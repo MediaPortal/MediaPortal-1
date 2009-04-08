@@ -29,7 +29,6 @@
       <textcolor>ffa9d0f7</textcolor>
       <label>#date | #time</label>
     </control>
-
     <control>
       <description>Guide Group Label</description>
       <type>label</type>
@@ -279,7 +278,6 @@
       <textureFocus>tv_green_border.png</textureFocus>
       <visible>Player.HasVideo</visible>
     </control>
-
     <control>
       <description>record pin</description>
       <type>image</type>
@@ -292,7 +290,7 @@
      <control>
       <description>TvGroup button</description>
       <type>button</type>
-      <id>60</id>
+      <id>100</id>
       <posX>14</posX>
       <posY>66</posY>
       <width>28</width>
@@ -310,7 +308,7 @@
     <control>
       <description>TvGroup button label</description>
       <type>label</type>
-      <id>61</id>
+      <id>0</id>
       <posX>37</posX>
       <posY>70</posY>
       <label>#TV.Guide.ChangeGroup</label>

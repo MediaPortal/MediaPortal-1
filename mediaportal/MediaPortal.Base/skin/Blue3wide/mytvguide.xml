@@ -292,7 +292,7 @@
      <control>
       <description>TvGroup button</description>
       <type>button</type>
-      <id>60</id>
+      <id>100</id>
       <posX>32</posX>
       <posY>83</posY>
       <width>45</width>
@@ -310,7 +310,7 @@
     <control>
       <description>TvGroup button label</description>
       <type>label</type>
-      <id>61</id>
+      <id>0</id>
       <posX>70</posX>
       <posY>90</posY>
       <label>#TV.Guide.ChangeGroup</label>
