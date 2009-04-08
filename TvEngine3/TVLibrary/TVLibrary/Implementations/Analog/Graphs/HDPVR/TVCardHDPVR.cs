@@ -752,8 +752,14 @@ namespace TvLibrary.Implementations.Analog
       IAMCrossbar crossBarFilter = _filterCrossBar as IAMCrossbar;
       if (crossBarFilter != null)
       {
-        crossBarFilter.Route(_videoOutPinIndex, _videoPinMap[vmode]);
-        crossBarFilter.Route(_audioOutPinIndex, _audioPinMap[amode]);
+        if (_videoPinMap.ContainsKey(vmode))
+        {
+          crossBarFilter.Route(_videoOutPinIndex, _videoPinMap[vmode]);
+        }
+        if (_audioPinMap.ContainsKey(amode))
+        {
+          crossBarFilter.Route(_audioOutPinIndex, _audioPinMap[amode]);
+        }
       }
     }
 
