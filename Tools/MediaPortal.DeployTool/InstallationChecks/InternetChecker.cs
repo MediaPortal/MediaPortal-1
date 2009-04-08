@@ -32,13 +32,13 @@ namespace MediaPortal.DeployTool.InstallationChecks
   {
     public static bool CheckConnection()
     {
-      Uri Url = new Uri("http://install.team-mediaportal.com/");
-      WebRequest WebReq = WebRequest.Create(Url);
-      WebReq.Proxy.Credentials = CredentialCache.DefaultCredentials;
-      WebResponse Resp;
-      
       try
       {
+        Uri Url = new Uri("http://install.team-mediaportal.com/");
+        WebRequest WebReq = WebRequest.Create(Url);
+        WebReq.Proxy.Credentials = CredentialCache.DefaultCredentials;
+        WebResponse Resp;
+
         Resp = WebReq.GetResponse();
         Resp.Close();
         return true;

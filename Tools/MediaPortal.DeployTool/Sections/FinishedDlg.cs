@@ -70,10 +70,16 @@ namespace MediaPortal.DeployTool.Sections
     #endregion
 
     #region Hyperlink handler
+
     private static void OpenURL(string url)
     {
-      System.Diagnostics.Process.Start(url);
+      try
+      {
+        System.Diagnostics.Process.Start(url);
+      }
+      catch (System.Exception) { }
     }
+
     private void linkHomepage_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       OpenURL("http://www.team-mediaportal.com");
@@ -86,6 +92,7 @@ namespace MediaPortal.DeployTool.Sections
     {
       OpenURL("http://www.team-mediaportal.com/manual/");
     }
+
     #endregion
 
   }

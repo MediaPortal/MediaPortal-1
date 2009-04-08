@@ -134,10 +134,11 @@ namespace MediaPortal.DeployTool.InstallationChecks
       }
       //Prepare the unattended ini file
       PrepareTemplateINI(tmpPath + "\\template.ini");
-      //run the setup
-      Process setup = Process.Start(tmpPath + "\\setup.exe", "/wait /settings \"" + tmpPath + "\\template.ini\" /qn");
+
       try
       {
+        //run the setup
+        Process setup = Process.Start(tmpPath + "\\setup.exe", "/wait /settings \"" + tmpPath + "\\template.ini\" /qn");
         if (setup != null)
         {
           setup.WaitForExit();
@@ -158,11 +159,13 @@ namespace MediaPortal.DeployTool.InstallationChecks
       }
       return false;
     }
+
     public bool UnInstall()
     {
       Utils.UninstallMSI("{2AFFFDD7-ED85-4A90-8C52-5DA9EBDC9B8F}");
       return true;
     }
+
     public CheckResult CheckStatus()
     {
       CheckResult result;
@@ -180,14 +183,16 @@ namespace MediaPortal.DeployTool.InstallationChecks
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion");
-      if (key == null)
-        result.state = CheckState.NOT_INSTALLED;
-      else
+      using (RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion"))
       {
-        string version = (string)key.GetValue("CurrentVersion");
-        key.Close();
-        result.state = version.StartsWith("9.0") ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
+        if (key == null)
+          result.state = CheckState.NOT_INSTALLED;
+        else
+        {
+          string version = (string)key.GetValue("CurrentVersion");
+          key.Close();
+          result.state = version.StartsWith("9.0") ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
+        }
       }
       return result;
     }

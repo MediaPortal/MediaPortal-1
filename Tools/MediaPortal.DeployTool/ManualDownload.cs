@@ -58,12 +58,20 @@ namespace MediaPortal.DeployTool
 
     private void linkURL_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      Process.Start(_url);
+      try
+      {
+        Process.Start(_url);
+      }
+      catch (Exception) { }
     }
 
     private void linkDir_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      Process.Start(labelTargetDir.Text);
+      try
+      {
+        Process.Start(labelTargetDir.Text);
+      }
+      catch (Exception) { }
     }
 
     private void buttonContinue_Click(object sender, EventArgs e)

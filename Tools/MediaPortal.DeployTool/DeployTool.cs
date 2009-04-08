@@ -141,11 +141,16 @@ namespace MediaPortal.DeployTool
         //
         if (InstallationProperties.Instance["InstallType"] == "download_only")
         {
-          Process process = new Process();
-          process.StartInfo.FileName = "explorer.exe";
-          process.StartInfo.Arguments = "/e, " + Application.StartupPath;
-          process.StartInfo.UseShellExecute = true;
-          process.Start();
+          try
+          {
+            Process process = new Process();
+            process.StartInfo.FileName = "explorer.exe";
+            process.StartInfo.Arguments = "/e, " + Application.StartupPath;
+            process.StartInfo.UseShellExecute = true;
+            process.Start();
+          }
+          // Starting processes might fail - prefer a not opening Explorer instead of a big crash window...
+          catch (Exception) { }
         }
         
         //
@@ -153,7 +158,12 @@ namespace MediaPortal.DeployTool
         //
         else
         {
-          Process.Start(Application.StartupPath + "\\HelpContent\\SetupGuide\\SetupGuide.htm");
+          try
+          {
+            Process.Start(Application.StartupPath + "\\HelpContent\\SetupGuide\\SetupGuide.htm");
+          }
+          // This might fail on systems without a default browser
+          catch (Exception) { }
         }
         Close();
         return;
@@ -216,7 +226,14 @@ namespace MediaPortal.DeployTool
 
     private void bHelp_Click(object sender, EventArgs e)
     {
-      Process.Start(Application.StartupPath + "\\HelpContent\\DeployToolGuide\\DeployToolGuide.htm");
+      try
+      {
+        Process.Start(Application.StartupPath + "\\HelpContent\\DeployToolGuide\\DeployToolGuide.htm");
+      }
+      catch (Exception ex) 
+      {
+        MessageBox.Show(String.Format("Unable to open the help page with your default browser - {0}", ex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
     }
   }
 }

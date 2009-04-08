@@ -44,22 +44,22 @@ namespace MediaPortal.DeployTool.InstallationChecks
       DialogResult result = Utils.RetryDownloadFile(InstallationProperties.Instance["Wmp11FileName"], prg);
       return (result == DialogResult.OK);
     }
+
     public bool Install()
     {
-      Process setup = Process.Start(InstallationProperties.Instance["Wmp11FileName"], "/q");
       try
       {
+        Process setup = Process.Start(InstallationProperties.Instance["Wmp11FileName"], "/q");
         if (setup != null)
         {
           setup.WaitForExit();
         }
         return true;
       }
-      catch
-      {
-        return false;
-      }
+      catch { }
+      return false;
     }
+
     public bool UnInstall()
     {
       //Uninstall not possible. Installer tries an automatic update if older version found

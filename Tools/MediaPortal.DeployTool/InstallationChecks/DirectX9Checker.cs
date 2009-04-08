@@ -50,23 +50,19 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       // Extract package
       string exe = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("DirectX9c", "FILE");
-      Process setup = Process.Start(exe, "/q /t:\"" + Path.GetTempPath() + "\\directx9c\"");
+
       try
       {
+        Process setup = Process.Start(exe, "/q /t:\"" + Path.GetTempPath() + "\\directx9c\"");
         if (setup != null)
         {
           setup.WaitForExit();
         }
-      }
-      catch
-      {
-        return false;
-      }
-      // Install package
-      exe = Path.GetTempPath() + "\\directx9c\\DXSetup.exe";
-      setup = Process.Start(exe, "/silent");
-      try
-      {
+
+        // Install package
+        exe = Path.GetTempPath() + "\\directx9c\\DXSetup.exe";
+
+        setup = Process.Start(exe, "/silent");
         if (setup != null)
         {
           setup.WaitForExit();
@@ -87,7 +83,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public CheckResult CheckStatus()
     {
-      CheckResult result;
+      CheckResult result = new CheckResult();
       result.needsDownload = true;
       string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("DirectX9c", "FILE");
       FileInfo dxFile = new FileInfo(fileName);
@@ -100,15 +96,18 @@ namespace MediaPortal.DeployTool.InstallationChecks
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\DirectX");
-      if (key == null)
+      try
       {
-        result.state = CheckState.NOT_INSTALLED;
-      }
-      else
-      {
-        key.Close();
-        string[] DllList = {
+        using (RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\DirectX"))
+        {
+          if (key == null)
+          {
+            result.state = CheckState.NOT_INSTALLED;
+          }
+          else
+          {
+            key.Close();
+            string[] DllList = {
                              @"\System32\D3DX9_30.dll",
                              @"\microsoft.net\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.Direct3D.dll",
                              @"\microsoft.net\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.DirectDraw.dll",
@@ -116,16 +115,22 @@ namespace MediaPortal.DeployTool.InstallationChecks
                              @"\microsoft.net\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.dll",
                              @"\microsoft.net\DirectX for Managed Code\1.0.2911.0\Microsoft.DirectX.Direct3DX.dll"
                            };
-        string WinDir = Environment.GetEnvironmentVariable("WINDIR");
-        foreach (string DllFile in DllList)
-        {
-          if (!File.Exists(WinDir + "\\" + DllFile))
-          {
-            result.state = CheckState.VERSION_MISMATCH;
-            return result;
+            string WinDir = Environment.GetEnvironmentVariable("WINDIR");
+            foreach (string DllFile in DllList)
+            {
+              if (!File.Exists(WinDir + "\\" + DllFile))
+              {
+                result.state = CheckState.VERSION_MISMATCH;
+                return result;
+              }
+            }
+            result.state = CheckState.INSTALLED;
           }
         }
-        result.state = CheckState.INSTALLED;
+      }
+      catch (Exception)
+      {
+        MessageBox.Show("Failed to check the DirectX installation status", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
       return result;
     }

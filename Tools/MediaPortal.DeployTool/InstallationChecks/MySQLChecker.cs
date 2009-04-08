@@ -154,9 +154,10 @@ namespace MediaPortal.DeployTool.InstallationChecks
       // mysqladmin.exe is used to set MySQL password
       //
       cmdLine = "-u root password " + InstallationProperties.Instance["DBMSPassword"];
-      Process mysqladmin = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
+      
       try
       {
+        Process mysqladmin = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
         if (mysqladmin != null)
         {
           mysqladmin.WaitForExit();
