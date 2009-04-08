@@ -2020,8 +2020,7 @@ namespace TvPlugin
     /// <returns></returns>
     public static bool IsSingleSeat()
     {
-      Log.Debug("TvFullScreen: IsSingleSeat - RemoteControl.HostName = {0} / Environment.MachineName = {1}",
-                RemoteControl.HostName, Environment.MachineName);
+      // Log.Debug("TVHome: IsSingleSeat - RemoteControl.HostName = {0} / Environment.MachineName = {1}", RemoteControl.HostName, Environment.MachineName);
       return (RemoteControl.HostName.ToLowerInvariant() == Environment.MachineName.ToLowerInvariant());
     }
 
