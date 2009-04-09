@@ -1345,7 +1345,7 @@ namespace TvPlugin
       {
         if (Utils.IsVideo(fileName))
         {
-          g_Player.SeekAbsolute(0);
+          //g_Player.SeekAbsolute(0); //this seek sometimes causes a deadlock in tsreader. original problem still present.
           g_Player.ShowFullScreenWindow();
         }
         if (stoptime > 0)
