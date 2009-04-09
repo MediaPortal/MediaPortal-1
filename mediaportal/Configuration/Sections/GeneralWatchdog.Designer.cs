@@ -43,14 +43,16 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxEnableWatchdog.AutoSize = true;
       this.checkBoxEnableWatchdog.Location = new System.Drawing.Point(17, 74);
       this.checkBoxEnableWatchdog.Name = "checkBoxEnableWatchdog";
-      this.checkBoxEnableWatchdog.Size = new System.Drawing.Size(287, 17);
+      this.checkBoxEnableWatchdog.Size = new System.Drawing.Size(200, 17);
       this.checkBoxEnableWatchdog.TabIndex = 9;
-      this.checkBoxEnableWatchdog.Text = "Watchdog enabled (MPTestTool won\'t be started at all)";
+      this.checkBoxEnableWatchdog.Text = "Watchdog enabled - monitor crashes";
       this.checkBoxEnableWatchdog.UseVisualStyleBackColor = true;
       // 
       // checkBoxAutoRestart
       // 
       this.checkBoxAutoRestart.AutoSize = true;
+      this.checkBoxAutoRestart.Checked = true;
+      this.checkBoxAutoRestart.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxAutoRestart.Location = new System.Drawing.Point(17, 97);
       this.checkBoxAutoRestart.Name = "checkBoxAutoRestart";
       this.checkBoxAutoRestart.Size = new System.Drawing.Size(141, 17);

@@ -25,8 +25,8 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        checkBoxEnableWatchdog.Checked = xmlreader.GetValueAsBool("general", "watchdogEnabled", true);
-        checkBoxAutoRestart.Checked = xmlreader.GetValueAsBool("general", "restartOnError", false);
+        checkBoxEnableWatchdog.Checked = xmlreader.GetValueAsBool("general", "watchdogEnabled", false);
+        checkBoxAutoRestart.Checked = xmlreader.GetValueAsBool("general", "restartOnError", true);
         numericUpDownDelay.Value = xmlreader.GetValueAsInt("general", "restart delay", 10);
       }
     }
