@@ -275,7 +275,7 @@ public class MediaPortalApp : D3DApp, IRender
           Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
           Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.BelowNormal;
         }
-        autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", true);
+        autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", false);
         _startupDelay = xmlreader.GetValueAsInt("general", "startup delay", 0);
         _waitForTvServer = xmlreader.GetValueAsBool("general", "wait for tvserver", false);
         watchdogEnabled = xmlreader.GetValueAsBool("general", "watchdogEnabled", true);
