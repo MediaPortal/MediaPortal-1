@@ -96,6 +96,7 @@ namespace TvLibrary.Implementations.Analog
       _conditionalAccess = null;
       _cardType = CardType.Analog;
       _epgGrabbing = false;
+      _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
     }
 
     #endregion
