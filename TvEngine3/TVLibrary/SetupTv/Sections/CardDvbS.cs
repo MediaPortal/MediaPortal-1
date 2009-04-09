@@ -159,43 +159,59 @@ namespace SetupTv.Sections
       Application.DoEvents();
       try
       {
-        try
+        string[,] contextDownload = new string[2, 2];
+
+        contextDownload[0, 0] = context.FileName;
+        contextDownload[1, 0] = context.FileName.Replace(".ini", "-S2.ini");
+        contextDownload[0, 1] = context.Url;
+        contextDownload[1, 1] = context.Url.Replace(".ini", "-S2.ini");
+
+        for (int row = 0; row <= 1; row++)
         {
-          File.Delete(context.FileName);
-        }
-        catch (Exception) { }
-        item.Text = itemLine + " connecting...";
-        Application.DoEvents();
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(context.Url);
-        try
-        {
-          // Use the current user in case an NTLM Proxy or similar is used.
-          // wr.Proxy = WebProxy.GetDefaultProxy();
-          request.Proxy.Credentials = CredentialCache.DefaultCredentials;
-        }
-        catch (Exception) { }
-        item.Text = itemLine + " downloading...";
-        Application.DoEvents();
-        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-        {
-          item.Text = itemLine + " saving...";
-          Application.DoEvents();
-          using (Stream resStream = response.GetResponseStream())
+          string satFile = contextDownload[row, 0];
+          string satUrl = contextDownload[row, 1];
+          if (File.Exists(satFile))
           {
-            using (TextReader tin = new StreamReader(resStream))
+            File.Delete(satFile);
+          }
+          item.Text = itemLine + " connecting...";
+          Application.DoEvents();
+          HttpWebRequest request = (HttpWebRequest)WebRequest.Create(satUrl);
+          request.ReadWriteTimeout = 30 * 1000; //thirty secs timeout
+          request.Proxy.Credentials = CredentialCache.DefaultCredentials;
+
+          item.Text = itemLine + " downloading...";
+          Application.DoEvents();
+          using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+          {
+            item.Text = itemLine + " saving...";
+            Application.DoEvents();
+            using (Stream resStream = response.GetResponseStream())
             {
-              using (TextWriter tout = File.CreateText(context.FileName))
+              using (TextReader tin = new StreamReader(resStream))
               {
-                while (true)
+                using (TextWriter tout = File.CreateText(satFile))
                 {
-                  string line = tin.ReadLine();
-                  if (line == null)
-                    break;
-                  tout.WriteLine(line);
+                  while (true)
+                  {
+                    string line = tin.ReadLine();
+                    if (line == null)
+                      break;
+                    tout.WriteLine(line);
+                  }
                 }
               }
             }
           }
+        }
+        item.Text = itemLine + " done";
+      }
+      catch (WebException WebEx)
+      {
+        //HTTP Protocol error, like 404 file not found. Do Nothing
+        if (WebEx.Status != WebExceptionStatus.ProtocolError)
+        {
+          throw new WebException(WebEx.Message);
         }
         item.Text = itemLine + " done";
       }
