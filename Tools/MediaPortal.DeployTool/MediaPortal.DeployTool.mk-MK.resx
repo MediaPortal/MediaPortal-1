@@ -507,4 +507,29 @@ PC-то ќе се однесува како специјализиран TV-Serv
   <data name="DownloadSettings_labelSectionHeader" xml:space="preserve">
     <value>Ве молам одберете подесувања за симнувања:</value>
   </data>
+  <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
+    <value>Нема интернет конекција! За да продолжи инсталацијата потребна е активна конекција.</value>
+  </data>
+  <data name="DiskSpace_Error" xml:space="preserve">
+    <value>Не остана доволно дисковен простор на посочениот драјв! За инсталација на Media Portal потребни се најмалку {0} MB слободен простор.</value>
+  </data>
+  <data name="Upgrade_labelSectionHeader" xml:space="preserve">
+    <value>Најден е MediaPortal {0}.</value>
+  </data>
+  <data name="Upgrade_labelSectionHeader_SVN" xml:space="preserve">
+    <value>Најден е MediaPortal {0} (build {1}).</value>
+  </data>
+  <data name="Upgrade_no" xml:space="preserve">
+    <value>Свежа инсталација</value>
+  </data>
+  <data name="Upgrade_yes" xml:space="preserve">
+    <value>Надогради тековна инсталација до {0}</value>
+  </data>
+  <data name="Upgrade_note" xml:space="preserve">
+    <value>ЗАБЕЛЕШКА: Не можете да надградите од постоечки SVN build,
+          тие се наменети само за тестирање.</value>
+  </data>
+  <data name="Install_actionUpgradeInstall" xml:space="preserve">
+    <value>Надогради-&gt;Инсталирај</value>
+  </data>
 </root>
