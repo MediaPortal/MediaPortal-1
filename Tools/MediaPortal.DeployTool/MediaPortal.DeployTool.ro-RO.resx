@@ -524,4 +524,7 @@ Transferați acest folder pe HTPC-ul dumneavoastră.Incepeți instalarea pornind
   <data name="Upgrade_note" xml:space="preserve">
     <value>NOTĂ:Nu puteți actualiza o versiune SVN existentă pentru că acestea sunt create numai pentru testare.</value>
   </data>
+  <data name="Install_actionUpgradeInstall" xml:space="preserve">
+    <value>Actualizare-&gt;Instalare</value>
+  </data>
 </root>
