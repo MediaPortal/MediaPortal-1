@@ -97,6 +97,7 @@ namespace TvLibrary.Implementations.Analog
       _cardType = CardType.Analog;
       _epgGrabbing = false;
       _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
+      Configuration.writeConfiguration(_configuration);
     }
 
     #endregion
@@ -464,6 +465,13 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     public override void BuildGraph()
     {
+      if (_cardId == 0)
+      {
+        GetPreloadBitAndCardId();
+        _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
+        Configuration.writeConfiguration(_configuration);
+      }
+
       _lastSignalUpdate = DateTime.MinValue;
       _tunerLocked = false;
       Log.Log.WriteFile("HDPVR: build graph");
@@ -489,7 +497,6 @@ namespace TvLibrary.Implementations.Analog
         }
 
         _graphState = GraphState.Created;
-
         _configuration.Graph.Crossbar.Name = "Hauppauge HD PVR Crossbar";
         _configuration.Graph.Crossbar.VideoPinMap = _videoPinMap;
         _configuration.Graph.Crossbar.AudioPinMap = _audioPinMap;
@@ -500,6 +507,8 @@ namespace TvLibrary.Implementations.Analog
         _configuration.Graph.Capture.FrameRate = -1d;
         _configuration.Graph.Capture.ImageHeight = -1;
         _configuration.Graph.Capture.ImageWidth = -1;
+        Configuration.writeConfiguration(_configuration);
+
       } catch (Exception ex)
       {
         Log.Log.Write(ex);

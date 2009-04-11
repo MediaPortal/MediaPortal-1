@@ -461,6 +461,12 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     public override void BuildGraph()
     {
+      if(_cardId==0)
+      {
+        GetPreloadBitAndCardId();
+        _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
+        Configuration.writeConfiguration(_configuration);
+      }
       _lastSignalUpdate = DateTime.MinValue;
       _tunerLocked = false;
       Log.Log.WriteFile("analog: build graph");
