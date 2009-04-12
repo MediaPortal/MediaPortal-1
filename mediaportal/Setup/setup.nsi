@@ -128,13 +128,13 @@ BrandingText  "${NAME} ${VERSION} by ${COMPANY}"
 !include Memento.nsh
 !include "${svn_InstallScripts}\include-WinVerEx.nsh"
 
+!include "${svn_InstallScripts}\include\*"
 
 !define USE_READ_MP_DIRS ; defines if MediaPortal's special directories needs to be read from config
 !define USE_INSTALL_LOG  ; enables logging during installation and uninstallation
 !include "${svn_InstallScripts}\include-CommonMPMacros.nsh"
 
 
-!include "${svn_InstallScripts}\include-FileAssociation.nsh"
 !include "${svn_InstallScripts}\include-AddRemovePage.nsh"
 !include "${svn_InstallScripts}\include-UninstallModePage.nsh"
 !include setup-languages.nsh

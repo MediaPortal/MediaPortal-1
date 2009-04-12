@@ -66,6 +66,8 @@ Page instfiles
 #!include Memento.nsh
 
 
+!include "${svn_InstallScripts}\include\*"
+
 !define USE_READ_MP_DIRS ; defines if MediaPortal's special directories needs to be read from config
 #!define USE_INSTALL_LOG  ; enables logging during installation and uninstallation
 !include "${svn_InstallScripts}\include-CommonMPMacros.nsh"
@@ -224,5 +226,19 @@ Section /o "Kill Processes"
   ${KillProcess} "MPInstaller.exe"
   ${KillProcess} "makensisw.exe"
   ${KillProcess} "Input Service Configuration.exe"
+
+SectionEnd
+
+Section /o "RegisterExtension"
+
+      ${LOG_TEXT} "INFO" "RegisterExtension"
+  ${RegisterExtension} "$MPdir.Base\MPIMaker.exe" ".xmp" "MediaPortal extension project"
+
+SectionEnd
+
+Section /o "UnRegisterExtension"
+
+      ${LOG_TEXT} "INFO" "UnRegisterExtension"
+  ${UnRegisterExtension} ".xmp" "MediaPortal extension project"
 
 SectionEnd
