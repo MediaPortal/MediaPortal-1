@@ -1,7 +1,7 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
+#region Copyright (C) 2005-2009 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005-2008 Team MediaPortal
+ *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -23,12 +23,21 @@
 
 #endregion
 
-#**********************************************************************************************************#
-#
-# This original header file is taken from:           http://nsis.sourceforge.net/Add/Remove_Functionality
-#     and modified for our needs.
-#
-#**********************************************************************************************************#
+/*
+_____________________________________________________________________________
+
+                       AddRemovePage
+_____________________________________________________________________________
+
+  The original header file is taken from:
+              http://nsis.sourceforge.net/Add/Remove_Functionality
+  and modified for our needs.
+*/
+
+!ifndef UninstallModePage
+!define ___ADD_REMOVE_PAGE__NSH___
+
+!macro AddRemovePage RegKey
 
 !include WordFunc.nsh
 !include FileFunc.nsh
@@ -40,14 +49,15 @@
 Var ReinstallPageCheck
 
 Function PageReinstall
-  ReadRegStr $R0 HKLM "${REG_UNINSTALL}" "UninstallString"
-  IfFileExists $R0 +2
+  ReadRegStr $R0 HKLM "${RegKey}" "InstallPath"
+  ${If} $R0 == ""
     Abort
+  ${EndIf}
 
-  ReadRegDWORD $R0 HKLM "${REG_UNINSTALL}" "VersionMajor"
-  ReadRegDWORD $R1 HKLM "${REG_UNINSTALL}" "VersionMinor"
-  ReadRegDWORD $R2 HKLM "${REG_UNINSTALL}" "VersionRevision"
-  ReadRegDWORD $R3 HKLM "${REG_UNINSTALL}" "VersionBuild"
+  ReadRegDWORD $R0 HKLM "${RegKey}" "VersionMajor"
+  ReadRegDWORD $R1 HKLM "${RegKey}" "VersionMinor"
+  ReadRegDWORD $R2 HKLM "${RegKey}" "VersionRevision"
+  ReadRegDWORD $R3 HKLM "${RegKey}" "VersionBuild"
   StrCpy $R0 $R0.$R1.$R2.$R3
 
   ${VersionCompare} ${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD} $R0 $R0
@@ -118,7 +128,7 @@ Function PageLeaveReinstall
 
   doUninstall:
   ; check if MP is already installed
-  ReadRegStr $R0 HKLM "${REG_UNINSTALL}" UninstallString
+  ReadRegStr $R0 HKLM "${RegKey}" UninstallString
   ${If} ${FileExists} "$R0"
     ; get parent folder of uninstallation EXE (RO) and save it to R1
     ${GetParent} $R0 $R1
@@ -146,15 +156,6 @@ Function PageLeaveReinstall
   finish:
 FunctionEnd
 
+!macroend
 
-
-LangString TEXT_ADDREMOVE_HEADER            ${LANG_ENGLISH} "Already Installed"
-LangString TEXT_ADDREMOVE_HEADER2_REPAIR    ${LANG_ENGLISH} "Choose the maintenance option to perform."
-LangString TEXT_ADDREMOVE_HEADER2_UPDOWN    ${LANG_ENGLISH} "Choose how you want to install $(^Name)."
-LangString TEXT_ADDREMOVE_INFO_REPAIR       ${LANG_ENGLISH} "$(^Name) ${VERSION} is already installed. Select the operation you want to perform and click Next to continue."
-LangString TEXT_ADDREMOVE_INFO_UPGRADE      ${LANG_ENGLISH} "An older version of $(^Name) is installed on your system. It is recommended that you uninstall the current version before installing. Select the operation you want to perform and click Next to continue."
-LangString TEXT_ADDREMOVE_INFO_DOWNGRADE    ${LANG_ENGLISH} "A newer version of $(^Name) is already installed! It is not recommended that you install an older version. If you really want to install this older version, it's better to uninstall the current version first. Select the operation you want to perform and click Next to continue."
-LangString TEXT_ADDREMOVE_REPAIR_OPT1       ${LANG_ENGLISH} "Add/Remove/Reinstall components"
-LangString TEXT_ADDREMOVE_REPAIR_OPT2       ${LANG_ENGLISH} "Uninstall $(^Name)"
-LangString TEXT_ADDREMOVE_UPDOWN_OPT1       ${LANG_ENGLISH} "Uninstall before installing"
-LangString TEXT_ADDREMOVE_UPDOWN_OPT2       ${LANG_ENGLISH} "Do not uninstall"
+!endif # !___ADD_REMOVE_PAGE__NSH___

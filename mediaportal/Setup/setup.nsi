@@ -132,18 +132,10 @@ BrandingText  "${NAME} ${VERSION} by ${COMPANY}"
 !include "${svn_InstallScripts}\include-CommonMPMacros.nsh"
 
 
-!include "${svn_InstallScripts}\include-AddRemovePage.nsh"
-!include "${svn_InstallScripts}\include-UninstallModePage.nsh"
-!include setup-languages.nsh
+!include "${svn_InstallScripts}\pages\AddRemovePage.nsh"
+!insertmacro AddRemovePage "${REG_UNINSTALL}"
+!include "${svn_InstallScripts}\pages\UninstallModePage.nsh"
 
-; FileFunc macros
-!insertmacro GetParameters
-!insertmacro GetOptions
-!insertmacro un.GetParameters
-!insertmacro un.GetOptions
-!insertmacro GetParent
-!insertmacro RefreshShellIcons
-!insertmacro un.RefreshShellIcons
 
 #---------------------------------------------------------------------------
 # INSTALLER INTERFACE settings
@@ -211,7 +203,7 @@ UninstPage custom un.UninstallModePage un.UninstallModePageLeave
 #---------------------------------------------------------------------------
 # INSTALLER LANGUAGES
 #---------------------------------------------------------------------------
-!insertmacro MUI_LANGUAGE English
+!insertmacro LANG_LOAD "English"
 
 #---------------------------------------------------------------------------
 # INSTALLER ATTRIBUTES

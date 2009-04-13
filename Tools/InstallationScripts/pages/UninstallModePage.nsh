@@ -23,15 +23,17 @@
 
 #endregion
 
-#**********************************************************************************************************#
-#
-# This original header file is taken from:           http://nsis.sourceforge.net/Add/Remove_Functionality
-#     and modified for our needs.
-#
-#**********************************************************************************************************#
+/*
+_____________________________________________________________________________
+
+                       UninstallModePage
+_____________________________________________________________________________
+*/
+
+!ifndef UninstallModePage_INCLUDED
+!define UninstallModePage_INCLUDED
 
 
-#####    UnInstallMode page
 Var UnInstallMode
 Var uninstModePage.optBtn0
 Var uninstModePage.optBtn0.state
@@ -103,19 +105,4 @@ Function un.UninstallModePageLeave
 
 FunctionEnd
 
-
-
-LangString TEXT_UNMODE_HEADER     ${LANG_ENGLISH} "Uninstallation Mode"
-LangString TEXT_UNMODE_HEADER2    ${LANG_ENGLISH} "Please choose the mode, you want to do the uninstallation."
-
-LangString TEXT_UNMODE_OPT0       ${LANG_ENGLISH} "Standard Uninstall (recommended)"
-LangString TEXT_UNMODE_OPT1       ${LANG_ENGLISH} "Complete Uninstallation for ${NAME}"
-LangString TEXT_UNMODE_OPT2       ${LANG_ENGLISH} "Full MediaPortal Products cleanup"
-
-LangString TEXT_UNMODE_OPT0_DESC  ${LANG_ENGLISH} "Only the main application will be uninstalled, userfiles and databases will not be deleted (recommended)"
-LangString TEXT_UNMODE_OPT1_DESC  ${LANG_ENGLISH} "This will uninstall ${NAME}, delete all userfiles and databases"
-LangString TEXT_UNMODE_OPT2_DESC  ${LANG_ENGLISH} "This will also remove all files, folders, databases, settings and registry keys which might be leftovers from older MediaPortal versions."
-
-
-LangString TEXT_UNMODE_OPT1_MSGBOX  ${LANG_ENGLISH} "Are you sure that you want to do a Complete Uninstallation? This can not be undone!"
-LangString TEXT_UNMODE_OPT2_MSGBOX  ${LANG_ENGLISH} "Are you sure that you want to do a Full MediaPortal Products cleanup? This can not be undone!"
+!endif # UninstallModePage_INCLUDED

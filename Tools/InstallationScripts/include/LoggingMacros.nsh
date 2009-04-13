@@ -1,7 +1,7 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
+#region Copyright (C) 2005-2009 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005-2008 Team MediaPortal
+ *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -28,6 +28,9 @@ _____________________________________________________________________________
 
                        NSIS logging system
 _____________________________________________________________________________
+
+  These macros for writing a log file during the installation process,
+  which can be used for debugging the installation process.
 */
 
 
