@@ -131,9 +131,6 @@ BrandingText  "${NAME} ${VERSION} by ${COMPANY}"
 !include "${svn_InstallScripts}\include-WinVerEx.nsh"
 
 !include "${svn_InstallScripts}\include\*"
-
-!define USE_READ_MP_DIRS ; defines if MediaPortal's special directories needs to be read from config
-!define USE_INSTALL_LOG ; enables logging during installation and uninstallation
 !include "${svn_InstallScripts}\include-CommonMPMacros.nsh"
 
 

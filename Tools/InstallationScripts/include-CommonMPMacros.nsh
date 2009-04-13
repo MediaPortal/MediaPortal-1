@@ -60,204 +60,6 @@
 !include "${svn_InstallScripts}\XML-plugin\Include\XML.nsh"
 
 
-#---------------------------------------------------------------------------
-#   NSIS logging system
-#
-#           enable it by defining         USE_INSTALL_LOG      in parent script
-#---------------------------------------------------------------------------
-!define prefixERROR "[ERROR     !!!]   "
-!define prefixDEBUG "[    DEBUG    ]   "
-!define prefixINFO  "[         INFO]   "
-
-!ifdef USE_INSTALL_LOG
-
-!include FileFunc.nsh
-!insertmacro GetTime
-!insertmacro un.GetTime
-
-Var LogFile
-Var TempInstallLog
-
-
-
-!define LOG_OPEN `!insertmacro LOG_OPEN ""`
-!define un.LOG_OPEN `!insertmacro LOG_OPEN "un."`
-!macro LOG_OPEN UNINSTALL_PREFIX
-  GetTempFileName $TempInstallLog
-  FileOpen $LogFile "$TempInstallLog" w
-
-  ${${UNINSTALL_PREFIX}GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
-  ${LOG_TEXT} "INFO" "$(^Name) ${UNINSTALL_PREFIX}installation"
-  ${LOG_TEXT} "INFO" "Logging started: $0.$1.$2 $4:$5:$6"
-  ${LOG_TEXT} "INFO" "${UNINSTALL_PREFIX}installer version: ${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}"
-  ${LOG_TEXT} "INFO" "============================================================================================"
-!macroend
-
-
-!define LOG_CLOSE `!insertmacro LOG_CLOSE ""`
-!define un.LOG_CLOSE `!insertmacro LOG_CLOSE "un."`
-!macro LOG_CLOSE UNINSTALL_PREFIX
-  SetShellVarContext all
-
-  ${${UNINSTALL_PREFIX}GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
-  ${LOG_TEXT} "INFO" "============================================================================================"
-  ${LOG_TEXT} "INFO" "Logging stopped: $0.$1.$2 $4:$5:$6"
-  ${LOG_TEXT} "INFO" "${UNINSTALL_PREFIX}installer version: ${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}"
-  ${LOG_TEXT} "INFO" "$(^Name) ${UNINSTALL_PREFIX}installation"
-
-  FileClose $LogFile
-
-!ifdef INSTALL_LOG_FILE
-  CopyFiles "$TempInstallLog" "${INSTALL_LOG_FILE}"
-!else
-  !ifndef COMMON_APPDATA
-    !error "$\r$\n$\r$\nCOMMON_APPDATA is not defined!$\r$\n$\r$\n"
-  !endif
-
-  ${${UNINSTALL_PREFIX}GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
-  CopyFiles "$TempInstallLog" "${COMMON_APPDATA}\log\${UNINSTALL_PREFIX}install_${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}_$2-$1-$0_$4-$5-$6.log"
-
-  Delete "$TempInstallLog"
-
-!endif
-!macroend
-
-
-!define LOG_TEXT `!insertmacro LOG_TEXT`
-!macro LOG_TEXT LEVEL TEXT
-
-!if     "${LEVEL}" != "DEBUG"
-  !if   "${LEVEL}" != "ERROR"
-    !if "${LEVEL}" != "INFO"
-      !error "$\r$\n$\r$\nYou call macro LOG_TEXT with wrong LogLevel. Only 'DEBUG', 'ERROR' and 'INFO' are valid!$\r$\n$\r$\n"
-    !else
-      DetailPrint "${prefix${LEVEL}}${TEXT}"
-    !endif
-  !else
-    DetailPrint "${prefix${LEVEL}}${TEXT}"
-  !endif
-!endif
-
-  FileWrite $LogFile "${prefix${LEVEL}}${TEXT}$\r$\n"
-
-!macroend
-
-!else #!USE_INSTALL_LOG
-
-!define LOG_OPEN `!insertmacro LOG_OPEN`
-!macro LOG_OPEN
-!macroend
-
-!define LOG_CLOSE `!insertmacro LOG_CLOSE`
-!macro LOG_CLOSE
-!macroend
-
-!define LOG_TEXT `!insertmacro LOG_TEXT`
-!macro LOG_TEXT LEVEL TEXT
-      DetailPrint "${prefix${LEVEL}}${TEXT}"
-!macroend
-
-!endif
-
-#---------------------------------------------------------------------------
-#   KILL Process       macro for common usage
-#---------------------------------------------------------------------------
-!define KillProcess `!insertmacro KillProcess`
-!macro KillProcess Process
-  ${LOG_TEXT} "INFO" "KillProcess: ${Process}"
-
-  StrCpy $R1 1  ; set counter to 1
-  ${Do}
-
-    nsExec::Exec '"taskkill" /F /IM "${Process}"'
-
-    Pop $0
-
-    ${Select} $0
-      ${Case} "0"
-        ${LOG_TEXT} "INFO" "KillProcess: ${Process} was killed successfully."
-        ${ExitDo}
-      ${Case} "128"
-        ${LOG_TEXT} "INFO" "KillProcess: ${Process} is not running."
-        ${ExitDo}
-      ${CaseElse}
-
-        ${LOG_TEXT} "ERROR" "KillProcess: Unknown result: $0"
-        IntOp $R1 $R1 + 1  ; increase retry-counter +1
-        ${If} $R1 > 5  ; try max. 5 times
-          ${ExitDo}
-        ${Else}
-          ${LOG_TEXT} "INFO" "KillProcess: Trying again. $R1/5"
-        ${EndIf}
-
-      ${EndSelect}
-  ${Loop}
-!macroend
-
-!define StopService `!insertmacro StopService`
-!macro StopService Service
-  ${LOG_TEXT} "INFO" "StopService: ${Service}"
-
-  StrCpy $R1 1  ; set counter to 1
-  ${Do}
-
-    nsExec::Exec 'net stop "${Service}"'
-
-    Pop $0
-
-    ${Select} $0
-      ${Case} "0"
-        ${LOG_TEXT} "INFO" "StopService: ${Service} was stopped successfully."
-        ${ExitDo}
-      ${Case} "2"
-        ${LOG_TEXT} "INFO" "StopService: ${Service} is not started."
-        ${ExitDo}
-      ${CaseElse}
-
-        ${LOG_TEXT} "ERROR" "StopService: Unknown result: $0"
-        IntOp $R1 $R1 + 1  ; increase retry-counter +1
-        ${If} $R1 > 5  ; try max. 5 times
-          ${ExitDo}
-        ${Else}
-          ${LOG_TEXT} "INFO" "StopService: Trying again. $R1/5"
-        ${EndIf}
-
-      ${EndSelect}
-  ${Loop}
-!macroend
-
-!macro RenameDirectory DirPath NewDirPath
-  ${LOG_TEXT} "INFO" "RenameDirectory: Old path: ${DirPath}"
-  ${LOG_TEXT} "INFO" "RenameDirectory: New path: ${NewDirPath}"
-
-  ${If} ${FileExists} "${DirPath}\*.*"
-    ${LOG_TEXT} "INFO" "RenameDirectory: Directory exists. Trying to rename."
-
-    StrCpy $R1 1  ; set counter to 1
-    ${Do}
-
-      ClearErrors
-      Rename "${DirPath}" "${NewDirPath}"
-
-      IntOp $R1 $R1 + 1  ; increase retry-counter +1
-      ${IfNot} ${Errors}
-        ${LOG_TEXT} "INFO" "RenameDirectory: Renamed directory successfully."
-        ${ExitDo}
-      ${ElseIf} $R1 > 5  ; try max. 5 times
-        ${LOG_TEXT} "ERROR" "RenameDirectory: Renaming directory failed for some reason."
-        ${ExitDo}
-      ${Else}
-        ${LOG_TEXT} "INFO" "RenameDirectory: Trying again. $R1/5"
-      ${EndIf}
-
-    ${Loop}
-  
-  ${Else}
-    ${LOG_TEXT} "INFO" "RenameDirectory: Directory does not exist. No need to rename: ${DirPath}"
-  ${EndIf}
-!macroend
-
-
 
 #Var AR_SecFlags
 #Var AR_RegFlags
@@ -679,7 +481,7 @@ LangString UPDATE_ERROR_VERSION_TVSERVER          ${LANG_ENGLISH} "wrong version
 #
 #           enable it by defining         USE_READ_MP_DIRS      in parent script
 #---------------------------------------------------------------------------
-!ifdef USE_READ_MP_DIRS
+!ifndef NO_READ_MP_DIRS
 
 Var MyDocs
 Var UserAppData
@@ -929,7 +731,7 @@ FunctionEnd
   ${LOG_TEXT} "INFO" "          BurnerSupport: $MPdir.BurnerSupport"
 !macroend
 
-!endif # !USE_READ_MP_DIRS
+!endif # !NO_READ_MP_DIRS
 
 #---------------------------------------------------------------------------
 #   COMPLETE MEDIAPORTAL CLEANUP
