@@ -783,6 +783,9 @@ Function .onInit
     !insertmacro UnselectSection ${SecServer}
   ${EndIf}
 
+
+${If} $DeployMode = 0
+
   ; OS and other common initialization checks are done in the following NSIS header file
   !insertmacro MediaPortalOperatingSystemCheck $DeployMode
   !insertmacro MediaPortalAdminCheck $DeployMode
@@ -800,6 +803,15 @@ Function .onInit
     Abort
   ${EndIf}
 
+  ; check if reboot is required
+  ${If} ${FileExists} "$INSTDIR\rebootflag"
+    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
+    Abort
+  ${EndIf}
+
+${EndIf}
+
+
   ; Read installation dir from registry, ONLY if
   ;   - installer is started in UpdateMode
   ;   - MediaPortal is already installed
@@ -811,12 +823,6 @@ Function .onInit
       MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_UPDATE_BUT_NOT_INSTALLED)"
       Abort
     ${EndIf}
-  ${EndIf}
-
-  ; check if reboot is required
-  ${If} ${FileExists} "$INSTDIR\rebootflag"
-    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
-    Abort
   ${EndIf}
 
   ; If Silent:   check if MP is installed -> if not disable that component
