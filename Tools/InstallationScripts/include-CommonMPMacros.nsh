@@ -31,6 +31,7 @@
 !include LogicLib.nsh
 !include x64.nsh
 !include "${svn_InstallScripts}\include-WinVerEx.nsh"
+!include "${svn_InstallScripts}\include\LoggingMacros.nsh"
 
 
 !ifndef COMPANY
