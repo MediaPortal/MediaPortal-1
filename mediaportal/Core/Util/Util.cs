@@ -59,7 +59,7 @@ namespace MediaPortal.Util
     public string TwoLetterISO;
   };
 
-  
+
   /// <summary>
   /// Common functions for general usage
   /// </summary>
@@ -1572,13 +1572,16 @@ namespace MediaPortal.Util
     {
       if (strText == null) return string.Empty;
       if (strText.Length == 0) return string.Empty;
-      string strFName = strText.Replace('*', '_');
-      strFName = strFName.Replace(':', '_');
+
+      string strFName = strText.Replace(':', '_');
+      strFName = strFName.Replace('/', '_');
+      strFName = strFName.Replace('*', '_');
       strFName = strFName.Replace('?', '_');
       strFName = strFName.Replace('\"', '_');
       strFName = strFName.Replace('<', '_');
       strFName = strFName.Replace('>', '_');
       strFName = strFName.Replace('|', '_');
+
       return strFName;
     }
 
