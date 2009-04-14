@@ -106,7 +106,7 @@ VIAddVersionKey LegalCopyright    "Copyright © 2005-2009 ${COMPANY}"
 
 Section
   IfFileExists "$INSTDIR\*.*" 0 +2
-    RMDir "$INSTDIR"
+    RMDir /r "$INSTDIR"
 
   SetOutPath $INSTDIR
   File /r /x .svn /x *.pdb /x *.vshost.exe "${svn_DeployTool}\bin\Release\*"
