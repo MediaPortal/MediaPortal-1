@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="windows-1250"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="9,00"
 	Name="MPAudioswitcher"
 	ProjectGUID="{D8DB3E7E-D50E-4EC3-A9B9-DAD18F5FE466}"
 	RootNamespace="audioswitcher"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -45,7 +46,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;"
-				PreprocessorDefinitions="REGISTER_FILTER;WIN32;_DEBUG;_USRDLL;WINVER=0x400;_CRT_SECURE_NO_DEPRECATE"
+				PreprocessorDefinitions="REGISTER_FILTER;WIN32;_DEBUG;_USRDLL;_CRT_SECURE_NO_DEPRECATE"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="1"
 				AssemblerListingLocation=".\obj\Debug/"
@@ -76,6 +77,8 @@
 				DelayLoadDLLs=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				ImportLibrary=".\bin\Debug/MPAudioSwitcher.lib"
 				TargetMachine="1"
 			/>
@@ -96,9 +99,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -151,6 +151,8 @@
 				ModuleDefinitionFile="AudioSwitcher.def"
 				DelayLoadDLLs=""
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -170,9 +172,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -227,6 +226,8 @@
 				ModuleDefinitionFile=".\source\AudioSwitcher.def"
 				DelayLoadDLLs=""
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -246,9 +247,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -300,6 +298,8 @@
 				ModuleDefinitionFile="AudioSwitcher.def"
 				DelayLoadDLLs=""
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -319,9 +319,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"

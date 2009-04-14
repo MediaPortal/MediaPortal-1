@@ -1,5 +1,5 @@
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DvbCoreUtils", "DvbCoreUtils\DvbCoreUtils.vcproj", "{4B134B4C-4EF6-4647-9CEA-A59FF0013357}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TsWriter", "TsWriter\MPTSWriter.vcproj", "{FCF30D16-2C9E-4429-B605-4ACA43023E71}"
