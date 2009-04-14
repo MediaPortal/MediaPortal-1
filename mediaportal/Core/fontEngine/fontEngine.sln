@@ -1,5 +1,5 @@
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fontEngine", "fontEngine\fontEngine.vcproj", "{C3CD9ACF-E025-465C-8B07-4F53CF33003F}"
 EndProject
 Global
