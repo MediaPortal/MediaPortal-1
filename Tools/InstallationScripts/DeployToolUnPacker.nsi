@@ -74,7 +74,8 @@ Name "MediaPortal Unpacker"
 #---------------------------------------------------------------------------
 # INCLUDE FILES
 #---------------------------------------------------------------------------
-!include "${svn_InstallScripts}\include-CommonMPMacros.nsh"
+!define NO_INSTALL_LOG
+!include "${svn_InstallScripts}\include\MediaPortalMacros.nsh"
 
 
 #---------------------------------------------------------------------------

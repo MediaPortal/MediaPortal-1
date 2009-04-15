@@ -27,6 +27,8 @@
 !ifndef ProcessMacros_INCLUDED
 !define ProcessMacros_INCLUDED
 
+!include LogicLib.nsh
+!include "${svn_InstallScripts}\include\LoggingMacros.nsh"
 
 !define KillProcess `!insertmacro KillProcess`
 !macro KillProcess Process

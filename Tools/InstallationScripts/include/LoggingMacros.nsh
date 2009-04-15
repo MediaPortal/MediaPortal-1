@@ -31,15 +31,16 @@ _____________________________________________________________________________
 
   These macros for writing a log file during the installation process,
   which can be used for debugging the installation process.
+  
+  Disable Logging to file by defining NO_INSTALL_LOG in host script.
+    !define NO_INSTALL_LOG
 */
 
 
 !ifndef LoggingMacros_INCLUDED
 !define LoggingMacros_INCLUDED
 
-#---------------------------------------------------------------------------
-#           enable it by defining         USE_INSTALL_LOG      in parent script
-#---------------------------------------------------------------------------
+
 !define prefixERROR "[ERROR     !!!]   "
 !define prefixDEBUG "[    DEBUG    ]   "
 !define prefixINFO  "[         INFO]   "

@@ -128,8 +128,8 @@ BrandingText  "${NAME} ${VERSION} by ${COMPANY}"
 !include Memento.nsh
 !include "${svn_InstallScripts}\include-WinVerEx.nsh"
 
+
 !include "${svn_InstallScripts}\include\*"
-!include "${svn_InstallScripts}\include-CommonMPMacros.nsh"
 
 
 !include "${svn_InstallScripts}\pages\AddRemovePage.nsh"

@@ -34,11 +34,16 @@ _____________________________________________________________________________
 
 !insertmacro LANG_STRING ^UninstallLink             "Uninstall $(^Name)"
 
+
 # Descriptions for components (sections)
 !insertmacro LANG_STRING DESC_SecGabest             "Installs the MPC-HC audio/video decoders"
 
 !insertmacro LANG_STRING DESC_SecServer             "Installs the MediaPortal TV Server"
 !insertmacro LANG_STRING DESC_SecClient             "Installs the MediaPortal TV Client plugin"
+
+!insertmacro LANG_STRING TEXT_MP_NOT_INSTALLED        "MediaPortal not installed"
+!insertmacro LANG_STRING TEXT_TVSERVER_NOT_INSTALLED  "TVServer not installed"
+
 
 # Texts for message boxes
 !if "${NAME}" == "MediaPortal"
@@ -59,6 +64,34 @@ _____________________________________________________________________________
 
 !insertmacro LANG_STRING TEXT_MSGBOX_ERROR_MSI_CLIENT       "Old MSI-based TV Client plugin is still installed. Why didn't you follow the instructions and didn't remove it first? Do that and restart this setup."
 !insertmacro LANG_STRING TEXT_MSGBOX_ERROR_MSI_SERVER       "Old MSI-based TV Server is still installed. Why didn't you follow the instructions and didn't remove it first? Do that and restart this setup."
+
+
+# Texts for requirement checks
+!insertmacro LANG_STRING TEXT_MSGBOX_INSTALLATION_CANCELD         "Installation will be canceled."
+!insertmacro LANG_STRING TEXT_MSGBOX_MORE_INFO                    "Do you want to get more information about it?"
+
+!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_WIN                    "Your operating system is not supported by $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
+!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_WIN_NOT_RECOMMENDED    "Your operating system is not recommended by $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
+!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_ADMIN                  "You need administration rights to install $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)"
+!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_VCREDIST_2005          "Microsoft Visual C++ 2005 SP1 Redistributable Package (x86) is not installed.$\r$\nIt is a requirement for $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
+!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_VCREDIST_2008          "Microsoft Visual C++ 2008 SP1 Redistributable Package (x86) is not installed.$\r$\nIt is a requirement for $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
+!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_DOTNET20               "Microsoft .Net Framework 2.0 SP2 is not installed.$\r$\nIt is a requirement for $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
+!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_DOTNET20_SP            "Microsoft .Net Framework 2.0 is installed.$\r$\nBut Service Pack 2 is a requirement for $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
+!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_DOTNET35               "Microsoft .Net Framework 3.5 SP1 is not installed.$\r$\nIt is a requirement for $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
+!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_DOTNET35_SP            "Microsoft .Net Framework 3.5 is installed.$\r$\nBut Service Pack 1 is a requirement for $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
+
+!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_IS_INSTALLED               "$(^Name) is already installed. You need to uninstall it, before you continue with the installation.$\r$\nUninstall will be lunched when pressing OK."
+!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_ON_UNINSTALL               "An error occured while trying to uninstall old version!$\r$\nDo you still want to continue the installation?"
+!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_REBOOT_REQUIRED            "A reboot is required after a previous action. Reboot you system and try it again."
+!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_UPDATE_BUT_NOT_INSTALLED   "$(^Name) is not installed. It is not possible to install this update.$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)"
+
+
+!insertmacro LANG_STRING UPDATE_ERROR_WRONGEXE                    "updating $(^Name) is only allowed by starting MediaPortalUpdater!"
+!insertmacro LANG_STRING UPDATE_ERROR_UNKNOWN                     "strange / unknown error, please use full installer"
+!insertmacro LANG_STRING UPDATE_ERROR_NOTHING_INSTALLED           "Nothing to do, nothing installed, please use the full installer"
+!insertmacro LANG_STRING UPDATE_ERROR_VERSION_MP                  "wrong version of MediaPortal is installed or svn, please use the full installer"
+!insertmacro LANG_STRING UPDATE_ERROR_VERSION_TVSERVER            "wrong version or TVServer or Client plugin is installed or svn, please use the full installer"
+
 
 
 # Strings for AddRemove-Page
