@@ -929,15 +929,15 @@ DeleteRegKey HKCU "Software\MediaPortal"
   ${LOG_TEXT} "INFO" ".: Microsoft Visual C++ Redistributable Check :."
 
   ; check if VC Redist 2005 SP1 is installed
-  ${IfNot} ${VCRedist2005IsInstalled}
-    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_VCREDIST_2005)" IDNO +2
-    ExecShell open "${WEB_REQUIREMENTS}"
-    Abort
-  ; check if VC Redist 2008 SP1 is installed
-  #${ElseIfNot} ${VCRedist2008IsInstalled}
-  #  MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_VCREDIST_2008)" IDNO +2
+  #${IfNot} ${VCRedist2005IsInstalled}
+  #  MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_VCREDIST_2005)" IDNO +2
   #  ExecShell open "${WEB_REQUIREMENTS}"
   #  Abort
+  ; check if VC Redist 2008 SP1 is installed
+  ${IfNot} ${VCRedist2008IsInstalled}
+    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_VCREDIST_2008)" IDNO +2
+    ExecShell open "${WEB_REQUIREMENTS}"
+    Abort
   ${EndIf}
 
   ${LOG_TEXT} "INFO" "============================"
