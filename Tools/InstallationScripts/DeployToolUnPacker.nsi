@@ -85,9 +85,6 @@ Icon "${svn_DeployTool}\Install.ico"
 OutFile "MediaPortalSetup_1.0.1_SVN${SVN_REVISION}.exe"
 InstallDir "$TEMP\MediaPortal Installation"
 
-;Page directory
-Page instfiles
-
 CRCCheck on
 XPStyle on
 RequestExecutionLevel admin
@@ -105,6 +102,12 @@ VIAddVersionKey LegalCopyright    "Copyright © 2005-2009 ${COMPANY}"
 ;if we want to make it fully silent we can uncomment this
 ;SilentInstall silent
 
+;Page directory
+Page instfiles
+
+!insertmacro LANG_LOAD "English"
+
+;sections for unpacking
 Section
   IfFileExists "$INSTDIR\*.*" 0 +2
     RMDir /r "$INSTDIR"

@@ -35,8 +35,14 @@ _____________________________________________________________________________
 */
 
 
+!ifndef ___LanguageMacros__NSH___
+!define ___LanguageMacros__NSH___
+
+
 !macro LANG_LOAD LANGLOAD
+!ifdef MUI_INCLUDED
   !insertmacro MUI_LANGUAGE "${LANGLOAD}"
+!endif
   !include "${svn_InstallScripts}\languages\${LANGLOAD}.nsh"
   !undef LANG
 !macroend
@@ -44,3 +50,5 @@ _____________________________________________________________________________
 !macro LANG_STRING NAME VALUE
   LangString "${NAME}" "${LANG_${LANG}}" "${VALUE}"
 !macroend
+
+!endif # !___LanguageMacros__NSH___
