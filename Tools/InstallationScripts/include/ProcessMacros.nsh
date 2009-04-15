@@ -99,8 +99,13 @@
   ${LOG_TEXT} "INFO" "RenameDirectory: Old path: ${DirPath}"
   ${LOG_TEXT} "INFO" "RenameDirectory: New path: ${NewDirPath}"
 
+${If} ${FileExists} "${DirPath}\*.*"
+
+  ${LOG_TEXT} "INFO" "RenameDirectory: Directory exists. Trying to remove if empty."
+  RMDir "${DirPath}"
+
   ${If} ${FileExists} "${DirPath}\*.*"
-    ${LOG_TEXT} "INFO" "RenameDirectory: Directory exists. Trying to rename."
+    ${LOG_TEXT} "INFO" "RenameDirectory: Directory still exists, means it is not empty. Trying to rename."
 
     StrCpy $R1 1  ; set counter to 1
     ${Do}
@@ -122,8 +127,14 @@
     ${Loop}
   
   ${Else}
-    ${LOG_TEXT} "INFO" "RenameDirectory: Directory does not exist. No need to rename: ${DirPath}"
+    ${LOG_TEXT} "INFO" "RenameDirectory: Directory does not exist anymore. No need to rename: ${DirPath}"
   ${EndIf}
+  
+${Else}
+
+    ${LOG_TEXT} "INFO" "RenameDirectory: Directory does not exist. No need to rename: ${DirPath}"
+
+${EndIf}
 !macroend
 
 
