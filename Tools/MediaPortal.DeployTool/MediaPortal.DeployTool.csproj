@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{C54A87DB-89E6-4DD9-A508-2749DADC1760}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -103,7 +103,6 @@
       <DependentUpon>Images.resx</DependentUpon>
     </Compile>
     <Compile Include="InstallationChecks\OldPackagesChecker.cs" />
-    <Compile Include="InstallationChecks\VCRedist2005Checker.cs" />
     <Compile Include="InstallationChecks\WindowsFirewallChecker.cs" />
     <Compile Include="InstallationChecks\MySQLChecker.cs" />
     <Compile Include="InstallationChecks\MSSQLExpressChecker.cs" />
