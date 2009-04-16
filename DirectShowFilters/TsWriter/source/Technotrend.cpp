@@ -118,6 +118,7 @@ CTechnotrend::CTechnotrend(LPUNKNOWN pUnk, HRESULT *phr)
 	m_ciSlotAvailable = 0;
   m_ciStatus        = -1;
   m_dll             = NULL;
+  m_waitTimeout     = 0;
   m_verboseLogging  = false; // Log extended information?
 }
 
@@ -609,8 +610,19 @@ STDMETHODIMP CTechnotrend::DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOO
   }
   else if (m_slotStatus==CI_SLOT_UNKNOWN_STATE)
   {
-    LogDebug("TechnoTrend: CI slot state unknown");
+    if (m_waitTimeout == 0) 
+    {
+      //no CAM inserted
+      LogDebug("TechnoTrend: CI slot state unknown, allow one retry");
     *succeeded=FALSE; // to allow retry from ConditionalAccess
+    }
+    else
+    {
+   		//still no valid state? don't try next time!
+      LogDebug("TechnoTrend: CI slot state still unknown after one retry. Stop trying.");
+      *succeeded=TRUE; // to allow retry from ConditionalAccess
+    }
+		m_waitTimeout++;
   }
   else if (m_slotStatus==CI_SLOT_MODULE_INSERTED)
   {

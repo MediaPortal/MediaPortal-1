@@ -75,6 +75,7 @@ private:
   DEVICE_CAT  m_deviceType;
   int         m_ciStatus;
   HMODULE     m_dll;
+  int         m_waitTimeout;
 	int					m_ciSlotAvailable;
   bool        m_verboseLogging;
   TS_CiCbFcnPointer m_technoTrendStructure;
