@@ -855,14 +855,14 @@ namespace TvLibrary.Implementations.Analog.Components
           if (hr != 0)
           {
             Log.Log.Info("SetFrameRate:  FAILED to set:{0}",hr);
-            return true;
+            return false;
           }
         }
         finally
         {
           Marshal.FreeCoTaskMem(pmt);
         }
-        return false;
+        return true;
       } catch (Exception)
       {
         Log.Log.Info("SetFrameRate:  FAILED ");
