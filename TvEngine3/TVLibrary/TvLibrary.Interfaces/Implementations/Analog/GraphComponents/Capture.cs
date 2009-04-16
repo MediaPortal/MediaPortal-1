@@ -72,9 +72,27 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
       _minValue = minValue;
       _maxValue = maxValue;
       _steppingDelta = steppingDelta;
-      _defaultValue = defaultValue;
+      if (defaultValue > maxValue)
+      {
+        _defaultValue = maxValue;
+      } else if (defaultValue < minValue)
+      {
+        _defaultValue = minValue;
+      } else
+      {
+        _defaultValue = defaultValue;
+      }
       _manual = manual;
-      _value = value;
+      if (value > maxValue)
+      {
+        _value = maxValue;
+      } else if (defaultValue < minValue)
+      {
+        _value = minValue;
+      } else
+      {
+        _value = defaultValue;
+      }
     }
 
     /// <summary>
@@ -232,10 +250,10 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
           capture.TeletextPin = Int32.Parse(teletextPinNode.InnerText);
           capture.FrameRate = Double.Parse(frameRateNode.InnerText, CultureInfo.GetCultureInfo("en-GB").NumberFormat);
           capture.VideoIn = Int32.Parse(videoInNode.InnerText);
-          if(audioInNode!=null)
+          if (audioInNode != null)
           {
             capture.AudioCaptureName = nameNode.InnerText;
-          }else
+          } else
           {
             XmlNode audioCaptureNode = xmlNode.SelectSingleNode("audioCapture");
             XmlNode audioCaptureNameNode = audioCaptureNode.SelectSingleNode("audioIn");
@@ -288,8 +306,8 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
       writer.WriteStartElement("capture");//<capture>
       writer.WriteStartElement("videoCapture");//<videoCapture>
       writer.WriteElementString("name", _name ?? "");
-      writer.WriteElementString("videoIn",_videoIn.ToString());
-      if(_name!=null && _name.Equals(_audioCaptureName))
+      writer.WriteElementString("videoIn", _videoIn.ToString());
+      if (_name != null && _name.Equals(_audioCaptureName))
       {
         writer.WriteElementString("audioIn", _audioIn.ToString());
       }
