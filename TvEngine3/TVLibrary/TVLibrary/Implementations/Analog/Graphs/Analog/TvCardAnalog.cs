@@ -102,7 +102,11 @@ namespace TvLibrary.Implementations.Analog
         {
           BuildGraph();
         }
-        return _tuner.SupportsFMRadio;
+        if (_tuner != null)
+        {
+          return _tuner.SupportsFMRadio;
+        }
+        return false;
       }
       return true;
     }
@@ -559,6 +563,7 @@ namespace TvLibrary.Implementations.Analog
           throw new TvException("Analog: unable to add mpfilewriter");
         }
         Log.Log.WriteFile("analog: Graph is built");
+        ReloadCardConfiguration();
         _graphState = GraphState.Created;
       } catch(TvExceptionSWEncoderMissing ex)
       {

@@ -91,7 +91,7 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
         _value = minValue;
       } else
       {
-        _value = defaultValue;
+        _value = value;
       }
     }
 
