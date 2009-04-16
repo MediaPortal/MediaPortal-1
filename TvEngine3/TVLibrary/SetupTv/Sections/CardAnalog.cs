@@ -172,10 +172,6 @@ namespace SetupTv.Sections
         {
           videoStandardComboBox.Items.Add(AnalogVideoStandard.NTSC_M_J);
         }
-        if ((availableVideoStandard & AnalogVideoStandard.NTSCMask) != 0)
-        {
-          videoStandardComboBox.Items.Add(AnalogVideoStandard.NTSCMask);
-        }
         if ((availableVideoStandard & AnalogVideoStandard.PAL_60) != 0)
         {
           videoStandardComboBox.Items.Add(AnalogVideoStandard.PAL_60);
@@ -243,10 +239,6 @@ namespace SetupTv.Sections
         if ((availableVideoStandard & AnalogVideoStandard.SECAM_L1) != 0)
         {
           videoStandardComboBox.Items.Add(AnalogVideoStandard.SECAM_L1);
-        }
-        if ((availableVideoStandard & AnalogVideoStandard.SECAMMask) != 0)
-        {
-          videoStandardComboBox.Items.Add(AnalogVideoStandard.SECAMMask);
         }
         AnalogVideoStandard currentStandard = _configuration.Graph.Capture.CurrentVideoStandard;
         if (currentStandard != AnalogVideoStandard.None)
