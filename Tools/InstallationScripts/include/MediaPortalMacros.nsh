@@ -485,6 +485,12 @@ RMDir /r /REBOOTOK "$LOCALAPPDATA\Microsoft\Windows\Start Menu\Programs\Team Med
 RMDir /r /REBOOTOK "$LOCALAPPDATA\Microsoft\Windows\Start Menu\Programs\MediaPortal"
 
 # Remove registry keys
+DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
+
+DeleteRegKey HKLM "Software\Team MediaPortal"
+DeleteRegKey HKCU "Software\Team MediaPortal"
+
 DeleteRegKey HKLM "Software\Team MediaPortal"
 DeleteRegKey HKCU "Software\Team MediaPortal"
 
