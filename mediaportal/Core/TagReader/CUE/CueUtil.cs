@@ -44,6 +44,7 @@ namespace MediaPortal.TagReader
     #region Variables
 
     public const string CUE_FILE_EXT = "cue";
+    public const string WAV_CUE_FILE_EXT = "wav.cue";
     public const string CUE_FAKE_TRACK_FILE_EXT = "cue.fake.track";
     public static ICueTrackFileBuilder<GUIListItem> CUE_TRACK_FILE_GUI_LIST_ITEM_BUILDER = new CueTrackFileGUIListItemBuilder();
     public static ICueTrackFileBuilder<string> CUE_TRACK_FILE_STRING_BUILDER = new CueTrackFileStringBuilder();
@@ -59,6 +60,16 @@ namespace MediaPortal.TagReader
     #endregion
 
     #region Public Methods
+
+    /// <summary>
+    /// Check if file is Cue file
+    /// </summary>
+    /// <param name="fileName">file name to check</param>
+    /// <returns>Returns true if file is Cue file</returns>
+    public static Boolean isWavCueFile(string fileName)
+    {
+      return fileName.ToLower().EndsWith("." + WAV_CUE_FILE_EXT);
+    }
     
     /// <summary>
     /// Check if file is Cue file
@@ -67,7 +78,16 @@ namespace MediaPortal.TagReader
     /// <returns>Returns true if file is Cue file</returns>
     public static Boolean isCueFile(string fileName)
     {
-      return (fileName.ToLower().EndsWith("." + CUE_FILE_EXT) && !isCueFakeTrackFile(fileName));
+      if (!isWavCueFile(fileName) && fileName.ToLower().EndsWith("." + CUE_FILE_EXT) && !isCueFakeTrackFile(fileName))
+	  {
+		// Do the File Exists check only here, otherwise we will recheck the existence of all non-cue files as well.
+		// This causes an unnecessary check of ALL files when scanning the shares
+		if (System.IO.File.Exists(fileName))
+		{
+			return true;
+		}
+	  }
+	  return false;
     }
 
     /// <summary>
@@ -122,15 +142,27 @@ namespace MediaPortal.TagReader
     /// <param name="fileList">fileList to filter</param>
     /// <param name="builder">Builder for construct new list entries</param>
     /// <returns>filtered list</returns>
-    public static IList<T> CUEFileListFilterList<T>(IList<T> fileList, ICueTrackFileBuilder<T> builder)
+    public static IList CUEFileListFilterList<T>(IList fileList, ICueTrackFileBuilder<T> builder)
     {
       if (fileList == null || fileList.Count == 0)
       {
         return fileList;
       }
+      // Adapt ArrayList to IList generic
+      IList<T> tmpAvailableFiles = new List<T>(fileList.Count);
+      foreach (T s in fileList)
+      {
+        tmpAvailableFiles.Add(s);
+      }
       // Apply CUE Filter
-      fileList = CueUtil.CUEFileListFilter<T>(fileList, builder);
-      return fileList;
+      tmpAvailableFiles = CueUtil.CUEFileListFilter<T>(tmpAvailableFiles, builder);
+      // Adapt IList generic to ArrayList
+      ArrayList result = new ArrayList(tmpAvailableFiles.Count);
+      foreach (T s in tmpAvailableFiles)
+      {
+        result.Add(s);
+      }
+      return result;
     }
 
     /// <summary>
@@ -155,13 +187,13 @@ namespace MediaPortal.TagReader
 
       foreach (T fobj in fileList)
       {
-        if (CueUtil.isCueFile(builder.getFileName(fobj)))
+        string fileName = builder.getFileName(fobj);
+        if (CueUtil.isCueFile(fileName))
         {
-          string cueFileName = builder.getFileName(fobj);
-          exclusionList.Add(cueFileName);
+          exclusionList.Add(fileName);
 
-          CueSheet cueSheet = new CueSheet(cueFileName);
-          string cuePath = System.IO.Path.GetDirectoryName(cueFileName);
+          CueSheet cueSheet = new CueSheet(fileName);
+          string cuePath = System.IO.Path.GetDirectoryName(fileName);
 
           foreach (Track track in cueSheet.Tracks)
           {
@@ -169,12 +201,15 @@ namespace MediaPortal.TagReader
             {
               exclusionList.Add(cuePath + "\\" + track.DataFile.Filename);
             }
-            resultList.Add(builder.build(cueFileName, cueSheet, track));
+            resultList.Add(builder.build(fileName, cueSheet, track));
           }
         }
         else
         {
-          resultList.Add(fobj);
+          if (!isWavCueFile(fileName))
+          {
+            resultList.Add(fobj);
+          }
         }
       }
 
@@ -215,17 +250,19 @@ namespace MediaPortal.TagReader
 
         // Cache CueSheet to pervent parsing it for each track in the album
         CueFakeTrack cueFakeTrack = parseCueFakeTrackFileName(cueFakeTrackFileName);
-        if (cueSheetCacheFileNameCache != cueFakeTrackFileNameCache)
+        if (cueSheetCacheFileNameCache != cueFakeTrack.CueFileName)
         {
           cueSheetCache = new CueSheet(cueFakeTrack.CueFileName);
+          cueSheetCacheFileNameCache = cueFakeTrack.CueFileName;
         }
 
-        Track track = cueSheetCache.Tracks[cueFakeTrack.TrackNumber - 1];
+        int trackPosition = cueFakeTrack.TrackNumber - cueSheetCache.Tracks[0].TrackNumber;
+        Track track = cueSheetCache.Tracks[trackPosition];
 
         musicTagCache = new MusicTag();
-        if (track.TrackNumber < cueSheetCache.Tracks.Length)
+        if (track.TrackNumber < cueSheetCache.Tracks[cueSheetCache.Tracks.Length-1].TrackNumber)
         {
-          Track nextTrack = cueSheetCache.Tracks[cueFakeTrack.TrackNumber];
+          Track nextTrack = cueSheetCache.Tracks[trackPosition + 1];
           musicTagCache.Duration = cueIndexToIntTime(nextTrack.Indices[0]) - cueIndexToIntTime(track.Indices[0]);
         }
 

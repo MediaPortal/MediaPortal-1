@@ -1643,7 +1643,6 @@ namespace MediaPortal.Player
           // Cue support
           cueTrackStartPos = 0;
           cueTrackEndPos = 0;
-
           if (CueUtil.isCueFakeTrackFile(filePath))
           {
             Log.Debug("BASS: Playing CUE Track: {0}", filePath);
@@ -1651,28 +1650,35 @@ namespace MediaPortal.Player
             CueFakeTrack cueFakeTrack = CueUtil.parseCueFakeTrackFileName(filePath);
             if (!cueFakeTrack.CueFileName.Equals(currentCueFileName))
             {
+              // New CUE. Update chached cue.
               currentCueSheet = new CueSheet(cueFakeTrack.CueFileName);
               currentCueFileName = cueFakeTrack.CueFileName;
             }
 
-            Track track = currentCueSheet.Tracks[cueFakeTrack.TrackNumber - 1];
+            // Get track start position
+            Track track = currentCueSheet.Tracks[cueFakeTrack.TrackNumber - currentCueSheet.Tracks[0].TrackNumber];
             Index index = track.Indices[0];
             cueTrackStartPos = CueUtil.cueIndexToFloatTime(index);
 
-            if (currentCueSheet.Tracks.Length > track.TrackNumber)
+            // If single audio file and is not last track, set track end position. 
+            if (currentCueSheet.Tracks[currentCueSheet.Tracks.Length - 1].TrackNumber > track.TrackNumber)
             {
-              Track nextTrack = currentCueSheet.Tracks[cueFakeTrack.TrackNumber];
-              Index nindex = nextTrack.Indices[0];
-              cueTrackEndPos = CueUtil.cueIndexToFloatTime(nindex);
+              Track nextTrack = currentCueSheet.Tracks[cueFakeTrack.TrackNumber - currentCueSheet.Tracks[0].TrackNumber + 1];
+              if (nextTrack.DataFile.Filename.Equals(track.DataFile.Filename))
+              {
+                Index nindex = nextTrack.Indices[0];
+                cueTrackEndPos = CueUtil.cueIndexToFloatTime(nindex);
+              }
             }
 
-            string tmpFilePath = System.IO.Path.GetDirectoryName(cueFakeTrack.CueFileName) + System.IO.Path.DirectorySeparatorChar + track.DataFile.Filename;
-            if (tmpFilePath.CompareTo(FilePath) == 0 && StreamIsPlaying(stream))
+            // If audio file is not changed, just set new start/end position and reset pause
+            string audioFilePath = System.IO.Path.GetDirectoryName(cueFakeTrack.CueFileName) + System.IO.Path.DirectorySeparatorChar + track.DataFile.Filename;
+            if (audioFilePath.CompareTo(FilePath) == 0 /* && StreamIsPlaying(stream)*/ )
             {
               setCueTrackEndPosition(stream);
               return true;
             }
-            filePath = tmpFilePath;
+            filePath = audioFilePath;
           }
           else
           {

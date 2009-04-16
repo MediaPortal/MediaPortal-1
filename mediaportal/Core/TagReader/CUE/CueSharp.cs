@@ -246,8 +246,12 @@ namespace MediaPortal.TagReader
       for (int i = 0; i < file.Length; i++)
       {
         file[i] = file[i].Trim();
+        string prefix = "trash";
+        if (file[i].Length > 1 ) {
+          prefix = file[i].Substring(0, file[i].IndexOf(' ')).ToUpper();
+        }
 
-        switch (file[i].Substring(0, file[i].IndexOf(' ')).ToUpper())
+        switch (prefix)
         {
           case "CATALOG":
             ParseString(file[i], trackOn);
