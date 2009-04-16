@@ -258,7 +258,14 @@ namespace TvLibrary.Implementations.Analog
       }
       subChannel.CurrentChannel = channel;
       subChannel.OnBeforeTune();
-      PerformTuning(channel);
+      try
+      {
+        RunGraph(subChannel.SubChannelId);
+      } catch (TvExceptionNoSignal)
+      {
+        FreeSubChannel(subChannel.SubChannelId);
+        throw;
+      }
       subChannel.OnAfterTune();
       RunGraph(subChannel.SubChannelId);
       _encoder.UpdatePinVideo(channel.IsTv,_graphBuilder);

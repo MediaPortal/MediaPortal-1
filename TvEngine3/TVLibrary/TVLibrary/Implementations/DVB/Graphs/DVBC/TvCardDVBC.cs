@@ -223,7 +223,14 @@ namespace TvLibrary.Implementations.DVB
       _tuneRequest.put_Locator(locator);
 
       ITvSubChannel ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest);
-      RunGraph(ch.SubChannelId);
+      try
+      {
+        RunGraph(ch.SubChannelId);
+      } catch (TvExceptionNoSignal)
+      {
+        FreeSubChannel(ch.SubChannelId);
+        throw;
+      }
       return ch;
       //SetupPmtGrabber(dvbcChannel.PmtPid);
 

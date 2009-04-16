@@ -234,7 +234,14 @@ namespace TvLibrary.Implementations.DVB
         ITvSubChannel ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest);
         Log.Log.Info("dvbt: tune: Running graph for channel {0}", ch.ToString());
         Log.Log.Info("dvbt: tune: SubChannel {0}", ch.SubChannelId);
-        RunGraph(ch.SubChannelId);
+        try
+        {
+          RunGraph(ch.SubChannelId);
+        } catch (TvExceptionNoSignal)
+        {
+          FreeSubChannel(ch.SubChannelId);
+          throw;
+        }
         Log.Log.Info("dvbt: tune: Graph running. Returning {0}", ch.ToString());
         return ch;
       } catch (TvExceptionNoSignal)

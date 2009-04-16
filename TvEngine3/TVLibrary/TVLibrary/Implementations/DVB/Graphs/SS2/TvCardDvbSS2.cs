@@ -553,7 +553,14 @@ namespace TvLibrary.Implementations.DVB
       _lastSignalUpdate = DateTime.MinValue;
       SendHwPids(new List<ushort>());
       _mapSubChannels[subChannelId].OnAfterTune();
-      RunGraph(subChannelId);
+      try
+      {
+        RunGraph(subChannelId);
+      } catch (TvExceptionNoSignal)
+      {
+        FreeSubChannel(subChannelId);
+        throw;
+      }
       Log.Log.WriteFile("ss2:tune done:{0:X}", pmtPid);
       return _mapSubChannels[subChannelId];
     }
