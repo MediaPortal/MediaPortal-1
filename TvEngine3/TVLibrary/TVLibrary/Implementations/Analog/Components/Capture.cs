@@ -752,7 +752,7 @@ namespace TvLibrary.Implementations.Analog.Components
         {
           VideoQuality quality = map[prop];
           _videoProcAmp.Set(prop, quality.Value, quality.IsManual ? VideoProcAmpFlags.Manual : VideoProcAmpFlags.Auto);
-          Log.Log.Info("Set VideoProcAmp - {0} to value: ", prop, quality.Value);
+          Log.Log.Info("Set VideoProcAmp - {0} to value: {1}", prop, quality.Value);
         }
       }
     }
