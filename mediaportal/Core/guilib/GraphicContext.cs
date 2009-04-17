@@ -1345,6 +1345,7 @@ namespace MediaPortal.GUI.Library
           return;
         }
         m_iCharsInCharacterSet = value;
+        Log.Info("GraphicContext: Using {0} chars of the character set. ", m_iCharsInCharacterSet);
       }
     }
 

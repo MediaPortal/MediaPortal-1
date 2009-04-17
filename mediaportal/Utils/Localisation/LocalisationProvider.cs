@@ -6,6 +6,8 @@ using System.IO;
 using System.Xml.Serialization;
 using MediaPortal.Localisation.LanguageStrings;
 using MediaPortal.Services;
+using MediaPortal.Profile;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.Localisation
 {
@@ -326,6 +328,17 @@ namespace MediaPortal.Localisation
           _characters = strings.characters;
         }
 
+        // Some chinese might prefer to use an english OS but still have all chars for media, etc
+        bool useChineseHack = false;
+        using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        {
+          useChineseHack = reader.GetValueAsBool("debug", "useExtendedCharsWithStandardCulture", false);
+          if (useChineseHack)
+          {
+            _characters = 1536;
+          }
+        }
+        GlobalServiceProvider.Get<ILog>().Debug("    ExtendedChars = {0}, StringChars = {1}", useChineseHack, strings.characters);
         foreach (StringSection section in strings.sections)
         {
           // convert section name tolower -> no case matching.

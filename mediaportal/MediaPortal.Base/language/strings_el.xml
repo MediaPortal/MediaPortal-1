@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<Language name="Greek" characters="255">
+<Language name="Greek" characters="974">
   <Section name="unmapped">
     <String id="0">Προγράμματα</String>
     <String id="1">Φωτογραφίες</String>
