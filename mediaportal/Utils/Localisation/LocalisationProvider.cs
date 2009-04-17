@@ -339,6 +339,7 @@ namespace MediaPortal.Localisation
           }
         }
         GlobalServiceProvider.Get<ILog>().Debug("    ExtendedChars = {0}, StringChars = {1}", useChineseHack, strings.characters);
+
         foreach (StringSection section in strings.sections)
         {
           // convert section name tolower -> no case matching.

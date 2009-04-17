@@ -96,10 +96,11 @@ namespace MediaPortal.GUI.Library
 
       // http://msdn.microsoft.com/en-us/library/system.globalization.cultureinfo.aspx
       _stringProvider = new LocalisationProvider(directory, cultureName, isPrefixEnabled);
-      int fontChars = _stringProvider.Characters;
-      
-      GUIGraphicsContext.CharsInCharacterSet = fontChars;
 
+      if (_stringProvider.Characters > GUIGraphicsContext.CharsInCharacterSet)
+      {
+        GUIGraphicsContext.CharsInCharacterSet = _stringProvider.Characters;
+      }
       return true;
     }
 
@@ -122,6 +123,10 @@ namespace MediaPortal.GUI.Library
       else
       {
         _stringProvider.ChangeLanguage(GetCultureName(language));
+        if (_stringProvider.Characters > GUIGraphicsContext.CharsInCharacterSet)
+        {
+            GUIGraphicsContext.CharsInCharacterSet = _stringProvider.Characters;
+        }
       }
     }
 
