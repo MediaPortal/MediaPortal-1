@@ -42,7 +42,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      base.LoadSettings("music", ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc,.cue");
+      base.LoadSettings("music", ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc,.cue,.aif,.aiff");
     }
 
     public override void SaveSettings()

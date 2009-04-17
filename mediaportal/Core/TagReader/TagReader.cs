@@ -317,6 +317,8 @@ namespace MediaPortal.TagReader
 
       switch (ext)
       {
+        case ".aif":
+        case ".aiff":
         case ".ape":
         case ".flac":
         case ".mp3":
