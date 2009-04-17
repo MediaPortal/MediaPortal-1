@@ -641,11 +641,6 @@ DeleteRegKey HKCU "Software\MediaPortal"
 !macro MediaPortalVCRedistCheck HideWarnings
   ${LOG_TEXT} "INFO" ".: Microsoft Visual C++ Redistributable Check :."
 
-  ; check if VC Redist 2005 SP1 is installed
-  #${IfNot} ${VCRedist2005IsInstalled}
-  #  MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_VCREDIST_2005)" IDNO +2
-  #  ExecShell open "${WEB_REQUIREMENTS}"
-  #  Abort
   ; check if VC Redist 2008 SP1 is installed
   ${IfNot} ${VCRedist2008IsInstalled}
     MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_VCREDIST_2008)" IDNO +2
@@ -659,45 +654,20 @@ DeleteRegKey HKCU "Software\MediaPortal"
 !macro MediaPortalNetFrameworkCheck HideWarnings
   ${LOG_TEXT} "INFO" ".: Microsoft .Net Framework Check :."
 
-  ; check if .Net Framework 2.0 is installed
-  ReadRegDWORD $0 HKLM "SOFTWARE\Microsoft\NET Framework Setup\NDP\v2.0.50727" "Install"
-  ; check if .Net Framework 2.0 SP2 is installed
-  ReadRegDWORD $1 HKLM "SOFTWARE\Microsoft\NET Framework Setup\NDP\v2.0.50727" "SP"
-
   ; check if .Net Framework 3.5 is installed
-  ReadRegDWORD $2 HKLM "SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5" "Install"
+  ReadRegDWORD $0 HKLM "SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5" "Install"
   ; check if .Net Framework 3.5 SP1 is installed
-  ReadRegDWORD $3 HKLM "SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5" "SP"
+  ReadRegDWORD $1 HKLM "SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5" "SP"
 
-  ${LOG_TEXT} "INFO" ".Net 2.0 installed? $0"
-  ${LOG_TEXT} "INFO" ".Net 2.0 ServicePack: $1"
   ${LOG_TEXT} "INFO" ".Net 3.5 installed? $2"
   ${LOG_TEXT} "INFO" ".Net 3.5 ServicePack: $3"
 
-  ${If} ${IsWinVISTA}
-  ${AndIf} ${RunningX64} ; 3.5 is installed, check for sp1
-    ${LOG_TEXT} "INFO" "OS is Vista64, .Net 3.5 is installed."
-
-    ${If} $3 < 1  ; if 3.5, but no sp1
-      MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_DOTNET35_SP)" IDNO +2
-      ExecShell open "${WEB_REQUIREMENTS}"
-      Abort
-    ${EndIf}
-
-  ${ElseIf} $0 != 1  ; if no 2.0
-
-    ${If} $2 != 1  ; if no 3.5
-      MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_DOTNET20)" IDNO +2
-      ExecShell open "${WEB_REQUIREMENTS}"
-      Abort
-    ${ElseIf} $3 < 1  ; if 3.5, but no sp1
-      MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_DOTNET35_SP)" IDNO +2
-      ExecShell open "${WEB_REQUIREMENTS}"
-      Abort
-    ${EndIf}
-
-  ${ElseIf} $1 < 2  ; if 2.0, but no sp2
-    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_DOTNET20_SP)" IDNO +2
+  ${If} $0 != 1  ; if no 3.5
+    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_DOTNET35)" IDNO +2
+    ExecShell open "${WEB_REQUIREMENTS}"
+    Abort
+  ${ElseIf} $1 < 1  ; if 3.5, but no sp1
+    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_DOTNET35_SP)" IDNO +2
     ExecShell open "${WEB_REQUIREMENTS}"
     Abort
   ${EndIf}
