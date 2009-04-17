@@ -142,27 +142,16 @@ namespace MediaPortal.TagReader
     /// <param name="fileList">fileList to filter</param>
     /// <param name="builder">Builder for construct new list entries</param>
     /// <returns>filtered list</returns>
-    public static IList CUEFileListFilterList<T>(IList fileList, ICueTrackFileBuilder<T> builder)
+    public static IList<T> CUEFileListFilterList<T>(IList<T> fileList, ICueTrackFileBuilder<T> builder)
     {
       if (fileList == null || fileList.Count == 0)
       {
         return fileList;
       }
-      // Adapt ArrayList to IList generic
-      IList<T> tmpAvailableFiles = new List<T>(fileList.Count);
-      foreach (T s in fileList)
-      {
-        tmpAvailableFiles.Add(s);
-      }
+
       // Apply CUE Filter
-      tmpAvailableFiles = CueUtil.CUEFileListFilter<T>(tmpAvailableFiles, builder);
-      // Adapt IList generic to ArrayList
-      ArrayList result = new ArrayList(tmpAvailableFiles.Count);
-      foreach (T s in tmpAvailableFiles)
-      {
-        result.Add(s);
-      }
-      return result;
+      fileList = CueUtil.CUEFileListFilter<T>(fileList, builder);
+      return fileList;
     }
 
     /// <summary>
