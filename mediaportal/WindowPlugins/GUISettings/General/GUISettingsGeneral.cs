@@ -313,8 +313,8 @@ namespace WindowPlugins.GUISettings
       BackupButtons();
       SaveSettings();
       GUILocalizeStrings.ChangeLanguage(btnLanguage.SelectedLabel);
-      //GUILocalizeStrings.Clear();
-      //GUILocalizeStrings.Load(btnLanguage.SelectedLabel); //Config.GetFile(Config.Dir.Language, btnLanguage.SelectedLabel + @"\strings.xml"));
+      GUIFontManager.LoadFonts(GUIGraphicsContext.Skin + @"\fonts.xml");
+      GUIFontManager.InitializeDeviceObjects();
       GUIWindowManager.OnResize();
       GUIWindowManager.ActivateWindow(GetID); // without this you cannot change skins / lang any more..
       GUIControl.FocusControl(GetID, btnLanguage.GetID);

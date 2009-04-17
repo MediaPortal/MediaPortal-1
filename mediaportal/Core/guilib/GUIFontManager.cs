@@ -552,6 +552,12 @@ namespace MediaPortal.GUI.Library
       _listFontObjects.Clear();
     }
 
+    public static void ClearFontCache()
+    {
+        string fontCache = String.Format(@"{0}\fonts", GUIGraphicsContext.SkinCacheFolder);
+        MediaPortal.Util.Utils.DirectoryDelete(fontCache, true);
+    }
+
     /// <summary>
     /// Sets the device and the FVF.
     /// </summary>

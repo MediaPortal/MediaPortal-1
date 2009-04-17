@@ -1599,12 +1599,17 @@ namespace MediaPortal.Util
       return false;
     }
 
-    public static bool DirectoryDelete(string strDir)
+    public static bool DirectoryDelete(string aDirectory)
     {
-      if (String.IsNullOrEmpty(strDir)) return false;
+       return DirectoryDelete(aDirectory, false);
+    }
+
+    public static bool DirectoryDelete(string aDirectory, bool aRecursive)
+    {
+      if (String.IsNullOrEmpty(aDirectory)) return false;
       try
       {
-        Directory.Delete(strDir);
+        Directory.Delete(aDirectory, aRecursive);
         return true;
       }
       catch (Exception) { }

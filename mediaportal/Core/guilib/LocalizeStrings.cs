@@ -116,6 +116,7 @@ namespace MediaPortal.GUI.Library
 
     public static void ChangeLanguage(string language)
     {
+      GUIFontManager.ClearFontCache();
       if (_stringProvider == null)
       {
         Load(language);
