@@ -258,6 +258,8 @@ namespace TvLibrary.Implementations.Analog
       }
       subChannel.CurrentChannel = channel;
       subChannel.OnBeforeTune();
+      PerformTuning(channel);
+      subChannel.OnAfterTune();
       try
       {
         RunGraph(subChannel.SubChannelId);
@@ -266,9 +268,7 @@ namespace TvLibrary.Implementations.Analog
         FreeSubChannel(subChannel.SubChannelId);
         throw;
       }
-      subChannel.OnAfterTune();
-      RunGraph(subChannel.SubChannelId);
-      _encoder.UpdatePinVideo(channel.IsTv,_graphBuilder);
+      _encoder.UpdatePinVideo(channel.IsTv, _graphBuilder);
       return subChannel;
     }
     #endregion
