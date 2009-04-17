@@ -348,7 +348,10 @@ namespace MediaPortal.GUI.Library
         else
         {
           string[] skinFiles = Directory.GetFiles(String.Format(@"{0}\media", skinName), "volume*.png");
+          string[] forcedCacheFiles = Directory.GetFiles(String.Format(@"{0}\media", skinName), "cached*.png");
+          files.Add(String.Format(@"{0}\media\Thumb_Mask.png", skinName));
           files.AddRange(skinFiles);
+          files.AddRange(forcedCacheFiles);
         }
         if (xmlreader.GetValueAsBool("debug", "packLogoGfx", true))
         {

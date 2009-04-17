@@ -554,8 +554,12 @@ namespace MediaPortal.GUI.Library
 
     public static void ClearFontCache()
     {
+      try
+      {
         string fontCache = String.Format(@"{0}\fonts", GUIGraphicsContext.SkinCacheFolder);
         MediaPortal.Util.Utils.DirectoryDelete(fontCache, true);
+      }
+      catch (Exception) { }
     }
 
     /// <summary>
