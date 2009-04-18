@@ -66,11 +66,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				RegisterOutput="true"
+				RegisterOutput="false"
 				AdditionalDependencies="strmbaseDU.lib Winmm.lib"
 				OutputFile=".\bin\Debug/MPAudioSwitcher.ax"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\..\..\lib;&quot;$(DSHOW_BASE)Release_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Release_MBCS&quot;;&quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;"
 				ManifestFile="obj\Debug\MPAudioSwitcher.intermediate.manifest"
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile="./source/AudioSwitcher.def"
@@ -219,7 +219,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				RegisterOutput="true"
+				RegisterOutput="false"
 				AdditionalDependencies="strmbaseRU.lib Winmm.lib"
 				OutputFile=".\bin\Release/MPAudioSwitcher.ax"
 				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Release_MBCS&quot;;&quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;"
@@ -341,7 +341,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\AudioSwitcher.def"
+				>
+			</File>
+			<File
 				RelativePath="source\FilterApp.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\H264Nalu.cpp"
 				>
 			</File>
 			<File
@@ -398,11 +406,51 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\DSUtil.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\FilterApp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\H264Nalu.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\HdmvClipInfo.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\MediaTypeEx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\MediaTypes.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\moreuuids.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\NullRenderers.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\stdafx.h"
 				>
 			</File>
 			<File
 				RelativePath=".\source\StreamSwitcher.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\text.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\vd.h"
 				>
 			</File>
 		</Filter>

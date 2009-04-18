@@ -1,4 +1,4 @@
-LIBRARY		"AudioSwitcher.ax"
+LIBRARY		"MPAudioSwitcher.ax"
 
 EXPORTS
 	DllCanUnloadNow			PRIVATE
