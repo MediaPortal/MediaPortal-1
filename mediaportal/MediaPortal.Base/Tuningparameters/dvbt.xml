@@ -320,6 +320,7 @@
   </country>
   <country name="Austria - Niederösterreich">
     <carrier frequency="650000" bandwidth="8"></carrier>
+    <carrier frequency="554000" bandwidth="8"></carrier>
     <carrier frequency="498000" bandwidth="8"></carrier>
     <carrier frequency="474000" bandwidth="8"></carrier>
   </country>
