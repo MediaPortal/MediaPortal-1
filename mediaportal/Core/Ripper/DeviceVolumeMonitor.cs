@@ -380,15 +380,7 @@ namespace Win32.Utils.Cd
       {
         if (fInternal.Handle != IntPtr.Zero)
         {
-          // handle should not be released as this is the handle for MediaPortal itself (just borrowing 
-          // it for wndproc message purposes). Just nulling the reference and letting the garbage collector
-          // clean up is enough to free resources for device monitoring.
-          
-          // patch is currently reverted as it causes more severe issues (resource leaking etc.)
-          // http://mantis.team-mediaportal.com/view.php?id=2100
-          
           fInternal.ReleaseHandle();
-          
           fInternal = null;
         }
       }
