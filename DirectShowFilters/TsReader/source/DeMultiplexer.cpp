@@ -686,6 +686,7 @@ void CDeMultiplexer::Start()
   while ((GetTickCount() - m_Time) < 5000)
   {
     int BytesRead =ReadFromFile(false,false) ;
+		if (BytesRead==0) Sleep(10) ;
     if (dwBytesProcessed>5000000 || GetAudioStreamCount()>0)
     {
       // dynamic pins are currently disabled
@@ -1082,7 +1083,6 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
 {
   if (m_pids.VideoPid==0) return;
   if (header.Pid!=m_pids.VideoPid) return;
-//  if (m_filter.GetVideoPin()->IsConnected()==false) return;
 
   if ( header.AdaptionFieldOnly() )return;
 
@@ -1306,7 +1306,7 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
             ivecBuffers it ;
             it = m_t_vecVideoBuffers.begin() ;
 
-            if (Gop || m_bIframeFound)
+            if ((Gop || m_bIframeFound) && m_filter.GetVideoPin()->IsConnected())
             {
               CRefTime Ref ;
               if((*it)->MediaTime(Ref))
