@@ -4,6 +4,7 @@
 	Version="9,00"
 	Name="fontEngine"
 	ProjectGUID="{C3CD9ACF-E025-465C-8B07-4F53CF33003F}"
+	RootNamespace="fontEngine"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -20,7 +21,6 @@
 			OutputDirectory="Debug"
 			IntermediateDirectory="Debug"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
 			>
 			<Tool
@@ -48,7 +48,7 @@
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -64,7 +64,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="dxguid.lib d3d9.lib d3dx9.lib"
 				OutputFile="$(OutDir)/fontEngine.dll"
-				LinkIncremental="2"
+				LinkIncremental="0"
 				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Debug_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;"
 				ModuleDefinitionFile=".\fontEngine.def"
 				GenerateDebugInformation="true"
@@ -102,7 +102,6 @@
 			OutputDirectory="Release"
 			IntermediateDirectory="Release"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
 			>
 			<Tool
@@ -122,14 +121,15 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				FavorSizeOrSpeed="1"
+				Optimization="3"
+				FavorSizeOrSpeed="2"
 				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;FONTENGINE_EXPORTS"
 				RuntimeLibrary="0"
 				BufferSecurityCheck="false"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="0"
 			/>
 			<Tool
@@ -145,14 +145,14 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="dxguid.lib d3d9.lib d3dx9.lib shell32.lib"
 				OutputFile="$(OutDir)/fontEngine.dll"
-				LinkIncremental="1"
+				LinkIncremental="0"
 				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Release_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;"
 				ModuleDefinitionFile="fontEngine.def"
 				GenerateDebugInformation="false"
 				MapExports="false"
 				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
+				OptimizeReferences="0"
+				EnableCOMDATFolding="0"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				ImportLibrary="$(OutDir)/fontEngine.lib"
