@@ -71,6 +71,12 @@
 !define MEDIAPORTAL.XBMCBIN "${svn_MP}\xbmc\bin\${BUILD_TYPE}"
 
 #---------------------------------------------------------------------------
+# pre build commands
+#---------------------------------------------------------------------------
+!include "${svn_MP}\Setup\setup-preBuild.nsh"
+
+
+#---------------------------------------------------------------------------
 # VARIABLES
 #---------------------------------------------------------------------------
 Var StartMenuGroup  ; Holds the Startmenu\Programs folder
@@ -347,6 +353,7 @@ Section "MediaPortal core files (required)" SecCore
     /x yac-area-codes.xml \
     "
 
+### AUTO-GENERATED   UNINSTALLATION CODE ###
   # Files which were diffed before including in installer
   # means all of them are in full installer, but only the changed and new ones are in svn installer 
   #We can not use the complete mediaportal.base dir recoursivly , because the plugins, thumbs, weather need to be extracted to their special MPdir location
@@ -365,41 +372,8 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\WebEPG\*"
   SetOutPath "$MPdir.Base\Wizards"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Wizards\*"
-  
-  ; Doc
-  SetOutPath "$MPdir.Base\Docs"
-  File "..\Docs\BASS License.txt"
-  File "..\Docs\MediaPortal License.rtf"
-  #File "..\Docs\LICENSE.rtf"
-  #File "..\Docs\SQLite Database Browser.exe"
 
-  SetOutPath "$MPdir.BurnerSupport"
-  CreateDirectory "$MPdir.BurnerSupport"
-  SetOutPath "$MPdir.Config"
-  CreateDirectory "$MPdir.Config"
-  SetOutPath "$MPdir.Database"
-  CreateDirectory "$MPdir.Database"
-  SetOutPath "$MPdir.Log"
-  CreateDirectory "$MPdir.Log"
-
-  # COMMON CONFIG files for SVN and FINAL RELEASES
-  SetOutPath "$MPdir.Config"
-  File /nonfatal "${MEDIAPORTAL.BASE}\CaptureCardDefinitions.xml"
-  File /nonfatal "${MEDIAPORTAL.BASE}\eHome Infrared Transceiver List XP.xml"
-  File /nonfatal "${MEDIAPORTAL.BASE}\HelpReferences.xml"
-  File /nonfatal "${MEDIAPORTAL.BASE}\ISDNCodes.xml"
-  File /nonfatal "${MEDIAPORTAL.BASE}\keymap.xml"
-  File /nonfatal "${MEDIAPORTAL.BASE}\wikipedia.xml"
-  File /nonfatal "${MEDIAPORTAL.BASE}\yac-area-codes.xml"
-  SetOutPath "$MPdir.Config\xmltv"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\xmltv\*"
-
-  SetOutPath "$MPdir.Config\Installer"
-  File /nonfatal "${MEDIAPORTAL.BASE}\Installer\cleanup.xml"
-
-  SetOutPath "$MPdir.Config\scripts\MovieInfo"
-  File /nonfatal "${MEDIAPORTAL.BASE}\scripts\MovieInfo\IMDB.csscript"
-
+  # special MP directories
   SetOutPath "$MPdir.CustomInputDefault"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\InputDeviceMappings\defaults\*"
   SetOutPath "$MPdir.Language"
@@ -412,11 +386,39 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\thumbs\*"
   SetOutPath "$MPdir.Weather"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\weather\*"
+### AUTO-GENERATED   UNINSTALLATION CODE   END ###
+
+  ; create empty folders
+  SetOutPath "$MPdir.BurnerSupport"
+  CreateDirectory "$MPdir.BurnerSupport"
+  SetOutPath "$MPdir.Config"
+  CreateDirectory "$MPdir.Config"
+  SetOutPath "$MPdir.Database"
+  CreateDirectory "$MPdir.Database"
+  SetOutPath "$MPdir.Log"
+  CreateDirectory "$MPdir.Log"
+
+  ; Config Files
+  SetOutPath "$MPdir.Config"
+  File /nonfatal "${MEDIAPORTAL.BASE}\CaptureCardDefinitions.xml"
+  File /nonfatal "${MEDIAPORTAL.BASE}\eHome Infrared Transceiver List XP.xml"
+  File /nonfatal "${MEDIAPORTAL.BASE}\HelpReferences.xml"
+  File /nonfatal "${MEDIAPORTAL.BASE}\ISDNCodes.xml"
+  File /nonfatal "${MEDIAPORTAL.BASE}\keymap.xml"
+  File /nonfatal "${MEDIAPORTAL.BASE}\wikipedia.xml"
+  File /nonfatal "${MEDIAPORTAL.BASE}\yac-area-codes.xml"
+
+  SetOutPath "$MPdir.Config\Installer"
+  File /nonfatal "${MEDIAPORTAL.BASE}\Installer\cleanup.xml"
+  SetOutPath "$MPdir.Config\scripts\MovieInfo"
+  File /nonfatal "${MEDIAPORTAL.BASE}\scripts\MovieInfo\IMDB.csscript"
+  SetOutPath "$MPdir.Config\xmltv"
+  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\xmltv\*"
+  
 
 
   SetOutPath "$MPdir.Base"
   SetOverwrite on
-  ; ========================================
   ; MediaPortalEXE
   ;should be           , but because of postbuild.bat there are too much matching files
   ;File "..\xbmc\bin\${BUILD_TYPE}\MediaPortal.*"
@@ -424,18 +426,10 @@ Section "MediaPortal core files (required)" SecCore
   File "..\xbmc\bin\${BUILD_TYPE}\MediaPortal.exe.config"
   ; Configuration
   File "..\Configuration\bin\${BUILD_TYPE}\Configuration.*"
-
-  ; ========================================
   ; Core
   File "..\core\bin\${BUILD_TYPE}\Core.*"
   File "..\core\bin\${BUILD_TYPE}\DirectShowLib.*"
   File "..\MiniDisplayLibrary\bin\${BUILD_TYPE}\MiniDisplayLibrary.*"
-
-  #those files are moved to MediaPortal.Base
-  #File "..\core\directshowhelper\directshowhelper\${BUILD_TYPE}\dshowhelper.dll"
-  #File "..\core\DXUtil\${BUILD_TYPE}\DXUtil.dll"
-  #File "..\core\fontengine\fontengine\${BUILD_TYPE}\fontengine.*"
-
   ; Utils
   File "..\Utils\bin\${BUILD_TYPE}\Utils.dll"
   ; Support
@@ -446,14 +440,11 @@ Section "MediaPortal core files (required)" SecCore
   File "..\tvcapture\bin\${BUILD_TYPE}\tvcapture.*"
   ; TvGuideScheduler
   File "..\TVGuideScheduler\bin\${BUILD_TYPE}\TVGuideScheduler.*"
-
-  ; ========================================
   ; MusicShareWatcher
   File "..\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\${BUILD_TYPE}\MusicShareWatcherHelper.*"
   File "..\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\${BUILD_TYPE}\MusicShareWatcher.exe"
   ; MPInstaller
   File "..\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.*"
-  File "..\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.Library.*"
   File "..\MPInstaller\MPIMaker\bin\${BUILD_TYPE}\MPIMaker.*"
   ; WatchDog
   File "..\WatchDog\bin\${BUILD_TYPE}\WatchDog.exe"
@@ -465,13 +456,10 @@ Section "MediaPortal core files (required)" SecCore
   File "..\WebEPG\WebEPG\bin\${BUILD_TYPE}\WebEPG.dll"
   File /oname=WebEPG.exe "..\WebEPG\WebEPG-xmltv\bin\${BUILD_TYPE}\WebEPG-xmltv.exe"
   File "..\WebEPG\WebEPG-conf\bin\${BUILD_TYPE}\WebEPG-conf.exe"
-
-  ; ========================================
   ; Plugins
   File "..\RemotePlugins\bin\${BUILD_TYPE}\RemotePlugins.*"
   File "..\RemotePlugins\Remotes\HcwRemote\HCWHelper\bin\${BUILD_TYPE}\HCWHelper.*"
   File "..\RemotePlugins\Remotes\X10Remote\Interop.X10.dll"
-
   SetOutPath "$MPdir.Plugins\ExternalPlayers"
   File "..\ExternalPlayers\bin\${BUILD_TYPE}\ExternalPlayers.*"
   SetOutPath "$MPdir.Plugins\process"
@@ -481,12 +469,13 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath "$MPdir.Plugins\Windows"
   File "..\Dialogs\bin\${BUILD_TYPE}\Dialogs.*"
   File "..\WindowPlugins\bin\${BUILD_TYPE}\WindowPlugins.*"
-
   ; MyBurner plugin dependencies
   SetOutPath "$MPdir.Base"
   File "..\XPImapiBurner\bin\${BUILD_TYPE}\XPBurnComponent.dll"
-
-  ; ========================================
+  ; Doc
+  SetOutPath "$MPdir.Base\Docs"
+  File "..\Docs\BASS License.txt"
+  File "..\Docs\MediaPortal License.rtf"
   ; Wizards
   SetOutPath "$MPdir.Base\Wizards"
   File "..\Configuration\Wizards\*.*"
@@ -542,6 +531,22 @@ SectionEnd
   ; used for digital tv
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\TsReader.ax"
 
+
+### AUTO-GENERATED   UNINSTALLATION CODE ###
+  !include "${svn_MP}\Setup\uninstall.nsh"
+### AUTO-GENERATED   UNINSTALLATION CODE   END ###
+### temp workaround for somefiles
+  Delete /REBOOTOK "$MPdir.Base\Tuningparameters\Finland-Järvenpää-Elisa.dvbc"
+  Delete /REBOOTOK "$MPdir.Base\Tuningparameters\Sweden Comhem Göteborg.dvbc"
+  RMDir /REBOOTOK "$MPdir.Base\Tuningparameters"
+  Delete /REBOOTOK "$MPdir.Base\MediaPortal.Support.pdb"
+  Delete /REBOOTOK "$MPdir.Base\MPIMaker.pdb"
+
+
+  ; Remove the Folders
+  RMDir /r /REBOOTOK "$MPdir.BurnerSupport"
+  RMDir /r /REBOOTOK "$MPdir.Cache"
+
   ; Config Files
   Delete /REBOOTOK "$MPdir.Config\CaptureCardDefinitions.xml"
   Delete /REBOOTOK "$MPdir.Config\eHome Infrared Transceiver List XP.xml"
@@ -550,151 +555,75 @@ SectionEnd
   Delete /REBOOTOK "$MPdir.Config\keymap.xml"
   Delete /REBOOTOK "$MPdir.Config\wikipedia.xml"
   Delete /REBOOTOK "$MPdir.Config\yac-area-codes.xml"
-
-  ; Remove the Folders
-  RMDir /r /REBOOTOK "$MPdir.Base\MovieThumbnailer"
-  RMDir /r /REBOOTOK "$MPdir.Base\MusicPlayer"
-  RMDir /r /REBOOTOK "$MPdir.Base\Profiles"
-  RMDir /r /REBOOTOK "$MPdir.Base\Tuningparameters"
-  RMDir /r /REBOOTOK "$MPdir.Base\WebEPG"
-  RMDir /r /REBOOTOK "$MPdir.Base\Wizards"
-
-  RMDir /r /REBOOTOK "$MPdir.BurnerSupport"
-  RMDir /r /REBOOTOK "$MPdir.Cache"
-  RMDir /r /REBOOTOK "$MPdir.CustomInputDefault"
-  RMDir /r /REBOOTOK "$MPdir.Weather"
-
-  ; Language
-  Delete /REBOOTOK "$MPdir.Language\*"
-  RMDir "$MPdir.Language"
-
-  ; Doc
-  Delete /REBOOTOK "$MPdir.Base\Docs\BASS License.txt"
-  Delete /REBOOTOK "$MPdir.Base\Docs\MediaPortal License.rtf"
-  #Delete /REBOOTOK "$INSTDIR\Docs\LICENSE.rtf"
-  #Delete /REBOOTOK "$INSTDIR\Docs\SQLite Database Browser.exe"
-  RMDir "$MPdir.Base\Docs"
-
-  ; WebEPG
-  RMDir /r /REBOOTOK "$MPdir.Base\WebEPG\channels"
-  RMDir /r /REBOOTOK "$MPdir.Base\WebEPG\grabbers"
-  RMDir "$MPdir.Base\WebEPG"
-
   ; xmltv
   Delete /REBOOTOK "$MPdir.Base\xmltv\ReadMe.txt"
   Delete /REBOOTOK "$MPdir.Base\xmltv\xmltv.dtd"
   RMDir "$MPdir.Base\xmltv"
 
-  ; plugins
-  Delete /REBOOTOK "$MPdir.Plugins\ExternalPlayers\ExternalPlayers.dll"
-  RMDir "$MPdir.Plugins\ExternalPlayers"
 
-  RMDir /r /REBOOTOK "$MPdir.Plugins\process\LCDDrivers"
-  Delete /REBOOTOK "$MPdir.Plugins\process\ProcessPlugins.dll"
-  Delete /REBOOTOK "$MPdir.Plugins\process\PowerSchedulerClientPlugin.dll"
-  RMDir "$MPdir.Plugins\process"
-
-  Delete /REBOOTOK "$MPdir.Plugins\subtitle\SubtitlePlugins.dll"
-  RMDir "$MPdir.Plugins\subtitle"
-
-  Delete /REBOOTOK "$MPdir.Plugins\Windows\Dialogs.dll"
-  Delete /REBOOTOK "$MPdir.Plugins\Windows\WindowPlugins.dll"
-  RMDir "$MPdir.Plugins\Windows"
-
-  RMDir "$MPdir.Plugins"
-
-  ; skins
-  RMDir /r /REBOOTOK "$MPdir.Skin\BlueTwo"
-  RMDir /r /REBOOTOK "$MPdir.Skin\BlueTwo wide"
-  RMDir /r /REBOOTOK "$MPdir.Skin\Blue3"
-  RMDir /r /REBOOTOK "$MPdir.Skin\Blue3wide"
-  RMDir "$MPdir.Skin"
-
-  ; Remove Files in MP Root Directory
-  Delete /REBOOTOK "$MPdir.Base\AppStart.exe"
-  Delete /REBOOTOK "$MPdir.Base\AppStart.exe.config"
-  Delete /REBOOTOK "$MPdir.Base\AxInterop.WMPLib.dll"
-  Delete /REBOOTOK "$MPdir.Base\bass.dll"
-  Delete /REBOOTOK "$MPdir.Base\Bass.Net.dll"
-  Delete /REBOOTOK "$MPdir.Base\bass_fx.dll"
-  Delete /REBOOTOK "$MPdir.Base\bass_vis.dll"
-  Delete /REBOOTOK "$MPdir.Base\bass_vst.dll"
-  Delete /REBOOTOK "$MPdir.Base\bass_wadsp.dll"
-  Delete /REBOOTOK "$MPdir.Base\bassasio.dll"
-  Delete /REBOOTOK "$MPdir.Base\bassmix.dll"
-  Delete /REBOOTOK "$MPdir.Base\BassRegistration.dll"
-  Delete /REBOOTOK "$MPdir.Base\Configuration.exe"
-  Delete /REBOOTOK "$MPdir.Base\Configuration.exe.config"
-  Delete /REBOOTOK "$MPdir.Base\Core.dll"
-  Delete /REBOOTOK "$MPdir.Base\CSScriptLibrary.dll"
-  Delete /REBOOTOK "$MPdir.Base\DaggerLib.dll"
-  Delete /REBOOTOK "$MPdir.Base\DaggerLib.DSGraphEdit.dll"
-  Delete /REBOOTOK "$MPdir.Base\Databases.dll"
-  Delete /REBOOTOK "$MPdir.Base\defaultMusicViews.xml"
-  Delete /REBOOTOK "$MPdir.Base\defaultVideoViews.xml"
-  Delete /REBOOTOK "$MPdir.Base\DirectShowLib-2005.dll"
-  Delete /REBOOTOK "$MPdir.Base\DirectShowLib.dll"
-  Delete /REBOOTOK "$MPdir.Base\dlportio.dll"
-  Delete /REBOOTOK "$MPdir.Base\dshowhelper.dll"
-  Delete /REBOOTOK "$MPdir.Base\dvblib.dll"
-  Delete /REBOOTOK "$MPdir.Base\dxerr9.dll"
-  Delete /REBOOTOK "$MPdir.Base\DXUtil.dll"
-  Delete /REBOOTOK "$MPdir.Base\edtftpnet-1.2.2.dll"
-  Delete /REBOOTOK "$MPdir.Base\FastBitmap.dll"
-  Delete /REBOOTOK "$MPdir.Base\fontEngine.dll"
-  Delete /REBOOTOK "$MPdir.Base\FTD2XX.DLL"
-  Delete /REBOOTOK "$MPdir.Base\hauppauge.dll"
-  Delete /REBOOTOK "$MPdir.Base\HcwHelper.exe"
-  Delete /REBOOTOK "$MPdir.Base\ICSharpCode.SharpZipLib.dll"
-  Delete /REBOOTOK "$MPdir.Base\inpout32.dll"
-  Delete /REBOOTOK "$MPdir.Base\Interop.GIRDERLib.dll"
-  Delete /REBOOTOK "$MPdir.Base\Interop.iTunesLib.dll"
-  Delete /REBOOTOK "$MPdir.Base\Interop.TunerLib.dll"
-  Delete /REBOOTOK "$MPdir.Base\Interop.WMEncoderLib.dll"
-  Delete /REBOOTOK "$MPdir.Base\Interop.WMPLib.dll"
-  Delete /REBOOTOK "$MPdir.Base\Interop.X10.dll"
-  Delete /REBOOTOK "$MPdir.Base\KCS.Utilities.dll"
-  Delete /REBOOTOK "$MPdir.Base\lame_enc.dll"
-  Delete /REBOOTOK "$MPdir.Base\LibDriverCoreClient.dll"
-  Delete /REBOOTOK "$MPdir.Base\log4net.dll"
-  Delete /REBOOTOK "$MPdir.Base\madlldlib.dll"
-  Delete /REBOOTOK "$MPdir.Base\MediaFoundation.dll"
-  Delete /REBOOTOK "$MPdir.Base\MediaPadLayer.dll"
-  Delete /REBOOTOK "$MPdir.Base\MediaPortalDirs.xml"
+  ; MediaPortalEXE
   Delete /REBOOTOK "$MPdir.Base\MediaPortal.exe"
   Delete /REBOOTOK "$MPdir.Base\MediaPortal.exe.config"
-  Delete /REBOOTOK "$MPdir.Base\MediaPortal.Support.dll"
-  Delete /REBOOTOK "$MPdir.Base\Microsoft.ApplicationBlocks.ApplicationUpdater.dll"
-  Delete /REBOOTOK "$MPdir.Base\Microsoft.ApplicationBlocks.ApplicationUpdater.Interfaces.dll"
-  Delete /REBOOTOK "$MPdir.Base\Microsoft.ApplicationBlocks.ExceptionManagement.dll"
-  Delete /REBOOTOK "$MPdir.Base\Microsoft.ApplicationBlocks.ExceptionManagement.Interfaces.dll"
-  Delete /REBOOTOK "$MPdir.Base\Microsoft.Office.Interop.Outlook.dll"
+  ; Configuration
+  Delete /REBOOTOK "$MPdir.Base\Configuration.exe"
+  Delete /REBOOTOK "$MPdir.Base\Configuration.exe.config"
+  ; Core
+  Delete /REBOOTOK "$MPdir.Base\Core.dll"
+  Delete /REBOOTOK "$MPdir.Base\DirectShowLib.dll"
   Delete /REBOOTOK "$MPdir.Base\MiniDisplayLibrary.dll"
-  Delete /REBOOTOK "$MPdir.Base\MPInstaller.exe"
-  Delete /REBOOTOK "$MPdir.Base\MPInstaller.Library.dll"
-  Delete /REBOOTOK "$MPdir.Base\MPIMaker.exe"
-  Delete /REBOOTOK "$MPdir.Base\WatchDog.exe"
-  Delete /REBOOTOK "$MPdir.Base\mpviz.dll"
+  ; Utils
+  Delete /REBOOTOK "$MPdir.Base\Utils.dll"
+  ; Support
+  Delete /REBOOTOK "$MPdir.Base\MediaPortal.Support.dll"
+  ; Databases
+  Delete /REBOOTOK "$MPdir.Base\Databases.dll"
+  ; TvCapture
+  Delete /REBOOTOK "$MPdir.Base\TVCapture.dll"
+  ; TvGuideScheduler
+  Delete /REBOOTOK "$MPdir.Base\TVGuideScheduler.exe"
+  ; MusicShareWatcher
   Delete /REBOOTOK "$MPdir.Base\MusicShareWatcher.exe"
   Delete /REBOOTOK "$MPdir.Base\MusicShareWatcherHelper.dll"
-  Delete /REBOOTOK "$MPdir.Base\RemotePlugins.dll"
-  Delete /REBOOTOK "$MPdir.Base\restart.vbs"
-  Delete /REBOOTOK "$MPdir.Base\SG_VFD.dll"
-  Delete /REBOOTOK "$MPdir.Base\sqlite.dll"
-  Delete /REBOOTOK "$MPdir.Base\taglib-sharp.dll"
-  Delete /REBOOTOK "$MPdir.Base\TaskScheduler.dll"
-  Delete /REBOOTOK "$MPdir.Base\ttBdaDrvApi_Dll.dll"
-  Delete /REBOOTOK "$MPdir.Base\ttdvbacc.dll"
-  Delete /REBOOTOK "$MPdir.Base\TVCapture.dll"
-  Delete /REBOOTOK "$MPdir.Base\TVGuideScheduler.exe"
-  Delete /REBOOTOK "$MPdir.Base\Utils.dll"
+  ; MPInstaller
+  Delete /REBOOTOK "$MPdir.Base\MPInstaller.exe"
+  Delete /REBOOTOK "$MPdir.Base\MPInstaller.exe.config"
+  Delete /REBOOTOK "$MPdir.Base\MPInstaller.Library.dll"
+  Delete /REBOOTOK "$MPdir.Base\MPIMaker.exe"
+  ; WatchDog
+  Delete /REBOOTOK "$MPdir.Base\WatchDog.exe"
+  Delete /REBOOTOK "$MPdir.Base\DaggerLib.dll"
+  Delete /REBOOTOK "$MPdir.Base\DaggerLib.DSGraphEdit.dll"
+  Delete /REBOOTOK "$MPdir.Base\DirectShowLib-2005.dll"
+  Delete /REBOOTOK "$MPdir.Base\MediaFoundation.dll"
+  ; WebEPG
   Delete /REBOOTOK "$MPdir.Base\WebEPG.dll"
   Delete /REBOOTOK "$MPdir.Base\WebEPG.exe"
   Delete /REBOOTOK "$MPdir.Base\WebEPG-conf.exe"
-  Delete /REBOOTOK "$MPdir.Base\X10Unified.dll"
-  Delete /REBOOTOK "$MPdir.Base\xAPMessage.dll"
-  Delete /REBOOTOK "$MPdir.Base\xAPTransport.dll"
+  ; Plugins
+  Delete /REBOOTOK "$MPdir.Base\RemotePlugins.dll"
+  Delete /REBOOTOK "$MPdir.Base\HcwHelper.exe"
+  Delete /REBOOTOK "$MPdir.Base\Interop.X10.dll"
+  Delete /REBOOTOK "$MPdir.Plugins\ExternalPlayers\ExternalPlayers.dll"
+  Delete /REBOOTOK "$MPdir.Plugins\process\ProcessPlugins.dll"
+  Delete /REBOOTOK "$MPdir.Plugins\subtitle\SubtitlePlugins.dll"
+  Delete /REBOOTOK "$MPdir.Plugins\Windows\Dialogs.dll"
+  Delete /REBOOTOK "$MPdir.Plugins\Windows\WindowPlugins.dll"
+  ; MyBurner plugin dependencies
   Delete /REBOOTOK "$MPdir.Base\XPBurnComponent.dll"
+  ; Doc
+  Delete /REBOOTOK "$MPdir.Base\Docs\BASS License.txt"
+  Delete /REBOOTOK "$MPdir.Base\Docs\MediaPortal License.rtf"
+  ; Wizards
+  RMDir /r /REBOOTOK "$MPdir.Base\Wizards"
+
+
+  RMDir "$MPdir.Base\Docs"
+  RMDir "$MPdir.Plugins\ExternalPlayers"
+  RMDir "$MPdir.Plugins\process"
+  RMDir "$MPdir.Plugins\subtitle"
+  RMDir "$MPdir.Plugins\Windows"
+  RMDir "$MPdir.Plugins"
+
 !macroend
 
 !ifndef HEISE_BUILD
