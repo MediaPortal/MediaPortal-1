@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeployVersionSVN", "DeployVersionSVN\DeployVersionSVN.csproj", "{1B00E1FF-5C00-4598-8780-22ABBA4B99A2}"
 EndProject
 Global
