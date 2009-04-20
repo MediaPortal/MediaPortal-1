@@ -62,7 +62,10 @@ namespace MediaPortal.GUI.Library
         #endregion
 
         #region events
+
         public event EventHandler Disposed;
+        private delegate void SafeDisposer();
+
         #endregion
 
         #region Frame class
@@ -171,11 +174,22 @@ namespace MediaPortal.GUI.Library
                 }
             }
 
-            void D3DTexture_Disposing(object sender, EventArgs e)
+            private void D3DTexture_Disposing(object sender, EventArgs e)
             {
                 // D3D has disposed of this texture! notify so that things are kept up to date
-                // Dispose();
-                Log.Warn("CachedTexture: Already disposed texture - cleanup needed!");
+                DisposeD3DTexture();                
+            }
+
+            private void DisposeD3DTexture()
+            {
+                if (GUIGraphicsContext.form.InvokeRequired)
+                {
+                    SafeDisposer d = new SafeDisposer(DisposeD3DTexture);
+                    GUIGraphicsContext.form.Invoke(d);
+                    return;
+                }
+                //Log.Warn("CachedTexture: Already disposed texture - cleaning up now!");
+                Dispose();
             }
 
             /// <summary>
@@ -314,8 +328,19 @@ namespace MediaPortal.GUI.Library
         private void frame_Disposed(object sender, EventArgs e)
         {
             // D3D has released the texture in one Frame. In that case, just dispose the whole CachedTexture
-            //Dispose();
-            Log.Warn("CachedTexture: D3D released texture - dispose needed!");
+            DisposeFrame();
+        }
+
+        private void DisposeFrame()
+        {
+            if (GUIGraphicsContext.form.InvokeRequired)
+            {
+                SafeDisposer d = new SafeDisposer(DisposeFrame);
+                GUIGraphicsContext.form.Invoke(d);
+                return;
+            }
+            //Log.Warn("CachedTexture: Already disposed frame - cleaning up now!");
+            Dispose();
         }
 
         /// <summary>

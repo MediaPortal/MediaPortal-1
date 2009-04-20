@@ -416,6 +416,7 @@ namespace MediaPortal.GUI.Library
             return 0;
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         private static void cachedTexture_Disposed(object sender, EventArgs e)
         {
             // a texture in the cache has been disposed of! remove from the cache
@@ -423,11 +424,11 @@ namespace MediaPortal.GUI.Library
             {
                 if (_cache[i] == sender)
                 {
-                    //_cache[i].Disposed -= new EventHandler(cachedTexture_Disposed);
-                    //if (_persistentTextures.ContainsKey(_cache[i].Name))
-                    //  _persistentTextures.Remove(_cache[i].Name);
-                    //_cache.Remove(_cache[i]);
-                    Log.Warn("TextureManager: Already disposed texture - cache is dirty!");
+                    //Log.Debug("TextureManager: Already disposed texture - cleaning up the cache...");
+                    _cache[i].Disposed -= new EventHandler(cachedTexture_Disposed);
+                    if (_persistentTextures.ContainsKey(_cache[i].Name))
+                      _persistentTextures.Remove(_cache[i].Name);
+                    _cache.Remove(_cache[i]);                    
                 }
             }
         }
