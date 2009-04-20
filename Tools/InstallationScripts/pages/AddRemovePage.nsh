@@ -42,15 +42,13 @@ _____________________________________________________________________________
 !include WordFunc.nsh
 !include FileFunc.nsh
 
-!insertmacro VersionCompare
-!insertmacro GetParent
-
 #####    Add/Remove/Reinstall page
 Var ReinstallPageCheck
 
 Function PageReinstall
-  ReadRegStr $R0 HKLM "${RegKey}" "InstallPath"
-  ${If} $R0 == ""
+  ; abort displaying page if software is not installed
+  ReadRegStr $R0 HKLM "${RegKey}" "UninstallString"
+  ${IfNot} ${FileExists} "$R0"
     Abort
   ${EndIf}
 
