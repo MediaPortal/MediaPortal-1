@@ -419,33 +419,34 @@ Section "MediaPortal core files (required)" SecCore
 
   SetOutPath "$MPdir.Base"
   SetOverwrite on
-  ; MediaPortalEXE
-  ;should be           , but because of postbuild.bat there are too much matching files
-  ;File "..\xbmc\bin\${BUILD_TYPE}\MediaPortal.*"
+  ; MediaPortal.exe
   File "..\xbmc\bin\${BUILD_TYPE}\MediaPortal.exe"
   File "..\xbmc\bin\${BUILD_TYPE}\MediaPortal.exe.config"
   ; Configuration
-  File "..\Configuration\bin\${BUILD_TYPE}\Configuration.*"
+  File "..\Configuration\bin\${BUILD_TYPE}\Configuration.exe"
+  File "..\Configuration\bin\${BUILD_TYPE}\Configuration.exe.config"
   ; Core
-  File "..\core\bin\${BUILD_TYPE}\Core.*"
-  File "..\core\bin\${BUILD_TYPE}\DirectShowLib.*"
-  File "..\MiniDisplayLibrary\bin\${BUILD_TYPE}\MiniDisplayLibrary.*"
+  File "..\core\bin\${BUILD_TYPE}\Core.dll"
+  File "..\core\bin\${BUILD_TYPE}\DirectShowLib.dll"
+  File "..\MiniDisplayLibrary\bin\${BUILD_TYPE}\MiniDisplayLibrary.dll"
   ; Utils
   File "..\Utils\bin\${BUILD_TYPE}\Utils.dll"
   ; Support
-  File "..\MediaPortal.Support\bin\${BUILD_TYPE}\MediaPortal.Support.*"
+  File "..\MediaPortal.Support\bin\${BUILD_TYPE}\MediaPortal.Support.dll"
   ; Databases
-  File "..\databases\bin\${BUILD_TYPE}\databases.*"
+  File "..\databases\bin\${BUILD_TYPE}\Databases.dll"
   ; TvCapture
-  File "..\tvcapture\bin\${BUILD_TYPE}\tvcapture.*"
+  File "..\tvcapture\bin\${BUILD_TYPE}\TVCapture.dll"
   ; TvGuideScheduler
-  File "..\TVGuideScheduler\bin\${BUILD_TYPE}\TVGuideScheduler.*"
+  File "..\TVGuideScheduler\bin\${BUILD_TYPE}\TVGuideScheduler.exe"
   ; MusicShareWatcher
-  File "..\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\${BUILD_TYPE}\MusicShareWatcherHelper.*"
   File "..\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\${BUILD_TYPE}\MusicShareWatcher.exe"
+  File "..\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\${BUILD_TYPE}\MusicShareWatcherHelper.dll"
   ; MPInstaller
-  File "..\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.*"
-  File "..\MPInstaller\MPIMaker\bin\${BUILD_TYPE}\MPIMaker.*"
+  File "..\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.exe"
+  File "..\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.exe.config"
+  File "..\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.Library.dll"
+  File "..\MPInstaller\MPIMaker\bin\${BUILD_TYPE}\MPIMaker.exe"
   ; WatchDog
   File "..\WatchDog\bin\${BUILD_TYPE}\WatchDog.exe"
   File "..\WatchDog\bin\${BUILD_TYPE}\DaggerLib.dll"
@@ -457,18 +458,18 @@ Section "MediaPortal core files (required)" SecCore
   File /oname=WebEPG.exe "..\WebEPG\WebEPG-xmltv\bin\${BUILD_TYPE}\WebEPG-xmltv.exe"
   File "..\WebEPG\WebEPG-conf\bin\${BUILD_TYPE}\WebEPG-conf.exe"
   ; Plugins
-  File "..\RemotePlugins\bin\${BUILD_TYPE}\RemotePlugins.*"
-  File "..\RemotePlugins\Remotes\HcwRemote\HCWHelper\bin\${BUILD_TYPE}\HCWHelper.*"
+  File "..\RemotePlugins\bin\${BUILD_TYPE}\RemotePlugins.dll"
+  File "..\RemotePlugins\Remotes\HcwRemote\HCWHelper\bin\${BUILD_TYPE}\HcwHelper.exe"
   File "..\RemotePlugins\Remotes\X10Remote\Interop.X10.dll"
   SetOutPath "$MPdir.Plugins\ExternalPlayers"
-  File "..\ExternalPlayers\bin\${BUILD_TYPE}\ExternalPlayers.*"
+  File "..\ExternalPlayers\bin\${BUILD_TYPE}\ExternalPlayers.dll"
   SetOutPath "$MPdir.Plugins\process"
-  File "..\ProcessPlugins\bin\${BUILD_TYPE}\ProcessPlugins.*"
+  File "..\ProcessPlugins\bin\${BUILD_TYPE}\ProcessPlugins.dll"
   SetOutPath "$MPdir.Plugins\subtitle"
-  File "..\SubtitlePlugins\bin\${BUILD_TYPE}\SubtitlePlugins.*"
+  File "..\SubtitlePlugins\bin\${BUILD_TYPE}\SubtitlePlugins.dll"
   SetOutPath "$MPdir.Plugins\Windows"
-  File "..\Dialogs\bin\${BUILD_TYPE}\Dialogs.*"
-  File "..\WindowPlugins\bin\${BUILD_TYPE}\WindowPlugins.*"
+  File "..\Dialogs\bin\${BUILD_TYPE}\Dialogs.dll"
+  File "..\WindowPlugins\bin\${BUILD_TYPE}\WindowPlugins.dll"
   ; MyBurner plugin dependencies
   SetOutPath "$MPdir.Base"
   File "..\XPImapiBurner\bin\${BUILD_TYPE}\XPBurnComponent.dll"
@@ -535,12 +536,6 @@ SectionEnd
 ### AUTO-GENERATED   UNINSTALLATION CODE ###
   !include "${svn_MP}\Setup\uninstall.nsh"
 ### AUTO-GENERATED   UNINSTALLATION CODE   END ###
-### temp workaround for somefiles
-  Delete /REBOOTOK "$MPdir.Base\Tuningparameters\Finland-Järvenpää-Elisa.dvbc"
-  Delete /REBOOTOK "$MPdir.Base\Tuningparameters\Sweden Comhem Göteborg.dvbc"
-  RMDir /REBOOTOK "$MPdir.Base\Tuningparameters"
-  Delete /REBOOTOK "$MPdir.Base\MediaPortal.Support.pdb"
-  Delete /REBOOTOK "$MPdir.Base\MPIMaker.pdb"
 
 
   ; Remove the Folders
@@ -555,13 +550,18 @@ SectionEnd
   Delete /REBOOTOK "$MPdir.Config\keymap.xml"
   Delete /REBOOTOK "$MPdir.Config\wikipedia.xml"
   Delete /REBOOTOK "$MPdir.Config\yac-area-codes.xml"
-  ; xmltv
+
+  Delete /REBOOTOK "$MPdir.Config\Installer\cleanup.xml"
+  RMDir "$MPdir.Config\Installer"
+  Delete /REBOOTOK "$MPdir.Config\scripts\MovieInfo\IMDB.csscript"
+  RMDir "$MPdir.Config\scripts\MovieInfo"
+  RMDir "$MPdir.Config\scripts"
   Delete /REBOOTOK "$MPdir.Base\xmltv\ReadMe.txt"
   Delete /REBOOTOK "$MPdir.Base\xmltv\xmltv.dtd"
-  RMDir "$MPdir.Base\xmltv"
+  RMDir "$MPdir.Config\xmltv"
 
 
-  ; MediaPortalEXE
+  ; MediaPortal.exe
   Delete /REBOOTOK "$MPdir.Base\MediaPortal.exe"
   Delete /REBOOTOK "$MPdir.Base\MediaPortal.exe.config"
   ; Configuration
@@ -604,26 +604,23 @@ SectionEnd
   Delete /REBOOTOK "$MPdir.Base\HcwHelper.exe"
   Delete /REBOOTOK "$MPdir.Base\Interop.X10.dll"
   Delete /REBOOTOK "$MPdir.Plugins\ExternalPlayers\ExternalPlayers.dll"
+  RMDir "$MPdir.Plugins\ExternalPlayers"
   Delete /REBOOTOK "$MPdir.Plugins\process\ProcessPlugins.dll"
+  RMDir "$MPdir.Plugins\process"
   Delete /REBOOTOK "$MPdir.Plugins\subtitle\SubtitlePlugins.dll"
+  RMDir "$MPdir.Plugins\subtitle"
   Delete /REBOOTOK "$MPdir.Plugins\Windows\Dialogs.dll"
   Delete /REBOOTOK "$MPdir.Plugins\Windows\WindowPlugins.dll"
+  RMDir "$MPdir.Plugins\Windows"
+  RMDir "$MPdir.Plugins"
   ; MyBurner plugin dependencies
   Delete /REBOOTOK "$MPdir.Base\XPBurnComponent.dll"
   ; Doc
   Delete /REBOOTOK "$MPdir.Base\Docs\BASS License.txt"
   Delete /REBOOTOK "$MPdir.Base\Docs\MediaPortal License.rtf"
+  RMDir "$MPdir.Base\Docs"
   ; Wizards
   RMDir /r /REBOOTOK "$MPdir.Base\Wizards"
-
-
-  RMDir "$MPdir.Base\Docs"
-  RMDir "$MPdir.Plugins\ExternalPlayers"
-  RMDir "$MPdir.Plugins\process"
-  RMDir "$MPdir.Plugins\subtitle"
-  RMDir "$MPdir.Plugins\Windows"
-  RMDir "$MPdir.Plugins"
-
 !macroend
 
 !ifndef HEISE_BUILD

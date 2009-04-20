@@ -73,7 +73,7 @@ namespace UninstallFilelist
         File.Delete(output);
       }
 
-      TextWriter write = new StreamWriter(output);
+      TextWriter write = new StreamWriter(output, false, System.Text.Encoding.Default);
       write.Write(lister.FileList);
       write.Close();
     }
