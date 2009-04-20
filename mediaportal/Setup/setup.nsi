@@ -662,14 +662,20 @@ Section -Post
   ${LOG_TEXT} "DEBUG" "SECTION Post"
   ${LOG_TEXT} "INFO" "Doing post installation stuff..."
 
-  ;Removes unselected components
+  ; Removes unselected components
   !insertmacro SectionList "FinishSection"
 
-  ;writes component status to registry
+  ; writes component status to registry
   ${MementoSectionSave}
 
   SetOverwrite on
   SetOutPath "$MPdir.Base"
+
+  ; cleaning/renaming log dir - requested by chemelli
+  RMDir /r "$MPdir.Log\OldLogs"
+  CreateDirectory "$MPdir.Log\OldLogs"
+  CopyFiles /SILENT /FILESONLY "$MPdir.Log\*" "$MPdir.Log\OldLogs"
+  Delete "$MPdir.Log\*"
 
   ; removing old externaldisplay files - requested by chemelli
   ${LOG_TEXT} "INFO" "Removing obsolete (External/Mini/Cybr)Display files"

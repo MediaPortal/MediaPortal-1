@@ -643,6 +643,12 @@ Section -Post
   SetOverwrite on
   SetOutPath $INSTDIR
 
+  ; cleaning/renaming log dir - requested by chemelli
+  RMDir /r "${COMMON_APPDATA}\log\OldLogs"
+  CreateDirectory "${COMMON_APPDATA}\log\OldLogs"
+  CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\log\*" "${COMMON_APPDATA}\log\OldLogs"
+  Delete "${COMMON_APPDATA}\log\*"
+
   ${If} $noStartMenuSC != 1
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails

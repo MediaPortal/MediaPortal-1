@@ -68,9 +68,6 @@ Page instfiles
 
 !include "${svn_InstallScripts}\include\*"
 
-!define USE_READ_MP_DIRS ; defines if MediaPortal's special directories needs to be read from config
-#!define USE_INSTALL_LOG  ; enables logging during installation and uninstallation
-!include "${svn_InstallScripts}\include-CommonMPMacros.nsh"
 
 ;--------------------------------
 
@@ -240,5 +237,22 @@ Section /o "UnRegisterExtension"
 
       ${LOG_TEXT} "INFO" "UnRegisterExtension"
   ${UnRegisterExtension} ".xmp" "MediaPortal extension project"
+
+SectionEnd
+
+Section /o "CleanLogDirectory"
+
+  ${IfNot} ${MP023IsInstalled}
+  ${AndIfNot} ${MPIsInstalled}
+    DetailPrint "no MPIsInstalled"
+  ${else}
+    !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
+    ${ReadMediaPortalDirs} $MPdir.Base
+
+    RMDir /r "$MPdir.Log\OldLogs"
+    CreateDirectory "$MPdir.Log\OldLogs"
+    CopyFiles /SILENT /FILESONLY "$MPdir.Log\*" "$MPdir.Log\OldLogs"
+    Delete "$MPdir.Log\*"
+  ${EndIf}
 
 SectionEnd
