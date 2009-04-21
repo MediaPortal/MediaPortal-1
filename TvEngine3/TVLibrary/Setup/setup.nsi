@@ -371,7 +371,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File ..\SetupControls\bin\${BUILD_TYPE}\SetupControls.dll
 
   ; 3rd party assemblys
-  File "${TVSERVER.BASE}\dvblib.dll"
   File "${TVSERVER.BASE}\dxerr9.dll"
   File "${TVSERVER.BASE}\hauppauge.dll"
   File "${TVSERVER.BASE}\hcwWinTVCI.dll"
@@ -381,6 +380,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\ICSharpCode.SharpZipLib.dll"
 
   File "${svn_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
+  ; binary used for skystar2 support
+  File "${svn_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\dvblib.dll"
 
   ; Common App Data Files
   SetOutPath "${COMMON_APPDATA}"
@@ -485,6 +486,7 @@ ${MementoSectionEnd}
   ; And finally remove all the files installed
   ; Leave the directory in place, as it might contain user modified files
   Delete /REBOOTOK $INSTDIR\DirectShowLib.dll
+  ; binary used for skystar2 support
   Delete /REBOOTOK $INSTDIR\dvblib.dll
   Delete /REBOOTOK $INSTDIR\PluginBase.dll
   Delete /REBOOTOK $INSTDIR\PowerScheduler.Interfaces.DLL

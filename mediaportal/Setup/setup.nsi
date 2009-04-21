@@ -492,6 +492,8 @@ Section "MediaPortal core files (required)" SecCore
   ; Wizards
   SetOutPath "$MPdir.Base\Wizards"
   File "..\Configuration\Wizards\*.*"
+  ; binary used for skystar2 support
+  File "${svn_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\dvblib.dll"
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION
@@ -503,8 +505,7 @@ Section "MediaPortal core files (required)" SecCore
   ##### MAYBE used by VideoEditor
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\bin\Release\CLDump.ax"                                 "$MPdir.Base\CLDump.ax"           "$MPdir.Base"
   ; used for scanning in tve2
-  ;!insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\MPSA\bin\${BUILD_TYPE}\MPSA.ax"                        "$MPdir.Base\MPSA.ax"             "$MPdir.Base"
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\MPSA\bin\Release\MPSA.ax"                              "$MPdir.Base\MPSA.ax"             "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\MPSA\bin\${BUILD_TYPE}\MPSA.ax"                        "$MPdir.Base\MPSA.ax"             "$MPdir.Base"
   ;filter for analog tv
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\bin\Release\PDMpgMux.ax"                               "$MPdir.Base\PDMpgMux.ax"         "$MPdir.Base"
   ; used for shoutcast
@@ -633,6 +634,8 @@ SectionEnd
   RMDir "$MPdir.Base\Docs"
   ; Wizards
   RMDir /r /REBOOTOK "$MPdir.Base\Wizards"
+  ; binary used for skystar2 support
+  Delete /REBOOTOK "$MPdir.Base\dvblib.dll"
 !macroend
 
 !ifndef HEISE_BUILD
