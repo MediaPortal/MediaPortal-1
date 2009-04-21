@@ -21,9 +21,8 @@
 
 using System;
 using TvLibrary;
-using TvLibrary.Implementations;
+using TvLibrary.Implementations.Hybrid;
 using TvLibrary.Interfaces;
-using TvLibrary.Channels;
 using TvLibrary.Log;
 using TvControl;
 using TvDatabase;
@@ -235,7 +234,17 @@ namespace TvService
           Log.Info("card2:{0} {1} {2}", user.Name, user.CardId, user.SubChannel);
           return result;
         }
-        if (_cardHandler.CurrentDbChannel(ref user) == dbChannel.IdChannel && dbChannel.IdChannel >= 0)
+        bool cardActive = true;
+        HybridCard hybridCard = _cardHandler.Card as HybridCard;
+        if (hybridCard != null)
+        {
+          if (!hybridCard.IsCardIdActive(user.CardId))
+          {
+            cardActive = false;
+          }
+        }
+
+        if (cardActive && _cardHandler.CurrentDbChannel(ref user) == dbChannel.IdChannel && dbChannel.IdChannel >= 0)
         {
           return TvResult.Succeeded;
         }
@@ -277,7 +286,7 @@ namespace TvService
         return false;
       if (subchannels[0].CurrentChannel == null)
         return false;
-      return (false == IsDifferentTransponder(subchannels[0].CurrentChannel, transponder));
+      return (false == subchannels[0].CurrentChannel.IsDifferentTransponder(transponder));
     }
 
 
@@ -316,108 +325,6 @@ namespace TvService
         Log.Write(ex);
         return false;
       }
-    }
-    /// <summary>
-    /// Determines whether transponder 1 is the same as transponder2
-    /// </summary>
-    /// <param name="transponder1">The transponder1.</param>
-    /// <param name="transponder2">The transponder2.</param>
-    /// <returns>
-    /// 	<c>true</c> if transponder 1 is not equal to transponder 2; otherwise, <c>false</c>.
-    /// </returns>
-    public bool IsDifferentTransponder(IChannel transponder1, IChannel transponder2)
-    {
-      DVBCChannel dvbcChannelNew = transponder2 as DVBCChannel;
-      // Check the type of the channel. If they are different, than we are definitely 
-      // on a different transponder. This could happen with hybrid card.
-      if (!transponder1.GetType().Equals(transponder2.GetType()))
-        return true;
-      if (dvbcChannelNew != null)
-      {
-        DVBCChannel dvbcChannelCurrent = transponder1 as DVBCChannel;
-        if (dvbcChannelCurrent != null)
-          if (dvbcChannelNew.Frequency != dvbcChannelCurrent.Frequency)
-            return true;
-        return false;
-      }
-
-      DVBTChannel dvbtChannelNew = transponder2 as DVBTChannel;
-      if (dvbtChannelNew != null)
-      {
-        DVBTChannel dvbtChannelCurrent = transponder1 as DVBTChannel;
-        if (dvbtChannelCurrent != null)
-          if (dvbtChannelNew.Frequency != dvbtChannelCurrent.Frequency)
-            return true;
-        return false;
-      }
-
-      DVBSChannel dvbsChannelNew = transponder2 as DVBSChannel;
-      if (dvbsChannelNew != null)
-      {
-        DVBSChannel dvbsChannelCurrent = transponder1 as DVBSChannel;
-        if (dvbsChannelCurrent != null)
-        {
-          if (dvbsChannelNew.Frequency != dvbsChannelCurrent.Frequency)
-            return true;
-          if (dvbsChannelNew.Polarisation != dvbsChannelCurrent.Polarisation)
-            return true;
-          if (dvbsChannelNew.ModulationType != dvbsChannelCurrent.ModulationType)
-            return true;
-          if (dvbsChannelNew.SatelliteIndex != dvbsChannelCurrent.SatelliteIndex)
-            return true;
-          if (dvbsChannelNew.InnerFecRate != dvbsChannelCurrent.InnerFecRate)
-            return true;
-          if (dvbsChannelNew.Pilot != dvbsChannelCurrent.Pilot)
-            return true;
-          if (dvbsChannelNew.Rolloff != dvbsChannelCurrent.Rolloff)
-            return true;
-          if (dvbsChannelNew.DisEqc != dvbsChannelCurrent.DisEqc)
-            return true;
-        }
-        return false;
-      }
-
-      ATSCChannel atscChannelNew = transponder2 as ATSCChannel;
-      if (atscChannelNew != null)
-      {
-        ATSCChannel atscChannelCurrent = transponder1 as ATSCChannel;
-        if (atscChannelCurrent != null)
-        {
-          if (atscChannelNew.MajorChannel != atscChannelCurrent.MajorChannel)
-            return true;
-          if (atscChannelNew.MinorChannel != atscChannelCurrent.MinorChannel)
-            return true;
-          if (atscChannelNew.PhysicalChannel != atscChannelCurrent.PhysicalChannel)
-            return true;
-        }
-        return false;
-      }
-
-      AnalogChannel analogChannelNew = transponder2 as AnalogChannel;
-      if (analogChannelNew != null)
-      {
-        AnalogChannel analogChannelCurrent = transponder1 as AnalogChannel;
-        if (analogChannelCurrent != null)
-        {
-          if (analogChannelNew.IsTv != analogChannelCurrent.IsTv)
-            return true;
-          if (analogChannelNew.IsRadio != analogChannelCurrent.IsRadio)
-            return true;
-          if (analogChannelNew.Country.Id != analogChannelCurrent.Country.Id)
-            return true;
-          if (analogChannelNew.VideoSource != analogChannelCurrent.VideoSource)
-            return true;
-          if (analogChannelNew.TunerSource != analogChannelCurrent.TunerSource)
-            return true;
-          if (analogChannelNew.ChannelNumber != analogChannelCurrent.ChannelNumber)
-            return true;
-          if (analogChannelNew.Frequency != analogChannelCurrent.Frequency)
-            return true;
-        }
-        return false;
-      }
-
-      return false;
     }
   }
 
