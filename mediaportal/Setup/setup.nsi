@@ -288,8 +288,20 @@ Section "-prepare" SecPrepare
 
   # if it is an update include a file with last update/cleanup instructions
   ${If} $UpdateMode = 1
-    ${LOG_TEXT} "INFO" "Removing 1.0 files..."
-    !include "update-1.0.1.nsh"
+    !insertmacro MP_GET_VERSION $0
+    ${If} $0 == 1.0.0.0
+      ${LOG_TEXT} "INFO" "Removing 1.0 files..."
+      !include "update-1.0.1.nsh"
+    ${ElseIf} $0 == 1.0.1.0
+      ${LOG_TEXT} "INFO" "Removing 1.0.1 files..."
+      !include "update-1.0.2.nsh"
+    ${ElseIf} $0 == ""
+      ${LOG_TEXT} "INFO" "It seems MP is not installed, no update procedure will be done"
+    ${ElseIf} $R3 != 0
+      ${LOG_TEXT} "INFO" "An SVN version ($0) of MP is installed. Update is not supported."
+    ${Else}
+      ${LOG_TEXT} "INFO" "MediaPortal $0 is installed."
+    ${EndIf}
   ${EndIf}
 SectionEnd
 
