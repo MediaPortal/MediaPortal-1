@@ -41,7 +41,6 @@ namespace TvService
     DateTime _dateTimeRecordingStarted;
     Recording _recording;
     readonly bool _isSerie;
-    private  bool _isSerieFileFormat;
 
     #endregion
 
@@ -54,18 +53,15 @@ namespace TvService
     /// <param name="endTime">Date/Time the recording should start without pre-record interval</param>
     /// <param name="endTime">Date/Time the recording should stop with post record interval</param>
     /// <param name="isSerie">Is serie recording</param>
-    /// <param name="isSerieFileFormat">Used by MakefileName() instead of isSerie</param>
     /// 
-    /// chemelli: added isSerieFileFormat as isSerie is sometimes corrupted for MakefileName point of view (mantis #1989)
     /// 
-    public RecordingDetail(Schedule schedule, Channel channel, DateTime endTime, bool isSerie, bool isSerieFileFormat)
+    public RecordingDetail(Schedule schedule, Channel channel, DateTime endTime, bool isSerie)
     {
       _schedule = schedule;
       _channel = channel;
       _endTime = endTime;
       _program = null;
       _isSerie = isSerie;
-      _isSerieFileFormat = isSerieFileFormat;
 
       TvDatabase.Program _current = schedule.ReferencedChannel().CurrentProgram; // current running program
       TvDatabase.Program _next = schedule.ReferencedChannel().NextProgram; // next running one
@@ -241,15 +237,14 @@ namespace TvService
       TvBusinessLayer layer = new TvBusinessLayer();
 
       Setting setting;
-
-      if (!_isSerieFileFormat)
+      if (!this.IsSerie)
       {
-        Log.Debug("Scheduler: MakeFileName() using \"moviesformat\" (_isSerieFileFormat={0})", _isSerieFileFormat);
+        Log.Debug("Scheduler: MakeFileName() using \"moviesformat\" (_isSerie={0})", _isSerie);
         setting = layer.GetSetting("moviesformat", "%title%");
       }
       else
       {
-        Log.Debug("Scheduler: MakeFileName() using \"seriesformat\" (_isSerieFileFormat={0})", _isSerieFileFormat);
+        Log.Debug("Scheduler: MakeFileName() using \"seriesformat\" (_isSerie={0})", _isSerie);
         setting = layer.GetSetting("seriesformat", "%title%");
       }
 
@@ -264,7 +259,10 @@ namespace TvService
       string subDirectory = string.Empty;
       string fullPath = recordingPath;
       string fileName;
-      const string recEngineExt = ".mpg";
+      string recEngineExt;
+      int recFormat = this.CardInfo.Card.RecordingFormat;
+      if(recFormat == 0) recEngineExt = ".ts";
+      else recEngineExt = ".mpg";
 
       strInput = Utils.ReplaceTag(strInput, "%channel%", Utils.MakeFileName(_schedule.ReferencedChannel().DisplayName), "unknown");
       strInput = Utils.ReplaceTag(strInput, "%title%", Utils.MakeFileName(Program.Title), "unknown");
