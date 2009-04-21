@@ -381,7 +381,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   File "${svn_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
   ; binary used for skystar2 support
-  File "${svn_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\dvblib.dll"
+  File "${svn_DirectShowFilters}\dvblib\bin\${BUILD_TYPE}\dvblib.dll"
 
   ; Common App Data Files
   SetOutPath "${COMMON_APPDATA}"

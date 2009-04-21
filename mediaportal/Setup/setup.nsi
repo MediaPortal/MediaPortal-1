@@ -493,7 +493,7 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath "$MPdir.Base\Wizards"
   File "..\Configuration\Wizards\*.*"
   ; binary used for skystar2 support
-  File "${svn_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\dvblib.dll"
+  File "${svn_DirectShowFilters}\dvblib\bin\${BUILD_TYPE}\dvblib.dll"
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION
