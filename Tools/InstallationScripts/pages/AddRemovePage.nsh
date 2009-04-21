@@ -83,7 +83,7 @@ Function PageReinstall
 
   nsDialogs::Create /NOUNLOAD 1018
 
-  ${NSD_CreateLabel} 0 0 100% 24u $R1
+  ${NSD_CreateLabel} 0 0 300u 24u $R1
   Pop $R1
 
   ${NSD_CreateRadioButton} 30u 50u -30u 8u $R2

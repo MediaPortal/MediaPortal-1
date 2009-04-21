@@ -51,25 +51,25 @@ Function un.UninstallModePage
   ;Pop $R1
 
 
-  ${NSD_CreateRadioButton} 20u 20u -30u 8u "$(TEXT_UNMODE_OPT0)"
+  ${NSD_CreateRadioButton} 20u 20u -20u 8u "$(TEXT_UNMODE_OPT0)"
   Pop $uninstModePage.optBtn0
   ${NSD_OnClick} $uninstModePage.optBtn0 un.UninstallModePageUpdateSelection
 
-  ${NSD_CreateLabel} 30u 30u 100% 24u "$(TEXT_UNMODE_OPT0_DESC)"
+  ${NSD_CreateLabel} 30u 30u -30u 24u "$(TEXT_UNMODE_OPT0_DESC)"
 
 
-  ${NSD_CreateRadioButton} 20u 60u -30u 8u "$(TEXT_UNMODE_OPT1)"
+  ${NSD_CreateRadioButton} 20u 60u -20u 8u "$(TEXT_UNMODE_OPT1)"
   Pop $uninstModePage.optBtn1
   ${NSD_OnClick} $uninstModePage.optBtn1 un.UninstallModePageUpdateSelection
 
-  ${NSD_CreateLabel} 30u 70u 100% 24u "$(TEXT_UNMODE_OPT1_DESC)"
+  ${NSD_CreateLabel} 30u 70u -30u 24u "$(TEXT_UNMODE_OPT1_DESC)"
 
 
-  ${NSD_CreateRadioButton} 20u 100u -30u 8u "$(TEXT_UNMODE_OPT2)"
+  ${NSD_CreateRadioButton} 20u 100u -20u 8u "$(TEXT_UNMODE_OPT2)"
   Pop $uninstModePage.optBtn2
   ${NSD_OnClick} $uninstModePage.optBtn2 un.UninstallModePageUpdateSelection
 
-  ${NSD_CreateLabel} 30u 110u 100% 24u "$(TEXT_UNMODE_OPT2_DESC)"
+  ${NSD_CreateLabel} 30u 110u -30u 24u "$(TEXT_UNMODE_OPT2_DESC)"
 
 
   SendMessage $uninstModePage.optBtn0 ${BM_SETCHECK} ${BST_CHECKED} 0
