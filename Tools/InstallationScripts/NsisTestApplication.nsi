@@ -162,27 +162,48 @@ Section /o "OS, .Net and VCRedist Tests"
 
 SectionEnd
 
-Section /o "MediaPortal CleanUp: 1.0 for 1.0.1 Update"
+Section /o "MediaPortal Update Procedure Check"
 
-;MP onInit
-    ${If} ${MPIsInstalled}
-      !insertmacro MP_GET_INSTALL_DIR $INSTDIR
+    !insertmacro MP_GET_VERSION $0
+    ${If} $0 == 1.0.0.0
+      ${LOG_TEXT} "INFO" "Removing 1.0 files..."
+    ${ElseIf} $0 == 1.0.1.0
+      ${LOG_TEXT} "INFO" "Removing 1.0.1 files..."
+    ${ElseIf} $0 == ""
+      ${LOG_TEXT} "INFO" "It seems MP is not installed, no update procedure will be done"
+    ${ElseIf} $R3 != 0
+      ${LOG_TEXT} "INFO" "An SVN version ($0) of MP is installed. Update is not supported."
     ${Else}
-      MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_UPDATE_BUT_NOT_INSTALLED)"
-      Abort
+      ${LOG_TEXT} "INFO" "MediaPortal $0 is installed."
     ${EndIf}
 
+SectionEnd
+
+Section /o "MediaPortal CleanUp: 1.0 for 1.0.1/1.0.2 Update"
+
 ;MP secPrepare
-  ${ReadMediaPortalDirs} "$INSTDIR"
+  !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
+  ${ReadMediaPortalDirs} "$MPdir.Base"
 
   ${LOG_TEXT} "INFO" "Deleting SkinCache..."
   RMDir /r "$MPdir.Cache"
 
-  # if it is an update include a file with  last update/cleanup instructions
-  ;${If} $UpdateMode = 1
-    ${LOG_TEXT} "INFO" "Removing 1.0 files..."
-    !include "${svn_MP}\Setup\update-1.0.1.nsh"
-  ;${EndIf}
+      ${LOG_TEXT} "INFO" "Removing 1.0 files..."
+      !include "${svn_MP}\Setup\update-1.0.1.nsh"
+
+SectionEnd
+
+Section /o "MediaPortal CleanUp: 1.0.1 for 1.0.2 Update"
+
+;MP secPrepare
+  !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
+  ${ReadMediaPortalDirs} "$MPdir.Base"
+
+  ${LOG_TEXT} "INFO" "Deleting SkinCache..."
+  RMDir /r "$MPdir.Cache"
+
+      ${LOG_TEXT} "INFO" "Removing 1.0.1 files..."
+      !include "${svn_MP}\Setup\update-1.0.2.nsh"
 
 SectionEnd
 
