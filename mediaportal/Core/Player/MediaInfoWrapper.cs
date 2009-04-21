@@ -59,11 +59,17 @@ namespace MediaPortal.Player
     {
 
       bool isTV = Util.Utils.IsLiveTv(strFile);
+      bool isRadio = Util.Utils.IsLiveRadio(strFile);
       bool isDVD = Util.Utils.IsDVD(strFile);
       bool isVideo = Util.Utils.IsVideo(strFile);
-      bool IsAVStream = Util.Utils.IsAVStream(strFile); //rtsp users for live TV and recordings.
+      bool isAVStream = Util.Utils.IsAVStream(strFile); //rtsp users for live TV and recordings.
 
-      //currently mediainfo is only used for video related material, but liveTV 
+      if(isTV || isRadio || isAVStream)
+      {
+        return;
+      }
+
+      //currently mediainfo is only used for video related material
       if (!isDVD && !isVideo)
       {
         return;
