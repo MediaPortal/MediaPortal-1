@@ -282,7 +282,7 @@ namespace MediaPortal.DeployTool
     {
       CheckResult result = new CheckResult();
       result.state = CheckState.NOT_INSTALLED;
-      
+
       RegistryKey key =
         Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] +
                                          "Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + RegistryPath);
@@ -294,7 +294,7 @@ namespace MediaPortal.DeployTool
 
         if (_IsInstalled == 1)
         {
-          result.state = version == GetPackageVersion(true) ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
+          result.state = version == GetPackageVersion('c') ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
         }
         else
         {
@@ -433,9 +433,19 @@ namespace MediaPortal.DeployTool
       }
     }
 
-    public static string GetPackageVersion(bool current)
+    public static string GetPackageVersion(char type)
     {
-      return current ? "1.0.1" : "1.0.0";
+      switch(type.ToString().ToLower())
+      {
+        case "c":                       //current
+                  return "1.0.2";
+        case "p":                       //previous
+                  return "1.0.1";
+        case "s":                       //stable
+                  return "1.0.0";
+        default:
+          return string.Empty;
+      }
     }
   }
 }
