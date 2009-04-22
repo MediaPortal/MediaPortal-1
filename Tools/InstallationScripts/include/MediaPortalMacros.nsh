@@ -144,30 +144,27 @@
 # old installations < 0.2.3.0 RC 3
 !macro _MP022IsInstalled _a _b _t _f
   SetRegView 32
-
   !insertmacro _LOGICLIB_TEMP
-  ClearErrors
+
   ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{87819CFA-1786-484D-B0DE-10B5FBF2625D}" "UninstallString"
-  IfErrors `${_f}` `${_t}`
+  IfFileExists $_LOGICLIB_TEMP `${_t}` `${_f}`
 !macroend
 !define MP022IsInstalled `"" MP022IsInstalled ""`
 
 !macro _MP023RC3IsInstalled _a _b _t _f
   SetRegView 32
-
   !insertmacro _LOGICLIB_TEMP
-  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal 0.2.3.0 RC3" "UninstallString"
 
+  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal 0.2.3.0 RC3" "UninstallString"
   IfFileExists $_LOGICLIB_TEMP `${_t}` `${_f}`
 !macroend
 !define MP023RC3IsInstalled `"" MP023RC3IsInstalled ""`
 
 !macro _MP023IsInstalled _a _b _t _f
   SetRegView 32
-
   !insertmacro _LOGICLIB_TEMP
-  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal 0.2.3.0" "UninstallString"
 
+  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal 0.2.3.0" "UninstallString"
   IfFileExists $_LOGICLIB_TEMP `${_t}` `${_f}`
 !macroend
 !define MP023IsInstalled `"" MP023IsInstalled ""`
@@ -176,23 +173,22 @@
 
 !macro _MSI_TVServerIsInstalled _a _b _t _f
   SetRegView 32
-
   !insertmacro _LOGICLIB_TEMP
-  ClearErrors
+
   ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{4B738773-EE07-413D-AFB7-BB0AB04A5488}" "UninstallString"
-  IfErrors `${_f}` `${_t}`
+  IfFileExists $_LOGICLIB_TEMP `${_t}` `${_f}`
 !macroend
 !define MSI_TVServerIsInstalled `"" MSI_TVServerIsInstalled ""`
 
 !macro _MSI_TVClientIsInstalled _a _b _t _f
   SetRegView 32
-
   !insertmacro _LOGICLIB_TEMP
-  ClearErrors
+
   ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{F7444E89-5BC0-497E-9650-E50539860DE0}" "UninstallString"
-  IfErrors 0 `${_t}`
+  IfFileExists $_LOGICLIB_TEMP `${_t}`
+
   ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}" "UninstallString"
-  IfErrors `${_f}` `${_t}`
+  IfFileExists $_LOGICLIB_TEMP `${_t}` `${_f}`
 !macroend
 !define MSI_TVClientIsInstalled `"" MSI_TVClientIsInstalled ""`
 
@@ -200,20 +196,18 @@
 
 !macro _MPIsInstalled _a _b _t _f
   SetRegView 32
-
   !insertmacro _LOGICLIB_TEMP
-  ReadRegStr $_LOGICLIB_TEMP HKLM "${MP_REG_UNINSTALL}" "UninstallString"
 
+  ReadRegStr $_LOGICLIB_TEMP HKLM "${MP_REG_UNINSTALL}" "UninstallString"
   IfFileExists $_LOGICLIB_TEMP `${_t}` `${_f}`
 !macroend
 !define MPIsInstalled `"" MPIsInstalled ""`
 
 !macro _TVServerIsInstalled _a _b _t _f
   SetRegView 32
-
   !insertmacro _LOGICLIB_TEMP
-  ReadRegStr $_LOGICLIB_TEMP HKLM "${TV3_REG_UNINSTALL}" "UninstallString"
 
+  ReadRegStr $_LOGICLIB_TEMP HKLM "${TV3_REG_UNINSTALL}" "UninstallString"
   IfFileExists $_LOGICLIB_TEMP 0 `${_f}`
 
   ReadRegStr $_LOGICLIB_TEMP HKLM "${TV3_REG_UNINSTALL}" "MementoSection_SecServer"
@@ -223,10 +217,9 @@
 
 !macro _TVClientIsInstalled _a _b _t _f
   SetRegView 32
-
   !insertmacro _LOGICLIB_TEMP
-  ReadRegStr $_LOGICLIB_TEMP HKLM "${TV3_REG_UNINSTALL}" "UninstallString"
 
+  ReadRegStr $_LOGICLIB_TEMP HKLM "${TV3_REG_UNINSTALL}" "UninstallString"
   IfFileExists $_LOGICLIB_TEMP 0 `${_f}`
 
   ReadRegStr $_LOGICLIB_TEMP HKLM "${TV3_REG_UNINSTALL}" "MementoSection_SecClient"
