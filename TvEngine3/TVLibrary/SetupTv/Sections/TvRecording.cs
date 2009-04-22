@@ -104,26 +104,26 @@ namespace SetupTv.Sections
                                         DateTime.Now.Minute, DateTime.Now.Second);
             if (strInput != string.Empty)
             {
-                strInput = Utils.ReplaceTag(strInput, "channel", example[recType].Channel, "unknown");
-                strInput = Utils.ReplaceTag(strInput, "title", example[recType].Title, "unknown");
-                strInput = Utils.ReplaceTag(strInput, "name", example[recType].Episode, "unknown");
-                strInput = Utils.ReplaceTag(strInput, "series", example[recType].SeriesNum, "unknown");
-                strInput = Utils.ReplaceTag(strInput, "episode", example[recType].EpisodeNum, "unknown");
-                strInput = Utils.ReplaceTag(strInput, "part", example[recType].EpisodePart, "unknown");
-                strInput = Utils.ReplaceTag(strInput, "date", example[recType].StartDate.ToShortDateString(), "unknown");
-                strInput = Utils.ReplaceTag(strInput, "start", example[recType].StartDate.ToShortTimeString(), "unknown");
-                strInput = Utils.ReplaceTag(strInput, "end", example[recType].EndDate.ToShortTimeString(), "unknown");
-                strInput = Utils.ReplaceTag(strInput, "genre", example[recType].Genre, "unknown");
-                strInput = Utils.ReplaceTag(strInput, "startday", example[recType].StartDate.ToString("dd"), "unknown");
-                strInput = Utils.ReplaceTag(strInput, "startmonth", example[recType].StartDate.ToString("MM"), "unknown");
-                strInput = Utils.ReplaceTag(strInput, "startyear", example[recType].StartDate.ToString("yyyy"), "unknown");
-                strInput = Utils.ReplaceTag(strInput, "starthh", example[recType].StartDate.ToString("HH"), "unknown");
-                strInput = Utils.ReplaceTag(strInput, "startmm", example[recType].StartDate.ToString("mm"), "unknown");
-                strInput = Utils.ReplaceTag(strInput, "endday", example[recType].EndDate.ToString("dd"), "unknown");
-                strInput = Utils.ReplaceTag(strInput, "endmonth", example[recType].EndDate.ToString("MM"), "unknown");
-                strInput = Utils.ReplaceTag(strInput, "endyear", example[recType].EndDate.ToString("yyyy"), "unknown");
-                strInput = Utils.ReplaceTag(strInput, "endhh", example[recType].EndDate.ToString("HH"), "unknown");
-                strInput = Utils.ReplaceTag(strInput, "endmm", example[recType].EndDate.ToString("mm"), "unknown");
+                strInput = Utils.ReplaceTag(strInput, "%channel%", example[recType].Channel, "unknown");
+                strInput = Utils.ReplaceTag(strInput, "%title%", example[recType].Title, "unknown");
+                strInput = Utils.ReplaceTag(strInput, "%name%", example[recType].Episode, "unknown");
+                strInput = Utils.ReplaceTag(strInput, "%series%", example[recType].SeriesNum, "unknown");
+                strInput = Utils.ReplaceTag(strInput, "%episode%", example[recType].EpisodeNum, "unknown");
+                strInput = Utils.ReplaceTag(strInput, "%part%", example[recType].EpisodePart, "unknown");
+                strInput = Utils.ReplaceTag(strInput, "%date%", example[recType].StartDate.ToShortDateString(), "unknown");
+                strInput = Utils.ReplaceTag(strInput, "%start%", example[recType].StartDate.ToShortTimeString(), "unknown");
+                strInput = Utils.ReplaceTag(strInput, "%end%", example[recType].EndDate.ToShortTimeString(), "unknown");
+                strInput = Utils.ReplaceTag(strInput, "%genre%", example[recType].Genre, "unknown");
+                strInput = Utils.ReplaceTag(strInput, "%startday%", example[recType].StartDate.ToString("dd"), "unknown");
+                strInput = Utils.ReplaceTag(strInput, "%startmonth%", example[recType].StartDate.ToString("MM"), "unknown");
+                strInput = Utils.ReplaceTag(strInput, "%startyear%", example[recType].StartDate.ToString("yyyy"), "unknown");
+                strInput = Utils.ReplaceTag(strInput, "%starthh%", example[recType].StartDate.ToString("HH"), "unknown");
+                strInput = Utils.ReplaceTag(strInput, "%startmm%", example[recType].StartDate.ToString("mm"), "unknown");
+                strInput = Utils.ReplaceTag(strInput, "%endday%", example[recType].EndDate.ToString("dd"), "unknown");
+                strInput = Utils.ReplaceTag(strInput, "%endmonth%", example[recType].EndDate.ToString("MM"), "unknown");
+                strInput = Utils.ReplaceTag(strInput, "%endyear%", example[recType].EndDate.ToString("yyyy"), "unknown");
+                strInput = Utils.ReplaceTag(strInput, "%endhh%", example[recType].EndDate.ToString("HH"), "unknown");
+                strInput = Utils.ReplaceTag(strInput, "%endmm%", example[recType].EndDate.ToString("mm"), "unknown");
 
                 int index = strInput.LastIndexOf('\\');
                 switch (index)

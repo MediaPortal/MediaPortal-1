@@ -310,11 +310,9 @@ public class MediaPortalApp : D3DApp, IRender
         mpWatchDog.Start();
       }
 #endif
-
-      //Log MediaPortal version build and operating system level
       OSVersionInfo os = new OperatingSystemVersion();
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-      string ServicePack = String.Empty;
+      string ServicePack = "";
       if (!String.IsNullOrEmpty(os.OSCSDVersion))
       {
         ServicePack = " (" + os.OSCSDVersion + ")";
@@ -322,17 +320,6 @@ public class MediaPortalApp : D3DApp, IRender
       Log.Info("Main: MediaPortal v" + versionInfo.FileVersion + " is starting up on " + os.OSVersionString +
                ServicePack);
 
-      //Log last install of WindowsUpdate patches
-      string LastSuccessTime = "NEVER !!!";
-      RegistryKey regKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsUpdate\\Auto Update\\Results\\Install");
-      if (regKey != null)
-      {
-          LastSuccessTime = (string)regKey.GetValue("LastSuccessTime");
-          regKey.Close();
-      }
-      Log.Info("Main: Last install from WindowsUpdates is {0}", LastSuccessTime);
-
-      //Disable "ghosting" for WindowsVista and up
       int ver = (os.OSMajorVersion * 10) + os.OSMinorVersion;
       if (ver >= 60)
       {
@@ -340,7 +327,6 @@ public class MediaPortalApp : D3DApp, IRender
         NativeMethods.DisableProcessWindowsGhosting();
       }
 
-      //Start MediaPortal
       Log.Info("Main: Using Directories:");
       foreach (Config.Dir option in Enum.GetValues(typeof(Config.Dir)))
       {
