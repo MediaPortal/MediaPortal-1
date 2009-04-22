@@ -671,30 +671,32 @@ namespace TvService
       return DateTime.Now;
     }
 
-    public static string ReplaceTag(string line, string tag, string value, string empty)
+    public static string ReplaceTag(string line, string tag, string value, string defaultValue)
     {
       if (string.IsNullOrEmpty(line) || string.IsNullOrEmpty(tag))
-        return "unknown";
+        return defaultValue;
 
-      Regex r = new Regex(String.Format(@"\[[^%]*{0}[^\]]*[\]]", tag));
-      if (value == empty)
+      // check for [*%tag%*]
+      Regex r = new Regex(String.Format(@"\[[^%]*\%{0}\%[^\]]*\]", tag));
+
+      Match match = r.Match(line);
+      if (match != null && match.Length > 0)
       {
-        Match match = r.Match(line);
-        if (match != null && match.Length > 0)
+        // Remove [ xxx ] completly
+        line = line.Remove(match.Index, match.Length);
+        if (!String.IsNullOrEmpty(value))
         {
-          line = line.Remove(match.Index, match.Length);
-        }
-      }
-      else
-      {
-        Match match = r.Match(line);
-        if (match != null && match.Length > 0)
-        {
-          line = line.Remove(match.Index, match.Length);
+          // Add again xxx if value != null
           string m = match.Value.Substring(1, match.Value.Length - 2);
           line = line.Insert(match.Index, m);
         }
       }
+      else
+      {
+        //remove the % from the orignal line for this specific tag
+        line = line.Replace(String.Format("%{0}%", tag), tag);
+      }
+      // finally replace tag with value
       return line.Replace(tag, value);
     }
 
