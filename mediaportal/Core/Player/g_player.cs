@@ -1149,21 +1149,10 @@ namespace MediaPortal.Player
       return player;
     }
 
-    public static bool Play(string strFile)
-    {
-      return Play(strFile, MediaType.Unknown);
-    }
-
     public static bool Play(string strFile, MediaType type)
-    {          
+    {
       try
       {
-        if (string.IsNullOrEmpty(strFile))
-        {
-          UnableToPlay(strFile, type);
-          return false;
-        }
-        
         _mediaInfo = new MediaInfoWrapper(strFile);
 
         Starting = true;
@@ -1174,7 +1163,7 @@ namespace MediaPortal.Player
           GUIMessage msgRadio = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendMessage(msgRadio);
         }
-        //if (!Util.Utils.IsLiveTv(strFile) && !Util.Utils.IsLiveRadio(strFile))
+        if (!Util.Utils.IsLiveTv(strFile) && !Util.Utils.IsLiveRadio(strFile))
         {
           //file is not a live tv file
           //so tell recorder to stop timeshifting live-tv
@@ -1182,11 +1171,14 @@ namespace MediaPortal.Player
           //GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
           //GUIWindowManager.SendMessage(msgTv);
         }
-        
-        if (Util.Utils.IsLiveTv(strFile) || Util.Utils.IsRTSP(strFile) || Util.Utils.IsVideo(strFile))
+
+        int t1 = (int) type;
+        RefreshRateChanger.MediaType t2 = (RefreshRateChanger.MediaType) t1;
+
+        if (Util.Utils.IsLiveTv(strFile) || Util.Utils.IsRTSP(strFile))
         {
-          // refreshrate change done here.
-          RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+          // liveTV needs the refreshrate change done here.
+          RefreshRateChanger.AdaptRefreshRate(strFile, t2);
 
           if (RefreshRateChanger.RefreshRateChangePending)
           {
@@ -1207,7 +1199,12 @@ namespace MediaPortal.Player
 
         _currentStep = 0;
         _currentStepIndex = -1;
-        _seekTimer = DateTime.MinValue;        
+        _seekTimer = DateTime.MinValue;
+        if (string.IsNullOrEmpty(strFile))
+        {
+          UnableToPlay(strFile, type);
+          return false;
+        }
         _isInitialized = true;
         _subs = null;
         Log.Info("g_Player.Play({0} {1})", strFile, type);
@@ -1216,6 +1213,178 @@ namespace MediaPortal.Player
           GUIGraphicsContext.ShowBackground = true;
           OnChanged(strFile);
           OnStopped();
+          if (_player != null)
+          {
+            _player.Stop();
+          }
+          CachePlayer();
+          _player = null;
+          GC.Collect();
+          GC.Collect();
+          GC.Collect();
+          GC.Collect();
+          //?? ms-help://MS.VSCC.v80/MS.MSDN.v80/MS.NETDEVFX.v20.de/cpref2/html/M_System_GC_Collect_1_804c5d7d.htm
+        }
+
+        if (!Util.Utils.IsAVStream(strFile) && Util.Utils.IsVideo(strFile))
+        {
+          RefreshRateChanger.AdaptRefreshRate(strFile, t2);
+
+          if (RefreshRateChanger.RefreshRateChangePending)
+          {
+            TimeSpan ts = DateTime.Now - RefreshRateChanger.RefreshRateChangeExecutionTime;
+            if (ts.TotalSeconds > RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX)
+            {
+              Log.Info(
+                "g_Player.Play - waited {0}s for refreshrate change, but it never took place (check your config). Proceeding with playback.",
+                RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX);
+              RefreshRateChanger.ResetRefreshRateState();
+            }
+            else
+            {
+              return true;
+            }
+          }
+
+          if (Util.Utils.PlayMovie(strFile))
+          {
+            _isInitialized = false;
+            UnableToPlay(strFile, type);
+            return false;
+          }
+          string extension = Path.GetExtension(strFile).ToLower();
+          if (extension == ".ifo" || extension == ".vob")
+          {
+            int iUseVMR9 = 0;
+            using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            {
+              iUseVMR9 = xmlreader.GetValueAsInt("dvdplayer", "vmr9", 0);
+            }
+            _player = new DVDPlayer9();
+            _player = CachePreviousPlayer(_player);
+            bool _isPlaybackPossible = _player.Play(strFile);
+            if (!_isPlaybackPossible)
+            {
+              Log.Info("player:ended");
+              _player.Release();
+              _player = null;
+              _subs = null;
+              GC.Collect();
+              GC.Collect();
+              GC.Collect();
+            }
+            else if (_player.Playing)
+            {
+              _currentFilePlaying = _player.CurrentFile;
+              OnStarted();
+              _isInitialized = false;
+              GUIGraphicsContext.IsFullScreenVideo = true;
+              GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+            }
+            _isInitialized = false;
+            if (!_isPlaybackPossible)
+            {
+              UnableToPlay(strFile, type);
+            }
+            return _isPlaybackPossible;
+          }
+        }
+        _player = _factory.Create(strFile, type);
+        if (_player != null)
+        {
+          LoadChapters(strFile);
+          _player = CachePreviousPlayer(_player);
+          bool bResult = _player.Play(strFile);
+          if (!bResult)
+          {
+            Log.Info("player:ended");
+            if (_player != null)
+            {
+              _player.Release();
+            }
+            _player = null;
+            _subs = null;
+            GC.Collect();
+            GC.Collect();
+            GC.Collect();
+          }
+          else if (_player.Playing)
+          {
+            _currentFilePlaying = _player.CurrentFile;
+            if (_chapters == null)
+            {
+              _chapters = _player.Chapters;
+            }
+            OnStarted();
+          }
+          _isInitialized = false;
+          if (!bResult)
+          {
+            UnableToPlay(strFile, type);
+          }
+          return bResult;
+        }
+        _isInitialized = false;
+      }
+      finally
+      {
+        Starting = false;
+      }
+      UnableToPlay(strFile, type);
+      return false;
+    }
+
+    public static bool Play(string strFile)
+    {
+      try
+      {
+        // when we are watching TV and suddenly decides to watch a video, we want to make sure that the TV is stopped.
+        /*if (g_Player.IsTimeShifting && g_Player.IsTV)
+        {
+          Log.Info("player: Stopping timeshifting.");
+          g_Player.Stop();
+        }
+        */
+
+        _mediaInfo = new MediaInfoWrapper(strFile);
+
+        Starting = true;
+        ChangeDriveSpeed(strFile, DriveType.CD);
+        //stop radio
+        if (!Util.Utils.UsingTvServer)
+        {
+          if (!Util.Utils.IsLiveRadio(strFile))
+          {
+            GUIMessage msgRadio = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO, 0, 0, 0, 0, 0, null);
+            GUIWindowManager.SendMessage(msgRadio);
+          }
+          if (!Util.Utils.IsLiveTv(strFile) && !Util.Utils.IsLiveRadio(strFile))
+          {
+            //file is not a live tv file
+            //so tell recorder to stop timeshifting live-tv
+            //Log.Info("player: file is not live tv, so stop timeshifting:{0}", strFile);
+            //GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
+            //GUIWindowManager.SendMessage(msgTv);
+          }
+        }
+
+        _currentStep = 0;
+        _currentStepIndex = -1;
+        _seekTimer = DateTime.MinValue;
+        if (string.IsNullOrEmpty(strFile))
+        {
+          UnableToPlay(strFile, MediaType.Unknown);
+          return false;
+        }
+        _isInitialized = true;
+        _subs = null;
+        Log.Debug("g_Player.Play({0})", strFile);
+        if (_player != null)
+        {
+          GUIGraphicsContext.ShowBackground = true;
+          OnChanged(strFile);
+          OnStopped();
+
           //SV 
           // If we're using the internal music player and cross-fading is enabled
           // we don't want a hard stop here as it will break cross-fading
@@ -1225,9 +1394,9 @@ namespace MediaPortal.Player
           if (!_player.IsExternal)
           {
             GC.Collect();
-            //GC.Collect();
-            //GC.Collect();
-            //GC.Collect();
+            GC.Collect();
+            GC.Collect();
+            GC.Collect();
           }
           //?? ms-help://MS.VSCC.v80/MS.MSDN.v80/MS.NETDEVFX.v20.de/cpref2/html/M_System_GC_Collect_1_804c5d7d.htm
           bool doStop = true;
@@ -1251,9 +1420,9 @@ namespace MediaPortal.Player
             if (!isExternal)
             {
               GC.Collect();
-              //GC.Collect();
-              //GC.Collect();
-              //GC.Collect();
+              GC.Collect();
+              GC.Collect();
+              GC.Collect();
             }
           }
         }
@@ -1266,45 +1435,57 @@ namespace MediaPortal.Player
             BassMusicPlayer.Player.FreeBass();
           }
 
-          string extension = Path.GetExtension(strFile).ToLower();
-          if (!Util.Utils.IsRTSP(strFile) && extension != ".ts") // do not play recorded tv with external player
+          RefreshRateChanger.AdaptRefreshRate(strFile, RefreshRateChanger.MediaType.Unknown);
+          if (RefreshRateChanger.RefreshRateChangePending)
           {
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            TimeSpan ts = DateTime.Now - RefreshRateChanger.RefreshRateChangeExecutionTime;
+            if (ts.TotalSeconds > RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX)
             {
-              bool bInternal;
-              bool bInternalDVD;
-              bInternal = xmlreader.GetValueAsBool("movieplayer", "internal", true);
-              bInternalDVD = xmlreader.GetValueAsBool("dvdplayer", "internal", true);
-
-              if ((!bInternalDVD && (extension == ".ifo" || extension == ".vob")) || (!bInternal && (extension != ".ifo" && extension != ".vob"))) // external player used
-              {
-                if (Util.Utils.PlayMovie(strFile))
-                {
-                  return true;
-                }
-                else // external player error
-                {
-                  _isInitialized = false;
-                  UnableToPlay(strFile, type);
-                  return false;
-                }
-              }
+              Log.Warn(
+                "g_Player.Play - waited {0}s for refreshrate change, but it never took place (check your config). Proceeding with playback.",
+                RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX);
+              RefreshRateChanger.ResetRefreshRateState();
+            }
+            else
+            {
+              return true;
             }
           }
-          if (extension == ".ifo" || extension == ".vob")
+          bool bInternal = true;
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          {
+            bInternal = xmlreader.GetValueAsBool("movieplayer", "internal", true);
+          }
+          if (Util.Utils.PlayMovie(strFile)) // external player used
           {            
+            return true;
+          }
+          else if(!bInternal) // external player error
+          {
+            _isInitialized = false;
+            UnableToPlay(strFile, MediaType.Unknown);
+            return false;
+          }
+          string extension = Path.GetExtension(strFile).ToLower();
+          if (extension == ".ifo" || extension == ".vob")
+          {
+            int iUseVMR9 = 0;
+            using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            {
+              iUseVMR9 = xmlreader.GetValueAsInt("dvdplayer", "vmr9", 0);
+            }
             _player = new DVDPlayer9();
             _player = CachePreviousPlayer(_player);
             bool _isPlaybackPossible = _player.Play(strFile);
             if (!_isPlaybackPossible)
             {
-              Log.Info("g_Player: ended");
+              Log.Debug("g_player: Player returned");
               _player.Release();
               _player = null;
               _subs = null;
               GC.Collect();
-              //GC.Collect();
-              //GC.Collect();
+              GC.Collect();
+              GC.Collect();
             }
             else if (_player.Playing)
             {
@@ -1317,19 +1498,13 @@ namespace MediaPortal.Player
             _isInitialized = false;
             if (!_isPlaybackPossible)
             {
-              UnableToPlay(strFile, type);
+              UnableToPlay(strFile, MediaType.Unknown);
             }
             return _isPlaybackPossible;
           }
         }
-        if (type == MediaType.Unknown)
-        {
-          _player = _factory.Create(strFile);
-        }
-        else
-        {
-          _player = _factory.Create(strFile, type);
-        }
+
+        _player = _factory.Create(strFile);
         if (_player != null)
         {
           LoadChapters(strFile);
@@ -1337,31 +1512,27 @@ namespace MediaPortal.Player
           bool bResult = _player.Play(strFile);
           if (!bResult)
           {
-            Log.Info("g_Player: ended");
-            if (_player != null)
-            {
-              _player.Release();
-            }
+            Log.Debug("g_player: Player returned");
+            _player.Release();
             _player = null;
             _subs = null;
             GC.Collect();
-            //GC.Collect();
-            //GC.Collect();
+            GC.Collect();
+            GC.Collect();
           }
           else if (_player.Playing)
           {
-            _currentFilePlaying = _player.CurrentFile;
             if (_chapters == null)
             {
               _chapters = _player.Chapters;
             }
+            _currentFilePlaying = _player.CurrentFile;
             OnStarted();
           }
           _isInitialized = false;
           if (!bResult)
           {
-            _isInitialized = false;
-            UnableToPlay(strFile, type);
+            UnableToPlay(strFile, MediaType.Unknown);
           }
           return bResult;
         }
@@ -1371,9 +1542,9 @@ namespace MediaPortal.Player
       {
         Starting = false;
       }
-      UnableToPlay(strFile, type);
+      UnableToPlay(strFile, MediaType.Unknown);
       return false;
-    }    
+    }
 
     public static bool IsExternalPlayer
     {
@@ -2497,16 +2668,17 @@ namespace MediaPortal.Player
       }
       return false;
     }
-    
+
     private static bool LoadChapters(string videoFile)
     {
       _chapters = null;
       _jumpPoints = null;
 
       try
-      {        
-        string chapterFile = Path.ChangeExtension(videoFile, ".txt");        
-        if(!File.Exists(chapterFile) || IsFileUsedbyAnotherProcess(chapterFile))
+      {
+        string chapterFile = Path.ChangeExtension(videoFile, ".txt");
+
+        if (!File.Exists(chapterFile) || IsFileUsedbyAnotherProcess(chapterFile))
         {
           return false;
         }
@@ -2567,12 +2739,12 @@ namespace MediaPortal.Player
             }
           }
         }
-
         if (chapters.Count == 0)
         {
           Log.Warn("g_Player.LoadChapters() - No chapters found in file \"{0}\"", chapterFile);
           return false;
         }
+
         _chapters = new double[chapters.Count];
         chapters.CopyTo(_chapters);
 

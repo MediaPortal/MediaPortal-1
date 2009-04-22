@@ -327,7 +327,6 @@
     <Compile Include="GUITV\GUITVTeletextBase.cs" />
     <Compile Include="GUIVideoFiles\MatroskaTagLib.cs" />
     <Compile Include="GUIVideoFiles\SelectDVDHandler.cs" />
-    <Compile Include="GUIWeather\WeatherChannel.cs" />
     <Compile Include="Home\GUIHome.cs" />
     <Compile Include="Home\GUIHomeBaseWindow.cs" />
     <Compile Include="Home\GUIHomeSetupForm.cs">
