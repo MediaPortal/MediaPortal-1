@@ -259,10 +259,10 @@ namespace TvService
       string subDirectory = string.Empty;
       string fullPath = recordingPath;
       string fileName;
-      string recEngineExt;
-      int recFormat = this.CardInfo.Card.RecordingFormat;
+      const string recEngineExt = ".ts";
+      /*int recFormat = this.CardInfo.Card.RecordingFormat;
       if(recFormat == 0) recEngineExt = ".ts";
-      else recEngineExt = ".mpg";
+      else recEngineExt = ".mpg";*/
 
       strInput = Utils.ReplaceTag(strInput, "%channel%", Utils.MakeFileName(_schedule.ReferencedChannel().DisplayName), "unknown");
       strInput = Utils.ReplaceTag(strInput, "%title%", Utils.MakeFileName(Program.Title), "unknown");
