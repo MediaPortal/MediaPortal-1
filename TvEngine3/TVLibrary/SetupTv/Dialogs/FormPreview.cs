@@ -1,13 +1,14 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using SetupControls;
 using TvDatabase;
 using TvLibrary.Log;
 using TvControl;
 
 namespace SetupTv.Sections
 {
-  public partial class FormPreview : Form
+  public partial class FormPreview : MPForm
   {
     Channel _channel;
     VirtualCard _card;

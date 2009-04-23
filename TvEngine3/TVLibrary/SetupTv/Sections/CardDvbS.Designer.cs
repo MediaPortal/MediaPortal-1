@@ -42,6 +42,7 @@ namespace SetupTv.Sections
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage3 = new System.Windows.Forms.TabPage();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.checkEnableDVBS2 = new System.Windows.Forms.CheckBox();
       this.mpTransponder4 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpTransponder3 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpTransponder2 = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -71,7 +72,6 @@ namespace SetupTv.Sections
       this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel6 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLNB1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkEnableDVBS2 = new System.Windows.Forms.CheckBox();
       this.tabPage2 = new System.Windows.Forms.TabPage();
       this.labelTunerLock = new System.Windows.Forms.Label();
       this.label18 = new System.Windows.Forms.Label();
@@ -127,7 +127,7 @@ namespace SetupTv.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBarQuality.Location = new System.Drawing.Point(105, 63);
       this.progressBarQuality.Name = "progressBarQuality";
-      this.progressBarQuality.Size = new System.Drawing.Size(328, 10);
+      this.progressBarQuality.Size = new System.Drawing.Size(309, 10);
       this.progressBarQuality.TabIndex = 59;
       // 
       // progressBarLevel
@@ -136,7 +136,7 @@ namespace SetupTv.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBarLevel.Location = new System.Drawing.Point(105, 40);
       this.progressBarLevel.Name = "progressBarLevel";
-      this.progressBarLevel.Size = new System.Drawing.Size(328, 10);
+      this.progressBarLevel.Size = new System.Drawing.Size(309, 10);
       this.progressBarLevel.TabIndex = 58;
       // 
       // label2
@@ -163,13 +163,13 @@ namespace SetupTv.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBar1.Location = new System.Drawing.Point(18, 87);
       this.progressBar1.Name = "progressBar1";
-      this.progressBar1.Size = new System.Drawing.Size(415, 10);
+      this.progressBar1.Size = new System.Drawing.Size(396, 10);
       this.progressBar1.TabIndex = 55;
       // 
       // mpButtonScanTv
       // 
       this.mpButtonScanTv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonScanTv.Location = new System.Drawing.Point(326, 359);
+      this.mpButtonScanTv.Location = new System.Drawing.Point(307, 359);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
       this.mpButtonScanTv.Size = new System.Drawing.Size(107, 23);
       this.mpButtonScanTv.TabIndex = 1;
@@ -197,7 +197,7 @@ namespace SetupTv.Sections
             this.columnHeader1});
       this.listViewStatus.Location = new System.Drawing.Point(18, 112);
       this.listViewStatus.Name = "listViewStatus";
-      this.listViewStatus.Size = new System.Drawing.Size(415, 224);
+      this.listViewStatus.Size = new System.Drawing.Size(396, 224);
       this.listViewStatus.TabIndex = 67;
       this.listViewStatus.UseCompatibleStateImageBehavior = false;
       this.listViewStatus.View = System.Windows.Forms.View.Details;
@@ -230,7 +230,7 @@ namespace SetupTv.Sections
       this.tabControl1.Location = new System.Drawing.Point(3, 3);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(493, 417);
+      this.tabControl1.Size = new System.Drawing.Size(474, 417);
       this.tabControl1.TabIndex = 69;
       this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
@@ -239,7 +239,7 @@ namespace SetupTv.Sections
       this.tabPage3.Controls.Add(this.groupBox1);
       this.tabPage3.Location = new System.Drawing.Point(4, 22);
       this.tabPage3.Name = "tabPage3";
-      this.tabPage3.Size = new System.Drawing.Size(485, 391);
+      this.tabPage3.Size = new System.Drawing.Size(466, 391);
       this.tabPage3.TabIndex = 2;
       this.tabPage3.Text = "LNB Setup";
       this.tabPage3.UseVisualStyleBackColor = true;
@@ -281,10 +281,20 @@ namespace SetupTv.Sections
       this.groupBox1.Controls.Add(this.mpLNB1);
       this.groupBox1.Location = new System.Drawing.Point(3, 11);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(479, 367);
+      this.groupBox1.Size = new System.Drawing.Size(460, 367);
       this.groupBox1.TabIndex = 67;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "LNB Setup";
+      // 
+      // checkEnableDVBS2
+      // 
+      this.checkEnableDVBS2.AutoSize = true;
+      this.checkEnableDVBS2.Location = new System.Drawing.Point(10, 292);
+      this.checkEnableDVBS2.Name = "checkEnableDVBS2";
+      this.checkEnableDVBS2.Size = new System.Drawing.Size(399, 17);
+      this.checkEnableDVBS2.TabIndex = 91;
+      this.checkEnableDVBS2.Text = "Enable DVB-S2 tuning features (scans and sets extra DVB-S2 transponder info)";
+      this.checkEnableDVBS2.UseVisualStyleBackColor = true;
       // 
       // mpTransponder4
       // 
@@ -292,7 +302,7 @@ namespace SetupTv.Sections
       this.mpTransponder4.FormattingEnabled = true;
       this.mpTransponder4.Location = new System.Drawing.Point(294, 126);
       this.mpTransponder4.Name = "mpTransponder4";
-      this.mpTransponder4.Size = new System.Drawing.Size(172, 21);
+      this.mpTransponder4.Size = new System.Drawing.Size(160, 21);
       this.mpTransponder4.TabIndex = 15;
       // 
       // mpTransponder3
@@ -301,7 +311,7 @@ namespace SetupTv.Sections
       this.mpTransponder3.FormattingEnabled = true;
       this.mpTransponder3.Location = new System.Drawing.Point(294, 99);
       this.mpTransponder3.Name = "mpTransponder3";
-      this.mpTransponder3.Size = new System.Drawing.Size(172, 21);
+      this.mpTransponder3.Size = new System.Drawing.Size(160, 21);
       this.mpTransponder3.TabIndex = 11;
       // 
       // mpTransponder2
@@ -310,7 +320,7 @@ namespace SetupTv.Sections
       this.mpTransponder2.FormattingEnabled = true;
       this.mpTransponder2.Location = new System.Drawing.Point(294, 72);
       this.mpTransponder2.Name = "mpTransponder2";
-      this.mpTransponder2.Size = new System.Drawing.Size(172, 21);
+      this.mpTransponder2.Size = new System.Drawing.Size(160, 21);
       this.mpTransponder2.TabIndex = 7;
       // 
       // mpTransponder1
@@ -319,7 +329,7 @@ namespace SetupTv.Sections
       this.mpTransponder1.FormattingEnabled = true;
       this.mpTransponder1.Location = new System.Drawing.Point(294, 45);
       this.mpTransponder1.Name = "mpTransponder1";
-      this.mpTransponder1.Size = new System.Drawing.Size(172, 21);
+      this.mpTransponder1.Size = new System.Drawing.Size(160, 21);
       this.mpTransponder1.TabIndex = 3;
       // 
       // mpDisEqc4
@@ -607,16 +617,6 @@ namespace SetupTv.Sections
       this.mpLNB1.UseVisualStyleBackColor = true;
       this.mpLNB1.CheckedChanged += new System.EventHandler(this.mpLNB1_CheckedChanged);
       // 
-      // checkEnableDVBS2
-      // 
-      this.checkEnableDVBS2.AutoSize = true;
-      this.checkEnableDVBS2.Location = new System.Drawing.Point(10, 292);
-      this.checkEnableDVBS2.Name = "checkEnableDVBS2";
-      this.checkEnableDVBS2.Size = new System.Drawing.Size(399, 17);
-      this.checkEnableDVBS2.TabIndex = 91;
-      this.checkEnableDVBS2.Text = "Enable DVB-S2 tuning features (scans and sets extra DVB-S2 transponder info)";
-      this.checkEnableDVBS2.UseVisualStyleBackColor = true;
-      // 
       // tabPage2
       // 
       this.tabPage2.Controls.Add(this.labelTunerLock);
@@ -653,7 +653,7 @@ namespace SetupTv.Sections
       this.tabPage2.Location = new System.Drawing.Point(4, 22);
       this.tabPage2.Name = "tabPage2";
       this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage2.Size = new System.Drawing.Size(485, 391);
+      this.tabPage2.Size = new System.Drawing.Size(466, 391);
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "DiSEqC Motor";
       this.tabPage2.UseVisualStyleBackColor = true;
@@ -977,7 +977,7 @@ namespace SetupTv.Sections
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(485, 391);
+      this.tabPage1.Size = new System.Drawing.Size(466, 391);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Scanning";
       this.tabPage1.UseVisualStyleBackColor = true;
@@ -997,7 +997,7 @@ namespace SetupTv.Sections
       // button1
       // 
       this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.button1.Location = new System.Drawing.Point(207, 359);
+      this.button1.Location = new System.Drawing.Point(188, 359);
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(113, 23);
       this.button1.TabIndex = 68;
@@ -1053,7 +1053,7 @@ namespace SetupTv.Sections
       this.Controls.Add(this.tabControl1);
       this.Controls.Add(this.mpCheckBox1);
       this.Name = "CardDvbS";
-      this.Size = new System.Drawing.Size(499, 420);
+      this.Size = new System.Drawing.Size(480, 420);
       this.Load += new System.EventHandler(this.CardDvbS_Load);
       this.tabControl1.ResumeLayout(false);
       this.tabPage3.ResumeLayout(false);
