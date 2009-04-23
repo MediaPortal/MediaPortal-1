@@ -448,7 +448,6 @@ namespace TvService
                   newSchedule.ScheduleType = 0; // type Once
                   newSchedule.Persist();
                   newRecording = new RecordingDetail(newSchedule, current.ReferencedChannel(), current.EndTime, true);
-                  _recordingsInProgressList.Add(newRecording);
                   return true; 
                 }
               }
@@ -643,7 +642,7 @@ namespace TvService
                             recording.Program.Description, recording.Program.Genre, recording.FileName, recording.Schedule.KeepMethod,
                             recording.Schedule.KeepDate, 0, idServer);
         recording.Recording.Persist();
-
+        _recordingsInProgressList.Add(recording);
         _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingStarted, new VirtualCard(_user), _user, recording.Schedule, recording.Recording));
         int cardId = _user.CardId;
         if (_controller.SupportsQualityControl(cardId))
