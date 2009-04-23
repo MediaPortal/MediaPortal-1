@@ -1,18 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Text;
-using System.Windows.Forms;
 using System.Threading;
 
 using MediaPortal.Configuration;
 
 namespace MediaPortal.MPInstaller
 {
-  public partial class QueueInstaller : Form
+  public partial class QueueInstaller : MPInstallerForm
   {
     #region local vars
     public QueueEnumerator queue = new QueueEnumerator();

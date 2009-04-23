@@ -1,10 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
 
 using MediaPortal.Configuration;
@@ -12,7 +8,7 @@ using CSScriptLibrary;
 
 namespace MediaPortal.MPInstaller
 {
-  public partial class ScriptEditorForm : Form
+  public partial class ScriptEditorForm : MPInstallerForm
   {
     public ScriptEditorForm()
     {
