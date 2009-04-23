@@ -547,6 +547,11 @@ namespace MediaPortal.Configuration.Sections
 
     private void SetDAmpPreset(int preset)
     {
+      if (_damp == null)
+      {
+        _damp = new BASS_BFX_DAMP();
+      }
+
       switch (preset)
       {
         case 0:
