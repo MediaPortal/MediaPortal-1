@@ -448,6 +448,7 @@ namespace TvService
                   newSchedule.ScheduleType = 0; // type Once
                   newSchedule.Persist();
                   newRecording = new RecordingDetail(newSchedule, current.ReferencedChannel(), current.EndTime, true);
+                  _recordingsInProgressList.Add(newRecording); // needed to keep isSerie property to 'once' typed schedule created
                   return true; 
                 }
               }
@@ -473,6 +474,7 @@ namespace TvService
               newSchedule.ScheduleType = 0; // type Once
               newSchedule.Persist();
               newRecording = new RecordingDetail(newSchedule, program.ReferencedChannel(), program.EndTime, true);
+              _recordingsInProgressList.Add(newRecording); // needed to keep isSerie property to 'once' typed schedule created
               return true;
             }
           }
@@ -642,7 +644,11 @@ namespace TvService
                             recording.Program.Description, recording.Program.Genre, recording.FileName, recording.Schedule.KeepMethod,
                             recording.Schedule.KeepDate, 0, idServer);
         recording.Recording.Persist();
+        TvControl.VirtualCard  dummycard;
+        if(!IsRecordingSchedule(recording.Schedule.IdSchedule,out dummycard)) // can have been added for everytime on to once schedule conversion 
+        {
         _recordingsInProgressList.Add(recording);
+        }
         _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingStarted, new VirtualCard(_user), _user, recording.Schedule, recording.Recording));
         int cardId = _user.CardId;
         if (_controller.SupportsQualityControl(cardId))
