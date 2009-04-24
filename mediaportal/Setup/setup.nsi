@@ -105,19 +105,19 @@ Var UpdateMode
 
 !define VER_MAJOR       1
 !define VER_MINOR       0
-!define VER_REVISION    1
+!define VER_REVISION    2
 !ifndef VER_BUILD
     !define VER_BUILD   0
 !endif
 
 
 !if ${BUILD_TYPE} == "Debug"
-    !define VERSION "1.0.1 >>DEBUG<< build ${VER_BUILD} for TESTING ONLY"
+    !define VERSION "1.0.2 >>DEBUG<< build ${VER_BUILD} for TESTING ONLY"
 !else
 !if ${VER_BUILD} == 0       # it's an official release
-    !define VERSION "1.0.2"
+    !define VERSION "1.0.3"
 !else                       # it's a svn release
-    !define VERSION "1.0.1 SVN build ${VER_BUILD} for TESTING ONLY"
+    !define VERSION "1.0.2 SVN build ${VER_BUILD} for TESTING ONLY"
 !endif
 !endif
 Name          "${NAME}"
