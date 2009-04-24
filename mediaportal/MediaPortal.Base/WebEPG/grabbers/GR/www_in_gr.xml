@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="el" availableDays="7" timezone="Central European Standard Time" version="2.1" />
+  <Info language="el" availableDays="7" timezone="GTB Standard Time" version="2.1" />
   <Channels>
     <Channel id="mega-tv-gr" siteId="262" />
     <Channel id="antenna.gr" siteId="263" />
