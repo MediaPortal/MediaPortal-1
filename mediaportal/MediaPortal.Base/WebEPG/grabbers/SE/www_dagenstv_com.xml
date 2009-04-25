@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info availableDays="14" timezone="W. Europe Standard Time" version="2.1.0" />
+  <Info availableDays="14" timezone="W. Europe Standard Time" version="2.2.0" />
   <Channels>
     <Channel id="24@svt.se" siteId="101" />
     <Channel id="3plus.dk" siteId="83" />
@@ -14,28 +14,34 @@
     <Channel id="arte-tv.com" siteId="84" />
     <Channel id="axess.tv" siteId="247" />
     <Channel id="barnkanalen@svt.se" siteId="143" />
-    <Channel id="bbcfood.com" siteId="149" />
-    <Channel id="bbcprime.com" siteId="2" />
+    <Channel id="bbclifestyle.com" siteId="149" />
+    <Channel id="bbcentertainment.com" siteId="2" />
     <Channel id="bbcworld.com" siteId="3" />
     <Channel id="bloomberg.tv" siteId="260" />
+    <Channel id="boom@cartoon-network.co.uk" siteId="331" />
     <Channel id="Canal7" siteId="80" />
     <Channel id="cartoonnetwork.se" siteId="4" />
     <Channel id="civilisation@discovery.com" siteId="118" />
     <Channel id="classic@tv1000.se" siteId="208" />
+    <Channel id="classic@vh1.co.uk" siteId="294" />
     <Channel id="cnbc@msn.com" siteId="56" />
     <Channel id="cnni-emea@cnn.com" siteId="5" />
     <Channel id="comedy@canalplus.se" siteId="298" />
+    <Channel id="comedycentral.com" siteId="334" />
     <Channel id="di.tv" siteId="231" />
     <Channel id="discovery@discovery.com" siteId="7" />
     <Channel id="disneychannel.se" siteId="147" />
+    <Channel id="dk4.dk" siteId="908" />
     <Channel id="dr1@dr.dk" siteId="58" />
     <Channel id="dr2@dr.dk" siteId="59" />
     <Channel id="drama@canalplus.se" siteId="255" />
+    <Channel id="drama@tv1000.se" siteId="336" />
     <Channel id="dsf.de" siteId="8" />
     <Channel id="e.tv" siteId="225" />
     <Channel id="espn.com" siteId="196" />
     <Channel id="euronews.net" siteId="104" />
     <Channel id="europa@svt.se" siteId="100" />
+    <Channel id="europe@nickelodeon.se" siteId="328" />
     <Channel id="eurosport@eurosport.com" siteId="9" />
     <Channel id="eurosport2@eurosport.com" siteId="217" />
     <Channel id="explorer@viasat.se" siteId="76" />
@@ -54,10 +60,14 @@
     <Channel id="hallmarkchannel.com" siteId="13" />
     <Channel id="HD@canalplus.se" siteId="229" />
     <Channel id="HD@discovery.com" siteId="263" />
+    <Channel id="HD@eurosport.com" siteId="164" />
+    <Channel id="HD@mtve.com" siteId="321" />
     <Channel id="HD@nationalgeographic.com" siteId="293" />
     <Channel id="HDsport@canalplus.se" siteId="271" />
+    <Channel id="HDsport@viasat.se" siteId="300" />
     <Channel id="hd@svt.se" siteId="264" />
     <Channel id="hd@tv4.se" siteId="292" />
+    <Channel id="hd@tv1000.se" siteId="301" />
     <Channel id="hd@voom.tv" siteId="265" />
     <Channel id="history@viasat.se" siteId="215" />
     <Channel id="hits@canalplus.se" siteId="257" />
@@ -81,6 +91,7 @@
     <Channel id="nasn.tv" siteId="267" />
     <Channel id="nationalgeographic.com" siteId="48" />
     <Channel id="nelonen@nelonen.fi" siteId="189" />
+    <Channel id="nick.co.uk" siteId="909" />
     <Channel id="nickelodeon.se" siteId="45" />
     <Channel id="nordic@tv1000.se" siteId="209" />
     <Channel id="nrk1@nrk.no" siteId="72" />
@@ -99,11 +110,14 @@
     <Channel id="rtl2.de" siteId="15" />
     <Channel id="rtve.es" siteId="41" />
     <Channel id="rtvpink.com" siteId="109" />
+    <Channel id="russiatoday.ru" siteId="295" />
     <Channel id="sat1.de" siteId="17" />
     <Channel id="sailingchannel.tv" siteId="269" />
     <Channel id="Science@discovery.com" siteId="119" />
+    <Channel id="scifi@tv4.se" siteId="305" />
     <Channel id="showtime@canaldigital.se" siteId="214" />
     <Channel id="Silver-se" siteId="241" />
+    <Channel id="SilverHD-se" siteId="296" />
     <Channel id="skane@kanallokal.se" siteId="244" />
     <Channel id="skynews@sky.com" siteId="18" />
     <Channel id="spiceplatinum.nl" siteId="222" />
@@ -129,6 +143,7 @@
     <Channel id="tv2@tv2.dk" siteId="71" />
     <Channel id="tv2@yle.fi" siteId="36" />
     <Channel id="tv2zulu@tv2.dk" siteId="126" />
+    <Channel id="tv2charlie@tv2.dk" siteId="906" />
     <Channel id="tv3.dk" siteId="57" />
     <Channel id="tv3.no" siteId="62" />
     <Channel id="tv3.se" siteId="26" />
@@ -147,6 +162,7 @@
     <Channel id="viva.tv" siteId="106" />
     <Channel id="voice.fi" siteId="216" />
     <Channel id="vox.de" siteId="107" />
+    <Channel id="wild@nationalgeographic.co.uk" siteId="335" />
     <Channel id="yle24@yle.fi" siteId="220" />
     <Channel id="yleteema@yle.fi" siteId="221" />
     <Channel id="zdf.de" siteId="51" />
@@ -158,41 +174,31 @@
     <Site url="http://www.dagenstv.com/se/chart/?dat=[YYYY]-[MM]-[DD]&amp;cha=[ID]" post="" external="false" encoding="" />
     <Html>
       <Template name="default" start="&lt;!-- Program --&gt;" end="&lt;!-- Slut Content-tabell --&gt;">
-        <SectionTemplate tags="DS">
+        <SectionTemplate tags="ADF">
           <TemplateText>
-            &lt;div&gt;
-        &lt;a&gt;&lt;/a&gt;
-        &lt;div&gt;
-            &lt;#START&gt; 
-        &lt;/div&gt;
-        &lt;div&gt;&lt;#TITLE&gt;&lt;strong&gt; &lt;#NOTUSED1&gt; | &lt;#NOTUSED2&gt; | &lt;#NOTUSED3&gt; &lt;/strong&gt; &lt;z(&gt;&lt;span&gt;[&lt;#REPLAY&gt;]&lt;/span&gt;&lt;/z)?&gt;
-        &lt;/div&gt;
-            &lt;div&gt;
-                &lt;strong&gt; &lt;#NOTUSED4&gt; | &lt;#NOTUSED5&gt; | &lt;#NOTUSED6&gt; &lt;/strong&gt;&lt;#DESCRIPTION&gt; [&lt;#TRASH&gt;] 
-&lt;z(&gt;&lt;form&gt;&lt;div&gt;&lt;div&gt;Betygsätt&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/form&gt;&lt;/z)?&gt;
-            &lt;/div&gt;
-            &lt;div&gt;
-                &lt;a&gt;
-                    &lt;img&gt;&lt;/a&gt;
-                &lt;a&gt;&lt;img&gt;&lt;/a&gt;&lt;a&gt;&lt;img&gt;&lt;/a&gt;
-                &lt;a&gt;
-                    &lt;img&gt;&lt;/a&gt;
-            &lt;/div&gt;
-            &lt;div&gt;
-            &lt;/div&gt;
-        &lt;/div&gt;
+&lt;div&gt;&lt;a&gt;&lt;/a&gt;
+&lt;div&gt;&lt;#START&gt;(&lt;#END&gt;)&lt;/div&gt;
+&lt;div&gt;&lt;#TITLE&gt;&lt;/div&gt;
+&lt;z(&gt;&lt;div&gt;&lt;#DESCRIPTION&gt;&lt;/div&gt;&lt;div&gt;&lt;/z)?&gt;
+&lt;z(&gt;&lt;div&gt;&lt;#DESCRIPTION&gt;&lt;form&gt;&lt;div&gt;&lt;/z)?&gt;
           </TemplateText>
         </SectionTemplate>
       </Template>
       <Searches>
-        <Search match="\[[0-9]{3,}\]" field="#SHOWVIEW" remove="true" />
-        <Search match="Repris fr&amp;#229;n [0-9/]{3,}." field="#REPEATNOTFALSE" remove="true" />
-        <Search match="Del [0-9]{1,} av [0-9]{1,}.|- del [0-9]{1,}|Del [0-9]{1,}.|del [0-9]{1,}." field="#EPISODE" remove="true" />
-        <Search match="Text-tv [0-9]{1,}[0-9a-zA-Z, ]{1,}." field="#TELETEXTSUBTITLE" remove="true" />
-        <Search match="Textat." field="#SUBTITLESNOTFALSE" remove="true" />
-        <Search match="&amp;#196;ven [0-9/]{1,}[0-9a-zA-Z, /]{1,}." field="#REPEATDATE" remove="true" />
-        <Search match="Bredbild." field="#WIDESCREEN" remove="true" />
+        <Search match="\[[0-9]{2,}\]" field="#SHOWVIEW" remove="true"/>
+        <Search match="Repris fr&amp;#229;n [0-9/]{3,}." field="#REPEATNOTFALSE" remove="true"/>
+        <Search match="\[Repris\]" field="#REPEATNOTFALSE" remove="true"/>
+        <Search match="Del [0-9]{1,} av [0-9]{1,}.|- del [0-9]{1,}|Del [0-9]{1,}.|del [0-9]{1,}." field="#EPISODE" remove="false"/>
+        <Search match="Avsnitt: [0-9]{1,} av [0-9]{1,}." field="#EPISODE" remove="false"/>
+        <Search match="Text-tv [0-9]{1,}[0-9a-zA-Z, ]{1,}." field="#TELETEXTSUBTITLE" remove="true"/>
+        <Search match="Textat." field="#SUBTITLESNOTFALSE" remove="true"/>
+        <Search match="&amp;#196;ven [0-9/]{1,}[0-9a-zA-Z, /]{1,}." field="#REPEATDATE" remove="true"/>
+        <Search match="Bredbild." field="#WIDESCREEN" remove="true"/>
       </Searches>
     </Html>
   </Listing>
+  <Actions>
+    <Modify channel="*" field="#TITLE" search="Bobster" action="Remove" /> 
+    <Modify channel="*" field="#TITLE" search="Bolibompa" action="Remove" /> 
+  </Actions>
 </Grabber>
