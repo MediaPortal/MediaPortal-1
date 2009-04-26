@@ -141,7 +141,7 @@ Section "-Core"
   SetOutPath "$MPdir.Skin\Xface"
 
   DetailPrint "core files ..."
-  File /r /x svn "${svn_xface}\Xface\*.*"
+  File /r /x .svn "${svn_xface}\Xface\*.*"
   
   !insertmacro SelectOptionPageList SelectOptionInstall
 

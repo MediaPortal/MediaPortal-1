@@ -119,10 +119,10 @@ Page custom SelectOptionPage${ID}
 !macro SelectOptionInstall ID OPTION0 OPTION1
   ${If} $SelectOption${ID} == 1
     DetailPrint "Install SelectOption${ID} option ${OPTION0}"
-    File /r /x svn /x preview.bmp "${svn_xface}\Customize\${ID}\${OPTION0}\*.*"
+    File /r /x .svn /x preview.bmp "${svn_xface}\Customize\${ID}\${OPTION0}\*.*"
   ${Else}
     DetailPrint "Install SelectOption${ID} option ${OPTION1}"
-    File /r /x svn /x preview.bmp "${svn_xface}\Customize\${ID}\${OPTION1}\*.*"
+    File /r /x .svn /x preview.bmp "${svn_xface}\Customize\${ID}\${OPTION1}\*.*"
   ${EndIf}
 !macroend
 
