@@ -997,6 +997,8 @@ Function FinishShow
   ${IfNot} ${TVServerIsInstalled}
     SendMessage $mui.FinishPage.Run ${BM_CLICK} 0 0
     ShowWindow  $mui.FinishPage.Run ${SW_HIDE}
+  ${Else}
+    EnableWindow $mui.FinishPage.Run 0 # start out disabled
   ${EndIf}
 FunctionEnd
 
