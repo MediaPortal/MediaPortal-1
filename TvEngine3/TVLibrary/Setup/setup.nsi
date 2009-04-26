@@ -517,6 +517,7 @@ ${MementoSectionEnd}
   Delete /REBOOTOK $INSTDIR\StreamingServer.dll
   Delete /REBOOTOK $INSTDIR\ttBdaDrvApi_Dll.dll
   Delete /REBOOTOK $INSTDIR\ttdvbacc.dll
+  Delete /REBOOTOK $INSTDIR\ICSharpCode.SharpZipLib.dll
 
   ; remove Start Menu shortcuts
   Delete "$SMPROGRAMS\$StartMenuGroup\TV-Server Configuration.lnk"
