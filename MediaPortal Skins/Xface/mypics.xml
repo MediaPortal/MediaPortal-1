@@ -5,7 +5,7 @@
   <allowoverlay>yes</allowoverlay>
   <define>#header.label:1</define>
   <define>#header.image:pictures_logo.png</define>
-  <define>#header.hover:-</define>
+  <define>#header.hover:-</define> 
   <controls>
     <import>common.window.pictures.xml</import>
     <control>

@@ -48,34 +48,47 @@
         <control>
           <description>Thumbnail Panel</description>
           <type>thumbnailpanel</type>
+          <imageFolder>icon_empty_nofocus1.png</imageFolder>
+		  <imageFolderFocus>icon_empty_nofocus1.png</imageFolderFocus>
           <id>50</id>
-          <scrollOffset>1</scrollOffset>
+           <scrollOffset>0</scrollOffset>
+          <onleft>2</onleft>
+          <itemWidth>155</itemWidth>
+    <itemHeight>160</itemHeight>
+    <textureWidth>132</textureWidth>
+    <textureHeight>132</textureHeight>
+    <thumbWidth>123</thumbWidth>
+    <thumbHeight>125</thumbHeight>
+    <thumbPosX>4</thumbPosX>
+    <thumbPosY>2</thumbPosY>
+          <textureWidthBig>165</textureWidthBig>
+          <textureHeightBig>160</textureHeightBig>
+          <itemWidthBig>191</itemWidthBig>
+          <itemHeightBig>217</itemHeightBig>
+          <thumbWidthBig>154</thumbWidthBig>
+          <thumbHeightBig>154</thumbHeightBig>
+          <thumbPosXBig>5</thumbPosXBig>
+          <thumbPosYBig>3</thumbPosYBig>
+          <thumbZoom>no</thumbZoom>
+          <enableFocusZoom>no</enableFocusZoom>
+           <hideUnfocusTexture>no</hideUnfocusTexture>
+          <renderFocusText>no</renderFocusText>
+          <renderUnfocusText>yes</renderUnfocusText>
+          <zoomXPixels>15</zoomXPixels>
+          <zoomYPixels>15</zoomYPixels>
+          <textXOff>0</textXOff>
+		  <textYOff>0</textYOff>
+		  <font>font10</font>
         </control>
         <control>
           <description>Filmstrip view</description>
           <type>filmstrip</type>
           <id>50</id>
           <onup>2</onup>
-          <!-- needs fine tuning, these values are from references.xml
-        <itemWidth>120</itemWidth>
-        <itemHeight>136</itemHeight>
-        <textureWidth>112</textureWidth>
-        <textureHeight>112</textureHeight>
-        <thumbWidth>85</thumbWidth>
-        <thumbHeight>85</thumbHeight>
-        <thumbPosX>13</thumbPosX>
-        <thumbPosY>13</thumbPosY>
-          -->
           <imageFolder>icon_empty_nofocus_music.png</imageFolder>
           <imageFolderFocus>icon_empty_focus_music.png</imageFolderFocus>
           <frame>icon_empty_nofocus_music.png</frame>
           <frameFocus>-</frameFocus>
-          <!-- needs fine tuning, these values are from references.xml
-        <backgroundx>672</backgroundx>
-        <backgroundy>126</backgroundy>
-        <backgroundwidth>427</backgroundwidth>
-        <backgroundheight>446</backgroundheight>
-          -->
           <thumbs flipY="true" diffuse="Thumb_Mask.png"></thumbs>
           <InfoImage flipY="true" diffuse="Thumb_Mask.png"></InfoImage>
           <showFrame>yes</showFrame>

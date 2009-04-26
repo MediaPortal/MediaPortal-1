@@ -66,6 +66,6 @@
         <hyperlink>762</hyperlink>
       </control>
     </control>
-    <import>common.facade.xml</import>
+    <import>common.facade.music.xml</import>
   </controls>
 </window>

@@ -4,172 +4,194 @@
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
-    <control>
+  <control>
+		<description>BG</description>
+		<type>image</type>
+		<id>0</id>
+		<width>1366</width>
+		<height>768</height>
+		<texture>album_background_nofocus.png</texture>
+		 <colorDiffuse>10fffffff</colorDiffuse>
+	</control>
+     <control>
       <description>Time</description>
       <type>label</type>
       <id>0</id>
-      <posX>1245</posX>
-      <posY>75</posY>
+      <posX>1233</posX>
+      <posY>10</posY>
       <label>#time</label>
       <align>right</align>
-      <font>font13</font>
-      <textcolor>ffa9d0f7</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <font>font12</font>
+      <textcolor>ff969696</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
-    <control>
-      <description>Guide Text Label</description>
+	<control>
+		<description>TVGUIDE Panel</description>
+		<type>image</type>
+		<id>2</id>
+		<posX>90</posX>
+		<posY>100</posY>
+		<width>1230</width>
+		<height>440</height>
+		<colordiffuse>ffffffff</colordiffuse>
+		<texture>-</texture>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="500">WindowClose</animation>
+	</control>
+	<control>
+		<description>Single Channel Label</description>
+		<type>label</type>
+		<id>32</id>
+		<posX>373</posX>
+		<posY>105</posY>
+		<font>font10</font>
+		<align>left</align>
+		<textcolor>FFFFFFFF</textcolor>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="500">WindowClose</animation>
+	</control>
+	<control>
+		<description>Single Channel Image</description>
+		<type>image</type>
+		<id>33</id>
+		<posX>287</posX>
+		<posY>94</posY>
+		<width>44</width>
+		<height>44</height>
+		<keepaspectratio>yes</keepaspectratio>
+		<zoom>yes</zoom>
+		<texture>defaultVideoBig.png</texture>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="500">WindowClose</animation>
+	</control>
+	<!-- Timeheader background must be dedfined before Timeheader label template -->
+	<!-- b/c Timeheader is on the background and will be rendered first -->
+	<control>
+		<description>time header background image template</description>
+		<type>image</type>
+		<id>90</id>
+		<posX>237</posX>
+		<posY>100</posY>
+		<width>153</width>
+		<height>37</height>
+		<texture>button_small_settings_nofocus.png</texture>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="500">WindowClose</animation>
+	</control>
+	<control>
+		<description>time header label template</description>
+		<type>label</type>
+		<id>40</id>
+		<posX>287</posX>
+		<posY>100</posY>
+		<font>font13</font>
+		<textcolor>ffffffff</textcolor>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="500">WindowClose</animation>
+	</control>
+	<control>
+		<description>day spin control</description>
+		<type>spincontrol</type>
+		<id>6</id>
+		<width>24</width>
+		<height>24</height>
+		<posX>49</posX>
+		<posY>105</posY>
+		<showrange>no</showrange>
+		<orientation>horizontal</orientation>
+		<align>center</align>
+		<onleft>60</onleft>
+		<onright>8</onright>
+		<textureUp>arrow_round_right_nofocus.png</textureUp>
+		<textureDown>arrow_round_left_nofocus.png</textureDown>
+		<textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
+		<textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="500">WindowClose</animation>
+	</control>
+	<control>
+		<description>time interval spin control</description>
+		<type>spincontrol</type>
+		<id>8</id>
+		<width>24</width>
+		<height>24</height>
+		<posX>213</posX>
+		<posY>105</posY>
+		<showrange>no</showrange>
+		<orientation>horizontal</orientation>
+		<align>center</align>
+		<textureUp>arrow_round_right_nofocus.png</textureUp>
+		<textureDown>arrow_round_left_nofocus.png</textureDown>
+		<textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
+		<textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
+		<onleft>6</onleft>
+		<onright>8</onright>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="500">WindowClose</animation>
+	</control>
+	<control>
+		<description>Channel template</description>
+		<type>image</type>
+		<id>20</id>
+		<posX>50</posX>
+		<posY>146</posY>
+		<width>240</width>
+		<height>35</height>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="500">WindowClose</animation>
+	</control>
+	<control>
+		<description>Channel image template</description>
+		<type>image</type>
+		<id>7</id>
+                <posX>2</posX>
+                <posY>1</posY>
+                <width>30</width>
+                <height>30</height>
+                <centered>no</centered>
+		<zoom>yes</zoom>
+		<texture>defaultVideoBig.png</texture>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="500">WindowClose</animation>
+	</control>
+	<control>
+		<description>channel Label template</description>
+		<type>label</type>
+		<id>18</id>
+                <posX>47</posX>
+                <posY>4</posY>
+		<width>86</width>
+		<height>20</height>
+		<font>font10</font>
+		<textcolor>FFFFFFFF</textcolor>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="500">WindowClose</animation>
+	</control>
+	<control>
+      <description>Current program time</description>
       <type>label</type>
-      <id>11</id>
-      <posX>118</posX>
-      <posY>70</posY>
-      <!-- <label>4</label> -->
-      <label>#TV.Guide.Group</label>
-      <font>font16</font>
+      <id>14</id>
+      <posX>1020</posX>
+      <posY>560</posY>
+      <label>#TV.Guide.Time</label>
       <align>left</align>
-      <textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>TVGUIDE Panel</description>
-      <type>image</type>
-      <id>2</id>
-      <posX>113</posX>
-      <posY>120</posY>
-      <width>1140</width>
-      <height>440</height>
-      <colordiffuse>60ffffff</colordiffuse>
-      <texture>-</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>Single Channel Label</description>
-      <type>label</type>
-      <id>32</id>
-      <posX>439</posX>
-      <posY>125</posY>
-      <font>font10</font>
-      <align>left</align>
-      <textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>Single Channel Image</description>
-      <type>image</type>
-      <id>33</id>
-      <posX>353</posX>
-      <posY>113</posY>
-      <width>46</width>
-      <height>46</height>
-      <keepaspectratio>yes</keepaspectratio>
-      <zoom>yes</zoom>
-      <texture>defaultVideoBig.png</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <!-- Timeheader background must be dedfined before Timeheader label template -->
-    <!-- b/c Timeheader is on the background and will be rendered first -->
-    <control>
-      <description>time header background image template</description>
-      <type>image</type>
-      <id>90</id>
-      <posX>353</posX>
-      <posY>120</posY>
-      <width>153</width>
-      <height>37</height>
-      <texture>button_small_settings_nofocus.png</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>time header label template</description>
-      <type>label</type>
-      <id>40</id>
-      <posX>353</posX>
-      <posY>120</posY>
       <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>10fffffff</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
-      <description>day spin control</description>
-      <type>spincontrol</type>
-      <id>6</id>
-      <width>24</width>
-      <height>24</height>
-      <posX>116</posX>
-      <posY>125</posY>
-      <showrange>no</showrange>
-      <orientation>horizontal</orientation>
-      <align>center</align>
-      <onleft>6</onleft>
-      <onright>8</onright>
-      <textureUp>arrow_round_right_nofocus.png</textureUp>
-      <textureDown>arrow_round_left_nofocus.png</textureDown>
-      <textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
-      <textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>time interval spin control</description>
-      <type>spincontrol</type>
-      <id>8</id>
-      <width>24</width>
-      <height>24</height>
-      <posX>280</posX>
-      <posY>125</posY>
-      <showrange>no</showrange>
-      <orientation>horizontal</orientation>
-      <align>center</align>
-      <textureUp>arrow_round_right_nofocus.png</textureUp>
-      <textureDown>arrow_round_left_nofocus.png</textureDown>
-      <textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
-      <textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
-      <onleft>6</onleft>
-      <onright>8</onright>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>Channel template</description>
-      <type>image</type>
-      <id>20</id>
-      <posX>117</posX>
-      <posY>166</posY>
-      <width>240</width>
-      <height>35</height>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>Channel image template</description>
-      <type>image</type>
-      <id>7</id>
-      <posX>3</posX>
-      <posY>3</posY>
-      <width>30</width>
-      <height>30</height>
-      <centered>no</centered>
-      <zoom>yes</zoom>
-      <texture>defaultVideoBig.png</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>channel Label template</description>
-      <type>label</type>
-      <id>18</id>
-      <posX>47</posX>
-      <posY>4</posY>
-      <width>86</width>
-      <height>20</height>
-      <font>font10</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <description>Current program genre</description>
+      <type>fadelabel</type>
+      <id>27</id>
+      <posX>1020</posX>
+      <posY>590</posY>
+      <width>290</width>
+      <label>#TV.Guide.Genre</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>ff969696</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -178,140 +200,119 @@
       <type>fadelabel</type>
       <id>13</id>
       <posX>374</posX>
-      <posY>574</posY>
-      <width>666</width>
+      <posY>560</posY>
+      <width>640</width>
       <label>#TV.Guide.Title</label>
-      <font>font14</font>
-      <textcolor>FFB2D4F5</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>Current program time</description>
-      <type>label</type>
-      <id>14</id>
-      <posX>374</posX>
-      <posY>720</posY>
-      <label>#TV.Guide.Time</label>
-      <align>left</align>
-      <font>font14</font>
-      <textcolor>FFB2D4F5</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>Current program genre</description>
-      <type>label</type>
-      <id>27</id>
-      <posX>891</posX>
-      <posY>720</posY>
-      <label>#TV.Guide.Genre</label>
-      <align>left</align>
-      <font>font14</font>
-      <textcolor>FFB2D4F5</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>Description1</description>
-      <type>textboxscrollup</type>
-      <id>15</id>
-      <posX>374</posX>
-      <posY>614</posY>
-      <width>660</width>
-      <height>93</height>
-      <seperator>----------------------------------------------------------------------------------------------</seperator>
-      <label>#TV.Guide.Description</label>
       <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>ff969696</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-    <!--	<control>
+	<control>
+		<description>Description1</description>
+		<type>textboxscrollup</type>
+		<id>15</id>
+		<posX>374</posX>
+		<posY>590</posY>
+		<width>640</width>
+		<height>107</height>
+		<seperator>----------------------------------------------------------------------------------------------</seperator>
+		<label>#TV.Guide.Description</label>
+		<font>font13</font>
+		<textcolor>FFFFFFFF</textcolor>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="500">WindowClose</animation>
+	</control>
+<!--<control>
 		<description>template for program genre light area</description>
 		<type>label</type>
 		<id>23</id>
 		<label>-</label>
 		<font>font10</font>
 		<textcolor>FF101010</textcolor>
-	</control>	-->
-    <control>
-      <description>template for program title light area</description>
-      <type>label</type>
-      <id>24</id>
-      <visible>no</visible>
-      <label>-</label>
-      <font>font10</font>
-      <textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>vertical timeline</description>
-      <type>image</type>
-      <id>25</id>
-      <posX>55</posX>
-      <posY>163</posY>
-      <height>390</height>
-      <colordiffuse>c0ffffff</colordiffuse>
-      <texture>tvguide_slider.png</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>template for program title darkarea </description>
-      <type>label</type>
-      <visible>no</visible>
-      <id>26</id>
-      <label>-</label>
-      <font>font10</font>
-      <textcolor>FFB2D4F5</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <!--	<control>
-		<description>template for genre  dark area</description>
+	</control> -->
+	<control>
+		<description>template for program title light area</description>
+		<type>label</type>
+		<id>24</id>
+		<visible>no</visible>
+		<label>-</label>
+		<font>font10</font>
+		<textcolor>FFFFFFFF</textcolor>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="500">WindowClose</animation>
+	</control>
+	<control>
+		<description>vertical timeline</description>
+		<type>image</type>
+		<id>25</id>
+		<posX>55</posX>
+		<posY>143</posY>
+		<height>390</height>
+		<colordiffuse>c0ffffff</colordiffuse>
+		<texture>tvguide_slider.png</texture>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="500">WindowClose</animation>
+	</control>
+	<control>
+		<description>template for program title darkarea </description>
+		<type>label</type>
+		<visible>no</visible>
+		<id>26</id>
+		<label>-</label>
+		<font>font10</font>
+		<textcolor>FFB2D4F5</textcolor>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="500">WindowClose</animation>
+	</control>
+<!--<control>
+		<description>template for genre	dark area</description>
 		<type>label</type>
 		<visible>no</visible>
 		<id>30</id>
 		<label>-</label>
-		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
-	</control> -->
-    <control>
-      <description>Horizontal scrollbar</description>
-      <type>hscrollbar</type>
-      <id>28</id>
-      <posX>115</posX>
-      <posY>550</posY>
-      <width>1132</width>
-      <height>24</height>
-      <visible>yes</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+		<font>font10</font>
+		<textcolor>FFDDDDDD</textcolor>
+	</control>-->
+	<control>
+		<description>record pin</description>
+		<type>image</type>
+		<id>31</id>
+		<posX>834</posX>
+		<posY>706</posY>
+		<texture>tvguide_record_button.png</texture>
+		<visible>no</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="500">WindowClose</animation>
+	</control>
+	 <control>
+      <description>TvGroup button</description>
+      <type>button</type>
+      <id>100</id>
+      <posX>5</posX>
+      <posY>143</posY>
+      <width>45</width>
+      <height>385</height>
+      <textureFocus>small_vbutton_focus.png</textureFocus>
+      <textureNoFocus>small_vbutton_nofocus.png</textureNoFocus>
+      <label></label>
+      <onleft>60</onleft>
+      <onright>6</onright>
+      <onup>6</onup>
+      <ondown>6</ondown>
+     <animation effect="zoom" start="100,100" end="100,100" time="0">focus</animation>
+     <animation effect="zoom" start="100,100" end="100,100" time="0">unfocus</animation>
     </control>
     <control>
-      <description>Vertical scrollbar</description>
-      <type>vscrollbar</type>
-      <id>29</id>
-      <posX>1261</posX>
-      <posY>166</posY>
-      <width>26</width>
-      <height>409</height>
-      <visible>yes</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>record pin</description>
-      <type>image</type>
-      <id>31</id>
-      <posX>834</posX>
-      <posY>706</posY>
-      <texture>tvguide_record_button.png</texture>
-      <visible>no</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-  </controls>
+      <description>TvGroup button label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>37</posX>
+      <posY>155</posY>
+      <label>#TV.Guide.ChangeGroup</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="rotate" end="-90" time="0">WindowOpen</animation>
+      </control>
+	</controls>
 </window>

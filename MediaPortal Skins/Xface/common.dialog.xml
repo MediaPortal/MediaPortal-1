@@ -64,10 +64,23 @@
       <type>label</type>
       <id>4</id>
       <posX>428</posX>
-      <posY>406</posY>
+      <posY>408</posY>
       <label>-</label>
       <width>480</width>
       <font>font13</font>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>
+    <control>
+      <description>dialog line 4</description>
+      <type>label</type>
+      <id>5</id>
+      <posX>425</posX>
+      <posY>440</posY>
+      <label>-</label>
+      <width>515</width>
+      <font>font12</font>
       <textcolor>ffffffff</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>

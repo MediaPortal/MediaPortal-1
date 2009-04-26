@@ -4,13 +4,43 @@
     <defaultcontrol>10</defaultcontrol>
     <allowoverlay>no</allowoverlay>
     <define>#selecteditem:#Play.Current.Lastfm.CurrentStream</define>
-    <define>#header.hover:hover_LastFmRadio.png</define>
+    <define>#header.image:radio_logo.png</define>
     <controls>
-        <control>
-            <type>image</type>
-            <description>background image</description>
-            <id>0</id>
-        </control>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1366</width>
+      <height>768</height>
+      <texture>background.png</texture>
+    </control>
+    <control>
+      <type>image</type>
+      <posY>700</posY>
+      <height>89</height>
+      <width>1366</width>
+      <texture>Barback.png</texture>
+      <colorDiffuse>effffffff</colorDiffuse>
+    </control>
+    <control>
+      <type>image</type>
+      <posY>-20</posY>
+      <height>89</height>
+      <width>1366</width>
+      <texture>Barback.png</texture>
+      <colorDiffuse>effffffff</colorDiffuse>
+    </control>
+    <control>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <type>image</type>
+      <id>1</id>
+      <posX>89</posX>
+      <posY>4</posY>
+      <width>220</width>
+      <height>55</height>
+      <texture>#header.image</texture>
+    </control>
         <control>
             <type>image</type>
             <description>title image</description>
@@ -35,17 +65,6 @@
             <height>168</height>
             <texture>music.png</texture>
             <visible>false</visible>
-            <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
-        </control>
-        <control>
-            <type>image</type>
-            <description>title image</description>
-            <id>0</id>
-            <posX>113</posX>
-            <posY>26</posY>
-            <visible>!player.hasmedia</visible>
-            <texture>radio_logo.png</texture>
             <animation effect="fade" time="250">WindowOpen</animation>
             <animation effect="fade" time="500">WindowClose</animation>
         </control>
@@ -80,8 +99,8 @@
             <description>start a stream</description>
             <type>button</type>
             <id>10</id>
-            <posX>113</posX>
-            <posY>146</posY>
+            <posX>69</posX>
+            <posY>89</posY>
             <label>34001</label>
             <onleft>10</onleft>
             <onright>123</onright>
@@ -96,8 +115,8 @@
             <layout>StackLayout</layout>
             <animation effect="fade" time="250">WindowOpen</animation>
             <animation effect="fade" time="500">WindowClose</animation>
-            <posX>113</posX>
-            <posY>204</posY>
+            <posX>69</posX>
+            <posY>130</posY>
             <control>
                 <description>choose artist</description>
                 <type>button</type>
@@ -107,7 +126,7 @@
                 <onright>123</onright>
                 <onup>10</onup>
                 <ondown>20</ondown>
-            </control>  
+            </control>
             <control>
                 <description>choose tag</description>
                 <type>button</type>
@@ -116,7 +135,7 @@
                 <onleft>20</onleft>
                 <onright>123</onright>
                 <onup>15</onup>
-                <ondown>30</ondown>      
+                <ondown>30</ondown>
             </control>
             <control>
                 <description>choose friend</description>
@@ -153,7 +172,7 @@
                 <animation effect="fade" time="500">WindowClose</animation>
             </control>
         </control>
-        
+
 <!--         <control>
             <type>fadelabel</type>
             <description>track label shadow</description>
@@ -168,7 +187,7 @@
             <disabledcolor>ff800000</disabledcolor>
             <animation effect="fade" time="250">WindowOpen</animation>
             <animation effect="fade" time="500">WindowClose</animation>
-        </control>  -->       
+        </control>  -->
         <control>
             <type>fadelabel</type>
             <description>track label</description>
@@ -184,7 +203,7 @@
             <animation effect="fade" time="250">WindowOpen</animation>
             <animation effect="fade" time="500">WindowClose</animation>
         </control>
-      
+
 <!--         <control>
             <type>fadelabel</type>
             <description>artist label shadow</description>
@@ -199,7 +218,7 @@
             <disabledcolor>ff808080</disabledcolor>
             <animation effect="fade" time="250">WindowOpen</animation>
             <animation effect="fade" time="500">WindowClose</animation>
-        </control>   -->     
+        </control>   -->
         <control>
             <type>fadelabel</type>
             <description>artist label</description>
@@ -214,8 +233,8 @@
             <disabledcolor>ff808080</disabledcolor>
             <animation effect="fade" time="250">WindowOpen</animation>
             <animation effect="fade" time="500">WindowClose</animation>
-        </control>         
-        
+        </control>
+
         <control>
             <type>label</type>
             <description>album label</description>
@@ -230,7 +249,7 @@
             <animation effect="fade" time="250">WindowOpen</animation>
             <animation effect="fade" time="500">WindowClose</animation>
         </control>
-        
+
         <control>
             <type>fadelabel</type>
             <description>stream label</description>
@@ -286,7 +305,7 @@
             <visible>control.hastext(444)</visible>
             <animation effect="fade" time="250">WindowOpen</animation>
             <animation effect="fade" time="500">WindowClose</animation>
-        </control> 
+        </control>
         <control>
             <type>textbox</type>
             <description>Similar artists box</description>
@@ -315,7 +334,7 @@
             <visible>control.hastext(333)</visible>
             <animation effect="fade" time="250">WindowOpen</animation>
             <animation effect="fade" time="500">WindowClose</animation>
-        </control>   
+        </control>
         <control>
             <type>textbox</type>
             <description>Track tags box</description>

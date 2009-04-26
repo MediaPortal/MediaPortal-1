@@ -19,7 +19,7 @@
       <type>button</type>
       <id>34</id>
       <posX>1052</posX>
-      <posY>68</posY>
+      <posY>70</posY>
       <width>58</width>
       <height>58</height>
       <textureFocus>dialogue_shutdown_focus.png</textureFocus>
@@ -30,7 +30,7 @@
       <ondown>35</ondown>
       <onup>34</onup>
     </control>
-    
+
     <control>
       <description>list to show channels without channel state logos</description>
       <type>listcontrol</type>
@@ -54,7 +54,7 @@
       <itemWidth>40</itemWidth>
       <itemHeight>40</itemHeight>
       <textureFocus>recording_background_focus.png</textureFocus>
-      <textureNoFocus>recording_background_nofocus.png</textureNoFocus>
+      <textureNoFocus>-</textureNoFocus>
       <spaceBetweenItems>1</spaceBetweenItems>
       <textureHeight>50</textureHeight>
       <keepaspectratio>no</keepaspectratio>
@@ -66,7 +66,7 @@
       <onleft>36</onleft>
       <onright>34</onright>
     </control>
-    
+
     <control>
       <description>list to show channels with channel state logos</description>
       <type>listcontrol</type>
@@ -94,7 +94,7 @@
       <itemWidth>40</itemWidth>
       <itemHeight>40</itemHeight>
       <textureFocus>recording_background_focus.png</textureFocus>
-      <textureNoFocus>recording_background_nofocus.png</textureNoFocus>
+      <textureNoFocus>-</textureNoFocus>
       <spaceBetweenItems>1</spaceBetweenItems>
       <textureHeight>50</textureHeight>
       <keepaspectratio>no</keepaspectratio>
@@ -106,9 +106,9 @@
       <onleft>36</onleft>
       <onright>34</onright>
     </control>
-    
-    
-    
+
+
+
     <control>
       <description>groups spin control</description>
       <type>spincontrol</type>

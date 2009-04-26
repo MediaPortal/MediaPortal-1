@@ -294,31 +294,5 @@
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
-    <control>
-      <description>video preview window shadow</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>608</posX>
-      <posY>662</posY>
-      <width>166</width>
-      <height>106</height>
-      <texture>-</texture>
-      <visible>Player.HasMedia</visible>      
-      <animation effect="fade" time="200">WindowClose</animation>
-      <animation effect="fade" time="200">WindowOpen</animation>
-    </control>
-    <control>
-      <description>TV preview window</description>
-      <type>videowindow</type>
-      <id>99</id>
-      <posX>615</posX>
-      <posY>666</posY>
-      <width>144</width>
-      <height>81</height>
-      <action>18</action>
-      <textureFocus>tv_green_border.png</textureFocus>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
-    </control>
   </controls>
 </window>

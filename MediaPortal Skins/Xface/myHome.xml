@@ -14,22 +14,12 @@
       <texture>background5.png</texture>
     </control>
     <control>
-      <description>background image</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>45</posX>
-      <posY>190</posY>
-      <width>500</width>
-      <height>466</height>
-      <texture>background_glass_hoover_area11.png</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
       <description>Menu</description>
       <type>menu</type>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="zoom" start="50,50" end="100,100" center="640,360" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="1,1" center="640,360" time="500">WindowClose</animation>
       <id>50</id>
       <posX>400</posX>
       <posY>10</posY>
@@ -53,7 +43,7 @@
       <hoverKeepAspectratio>yes</hoverKeepAspectratio>
       <scrollTime>300</scrollTime>
       <scrollTimeMin>60</scrollTimeMin>
-      <textureBackground>background_glass_menu_area11.png</textureBackground>
+      <textureBackground>-</textureBackground>
       <onright>13</onright>
       <onleft>10</onleft>
       <hover flipY="true" diffuse="Thumb_Mask.png"></hover>
@@ -68,13 +58,26 @@
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
+     <control>
+      <description>Widgetbackground</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>300</width>
+      <height>768</height>
+      <texture>Backslide.png</texture>
+      <visible>Player.HasMedia</visible>
+      <animation effect="fade" time="550">Visible</animation>
+      <animation effect="fade" time="550">WindowOpen</animation>
+    </control>
     <!-- Date and Time -->
     <control>
       <type>image</type>
-      <posX>250</posX>
-      <posY>15</posY>
-      <width>35</width>
-      <height>35</height>
+      <posX>230</posX>
+      <posY>50</posY>
+      <width>40</width>
+      <height>40</height>
       <texture>Clock.png</texture>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -83,8 +86,8 @@
       <description>Date</description>
       <type>label</type>
       <id>200</id>
-      <posX>230</posX>
-      <posY>30</posY>
+      <posX>210</posX>
+      <posY>70</posY>
       <label>#date</label>
       <align>right</align>
       <font>font12</font>
@@ -96,8 +99,8 @@
       <description>Time</description>
       <type>label</type>
       <id>201</id>
-      <posX>233</posX>
-      <posY>10</posY>
+      <posX>210</posX>
+      <posY>50</posY>
       <label>#time</label>
       <align>right</align>
       <font>font12</font>
@@ -191,26 +194,13 @@
       <ondown>50</ondown>
     </control>
     <control>
-      <description>music rectangle</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>48</posX>
-      <posY>540</posY>
-      <width>330</width>
-      <height>225</height>
-      <texture>playback_background.png</texture>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <visible>Player.HasMedia</visible>
-    </control>
-    <control>
       <description>video preview window</description>
       <type>videowindow</type>
       <id>99</id>
-      <posX>96</posX>
-      <posY>568</posY>
-      <width>238</width>
-      <height>131</height>
+      <posX>40</posX>
+      <posY>318</posY>
+      <width>219</width>
+      <height>124</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <action>18</action>
@@ -218,17 +208,45 @@
       <visible>Player.HasMedia</visible>
     </control>
     <control>
-      <description>progress bar</description>
-      <type>progress</type>
-      <id>20</id>
-      <posX>126</posX>
-      <posY>701</posY>
-      <width>158</width>
-      <label>#percentage</label>
-      <visible>yes</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <visible>Player.HasMedia</visible>
+      <type>fadelabel</type>
+       <posX>210</posX>
+      <posY>273</posY>
+      <width>750</width>
+      <align>right</align>
+      <font>font10</font>
+       <textcolor>ff969696</textcolor>
+      <label>#Play.Current.Title</label>
+      <animation effect="fade" time="800" delay="250">WindowOpen</animation>
+      <animation effect="fade" time="800" delay="250">WindowClose</animation>
     </control>
+    <control>
+      <description>Playing Channel</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>228</posX>
+      <posY>265</posY>
+      <width>40</width>
+      <height>40</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>#TV.View.thumb</texture>
+      <visible>Player.HasMedia</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>1</id>
+       <posX>226</posX>
+      <posY>265</posY>
+      <width>42</width>
+      <height>42</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <texture>#Play.Current.Thumb</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+     <import>common.rss.xml</import>
   </controls>
 </window>

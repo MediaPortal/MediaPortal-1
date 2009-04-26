@@ -5,7 +5,7 @@
   <allowoverlay>yes</allowoverlay>
   <define>#header.label:134</define>
   <define>#header.image:music_logo.png</define>
-  <define>#header.hover:-</define>
+  <define>#header.hover:-</define> 
   <controls>
     <import>common.window.music.xml</import>
     <import>common.picback.xml</import>

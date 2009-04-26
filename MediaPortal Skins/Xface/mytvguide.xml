@@ -164,7 +164,7 @@
 		<showrange>no</showrange>
 		<orientation>horizontal</orientation>
 		<align>center</align>
-		<onleft>6</onleft>
+		<onleft>60</onleft>
 		<onright>8</onright>
 		<textureUp>arrow_round_right_nofocus.png</textureUp>
 		<textureDown>arrow_round_left_nofocus.png</textureDown>
@@ -385,5 +385,34 @@
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="500">WindowClose</animation>
 	</control>
+	 <control>
+      <description>TvGroup button</description>
+      <type>button</type>
+      <id>100</id>
+      <posX>5</posX>
+      <posY>143</posY>
+      <width>45</width>
+      <height>385</height>
+      <textureFocus>small_vbutton_focus.png</textureFocus>
+      <textureNoFocus>small_vbutton_nofocus.png</textureNoFocus>
+      <label></label>
+      <onleft>60</onleft>
+      <onright>6</onright>
+      <onup>6</onup>
+      <ondown>6</ondown>
+     <animation effect="zoom" start="100,100" end="100,100" time="0">focus</animation>
+     <animation effect="zoom" start="100,100" end="100,100" time="0">unfocus</animation>
+    </control>
+    <control>
+      <description>TvGroup button label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>37</posX>
+      <posY>155</posY>
+      <label>#TV.Guide.ChangeGroup</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="rotate" end="-90" time="0">WindowOpen</animation>
+      </control>
 	</controls>
 </window>

@@ -96,6 +96,7 @@
       <width>275</width>
       <label>#Play.Current.Album</label>
       <font>font13</font>
+      <textcolor>90000000</textcolor>
       <animation effect="fade" time="800" delay="250">WindowOpen</animation>
       <animation effect="fade" time="800" delay="250">WindowClose</animation>
     </control>

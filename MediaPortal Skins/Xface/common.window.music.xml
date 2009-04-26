@@ -93,9 +93,9 @@
       <type>image</type>
       <id>888</id>
       <posX>637</posX>
-      <posY>588</posY>
-      <width>85</width>
-      <height>86</height>
+      <posY>589</posY>
+      <width>83</width>
+      <height>83</height>
       <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
       <visible>!facadeview.list+!facadeview.playlist</visible>
     </control>

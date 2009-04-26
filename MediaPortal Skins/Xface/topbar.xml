@@ -188,7 +188,7 @@
        <animation effect="zoom" start="100,100" end="120,120" time="100">focus</animation>
     <animation effect="zoom" start="120,120" end="100,100" time="300">unfocus</animation>
       </control>
-		<control>
+		<!-- <control>
 			<description>home BM FFS</description>
 			<type>button</type>
 			<id>611</id>
@@ -265,7 +265,7 @@
 			<ondown>613</ondown>
 			<animation effect="zoom" start="100,100" end="120,120" time="100">focus</animation>
         <animation effect="zoom" start="120,120" end="100,100" time="300">unfocus</animation>
-		</control>
+		</control>-->
 
 		<!-- time functionality group -->
 		<control>

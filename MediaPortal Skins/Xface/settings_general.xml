@@ -20,9 +20,9 @@
       <!-- topmost item needs an onup with a value of 17 for topbar to work -->
       <control>
         <description>Skin</description>
-        <type>selectbutton</type>
+        <type>button</type>
         <id>10</id>
-        <width>280</width>
+        <width>310</width>
         <label>166</label>
         <onup>17</onup>
         <ondown>11</ondown>
@@ -31,7 +31,7 @@
         <description>Language</description>
         <type>selectbutton</type>
         <id>11</id>
-        <width>280</width>
+        <width>310</width>
         <label>248</label>
          <onup>10</onup>
         <ondown>12</ondown>
@@ -40,7 +40,7 @@
         <description>Start in fullscreen mode</description>
         <type>togglebutton</type>
         <id>12</id>
-        <width>280</width>
+        <width>310</width>
         <label>1047</label>
          <onup>11</onup>
         <ondown>13</ondown>
@@ -49,7 +49,7 @@
         <description>Screensaver</description>
         <type>togglebutton</type>
         <id>13</id>
-        <width>280</width>
+        <width>310</width>
         <label>360</label>
          <onup>12</onup>
         <ondown>14</ondown>
@@ -58,7 +58,7 @@
         <description>Skip steps screen button</description>
         <type>button</type>
         <id>14</id>
-        <width>280</width>
+        <width>310</width>
         <label>6024</label>
         <hyperlink>708</hyperlink>
          <onup>13</onup>

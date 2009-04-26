@@ -7,28 +7,32 @@
 	<define>#header.image:tv_logo.png</define>
 	<define>#header.hover:-</define>
 	<controls>
-		<import>common.window.xml</import>
-	<control>
-		<description>tele-text rendering image</description>
-		<type>image</type>
-		<id>500</id>
-		<animation effect="fade" time="400">WindowClose</animation>
-		<animation effect="fade" time="400">WindowOpen</animation>
-		<animation effect="zoom" start="70,70" end="100,100" center="640,360"  time="400" >WindowOpen</animation>
-		<animation effect="zoom" start="100,100" end="130,130" center="640,360"  time="400" >WindowClose</animation>
-		<posX>381</posX>
-		<posY>85</posY>
-		<width>833</width>
-		<height>468</height>
-		<texture>button_small_settings_nofocus.png</texture>
-	</control>
+		<import>common.window2.xml</import>
+	 <control>
+      <description>tele-text rendering image</description>
+      <type>image</type>
+      <id>500</id>
+      <posX>435</posX>
+      <posY>91</posY>
+      <width>760</width>
+      <height>570</height>
+      <texture>black.png</texture>
+    </control>
+    <control>
+      <description>tele-text rendering image 2</description>
+      <type>image</type>
+      <id>501</id>
+      <posX>435</posX>
+      <posY>91</posY>
+      <width>760</width>
+      <height>570</height>
+      <texture>black.png</texture>
+    </control>
 	<control>
 		<description>template for program title darkarea </description>
 		<type>label</type>
 		<animation effect="fade" time="400">WindowClose</animation>
 		<animation effect="fade" time="400">WindowOpen</animation>
-		<animation effect="zoom" start="70,70" end="100,100" center="640,360"  time="400" >WindowOpen</animation>
-		<animation effect="zoom" start="100,100" end="130,130" center="640,360"  time="400" >WindowClose</animation>
 		<visible>no</visible>
 		<id>26</id>
 		<label>-</label>
@@ -40,8 +44,6 @@
  		<type>label</type>
 		<animation effect="fade" time="400">WindowClose</animation>
 		<animation effect="fade" time="400">WindowOpen</animation>
-		<animation effect="zoom" start="70,70" end="100,100" center="640,360"  time="400" >WindowOpen</animation>
-		<animation effect="zoom" start="100,100" end="130,130" center="640,360"  time="400" >WindowClose</animation>
 		<visible>no</visible>
  		<posX>300</posX>
  		<posY>200</posY>
@@ -54,8 +56,6 @@
 		<type>group</type>
 		<animation effect="fade" time="400">WindowClose</animation>
 		<animation effect="fade" time="400">WindowOpen</animation>
-		<animation effect="zoom" start="70,70" end="100,100" center="640,360"  time="400" >WindowOpen</animation>
-		<animation effect="zoom" start="100,100" end="130,130" center="640,360"  time="400" >WindowClose</animation>
 		  <description>group element</description>
 		  <layout>StackLayout</layout>
 		  <posX>69</posX>
@@ -154,8 +154,6 @@
 				<id>507</id>
 				<animation effect="fade" time="400">WindowClose</animation>
 				<animation effect="fade" time="400">WindowOpen</animation>
-				<animation effect="zoom" start="70,70" end="100,100" center="640,360"  time="400" >WindowOpen</animation>
-				<animation effect="zoom" start="100,100" end="130,130" center="640,360"  time="400" >WindowClose</animation>
 				<posY>267</posY>
 				<label>595</label>
 				<onup>506</onup>

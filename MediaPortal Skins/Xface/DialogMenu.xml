@@ -2,7 +2,7 @@
 <window>
   <id>2012</id>
   <defaultcontrol>3</defaultcontrol>
-  <allowoverlay>yes</allowoverlay>
+  <allowoverlay>no</allowoverlay>
   <controls>
     <control>
       <type>image</type>
@@ -83,11 +83,11 @@
       <textXOff>32</textXOff>
 			<textYOff>4</textYOff>
 			<textXOff2>602</textXOff2>
-			<textYOff2>4</textYOff2>		
+			<textYOff2>4</textYOff2>
 			<itemHeight>40</itemHeight>
     	<itemWidth>40</itemWidth>
     	<IconXOff>10</IconXOff>
-      <IconYOff>0</IconYOff>    	       
+      <IconYOff>0</IconYOff>
       <posX>350</posX>
       <posY>260</posY>
       <width>650</width>
