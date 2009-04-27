@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
+      <control>
+        <description>composite control consisting of a list control and a thumbnail panel</description>
+        <type>facadeview</type>
+        <id>50</id>
+        <control>
+          <description>listcontrol</description>
+          <type>listcontrol</type>
+          <id>50</id>
+           <onleft>2</onleft>
+          <onright>2</onright>
+          <scrollOffset>2</scrollOffset>
+        </control>
+        <control>
+          <description>album view listcontrol</description>
+          <type>listcontrol</type>
+          <subtype>album</subtype>
+          <id>50</id>
+          <font>font13</font>
+          <font2>font13</font2>
+          <selectedColor>FFFF6600</selectedColor>
+          <textcolor>FFB2D4F5</textcolor>
+          <selectedColor2>FFFF6600</selectedColor2>
+          <textcolor2>FFB2D4F5</textcolor2>
+          <textXOff>36</textXOff>
+          <textYOff>20</textYOff>
+          <textXOff2>712</textXOff2>
+          <textYOff2>80</textYOff2>
+          <itemWidth>136</itemWidth>
+          <itemHeight>102</itemHeight>
+          <spaceBetweenItems>5</spaceBetweenItems>
+          <textureHeight>132</textureHeight>
+          <scrollOffset>1</scrollOffset>
+          <onleft>2</onleft>
+          <onright>50</onright>
+          <onup>2</onup>
+          <ondown>2</ondown>
+        </control>
+        <control>
+          <description>Thumbnail Panel</description>
+          <type>thumbnailpanel</type>
+          <imageFolder>icon_empty_nofocus1.png</imageFolder>
+		  <imageFolderFocus>icon_empty_nofocus1.png</imageFolderFocus>
+          <id>50</id>
+           <scrollOffset>0</scrollOffset>
+          <onleft>2</onleft>
+          <itemWidth>155</itemWidth>
+    <itemHeight>160</itemHeight>
+    <textureWidth>132</textureWidth>
+    <textureHeight>132</textureHeight>
+    <thumbWidth>123</thumbWidth>
+    <thumbHeight>125</thumbHeight>
+    <thumbPosX>4</thumbPosX>
+    <thumbPosY>2</thumbPosY>
+          <textureWidthBig>165</textureWidthBig>
+          <textureHeightBig>160</textureHeightBig>
+          <itemWidthBig>191</itemWidthBig>
+          <itemHeightBig>217</itemHeightBig>
+          <thumbWidthBig>154</thumbWidthBig>
+          <thumbHeightBig>154</thumbHeightBig>
+          <thumbPosXBig>5</thumbPosXBig>
+          <thumbPosYBig>3</thumbPosYBig>
+          <thumbZoom>no</thumbZoom>
+          <enableFocusZoom>no</enableFocusZoom>
+           <hideUnfocusTexture>no</hideUnfocusTexture>
+          <renderFocusText>no</renderFocusText>
+          <renderUnfocusText>yes</renderUnfocusText>
+          <zoomXPixels>15</zoomXPixels>
+          <zoomYPixels>15</zoomYPixels>
+          <textXOff>0</textXOff>
+		  <textYOff>0</textYOff>
+		  <font>font10</font>
+        </control>
+        <control>
+          <description>Filmstrip view</description>
+          <type>filmstrip</type>
+          <id>50</id>
+          <onup>2</onup>
+          <imageFolder>icon_empty_nofocus_music.png</imageFolder>
+          <imageFolderFocus>icon_empty_focus_music.png</imageFolderFocus>
+          <frame>icon_empty_nofocus_music.png</frame>
+          <frameFocus>-</frameFocus>
+          <thumbs flipY="true" diffuse="Thumb_Mask.png"></thumbs>
+          <InfoImage flipY="true" diffuse="Thumb_Mask.png"></InfoImage>
+          <showFrame>yes</showFrame>
+          <showFolder>yes</showFolder>
+          <showBackGround>no</showBackGround>
+          <showInfoImage>yes</showInfoImage>
+          <thumbAnimation effect="zoom" start="100,100" end="150,150" time="300">focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="150,150" end="100,100" time="300">unfocus</thumbAnimation>
+        </control>
+        <control>
+          <description>playlist listcontrol</description>
+          <type>playlistcontrol</type>
+          <id>50</id>
+          <scrollOffset>2</scrollOffset>
+        </control>
+      </control>
+    </control>
+  </controls>
+</window>

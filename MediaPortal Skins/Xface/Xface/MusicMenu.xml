@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>8888</id>
+  <defaultcontrol>20</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>0</id>
+      <width>1366</width>
+      <height>768</height>
+    </control>
+    <control>
+      <description>Big text</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>673</posX>
+      <posY>506</posY>
+      <label>#highlightedbutton</label>
+      <align>center</align>
+      <font>dingbats</font>
+      <textcolor>40ffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>home BM Radio</description>
+      <type>button</type>
+      <id>20</id>
+      <posX>392</posX>
+      <posY>186</posY>
+      <width>180</width>
+      <height>260</height>
+      <textureFocus>common.RadioAnimation.xml</textureFocus>
+      <textureNoFocus>Radio0.png</textureNoFocus>
+      <thumbZoom>yes</thumbZoom>
+      <hyperlink>30</hyperlink>
+      <hover>-</hover>
+      <hoverX>502</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>272</hoverWidth>
+      <hoverHeight>306</hoverHeight>
+      <label>665</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>20</onleft>
+      <onright>30</onright>
+      <onup>20</onup>
+      <ondown>30</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>home BM Music</description>
+      <type>button</type>
+      <id>30</id>
+      <posX>819</posX>
+      <posY>186</posY>
+      <width>180</width>
+      <height>260</height>
+      <textureFocus>common.MusicAnimation.xml</textureFocus>
+      <textureNoFocus>Music0.png</textureNoFocus>
+      <hyperlink>501</hyperlink>
+      <hover>-</hover>
+      <hoverX>502</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>272</hoverWidth>
+      <hoverHeight>306</hoverHeight>
+      <label>2</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>20</onleft>
+      <onright>30</onright>
+      <onup>20</onup>
+      <ondown>30</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>Date</description>
+      <type>label</type>
+      <id>200</id>
+      <posX>745</posX>
+      <posY>626</posY>
+      <label>#date</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>Time</description>
+      <type>label</type>
+      <id>201</id>
+      <posX>768</posX>
+      <posY>626</posY>
+      <label>#time</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+  </controls>
+</window>

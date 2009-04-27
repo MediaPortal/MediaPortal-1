@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>31</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1366</width>
+      <height>768</height>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>89</posX>
+      <posY>4</posY>
+      <width>220</width>
+      <height>55</height>
+      <texture>settings_logo.png</texture>
+    </control>
+    <control>
+      <description>Settings text label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>374</posX>
+      <posY>39</posY>
+      <label>5</label>
+      <font>font14</font>
+      <align>right</align>
+      <textcolor>White</textcolor>
+    </control>
+    <control>
+      <description>Scroll Speed label horizontal</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>474</posX>
+      <posY>238</posY>
+      <label>1442</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control>
+      <description>Speedselect Horizontal</description>
+      <type>spincontrol</type>
+      <id>2</id>
+      <posX>853</posX>
+      <posY>244</posY>
+      <onup>17</onup>
+      <ondown>4</ondown>
+      <onleft>2</onleft>
+      <onright>2</onright>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control>
+      <description>Scroll Speed label vertical</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>474</posX>
+      <posY>274</posY>
+      <label>1443</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control>
+      <description>Speedselect Vertical</description>
+      <type>spincontrol</type>
+      <id>4</id>
+      <posX>853</posX>
+      <posY>280</posY>
+      <onup>2</onup>
+      <ondown>3</ondown>
+      <onleft>4</onleft>
+      <onright>4</onright>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control>
+      <description>FPS label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>474</posX>
+      <posY>310</posY>
+      <label>973</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control>
+      <description>FPS select</description>
+      <type>spincontrol</type>
+      <id>3</id>
+      <posX>853</posX>
+      <posY>316</posY>
+      <onup>2</onup>
+      <ondown>2</ondown>
+      <onleft>2</onleft>
+      <onright>2</onright>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control>
+      <description>currentFPS count</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1043</posX>
+      <posY>310</posY>
+      <label>#fps</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control>
+      <description>Example value</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>474</posX>
+      <posY>346</posY>
+      <width>533</width>
+      <label>675</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control>
+      <description>TagLine value</description>
+      <type>fadelabel</type>
+      <id>25</id>
+      <posX>474</posX>
+      <posY>373</posY>
+      <width>400</width>
+      <label>-</label>
+      <font>font13</font>
+      <textcolor>ff969696</textcolor>
+    </control>
+    <control>
+      <description>Description1</description>
+      <type>textboxscrollup</type>
+      <id>26</id>
+      <posX>474</posX>
+      <posY>413</posY>
+      <width>400</width>
+      <height>133</height>
+      <label>-</label>
+      <font>font13</font>
+      <textcolor>ff969696</textcolor>
+    </control>
+  </controls>
+</window>

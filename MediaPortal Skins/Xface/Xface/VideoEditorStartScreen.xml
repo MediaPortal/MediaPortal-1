@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>2959</id>
+  <defaultcontrol>101</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#header.label:</define>
+  <define>#header.text:video editor</define>
+  <define>#header.image:videoeditor_logo.png</define>
+  <controls>
+    <import>common.window2.xml</import>
+    <control>
+      <type>label</type>
+      <id>23</id>
+      <posX>424</posX>
+      <posY>58</posY>
+      <align>left</align>
+      <font>font14</font>
+      <label>2092</label>
+      <textcolor>FF888888</textcolor>
+    </control>
+    <control>
+      <type>group</type>
+      <layout>StackLayout</layout>
+      <description>group element</description>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <posX>69</posX>
+      <posY>89</posY>
+      <control>
+        <type>button</type>
+        <id>0</id>
+        <onup>0</onup>
+        <ondown>0</ondown>
+        <label>-</label>
+      </control>
+      <control>
+        <type>button</type>
+        <id>104</id>
+        <onup>102</onup>
+        <ondown>102</ondown>
+        <onright>103</onright>
+        <label>2079</label>
+      </control>
+    </control>
+      <control>
+        <description>JoinSelect</description>
+        <type>spincontrol</type>
+        <id>102</id>
+        <posX>92</posX>
+        <posY>99</posY>
+        <onup>102</onup>
+        <ondown>104</ondown>
+        <onleft>101</onleft>
+        <onright>101</onright>
+        <textcolor>FFFFFFFF</textcolor>
+        <showrange>no</showrange>
+        <subitems>
+          <subitem>2077</subitem>
+          <subitem>2078</subitem>
+          <subitem>2071</subitem>
+          <subitem>2066</subitem>
+        </subitems>
+        <font>font14</font>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="500">WindowClose</animation>
+        <animation effect="zoom" start="100,100" end="100,100" time="100">focus</animation>
+        <animation effect="zoom" start="100,100" end="100,100" time="300">unfocus</animation>
+      </control>
+    <control>
+      <description>Videoliste</description>
+      <type>listcontrol</type>
+      <id>101</id>
+      <width>850</width>
+      <height>533</height>
+      <spinPosY>556</spinPosY>
+      <label>2094</label>
+      <onleft>102</onleft>
+      <onright>2</onright>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Join list:</description>
+      <id>27</id>
+      <posX>415</posX>
+      <posY>600</posY>
+      <onup>102</onup>
+      <ondown>102</ondown>
+      <font>font13</font>
+      <align>right</align>
+      <label>Join list:</label>
+    </control>
+    <control>
+      <description>JoinList</description>
+      <type>listcontrol</type>
+      <id>103</id>
+      <posY>600</posY>
+      <width>850</width>
+      <height>133</height>
+      <spinPosY>702</spinPosY>
+      <label>JoinList</label>
+      <onleft>104</onleft>
+      <onright>104</onright>
+      <onup>101</onup>
+      <ondown>101</ondown>
+    </control>
+    <control>
+      <type>progress</type>
+      <id>105</id>
+      <posX>90</posX>
+      <posY>306</posY>
+      <width>280</width>
+    </control>
+    <control>
+      <type>label</type>
+      <id>106</id>
+      <posX>106</posX>
+      <posY>326</posY>
+      <align>left</align>
+      <font>font14</font>
+      <label />
+    </control>
+  </controls>
+</window>

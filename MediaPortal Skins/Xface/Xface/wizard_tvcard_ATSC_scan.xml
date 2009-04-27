@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>625</id>
+  <defaultcontrol>5</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <control>
+      <type>image</type>
+      <description>BG</description>
+      <id>1</id>
+    </control>
+    <control>
+      <type>button</type>
+      <description>Back</description>
+      <id>25</id>
+      <posX>849</posX>
+      <posY>672</posY>
+      <onleft>25</onleft>
+      <onright>25</onright>
+      <onup>25</onup>
+      <ondown>25</ondown>
+      <hyperlink>617</hyperlink>
+      <label>&lt;Back</label>
+      <width>128</width>
+    </control>
+    <control>
+      <type>label</type>
+      <description>-</description>
+      <id>1</id>
+      <posX>60</posX>
+      <posY>202</posY>
+      <label>MediaPortal is now scanning for new radio stations and tv channels</label>
+      <font>font12</font>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>91</posX>
+      <posY>520</posY>
+      <texture>hover_my tv.png</texture>
+    </control>
+    <control>
+      <type>image</type>
+      <description>MP Logo</description>
+      <id>1</id>
+      <posX>60</posX>
+      <posY>32</posY>
+      <texture>mplogo.png</texture>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Setup ATSC</description>
+      <id>1</id>
+      <posX>60</posX>
+      <posY>160</posY>
+      <label>TV Setup - ATSC</label>
+      <font>font18</font>
+    </control>
+    <control>
+      <type>button</type>
+      <description>Next</description>
+      <id>5</id>
+      <posX>1062</posX>
+      <posY>672</posY>
+      <onleft>25</onleft>
+      <onright>5</onright>
+      <onup>5</onup>
+      <ondown>5</ondown>
+      <label>Next&gt;</label>
+      <width>128</width>
+    </control>
+    <control>
+      <type>listcontrol</type>
+      <description>channelList</description>
+      <id>24</id>
+      <posX>60</posX>
+      <posY>245</posY>
+      <width>789</width>
+      <height>266</height>
+      <onleft>5</onleft>
+      <onright>5</onright>
+      <onup>5</onup>
+      <ondown>5</ondown>
+      <textXOff2>0</textXOff2>
+      <IconYOff>10</IconYOff>
+      <textYOff>5</textYOff>
+      <font>font13</font>
+      <textXOff>9</textXOff>
+      <textureHeight>42</textureHeight>
+      <IconXOff>15</IconXOff>
+      <spinPosX>1043</spinPosX>
+      <spinPosY>533</spinPosY>
+      <textYOff2>5</textYOff2>
+    </control>
+    <control>
+      <description>progress control</description>
+      <type>progress</type>
+      <id>20</id>
+      <posX>60</posX>
+      <posY>440</posY>
+      <width>789</width>
+    </control>
+    <control>
+      <type>label</type>
+      <description>total channels found</description>
+      <id>26</id>
+      <posX>60</posX>
+      <posY>485</posY>
+      <label>-</label>
+    </control>
+    <control>
+      <type>label</type>
+      <description>press next</description>
+      <id>27</id>
+      <posX>60</posX>
+      <posY>517</posY>
+      <label>-</label>
+    </control>
+  </controls>
+</window>

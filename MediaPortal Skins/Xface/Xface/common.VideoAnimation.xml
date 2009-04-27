@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control>
+      <description>VideoAnimation</description>
+      <type>animation</type>
+      <textures>Animations\Video1.png;Animations\Video11.png;Animations\Video2.png;Animations\Video22.png;Animations\Video3.png;Animations\Video22.png;Animations\Video2.png;Animations\Video11.png;Animations\Video1.png;Animations\Video2.png;Animations\Video22.png;Animations\Video3.png</textures>
+      <Duration>0:0:01</Duration>
+      <RepeatBehavior>1</RepeatBehavior>
+      <FillBehavior>HoldEnd</FillBehavior>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>
+  </controls>
+</window>

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<window>
+  <id>5900</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:5900</define>
+  <define>#header.image:trailers_logo.png</define>
+  <define>#header.hover:hover_my trailers.png</define>
+  <controls>
+    <import>common.time.xml</import>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1366</width>
+      <height>768</height>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>113</posX>
+      <posY>26</posY>
+      <texture>#header.image</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <import>mytrailers.index.xml</import>
+    <import>mytrailers.details.xml</import>
+  </controls>
+</window>

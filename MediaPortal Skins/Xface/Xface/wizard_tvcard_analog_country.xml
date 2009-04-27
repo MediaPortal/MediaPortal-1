@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>626</id>
+  <defaultcontrol>24</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <control>
+      <type>image</type>
+      <description>BG</description>
+      <id>1</id>
+    </control>
+    <control>
+      <type>button</type>
+      <description>manual tune</description>
+      <id>23</id>
+      <posX>793</posX>
+      <posY>672</posY>
+      <onleft>25</onleft>
+      <onright>25</onright>
+      <onup>24</onup>
+      <ondown>25</ondown>
+      <label>Manual Tune</label>
+      <width>168</width>
+    </control>
+    <control>
+      <type>button</type>
+      <description>Back</description>
+      <id>25</id>
+      <posX>1062</posX>
+      <posY>672</posY>
+      <onleft>23</onleft>
+      <onright>25</onright>
+      <onup>24</onup>
+      <ondown>25</ondown>
+      <hyperlink>616</hyperlink>
+      <label>&lt;Back</label>
+      <width>128</width>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Welcome to MediaPortal. </description>
+      <id>1</id>
+      <posX>60</posX>
+      <posY>234</posY>
+      <label>not listed then you will need to manual tune</label>
+      <font>font12</font>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Welcome to MediaPortal. </description>
+      <id>1</id>
+      <posX>60</posX>
+      <posY>202</posY>
+      <label>Please select your country or region. Note if your country/region is </label>
+      <font>font12</font>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>91</posX>
+      <posY>520</posY>
+      <texture>hover_my tv.png</texture>
+    </control>
+    <control>
+      <type>image</type>
+      <description>MP Logo</description>
+      <id>1</id>
+      <posX>60</posX>
+      <posY>32</posY>
+      <texture>mplogo.png</texture>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Setup Analog</description>
+      <id>1</id>
+      <posX>60</posX>
+      <posY>160</posY>
+      <label>TV Setup - Analog TV</label>
+      <font>font18</font>
+    </control>
+    <control>
+      <type>listcontrol</type>
+      <description>countryList</description>
+      <id>24</id>
+      <posX>60</posX>
+      <posY>309</posY>
+      <width>789</width>
+      <height>293</height>
+      <onleft>23</onleft>
+      <onright>23</onright>
+      <onup>23</onup>
+      <ondown>23</ondown>
+      <textXOff>9</textXOff>
+      <font>font13</font>
+      <textYOff>5</textYOff>
+      <textureHeight>42</textureHeight>
+      <spinPosX>1043</spinPosX>
+      <spinPosY>533</spinPosY>
+      <textYOff2>5</textYOff2>
+      <textXOff2>0</textXOff2>
+      <IconYOff>10</IconYOff>
+      <IconXOff>15</IconXOff>
+    </control>
+  </controls>
+</window>

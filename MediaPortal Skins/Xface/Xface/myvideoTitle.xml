@@ -1,0 +1,390 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>25</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:#view</define>
+  <define>#header.image:videos_logo.png</define>
+  <define>#header.hover:-</define>
+  <controls>
+    <import>common.window.video.xml</import>
+  <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>70</posX>
+      <posY>68</posY>
+      <width>282</width>
+      <label>#title</label>
+      <font>font18</font>
+      <align>left</align>
+      <textcolor>ffffffff</textcolor>
+      <visible>facadeview.list+Control.HasFocus(50)</visible>
+      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>imagelist</type>
+      <id>1</id>
+      <posX>70</posX>
+      <posY>122</posY>
+      <width>302</width>
+      <height>40</height>
+      <textureWidth>28</textureWidth>
+      <textureHeight>20</textureHeight>
+      <subitems>
+        <subitem>greystar.png</subitem>
+        <subitem>star.png</subitem>
+      </subitems>
+      <orientation>horizontal</orientation>
+      <align>left</align>
+      <imagesToDraw>10</imagesToDraw>
+      <percentage>#rating</percentage>
+      <visible>facadeview.list+Control.HasFocus(50)</visible>
+      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Genre txt</description>
+      <type>label</type>
+      <id>1</id>
+      <animation effect="fade" time="400">WindowClose</animation>
+      <animation effect="fade" time="400">WindowOpen</animation>
+      <posX>255</posX>
+      <posY>153</posY>
+      <label>174</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ff969696</textcolor>
+      <visible>facadeview.list + control.hasfocus(50)</visible>
+      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Genre value</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <animation effect="fade" time="400">WindowClose</animation>
+      <animation effect="fade" time="400">WindowOpen</animation>
+      <posX>255</posX>
+      <posY>172</posY>
+      <width>178</width>
+      <label>#genre</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>facadeview.list + control.hasfocus(50)</visible>
+      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Director txt</description>
+      <type>label</type>
+      <id>1</id>
+      <animation effect="fade" time="400">WindowClose</animation>
+      <animation effect="fade" time="400">WindowOpen</animation>
+      <posX>255</posX>
+      <posY>203</posY>
+      <label>199</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ff969696</textcolor>
+      <visible>facadeview.list + control.hasfocus(50)</visible>
+      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Director value</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <animation effect="fade" time="400">WindowClose</animation>
+      <animation effect="fade" time="400">WindowOpen</animation>
+      <posX>255</posX>
+      <posY>222</posY>
+      <label>#director</label>
+      <font>font13</font>
+      <width>178</width>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>facadeview.list + control.hasfocus(50)</visible>
+      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Year txt</description>
+      <type>label</type>
+      <id>1</id>
+      <animation effect="fade" time="400">WindowClose</animation>
+      <animation effect="fade" time="400">WindowOpen</animation>
+      <posX>255</posX>
+      <posY>253</posY>
+      <label>201</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ff969696</textcolor>
+      <visible>facadeview.list + control.hasfocus(50)</visible>
+      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Year value</description>
+      <type>label</type>
+      <id>1</id>
+      <animation effect="fade" time="400">WindowClose</animation>
+      <animation effect="fade" time="400">WindowOpen</animation>
+      <posX>255</posX>
+      <posY>272</posY>
+      <width>178</width>
+      <label>#year</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>facadeview.list + control.hasfocus(50)</visible>
+      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Runtime txt</description>
+      <type>label</type>
+      <id>1</id>
+      <animation effect="fade" time="400">WindowClose</animation>
+      <animation effect="fade" time="400">WindowOpen</animation>
+      <posX>255</posX>
+      <posY>303</posY>
+      <label>299</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ff969696</textcolor>
+      <visible>facadeview.list + control.hasfocus(50)</visible>
+      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Runtime value</description>
+      <type>label</type>
+      <id>1</id>
+      <animation effect="fade" time="400">WindowClose</animation>
+      <animation effect="fade" time="400">WindowOpen</animation>
+      <posX>255</posX>
+      <posY>322</posY>
+      <width>178</width>
+      <label>#runtime</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>facadeview.list + control.hasfocus(50)</visible>
+      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>MPAA txt</description>
+      <type>label</type>
+      <id>1</id>
+      <animation effect="fade" time="400">WindowClose</animation>
+      <animation effect="fade" time="400">WindowOpen</animation>
+      <posX>255</posX>
+      <posY>353</posY>
+      <label>Rating</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ff969696</textcolor>
+      <visible>facadeview.list + control.hasfocus(50)</visible>
+      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>MPAA Rating</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <animation effect="fade" time="400">WindowClose</animation>
+      <animation effect="fade" time="400">WindowOpen</animation>
+      <posX>255</posX>
+      <posY>372</posY>
+      <width>178</width>
+      <label>#mpaarating</label>
+      <font>font13</font>
+      <align>left</align>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>facadeview.list + control.hasfocus(50)</visible>
+      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Plot value</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <animation effect="fade" time="400">WindowClose</animation>
+      <animation effect="fade" time="400">WindowOpen</animation>
+      <posX>71</posX>
+      <posY>472</posY>
+      <width>1240</width>
+      <height>112</height>
+      <label>#plot</label>
+      <font>font12</font>
+      <textcolor>ffffffff</textcolor>
+      <visible>facadeview.list + control.hasfocus(50)</visible>
+      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>50</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>0</buttonY>
+      <buttonwidth>100</buttonwidth>
+      <buttonheight>720</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>320</width>
+      <height>720</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <posY>64</posY>
+        <width>385</width>
+        <height>515</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="350" start="-300,0">visible</animation>
+        <animation effect="slide" time="350" end="-300,0">hidden</animation>
+      </control>
+      <control>
+        <description>button group</description>
+        <type>group</type>
+        <layout>StackLayout</layout>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="350" end="-300,0">hidden</animation>
+        <animation effect="slide" time="450" start="-300,0">visible</animation>
+        <posX>69</posX>
+        <posY>89</posY>
+        <layout>StackLayout</layout>
+        <control>
+          <description>View-As</description>
+          <type>button</type>
+          <id>2</id>
+          <label>100</label>
+          <onright>50</onright>
+          <onup>17</onup>
+        </control>
+        <control>
+          <description>Sort</description>
+          <type>sortbutton</type>
+          <id>3</id>
+          <label>103</label>
+          <onright>50</onright>
+          <onup>2</onup>
+          <ondown>5</ondown>
+        </control>
+        <control>
+          <description>Switch View</description>
+          <type>button</type>
+          <id>5</id>
+          <label>457</label>
+          <onright>50</onright>
+          <onup>3</onup>
+          <ondown>6</ondown>
+        </control>
+        <control>
+          <description>Play DVD</description>
+          <type>button</type>
+          <id>6</id>
+          <label>341</label>
+          <onright>50</onright>
+          <onup>5</onup>
+          <ondown>7</ondown>
+        </control>
+        <control>
+          <description>Eject Disc</description>
+          <type>button</type>
+          <id>7</id>
+          <label>654</label>
+          <action>100</action>
+          <onright>50</onright>
+          <onup>6</onup>
+          <ondown>20</ondown>
+        </control>
+        <control>
+          <type>image</type>
+          <description>Divider image</description>
+          <id>999</id>
+          <texture>hbar1.png</texture>
+          <keepaspectratio>yes</keepaspectratio>
+        </control>
+        <control>
+          <description>Current Playlist</description>
+          <type>button</type>
+          <id>20</id>
+          <label>4555</label>
+          <action>33</action>
+          <onright>50</onright>
+          <onup>7</onup>
+          <ondown>9</ondown>
+        </control>
+        <control>
+          <description>My Playlists</description>
+          <type>button</type>
+          <id>9</id>
+          <label>983</label>
+          <onright>50</onright>
+          <onup>20</onup>
+          <ondown>8</ondown>
+        </control>
+        <control>
+          <description>Trailers</description>
+          <type>button</type>
+          <id>8</id>
+          <label>5906</label>
+          <hyperlink>5900</hyperlink>
+          <onright>50</onright>
+          <onup>9</onup>
+          <ondown>99</ondown>
+        </control>
+      </control>
+    </control>
+    <import>common.facade.video2.xml</import>
+     <control>
+      <id>1</id>
+      <type>image</type>
+      <posX>80</posX>
+      <posY>160</posY>
+      <width>148</width>
+      <height>240</height>
+      <texture flipY="true" diffuse="Thumb_Mask.png">missing_Coverart.png</texture>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <id>1</id>
+      <type>image</type>
+      <posX>80</posX>
+      <posY>160</posY>
+      <width>150</width>
+      <height>243</height>
+      <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>62</posX>
+      <posY>153</posY>
+      <width>187</width>
+      <height>425</height>
+      <texture>Cover_dvd.png</texture>
+      <visible>facadeview.list</visible>
+    </control>
+  </controls>
+</window>

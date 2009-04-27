@@ -1,0 +1,224 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>504</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:#view</define>
+  <define>#header.image:music_logo.png</define>
+  <define>-</define>
+  <controls>
+    <import>common.window.music.xml</import>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>50</onexit>
+      <buttonX>-210</buttonX>
+      <buttonY>64</buttonY>
+      <buttonwidth>385</buttonwidth>
+      <buttonheight>515</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <width>100</width>
+      <height>568</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <posY>64</posY>
+        <width>385</width>
+        <height>515</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="350" start="-300,0">visible</animation>
+        <animation effect="slide" time="350" end="-300,0">hidden</animation>
+      </control>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="350" end="-300,0">hidden</animation>
+        <animation effect="slide" time="450" start="-300,0">visible</animation>
+        <posX>69</posX>
+        <posY>89</posY>
+        <layout>StackLayout</layout>
+        <control>
+          <description>View-As button</description>
+          <type>button</type>
+          <id>2</id>
+          <label>100</label>
+          <onleft>2</onleft>
+          <onright>50</onright>
+          <onup>17</onup>
+          <ondown>3</ondown>
+        </control>
+        <control>
+          <type>sortbutton</type>
+          <id>3</id>
+          <label>103</label>
+          <onleft>3</onleft>
+          <onright>50</onright>
+          <onup>2</onup>
+          <ondown>6</ondown>
+        </control>
+        <control>
+          <description>Albums/Artists/Songs/Genres button</description>
+          <type>button</type>
+          <id>6</id>
+          <label>457</label>
+          <onleft>6</onleft>
+          <onright>50</onright>
+          <onup>3</onup>
+          <ondown>8</ondown>
+        </control>
+        <control>
+          <description>Search button</description>
+          <type>button</type>
+          <id>8</id>
+          <label>137</label>
+          <onleft>8</onleft>
+          <onright>50</onright>
+          <onup>6</onup>
+          <ondown>12</ondown>
+        </control>
+        <control>
+          <description>Play CD</description>
+          <type>button</type>
+          <id>12</id>
+          <label>890</label>
+          <onleft>12</onleft>
+          <onright>50</onright>
+          <onup>8</onup>
+          <ondown>13</ondown>
+        </control>
+        <control>
+          <description>Eject Disc</description>
+          <type>button</type>
+          <id>13</id>
+          <label>654</label>
+          <onleft>13</onleft>
+          <onright>50</onright>
+          <onup>12</onup>
+          <ondown>11</ondown>
+          <action>100</action>
+        </control>
+        <control>
+          <type>image</type>
+          <description>Divider image</description>
+          <id>999</id>
+          <texture>hbar1.png</texture>
+          <keepaspectratio>yes</keepaspectratio>
+        </control>
+        <control>
+          <description>Now playing button</description>
+          <type>button</type>
+          <id>11</id>
+          <label>4540</label>
+          <onleft>11</onleft>
+          <onright>50</onright>
+          <onup>13</onup>
+          <ondown>9</ondown>
+          <hyperlink>510</hyperlink>
+        </control>
+        <control>
+          <description>Playlist button</description>
+          <type>button</type>
+          <id>9</id>
+          <label>4555</label>
+          <action>33</action>
+          <onleft>9</onleft>
+          <onright>50</onright>
+          <onup>11</onup>
+          <ondown>10</ondown>
+        </control>
+        <control>
+          <description>My Playlists</description>
+          <type>button</type>
+          <id>10</id>
+          <label>983</label>
+          <onleft>10</onleft>
+          <onright>50</onright>
+          <onup>9</onup>
+          <ondown>99</ondown>
+        </control>
+      </control>
+    </control>
+    <import>common.facade.music2.xml</import>
+    <control>
+      <id>0</id>
+      <type>image</type>
+      <posX>145</posX>
+      <posY>232</posY>
+      <width>180</width>
+      <height>180</height>
+      <texture flipY="true" diffuse="Thumb_Mask.png">missing_Coverart.png</texture>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <id>0</id>
+      <type>image</type>
+      <posX>145</posX>
+      <posY>232</posY>
+      <width>180</width>
+      <height>180</height>
+      <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>112</posX>
+      <posY>210</posY>
+      <width>225</width>
+      <height>300</height>
+      <texture>Covertop.png</texture>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>89</posX>
+      <posY>445</posY>
+      <width>300</width>
+      <label>#itemcount</label>
+      <font>font14</font>
+      <textcolor>ff969696</textcolor>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>89</posX>
+      <posY>475</posY>
+      <width>300</width>
+      <label>#selecteditem</label>
+      <font>font14</font>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>89</posX>
+      <posY>505</posY>
+      <width>365</width>
+      <label>#selecteditem2</label>
+      <font>font14</font>
+      <visible>facadeview.list</visible>
+    </control>
+      <control>
+      <description>play time label</description>
+      <type>label</type>
+      <posX>257</posX>
+      <posY>710</posY>
+      <label>#currentplaytime</label>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>00ffffff</textcolor>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+  </controls>
+</window>

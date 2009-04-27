@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+
+  <controls>
+
+    <control>
+      <type>group</type>
+      <animation effect="slide" time="350" end="300,0">WindowClose</animation>
+      <animation effect="slide" time="450" start="300,0">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="500">WindowOpen</animation>
+      <description>group element</description>
+      <control>
+        <description>composite control consisting of a list control and a thumbnail panel</description>
+        <type>facadeview</type>
+        <id>50</id>
+        <control>
+          <description>listcontrol</description>
+          <type>listcontrol</type>
+          <id>50</id>
+          <posX>375</posX>
+          <width>950</width>
+          <textureHeight>45</textureHeight>
+          <font>font16</font>
+          <textXOff>82</textXOff>
+          <textXOff2>872</textXOff2>
+          <itemWidth>40</itemWidth>
+          <itemHeight>37</itemHeight>
+          <IconXOff>64</IconXOff>
+          <IconYOff>4</IconYOff>
+          <scrollOffset>2</scrollOffset>
+          <folderPrefix></folderPrefix>
+          <folderSuffix></folderSuffix>
+	  <onleft>10</onleft>
+        </control>
+        <control>
+          <description>Thumbnail Panel</description>
+          <type>thumbnailpanel</type>
+          <id>50</id>
+          <font>font12</font>
+	  <scrollOffset>1</scrollOffset> 
+          <posX>90</posX>
+          <posY>89</posY>
+          <width>1250</width>
+          <height>505</height>
+          <spinWidth>34</spinWidth>
+          <spinHeight>36</spinHeight>
+          <spinPosX>1182</spinPosX>
+          <spinPosY>590</spinPosY>
+          <spinColor>ffffffff</spinColor>
+          <textureUp>page_up_nofocus.png</textureUp>
+          <textureDown>page_down_nofocus.png</textureDown>
+          <textureUpFocus>page_up_focus.png</textureUpFocus>
+          <textureDownFocus>page_down_focus.png</textureDownFocus>
+          <itemWidth>176</itemWidth>
+          <itemHeight>156</itemHeight>
+          <textureWidth>176</textureWidth>
+          <textureHeight>156</textureHeight>
+          <thumbWidth>110</thumbWidth>
+          <thumbHeight>110</thumbHeight>
+          <thumbPosX>33</thumbPosX>
+          <thumbPosY>12</thumbPosY>
+          <thumbZoom>no</thumbZoom>
+          <imageFolder>icon_empty_nofocus.png</imageFolder>
+          <imageFolderFocus>icon_empty_focus.png</imageFolderFocus>
+          <font>font12</font>
+          <selectedColor>00ffffff</selectedColor>
+          <textcolor>ffffffff</textcolor>
+          <colordiffuse>ffffffff</colordiffuse>
+          <remoteColor>ffFFA075</remoteColor>
+          <downloadColor>ff80ff80</downloadColor>
+          <suffix>|</suffix>
+          <folderPrefix></folderPrefix>
+          <folderSuffix></folderSuffix>
+          <textureWidthBig>290</textureWidthBig>
+          <textureHeightBig>230</textureHeightBig>
+          <itemWidthBig>290</itemWidthBig>
+          <itemHeightBig>230</itemHeightBig>
+          <thumbWidthBig>173</thumbWidthBig>
+          <thumbHeightBig>173</thumbHeightBig>
+          <thumbPosXBig>57</thumbPosXBig>
+          <thumbPosYBig>18</thumbPosYBig>
+          <thumbZoom>no</thumbZoom>
+          <textXOff>17</textXOff>
+          <textYOff>-40</textYOff>
+          <enableFocusZoom>no</enableFocusZoom>
+	  <onleft>10</onleft>
+        </control>
+        <control>
+          <description>Filmstrip view</description>
+          <type>filmstrip</type>
+          <id>50</id>
+          <posX>90</posX>
+          <width>1250</width>
+          <onup>10</onup>
+	  <onleft>10</onleft>
+          <thumbWidth>141</thumbWidth>
+          <thumbHeight>219</thumbHeight>
+          <thumbPosX>17</thumbPosX>
+          <thumbPosY>6</thumbPosY>
+          <imageFolderFocus>Framefocus.png</imageFolderFocus>
+          <frame>Cover_game.png</frame>
+          <frameFocus>Coverframe_game.png</frameFocus>
+          <itemWidth>203</itemWidth>
+          <itemHeight>210</itemHeight>
+          <textureWidth>173</textureWidth>
+          <textureHeight>380</textureHeight>
+          <font>font12</font>
+          <textXOff>8</textXOff>
+          <textYOff>-165</textYOff>
+          <selectedColor>20ffffff</selectedColor>
+          <textcolor>00ffffff</textcolor>
+          <background>Coverbig.png</background>
+          <thumbs flipY="true" diffuse="Thumb_Mask.png"></thumbs>
+          <InfoImage flipY="true" diffuse="Thumb_Mask.png"></InfoImage>
+          <showFrame>yes</showFrame>
+          <showFolder>no</showFolder>
+          <showBackGround>no</showBackGround>
+          <showInfoImage>no</showInfoImage>
+          <folderPrefix></folderPrefix>
+          <folderSuffix></folderSuffix>
+          <thumbAnimation effect="zoom" start="100,100" end="140,140" time="180">focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="140,140" end="100,100" time="180">unfocus</thumbAnimation>
+        </control>
+        <control>
+          <description>playlist listcontrol</description>
+          <type>playlistcontrol</type>
+          <id>50</id>
+	  <onleft>10</onleft>
+          <posX>375</posX>
+          <width>950</width>
+          <textureHeight>45</textureHeight>
+          <font>font16</font>
+          <textXOff>82</textXOff>
+          <textXOff2>742</textXOff2>
+          <itemWidth>40</itemWidth>
+          <itemHeight>37</itemHeight>
+          <IconXOff>64</IconXOff>
+          <IconYOff>4</IconYOff>
+          <upBtnWidth>43</upBtnWidth>
+          <downBtnWidth>47</downBtnWidth>
+          <deleteBtnWidth>47</deleteBtnWidth>
+          <upBtnHeight>45</upBtnHeight>
+          <downBtnHeight>45</downBtnHeight>
+          <deleteBtnHeight>45</deleteBtnHeight>
+          <upBtnXOffset>772</upBtnXOffset>
+          <downBtnXOffset>819</downBtnXOffset>
+          <deleteBtnXOffset>870</deleteBtnXOffset>
+          <upBtnYOffset>1</upBtnYOffset>
+          <downBtnYOffset>1</downBtnYOffset>
+          <deleteBtnYOffset>1</deleteBtnYOffset>
+          <scrollOffset>1</scrollOffset>
+        </control>
+      </control>
+    </control>
+
+  </controls>
+</window>

@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>3007</id>
+  <defaultcontrol>213</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>10</posX>
+      <posY>610</posY>
+      <width>850</width>
+      <height>140</height>
+      <texture>zaposd_background_wide.png</texture>
+    </control>
+    <control>
+      <description>TV Logo</description>
+      <type>image</type>
+      <id>10</id>
+      <posX>35</posX>
+      <posY>625</posY>
+      <width>100</width>
+      <height>100</height>
+      <texture>#TV.View.thumb</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+    </control>
+    <control>
+      <description>Progress Bar</description>
+      <type>progress</type>
+      <id>1</id>
+      <posX>480</posX>
+      <posY>647</posY>
+      <width>220</width>
+      <height>5</height>
+      <texturebg>osd_progress_back.png</texturebg>
+      <visible>yes</visible>
+      <label>#TV.View.Percentage</label>
+    </control>
+    <control>
+      <description>Start Time Info</description>
+      <type>label</type>
+      <id>101</id>
+      <posX>415</posX>
+      <posY>636</posY>
+      <label>#TV.View.start</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control>
+      <description>End Time Info</description>
+      <type>label</type>
+      <id>102</id>
+      <posX>710</posX>
+      <posY>636</posY>
+      <label>#TV.View.stop</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control>
+      <description>rec logo</description>
+      <type>image</type>
+      <id>39</id>
+      <posX>710</posX>
+      <posY>694</posY>
+      <texture>rec.png</texture>
+      <colordiffuse>50ffffff</colordiffuse>
+    </control>
+    <control>
+      <description>On tv NOW</description>
+      <id>36</id>
+      <type>textbox</type>
+      <width>400</width>
+      <height>30</height>
+      <posX>170</posX>
+      <posY>668</posY>
+      <align>left</align>
+      <font>font14</font>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control>
+      <description>On tv NEXT</description>
+      <id>37</id>
+      <type>textbox</type>
+      <width>400</width>
+      <height>30</height>
+      <posX>170</posX>
+      <posY>694</posY>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>FFB2D4F5</textcolor>
+    </control>
+    <control>
+      <description>Current channel</description>
+      <type>label</type>
+      <id>35</id>
+      <posX>160</posX>
+      <posY>632</posY>
+      <label>-</label>
+      <align>left</align>
+      <font>font16</font>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+  </controls>
+</window>

@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>2016</id>
+  <defaultcontrol>4</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <width>1366</width>
+      <height>768</height>
+      <texture>black.bmp</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>607</posX>
+        <posY>533</posY>
+        <width>566</width>
+        <height>200</height>
+        <texture>dialog_background.png</texture>
+      </control>
+      <control>
+        <description>Heading text label</description>
+        <type>label</type>
+        <id>3</id>
+        <posX>677</posX>
+        <posY>546</posY>
+        <label>181</label>
+        <font>font10</font>
+        <textcolor>Black</textcolor>
+      </control>
+      <control>
+        <description>OK button</description>
+        <type>button</type>
+        <id>4</id>
+        <posX>1077</posX>
+        <posY>540</posY>
+        <width>38</width>
+        <height>38</height>
+        <textureFocus>dialogue_ok_focus.png</textureFocus>
+        <textureNoFocus>dialogue_ok_nofocus.png</textureNoFocus>
+        <label>-</label>
+        <onleft>4</onleft>
+        <onright>4</onright>
+        <onup>4</onup>
+        <ondown>6</ondown>
+      </control>
+      <control>
+        <description>logo</description>
+        <type>image</type>
+        <id>5</id>
+        <posX>664</posX>
+        <posY>600</posY>
+        <width>93</width>
+        <height>93</height>
+        <texture>#thumb</texture>
+        <colorkey>FFFF00FF</colorkey>
+        <colordiffuse>FFFFFFFF</colordiffuse>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>textarea</description>
+        <type>textbox</type>
+        <id>6</id>
+        <font>font10</font>
+        <posX>787</posX>
+        <posY>599</posY>
+        <width>300</width>
+        <height>120</height>
+        <spinPosX>1077</spinPosX>
+        <spinPosY>680</spinPosY>
+        <onleft>4</onleft>
+        <onright>4</onright>
+        <onup>4</onup>
+        <ondown>4</ondown>
+        <label>-</label>
+      </control>
+    </control>
+  </controls>
+</window>

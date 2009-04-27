@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control>
+      <type>label</type>
+      <description>Dummy Label for Fanart triggers</description>
+      <id>1232</id>
+      <posX>-50</posX>
+      <posY>-50</posY>
+      <width>620</width>
+      <textcolor>d4d2d2</textcolor>
+      <font>font14</font>
+      <label>
+      </label>
+      <visible>false</visible>
+      <!-- to make a control visible only when FANART is loaded do this: <visible>Control.IsVisible(1232)</visible> -->
+      <!-- to make a control invisible when FANART is loaded do this: <visible>!Control.IsVisible(1232)</visible> -->
+    </control>
+    <control>
+      <type>label</type>
+      <description>Dummy Label for dark Fanart triggers</description>
+      <id>1233</id>
+      <posX>-50</posX>
+      <posY>-50</posY>
+      <width>620</width>
+      <textcolor>d4d2d2</textcolor>
+      <font>font14</font>
+      <label>
+      </label>
+      <visible>false</visible>
+      <!-- to make a control visible only when a DARK FANART is loaded do this: <visible>Control.IsVisible(1233)</visible> -->
+      <!-- to make a control invisible when a DARK FANART is loaded do this: <visible>!Control.IsVisible(1233)</visible> -->
+    </control>
+    <control>
+      <type>label</type>
+      <description>Dummy Label for light Fanart triggers</description>
+      <id>1234</id>
+      <posX>-50</posX>
+      <posY>-50</posY>
+      <width>620</width>
+      <textcolor>d4d2d2</textcolor>
+      <font>font14</font>
+      <label>
+      </label>
+      <visible>false</visible>
+      <!-- to make a control visible only when a LIGHT FANART is loaded do this: <visible>Control.IsVisible(1234)</visible> -->
+      <!-- to make a control invisible when a LIGHT FANART is loaded do this: <visible>!Control.IsVisible(1234)</visible> -->
+    </control>
+    <control>
+      <type>label</type>
+      <description>Dummy Label for List triggers</description>
+      <id>1235</id>
+      <posX>-50</posX>
+      <posY>-50</posY>
+      <width>0</width>
+      <textcolor>d4d2d2</textcolor>
+      <font>font14</font>
+      <label>
+      </label>
+      <visible>false</visible>
+      <!-- to make a control visible only when the facade is in LIST MODE do this: <visible>Control.IsVisible(1235)</visible> -->
+      <!-- to make a control invisible when the facade is in LIST MODE do this: <visible>!Control.IsVisible(1235)</visible> -->
+    </control>
+    <control>
+      <type>label</type>
+      <description>Dummy Label for Graphical View</description>
+      <id>1236</id>
+      <posX>-50</posX>
+      <posY>-50</posY>
+      <width>0</width>
+      <textcolor>d4d2d2</textcolor>
+      <font>font14</font>
+      <label>
+      </label>
+      <visible>false</visible>
+      <!-- to make a control visible only when the facade is in BIG THUMBNAIL MODE do this: <visible>Control.IsVisible(1236)</visible> -->
+      <!-- to make a control invisible when the facade is in BIG THUMBNAIL MODE do this: <visible>!Control.IsVisible(1236)</visible> -->
+    </control>
+    <control>
+      <type>label</type>
+      <description>Dummy Label for Series View</description>
+      <id>1237</id>
+      <posX>-50</posX>
+      <posY>-50</posY>
+      <width>0</width>
+      <textcolor>d4d2d2</textcolor>
+      <font>font14</font>
+      <label>
+      </label>
+      <visible>false</visible>
+      <!-- to make a control visible only when you are in SERIES VIEW do this: <visible>Control.IsVisible(1237)</visible> -->
+      <!-- to make a control invisible when you are in SERIES VIEW do this: <visible>!Control.IsVisible(1237)</visible> -->
+    </control>
+    <control>
+      <type>label</type>
+      <description>Dummy Label for Season View</description>
+      <id>1238</id>
+      <posX>-50</posX>
+      <posY>-50</posY>
+      <width>0</width>
+      <textcolor>d4d2d2</textcolor>
+      <font>font14</font>
+      <label>
+      </label>
+      <visible>false</visible>
+      <!-- to make a control visible only when you are in SEASON VIEW do this: <visible>Control.IsVisible(1238)</visible> -->
+      <!-- to make a control invisible when you are in SEASON VIEW do this: <visible>!Control.IsVisible(1238)</visible> -->
+    </control>
+    <control>
+      <type>label</type>
+      <description>Dummy Label for Episode View</description>
+      <id>1239</id>
+      <posX>-50</posX>
+      <posY>-50</posY>
+      <width>0</width>
+      <textcolor>d4d2d2</textcolor>
+      <font>font14</font>
+      <label>
+      </label>
+      <visible>false</visible>
+      <!-- to make a control visible only when you are in EPISODE VIEW do this: <visible>Control.IsVisible(1239)</visible> -->
+      <!-- to make a control invisible when you are in EPISODE VIEW do this: <visible>!Control.IsVisible(1239)</visible> -->
+    </control>
+    <control>
+      <type>label</type>
+      <description>Dummy Label for Grouped View</description>
+      <id>1240</id>
+      <posX>-50</posX>
+      <posY>-50</posY>
+      <width>0</width>
+      <textcolor>d4d2d2</textcolor>
+      <font>font14</font>
+      <label>
+      </label>
+      <visible>false</visible>
+      <!-- to make a control visible only when you are in GROUP VIEW (Genre/Channels) do this: <visible>Control.IsVisible(1240)</visible> -->
+      <!-- to make a control invisible when you are in GROUP VIEW (Genre/Channels) do this: <visible>!Control.IsVisible(1240)</visible> -->
+    </control>
+    <control>
+      <type>label</type>
+      <description>Dummy Label for FanArt Colors</description>
+      <id>1241</id>
+      <posX>-50</posX>
+      <posY>-50</posY>
+      <width>0</width>
+      <textcolor>d4d2d2</textcolor>
+      <font>font14</font>
+      <label>
+      </label>
+      <visible>false</visible>
+      <!-- to make a control visible when fanart colors are present do this: <visible>Control.IsVisible(1241)</visible> -->
+      <!-- to make a control invisible when fanart colors are present  do this: <visible>!Control.IsVisible(1241)</visible> -->
+    </control>
+    <control>
+      <type>label</type>
+      <description>Dummy Label for Series Posters / Wide banners</description>
+      <id>1242</id>
+      <posX>-50</posX>
+      <posY>-50</posY>
+      <width>0</width>
+      <textcolor>d4d2d2</textcolor>
+      <font>font14</font>
+      <label>
+      </label>
+      <visible>false</visible>
+      <!-- to make a control visible only when Series Posters are enabled do this: <visible>Control.IsVisible(1242)</visible> -->
+      <!-- to make a control invisible only when Wide Banners are enabled do this: <visible>!Control.IsVisible(1242)</visible> -->
+    </control>
+    <control>
+      <type>label</type>
+      <description>Dummy Label for Series/Season/Episode Watched Flag</description>
+      <id>1243</id>
+      <posX>-50</posX>
+      <posY>-50</posY>
+      <width>0</width>
+      <textcolor>d4d2d2</textcolor>
+      <font>font14</font>
+      <label>
+      </label>
+      <visible>false</visible>
+      <!-- to make a control visible only when Series/Season/Episode is watched do this: <visible>Control.IsVisible(1243)</visible> -->
+      <!-- to make a control invisible only when Series/Season/Episode is not watched do this: <visible>!Control.IsVisible(1243)</visible> -->
+    </control>
+    <control>
+      <type>label</type>
+      <description>Dummy Label for Series/Season/Episode being Available</description>
+      <id>1244</id>
+      <posX>-50</posX>
+      <posY>-50</posY>
+      <width>0</width>
+      <textcolor>d4d2d2</textcolor>
+      <font>font14</font>
+      <label>
+      </label>
+      <visible>false</visible>
+      <!-- to make a control visible only when Series/Season/Episode is available (file local) do this: <visible>Control.IsVisible(1244)</visible> -->
+      <!-- to make a control invisible only when Series/Season/Episode is not available (file not local) do this: <visible>!Control.IsVisible(1244)</visible> -->
+    </control>
+  </controls>
+</window>

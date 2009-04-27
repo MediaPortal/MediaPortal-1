@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>608</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#header.label:892</define>
+  <define>#header.image:television_logo.png</define>
+  <define>#header.hover:hover_my tv.png</define>
+  <controls>
+    <import>common.window3.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1366</width>
+      <height>768</height>
+    </control>
+    <!--     <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>113</posX>
+      <posY>26</posY>
+      <texture>television_logo.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control> -->
+    <!--     <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>142</posX>
+      <posY>493</posY>
+      <texture>hover_my tv.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control> -->
+    <!--     <control>
+      <description>Conflicts Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>474</posX>
+      <posY>93</posY>
+      <label>892</label>
+      <align>right</align>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control> -->
+    <!--     <control>
+      <description>Date</description>
+      <type>label</type>
+      <id>200</id>
+      <posX>1309</posX>
+      <posY>40</posY>
+      <label>#date</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>Time</description>
+      <type>label</type>
+      <id>201</id>
+      <posX>1309</posX>
+      <posY>66</posY>
+      <label>#time</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control> -->
+    <!--     <control>
+      <description>Number of Files Label</description>
+      <type>label</type>
+      <id>12</id>
+      <posX>493</posX>
+      <posY>706</posY>
+      <label>#itemcount</label>
+      <font>font13</font>
+      <align>left</align>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>1252</posX>
+      <posY>93</posY>
+      <width>533</width>
+      <label>#selecteditem</label>
+      <font>font13</font>
+      <align>right</align>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control> -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <control>
+        <description>scheduler recordings listcontrol</description>
+        <type>listcontrol</type>
+        <id>10</id>
+        <posX>269</posX>
+        <posY>89</posY>
+        <width>566</width>
+        <height>493</height>
+        <textXOff>94</textXOff>
+        <textYOff>2</textYOff>
+        <textXOff2>796</textXOff2>
+        <textYOff2>38</textYOff2>
+        <textXOff3>189</textXOff3>
+        <textYOff3>38</textYOff3>
+        <IconXOff>22</IconXOff>
+        <IconYOff>10</IconYOff>
+        <PinIconXOff>45</PinIconXOff>
+        <PinIconYOff>19</PinIconYOff>
+        <spinPosX>1149</spinPosX>
+        <spinPosY>557</spinPosY>
+        <itemWidth>46</itemWidth>
+        <itemHeight>46</itemHeight>
+        <textureFocus>recording_background_focus.png</textureFocus>
+        <textureNoFocus>recording_background_nofocus.png</textureNoFocus>
+        <spaceBetweenItems>6</spaceBetweenItems>
+        <textureHeight>66</textureHeight>
+        <keepaspectratio>no</keepaspectratio>
+        <font2>font10</font2>
+        <font3>font10</font3>
+        <onleft>2</onleft>
+        <onright>2</onright>
+        <onup>2</onup>
+        <ondown>2</ondown>
+      </control>
+    </control>
+    <control>
+      <description>Current program title</description>
+      <type>fadelabel</type>
+      <id>13</id>
+      <posX>493</posX>
+      <posY>586</posY>
+      <width>333</width>
+      <label>#TV.Scheduled.Title</label>
+      <font>font13</font>
+      <textcolor>FF000000</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>Current program time</description>
+      <type>label</type>
+      <id>14</id>
+      <posX>493</posX>
+      <posY>613</posY>
+      <label>#TV.Scheduled.Time</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>ff969696</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>Description1</description>
+      <type>textboxscrollup</type>
+      <id>15</id>
+      <posX>493</posX>
+      <posY>646</posY>
+      <width>573</width>
+      <height>86</height>
+      <label>#TV.Scheduled.Description</label>
+      <font>font13</font>
+      <textcolor>ff969696</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>genre</description>
+      <type>label</type>
+      <id>17</id>
+      <posX>1252</posX>
+      <posY>613</posY>
+      <label>#TV.Scheduled.Genre</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>FF000000</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+   <control>
+      <description>video rectangle</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>48</posX>
+      <posY>540</posY>
+      <width>330</width>
+      <height>225</height>
+      <texture>playback_background.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>video preview window</description>
+      <type>videowindow</type>
+      <id>99</id>
+      <posX>96</posX>
+      <posY>568</posY>
+      <width>238</width>
+      <height>131</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <action>18</action>
+      <textureFocus>tv_green_border.png</textureFocus>
+    </control>
+    <control>
+      <description>progress bar</description>
+      <type>progress</type>
+      <id>20</id>
+      <posX>126</posX>
+      <posY>701</posY>
+      <width>158</width>
+      <label>#TV.View.Percentage</label>
+      <visible>yes</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+  </controls>
+</window>

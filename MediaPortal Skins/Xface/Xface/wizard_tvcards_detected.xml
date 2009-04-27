@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>616</id>
+  <defaultcontrol>5</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <control>
+      <type>image</type>
+      <description>BG</description>
+      <id>1</id>
+    </control>
+    <control>
+      <type>button</type>
+      <description>Back</description>
+      <id>25</id>
+      <posX>60</posX>
+      <posY>452</posY>
+      <onleft>25</onleft>
+      <onright>5</onright>
+      <onup>25</onup>
+      <ondown>25</ondown>
+      <label>200007</label>
+      <width>194</width>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Press the Next button to configure these cards</description>
+      <id>1</id>
+      <posX>60</posX>
+      <posY>416</posY>
+      <label>200023</label>
+      <font>font12</font>
+    </control>
+    <control>
+      <type>label</type>
+      <description>MediaPortal has found the following tv-cards:</description>
+      <id>1</id>
+      <posX>60</posX>
+      <posY>202</posY>
+      <label>200022</label>
+      <font>font12</font>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>91</posX>
+      <posY>520</posY>
+      <texture>hover_my tv1.png</texture>
+    </control>
+    <control>
+      <type>image</type>
+      <description>MP Logo</description>
+      <id>1</id>
+      <posX>89</posX>
+      <posY>4</posY>
+      <width>320</width>
+      <height>55</height>
+      <texture>mplogo.png</texture>
+    </control>
+    <control>
+      <type>label</type>
+      <description>TV Setup</description>
+      <id>1</id>
+      <posX>374</posX>
+      <posY>39</posY>
+      <label>200024</label>
+      <font>font14</font>
+      <align>right</align>
+      <textcolor>White</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>
+    <control>
+      <type>button</type>
+      <description>Next</description>
+      <id>5</id>
+      <posX>280</posX>
+      <posY>452</posY>
+      <onleft>25</onleft>
+      <onright>5</onright>
+      <onup>5</onup>
+      <ondown>5</ondown>
+      <label>200009</label>
+      <width>194</width>
+    </control>
+    <control>
+      <type>textbox</type>
+      <id>24</id>
+      <posX>106</posX>
+      <posY>234</posY>
+      <width>693</width>
+      <height>141</height>
+      <text>Hauppauge PVR 350</text>
+      <SpinPosX>533</SpinPosX>
+      <SpinPosY>282</SpinPosY>
+      <SpinAlign>right</SpinAlign>
+    </control>
+  </controls>
+</window>

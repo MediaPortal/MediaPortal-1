@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>614</id>
+  <defaultcontrol>3</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1366</width>
+      <height>768</height>
+      <texture>background.png</texture>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>89</posX>
+      <posY>4</posY>
+       <width>220</width>
+       <height>55</height>
+      <texture>movieinfo_logo.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>
+    <control>
+      <description>Actor Name Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>189</posX>
+      <posY>133</posY>
+      <label>493</label>
+      <font>font13</font>
+      <textcolor>ff969696</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>
+    <control>
+      <description>Actor Name value</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>417</posX>
+      <posY>133</posY>
+      <width>533</width>
+      <label>#Actor.Name</label>
+      <font>font16</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>
+    <control>
+      <description>Born</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>189</posX>
+      <posY>160</posY>
+      <label>686</label>
+      <font>font13</font>
+     <textcolor>ff969696</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>
+    <control>
+      <description>Date of Birth</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>417</posX>
+      <posY>160</posY>
+      <width>533</width>
+      <label>#Actor.DateOfBirth #Actor.PlaceOfBirth</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>
+    <control>
+      <description>Biography</description>
+      <type>togglebutton</type>
+      <id>3</id>
+      <posX>69</posX>
+      <posY>373</posY>
+      <label>1011</label>
+      <textcolor>ffffffff</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+      <font>font13</font>
+      <onleft>22</onleft>
+      <onright>22</onright>
+      <onup>2</onup>
+      <ondown>4</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>
+    <control>
+      <description>Movies</description>
+      <type>togglebutton</type>
+      <id>4</id>
+      <posX>69</posX>
+      <posY>421</posY>
+      <label>342</label>
+      <textcolor>ffffffff</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+      <font>font13</font>
+      <onleft>22</onleft>
+      <onright>22</onright>
+      <onup>3</onup>
+      <ondown>5</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>
+    <control>
+      <description>Biography value</description>
+      <type>textboxscrollup</type>
+      <id>20</id>
+      <posX>417</posX>
+      <posY>200</posY>
+      <width>546</width>
+      <height>533</height>
+      <label>#Actor.Biography</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>
+    <control>
+      <description>Image logo</description>
+      <type>image</type>
+      <id>21</id>
+      <posX>189</posX>
+      <posY>200</posY>
+      <width>133</width>
+      <height>133</height>
+      <texture>#thumb</texture>
+      <colorkey>FFFF00FF</colorkey>
+      <colordiffuse>FFFFFFFF</colordiffuse>
+      <keepaspectratio>yes</keepaspectratio>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>
+    <control>
+      <description>textarea</description>
+      <type>textbox</type>
+      <id>22</id>
+      <posY>200</posY>
+      <height>325</height>
+      <onleft>4</onleft>
+      <onright>4</onright>
+      <onup>4</onup>
+      <ondown>4</ondown>
+      <label>#Actor.Movies</label>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>
+  </controls>
+</window>

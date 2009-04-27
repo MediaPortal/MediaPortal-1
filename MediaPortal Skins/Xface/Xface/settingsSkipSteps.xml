@@ -1,0 +1,328 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>708</id>
+  <defaultcontrol>19</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1366</width>
+      <height>768</height>
+    </control>
+    <control>
+      <type>image</type>
+      <description>MP	Logo</description>
+      <id>1</id>
+      <posX>69</posX>
+      <posY>4</posY>
+      <width>320</width>
+      <height>55</height>
+      <texture>mplogo.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Setup skip steps</description>
+      <id>1</id>
+      <posX>374</posX>
+      <posY>39</posY>
+      <label>6025</label>
+      <font>font14</font>
+      <align>right</align>
+      <textcolor>White</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>
+    <control>
+      <description>add button</description>
+      <type>button</type>
+      <id>19</id>
+      <label>200039</label>
+      <posX>113</posX>
+      <posY>194</posY>
+      <align>center</align>
+      <textureFocus>button_small_settings_focus.png</textureFocus>
+      <textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>
+      <onup>99</onup>
+      <ondown>20</ondown>
+      <onleft>2</onleft>
+      <onright>2</onright>
+    </control>
+    <control>
+      <description>remove button</description>
+      <type>button</type>
+      <id>20</id>
+      <label>200040</label>
+      <posX>113</posX>
+      <posY>234</posY>
+      <align>center</align>
+      <textureFocus>button_small_settings_focus.png</textureFocus>
+      <textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>
+      <onup>19</onup>
+      <ondown>18</ondown>
+      <onleft>2</onleft>
+      <onright>2</onright>
+    </control>
+    <control>
+      <description>reset button</description>
+      <type>button</type>
+      <id>18</id>
+      <label>886</label>
+      <posX>113</posX>
+      <posY>274</posY>
+      <align>center</align>
+      <textureFocus>button_small_settings_focus.png</textureFocus>
+      <textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>
+      <onup>20</onup>
+      <ondown>2</ondown>
+      <onleft>2</onleft>
+      <onright>2</onright>
+    </control>
+    <control>
+      <type>label</type>
+      <description>skip steps seconds</description>
+      <id>1</id>
+      <posX>546</posX>
+      <posY>266</posY>
+      <label>9997</label>
+      <font>font13</font>
+    </control>
+    <control>
+      <description>Step 1</description>
+      <type>checkmark</type>
+      <id>2</id>
+      <label> 5</label>
+      <posX>546</posX>
+      <posY>300</posY>
+      <textcolor>FFFFFFFF</textcolor>
+      <onleft>18</onleft>
+      <onright>6</onright>
+      <onup>18</onup>
+      <align>right</align>
+    </control>
+    <control>
+      <description>Step 2</description>
+      <type>checkmark</type>
+      <id>3</id>
+      <label> 15</label>
+      <posX>546</posX>
+      <posY>333</posY>
+      <textcolor>FFFFFFFF</textcolor>
+      <onleft>18</onleft>
+      <onright>6</onright>
+      <align>right</align>
+    </control>
+    <control>
+      <description>Step 3</description>
+      <type>checkmark</type>
+      <id>4</id>
+      <label> 30</label>
+      <posX>546</posX>
+      <posY>366</posY>
+      <textcolor>FFFFFFFF</textcolor>
+      <onleft>18</onleft>
+      <onright>6</onright>
+      <align>right</align>
+    </control>
+    <control>
+      <description>Step 4</description>
+      <type>checkmark</type>
+      <id>5</id>
+      <label> 45</label>
+      <posX>546</posX>
+      <posY>400</posY>
+      <textcolor>FFFFFFFF</textcolor>
+      <onleft>18</onleft>
+      <onright>6</onright>
+      <ondown>2</ondown>
+      <align>right</align>
+    </control>
+    <control>
+      <type>label</type>
+      <description>skip steps minutes</description>
+      <id>1</id>
+      <posX>819</posX>
+      <posY>266</posY>
+      <label>9998</label>
+      <font>font13</font>
+    </control>
+    <control>
+      <description>Step 5</description>
+      <type>checkmark</type>
+      <id>6</id>
+      <label> 1</label>
+      <posX>819</posX>
+      <posY>300</posY>
+      <textcolor>FFFFFFFF</textcolor>
+      <onleft>2</onleft>
+      <onright>14</onright>
+      <onup>18</onup>
+      <align>right</align>
+    </control>
+    <control>
+      <description>Step 6</description>
+      <type>checkmark</type>
+      <id>7</id>
+      <label> 3</label>
+      <posX>819</posX>
+      <posY>333</posY>
+      <textcolor>FFFFFFFF</textcolor>
+      <onleft>2</onleft>
+      <onright>14</onright>
+      <align>right</align>
+    </control>
+    <control>
+      <description>Step 7</description>
+      <type>checkmark</type>
+      <id>8</id>
+      <label> 5</label>
+      <posX>819</posX>
+      <posY>366</posY>
+      <textcolor>FFFFFFFF</textcolor>
+      <onleft>2</onleft>
+      <onright>14</onright>
+      <align>right</align>
+    </control>
+    <control>
+      <description>Step 8</description>
+      <type>checkmark</type>
+      <id>9</id>
+      <label> 7</label>
+      <posX>819</posX>
+      <posY>400</posY>
+      <textcolor>FFFFFFFF</textcolor>
+      <onleft>2</onleft>
+      <onright>14</onright>
+      <align>right</align>
+    </control>
+    <control>
+      <description>Step 9</description>
+      <type>checkmark</type>
+      <id>10</id>
+      <label> 10</label>
+      <posX>819</posX>
+      <posY>433</posY>
+      <textcolor>FFFFFFFF</textcolor>
+      <onleft>2</onleft>
+      <onright>14</onright>
+      <align>right</align>
+    </control>
+    <control>
+      <description>Step 10</description>
+      <type>checkmark</type>
+      <id>11</id>
+      <label> 15</label>
+      <posX>819</posX>
+      <posY>466</posY>
+      <textcolor>FFFFFFFF</textcolor>
+      <onleft>2</onleft>
+      <onright>14</onright>
+      <align>right</align>
+    </control>
+    <control>
+      <description>Step 11</description>
+      <type>checkmark</type>
+      <id>12</id>
+      <label> 30</label>
+      <posX>819</posX>
+      <posY>500</posY>
+      <textcolor>FFFFFFFF</textcolor>
+      <onleft>2</onleft>
+      <onright>14</onright>
+      <align>right</align>
+    </control>
+    <control>
+      <description>Step 12</description>
+      <type>checkmark</type>
+      <id>13</id>
+      <label> 45</label>
+      <posX>819</posX>
+      <posY>533</posY>
+      <textcolor>FFFFFFFF</textcolor>
+      <onleft>2</onleft>
+      <onright>14</onright>
+      <ondown>6</ondown>
+      <align>right</align>
+    </control>
+    <control>
+      <type>label</type>
+      <description>skip steps hours</description>
+      <id>1</id>
+      <posX>1092</posX>
+      <posY>266</posY>
+      <label>9999</label>
+      <font>font13</font>
+    </control>
+    <control>
+      <description>Step 13</description>
+      <type>checkmark</type>
+      <id>14</id>
+      <label> 1</label>
+      <posX>1092</posX>
+      <posY>300</posY>
+      <textcolor>FFFFFFFF</textcolor>
+      <onleft>6</onleft>
+      <onright>2</onright>
+      <onup>18</onup>
+      <align>right</align>
+    </control>
+    <control>
+      <description>Step 14</description>
+      <type>checkmark</type>
+      <id>15</id>
+      <label> 1.5</label>
+      <posX>1092</posX>
+      <posY>333</posY>
+      <textcolor>FFFFFFFF</textcolor>
+      <onleft>6</onleft>
+      <onright>2</onright>
+      <align>right</align>
+    </control>
+    <control>
+      <description>Step 15</description>
+      <type>checkmark</type>
+      <id>16</id>
+      <label> 2</label>
+      <posX>1092</posX>
+      <posY>366</posY>
+      <textcolor>FFFFFFFF</textcolor>
+      <onleft>6</onleft>
+      <onright>2</onright>
+      <align>right</align>
+    </control>
+    <control>
+      <description>Step 16</description>
+      <type>checkmark</type>
+      <id>17</id>
+      <label> 3</label>
+      <posX>1092</posX>
+      <posY>400</posY>
+      <textcolor>FFFFFFFF</textcolor>
+      <onleft>6</onleft>
+      <onright>2</onright>
+      <ondown>14</ondown>
+      <align>right</align>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Current config static</description>
+      <id>1</id>
+      <posX>546</posX>
+      <posY>133</posY>
+      <label>143</label>
+      <font>font18</font>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Current config dynamic</description>
+      <id>21</id>
+      <posX>546</posX>
+      <posY>203</posY>
+      <label>15,30,60,300</label>
+      <font>font12</font>
+    </control>
+  </controls>
+</window>

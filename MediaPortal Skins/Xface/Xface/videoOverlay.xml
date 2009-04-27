@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>3000</id>
+  <defaultcontrol>2</defaultcontrol>
+  <controls>
+    <control>
+      <description>play time label</description>
+      <type>label</type>
+      <id>2</id>
+      <posX>370</posX>
+      <posY>665</posY>
+      <label>#currentplaytime</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>ff969696</textcolor>
+      <animation effect="fade" time="800" delay="250">WindowOpen</animation>
+      <animation effect="fade" time="800" delay="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>play logo</description>
+      <type>image</type>
+      <id>3</id>
+       <posX>370</posX>
+      <posY>703</posY>
+      <width>68</width>
+      <height>35</height>
+      <texture>logo_play3.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>Pause logo</description>
+      <type>image</type>
+      <id>4</id>
+      <posX>370</posX>
+      <posY>703</posY>
+      <width>68</width>
+      <height>35</height>
+      <texture>logo_pause.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>FF logo</description>
+      <type>image</type>
+      <id>7</id>
+      <posX>370</posX>
+      <posY>703</posY>
+      <width>68</width>
+      <height>35</height>
+      <texture>logo_fastforward.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>RW logo</description>
+      <type>image</type>
+      <id>8</id>
+      <posX>370</posX>
+      <posY>703</posY>
+      <width>68</width>
+      <height>35</height>
+      <texture>logo_rewind.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <posX>370</posX>
+      <posY>580</posY>
+      <width>275</width>
+      <label>#Play.Current.Title</label>
+      <font>font16</font>
+      <textcolor>black</textcolor>
+      <animation effect="fade" time="800" delay="250">WindowOpen</animation>
+      <animation effect="fade" time="800" delay="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <posX>370</posX>
+      <posY>615</posY>
+      <width>275</width>
+      <label>#Play.Current.Director</label>
+      <font>font13</font>
+      <textcolor>90000000</textcolor>
+      <animation effect="fade" time="800" delay="250">WindowOpen</animation>
+      <animation effect="fade" time="800" delay="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <posX>370</posX>
+      <posY>640</posY>
+      <width>275</width>
+      <label>#Play.Current.Genre</label>
+      <font>font13</font>
+      <textcolor>ff969696</textcolor>
+      <animation effect="fade" time="800" delay="250">WindowOpen</animation>
+      <animation effect="fade" time="800" delay="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>video rectangle</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>48</posX>
+      <posY>540</posY>
+      <width>330</width>
+      <height>225</height>
+      <texture>playback_background.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>video preview window</description>
+      <type>videowindow</type>
+      <id>99</id>
+      <posX>96</posX>
+      <posY>568</posY>
+      <width>238</width>
+      <height>131</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <action>18</action>
+      <textureFocus>tv_green_border.png</textureFocus>
+    </control>
+    <control>
+      <description>progress bar</description>
+      <type>progress</type>
+      <id>20</id>
+      <posX>126</posX>
+      <posY>701</posY>
+      <width>158</width>
+      <label>#percentage</label>
+      <visible>yes</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+  </controls>
+</window>

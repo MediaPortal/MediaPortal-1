@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>4</id>
+  <defaultcontrol>3</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:5</define>
+  <define>#header.image:settings_logo.png</define>
+  <define>#header.hover:-</define>
+  <!-- cheat a little, we don't use two of the items in the imported file to blank their labels -->
+  <define>#itemcount:-</define>
+  <define>#selecteditem:-</define>
+  <controls>
+    <import>common.window.xml</import>
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="500" end="800,0">WindowClose</animation>
+      <posX>550</posX>
+      <posY>170</posY>
+      <layout>StackLayout</layout>
+      <!-- topmost item needs an onup with a value of 17 for topbar to work -->
+      <control>
+        <description>Wizard</description>
+        <type>button</type>
+        <id>3</id>
+        <width>262</width>
+        <label>1200</label>
+        <hyperlink>615</hyperlink>
+        <onup>17</onup>
+      </control>
+      <control>
+        <description>General</description>
+        <type>button</type>
+        <id>4</id>
+        <width>262</width>
+        <label>128</label>
+        <hyperlink>705</hyperlink>
+      </control>
+      <control>
+        <description>Screen</description>
+        <type>button</type>
+        <id>5</id>
+        <width>262</width>
+        <label>214</label>
+        <hyperlink>9</hyperlink>
+      </control>
+      <control>
+        <description>TV</description>
+        <type>button</type>
+        <id>10</id>
+        <width>262</width>
+        <label>605</label>
+        <hyperlink>700</hyperlink>
+      </control>
+      <control>
+        <description>My Pictures</description>
+        <type>button</type>
+        <id>7</id>
+        <width>262</width>
+        <label>1</label>
+        <hyperlink>12</hyperlink>
+      </control>
+      <control>
+        <description>Movies</description>
+        <type>button</type>
+        <id>8</id>
+        <width>262</width>
+        <label>3</label>
+        <hyperlink>703</hyperlink>
+      </control>
+      <control>
+        <description>My DVD</description>
+        <type>button</type>
+        <id>9</id>
+        <width>262</width>
+        <label>1027</label>
+        <hyperlink>704</hyperlink>
+      </control>
+      <!-- last item needs an ondown with a value of 99 to navigate to overlay -->
+      <control>
+        <description>My Music</description>
+        <type>button</type>
+        <id>6</id>
+        <width>262</width>
+        <label>2</label>
+        <hyperlink>14</hyperlink>
+      </control>
+      <control>
+        <description>MiniDisplay</description>
+        <type>button</type>
+        <id>11</id>
+        <width>262</width>
+        <label>9100</label>
+        <hyperlink>9000</hyperlink>
+        <ondown>99</ondown>
+      </control>
+    </control>
+  </controls>
+</window>

@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>9004</id>
+  <defaultcontrol>20</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:109004</define>
+  <define>#header.image:settings_logo.png</define>
+  <define>#header.hover:-</define>
+  <!-- cheat a little, we don't use two of the items in the imported file to blank their labels -->
+  <define>#itemcount:-</define>
+  <define>#selecteditem:-</define>
+  <controls>
+    <import>common.window.xml</import>
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="500" end="800,0">WindowClose</animation>
+      <posX>550</posX>
+      <posY>170</posY>
+      <layout>StackLayout</layout>
+      <control>
+        <description>Use Equalizer</description>
+        <type>togglebutton</type>
+        <id>20</id>
+        <width>262</width>
+        <label>9132</label>
+        <onup>17</onup>
+      </control>
+      <control>
+        <description>Equalizer Style</description>
+        <type>selectbutton</type>
+        <id>21</id>
+        <width>262</width>
+        <label>9133</label>
+      </control>
+      <control>
+        <description>Use Equalizer Smoothing</description>
+        <type>togglebutton</type>
+        <id>22</id>
+        <width>262</width>
+        <label>9134</label>
+      </control>
+      <control>
+        <description>Delay Start</description>
+        <type>togglebutton</type>
+        <id>23</id>
+        <width>262</width>
+        <label>9135</label>
+      </control>
+      <control>
+        <description>Delay Time</description>
+        <type>selectbutton</type>
+        <id>24</id>
+        <width>262</width>
+        <label>9136</label>
+      </control>
+      <control>
+        <description>Show Title</description>
+        <type>togglebutton</type>
+        <id>25</id>
+        <width>262</width>
+        <label>9137</label>
+      </control>
+      <control>
+        <description>Title Time</description>
+        <type>selectbutton</type>
+        <id>26</id>
+        <width>262</width>
+        <label>9138</label>
+      </control>
+      <control>
+        <description>Title Frequency</description>
+        <type>selectbutton</type>
+        <id>27</id>
+        <width>262</width>
+        <label>9139</label>
+      </control>
+    </control>
+  </controls>
+</window>

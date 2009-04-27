@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>3009</id>
+  <defaultcontrol>35</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>0</id>
+      <texture>context_background.png</texture>
+      <width>1000</width>
+      <height>700</height>
+      <posX>198</posX>
+      <posY>43</posY>
+    </control>
+    <control>
+      <description>exit button</description>
+      <type>button</type>
+      <id>34</id>
+      <posX>1052</posX>
+      <posY>70</posY>
+      <width>58</width>
+      <height>58</height>
+      <textureFocus>dialogue_shutdown_focus.png</textureFocus>
+      <textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <onleft>36</onleft>
+      <onright>34</onright>
+      <ondown>35</ondown>
+      <onup>34</onup>
+    </control>
+
+    <control>
+      <description>list to show channels without channel state logos</description>
+      <type>listcontrol</type>
+      <id>35</id>
+      <posX>266</posX>
+      <posY>155</posY>
+      <width>866</width>
+      <height>533</height>
+      <textXOff>24</textXOff>
+      <textYOff>24</textYOff>
+      <textXOff2>815</textXOff2>
+      <textYOff2>15</textYOff2>
+      <textXOff3>75</textXOff3>
+      <textYOff3>1</textYOff3>
+      <IconXOff>22</IconXOff>
+      <IconYOff>5</IconYOff>
+      <spinPosX>1000</spinPosX>
+      <spinPosY>672</spinPosY>
+      <spinWidth>38</spinWidth>
+      <spinHeight>38</spinHeight>
+      <itemWidth>40</itemWidth>
+      <itemHeight>40</itemHeight>
+      <textureFocus>recording_background_focus.png</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <spaceBetweenItems>1</spaceBetweenItems>
+      <textureHeight>50</textureHeight>
+      <keepaspectratio>no</keepaspectratio>
+      <font>font8</font>
+      <font2>font9</font2>
+      <font3>font12</font3>
+      <remoteColor>ffffffff</remoteColor>
+      <!-- used for selected channel -->
+      <onleft>36</onleft>
+      <onright>34</onright>
+    </control>
+
+    <control>
+      <description>list to show channels with channel state logos</description>
+      <type>listcontrol</type>
+      <id>37</id>
+      <posX>266</posX>
+      <posY>155</posY>
+      <width>866</width>
+      <height>533</height>
+      <textXOff>24</textXOff>
+      <textYOff>24</textYOff>
+      <textXOff2>795</textXOff2>
+      <textYOff2>15</textYOff2>
+      <textXOff3>75</textXOff3>
+      <textYOff3>1</textYOff3>
+      <IconXOff>22</IconXOff>
+      <IconYOff>5</IconYOff>
+      <PinIconXOff>810</PinIconXOff>
+      <PinIconYOff>5</PinIconYOff>
+      <PinIconWidth>44</PinIconWidth>
+      <PinIconHeight>40</PinIconHeight>
+      <spinPosX>1000</spinPosX>
+      <spinPosY>672</spinPosY>
+      <spinWidth>38</spinWidth>
+      <spinHeight>38</spinHeight>
+      <itemWidth>40</itemWidth>
+      <itemHeight>40</itemHeight>
+      <textureFocus>recording_background_focus.png</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <spaceBetweenItems>1</spaceBetweenItems>
+      <textureHeight>50</textureHeight>
+      <keepaspectratio>no</keepaspectratio>
+      <font>font8</font>
+      <font2>font9</font2>
+      <font3>font12</font3>
+      <remoteColor>ffffffff</remoteColor>
+      <!-- used for selected channel -->
+      <onleft>36</onleft>
+      <onright>34</onright>
+    </control>
+
+
+
+    <control>
+      <description>groups spin control</description>
+      <type>spincontrol</type>
+      <id>36</id>
+      <posX>535</posX>
+      <posY>81</posY>
+      <showrange>no</showrange>
+      <orientation>horizontal</orientation>
+      <font>font13</font>
+      <textureUp>arrow_round_right_nofocus.png</textureUp>
+      <textureDown>arrow_round_left_nofocus.png</textureDown>
+      <textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
+      <textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
+      <textcolor>Black</textcolor>
+      <ondown>35</ondown>
+      <onup>36</onup>
+      <onright>34</onright>
+      <onleft>36</onleft>
+    </control>
+    <control>
+      <description>GFX-Heading "menu" text label</description>
+      <type>label</type>
+      <id>5</id>
+      <posX>288</posX>
+      <width>240</width>
+      <label>10105</label>
+      <font>font14</font>
+      <textcolor>Black</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>
+    <!--     <control>
+      <description>Heading text label</description>
+      <type>label</type>
+      <id>4</id>
+      <posX>520</posX>
+      <posY>166</posY>
+      <label>181</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>   -->
+       <control>
+      <description>clock</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>300</posX>
+      <posY>674</posY>
+      <width>30</width>
+      <height>30</height>
+      <texture>Clock2.png</texture>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>time label</description>
+      <id>0</id>
+      <type>label</type>
+      <posX>340</posX>
+      <posY>677</posY>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>80000000</textcolor>
+      <label>#time</label>
+    </control>
+  </controls>
+</window>
