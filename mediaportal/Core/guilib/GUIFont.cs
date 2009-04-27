@@ -1059,7 +1059,7 @@ namespace MediaPortal.GUI.Library
                     Log.Debug("  Loaded font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] miplevels:{6}", _fontName, _fontHeight,
                               _textureWidth, _textureHeight, _StartCharacter, _EndCharacter, _textureFont.LevelCount);
                     }
-                    catch (Exception exload)
+                    catch (Exception)
                     {
                         // Deserialisation failed. Maybe the language changed or the font cache got manipulated.
                         Log.Error("GUIFont: Failed to load font {0} from cache. Trying to recreate it...", _fontName);

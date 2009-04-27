@@ -169,7 +169,7 @@ namespace MediaPortal.GUI.Library
     private DateTime _idleTimer = DateTime.Now;
     private bool _infoChanged = false;
     private string _newInfoImageName = "";
-
+    private int _frameLimiter = 1;
     protected double _scrollOffset = 0.0f;
     protected double _timeElapsed = 0.0f;
     protected bool _scrollContinuosly = false;
@@ -682,12 +682,12 @@ namespace MediaPortal.GUI.Library
     public override void Render(float timePassed)
     {
       _timeElapsed += timePassed;
-
       if (null == _font)
       {
         base.Render(timePassed);
         return;
       }
+
       if (GUIGraphicsContext.EditMode == false)
       {
         if (!IsVisible)
@@ -708,6 +708,11 @@ namespace MediaPortal.GUI.Library
       {
         _sleeper--;
       }
+
+      if (_frameLimiter < GUIGraphicsContext.MaxFPS)
+        _frameLimiter++;
+      else
+        _frameLimiter = 1;
 
       UpdateInfoImage();
       if (_imageBackground != null && _showBackGround)
@@ -2172,7 +2177,21 @@ namespace MediaPortal.GUI.Library
             //{
             //  _scrollPosititionX = _currentFrame - (25 + 12);
             //}
-            _scrollPosititionX = _scrollPosititionX + GUIGraphicsContext.ScrollSpeedHorizontal;
+
+            // Add an especially slow setting for far distance + small display + bad eyes + foreign language combination
+            if (GUIGraphicsContext.ScrollSpeedHorizontal < 3)
+            {
+              // Advance one pixel every 3 or 2 frames
+              if (_frameLimiter % (4 - GUIGraphicsContext.ScrollSpeedHorizontal) == 0)
+              {
+                _scrollPosititionX++;
+              }
+            }
+            else
+            {
+              // advance 1 - 3 pixels every frame
+              _scrollPosititionX = _scrollPosititionX + (GUIGraphicsContext.ScrollSpeedHorizontal - 2);
+            }
 
             char wTmp;
             if (_scrollPosition >= _brackedText.Length)
@@ -3381,6 +3400,7 @@ namespace MediaPortal.GUI.Library
       _upDownControl.SetRange(1, 1);
       _upDownControl.Value = 1;
       _cursorX = _offset = 0;
+      _frameLimiter = 1;
       _refresh = true;
       OnSelectionChanged();
     }
