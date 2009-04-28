@@ -473,7 +473,7 @@
       <id>46</id>
       <posX>20</posX>
       <posY>404</posY>
-      <width>238</width>
+      <width>240</width>
       <height>344</height>
       <texture>#TVSeries.SeriesBanner</texture>
       <visible>Control.IsVisible(1235)+!Control.IsVisible(1238)+!Control.IsVisible(1239)+!Control.IsVisible(1240)</visible>
@@ -484,7 +484,7 @@
       <id>146</id>
       <posX>20</posX>
       <posY>404</posY>
-      <width>238</width>
+      <width>240</width>
       <height>344</height>
       <texture>#TVSeries.SeasonBanner</texture>
       <visible>Control.IsVisible(1238)+!Control.IsVisible(1239)</visible>

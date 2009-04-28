@@ -6,7 +6,7 @@
       <type>image</type>
       <id>1282</id>
       <posX>228</posX>
-      <posY>645</posY>
+      <posY>137</posY>
       <width>44</width>
       <height>44</height>
       <texture>#weatherimg</texture>
@@ -17,7 +17,7 @@
       <type>label</type>
       <id>1</id>
       <posX>210</posX>
-      <posY>645</posY>
+      <posY>140</posY>
       <width>750</width>
       <align>right</align>
       <font>font10</font>
@@ -30,7 +30,7 @@
       <type>label</type>
       <id>1</id>
       <posX>210</posX>
-      <posY>670</posY>
+      <posY>160</posY>
       <width>750</width>
       <align>right</align>
       <font>font10</font>

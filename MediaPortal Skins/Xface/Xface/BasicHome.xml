@@ -2911,7 +2911,7 @@
     <control>
       <description>video preview window</description>
       <type>videowindow</type>
-      <id>1</id>
+      <id>99</id>
       <posX>60</posX>
 	  <posY>463</posY>
 	  <width>222</width>

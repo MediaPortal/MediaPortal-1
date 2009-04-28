@@ -58,19 +58,6 @@
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
-     <control>
-      <description>Widgetbackground</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>0</posX>
-      <posY>0</posY>
-      <width>300</width>
-      <height>768</height>
-      <texture>Backslide.png</texture>
-      <visible>Player.HasMedia</visible>
-      <animation effect="fade" time="550">Visible</animation>
-      <animation effect="fade" time="550">WindowOpen</animation>
-    </control>
     <!-- Date and Time -->
     <control>
       <type>image</type>
@@ -194,58 +181,44 @@
       <ondown>50</ondown>
     </control>
     <control>
+      <description>music rectangle</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>48</posX>
+      <posY>540</posY>
+      <width>330</width>
+      <height>225</height>
+      <texture>playback_background.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <visible>Player.HasVideo + Player.playing</visible>
+    </control>
+    <control>
       <description>video preview window</description>
       <type>videowindow</type>
       <id>99</id>
-      <posX>40</posX>
-      <posY>318</posY>
-      <width>219</width>
-      <height>124</height>
+      <posX>96</posX>
+      <posY>568</posY>
+      <width>240</width>
+      <height>131</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <action>18</action>
       <textureFocus>tv_green_border.png</textureFocus>
-      <visible>Player.HasMedia</visible>
+      <visible>Player.HasVideo + Player.playing</visible>
     </control>
     <control>
-      <type>fadelabel</type>
-       <posX>210</posX>
-      <posY>273</posY>
-      <width>750</width>
-      <align>right</align>
-      <font>font10</font>
-       <textcolor>ff969696</textcolor>
-      <label>#Play.Current.Title</label>
-      <animation effect="fade" time="800" delay="250">WindowOpen</animation>
-      <animation effect="fade" time="800" delay="250">WindowClose</animation>
-    </control>
-    <control>
-      <description>Playing Channel</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>228</posX>
-      <posY>265</posY>
-      <width>40</width>
-      <height>40</height>
-      <keepaspectratio>yes</keepaspectratio>
-      <texture>#TV.View.thumb</texture>
-      <visible>Player.HasMedia</visible>
+      <description>progress bar</description>
+      <type>progress</type>
+      <id>20</id>
+      <posX>126</posX>
+      <posY>701</posY>
+      <width>158</width>
+      <label>#percentage</label>
+      <visible>yes</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-    </control>
-    <control>
-      <description>music logo</description>
-      <type>image</type>
-      <id>1</id>
-       <posX>226</posX>
-      <posY>265</posY>
-      <width>42</width>
-      <height>42</height>
-      <keepaspectratio>yes</keepaspectratio>
-      <centered>yes</centered>
-      <texture>#Play.Current.Thumb</texture>
       <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <visible>Player.HasVideo + Player.playing</visible>
     </control>
      <import>common.rss.xml</import>
   </controls>
