@@ -198,7 +198,7 @@ namespace TvService
       IList<Schedule> schedules = Schedule.ListAll();
       foreach (Schedule schedule in schedules)
       {
-        Log.Debug("Checking: schedule {0}, type {1}", schedule.ProgramName, schedule.ScheduleType);
+        //Log.Debug("Checking: schedule {0}, type {1}", schedule.ProgramName, schedule.ScheduleType);
         //if schedule has been canceled then do nothing
         if (schedule.Canceled != Schedule.MinSchedule)
           continue;

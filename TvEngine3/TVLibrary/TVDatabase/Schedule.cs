@@ -38,7 +38,6 @@ namespace TvDatabase
     public static DateTime MinSchedule = new DateTime(2000, 1, 1);
     public static readonly int HighestPriority = Int32.MaxValue;
     //public static readonly int LowestPriority;
-    private bool _isSeries;
 
     #region Members
 
@@ -59,6 +58,7 @@ namespace TvDatabase
     [TableColumn("postRecordInterval", NotNull = true)] private int postRecordInterval;
     [TableColumn("canceled", NotNull = true)] private DateTime canceled;
     [TableColumn("recommendedCard", NotNull = true)] private int recommendedCard;
+    [TableColumn("series", NotNull = true)] private bool series;
 
     #endregion
 
@@ -82,7 +82,7 @@ namespace TvDatabase
       BitRateMode = VIDEOENCODER_BITRATE_MODE.NotSet;
       QualityType = QualityType.NotSet;
       ScheduleType = (int) ScheduleRecordingType.Once;
-      Series = false;
+      Series = (scheduleType > 0);
       StartTime = startTime;
       recommendedCard = -1;
     }
@@ -109,6 +109,7 @@ namespace TvDatabase
       this.preRecordInterval = preRecordInterval;
       this.postRecordInterval = postRecordInterval;
       this.canceled = canceled;
+      this.series = (scheduleType>0);
       recommendedCard = -1;
     }
 
@@ -132,6 +133,7 @@ namespace TvDatabase
       preRecordInterval = schedule.preRecordInterval;
       postRecordInterval = schedule.postRecordInterval;
       canceled = schedule.canceled;
+      series = schedule.Series;
       recommendedCard = -1;
     }
 
@@ -158,6 +160,7 @@ namespace TvDatabase
       this.preRecordInterval = preRecordInterval;
       this.postRecordInterval = postRecordInterval;
       this.canceled = canceled;
+      this.series = (scheduleType > 0);
       recommendedCard = -1;
     }
 
@@ -916,8 +919,8 @@ namespace TvDatabase
 
     public bool Series
     {
-      get { return _isSeries; }
-      set { _isSeries = value; }
+      get { return series; }
+      set { series = value; }
     }
 
     public Schedule Clone()
@@ -926,7 +929,7 @@ namespace TvDatabase
                                        Directory, Quality, KeepMethod, KeepDate, PreRecordInterval, PostRecordInterval,
                                        Canceled);
 
-      schedule._isSeries = _isSeries;
+      schedule.series = series;
       schedule.idSchedule = idSchedule;
       schedule.isChanged = false;
       return schedule;

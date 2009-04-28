@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{CC77F438-DBD3-4D9C-80B1-C86BA50CF635}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -80,7 +80,6 @@
     <Compile Include="PowerScheduler.cs" />
     <Compile Include="ClientPlugin.cs" />
     <Compile Include="PowerSchedulerClientSetup.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="PowerSchedulerClientSetup.designer.cs">
       <DependentUpon>PowerSchedulerClientSetup.cs</DependentUpon>
