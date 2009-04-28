@@ -38,8 +38,8 @@
 
 ; VER_BUILD is set to zero for Release builds
 !define VER_MAJOR       1
-!define VER_MINOR       0
-!define VER_REVISION    1
+!define VER_MINOR       8
+!define VER_REVISION    0
 !define VER_BUILD       0
 
 !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}"
@@ -96,7 +96,7 @@ CRCCheck On
 # INSTALLER INTERFACE settings
 #---------------------------------------------------------------------------
 !define MUI_ABORTWARNING
-!define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\win-install.ico"
+!define MUI_ICON                        "images\XFACE.ico"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\win-uninstall.ico"
 
 !define MUI_HEADERIMAGE
