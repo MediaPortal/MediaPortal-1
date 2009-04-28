@@ -1,7 +1,7 @@
 ;======================================
-; IR Server Suite.nsi
+; Xface Skin.nsi
 ;
-; (C) Copyright Aaron Dinnage, 2008
+; (C) Copyright Harley, 2009
 ;======================================
 
 
@@ -34,7 +34,7 @@
 #---------------------------------------------------------------------------
 !define PRODUCT_NAME          "Xface"
 !define PRODUCT_PUBLISHER     "Harley"
-!define PRODUCT_WEB_SITE      "http://forum.team-mediaportal.com/mce_replacement_plugin-f165.html"
+!define PRODUCT_WEB_SITE      "http://www.team-mediaportal.com/files/Download/Skins/16:9/XfaceSkin/"
 
 ; VER_BUILD is set to zero for Release builds
 !define VER_MAJOR       1
@@ -99,10 +99,10 @@ CRCCheck On
 !define MUI_ICON                        "images\XFACE.ico"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\win-uninstall.ico"
 
-!define MUI_HEADERIMAGE
+!define MUI_HEADERIMAGE			
 !define MUI_HEADERIMAGE_BITMAP          "images\header.bmp"
 !define MUI_WELCOMEFINISHPAGE_BITMAP    "images\wizard.bmp"
-!define MUI_HEADERIMAGE_RIGHT
+!define MUI_HEADERIMAGE_RIGHT		 
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_FINISHPAGE_NOAUTOCLOSE
