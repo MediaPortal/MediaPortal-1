@@ -543,7 +543,7 @@ namespace TvLibrary.Implementations.DVB
       }
       else
       {
-        Log.Log.WriteFile("dvb:StopGraph - conditionalAccess.AllowedToStopGraph = true");
+        Log.Log.WriteFile("dvb:StopGraph - conditionalAccess.AllowedToStopGraph = false");
       }
       _graphState = GraphState.Created;
     }
