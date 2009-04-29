@@ -15,7 +15,7 @@
       <type>image</type>
       <id>600</id>
       <posX>948</posX>
-      <posY>90</posY>
+      <posY>97</posY>
       <width>350</width>
       <height>350</height>
       <keepaspectratio>yes</keepaspectratio>
@@ -113,7 +113,6 @@
       <width>107</width>
       <height>107</height>
       <texture>VU aus.png</texture>
-      <visible>!Player.playing</visible>
       <animation effect="fade" time="50">VisibleChange</animation>
     </control>
 	 <!--
@@ -151,7 +150,6 @@
       <width>107</width>
       <height>107</height>
       <texture>VU aus.png</texture>
-      <visible>!Player.playing</visible>
       <animation effect="fade" time="50">VisibleChange</animation>
     </control>
 	<!--
