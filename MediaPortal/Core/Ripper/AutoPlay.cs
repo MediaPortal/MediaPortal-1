@@ -26,6 +26,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
@@ -47,6 +48,11 @@ namespace MediaPortal.Ripper
     private static string m_audiocd = "No";
 
     private static ArrayList allfiles;
+
+    // a hidden window to allow us to listen to WndProc messages
+    // Winamp viz doesn't like when it receives notify that the WndProc handler has changed
+    private static NativeWindow _nativeWindow;
+    private static IntPtr _windowHandle;
 
     private enum MediaType
     {
@@ -77,6 +83,11 @@ namespace MediaPortal.Ripper
       m_dvd = "No";
       m_audiocd = "No";
       allfiles = new ArrayList();
+
+      _nativeWindow = new NativeWindow();
+      CreateParams cp = new CreateParams();
+      _nativeWindow.CreateHandle(cp);
+      _windowHandle = _nativeWindow.Handle;
     }
 
     ~AutoPlay()
@@ -115,7 +126,7 @@ namespace MediaPortal.Ripper
 
     private static void StartListeningForEvents()
     {
-      _deviceMonitor = new DeviceVolumeMonitor(GUIGraphicsContext.form.Handle);
+      _deviceMonitor = new DeviceVolumeMonitor(_windowHandle);
       _deviceMonitor.OnVolumeInserted += new DeviceVolumeAction(VolumeInserted);
       _deviceMonitor.OnVolumeRemoved += new DeviceVolumeAction(VolumeRemoved);
       _deviceMonitor.AsynchronousEvents = true;
@@ -130,6 +141,9 @@ namespace MediaPortal.Ripper
     {
       if (_deviceMonitor != null)
       {
+        _deviceMonitor.Enabled = false;
+        _deviceMonitor.OnVolumeInserted -= new DeviceVolumeAction(VolumeInserted);
+        _deviceMonitor.OnVolumeRemoved -= new DeviceVolumeAction(VolumeRemoved);
         _deviceMonitor.Dispose();
       }
       _deviceMonitor = null;
