@@ -1,0 +1,532 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="WatchTV_labelSectionHeader" xml:space="preserve">
+    <value>Skal du bruke MediaPortal for å se på TV?</value>
+  </data>
+  <data name="WatchTV_on" xml:space="preserve">
+    <value>Ja, Jeg skal bruke MediaPortal for å se på TV.</value>
+  </data>
+  <data name="WatchTV_off" xml:space="preserve">
+    <value>Nei, Jeg skal ikke bruke MediaPortal for å se på TV.</value>
+  </data>
+  <data name="WatchHDTv_labelSectionHeader" xml:space="preserve">
+    <value>Vil du se HDTV med MediaPortal ?</value>
+  </data>
+  <data name="WatchHDTv_yes" xml:space="preserve">
+    <value>Ja, Jeg skal bruke MediaPortal  til å se HD.</value>
+  </data>
+  <data name="WatchHDTv_no" xml:space="preserve">
+    <value>Nei, Jeg skal ikke bruke MediaPortal til å se HD.</value>
+  </data>
+  <data name="WatchHDTv_maybe" xml:space="preserve">
+    <value>Jeg vet ikke hva HD er.</value>
+  </data>
+  <data name="TvEngineType_labelSectionHeader" xml:space="preserve">
+    <value>Hvilken TV-motor vil du bruke ?</value>
+  </data>
+  <data name="TvEngineType_rbTvBuildIn" xml:space="preserve">
+    <value>Innebygde TV-motoren i MediaPortal 1.0.</value>
+  </data>
+  <data name="TvEngineType_rbTvEngine" xml:space="preserve">
+    <value>MediaPortal TV-Server 1.0.</value>
+  </data>
+  <data name="TvEngineType_labelTvEngine" xml:space="preserve">
+    <value>Forskjellen mellom TV-Server og den innebygde TV-motoren I MediaPortal 1.0:
++ full dvb-undertekst support
++ support for HD-TV (dvb-s2 / h.264) og AAC lyd (Norge, New Zealand, Australia)
++ hybrid tv-kort support (kort som har tuner for både DVB og analog)
++ automatisk detektering av alle TV-kort (analog, dvb-c, -s, -s2, -t, atsc)
++ ATSC QAM (Kabel-TV) support
++ gir mulighet for opptak I både mpg og ts fil format
++ atsc/dvb gir mulighet for flervalg av kanaler på samme transponder/mux med et TV-kort
++ gir mulighet for flere tv klienter på nettverket
+- trenger MySQL or MS-SQL (vil bli automatisk installert hvis den ikke finnes fra før)
+
+TV-Serveren erstatter den innebygde TV-motoren fullstendig og integreres fullt ut med
+MediaPortal bruker grensesnitt.</value>
+  </data>
+  <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
+    <value>Alle programmer som trengs vil bli installert til vanlige plasser med vanlige innstillinger.</value>
+  </data>
+  <data name="BaseInstallationNoTvEngine_labelAdvancedDesc" xml:space="preserve">
+    <value>Den avanserte installasjonen lar deg spesifisere hvor den skal installere samt andre innstillinger</value>
+  </data>
+  <data name="BaseInstallation_labelAdvancedCaption" xml:space="preserve">
+    <value>Avansert installasjon</value>
+  </data>
+  <data name="BaseInstallation_labelAdvancedDesc" xml:space="preserve">
+    <value>Avansert installasjon gir deg muligheten til å installere server/klient oppsett og spesifisere lokasjon av installasjon samt andre ting</value>
+  </data>
+  <data name="BaseInstallation_labelOneClickCaption" xml:space="preserve">
+    <value>Enkel installasjon</value>
+  </data>
+  <data name="BaseInstallation_labelOneClickDesc" xml:space="preserve">
+    <value>Alle programmer vil bli installert til sine vanlige lokasjoner med de vanlige innstillingene. Database passordet er da ”MediaPortal”.</value>
+  </data>
+  <data name="BaseInstallation_rbAdvanced" xml:space="preserve">
+    <value>Bruke avansert installasjon</value>
+  </data>
+  <data name="BaseInstallation_rbOneClick" xml:space="preserve">
+    <value>Bruke enkel installasjon</value>
+  </data>
+  <data name="CustomInstallation_labelSectionHeader" xml:space="preserve">
+    <value>Vennligst velg hvilken installasjons metode du vil bruke:</value>
+  </data>
+  <data name="CustomInstallation_rbClient" xml:space="preserve">
+    <value>MediaPortal Klient</value>
+  </data>
+  <data name="CustomInstallation_labelClient" xml:space="preserve">
+    <value>Denne vil bare installere MediaPortal 1.0. for å kunne se på TV, den vil koble til en dedikert TV-Server på ditt nettverk.</value>
+  </data>
+  <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
+    <value>Singleseat Installajon</value>
+  </data>
+  <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
+    <value>Dette oppsettet er korrekt for deg som har TV-Kort installert på same PC som du ønsker å bruke MediaPortal
+ til å se på TV med MediaPortal 1.0.</value>
+  </data>
+  <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
+    <value>Dedikert TV-Server (hoved)</value>
+  </data>
+  <data name="CustomInstallation_labelMaster" xml:space="preserve">
+    <value>Denne vil bare installere MediaPortal TV-Server på denne PC-en.
+PC-en vil da fungere som en TV-Server og gi andre PC-er på ditt nettverk tilgang til TV (database installasjon kreves).</value>
+  </data>
+  <data name="MainWindow_browseButton" xml:space="preserve">
+    <value>Finn</value>
+  </data>
+  <data name="DBMSSettings_checkBoxFirewall" xml:space="preserve">
+    <value>Stille inn Windows Firewall til å akseptere ekstern tilkobling til databasen</value>
+  </data>
+  <data name="DBMSSettings_errInvalidInstallationPath" xml:space="preserve">
+    <value>Du må sette en gyldig installasjons vei til SQL-Server.</value>
+  </data>
+  <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
+    <value>Du må sette et passord for brukeren i SQL-Serveren .</value>
+  </data>
+  <data name="DBMSSettings_labelHeading" xml:space="preserve">
+    <value>Vennligst utfør de nødvendige instillingene for SQL-Server installasjonen:</value>
+  </data>
+  <data name="DBMSSettings_labelInstDir" xml:space="preserve">
+    <value>Innstallasjons folder</value>
+  </data>
+  <data name="DBMSSettings_labelPassword" xml:space="preserve">
+    <value>Passord for brukeren i SQL Server</value>
+  </data>
+  <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
+    <value>Velg installasjons folder for SQL-Serveren</value>
+  </data>
+  <data name="DBMSType_labelHeading" xml:space="preserve">
+    <value>Vennligst velg type SQL-Server du vil bruke:</value>
+  </data>
+  <data name="DBMSType_rbMSSQL" xml:space="preserve">
+    <value>Microsoft SQL-Server Express</value>
+  </data>
+  <data name="DBMSType_rbMySQL" xml:space="preserve">
+    <value>MySQL 5</value>
+  </data>
+  <data name="DBMSType_rbDBAlreadyInstalled" xml:space="preserve">
+    <value>En SQL Server er allerede installert og vil brukes til TV Serveren</value>
+  </data>
+  <data name="Finished_labelHeading1" xml:space="preserve">
+    <value>Gratulerer !</value>
+  </data>
+  <data name="Finished_labelHeading2_install" xml:space="preserve">
+    <value>Under her finner du hjelpe lenker for bruk/oppsett av MediaPortal</value>
+  </data>
+  <data name="Finished_labelHeading3_install" xml:space="preserve">
+    <value>MediaPortal Forum</value>
+  </data>
+  <data name="Finished_linkForum" xml:space="preserve">
+    <value>MediaPortal Forum</value>
+  </data>
+  <data name="Finished_linkHomepage" xml:space="preserve">
+    <value>MediaPortal Hjemmeside</value>
+  </data>
+  <data name="Finished_linkWiki" xml:space="preserve">
+    <value>MediaPortal Wiki</value>
+  </data>
+  <data name="HTTPDownload_buttonCancel" xml:space="preserve">
+    <value>Avbryt</value>
+  </data>
+  <data name="HTTPDownload_errDownloadFailed" xml:space="preserve">
+    <value>En feil oppstod ved nedlasting av denne filen</value>
+  </data>
+  <data name="HTTPDownload_labelSourceURL" xml:space="preserve">
+    <value>Nedlasting URL:</value>
+  </data>
+  <data name="HTTPDownload_labelTargetFile" xml:space="preserve">
+    <value>Mål:</value>
+  </data>
+  <data name="HTTPDownload_msgCanceledByUser" xml:space="preserve">
+    <value>Nedlasting avbrutt av bruker</value>
+  </data>
+  <data name="HTTPDownload_Title" xml:space="preserve">
+    <value>Laster ned fil...</value>
+  </data>
+  <data name="Install_actionDownloadInstall" xml:space="preserve">
+    <value>Last ned-&gt;installer</value>
+  </data>
+  <data name="Install_actionInstall" xml:space="preserve">
+    <value>Innstaller</value>
+  </data>
+  <data name="Install_actionNothing" xml:space="preserve">
+    <value>&lt;ingen endring&gt;</value>
+  </data>
+  <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
+    <value>Avinstaller tidligere-&gt;last ned-&gt;installer</value>
+  </data>
+  <data name="Install_actionUninstallInstall" xml:space="preserve">
+    <value>Avinstaller tidligere-&gt;installer</value>
+  </data>
+  <data name="Install_buttonInstall" xml:space="preserve">
+    <value>Installer</value>
+  </data>
+  <data name="Install_colAction" xml:space="preserve">
+    <value>Utfør</value>
+  </data>
+  <data name="Install_colApplication" xml:space="preserve">
+    <value>Program</value>
+  </data>
+  <data name="Install_colState" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Install_errAppsMissing" xml:space="preserve">
+    <value>Ikke alle programmer som trengs er installert.</value>
+  </data>
+  <data name="Install_errDownloadFailed" xml:space="preserve">
+    <value>En feil oppstod under nedlasting av program [{0}]</value>
+  </data>
+  <data name="Install_errInstallFailed" xml:space="preserve">
+    <value>En feil oppstod under installasjon av programmet [{0}]</value>
+  </data>
+  <data name="Install_labelHeadingInstall" xml:space="preserve">
+    <value>Klikk på “installasjon” knappen for å gjøre ferdig til installasjon</value>
+  </data>
+  <data name="Install_msgDownloading" xml:space="preserve">
+    <value>Laster ned...</value>
+  </data>
+  <data name="Install_msgInstalling" xml:space="preserve">
+    <value>Installerer...</value>
+  </data>
+  <data name="Install_msgUninstalling" xml:space="preserve">
+    <value>Avinstallerer...</value>
+  </data>
+  <data name="Install_stateInstalled" xml:space="preserve">
+    <value>Installert</value>
+  </data>
+  <data name="Install_stateNotInstalled" xml:space="preserve">
+    <value>Ikke installert</value>
+  </data>
+  <data name="Install_stateVersionMismatch" xml:space="preserve">
+    <value>En annen versjon er allerede installert</value>
+  </data>
+  <data name="MainWindow_AppName" xml:space="preserve">
+    <value>MediaPortal Deploy Tool</value>
+  </data>
+  <data name="MainWindow_backButton" xml:space="preserve">
+    <value>Tilbake</value>
+  </data>
+  <data name="MainWindow_buttonClose" xml:space="preserve">
+    <value>Avslutt</value>
+  </data>
+  <data name="MainWindow_labelAppHeading" xml:space="preserve">
+    <value>Dette programmet vil guide deg gjennom installasjonen av MediaPortal og alle programmer som trengs.</value>
+  </data>
+  <data name="MainWindow_nextButton" xml:space="preserve">
+    <value>Neste</value>
+  </data>
+  <data name="ManualDownload_buttonContinue" xml:space="preserve">
+    <value>Fortsett</value>
+  </data>
+  <data name="ManualDownload_errFileNotFound" xml:space="preserve">
+    <value>En fil som trengs finnes fortsatt ikke</value>
+  </data>
+  <data name="ManualDownload_labelDesc" xml:space="preserve">
+    <value>Klikk på “fortsett”, når du er ferdig med å laste ned filen</value>
+  </data>
+  <data name="ManualDownload_labelHeading" xml:space="preserve">
+    <value>Du må manuelt laste ned følgende fil</value>
+  </data>
+  <data name="ManualDownload_linkDir" xml:space="preserve">
+    <value>Åpne folder</value>
+  </data>
+  <data name="ManualDownload_linkURL" xml:space="preserve">
+    <value>Lenker</value>
+  </data>
+  <data name="ManualDownload_Title" xml:space="preserve">
+    <value>Manuell nedlasting</value>
+  </data>
+  <data name="MPSettings_errInvalidPath" xml:space="preserve">
+    <value>Du må gi en gyldig installasjons vei for MediaPortal</value>
+  </data>
+  <data name="MPSettings_labelHeading" xml:space="preserve">
+    <value>Vennligst velg de innstillinger som kreves for installasjon av MediPortal:</value>
+  </data>
+  <data name="MPSettings_labelInstDir" xml:space="preserve">
+    <value>MediaPortal installasjons folder:</value>
+  </data>
+  <data name="MPSettings_msgSelectDir" xml:space="preserve">
+    <value>Velg folder for installasjon av MediaPortal:</value>
+  </data>
+  <data name="TvServerSettings_checkBoxFirewall" xml:space="preserve">
+    <value>Stille inn Windows Firewall til å akseptere ekstern tilkobling til TV-Serveren</value>
+  </data>
+  <data name="TvServerSettings_errInvalidPath" xml:space="preserve">
+    <value>Du må gi en gyldig installasjons vei for TV-Serveren.</value>
+  </data>
+  <data name="TvServerSettings_labelHeading" xml:space="preserve">
+    <value>Vennligst velg de innstillinger som kreves for installasjon av TV-Serveren:</value>
+  </data>
+  <data name="TvServerSettings_labelInstDir" xml:space="preserve">
+    <value>TV-Server installasjons folder:</value>
+  </data>
+  <data name="TvServerSettings_msgSelectDir" xml:space="preserve">
+    <value>Velg folder for TV-Server installasjonen</value>
+  </data>
+  <data name="Welcome_labelHeading1" xml:space="preserve">
+    <value>Takk for at du har valgt MediaPortal. . The FREE OpenSource MediaCenter!</value>
+  </data>
+  <data name="Welcome_labelHeading2" xml:space="preserve">
+    <value>Dette programmet vil guide deg igjennom installasjons prosessen</value>
+  </data>
+  <data name="Welcome_labelHeading3" xml:space="preserve">
+    <value>Vennligst velg ditt språk for installasjonen</value>
+  </data>
+  <data name="Finished_labelEbay" xml:space="preserve">
+    <value>MediaPortal er GRATIS, har du kjøpt den et annet sted har du blitt lurt ;-(</value>
+  </data>
+  <data name="Install_actionConfigure" xml:space="preserve">
+    <value>Konfigurer</value>
+  </data>
+  <data name="Install_actionRemove" xml:space="preserve">
+    <value>Fjern</value>
+  </data>
+  <data name="Install_errConfigureFailed" xml:space="preserve">
+    <value>Konfigurasjon feilet</value>
+  </data>
+  <data name="Install_errRemoveFailed" xml:space="preserve">
+    <value>Avinstallasjon feilet</value>
+  </data>
+  <data name="Install_msgConfiguring" xml:space="preserve">
+    <value>Konfigurering</value>
+  </data>
+  <data name="Install_stateConfigured" xml:space="preserve">
+    <value>Konfigurert</value>
+  </data>
+  <data name="Install_stateNotConfigured" xml:space="preserve">
+    <value>Ikke konfigurert</value>
+  </data>
+  <data name="Install_stateRemoved" xml:space="preserve">
+    <value>Fjernet</value>
+  </data>
+  <data name="Install_stateUninstall" xml:space="preserve">
+    <value>Avinstallert</value>
+  </data>
+  <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
+    <value>En internett tilkobling kreves for denne installasjons prosessen.
+Vil du starte installasjons prosessen nå, eller bare laste ned 
+komponentene for å installere senere.</value>
+  </data>
+  <data name="DownloadOnly_no" xml:space="preserve">
+    <value>Bare laste ned komponentene</value>
+  </data>
+  <data name="DownloadOnly_yes" xml:space="preserve">
+    <value>Start installasjon nå</value>
+  </data>
+  <data name="Install_buttonDownload" xml:space="preserve">
+    <value>Last ned</value>
+  </data>
+  <data name="Install_stateDownloaded" xml:space="preserve">
+    <value>Lastet ned</value>
+  </data>
+  <data name="Install_actionDownload" xml:space="preserve">
+    <value>Last ned</value>
+  </data>
+  <data name="Install_stateNotDownloaded" xml:space="preserve">
+    <value>Ikke lastet ned</value>
+  </data>
+  <data name="Finished_labelHeading2_download" xml:space="preserve">
+    <value>Du har nå satt opp MediaPortal </value>
+  </data>
+  <data name="Install_labelHeadingDownload" xml:space="preserve">
+    <value>Klikk på “last ned” knappen for å laste ned de komponentene som trengs</value>
+  </data>
+  <data name="OS_Support" xml:space="preserve">
+    <value>Beklager ditt operativ system er ikke støttet av MediaPortal</value>
+  </data>
+  <data name="OS_Warning" xml:space="preserve">
+    <value>Ditt operativsystem er ikke støttet, grunnet mangel på oppdateringer fra Microsoft.
+Fortsett på egen risiko....</value>
+  </data>
+  <data name="DownloadSettings_failed" xml:space="preserve">
+    <value>Nedlasting av oppsett fil feilet.
+Vennligst sjekk Internet Explorer innstillingene.
+Den ødelagte oppsett filen vil nå bli slettet, hvis den finnes.</value>
+  </data>
+  <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
+    <value>Stille inn Windows Firewall til å akseptere ekstern tilkobling for MediaPortal</value>
+  </data>
+  <data name="OS_Beta" xml:space="preserve">
+    <value>Beta versjon av en Service pakke funnet, ditt system er derfor ikke støttet...
+Fortsett på egen risiko!</value>
+  </data>
+  <data name="Finished_labelHeading3_download" xml:space="preserve">
+    <value>Programmet vil nå avslutte, for deretter å åpne folderen "MediaPortal Installation".
+Overfør denne folderen til din HTPC. Start installasjonen ved å kjøre "MediaPortal.DeployTool.exe"</value>
+  </data>
+  <data name="Install_stateSkipped" xml:space="preserve">
+    <value>Hoppet over</value>
+  </data>
+  <data name="Exit_Installation" xml:space="preserve">
+    <value>Vil du virkelig avslutte installasjonen av MediaPortal?</value>
+  </data>
+  <data name="DownloadOnly_CurrentSettings" xml:space="preserve">
+    <value>Gjeldende instillinger for nedlasting: lang={0}, arch={1}</value>
+  </data>
+  <data name="DownloadSettings_labelSectionHeader" xml:space="preserve">
+    <value>Vennligst velg instillinger for nedlasting</value>
+  </data>
+  <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
+    <value>Ingen Internett tilkobling funnet! For å kune fortsette innstallasjonen kreves en tilkobling.</value>
+  </data>
+  <data name="DiskSpace_Error" xml:space="preserve">
+    <value>Det er ikke nok plass på valgte harddisk! For innstallasjon av MediaPortal kreves {0} MB fri plass.</value>
+  </data>
+  <data name="Upgrade_labelSectionHeader" xml:space="preserve">
+    <value>MediaPortal {0} funnet.</value>
+  </data>
+  <data name="Upgrade_labelSectionHeader_SVN" xml:space="preserve">
+    <value>MediaPortal {0} (build {1}) funnet.</value>
+  </data>
+  <data name="Upgrade_no" xml:space="preserve">
+    <value>Ny Innstallasjon</value>
+  </data>
+  <data name="Upgrade_yes" xml:space="preserve">
+    <value>Oppdatere gjeldende installasjon til {0}</value>
+  </data>
+  <data name="Upgrade_note" xml:space="preserve">
+    <value>NB! Du kan ikke oppgradere fra en SVN versjon,
+       siden de er kun ment for testing.</value>
+  </data>
+  <data name="Install_actionUpgradeInstall" xml:space="preserve">
+    <value>Oppgradere-&gt;Innstallere</value>
+  </data>
+</root>

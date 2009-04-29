@@ -1,0 +1,651 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C54A87DB-89E6-4DD9-A508-2749DADC1760}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MediaPortal.DeployTool</RootNamespace>
+    <AssemblyName>MediaPortal.DeployTool</AssemblyName>
+    <ApplicationIcon>Install.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Interop.NetFwTypeLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\Interop.NetFwTypeLib.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="InstallationChecks\VCRedist2008Checker.cs" />
+    <Compile Include="InstallationChecks\DiskSpaceChecker.cs" />
+    <Compile Include="InstallationChecks\InternetChecker.cs" />
+    <Compile Include="ManualDownloadFileMissing.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ManualDownloadFileMissing.Designer.cs">
+      <DependentUpon>ManualDownloadFileMissing.cs</DependentUpon>
+    </Compile>
+    <Compile Include="HTTPDownload.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HTTPDownload.Designer.cs">
+      <DependentUpon>HTTPDownload.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IInstallationPackage.cs" />
+    <Compile Include="DeployDialog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DeployDialog.Designer.cs">
+      <DependentUpon>DeployDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DeployTool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DeployTool.Designer.cs">
+      <DependentUpon>DeployTool.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DialogFlowHandler.cs" />
+    <Compile Include="IDeployDialog.cs" />
+    <Compile Include="Images.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Images.resx</DependentUpon>
+    </Compile>
+    <Compile Include="InstallationChecks\OldPackagesChecker.cs" />
+    <Compile Include="InstallationChecks\VCRedist2005Checker.cs" />
+    <Compile Include="InstallationChecks\WindowsFirewallChecker.cs" />
+    <Compile Include="InstallationChecks\MySQLChecker.cs" />
+    <Compile Include="InstallationChecks\MSSQLExpressChecker.cs" />
+    <Compile Include="InstallationChecks\TvPluginChecker.cs" />
+    <Compile Include="InstallationChecks\TvServerChecker.cs" />
+    <Compile Include="InstallationChecks\DirectX9Checker.cs" />
+    <Compile Include="InstallationChecks\MediaPortalChecker.cs" />
+    <Compile Include="InstallationChecks\WindowsMediaPlayerChecker.cs" />
+    <Compile Include="InstallationProperties.cs" />
+    <Compile Include="ManualDownload.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ManualDownload.Designer.cs">
+      <DependentUpon>ManualDownload.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.da-DK.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.da-DK.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.de-AT.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.de-AT.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.de-DE.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.de-DE.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.el-GR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.el-GR.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.es-ES.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.es-ES.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.fr-FR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.fr-FR.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.hr-HR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.hr-HR.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.it-IT.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.it-IT.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.ja-JP.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.ja-JP.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.mk-MK.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.mk-MK.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.nb-NO.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.nb-NO.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.nl-NL.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.nl-NL.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.pl-PL.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.pl-PL.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.pt-BR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.pt-BR.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.pt-PT.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.pt-PT.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.ro-RO.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.ro-RO.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.ru-RU.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.ru-RU.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.sr-Cyrl-CS.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.sr-Cyrl-CS.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.sr-Latn-CS.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.sr-Latn-CS.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.sv-SE.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.sv-SE.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.tr-TR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.tr-TR.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MPListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="OSVersion.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="DeployDialog.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DeployDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DeployTool.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DeployTool.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPDownload.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>HTTPDownload.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Images.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ManualDownload.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ManualDownload.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ManualDownloadFileMissing.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ManualDownloadFileMissing.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.da-DK.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.da-DK.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.de-AT.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.de-AT.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.de-DE.resx">
+      <SubType>Designer</SubType>
+      <LastGenOutput>MediaPortal.DeployTool.de-DE.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.el-GR.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.el-GR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.es-ES.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.es-ES.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.fr-FR.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.fr-FR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.hr-HR.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.hr-HR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.it-IT.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.it-IT.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.ja-JP.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.ja-JP.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.mk-MK.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.mk-MK.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.nb-NO.resx">
+      <SubType>Designer</SubType>
+      <LastGenOutput>MediaPortal.DeployTool.nb-NO.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.nl-NL.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.nl-NL.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.pl-PL.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.pl-PL.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.pt-BR.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.pt-BR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.pt-PT.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.pt-PT.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.ro-RO.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.ro-RO.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.ru-RU.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.ru-RU.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.sr-Cyrl-CS.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.sr-Cyrl-CS.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.sr-Latn-CS.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.sr-Latn-CS.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.sv-SE.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.sv-SE.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.tr-TR.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.tr-TR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\BaseInstallationTypeDlg.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>BaseInstallationTypeDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\BaseInstallationTypeWithoutTvEngineDlg.resx">
+      <DependentUpon>BaseInstallationTypeWithoutTvEngineDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\UpgradeDlg.resx">
+      <DependentUpon>UpgradeDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\DownloadSettingsDlg.resx">
+      <DependentUpon>DownloadSettingsDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\DownloadOnlyDlg.resx">
+      <DependentUpon>DownloadOnlyDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\TvEngineTypeDlg.resx">
+      <DependentUpon>TvEngineTypeDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\WatchHDTvDlg.resx">
+      <DependentUpon>WatchHDTvDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\WatchTvDlg.resx">
+      <DependentUpon>WatchTvDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\CustomInstallationTypeDlg.resx">
+      <DependentUpon>CustomInstallationTypeDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\FinishedDlg.resx">
+      <DependentUpon>FinishedDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\InstallDlg.resx">
+      <DependentUpon>InstallDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\DBMSSettingsDlg.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DBMSSettingsDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\DBMSTypeDlg.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DBMSTypeDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\MPSettingsDlg.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>MPSettingsDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\TvServerSettingsDlg.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TvServerSettingsDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\WelcomeDlg.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>WelcomeDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\BaseInstallationTypeDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\BaseInstallationTypeDlg.Designer.cs">
+      <DependentUpon>BaseInstallationTypeDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\BaseInstallationTypeWithoutTvEngineDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\BaseInstallationTypeWithoutTvEngineDlg.Designer.cs">
+      <DependentUpon>BaseInstallationTypeWithoutTvEngineDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\UpgradeDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\UpgradeDlg.Designer.cs">
+      <DependentUpon>UpgradeDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\DownloadSettingsDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\DownloadSettingsDlg.Designer.cs">
+      <DependentUpon>DownloadSettingsDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\DownloadOnlyDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\DownloadOnlyDlg.Designer.cs">
+      <DependentUpon>DownloadOnlyDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\TvEngineTypeDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\TvEngineTypeDlg.Designer.cs">
+      <DependentUpon>TvEngineTypeDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\WatchHDTvDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\WatchHDTvDlg.Designer.cs">
+      <DependentUpon>WatchHDTvDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\WatchTvDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\WatchTvDlg.Designer.cs">
+      <DependentUpon>WatchTvDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\CustomInstallationTypeDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\CustomInstallationTypeDlg.Designer.cs">
+      <DependentUpon>CustomInstallationTypeDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\FinishedDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\FinishedDlg.Designer.cs">
+      <DependentUpon>FinishedDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\InstallDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\InstallDlg.Designer.cs">
+      <DependentUpon>InstallDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\DBMSSettingsDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\DBMSSettingsDlg.Designer.cs">
+      <DependentUpon>DBMSSettingsDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\DBMSTypeDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\DBMSTypeDlg.Designer.cs">
+      <DependentUpon>DBMSTypeDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\MPSettingsDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\MPSettingsDlg.Designer.cs">
+      <DependentUpon>MPSettingsDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\TvServerSettingsDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\TvServerSettingsDlg.Designer.cs">
+      <DependentUpon>TvServerSettingsDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\WelcomeDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\WelcomeDlg.Designer.cs">
+      <DependentUpon>WelcomeDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Utils.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ApplicationLocations.xml">
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide.htm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\10_advancedInstall.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\11_dbType.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\12_dbInstall.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\13_mpInstall.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\14_tvServerInstall.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\15_installFiles.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\16_installFinished.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\1_language.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\2_setupMode.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\3_downloadSettings.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\4_downloadFiles.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\5_downloadFinished.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\6_watchTV.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\7_watchHDTV.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\8_tvEngine.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\9_installationMode.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\common.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\common.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\msie.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\print.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\SetupGuide\SetupGuide.htm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\SetupGuide\SetupGuide_files\common.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\SetupGuide\SetupGuide_files\common.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\SetupGuide\SetupGuide_files\msie.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\SetupGuide\SetupGuide_files\print.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Install.ico" />
+    <Content Include="Interop.NetFwTypeLib.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Resources\MePo_average.png" />
+    <None Include="Resources\MePo_smart.png" />
+    <None Include="Resources\MePo_tv.png" />
+    <None Include="Resources\MP_logo.png" />
+    <None Include="Resources\MP_packshoth.jpg" />
+    <None Include="Resources\Background top.png" />
+    <None Include="Resources\Background bottom.png" />
+    <None Include="Resources\Background middle internet connection.png" />
+    <None Include="Resources\Background middle one click install choose.png" />
+    <None Include="Resources\Background middle TV  yes no.png" />
+    <None Include="Resources\Background middle TV install.png" />
+    <None Include="Resources\Background middle with MP Box.png" />
+    <None Include="Resources\Background middle empty.png" />
+    <None Include="Resources\Choose button on.png" />
+    <None Include="Resources\Choose button off.png" />
+    <None Include="Resources\exit41.png" />
+    <None Include="Resources\helpIcon.png" />
+    <Content Include="Resources\MePo_download.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
