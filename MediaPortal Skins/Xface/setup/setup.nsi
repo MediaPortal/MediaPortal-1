@@ -77,9 +77,9 @@ SetCompressor /SOLID /FINAL lzma
 !macro SelectOptionPageList MacroName
   ; This macro used to define the SelectOption pages.
   ; List all the option pages which should be displayed here.
-  !insertmacro "${MacroName}" "EPG"               "9rows"           "11rows"
-  !insertmacro "${MacroName}" "NowPlaying"        "oldStyle"        "newStyle_VUMeters"
-  !insertmacro "${MacroName}" "Topbar"            "withShortcuts"   "withoutShortcuts"
+  !insertmacro "${MacroName}" "EPG"               "11rows"            "9rows"
+  !insertmacro "${MacroName}" "NowPlaying"        "newStyle_VUMeters" "oldStyle"
+  !insertmacro "${MacroName}" "Topbar"            "withoutShortcuts"  "withShortcuts"
 !macroend
 
 ;======================================
@@ -97,12 +97,11 @@ CRCCheck On
 #---------------------------------------------------------------------------
 !define MUI_ABORTWARNING
 !define MUI_ICON                        "images\XFACE.ico"
-!define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\win-uninstall.ico"
 
-!define MUI_HEADERIMAGE			
+!define MUI_HEADERIMAGE
 !define MUI_HEADERIMAGE_BITMAP          "images\header.bmp"
 !define MUI_WELCOMEFINISHPAGE_BITMAP    "images\wizard.bmp"
-!define MUI_HEADERIMAGE_RIGHT		 
+!define MUI_HEADERIMAGE_RIGHT
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_FINISHPAGE_NOAUTOCLOSE

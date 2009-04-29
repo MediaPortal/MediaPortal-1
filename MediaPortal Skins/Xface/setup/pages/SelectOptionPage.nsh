@@ -59,7 +59,7 @@ Function SelectOptionPage${ID}
 
 
 
-  ${NSD_CreateRadioButton} 0 30u 145u 8u "$(SelectOptionPage${ID}_OPT0)"
+  ${NSD_CreateRadioButton} 0 30u 145u 8u "$(SelectOptionPage${ID}_${OPTION0})"
   Pop $SelectOptionPage${ID}.optBtn0
   ${NSD_OnClick} $SelectOptionPage${ID}.optBtn0 SelectOptionPage${ID}UpdateSelection
 
@@ -68,7 +68,7 @@ Function SelectOptionPage${ID}
   ${NSD_SetImage} $SelectOptionPage${ID}.optImg0 "$PLUGINSDIR\preview${OPTION0}.bmp" $SelectOptionPage${ID}.optImg0.handle
 
 
-  ${NSD_CreateRadioButton} 155u 30u 145u 8u "$(SelectOptionPage${ID}_OPT1)"
+  ${NSD_CreateRadioButton} 155u 30u 145u 8u "$(SelectOptionPage${ID}_${OPTION1})"
   Pop $SelectOptionPage${ID}.optBtn1
   ${NSD_OnClick} $SelectOptionPage${ID}.optBtn1 SelectOptionPage${ID}UpdateSelection
 
@@ -119,10 +119,10 @@ Page custom SelectOptionPage${ID}
 !macro SelectOptionInstall ID OPTION0 OPTION1
   ${If} $SelectOption${ID} == 1
     DetailPrint "Install SelectOption${ID} option ${OPTION0}"
-    File /r /x .svn /x preview.bmp "${svn_xface}\Customize\${ID}\${OPTION0}\*.*"
+    File /r /x .svn /x preview.bmp "${svn_xface}\Customize\${ID}\${OPTION1}\*.*"
   ${Else}
     DetailPrint "Install SelectOption${ID} option ${OPTION1}"
-    File /r /x .svn /x preview.bmp "${svn_xface}\Customize\${ID}\${OPTION1}\*.*"
+    File /r /x .svn /x preview.bmp "${svn_xface}\Customize\${ID}\${OPTION0}\*.*"
   ${EndIf}
 !macroend
 
