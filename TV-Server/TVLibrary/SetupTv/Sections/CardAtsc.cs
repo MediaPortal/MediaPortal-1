@@ -315,6 +315,9 @@ namespace SetupTv.Sections
             dbChannel.FreeToAir = !checkBoxQAM.Checked || channel.FreeToAir;
 
             dbChannel.Persist();
+
+            layer.AddChannelToGroup(dbChannel, "All Channels");
+
             if (currentDetail == null)
             {
               layer.AddTuningDetails(dbChannel, channel);

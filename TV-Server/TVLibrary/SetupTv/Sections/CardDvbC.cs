@@ -373,6 +373,8 @@ namespace SetupTv.Sections
             dbChannel.FreeToAir = channel.FreeToAir;
             dbChannel.Persist();
 
+            layer.AddChannelToGroup(dbChannel, "All Channels");
+
             if (checkBoxCreateGroups.Checked)
             {
               layer.AddChannelToGroup(dbChannel, channel.Provider);
