@@ -3677,7 +3677,7 @@ public class MediaPortalApp : D3DApp, IRender
                       aParamVersion.ToString());
       Log.Info("Util: quartz.dll error - {0}", ErrorMsg);
       if (
-        MessageBox.Show(ErrorMsg, "Microsoft VMR9 handler outdated!", MessageBoxButtons.OKCancel,
+        MessageBox.Show(ErrorMsg, "Core directshow component (quartz.dll) is outdated!", MessageBoxButtons.OKCancel,
                         MessageBoxIcon.Exclamation) == DialogResult.OK)
       {
         Process.Start(@"http://wiki.team-mediaportal.com/GeneralRequirements");
