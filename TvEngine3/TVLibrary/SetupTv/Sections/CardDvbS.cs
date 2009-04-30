@@ -947,6 +947,8 @@ namespace SetupTv.Sections
           dbChannel.FreeToAir = channel.FreeToAir;
           dbChannel.Persist();
 
+          layer.AddChannelToGroup(dbChannel, "All Channels");
+
           if (checkBoxCreateGroupsSat.Checked)
           {
             layer.AddChannelToGroup(dbChannel, context.Satelite.SatelliteName);
