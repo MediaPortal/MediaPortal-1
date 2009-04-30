@@ -76,7 +76,12 @@ namespace TvEngine.PowerScheduler.Handlers
 
       DateTime remoteScheduleTime = (DateTime)(System.ComponentModel.TypeDescriptor.GetConverter(new DateTime(now.Year, now.Month, now.Day)).ConvertFrom(remoteScheduleTimeStr));
 
-      if (now < remoteScheduleTime)
+      if (remoteScheduleTime == DateTime.MinValue)
+      {
+        remoteScheduleTime = defaultRemoteScheduleTime;
+      }
+
+      if ((now < remoteScheduleTime) && (remoteScheduleTime > DateTime.MinValue))
       {
         remoteScheduleTime.AddDays(1);
       }
