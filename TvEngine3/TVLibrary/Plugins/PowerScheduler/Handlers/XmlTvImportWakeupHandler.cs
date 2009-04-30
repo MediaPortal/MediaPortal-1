@@ -71,7 +71,7 @@ namespace TvEngine.PowerScheduler.Handlers
       }
 
       DateTime now = DateTime.Now;      
-      DateTime defaultRemoteScheduleTime = new DateTime(now.Year, now.Month, now.Day, 6, 30, 0);
+      DateTime defaultRemoteScheduleTime = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0);
       string remoteScheduleTimeStr = layer.GetSetting("xmlTvRemoteScheduleTime", defaultRemoteScheduleTime.ToString()).Value;
 
       DateTime remoteScheduleTime = (DateTime)(System.ComponentModel.TypeDescriptor.GetConverter(new DateTime(now.Year, now.Month, now.Day)).ConvertFrom(remoteScheduleTimeStr));
