@@ -162,7 +162,8 @@ FunctionEnd
 ;======================================
 
 Function DirectoryPreMP
-  ${If} ${FileExists} "$MPdir.Base\*.*"
+  !insertmacro MP_GET_INSTALL_DIR $0
+  ${IfNot} $0 == ""
     Abort
   ${EndIf}
 FunctionEnd
