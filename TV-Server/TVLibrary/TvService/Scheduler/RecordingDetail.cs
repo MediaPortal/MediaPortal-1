@@ -336,7 +336,7 @@ namespace TvService
         /* Replace any trailing dots in path name; Bugfix for Mantis 1881 */
         subDirectory = new Regex(@"\.*$").Replace(subDirectory, "");
 
-        fullPath = recordingPath + "\\" + subDirectory;
+        fullPath = recordingPath + "\\" + subDirectory.Trim();
         if (!System.IO.Directory.Exists(fullPath))
           System.IO.Directory.CreateDirectory(fullPath);
       }
