@@ -167,9 +167,9 @@ namespace TvDatabase
       return AddNewChannel(name);
     }
 
-    public void AddChannelToGroup(Channel channel, string groupName)
+    public ChannelGroup CreateGroup(string groupName)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (ChannelGroup));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(ChannelGroup));
       sb.AddConstraint(Operator.Like, "groupName", "%" + groupName + "%");
       SqlStatement stmt = sb.GetStatement(true);
       IList<ChannelGroup> groups = ObjectFactory.GetCollection<ChannelGroup>(stmt.Execute());
@@ -183,7 +183,14 @@ namespace TvDatabase
       {
         group = groups[0];
       }
+      return group;
+    }
+
+    public void AddChannelToGroup(Channel channel, string groupName)
+    {
+      
       bool found = false;
+      ChannelGroup group = CreateGroup(groupName);
       IList<GroupMap> groupMaps = group.ReferringGroupMap();
       foreach (GroupMap map in groupMaps)
       {
