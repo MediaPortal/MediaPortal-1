@@ -260,30 +260,58 @@ namespace TvService
       string fullPath = recordingPath;
       string fileName;
       const string recEngineExt = ".ts";
-      /*int recFormat = this.CardInfo.Card.RecordingFormat;
-      if(recFormat == 0) recEngineExt = ".ts";
-      else recEngineExt = ".mpg";*/
 
-      strInput = Utils.ReplaceTag(strInput, "%channel%", Utils.MakeFileName(_schedule.ReferencedChannel().DisplayName), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%title%", Utils.MakeFileName(Program.Title), "unknown");
-      //strInput = Utils.ReplaceTag(strInput, "%name%", Utils.MakeFileName(Program.Episode), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%series%", Utils.MakeFileName(Program.SeriesNum), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%episode%", Utils.MakeFileName(Program.EpisodeNum), "unknown");
-      //strInput = Utils.ReplaceTag(strInput, "%part%", Utils.MakeFileName(Program.EpisodePart), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%date%", Utils.MakeFileName(Program.StartTime.ToString("yyyy-MM-dd")), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%start%", Utils.MakeFileName(Program.StartTime.ToShortTimeString()), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%end%", Utils.MakeFileName(Program.EndTime.ToShortTimeString()), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%genre%", Utils.MakeFileName(Program.Genre), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%startday%", Utils.MakeFileName(Program.StartTime.ToString("dd")), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%startmonth%", Utils.MakeFileName(Program.StartTime.ToString("MM")), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%startyear%", Utils.MakeFileName(Program.StartTime.ToString("yyyy")), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%starthh%", Utils.MakeFileName(Program.StartTime.ToString("HH")), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%startmm%", Utils.MakeFileName(Program.StartTime.ToString("mm")), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%endday%", Utils.MakeFileName(Program.EndTime.ToString("dd")), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%endmonth%", Utils.MakeFileName(Program.EndTime.ToString("MM")), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%endyear%", Utils.MakeFileName(Program.EndTime.ToString("yyyy")), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%endhh%", Utils.MakeFileName(Program.EndTime.ToString("HH")), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%endmm%", Utils.MakeFileName(Program.EndTime.ToString("mm")), "unknown");
+      string[] TagNames = { "%channel%", 
+                            "%title%", 
+                            //"%name%", 
+                            "%series%", 
+                            "%episode%", 
+                            //"%part%", 
+                            "%date%",
+                            "%start%",
+                            "%end%",
+                            "%genre%", 
+                            "%startday%", 
+                            "%startmonth%", 
+                            "%startyear%", 
+                            "%starthh%", 
+                            "%startmm%", 
+                            "%endday%", 
+                            "%endmonth%", 
+                            "%endyear%", 
+                            "%endhh%", 
+                            "%endmm%"
+                          };
+      string[] TagValues = { _schedule.ReferencedChannel().DisplayName,
+                             Program.Title,
+                             //Program.Episode,
+                             Program.SeriesNum,
+                             Program.EpisodeNum,
+                             //Program.EpisodePart,
+                             Program.StartTime.ToString("yyyy-MM-dd"),
+                             Program.StartTime.ToShortTimeString(),
+                             Program.EndTime.ToShortTimeString(),
+                             Program.Genre,
+                             Program.StartTime.ToString("dd"),
+                             Program.StartTime.ToString("MM"),
+                             Program.StartTime.ToString("yyyy"),
+                             Program.StartTime.ToString("HH"),
+                             Program.StartTime.ToString("mm"),
+                             Program.EndTime.ToString("dd"),
+                             Program.EndTime.ToString("MM"),
+                             Program.EndTime.ToString("yyyy"),
+                             Program.EndTime.ToString("HH"),
+                             Program.EndTime.ToString("mm")
+                           };
+
+      for (int i = 0; i < TagNames.Length; i++)
+      {
+        strInput = Utils.ReplaceTag(strInput, TagNames[i], Utils.MakeFileName(TagValues[i]), "unknown");
+        if (!strInput.Contains("%"))
+        {
+          break;
+        }
+      }
 
       int index = strInput.LastIndexOf('\\');
       if (index != -1)

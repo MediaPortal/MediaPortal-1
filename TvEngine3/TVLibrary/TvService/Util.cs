@@ -671,30 +671,40 @@ namespace TvService
       return DateTime.Now;
     }
 
-    public static string ReplaceTag(string line, string tag, string value, string empty)
+    public static string ReplaceTag(string line, string tag, string value, string defaultValue)
     {
       if (string.IsNullOrEmpty(line) || string.IsNullOrEmpty(tag))
-        return "unknown";
+        return defaultValue;
 
-      Regex r = new Regex(String.Format(@"\[[^%]*{0}[^\]]*[\]]", tag));
-      if (value == empty)
+      // check for [*%tag%*]
+      // +
+      // escape % for regex parsing
+      string strRegex = String.Format(@"\[[^%]*{0}[^\]]*[\]]", tag.Replace("%", "\\%"));
+
+      Regex r;
+      try
       {
-        Match match = r.Match(line);
-        if (match != null && match.Length > 0)
-        {
-          line = line.Remove(match.Index, match.Length);
-        }
+        r = new Regex(strRegex);
       }
-      else
+      catch (Exception ex)
       {
-        Match match = r.Match(line);
-        if (match != null && match.Length > 0)
+        Log.Error("ReplaceTag: Regex generated the following error: {0}", ex.Message);
+        return line;
+      }
+
+      Match match = r.Match(line);
+      if (match.Success)
+      {
+        // Remove [ xxx ] completly
+        line = line.Remove(match.Index, match.Length);
+        if (!String.IsNullOrEmpty(value))
         {
-          line = line.Remove(match.Index, match.Length);
+          // Add again xxx if value != null
           string m = match.Value.Substring(1, match.Value.Length - 2);
           line = line.Insert(match.Index, m);
         }
       }
+      // finally replace tag with value
       return line.Replace(tag, value);
     }
 
