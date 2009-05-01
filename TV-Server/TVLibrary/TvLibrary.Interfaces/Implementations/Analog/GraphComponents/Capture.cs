@@ -72,9 +72,31 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
       _minValue = minValue;
       _maxValue = maxValue;
       _steppingDelta = steppingDelta;
-      _defaultValue = defaultValue;
+      if (defaultValue > maxValue)
+      {
+        _defaultValue = maxValue;
+      }
+      else if (defaultValue < minValue)
+      {
+        _defaultValue = minValue;
+      }
+      else
+      {
+        _defaultValue = defaultValue;
+      }
       _manual = manual;
-      _value = value;
+      if (value > maxValue)
+      {
+        _value = maxValue;
+      }
+      else if (defaultValue < minValue)
+      {
+        _value = minValue;
+      }
+      else
+      {
+        _value = value;
+      }
     }
 
     /// <summary>

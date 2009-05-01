@@ -51,17 +51,7 @@ namespace TvLibrary.Implementations
       //get preload card value
       if (_devicePath != null)
       {
-        //fetch preload value from db and apply it.
-        IList<Card> cardsInDbs = Card.ListAll();
-        foreach (Card dbsCard in cardsInDbs)
-        {
-          if (dbsCard.DevicePath.Equals(_devicePath))
-          {
-            _preloadCard = dbsCard.PreloadCard;
-            _cardId = dbsCard.IdCard;
-            break;
-          }
-        }
+        GetPreloadBitAndCardId();
       }
     }
 
@@ -520,6 +510,21 @@ namespace TvLibrary.Implementations
     #endregion
 
     #region HelperMethods
+
+    protected void GetPreloadBitAndCardId()
+    {
+      //fetch preload value from db and apply it.
+      IList<Card> cardsInDbs = Card.ListAll();
+      foreach (Card dbsCard in cardsInDbs)
+      {
+        if (dbsCard.DevicePath.Equals(_devicePath))
+        {
+          _preloadCard = dbsCard.PreloadCard;
+          _cardId = dbsCard.IdCard;
+          break;
+        }
+      }
+    }
 
     /// <summary>
     /// Gets the first subchannel being used.

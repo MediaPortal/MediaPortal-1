@@ -213,7 +213,14 @@ namespace TvLibrary.Implementations.DVB
         ITvSubChannel ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest);
         //ViXS QAM set is done here...
         _conditionalAccess.CheckViXSATSCQAM(atscChannel);
-        RunGraph(ch.SubChannelId);
+        try
+        {
+          RunGraph(ch.SubChannelId);
+        } catch (TvExceptionNoSignal)
+        {
+          FreeSubChannel(ch.SubChannelId);
+          throw;
+        }
         return ch;
       } catch (Exception ex)
       {

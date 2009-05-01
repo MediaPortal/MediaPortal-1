@@ -48,6 +48,7 @@ namespace SetupTv.Sections
       this.label2 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
       this.tabPage3 = new System.Windows.Forms.TabPage();
+      this.label31 = new System.Windows.Forms.Label();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
       this.videoStandardComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -357,6 +358,7 @@ namespace SetupTv.Sections
       // 
       // tabPage3
       // 
+      this.tabPage3.Controls.Add(this.label31);
       this.tabPage3.Controls.Add(this.groupBox3);
       this.tabPage3.Controls.Add(this.groupBox2);
       this.tabPage3.Location = new System.Drawing.Point(4, 22);
@@ -365,6 +367,16 @@ namespace SetupTv.Sections
       this.tabPage3.TabIndex = 2;
       this.tabPage3.Text = "Settings";
       this.tabPage3.UseVisualStyleBackColor = true;
+      // 
+      // label31
+      // 
+      this.label31.AutoSize = true;
+      this.label31.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.label31.Location = new System.Drawing.Point(17, 334);
+      this.label31.Name = "label31";
+      this.label31.Size = new System.Drawing.Size(432, 13);
+      this.label31.TabIndex = 35;
+      this.label31.Text = "Note: A restart of TvServer might be needed when changing these settings";
       // 
       // groupBox3
       // 
@@ -408,7 +420,7 @@ namespace SetupTv.Sections
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Stream Config";
       // 
-      // refreshRateComboBox
+      // frameRateComboBox
       // 
       this.frameRateComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.frameRateComboBox.FormattingEnabled = true;
@@ -1286,6 +1298,7 @@ namespace SetupTv.Sections
       this.tabPage1.ResumeLayout(false);
       this.tabPage1.PerformLayout();
       this.tabPage3.ResumeLayout(false);
+      this.tabPage3.PerformLayout();
       this.groupBox3.ResumeLayout(false);
       this.groupBox3.PerformLayout();
       this.groupBox2.ResumeLayout(false);
@@ -1414,5 +1427,6 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPLabel label6;
     private MediaPortal.UserInterface.Controls.MPLabel label5;
     private System.Windows.Forms.Button defaultValuesButton;
+    private System.Windows.Forms.Label label31;
   }
 }

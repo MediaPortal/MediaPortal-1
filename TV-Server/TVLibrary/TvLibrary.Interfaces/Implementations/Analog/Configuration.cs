@@ -174,7 +174,7 @@ namespace TvLibrary.Implementations.Analog
       _configuration.Name = name;
       _configuration.DevicePath = devicePath;
       _configuration.CardId = cardId;
-      if (File.Exists(fileName))
+      if (cardId != 0 && File.Exists(fileName))
       {
         try
         {
@@ -187,6 +187,9 @@ namespace TvLibrary.Implementations.Analog
             if (_configuration.CardId != cardId)
             {
               File.Delete(fileName);
+              _configuration = new Configuration();
+              _configuration.Name = name;
+              _configuration.DevicePath = devicePath;
               _configuration.CardId = cardId;
               return _configuration;
             }
@@ -194,7 +197,10 @@ namespace TvLibrary.Implementations.Analog
             if (_configuration.Name != name)
             {
               File.Delete(fileName);
+              _configuration = new Configuration();
               _configuration.Name = name;
+              _configuration.DevicePath = devicePath;
+              _configuration.CardId = cardId;
               return _configuration;
             }
             XmlNode node = cardNode.SelectSingleNode("device/path");
@@ -202,7 +208,10 @@ namespace TvLibrary.Implementations.Analog
             if (!_configuration.DevicePath.Equals(devicePath))
             {
               File.Delete(fileName);
+              _configuration = new Configuration();
+              _configuration.Name = name;
               _configuration.DevicePath = devicePath;
+              _configuration.CardId = cardId;
               return _configuration;
             }
 
@@ -238,8 +247,7 @@ namespace TvLibrary.Implementations.Analog
             _configuration.RecordQualityType = (QualityType)tempValue;
             _configuration.Graph = Graph.CreateInstance(cardNode.SelectSingleNode("graph"));
           }
-        }
-        catch 
+        } catch
         {
           Log.Log.WriteFile("Error while reading analog card configuration file");
           _configuration = new Configuration();
@@ -248,7 +256,8 @@ namespace TvLibrary.Implementations.Analog
           _configuration.CardId = cardId;
           _configuration.Graph = Graph.CreateInstance(null);
         }
-      }else
+      }
+      else
       {
         _configuration.Graph = Graph.CreateInstance(null);
       }
@@ -261,39 +270,42 @@ namespace TvLibrary.Implementations.Analog
     /// <param name="configuration">Configuration object to be saved</param>
     public static void writeConfiguration(Configuration configuration)
     {
-      String fileName = GetFileName(configuration.Name, configuration.CardId);
-      XmlTextWriter writer = new XmlTextWriter(fileName, Encoding.UTF8);
-      writer.Formatting = Formatting.Indented;
-      writer.Indentation = 1;
-      writer.IndentChar = (char)9;
-      writer.WriteStartDocument(true);
-      writer.WriteStartElement("configuration"); //<configuration>
-      writer.WriteAttributeString("version", "2");
-      writer.WriteStartElement("card"); //<card>
-      writer.WriteAttributeString("cardId", XmlConvert.ToString(configuration.CardId));
-      writer.WriteAttributeString("name", configuration.Name);
-      writer.WriteStartElement("device"); //<device>
-      writer.WriteElementString("path", configuration.DevicePath);
-      writer.WriteEndElement(); //</device>
-      configuration.Graph.WriteGraph(writer);
-      writer.WriteStartElement("qualityControl"); //<qualityControl>
-      writer.WriteStartElement("customSettings"); //<customSettings>
-      writer.WriteAttributeString("value", XmlConvert.ToString(configuration.CustomQualityValue));
-      writer.WriteAttributeString("peakValue", XmlConvert.ToString(configuration.CustomPeakQualityValue));
-      writer.WriteEndElement(); //</customSettings>
-      writer.WriteStartElement("playback"); //<playback>
-      writer.WriteAttributeString("mode", XmlConvert.ToString((int)configuration.PlaybackQualityMode));
-      writer.WriteAttributeString("type", XmlConvert.ToString((int)configuration.PlaybackQualityType));
-      writer.WriteEndElement(); //</playback>
-      writer.WriteStartElement("record"); //<record>
-      writer.WriteAttributeString("mode", XmlConvert.ToString((int)configuration.RecordQualityMode));
-      writer.WriteAttributeString("type", XmlConvert.ToString((int)configuration.RecordQualityType));
-      writer.WriteEndElement(); //</record>
-      writer.WriteEndElement(); //</qualityControl>
-      writer.WriteEndElement(); //</card>
-      writer.WriteEndElement(); //</configuration>
-      writer.WriteEndDocument();
-      writer.Close();
+      if (configuration != null && configuration.CardId != 0)
+      {
+        String fileName = GetFileName(configuration.Name, configuration.CardId);
+        XmlTextWriter writer = new XmlTextWriter(fileName, Encoding.UTF8);
+        writer.Formatting = Formatting.Indented;
+        writer.Indentation = 1;
+        writer.IndentChar = (char)9;
+        writer.WriteStartDocument(true);
+        writer.WriteStartElement("configuration"); //<configuration>
+        writer.WriteAttributeString("version", "2");
+        writer.WriteStartElement("card"); //<card>
+        writer.WriteAttributeString("cardId", XmlConvert.ToString(configuration.CardId));
+        writer.WriteAttributeString("name", configuration.Name);
+        writer.WriteStartElement("device"); //<device>
+        writer.WriteElementString("path", configuration.DevicePath);
+        writer.WriteEndElement(); //</device>
+        configuration.Graph.WriteGraph(writer);
+        writer.WriteStartElement("qualityControl"); //<qualityControl>
+        writer.WriteStartElement("customSettings"); //<customSettings>
+        writer.WriteAttributeString("value", XmlConvert.ToString(configuration.CustomQualityValue));
+        writer.WriteAttributeString("peakValue", XmlConvert.ToString(configuration.CustomPeakQualityValue));
+        writer.WriteEndElement(); //</customSettings>
+        writer.WriteStartElement("playback"); //<playback>
+        writer.WriteAttributeString("mode", XmlConvert.ToString((int)configuration.PlaybackQualityMode));
+        writer.WriteAttributeString("type", XmlConvert.ToString((int)configuration.PlaybackQualityType));
+        writer.WriteEndElement(); //</playback>
+        writer.WriteStartElement("record"); //<record>
+        writer.WriteAttributeString("mode", XmlConvert.ToString((int)configuration.RecordQualityMode));
+        writer.WriteAttributeString("type", XmlConvert.ToString((int)configuration.RecordQualityType));
+        writer.WriteEndElement(); //</record>
+        writer.WriteEndElement(); //</qualityControl>
+        writer.WriteEndElement(); //</card>
+        writer.WriteEndElement(); //</configuration>
+        writer.WriteEndDocument();
+        writer.Close();
+      }
     }
 
     #endregion

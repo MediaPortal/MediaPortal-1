@@ -3256,20 +3256,16 @@ namespace TvPlugin
 
           if (cardChanged)
           {
-            if (wasPlaying)
-            {
-              Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. CardId:{0}/{1}, RTSP:{2}", Card.Id, newCardId, Card.RTSPUrl);
-              Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. Timeshifting:{0}", Card.TimeShiftFileName);
-              //g_Player.StopAndKeepTimeShifting(); // keep timeshifting on server, we only want to recreate the graph on the client
-              //server.StopTimeShifting(ref user);              
-              Log.Debug("TVHome.ViewChannelAndCheck(): rebuilding graph (card changed) - timeshifting continueing.");
-            }
+            Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. CardId:{0}/{1}, RTSP:{2}", Card.Id, newCardId, Card.RTSPUrl);
+            Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. Timeshifting:{0}", Card.TimeShiftFileName);
+            //g_Player.StopAndKeepTimeShifting(); // keep timeshifting on server, we only want to recreate the graph on the client
+            //server.StopTimeShifting(ref user);              
+            Log.Debug("TVHome.ViewChannelAndCheck(): rebuilding graph (card changed) - timeshifting continueing.");
 
             RenderBlackImage();
             succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
-            
             // check if after starttimeshift the active card is same as before (tvserver can do "failover" to another card)
-            if (Card.Id == card.Id)
+            if (succeeded == TvResult.Succeeded && card != null && Card.Id == card.Id)
             {
               Log.Debug("TVHome.ViewChannelAndCheck(): card was not changed. seek to end.");
               cardChanged = false;
@@ -3336,8 +3332,6 @@ namespace TvPlugin
 
           Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
 
-          bool wasPaused = g_Player.Paused;
-
           if (!g_Player.Playing || cardChanged)
           {
             StartPlay();
@@ -3354,25 +3348,11 @@ namespace TvPlugin
         else
         {
           //timeshifting new channel failed. 
-          //if (g_Player.Duration == 0)
-          //{
-          //Added by joboehl - Only stops if stream is empty. Otherwise, a message is displaying but everything stays as before.  
-          if (!cardChanged)
-          {
-            g_Player.Stop();
-          }
-          else
-          {
-            wasPlaying = false;
-          }
+          g_Player.Stop();
 
-          //UpdateGUIonPlaybackStateChange(false);
-          //}
         }
 
         //GUIWaitCursor.Hide();
-
-        //if (pDlgOK != null && pDlgYesNo != null)
 
         //GUIWaitCursor.Hide();
         ChannelTuneFailedNotifyUser(succeeded, wasPlaying, channel);

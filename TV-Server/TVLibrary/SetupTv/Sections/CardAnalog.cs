@@ -172,10 +172,6 @@ namespace SetupTv.Sections
         {
           videoStandardComboBox.Items.Add(AnalogVideoStandard.NTSC_M_J);
         }
-        if ((availableVideoStandard & AnalogVideoStandard.NTSCMask) != 0)
-        {
-          videoStandardComboBox.Items.Add(AnalogVideoStandard.NTSCMask);
-        }
         if ((availableVideoStandard & AnalogVideoStandard.PAL_60) != 0)
         {
           videoStandardComboBox.Items.Add(AnalogVideoStandard.PAL_60);
@@ -244,10 +240,6 @@ namespace SetupTv.Sections
         {
           videoStandardComboBox.Items.Add(AnalogVideoStandard.SECAM_L1);
         }
-        if ((availableVideoStandard & AnalogVideoStandard.SECAMMask) != 0)
-        {
-          videoStandardComboBox.Items.Add(AnalogVideoStandard.SECAMMask);
-        }
         AnalogVideoStandard currentStandard = _configuration.Graph.Capture.CurrentVideoStandard;
         if (currentStandard != AnalogVideoStandard.None)
         {
@@ -269,12 +261,24 @@ namespace SetupTv.Sections
         brightnessScrollbar.Minimum = quality.MinValue;
         brightnessScrollbar.SmallChange = quality.SteppingDelta;
         brightnessScrollbar.LargeChange = quality.SteppingDelta;
-        brightnessScrollbar.Value = quality.Value;
+        if (quality.Value > quality.MaxValue)
+        {
+          brightnessScrollbar.Value = quality.MaxValue;
+        }
+        else if (quality.Value < quality.MinValue)
+        {
+          brightnessScrollbar.Value = quality.MinValue;
+        }
+        else
+        {
+          brightnessScrollbar.Value = quality.Value;
+        }
         brightnessValue.Text = quality.Value.ToString();
         brightnessScrollbar.Enabled = true;
         brightnessValue.Enabled = true;
         label5.Enabled = true;
-      } else
+      }
+      else
       {
         brightnessScrollbar.Enabled = false;
         brightnessValue.Text = string.Empty;
@@ -288,12 +292,24 @@ namespace SetupTv.Sections
         contrastScrollbar.Minimum = quality.MinValue;
         contrastScrollbar.SmallChange = quality.SteppingDelta;
         contrastScrollbar.LargeChange = quality.SteppingDelta;
-        contrastScrollbar.Value = quality.Value;
+        if (quality.Value > quality.MaxValue)
+        {
+          contrastScrollbar.Value = quality.MaxValue;
+        }
+        else if (quality.Value < quality.MinValue)
+        {
+          contrastScrollbar.Value = quality.MinValue;
+        }
+        else
+        {
+          contrastScrollbar.Value = quality.Value;
+        }
         contrastValue.Text = quality.Value.ToString();
         contrastScrollbar.Enabled = true;
         contrastValue.Enabled = true;
         label6.Enabled = true;
-      } else
+      }
+      else
       {
         contrastScrollbar.Enabled = false;
         contrastValue.Text = string.Empty;
@@ -307,12 +323,24 @@ namespace SetupTv.Sections
         hueScrollbar.Minimum = quality.MinValue;
         hueScrollbar.SmallChange = quality.SteppingDelta;
         hueScrollbar.LargeChange = quality.SteppingDelta;
-        hueScrollbar.Value = quality.Value;
+        if (quality.Value > quality.MaxValue)
+        {
+          hueScrollbar.Value = quality.MaxValue;
+        }
+        else if (quality.Value < quality.MinValue)
+        {
+          hueScrollbar.Value = quality.MinValue;
+        }
+        else
+        {
+          hueScrollbar.Value = quality.Value;
+        }
         hueValue.Text = quality.Value.ToString();
         hueScrollbar.Enabled = true;
         hueValue.Enabled = true;
         label7.Enabled = true;
-      } else
+      }
+      else
       {
         hueScrollbar.Enabled = false;
         hueValue.Text = string.Empty;
@@ -326,12 +354,24 @@ namespace SetupTv.Sections
         saturationScrollbar.Minimum = quality.MinValue;
         saturationScrollbar.SmallChange = quality.SteppingDelta;
         saturationScrollbar.LargeChange = quality.SteppingDelta;
-        saturationScrollbar.Value = quality.Value;
+        if (quality.Value > quality.MaxValue)
+        {
+          saturationScrollbar.Value = quality.MaxValue;
+        }
+        else if (quality.Value < quality.MinValue)
+        {
+          saturationScrollbar.Value = quality.MinValue;
+        }
+        else
+        {
+          saturationScrollbar.Value = quality.Value;
+        }
         saturationValue.Text = quality.Value.ToString();
         saturationScrollbar.Enabled = true;
         saturationValue.Enabled = true;
         label8.Enabled = true;
-      } else
+      }
+      else
       {
         saturationScrollbar.Enabled = false;
         saturationValue.Text = string.Empty;
@@ -345,12 +385,24 @@ namespace SetupTv.Sections
         sharpnessScrollbar.Minimum = quality.MinValue;
         sharpnessScrollbar.SmallChange = quality.SteppingDelta;
         sharpnessScrollbar.LargeChange = quality.SteppingDelta;
-        sharpnessScrollbar.Value = quality.Value;
+        if (quality.Value > quality.MaxValue)
+        {
+          sharpnessScrollbar.Value = quality.MaxValue;
+        }
+        else if (quality.Value < quality.MinValue)
+        {
+          sharpnessScrollbar.Value = quality.MinValue;
+        }
+        else
+        {
+          sharpnessScrollbar.Value = quality.Value;
+        }
         sharpnessValue.Text = quality.Value.ToString();
         sharpnessScrollbar.Enabled = true;
         sharpnessValue.Enabled = true;
         label9.Enabled = true;
-      } else
+      }
+      else
       {
         sharpnessScrollbar.Enabled = false;
         sharpnessValue.Text = string.Empty;
@@ -364,12 +416,24 @@ namespace SetupTv.Sections
         gammaScrollbar.Minimum = quality.MinValue;
         gammaScrollbar.SmallChange = quality.SteppingDelta;
         gammaScrollbar.LargeChange = quality.SteppingDelta;
-        gammaScrollbar.Value = quality.Value;
+        if (quality.Value > quality.MaxValue)
+        {
+          gammaScrollbar.Value = quality.MaxValue;
+        }
+        else if (quality.Value < quality.MinValue)
+        {
+          gammaScrollbar.Value = quality.MinValue;
+        }
+        else
+        {
+          gammaScrollbar.Value = quality.Value;
+        }
         gammaValue.Text = quality.Value.ToString();
         gammaScrollbar.Enabled = true;
         gammaValue.Enabled = true;
         label10.Enabled = true;
-      } else
+      }
+      else
       {
         gammaScrollbar.Enabled = false;
         gammaValue.Text = string.Empty;
@@ -383,12 +447,24 @@ namespace SetupTv.Sections
         colorEnableScrollbar.Minimum = quality.MinValue;
         colorEnableScrollbar.SmallChange = quality.SteppingDelta;
         colorEnableScrollbar.LargeChange = quality.SteppingDelta;
-        colorEnableScrollbar.Value = quality.Value;
+        if (quality.Value > quality.MaxValue)
+        {
+          colorEnableScrollbar.Value = quality.MaxValue;
+        }
+        else if (quality.Value < quality.MinValue)
+        {
+          colorEnableScrollbar.Value = quality.MinValue;
+        }
+        else
+        {
+          colorEnableScrollbar.Value = quality.Value;
+        }
         colorEnableValue.Text = quality.Value.ToString();
         colorEnableScrollbar.Enabled = true;
         colorEnableValue.Enabled = true;
         label11.Enabled = true;
-      } else
+      }
+      else
       {
         colorEnableScrollbar.Enabled = false;
         colorEnableValue.Text = string.Empty;
@@ -402,12 +478,24 @@ namespace SetupTv.Sections
         whiteBalanceScrollbar.Minimum = quality.MinValue;
         whiteBalanceScrollbar.SmallChange = quality.SteppingDelta;
         whiteBalanceScrollbar.LargeChange = quality.SteppingDelta;
-        whiteBalanceScrollbar.Value = quality.Value;
+        if (quality.Value > quality.MaxValue)
+        {
+          whiteBalanceScrollbar.Value = quality.MaxValue;
+        }
+        else if (quality.Value < quality.MinValue)
+        {
+          whiteBalanceScrollbar.Value = quality.MinValue;
+        }
+        else
+        {
+          whiteBalanceScrollbar.Value = quality.Value;
+        }
         whiteBalanceValue.Text = quality.Value.ToString();
         whiteBalanceScrollbar.Enabled = true;
         whiteBalanceValue.Enabled = true;
         label12.Enabled = true;
-      } else
+      }
+      else
       {
         whiteBalanceScrollbar.Enabled = false;
         whiteBalanceValue.Text = string.Empty;
@@ -421,12 +509,24 @@ namespace SetupTv.Sections
         backlightCompensationScrollbar.Minimum = quality.MinValue;
         backlightCompensationScrollbar.SmallChange = quality.SteppingDelta;
         backlightCompensationScrollbar.LargeChange = quality.SteppingDelta;
-        backlightCompensationScrollbar.Value = quality.Value;
+        if (quality.Value > quality.MaxValue)
+        {
+          backlightCompensationScrollbar.Value = quality.MaxValue;
+        }
+        else if (quality.Value < quality.MinValue)
+        {
+          backlightCompensationScrollbar.Value = quality.MinValue;
+        }
+        else
+        {
+          backlightCompensationScrollbar.Value = quality.Value;
+        }
         backlightCompensationValue.Text = quality.Value.ToString();
         backlightCompensationScrollbar.Enabled = true;
         backlightCompensationValue.Enabled = true;
         label13.Enabled = true;
-      } else
+      }
+      else
       {
         backlightCompensationScrollbar.Enabled = false;
         backlightCompensationValue.Text = string.Empty;

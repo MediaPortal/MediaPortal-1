@@ -102,7 +102,11 @@ namespace TvLibrary.Implementations.Analog
         {
           BuildGraph();
         }
-        return _tuner.SupportsFMRadio;
+        if (_tuner != null)
+        {
+          return _tuner.SupportsFMRadio;
+        }
+        return false;
       }
       return true;
     }
@@ -256,8 +260,15 @@ namespace TvLibrary.Implementations.Analog
       subChannel.OnBeforeTune();
       PerformTuning(channel);
       subChannel.OnAfterTune();
-      RunGraph(subChannel.SubChannelId);
-      _encoder.UpdatePinVideo(channel.IsTv,_graphBuilder);
+      try
+      {
+        RunGraph(subChannel.SubChannelId);
+      } catch (TvExceptionNoSignal)
+      {
+        FreeSubChannel(subChannel.SubChannelId);
+        throw;
+      }
+      _encoder.UpdatePinVideo(channel.IsTv, _graphBuilder);
       return subChannel;
     }
     #endregion
@@ -461,6 +472,12 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     public override void BuildGraph()
     {
+      if (_cardId == 0)
+      {
+        GetPreloadBitAndCardId();
+        _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
+        Configuration.writeConfiguration(_configuration);
+      }
       _lastSignalUpdate = DateTime.MinValue;
       _tunerLocked = false;
       Log.Log.WriteFile("analog: build graph");

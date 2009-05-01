@@ -22,6 +22,7 @@
 using System;
 using TvLibrary;
 using TvLibrary.Implementations;
+using TvLibrary.Implementations.Hybrid;
 using TvLibrary.Interfaces;
 using TvLibrary.Channels;
 using TvLibrary.Log;
@@ -235,7 +236,17 @@ namespace TvService
           Log.Info("card2:{0} {1} {2}", user.Name, user.CardId, user.SubChannel);
           return result;
         }
-        if (_cardHandler.CurrentDbChannel(ref user) == dbChannel.IdChannel && dbChannel.IdChannel >= 0)
+        bool cardActive = true;
+        HybridCard hybridCard = _cardHandler.Card as HybridCard;
+        if (hybridCard != null)
+        {
+          if (!hybridCard.IsCardIdActive(user.CardId))
+          {
+            cardActive = false;
+          }
+        }
+
+        if (cardActive && _cardHandler.CurrentDbChannel(ref user) == dbChannel.IdChannel && dbChannel.IdChannel >= 0)
         {
           return TvResult.Succeeded;
         }

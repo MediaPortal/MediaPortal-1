@@ -275,7 +275,14 @@ namespace TvLibrary.Implementations.DVB
           _conditionalAccess.DiSEqCMotor.GotoPosition((byte)dvbsChannel.SatelliteIndex);
         }
       }
-      RunGraph(ch.SubChannelId);
+      try
+      {
+        RunGraph(ch.SubChannelId);
+      } catch (TvExceptionNoSignal)
+      {
+        FreeSubChannel(ch.SubChannelId);
+        throw;
+      }
 
       if (dvbsChannel.ServiceId < 0 || dvbsChannel.NetworkId < 0 || dvbsChannel.TransportId < 0)
         _filterTIF.Stop();
