@@ -48,6 +48,7 @@ namespace SetupTv.Sections
       this.label2 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
       this.tabPage3 = new System.Windows.Forms.TabPage();
+      this.label31 = new System.Windows.Forms.Label();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
       this.videoStandardComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -130,7 +131,6 @@ namespace SetupTv.Sections
       this.lowPlayback = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.portablePlayback = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.defaultPlayback = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.label31 = new System.Windows.Forms.Label();
       this.mpTabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage3.SuspendLayout();
@@ -367,6 +367,16 @@ namespace SetupTv.Sections
       this.tabPage3.TabIndex = 2;
       this.tabPage3.Text = "Settings";
       this.tabPage3.UseVisualStyleBackColor = true;
+      // 
+      // label31
+      // 
+      this.label31.AutoSize = true;
+      this.label31.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.label31.Location = new System.Drawing.Point(17, 334);
+      this.label31.Name = "label31";
+      this.label31.Size = new System.Drawing.Size(432, 13);
+      this.label31.TabIndex = 35;
+      this.label31.Text = "Note: A restart of TvServer might be needed when changing these settings";
       // 
       // groupBox3
       // 
@@ -1276,16 +1286,6 @@ namespace SetupTv.Sections
       this.defaultPlayback.TabIndex = 0;
       this.defaultPlayback.TabStop = true;
       this.defaultPlayback.UseVisualStyleBackColor = true;
-      // 
-      // label31
-      // 
-      this.label31.AutoSize = true;
-      this.label31.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label31.Location = new System.Drawing.Point(40, 331);
-      this.label31.Name = "label31";
-      this.label31.Size = new System.Drawing.Size(376, 13);
-      this.label31.TabIndex = 35;
-      this.label31.Text = "Note: A restart of TvServer might be needed when these settings";
       // 
       // CardAnalog
       // 
