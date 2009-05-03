@@ -22,6 +22,7 @@ namespace MediaPortal.Player
     private int _height = 0;
     private int _audiorate = 0;
     private int _audiochannels = 0;
+    private int _numsubtitles = 0;
     private string _aspectRatio = "";
     private string _videoCodec = string.Empty;
     private string _audioCodec = string.Empty;
@@ -77,8 +78,6 @@ namespace MediaPortal.Player
 
       try
       {
-        _hasSubtitles = checkHasSubtitles(strFile);
-
         _mI = new MediaInfo();
         _mI.Open(strFile);
 
@@ -88,10 +87,19 @@ namespace MediaPortal.Player
         double.TryParse(_mI.Get(StreamKind.Video, 0, "FrameRate"), NumberStyles.AllowDecimalPoint, providerNumber, out _framerate);
         _videoCodec = _mI.Get(StreamKind.Video, 0, "Codec").ToLower();
         _scanType = _mI.Get(StreamKind.Video, 0, "ScanType").ToLower();
-        Int32.TryParse(_mI.Get(StreamKind.Video, 0, "Width"), NumberStyles.Integer, providerNumber, out _width);
-        Int32.TryParse(_mI.Get(StreamKind.Video, 0, "Height"), NumberStyles.Integer, providerNumber, out _height);
-        Int32.TryParse(_mI.Get(StreamKind.Audio, 0, "Audiochannels"), NumberStyles.Integer, providerNumber, out _audiochannels);
-        Int32.TryParse(_mI.Get(StreamKind.Audio, 0, "Audiorate"), NumberStyles.Integer, providerNumber, out _audiorate);
+        int.TryParse(_mI.Get(StreamKind.Video, 0, "Width"), out _width);
+        int.TryParse(_mI.Get(StreamKind.Video, 0, "Height"), out _height);
+        int.TryParse(_mI.Get(StreamKind.Audio, 0, "Channels"), out _audiochannels);
+        int.TryParse(_mI.Get(StreamKind.Audio, 0, "SamplingRate"), out _audiorate);
+        int.TryParse(_mI.Get(StreamKind.General, 0, "TextCount"), out _numsubtitles);
+        int intValue;
+        int iAudioStreams = _mI.Count_Get(StreamKind.Audio);
+        for (int i = 0; i < iAudioStreams - 1; i++)
+        {
+            if (int.TryParse(_mI.Get(StreamKind.Audio, i, "Channel(s)"), out intValue)
+                && intValue > _audiochannels)
+                _audiochannels = intValue;
+        }
 
         _aspectRatio = _mI.Get(StreamKind.Video, 0, "AspectRatio/String");
 
@@ -131,7 +139,7 @@ namespace MediaPortal.Player
         _isMP4V = (_videoCodec.IndexOf("fmp4") > -1); // add more
         _isWMV = (_videoCodec.IndexOf("wmv") > -1); // wmv3 = WMV9
         // missing cvid etc
-        _isAC3 = (_audioCodec.IndexOf("ac3") > -1);
+        _isAC3 = (System.Text.RegularExpressions.Regex.IsMatch(_audioCodec, "ac-?3"));
         _isMP3 = (_audioCodec.IndexOf("mpeg-1 audio layer 3") > -1);
         _isMP2A = (_audioCodec.IndexOf("mpeg-1 audio layer 2") > -1);
         _isDTS = (_audioCodec.IndexOf("dts") > -1);
@@ -139,6 +147,19 @@ namespace MediaPortal.Player
         _isAAC = (_audioCodec.IndexOf("aac") > -1);
         _isWMA = (_audioCodec.IndexOf("wma") > -1); // e.g. wma3
         _isPCM = (_audioCodec.IndexOf("pcm") > -1);
+
+        if (checkHasExternalSubtitles(strFile))
+        {
+            _hasSubtitles = true;
+        } 
+        else if (_numsubtitles > 0)
+        {
+            _hasSubtitles = true;
+        }
+        else
+        {
+            _hasSubtitles = false;
+        }
 
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: inspecting media : {0}", strFile);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: FrameRate : {0}", _framerate);
@@ -158,6 +179,8 @@ namespace MediaPortal.Player
         if (_isWMV)
           Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsWMV: {0}", _isWMV);
 
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: HasSubtitles : {0}", _hasSubtitles);
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: NumSubtitles : {0}", _numsubtitles);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: Scan type : {0}", _scanType);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsInterlaced: {0}", _isInterlaced);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: Width : {0}", _width);
@@ -202,7 +225,7 @@ namespace MediaPortal.Player
 
     #region private methods
 
-    private bool checkHasSubtitles(string strFile)
+    private bool checkHasExternalSubtitles(string strFile)
     {
       if (_subTitleExtensions.Count == 0)
       {
@@ -267,7 +290,25 @@ namespace MediaPortal.Player
 
     public string VideoCodec
     {
-      get { return _videoCodec; }
+      get { 
+          string tempCodec = String.Empty;
+          if (_isDIVX)
+              tempCodec = "DIVX";
+          else if (_isXVID)
+              tempCodec = "XVID";
+          else if (_isH264)
+              tempCodec = "H264";
+          else if (_isMP1V)
+              tempCodec = "MP1V";
+          else if (_isMP2V)
+              tempCodec = "MP2V";
+          else if (_isWMV)
+              tempCodec = "WMV";
+          else
+              tempCodec = _videoCodec;
+
+          return tempCodec; 
+      }
     }
 
     public double Framerate
@@ -356,7 +397,28 @@ namespace MediaPortal.Player
 
     public string AudioCodec
     {
-      get { return _audioCodec; }
+      get {
+          string tempCodec = String.Empty;
+          if (_isAC3)
+              tempCodec = "AC3";
+          else if (_isMP3)
+              tempCodec = "MP3";
+          else if (_isMP2A)
+              tempCodec = "MP2A";
+          else if (_isDTS)
+              tempCodec = "DTS";
+          else if (_isOGG)
+              tempCodec = "OGG";
+          else if (_isAAC)
+              tempCodec = "AAC";
+          else if (_isWMA)
+              tempCodec = "WMA";
+          else if (_isPCM)
+              tempCodec = "PCM";
+          else
+              tempCodec = _audioCodec;
+          return tempCodec; 
+      }
     }
 
     public int Audiorate
@@ -416,6 +478,11 @@ namespace MediaPortal.Player
     public bool HasSubtitles
     {
       get { return _hasSubtitles; }
+    }
+
+    public int NumSubtitles
+    {
+        get { return _numsubtitles; }
     }
 
     #endregion
