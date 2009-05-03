@@ -126,7 +126,7 @@ namespace MediaPortal.GUI.Video
             {
               PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO);
               if (playList != null && playList.Count > 0)
-              {
+              {                
                 playlistPlayer.Play(0);
                 UpdateButtonStates();
               }
@@ -197,8 +197,15 @@ namespace MediaPortal.GUI.Video
       }
       else if (control == btnPlay)
       {
+        GUIListItem item = facadeView.SelectedListItem;
+        // If the file is an image file, it should be mounted before playing
+        if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(item.Path)))
+        {
+          if (!GUIVideoFiles.MountImageFile(GUIWindowManager.ActiveWindow, item.Path))
+            return;
+        }
         playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
-        playlistPlayer.Reset();
+        playlistPlayer.Reset();        
         playlistPlayer.Play(facadeView.SelectedListItemIndex);
         UpdateButtonStates();
       }
@@ -517,7 +524,6 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-
     protected override void OnClick(int itemIndex)
     {
       currentSelectedItem = facadeView.SelectedListItemIndex;
@@ -530,7 +536,12 @@ namespace MediaPortal.GUI.Video
       {
         return;
       }
-
+      // If the file is an image file, it should be mounted before playing
+      if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(item.Path)))
+      {
+        if (!GUIVideoFiles.MountImageFile(GUIWindowManager.ActiveWindow, item.Path))
+          return;
+      }
       playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
       playlistPlayer.Reset();
       playlistPlayer.Play(itemIndex);

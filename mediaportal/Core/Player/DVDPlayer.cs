@@ -286,6 +286,8 @@ namespace MediaPortal.Player
         _currentFile = file;
         if (file != "")
         {
+          if (Util.VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(file)))
+            file = DaemonTools.GetVirtualDrive() + @"\VIDEO_TS\VIDEO_TS.IFO";
           int ipos = file.LastIndexOf(@"\");
           if (ipos > 0)
           {
@@ -1201,7 +1203,8 @@ namespace MediaPortal.Player
         UpdateMenu();
       }
       CloseInterfaces();
-      Util.DaemonTools.UnMount();
+      if(Util.DaemonTools.IsMounted(_currentFile))
+        Util.DaemonTools.UnMount();
       GUIGraphicsContext.IsFullScreenVideo = false;
       GUIGraphicsContext.IsPlaying = false;
     }

@@ -1416,8 +1416,9 @@ namespace MediaPortal.Util
 
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          bool bInternal = xmlreader.GetValueAsBool("movieplayer", "internal", true);
-          if (bInternal) return false;
+          //using external player checking is now g_player side 
+          //bool bInternal = xmlreader.GetValueAsBool("movieplayer", "internal", true);
+          //if (bInternal) return false;
           string strPath = xmlreader.GetValueAsString("movieplayer", "path", "");
           string strParams = xmlreader.GetValueAsString("movieplayer", "arguments", "");
           if (extension.ToLower() == ".ifo" || extension.ToLower() == ".vob")

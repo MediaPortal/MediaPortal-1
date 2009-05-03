@@ -308,14 +308,12 @@ namespace MediaPortal.GUI.Video
       LoadDirectory(_currentFolder);
     }
 
-
     protected override void OnPageDestroy(int newWindowId)
     {
       _currentSelectedItem = facadeView.SelectedListItemIndex;
       SaveFolderSettings(_currentFolder);
       base.OnPageDestroy(newWindowId);
     }
-
 
     public override bool OnMessage(GUIMessage message)
     {
@@ -396,7 +394,6 @@ namespace MediaPortal.GUI.Video
       return base.OnMessage(message);
     }
 
-
     private void LoadFolderSettings(string folderName)
     {
       if (folderName == string.Empty)
@@ -460,34 +457,7 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
-      GUIWaitCursor.Show();
-
-      //newFolderName = Path.GetDirectoryName(newFolderName);
-      // Mounting and loading a DVD image file takes a long time,
-      // so display a message letting the user know that something 
-      // is happening.
-      if (VirtualDirectory.IsImageFile(Path.GetExtension(newFolderName)))
-      {
-        // hide it before playback since it would be on top of the "play from that point" dialog
-        GUIWaitCursor.Hide();
-
-        if (PlayMountedImageFile(GetID, newFolderName))
-        {
-          return;
-        }
-        else
-        {
-          if (DaemonTools.IsMounted(newFolderName)) // caused mantis bug 1444: ISO playing problems
-          {
-            newFolderName = DaemonTools.GetVirtualDrive() + @"\";
-          }
-          else
-          {
-            return;
-          }
-        }
-      }
-
+      GUIWaitCursor.Show();      
       GUIListItem selectedListItem = facadeView.SelectedListItem;
       if (selectedListItem != null)
       {
@@ -506,9 +476,19 @@ namespace MediaPortal.GUI.Video
       {
         LoadFolderSettings(newFolderName);
       }
-
-      _currentFolder = newFolderName;
-
+      // Image file is not listed as a valid movie so we need to handle it 
+      // as a folder and enable browsing for it
+      if (VirtualDirectory.IsImageFile(Path.GetExtension(newFolderName)))
+      {
+        if (!MountImageFile(GetID, newFolderName))
+          return;
+        
+        _currentFolder = DaemonTools.GetVirtualDrive();
+      }
+      else
+      {
+        _currentFolder = newFolderName;
+      }
       string objectCount = string.Empty;
 
       GUIControl.ClearControl(GetID, facadeView.GetID);
@@ -646,7 +626,7 @@ namespace MediaPortal.GUI.Video
         }
       }
 
-      if ((item.IsFolder && !isFolderAMovie) || VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(path)))
+      if ((item.IsFolder && !isFolderAMovie))
         //-- Mars Warrior @ 03-sep-2004
       {
         _currentSelectedItem = -1;
@@ -930,30 +910,7 @@ namespace MediaPortal.GUI.Video
         if (listItem.Label == "..")
         {
           return;
-        }
-        // Mounting and loading a DVD image file takes a long time,
-        // so display a message letting the user know that something 
-        // is happening.
-        if (VirtualDirectory.IsImageFile(Path.GetExtension(listItem.Path)))
-        {
-          if (MountImageFile(GetID, listItem.Path))
-          {
-            string strDir = DaemonTools.GetVirtualDrive();
-
-            // Check if the mounted image is actually a DVD. If so, bypass
-            // autoplay to play the DVD without user intervention
-            if (File.Exists(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
-            {
-              PlayListItem newitem = new PlayListItem();
-              newitem.FileName = strDir + @"\VIDEO_TS\VIDEO_TS.IFO";
-              newitem.Description = listItem.Label;
-              newitem.Duration = listItem.Duration;
-              newitem.Type = PlayListItem.PlayListItemType.Video;
-              _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Add(newitem);
-            }
-          }
-          return;
-        }
+        }        
         List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryUnProtectedExt(listItem.Path, true);
         foreach (GUIListItem item in itemlist)
         {
@@ -1038,21 +995,8 @@ namespace MediaPortal.GUI.Video
       }
       string strFile = pItem.Path;
       string strMovie = pItem.Label;
-      bool bFoundFile = true;
-      if ((pItem.IsFolder) && (VirtualDirectory.IsImageFile(Path.GetExtension(strFile))))
-      {
-        if (MountImageFile(GetID, strFile))
-        {
-          string strDir = DaemonTools.GetVirtualDrive();
-          // Check if the mounted image is actually a DVD. If so, bypass
-          // autoplay to play the DVD without user intervention
-          if (File.Exists(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
-          {
-            strMovie = Util.Utils.GetDriveName(strDir);
-          }
-        }
-      }
-      else if ((pItem.IsFolder) && (!Util.Utils.IsDVD(pItem.Path)))
+      bool bFoundFile = true;      
+      if ((pItem.IsFolder) && (!Util.Utils.IsDVD(pItem.Path)))
       {
         if (pItem.Label == "..")
         {
@@ -1361,8 +1305,7 @@ namespace MediaPortal.GUI.Video
           if (movieDetails.Title != string.Empty)
           {
             title = movieDetails.Title;
-          }
-
+          }          
           if (askForResumeMovie)
           {
             GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
@@ -1383,7 +1326,12 @@ namespace MediaPortal.GUI.Video
           }
         }
       }
-
+      // If the file is an image file, it should be mounted before playing
+      if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(filename)))
+      {
+        if (!MountImageFile(GUIWindowManager.ActiveWindow, filename))
+          return;
+      }
       if (iMovieIndex == -1)
       {
         _playlistPlayer.PlayNext();
@@ -1408,6 +1356,9 @@ namespace MediaPortal.GUI.Video
       }
     }
 
+    // obsolete function - not used anymore
+    // PlayMountedImageFile(int WindowID, string file)
+    /*
     public static bool PlayMountedImageFile(int WindowID, string file)
     {
       Log.Info("GUIVideoFiles: PlayMountedImageFile - {0}", file);
@@ -1425,7 +1376,7 @@ namespace MediaPortal.GUI.Video
           playlist.Clear();
 
           PlayListItem newitem = new PlayListItem();
-          newitem.FileName = strDir + @"\VIDEO_TS\VIDEO_TS.IFO";
+          newitem.FileName = file; //strDir + @"\VIDEO_TS\VIDEO_TS.IFO";
           newitem.Type = PlayListItem.PlayListItemType.Video;
           playlist.Add(newitem);
 
@@ -1436,6 +1387,7 @@ namespace MediaPortal.GUI.Video
       }
       return false;
     }
+    */
 
     public static bool MountImageFile(int WindowID, string file)
     {
@@ -1455,22 +1407,8 @@ namespace MediaPortal.GUI.Video
               return false;
             }
           }
-        }
-        GUIDialogProgress dlgProgress =
-          (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
-        if (dlgProgress != null)
-        {
-          dlgProgress.Reset();
-          dlgProgress.SetHeading(13013);
-          dlgProgress.SetLine(1, Path.GetFileNameWithoutExtension(file));
-          dlgProgress.StartModal(WindowID);
-          dlgProgress.Progress();
-          if (dlgProgress != null)
-          {
-            dlgProgress.Close();
-          }
-        }
-        List<GUIListItem> items = _virtualDirectory.GetDirectoryExt(file);
+        }        
+        List<GUIListItem> items = _virtualDirectory.GetDirectoryExt(file);        
         if (items.Count == 1 && file != string.Empty)
         {
           return false; // protected share, with wrong pincode
@@ -1478,7 +1416,6 @@ namespace MediaPortal.GUI.Video
       }
       return DaemonTools.IsMounted(file);
     }
-
 
     private void doOnPlayBackStoppedOrChanged(g_Player.MediaType type, int timeMovieStopped, string filename,
                                               string caller)
@@ -2455,17 +2392,7 @@ namespace MediaPortal.GUI.Video
       {
         return;
       }
-      // Image file handling.
-      // If the only file is an image file, it should be mounted,
-      // allowing autoplay to take over the playing of it.
-      // There should only be one image file in the stack, since
-      // stacking is not currently supported for image files.
-      if (movies.Count == 1 && VirtualDirectory.IsImageFile(Path.GetExtension((string) movies[0]).ToLower()))
-      {
-        PlayMountedImageFile(GUIWindowManager.ActiveWindow, (string) movies[0]);
-        return;
-      }
-
+      
       bool askForResumeMovie = true;
       int movieDuration = 0;
       {

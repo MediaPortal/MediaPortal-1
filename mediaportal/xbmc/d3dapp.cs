@@ -1424,7 +1424,7 @@ namespace MediaPortal
             if ((idMovie >= 0) && (idFile >= 0))
             {
               timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);
-              g_Player.PlayDVD();
+              g_Player.PlayDVD(fileName);
               if (g_Player.Playing)
               {
                 g_Player.Player.SetResumeState(resumeData);
