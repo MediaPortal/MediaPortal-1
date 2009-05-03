@@ -15,7 +15,7 @@ namespace MediaPortal.Player
   {
     #region private vars
 
-    private  MediaInfo _mI = null;
+    private MediaInfo _mI = null;
 
     private double _framerate = 0;
     private int _width = 0;
@@ -49,7 +49,7 @@ namespace MediaPortal.Player
     private bool _isPCM = false;  // RAW audio
 
     private bool _hasSubtitles = false;
-    private static List<string> _subTitleExtensions = new List<string>();   
+    private static List<string> _subTitleExtensions = new List<string>();
 
     #endregion
 
@@ -98,23 +98,30 @@ namespace MediaPortal.Player
         _audioCodec = _mI.Get(StreamKind.Audio, 0, "Codec/String").ToLower();
 
         _isInterlaced = (_scanType.IndexOf("interlaced") > -1);
+
         if (_height >= 720)
         {
-            _isHDTV = true;
+          _isHDTV = true;
         }
         else
         {
-            _isSDTV = true;
+          _isSDTV = true;
         }
 
-        if (_width == 1280 && _height == 720 && _scanType.IndexOf("progressive") > 1)
-            _is720P = true;
+        if ((_width == 1280 || _height == 720) && !_isInterlaced)
+        {
+          _is720P = true;
+        }
 
-        if (_width == 1920 && _height == 1080 && _scanType.IndexOf("progressive") > 1)
-            _is1080P = true;
+        if ((_width == 1920 || _height == 1080) && !_isInterlaced)
+        {
+          _is1080P = true;
+        }
 
-        if (_width == 1920 && _height == 1080 && _scanType.IndexOf("interlaced") > 1)
-            _is1080I = true;
+        if ((_width == 1920 || _height == 1080) && _isInterlaced)
+        {
+          _is1080I = true;
+        }
 
         _isDIVX = (_videoCodec.IndexOf("dx50") > -1); // DivX 5
         _isXVID = (_videoCodec.IndexOf("xvid") > -1);
@@ -137,17 +144,17 @@ namespace MediaPortal.Player
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: FrameRate : {0}", _framerate);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: VideoCodec : {0}", _videoCodec);
         if (_isDIVX)
-            Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsDIVX: {0}", _isDIVX);
-        if(_isXVID)
-            Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsXVID: {0}", _isXVID);
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsDIVX: {0}", _isDIVX);
+        if (_isXVID)
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsXVID: {0}", _isXVID);
         if (_isH264)
-            Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsH264: {0}", _isH264);
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsH264: {0}", _isH264);
         if (_isMP1V)
-            Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP1V: {0}", _isMP1V);
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP1V: {0}", _isMP1V);
         if (_isMP2V)
-            Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP2V: {0}", _isMP2V);
-          if (_isMP4V)
-            Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP4V: {0}", _isMP4V);
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP2V: {0}", _isMP2V);
+        if (_isMP4V)
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP4V: {0}", _isMP4V);
         if (_isWMV)
           Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsWMV: {0}", _isWMV);
 
@@ -159,18 +166,18 @@ namespace MediaPortal.Player
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: Audiorate : {0}", _audiorate);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: AspectRatio : {0}", _aspectRatio);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: AudioCodec : {0}", _audioCodec);
-        if(_isAC3)
-            Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsAC3 : {0}", _isAC3);
-        if(_isMP3)
-            Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP3 : {0}", _isMP3);
-        if(_isMP2A)
-            Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP2A: {0}", _isMP2A);
-        if(_isDTS)
-            Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsDTS : {0}", _isDTS);
-        if(_isOGG)
-            Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsOGG : {0}", _isOGG);
-        if(_isAAC)
-            Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsAAC : {0}", _isAAC);
+        if (_isAC3)
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsAC3 : {0}", _isAC3);
+        if (_isMP3)
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP3 : {0}", _isMP3);
+        if (_isMP2A)
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP2A: {0}", _isMP2A);
+        if (_isDTS)
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsDTS : {0}", _isDTS);
+        if (_isOGG)
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsOGG : {0}", _isOGG);
+        if (_isAAC)
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsAAC : {0}", _isAAC);
         if (_isWMA)
           Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsWMA: {0}", _isWMA);
         if (_isPCM)
@@ -271,7 +278,7 @@ namespace MediaPortal.Player
     {
       get { return _isDIVX; }
     }
-    
+
     public bool IsXVID
     {
       get { return _isXVID; }
@@ -279,14 +286,14 @@ namespace MediaPortal.Player
 
     public bool IsH264
     {
-       get { return _isH264; }
+      get { return _isH264; }
     }
 
     public bool IsMP1V
     {
-     get { return _isMP1V; }
+      get { return _isMP1V; }
     }
-    
+
     public bool IsMP2V
     {
       get { return _isMP2V; }
@@ -314,22 +321,22 @@ namespace MediaPortal.Player
 
     public bool Is1080I
     {
-       get { return _is1080I; }
+      get { return _is1080I; }
     }
 
     public bool IsHDTV
     {
-       get { return _isHDTV; }
+      get { return _isHDTV; }
     }
 
     public bool IsSDTV
     {
-       get { return _isSDTV; }
+      get { return _isSDTV; }
     }
 
     public bool IsInterlaced
     {
-       get { return _isInterlaced; }
+      get { return _isInterlaced; }
     }
 
     public int Width
@@ -359,7 +366,7 @@ namespace MediaPortal.Player
     public int Audiochannels
     {
       get { return _audiochannels; }
-    }   
+    }
 
     public bool IsAC3
     {
@@ -408,7 +415,7 @@ namespace MediaPortal.Player
     public bool HasSubtitles
     {
       get { return _hasSubtitles; }
-    }    
+    }
 
     #endregion
   }
