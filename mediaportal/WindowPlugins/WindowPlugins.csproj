@@ -1,7 +1,7 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{B282C55B-A37B-4CEC-A4FC-00791069BF00}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -327,6 +327,7 @@
     <Compile Include="GUITV\GUITVTeletextBase.cs" />
     <Compile Include="GUIVideoFiles\MatroskaTagLib.cs" />
     <Compile Include="GUIVideoFiles\SelectDVDHandler.cs" />
+    <Compile Include="GUIWeather\WeatherChannel.cs" />
     <Compile Include="Home\GUIHome.cs" />
     <Compile Include="Home\GUIHomeBaseWindow.cs" />
     <Compile Include="Home\GUIHomeSetupForm.cs">

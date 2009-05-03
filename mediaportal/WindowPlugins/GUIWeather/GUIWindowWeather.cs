@@ -502,7 +502,7 @@ namespace MediaPortal.GUI.Weather
 
     private void OnSelectLocation()
     {
-      GUIDialogMenu dialogCitySelect = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dialogCitySelect = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dialogCitySelect != null)
       {
         dialogCitySelect.Reset();
@@ -511,10 +511,18 @@ namespace MediaPortal.GUI.Weather
         {
           dialogCitySelect.Add(loc.City);
         }
+        // Add extra menu item 'Select Location'
+        dialogCitySelect.Add(GUILocalizeStrings.Get(396));
         dialogCitySelect.DoModal(GetID);
+        // Quick weather info selected
+        if (dialogCitySelect.SelectedLabelText == GUILocalizeStrings.Get(396))
+        {
+          OnTempCity();
+          return;
+        }
         if (dialogCitySelect.SelectedLabel >= 0)
         {
-          LocationInfo loc = (LocationInfo) _listLocations[dialogCitySelect.SelectedLabel];
+          LocationInfo loc = (LocationInfo)_listLocations[dialogCitySelect.SelectedLabel];
           _locationCode = loc.CityCode;
           _nowLabelLocation = loc.City;
           _urlSatellite = loc.UrlSattelite;
@@ -532,6 +540,84 @@ namespace MediaPortal.GUI.Weather
           //refresh clicked so do a complete update (not an autoUpdate)
           BackgroundUpdate(false);
         }
+      }
+    }
+
+    private bool GetKeyboard(ref string strLine)
+    {
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+      if (null == keyboard) return false;
+      keyboard.IsSearchKeyboard = true;
+      keyboard.Reset();
+      keyboard.Text = strLine;
+      keyboard.DoModal(GUIWindowManager.ActiveWindow);
+      if (keyboard.IsConfirmed)
+      {
+        strLine = keyboard.Text;
+        return true;
+      }
+      return false;
+    }
+
+    private void OnTempCity()
+    {
+      string city = "";
+      if (!GetKeyboard(ref city) || String.IsNullOrEmpty(city))
+      {
+        return;
+      }
+      try
+      {
+        // Perform actual search        
+        WeatherChannel weather = new WeatherChannel();
+        ArrayList cities = weather.SearchCity(city);
+
+        if (cities.Count <= 0)
+        {
+          GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+          dlg.SetHeading(8);
+          dlg.SetLine(1, 412);
+          dlg.SetLine(2, "");
+          dlg.DoModal(GetID);
+          return;
+        }
+
+        GUIDialogMenu dialogCitySelect = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+        if (dialogCitySelect != null)
+        {
+          dialogCitySelect.Reset();
+          dialogCitySelect.SetHeading(8);//my weather
+          foreach (WeatherChannel.City _city in cities)
+          {
+            dialogCitySelect.Add(_city.Name + " (" + _city.Id + ")");
+          }
+
+          dialogCitySelect.DoModal(GetID);
+          if (dialogCitySelect.SelectedLabel >= 0)
+          {
+            WeatherChannel.City citytemp = (WeatherChannel.City)cities[dialogCitySelect.SelectedLabel];
+            _locationCode = citytemp.Id;
+            _nowLabelLocation = citytemp.Name;
+            _urlSatellite = "";
+            _urlTemperature = "";
+            _urlUvIndex = "";
+            _urlWinds = "";
+            _urlHumidity = "";
+            _urlPreciptation = "";
+
+            UpdateDetailImages();
+
+            _dayNum = -2;
+            _selectedDayName = "All";
+
+            //refresh clicked so do a complete update (not an autoUpdate)
+            BackgroundUpdate(false);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("MyWeather (Quick Weather) error: {0}", ex.ToString());
       }
     }
 
