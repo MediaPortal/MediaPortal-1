@@ -91,7 +91,7 @@ namespace MediaPortal
     private float lastTime = 0.0f; // The last time
     protected int frames = 0; // Number of frames since our last update
     protected int m_iVolume = -1;
-
+    protected bool miniTvMode = false; // minitv means minsize < 720, always on top, focus may leave
     protected D3DEnumeration enumerationSettings = new D3DEnumeration();
     // We need to keep track of our enumeration settings
 
@@ -192,6 +192,7 @@ namespace MediaPortal
     private MenuItem menuItem5;
     private MenuItem menuItemFullscreen;
     protected Rectangle oldBounds;
+    private MenuItem menuItemMiniTv;
     protected PlayListPlayer playlistPlayer;
 
 #if PERFCOUNTER
@@ -269,6 +270,7 @@ namespace MediaPortal
     private int m_iSleepingTime = 50;
     protected bool autoHideTaskbar = true;
     private bool alwaysOnTop = false;
+    private bool alwaysOnTopConfig = false;
     protected bool useExclusiveDirectXMode;
     protected bool useEnhancedVideoRenderer;
     private bool _disableMouseEvents = false;
@@ -330,7 +332,7 @@ namespace MediaPortal
           useExclusiveDirectXMode = false;
         }
         autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", true);
-        alwaysOnTop = xmlreader.GetValueAsBool("general", "alwaysontop", false);
+        alwaysOnTopConfig = alwaysOnTop = xmlreader.GetValueAsBool("general", "alwaysontop", false);
         debugChangeDeviceHack = xmlreader.GetValueAsBool("debug", "changedevicehack", false);
         _disableMouseEvents = xmlreader.GetValueAsBool("remote", "CentareaJoystickMap", false);
       }
@@ -346,6 +348,9 @@ namespace MediaPortal
       clipCursorWhenFullscreen = true;
 #endif
       InitializeComponent();
+
+
+      menuItemMiniTv.Checked = miniTvMode;
 
       GUIGraphicsContext.IsVMR9Exclusive = useExclusiveDirectXMode;
       GUIGraphicsContext.IsEvr = useEnhancedVideoRenderer;
@@ -1464,7 +1469,8 @@ namespace MediaPortal
       {
         HandleCursor();
 
-        if ((ActiveForm != this) && (alwaysOnTop))
+        // in minitv mode allow to loose focus
+        if ((ActiveForm != this) && (alwaysOnTop) && !miniTvMode)
         {
           this.Activate();
         }
@@ -1512,7 +1518,8 @@ namespace MediaPortal
 
       HandleCursor();
 
-      if ((ActiveForm != this) && (alwaysOnTop))
+      // in minitv mode allow to loose focus
+      if ((ActiveForm != this) && (alwaysOnTop) && !miniTvMode)
       {
         Activate();
       }
@@ -2254,6 +2261,12 @@ namespace MediaPortal
         e.Handled = true;
         return;
       }
+	  else if (e.Control == true && e.Alt == true && e.KeyCode == Keys.Return)
+	  {
+		  ToggleMiniTv();
+		  e.Handled = true;
+		  return;
+	  }
       else if (e.KeyCode == Keys.F2)
       {
         OnSetup(null, null);
@@ -2289,6 +2302,7 @@ namespace MediaPortal
       this.contextMenu = new ContextMenu();
       this.menuItemContext = new MenuItem();
       this.menuItem5 = new MenuItem();
+      this.menuItemMiniTv = new MenuItem();
       this.SuspendLayout();
       // 
       // menuStripMain
@@ -2321,6 +2335,7 @@ namespace MediaPortal
       this.menuItemOptions.MenuItems.AddRange(new MenuItem[]
                                                 {
                                                   this.menuItemFullscreen,
+                                                  this.menuItemMiniTv,
                                                   this.menuItemConfiguration
                                                 });
       this.menuItemOptions.Text = "&Options";
@@ -2419,6 +2434,12 @@ namespace MediaPortal
       // 
       this.menuItem5.Index = 0;
       this.menuItem5.Text = "";
+      // 
+      // menuItemMiniTv
+      // 
+      this.menuItemMiniTv.Index = 1;
+      this.menuItemMiniTv.Text = "&MiniTv Mode";
+      this.menuItemMiniTv.Click += new System.EventHandler(this.menuItemMiniTv_Click);
       // 
       // D3DApp
       // 
@@ -2961,6 +2982,45 @@ namespace MediaPortal
         base.SetBoundsCore(x, y, width, height, specified);
       }
     }
+
+    /// <summary>
+    /// toggles default and minitv mode
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void menuItemMiniTv_Click(object sender, EventArgs e)
+    {
+		this.ToggleMiniTv();
+    }
+
+	private void ToggleMiniTv()
+	{
+		if (!windowed) return; // only affection window mode
+
+		miniTvMode = !miniTvMode; // toggle
+
+		if (miniTvMode)
+		{
+			MinimumSize = new Size(720 / 2, 576 / 2);
+			alwaysOnTop = true;
+			this.FormBorderStyle = FormBorderStyle.SizableToolWindow;
+			this.Menu = null;
+		}
+		else
+		{
+			MinimumSize = new Size(720, 576);
+			alwaysOnTop = alwaysOnTopConfig;
+			this.FormBorderStyle = FormBorderStyle.Sizable;
+			this.Menu = menuStripMain;
+
+			this.SwitchFullScreenOrWindowed(true);
+		}
+
+		Size = MinimumSize;
+		TopMost = alwaysOnTop;
+
+		menuItemMiniTv.Checked = miniTvMode;
+	}
   }
 
   #region Enums for D3D Applications
