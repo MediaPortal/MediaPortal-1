@@ -2432,90 +2432,11 @@ namespace TvPlugin
         return;
       }
 
-      // stop on last item
-      // _channelOffset is the offset in addition to the _cursorX. The abslute pos
-      // in the channel list is therefore calculated as _cursorX+_channelOffset
-      if ((_cursorX + 1 >= _channelList.Count) ||
-            (_cursorX + _channelOffset + 1 >= _channelList.Count))
+      // not on tvguide button
+      if (_cursorY > 0)
       {
-        return;
-      }
-
-
-      int iCurY = _cursorX;
-      int iCurOff = _channelOffset;
-      int iX1, iX2;
-      //      int iNewWidth=0;
-      int iControlId = GUIDE_COMPONENTID_START + _cursorX * RowID + (_cursorY - 1) * ColID;
-      GUIControl control = GetControl(iControlId);
-      if (control == null)
-      {
-        return;
-      }
-      iX1 = control.XPosition;
-      iX2 = control.XPosition + control.Width;
-
-      bool bOK = false;
-      int iMaxSearch = _channelList.Count;
-
-      // TODO rewrite the while loop, the code is a little awkward.
-      while (!bOK && (iMaxSearch > 0))
-      {
-        iMaxSearch--;
-        if (_cursorX + 1 < _channelCount)
-        {
-          _cursorX++;
-        }
-        else
-        {
-          _channelOffset++;
-
-          if (updateScreen)
-          {
-            Update(false);
-          }
-        }
-
-        for (int x = 1; x < ColID; x++)
-        {
-          iControlId = GUIDE_COMPONENTID_START + _cursorX * RowID + (x - 1) * ColID;
-          control = GetControl(iControlId);
-          if (control != null)
-          {
-            Program prog = (Program)control.Data;
-            if (x == 1 && m_dtStartTime < prog.StartTime || _singleChannelView)
-            {
-              _cursorY = x;
-              bOK = true;
-              break;
-            }
-
-            if (m_dtStartTime >= prog.StartTime && m_dtStartTime < prog.EndTime)
-            {
-              _cursorY = x;
-              bOK = true;
-              break;
-            }
-          }
-        }
-      }
-      if (!bOK)
-      {
-        _cursorX = iCurY;
-        _channelOffset = iCurOff;
-      }
-      if (updateScreen)
-      {
-        if (iCurOff == _channelOffset)
-        {
-          Correct();
-          UpdateCurrentProgram();
-          return;
-        }
-
-        Correct();
-        Update(false);
-        SetFocus();
+        // if cursor is on a program in guide, try to find the "best time matching" program in new channel
+        SetBestMatchingProgram(updateScreen, true);
       }
     }
 
@@ -2595,9 +2516,24 @@ namespace TvPlugin
         }
         return;
       }
+      
+      // not on tvguide button
+      if (_cursorY > 0)
+      {
+        // if cursor is on a program in guide, try to find the "best time matching" program in new channel
+        SetBestMatchingProgram(updateScreen, false);
+      }
+    }
+
+    /// <summary>
+    /// Sets the best matching program in new guide row
+    /// </summary>
+    /// <param name="updateScreen"></param>
+    private void SetBestMatchingProgram(bool updateScreen, bool DirectionIsDown)
+    {
+      // if cursor is on a program in guide, try to find the "best time matching" program in new channel
       int iCurY = _cursorX;
       int iCurOff = _channelOffset;
-
       int iX1, iX2;
       int iControlId = GUIDE_COMPONENTID_START + _cursorX * RowID + (_cursorY - 1) * ColID;
       GUIControl control = GetControl(iControlId);
@@ -2610,27 +2546,54 @@ namespace TvPlugin
 
       bool bOK = false;
       int iMaxSearch = _channelList.Count;
+
+      // TODO rewrite the while loop, the code is a little awkward.
       while (!bOK && (iMaxSearch > 0))
       {
         iMaxSearch--;
-        if (_cursorX == 0)
+        if (DirectionIsDown == true)
         {
-          if (_channelOffset > 0)
+          // increase only if more
+          if (_cursorX + 1 < Math.Min(_channelCount, _channelList.Count))
           {
-            _channelOffset--;
+            _cursorX++;
+          }
+          else
+          {
+            _channelOffset++;
+            // switch over to start needed?
+            if ((_cursorX + 1 > _channelList.Count) || (_cursorX + _channelOffset + 1 > _channelList.Count))
+            {
+              _channelOffset = 0; // set back to top
+              _cursorX = 0;
+            }
             if (updateScreen)
             {
               Update(false);
             }
           }
+        }
+        else // Direction "Up"
+        {
+          if (_cursorX == 0)
+          {
+            if (_channelOffset > 0)
+            {
+              _channelOffset--;
+              if (updateScreen)
+              {
+                Update(false);
+              }
+            }
+            else
+            {
+              break;
+            }
+          }
           else
           {
-            break;
+            _cursorX--;
           }
-        }
-        else
-        {
-          _cursorX--;
         }
 
         for (int x = 1; x < ColID; x++)
@@ -2646,16 +2609,13 @@ namespace TvPlugin
               bOK = true;
               break;
             }
+
             if (m_dtStartTime >= prog.StartTime && m_dtStartTime < prog.EndTime)
             {
               _cursorY = x;
               bOK = true;
               break;
             }
-          }
-          else
-          {
-            break;
           }
         }
       }
@@ -2664,14 +2624,12 @@ namespace TvPlugin
         _cursorX = iCurY;
         _channelOffset = iCurOff;
       }
-
       if (updateScreen)
       {
         if (iCurOff == _channelOffset)
         {
           Correct();
           UpdateCurrentProgram();
-
           return;
         }
 
