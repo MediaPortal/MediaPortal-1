@@ -183,6 +183,7 @@ namespace MediaPortal.GUI.Music
     private ScrobblerUtilsRequest _lastArtistRequest;
     private ScrobblerUtilsRequest _lastTagRequest;
     private Timer ImageChangeTimer = null;
+    private Timer VUMeterTimer = null;
     private List<String> ImagePathContainer = null;
     private bool UseID3 = false;
     private bool _trackChanged = true;
@@ -535,6 +536,19 @@ namespace MediaPortal.GUI.Music
         ImageChangeTimer.Start();
       }
 
+      // Start the VUMeter Update Timer, currently used in XFace skin, when BASS player is selected
+      string skinName = GUIGraphicsContext.Skin.Substring(GUIGraphicsContext.Skin.LastIndexOf(@"\"));
+      GUIPropertyManager.SetProperty("#VUMeterL", @"VU1.png");
+      GUIPropertyManager.SetProperty("#VUMeterR", @"VU1.png");
+      if (VUMeterTimer == null && _usingBassEngine &&
+          skinName.ToLower().Contains("xface"))
+      {
+        VUMeterTimer = new Timer();
+        VUMeterTimer.Interval = 200;
+        VUMeterTimer.Elapsed += new ElapsedEventHandler(OnVUMterTimerTickEvent);
+        VUMeterTimer.Start();
+      }
+
       UpdateImagePathContainer();
 
       if (g_Player.Playing)
@@ -561,6 +575,12 @@ namespace MediaPortal.GUI.Music
       InfoScrobbler.RemoveRequest(_lastTagRequest);
 
       ImageChangeTimer.Stop();
+
+      if (VUMeterTimer != null)
+      {
+        VUMeterTimer.Stop();
+        VUMeterTimer = null;
+      }
 
       if (ImgCoverArt != null)
       {
@@ -982,6 +1002,149 @@ namespace MediaPortal.GUI.Music
     #endregion
 
     #region Private methods
+    /// <summary>
+    /// The VUMeter Timer has elapsed.
+    /// Set the VUMeter Properties, currently only used by XFace
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void OnVUMterTimerTickEvent(object sender, ElapsedEventArgs e)
+    {
+      double dbLevelL = 0.0;
+      double dbLevelR = 0.0;
+      BassMusicPlayer.Player.RMS(out dbLevelL, out dbLevelR);
+
+      // Raise the level with factor 1.5 so that the VUMeter shows more activity
+      dbLevelL += Math.Abs(dbLevelL*0.5);
+      dbLevelR += Math.Abs(dbLevelR * 0.5);
+
+      //Console.WriteLine("{0} {1}",(int)dbLevelL, (int)dbLevelR);
+
+      string file = "VU1.png";
+      if ((int)dbLevelL < -15)
+      {
+        file = "VU1.png";
+      }
+      else if ((int)dbLevelL < -10)
+      {
+        file = "VU2.png";
+      }
+      else if ((int)dbLevelL < -8)
+      {
+        file = "VU3.png";
+      }
+      else if ((int)dbLevelL < -7)
+      {
+        file = "VU4.png";
+      }
+      else if ((int)dbLevelL < -6)
+      {
+        file = "VU5.png";
+      }
+      else if ((int)dbLevelL < -5)
+      {
+        file = "VU6.png";
+      }
+      else if ((int)dbLevelL < -4)
+      {
+        file = "VU7.png";
+      }
+      else if ((int)dbLevelL < -3)
+      {
+        file = "VU8.png";
+      }
+      else if ((int)dbLevelL < -2)
+      {
+        file = "VU9.png";
+      }
+      else if ((int)dbLevelL < -1)
+      {
+        file = "VU10.png";
+      }
+      else if ((int)dbLevelL < 0)
+      {
+        file = "VU11.png";
+      }
+      else if ((int)dbLevelL < 1)
+      {
+        file = "VU12.png";
+      }
+      else if ((int)dbLevelL < 2)
+      {
+        file = "VU13.png";
+      }
+      else if ((int)dbLevelL < 3)
+      {
+        file = "VU14.png";
+      }
+      else
+      {
+        file = "VU15.png";
+      }
+      GUIPropertyManager.SetProperty("#VUMeterL", Path.Combine(@"Animations\Vu", file));
+      
+      if ((int)dbLevelR < -15)
+      {
+        file = "VU1.png";
+      }
+      else if ((int)dbLevelR < -10)
+      {
+        file = "VU2.png";
+      }
+      else if ((int)dbLevelR < -8)
+      {
+        file = "VU3.png";
+      }
+      else if ((int)dbLevelR < -7)
+      {
+        file = "VU4.png";
+      }
+      else if ((int)dbLevelR < -6)
+      {
+        file = "VU5.png";
+      }
+      else if ((int)dbLevelR < -5)
+      {
+        file = "VU6.png";
+      }
+      else if ((int)dbLevelR < -4)
+      {
+        file = "VU7.png";
+      }
+      else if ((int)dbLevelR < -3)
+      {
+        file = "VU8.png";
+      }
+      else if ((int)dbLevelR < -2)
+      {
+        file = "VU9.png";
+      }
+      else if ((int)dbLevelR < -1)
+      {
+        file = "VU10.png";
+      }
+      else if ((int)dbLevelR < 0)
+      {
+        file = "VU11.png";
+      }
+      else if ((int)dbLevelR < 1)
+      {
+        file = "VU12.png";
+      }
+      else if ((int)dbLevelR < 2)
+      {
+        file = "VU13.png";
+      }
+      else if ((int)dbLevelR < 3)
+      {
+        file = "VU14.png";
+      }
+      else
+      {
+        file = "VU15.png";
+      }
+      GUIPropertyManager.SetProperty("#VUMeterR", Path.Combine(@"Animations\Vu", file));
+    }
 
     private void UpdateImagePathContainer()
     {

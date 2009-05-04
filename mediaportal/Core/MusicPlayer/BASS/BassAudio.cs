@@ -345,6 +345,10 @@ namespace MediaPortal.Player
     private float cueTrackStartPos = 0;
     private float cueTrackEndPos = 0;
     private int cueTrackEndEventHandler;
+
+    // RMS / VUMeter
+    private int _30mslength = 0;
+    private float[] _rmsData;           // Global data buffer used at RMS
     #endregion
 
     #region Properties
@@ -1749,7 +1753,7 @@ namespace MediaPortal.Player
           }
           else
           {
-            streamFlags = BASSFlag.BASS_STREAM_AUTOFREE;
+            streamFlags = BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_AUTOFREE;
           }
 
           FilePath = filePath;
@@ -1811,6 +1815,8 @@ namespace MediaPortal.Player
 
           if (stream != 0)
           {
+            _30mslength = (int)Bass.BASS_ChannelSeconds2Bytes(stream, 0.03); // 30ms window used by RMS / VUMeter
+
             StreamEventSyncHandles[CurrentStreamIndex] = RegisterPlaybackEvents(stream, CurrentStreamIndex);
 
             if (doFade && _CrossFadeIntervalMS > 0)
@@ -3128,6 +3134,59 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Return the dbLevel to be used by a VUMeter
+    /// </summary>
+    /// <param name="dbLevelL"></param>
+    /// <param name="dbLevelR"></param>
+    public void RMS(out double dbLevelL, out double dbLevelR)
+    {
+      int peakL = 0;
+      int peakR = 0;
+      float maxL = 0f;
+      float maxR = 0f;
+      int length = _30mslength; // 30ms window already set at buttonPlay_Click
+      int l4 = length / 4; // the number of 32-bit floats required (since length is in bytes!)
+
+      // increase our data buffer as needed
+      if (_rmsData == null || _rmsData.Length < l4)
+        _rmsData = new float[l4];
+
+      // Note: this is a special mechanism to deal with variable length c-arrays.
+      // In fact we just pass the address (reference) to the first array element to the call.
+      // However the .Net marshal operation will copy N array elements (so actually fill our float[]).
+      // N is determined by the size of our managed array, in this case N=l4
+      length = Bass.BASS_ChannelGetData(GetCurrentStream(), _rmsData, length);
+
+      l4 = length / 4; // the number of 32-bit floats received
+
+      for (int a = 0; a < l4; a++)
+      {
+        float absLevel = Math.Abs(_rmsData[a]);
+        // decide on L/R channel
+        if (a % 2 == 0)
+        {
+          // L channel
+          if (absLevel > maxL)
+            maxL = absLevel;
+        }
+        else
+        {
+          // R channel
+          if (absLevel > maxR)
+            maxR = absLevel;
+        }
+      }
+
+      // limit the maximum peak levels to +6bB = 0xFFFF = 65535
+      // the peak levels will be int values, where 32767 = 0dB!
+      // and a float value of 1.0 also represents 0db.
+      peakL = (int)Math.Round(32767f * maxL) & 0xFFFF;
+      peakR = (int)Math.Round(32767f * maxR) & 0xFFFF;
+
+      dbLevelL = Un4seen.Bass.Utils.LevelToDB(peakL, 65535);
+      dbLevelR = Un4seen.Bass.Utils.LevelToDB(peakR, 65535);
+    }
     #endregion
   }
 }
