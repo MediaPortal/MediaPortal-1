@@ -322,19 +322,46 @@ public class MediaPortalApp : D3DApp, IRender
       Log.Info("Main: MediaPortal v" + versionInfo.FileVersion + " is starting up on " + os.OSVersionString +
                ServicePack);
 
+      // Store OS version for next checks
+      int OsVer = (os.OSMajorVersion * 10) + os.OSMinorVersion;
+
       //Log last install of WindowsUpdate patches
       string LastSuccessTime = "NEVER !!!";
-      RegistryKey regKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsUpdate\\Auto Update\\Results\\Install");
-      if (regKey != null)
+      UIntPtr res = UIntPtr.Zero;
+
+      int options = Convert.ToInt32(RegistryRights.ReadKey);
+      if (OsVer >= 52)
       {
-          LastSuccessTime = (string)regKey.GetValue("LastSuccessTime");
-          regKey.Close();
+        options = options | Convert.ToInt32(RegWow64Options.KEY_WOW64_64KEY);
       }
-      Log.Info("Main: Last install from WindowsUpdates is {0}", LastSuccessTime);
+      UIntPtr rKey = new UIntPtr(Convert.ToUInt32(RegistryRoot.HKLM));
+      int lastError = 0;
+      int retval = NativeMethods.RegOpenKeyEx(rKey, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsUpdate\\Auto Update\\Results\\Install", 0, options, out res);
+      if (retval == 0)
+      {
+        uint tKey;
+        uint lKey = 100;
+        System.Text.StringBuilder sKey = new System.Text.StringBuilder((int)lKey);
+        retval = NativeMethods.RegQueryValueEx(res, "LastSuccessTime", 0, out tKey, sKey, ref lKey);
+        if (retval == 0)
+        {
+          LastSuccessTime = sKey.ToString();
+        }
+        else
+        {
+          lastError = Marshal.GetLastWin32Error();
+          Log.Debug("RegQueryValueEx retval=<{0}>, lastError=<{1}>", retval, lastError);
+        }
+      }
+      else
+      {
+        lastError = Marshal.GetLastWin32Error();
+        Log.Debug("RegOpenKeyEx retval=<{0}>, lastError=<{1}>", retval, lastError);
+      }
+      Log.Info("Main: Last install from WindowsUpdate is dated {0}", LastSuccessTime);
 
       //Disable "ghosting" for WindowsVista and up
-      int ver = (os.OSMajorVersion * 10) + os.OSMinorVersion;
-      if (ver >= 60)
+      if (OsVer >= 60)
       {
         Log.Debug("Disabling process window ghosting");
         NativeMethods.DisableProcessWindowsGhosting();
@@ -566,7 +593,8 @@ public class MediaPortalApp : D3DApp, IRender
           app.OnExit();
         }
 #if !DEBUG
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
           Log.Error(ex);
           Log.Error("MediaPortal stopped due to an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
@@ -2051,7 +2079,7 @@ public class MediaPortalApp : D3DApp, IRender
       //}
     }
 #if !DEBUG
- catch (Exception ex)
+    catch (Exception ex)
     {
       Log.Error(ex);
     }
@@ -3876,4 +3904,27 @@ public class MediaPortalApp : D3DApp, IRender
       Log.Info("No write permissions to enable/disable the S3 standby trick");
     }
   }
+
+  [Flags]
+  public enum RegWow64Options : int
+  {
+    None = 0,
+    KEY_WOW64_64KEY = 0x100,
+    KEY_WOW64_32KEY = 0x200
+  }
+
+  [Flags]
+  public enum RegistryRights : int
+  {
+    ReadKey = 131097,
+    WriteKey = 131078
+  }
+
+  [Flags]
+  public enum RegistryRoot : uint
+  {
+    HKCU = 0x80000001,
+    HKLM = 0x80000002
+  }
+
 }
