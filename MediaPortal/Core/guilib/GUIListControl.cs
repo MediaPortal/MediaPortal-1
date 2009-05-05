@@ -158,7 +158,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("spinCanFocus")] protected bool _spinCanFocus = true;
 
     private bool _wordWrapping = false;
-
+    private int _frameLimiter = 1;
     // Search            
     private DateTime _timerKey = DateTime.Now;
     private char _currentKey = (char) 0;
@@ -786,13 +786,13 @@ namespace MediaPortal.GUI.Library
     public override void Render(float timePassed)
     {
       _timeElapsed += timePassed;
-
       // If there is no font do not render.
       if (null == _font)
       {
         base.Render(timePassed);
         return;
       }
+
       // If the control is not visible do not render.
       if (GUIGraphicsContext.EditMode == false)
       {
@@ -802,6 +802,11 @@ namespace MediaPortal.GUI.Library
           return;
         }
       }
+
+      if (_frameLimiter < GUIGraphicsContext.MaxFPS)
+        _frameLimiter++;
+      else
+        _frameLimiter = 1;
 
       int dwPosY = _positionY;
 
@@ -1074,8 +1079,21 @@ namespace MediaPortal.GUI.Library
         }
         if ((int)_timeElapsed > _scrollStartDelay || _scrollContinuosly)
         {
-          _scrollPosititionX = _scrollPosititionX + GUIGraphicsContext.ScrollSpeedHorizontal;
-          //Log.Debug("*** Listcontrol _scrollPosititionX = {0}", _scrollPosititionX);
+          // Add an especially slow setting for far distance + small display + bad eyes + foreign language combination
+          if (GUIGraphicsContext.ScrollSpeedHorizontal < 3)
+          {
+            // Advance one pixel every 3 or 2 frames
+            if (_frameLimiter % (4 - GUIGraphicsContext.ScrollSpeedHorizontal) == 0)
+            {
+              _scrollPosititionX++;
+            }
+          }
+          else
+          {
+            // advance 1 - 3 pixels every frame
+            _scrollPosititionX = _scrollPosititionX + (GUIGraphicsContext.ScrollSpeedHorizontal - 2);
+          }
+
           char wTmp;
           if (_scrollPosition >= _brackedText.Length)
           {
@@ -3368,6 +3386,7 @@ namespace MediaPortal.GUI.Library
       //GUITextureManager.CleanupThumbs();
       _upDownControl.SetRange(1, 1);
       _upDownControl.Value = 1;
+      _frameLimiter = 1;
       _refresh = true;
       OnSelectionChanged();
     }

@@ -482,9 +482,20 @@ namespace MediaPortal.GUI.Library
         // doscroll (after having waited some frames)
         string wTmp = "";
 
-        //_scrollPosititionX = _currentFrame - (12 + 25);
-        //if (_frameLimiter % (2) == 0)
-        _scrollPosititionX = _scrollPosititionX + GUIGraphicsContext.ScrollSpeedHorizontal;
+        // Add an especially slow setting for far distance + small display + bad eyes + foreign language combination
+        if (GUIGraphicsContext.ScrollSpeedHorizontal < 3)
+        {
+          // Advance one pixel every 3 or 2 frames
+          if (_frameLimiter % (4 - GUIGraphicsContext.ScrollSpeedHorizontal) == 0)
+          {
+            _scrollPosititionX++;
+          }
+        }
+        else
+        {
+          // advance 1 - 3 pixels every frame
+          _scrollPosititionX = _scrollPosititionX + (GUIGraphicsContext.ScrollSpeedHorizontal - 2);
+        }
 
         if (_scrollPosition >= wszOrgText.Length)
         {

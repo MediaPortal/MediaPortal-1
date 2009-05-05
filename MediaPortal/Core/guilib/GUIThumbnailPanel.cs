@@ -219,7 +219,7 @@ namespace MediaPortal.GUI.Library
     protected double _scrollOffset = 0.0f;
     protected double _timeElapsed = 0.0f;
     protected bool _scrollContinuosly = false;
-
+    private int _frameLimiter = 1;
     // Search
     private DateTime _keyTimer = DateTime.Now;
     private char _currentKey = (char)0;
@@ -657,6 +657,7 @@ namespace MediaPortal.GUI.Library
         base.Render(timePassed);
         return;
       }
+
       if (GUIGraphicsContext.EditMode == false)
       {
         if (!IsVisible)
@@ -665,6 +666,11 @@ namespace MediaPortal.GUI.Library
           return;
         }
       }
+
+      if (_frameLimiter < GUIGraphicsContext.MaxFPS)
+        _frameLimiter++;
+      else
+        _frameLimiter = 1;
 
       int dwPosY = 0;
       if ((_cursorX > 0 || _cursorY > 0) && !ValidItem(_cursorX, _cursorY))
@@ -2243,8 +2249,22 @@ namespace MediaPortal.GUI.Library
             //{
             //  _scrollPosititionX = _currentFrame - (25 + 12);              
             //}
-            _scrollPosititionX = _scrollPosititionX + GUIGraphicsContext.ScrollSpeedHorizontal;
-            //Log.Debug("*** Thumbpanel _scrollPosititionX = {0}", _scrollPosititionX);
+
+            // Add an especially slow setting for far distance + small display + bad eyes + foreign language combination
+            if (GUIGraphicsContext.ScrollSpeedHorizontal < 3)
+            {
+              // Advance one pixel every 3 or 2 frames
+              if (_frameLimiter % (4 - GUIGraphicsContext.ScrollSpeedHorizontal) == 0)
+              {
+                _scrollPosititionX++;
+              }
+            }
+            else
+            {
+              // advance 1 - 3 pixels every frame
+              _scrollPosititionX = _scrollPosititionX + (GUIGraphicsContext.ScrollSpeedHorizontal - 2);
+            }
+
             char wTmp;
             if (_scrollPosition >= _brackedText.Length)
             {
@@ -2968,6 +2988,7 @@ namespace MediaPortal.GUI.Library
       _controlUpDown.SetRange(1, 1);
       _controlUpDown.Value = 1;
       _cursorX = _cursorY = _offset = 0;
+      _frameLimiter = 1;
       _refresh = true;
       OnSelectionChanged();
     }
