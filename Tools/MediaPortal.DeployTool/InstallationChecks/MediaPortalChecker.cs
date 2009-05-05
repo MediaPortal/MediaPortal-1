@@ -35,7 +35,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
   {
     public string GetDisplayName()
     {
-      return "MediaPortal " + Utils.GetPackageVersion(true);
+      return "MediaPortal " + Utils.GetPackageVersion('c');
     }
 
     public bool Download()
@@ -124,7 +124,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
           if (MpPath != null && File.Exists(MpPath))
           {
-            result.state = MpVer == Utils.GetPackageVersion(true) ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
+            result.state = MpVer == Utils.GetPackageVersion('c') ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
           }
         }
       }

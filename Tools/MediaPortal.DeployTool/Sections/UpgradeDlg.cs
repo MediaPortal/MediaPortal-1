@@ -50,6 +50,8 @@ namespace MediaPortal.DeployTool.Sections
       // es1.  1.0.1 is current, installed must be 1.0.0
       // es2.  1.0 SVN XXXXX is installed
       //
+
+      // MediaPortal
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
       string MpVer = string.Empty;
       string MpBuild = string.Empty;
@@ -61,14 +63,41 @@ namespace MediaPortal.DeployTool.Sections
         MpBuild = key.GetValue("VersionBuild").ToString();
         key.Close();
       }
-      if (MpVer != Utils.GetPackageVersion(false) || MpBuild != "0")
+
+      // TV-Server
+      key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
+      string Tv3Ver = string.Empty;
+      string Tv3Build = string.Empty;
+      if (key != null)
       {
-        rbUpdate.Enabled = false;
-        bUpdate.Enabled = false;
+        Tv3Ver = key.GetValue("VersionMajor") + ".";
+        Tv3Ver += key.GetValue("VersionMinor") + ".";
+        Tv3Ver += key.GetValue("VersionRevision");
+        Tv3Build = key.GetValue("VersionBuild").ToString();
+        key.Close();
       }
 
-      labelSectionHeader.Text = MpBuild != "0" ? String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader_SVN"), MpVer, MpBuild) : String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader"), MpVer);
-      rbUpdate.Text = String.Format(Localizer.GetBestTranslation("Upgrade_yes"), Utils.GetPackageVersion(true));
+      rbUpdate.Enabled = false;
+      bUpdate.Enabled = false;
+      if ((MpVer == Utils.GetPackageVersion('p') && MpBuild == "0") ||
+          (Tv3Ver == Utils.GetPackageVersion('p') && Tv3Build == "0") ||
+          (MpVer == Utils.GetPackageVersion('s') && MpBuild == "0") ||
+          (Tv3Ver == Utils.GetPackageVersion('s') && Tv3Build == "0"))
+      {
+        rbUpdate.Enabled = true;
+        bUpdate.Enabled = true;
+      }
+
+      if (!String.IsNullOrEmpty(MpBuild))
+      {
+        labelSectionHeader.Text = MpBuild != "0" ? String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader_SVN"), MpVer, MpBuild) : String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader"), MpVer);
+      }
+      else
+      {
+        labelSectionHeader.Text = Tv3Build != "0" ? String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader_SVN"), Tv3Ver, Tv3Build) : String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader"), Tv3Ver);
+      }
+
+      rbUpdate.Text = String.Format(Localizer.GetBestTranslation("Upgrade_yes"), Utils.GetPackageVersion('c'));
       rbFresh.Text = Localizer.GetBestTranslation("Upgrade_no");
       labelNote.Text = Localizer.GetBestTranslation("Upgrade_note");
     }

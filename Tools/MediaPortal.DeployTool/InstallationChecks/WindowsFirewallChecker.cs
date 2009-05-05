@@ -25,7 +25,6 @@
 
 using System;
 using System.IO;
-using System.Windows.Forms;
 using NetFwTypeLib;
 #if DEBUG // we need it for the msg box
 using System.Windows.Forms;
