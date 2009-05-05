@@ -144,7 +144,7 @@ namespace MediaPortal.Player
     protected int _aspectX = 1;
     protected int _aspectY = 1;
     protected long _speedRate = 10000;
-    protected bool _CodecSupportsFastSeeking = false;
+    protected bool _CodecSupportsFastSeeking = true;
     protected IBaseFilter _interfaceTSReader = null;
     protected IBaseFilter _videoCodecFilter = null;
     protected IBaseFilter _h264videoCodecFilter = null;
@@ -1600,7 +1600,7 @@ namespace MediaPortal.Player
         string strFilters = ""; // FlipGer: collect custom filters
         using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          _CodecSupportsFastSeeking = xmlreader.GetValueAsBool("debug", "CodecSupportsFastSeeking", false);
+          _CodecSupportsFastSeeking = xmlreader.GetValueAsBool("debug", "CodecSupportsFastSeeking", true);
           Log.Debug("BaseTSReaderPlayer: Codec supports fast seeking = {0}", _CodecSupportsFastSeeking);
           // FlipGer: load infos for custom filters
           int intCount = 0;
