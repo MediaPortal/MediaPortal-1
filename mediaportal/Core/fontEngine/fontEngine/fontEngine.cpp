@@ -141,8 +141,14 @@ void Log(char* txt)
   }
   
   FILE* fp = fopen(logFile,"a+");
+  if (!fp)
+  {
+    // failed to open log file, folder missing?
+    return;
+  }
+
   fseek(fp,0,SEEK_END);
-  
+
   SYSTEMTIME systemTime;
   GetLocalTime(&systemTime);
 
