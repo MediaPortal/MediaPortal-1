@@ -230,7 +230,8 @@
     <EmbeddedResource Include="42_upgrade_sqlserver_database.sql" />
     <EmbeddedResource Include="create_mysql_database.sql" />
     <EmbeddedResource Include="create_sqlserver_database.sql" />
-    <EmbeddedResource Include="SetupTv.exe.manifest" />
+    <None Include="SetupTv.exe.manifest">
+    </None>
     <Compile Include="SearchSHOUTcast.cs">
       <SubType>Form</SubType>
     </Compile>

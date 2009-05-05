@@ -11,6 +11,7 @@
     <AssemblyName>MPInstaller</AssemblyName>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <ApplicationIcon>MPI MediaPortal Installer.ico</ApplicationIcon>
+    <StartupObject>MediaPortal.MPInstaller.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -162,6 +163,8 @@
       <DependentUpon>Info.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="MPInstaller.exe.manifest">
+    </None>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
