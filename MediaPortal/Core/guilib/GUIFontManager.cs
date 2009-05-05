@@ -552,6 +552,16 @@ namespace MediaPortal.GUI.Library
       _listFontObjects.Clear();
     }
 
+    public static void ClearFontCache()
+    {
+      try
+      {
+        string fontCache = String.Format(@"{0}\fonts", GUIGraphicsContext.SkinCacheFolder);
+        MediaPortal.Util.Utils.DirectoryDelete(fontCache, true);
+      }
+      catch (Exception) { }
+    }
+
     /// <summary>
     /// Sets the device and the FVF.
     /// </summary>
@@ -571,16 +581,16 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void InitializeDeviceObjects()
     {
-      Log.Info("  fonts.InitializeDeviceObjects()");
+      Log.Debug("  fonts.InitializeDeviceObjects()");
       IntPtr upDevice = DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
-      unsafe
-      {
-        FontEngineSetDevice(upDevice.ToPointer());
-      }
-      foreach (GUIFont font in _listFonts)
-      {
-        font.InitializeDeviceObjects();
+        unsafe
+        {
+          FontEngineSetDevice(upDevice.ToPointer());
+        }
+        foreach (GUIFont font in _listFonts)
+        {
+          font.InitializeDeviceObjects();
       }
     }
   }

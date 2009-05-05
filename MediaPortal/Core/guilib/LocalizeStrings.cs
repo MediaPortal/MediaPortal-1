@@ -79,11 +79,9 @@ namespace MediaPortal.GUI.Library
     public static bool Load(string language)
     {
       bool isPrefixEnabled = true;
-      bool useChineseHack = false;
       using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         isPrefixEnabled = reader.GetValueAsBool("general", "myprefix", true);
-        useChineseHack = reader.GetValueAsBool("debug", "useExtendedCharsWithStandardCulture", false);
       }
 
       string directory = Config.GetFolder(Config.Dir.Language);
@@ -98,16 +96,11 @@ namespace MediaPortal.GUI.Library
 
       // http://msdn.microsoft.com/en-us/library/system.globalization.cultureinfo.aspx
       _stringProvider = new LocalisationProvider(directory, cultureName, isPrefixEnabled);
-      int fontChars = _stringProvider.Characters;
-      // Some chinese might prefer to use an english OS but still have all chars for media, etc
-      if (useChineseHack)
+
+      if (_stringProvider.Characters > GUIGraphicsContext.CharsInCharacterSet)
       {
-        fontChars = 1536;
+        GUIGraphicsContext.CharsInCharacterSet = _stringProvider.Characters;
       }
-
-      Log.Debug("LocalizeStrings: Using {0} chars of the character set", fontChars);
-      GUIGraphicsContext.CharsInCharacterSet = fontChars;
-
       return true;
     }
 
@@ -123,6 +116,7 @@ namespace MediaPortal.GUI.Library
 
     public static void ChangeLanguage(string language)
     {
+      GUIFontManager.ClearFontCache();
       if (_stringProvider == null)
       {
         Load(language);
@@ -130,6 +124,10 @@ namespace MediaPortal.GUI.Library
       else
       {
         _stringProvider.ChangeLanguage(GetCultureName(language));
+        if (_stringProvider.Characters > GUIGraphicsContext.CharsInCharacterSet)
+        {
+            GUIGraphicsContext.CharsInCharacterSet = _stringProvider.Characters;
+        }
       }
     }
 
