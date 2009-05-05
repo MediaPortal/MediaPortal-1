@@ -54,7 +54,7 @@ namespace MediaPortal.DeployTool.Sections
       this.rbUpdate.Name = "rbUpdate";
       this.rbUpdate.Size = new System.Drawing.Size(205, 13);
       this.rbUpdate.TabIndex = 16;
-      this.rbUpdate.Text = "Update current installation to 1.0.1";
+      this.rbUpdate.Text = "Update current installation to 1.0.2";
       this.rbUpdate.Click += new System.EventHandler(this.bUpdate_Click);
       // 
       // rbFresh

@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
