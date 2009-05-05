@@ -1799,6 +1799,9 @@
     <String id="109004">Mini Display - Oppsett - Equalizer</String>
     <String id="109005">Mini Display - Oppsett - KeyPad</String>
     <String id="109006">Mini Display - Oppsett - Fjernkontroll</String>
+    <String id="109811" prefix="Mine ">TV-Serier</String>
+    <String id="190478" prefix="Min ">Lyrikk</String>
+    <String id="196742" prefix="Mine ">Moving Pictures</String>
     <String id="200000">Vennligst velg din EPG-grabber. Husk at hvis ditt land</String>
     <String id="200001">ikke er på listen må du legge inn EPG manuellt</String>
     <String id="200002">Nå kan du kartlegge EPG-kanalene til dine TV-kanaler</String>
