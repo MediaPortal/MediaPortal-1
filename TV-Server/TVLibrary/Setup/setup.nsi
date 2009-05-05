@@ -101,19 +101,19 @@ Var UpdateMode
 
 !define VER_MAJOR       1
 !define VER_MINOR       0
-!define VER_REVISION    1
+!define VER_REVISION    2
 !ifndef VER_BUILD
     !define VER_BUILD   0
 !endif
 
 
 !if ${BUILD_TYPE} == "Debug"
-  !define VERSION "1.0 >>DEBUG<< build ${VER_BUILD} for TESTING ONLY"
+  !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION} >>DEBUG<< build ${VER_BUILD} for TESTING ONLY"
 !else
 !if ${VER_BUILD} == 0       # it's an official release
-  !define VERSION "1.0.2"
+  !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}"
 !else                       # it's a svn release
-  !define VERSION "1.0.1 SVN build ${VER_BUILD} for TESTING ONLY"
+  !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION} SVN build ${VER_BUILD} for TESTING ONLY"
 !endif
 !endif
 Name          "${NAME}"
@@ -131,20 +131,13 @@ BrandingText  "${NAME} ${VERSION} by ${COMPANY}"
 !include "${svn_InstallScripts}\include-WinVerEx.nsh"
 
 
-!define USE_READ_MP_DIRS ; defines if MediaPortal's special directories needs to be read from config
-!define USE_INSTALL_LOG ; enables logging during installation and uninstallation
-!include "${svn_InstallScripts}\include-CommonMPMacros.nsh"
+!include "${svn_InstallScripts}\include\*"
 
 
-!include "${svn_InstallScripts}\include-AddRemovePage.nsh"
-!include "${svn_InstallScripts}\include-UninstallModePage.nsh"
-!include setup-languages.nsh
+!include "${svn_InstallScripts}\pages\AddRemovePage.nsh"
+!insertmacro AddRemovePage "${REG_UNINSTALL}"
+!include "${svn_InstallScripts}\pages\UninstallModePage.nsh"
 
-!insertmacro GetParameters
-!insertmacro GetOptions
-!insertmacro un.GetParameters
-!insertmacro un.GetOptions
-!insertmacro GetParent
 
 #---------------------------------------------------------------------------
 # INSTALLER INTERFACE settings
@@ -211,7 +204,7 @@ UninstPage custom un.UninstallModePage un.UninstallModePageLeave
 #---------------------------------------------------------------------------
 # INSTALLER LANGUAGES
 #---------------------------------------------------------------------------
-!insertmacro MUI_LANGUAGE English
+!insertmacro LANG_LOAD "English"
 
 #---------------------------------------------------------------------------
 # INSTALLER ATTRIBUTES
@@ -378,7 +371,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File ..\SetupControls\bin\${BUILD_TYPE}\SetupControls.dll
 
   ; 3rd party assemblys
-  File "${TVSERVER.BASE}\dvblib.dll"
   File "${TVSERVER.BASE}\dxerr9.dll"
   File "${TVSERVER.BASE}\hauppauge.dll"
   File "${TVSERVER.BASE}\hcwWinTVCI.dll"
@@ -388,6 +380,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\ICSharpCode.SharpZipLib.dll"
 
   File "${svn_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
+  ; binary used for skystar2 support
+  File "${svn_DirectShowFilters}\dvblib\bin\${BUILD_TYPE}\dvblib.dll"
 
   ; Common App Data Files
   SetOutPath "${COMMON_APPDATA}"
@@ -492,6 +486,7 @@ ${MementoSectionEnd}
   ; And finally remove all the files installed
   ; Leave the directory in place, as it might contain user modified files
   Delete /REBOOTOK $INSTDIR\DirectShowLib.dll
+  ; binary used for skystar2 support
   Delete /REBOOTOK $INSTDIR\dvblib.dll
   Delete /REBOOTOK $INSTDIR\PluginBase.dll
   Delete /REBOOTOK $INSTDIR\PowerScheduler.Interfaces.DLL
@@ -522,6 +517,7 @@ ${MementoSectionEnd}
   Delete /REBOOTOK $INSTDIR\StreamingServer.dll
   Delete /REBOOTOK $INSTDIR\ttBdaDrvApi_Dll.dll
   Delete /REBOOTOK $INSTDIR\ttdvbacc.dll
+  Delete /REBOOTOK $INSTDIR\ICSharpCode.SharpZipLib.dll
 
   ; remove Start Menu shortcuts
   Delete "$SMPROGRAMS\$StartMenuGroup\TV-Server Configuration.lnk"
@@ -649,6 +645,12 @@ Section -Post
 
   SetOverwrite on
   SetOutPath $INSTDIR
+
+  ; cleaning/renaming log dir - requested by chemelli
+  RMDir /r "${COMMON_APPDATA}\log\OldLogs"
+  CreateDirectory "${COMMON_APPDATA}\log\OldLogs"
+  CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\log\*" "${COMMON_APPDATA}\log\OldLogs"
+  Delete "${COMMON_APPDATA}\log\*"
 
   ${If} $noStartMenuSC != 1
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
@@ -790,6 +792,9 @@ Function .onInit
     !insertmacro UnselectSection ${SecServer}
   ${EndIf}
 
+
+${If} $DeployMode = 0
+
   ; OS and other common initialization checks are done in the following NSIS header file
   !insertmacro MediaPortalOperatingSystemCheck $DeployMode
   !insertmacro MediaPortalAdminCheck $DeployMode
@@ -807,6 +812,15 @@ Function .onInit
     Abort
   ${EndIf}
 
+  ; check if reboot is required
+  ${If} ${FileExists} "$INSTDIR\rebootflag"
+    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
+    Abort
+  ${EndIf}
+
+${EndIf}
+
+
   ; Read installation dir from registry, ONLY if
   ;   - installer is started in UpdateMode
   ;   - MediaPortal is already installed
@@ -818,12 +832,6 @@ Function .onInit
       MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_UPDATE_BUT_NOT_INSTALLED)"
       Abort
     ${EndIf}
-  ${EndIf}
-
-  ; check if reboot is required
-  ${If} ${FileExists} "$INSTDIR\rebootflag"
-    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
-    Abort
   ${EndIf}
 
   ; If Silent:   check if MP is installed -> if not disable that component
@@ -990,6 +998,8 @@ Function FinishShow
   ${IfNot} ${TVServerIsInstalled}
     SendMessage $mui.FinishPage.Run ${BM_CLICK} 0 0
     ShowWindow  $mui.FinishPage.Run ${SW_HIDE}
+  ${Else}
+    EnableWindow $mui.FinishPage.Run 0 # start out disabled
   ${EndIf}
 FunctionEnd
 
