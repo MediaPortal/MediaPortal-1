@@ -29,6 +29,39 @@ namespace TvLibrary.Epg
   /// </summary>
   public class Languages
   {
+
+    //
+    // Created needed expections lists for all cultures with two ISO-639-2 ( B and T )
+    // (data taken from http://en.wikipedia.org/wiki/List_of_ISO_639-2_codes)
+    // 
+    string[] LanguageNameExceptions = { "Albanian", "Armenian", 
+                                        "Basque", "Burmese", 
+                                        "Chinese", "Czech",
+                                        "Dutch", 
+                                        "French",
+                                        "Georgian", "German", "Greek (Modern)",
+                                        "Icelandic",
+                                        "Macedonian", "Malay", "Maori",
+                                        "Persian",
+                                        "Romanian",
+                                        "Tibetan",
+                                        "Welsh"
+                                      };
+
+    string[] LanguageCodeExceptions = { "alb", "arm", 
+                                        "baq", "bur", 
+                                        "chi", "cze", 
+                                        "dut",
+                                        "fre",
+                                        "geo", "ger", "gre",
+                                        "ice",
+                                        "mac", "may", "mao",
+                                        "per",
+                                        "rum",
+                                        "tib",
+                                        "wel"
+                                      };
+
     /// <summary>
     /// Gets the languages.
     /// </summary>
@@ -42,6 +75,8 @@ namespace TvLibrary.Epg
       {
         langs.Add(ci.EnglishName);
       }
+      // Exceptions with a double ISO639-2 code (B and T). Adding code B
+      langs.AddRange(LanguageNameExceptions);
       return langs;
     }
 
@@ -58,6 +93,8 @@ namespace TvLibrary.Epg
       {
         langs.Add(ci.ThreeLetterISOLanguageName);
       }
+      // Exceptions with a double ISO639-2 code (B and T). Adding code B
+      langs.AddRange(LanguageCodeExceptions);
       return langs;
     }
 
