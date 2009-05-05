@@ -1,0 +1,16 @@
+
+1. Update to the latest Windows SDK (previously the Platform SDK).
+        http://www.microsoft.com/downloads/details.aspx?FamilyId=F26B1AA4-741A-433A-9BE5-FA919850BDBF&displaylang=en
+
+
+2. Create the following registry key (check the path if you did a custom install):
+
+	Windows Registry Editor Version 5.00
+
+	[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework]
+	"SDKInstallRootv2.0"="C:\\Program Files\\Microsoft SDKs\\Windows\\v6.1"
+
+3. Check "\svnroot\mediaportal\trunk\Tools\InstallationScripts\DeployToolUnPacker.nsi" for the above path:
+
+	!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /p:ALToolPath="%ProgramFiles%\Microsoft SDKs\Windows\v6.1\Bin" /target:Rebuild /property:Configuration=Release;Platform=x86 "${svn_DeployTool}\MediaPortal.DeployTool.sln"' = 0
+
