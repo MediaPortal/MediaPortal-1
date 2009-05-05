@@ -14,3 +14,5 @@
 
 	!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /p:ALToolPath="%ProgramFiles%\Microsoft SDKs\Windows\v6.1\Bin" /target:Rebuild /property:Configuration=Release;Platform=x86 "${svn_DeployTool}\MediaPortal.DeployTool.sln"' = 0
 
+
+NOTE: Used http://msdn.microsoft.com/en-us/windowsserver/bb986638.aspx, chapter 5.1.2 as reference
