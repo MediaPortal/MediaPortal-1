@@ -117,7 +117,7 @@ namespace MediaPortal.Util
       }
       VirtualDrive = _Drive;
       _MountedIsoFile = IsoFile;
-      Log.Debug("Mount time: {0}s", (DateTime.Now - startTime).TotalSeconds);
+      Log.Debug("Mount time: {0}s", String.Format("{0:N}",(DateTime.Now - startTime).TotalSeconds));
       return true;
     }
 
@@ -125,6 +125,7 @@ namespace MediaPortal.Util
     {
       if (!_Enabled) return;
       if (!System.IO.File.Exists(_Path)) return;
+      if (!System.IO.Directory.Exists(_Drive + @"\")) return;
 
       string strParams = String.Format("-unmount {0}", _DriveNo);
       Process p = Utils.StartProcess(_Path, strParams, true, true);
@@ -134,7 +135,6 @@ namespace MediaPortal.Util
         System.Threading.Thread.Sleep(100);
         timeout += 100;
       }
-
       _MountedIsoFile = string.Empty;
     }
 

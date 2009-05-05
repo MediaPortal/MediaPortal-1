@@ -1452,8 +1452,10 @@ namespace MediaPortal.Util
               {
                 OnStartExternal(movieplayer, true);		// Event: Starting external process
               }
+              AutoPlay.StopListening();
               movieplayer.Start();
               movieplayer.WaitForExit();
+              AutoPlay.StartListening();
               if (OnStopExternal != null)
               {
                 OnStopExternal(movieplayer, true);		// Event: External process stopped

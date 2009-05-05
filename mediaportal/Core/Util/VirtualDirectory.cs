@@ -982,32 +982,19 @@ namespace MediaPortal.Util
           if (IsImageFile(extension))
           {
             if (!DaemonTools.IsMounted(strDir))
-            {
-              AutoPlay.StopListening();
+            {              
               string virtualPath;
               if (DaemonTools.Mount(strDir, out virtualPath))
               {
                 strDir = virtualPath;
                 VirtualShare = true;
-              }
-              //Start listening to Volume Events (Hack to start listening after 10 seconds)
-              StartVolumeListener();
+              }              
             }
             else
             {
               strDir = DaemonTools.GetVirtualDrive();
               VirtualShare = true;
-            }
-
-            if (VirtualShare /*&& !g_Player.Playing*/) // dont interrupt if we're already playing
-            {
-              // If it looks like a DVD directory structure then return so
-              // that the playing of the DVD is handled by the caller.
-              if (File.Exists(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
-              {
-                return items;
-              }
-            }
+            }            
           }
           #endregion
         }
@@ -1332,16 +1319,13 @@ namespace MediaPortal.Util
         if (IsImageFile(extension))
         {
           if (!DaemonTools.IsMounted(strDir))
-          {
-            AutoPlay.StopListening();
+          {            
             string virtualPath;
             if (DaemonTools.Mount(strDir, out virtualPath))
             {
               strDir = virtualPath;
               VirtualShare = true;
             }
-            //Start listening to Volume Events.Wait 10 seconds in another thread and start listeneing again
-            StartVolumeListener();
           }
           else
           {
@@ -1669,15 +1653,7 @@ namespace MediaPortal.Util
 
     //  return items;
     //}
-
-    private void StartVolumeListener()
-    {
-      Thread VirtDirListener = new Thread(_startListening);
-      VirtDirListener.IsBackground = true;
-      VirtDirListener.Name = "VirtualDirectoryListener";
-      VirtDirListener.Start();
-    }
-
+    
     /// <summary>
     /// This method checks if the extension of the specified file is valid for the current virtual folder
     /// The virtual directory will only show files with valid extensions
@@ -1974,14 +1950,7 @@ namespace MediaPortal.Util
         Log.Info("VirtualDirectory:unable to connect to remote share");
       return ftp;
     }
-    #region generics
-
-    private void _startListening()
-    {
-      Thread.Sleep(5000);
-      AutoPlay.StartListening();
-      Log.Info("*****Start listening to drives");
-    }
+    #region generics    
 
     public static void SetInitialDefaultShares(bool addOptical, bool addMusic, bool addPictures, bool addVideos)
     {
