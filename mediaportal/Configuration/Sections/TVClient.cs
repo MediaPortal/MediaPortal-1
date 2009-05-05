@@ -152,11 +152,14 @@ namespace MediaPortal.Configuration.Sections
                     mpListViewPreferredAudioLang.Items.Clear();
                     for (int i = 0; i < _languagesAvail.Count; i++)
                     {
-                      if (!_preferredAudioLanguages.Contains(_languagesAvail[i]) && _languageCodes[i] != _languageCodes[i - 1])
+                      if (!_preferredAudioLanguages.Contains(_languagesAvail[i]))
                       {
                         ListViewItem item = new ListViewItem(new string[] { _languagesAvail[i], _languageCodes[i] });
-                        item.Tag = _languageCodes[i];
-                        mpListViewAvailAudioLang.Items.Add(item);
+                        item.Name = _languageCodes[i];
+                        if (!mpListViewAvailAudioLang.Items.ContainsKey(item.Name))
+                        {
+                          mpListViewAvailAudioLang.Items.Add(item);
+                        }
                       }
                     }
                     mpListViewAvailAudioLang.ListViewItemSorter = _columnSorter = new ListViewColumnSorter();
@@ -191,11 +194,14 @@ namespace MediaPortal.Configuration.Sections
                     mpListViewPreferredSubLang.Items.Clear();
                     for (int i = 0; i < _languagesAvail.Count; i++)
                     {
-                      if (!_preferredSubLanguages.Contains(_languagesAvail[i]) && _languageCodes[i] != _languageCodes[i - 1])
+                      if (!_preferredSubLanguages.Contains(_languagesAvail[i]))
                       {
                         ListViewItem item = new ListViewItem(new string[] { _languagesAvail[i], _languageCodes[i] });
-                        item.Tag = _languageCodes[i];
-                        mpListViewAvailSubLang.Items.Add(item);
+                        item.Name = _languageCodes[i];
+                        if (!mpListViewAvailSubLang.Items.ContainsKey(item.Name))
+                        {
+                          mpListViewAvailSubLang.Items.Add(item);
+                        }
                       }
                     }
                     mpListViewAvailSubLang.ListViewItemSorter = _columnSorter = new ListViewColumnSorter();
