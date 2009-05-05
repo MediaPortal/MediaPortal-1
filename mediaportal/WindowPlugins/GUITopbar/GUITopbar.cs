@@ -58,7 +58,7 @@ namespace MediaPortal.Topbar
       GetID = (int) Window.WINDOW_TOPBAR;
     }
 
-    public bool UseTopBarSub // Use top Bar in Submenu. 
+    public bool UseTopBarSub	// Use top Bar in Submenu. 
     {
       get { return useTopBarSub; }
       set { useTopBarSub = value; }
@@ -101,7 +101,7 @@ namespace MediaPortal.Topbar
         if ((pos.YPos + pos.control.Height) > m_iTopbarRegion)
         {
           m_iTopbarRegion = pos.YPos + pos.control.Height;
-        }
+      }
       }
 
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Topbar2);
@@ -141,43 +141,26 @@ namespace MediaPortal.Topbar
 
     public override bool DoesPostRender()
     {
-      if (!m_bEnabled)
-      {
-        return false;
-      }
-      if (GUIGraphicsContext.IsFullScreenVideo)
-      {
-        return false;
-      }
-      if (GUIGraphicsContext.DisableTopBar)
-      {
-        return false;
-      }
-      if (GUIWindowManager.ActiveWindow == (int) Window.WINDOW_WEBBROWSER)
-      {
-        return false;
-      }
-      if (GUIWindowManager.ActiveWindow == (int) Window.WINDOW_MOVIE_CALIBRATION)
-      {
-        return false;
-      }
-      if (GUIWindowManager.ActiveWindow == (int) Window.WINDOW_UI_CALIBRATION)
-      {
-        return false;
-      }
-      if (GUIWindowManager.ActiveWindow == (int) Window.WINDOW_SLIDESHOW)
-      {
-        return false;
-      }
-      if (GUIWindowManager.ActiveWindow == (int) Window.WINDOW_HOME && useTopBarSub == true)
-      {
-        return true;
-      }
-      if (GUIWindowManager.ActiveWindow != (int) Window.WINDOW_HOME)
-      {
-        return true;
-      }
-      return false;
+      if (!m_bEnabled) return false;
+      //if (GUIGraphicsContext.IsFullScreenVideo) return false;
+      if (GUIGraphicsContext.DisableTopBar) return false;
+      if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_WEBBROWSER) return false;
+      if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MOVIE_CALIBRATION) return false;
+      if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_UI_CALIBRATION) return false;
+			// XXX OS: if we are in DVD menu display we disable the topbar because it can interfere with the DVD navigation menu
+			if (MediaPortal.Player.g_Player.IsDVDMenu) return false;
+			// XXX OS: picture slideshow should have a topbar... i still have no idea why they disabled it in all these screens
+			//if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW) return false;
+			return true;
+
+			// XXX OS: commented out the supression of the topbar on the home screen
+			//if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_HOME && useTopBarSub == true) return true;
+			//			
+			//if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_HOME)
+      //{
+      //  return true;
+      //}
+      //return false;
     }
 
     public override void PostRender(float timePassed, int iLayer)
@@ -207,9 +190,9 @@ namespace MediaPortal.Topbar
         }
         foreach (CPosition pos in _listPositions)
         {
-          int y = (int) pos.YPos - m_iMoveUp;
+          int y = (int)pos.YPos - m_iMoveUp;
           //y += GUIGraphicsContext.OverScanTop;     // already done
-          pos.control.SetPosition((int) pos.XPos, y);
+          pos.control.SetPosition((int)pos.XPos, y);
         }
       }
       else if (m_bTopBarHidden != m_bTopBarHide)
@@ -255,9 +238,9 @@ namespace MediaPortal.Topbar
 
           foreach (CPosition pos in _listPositions)
           {
-            int y = (int) pos.YPos - m_iMoveUp;
+            int y = (int)pos.YPos - m_iMoveUp;
             //y += GUIGraphicsContext.OverScanTop;  // already done
-            pos.control.SetPosition((int) pos.XPos, y);
+            pos.control.SetPosition((int)pos.XPos, y);
           }
         }
       }
@@ -319,13 +302,13 @@ namespace MediaPortal.Topbar
         {
           bool bFocus = control.Focus;
           int id;
-          if (control.HitTest((int) action.fAmount1, (int) action.fAmount2, out id, out bFocus))
+          if (control.HitTest((int)action.fAmount1, (int)action.fAmount2, out id, out bFocus))
           {
             if (!bFocus)
             {
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, id, 0, 0, null);
               OnMessage(msg);
-              control.HitTest((int) action.fAmount1, (int) action.fAmount2, out id, out bFocus);
+              control.HitTest((int)action.fAmount1, (int)action.fAmount2, out id, out bFocus);
             }
             control.OnAction(action);
             m_bFocused = true;
