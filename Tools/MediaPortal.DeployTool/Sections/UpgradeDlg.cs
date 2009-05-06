@@ -47,7 +47,7 @@ namespace MediaPortal.DeployTool.Sections
     {
       //
       // Disable upgrade if installed version is different from previous or SVN is installed
-      // es1.  1.0.2 is current, installed must be 1.0.0
+      // es1.  1.0.2 is current, installed must be 1.0.0/1.0.1
       // es2.  1.0 SVN XXXXX is installed
       //
 

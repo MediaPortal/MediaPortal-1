@@ -440,7 +440,7 @@ namespace MediaPortal.DeployTool
         case "c":                       //current
                   return "1.0.2";
         case "p":                       //previous
-                  return "1.0.2";
+                  return "1.0.1";
         case "s":                       //stable
                   return "1.0.0";
         default:
