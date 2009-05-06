@@ -181,7 +181,7 @@ namespace MediaPortal.Configuration.Sections
                             if (_languageCodes[j].Contains(langStr))
                             {
                               ListViewItem item = new ListViewItem(new string[] { _languagesAvail[j], _languageCodes[j] });
-                              item.Tag = _languageCodes[j];
+                              item.Name = _languageCodes[j];
                               mpListViewPreferredAudioLang.Items.Add(item);
                               break;
                             }
@@ -223,7 +223,7 @@ namespace MediaPortal.Configuration.Sections
                             if (_languageCodes[j].Contains(langStr))
                             {
                               ListViewItem item = new ListViewItem(new string[] { _languagesAvail[j], _languageCodes[j] });
-                              item.Tag = _languageCodes[j];
+                              item.Name = _languageCodes[j];
                               mpListViewPreferredSubLang.Items.Add(item);
                               break;
                             }
@@ -282,14 +282,14 @@ namespace MediaPortal.Configuration.Sections
 
         foreach (ListViewItem item in mpListViewPreferredAudioLang.Items)
         {
-          prefLangs += (string)item.Tag + ";";
+          prefLangs += (string)item.Name + ";";
         }
         xmlwriter.SetValue("tvservice", "preferredaudiolanguages", prefLangs);
 
         prefLangs = "";
         foreach (ListViewItem item in mpListViewPreferredSubLang.Items)
         {
-          prefLangs += (string)item.Tag + ";";
+          prefLangs += (string)item.Name + ";";
         }
         xmlwriter.SetValue("tvservice", "preferredsublanguages", prefLangs);
       }
