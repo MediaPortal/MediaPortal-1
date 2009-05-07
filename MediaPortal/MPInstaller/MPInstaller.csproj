@@ -1,8 +1,8 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{11ADEC11-8343-40AD-8AE1-F5AF63F3D7DE}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -11,7 +11,12 @@
     <AssemblyName>MPInstaller</AssemblyName>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <ApplicationIcon>MPI MediaPortal Installer.ico</ApplicationIcon>
-    <StartupObject>MediaPortal.MPInstaller.Program</StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <ApplicationManifest>MPInstaller.exe.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -163,8 +168,7 @@
       <DependentUpon>Info.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
-    <None Include="MPInstaller.exe.manifest">
-    </None>
+    <None Include="MPInstaller.exe.manifest" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

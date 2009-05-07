@@ -12,11 +12,7 @@
     <Win32Resource>
     </Win32Resource>
     <ApplicationIcon>images\icon.mpConfig.ico</ApplicationIcon>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>2.0</OldToolsVersion>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
+    <ApplicationManifest>SetupTv.exe.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -230,8 +226,7 @@
     <EmbeddedResource Include="42_upgrade_sqlserver_database.sql" />
     <EmbeddedResource Include="create_mysql_database.sql" />
     <EmbeddedResource Include="create_sqlserver_database.sql" />
-    <None Include="SetupTv.exe.manifest">
-    </None>
+    <None Include="SetupTv.exe.manifest" />
     <Compile Include="SearchSHOUTcast.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -548,4 +543,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
 </Project>
