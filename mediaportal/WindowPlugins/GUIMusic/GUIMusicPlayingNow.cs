@@ -536,12 +536,12 @@ namespace MediaPortal.GUI.Music
         ImageChangeTimer.Start();
       }
 
-      // Start the VUMeter Update Timer, currently used in XFace skin, when BASS player is selected
+      // Start the VUMeter Update Timer, when it is enabled in skin file
       string skinName = GUIGraphicsContext.Skin.Substring(GUIGraphicsContext.Skin.LastIndexOf(@"\"));
       GUIPropertyManager.SetProperty("#VUMeterL", @"VU1.png");
       GUIPropertyManager.SetProperty("#VUMeterR", @"VU1.png");
       if (VUMeterTimer == null && _usingBassEngine &&
-          skinName.ToLower().Contains("xface"))
+          _hasVUMeter)
       {
         VUMeterTimer = new Timer();
         VUMeterTimer.Interval = 200;
