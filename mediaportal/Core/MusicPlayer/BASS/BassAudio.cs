@@ -336,7 +336,8 @@ namespace MediaPortal.Player
                                          {0, 1} // right-rear center out = right in
                                        };
 
-    private StreamCopy _streamcopy;
+    private StreamCopy _streamcopy;     // For Asio Channels
+    private Un4seen.Bass.Misc.DSP_StreamCopy _streamVUMeter;  // We need a cloned stream for VUMeter support, so that we don't steal data
 
     // CUE Support
     private string currentCueFileName = null;
@@ -345,10 +346,6 @@ namespace MediaPortal.Player
     private float cueTrackStartPos = 0;
     private float cueTrackEndPos = 0;
     private int cueTrackEndEventHandler;
-
-    // RMS / VUMeter
-    private int _30mslength = 0;
-    private float[] _rmsData;           // Global data buffer used at RMS
     #endregion
 
     #region Properties
@@ -1815,8 +1812,6 @@ namespace MediaPortal.Player
 
           if (stream != 0)
           {
-            _30mslength = (int)Bass.BASS_ChannelSeconds2Bytes(stream, 0.03); // 30ms window used by RMS / VUMeter
-
             StreamEventSyncHandles[CurrentStreamIndex] = RegisterPlaybackEvents(stream, CurrentStreamIndex);
 
             if (doFade && _CrossFadeIntervalMS > 0)
@@ -1954,6 +1949,31 @@ namespace MediaPortal.Player
           if (stream != 0 && playbackStarted)
           {
             Log.Info("BASS: playback started");
+
+            // Set up the stream copy for VUMeter support
+            if (_Mixing || _useASIO)
+            {
+              _streamVUMeter = new Un4seen.Bass.Misc.DSP_StreamCopy();
+              _streamVUMeter.StreamCopyDevice = 0;
+              if (_Mixing)
+              {
+                _streamVUMeter.ChannelHandle = stream;
+                _streamVUMeter.SourceMixerStream = _mixer;
+              }
+              else
+              {
+                _streamVUMeter.ChannelHandle = stream;
+                _streamVUMeter.StreamCopyFlags = BASSFlag.BASS_SAMPLE_FLOAT;
+              }
+              try
+              {
+                _streamVUMeter.Start();
+              }
+              catch (Exception)
+              {
+                Log.Error("Error starting VUMeter StreamCopy");
+              }
+            }
 
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
             msg.Label = FilePath;
@@ -3143,49 +3163,29 @@ namespace MediaPortal.Player
     {
       int peakL = 0;
       int peakR = 0;
-      float maxL = 0f;
-      float maxR = 0f;
-      int length = _30mslength; // 30ms window already set at buttonPlay_Click
-      int l4 = length / 4; // the number of 32-bit floats required (since length is in bytes!)
+      int stream = 0;
 
-      // increase our data buffer as needed
-      if (_rmsData == null || _rmsData.Length < l4)
-        _rmsData = new float[l4];
-
-      // Note: this is a special mechanism to deal with variable length c-arrays.
-      // In fact we just pass the address (reference) to the first array element to the call.
-      // However the .Net marshal operation will copy N array elements (so actually fill our float[]).
-      // N is determined by the size of our managed array, in this case N=l4
-      length = Bass.BASS_ChannelGetData(GetCurrentStream(), _rmsData, length);
-
-      l4 = length / 4; // the number of 32-bit floats received
-
-      for (int a = 0; a < l4; a++)
+      // Find out with which stream to deal with
+      if (_Mixing || _useASIO)
       {
-        float absLevel = Math.Abs(_rmsData[a]);
-        // decide on L/R channel
-        if (a % 2 == 0)
+        if (_streamVUMeter != null)
         {
-          // L channel
-          if (absLevel > maxL)
-            maxL = absLevel;
-        }
-        else
-        {
-          // R channel
-          if (absLevel > maxR)
-            maxR = absLevel;
+          stream = _streamVUMeter.StreamCopy;
         }
       }
+      else
+      {
+        stream = GetCurrentStream();
+      }
 
-      // limit the maximum peak levels to +6bB = 0xFFFF = 65535
-      // the peak levels will be int values, where 32767 = 0dB!
-      // and a float value of 1.0 also represents 0db.
-      peakL = (int)Math.Round(32767f * maxL) & 0xFFFF;
-      peakR = (int)Math.Round(32767f * maxR) & 0xFFFF;
+      int level = Bass.BASS_ChannelGetLevel(stream);
+      peakL = Un4seen.Bass.Utils.LowWord32(level); // the left level
+      peakR = Un4seen.Bass.Utils.HighWord32(level); // the right level
 
       dbLevelL = Un4seen.Bass.Utils.LevelToDB(peakL, 65535);
-      dbLevelR = Un4seen.Bass.Utils.LevelToDB(peakR, 65535);
+      dbLevelR = Un4seen.Bass.Utils.LevelToDB(peakR, 65535);      
+
+      Console.WriteLine("{0} {1}", peakL, peakR);
     }
     #endregion
   }
