@@ -451,6 +451,8 @@ Section "MediaPortal core files (required)" SecCore
   File "..\tvcapture\bin\${BUILD_TYPE}\TVCapture.dll"
   ; TvGuideScheduler
   File "..\TVGuideScheduler\bin\${BUILD_TYPE}\TVGuideScheduler.exe"
+  ; TVE2 Skystar2 support
+  File "${svn_DirectShowFilters}\dvblib\bin\${BUILD_TYPE}\dvblib.dll"
   ; MusicShareWatcher
   File "..\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\${BUILD_TYPE}\MusicShareWatcher.exe"
   File "..\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\${BUILD_TYPE}\MusicShareWatcherHelper.dll"
@@ -492,8 +494,6 @@ Section "MediaPortal core files (required)" SecCore
   ; Wizards
   SetOutPath "$MPdir.Base\Wizards"
   File "..\Configuration\Wizards\*.*"
-  ; binary used for skystar2 support
-  File "${svn_DirectShowFilters}\dvblib\bin\${BUILD_TYPE}\dvblib.dll"
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION
