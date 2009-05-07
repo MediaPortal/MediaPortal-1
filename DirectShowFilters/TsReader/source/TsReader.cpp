@@ -38,30 +38,19 @@
 #include "memoryreader.h"
 #include <cassert>
 
+static char logFile[MAX_PATH];
+static bool logFileParsed = false;
 
 void GetLogFile(char *pLog)
 {
-  /*OSVERSIONINFO osvi;
-  osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-  GetVersionEx (&osvi);*/
-
-  // Both Vista and XP are onw using the same logging folders
-  // Vista
-  //if(osvi.dwMajorVersion >= 6)
+  if(!logFileParsed)
   {
     TCHAR folder[MAX_PATH];
     ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-    sprintf(pLog,"%s\\Team MediaPortal\\MediaPortal\\Log\\TsReader.log",folder);
+    sprintf(logFile,"%s\\Team MediaPortal\\MediaPortal\\Log\\TsReader.log",folder);
+    logFileParsed=true;
   }
-  /*else // XP or earlier
-  {
-    char moduleFileName[1024];
-    GetModuleFileName(NULL,moduleFileName,sizeof(moduleFileName));
-    string logFile=moduleFileName;
-    logFile=logFile.substr(0, logFile.rfind("\\"));
-    logFile.append("\\log\\TsReader.log");
-    strncpy(pLog, logFile.c_str(), 1024);
-  }*/
+  strcpy(pLog, &logFile[0]);
 }
 
 
