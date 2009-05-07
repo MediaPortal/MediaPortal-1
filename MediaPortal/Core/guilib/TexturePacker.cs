@@ -353,7 +353,7 @@ namespace MediaPortal.GUI.Library
           files.AddRange(skinFiles);
           files.AddRange(forcedCacheFiles);
         }
-        if (xmlreader.GetValueAsBool("debug", "packLogoGfx", true))
+        if (xmlreader.GetValueAsBool("debug", "packLogoGfx", false))
         {
           string[] logoFiles = Directory.GetFiles(Config.GetFolder(Config.Dir.Thumbs), "*.png", SearchOption.AllDirectories);
           //string[] thumbFiles = Directory.GetFiles(Config.GetFolder(Config.Dir.Thumbs), "*.jpg", SearchOption.AllDirectories);
