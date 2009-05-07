@@ -3,6 +3,7 @@
   <id>510</id>
   <defaultcontrol>33</defaultcontrol>
   <allowoverlay>no</allowoverlay>
+  <vumeter>yes</vumeter>
   <controls>
     <control>
       <type>image</type>
