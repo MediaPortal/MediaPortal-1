@@ -107,8 +107,8 @@ void CProgramToTransportStream::Write(byte* data, int len)
 		{
 			if(m_bSendVideoAudioObserverEvents && m_pCallback != NULL){
 				m_bSendVideoAudioObserverEvents = false;
-				m_pCallback->OnNotify(PidType::Audio);
-				m_pCallback->OnNotify(PidType::Video);
+				m_pCallback->OnNotify(Audio);
+				m_pCallback->OnNotify(Video);
 			}
 			m_env->taskScheduler().doEventLoop(); 
 		}

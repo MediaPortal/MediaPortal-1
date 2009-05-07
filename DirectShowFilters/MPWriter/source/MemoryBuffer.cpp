@@ -46,7 +46,7 @@ void CMemoryBuffer::Stop()
 DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset)
 {	
 	if (lDataLength<0) return 0;
-  while (m_BytesInBuffer < lDataLength)
+  while ((long)m_BytesInBuffer < lDataLength)
   {	
     if (m_bStopping) 
     {

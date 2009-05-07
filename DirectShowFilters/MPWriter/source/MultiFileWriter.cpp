@@ -203,7 +203,7 @@ HRESULT MultiFileWriter::Write(PBYTE pbData, ULONG lDataLength)
 
 		// Try writing the remaining data now that a new file has been created.
 		pbData += dataToWrite;
-		lDataLength -= dataToWrite;
+		lDataLength -= (ULONG) dataToWrite;
 		return Write(pbData, lDataLength);
 	}
 	else
