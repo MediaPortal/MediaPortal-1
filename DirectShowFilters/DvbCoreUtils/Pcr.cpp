@@ -172,14 +172,14 @@ double CPcr::ToClock() const
 void CPcr::Time(int& day,int& hour, int &minutes, int& seconds, int & millsecs)
 {
   double clock=ToClock();
-  day = clock/86400;
-  clock-=day*86400;
-  hour = clock/3600;
+  day = (int) (clock/86400);
+  clock-= day*86400;
+  hour = (int) (clock/3600);
   clock-=hour*3600;
-  minutes=clock/60;
+  minutes= (int) (clock/60);
   clock-=minutes*60;
-  seconds=floor(clock);
-  millsecs=(clock-seconds)*1000;
+  seconds= (int) floor(clock);
+  millsecs=(int) ((clock-seconds)*1000);
 }
 
 CPcr & CPcr::operator+=(const CPcr &rhs) 
