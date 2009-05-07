@@ -55,6 +55,7 @@ HMODULE m_hModuleMFPLAT = NULL;
 
 TDXVA2CreateDirect3DDeviceManager9* m_pDXVA2CreateDirect3DDeviceManager9 = NULL;
 TMFCreateVideoSampleFromSurface* m_pMFCreateVideoSampleFromSurface = NULL;
+TMFCreateVideoMediaType* m_pMFCreateVideoMediaType = NULL;
 TMFCreateMediaType* m_pMFCreateMediaType = NULL;
 BOOL m_bEVRLoaded = false;
 char* m_RenderPrefix = "vmr9";
@@ -342,14 +343,12 @@ void UnloadEVR()
   Log("Unloading EVR libraries");
   if (m_hModuleDXVA2!=NULL)
   {
-
 	  Log("Freeing library DXVA2.dll");
-
     if (!FreeLibrary(m_hModuleDXVA2))
-	{
-		Log("DXVA2.dll could not be unloaded!");
-	}
-	m_hModuleDXVA2 = NULL;
+  	{
+      Log("DXVA2.dll could not be unloaded!");
+    }
+	  m_hModuleDXVA2 = NULL;
   }
   if (m_hModuleEVR!=NULL)
   {
@@ -358,7 +357,7 @@ void UnloadEVR()
 	  {
 		  Log("EVR.dll could not be unloaded");
 	  }
-	m_hModuleEVR = NULL;
+    m_hModuleEVR = NULL;
   }
   if (m_hModuleMFPLAT!=NULL)
   {
@@ -367,9 +366,8 @@ void UnloadEVR()
 	  {
 		  Log("MFPLAT.dll could not be unloaded");
 	  }
-	m_hModuleMFPLAT = NULL;
+    m_hModuleMFPLAT = NULL;
   }
-  
 }
 
 bool LoadEVR()
@@ -386,24 +384,31 @@ bool LoadEVR()
     m_pDXVA2CreateDirect3DDeviceManager9=(TDXVA2CreateDirect3DDeviceManager9*)GetProcAddress(m_hModuleDXVA2,"DXVA2CreateDirect3DDeviceManager9");
     if (m_pDXVA2CreateDirect3DDeviceManager9!=NULL)
     {
-		Log("Found method DXVA2CreateDirect3DDeviceManager9");
+		  Log("Found method DXVA2CreateDirect3DDeviceManager9");
       sprintf(mfDLLFileName,"%s\\evr.dll", systemFolder);
       m_hModuleEVR=LoadLibrary(mfDLLFileName);
       m_pMFCreateVideoSampleFromSurface=(TMFCreateVideoSampleFromSurface*)GetProcAddress(m_hModuleEVR,"MFCreateVideoSampleFromSurface");
-	  if ( m_pMFCreateVideoSampleFromSurface )
-	  {
-		  Log("Found method MFCreateVideoSampleFromSurface");
-		  sprintf(mfDLLFileName,"%s\\mfplat.dll", systemFolder);
-		  m_hModuleMFPLAT=LoadLibrary(mfDLLFileName);
-		  m_pMFCreateMediaType=(TMFCreateMediaType*)GetProcAddress(m_hModuleMFPLAT,"MFCreateMediaType");
-		  if ( m_pMFCreateMediaType )
-		  {
-			  Log("Found method MFCreateMediaType");
-			  Log("Successfully loaded EVR dlls");
-			  return TRUE;
-		  }
+	    
+      if ( m_pMFCreateVideoSampleFromSurface )
+	    {
+		    Log("Found method MFCreateVideoSampleFromSurface");
+        m_pMFCreateVideoMediaType=(TMFCreateVideoMediaType*)GetProcAddress(m_hModuleEVR,"MFCreateVideoMediaType");
+        if( m_pMFCreateVideoMediaType )
+        {
+          Log("Found method MFCreateVideoMediaType");
+          sprintf(mfDLLFileName,"%s\\mfplat.dll", systemFolder);
+		      m_hModuleMFPLAT=LoadLibrary(mfDLLFileName);
+		      m_pMFCreateMediaType=(TMFCreateMediaType*)GetProcAddress(m_hModuleMFPLAT,"MFCreateMediaType");
+  		    
+          if ( m_pMFCreateMediaType )
+		      {
+			      Log("Found method MFCreateMediaType");
+			      Log("Successfully loaded EVR dlls");
+			      return TRUE;
+		      }
+        }
+	    }
 	  }
-	}
   }
   Log("Could not find all dependencies for EVR!");
   UnloadEVR();
@@ -416,7 +421,7 @@ void DsDumpGraph( IFilterGraph* vmr9Filter )
 	return;
 	IEnumFilters* pEnum;
 	vmr9Filter->EnumFilters(&pEnum);
-Log("---------------------DUMPGRAPH----------------");
+  Log("---------------------DUMPGRAPH----------------");
   //	HRESULT hr;
 	IBaseFilter* pFilter;
 	ULONG cFetched;
@@ -433,7 +438,8 @@ Log("---------------------DUMPGRAPH----------------");
 			pFilter->EnumPins(&pEnumPins);
 			IPin* pPins, *pConnectedPin;
 			ULONG pinsFetched;
-			do {
+			do 
+      {
 				pEnumPins->Next(1, &pPins, &pinsFetched);
 				if ( pinsFetched > 0 )
 				{
@@ -443,7 +449,8 @@ Log("---------------------DUMPGRAPH----------------");
 					Log("Found pin: %s", astr);
 					CoTaskMemFree(astr);
 
-					if ( SUCCEEDED(pPins->ConnectedTo(&pConnectedPin)) ) {
+					if ( SUCCEEDED(pPins->ConnectedTo(&pConnectedPin)) ) 
+          {
 						pConnectedPin->QueryPinInfo(&pinInfo);
 						UnicodeToAnsi(pinInfo.achName, &astr);
 						Log("Connected to pin: %s", astr);
@@ -452,16 +459,20 @@ Log("---------------------DUMPGRAPH----------------");
 						UnicodeToAnsi(info.achName, &astr);
 						Log("\tFrom Filter: %p: %s", pinInfo.pFilter, astr);
 						CoTaskMemFree(astr);
-					} else {
+					} 
+          else 
+          {
 						Log( "Could not get connected pin!");
 					}
 				}
-			} while (pinsFetched > 0);
+			} 
+      while (pinsFetched > 0);
 		}
-	} while ( cFetched > 0 );
+	} 
+  while ( cFetched > 0 );
 
 	pEnum->Release();
-Log("---------------------/DUMPGRAPH----------------");
+  Log("---------------------/DUMPGRAPH----------------");
 	//DumpGraph(vmr9Filter, 0);
 }
 

@@ -13,10 +13,10 @@
 #include <dxva2api.h>
 
 // This class is exported from the dshowhelper.dll
-class DSHOWHELPER_API Cdshowhelper {
+class DSHOWHELPER_API Cdshowhelper 
+{
 public:
 	Cdshowhelper(void);
-	// TODO: add your methods here.
 };
 
 extern DSHOWHELPER_API int ndshowhelper;
@@ -29,8 +29,10 @@ extern TDXVA2CreateDirect3DDeviceManager9* m_pDXVA2CreateDirect3DDeviceManager9;
 typedef HRESULT __stdcall TMFCreateVideoSampleFromSurface(__in_opt IUnknown* pUnkSurface,__deref_out_opt IMFSample** ppSample);
 extern TMFCreateVideoSampleFromSurface* m_pMFCreateVideoSampleFromSurface;
 
+typedef HRESULT __stdcall TMFCreateVideoMediaType(__out_opt MFVIDEOFORMAT* videoformat, IMFVideoMediaType **videotype);
+extern TMFCreateVideoMediaType* m_pMFCreateVideoMediaType;
+
 typedef HRESULT __stdcall TMFCreateMediaType(IMFMediaType** ppIMediaType);
 extern TMFCreateMediaType* m_pMFCreateMediaType;
 
-HRESULT MyGetService(IUnknown* punkObject, REFGUID guidService,
-    REFIID riid, LPVOID* ppvObject );
+HRESULT MyGetService(IUnknown* punkObject, REFGUID guidService, REFIID riid, LPVOID* ppvObject );

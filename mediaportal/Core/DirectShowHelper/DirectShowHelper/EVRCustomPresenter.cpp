@@ -252,7 +252,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter( IVMR9Callback* pCallback, IDirect3DD
   if (m_pMFCreateVideoSampleFromSurface!=NULL)
   {
     LogRotate();
-    Log("----------v0.37---------------------------");
+    Log("----------v0.4---------------------------");
     m_hMonitor=monitor;
     m_pD3DDev=direct3dDevice;
     HRESULT hr = m_pDXVA2CreateDirect3DDeviceManager9( &m_iResetToken, &m_pDeviceManager );
@@ -272,6 +272,12 @@ MPEVRCustomPresenter::MPEVRCustomPresenter( IVMR9Callback* pCallback, IDirect3DD
     m_fRate = 1.0f;
     m_iFreeSamples = 0;
     m_dwLastStatLogTime = 0;
+    m_nNextJitter = 0;
+    m_llLastPerf = 0;
+    m_fAvrFps = 0.0;
+    m_rtTimePerFrame = 0;
+    memset (m_pllJitter, 0, sizeof(m_pllJitter));
+
     //TODO: use ZeroMemory
     /*for ( int i=0; i<NUM_SURFACES; i++ ) {
     chains[i] = NULL;
@@ -903,6 +909,26 @@ HRESULT MPEVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType,
     i64Size.LowPart  = 1;
     //(*pType)->SetUINT64 (MF_MT_PIXEL_ASPECT_RATIO, i64Size.QuadPart);
 
+    CComPtr<IMFVideoMediaType> pVideoMediaType;
+    HRESULT hr;
+    AM_MEDIA_TYPE* pAMMedia = NULL;
+    MFVIDEOFORMAT* VideoFormat = NULL;
+
+    CHECK_HR (pMixerType->GetRepresentation(FORMAT_MFVideoFormat, (void**)&pAMMedia), "pMixerType->GetRepresentation failed!");
+    VideoFormat = (MFVIDEOFORMAT*)pAMMedia->pbFormat;
+    hr = m_pMFCreateVideoMediaType(VideoFormat, &pVideoMediaType);
+
+    if (hr == 0 && VideoFormat->videoInfo.FramesPerSecond.Numerator != 0)
+    {
+      m_rtTimePerFrame = (20000000I64*VideoFormat->videoInfo.FramesPerSecond.Denominator)/VideoFormat->videoInfo.FramesPerSecond.Numerator;
+    }
+
+    if( m_rtTimePerFrame == 0) 
+    {
+      // Assume 25fps as TsReader is not currently providing the FramesPerSecond info
+      m_rtTimePerFrame = 400000;
+    }
+
     CHECK_HR((*pType)->GetUINT64(MF_MT_FRAME_SIZE, (UINT64*)&i64Size.QuadPart), "Failed to get MF_MT_FRAME_SIZE");
     Log("Frame size: %dx%d",i64Size.HighPart, i64Size.LowPart); 
 
@@ -1062,6 +1088,7 @@ HRESULT MPEVRCustomPresenter::RenegotiateMediaOutputType()
       fFoundMediaType = TRUE;
     }
   }
+
   return hr;
 }
 
@@ -1143,7 +1170,8 @@ HRESULT MPEVRCustomPresenter::PresentSample(IMFSample* pSample)
 
     // Calculate offset to scheduled time
     m_iFramesDrawn++;
-    if ( m_pClock != NULL ) {
+    if ( m_pClock != NULL ) 
+    {
       LONGLONG hnsTimeNow, hnsSystemTime, hnsTimeScheduled;
       m_pClock->GetCorrelatedTime(0, &hnsTimeNow, &hnsSystemTime);
 
@@ -1622,7 +1650,8 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::ProcessMessage(
     //Log("Message 2: %d", m_lInputAvailable);
     //InterlockedIncrement(&m_lInputAvailable);
     //      NotifyWorker();
-    if ( !ImmediateCheckForInput() ) {
+    if ( !ImmediateCheckForInput() ) 
+    {
       NotifyWorker();
     }
     break;
@@ -1851,10 +1880,13 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
     m_pD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
     if(FAILED(hr = m_pD3DDev->StretchRect(pSurface, NULL, m_pVideoSurface, NULL, D3DTEXF_NONE)))
     {
-      Log("vmr9:Paint: StretchRect failed %u\n",hr);
+      Log("EVR:Paint: StretchRect failed %u\n",hr);
     }
     m_pD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
     hr = m_pCallback->PresentImage(m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY, (DWORD)(IDirect3DTexture9*)m_pVideoTexture, (DWORD)(IDirect3DSurface9*)pSurface);
+
+    UpdateJitterStats();
+    
     return hr;
   }
   catch(...)
@@ -1882,20 +1914,23 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::get_FramesDrawn(int *pcFramesDra
 HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::get_AvgFrameRate(int *piAvgFrameRate)
 {
   //Log("evr:get_AvgFrameRate");
+  *piAvgFrameRate = (int)(m_fAvrFps*100);
   return S_OK;
 }
 HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::get_Jitter(int *iJitter)
 {
   /*Log("evr:get_Jitter: %d, deviation: %d", m_iJitter,
   (int)(m_hnsTotalDiff / m_iFramesDrawn) );*/
-  if ( m_dwVariance != 0 && m_iFramesForStats > 0 ) 
+  /*if ( m_dwVariance != 0 && m_iFramesForStats > 0 ) 
   {
     *iJitter = sqrt((double)m_dwVariance/m_iFramesForStats);
   }
   else
   {
     *iJitter = 0;
-  }
+  }*/
+
+  *iJitter = (int)((m_pllJitter[m_nNextJitter]/5000 ) + (m_rtTimePerFrame/10000));
   return S_OK;
 }
 HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::get_AvgSyncOffset(int *piAvg)
@@ -2090,4 +2125,33 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::MapOutputCoordinateToInputStream
   *pxIn=xOut;
   *pyIn=yOut;
   return S_OK;
+}
+
+void MPEVRCustomPresenter::UpdateJitterStats()
+{
+  LONGLONG llPerf;
+
+  LONGLONG i64Ticks100ns;
+  QueryPerformanceCounter ((LARGE_INTEGER*)&i64Ticks100ns);
+  i64Ticks100ns	= i64Ticks100ns * 10000000;
+  i64Ticks100ns	= i64Ticks100ns / g_liQPCFreq.QuadPart;
+
+  llPerf = i64Ticks100ns;
+
+  if ((m_rtTimePerFrame != 0) && (labs ((long)(llPerf - m_llLastPerf)) < m_rtTimePerFrame*3) )
+  {
+    m_nNextJitter = (m_nNextJitter+1) % NB_JITTER;
+    LONGLONG jitter = llPerf - m_llLastPerf - m_rtTimePerFrame;
+    m_pllJitter[m_nNextJitter] = jitter;
+
+    // Calculate the real FPS
+    LONGLONG llJitterSum = 0;
+    for (int i=0; i<NB_JITTER; i++)
+    {
+      llJitterSum += m_pllJitter[i];
+    }
+    m_fAvrFps = 10000000.0/(llJitterSum/NB_JITTER + m_rtTimePerFrame);
+  }
+
+  m_llLastPerf = llPerf;
 }
