@@ -207,6 +207,8 @@ namespace MediaPortal.GUI.Library
             [MethodImpl(MethodImplOptions.Synchronized)]
             public void Dispose()
             {
+              try
+              {
                 if (_image != null)
                 {
                     if (Disposing != null)
@@ -240,6 +242,8 @@ namespace MediaPortal.GUI.Library
                         Disposed(this, new EventArgs());
                     }
                 }
+              }
+              catch { }
             }
 
             #endregion
@@ -441,31 +445,35 @@ namespace MediaPortal.GUI.Library
         /// </summary>
         public void Dispose()
         {
+          try
+          {
             foreach (Frame tex in _listFrames)
             {
-                if (tex != null)
-                {
-                    tex.Disposed -= new EventHandler(frame_Disposed);
-                    tex.Dispose();
-                }
+              if (tex != null)
+              {
+                tex.Disposed -= new EventHandler(frame_Disposed);
+                tex.Dispose();
+              }
             }
             _listFrames.Clear();
             if (_gdiBitmap != null)
             {
-                try
-                {
-                    _gdiBitmap.Dispose();
-                }
-                catch (Exception)
-                {
-                    //already disposed?
-                }
-                _gdiBitmap = null;
+              try
+              {
+                _gdiBitmap.Dispose();
+              }
+              catch (Exception)
+              {
+                //already disposed?
+              }
+              _gdiBitmap = null;
             }
             if (Disposed != null)
             {
-                Disposed(this, new EventArgs());
+              Disposed(this, new EventArgs());
             }
+          }
+          catch { }
         }
 
         #endregion

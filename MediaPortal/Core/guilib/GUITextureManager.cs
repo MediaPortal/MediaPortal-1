@@ -67,6 +67,8 @@ namespace MediaPortal.GUI.Library
 
         private static void dispose(bool disposing)
         {
+          try
+          {
             Log.Debug("TextureManager: Dispose()");
             _packer.Dispose();
             if (disposing)
@@ -78,26 +80,28 @@ namespace MediaPortal.GUI.Library
                 _cache.Clear();
             }
             _cacheDownload.Clear();
+          }
+          catch { }
 
-            string[] files = null;
+          string[] files = null;
 
-            try
+          try
+          {
+            files = Directory.GetFiles(Config.GetFolder(Config.Dir.Thumbs), "MPTemp*.*");
+          }
+          catch { }
+
+          if (files != null)
+          {
+            foreach (string file in files)
             {
-                files = Directory.GetFiles(Config.GetFolder(Config.Dir.Thumbs), "MPTemp*.*");
-            }
-            catch { }
-
-            if (files != null)
-            {
-                foreach (string file in files)
-                {
-                    try
-                    {
-                        File.Delete(file);
-                    }
-                    catch (Exception) { }
-                }
-            }
+              try
+              {
+                File.Delete(file);
+              }
+              catch (Exception) { }
+              }
+          }
         }
 
         public static CachedTexture GetCachedTexture(string filename)
@@ -419,18 +423,22 @@ namespace MediaPortal.GUI.Library
         [MethodImpl(MethodImplOptions.Synchronized)]
         private static void cachedTexture_Disposed(object sender, EventArgs e)
         {
+          try
+          {
             // a texture in the cache has been disposed of! remove from the cache
             for (int i = 0; i < _cache.Count; ++i)
             {
-                if (_cache[i] == sender)
-                {
-                    //Log.Debug("TextureManager: Already disposed texture - cleaning up the cache...");
-                    _cache[i].Disposed -= new EventHandler(cachedTexture_Disposed);
-                    if (_persistentTextures.ContainsKey(_cache[i].Name))
-                      _persistentTextures.Remove(_cache[i].Name);
-                    _cache.Remove(_cache[i]);                    
-                }
+              if (_cache[i] == sender)
+              {
+                //Log.Debug("TextureManager: Already disposed texture - cleaning up the cache...");
+                _cache[i].Disposed -= new EventHandler(cachedTexture_Disposed);
+                if (_persistentTextures.ContainsKey(_cache[i].Name))
+                  _persistentTextures.Remove(_cache[i].Name);
+                _cache.Remove(_cache[i]);                    
+              }
             }
+          }
+          catch { }
         }
 
         private static Texture LoadGraphic(string fileName, long lColorKey, int iMaxWidth, int iMaxHeight, out int width, out int height)
