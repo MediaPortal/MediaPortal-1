@@ -137,7 +137,7 @@ namespace MediaPortal.GUI.Settings
 
     public bool ShowDefaultHome()
     {
-      return true;
+      return false;
     }
 
     #endregion

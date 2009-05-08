@@ -72,7 +72,7 @@ namespace MediaPortal.Topbar
 
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        m_iAutoHideTimeOut = xmlreader.GetValueAsInt("TopBar", "autohidetimeout", 15);
+        m_iAutoHideTimeOut = xmlreader.GetValueAsInt("TopBar", "autohidetimeout", 5);
 
         m_bOverrideSkinAutoHide = false;
         if (xmlreader.GetValueAsInt("TopBar", "overrideskinautohide", 0) == 1)

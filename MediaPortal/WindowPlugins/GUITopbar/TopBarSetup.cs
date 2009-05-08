@@ -53,7 +53,7 @@ namespace MediaPortal.Topbar
 
     public bool DefaultEnabled()
     {
-      return true;
+      return false;
     }
 
     public string Description()

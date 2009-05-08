@@ -150,7 +150,7 @@ namespace MediaPortal.Configuration.Sections
     {
       foreach (ItemTag tag in loadedPlugins)
       {
-        // Show only common, stable plugins
+        // Show only common, stable plugins       
         if (!SettingsForm.AdvancedMode)
         {
           if (tag.IsExternalPlayer)
@@ -178,6 +178,10 @@ namespace MediaPortal.Configuration.Sections
           {
             continue;
           }
+          if (tag.WindowId == 800) // Extensions
+          {
+            continue;
+          }           
         }
 
         // The tvplugin uses the same IDs and names as the inbuild plugin for backward compatibility reasons.

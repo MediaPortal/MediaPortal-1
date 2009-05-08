@@ -120,7 +120,7 @@ namespace WindowPlugins.GUI.Extensions
 
     public bool CanEnable()
     {
-      return true;
+      return false;
     }
 
     public string PluginName()
