@@ -207,7 +207,7 @@ namespace SetupTv
 
       // Mantis #0002138: impossible to configure TVGroups 
       TvBusinessLayer layer = new TvBusinessLayer();
-      layer.CreateGroup("All channels");
+      layer.CreateGroup("All Channels");
 
       try
       {
