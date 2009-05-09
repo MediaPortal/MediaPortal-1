@@ -110,6 +110,14 @@ namespace MediaPortal.GUI.Library
       get { return _listFonts.Count; }
     }
 
+    public static void ReleaseUnmanagedResources()
+    {
+      unsafe
+      {
+        FontEngineSetDevice(null);
+      }
+    }
+
     /// <summary>
     /// Loads the fonts from a file.
     /// </summary>

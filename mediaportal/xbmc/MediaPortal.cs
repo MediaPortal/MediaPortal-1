@@ -1597,6 +1597,7 @@ public class MediaPortalApp : D3DApp, IRender
       tMouseClickTimer = null;
     }
     GUIWaitCursor.Dispose();
+    GUIFontManager.ReleaseUnmanagedResources();
     GUIFontManager.Dispose();
     GUITextureManager.Dispose();
     GUIWindowManager.Clear();

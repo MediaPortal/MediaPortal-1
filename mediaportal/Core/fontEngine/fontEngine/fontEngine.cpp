@@ -224,6 +224,12 @@ void FontEngineInitialize(int screenWidth, int screenHeight, int poolFormat)
 //*******************************************************************************************************************
 void FontEngineSetDevice(void* device)
 {
+  if(!device)
+  {
+    m_pDevice = NULL;
+    return;
+  }
+  
   m_pDevice = (LPDIRECT3DDEVICE9)device;
   m_Filter = D3DTEXF_NONE;
 
@@ -258,6 +264,11 @@ void FontEngineRemoveTexture(int textureNo)
   //char log[128];
   //sprintf(log,"FontEngineRemoveTexture(%d)\n", textureNo);
   //Log(log);
+  if(!m_pDevice)
+  {
+    return;
+  }
+
   if(inPresentTextures)
   {
     char log[128];
