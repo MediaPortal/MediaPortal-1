@@ -23,7 +23,6 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using TvLibrary.Channels;
-using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.DVB
@@ -31,7 +30,7 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// KNC CI control class
   /// </summary>
-  public class KNC : IDisposable, ICiMenuActions
+  public class KNC : IDisposable
   {
     IKNC _KNCInterface;
     readonly IntPtr ptrPmt;
@@ -232,79 +231,5 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Info("KNC: IsCIAvailable {0}", yesNo);
       return yesNo;
     }
-
-    #region ICiMenuActions Member
-
-    /// <summary>
-    /// Sets the callback handler
-    /// </summary>
-    /// <param name="ciMenuHandler"></param>
-    public bool SetCiMenuHandler(ICiMenuCallbacks ciMenuHandler)
-    {
-      if (ciMenuHandler != null)
-      {
-        //_KNCInterface.SetCiMenuHandler(ciMenuHandler);
-        return true;
-      }
-      return false;
-    }
-
-
-    /// <summary>
-    /// Enters the CI menu of KNC1 card
-    /// </summary>
-    /// <returns></returns>
-    public bool EnterCIMenu()
-    {
-      if (_KNCInterface == null)
-        return false;
-      Log.Log.Debug("KNC: Enter CI Menu");
-      _KNCInterface.EnterModuleMenu();
-      return true;
-    }
-
-    /// <summary>
-    /// Closes the CI menu of KNC1 card
-    /// </summary>
-    /// <returns></returns>
-    public bool CloseCIMenu()
-    {
-      if (_KNCInterface == null)
-        return false;
-      Log.Log.Debug("KNC: Close CI Menu");
-      _KNCInterface.CloseModuleMenu();
-      return true;
-    }
-
-    /// <summary>
-    /// Selects a CI menu entry
-    /// </summary>
-    /// <param name="choice"></param>
-    /// <returns></returns>
-    public bool SelectMenu(byte choice)
-    {
-      if (_KNCInterface == null)
-        return false;
-      Log.Log.Debug("KNC: Select CI Menu entry {0}", choice);
-      _KNCInterface.SelectMenu(choice);
-      return true;
-    }
-
-    /// <summary>
-    /// Sends an answer after CI request
-    /// </summary>
-    /// <param name="Cancel"></param>
-    /// <param name="Answer"></param>
-    /// <returns></returns>
-    public bool SendMenuAnswer(bool Cancel, string Answer)
-    {
-      if (_KNCInterface == null)
-        return false;
-      if (Answer == null) Answer = "";
-      Log.Log.Debug("KNC: Send Menu Answer: {0}, Cancel: {1}", Answer, Cancel);
-      _KNCInterface.SendMenuAnswer(Cancel, Answer);
-      return true;
-    }
-    #endregion
   }
 }
