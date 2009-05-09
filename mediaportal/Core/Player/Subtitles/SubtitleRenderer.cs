@@ -427,7 +427,7 @@ namespace MediaPortal.Player.Subtitles
           Log.Debug("Page: " + sub.page);
           Log.Debug("Character table: " + sub.encoding);
           Log.Debug("Timeout: " + sub.timeOut);
-          Log.Debug("Timestamp" + sub.timeStamp);
+          Log.Debug("Timestamp: " + sub.timeStamp);
           Log.Debug("Language: " + sub.language);
 
           String content = sub.text;
