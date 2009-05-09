@@ -544,6 +544,9 @@ namespace MediaPortal.GUI.Video
         case VideoSort.SortMethod.Label:
           strLine = GUILocalizeStrings.Get(430);
           break;
+        case VideoSort.SortMethod.Unwatched:
+          strLine = GUILocalizeStrings.Get(527);
+          break;
       }
 
       if (btnSortBy != null)
@@ -801,6 +804,7 @@ namespace MediaPortal.GUI.Video
       dlg.AddLocalizedString(366); // year
       dlg.AddLocalizedString(367); // rating
       dlg.AddLocalizedString(430); // label
+      dlg.AddLocalizedString(527); // unwatched
 
       // set the focus to currently used sort method
       dlg.SelectedLabel = (int) CurrentSortMethod;
@@ -831,6 +835,9 @@ namespace MediaPortal.GUI.Video
           break;
         case 430:
           CurrentSortMethod = VideoSort.SortMethod.Label;
+          break;
+        case 527:
+          CurrentSortMethod = VideoSort.SortMethod.Unwatched;
           break;
         default:
           CurrentSortMethod = VideoSort.SortMethod.Name;

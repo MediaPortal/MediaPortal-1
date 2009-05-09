@@ -43,6 +43,7 @@ namespace MediaPortal.GUI.Video
       Year = 3,
       Rating = 4,
       Label = 5,
+      Unwatched = 6
     }
 
     protected SortMethod currentSortMethod;
@@ -208,6 +209,21 @@ namespace MediaPortal.GUI.Video
           {
             return DateTime.Compare(item2.FileInfo.ModificationTime, item1.FileInfo.ModificationTime);
           }
+        case SortMethod.Unwatched:
+          {
+            int ret = 0;
+            if (item1.IsPlayed && !item2.IsPlayed)
+            {
+              ret = 1;
+              if (!sortAscending) ret = -1;
+            }
+            if (!item1.IsPlayed && item2.IsPlayed)
+            {
+              ret = -1;
+              if (!sortAscending) ret = 1;
+            }
+            return ret;
+          }      
       }
       return 0;
     }
