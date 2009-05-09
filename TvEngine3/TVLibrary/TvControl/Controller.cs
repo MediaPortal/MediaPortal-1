@@ -1014,5 +1014,59 @@ namespace TvControl
     void SetBitRateMode(int cardId, VIDEOENCODER_BITRATE_MODE bitRateMode);
 
     #endregion
+
+    #region CI Menu support
+
+    /// <summary>
+    /// Indicates if CI Menu is supported
+    /// </summary>
+    /// <param name="cardId">Unique id of the card</param>
+    /// <returns>true/false</returns>
+    bool CiMenuSupported(int cardId);
+
+    /// <summary>
+    /// Enters the ci menu of card
+    /// </summary>
+    /// <param name="cardId">card</param>
+    /// <returns>true if successful</returns>
+    bool EnterCiMenu(int cardId);
+
+    /// <summary>
+    /// Selects a ci menu option
+    /// </summary>
+    /// <param name="cardId"></param>
+    /// <returns>true if successful</returns>
+    bool SelectMenu(int cardId, byte choice);
+
+    /// <summary>
+    /// CloseMenu closes the menu
+    /// </summary>
+    /// <param name="cardId">card</param>
+    /// <returns>true if successful</returns>
+    bool CloseMenu(int cardId);
+
+    /// <summary>
+    /// Sends a answer to cam after a request
+    /// </summary>
+    /// <param name="cardId">card</param>
+    /// <param name="Cancel">cancel request</param>
+    /// <param name="Answer">answer string</param>
+    /// <returns></returns>
+    bool SendMenuAnswer(int cardId, bool Cancel, string Answer);
+
+    /// <summary>
+    /// Registers a ci menu callback handler for user interaction
+    /// </summary>
+    /// <param name="cardId"></param>
+    /// <param name="CallbackHandler"></param>
+    /// <returns></returns>
+    bool SetCiMenuHandler(int cardId, ICiMenuCallbacks CallbackHandler);
+
+    /// <summary>
+    /// Add or remove callback destinations on the client
+    /// </summary>
+    event CiMenuCallback OnCiMenu;
+    
+    #endregion
   }
 }

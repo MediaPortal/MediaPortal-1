@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{30BBD993-535E-40FA-B751-120CC8005E09}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TvEngine</RootNamespace>
+    <AssemblyName>CI_Menu_Plugin</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>C:\Program Files\Team MediaPortal\MediaPortal TV Server\plugins\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>C:\Program Files\Team MediaPortal\MediaPortal TV Server\plugins\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Gentle.Common, Version=1.5.0.29053, Culture=neutral, PublicKeyToken=80b5de62e27be49b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TVDatabase\references\Gentle.Common.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Gentle.Framework, Version=1.5.0.29053, Culture=neutral, PublicKeyToken=80b5de62e27be49b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TVDatabase\references\Gentle.Framework.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CiMenuEntry.cs" />
+    <Compile Include="CI_Menu.cs" />
+    <Compile Include="CI_Menu_Dialog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CI_Menu_Dialog.Designer.cs">
+      <DependentUpon>CI_Menu_Dialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\SetupControls\SetupControls.csproj">
+      <Project>{A2792D3C-04C1-4A92-9383-A33D59C54D8D}</Project>
+      <Name>SetupControls</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\SetupTv\SetupTv.csproj">
+      <Project>{FF9AAD68-BBE0-41F7-9183-F2B8474B9224}</Project>
+      <Name>SetupTv</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\TvControl\TvControl.csproj">
+      <Project>{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}</Project>
+      <Name>TvControl</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj">
+      <Project>{58C35C9D-F18D-40F2-8024-24E50D01E9C5}</Project>
+      <Name>TvBusinessLayer</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\TVDatabase\TVDatabase.csproj">
+      <Project>{0FD8DEAE-37A4-49CC-A7BE-E86E0E0D85BD}</Project>
+      <Name>TVDatabase</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
+      <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
+      <Name>TvLibrary.Interfaces</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\TVLibrary\TVLibrary.csproj">
+      <Project>{59C2EBC8-0FEA-4B2E-B5D1-476347332331}</Project>
+      <Name>TVLibrary</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\PluginBase\PluginBase.csproj">
+      <Project>{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}</Project>
+      <Name>PluginBase</Name>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CI_Menu_Dialog.resx">
+      <DependentUpon>CI_Menu_Dialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

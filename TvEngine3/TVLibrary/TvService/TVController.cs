@@ -31,6 +31,7 @@ using System.Reflection;
 using TvLibrary;
 using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
+using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Implementations.Analog;
 using TvLibrary.Implementations.Hybrid;
 using TvLibrary.Epg;
@@ -48,7 +49,7 @@ namespace TvService
   /// and if server is the master it will delegate the requests to the 
   /// correct slave servers
   /// </summary>
-  public class TVController : MarshalByRefObject, IController, IDisposable, ITvServerEvent, IEpgEvents
+  public class TVController : MarshalByRefObject, IController, IDisposable, ITvServerEvent, IEpgEvents, ICiMenuCallbacks
   {
     #region constants
     private const int HEARTBEAT_MAX_SECS_EXCEED_ALLOWED = 30;
@@ -88,6 +89,25 @@ namespace TvService
     // used to speedup "mini EPG" channel state creation.
     List<Channel> _tvChannelListGroups;
 
+    #region CI Menu Event handling
+    /// <summary>
+    /// Local copy of event holding a collection
+    /// </summary>
+    private static event CiMenuCallback s_ciMenu;
+
+    /// <summary>
+    /// Add or remove callback destinations on the client
+    /// </summary>
+    event CiMenuCallback IController.OnCiMenu
+    {
+      add { 
+        s_ciMenu = value; 
+        Log.Debug("CiMenu: registered client event for callback"); 
+      }
+      remove { Log.Debug("CiMenu: TODO : event remove."); }
+    }
+    #endregion
+
     #endregion
 
     #region events
@@ -123,20 +143,132 @@ namespace TvService
       return _cards[cardId].IsLocal;
     }
 
+    #region CI Menu action functions
+    /// <summary>
+    /// Returns if selected card has CI Menu capabilities
+    /// </summary>
+    /// <param name="cardId">card</param>
+    /// <returns>true if supported</returns>
+    public bool CiMenuSupported(int cardId)
+    {
+      Log.Debug("CiMenuSupported called cardid {0}", cardId);
+      if (ValidateTvControllerParams(cardId, false))
+      {
+        Log.Debug("ValidateTvControllerParams failed");
+        return false;
+      }
+      Log.Debug("CiMenuSupported card {0} supported: {1}", _cards[cardId].CardName, _cards[cardId].CiMenuSupported);
+      return _cards[cardId].CiMenuSupported;
+    }
+
+    /// <summary>
+    /// Enters the card's CI menu
+    /// </summary>
+    /// <param name="cardId">card</param>
+    /// <returns>true if successful</returns>
+    public bool EnterCiMenu(int cardId)
+    {
+      Log.Debug("EnterCiMenu called");
+      if (ValidateTvControllerParams(cardId, false))
+        return false;
+      if (_cards[cardId].CiMenuActions != null)
+        return _cards[cardId].CiMenuActions.EnterCIMenu();
+      else
+        return false;
+    }
+
+    /// <summary>
+    /// SelectMenu selects an ci menu entry; 
+    /// </summary>
+    /// <param name="cardId">card</param>
+    /// <param name="choice">choice,0 for "back" action</param>
+    /// <returns>true if successful</returns>
+    public bool SelectMenu(int cardId, byte choice)
+    {
+      Log.Debug("SelectCiMenu called");
+      if (ValidateTvControllerParams(cardId, false))
+        return false;
+      if (_cards[cardId].CiMenuActions != null)
+        return _cards[cardId].CiMenuActions.SelectMenu(choice);
+      else
+        return false;
+    }
+
+    /// <summary>
+    /// CloseMenu closes the menu
+    /// </summary>
+    /// <param name="cardId">card</param>
+    /// <returns>true if successful</returns>
+    public bool CloseMenu(int cardId)
+    {
+      Log.Debug("CloseMenu called");
+      if (ValidateTvControllerParams(cardId, false))
+        return false;
+      if (_cards[cardId].CiMenuActions != null)
+        return _cards[cardId].CiMenuActions.CloseCIMenu();
+      else
+        return false;
+    }
+
+    public bool SendMenuAnswer(int cardId, bool Cancel, string Answer)
+    {
+      Log.Debug("SendMenuAnswer called");
+      if (ValidateTvControllerParams(cardId, false))
+        return false;
+      if (_cards[cardId].CiMenuActions != null)
+        return _cards[cardId].CiMenuActions.SendMenuAnswer(Cancel, Answer);
+      else
+        return false;
+    }
+
+    /// <summary>
+    /// sets a CI menu callback handler. dummy in this case, because it's an interface member
+    /// </summary>
+    /// <param name="cardId">card</param>
+    /// <param name="CallbackHandler">null, not required</param>
+    /// <returns>true is successful</returns>
+    public bool SetCiMenuHandler(int cardId, ICiMenuCallbacks CallbackHandler)
+    {
+      // register tvservice itself as handler
+      return EnableCiMenuHandler(cardId);
+    }
+
+    /// <summary>
+    /// Registers the tvserver as primary CI menu handler on serverside
+    /// </summary>
+    /// <param name="cardId">card</param>
+    /// <returns>true is successful</returns>
+    public bool EnableCiMenuHandler(int cardId)
+    {
+      bool res;
+      Log.Debug("TvController: EnableCiMenuHandler called");
+      if (ValidateTvControllerParams(cardId, false))
+        return false;
+      if (_cards[cardId].CiMenuActions != null)
+      {
+        res = _cards[cardId].CiMenuActions.SetCiMenuHandler(this);
+        Log.Debug("TvController: SetCiMenuHandler: result {0}", res);
+        return res;
+      }
+      else
+        return false;
+    }
+    #endregion
+
     /*
-        /// <summary>
-        /// Determines whether the specified card is the local pc or not.
-        /// </summary>
-        /// <param name="card">Card</param>
-        /// <returns>
-        /// 	<c>true</c> if the specified host name is local; otherwise, <c>false</c>.
-        /// </returns>
-        bool IsLocal(Card card)
-        {
-          if (ValidateTvControllerParams(card)) return false;
-          return _cards[card.IdCard].IsLocal;
-        }
-    */
+            /// <summary>
+            /// Determines whether the specified card is the local pc or not.
+            /// </summary>
+            /// <param name="card">Card</param>
+            /// <returns>
+            /// 	<c>true</c> if the specified host name is local; otherwise, <c>false</c>.
+            /// </returns>
+            bool IsLocal(Card card)
+            {
+              if (ValidateTvControllerParams(card)) return false;
+              return _cards[card.IdCard].IsLocal;
+            }
+        */
 
     /// <summary>
     /// Determines whether the specified host name is the local pc or not.
@@ -555,7 +687,7 @@ namespace TvService
         heartBeatMonitorThread.Start();
       } catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.Write("TvControllerException: {0}\r\n{1}", ex.ToString(), ex.StackTrace);
         return false;
       }
       Log.Info("Controller: initalized");
@@ -3487,6 +3619,87 @@ namespace TvService
         return true;
       }
       return false;
+    }
+
+    #endregion
+
+
+    #region ICiMenuCallbacks Member
+
+    CiMenu curMenu;
+
+    /// <summary>
+    /// Checks menu state; If it's ready, fire event to "push" it to client
+    /// </summary>
+    private void CheckForCallback()
+    {
+      if (curMenu != null)
+      {
+        if (curMenu.State == CiMenuState.Ready || curMenu.State == CiMenuState.NoChoices || curMenu.State == CiMenuState.Request)
+          s_ciMenu(curMenu); // pass to eventhandlers
+
+      }
+    }
+    /// <summary>
+    /// [TsWriter Interface Callback] Called on initialization of an menu. Options follow in OnCiMenuChoice
+    /// </summary>
+    /// <param name="lpszTitle">Title</param>
+    /// <param name="lpszSubTitle">Subtitle</param>
+    /// <param name="lpszBottom">Bottomtext</param>
+    /// <param name="nNumChoices">number of choices</param>
+    /// <returns>0</returns>
+    public int OnCiMenu(string lpszTitle, string lpszSubTitle, string lpszBottom, int nNumChoices)
+    {
+      curMenu = new CiMenu(lpszTitle, lpszSubTitle, lpszBottom, CiMenuState.Opened);
+      curMenu.NumChoices = nNumChoices;
+      if (nNumChoices == 0)
+        curMenu.State = CiMenuState.NoChoices;
+
+      CheckForCallback();
+      return 0;
+    }
+
+    /// <summary>
+    /// [TsWriter Interface Callback] Sets the choices to opening dialog
+    /// </summary>
+    /// <param name="nChoice">number of choice (0 based)</param>
+    /// <param name="lpszText">title of choice</param>
+    /// <returns>0</returns>
+    public int OnCiMenuChoice(int nChoice, string lpszText)
+    {
+      curMenu.AddEntry(nChoice+1, lpszText); // choices for display +1 
+      if (nChoice + 1 == curMenu.NumChoices)
+      {
+        curMenu.State = CiMenuState.Ready;
+        CheckForCallback();
+      }
+      return 0;
+    }
+
+    /// <summary>
+    /// [TsWriter Interface Callback] call to close display
+    /// </summary>
+    /// <param name="nDelay">delay in (ms?)</param>
+    /// <returns>0</returns>
+    public int OnCiCloseDisplay(int nDelay)
+    {
+      curMenu.State = CiMenuState.Closed;
+      CheckForCallback();
+      return 0;
+    }
+
+    /// <summary>
+    /// [TsWriter Interface Callback] Opens a input request
+    /// </summary>
+    /// <param name="bBlind">?</param>
+    /// <param name="nAnswerLength">expected maximum length of answer</param>
+    /// <param name="lpszText">Title of input</param>
+    /// <returns>0</returns>
+    public int OnCiRequest(bool bBlind, uint nAnswerLength, string lpszText)
+    {
+      curMenu.Request(lpszText, (int)nAnswerLength, bBlind);
+      CheckForCallback();
+      return 0;
     }
 
     #endregion

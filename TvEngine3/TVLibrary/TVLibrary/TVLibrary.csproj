@@ -101,8 +101,10 @@
     <Compile Include="Implementations\DVB\ConditionalAccess\HaupPauge\Hauppauge.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\HaupPauge\WinTvCiModule.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\KNC\KNC.cs" />
+    <Compile Include="Implementations\DVB\ConditionalAccess\KNC\KNCAPI.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\KNC\KNCDeviceLookup.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\OnAirATSC.cs" />
+    <Compile Include="Implementations\DVB\ConditionalAccess\TechnoTrend\TechnoTrendAPI.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\ViXSATSC.cs" />
     <Compile Include="Implementations\DVB\DisEqC\DiSEqCMotor.cs" />
     <Compile Include="Implementations\DVB\DisEqC\IDiSEqCController.cs" />

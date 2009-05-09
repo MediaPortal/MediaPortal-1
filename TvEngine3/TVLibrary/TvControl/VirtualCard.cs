@@ -1451,5 +1451,161 @@ namespace TvControl
     }
 
     #endregion
+    
+    #region CI Menu Handling
+    /// <summary>
+    /// Indicates, if the card supports CI Menu
+    /// </summary>
+    /// <returns>true/false</returns>
+    public bool CiMenuSupported()
+    {
+      try
+      {
+        if (User.CardId < 0)
+        {
+          return false;
+        }
+        RemoteControl.HostName = _server;
+        return RemoteControl.Instance.IsMaster && RemoteControl.Instance.CiMenuSupported(User.CardId);
+      }
+      catch (Exception)
+      {
+        HandleFailure();
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Enters the CI Menu for current card
+    /// </summary>
+    /// <returns>true if successful</returns>
+    public bool EnterCiMenu()
+    {
+      try
+      {
+        if (User.CardId < 0)
+        {
+          return false;
+        }
+        RemoteControl.HostName = _server;
+        if (RemoteControl.Instance.IsMaster) 
+          return RemoteControl.Instance.EnterCiMenu(User.CardId);
+        else
+          return false;
+      }
+      catch (Exception)
+      {
+        HandleFailure();
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Selects a ci menu entry
+    /// </summary>
+    /// <param name="Choice">Choice (1 based), 0 for "back"</param>
+    /// <returns>true if successful</returns>
+    public bool SelectCiMenu(byte Choice)
+    {
+      try
+      {
+        if (User.CardId < 0)
+        {
+          return false;
+        }
+        RemoteControl.HostName = _server;
+        if (RemoteControl.Instance.IsMaster)
+          return RemoteControl.Instance.SelectMenu(User.CardId, Choice);
+        else
+          return false;
+      }
+      catch (Exception)
+      {
+        HandleFailure();
+      }
+      return false;
+    }
+    /// <summary>
+    /// Closes the CI Menu for current card
+    /// </summary>
+    /// <returns>true if successful</returns>
+    public bool CloseMenu()
+    {
+      try
+      {
+        if (User.CardId < 0)
+        {
+          return false;
+        }
+        RemoteControl.HostName = _server;
+        if (RemoteControl.Instance.IsMaster)
+          return RemoteControl.Instance.CloseMenu(User.CardId);
+        else
+          return false;
+      }
+      catch (Exception)
+      {
+        HandleFailure();
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Sends an answer to CAM after a request
+    /// </summary>
+    /// <param name="Cancel">cancel request</param>
+    /// <param name="Answer">answer string</param>
+    /// <returns>true if successful</returns>
+    public bool SendMenuAnswer(bool Cancel, string Answer)
+    {
+      try
+      {
+        if (User.CardId < 0)
+        {
+          return false;
+        }
+        RemoteControl.HostName = _server;
+        if (RemoteControl.Instance.IsMaster)
+          return RemoteControl.Instance.SendMenuAnswer(User.CardId, Cancel, Answer);
+        else
+          return false;
+      }
+      catch (Exception)
+      {
+        HandleFailure();
+      }
+      return false;
+    }
+    /// <summary>
+    /// Sets a callback handler
+    /// </summary>
+    /// <param name="CallbackHandler"></param>
+    /// <returns></returns>
+    public bool SetCiMenuHandler(TvLibrary.Interfaces.ICiMenuCallbacks CallbackHandler)
+    {
+      TvLibrary.Log.Log.Debug("VC: SetCiMenuHandler");
+      try
+      {
+        if (User.CardId < 0)
+        {
+          return false;
+        }
+        RemoteControl.HostName = _server;
+        if (RemoteControl.Instance.IsMaster)
+        {
+          TvLibrary.Log.Log.Debug("VC: SetCiMenuHandler card: {0}, {1}", User.CardId, CallbackHandler);
+          return RemoteControl.Instance.SetCiMenuHandler(User.CardId, CallbackHandler);
+        }
+        else
+          return false;
+      }
+      catch (Exception Ex)
+      {
+        TvLibrary.Log.Log.Error("Exception: {0}", Ex.ToString());
+        HandleFailure();
+      }
+      return false;
+    }
+    #endregion
   }
 }

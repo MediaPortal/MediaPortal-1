@@ -21,7 +21,12 @@
 using System;
 using System.Runtime.Remoting;
 using System.Threading;
+using TvLibrary.Interfaces;
 using TvLibrary.Log;
+using System.Runtime.Remoting.Channels;
+using System.Collections;
+using System.Runtime.Remoting.Channels.Http;
+using System.Runtime.Serialization.Formatters;
 
 // Reverted mantis #1409: using System.Collections;
 
@@ -32,10 +37,60 @@ namespace TvControl
   /// </summary>
   public class RemoteControl
   {
+    private static bool _channelRegistered = false;
     private static IController _tvControl;
     private static string _hostName = "localhost";
+    private static HttpChannel CallbackChannel; // callback channel
     // Reverted mantis #1409: private static uint _timeOut = 45000; // specified in ms (currently all remoting calls are aborted if processing takes more than 45 sec)
 
+    /// <summary>
+    /// Registers a remoting channel for allowing callback from server to client
+    /// </summary>
+    private static void RegisterChannel()
+    {
+      try {
+        // start listening on local port only once!
+        if (CallbackChannel == null)
+        {
+          //turn off customErrors to receive full exception messages
+          RemotingConfiguration.CustomErrorsMode = CustomErrorsModes.Off;
+
+          // Creating a custom formatter for a TcpChannel sink chain.
+          //BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
+          SoapServerFormatterSinkProvider provider   = new SoapServerFormatterSinkProvider();
+          provider.TypeFilterLevel                   = TypeFilterLevel.Full; // needed for passing objref!
+          IDictionary channelProperties              = new Hashtable(); // Creating the IDictionary to set the port on the channel instance.
+          channelProperties.Add("port", 31458); // "0" chooses one available port
+          channelProperties.Add("exclusiveAddressUse", false);
+
+          // Pass the properties for the port setting and the server provider in the server chain argument. (Client remains null here.)
+          CallbackChannel = new HttpChannel(channelProperties, new SoapClientFormatterSinkProvider(), provider);
+          ChannelServices.RegisterChannel(CallbackChannel, false);
+        }
+      }
+      catch (RemotingException) { }
+      catch (System.Net.Sockets.SocketException) { }
+      catch (Exception e) 
+      {
+        Log.Error(e.ToString());
+      }
+    }
+
+    /// <summary>
+    /// Registers Ci Menu Callbackhandler in TvPlugin, connects to a server side event
+    /// </summary>
+    public static void RegisterCiMenuCallbacks(CiMenuCallbackSink sink)
+    {
+      // Define sink for events
+      RemotingConfiguration.RegisterWellKnownServiceType(
+          typeof(CiMenuCallbackSink),
+          "ServerEvents",
+          WellKnownObjectMode.Singleton);
+
+      // Assign the callback from the server to here
+      _tvControl.OnCiMenu += new CiMenuCallback(sink.FireCiMenuCallback);
+    }    
+    
     /// <summary>
     /// Gets or sets the name the hostname of the master tv-server.
     /// </summary>
@@ -82,10 +137,15 @@ namespace TvControl
           //            //Log.Debug("RemoteControl: could not set timeout on Remoting framework - {0}", e.Message);
           //            //ignore
           //          }
-          //#endif          
+          //#endif    
+
+          // register remoting channel
+          RegisterChannel();
+
           _tvControl =
             (IController)
             Activator.GetObject(typeof (IController), String.Format("tcp://{0}:31456/TvControl", _hostName));
+
           // int card = _tvControl.Cards;
           return _tvControl;
         }
@@ -96,9 +156,14 @@ namespace TvControl
             Log.Error("RemoteControl: Timeout getting server Instance; retrying in 5 seconds - {0}", exrt.Message);
             // maybe the DB wasn't up yet - 2nd try...
             Thread.Sleep(5000);
+
+            // register remoting channel
+            RegisterChannel();
+
             _tvControl =
               (IController)
               Activator.GetObject(typeof (IController), String.Format("tcp://{0}:31456/TvControl", _hostName));
+
             // int card = _tvControl.Cards;
             return _tvControl;
           }

@@ -52,6 +52,15 @@ namespace TvPlugin
       Channel chan = TVHome.Navigator.Channel;
       if (chan != null)
       {
+        try
+        {
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.HasCiMenuSupport", TVHome.Card.CiMenuSupported().ToString());
+        }
+        catch (System.Exception ex)
+        {
+          Log.Error("Error loading TuningDetails /  HasCiMenuSupport:" +ex.StackTrace);
+        }
+
         IList<TuningDetail> details = chan.ReferringTuningDetail();
         if (details.Count > 0)
         {

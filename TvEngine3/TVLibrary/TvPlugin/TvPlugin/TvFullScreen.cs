@@ -45,6 +45,7 @@ using TvControl;
 using TvDatabase;
 using TvLibrary.Interfaces;
 using Timer=System.Timers.Timer;
+using System.Runtime.Remoting;
 
 #endregion
 
@@ -120,6 +121,7 @@ namespace TvPlugin
     private GUIDialogNotify _dialogNotify = null;
     private GUIDialogMenuBottomRight _dialogBottomMenu = null;
     private GUIDialogYesNo _dlgYesNo = null;
+    private GUIDialogOK _dlgOk = null;
     // Message box
     private bool _dialogYesNoVisible = false;
     private bool _notifyDialogVisible = false;
@@ -148,6 +150,7 @@ namespace TvPlugin
     private VideoRendererStatistics.State videoState = VideoRendererStatistics.State.VideoPresent;
     private List<Geometry.Type> _allowedArModes = new List<Geometry.Type>();
 
+    private readonly CiMenuHandler ciMenuHandler;
     #endregion
 
     #region enums
@@ -184,6 +187,7 @@ namespace TvPlugin
     {
       Log.Debug("TvFullScreen:ctor");
       GetID = (int) Window.WINDOW_TVFULLSCREEN;
+      ciMenuHandler = new CiMenuHandler();
     }
 
     public override void OnAdded()
@@ -1558,6 +1562,11 @@ namespace TvPlugin
 
       dlg.AddLocalizedString(970); // Previous window
 
+      if (TVHome.Card.CiMenuSupported())
+        dlg.AddLocalizedString(2700); // CI Menu supported
+
+      //dlg.AddLocalizedString(6008); // Sort TvChannel
+
       if (TVHome.Card.IsOwner() && !TVHome.Card.IsRecording && TVHome.Card.SupportsQualityControl() &&
           !g_Player.IsTVRecording)
       {
@@ -1585,9 +1594,9 @@ namespace TvPlugin
             dlgTvGuide.GroupChanged = false;
             // do this in loop to reopen guide after change
             do {
-            _isDialogVisible = true;
-            dlgTvGuide.DoModal(GetID);
-            _isDialogVisible = false;
+              _isDialogVisible = true;
+              dlgTvGuide.DoModal(GetID);
+              _isDialogVisible = false;
             } while (dlgTvGuide.GroupChanged == true);
             break;
           }
@@ -1667,6 +1676,14 @@ namespace TvPlugin
         case 941: // Change aspect ratio
           ShowAspectRatioMenu();
           break;
+
+        case 2700: // Open CI Menu
+          PrepareCiMenu();
+          break;
+
+        //case 6008: // TvChannel sort
+        //  SortChannels();
+        //  break;
 
         case 492: // Show audio language menu
           ShowAudioLanguageMenu();
@@ -1971,6 +1988,107 @@ namespace TvPlugin
       OnMessage(msg);
     }
 
+    #region CI Menu 
+    /// <summary>
+    /// Sets callbacks and calls EnterCiMenu; Actions are done from callbacks
+    /// </summary>
+    private void PrepareCiMenu()
+    {
+      bool res;
+      Log.Debug("CiMenu: PrepareCiMenu");
+      
+      // attach local eventhandler to server event
+      RemoteControl.RegisterCiMenuCallbacks(ciMenuHandler);
+      // register this for callback
+      ciMenuHandler.SetCaller(this);
+      // needed once to tell tvserver to handle the ICiMenuCallbacks and then forward it through event
+      res = TVHome.Card.SetCiMenuHandler(null); // null because handler registers tvserver there
+      
+      if (res==true)
+        TVHome.Card.EnterCiMenu(); // Enter menu. Dialog shows up on callback
+    }
+
+    /// <summary>
+    /// Handles all CiMenu actions from callback
+    /// </summary>
+    /// <param name="Menu">complete CI menu object</param>
+    public void CiMenuCallback(CiMenu Menu)
+    {
+      if (dlg == null)
+      {
+        return;
+      }
+      switch (Menu.State)
+      {
+          // choices available, so show them
+        case TvLibrary.Interfaces.CiMenuState.Ready:
+          dlg.Reset();
+          dlg.SetHeading(Menu.Title + ": " + Menu.Subtitle); // CI Menu
+
+          for (int i = 0; i < Menu.NumChoices; i++) // CI Menu Entries
+            dlg.Add(Menu.MenuEntries[i].Message); // take only message, numbers come from dialog
+
+          // show dialog and wait for result       
+          dlg.DoModal(GUIWindowManager.ActiveWindow);
+          if (Menu.State != TvLibrary.Interfaces.CiMenuState.Error)
+          {
+            if (dlg.SelectedId != -1)
+            {
+              TVHome.Card.SelectCiMenu(Convert.ToByte(dlg.SelectedId));
+            }
+            else
+            {
+              TVHome.Card.SelectCiMenu(0); // 0 means "back"
+            }
+          }
+          else
+          {
+            TVHome.Card.CloseMenu(); // in case of error close the menu
+          }
+          break;
+
+          // errors and menu options with no choices
+        case TvLibrary.Interfaces.CiMenuState.Error:
+        case TvLibrary.Interfaces.CiMenuState.NoChoices:
+          if (_dlgOk == null)
+          {
+            _dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+          }
+          if (null != _dlgOk)
+          {
+            _dlgOk.Reset();
+            _dlgOk.SetHeading(Menu.Title);
+            _dlgOk.SetLine(1, Menu.Subtitle);
+            _dlgOk.SetLine(2, Menu.BottomText);
+            _dlgOk.DoModal(GUIWindowManager.ActiveWindow);
+          }
+          break;
+
+          // requests require users input so open keyboard
+        case TvLibrary.Interfaces.CiMenuState.Request:
+          String result="";
+          if (GetKeyboard(Menu.RequestText, Menu.AnswerLength, Menu.Password, ref result) == true)
+          {
+            TVHome.Card.SendMenuAnswer(false, result); // send answer, cancel=false
+          }
+          else
+          {
+            TVHome.Card.SendMenuAnswer(true, null); // cancel request 
+          }
+          break;
+      }
+    }
+
+    #endregion
+
+    private void SortChannels()
+    {
+      GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_SORT_CHANNELS);
+      //ChannelSettings channelSettings = (ChannelSettings)GUIWindowManager.GetWindow((int)Window.WINDOW_SETTINGS_SORT_CHANNELS);
+      //channelSettings.StartM
+      //channelSettings.O
+      //channelSettings.;
+    }
     private void ShowAudioLanguageMenu()
     {
       if (dlg == null)
@@ -3234,5 +3352,61 @@ namespace TvPlugin
       }
       return false;
     }
+    protected bool GetKeyboard(string title, int maxLength, bool bPassword, ref string strLine)
+    {
+      StandardKeyboard keyboard = (StandardKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
+      if (null == keyboard)
+      {
+        return false;
+      }
+      keyboard.Password = bPassword;
+      keyboard.Title = title;
+      keyboard.SetMaxLength(maxLength);
+      keyboard.Reset();
+      keyboard.Text = strLine;
+      keyboard.DoModal(GetID);
+      if (keyboard.IsConfirmed)
+      {
+        strLine = keyboard.Text;
+        return true;
+      }
+      return false;
+    }
   }
+
+  #region CI Menu
+  /// <summary>
+  /// Handler class for gui interactions of ci menu
+  /// </summary>
+  public class CiMenuHandler : CiMenuCallbackSink
+  {
+    TvFullScreen refDlg;
+    public void SetCaller (TvFullScreen caller)
+    {
+      refDlg = caller;
+    }
+    /// <summary>
+    /// eventhandler to show CI Menu dialog
+    /// </summary>
+    /// <param name="Menu"></param>
+    protected override void CiMenuCallback(CiMenu Menu)
+    {
+      try
+      {
+        Log.Debug("Callback from tvserver {0}", Menu.Title);
+
+        // pass menu to calling dialog
+        if (refDlg != null)
+          refDlg.CiMenuCallback(Menu);
+      }
+      catch (Exception re)
+      {
+        Menu = new CiMenu("Remoting Exception", "Communication with server failed", null, TvLibrary.Interfaces.CiMenuState.Error);
+        // pass menu to calling dialog
+        if (refDlg != null)
+          refDlg.CiMenuCallback(Menu);
+      }
+    }
+  }
+  #endregion
 }

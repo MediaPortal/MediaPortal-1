@@ -22,8 +22,9 @@
 using System;
 using System.Net;
 using TvLibrary;
-using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
+using TvLibrary.Implementations.Analog;
+using TvLibrary.Implementations.DVB;
 using TvLibrary.Log;
 using TvControl;
 using TvDatabase;
@@ -45,6 +46,7 @@ namespace TvService
     readonly Recorder _recorder;
     readonly TimeShifter _timerShifter;
     readonly CardTuner _tuner;
+    ICiMenuActions _ciMenu;
     #endregion
 
     #region ctor
@@ -68,6 +70,39 @@ namespace TvService
     }
     #endregion
 
+    #region CI Menu handling
+    public bool CiMenuSupported
+    {
+      get
+      {
+        // is card a dvb card? then expose it's ConditionalAccess here
+        TvCardDvbBase dvbCard = _card as TvCardDvbBase;
+        if (dvbCard != null)
+        {
+          if (dvbCard.ConditionalAccess != null)
+          {
+            _ciMenu = dvbCard.ConditionalAccess.CiMenu;
+            if (_ciMenu != null && dvbCard.ConditionalAccess.IsCamReady()) // only if cam is ready
+                return true;
+            else
+              return false;
+          }
+        }
+        return false;
+      }
+    }
+    /// <summary>
+    /// Gets the ConditionalAccess handler.
+    /// </summary>
+    /// <value>ConditionalAccess</value>
+    public ICiMenuActions CiMenuActions
+    {
+      get
+      {
+        return _ciMenu;
+      }
+    }
+    #endregion
 
     /// <summary>
     /// Gets the users.

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -116,6 +116,7 @@
     <Compile Include="RadioGuide.cs" />
     <Compile Include="RadioGuideBase.cs" />
     <Compile Include="RadioSetupForm.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="RadioSetupForm.Designer.cs">
       <DependentUpon>RadioSetupForm.cs</DependentUpon>
@@ -150,11 +151,13 @@
     <Compile Include="TvRecordingSettings.cs" />
     <Compile Include="TvSetup.cs" />
     <Compile Include="TvSetupAudioLanguageForm.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="TvSetupAudioLanguageForm.Designer.cs">
       <DependentUpon>TvSetupAudioLanguageForm.cs</DependentUpon>
     </Compile>
     <Compile Include="TvSetupForm.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="TvSetupForm.Designer.cs">
       <DependentUpon>TvSetupForm.cs</DependentUpon>

@@ -20,6 +20,7 @@
  */
 
 using TvLibrary.Interfaces;
+using TvLibrary.Interfaces.Analyzer;
 using TvControl;
 using TvDatabase;
 
@@ -36,6 +37,9 @@ namespace TvService
     Recorder Recorder { get;}
     TimeShifter TimeShifter { get;}
     CardTuner Tuner { get;}
+    ICiMenuActions CiMenuActions { get;}
+
+    bool CiMenuSupported { get; }
 
     ITVCard Card { get;}
     bool IsLocal { get;set;}
