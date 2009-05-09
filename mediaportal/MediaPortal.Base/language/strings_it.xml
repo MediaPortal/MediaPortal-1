@@ -448,6 +448,7 @@
     <String id="517">Errore critico, operazione non completata</String>
     <String id="518">Eliminare questa canzone?</String>
     <String id="519">Sottotitoli disattivati</String>
+    <String id="527">Ordina per: Visto</String>
     <String id="528">Artisti dell'Album</String>
     <String id="529">Vista: Elenco icone grandi</String>
     <String id="530">Disco foto inserito - vuoi aprirlo?</String>
@@ -1799,8 +1800,8 @@
     <String id="109004">MiniDisplay - Configurazione - Equalizzatore</String>
     <String id="109005">MiniDisplay - Configurazione - Tastiera</String>
     <String id="109006">MiniDisplay - Configurazione - Telecomando</String>
-    <String id="109811">Le mie Serie TV</String>
-    <String id="190478">I miei Testi</String>
+    <String id="109811" prefix="Le mie">Serie TV</String>
+    <String id="190478" prefix="I miei">Testi</String>
     <String id="196742">MovingPictures</String>
     <String id="200000">Per favore seleziona il tuo Grabber EPG (Guida Elettronica Programmi). Nota che se la tua nazione non</String>
     <String id="200001">è in elenco dovrai inserire l'EPG manualmente</String>
