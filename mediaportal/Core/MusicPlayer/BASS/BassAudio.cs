@@ -337,7 +337,6 @@ namespace MediaPortal.Player
                                        };
 
     private StreamCopy _streamcopy;     // For Asio Channels
-    private Un4seen.Bass.Misc.DSP_StreamCopy _streamVUMeter;  // We need a cloned stream for VUMeter support, so that we don't steal data
 
     // CUE Support
     private string currentCueFileName = null;
@@ -1804,7 +1803,7 @@ namespace MediaPortal.Player
           {
             // Do an upmix of the stereo according to the matrix. 
             // Now Plugin the stream to the mixer and set the mixing matrix
-            BassMix.BASS_Mixer_StreamAddChannel(_mixer, stream, BASSFlag.BASS_MIXER_MATRIX | BASSFlag.BASS_STREAM_AUTOFREE | BASSFlag.BASS_MIXER_NORAMPIN);
+            BassMix.BASS_Mixer_StreamAddChannel(_mixer, stream, BASSFlag.BASS_MIXER_MATRIX | BASSFlag.BASS_STREAM_AUTOFREE | BASSFlag.BASS_MIXER_NORAMPIN | BASSFlag.BASS_MIXER_BUFFER);
             BassMix.BASS_Mixer_ChannelSetMatrix(stream, _MixingMatrix);
           }
 
@@ -1949,31 +1948,6 @@ namespace MediaPortal.Player
           if (stream != 0 && playbackStarted)
           {
             Log.Info("BASS: playback started");
-
-            // Set up the stream copy for VUMeter support
-            if (_Mixing || _useASIO)
-            {
-              _streamVUMeter = new Un4seen.Bass.Misc.DSP_StreamCopy();
-              _streamVUMeter.StreamCopyDevice = 0;
-              if (_Mixing)
-              {
-                _streamVUMeter.ChannelHandle = stream;
-                _streamVUMeter.SourceMixerStream = _mixer;
-              }
-              else
-              {
-                _streamVUMeter.ChannelHandle = stream;
-                _streamVUMeter.StreamCopyFlags = BASSFlag.BASS_SAMPLE_FLOAT;
-              }
-              try
-              {
-                _streamVUMeter.Start();
-              }
-              catch (Exception)
-              {
-                Log.Error("Error starting VUMeter StreamCopy");
-              }
-            }
 
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
             msg.Label = FilePath;
@@ -3163,29 +3137,38 @@ namespace MediaPortal.Player
     {
       int peakL = 0;
       int peakR = 0;
-      int stream = 0;
+      double dbLeft = 0.0;
+      double dbRight = 0.0;
 
       // Find out with which stream to deal with
-      if (_Mixing || _useASIO)
+      int level = 0;
+      if (_Mixing)
       {
-        if (_streamVUMeter != null)
-        {
-          stream = _streamVUMeter.StreamCopy;
-        }
+        level = BassMix.BASS_Mixer_ChannelGetLevel(GetCurrentStream());
+      }
+      else if (_useASIO)
+      {
+        float fpeakL = BassAsio.BASS_ASIO_ChannelGetLevel(false, 0);
+        float fpeakR = (int) BassAsio.BASS_ASIO_ChannelGetLevel(false, 1);
+        dbLeft = 20.0 * Math.Log10(fpeakL);
+        dbRight = 20.0 * Math.Log10(fpeakR);
       }
       else
       {
-        stream = GetCurrentStream();
+        level = Bass.BASS_ChannelGetLevel(GetCurrentStream());
       }
 
-      int level = Bass.BASS_ChannelGetLevel(stream);
-      peakL = Un4seen.Bass.Utils.LowWord32(level); // the left level
-      peakR = Un4seen.Bass.Utils.HighWord32(level); // the right level
+      if (!_useASIO)  // For Asio, we already got the peaklevel above
+      {
+        peakL = Un4seen.Bass.Utils.LowWord32(level); // the left level
+        peakR = Un4seen.Bass.Utils.HighWord32(level); // the right level
 
-      dbLevelL = Un4seen.Bass.Utils.LevelToDB(peakL, 65535);
-      dbLevelR = Un4seen.Bass.Utils.LevelToDB(peakR, 65535);      
+        dbLeft = Un4seen.Bass.Utils.LevelToDB(peakL, 65535);
+        dbRight = Un4seen.Bass.Utils.LevelToDB(peakR, 65535);      
+      }
 
-      Console.WriteLine("{0} {1}", peakL, peakR);
+      dbLevelL = dbLeft;
+      dbLevelR = dbRight;
     }
     #endregion
   }
