@@ -89,6 +89,14 @@ namespace TvLibrary.Implementations
     /// </summary>
     protected ConditionalAccess _conditionalAccess;
     /// <summary>
+    /// Instance of the conditional access
+    /// </summary>
+    public ConditionalAccess ConditionalAccess
+    {
+      get { return _conditionalAccess; }
+    }
+
+    /// <summary>
     /// Dictionary of the corresponding sub channels
     /// </summary>
     protected Dictionary<int, BaseSubChannel> _mapSubChannels;

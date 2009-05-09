@@ -302,19 +302,19 @@ namespace TvLibrary.Implementations.DVB
         {
           _interfaceEpgGrabber.Reset();
         }
-        Log.Log.WriteFile("dvb:Submit tunerequest calling put_TuneRequest");
-        int hr = ((ITuner)_filterNetworkProvider).put_TuneRequest(tuneRequest);
-        Log.Log.WriteFile("dvb:Submit tunerequest done calling put_TuneRequest");
-        if (hr != 0)
-        {
-          Log.Log.WriteFile("dvb:SubmitTuneRequest  returns:0x{0:X}", hr);
-          //remove subchannel.
-          /*if (newSubChannel)
+          Log.Log.WriteFile("dvb:Submit tunerequest calling put_TuneRequest");
+          int hr = ((ITuner) _filterNetworkProvider).put_TuneRequest(tuneRequest);
+          Log.Log.WriteFile("dvb:Submit tunerequest done calling put_TuneRequest");
+          if (hr != 0)
           {
-          _mapSubChannels.Remove(subChannelId);
-          }*/
-          throw new TvException("Unable to tune to channel");
-        }
+            Log.Log.WriteFile("dvb:SubmitTuneRequest  returns:0x{0:X}", hr);
+            //remove subchannel.
+            /*if (newSubChannel)
+            {
+            _mapSubChannels.Remove(subChannelId);
+            }*/
+            throw new TvException("Unable to tune to channel");
+          }
 
         _lastSignalUpdate = DateTime.MinValue;
         _mapSubChannels[subChannelId].OnAfterTune();
@@ -1365,6 +1365,12 @@ namespace TvLibrary.Implementations.DVB
         _mdplugs.Close();
         _mdplugs = null;
       }
+      if (_conditionalAccess != null)
+      {
+        Log.Log.Info("  Disposing ConditionalAccess");
+        _conditionalAccess.Dispose();
+        _conditionalAccess = null;
+      }
 
       Log.Log.WriteFile("  remove all filters");
       FilterGraphTools.RemoveAllFilters(_graphBuilder);
@@ -1429,9 +1435,14 @@ namespace TvLibrary.Implementations.DVB
       //  Release.ComObject("secions&tables filter", _filterSectionsAndTables); _filterSectionsAndTables = null;
       //}
       Log.Log.WriteFile("  free pins...");
-      if (_filterTsWriter != null)
+      if (_filterTsWriter as IBaseFilter != null)
       {
         Release.ComObject("TSWriter filter", _filterTsWriter);
+        _filterTsWriter = null;
+      }
+      else
+      {
+        Log.Log.Debug("!!! Error releasing TSWriter filter (_filterTsWriter as IBaseFilter was null!)");
         _filterTsWriter = null;
       }
       Log.Log.WriteFile("  free graph...");
@@ -1476,7 +1487,6 @@ namespace TvLibrary.Implementations.DVB
         }
         _tunerStatistics.Clear();
       }
-      _conditionalAccess = null;
       Log.Log.WriteFile("  decompose done...");
       _graphState = GraphState.Idle;
     }

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -72,9 +72,12 @@
     <Compile Include="Implementations\Analog\GraphComponents\Graph.cs" />
     <Compile Include="Implementations\Analog\GraphComponents\Tuner.cs" />
     <Compile Include="Implementations\Channels\RadioWebStreamChannel.cs" />
+    <Compile Include="Interfaces\ICiMenuActions.cs" />
+    <Compile Include="Interfaces\ICiMenuCallbacks.cs" />
     <Compile Include="Interfaces\IDiSEqCMotor.cs" />
     <Compile Include="Interfaces\ITVChannelLinkage.cs" />
     <Compile Include="Interfaces\ITvSubChannel.cs" />
+    <Compile Include="Interfaces\TvPluginCallback.cs" />
     <Compile Include="RtspClient.cs" />
     <Compile Include="ScanParameters.cs" />
     <Compile Include="ServiceProvider\ServiceProvider.cs" />

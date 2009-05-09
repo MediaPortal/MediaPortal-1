@@ -34,7 +34,7 @@ namespace TvLibrary.Implementations.DVB
   /// Class which handles the conditional access modules for a tv card
   /// (CI and CAM)
   /// </summary>
-  public class ConditionalAccess
+  public class ConditionalAccess: IDisposable
   {
     #region variables
 
@@ -47,9 +47,11 @@ namespace TvLibrary.Implementations.DVB
     readonly CamType _CamType = CamType.Default;
 
     readonly DigitalEverywhere _digitalEveryWhere;
-    readonly TechnoTrend _technoTrend;
+    //readonly TechnoTrend _technoTrend;
+    readonly TechnoTrendAPI _technoTrend;
     readonly Twinhan _twinhan;
-    readonly KNC _knc;
+    //readonly KNC _knc;
+    readonly KNCAPI _knc;
     readonly Hauppauge _hauppauge;
     readonly DiSEqCMotor _diSEqCMotor;
     readonly Dictionary<int, ConditionalAccessContext> _mapSubChannels;
@@ -59,6 +61,15 @@ namespace TvLibrary.Implementations.DVB
     readonly OnAirATSC _isonairatsc;
     readonly ViXSATSC _isvixsatsc;
     readonly ConexantBDA _conexant;
+
+    private ICiMenuActions _ciMenu;
+    /// <summary>
+    /// Accessor for CI Menu handler
+    /// </summary>
+    public  ICiMenuActions CiMenu 
+    { 
+      get { return _ciMenu; } 
+    }
     //anysee _anysee = null;
     #endregion
 
@@ -99,9 +110,12 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("Check for KNC");
           // Lookup device index of current card. only counting KNC cards by device path
           int DeviceIndex = KNCDeviceLookup.GetDeviceIndex(card);
-          _knc = new KNC(tunerFilter, analyzerFilter, DeviceIndex);
+          //_knc = new KNC(tunerFilter, analyzerFilter, DeviceIndex);
+          _knc = new KNCAPI(tunerFilter, (uint)DeviceIndex);
           if (_knc.IsKNC)
           {
+            //if (_knc.IsCamReady()) 
+            _ciMenu = _knc; // Register KNC CI Menu capabilities when CAM detected and ready
             Log.Log.WriteFile("KNC card detected");
             return;
           }
@@ -129,9 +143,12 @@ namespace TvLibrary.Implementations.DVB
           _twinhan = null;
 
           Log.Log.WriteFile("Check for TechnoTrend");
-          _technoTrend = new TechnoTrend(tunerFilter, analyzerFilter);
+          //_technoTrend = new TechnoTrend(tunerFilter, analyzerFilter);
+          _technoTrend = new TechnoTrendAPI(tunerFilter);
           if (_technoTrend.IsTechnoTrend)
           {
+            ////if (_technoTrend.IsCamPresent()) 
+            _ciMenu = _technoTrend; // Register Technotrend CI Menu capabilities
             Log.Log.WriteFile("TechnoTrend card detected");
             return;
           }
@@ -286,10 +303,10 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        if (_technoTrend != null)
-        {
-          return false;
-        }
+        //if (_technoTrend != null)
+        //{
+        //  return false;
+        //}
         if (_twinhan != null)
         {
           if (_twinhan.IsCamPresent())
@@ -372,6 +389,14 @@ namespace TvLibrary.Implementations.DVB
         if (_digitalEveryWhere != null)
         {
           _digitalEveryWhere.ResetCAM();
+        }
+        if (_technoTrend != null)
+        {
+          _technoTrend.ResetCI();
+        }
+        if (_knc != null)
+        {
+          _knc.ResetCI();
         }
       } catch (Exception ex)
       {
@@ -967,5 +992,36 @@ namespace TvLibrary.Implementations.DVB
       }
       return channel;
     }
+
+    /// <summary>
+    /// Property to set CI Menu Handler 
+    /// </summary>
+    public ICiMenuCallbacks CiMenuHandler
+    {
+      set {
+        if (_ciMenu != null)
+        {
+          _ciMenu.SetCiMenuHandler(value);
+        }
+      }    
+    }
+
+    #region IDisposable Member
+    /// <summary>
+    /// Disposing CI and API resources
+    /// </summary>
+    public void Dispose()
+    {
+      if (_knc != null)
+      {
+        _knc.Dispose();
+      }
+      if (_technoTrend != null)
+      {
+        _technoTrend.Dispose();
+      }
+    }
+
+    #endregion
   }
 }
