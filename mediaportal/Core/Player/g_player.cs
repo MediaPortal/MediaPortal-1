@@ -462,6 +462,10 @@ namespace MediaPortal.Player
         Log.Info("g_Player.OnChanged()");
         if (PlayBackChanged != null)
         {
+          if ((_currentMedia == MediaType.TV || _currentMedia == MediaType.Video || _currentMedia == MediaType.Recording) && (!Util.Utils.IsVideo(newFile)))
+          {
+            RefreshRateChanger.AdaptRefreshRate();
+          }          
           PlayBackChanged(_currentMedia, (int) CurrentPosition, CurrentFile);
         }
       }
@@ -611,7 +615,10 @@ namespace MediaPortal.Player
         _chapters = null;
         _jumpPoints = null;
 
-        RefreshRateChanger.AdaptRefreshRate();
+        if (!keepExclusiveModeOn && !keepTimeShifting)
+        {
+          RefreshRateChanger.AdaptRefreshRate();
+        }
       }
     }
 

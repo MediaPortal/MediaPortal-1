@@ -29,6 +29,7 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
+using System.Collections.Generic;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
@@ -207,6 +208,82 @@ namespace MediaPortal.Player
     }
   }
 
+  internal class RefreshRateSetting
+  {
+
+    #region private vars
+
+    private string _name = null;
+    private List<double> _fps = null;
+    private double _hz = -1;
+    private string _extCmd = null;
+
+    #endregion
+
+    #region contructors
+    internal RefreshRateSetting()
+    {
+
+    }
+    #endregion
+
+    #region public properties
+
+    internal string Name
+    {
+      get
+      {
+        return _name;
+      }
+      set
+      {
+        _name = value;
+      }
+    }
+
+    internal List<double> Fps
+    {
+      get
+      {
+        return _fps;
+      }
+      set
+      {
+        _fps = value;
+      }
+    }
+
+    internal double Hz
+    {
+      get
+      {
+        return _hz;
+      }
+      set
+      {
+        _hz = value;
+      }
+    }
+
+    internal string ExtCmd
+    {
+      get
+      {
+        return _extCmd;
+      }
+      set
+      {
+        _extCmd = value;
+      }
+    }
+
+    #endregion
+
+    #region public methods
+    
+    #endregion
+  }
+
   public static class RefreshRateChanger
   {
     #region public constants
@@ -223,6 +300,8 @@ namespace MediaPortal.Player
     private static bool _refreshrateChangePending = false;
     private static bool _refreshrateChangeFullscreenVideo = false;
     private static DateTime _refreshrateChangeExecutionTime = DateTime.MinValue;
+
+    private static List<RefreshRateSetting> _refreshRateSettings = null;
 
     #endregion
 
@@ -305,136 +384,102 @@ namespace MediaPortal.Player
       }
     }
 
-    private static double[] RetriveRefreshRateChangerSettings(string key)
+    private static RefreshRateSetting RetrieveRefreshRateChangerSetting(string name)
     {
-      NumberFormatInfo provider = new NumberFormatInfo();
-      provider.NumberDecimalSeparator = ".";
+      GetRefreshRateConfiguration();
 
-      string[] arrStr = new string[0];
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      name = name.ToLower();
+
+      foreach (RefreshRateSetting setting in _refreshRateSettings)
       {
-        arrStr = xmlreader.GetValueAsString("general", key, "").Split(';');
-      }
-
-      double[] settingsHZ = new double[arrStr.Length];
-
-      for (int i = 0; i < arrStr.Length; i++)
-      {
-        double hzItem = 0;
-        double.TryParse(arrStr[i], NumberStyles.AllowDecimalPoint, provider, out hzItem);
-
-        if (hzItem > 0)
+        if (setting.Name.ToLower().Equals(name))
         {
-          settingsHZ[i] = hzItem;
-        }
+          return setting;
+        }        
       }
-      return settingsHZ;
+      return null;     
+    }
+
+
+    private static void GetRefreshRateConfiguration ()
+    {
+      if (_refreshRateSettings == null)
+      {
+        _refreshRateSettings = new List<RefreshRateSetting>();
+
+        NumberFormatInfo provider = new NumberFormatInfo();
+        provider.NumberDecimalSeparator = ".";
+
+        Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
+
+        for (int i = 1; i < 100; i++)
+        {
+          string extCmd = xmlreader.GetValueAsString("general", "refreshrate0" + Convert.ToString(i) + "_ext", "");
+          string name = xmlreader.GetValueAsString("general", "refreshrate0" + Convert.ToString(i) + "_name", "");
+
+          if (string.IsNullOrEmpty(name))
+          {
+            continue;
+          }
+
+          string fps = xmlreader.GetValueAsString("general", name + "_fps", "");
+          string hz = xmlreader.GetValueAsString("general", name + "_hz", "");
+
+          RefreshRateSetting setting = new RefreshRateSetting();
+
+          setting.Name = name;          
+
+          char[] splitter = { ';' };
+          string[] fpsArray = fps.Split(splitter);
+
+          List<double> fpsList = new List<double>();
+          foreach (string fpsItem in fpsArray)
+          {
+            double fpsAsDouble = -1;            
+            double.TryParse(fpsItem, NumberStyles.AllowDecimalPoint, provider, out fpsAsDouble);
+
+            if (fpsAsDouble > -1)
+            {
+              fpsList.Add(fpsAsDouble);
+            }
+          }
+
+          setting.Fps = fpsList;
+
+          double hzAsDouble = -1;
+          double.TryParse(hz, NumberStyles.AllowDecimalPoint, provider, out hzAsDouble);
+
+          setting.Hz = hzAsDouble;
+          setting.ExtCmd = extCmd;
+
+          _refreshRateSettings.Add(setting);          
+        }        
+      }
     }
 
     private static void FindExtCmdfromSettings(double fps, double currentRR, bool deviceReset, out double newRR,
                                                out string newExtCmd, out string newRRDescription)
     {
-      double cinemaHZ = 0;
-      double palHZ = 0;
-      double ntscHZ = 0;
-      double tvHZ = 0;
-
-      double[] cinemaFPS = RetriveRefreshRateChangerSettings("cinema_fps");
-      double[] palFPS = RetriveRefreshRateChangerSettings("pal_fps");
-      double[] ntscFPS = RetriveRefreshRateChangerSettings("ntsc_fps");
-      double[] tvFPS = RetriveRefreshRateChangerSettings("tv_fps");
-
-      string cinemaEXT = "";
-      string palEXT = "";
-      string ntscEXT = "";
-      string tvEXT = "";
+      GetRefreshRateConfiguration();
 
       newRR = 0;
       newExtCmd = "";
       newRRDescription = "";
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      foreach (RefreshRateSetting setting in _refreshRateSettings)
       {
-        NumberFormatInfo provider = new NumberFormatInfo();
-        provider.NumberDecimalSeparator = ".";
-
-        double.TryParse(xmlreader.GetValueAsString("general", "cinema_hz", ""), NumberStyles.AllowDecimalPoint, provider,
-                        out cinemaHZ);
-        double.TryParse(xmlreader.GetValueAsString("general", "pal_hz", ""), NumberStyles.AllowDecimalPoint, provider,
-                        out palHZ);
-        double.TryParse(xmlreader.GetValueAsString("general", "ntsc_hz", ""), NumberStyles.AllowDecimalPoint, provider,
-                        out ntscHZ);
-        double.TryParse(xmlreader.GetValueAsString("general", "tv_hz", ""), NumberStyles.AllowDecimalPoint, provider,
-                        out tvHZ);
-
-        cinemaEXT = xmlreader.GetValueAsString("general", "cinema_ext", "");
-        palEXT = xmlreader.GetValueAsString("general", "pal_ext", "");
-        ntscEXT = xmlreader.GetValueAsString("general", "ntsc_ext", "");
-        tvEXT = xmlreader.GetValueAsString("general", "tv_ext", "");
-      }
-      bool newRRRequired = false;
-      foreach (double fpsItem in cinemaFPS)
-      {
-        if (fpsItem == fps)
+        foreach (double fpsSetting in setting.Fps)
         {
-          newRRRequired = (currentRR != cinemaHZ || !deviceReset);
-          if (newRRRequired)
+          if (fps == fpsSetting)
           {
-            newRRDescription = "CINEMA@" + cinemaHZ + "hz";
-            newRR = cinemaHZ;
-            newExtCmd = cinemaEXT;
+            newRR = setting.Hz;
+            newExtCmd = setting.ExtCmd;
+            //newRRDescription = setting.Name;
+            newRRDescription = setting.Name + "@" + setting.Hz + "hz";
             return;
           }
-          break;
         }
-      }
-
-      foreach (double fpsItem in palFPS)
-      {
-        if (fpsItem == fps)
-        {
-          newRRRequired = (currentRR != palHZ || !deviceReset);
-          if (newRRRequired)
-          {
-            newRRDescription = "PAL@" + palHZ + "hz";
-            newRR = palHZ;
-            newExtCmd = palEXT;
-            return;
-          }
-          break;
-        }
-      }
-
-      foreach (double fpsItem in ntscFPS)
-      {
-        if (fpsItem == fps)
-        {
-          newRRRequired = (currentRR != ntscHZ || !deviceReset);
-          if (newRRRequired)
-          {
-            newRRDescription = "NTSC@" + ntscHZ + "hz";
-            newRR = ntscHZ;
-            newExtCmd = ntscEXT;
-            return;
-          }
-          break;
-        }
-      }
-      foreach (double fpsItem in tvFPS)
-      {
-        if (fpsItem == fps)
-        {
-          newRRRequired = (currentRR != tvHZ || !deviceReset);
-          if (newRRRequired)
-          {
-            newRRDescription = "TV@" + tvHZ + "hz";
-            newRR = tvHZ;
-            newExtCmd = tvEXT;
-            return;
-          }
-          break;
-        }
-      }
+      }                  
     }
 
     private static bool RunExternalJob(string newExtCmd, string strFile, MediaType type, bool deviceReset)
@@ -596,9 +641,17 @@ namespace MediaPortal.Player
       }
       else
       {
-        Log.Info(
-          "RefreshRateChanger.SetRefreshRateBasedOnFPS: no refreshrate change required. current is {0}hz, desired is {1}",
-          currentRR, newRR);
+        if (newRR == 0)
+        {
+          Log.Info(
+          "RefreshRateChanger.SetRefreshRateBasedOnFPS: could not find a matching refreshrate based on {0} fps (check config)",fps);          
+        }
+        else
+        {
+          Log.Info(
+            "RefreshRateChanger.SetRefreshRateBasedOnFPS: no refreshrate change required. current is {0}hz, desired is {1}",
+            currentRR, newRR);
+        }
       }
     }
 
@@ -630,7 +683,7 @@ namespace MediaPortal.Player
 
         force_refresh_rate = xmlreader.GetValueAsBool("general", "force_refresh_rate", false);
         bool useDefaultHz = xmlreader.GetValueAsBool("general", "use_default_hz", false);
-
+        
         if (!useDefaultHz)
         {
           Log.Info(
@@ -642,42 +695,21 @@ namespace MediaPortal.Player
 
         if (defaultKeyHZ.Length > 0)
         {
-          double.TryParse(xmlreader.GetValueAsString("general", defaultKeyHZ, ""), NumberStyles.AllowDecimalPoint,
+          double.TryParse(defaultKeyHZ, NumberStyles.AllowDecimalPoint,
                           provider, out defaultHZ);
         }
 
-        if (defaultKeyHZ.IndexOf("cinema") > -1)
+
+        foreach (RefreshRateSetting setting in _refreshRateSettings)
         {
-          double[] cinemafps = RetriveRefreshRateChangerSettings("cinema_fps");
-          if (cinemafps.Length > 0)
+          if (setting.Hz == defaultHZ)
           {
-            defaultFPS = cinemafps[0];
-          }
-        }
-        else if (defaultKeyHZ.IndexOf("pal") > -1)
-        {
-          double[] palfps = RetriveRefreshRateChangerSettings("pal_fps");
-          if (palfps.Length > 0)
-          {
-            defaultFPS = palfps[0];
-          }
-        }
-        else if (defaultKeyHZ.IndexOf("ntsc") > -1)
-        {
-          double[] ntscfps = RetriveRefreshRateChangerSettings("ntsc_fps");
-          if (ntscfps.Length > 0)
-          {
-            defaultFPS = ntscfps[0];
-          }
-        }
-        else
-        {
-          double[] tvfps = RetriveRefreshRateChangerSettings("tv_fps");
-          if (tvfps.Length > 0)
-          {
-            defaultFPS = tvfps[0];
-          }
-        }
+            if (setting.Fps.Count > 0)
+            {
+              defaultFPS = setting.Fps[0];
+            }
+          }         
+        }        
 
         deviceReset = xmlreader.GetValueAsBool("general", "devicereset", false);
       }
@@ -720,10 +752,18 @@ namespace MediaPortal.Player
         }
 
         deviceReset = xmlreader.GetValueAsBool("general", "devicereset", false);
-        force_refresh_rate = xmlreader.GetValueAsBool("general", "force_refresh_rate", false);
-        ;
+        force_refresh_rate = xmlreader.GetValueAsBool("general", "force_refresh_rate", false);        
       }
-      double[] tvFPS = RetriveRefreshRateChangerSettings("tv_fps");
+      
+      RefreshRateSetting setting = RetrieveRefreshRateChangerSetting("TV");
+
+      if (setting == null)
+      {
+        Log.Error("RefreshRateChanger.AdaptRefreshRate: TV section not found in mediaportal.xml, please delete file and reconfigure.");
+        return;
+      }
+
+      List<double> tvFPS = setting.Fps;
       double fps = -1;
 
       if ((isVideo || isDVD) && (!isRTSP && !isTV))
@@ -743,7 +783,7 @@ namespace MediaPortal.Player
       }
       else if (isTV || isRTSP)
       {
-        if (tvFPS.Length > 0)
+        if (tvFPS.Count > 0)
         {
           fps = tvFPS[0];
         }
