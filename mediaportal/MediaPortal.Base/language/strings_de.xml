@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Language name="German" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="Meine ">Anwendungen</String>
@@ -687,9 +687,9 @@
     <String id="810">Karte</String>
     <String id="820">Noch nicht gesehene Aufnahme löschen?</String>
     <String id="830">Als ungesehen markieren</String>
-    <String id="831">Wechseldatenträger auswefern</String>
-    <String id="832">Wechseldatenträger konnte nicht entfernt werden: </String>
-    <String id="833">Wechseldatenträger kann jetzt entfernt werden</String>
+	  <String id="831">Wechseldatenträger auswerfen</String>
+		<String id="832">Wechseldatenträger konnte nicht entfernt werden: </String>
+		<String id="833">Wechseldatenträger kann jetzt entfernt werden</String>
     <String id="850" prefix="Mein ">Alarm</String>
     <String id="851">Wiedergabeliste</String>
     <String id="852">Alarm aktiv</String>
@@ -1211,6 +1211,7 @@
     <String id="2610">Polnisch</String>
     <String id="2611">Tschechisch</String>
     <String id="2612">Ungarisch</String>
+    <String id="2700">CI Menü öffnen</String>
     <String id="2997">Std</String>
     <String id="2998">Min</String>
     <String id="2999">Sek</String>
@@ -1801,7 +1802,7 @@
     <String id="109006">Minidisplay Konfiguration : Fernbedienung</String>
     <String id="109811" prefix="Meine ">TV-Serien</String>
     <String id="190478" prefix="Meine ">Songtexte</String>
-    <String id="196742">MovingPictures</String>    
+    <String id="196742">MovingPictures</String>  
     <String id="200000">Bitte einen EPG-Grabber auswählen. Hinweis: Ist ihr Land nicht aufgeführt,</String>
     <String id="200001">dann müssen sie den Programmführer manuell einrichten!</String>
     <String id="200002">Sie können jetzt EPG-Kanäle ihren TV-Kanälen zuordnen</String>

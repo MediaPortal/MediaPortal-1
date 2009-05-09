@@ -259,7 +259,7 @@
       <type>label</type>
       <id>22</id>
       <posX>17</posX>
-      <posY>375</posY>
+      <posY>400</posY>
       <label>Signal level: #TV.TuningDetails.SignalLevel</label>
       <font>font14</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -271,7 +271,7 @@
       <type>progress</type>
       <id>23</id>
       <posX>17</posX>
-      <posY>400</posY>
+      <posY>425</posY>
       <width>444</width>
       <height>25</height>
       <label>#TV.TuningDetails.SignalLevel</label>
@@ -284,7 +284,7 @@
       <type>label</type>
       <id>24</id>
       <posX>711</posX>
-      <posY>375</posY>
+      <posY>400</posY>
       <label>Signal quality: #TV.TuningDetails.SignalQuality</label>
       <font>font14</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -296,7 +296,7 @@
       <type>progress</type>
       <id>25</id>
       <posX>711</posX>
-      <posY>400</posY>
+      <posY>425</posY>
       <width>444</width>
       <height>25</height>
       <label>#TV.TuningDetails.SignalQuality</label>
@@ -314,6 +314,18 @@
       <height>156</height>
       <action>18</action>
       <textureFocus>tv_green_border.png</textureFocus>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Has CI Menu</description>
+      <type>label</type>
+      <id>26</id>
+      <posX>17</posX>
+      <posY>375</posY>
+      <label>CI Menu supported: #TV.TuningDetails.HasCiMenuSupport</label>
+      <font>font14</font>
+      <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>

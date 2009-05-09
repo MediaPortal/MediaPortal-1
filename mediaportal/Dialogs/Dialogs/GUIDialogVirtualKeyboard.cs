@@ -65,7 +65,10 @@ namespace MediaPortal.Dialogs
     public const float fSTD_REPEAT = 0.085f; // 85 mS recommended for repeat rate
 
     // Maximum number of characters in string
-    public const int MAX_CHARS = 64;
+    protected int _max_chars = 64;
+    public int MAX_CHARS {
+      get { return _max_chars; }
+    }
 
     // Width of text box
     public float fTEXTBOX_WIDTH = 576.0f - 64.0f - 4.0f - 4.0f - 10.0f;
@@ -1664,6 +1667,10 @@ namespace MediaPortal.Dialogs
 
   public class StandardKeyboard : VirtualKeyboard
   {
+    public void SetMaxLength(int maxLen)
+    {
+      _max_chars = maxLen;
+    }
     protected override void InitializeInstance()
     {
       GetID = (int) Window.WINDOW_VIRTUAL_KEYBOARD;
