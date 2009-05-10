@@ -123,6 +123,12 @@
     </Compile>
     <Compile Include="HelpSystem.cs" />
     <Compile Include="OSVersion.cs" />
+    <Compile Include="Sections\ImportExport.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\ImportExport.Designer.cs">
+      <DependentUpon>ImportExport.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\Project.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -472,6 +478,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Combinations.resx">
       <DependentUpon>Combinations.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\ImportExport.resx">
+      <DependentUpon>ImportExport.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Project.resx">

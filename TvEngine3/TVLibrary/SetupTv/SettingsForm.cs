@@ -194,6 +194,7 @@ namespace SetupTv
         AddChildSection(radioChannels, new RadioEpgGrabber());
         AddChildSection(radioChannels, new RadioGroups());
 
+        AddSection(new ImportExport());
         AddSection(new ScanSettings());
         AddSection(new TvRecording());
         AddSection(new TvSchedules());
