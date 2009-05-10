@@ -25,7 +25,7 @@ using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using System.Runtime.Remoting.Channels;
 using System.Collections;
-using System.Runtime.Remoting.Channels.Http;
+using System.Runtime.Remoting.Channels.Tcp;
 using System.Runtime.Serialization.Formatters;
 
 // Reverted mantis #1409: using System.Collections;
@@ -40,7 +40,7 @@ namespace TvControl
     private static bool _channelRegistered = false;
     private static IController _tvControl;
     private static string _hostName = "localhost";
-    private static HttpChannel CallbackChannel; // callback channel
+    private static TcpChannel CallbackChannel; // callback channel
     // Reverted mantis #1409: private static uint _timeOut = 45000; // specified in ms (currently all remoting calls are aborted if processing takes more than 45 sec)
 
     /// <summary>
@@ -56,15 +56,15 @@ namespace TvControl
           RemotingConfiguration.CustomErrorsMode = CustomErrorsModes.Off;
 
           // Creating a custom formatter for a TcpChannel sink chain.
-          //BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
-          SoapServerFormatterSinkProvider provider   = new SoapServerFormatterSinkProvider();
+          BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
+          //SoapServerFormatterSinkProvider provider   = new SoapServerFormatterSinkProvider();
           provider.TypeFilterLevel                   = TypeFilterLevel.Full; // needed for passing objref!
           IDictionary channelProperties              = new Hashtable(); // Creating the IDictionary to set the port on the channel instance.
           channelProperties.Add("port", 31459); // "0" chooses one available port
           channelProperties.Add("exclusiveAddressUse", false);
 
           // Pass the properties for the port setting and the server provider in the server chain argument. (Client remains null here.)
-          CallbackChannel = new HttpChannel(channelProperties, new SoapClientFormatterSinkProvider(), provider);
+          CallbackChannel = new TcpChannel(channelProperties, null, provider);
           ChannelServices.RegisterChannel(CallbackChannel, false);
         }
       }
