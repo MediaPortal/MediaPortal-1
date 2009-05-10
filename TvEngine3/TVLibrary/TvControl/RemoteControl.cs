@@ -60,7 +60,7 @@ namespace TvControl
           SoapServerFormatterSinkProvider provider   = new SoapServerFormatterSinkProvider();
           provider.TypeFilterLevel                   = TypeFilterLevel.Full; // needed for passing objref!
           IDictionary channelProperties              = new Hashtable(); // Creating the IDictionary to set the port on the channel instance.
-          channelProperties.Add("port", 31458); // "0" chooses one available port
+          channelProperties.Add("port", 31459); // "0" chooses one available port
           channelProperties.Add("exclusiveAddressUse", false);
 
           // Pass the properties for the port setting and the server provider in the server chain argument. (Client remains null here.)
