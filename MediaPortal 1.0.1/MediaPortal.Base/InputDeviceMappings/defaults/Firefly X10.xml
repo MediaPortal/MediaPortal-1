@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<mappings version="3">
+	<remote family="SnapStream Firefly Remote">
+		<button name="0" code="20">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="80" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2" command="ACTION" cmdproperty="80" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="25" command="ACTION" cmdproperty="80" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="603" command="ACTION" cmdproperty="80" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="605" command="ACTION" cmdproperty="80" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="606" command="ACTION" cmdproperty="80" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="501" command="ACTION" cmdproperty="80" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="601" command="ACTION" cmdproperty="80" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="759" command="ACTION" cmdproperty="80" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="6" command="ACTION" cmdproperty="80" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="10" command="ACTION" cmdproperty="48" sound="back.wav" />
+			<action layer="0" condition="WINDOW" conproperty="11" command="ACTION" cmdproperty="48" sound="back.wav" />
+			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="88" sound="back.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="93" cmdkeychar="48" cmdkeycode="0" sound="cursor.wav" />
+		</button>
+		<button name="1" code="44">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="37" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="93" cmdkeychar="49" cmdkeycode="0" sound="cursor.wav" />
+		</button>
+		<button name="2" code="47">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="38" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="93" cmdkeychar="50" cmdkeycode="0" sound="cursor.wav" />
+		</button>
+		<button name="3" code="42">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="39" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="93" cmdkeychar="51" cmdkeycode="0" sound="cursor.wav" />
+		</button>
+		<button name="4" code="22">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="40" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="93" cmdkeychar="52" cmdkeycode="0" sound="cursor.wav" />
+		</button>
+		<button name="5" code="27">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="41" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="93" cmdkeychar="53" cmdkeycode="0" sound="cursor.wav" />
+		</button>
+		<button name="6" code="25">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="42" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="93" cmdkeychar="54" cmdkeycode="0" sound="cursor.wav" />
+		</button>
+		<button name="7" code="23">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="43" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="93" cmdkeychar="55" cmdkeycode="0" sound="cursor.wav" />
+		</button>
+		<button name="8" code="26">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="44" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="93" cmdkeychar="56" cmdkeycode="0" sound="cursor.wav" />
+		</button>
+		<button name="9" code="21">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="45" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="93" cmdkeychar="57" cmdkeycode="0" sound="cursor.wav" />
+		</button>
+		<button name="PAUSE" code="0">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="12" sound="click.wav" />
+		</button>
+		<button name="RECORD" code="1">
+			<action layer="0" condition="WINDOW" conproperty="501" command="ACTION" cmdproperty="113" sound="click.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="89" sound="click.wav" />
+		</button>
+		<button name="REWIND" code="2">
+			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="87" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="17" sound="cursor.wav" />
+		</button>
+		<button name="FF" code="4">
+			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="86" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="16" sound="cursor.wav" />
+		</button>
+		<button name="STOP" code="5">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="13" sound="click.wav" />
+		</button>
+		<button name="PLAY" code="6">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="68" sound="click.wav" />
+		</button>
+		<button name="MENU" code="97">
+			<action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="24" sound="click.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="106" sound="click.wav" />
+		</button>
+		<button name="SKIP_UP" code="41">
+			<action layer="0" condition="PLAYER" conproperty="DVD" command="ACTION" cmdproperty="91" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="5" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="91" sound="click.wav" />			
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="14" sound="cursor.wav" />
+		</button>
+		<button name="SKIP_DN" code="48">
+			<action layer="0" condition="PLAYER" conproperty="DVD" command="ACTION" cmdproperty="92" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="6" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="91" sound="click.wav" />			
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="15" sound="cursor.wav" />
+		</button>
+		<button name="UP" code="19">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="3" sound="cursor.wav" />
+		</button>
+		<button name="DN" code="12">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="4" sound="cursor.wav" />
+		</button>
+		<button name="LEFT" code="13">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="1" sound="cursor.wav" />
+		</button>
+		<button name="RIGHT" code="11">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="2" sound="cursor.wav" />
+		</button>
+		<button name="ENTER" code="15">
+			<action layer="0" condition="WINDOW" conproperty="11" command="ACTION" cmdproperty="47" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="10" command="ACTION" cmdproperty="10" sound="back.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="7" sound="click.wav" />
+		</button>
+		<button name="OKAY" code="17">
+			<action layer="0" condition="WINDOW" conproperty="11" command="ACTION" cmdproperty="47" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="10" command="ACTION" cmdproperty="10" sound="back.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="7" sound="click.wav" />
+		</button>
+		<button name="EXIT" code="98">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="10" sound="back.wav" />
+		</button>
+		<button name="TV" code="80">
+			<action layer="0" condition="WINDOW" conproperty="7701" command="WINDOW" cmdproperty="602" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="1" command="ACTION" cmdproperty="18" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="18" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="18" sound="click.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="1" sound="click.wav" />
+		</button>
+		<button name="POWER" code="30">
+			<action layer="0" condition="*" conproperty="-1" command="POWER" cmdproperty="EXIT" sound="back.wav" />
+		</button>
+		<button name="VOL_UP" code="37">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="103" sound="cursor.wav" />
+		</button>
+		<button name="VOL_DN" code="35">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="102" sound="cursor.wav" />
+		</button>
+		<button name="MUTE" code="40">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="9982" sound="click.wav" />
+		</button>
+		<button name="CH_UP" code="41">
+			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9979" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9979" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="31" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="1" command="ACTION" cmdproperty="95" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="95" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="5" sound="cursor.wav" />
+		</button>
+		<button name="CH_DN" code="48">
+			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9980" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9980" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="30" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="1" command="ACTION" cmdproperty="94" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="94" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="6" sound="cursor.wav" />
+		</button>
+		<button name="RESTOREMP" code="74">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="123" sound="cursor.wav" />
+		</button>
+		<button name="SUBTITLE" code="7" />
+		<button name="TITLE" code="160" />
+		<button name="RETURN" code="14" />
+		<button name="DISPLAY" code="16" />
+		<button name="AB" code="18" />
+		<button name="VCR_AUX_A" code="28" />
+		<button name="ALL_LTS_ON" code="31" />
+		<button name="DVD_AUX_D" code="32" />
+		<button name="SAT_AUX_C" code="33" />
+		<button name="CAB_AUX_B" code="34" />
+		<button name="AUD_AUX_E" code="36" />
+		<button name="IR_ALL_OFF" code="38" />
+		<button name="AUX_F" code="39" />
+		<button name="SETUP" code="43" />
+		<button name="3_ON" code="45" />
+		<button name="RECALL" code="46" />
+		<button name="1_ON" code="49" />
+		<button name="1_OFF" code="50" />
+		<button name="2_ON" code="51" />
+		<button name="2_OFF" code="52" />
+		<button name="3_OFF" code="53" />
+		<button name="4_ON" code="54" />
+		<button name="4_OFF" code="55" />
+		<button name="VALUE56" code="56" />
+		<button name="VALUE57" code="57" />
+		<button name="VALUE58" code="58" />
+		<button name="VALUE59" code="59" />
+		<button name="VALUE60" code="60" />
+		<button name="VALUE61" code="61" />
+		<button name="VALUE62" code="62" />
+		<button name="RELEASE" code="63" />
+		<button name="ON" code="64" />
+		<button name="OFF" code="65" />
+		<button name="BRIGHT" code="66" />
+		<button name="DIM" code="67" />
+		<button name="ALL_LIGHTS_ON" code="68" />
+		<button name="ALL_LIGHTS_OFF" code="69" />
+		<button name="ALL_OFF" code="70" />
+		<button name="EXTENDED" code="71" />
+		<button name="EVENT" code="72" />
+		<button name="PC" code="73" />
+		<button name="BUTTON_A" code="74" />
+		<button name="BUTTON_B" code="75" />
+		<button name="BUTTON_C" code="76" />
+		<button name="BUTTON_D" code="77" />
+		<button name="BUTTON_E" code="78" />
+		<button name="BUTTON_F" code="79" />
+		<button name="TVMODE" code="80" />
+		<button name="DVDMODE" code="81" />
+		<button name="WEBMODE" code="82" />
+		<button name="BOOKSYMBOL" code="83" />
+		<button name="HANDSYMBOL" code="84" />
+		<button name="LEFTMOUSEDOWN" code="85" />
+		<button name="LEFTMOUSEUP" code="86" />
+		<button name="RIGHTMOUSEDOWN" code="87" />
+		<button name="RIGHTMOUSEUP" code="88" />
+		<button name="DIRPADRIGHT" code="89" />
+		<button name="DIRPADUP" code="90" />
+		<button name="DIRPADLEFT" code="91" />
+		<button name="DIRPADDOWN" code="92" />
+		<button name="DIRPADRIGHTUP" code="93" />
+		<button name="DIRPADRIGHTDOWN" code="94" />
+		<button name="DIRPADLEFTDOWN" code="95" />
+		<button name="DIRPADLEFTUP" code="96" />
+		<button name="BOOKMARK" code="97" />
+		<button name="RESIZE" code="98" />
+		<button name="CHECK" code="99" />
+		<button name="LEFTMOUSEDOUBLECLICK" code="100" />
+		<button name="RIGHTMOUSEDOUBLECLICK" code="101" />
+		<button name="PANLEFT" code="102" />
+		<button name="PANRIGHT" code="103" />
+		<button name="PANUP" code="104" />
+		<button name="PANDOWN" code="105" />
+		<button name="CAMGOPOSITION1" code="106" />
+		<button name="CAMSETPOSITION1" code="107" />
+		<button name="CAMGOPOSITION2" code="108" />
+		<button name="CAMSETPOSITION2" code="109" />
+		<button name="CAMGOPOSITION3" code="110" />
+		<button name="CAMSETPOSITION3" code="111" />
+		<button name="CAMGOPOSITION4" code="112" />
+		<button name="CAMSETPOSITION4" code="113" />
+		<button name="CAMCENTER" code="114" />
+		<button name="CAMSWEEP" code="115" />
+		<button name="CAMCLEARALLPOSITIONS" code="116" />
+		<button name="CAMENTERSWEEPTESTMODE" code="117" />
+		<button name="FILLEDHAND" code="118" />
+		<button name="ZOOMIN" code="119" />
+		<button name="ZOOMOUT" code="120" />
+		<button name="GOPOSITION5" code="121" />
+		<button name="SETPOSITION5" code="122" />
+		<button name="GOPOSITION6" code="123" />
+		<button name="SETPOSITION6" code="124" />
+		<button name="GOPOSITION7" code="125" />
+		<button name="SETPOSITION7" code="126" />
+		<button name="GOPOSITION8" code="127" />
+		<button name="SETPOSITION8" code="128" />
+		<button name="GOPOSITION9" code="129" />
+		<button name="SETPOSITION9" code="130" />
+		<button name="FOCUSUP" code="131" />
+		<button name="FOCUSDOWN" code="132" />
+		<button name="IRISUP" code="133" />
+		<button name="IRISDOWN" code="134" />
+		<button name="PTZON" code="135" />
+		<button name="PTZOFF" code="136" />
+		<button name="INPUT" code="137" />
+		<button name="ZOOM" code="138" />
+		<button name="AUTOFOCUS" code="139" />
+		<button name="MTALBUM" code="140" />
+		<button name="MTARTIST" code="141" />
+		<button name="MTGENRE" code="142" />
+		<button name="MTTRACK" code="143" />
+		<button name="MTPLAYLIST" code="144" />
+		<button name="MTPC" code="150" />
+		<button name="MTLEFT" code="151" />
+		<button name="MTRIGHT" code="152" />
+		<button name="MTUP" code="153" />
+		<button name="MTDOWN" code="154" />
+		<button name="MTENTER" code="155" />
+		<button name="MTADDDELETE" code="156" />
+		<button name="MTAB" code="157" />
+		<button name="MTTV" code="158" />
+		<button name="MTVCR" code="159" />
+		<button name="MTRADIO" code="160" />
+		<button name="MTCHANNELLIST" code="161" />
+		<button name="SCROLLUP1" code="162" />
+		<button name="SCROLLUP2" code="163" />
+		<button name="SCROLLUP3" code="164" />
+		<button name="SCROLLUP4" code="165" />
+		<button name="SCROLLUP5" code="166" />
+		<button name="SCROLLUP6" code="167" />
+		<button name="SCROLLUP7" code="168" />
+		<button name="SCROLLUP8" code="169" />
+		<button name="SCROLLUP9" code="170" />
+		<button name="SCROLLUP10" code="171" />
+		<button name="SCROLLUP11" code="172" />
+		<button name="SCROLLUP12" code="173" />
+		<button name="SCROLLUP13" code="174" />
+		<button name="SCROLLUP14" code="175" />
+		<button name="SCROLLUP15" code="176" />
+		<button name="SCROLLUP16" code="177" />
+		<button name="SCROLLDN1" code="178" />
+		<button name="SCROLLDN2" code="179" />
+		<button name="SCROLLDN3" code="180" />
+		<button name="SCROLLDN4" code="181" />
+		<button name="SCROLLDN5" code="182" />
+		<button name="SCROLLDN6" code="183" />
+		<button name="SCROLLDN7" code="184" />
+		<button name="SCROLLDN8" code="185" />
+		<button name="MOUSEPAD_LEFTUP" code="186" />
+		<button name="MOUSEPAD_UP" code="187" />
+		<button name="MOUSEPAD_RIGHTUP" code="188" />
+		<button name="MOUSEPAD_LEFT" code="189" />
+		<button name="MOUSEPAD_RIGHT" code="190" />
+		<button name="MOUSEPAD_LEFTDOWN" code="191" />
+		<button name="MOUSEPAD_DOWN" code="192" />
+		<button name="MOUSEPAD_RIGHTDOWN" code="193" />
+		<button name="MOUSEPAD_LBUTTON" code="194" />
+		<button name="RFRECEIVERINIT" code="254" />
+	</remote>
+</mappings>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<wizard>
+   <caption>MediaPortal - Music Wizard</caption>
+   <sections>
+      <section>
+         <description>Welcome screen</description>
+         <name>Wizard_Welcome</name>
+         <topic>MediaPortal Wizard</topic>
+         <information></information>
+         <header>Welcome to the MusicPlayer Setup wizard</header>
+         <body>This wizard will take you through the basic steps needed to configure MediaPortals music playback. Please take time to read through each screen as it is displayed. Specific information presented on each page will assist you in making this setup successful.</body>
+         <image>wizards/wizard_music.png</image>
+      </section>
+      <section>
+         <description></description>
+         <name>Music</name>
+         <topic>General Music Settings</topic>
+         <information>Please note that enabling ID3 will make MediaPortal act a bit slower, if you still want to make use of the ID3 tags you can pre-build the music database with tag information instead. Windows Media Player 9 can provide visualizations for your music.</information>
+      </section>
+      <section>
+         <description/>
+         <name>MusicExtensions</name>
+         <topic>Music Extension Settings</topic>
+         <information>You may add, or change the default extensions you want MediaPortal to recognize and play. Please note that additional codecs might be needed.</information>
+      </section>
+      <section>
+         <description/>
+         <name>MusicShares</name>
+         <topic>Music Shares</topic>
+         <information>Setup your music shares, including mapped networked drives. Place a checkmark before the share you wish to be the default folder displayed when entering the music module.</information>
+      </section>
+      <section>
+         <description/>
+         <name>MusicDatabase</name>
+         <topic>Music Database</topic>
+         <information>By pressing the Update-button below, the wizard will scan for and extract music tag information from music files found in the marked shares. The tag information will be stored in MediaPortals music database, this will greatly speed up the usage of the plugin.</information>
+         <dependency>MusicShares.Shares.Available</dependency>
+      </section>
+      <section>
+         <description>Wizard done screen</description>
+         <name>Wizard_Finished</name>
+         <topic>Congratulations!</topic>
+         <information></information>
+         <header>This Modules Configuration is Complete!</header>
+         <body>You have now finished the configuration of this Wizard. If at anytime, you wish to alter any of these settings, press F2 from within MediaPortal. Please consult the appropriate MediaPortal documentation for further explanation of each setting.</body>
+         <image>wizards/wizard_done.png</image>
+      </section>
+   </sections>
+</wizard>

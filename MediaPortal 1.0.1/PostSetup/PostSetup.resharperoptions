@@ -1,0 +1,60 @@
+<Configuration>
+  <CompletionStatisticsManager>
+    <ItemStatistics item="Qualified:System.Windows.Forms.CheckBox">
+      <Item value="Checked" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:object">
+      <Item value="ToString" priority="0" />
+      <Item value="Equals" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.Control.ControlCollection">
+      <Item value="Clear" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:PostSetup.MP3PartInstaller">
+      <Item value="Title" priority="1" />
+      <Item value="ButtonActionChaned_Callback" priority="0" />
+      <Item value="Equals" priority="0" />
+      <Item value="ButtonAction_Changed" priority="0" />
+      <Item value="Dock" priority="0" />
+      <Item value="Init" priority="0" />
+      <Item value="Install" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@PostSetup.MP3PartInstaller.BUTTONACTION_NEXT">
+      <Item value="ToString" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.Button">
+      <Item value="Tag" priority="0" />
+      <Item value="Text" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.DialogResult">
+      <Item value="Equals" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.ComboBox">
+      <Item value="Enabled" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Microsoft.Win32.RegistryKey">
+      <Item value="GetValue" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:string">
+      <Item value="Split" priority="0" />
+    </ItemStatistics>
+  </CompletionStatisticsManager>
+  <SettingsComponent>
+    <string />
+    <integer />
+    <boolean />
+  </SettingsComponent>
+  <RecentFilesTracker>
+    <RecentFilesTracker>
+      <TrackedFile location="C:\work\Projects\mediaportal\PostSetup\MP3PartFFDShow.cs" offset="2056" line="57" column="0" />
+      <TrackedFile location="C:\work\Projects\mediaportal\PostSetup\MP3PartXMLTV.cs" offset="0" line="0" column="0" />
+      <TrackedFile location="C:\work\Projects\mediaportal\PostSetup\MP3PartInstaller.cs" offset="0" line="261" column="0" />
+      <TrackedFile location="C:\work\Projects\mediaportal\PostSetup\MPRecommendations.cs" offset="9260" line="125" column="0" />
+      <TrackedFile location="C:\work\Projects\mediaportal\PostSetup\MP3PartVobSub.cs" offset="0" line="18" column="0" />
+      <TrackedFile location="C:\work\Projects\mediaportal\PostSetup\WebDownload\DownloadThread.cs" offset="879" line="37" column="0" />
+      <TrackedFile location="C:\work\Projects\mediaportal\Core\SubtitleReader\SubTitles.cs" offset="0" line="-1" column="-1" />
+      <TrackedFile location="C:\work\Projects\mediaportal\Core\SubtitleReader\SubReader.cs" offset="0" line="-1" column="-1" />
+      <TrackedFile location="C:\work\Projects\mediaportal\Core\SubtitleReader\ISUbtitleReader.cs" offset="156" line="-1" column="-1" />
+    </RecentFilesTracker>
+  </RecentFilesTracker>
+</Configuration>

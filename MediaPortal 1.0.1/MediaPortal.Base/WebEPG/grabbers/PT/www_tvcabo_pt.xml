@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="pt" availableDays="6" timezone="GMT Standard Time" version="2.1.0" />
+  <Channels>
+    <Channel id="dois.tv" siteId="2:" />
+    <Channel id="arte-tv.com" siteId="Arte" />
+    <Channel id="axn.pt" siteId="AXN" />
+    <Channel id="bbcprime.com" siteId="BBCP" />
+    <Channel id="bbcworld.com" siteId="BBCW" />
+    <Channel id="biographychannel.tv" siteId="BIOC" />
+    <Channel id="bloomberg.co.uk" siteId="BLG" />
+    <Channel id="cartoonnetwork.co.uk" siteId="CART" />
+    <Channel id="cnbceurope.com" siteId="CNBC" />
+    <Channel id="cnni-emea@cnn.com" siteId="CNN" />
+    <Channel id="disney.pt" siteId="DC" />
+    <Channel id="tudiscovery.com" siteId="DISC" />
+    <Channel id="discoverycivilisation.co.uk" siteId="DISCC" />
+    <Channel id="discoveryscience.co.uk" siteId="DISCS" />
+    <Channel id="discovery-turbo-pt" siteId="DISCT" />
+    <Channel id="eurosportnews@eurosport.com" siteId="EPNS" />
+    <Channel id="extreme.com" siteId="ES" />
+    <Channel id="euronews.net" siteId="EUN" />
+    <Channel id="eurosport@eurosport.com" siteId="EURS" />
+    <Channel id="fox-pt" siteId="Fox" />
+    <Channel id="foxlife-pt" siteId="FOXF" />
+    <Channel id="canalhistoria.com" siteId="HIST" />
+    <Channel id="canal-hollywood.com" siteId="HOLL" />
+    <Channel id="LusomundoAction@lusomundo.pt" siteId="LUSA" />
+    <Channel id="LusomundoHappy@lusomundo.pt" siteId="LUSH" />
+    <Channel id="m6.fr" siteId="M6" />
+    <Channel id="mcmtop@mcm.net" siteId="MCM" />
+    <Channel id="mezzo.tv" siteId="MEZZ" />
+    <Channel id="mtv.pt" siteId="MTV" />
+    <Channel id="mtv2europe.com" siteId="MTV2" />
+    <Channel id="mtvbase.co.uk" siteId="MTVB" />
+    <Channel id="nationalgeographic.pt" siteId="NG" />
+    <Channel id="nickelodeon.pt" siteId="NICK" />
+    <Channel id="odisea-odisseia.com" siteId="ODIS" />
+    <Channel id="peopleandartslatino.com" siteId="P+A" />
+    <Channel id="canal-panda.com" siteId="PAND" />
+    <Channel id="playboytvla.com" siteId="PLBY" />
+    <Channel id="raiuno.rai.it" siteId="RAI1" />
+    <Channel id="rtp1@rtp.pt" siteId="RTP1" />
+    <Channel id="RTP Africa@rtp.pt" siteId="RTPA" />
+    <Channel id="RTP Memoria@rtp.pt" siteId="RTPM" />
+    <Channel id="RTPN@rtp.pt" siteId="RTPN" />
+    <Channel id="Venus.com.ar" siteId="SEXH" />
+    <Channel id="SIC@sapo.pt" siteId="SIC" />
+    <Channel id="SIC Comedia@sapo.pt" siteId="SICC" />
+    <Channel id="SIC Mulher@sapo.pt" siteId="SICM" />
+    <Channel id="SIC Noticias@sapo.pt" siteId="SICN" />
+    <Channel id="SIC Radical@sapo.pt" siteId="SICR" />
+    <Channel id="skynews@sky.com" siteId="SKYN" />
+    <Channel id="sporttv1@sporttv.pt" siteId="SPTV1" />
+    <Channel id="sporttv2@sporttv.pt" siteId="SPTV2" />
+    <Channel id="LusomundoGallery@lusomundo.pt" siteId="TCG" />
+    <Channel id="tcmeurope.com" siteId="TCM" />
+    <Channel id="LusomundoPremium@lusomundo.pt" siteId="TCP" />
+    <Channel id="tv5.org" siteId="TV5" />
+    <Channel id="crtvg.es" siteId="TVG" />
+    <Channel id="tve.es" siteId="TVEI" />
+    <Channel id="tvi.iol.pt" siteId="TVI" />
+    <Channel id="vh1e.com" siteId="VH1" />
+    <Channel id="vivir-tv-pt" siteId="VIV" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.tvcabo.pt/Televisao/ListaProgramas.aspx?cat=&amp;channelSigla=[ID]&amp;dia=[DAY_OFFSET]&amp;package=9" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="Imprimir">
+        <SectionTemplate tags="TA">
+          <TemplateText>
+            &lt;tr&gt;
+            &lt;td&gt;&lt;#START&gt;&lt;/td&gt;&lt;td&gt;&lt;a &gt;&lt;#TITLE&gt;&lt;/a&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Template name="Details" start="Menu Topo" end="//Menu Topo">
+        <SectionTemplate tags="TS">
+          <TemplateText>
+            &lt;table&gt;
+            &lt;z(&gt;&lt;tr&gt;&lt;td&gt;&lt;*MATCH&gt;&lt;span id="_ctl0__ctl4_lblDirector"&gt;&lt;*VALUE&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/z)?&gt;
+            &lt;z(&gt;&lt;tr&gt;&lt;td&gt;&lt;*MATCH&gt;&lt;span id="_ctl0__ctl4_lblActor"&gt;&lt;*VALUE&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/z)?&gt;
+            &lt;tr&gt;&lt;td&gt;&lt;span&gt;&lt;#DESCRIPTION&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+            &lt;/table&gt;
+          </TemplateText>
+          <MatchList>
+            <Match field="#ACTORS" match="Com:" />
+            <Match field="#DIRECTOR" match="De:" />
+          </MatchList>
+        </SectionTemplate>
+      </Template>
+      <Sublinks>
+        <Sublink search="GetProgram" template="Details">
+          <Link url="http://www.tvcabo.pt/TV/ProgramacaoTv.aspx?programId=[1]&amp;channelSigla=[2]" post="" external="false" encoding="" />
+        </Sublink>
+      </Sublinks>
+      <Searches>
+        <Search match="Ep [0-9]{1,3}" field="#EPISODE" remove="true" />
+        <Search match="\([0-9]{1,2}\)(,)" field="#SEASON" remove="true" />
+      </Searches>
+    </Html>
+  </Listing>
+</Grabber>

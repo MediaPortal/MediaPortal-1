@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>707</id>
+  <defaultcontrol>24</defaultcontrol>
+ <allowoverlay>yes</allowoverlay>
+  <define>#header.label:6103</define>
+  <define>#header.image:settings_logo.png</define>
+  <define>#header.hover:hover_my tv.png</define>
+  <controls>
+    <import>common.settings.xml</import>
+    <control>
+      <type>button</type>
+      <description>Manual</description>
+      <id>27</id>
+      <posX>418</posX>
+      <posY>504</posY>
+      <onleft>24</onleft>
+      <onright>24</onright>
+      <onup>24</onup>
+      <ondown>24</ondown>
+      <label>6013</label>
+      <width>126</width>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Please select your EPG grabber. Note if your country is</description>
+      <id>2</id>
+      <posX>32</posX>
+      <posY>152</posY>
+      <label>200000</label>
+      <font>font12</font>
+    </control>
+    <control>
+      <type>label</type>
+      <description>not listed then you will need to supply the EPG manually</description>
+      <id>3</id>
+      <posX>32</posX>
+      <posY>176</posY>
+      <label>200001</label>
+      <font>font12</font>
+    </control>
+    <control>
+      <type>listcontrol</type>
+      <description>countryList</description>
+      <id>24</id>
+      <posX>32</posX>
+      <posY>217</posY>
+      <width>592</width>
+      <height>220</height>
+      <onleft>27</onleft>
+      <onright>27</onright>
+      <onup>27</onup>
+      <ondown>27</ondown>
+      <font>font13</font>
+      <spinPosX>550</spinPosX>
+      <spinPosY>395</spinPosY>
+    </control>
+  </controls>
+</window>

@@ -1,0 +1,477 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3333B71D-6304-452C-BEA5-D037E7B3AA6B}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>ProcessPlugins</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>ProcessPlugins</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureCardDefinitions|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureDefintionsRelease|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;UseCaptureCardDefinitions</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>
+    </DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureCardDefinitions|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\UseCaptureCardDefinitions\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureDefintionsRelease|x86' ">
+    <OutputPath>bin\UseCaptureDefintionsRelease\</OutputPath>
+    <DefineConstants>TRACE;UseCaptureCardDefinitions</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>
+    </DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Name>Core</Name>
+      <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\Databases\Databases.csproj">
+      <Name>Databases</Name>
+      <Project>{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\Dialogs\Dialogs.csproj">
+      <Name>Dialogs</Name>
+      <Project>{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\DirectShowLib\DirectShowLib.csproj">
+      <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
+      <Name>DirectShowLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MiniDisplayLibrary\MiniDisplayLibrary.csproj">
+      <Project>{8635D515-A5D4-4FB7-BD30-71770651E18B}</Project>
+      <Name>MiniDisplayLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlugins\RemotePlugins.csproj">
+      <Name>RemotePlugins</Name>
+      <Project>{0A234721-1F13-4DF8-9B1E-64D9E3111203}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\TVCapture\TVCapture.csproj">
+      <Name>TVCapture</Name>
+      <Project>{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebEPG\WebEPG\WebEPG.csproj">
+      <Project>{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}</Project>
+      <Name>WebEPG %28WebEPG\WebEPG%29</Name>
+    </ProjectReference>
+    <ProjectReference Include="MusicShareWatcher\MusicShareWatcherHelper\MusicShareWatcherHelper.csproj">
+      <Project>{C6564AA7-976B-43EF-9E35-7E607EE1DD12}</Project>
+      <Name>MusicShareWatcherHelper</Name>
+    </ProjectReference>
+    <Reference Include="Bass.Net, Version=2.3.1.2, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Bass.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.GIRDERLib, Version=1.0.0.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Interop.GIRDERLib.dll</HintPath>
+    </Reference>
+    <Reference Include="LibDriverCoreClient, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\LibDriverCoreClient.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Outlook, Version=10.0.4504.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Microsoft.Office.Interop.Outlook.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap">
+      <Name>System.Runtime.Serialization.Formatters.Soap</Name>
+    </Reference>
+    <Reference Include="System.Web">
+      <Name>System.Web</Name>
+    </Reference>
+    <Reference Include="System.Web.Services">
+      <Name>System.Web.Services</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AudioScrobbler\AudioscrobblerPlugin.cs" />
+    <Compile Include="AudioScrobbler\AudioscrobblerSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AudioScrobbler\AudioscrobblerSettings.Designer.cs">
+      <DependentUpon>AudioscrobblerSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AutoCropper\AutoCropper.cs" />
+    <Compile Include="AutoCropper\AutoCropperSetup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AutoCropper\FrameAnalyzer.cs" />
+    <Compile Include="AutoCropper\MovingAverage.cs" />
+    <Compile Include="AutoCropper\PlugInBase.cs" />
+    <Compile Include="CallerId\ISDN\CallerIdISDN.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CallerId\ISDN\ISDNSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CallerId\ISDN\ISDNWatch.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CallerId\ISDN\OutlookHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CallerId\YAC\CallerIdPlugin.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ComSkipLauncher\ComSkipLauncher.cs" />
+    <Compile Include="ComSkipLauncher\Configuration.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ComSkipLauncher\Configuration.Designer.cs">
+      <DependentUpon>Configuration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DirecTV Serial Control\Command.cs" />
+    <Compile Include="DirecTV Serial Control\CommandSet.cs" />
+    <Compile Include="DirecTV Serial Control\DirecTVSettings.cs" />
+    <Compile Include="DirecTV Serial Control\KeyMap.cs" />
+    <Compile Include="DirecTV Serial Control\SerialInterface.cs" />
+    <Compile Include="DirecTV Serial Control\SetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DirecTV Serial Control\SetupForm.Designer.cs">
+      <DependentUpon>SetupForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DirecTV Serial Control\TunerPlugin.cs" />
+    <Compile Include="DiskManagement\DiskManagement.cs" />
+    <Compile Include="DiskManagement\EpisodeManagement.cs" />
+    <Compile Include="DiskManagement\RecordingManagement.cs" />
+    <Compile Include="HCWBlaster\HCWBlaster.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HCWBlaster\HCWBlasterSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HCWBlaster\HCWIRBlaster.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MameDevice\MameDevice.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MameDevice\MappingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MiniDisplay\MiniDisplay.cs" />
+    <Compile Include="MiniDisplay\SetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MPExTuneCmd\MPExTuneCmd.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MPExTuneCmd\MPExTuneCmdForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MusicDBReorg\MusicDBReorg.cs" />
+    <Compile Include="MusicDBReorg\MusicDBReorgSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MusicDBReorg\MusicDBReorgSettings.Designer.cs">
+      <DependentUpon>MusicDBReorgSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MusicShareWatcher\MusicShareWatcherPlugin.cs" />
+    <Compile Include="PowerScheduler\PowerException.cs" />
+    <Compile Include="PowerScheduler\PowerManager.cs" />
+    <Compile Include="PowerScheduler\PowerScheduler.cs" />
+    <Compile Include="PowerScheduler\PowerSchedulerSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PowerScheduler\TimerException.cs" />
+    <Compile Include="PowerScheduler\WaitableTimer.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="TvMovie\TvMovieSchedules.cs" />
+    <Compile Include="TvMovie\TvMovieSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TvMovie\TvMovieSettings.designer.cs">
+      <DependentUpon>TvMovieSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TvMovie\TvMovieDatabase.cs" />
+    <Compile Include="TvMovie\TvMovie.cs" />
+    <Compile Include="TvNotifies\NotifyManager.cs" />
+    <Compile Include="TvNotifies\NotifySetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TvNotifies\NotifySetupForm.Designer.cs">
+      <DependentUpon>NotifySetupForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WebEPG\WebEPGGrabber.cs" />
+    <Compile Include="WebEPG\WebEPGGrabberSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WebEPG\WebEPGGrabberSettings.Designer.cs">
+      <DependentUpon>WebEPGGrabberSettings.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="AudioScrobbler\AudioscrobblerSettings.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>AudioscrobblerSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CallerId\ISDN\ISDNSetupForm.resx">
+      <DependentUpon>ISDNSetupForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HCWBlaster\HCWBlasterSetupForm.resx">
+      <DependentUpon>HCWBlasterSetupForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MameDevice\MappingForm.resx">
+      <DependentUpon>MappingForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MPExTuneCmd\MPExTuneCmdForm.resx">
+      <DependentUpon>MPExTuneCmdForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TvMovie\TvMovieSettings.resx">
+      <DependentUpon>TvMovieSettings.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WebEPG\WebEPGGrabberSettings.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>WebEPGGrabberSettings.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Audioscrobbler\Audioscrobbler.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Audioscrobbler\AudioscrobblerDisabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="PowerScheduler\PowerSchedulerSetupForm.resx">
+      <DependentUpon>PowerSchedulerSetupForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MusicShareWatcher\MusicShareWatcher.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MusicShareWatcher\MusicShareWatcher_deactivated.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TvNotifies\Notifybutton.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TvNotifies\Notifybutton_disabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="PowerScheduler\PowerScheduler.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="PowerScheduler\PowerScheduler_disabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TvMovie\tvmovie.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="AutoCropper\AutoCropperSetup.resx">
+      <DependentUpon>AutoCropperSetup.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ComSkipLauncher\Configuration.resx">
+      <DependentUpon>Configuration.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DirecTV Serial Control\SetupForm.resx">
+      <DependentUpon>SetupForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MusicDBReorg\MusicDBReorgSettings.resx">
+      <DependentUpon>MusicDBReorgSettings.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TvMovie\tvmovie_inactive.gif" />
+    <EmbeddedResource Include="TvNotifies\NotifySetupForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>NotifySetupForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AutoCropper\Readme.txt" />
+    <EmbeddedResource Include="MiniDisplay\MiniDisplay.lcd.gif" />
+    <EmbeddedResource Include="MiniDisplay\MiniDisplay.lcd_deactivated.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

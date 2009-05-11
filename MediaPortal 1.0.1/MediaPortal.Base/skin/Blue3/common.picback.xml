@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control>
+      <id>1</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>720</width>
+      <height>576</height>
+      <dimColor>50ffffff</dimColor>
+      <texture>#selectedthumb</texture>
+       <visible>facadeview.filmstrip</visible>
+       <animation effect="fade" time="450">WindowOpen</animation>
+      <animation effect="fade" time="450">WindowClose</animation>
+    </control>
+     <control>
+      <id>1</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>720</width>
+      <height>576</height>
+      <dimColor>50ffffff</dimColor>
+      <texture>Backgroundtop.png</texture>
+       <visible>facadeview.filmstrip</visible>
+    </control>
+    <control>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <type>image</type>
+      <id>1</id>
+      <posX>60</posX>
+      <posY>10</posY>
+      <texture>#header.image</texture>
+       <visible>facadeview.filmstrip</visible>
+    </control>
+  </controls>
+</window>

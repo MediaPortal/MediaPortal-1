@@ -1,0 +1,191 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>0</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <autohidetopbar>yes</autohidetopbar>
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>720</width>
+      <height>576</height>
+    </control>
+   <control>
+   <type>image</type>
+   <id>1</id>
+   <posX>20</posX>
+   <posY>24</posY>
+   <texture>mediaportaltext.png</texture>
+   <animation effect="fade" time="300">WindowClose</animation>
+   <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="250">WindowOpen</animation>
+   <animation effect="zoom" start="100,100" end="1,1" center="384,288" time="250">WindowClose</animation>
+   </control>
+    <control>
+      <description>Logo</description>
+      <type>image</type>
+      <id>900</id>
+      <posX>130</posX>
+      <posY>40</posY>
+      <width>99</width>
+      <height>60</height>
+       <texture flipY="true" diffuse="Thumb_Mask.png">-</texture>
+       <animation effect="fade" time="300">WindowClose</animation>
+	   <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="250">WindowOpen</animation>
+       <animation effect="zoom" start="100,100" end="1,1" center="384,288" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Menu</description>
+      <type>menu</type>
+      <animation effect="fade" time="300">WindowOpen</animation>
+      <animation effect="fade" time="300">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="250">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="250">WindowClose</animation>
+      <id>50</id>
+      <posX>378</posX>
+      <posY>130</posY>
+      <width>310</width>
+      <textcolor>ffffffff</textcolor>
+      <textColorNoFocus>ffa9d0f7</textColorNoFocus>
+      <dimColor>80ffffff</dimColor>
+      <buttonTextXOff>38</buttonTextXOff>
+      <buttonTextYOff>10</buttonTextYOff>
+      <buttonOffset>25</buttonOffset>
+      <buttonFont>font18</buttonFont>
+      <buttonHeight>60</buttonHeight>
+      <spaceBetweenButtons>0</spaceBetweenButtons>
+      <numberOfButtons>5</numberOfButtons>
+      <textureButtonFocus>hp_selectionbar_focus.png</textureButtonFocus>
+      <textureButtonNoFocus>hp_selectionbar_nofocus.png</textureButtonNoFocus>
+      <hoverX>40</hoverX>
+      <hoverY>180</hoverY>
+      <hoverWidth>290</hoverWidth>
+      <hoverHeight>305</hoverHeight>
+      <hoverKeepAspectratio>yes</hoverKeepAspectratio>
+      <scrollTime>120</scrollTime>
+      <scrollTimeMin>50</scrollTimeMin>
+      <textureBackground>empty.png</textureBackground>
+      <onright>13</onright>
+      <onleft>10</onleft>
+    </control>
+    <!-- Date and Time -->
+    <control>
+      <description>Date</description>
+      <type>label</type>
+      <animation effect="fade" time="300">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="250">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="250">WindowClose</animation>
+      <id>200</id>
+      <posX>343</posX>
+      <posY>150</posY>
+      <label>#date</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>ffa9d0f7</textcolor>
+    </control>
+    <control>
+      <description>Time</description>
+      <type>label</type>
+      <animation effect="fade" time="300">WindowClose</animation>
+	  <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="250">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="250">WindowClose</animation>
+      <id>201</id>
+      <posX>343</posX>
+      <posY>172</posY>
+      <label>#time</label>
+      <align>right</align>
+      <font>font14</font>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <!-- TOPBAR Buttons -->
+    <control>
+      <description>Back button</description>
+      <type>button</type>
+      <animation effect="fade" time="300">WindowClose</animation>
+	  <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="250">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="1,1" center="384,288" time="250">WindowClose</animation>
+      <animation effect="zoom" start="100,100" end="110,110" center="433,81" time="200">focus</animation>
+      <animation effect="zoom" start="110,110" end="100,100" center="433,81" time="200">unfocus</animation>
+      <id>10</id>
+      <posX>410</posX>
+      <posY>40</posY>
+      <width>55</width>
+      <height>81</height>
+      <textureFocus>button_shutdown_focus.png</textureFocus>
+      <textureNoFocus>button_shutdown_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <action>99</action>
+      <onleft>50</onleft>
+      <onright>11</onright>
+      <onup>10</onup>
+      <ondown>50</ondown>
+    </control>
+    <control>
+      <description>videowallpaper button</description>
+      <type>button</type>
+      <animation effect="fade" time="300">WindowClose</animation>
+	  <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="250">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="1,1" center="384,288" time="250">WindowClose</animation>
+      <animation effect="zoom" start="100,100" end="110,110" center="493,81" time="200">focus</animation>
+      <animation effect="zoom" start="110,110" end="100,100" center="493,81" time="200">unfocus</animation>
+      <id>11</id>
+      <posX>470</posX>
+      <posY>40</posY>
+      <width>55</width>
+      <height>81</height>
+      <textureFocus>button_tvdesktop_focus.png</textureFocus>
+      <textureNoFocus>button_tvdesktop_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <action>101</action>
+      <onleft>10</onleft>
+      <onright>12</onright>
+      <onup>11</onup>
+      <ondown>50</ondown>
+    </control>
+    <control>
+      <description>basichome button button</description>
+      <type>button</type>
+      <animation effect="fade" time="300">WindowClose</animation>
+	  <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="250">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="1,1" center="384,288" time="250">WindowClose</animation>
+      <animation effect="zoom" start="100,100" end="110,110" center="558,81" time="200">focus</animation>
+      <animation effect="zoom" start="110,110" end="100,100" center="558,81" time="200">unfocus</animation>
+      <id>12</id>
+      <posX>530</posX>
+      <posY>40</posY>
+      <width>55</width>
+      <height>81</height>
+      <textureFocus>Basic_focus.png</textureFocus>
+      <textureNoFocus>Basic_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <action>115</action>
+      <onleft>11</onleft>
+      <onright>13</onright>
+      <onup>12</onup>
+      <ondown>50</ondown>
+    </control>
+    <control>
+      <description>Exit button</description>
+      <type>button</type>
+      <animation effect="fade" time="300">WindowClose</animation>
+	  <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="250">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="1,1" center="384,288" time="250">WindowClose</animation>
+      <animation effect="zoom" start="100,100" end="110,110" center="618,81" time="200">focus</animation>
+      <animation effect="zoom" start="110,110" end="100,100" center="618,81" time="200">unfocus</animation>
+      <id>13</id>
+      <posX>590</posX>
+      <posY>40</posY>
+      <width>55</width>
+      <height>81</height>
+      <textureFocus>button_close_focus.png</textureFocus>
+      <textureNoFocus>button_close_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <action>97</action>
+      <onleft>12</onleft>
+      <onright>50</onright>
+      <onup>13</onup>
+      <ondown>50</ondown>
+    </control>
+  </controls>
+</window>

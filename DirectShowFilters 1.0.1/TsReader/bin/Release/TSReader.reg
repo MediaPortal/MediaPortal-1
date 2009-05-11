@@ -1,0 +1,11 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\Media Type\Extensions\.ts]
+"Source Filter"="{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
+[HKEY_CLASSES_ROOT\Media Type\Extensions\.tp]
+"Source Filter"="{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
+[HKEY_CLASSES_ROOT\Media Type\Extensions\.tsbuffer]
+"Source Filter"="{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
+[HKEY_CLASSES_ROOT\Media Type\Extensions\.rtsp]
+"Source Filter"="{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
+				  

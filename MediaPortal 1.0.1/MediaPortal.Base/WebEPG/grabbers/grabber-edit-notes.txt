@@ -1,0 +1,30 @@
+When trying the create or edit a grabber.xml file.
+
+1. First read: http://wiki.team-mediaportal.com/MediaPortal_Setup_Customising_WebEPG
+
+2. A web browser can be used to check that there are no errors in your new grabber.xml file.
+   They will parse the file and display any errors.
+
+Debugging:
+
+1. Check xml file with a browser
+
+2. Remove all spaces from template section. 
+   (use either one line or tabs to make formating more readable)
+
+3. Check the log file
+
+4. Try to load the URL in the log file. Make sure page loads correctly.
+
+5. Re-check the page HTML source and check the listing format
+
+
+Some problems my be caused by special characters. These can be replaced with codes.
+
+A few web sites that contain a list of these codes (in no order):
+
+http://www.tedmontgomery.com/tutorial/HTMLchrc.html
+http://www.w3.org/MarkUp/html-spec/html-spec_13.html
+http://webmonkey.wired.com/webmonkey/reference/special_characters/
+
+

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="fr" availableDays="5" timezone="W. Europe Standard Time" version="2.0" />
+  <Channels>
+    <Channel id="13emerue.fr" siteId="2" />
+    <Channel id="3sat.de" siteId="3" />
+    <Channel id="ab1tv.fr" siteId="5" />
+    <Channel id="action@tps.fr" siteId="10" />
+    <Channel id="animauxtv.fr" siteId="12" />
+    <Channel id="ard.de" siteId="13" />
+    <Channel id="arte-tv.com" siteId="111" />
+    <Channel id="bbcprime.com" siteId="18" />
+    <Channel id="bbcworld.com" siteId="19" />
+    <Channel id="1@betv.be" siteId="29" />
+    <Channel id="cine2@betv.be" siteId="417" />
+    <Channel id="cine2@betv.be" siteId="418" />
+    <Channel id="bfmtv.fr" siteId="481" />
+    <Channel id="bloomberg.co.uk" siteId="410" />
+    <Channel id="canalcinema@canalsat.fr" siteId="33" />
+    <Channel id="cplusdecale@canalsat.fr" siteId="30" />
+    <Channel id="cplussport@canalsat.fr" siteId="35" />
+    <Channel id="canalj.net" siteId="32" />
+    <Channel id="cplus.fr" siteId="34" />
+    <Channel id="cartoonnetwork.fr" siteId="36" />
+    <Channel id="lachainemeteo.com" siteId="124" />
+    <Channel id="lcp@assemblee-nat.fr" siteId="234" />
+    <Channel id="chasseetpechetv.com" siteId="38" />
+    <Channel id="cineauteur@canalsat.fr" siteId="285" />
+    <Channel id="cineclassic@canalsat.fr" siteId="287" />
+    <Channel id="cineemotion@canalsat.fr" siteId="283" />
+    <Channel id="cinefamiz@canalsat.fr" siteId="401" />
+    <Channel id="cinefrisson@canalsat.fr" siteId="284" />
+    <Channel id="cinefx@absat.fr" siteId="288" />
+    <Channel id="cinepolar@absat.fr" siteId="289" />
+    <Channel id="cinepremier@canalsat.fr" siteId="282" />
+    <Channel id="club@rtl.be" siteId="50" />
+    <Channel id="cnn.com" siteId="53" />
+    <Channel id="comedie.com" siteId="54" />
+    <Channel id="demain.fr" siteId="57" />
+    <Channel id="direct8.fr" siteId="445" />
+    <Channel id="disneychannel@disney.fr" siteId="58" />
+    <Channel id="encyclopedia.fr" siteId="63" />
+    <Channel id="equidia.fr" siteId="64" />
+    <Channel id="escalestv.fr" siteId="67" />
+    <Channel id="euronews.net" siteId="140" />
+    <Channel id="europe2tv.fr" siteId="458" />
+    <Channel id="eurosport.fr" siteId="76" />
+    <Channel id="eurosport2@eurosport.com" siteId="439" />
+    <Channel id="foxlife-pt" siteId="480" />
+    <Channel id="france2.fr" siteId="4" />
+    <Channel id="france3.fr" siteId="80" />
+    <Channel id="france4.fr" siteId="78" />
+    <Channel id="france.5.fr" siteId="47" />
+    <Channel id="franceo.rfo.fr" siteId="160" />
+    <Channel id="funtv@m6.fr" siteId="86" />
+    <Channel id="gameone.boomtown.net" siteId="87" />
+    <Channel id="gullitv.fr" siteId="482" />
+    <Channel id="histoire.fr" siteId="88" />
+    <Channel id="itelevision.fr" siteId="226" />
+    <Channel id="infosport.tm.fr" siteId="94" />
+    <Channel id="jetix@canalsat.fr" siteId="79" />
+    <Channel id="canaljimmy.fr" siteId="96" />
+    <Channel id="Kiosque 1" siteId="98" />
+    <Channel id="kiosque10@canalsat.fr" siteId="99" />
+    <Channel id="kiosque2@canalsat.fr" siteId="100" />
+    <Channel id="kiosque3@canalsat.fr" siteId="101" />
+    <Channel id="kiosque4@canalsat.fr" siteId="102" />
+    <Channel id="kiosque5@canalsat.fr" siteId="103" />
+    <Channel id="kiosque6@canalsat.fr" siteId="104" />
+    <Channel id="kiosque7@canalsat.fr" siteId="105" />
+    <Channel id="kiosque8@canalsat.fr" siteId="106" />
+    <Channel id="kiosque9@canalsat.fr" siteId="107" />
+    <Channel id="lequipetv.fr" siteId="65" />
+    <Channel id="ladeux.be" siteId="187" />
+    <Channel id="la1.be" siteId="164" />
+    <Channel id="lci.fr" siteId="112" />
+    <Channel id="m6.fr" siteId="118" />
+    <Channel id="mangas.fr" siteId="6" />
+    <Channel id="mcm@mcm.fr" siteId="121" />
+    <Channel id="mezzo.tv" siteId="125" />
+    <Channel id="abmoteurs.fr" siteId="15" />
+    <Channel id="motorstv.com" siteId="237" />
+    <Channel id="mtv.fr" siteId="128" />
+    <Channel id="multivision1@tps.fr" siteId="129" />
+    <Channel id="multivision2@tps.fr" siteId="130" />
+    <Channel id="multivision3@tps.fr" siteId="1316" />
+    <Channel id="multivision4@tps.fr" siteId="132" />
+    <Channel id="multivision5@tps.fr" siteId="133" />
+    <Channel id="multivision6@tps.fr" siteId="134" />
+    <Channel id="multivision7@tps.fr" siteId="135" />
+    <Channel id="musiqueclassique.fr" siteId="137" />
+    <Channel id="nationalgeographic.com" siteId="243" />
+    <Channel id="nrj12.fr" siteId="444" />
+    <Channel id="nt1.tv" siteId="446" />
+    <Channel id="odyssee.com" siteId="142" />
+    <Channel id="orf1@orf.at" siteId="143" />
+    <Channel id="parispremiere@m6.fr" siteId="145" />
+    <Channel id="pinktv.fr" siteId="406" />
+    <Channel id="planete@planete.com" siteId="147" />
+    <Channel id="planete-choc@planete.com" siteId="402" />
+    <Channel id="planete-thalassa@planete.com" siteId="302" />
+    <Channel id="raidue.rai.it" siteId="154" />
+    <Channel id="raiuno.rai.it" siteId="156" />
+    <Channel id="rtl.de" siteId="166" />
+    <Channel id="rtl9.com" siteId="115" />
+    <Channel id="tvi@rtl.be" siteId="168" />
+    <Channel id="rtp1@rtp.pt" siteId="169" />
+    <Channel id="sat1.de" siteId="172" />
+    <Channel id="seasons.fr" siteId="173" />
+    <Channel id="serieclub@m6.fr" siteId="49" />
+    <Channel id="sf1@sfdrs.ch" siteId="59" />
+    <Channel id="sf2@sfdrs.ch" siteId="174" />
+    <Channel id="sport+@canalsat.fr" siteId="8" />
+    <Channel id="tcm.com" siteId="185" />
+    <Channel id="teletoon.fr" siteId="197" />
+    <Channel id="teva@m6.fr" siteId="191" />
+    <Channel id="tf1.fr" siteId="192" />
+    <Channel id="tf6.fr" siteId="228" />
+    <Channel id="tiji.tv" siteId="229" />
+    <Channel id="tmc.tv" siteId="195" />
+    <Channel id="toutelhistoire.com" siteId="7" />
+    <Channel id="cineclub@tps.fr" siteId="474" />
+    <Channel id="cinecomedie@tps.fr" siteId="484" />
+    <Channel id="cineculte@tps.fr" siteId="42" />
+    <Channel id="cinefamily@tps.fr" siteId="332" />
+    <Channel id="cinestar@tps.fr" siteId="178" />
+    <Channel id="cinetoile@tps.fr" siteId="73" />
+    <Channel id="cinextreme@tps.fr" siteId="333" />
+    <Channel id="homecinema@tps.fr" siteId="331" />
+    <Channel id="tpsstar@tps.fr" siteId="242" />
+    <Channel id="trace.tv" siteId="325" />
+    <Channel id="tsi1@rtsi.ch" siteId="200" />
+    <Channel id="tsi2@rtsi.ch" siteId="201" />
+    <Channel id="tsr1@tsr.ch" siteId="202" />
+    <Channel id="tsr2@tsr.ch" siteId="183" />
+    <Channel id="tvbreizh.fr" siteId="225" />
+    <Channel id="tv5.org" siteId="205" />
+    <Channel id="tve.es" siteId="208" />
+    <Channel id="Ushuaia TV" siteId="451" />
+    <Channel id="voyage.fr" siteId="212" />
+    <Channel id="W9" siteId="119" />
+    <Channel id="xxltv.fr" siteId="218" />
+    <Channel id="zdf.de" siteId="219" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://telecineobs.nouvelobs.com/?" post="formtv-limit=200&amp;formtv-initialisation=1&amp;formtv-crenau=0&amp;formtv-chaine=[ID]&amp;positionGroupeChainePrincipal=0&amp;formtv-date=[YYYY]-[MM]-[DD]" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="Votre programme TV" end="listepgm_action_bottom">
+        <SectionTemplate tags="TSCA">
+          <TemplateText>
+&lt;tr&gt;          
+&lt;td&gt;
+&lt;a&gt;
+&lt;z(&gt;&lt;cite&gt;&lt;/cite&gt;&lt;/z)?&gt;
+&lt;#START&gt;-&lt;#TITLE&gt;
+&lt;/a&gt;
+</TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Template name="Details" start="!-- detail">
+        <SectionTemplate tags="D">
+          <TemplateText>&lt;div&gt;&lt;/div&gt;&lt;span&gt;&lt;#GENRE&gt;:&lt;/span&gt;&lt;div&gt;&lt;/div&gt;:&lt;#DESCRIPTION&gt;&lt;div&gt;</TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Sublinks>
+        <Sublink search="onclick" template="Details">
+          <Link url="http://telecineobs.nouvelobs.com/detailProgramme.php?idProgram=[1]" post="" external="false" encoding="" />
+        </Sublink>
+      </Sublinks>
+    </Html>
+  </Listing>
+</Grabber>

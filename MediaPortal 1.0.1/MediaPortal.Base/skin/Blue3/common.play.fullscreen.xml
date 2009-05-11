@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control>
+      <description>row 1 label</description>
+      <type>label</type>
+      <id>10</id>
+      <posX>650</posX>
+      <posY>40</posY>
+      <label>-</label>
+      <align>center</align>
+      <font>font14</font>
+      <textcolor>black</textcolor>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <control>
+      <description>row 2 label</description>
+      <type>label</type>
+      <id>11</id>
+      <posX>614</posX>
+      <posY>90</posY>
+      <label>-</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>black</textcolor>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <control>
+      <description>row 3 label</description>
+      <type>label</type>
+      <id>12</id>
+      <posX>614</posX>
+      <posY>150</posY>
+      <label>-</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>black</textcolor>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+
+    <!-- common volume gfx -->
+    <control>
+      <type>image</type>
+      <id>500</id>
+      <posX>626</posX>
+      <posY>96</posY>
+      <texture>volume.states.mute.png</texture>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <control>
+      <type>volumebar</type>
+      <id>501</id>
+      <posX>660</posX>
+      <posY>60</posY>
+      <align>right</align>
+      <height>16</height>
+      <imageHeight>3</imageHeight>
+      <texture>volume.states.png</texture>
+      <colordiffuse>White</colordiffuse>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+  </controls>
+</window>
