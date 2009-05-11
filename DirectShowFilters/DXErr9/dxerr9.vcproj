@@ -18,10 +18,9 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="Debug"
-			IntermediateDirectory="Debug"
+			OutputDirectory=".\obj\Debug"
+			IntermediateDirectory=".\obj\Debug"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -48,8 +47,12 @@
 				RuntimeLibrary="1"
 				TreatWChar_tAsBuiltInType="true"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderFile=".\obj\Debug\dxerr9.pch"
+				AssemblerListingLocation=".\obj\Debug/"
+				ObjectFile=".\obj\Debug/"
+				ProgramDataBaseFileName=".\bin\Debug/"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -64,14 +67,14 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dxerr9.lib comsupp.lib"
-				OutputFile="$(OutDir)/dxerr9.dll"
+				OutputFile="bin\Debug/dxerr9.dll"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(OutDir)/dx9err.pdb"
+				ProgramDatabaseFile="bin\Debug/dxerr9.pdb"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)/dx9err.lib"
+				ImportLibrary="bin\Debug/dx9err.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -98,10 +101,9 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			OutputDirectory=".\obj\Release"
+			IntermediateDirectory=".\obj\Release"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -126,9 +128,13 @@
 				RuntimeLibrary="2"
 				TreatWChar_tAsBuiltInType="true"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderFile=".\obj\Release/dxerr9.pch"
+				AssemblerListingLocation=".\obj\Release/"
+				ObjectFile=".\obj\Release/"
+				ProgramDataBaseFileName=".\bin\Release/"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
+				Detect64BitPortabilityProblems="false"
+				DebugInformationFormat="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -142,15 +148,16 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dxerr9.lib comsuppw.lib"
-				OutputFile="$(OutDir)/dxerr9.dll"
+				OutputFile="bin\Release/dxerr9.dll"
 				LinkIncremental="1"
 				GenerateDebugInformation="false"
+				ProgramDatabaseFile="bin\Release/dxerr9.pcb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)/dx9err.lib"
+				ImportLibrary="bin\Release/dx9err.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -185,11 +192,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\dxerr9.cpp"
+				RelativePath=".\source\dxerr9.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\stdafx.cpp"
+				RelativePath=".\source\stdafx.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -215,11 +222,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\dxerr9.h"
+				RelativePath=".\source\dxerr9.h"
 				>
 			</File>
 			<File
-				RelativePath=".\stdafx.h"
+				RelativePath=".\source\stdafx.h"
 				>
 			</File>
 		</Filter>
