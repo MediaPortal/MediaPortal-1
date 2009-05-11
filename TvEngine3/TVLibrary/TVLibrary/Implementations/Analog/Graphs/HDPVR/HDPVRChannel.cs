@@ -115,7 +115,7 @@ namespace TvLibrary.Implementations.Analog
           Log.Log.Write("subch:{0} wait for pmt", _subChannelId);
           Thread.Sleep(20);
           TimeSpan ts = DateTime.Now - dtNow;
-          if (ts.TotalMilliseconds >= 10000)
+          if (ts.TotalMilliseconds >= 10)
           {
             Log.Log.Debug("Timedout waiting for PMT after {0} seconds. Increase the PMT timeout value?", ts.TotalSeconds);
             break;
