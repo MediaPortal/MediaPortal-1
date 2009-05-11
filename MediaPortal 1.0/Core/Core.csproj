@@ -1,0 +1,2100 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{02FFFC1F-2555-4B99-8B01-3432D0673855}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>Core</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>MediaPortal</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE;UseCaptureCardDefinitions;DOTNET1</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;UseCaptureCardDefinitions;NET_2_0</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureCardDefinitions|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE;UseCaptureCardDefinitions</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureDefintionsRelease|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;UseCaptureCardDefinitions</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release %28Standalone%29|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;UseCaptureCardDefinitions;DOTNET1</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;UseCaptureCardDefinitions</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;UseCaptureCardDefinitions;NET_2_0</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>
+    </DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureCardDefinitions|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\UseCaptureCardDefinitions\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;UseCaptureCardDefinitions</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureDefintionsRelease|x86' ">
+    <OutputPath>bin\UseCaptureDefintionsRelease\</OutputPath>
+    <DefineConstants>TRACE;UseCaptureCardDefinitions</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <Optimize>true</Optimize>
+    <DebugType>
+    </DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release %28Standalone%29|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Release %28Standalone%29\</OutputPath>
+    <DefineConstants>TRACE;UseCaptureCardDefinitions;DOTNET1</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AxInterop.WMPLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\AxInterop.WMPLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Bass.Net, Version=2.3.1.1, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Bass.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="BassRegistration, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\BassRegistration.dll</HintPath>
+    </Reference>
+    <Reference Include="edtftpnet-1.2.2, Version=1.2.2.0, Culture=neutral, PublicKeyToken=4b0c991f43097782">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\edtftpnet-1.2.2.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.TunerLib, Version=1.0.0.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Interop.TunerLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.WMPLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Interop.WMPLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Microsoft.DirectX.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Microsoft.DirectX.Direct3D.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.Direct3DX, Version=1.0.2906.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Microsoft.DirectX.Direct3DX.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.DirectDraw, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Microsoft.DirectX.DirectDraw.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Management">
+      <Name>System.Management</Name>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap">
+      <Name>System.Runtime.Serialization.Formatters.Soap</Name>
+    </Reference>
+    <Reference Include="System.ServiceProcess">
+      <Name>System.ServiceProcess</Name>
+    </Reference>
+    <Reference Include="System.Web">
+      <Name>System.Web</Name>
+    </Reference>
+    <Reference Include="System.Web.Services">
+      <Name>System.Web.Services</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <Reference Include="taglib-sharp, Version=2.0.2.10, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\taglib-sharp.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App.cs" />
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\cards\TechnoTrend.cs" />
+    <Compile Include="DShowNET\Helper\IksPropertyUtils2.cs" />
+    <Compile Include="DShowNET\TsFileSource\ITSFileSink.cs" />
+    <Compile Include="DShowNET\TsFileSource\ITSFileSource.cs" />
+    <Compile Include="guilib\Tween.cs" />
+    <Compile Include="MusicPlayer\BASS\StreamCopy.cs" />
+    <Compile Include="MusicPlayer\DSP\DSPPluginInfo.cs" />
+    <Compile Include="MusicPlayer\Visualization\WinampViz.cs" />
+    <Compile Include="Player\AudioSelector.cs" />
+    <Compile Include="Player\FrameGrabber.cs" />
+    <Compile Include="guilib\Animations.cs" />
+    <Compile Include="guilib\GUIActionGroup.cs" />
+    <Compile Include="guilib\GUIGridCell.cs" />
+    <Compile Include="guilib\GUIGridControl.cs" />
+    <Compile Include="guilib\GUIGridRow.cs" />
+    <Compile Include="guilib\GUIInfoManager.cs" />
+    <Compile Include="guilib\GUIMenuControl.cs" />
+    <Compile Include="guilib\GUIMultiImage.cs" />
+    <Compile Include="guilib\GUIPlayListItemListControl.cs" />
+    <Compile Include="guilib\GUIPlayListtButtonControl.cs" />
+    <Compile Include="guilib\SkinSettings.cs" />
+    <Compile Include="guilib\TransformMatrix.cs" />
+    <Compile Include="guilib\VisualEffect.cs" />
+    <Compile Include="MusicPlayer\DSP\BassEffect.cs" />
+    <Compile Include="MusicPlayer\DSP\BassEffectParm.cs" />
+    <Compile Include="MusicPlayer\DSP\WinAmpPlugin.cs" />
+    <Compile Include="MusicPlayer\DSP\Settings.cs" />
+    <Compile Include="MusicPlayer\DSP\VSTPlugin.cs" />
+    <Compile Include="MusicPlayer\DSP\VSTPluginParm.cs" />
+    <Compile Include="Player\IAutoCrop.cs" />
+    <Compile Include="MusicPlayer\BASS\BassAudio.cs" />
+    <Compile Include="MusicPlayer\Visualization\IVisualization.cs" />
+    <Compile Include="MusicPlayer\Visualization\IVisualizationManager.cs" />
+    <Compile Include="MusicPlayer\Visualization\IWMPEffects.cs" />
+    <Compile Include="MusicPlayer\Visualization\SoniqueViz.cs" />
+    <Compile Include="MusicPlayer\Visualization\SoundSpectrumViz.cs" />
+    <Compile Include="MusicPlayer\Visualization\VisualizationBase.cs" />
+    <Compile Include="MusicPlayer\Visualization\VisualizationInfo.cs" />
+    <Compile Include="MusicPlayer\Visualization\VisualizationManager.cs" />
+    <Compile Include="MusicPlayer\Visualization\VisualizationWindow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MusicPlayer\Visualization\VisualizationWindow.Designer.cs">
+      <DependentUpon>VisualizationWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MusicPlayer\Visualization\WMPVisualizationHelper.cs" />
+    <Compile Include="MusicPlayer\Visualization\WMPViz.cs" />
+    <Compile Include="Player\CropSettings.cs" />
+    <Compile Include="Player\DummyPlayer.cs" />
+    <Compile Include="Player\DummyPlayerFactory.cs" />
+    <Compile Include="Player\IMPAudioSwitcher.cs" />
+    <Compile Include="Player\IPlayerFactory.cs" />
+    <Compile Include="Player\Teletext\Hamming.cs" />
+    <Compile Include="Player\Teletext\IDVBTeletextDecoder.cs" />
+    <Compile Include="Player\Teletext\ITeletextSource.cs" />
+    <Compile Include="Player\Teletext\PESDecoder.cs" />
+    <Compile Include="Player\RTSPPlayer.cs" />
+    <Compile Include="Player\Subtitles\SubtitleRenderer.cs" />
+    <Compile Include="Player\BaseTSReaderPlayer.cs" />
+    <Compile Include="Player\Subtitles\SubtitleSelector.cs" />
+    <Compile Include="Player\TeletextSubtitles\TeletextMagazine.cs" />
+    <Compile Include="Player\TeletextSubtitles\TeletextPageHeader.cs" />
+    <Compile Include="Player\Teletext\TeletextReceiver.cs" />
+    <Compile Include="Player\TeletextSubtitles\TeletextSubtitleDecoder.cs" />
+    <Compile Include="Player\TeletextSubtitles\TextConversion.cs" />
+    <Compile Include="Player\TSHeader.cs" />
+    <Compile Include="Player\TSReaderPlayer.cs" />
+    <Compile Include="TagReader\ITag.cs" />
+    <Compile Include="TagReader\Utils.cs" />
+    <Compile Include="ThumbDbLib\Thumbnail.cs" />
+    <Compile Include="ThumbDbLib\ThumbnailCreator.cs" />
+    <Compile Include="ThumbDbLib\ThumbnailCreatorNet.cs" />
+    <Compile Include="ThumbDbLib\ThumbnailDatabase.cs" />
+    <Compile Include="ThumbDbLib\ThumbnailDatabaseCache.cs" />
+    <Compile Include="Transcoding\TSReader2WMV.cs" />
+    <Compile Include="Transcoding\Dvrms2Divx.cs" />
+    <Compile Include="Transcoding\TSReader2MP4.cs" />
+    <Compile Include="UserInterfaceControls\MPForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPForm.Designer.cs">
+      <DependentUpon>MPForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPContextMenuStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPConfigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPConfigForm.Designer.cs">
+      <DependentUpon>MPConfigForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPNumericUpDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPToolTip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Util\EncryptDecrypt.cs" />
+    <Compile Include="Util\FastImage.cs" />
+    <Compile Include="Util\FilterChecker.cs" />
+    <Compile Include="Util\FolderThumbCacher.cs" />
+    <Compile Include="Util\FolderThumbCreator.cs" />
+    <Compile Include="Util\HResult.cs" />
+    <Compile Include="Util\HTMLParser.cs" />
+    <Compile Include="Util\IMPawardsSearch.cs" />
+    <Compile Include="Util\PathUtility.cs" />
+    <Compile Include="Util\PRNG.cs" />
+    <Compile Include="Util\ProcessLock.cs" />
+    <Compile Include="Util\RegistryTools.cs" />
+    <Compile Include="Util\StopWatch.cs" />
+    <Compile Include="Util\UnhandledExceptionLogger.cs" />
+    <Compile Include="UserInterfaceControls\MPTabPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPTabControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPRadioButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\DataGridBooleanNoNull.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\EventArgs.cs" />
+    <Compile Include="UserInterfaceControls\ListViewItemComparer.cs" />
+    <Compile Include="UserInterfaceControls\MPBeveledLine.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPCheckBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPGradientLabel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPGroupBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MWCommon.cs" />
+    <Compile Include="UserInterfaceControls\MWEnums.cs" />
+    <Compile Include="UserInterfaceControls\MWTreeNodeWrapper.cs" />
+    <Compile Include="UserInterfaceControls\MWTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Dispatcher\Job.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Dispatcher\JobComparer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Dispatcher\JobDispatcher.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Dispatcher\JobFlags.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Dispatcher\JobPriority.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing.Layouts\DockLayout.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing.Layouts\GridLayout.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing.Layouts\ILayout.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing.Layouts\RingLayout.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing.Layouts\StackLayout.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing.Transforms\RotateTransform.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing.Transforms\ScaleTransform.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing.Transforms\Transform.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing.Transforms\TransformCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing.Transforms\TransformConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing.Transforms\TransformGroup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing.Transforms\TranslateTransform.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\AlignmentX.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\AlignmentY.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\Brush.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\BrushConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\BrushFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\BrushMappingMode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\CombinedGeometry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\CombineMode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\DashStyle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\DashStyles.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\DoubleCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\DrawingContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\FillRule.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\FormattedText.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\Geometry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\GeometryCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\GeometryCombineMode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\GeometryConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\GeometryDrawing.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\GeometryGroup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\GlyphRun.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\GradientBrush.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\GradientFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\GradientSpreadMethod.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\GradientStop.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\GradientStopCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\HorizontalAlignment.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\ImageBrush.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\ImageSource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\ImageSourceConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\Matrix.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\Pen.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\PenBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\PenLineCap.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\PenLineJoin.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\Point.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\PointCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\PointCollectionConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\PointConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\Rect.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\RectangleGeometry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\RectConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\Size.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\SizeConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\SolidColorBrush.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\SolidColorBrushConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\Stretch.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\StretchDirection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\StretchHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\Thickness.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\ThicknessConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\TileBrush.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\TileMode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\VerticalAlignment.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\BitMapInfoHeader.cs" />
+    <Compile Include="DShowNET\Helper\AudioMixerHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\ClassId.cs" />
+    <Compile Include="DShowNET\Helper\CrossBar.cs" />
+    <Compile Include="DShowNET\Helper\DirectShowUtil.cs" />
+    <Compile Include="DShowNET\Helper\DirectShowVolume.cs" />
+    <Compile Include="DShowNET\Helper\DirectVobSub.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\Filters\Filter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\Filters\FilterCategory.cs" />
+    <Compile Include="DShowNET\Helper\Filters\FilterCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\Filters\FilterHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\Filters\Filters.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\cards\hauppauge.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\PropertyPages\AudioSource.cs" />
+    <Compile Include="DShowNET\Helper\PropertyPages\CrossbarSource.cs" />
+    <Compile Include="DShowNET\Helper\PropertyPages\DirectShowPropertyPage.cs" />
+    <Compile Include="DShowNET\Helper\PropertyPages\FilterPersist.cs" />
+    <Compile Include="DShowNET\Helper\PropertyPages\PropertyPage.cs" />
+    <Compile Include="DShowNET\Helper\PropertyPages\PropertyPageCollection.cs" />
+    <Compile Include="DShowNET\Helper\PropertyPages\Source.cs" />
+    <Compile Include="DShowNET\Helper\PropertyPages\SourceCollection.cs" />
+    <Compile Include="DShowNET\Helper\PropertyPages\VfwCompressorPropertyPage.cs" />
+    <Compile Include="DShowNET\Helper\VideoProcAmp.cs" />
+    <Compile Include="DShowNET\Helper\IksPropertyUtils.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\IPersistMemory.cs" />
+    <Compile Include="DShowNET\MediaSubTypeEx.cs" />
+    <Compile Include="DShowNET\MetaData\AsfMetadataEditor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\MetaData\DvrmsMetadataEditor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\MetaData\MetadataEditor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\Capture\MPEG2Demux.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\cards\DigitalEveryWhere.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\TunerCountry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\cards\Twinhan.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\Capture\VideoCaptureDeviceEx.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\cards\VideoCaptureProperties.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Mpeg2VideoInfo.cs" />
+    <Compile Include="DShowNET\MPSA\IATSCGrabber.cs" />
+    <Compile Include="DShowNET\MPSA\IEPGGrabber.cs" />
+    <Compile Include="DShowNET\MPSA\IMHWGrabber.cs" />
+    <Compile Include="DShowNET\MPSA\IStreamAnalyzer.cs" />
+    <Compile Include="DShowNET\MPTSWriter\IMPTSRecord.cs" />
+    <Compile Include="DShowNET\MPTSWriter\IPMTSWriter.cs" />
+    <Compile Include="FreeDB\CDInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FreeDB\CDInfoDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FreeDB\CDTrackDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FreeDB\FreeDBFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FreeDB\FreeDBHttpImpl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FreeDB\FreeDBSite.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FreeDB\IFreeDB.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FreeDB\XMCDParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\Action.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\ActionTranslator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\Animator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\CachedTexture.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\CPosition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\DownloadedImage.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\DXUtil.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\Error.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\Events.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\FilterDefinition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\Geometry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GraphicContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIAnimation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIButton3PartControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIButtonControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUICheckButton.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUICheckListControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUICheckMarkControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIControlCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIControlFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIFacadeViewControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIFadeLabel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIFilmstripControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIFont.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIFontManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIGroup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIHorizontalScrollbar.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIImage.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIImageList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUILabelControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUILayerManager.cs" />
+    <Compile Include="guilib\GUILayerRenderer.cs" />
+    <Compile Include="guilib\GUIListControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIListItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIMessage.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIOverlayWindow.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIProgressControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUISelectButtonControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUISliderControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUISMSInputControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUISortButtonControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUISpinControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIStatusbarControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUITextControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUITextScrollUpControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUITextureManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIThumbnailPanel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIToggleButtonControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUITVProgressControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIUpDownButton.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIUpDownListControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIVerticalScrollbar.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIVideoControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIVolumeBar.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIWaitCursor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIWindow.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIWindowManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\IDialogbox.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\IPlugin.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\IProfile.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\IRender.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\IRenderLayer.cs" />
+    <Compile Include="guilib\ISetupForm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\IWakeable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\key.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\LocalizeStrings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\Log.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\PluginManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\PropertyManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\SkinControlAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\SortEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\SortEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\Strings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\TexturePacker.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\Util.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\VideoRendererStatistics.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\ViewDefinition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\WaitCursor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\Win32Support.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\XMLSkinElementAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="id3\StreamCopier.cs" />
+    <Compile Include="id3\TagBuilder.cs" />
+    <Compile Include="id3\TagCopier.cs" />
+    <Compile Include="id3\TagReader.cs" />
+    <Compile Include="id3\TagRemover.cs" />
+    <Compile Include="id3\Tags.cs" />
+    <Compile Include="id3\TagsException.cs" />
+    <Compile Include="id3\TagUtil.cs" />
+    <Compile Include="id3\TemporaryFile.cs" />
+    <Compile Include="Mixer\Mixer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerCallback.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerComponentType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerControlClass.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerControlType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerControlUnits.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerErrors.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerEventListener.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerFlags.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerLineControlFlags.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerLineFlags.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerLineStatusFlags.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerLineTarget.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerMessages.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerNativeMethods.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerTargetType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmedia\AudioWriters.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmedia\EditWaveWriter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="mmedia\InFormatEdit.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPNumericTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="mmedia\WaveNative.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmedia\WaveStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmedia\WaveWriter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmedia\Win32Functions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmedia\WriterConfig.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mp3\EditMp3Writer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="mp3\Lame.cs" />
+    <Compile Include="mp3\Mp3Writer.cs" />
+    <Compile Include="mp3\Mp3WriterConfig.cs" />
+    <Compile Include="Player\AudioPlayerVMR.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\AudioPlayerWMP9.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\BaseStreamBufferPlayer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\BaseTStreamBufferPlayer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\DVDPlayer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\DVDPlayer9.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\g_player.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\IExternalPlayer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\IPlayer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\PlaneScene.cs" />
+    <Compile Include="Player\PlayerFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\RadioGraph.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\RadioTuner.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\StreamBufferPlayer9.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\StreamBufferPlayerVMR9wl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\TSStreamBufferPlayer9.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\VideoPlayerVMR7.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\VideoPlayerVMR9.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\VideoPlayerVMR9wl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\VMR7.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\VMR9.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\VolumeHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\VolumeHandlerCustom.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PlayList\IPlayListIO.cs" />
+    <Compile Include="PlayList\PlayList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PlayList\PlayListB4sIO.cs" />
+    <Compile Include="PlayList\PlayListFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PlayList\PlayListItem.cs" />
+    <Compile Include="PlayList\PlayListM3uIO.cs" />
+    <Compile Include="PlayList\PlayListPlayer.cs" />
+    <Compile Include="PlayList\PlayListPLSIO.cs" />
+    <Compile Include="PlayList\PlayListType.cs" />
+    <Compile Include="PlayList\PlayListWPLIO.cs" />
+    <Compile Include="RedEye\RedEye.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Resource1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource1.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Ripper\AutoPlay.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Ripper\CDDrive.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Ripper\CDDriveEvents.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Ripper\DeviceVolumeMonitor.cs" />
+    <Compile Include="Ripper\RemovableDrive.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Ripper\Win32Functions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SerialUIR\CommBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SerialUIR\SerialUIR.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StringTokenizer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SubtitleReader\ISUbtitleReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SubtitleReader\SubReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SubtitleReader\SubTitles.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Collections\NullEnumerable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Collections\NullEnumerator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Collections\PriorityQueue.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Threading\TimeoutLock.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Automation.Provider\ExpandCollapseState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Automation.Provider\IAutomationPatternProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Automation.Provider\IExpandCollapseProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Automation.Provider\IToggleProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Automation\AutomationPattern.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Automation\IInvokeProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Automation\ToggleState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\Button.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\ButtonBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\Canvas.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\ClickMode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\ColumnDefinition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\ColumnDefinitionCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\ContextMenu.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\ContextMenuService.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\Control.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\ControlTemplate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\DataTemplate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\DataTemplateSelector.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\DefinitionBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\Dock.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\DockPanel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\Grid.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\GridLength.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\GridLengthConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\GridUnitType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\HeaderedItemsControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\Image.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\IScrollInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\ItemCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\ItemsControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\Menu.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\MenuBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\MenuItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\MenuItemMode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\MenuItemRole.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\Orientation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\Page.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\Panel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\PlacementMode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\RowDefinition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\RowDefinitionCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\StackPanel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Data\Binding.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Data\IValueConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\Dispatcher.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherFrame.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherHookEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherHookEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherHooks.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherOperation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherOperationStatus.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherPriority.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherProcessingDisabled.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherSynchronizationContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherTimer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherUnhandledExceptionEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherUnhandledExceptionEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherUnhandledExceptionFilterEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherUnhandledExceptionFilterEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\ApplicationCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\CommandBinding.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\CommandBindingCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\CommandConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\CommandManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\ExecuteEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\ExecuteEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\FocusManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\ICommand.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\IFrameworkInputElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\IInputElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\InputGestureCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\KeyboardFocusChangedEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\KeyboardFocusChangedEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\KeyEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\MouseButtonEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\MouseButtonEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\MouseEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\MouseWheelEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\QueryEnabledEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\QueryEnabledEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\RoutedCommand.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\UICommand.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\Animatable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\AnimationClock.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\AnimationClockCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\AnimationStore.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\AnimationTimeline.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\AnimationTimelineCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\AnimationTimer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\AnimationType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\BeginAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\BeginStoryboard.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\Clock.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\ClockCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\ClockController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\ClockGroup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\ClockState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\DoubleAnimation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\DoubleAnimationBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\Duration.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\DurationConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\Easing.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\FillBehavior.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\HandoffBehavior.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\IAnimatable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\IClock.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\NativeMethods.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\ParallelTimeline.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\PauseAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\RepeatBehavior.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\RepeatBehaviorConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\ResumeAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\ReverseAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\SeekAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\SkipToFillAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\StopAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\Storyboard.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\StoryboardCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\Timeline.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\TimelineAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\TimelineCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\TimelineGroup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\TimeManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\TimeSeekOrigin.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\TweenHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Imaging\BitmapCacheOption.cs" />
+    <Compile Include="System.Windows.Media.Imaging\BitmapCreateOptions.cs" />
+    <Compile Include="System.Windows.Media.Imaging\BitmapImage.cs" />
+    <Compile Include="System.Windows.Media.Imaging\BitmapSource.cs" />
+    <Compile Include="System.Windows.Media.Imaging\DownloadProgressEventArgs.cs" />
+    <Compile Include="System.Windows.Media.Imaging\DownloadProgressEventHandler.cs" />
+    <Compile Include="System.Windows.Media.Imaging\Rotation.cs" />
+    <Compile Include="System.Windows.Serialization\IAddChild.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Serialization\ICanAddNamespaceEntries.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Serialization\LocalizeExtension.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Serialization\MarkupExtension.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Serialization\TypeExtension.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Serialization\XamlParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Serialization\XamlParserException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Threading\DispatcherObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\ComponentResourceKey.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\ContentControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\ContentElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\DependencyObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\DependencyObjectType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\DependencyProperty.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\DependencyPropertyAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\DependencyPropertyChangedEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\DependencyPropertyChangedEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\DependencyPropertyConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\DependencyPropertyKey.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\DependencySource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\EventHandlersStore.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\EventManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\EventPrivateKey.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\EventRoute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\EventSetter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\EventTrigger.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\FlowDirection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\FrameworkContentElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\FrameworkElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\FrameworkElementFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\FrameworkPropertyMetadata.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\FrameworkPropertyMetadataOptions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\FrameworkTemplate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\Freezable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\GetValueOverride.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\IFrameworkInputElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\INameScope.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\IResourceHost.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\LocalValueEntry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\LocalValueEnumerator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\LogicalTreeHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\PropertyInvalidatedCallback.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\PropertyMetadata.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\PropertyPath.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\PropertyPathConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\ReadLocalValueOverride.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\RequestBringIntoViewEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\RequestBringIntoViewHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\ResourceDictionary.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\ResourceDictionaryCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\ResourceKey.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\RoutedEvent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\RoutedEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\RoutedEventConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\RoutedEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\RoutedEventHandlerInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\RoutedEventHandlerInfoList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\RoutedEventHandlerInfoStore.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\RoutingStrategy.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\Setter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\SetterBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\SetterBaseCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\SetValueOverride.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\SizeChangedEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\SizeChangedEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\SizeChangedInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\StaticResourceExtension.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\StaticResources.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\Style.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\SystemResourceHost.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\TemplateBindingExtension.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\Trigger.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\TriggerAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\TriggerActionCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\TriggerBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\TriggerCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\TriggerInvalidatedEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\TriggerInvalidatedEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\UIElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\UIElementCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\UIPropertyMetadata.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\ValidateValueCallback.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\Visibility.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\Visual.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\VisualCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\VisualOperations.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\VisualUtility.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\WindowState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\WriteLocalValueOverride.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TagReader\MusicTag.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TagReader\TagReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Transcoding\Dvrms2Mpeg.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Transcoding\ITranscode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Transcoding\TranscodeFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Transcoding\Dvrms2WMV.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UdpHelper\UdpHelper.cs" />
+    <Compile Include="USBUIRT\USBUIRT.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="USBUIRT\USBUIRTLearnForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Util\AmazonLookup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\AmazonReference.cs">
+      <SubType>code</SubType>
+    </Compile>
+    <Compile Include="Util\AudioMixerHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\BitmapResize.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\ConditionChecker.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\CRCTool.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\DaemonTools.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\DirectoryHistory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\DvrMsImageGrabber.cs" />
+    <Compile Include="Util\ExifExtractor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\FileInformation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\FtpConnectionCache.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\GoogleImageSearch.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\HTMLTable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\HtmlToText.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\HTMLUtil.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\ImageHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\LevenshteinDistance.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\Picture.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\Share.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\Thumbs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\Tokens.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\Util.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\VirtualDirectory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\Win32API.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\WindowsController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\BufferTypes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\CommonTypes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\MediaTypes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\NSSBuffer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\ProfilesTypes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\ReaderTypes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\WmaStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\WmaWriter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\WmaWriterConfig.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\WMFFunctions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\WMHeaderInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\WMProfile.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\WMStreamConfig.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\WriterTypes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Transcoding\Wmlib.cs" />
+    <EmbeddedResource Include="MusicPlayer\Visualization\VisualizationWindow.resx">
+      <DependentUpon>VisualizationWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserInterfaceControls\MPForm.resx">
+      <DependentUpon>MPForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserInterfaceControls\DataGridBooleanNoNull.resx">
+      <DependentUpon>DataGridBooleanNoNull.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserInterfaceControls\MPBeveledLine.resx">
+      <DependentUpon>MPBeveledLine.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserInterfaceControls\MPConfigForm.resx">
+      <DependentUpon>MPConfigForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserInterfaceControls\MPGradientLabel.resx">
+      <DependentUpon>MPGradientLabel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserInterfaceControls\MWTreeView.resx">
+      <DependentUpon>MWTreeView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mmedia\EditWaveWriter.resx">
+      <DependentUpon>EditWaveWriter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mmedia\InFormatEdit.resx">
+      <DependentUpon>InFormatEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserInterfaceControls\MPNumericTextBox.resx">
+      <DependentUpon>MPNumericTextBox.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mp3\EditMp3Writer.resx">
+      <DependentUpon>EditMp3Writer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Player\BaseStreamBufferPlayer.resx">
+      <DependentUpon>BaseStreamBufferPlayer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resource1.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="USBUIRT\USBUIRTLearnForm.resx">
+      <DependentUpon>USBUIRTLearnForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DirectShowLib\DirectShowLib.csproj">
+      <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
+      <Name>DirectShowLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MediaPortal.Support\MediaPortal.Support.csproj">
+      <Project>{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}</Project>
+      <Name>MediaPortal.Support</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="UserInterfaceControls\Resources\config.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="UserInterfaceControls\Resources\mp.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

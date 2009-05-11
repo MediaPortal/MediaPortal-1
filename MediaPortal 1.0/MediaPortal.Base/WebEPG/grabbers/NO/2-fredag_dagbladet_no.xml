@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="no" availableDays="7" timezone="W. Europe Standard Time" version="2.0.1" />
+  <Channels>
+    <Channel id="nrk1@nrk.no" siteId="1" />
+    <Channel id="nrk2@nrk.no" siteId="2" />
+    <Channel id="tv2.no" siteId="3" />
+    <Channel id="tv3.no" siteId="4" />
+    <Channel id="tvnorge.no" siteId="5" />
+    <Channel id="svt1@svt.se" siteId="6" />
+    <Channel id="svt2@svt.se" siteId="7" />
+    <Channel id="tv2@tv2.dk" siteId="13" />
+    <Channel id="zebra@tv2.no" siteId="107" />
+    <Channel id="ztv.se" siteId="30" />
+    <Channel id="tv3.dk" siteId="35" />
+    <Channel id="tv3.se" siteId="36" />
+    <Channel id="tv4@tv4.se" siteId="37" />
+    <Channel id="kanal5.se" siteId="47" />
+    <Channel id="dr2@dr.dk" siteId="58" />
+    <Channel id="3plus.dk" siteId="68" />
+    <Channel id="tcm.com" siteId="31" />
+    <Channel id="TCM_CARTOONNETWORK" siteId="32" />
+    <Channel id="tv1000@tv1000.no" siteId="34" />
+    <Channel id="hallmarkchannel.com" siteId="59" />
+    <Channel id="realitychannel.tv" siteId="61" />
+    <Channel id="nickelodeon.no" siteId="20" />
+    <Channel id="cartoonnetwork.no" siteId="41" />
+    <Channel id="disneychannel.no" siteId="67" />
+    <Channel id="dsf.de" siteId="11" />
+    <Channel id="extremesports.tv" siteId="49" />
+    <Channel id="sport@viasatsport.no" siteId="55" />
+    <Channel id="sport2@viasatsport.no" siteId="73" />
+    <Channel id="sport3@viasatsport.no" siteId="74" /> 
+    <Channel id="eurosport@eurosport.com" siteId="15" />
+    <Channel id="mtv@mtve.com" siteId="17" />
+    <Channel id="vh1.com" siteId="29" />
+    <Channel id="travelchannel.com" siteId="33" />
+    <Channel id="travel_adventure@discovery.com" siteId="53" />
+    <Channel id="animalplanet.com" siteId="10" />
+    <Channel id="CNBC_NGC" siteId="18" />
+    <Channel id="tv8.se" siteId="46" />
+    <Channel id="discovery@discovery.com" siteId="44" />
+    <Channel id="civilisation@discovery.com" siteId="51" />
+    <Channel id="sci_trek@discovery.com" siteId="52" />
+    <Channel id="skynews@sky.com" siteId="25" />
+    <Channel id="SKYNEWS_NGC" siteId="26" />
+    <Channel id="dw-world.de" siteId="14" />
+    <Channel id="bbcworld.com" siteId="38" />
+    <Channel id="cnni-emea@cnn.com" siteId="43" />
+    <Channel id="cnbc@msn.com" siteId="62" />
+    <Channel id="3sat.de" siteId="9" />
+    <Channel id="pro-sieben.de" siteId="21" />
+    <Channel id="rtl.de" siteId="22" />
+    <Channel id="rtl2.de" siteId="23" />
+    <Channel id="sat1.de" siteId="24" />
+    <Channel id="tv5.org" siteId="27" />
+    <Channel id="bbcprime.com" siteId="19" />
+    <Channel id="club" siteId="50" />
+    <Channel id="star" siteId="77" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://fredag.dagbladet.no/tv/index.html?kategori_id=&amp;kanal_id=[ID]&amp;dag=[DAY_OFFSET]&amp;fra_tid=0&amp;til_tid=24" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="&lt;!-- hovedtabell --&gt;" end="&lt;!-- /hovedtabell --&gt;">
+        <SectionTemplate tags="T">
+          <TemplateText>
+&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;td&gt;&lt;#START&gt;&lt;br&gt;(&lt;#END&gt;)&lt;/td&gt;
+&lt;td&gt;
+&lt;a&gt;&lt;img&gt;&lt;/a&gt;&lt;#TITLE&gt;
+&lt;br&gt;
+&lt;#DESCRIPTION&gt;&lt;br&gt;
+&lt;br&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+    </TemplateText>
+        </SectionTemplate>
+		</Template>
+       <Searches>
+        <Search match="\(R\)" field="#REPEAT" remove="true" />
+        <Search match="\([t]+\)" field="#SUBTITLES" remove="true" />
+        <Search match=" \([0-9]{1,4}[:][0-9]{0,4}\)|\([0-9]{0,4}\)" field="#EPISODE" remove="true" />
+        <Search match=" \(ttv\)" field="#TTV" remove="true" />
+      </Searches>
+      
+    </Html>
+  </Listing>
+</Grabber>

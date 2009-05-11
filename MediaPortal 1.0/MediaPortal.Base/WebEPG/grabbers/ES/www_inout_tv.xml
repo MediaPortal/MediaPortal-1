@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info availableDays="5" timezone="Romance Standard Time" version="2.0" />
+  <Channels>
+    <Channel id="tve1@tve.es" siteId="21" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.inout.tv/SincroGuia/templates/prog.php?idChannel=[ID]&amp;startDate=[YYYY]-[MM]-[DD]" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default">
+        <SectionTemplate tags="TA">
+          <TemplateText>
+            &lt;TR&gt;
+            &lt;TD&gt;&lt;#START&gt;&lt;/TD&gt;
+            &lt;TD&gt;&lt;img&gt;&lt;/TD&gt;
+            &lt;TD&gt;&lt;a target=_blank href &gt;&lt;#TITLE&gt;&lt;/font&gt;&lt;/a&gt;&lt;/TD&gt;
+            &lt;/TR&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Template name="Details">
+        <SectionTemplate tags="T">
+          <TemplateText>
+            &lt;table &gt;
+            &lt;Z(&gt;&lt;TR&gt;&lt;TD&gt;&lt;*MATCH&gt;&lt;/TD&gt;&lt;TD&gt;&lt;*VALUE&gt;&lt;/TD&gt;&lt;/TR&gt;&lt;/Z)?&gt;
+            &lt;Z(&gt;&lt;TR&gt;&lt;TD&gt;&lt;*MATCH&gt;&lt;/TD&gt;&lt;TD&gt;&lt;*VALUE&gt;&lt;/TD&gt;&lt;/TR&gt;&lt;/Z)?&gt;
+            &lt;Z(&gt;&lt;TR&gt;&lt;TD&gt;&lt;*MATCH&gt;&lt;/TD&gt;&lt;TD&gt;&lt;*VALUE&gt;&lt;/TD&gt;&lt;/TR&gt;&lt;/Z)?&gt;
+            &lt;Z(&gt;&lt;TR&gt;&lt;TD&gt;&lt;*MATCH&gt;&lt;/TD&gt;&lt;TD&gt;&lt;*VALUE&gt;&lt;/TD&gt;&lt;/TR&gt;&lt;/Z)?&gt;
+            &lt;Z(&gt;&lt;TR&gt;&lt;TD&gt;&lt;*MATCH&gt;&lt;/TD&gt;&lt;TD&gt;&lt;*VALUE&gt;&lt;/TD&gt;&lt;/TR&gt;&lt;/Z)?&gt;
+            &lt;Z(&gt;&lt;TR&gt;&lt;TD&gt;&lt;*MATCH&gt;&lt;/TD&gt;&lt;TD&gt;&lt;*VALUE&gt;&lt;/TD&gt;&lt;/TR&gt;&lt;/Z)?&gt;
+            &lt;Z(&gt;&lt;TR&gt;&lt;TD&gt;&lt;*MATCH&gt;&lt;/TD&gt;&lt;TD&gt;&lt;*VALUE&gt;&lt;/TD&gt;&lt;/TR&gt;&lt;/Z)?&gt;
+            &lt;Z(&gt;&lt;TR&gt;&lt;TD&gt;&lt;*MATCH&gt;&lt;/TD&gt;&lt;TD&gt;&lt;*VALUE&gt;&lt;/TD&gt;&lt;/TR&gt;&lt;/Z)?&gt;
+            &lt;TR&gt;&lt;TD&gt;&lt;/TD&gt;&lt;TD&gt;&lt;/TD&gt;&lt;/TR&gt;
+            &lt;/table&gt;&lt;/TD&gt;&lt;/TR&gt;&lt;TR&gt;
+            &lt;TD&gt;&lt;font&gt;&lt;br&gt;&lt;/font&gt; &lt;table&gt;&lt;tr&gt; &lt;td&gt;&lt;span&gt;&lt;strong&gt;Emisión: Domingo, 11 de febrero del 2007 . Inicio: 03:00 / Fin: 08:00&lt;/strong&gt;&lt;/span&gt;&lt;/td&gt;
+            &lt;/tr&gt;&lt;tr&gt;
+            &lt;td&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;font&gt;&lt;#DESCRIPTION&gt;&lt;/font&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/table&gt;
+          </TemplateText>
+          <MatchList>
+            <Match field="#GENRE" match="Género" />
+          </MatchList>
+        </SectionTemplate>
+      </Template>
+      <Sublinks>
+        <Sublink search="SincroGuia" template="Details" />
+      </Sublinks>
+    </Html>
+  </Listing>
+</Grabber>

@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>7701</id>
+  <defaultcontrol>500</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <description>tele-text rendering image</description>
+      <type>image</type>
+      <id>500</id>
+      <posX>435</posX>
+      <posY>121</posY>
+      <width>817</width>
+      <height>575</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>tele-text rendering image 2</description>
+      <type>image</type>
+      <id>501</id>
+      <posX>435</posX>
+      <posY>121</posY>
+      <width>817</width>
+      <height>575</height>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Current channel</description>
+      <type>label</type>
+      <id>27</id>
+      <posX>259</posX>
+      <posY>565</posY>
+      <label>-</label>
+      <align>left</align>
+      <font>font16</font>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+  </controls>
+</window>

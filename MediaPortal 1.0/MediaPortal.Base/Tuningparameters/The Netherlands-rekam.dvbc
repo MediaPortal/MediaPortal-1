@@ -1,0 +1,25 @@
+;This file contains the definitions for DVB-C networks. It contains the parameters needed
+;to tune to one ore more DVB-C networks. For each network you have to specify
+;  -carrier frequency
+;  -modulation type
+;  -symbolrate
+;format: frequency,modulation,symbolrate
+;
+;for modulation the following types can be choosen:
+; 1024QAM  , 112QAM, 128QAM, 160QAM, 16QAM , 16VSB, 192QAM, 224QAM, 256QAM, 320QAM, 384QAM
+; 448QAM   , 512QAM, 640QAM, 64QAM , 768QAM, 80QAM, 896QAM, 8VSB  , 96QAM , AMPLITUDE,
+; FREQUENCY, BPSK  , OQPSK , QPSK
+;
+; following lines are examples
+
+
+155000,64QAM,6875000
+163000,64QAM,6875000
+490000,64QAM,6875000
+498000,64QAM,6875000
+139000,64QAM,6875000
+147000,64QAM,6875000
+698000,64QAM,6875000
+706000,64QAM,6875000
+522000,64QAM,6875000
+

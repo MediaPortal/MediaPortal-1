@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core.csproj", "{02FFFC1F-2555-4B99-8B01-3432D0673855}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+		Release (Standalone) = Release (Standalone)
+		UseCaptureCardDefinitions = UseCaptureCardDefinitions
+		UseCaptureDefintionsRelease = UseCaptureDefintionsRelease
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{02FFFC1F-2555-4B99-8B01-3432D0673855}.Debug.ActiveCfg = Debug|.NET
+		{02FFFC1F-2555-4B99-8B01-3432D0673855}.Debug.Build.0 = Debug|.NET
+		{02FFFC1F-2555-4B99-8B01-3432D0673855}.Release.ActiveCfg = Release|.NET
+		{02FFFC1F-2555-4B99-8B01-3432D0673855}.Release.Build.0 = Release|.NET
+		{02FFFC1F-2555-4B99-8B01-3432D0673855}.Release (Standalone).ActiveCfg = Release (Standalone)|.NET
+		{02FFFC1F-2555-4B99-8B01-3432D0673855}.Release (Standalone).Build.0 = Release (Standalone)|.NET
+		{02FFFC1F-2555-4B99-8B01-3432D0673855}.UseCaptureCardDefinitions.ActiveCfg = UseCaptureCardDefinitions|.NET
+		{02FFFC1F-2555-4B99-8B01-3432D0673855}.UseCaptureCardDefinitions.Build.0 = UseCaptureCardDefinitions|.NET
+		{02FFFC1F-2555-4B99-8B01-3432D0673855}.UseCaptureDefintionsRelease.ActiveCfg = UseCaptureDefintionsRelease|.NET
+		{02FFFC1F-2555-4B99-8B01-3432D0673855}.UseCaptureDefintionsRelease.Build.0 = UseCaptureDefintionsRelease|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

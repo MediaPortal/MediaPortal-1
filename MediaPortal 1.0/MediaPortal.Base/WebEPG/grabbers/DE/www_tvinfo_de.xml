@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info availableDays="14" timezone="W. Europe Standard Time" version="2.0" />
+  <Channels>
+    <Channel id="ard.de" siteId="37" />
+    <Channel id="zdf.de" siteId="36" />
+    <Channel id="wdr.de" siteId="35" />
+    <Channel id="ndrtv.de" siteId="15" />
+    <Channel id="mdr.de" siteId="14" />
+    <Channel id="br-online.de" siteId="6" />
+    <Channel id="swr.de" siteId="44" />
+    <Channel id="hr-online.de" siteId="11" />
+    <Channel id="rbb-online.de" siteId="5" />
+    <Channel id="rtl.de" siteId="23" />
+    <Channel id="rtl2.de" siteId="24" />
+    <Channel id="super-rtl.de" siteId="25" />
+    <Channel id="sat1.de" siteId="38" />
+    <Channel id="pro-sieben.de" siteId="22" />
+    <Channel id="kabel1.de" siteId="12" />
+    <Channel id="vox.de" siteId="34" />
+    <Channel id="n-tv.de" siteId="81" />
+    <Channel id="n24.de" siteId="40" />
+    <Channel id="euronews.net" siteId="94" />
+    <Channel id="cnni-emea@cnn.com" siteId="93" />
+    <Channel id="bloomberg.co.uk" siteId="98" />
+    <Channel id="bbcworld.com" siteId="123" />
+    <Channel id="eurosport@eurosport.com" siteId="10" />
+    <Channel id="dsf.de" siteId="7" />
+    <Channel id="kika.de" siteId="13" />
+    <Channel id="mtv.de" siteId="46" />
+    <Channel id="viva.tv" siteId="32" />
+    <Channel id="vivaplus.tv" siteId="148" />
+    <Channel id="tele5.de" siteId="152" />
+    <Channel id="neunlive.de" siteId="134" />
+    <Channel id="3sat.de" siteId="2" />
+    <Channel id="arte-tv.com" siteId="4" />
+    <Channel id="gotv.at" siteId="176" />
+    <Channel id="alpha@br-online.de" siteId="3" />
+    <Channel id="phoenix.de" siteId="20" />
+    <Channel id="dw-world.de" siteId="100" />
+    <Channel id="bahntv.de" siteId="195" />
+    <Channel id="spikatv.de" siteId="204" />
+    <Channel id="terranova.de" siteId="205" />
+    <Channel id="tv2@tv2.dk" siteId="208" />
+    <Channel id="das-vierte.de" siteId="210" />
+    <Channel id="nick.de" siteId="217" />
+    <Channel id="tvb.de" siteId="182" />
+    <Channel id="spreekanal.de" siteId="145" />
+    <Channel id="tvm.de" siteId="31" />
+    <Channel id="fab.de" siteId="39" />
+    <Channel id="saartv.de" siteId="89" />
+    <Channel id="hamburg1.de" siteId="113" />
+    <Channel id="xxp.tv" siteId="130" />
+    <Channel id="rtlfrankenlifetv.de" siteId="186" />
+    <Channel id="rheinmaintv.de" siteId="192" />
+    <Channel id="rnf.de" siteId="203" />
+    <Channel id="rtlshop.de" siteId="177" />
+    <Channel id="hse24.de" siteId="131" />
+    <Channel id="qvc.de" siteId="132" />
+    <Channel id="trt.net.tr" siteId="178" />
+    <Channel id="bbcprime.com" siteId="129" />
+    <Channel id="cnbceurope.com" siteId="183" />
+    <Channel id="sf1@sfdrs.ch" siteId="41" />
+    <Channel id="sf2@sfdrs.ch" siteId="42" />
+    <Channel id="orf1@orf.at" siteId="17" />
+    <Channel id="orf2@orf.at" siteId="18" />
+    <Channel id="tw1.at" siteId="136" />
+    <Channel id="steiermark1.at" siteId="137" />
+    <Channel id="tsr1@tsr.ch" siteId="27" />
+    <Channel id="rtl.lu" siteId="102" />
+    <Channel id="1@rtvslo.si" siteId="146" />
+    <Channel id="2@rtvslo.si" siteId="147" />
+    <Channel id="atvplus.at" siteId="108" />
+    <Channel id="dr1@dr.dk" siteId="109" />
+    <Channel id="dr2@dr.dk" siteId="110" />
+    <Channel id="ned1@omroep.nl" siteId="103" />
+    <Channel id="ned2@omroep.nl" siteId="104" />
+    <Channel id="ned3@omroep.nl" siteId="105" />
+    <Channel id="1@betv.be" siteId="185" />
+    <Channel id="pulstv.at" siteId="202" />
+    <Channel id="tsi1@rtsi.ch" siteId="206" />
+    <Channel id="tsi2@rtsi.ch" siteId="207" />
+    <Channel id="exrta@ard-digital.de" siteId="111" />
+    <Channel id="fest@ard-digital.de" siteId="8" />
+    <Channel id="plus@ard-digital.de" siteId="9" />
+    <Channel id="zdftheater@zdf.de" siteId="92" />
+    <Channel id="zdfdoku@zdf.de" siteId="112" />
+    <Channel id="zdfinfo@zdf.de" siteId="133" />
+    <Channel id="planet-tv.de" siteId="73" />
+    <Channel id="premiere.de" siteId="162" />
+    <Channel id="sport1@premiere.de" siteId="47" />
+    <Channel id="prem1@premiere.de" siteId="153" />
+    <Channel id="prem2@premiere.de" siteId="154" />
+    <Channel id="prem3@premiere.de" siteId="155" />
+    <Channel id="prem4@premiere.de" siteId="224" />
+    <Channel id="prem5@premiere.de" siteId="157" />
+    <Channel id="prem6@premiere.de" siteId="158" />
+    <Channel id="prem7@premiere.de" siteId="159" />
+    <Channel id="nost@premiere.de" siteId="160" />
+    <Channel id="serie@premiere.de" siteId="161" />
+    <Channel id="13thstreet.de" siteId="52" />
+    <Channel id="krimi@premiere.de" siteId="71" />
+    <Channel id="disney.de" siteId="61" />
+    <Channel id="discovery.de" siteId="60" />
+    <Channel id="scifi.com" siteId="188" />
+    <Channel id="history@discovery.de" siteId="209" />
+    <Channel id="junior@premiere.de" siteId="70" />
+    <Channel id="classic@premiere.de" siteId="58" />
+    <Channel id="goldstar-tv.de" siteId="68" />
+    <Channel id="heimatkanal.de" siteId="172" />
+    <Channel id="beate-uhse.tv" siteId="106" />
+    <Channel id="mgm.com" siteId="181" />
+    <Channel id="animal@discovery.com" siteId="193" />
+    <Channel id="hit24.tv" siteId="194" />
+    <Channel id="bluemovie.cc" siteId="196" />
+    <Channel id="extra@bluemovie.cc" siteId="197" />
+    <Channel id="dir1@premiere.de" siteId="201" />
+	<Channel id="filmclassics@premiere.de" siteId="220" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://217.79.220.15/exe.php3?target=senderlist.inc&amp;newD=[_D]&amp;newM=[_M]&amp;newY=[YYYY]&amp;showSenderID=[ID]" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default">
+        <SectionTemplate tags="TA">
+          <TemplateText>
+	&lt;td&gt;&lt;#START&gt; &lt;/td&gt;
+	&lt;td&gt;&lt;a href&gt;&lt;#TITLE&gt;&lt;/a&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;
+	&lt;td&gt;&lt;#GENRE&gt;  &lt;/td&gt;&lt;/tr &gt;
+    </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Template name="Details" start="END PARTNER PROGRAM">
+        <SectionTemplate tags="TA">
+          <TemplateText>
+	&lt;TD&gt;&lt;#DESCRIPTION&gt;&lt;/TD&gt;&lt;/TR&gt;&lt;/table&gt; 
+   </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Sublinks>
+        <Sublink search="popup" template="Details" />
+      </Sublinks>
+    </Html>
+  </Listing>
+</Grabber>

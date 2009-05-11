@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>2002</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <import>common.dialog.xml</import>
+    <control>
+      <description>OK button</description>
+      <type>button</type>
+      <id>10</id>
+      <posX>882</posX>
+      <posY>265</posY>
+      <textYOff>8</textYOff>
+      <width>64</width>
+      <height>54</height>
+      <textureFocus>dialogue_ok_focus.png</textureFocus>
+      <textureNoFocus>dialogue_ok_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <onleft>10</onleft>
+      <onright>10</onright>
+      <onup>10</onup>
+      <ondown>10</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+  </controls>
+</window>

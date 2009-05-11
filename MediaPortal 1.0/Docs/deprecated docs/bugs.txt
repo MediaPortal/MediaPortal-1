@@ -1,0 +1,21 @@
+- create manual recording at 22:45->> takes start time:22:30
+- topbar should be lower
+- tv rectangle in scheduled/conflicts/priorities
+- add \ to end of shares (silentyl)
+- xvid/wmv transcoding
+- DVB: LCN
+- german/french IMDB cover art
+- ATSC
+
+
+things todo for 0.1.3:
+- map epg channels
+- ac3 option
+- channel select usa option
+- 
+
+
+things to test:
+- conflicts
+- priorities
+- keep max # of episodes

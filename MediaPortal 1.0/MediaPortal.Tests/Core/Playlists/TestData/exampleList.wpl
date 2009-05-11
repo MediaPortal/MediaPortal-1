@@ -1,0 +1,24 @@
+<?wpl version="1.0"?>
+<smil>
+    <head>
+        <meta name="Generator" content="Microsoft Windows Media Player -- 10.0.0.3802"/>
+        <author/>
+        <title>examplePlayList</title>
+    </head>
+    <body>
+        <seq>
+            <media src="01-chant_down_babylon-rev.mp3" tid="{8244B78C-BDFE-4B13-94E9-00BA66370C2F}"/>
+            <media src="06-blackman_redemption-rev.mp3" tid="{548AAA64-6CE8-444B-ABBA-D54E1BDB8DAE}"/>
+            <media src="keep_on_moving_part_iii-just.mp3" tid="{DD5CC147-1540-4357-8F2A-76260FCD4EF2}"/>
+            <media src="kaya_(version_2)-just.mp3" tid="{05403325-3E57-44F7-8D1B-5C8E91C561C4}"/>
+            <media src="soul_rebel_(version)-just.mp3" tid="{CC69B0BB-93F1-4223-BBC4-B7F4B2EC907A}"/>
+            <media src="kingston_12_shuffle-just.mp3" tid="{5A7E6747-A087-43C4-A7F1-98AA10FE50B4}"/>
+            <media src="battle_axe-just.mp3" tid="{07F015A8-0AE0-48ED-8C48-D9466C503FB9}"/>
+            <media src="jungle_dub-just.mp3" tid="{6043AAD0-F066-4174-9B78-EBCAE1661176}"/>
+            <media src="dracula-just.mp3" tid="{7D579B17-DAD4-4492-B946-171A4F12CE36}"/>
+            <media src="dreamland_(version)-just.mp3" tid="{EA8718D2-A8AB-4B6F-A32F-764BB169DCDA}"/>
+            <media src="face_man-just.mp3" tid="{B4A2BB6D-A58D-4B31-9A8B-FB3DE2209B23}"/>
+            <media src="satisfy_my_soul_babe_(version)-just.mp3" tid="{F2AB73EF-992E-4287-8C41-AA3CF9DE89FC}"/>
+        </seq>
+    </body>
+</smil>

@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="ro" availableDays="6" timezone="E. Europe Standard Time" version="2.0" />
+  <Channels>
+    <Channel id="tvr1@port.ro"  siteId="1" />
+    <!-- TVR1 -->
+    <Channel id="tvr2@port.ro"  siteId="2" />
+    <!-- TVR2 -->
+    <Channel id="hbo@port.ro"  siteId="3" />
+    <!-- HBO -->
+    <Channel id="acasa@port.ro"  siteId="4" />
+    <!-- ACASA -->
+    <Channel id="primatv@port.ro"  siteId="5" />
+    <!-- PRIMATV -->
+    <Channel id="tvklumea@port.ro"  siteId="8" />
+    <!-- TV K LUMEA -->
+    <Channel id="tvrinternational@port.ro"  siteId="15" />
+    <!-- TVR INTERNATIONAL -->
+    <Channel id="antena1@port.ro"  siteId="17" />
+    <!-- ANTENA1 -->
+    <Channel id="jetix@port.ro"  siteId="18" />
+    <!-- JETIX -->
+    <Channel id="discovery@port.ro"  siteId="20" />
+    <!-- Discovery -->
+    <Channel id="animalplanet@port.ro"  siteId="21" />
+    <!-- ANIMAL PLANET -->
+    <Channel id="b1tv@port.ro"  siteId="22" />
+    <!-- B1 TV -->
+    <Channel id="minimax@port.ro"  siteId="23" />
+    <!-- MINIMAX -->
+    <Channel id="nationalgeographic@port.ro"  siteId="24" />
+    <!-- National Geographic -->
+    <Channel id="tvrcultural@port.ro"  siteId="25" />
+    <!-- TVR Cultural -->
+    <Channel id="mtvromania@port.ro"  siteId="26" />
+    <!-- MTV -->
+    <Channel id="hallmark@port.ro"  siteId="27" />
+    <!-- Hallmark -->
+    <Channel id="eurosport@port.ro"  siteId="28" />
+    <!-- Eurosport -->
+    <Channel id="tvrm@port.ro"  siteId="29" />
+    <!-- TVRM -->
+    <Channel id="vh1@port.ro"  siteId="30" />
+    <!-- VH1 -->
+    <Channel id="nationaltv@port.ro"  siteId="31" />
+    <!-- Naþional TV -->
+    <Channel id="tvsport@port.ro"  siteId="32" />
+    <!-- TV SPORT -->
+    <Channel id="axn@port.ro"  siteId="33" />
+    <!-- AXN -->
+    <Channel id="procinema@port.ro"  siteId="36" />
+    <!-- Pro Cinema -->
+    <Channel id="etnotv@port.ro"  siteId="37" />
+    <!-- ETNO TV -->
+    <Channel id="mezzotv@port.ro"  siteId="38" />
+    <!-- MEZZO TV -->
+    <Channel id="viasatexplorer@port.ro"  siteId="39" />
+    <!-- Viasat Explorer -->
+    <Channel id="viasathistory@port.ro"  siteId="40" />
+    <!-- Viasat History -->
+    <Channel id="tv5@port.ro"  siteId="41" />
+    <!-- TV 5 -->
+    <Channel id="cinemax@port.ro"  siteId="42" />
+    <!-- Cinemax -->
+    <Channel id="discoveryciv@port.ro"  siteId="43" />
+    <!-- Discovery Civilisation -->
+    <Channel id="discoverysci@port.ro"  siteId="44" />
+    <!-- Discovery Science -->
+    <Channel id="discoveryTra@port.ro"  siteId="45" />
+    <!-- Discovery Travel & Living -->
+    <Channel id="otv@port.ro"  siteId="46" />
+    <!-- OTV -->
+    <Channel id="protvinter@port.ro"  siteId="47" />
+    <!-- PRO TV Internaþional -->
+    <Channel id="n24@port.ro"  siteId="48" />
+    <!-- N 24 -->
+    <Channel id="senso@port.ro"  siteId="49" />
+    <!-- Senso TV -->
+    <Channel id="zonereality@port.ro"  siteId="50" />
+    <!-- Zone Reality -->
+    <Channel id="zoneromantica@port.ro"  siteId="51" />
+    <!-- Zone Romantica -->
+    <Channel id="bbcprime@port.ro"  siteId="52" />
+    <!-- BBC Prime -->
+    <Channel id="cartoonnetwork@port.ro"  siteId="53" />
+    <!-- Cartoon Network -->
+    <Channel id="tcm@port.ro"  siteId="54" />
+    <!-- TCM -->
+    <Channel id="antena3@port.ro"  siteId="55" />
+    <!-- Antena3 -->
+    <Channel id="mtv2@port.ro"  siteId="56" />
+    <!-- MTV2 -->
+    <Channel id="mtvhits@port.ro"  siteId="57" />
+    <!-- MTV Hits -->
+    <Channel id="vh1classic@port.ro"  siteId="58" />
+    <!-- VH1 Classic -->
+    <Channel id="mtvbase@port.ro"  siteId="59" />
+    <!-- MTV Base -->
+    <Channel id="tv1000@port.ro"  siteId="60" />
+    <!-- TV 1000 -->
+    <Channel id="telesport@port.ro"  siteId="61" />
+    <!-- Telesport -->
+    <Channel id="euforia@port.ro"  siteId="63" />
+    <!-- Euforia Lifestyle Tv -->
+    <Channel id="raiuno@port.ro"  siteId="64" />
+    <!-- Rai Uno -->
+    <Channel id="eurosport2@port.ro"  siteId="65" />
+    <!-- Eurosport 2 -->
+    <Channel id="sportklub@port.ro"  siteId="66" />
+    <!-- Sport Klub -->
+    <Channel id="mtvdance@port.ro"  siteId="70" />
+    <!-- MTV Dance -->
+    <Channel id="favorit@port.ro"  siteId="71" />
+    <!-- Televiziunea Favorit -->
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.port.ro/pls/w/tv.channel?i_ch=[ID]&amp;i_date=[YYYY]-[MM]-[DD]&amp;i_xday=1&amp;i_where=1" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="----------------------" end="" >
+        <SectionTemplate tags="T">
+          <TemplateText>
+            &#60;tr&#62;
+            &#60;td&#62;
+            &#60;#START&#62;
+            &#60;/td&#62;
+            &#60;td&#62;
+            &#60;a&#62;
+            &#60;#TITLE:,(&#62;
+            &#60;br&#62;
+            &#60;#DESCRIPTION&#62;
+            &#60;/td&#62;
+            &#60;/tr&#62;
+
+         </TemplateText>
+       </SectionTemplate>
+      </Template>
+      <Template name="Details" start="below menu bar" end="Linkuri:">
+        <SectionTemplate tags="T">
+<TemplateText>
+            &#60;tr&#62;
+            &#60;td&#62;
+            &#60;#DESCRIPTION&#62;
+            &#60;/td&#62;
+            &#60;/tr&#62;
+</TemplateText>
+  <MatchList>
+   <Match field="#COUNTRY" match="Land" />
+   <Match field="#GENRE" match="Genre" />
+   <Match field="#DESCRIPTION" match="Info" />
+   <Match field="#DESCRIPTION" match="Inhoud" />
+   <Match field="#ACTORS" match="Acteurs" />
+   <Match field="#SUBTITLE" match="Afleveringstitel" />
+   <Match field="#EPISODE" match="Aflevering" />
+  </MatchList>
+    </SectionTemplate>
+      </Template>
+
+      <Searches>
+        <Search match="\(reluare\)" field="#REPEAT" remove="true" />
+        <Search match=" \([0-9]{1,2}\)" field="#EPISODE" remove="true" />
+      </Searches>
+      <Sublinks>
+        <Sublink search="window.open" template="Details" />
+      </Sublinks>
+    </Html>
+  </Listing>
+  </Grabber>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="fi" availableDays="7" timezone="" version="2.1.0" />
+  <Channels>
+    <Channel id="YLE tv1@yle.fi" siteId="tv1" />
+    <Channel id="YLE tv2@yle.fi" siteId="tv2" />
+    <Channel id="mtv3@mtv3.fi" siteId="mtv3" />
+    <Channel id="nelonen@nelonen.fi" siteId="nelonen" />
+    <Channel id="subtv.fi" siteId="subtv" />
+    <Channel id="YLEfst5.fi" siteId="fst5" />
+    <Channel id="yleteema@yle.fi" siteId="yleteema" />
+    <Channel id="yleextra@yle.fi" siteId="yleextra" />
+    <Channel id="jim@jim.fi" siteId="jim" />
+    <Channel id="diggari@diggari.fi" siteId="diggari" />
+    <Channel id="mtv3max@mtv3max.fi" siteId="mtv3max" />
+    <Channel id="subtvleffa@subtvleffa.fi" siteId="subtvleffa" />
+    <Channel id="mtv3fakta@mtv3fakta.fi" siteId="mtv3fakta" />
+    <Channel id="subtvjuniori@subtvjuniori.fi" siteId="subtvjuniori" />
+    <Channel id="tv1000@tv1000.fi" siteId="tv1000" />
+    <Channel id="tv1000action@tv1000action.fi" siteId="tv1000action" />
+    <Channel id="tv1000classic@tv1000classic.fi" siteId="tv1000classic" />
+    <Channel id="tv1000family@tv1000family.fi" siteId="tv1000family" />
+    <Channel id="tv1000nordic@tv1000nordic.fi" siteId="tv1000nordic" />
+    <Channel id="Canal+ Drama@Canal+.fi" siteId="cpnalpannordic" />
+    <Channel id="Canal+ Comedy@Canal+.fi" siteId="cp4" />
+    <Channel id="Canal+ First@Canal+.fi" siteId="cpnalfilm1" />
+    <Channel id="Canal+ Hits@Canal+.fi" siteId="cpnalfilm2" />
+    <Channel id="Canal+ Action@Canal+.fi" siteId="cpnalfilm3" />
+    <Channel id="Canal+ Film HD@Canal+.fi" siteId="cpnalhd" />
+    <Channel id="KinoTV@KinoTV.fi" siteId="kinotv" />
+    <Channel id="showtime@showtime.fi" siteId="showtime" />
+    <Channel id="tcm@tcm.fi" siteId="tcm" />
+    <Channel id="ticket1@ticket1.fi" siteId="ticket1" />
+    <Channel id="silver@silver.fi" siteId="silver" />
+    <Channel id="viasatsport1@viasatsport.fi" siteId="viasatsport1" />
+    <Channel id="viasatsport2@viasatsport.fi" siteId="viasatsport2" />
+    <Channel id="viasatsport3@viasatsport.fi" siteId="viasatsport3" />
+    <Channel id="Canal+ Sport1@Canal+.fi" siteId="cpnalsportfinlan" />
+    <Channel id="Canal+ Sport2@Canal+.fi" siteId="cpnalsport2" />
+    <Channel id="Canal+ Extra@Canal+.fi" siteId="cpe" />
+    <Channel id="Canal+ Sport HD@Canal+.fi" siteId="cpd" />
+    <Channel id="Eurosport@Eurosport.fi" siteId="imeurosportinter" />
+    <Channel id="Eurosport 2@Eurosport.fi" siteId="eurosport2" />
+    <Channel id="urheilukanava@urheilukanava.fi" siteId="urheilukanava" />
+    <Channel id="urheilukanava +@urheilukanava.fi" siteId="urheiluplus" />
+    <Channel id="nasn@nasn.fi" siteId="nasn" />
+    <Channel id="viasatgolf@viasatgolf.fi" siteId="viasatgolf" />
+    <Channel id="discovery@discovery.fi" siteId="discoverychannel" />
+    <Channel id="discovery science@discovery.fi" siteId="discoveryscience" />
+    <Channel id="discovery civilisation@discovery.fi" siteId="discoverycivilis" />
+    <Channel id="discovery travel@discovery.fi" siteId="discoverytravel" />
+    <Channel id="travelchannel@travelchannel.fi" siteId="imtravelchannelt" />
+    <Channel id="animalplanet@animalplanet.fi" siteId="animalplanet" />
+    <Channel id="nationalgeograph@nationalgeograph.fi" siteId="nationalgeograph" />
+    <Channel id="ViasatNatureCrime@Viasat.fi" siteId="viasatnaturecrim" />
+    <Channel id="Viasatexplorer@Viasat.fi" siteId="viasatexplorer" />
+    <Channel id="Viasathistory@Viasat.fi" siteId="viasathistory" />
+    <Channel id="zonereality@zonereality.fi" siteId="zonereality" />
+    <Channel id="bbcprime@bbc.fi" siteId="imbbcprime" />
+    <Channel id="bbcfood@bbc.fi" siteId="imbbcfood" />
+    <Channel id="bbcworld@bbc.fi" siteId="imbbcworldeurope" />
+    <Channel id="cnn international@cnn.fi" siteId="imcnninternation" />
+    <Channel id="bloomberg@bloomberg.fi" siteId="imbloombergtelev" />
+    <Channel id="aljazeera@aljazeera.fi" siteId="imaljazeeraengli" />
+    <Channel id="imfrance24uk@imfrance24uk.fi" siteId="imfrance24uk" />
+    <Channel id="disneychannel@disney.fi" siteId="imdisneychannels" />
+    <Channel id="toondisney@disney.fi" siteId="imtoondisneyscan" />
+    <Channel id="playhousedisney@disney.fi" siteId="implayhousedisne" />
+    <Channel id="svtbarnkanalen@svt.fi" siteId="svtbarnkanalen" />
+    <Channel id="Cartoon network@Cartoon network.fi" siteId="cartoon" />
+    <Channel id="nickelodeon@nickelodeon.fi" siteId="mtvckelodeon" />
+    <Channel id="subtv juniori@subtvjuniori.fi" siteId="subtvjuniori" />
+    <Channel id="tvfinland@yle.fi" siteId="tvfinland" />
+    <Channel id="MTV Finland@MTV.fi" siteId="mtvvfinland" />
+    <Channel id="E entertainment@E entertainment.fi" siteId="imeentertainment" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.telvis.fi/tvopas/?vw=channel&amp;ch=[ID]&amp;sh=all&amp;dy=[DD].[MM].[YYYY]" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default">
+        <SectionTemplate tags="DSH">
+          <TemplateText>
+            &lt;div&gt;&lt;div&gt;
+            &lt;h4&gt;
+            &lt;span&gt;&lt;#START&gt;&lt;/span&gt;
+            &lt;#TITLE&gt;
+            &lt;/h4&gt;
+            &lt;p&gt;
+            &lt;#DESCRIPTION&gt;
+            &lt;script&gt;&lt;/script&gt;
+            &lt;/p&gt;
+            &lt;/div&gt;&lt;/div&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>

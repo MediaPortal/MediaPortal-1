@@ -1,0 +1,250 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<mappings version="3">
+	<remote family="Centarea HID">
+		<button name="Power TV" code="100115">
+			<action layer="0" condition="*" conproperty="-1" command="POWER" cmdproperty="SHUTDOWN" sound="back.wav" />
+		</button>
+		<button name="Record" code="10082">
+			<action layer="0" condition="WINDOW" conproperty="501" command="ACTION" cmdproperty="113" sound="click.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="89" sound="click.wav" />
+		</button>
+		<button name="Stop" code="178">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="13" sound="click.wav" />
+		</button>
+		<button name="Pause" code="10080">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="105" sound="click.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="12" sound="click.wav" />
+		</button>
+		<button name="Rewind" code="11066">
+			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="87" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="17" sound="cursor.wav" />
+		</button>
+		<button name="Play" code="11080">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="105" sound="click.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="68" sound="click.wav" />
+		</button>
+		<button name="Forward" code="11070">
+			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="86" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="28" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="16" sound="cursor.wav" />
+		</button>
+		<button name="Replay" code="78">
+			<action layer="0" condition="PLAYER" conproperty="DVD" command="ACTION" cmdproperty="92" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="6" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="92" sound="click.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="15" sound="cursor.wav" />
+		</button>
+		<button name="Skip" code="10070">
+			<action layer="0" condition="PLAYER" conproperty="DVD" command="ACTION" cmdproperty="91" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="5" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="28" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="91" sound="click.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="14" sound="cursor.wav" />
+		</button>
+		<button name="Back" code="8">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="10" sound="back.wav" />
+		</button>
+		<button name="UP" code="38">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="3" sound="cursor.wav" />
+		</button>
+		<button name="DN" code="40">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="4" sound="cursor.wav" />
+		</button>
+		<button name="LEFT" code="37">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="1" sound="cursor.wav" />
+		</button>
+		<button name="RIGHT" code="39">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="2" sound="cursor.wav" />
+		</button>
+		<button name="OKAY" code="13">
+			<action layer="0" condition="WINDOW" conproperty="11" command="ACTION" cmdproperty="47" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="10" command="ACTION" cmdproperty="10" sound="back.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="7" sound="click.wav" />
+		</button>
+		<button name="Info" code="10069">
+			<action layer="0" condition="FULLSCREEN" conproperty="TRUE" command="ACTION" cmdproperty="24" sound="click.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="106" sound="click.wav" />
+		</button>
+		<button name="Volume +" code="121">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="103" sound="cursor.wav" />
+		</button>
+		<button name="Volume -" code="120">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="102" sound="cursor.wav" />
+		</button>
+		<button name="Start" code="77">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="115" sound="click.wav" focus="True" />
+		</button>
+		<button name="Channel Up" code="33">
+			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9979" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9979" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="31" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="1" command="ACTION" cmdproperty="95" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="95" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="5" sound="cursor.wav" />
+		</button>
+		<button name="Channel Down" code="34">
+			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9980" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9980" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="30" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="1" command="ACTION" cmdproperty="94" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="94" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="6" sound="cursor.wav" />
+		</button>
+		<button name="Mute" code="119">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="9982" sound="click.wav" />
+		</button>
+		<button name="Recorded TV" code="10079">
+			<action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="603" sound="click.wav" />
+		</button>
+		<button name="Guide" code="10071">
+			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="10" sound="back.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="600" sound="click.wav" />
+		</button>
+		<button name="Live TV" code="10084">
+			<action layer="0" condition="WINDOW" conproperty="7701" command="WINDOW" cmdproperty="602" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="1" command="ACTION" cmdproperty="18" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="18" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="18" sound="click.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="1" sound="click.wav" />
+		</button>
+		<button name="DVD Menu" code="10069">
+			<action layer="0" condition="PLAYER" conproperty="DVD" command="ACTION" cmdproperty="90" sound="click.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="3001" sound="click.wav" />
+		</button>
+		<button name="0" code="48">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="80" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2" command="ACTION" cmdproperty="80" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="25" command="ACTION" cmdproperty="80" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="603" command="ACTION" cmdproperty="80" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="605" command="ACTION" cmdproperty="80" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="606" command="ACTION" cmdproperty="80" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="501" command="ACTION" cmdproperty="80" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="601" command="ACTION" cmdproperty="80" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="759" command="ACTION" cmdproperty="80" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="6" command="ACTION" cmdproperty="80" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="10" command="ACTION" cmdproperty="48" sound="back.wav" />
+			<action layer="0" condition="WINDOW" conproperty="11" command="ACTION" cmdproperty="48" sound="back.wav" />
+			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="88" sound="back.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="93" cmdkeychar="48" cmdkeycode="0" sound="cursor.wav" />
+		</button>
+		<button name="1" code="49">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="37" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="93" cmdkeychar="49" cmdkeycode="0" sound="cursor.wav" />
+		</button>
+		<button name="2" code="65">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="38" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="93" cmdkeychar="50" cmdkeycode="0" sound="cursor.wav" />
+		</button>
+		<button name="3" code="51">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="39" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="93" cmdkeychar="51" cmdkeycode="0" sound="cursor.wav" />
+		</button>
+		<button name="4" code="52">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="40" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="93" cmdkeychar="52" cmdkeycode="0" sound="cursor.wav" />
+		</button>
+		<button name="5" code="53">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="41" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="93" cmdkeychar="53" cmdkeycode="0" sound="cursor.wav" />
+		</button>
+		<button name="6" code="54">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="42" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="93" cmdkeychar="54" cmdkeycode="0" sound="cursor.wav" />
+		</button>
+		<button name="7" code="55">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="43" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="93" cmdkeychar="55" cmdkeycode="0" sound="cursor.wav" />
+		</button>
+		<button name="8" code="56">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="44" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="93" cmdkeychar="56" cmdkeycode="0" sound="cursor.wav" />
+		</button>
+		<button name="9" code="57">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="45" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="93" cmdkeychar="57" cmdkeycode="0" sound="cursor.wav" />
+		</button>
+		<button name="*" code="154" />
+		<button name="#" code="152">
+			<action layer="0" condition="WINDOW" conproperty="501" command="ACTION" cmdproperty="34" />
+		</button>
+		<button name="Clear" code="8" />
+		<button name="Enter" code="13">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="33" />
+		</button>
+		<button name="Last" code="10066">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="21" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="15" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="7" />
+		</button>
+		<button name="Next" code="10070">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="26" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="20" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="14" />
+		</button>
+		<button name="Home" code="100013">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="115" />
+		</button>
+		<button name="S1" code="172" />
+		<button name="S2" code="171" />
+		<button name="S3" code="166" />
+		<button name="S4" code="167" />
+	</remote>
+	<remote family="Teletext specific buttons">
+		<button name="Red" code="11084">
+			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9975" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9975" sound="click.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="18" sound="click.wav" />
+		</button>
+		<button name="Green" code="10069">
+			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9976" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9976" sound="click.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="26" sound="click.wav" />
+		</button>
+		<button name="Yellow" code="10073">
+			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9977" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9977" sound="click.wav" />
+			<action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="119" sound="click.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="11" sound="click.wav" />
+		</button>
+		<button name="Blue" code="10077">
+			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9978" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9978" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="511" command="ACTION" cmdproperty="9886" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="19" sound="click.wav" />
+		</button>
+	</remote>
+	<remote family="Extended buttons">
+		<button name="My TV" code="70">
+			<action layer="0" condition="WINDOW" conproperty="7701" command="WINDOW" cmdproperty="602" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="1" command="ACTION" cmdproperty="18" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="18" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="18" sound="click.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="1" sound="click.wav" />
+		</button>
+		<button name="My Music" code="71">
+			<action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="501" sound="click.wav" />
+		</button>
+		<button name="My Pictures" code="73">
+			<action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="2" sound="click.wav" />
+		</button>
+		<button name="My Videos" code="74">
+			<action layer="0" condition="WINDOW" conproperty="6" command="ACTION" cmdproperty="18" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="18" sound="click.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="6" sound="click.wav" />
+		</button>
+		<button name="My Radio" code="80">
+			<action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="30" sound="click.wav" />
+		</button>
+		<button name="Messenger" code="105">
+			<action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="32" sound="click.wav" />
+		</button>
+		<button name="Aspect Ratio" code="39">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="19" sound="click.wav" />
+		</button>
+		<button name="Print" code="78">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="19" sound="click.wav" />
+		</button>
+	</remote>
+</mappings>

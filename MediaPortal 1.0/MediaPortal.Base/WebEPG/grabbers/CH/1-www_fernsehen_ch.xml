@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="de" availableDays="14" timezone="W. Europe Standard Time" version="2.1.0" />
+  <Channels>
+    <Channel id="sf1@sfdrs.ch" siteId="DRS" />
+    <Channel id="sf2@sfdrs.ch" siteId="CH4" />
+    <Channel id="tsr1@tsr.ch" siteId="TSR" />
+    <Channel id="tsr2@tsr.ch" siteId="TR2" />
+    <Channel id="tsi1@rtsi.ch" siteId="TSI" />
+    <Channel id="tsi2@rtsi.ch" siteId="TI2" />
+    <Channel id="startv.ch" siteId="STV" />
+    <Channel id="telebaselonline.ch" siteId="TBA" />
+    <Channel id="www.telezueri.ch" siteId="T24" />
+    <Channel id="tele-m1.ch" siteId="TM1" />
+    <Channel id="teleostschweiz.ch" siteId="TOS" />
+  <!--  <Channel id="tele-suedostschweiz.ch" siteId="TSS" />  no program data 01.07.2007 -->
+    <Channel id="teletell.ch" siteId="TET" />
+  <!--  <Channel id="cine@cablecom.ch" siteId="CAB" /> -->
+  <!--   <Channel id="teleclub.ch" siteId="TCL" /> -->
+  <!--  <Channel id="cine@teleclub.ch" siteId="TCC" /> -->
+  <!--  <Channel id="star@teleclub.ch" siteId="TCS" /> -->
+    <Channel id="orf1@orf.at" siteId="FS1" />
+    <Channel id="orf2@orf.at" siteId="FS2" />
+    <Channel id="ard.de" siteId="ARD" />
+    <Channel id="pro-sieben.de" siteId="PR7" />
+    <Channel id="3sat.de" siteId="3SA" />
+    <Channel id="sat1.de" siteId="SA1" />
+    <Channel id="arte-tv.com" siteId="ART" />
+    <Channel id="rtl.de" siteId="RTL" />
+    <Channel id="rtl2.de" siteId="RT2" />
+    <Channel id="super-rtl.de" siteId="SRT" />
+    <Channel id="kabel1.de" siteId="KAB" />
+    <Channel id="vox.de" siteId="VOX" />
+    <Channel id="zdf.de" siteId="ZDF" />
+    <Channel id="dsf.de" siteId="DSF" />
+    <Channel id="wdr.de" siteId="WE3" />
+    <Channel id="swr.de" siteId="SW3" />
+    <Channel id="br-online.de" siteId="BA3" />
+    <Channel id="alpha@br-online.de" siteId="ALP" />
+    <Channel id="rbb-online.de" siteId="BE1" />
+    <Channel id="fab.de" siteId="FAB" />
+    <Channel id="hr-online.de" siteId="HR3" />
+    <Channel id="ndrtv.de" siteId="NO3" />
+    <Channel id="mdr.de" siteId="MDR" />
+    <Channel id="phoenix.de" siteId="PHX" />
+  <!--  <Channel id="neunlive.de" siteId="TM3" /> -->
+    <Channel id="kika.de" siteId="KKA" />
+  <!--  <Channel id="n24.de" siteId="N24" /> -->
+    <Channel id="n-tv.de" siteId="NTV" />
+    <Channel id="viva.tv" siteId="VIV" />
+  <!--  <Channel id="vivaplus.tv" siteId="VI2" /> -->
+    <Channel id="mtv.de" siteId="MTV" />
+    <Channel id="cartoonnetworkeurope.com" siteId="TNT" />
+    <Channel id="13thstreet.de" siteId="STR" />
+    <Channel id="discovery.de" siteId="DIS" />
+    <Channel id="disney.de" siteId="DIC" />
+    <Channel id="foxkids.de" siteId="FOK" />
+    <Channel id="junior.tv" siteId="JUN" />
+    <Channel id="krimi@premiere.de" siteId="KRC" />
+    <Channel id="tf1.fr" siteId="TF1" />
+    <Channel id="france2.fr" siteId="AN2" />
+    <Channel id="france3.fr" siteId="FR3" />
+    <Channel id="m6.fr" siteId="M_6" />
+    <Channel id="tv5.fr" siteId="T5N" />
+    <Channel id="raiuno.rai.it" siteId="RAI" />
+    <Channel id="raidue.rai.it" siteId="RA2" />
+    <Channel id="tve.es" siteId="TVE" />
+    <Channel id="bbcprime.com" siteId="BBC" />
+    <Channel id="eurosport@eurosport.com" siteId="EUR" />
+    <Channel id="euronews.net" siteId="ENW" />
+    <Channel id="cnni-emea@cnn.com" siteId="CNN" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.fernsehen.ch/sender/[ID].html?next=[LIST_OFFSET]" post="" external="false" encoding="" />
+    <Search maxlistings="10" listStart="1"/>
+    <Html>
+      <Template name="default">
+        <SectionTemplate tags="T">
+          <TemplateText>
+&lt;td&gt;&lt;img&gt;&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;
+&lt;td&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a href&gt;&lt;img&gt;&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;b&gt;&lt;/b&gt;&lt;br /&gt;&lt;#DAY&gt;. &lt;#MONTH&gt;. &lt;#START&gt;-&lt;#END&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a href&gt;&lt;b&gt;&lt;#TITLE&gt;&lt;/b&gt;&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;a href&gt;&lt;img&gt;&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;a href&gt;&lt;img&gt;&lt;/a&gt;
+&lt;a href&gt;&lt;img&gt;&lt;/a&gt;
+&lt;a href&gt;&lt;/a&gt;&lt;br/&gt;
+&lt;#DESCRIPTION&gt;&lt;br /&gt;	
+&lt;/td&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <DateTime>
+        <Month>Jan</Month>
+        <Month>Feb</Month>
+        <Month>Mär</Month>
+        <Month>Apr</Month>
+        <Month>Mai</Month>
+        <Month>Jun</Month>
+        <Month>Jul</Month>
+        <Month>Aug</Month>
+        <Month>Sep</Month>
+        <Month>Okt</Month>
+        <Month>Nov</Month>
+        <Month>Dez</Month>
+      </DateTime>
+    </Html>
+  </Listing>
+</Grabber>

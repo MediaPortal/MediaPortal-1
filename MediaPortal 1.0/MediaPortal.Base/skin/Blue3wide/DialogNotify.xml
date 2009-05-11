@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>2016</id>
+  <defaultcontrol>4</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <width>1280</width>
+      <height>720</height>
+      <texture>black.bmp</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>568</posX>
+        <posY>500</posY>
+        <width>622</width>
+        <height>212</height>
+        <texture>dialog_background.png</texture>
+      </control>
+      <control>
+        <description>Heading text label</description>
+        <type>label</type>
+        <id>3</id>
+        <posX>640</posX>
+        <posY>531</posY>
+        <label>181</label>
+        <font>font10</font>
+        <textcolor>FFFFFFFF</textcolor>
+      </control>
+      <control>
+        <description>OK button</description>
+        <type>button</type>
+        <id>4</id>
+        <posX>1093</posX>
+        <posY>522</posY>
+        <width>50</width>
+        <height>40</height>
+        <textureFocus>dialogue_ok_focus.png</textureFocus>
+        <textureNoFocus>dialogue_ok_nofocus.png</textureNoFocus>
+        <label>-</label>
+        <onleft>4</onleft>
+        <onright>4</onright>
+        <onup>4</onup>
+        <ondown>4</ondown>
+      </control>
+      <control>
+        <description>logo</description>
+        <type>image</type>
+        <id>5</id>
+        <posX>622</posX>
+        <posY>562</posY>
+        <width>124</width>
+        <height>87</height>
+        <texture>#thumb</texture>
+        <colorkey>FFFF00FF</colorkey>
+        <colordiffuse>FFFFFFFF</colordiffuse>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>textarea</description>
+        <type>textbox</type>
+        <id>6</id>
+        <posX>755</posX>
+        <posY>556</posY>
+        <width>391</width>
+        <height>112</height>
+        <spinPosX>1031</spinPosX>
+        <spinPosY>641</spinPosY>
+        <onleft>4</onleft>
+        <onright>4</onright>
+        <onup>4</onup>
+        <ondown>4</ondown>
+        <label>-</label>
+      </control>
+    </control>
+  </controls>
+</window>

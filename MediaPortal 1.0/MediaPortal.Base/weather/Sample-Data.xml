@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--This document is intended only for use by authorized licensees of The Weather Channel. Unauthorized use is prohibited. Copyright 1995-2005, The Weather Channel Interactive, Inc. All Rights Reserved.-->
+<weather ver="2.0">
+  <head>
+    <locale>en_US</locale>
+    <form>MEDIUM</form>
+    <ut>C</ut>
+    <ud>km</ud>
+    <us>km/h</us>
+    <up>mb</up>
+    <ur>mm</ur>
+  </head>
+  <loc id="GMXX0104">
+    <dnam>Osnabruck, Germany</dnam>
+    <tm>12:55 AM</tm>
+    <lat>52.27</lat>
+    <lon>8.05</lon>
+    <sunr>5:48 AM</sunr>
+    <suns>9:03 PM</suns>
+    <zone>2</zone>
+  </loc>
+  <cc>
+    <lsup>5/7/08 12:20 AM Local Time</lsup>
+    <obst>Munster, Germany</obst>
+    <tmp>11</tmp>
+    <flik>11</flik>
+    <t>Fair</t>
+    <icon>33</icon>
+    <bar>
+      <r>1025.1</r>
+      <d>steady</d>
+    </bar>
+    <wind>
+      <s>2</s>
+      <gust>N/A</gust>
+      <d>100</d>
+      <t>E</t>
+    </wind>
+    <hmid>71</hmid>
+    <vis>10.0</vis>
+    <uv>
+      <i>0</i>
+      <t>Low</t>
+    </uv>
+    <dewp>6</dewp>
+    <moon>
+      <icon>1</icon>
+      <t>Waxing Crescent</t>
+    </moon>
+  </cc>
+  <dayf>
+    <lsup>5/6/08 3:26 PM Local Time</lsup>
+    <day d="0" t="Tuesday" dt="May 6">
+      <hi>N/A</hi>
+      <low>9</low>
+      <sunr>5:48 AM</sunr>
+      <suns>9:03 PM</suns>
+      <part p="d">
+        <icon>44</icon>
+        <t>N/A</t>
+        <wind>
+          <s>N/A</s>
+          <gust>N/A</gust>
+          <d>N/A</d>
+          <t>N/A</t>
+        </wind>
+        <bt>N/A</bt>
+        <ppcp>10</ppcp>
+        <hmid>N/A</hmid>
+      </part>
+      <part p="n">
+        <icon>31</icon>
+        <t>Clear</t>
+        <wind>
+          <s>11</s>
+          <gust>N/A</gust>
+          <d>76</d>
+          <t>ENE</t>
+        </wind>
+        <bt>Clear</bt>
+        <ppcp>10</ppcp>
+        <hmid>64</hmid>
+      </part>
+    </day>
+    <day d="1" t="Wednesday" dt="May 7">
+      <hi>23</hi>
+      <low>11</low>
+      <sunr>5:46 AM</sunr>
+      <suns>9:04 PM</suns>
+      <part p="d">
+        <icon>32</icon>
+        <t>Sunny</t>
+        <wind>
+          <s>8</s>
+          <gust>N/A</gust>
+          <d>79</d>
+          <t>E</t>
+        </wind>
+        <bt>Sunny</bt>
+        <ppcp>10</ppcp>
+        <hmid>54</hmid>
+      </part>
+      <part p="n">
+        <icon>31</icon>
+        <t>Clear</t>
+        <wind>
+          <s>8</s>
+          <gust>N/A</gust>
+          <d>70</d>
+          <t>ENE</t>
+        </wind>
+        <bt>Clear</bt>
+        <ppcp>10</ppcp>
+        <hmid>63</hmid>
+      </part>
+    </day>
+    <day d="2" t="Thursday" dt="May 8">
+      <hi>23</hi>
+      <low>11</low>
+      <sunr>5:44 AM</sunr>
+      <suns>9:06 PM</suns>
+      <part p="d">
+        <icon>32</icon>
+        <t>Sunny</t>
+        <wind>
+          <s>10</s>
+          <gust>N/A</gust>
+          <d>81</d>
+          <t>E</t>
+        </wind>
+        <bt>Sunny</bt>
+        <ppcp>10</ppcp>
+        <hmid>48</hmid>
+      </part>
+      <part p="n">
+        <icon>31</icon>
+        <t>Clear</t>
+        <wind>
+          <s>6</s>
+          <gust>N/A</gust>
+          <d>88</d>
+          <t>E</t>
+        </wind>
+        <bt>Clear</bt>
+        <ppcp>0</ppcp>
+        <hmid>59</hmid>
+      </part>
+    </day>
+    <day d="3" t="Friday" dt="May 9">
+      <hi>23</hi>
+      <low>11</low>
+      <sunr>5:42 AM</sunr>
+      <suns>9:07 PM</suns>
+      <part p="d">
+        <icon>32</icon>
+        <t>Sunny</t>
+        <wind>
+          <s>13</s>
+          <gust>N/A</gust>
+          <d>99</d>
+          <t>E</t>
+        </wind>
+        <bt>Sunny</bt>
+        <ppcp>0</ppcp>
+        <hmid>49</hmid>
+      </part>
+      <part p="n">
+        <icon>31</icon>
+        <t>Clear</t>
+        <wind>
+          <s>10</s>
+          <gust>N/A</gust>
+          <d>92</d>
+          <t>E</t>
+        </wind>
+        <bt>Clear</bt>
+        <ppcp>0</ppcp>
+        <hmid>55</hmid>
+      </part>
+    </day>
+    <day d="4" t="Saturday" dt="May 10">
+      <hi>22</hi>
+      <low>12</low>
+      <sunr>5:41 AM</sunr>
+      <suns>9:09 PM</suns>
+      <part p="d">
+        <icon>32</icon>
+        <t>Sunny</t>
+        <wind>
+          <s>16</s>
+          <gust>N/A</gust>
+          <d>88</d>
+          <t>E</t>
+        </wind>
+        <bt>Sunny</bt>
+        <ppcp>0</ppcp>
+        <hmid>46</hmid>
+      </part>
+      <part p="n">
+        <icon>31</icon>
+        <t>Clear</t>
+        <wind>
+          <s>10</s>
+          <gust>N/A</gust>
+          <d>81</d>
+          <t>E</t>
+        </wind>
+        <bt>Clear</bt>
+        <ppcp>0</ppcp>
+        <hmid>56</hmid>
+      </part>
+    </day>
+  </dayf>
+</weather>

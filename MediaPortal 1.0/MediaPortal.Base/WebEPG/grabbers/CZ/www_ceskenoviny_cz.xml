@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Grabber>
+  <Info language="cz" availableDays="13" timezone="W. Europe Standard Time" version="2.0" />
+  <Channels>
+    <Channel id="CT1@ct.cz" siteId="stanice1=%C8T1" />
+    <Channel id="Nova@nova.cz" siteId="stanice2=Nova" />
+    <Channel id="Markiza@markiza.cz" siteId="stanice3=Mark%EDza" />
+    <Channel id="Eurosport@eurosport.cz" siteId="stanice4=EuroSport" />
+    <Channel id="Minimax@minimax.cz" siteId="stanice5=Minimax" />
+    <Channel id="discovery@discovery.cz" siteId="stanice6=Discovery" />
+    <Channel id="AnimalPlanet@discovery.cz" siteId="stanice7=AnimalPlanet" />
+    <Channel id="CT2@ct.cz" siteId="stanice8=%C8T2" />
+    <Channel id="Prima@prima.cz" siteId="stanice9=Prima" />
+    <Channel id="HBO@hbo.cz" siteId="stanice10=HBO" />
+    <Channel id="dsf.de" siteId="stanice11=DSF" />
+    <Channel id="Hallmark@hallmark.cz" siteId="stanice12=Hallmark" />
+    <Channel id="Spektrum@spektrum.cz" siteId="stanice13=Spektrum" />
+    <Channel id="Galaxie@galaxie.cz" siteId="stanice14=Galaxie+Sport" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.ceskenoviny.cz/magazin/tvprogram/index.php?stanicex%5B1%5D=stanice1&amp;stanicex%5B2%5D=stanice2&amp;stanicex%5B3%5D=stanice3&amp;stanicex%5B4%5D=stanice4&amp;stanicex%5B5%5D=stanice5&amp;stanicex%5B6%5D=stanice6&amp;stanicex%5B7%5D=stanice7&amp;stanicex%5B8%5D=stanice8&amp;stanicex%5B9%5D=stanice9&amp;stanicex%5B10%5D=stanice10&amp;stanicex%5B11%5D=stanice11&amp;stanicex%5B12%5D=stanice12&amp;stanicex%5B13%5D=stanice13&amp;stanicex%5B14%5D=stanice14&amp;tv=6&amp;dnygrp=5&amp;datumod=[YYYY]-[MM]-[DD]&amp;datumdo=[YYYY]-[MM]-[DD]&amp;hodinygrp=1&amp;casod=5&amp;casdo=5&amp;zobraz=1&amp;findStr=&amp;hledejV=1&amp;[ID]" post="" external="false" encoding="windows-1250" />
+    <Html>
+      <Template name="default" start="tvp_stanice" end="pppaticka">
+        <SectionTemplate tags="TB">
+<TemplateText>
+&lt;tr valign="top"&gt;
+&lt;td class="tvp_cas" width= bgcolor=red&gt;&lt;#START&gt;&lt;/td&gt;
+&lt;td class="tvp_popis"&gt;&lt;b&gt;&lt;#TITLE&gt;&lt;/b&gt;
+&lt;z(&gt;
+&lt;br/&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;
+&lt;/z)?&gt;
+</TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>

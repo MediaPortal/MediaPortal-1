@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- 
+   This file stores information about the various Directories used in MediaPortal.
+   You may change only the information between the <Path>%ProgramData%\Team MediaPortal\MediaPortal\ and </Path> elements.
+   
+   ATTENTION: Never change anything in the <Dir> element as this may cause MediaPortal to fail.
+   If you don't know what that means at all, leave the default settings. 
+
+   Don't change this file itself.
+   copy it to MyDocuments and modify it there.
+   If you made an error, the original copy in the MediaPortal Installation Path is used.
+
+   Valid Values for the <Path>%ProgramData%\Team MediaPortal\MediaPortal\ element are:
+   <Path>%ProgramData%\Team MediaPortal\MediaPortal\</Path>
+   =============
+   This indicates that only the MediaPortal Install Path will be used.
+   result is: C:\Program Files\
+
+   <Path>%ProgramData%\Team MediaPortal\MediaPortal\log\</Path>
+   =================
+   This indicates that the given Path information should be prefixed with the MediaPortal Install Path.
+   result is: C:\Program Files\log\
+
+   <Path>%ProgramData%\Team MediaPortal\MediaPortal\C:\Temp\log\</Path>
+   =========================
+   This indicates that the given Path is an absolute Path and should be used as is.
+   result is: C:\Temp\log\
+-->
+<Config>
+  <!-- The Path were all the Config files are located (mediaportal.xml, etc.) -->
+  <Dir id = "Config">
+    <Path>%ProgramData%\Team MediaPortal\MediaPortal\</Path>
+  </Dir>
+  <!-- The Path were all the Plugins are located. Don't modify -->
+  <Dir id = "Plugins">
+    <Path>Plugins\</Path>
+  </Dir>
+  <!-- The Path were the log files should be written to -->
+  <Dir id = "Log">
+    <Path>%ProgramData%\Team MediaPortal\MediaPortal\Log\</Path>
+  </Dir>
+      <!-- The Path were the Custom Inputdevice Mappings are located. -->
+  <Dir id = "CustomInputDevice">
+    <Path>%ProgramData%\Team MediaPortal\MediaPortal\InputDeviceMappings\</Path>
+  </Dir>
+  <!-- The Path were the Default Inputdevice Mappings are located. -->
+  <Dir id = "CustomInputDefault">
+    <Path>InputDeviceMappings\defaults\</Path>
+  </Dir>
+  <!-- The Path were the skins are located -->
+  <Dir id = "Skin">
+    <Path>Skin\</Path>
+  </Dir>
+    <!-- The Path were the Language files are located -->
+  <Dir id = "Language">
+    <Path>Language\</Path>
+  </Dir>
+  <!-- The Path for the databases -->
+  <Dir id = "Database">
+    <Path>%ProgramData%\Team MediaPortal\MediaPortal\Database\</Path>
+  </Dir>
+  <!-- The Path for the Thumbs, like Music Cover Art, TV Logos, etc. -->
+  <Dir id = "Thumbs">
+    <Path>%ProgramData%\Team MediaPortal\MediaPortal\Thumbs\</Path>
+  </Dir>
+  <!-- The Path were all the Weather related files are located. -->
+  <Dir id = "Weather">
+    <Path>Weather\</Path>
+  </Dir>
+  <!-- A Path holding cached information. Like Picture thumbs, modified skin files (packedgfx), etc. Files in there can be removed by the user -->
+  <Dir id = "Cache">
+    <Path>%ProgramData%\Team MediaPortal\MediaPortal\Cache\</Path>
+  </Dir>
+  <!-- The path to CYGWIN files needed for the burner plugin -->
+  <Dir id = "BurnerSupport">
+    <Path>Burner\</Path>
+  </Dir>
+</Config>

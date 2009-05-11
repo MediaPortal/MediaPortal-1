@@ -1,0 +1,40 @@
+TV:
+- update tvdatabase when PMT changes!!!
+- mpeg2dec      : desync issue 
+- mpeg2dec      : AR niet goed
+
+- ss2		: werkt niet voor erisan
+- dvb-t 	: werkt niet voor dman?
+- dvb-t epg 	: werkt niet voor dman, silentyl en anderen?
+- dual-tuner    : werkt niet voor steve met 2x nova-t
+
+- auto-scan     : werkt niet in MP wizards?
+- webbrowser -> remote werkt niet meer na de hand?
+- msn        -> test
+
+Algemeen probleem:
+- welke filters horen bij welke instantie van welke kaart
+
+
+----------------------------------------------------------------------
+MCE nice:
+
+- watch tv fullscreen->insert dvd->dialog popped up of je DVD wil afspelen
+- tvgids
+    GIDS = kies genre, en tvgids laat programma's van dit genre zien
+    1-999= ga direct naar kanaal X
+
+- fullscreen tv:
+    - vorige / overslaan : snel seeken
+    - FF/RWD : meerdere keren drukken gaat van 2x/4x/8x
+    - meer info->gaat naar programma info scherm 
+
+
+Effecten:
+ - zoom in van GUI->fullscreen TV
+ - zoom out van fullscreen tv->GUI
+
+Todo:
+- check TsFileSource
+- check twinhan CI
+- edit scheduled recordings
