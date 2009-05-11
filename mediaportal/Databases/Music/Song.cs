@@ -103,6 +103,8 @@ namespace MediaPortal.Music.Database
     private string _strAlbum = String.Empty;
     private string _strAlbumArtist = String.Empty;
     private string _strGenre = String.Empty;
+    private string _strComposer = String.Empty;
+    private string _strConductor = String.Empty;
     private int _iTrack = 0;
     private int _iNumTracks = 0;
     private int _iDuration = 0;
@@ -114,7 +116,6 @@ namespace MediaPortal.Music.Database
     private DateTime _dateTimeModified = DateTime.MinValue;
     private DateTime _dateTimePlayed = DateTime.MinValue;
     private SongStatus _audioScrobblerStatus;
-    private string _musicBrainzID;
     private string _strURL = String.Empty;
     private string _webImage = String.Empty;
     private string _lastFMMatch = String.Empty;
@@ -139,6 +140,8 @@ namespace MediaPortal.Music.Database
       newsong.Duration = Duration;
       newsong.FileName = FileName;
       newsong.Genre = Genre;
+      newsong.Composer = Composer;
+      newsong.Conductor = Conductor;
       newsong.TimesPlayed = TimesPlayed;
       newsong.Title = Title;
       newsong.Track = Track;
@@ -149,7 +152,6 @@ namespace MediaPortal.Music.Database
       newsong.DateTimeModified = DateTimeModified;
       newsong.DateTimePlayed = DateTimePlayed;
       newsong.AudioScrobblerStatus = AudioScrobblerStatus;
-      newsong.MusicBrainzID = MusicBrainzID;
       newsong.URL = URL;
       newsong.WebImage = WebImage;
       newsong.LastFMMatch = LastFMMatch;
@@ -174,6 +176,8 @@ namespace MediaPortal.Music.Database
       _strAlbum = String.Empty;
       _strAlbumArtist = String.Empty;
       _strGenre = String.Empty;
+      _strComposer = String.Empty;
+      _strConductor = String.Empty;
       _iTrack = 0;
       _iNumTracks = 0;
       _iDuration = 0;
@@ -183,7 +187,6 @@ namespace MediaPortal.Music.Database
       _dateTimeModified = DateTime.MinValue;
       _dateTimePlayed = DateTime.MinValue;
       _audioScrobblerStatus = SongStatus.Init;
-      _musicBrainzID = String.Empty;
       _strURL = String.Empty;
       _webImage = String.Empty;
       _lastFMMatch = String.Empty;
@@ -253,6 +256,18 @@ namespace MediaPortal.Music.Database
     {
       get { return _strGenre; }
       set { _strGenre = value; }
+    }
+
+    public string Composer
+    {
+      get { return _strComposer; }
+      set { _strComposer = value; }
+    }
+
+    public string Conductor
+    {
+      get { return _strConductor; }
+      set { _strConductor = value; }
     }
 
     public string Title
@@ -368,15 +383,6 @@ namespace MediaPortal.Music.Database
       set { _audioScrobblerStatus = value; }
     }
 
-    /// <summary>
-    /// A unique ID to indentify each track
-    /// </summary>
-    public string MusicBrainzID
-    {
-      get { return _musicBrainzID; }
-      set { _musicBrainzID = value; }
-    }
-
     public string URL
     {
       get { return _strURL; }
@@ -478,6 +484,8 @@ namespace MediaPortal.Music.Database
       tmpTag.Artist = this.Artist;
       tmpTag.Duration = this.Duration;
       tmpTag.Genre = this.Genre;
+      tmpTag.Composer = this.Composer;
+      tmpTag.Conductor = this.Conductor;
       tmpTag.Track = this.Track;
       tmpTag.Year = this.Year;
       tmpTag.Rating = this.Rating;
@@ -598,7 +606,6 @@ namespace MediaPortal.Music.Database
       return _strArtist + "\t" +
              _strTitle + "\t" +
              _strAlbum + "\t" +
-             _musicBrainzID + "\t" +
              _iDuration + "\t" +
              _dateTimePlayed.ToString("s");
     }

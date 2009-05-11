@@ -48,12 +48,11 @@ namespace MediaPortal.Music.Database
         this.duration = (int) track.Duration;
         this.album = track.Album;
         this.tracknr = track.Track;
-        this.mbtrackid = track.MusicBrainzID;
         this.auth = track.AuthToken;
       }
 
       public QueuedTrack(string artist, string title, string start_time, string source, string rateaction, int duration,
-                         string album, int tracknr, string mbtrackid, string auth)
+                         string album, int tracknr, string auth)
       {
         this.artist = artist;
         this.title = title;
@@ -63,7 +62,6 @@ namespace MediaPortal.Music.Database
         this.duration = duration;
         this.album = album;
         this.tracknr = tracknr;
-        this.mbtrackid = mbtrackid;
         this.auth = auth;
       }
 
@@ -107,11 +105,6 @@ namespace MediaPortal.Music.Database
         get { return tracknr; }
       }
 
-      public string MbTrackId
-      {
-        get { return mbtrackid; }
-      }
-
       public string Auth
       {
         get { return auth; }
@@ -127,7 +120,6 @@ namespace MediaPortal.Music.Database
       private int duration;
       private string album;
       private int tracknr;
-      private string mbtrackid;
       private string auth;
     }
 
@@ -177,7 +169,6 @@ namespace MediaPortal.Music.Database
           writer.WriteElementString("Duration", track.Duration.ToString());
           writer.WriteElementString("Album", track.Album);
           writer.WriteElementString("TrackNr", track.TrackNr.ToString());
-          writer.WriteElementString("MbTrackId", track.MbTrackId);
 
           writer.WriteEndElement(); // Track
         }
@@ -210,7 +201,6 @@ namespace MediaPortal.Music.Database
           int duration = 0;
           string album = String.Empty;
           int tracknr = 0;
-          string mbtrackid = String.Empty;
 
           foreach (XmlNode child in node.ChildNodes)
           {
@@ -250,13 +240,9 @@ namespace MediaPortal.Music.Database
             {
               tracknr = Convert.ToInt32(child.ChildNodes[0].Value);
             }
-            else if (child.Name == "MbTrackId" && child.ChildNodes.Count != 0)
-            {
-              mbtrackid = child.ChildNodes[0].Value;
-            }
           }
 
-          queue.Add(new QueuedTrack(artist, title, start_time, source, rating, duration, album, tracknr, mbtrackid, auth));
+          queue.Add(new QueuedTrack(artist, title, start_time, source, rating, duration, album, tracknr, auth));
         }
       }
       catch
@@ -288,12 +274,11 @@ namespace MediaPortal.Music.Database
         //l[0]=<secs>
         //b[0]=<album>
         //n[0]=<tracknumber>
-        //m[0]=<mb-trackid>
 
         string trackNr = track.TrackNr > 0 ? Convert.ToString(track.TrackNr) : String.Empty;
 
         sb.AppendFormat(
-          "&a[{0}]={1}&t[{0}]={2}&i[{0}]={3}&o[{0}]={4}&r[{0}]={5}&l[{0}]={6}&b[{0}]={7}&n[{0}]={8}&m[{0}]={9}",
+          "&a[{0}]={1}&t[{0}]={2}&i[{0}]={3}&o[{0}]={4}&r[{0}]={5}&l[{0}]={6}&b[{0}]={7}&n[{0}]={8}",
           i, // number of queued items = 0
           AudioscrobblerBase.getValidURLLastFMString(AudioscrobblerBase.UndoArtistPrefix(track.Artist)), // artist = 1
           HttpUtility.UrlEncode(track.Title), // track = 2
@@ -302,8 +287,7 @@ namespace MediaPortal.Music.Database
           track.Rating, // rating = 5
           track.Duration.ToString(), // secs = 6
           AudioscrobblerBase.getValidURLLastFMString(track.Album), // album = 7
-          trackNr, // tracknumber = 8
-          track.MbTrackId // mb-trackid = 9
+          trackNr  // tracknumber = 8
           );
       }
 

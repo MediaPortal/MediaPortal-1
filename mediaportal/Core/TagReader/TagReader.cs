@@ -121,7 +121,10 @@ namespace MediaPortal.TagReader
         musictag.Comment = tag.Tag.Comment;
         string[] composer = tag.Tag.Composers;
         if (composer.Length > 0)
-          musictag.Composer = composer[0].Trim(trimChars);
+        {
+          musictag.Composer = string.Join(";", composer).Trim(trimChars);
+        }
+        musictag.Conductor = tag.Tag.Conductor;
         IPicture[] pics = new IPicture[] { };
         pics = tag.Tag.Pictures;
         if (pics.Length > 0)

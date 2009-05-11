@@ -66,10 +66,9 @@ namespace MediaPortal.Music.Database
       aSong.ResumeAt = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iResumeAt");
       aSong.DiscId = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iDisc");
       aSong.DiscTotal = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iNumDisc");
-      //aSong.GainTrack ?
-      //aSong.PeakTrack ?
       aSong.Lyrics = DatabaseUtility.Get(aResult, aRow, "tracks.strLyrics");
-      aSong.MusicBrainzID = DatabaseUtility.Get(aResult, aRow, "tracks.musicBrainzID");
+      aSong.Composer = DatabaseUtility.Get(aResult, aRow, "tracks.strComposer").Trim(trimChars);
+      aSong.Conductor = DatabaseUtility.Get(aResult, aRow, "tracks.strConductor").Trim(trimChars);
       try
       {
         aSong.DateTimePlayed = DatabaseUtility.GetAsDateTime(aResult, aRow, "dateLastPlayed");
@@ -228,6 +227,12 @@ namespace MediaPortal.Music.Database
             columnIndex = (int) results.ColumnIndices["strGenre"];
             song.Genre = fields.fields[columnIndex].Trim(trimChars);
           }
+          if (filter == "composer")
+          {
+            AssignAllSongFieldsFromResultSet(ref song, results, i);
+            columnIndex = (int)results.ColumnIndices["strComposer"];
+            song.Composer = fields.fields[columnIndex].Trim(trimChars);
+          }
           if (filter == "tracks")
           {
             AssignAllSongFieldsFromResultSet(ref song, results, i);
@@ -321,6 +326,12 @@ namespace MediaPortal.Music.Database
           if (filter == "genre")
           {
             song.Genre = fields.fields[0];
+            // Count of songs
+            song.Duration = Convert.ToInt16(fields.fields[1]);
+          }
+          if (filter == "composer")
+          {
+            song.Composer = fields.fields[0];
             // Count of songs
             song.Duration = Convert.ToInt16(fields.fields[1]);
           }
@@ -697,6 +708,52 @@ namespace MediaPortal.Music.Database
       {
         Log.Error("MusicDatabase: Lookups: GetSongsByPath failed: {0} exception err: {1} stack: {2}", strSQL, ex.Message,
                   ex.StackTrace);
+        Open();
+      }
+
+      return false;
+    }
+
+    public bool GetSongsByComposer(string aComposer, ref List<Song> aSongList)
+    {
+      try
+      {
+        aSongList.Clear();
+
+        string strComposer = aComposer;
+        DatabaseUtility.RemoveInvalidChars(ref strComposer);
+
+        string sql = string.Format("SELECT * FROM tracks WHERE strComposer LIKE '%| {0} |%' ORDER BY strAlbum asc",
+                                   strComposer);
+        GetSongsByFilter(sql, out aSongList, "tracks");
+        return true;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+
+      return false;
+    }
+
+    public bool GetSongsByConductor(string aConductor, ref List<Song> aSongList)
+    {
+      try
+      {
+        aSongList.Clear();
+
+        string strConductor = aConductor;
+        DatabaseUtility.RemoveInvalidChars(ref strConductor);
+
+        string sql = string.Format("SELECT * FROM tracks WHERE strConductor LIKE '%| {0} |%' ORDER BY strAlbum asc",
+                                   strConductor);
+        GetSongsByFilter(sql, out aSongList, "tracks");
+        return true;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 

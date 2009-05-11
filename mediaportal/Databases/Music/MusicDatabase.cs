@@ -104,7 +104,7 @@ namespace MediaPortal.Music.Database
       {
         if (MusicDbClient == null)
         {
-          MusicDbClient = new SQLiteClient(Config.GetFile(Config.Dir.Database, "MusicDatabaseV10.db3"));
+          MusicDbClient = new SQLiteClient(Config.GetFile(Config.Dir.Database, "MusicDatabaseV11.db3"));
         }
 
         return MusicDbClient;
@@ -164,14 +164,13 @@ namespace MediaPortal.Music.Database
         {
         }
 
-        if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV10.db3")))
+        if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV11.db3")))
         {
           // Get the DB handle or create it if necessary
           MusicDbClient = DbConnection;
 
           // When we have deleted the database, we need to scan from the beginning, regardsless of the last import setting
           _lastImport = DateTime.ParseExact("1900-01-01 00:00:00", "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
-          ;
 
           if (!CreateDatabase())
           {
@@ -206,15 +205,17 @@ namespace MediaPortal.Music.Database
           "strPath text, " +
           // Artist
           "strArtist text, strAlbumArtist text, " +
-          // Album (How to handle Various Artist Albums)
+          // Album 
           "strAlbum text, " +
           // Genre (multiple genres)
           "strGenre text, " +
+          // Composer (multiple composers)
+          "strComposer text, " +
+          "strConductor text, " +
           // Song
           "strTitle text, iTrack integer, iNumTracks integer, iDuration integer, iYear integer, " +
           "iTimesPlayed integer, iRating integer, iFavorite integer, iResumeAt integer, iDisc integer, iNumDisc integer, " +
-          "iGainTrack double,  iPeakTrack double, " +
-          "strLyrics text, musicBrainzID text, " +
+          "strLyrics text, " +
           "dateLastPlayed timestamp, dateAdded timestamp" +
           ")"
           );
@@ -238,6 +239,10 @@ namespace MediaPortal.Music.Database
                                  "CREATE INDEX idxalbum_strAlbum ON tracks(strAlbum ASC)");
         DatabaseUtility.AddIndex(MusicDbClient, "idxgenre_strGenre",
                                  "CREATE INDEX idxgenre_strGenre ON tracks(strGenre ASC)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxcomposer_strComposer",
+                         "CREATE INDEX idxcomposer_strComposer ON tracks(strComposer ASC)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxconductor_strConductor",
+                         "CREATE INDEX idxconductor_strConductor ON tracks(strConductor ASC)");
 
         // Artist 
         DatabaseUtility.AddTable(MusicDbClient, "artist",
@@ -256,6 +261,12 @@ namespace MediaPortal.Music.Database
                                  "CREATE TABLE genre ( idGenre integer primary key autoincrement, strGenre text)");
         DatabaseUtility.AddIndex(MusicDbClient, "idxgenretable_strGenre",
                                  "CREATE INDEX idxgenretable_strGenre ON genre(strGenre ASC)");
+
+        // Composer
+        DatabaseUtility.AddTable(MusicDbClient, "composer",
+                                 "CREATE TABLE composer ( idComposer integer primary key autoincrement, strComposer text)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxcomposertable_strComposer",
+                                 "CREATE INDEX idxcomposerable_strComposer ON composer(strComposer ASC)");
 
         // Artist Info and Album Info
         DatabaseUtility.AddTable(MusicDbClient, "albuminfo",

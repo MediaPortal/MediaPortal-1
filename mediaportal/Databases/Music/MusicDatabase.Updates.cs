@@ -1018,6 +1018,13 @@ namespace MediaPortal.Music.Database
         strTmp = tag.Lyrics;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         tag.Lyrics = strTmp == "unknown" ? "" : strTmp;
+        strTmp = tag.Composer;
+        DatabaseUtility.RemoveInvalidChars(ref strTmp);
+        tag.Composer = strTmp == "unknown" ? "" : strTmp;
+        strTmp = tag.Conductor;
+        DatabaseUtility.RemoveInvalidChars(ref strTmp);
+        tag.Conductor = strTmp == "unknown" ? "" : strTmp;
+
 
         if (!tag.HasAlbumArtist)
         {
@@ -1029,6 +1036,7 @@ namespace MediaPortal.Music.Database
         tag.Artist = FormatMultipleEntry(tag.Artist, true);
         tag.AlbumArtist = FormatMultipleEntry(tag.AlbumArtist, true);
         tag.Genre = FormatMultipleEntry(tag.Genre, false);
+        tag.Composer = FormatMultipleEntry(tag.Composer, true);
 
         return tag;
       }
@@ -1075,16 +1083,16 @@ namespace MediaPortal.Music.Database
         strSQL =
           String.Format(
             @"insert into tracks (
-                               strPath, strArtist, strAlbumArtist, strAlbum, strGenre, 
-                               strTitle, iTrack, iNumTracks, iDuration, iYear, iTimesPlayed, iRating, iFavorite, 
-                               iResumeAt, iDisc, iNumDisc, iGainTrack, iPeakTrack, strLyrics, musicBrainzID, dateLastPlayed) 
+                               strPath, strArtist, strAlbumArtist, strAlbum, strGenre, strComposer, strConductor, strTitle, 
+                               iTrack, iNumTracks, iDuration, iYear, iTimesPlayed, iRating, iFavorite, 
+                               iResumeAt, iDisc, iNumDisc, strLyrics, dateLastPlayed) 
                                values ( 
-                               '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', 
-                               {6}, {7}, {8}, {9}, {10}, {11}, {12}, 
-                               {13}, {14}, {15}, {16}, {17}, '{18}', '{19}', '{20}' )",
-            strFileName, tag.Artist, tag.AlbumArtist, tag.Album, tag.Genre, tag.Title,
+                               '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}',
+                               {8}, {9}, {10}, {11}, {12}, {13}, {14}, 
+                               {15}, {16}, {17}, '{18}', '{19}' )",
+            strFileName, tag.Artist, tag.AlbumArtist, tag.Album, tag.Genre, tag.Composer, tag.Conductor, tag.Title,
             tag.Track, tag.TrackTotal, tag.Duration, tag.Year, 0, tag.Rating, 0,
-            0, tag.DiscID, tag.DiscTotal, 0, 0, tag.Lyrics, "", DateTime.MinValue
+            0, tag.DiscID, tag.DiscTotal, tag.Lyrics, DateTime.MinValue
             );
         try
         {
@@ -1099,6 +1107,7 @@ namespace MediaPortal.Music.Database
           AddArtist(tag.Artist);
           AddAlbumArtist(tag.AlbumArtist);
           AddGenre(tag.Genre);
+          AddComposer(tag.Composer);
 
           if (_treatFolderAsAlbum)
           {
@@ -1232,6 +1241,44 @@ namespace MediaPortal.Music.Database
     }
 
     /// <summary>
+    /// Add the Composer to the Composer Table, to allow multiple Composers per song
+    /// </summary>
+    /// <param name="strComposer"></param>
+    private void AddComposer(string strComposer)
+    {
+      try
+      {
+        string strSQL;
+
+        // split up the composer, in case we've got multiple composers
+        string[] composers = strComposer.Split(new char[] { ';', '|' });
+        foreach (string composer in composers)
+        {
+          if (composer.Trim() == string.Empty)
+          {
+            continue;
+          }
+
+          // ATTENTION: We need to use the 'like' operator instead of '=' to have case insensitive searching
+          strSQL = String.Format("select idComposer from composer where strComposer like '{0}'", composer.Trim());
+          if (DirectExecute(strSQL).Rows.Count < 1)
+          {
+            // Insert the Composer
+            strSQL = String.Format("insert into composer (strComposer) values ('{0}')", composer.Trim());
+            DirectExecute(strSQL);
+          }
+        }
+        return;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Musicdatabase Exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return;
+    }
+
+    /// <summary>
     /// Update an existing song with the Tags from the file
     /// </summary>
     /// <param name="strFileName"></param>
@@ -1251,12 +1298,12 @@ namespace MediaPortal.Music.Database
                                  set strArtist = '{0}', strAlbumArtist = '{1}', strAlbum = '{2}', 
                                  strGenre = '{3}', strTitle = '{4}', iTrack = {5}, iNumTracks = {6}, 
                                  iDuration = {7}, iYear = {8}, iRating = {9}, iDisc = {10}, iNumDisc = {11}, 
-                                 strLyrics = '{12}' 
-                                 where strPath = '{13}'",
+                                 strLyrics = '{12}', strComposer = '{13}', strConductor = '{14}' 
+                                 where strPath = '{15}'",
               tag.Artist, tag.AlbumArtist, tag.Album,
               tag.Genre, tag.Title, tag.Track, tag.TrackTotal,
               tag.Duration, tag.Year, tag.Rating, tag.DiscID, tag.DiscTotal,
-              tag.Lyrics,
+              tag.Lyrics, tag.Composer, tag.Conductor,
               strFileName
               );
           try
@@ -1749,7 +1796,7 @@ namespace MediaPortal.Music.Database
     #region Clean Up Foreign Keys
 
     /// <summary>
-    /// When tags of a song have been updated, it might happen that we have entries in the Artist, AlbumArtist or Genre Table,
+    /// When tags of a song have been updated, it might happen that we have entries in the Artist, AlbumArtist, Composer or Genre Table,
     /// for which no longer a song exists.
     /// Do a cleanup to get rid of them.
     /// </summary>
@@ -1850,6 +1897,35 @@ namespace MediaPortal.Music.Database
 
       MusicDbClient.Execute("drop table tbltmp");
       Log.Info("Musicdatabasereorg: Finished with cleaning up Genres with no songs.");
+
+      Log.Info("Musicdatabasereorg: Cleaning up Composers with no songs.");
+      strSQL = "create table tbltmp (strComposer text)";
+      MusicDbClient.Execute(strSQL);
+
+      strSQL = "select distinct rtrim(ltrim(strComposer, '| '), ' |') from tracks";
+      results = DirectExecute(strSQL);
+      for (int i = 0; i < results.Rows.Count; i++)
+      {
+        string[] composers = DatabaseUtility.Get(results, i, 0).Split('|');
+        foreach (string composer in composers)
+        {
+          string strTmp = composer;
+          DatabaseUtility.RemoveInvalidChars(ref strTmp);
+          if (strTmp == "unknown")
+          {
+            continue;
+          }
+
+          strSQL = String.Format("insert into tbltmp values('{0}')", strTmp.Trim());
+          MusicDbClient.Execute(strSQL);
+        }
+      }
+
+      strSQL = "delete from composer where strComposer not in (select distinct strComposer from tbltmp)";
+      MusicDbClient.Execute(strSQL);
+
+      MusicDbClient.Execute("drop table tbltmp");
+      Log.Info("Musicdatabasereorg: Finished with cleaning up Composers with no songs.");
     }
 
     /// <summary>
@@ -1866,6 +1942,8 @@ namespace MediaPortal.Music.Database
         strSql = "delete from albumartist";
         MusicDbClient.Execute(strSql);
         strSql = "delete from genre";
+        MusicDbClient.Execute(strSql);
+        strSql = "delete from composer";
         MusicDbClient.Execute(strSql);
       }
       catch (Exception)

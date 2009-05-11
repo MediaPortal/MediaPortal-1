@@ -224,7 +224,7 @@ namespace MediaPortal.GUI.Music
         if (definition.SqlOperator == "group")
         {
           string searchTable = table;
-          string countField = searchField; // when grouping on ALnums, we need to count the artists
+          string countField = searchField; // when grouping on Albums, we need to count the artists
           // We don't have an album table anymore, so change the table to search for to tracks here.
           if (table == "album")
           {
@@ -243,6 +243,7 @@ namespace MediaPortal.GUI.Music
           case "artist":
           case "albumartist":
           case "genre":
+          case "composer":
             sql = String.Format("select * from {0} ", table);
             if (whereClause != string.Empty)
             {
@@ -306,6 +307,16 @@ namespace MediaPortal.GUI.Music
               catch (Exception)
               {
               }
+            }
+            else if (defRoot.Where == "conductor")
+            {
+              whereClause = "";
+              BuildRestriction(defRoot, ref whereClause);
+              if (whereClause != string.Empty)
+              {
+                whereClause = String.Format("where {0}", whereClause);
+              }
+              sql = String.Format("select distinct strConductor from tracks {0} {1}", whereClause, orderClause);
             }
             else
             {
@@ -453,6 +464,12 @@ namespace MediaPortal.GUI.Music
         string selectedValue = filter.SelectedValue;
         DatabaseUtility.RemoveInvalidChars(ref selectedValue);
 
+        // we don't store "unknown" into the conductor field, so let's correct empty values
+        if (selectedValue == "unknown" && filter.Where == "conductor")
+        {
+          selectedValue = "";
+        }
+
         // If we have a multiple values field then we need to compare with like
         if (IsMultipleValueField(GetField(filter.Where)))
         {
@@ -556,6 +573,7 @@ namespace MediaPortal.GUI.Music
         case "strArtist":
         case "strAlbumArtist":
         case "strGenre":
+        case "strComposer":
           return true;
 
         default:
@@ -584,6 +602,14 @@ namespace MediaPortal.GUI.Music
       if (where == "genre")
       {
         return "genre";
+      }
+      if (where == "composer")
+      {
+        return "composer";
+      }
+      if (where == "conductor")
+      {
+        return "tracks";
       }
       if (where == "year")
       {
@@ -633,6 +659,14 @@ namespace MediaPortal.GUI.Music
       if (where == "genre")
       {
         return "strGenre";
+      }
+      if (where == "composer")
+      {
+        return "strComposer";
+      }
+      if (where == "conductor")
+      {
+        return "strConductor";
       }
       if (where == "year")
       {
@@ -687,6 +721,14 @@ namespace MediaPortal.GUI.Music
       {
         return song.Genre;
       }
+      if (where == "composer")
+      {
+        return song.Composer;
+      }
+      if (where == "conductor")
+      {
+        return song.Conductor;
+      }
       if (where == "year")
       {
         return song.Year.ToString();
@@ -721,7 +763,7 @@ namespace MediaPortal.GUI.Music
     private string GetSortField(FilterDefinition filter)
     {
       // Don't allow anything else but the fieldnames itself on Multiple Fields
-      if (filter.Where == "artist" || filter.Where == "albumartist" || filter.Where == "genre")
+      if (filter.Where == "artist" || filter.Where == "albumartist" || filter.Where == "genre" || filter.Where == "composer")
       {
         return GetField(filter.Where);
       }
@@ -794,6 +836,22 @@ namespace MediaPortal.GUI.Music
         {
           item.Label2 = string.Empty;
         }
+        item.Label3 = string.Empty;
+      }
+      if (definition.Where == "composer")
+      {
+        item.Label = song.Composer;
+        // Don't clear the label in case of a Group/Index view, to show the counter
+        if (definition.SqlOperator != "group")
+        {
+          item.Label2 = string.Empty;
+        }
+        item.Label3 = string.Empty;
+      }
+      if (definition.Where == "conductor")
+      {
+        item.Label = song.Conductor;
+        item.Label2 = string.Empty;
         item.Label3 = string.Empty;
       }
       if (definition.Where == "year")

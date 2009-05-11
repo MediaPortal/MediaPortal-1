@@ -525,6 +525,8 @@ namespace MediaPortal.GUI.Music
             break;
 
           case "albumartist":
+          case "composer":
+          case "conductor":
             goto case "artist";
 
           case "artist":
@@ -1151,6 +1153,18 @@ namespace MediaPortal.GUI.Music
               break;
             case "year":
               if (MusicDatabase.Instance.GetSongsByYear(s.Year, ref songs))
+              {
+                AddSongsToPlayList(songs, playList);
+              }
+              break;
+            case "composer":
+              if (MusicDatabase.Instance.GetSongsByComposer(s.Composer, ref songs))
+              {
+                AddSongsToPlayList(songs, playList);
+              }
+              break;
+            case "conductor":
+              if (MusicDatabase.Instance.GetSongsByComposer(s.Conductor, ref songs))
               {
                 AddSongsToPlayList(songs, playList);
               }

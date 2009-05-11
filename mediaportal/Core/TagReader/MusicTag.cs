@@ -49,6 +49,7 @@ namespace MediaPortal.TagReader
     internal byte[] m_CoverArtImageBytes = null;
     internal string m_AlbumArtist = string.Empty;
     internal string m_Composer = string.Empty;
+    internal string m_Conductor = string.Empty;
     internal string m_FileType = string.Empty;
     internal int m_BitRate = 0;
     internal string m_FileName = string.Empty;
@@ -114,6 +115,7 @@ namespace MediaPortal.TagReader
       m_iRating = 0;
       m_BitRate = 0;
       m_Composer = "";
+      m_Conductor = "";
       m_AlbumArtist = "";
       m_Lyrics = "";
       m_iDiscId = 0;
@@ -304,6 +306,12 @@ namespace MediaPortal.TagReader
     {
       get { return m_Composer; }
       set { m_Composer = value; }
+    }
+
+    public string Conductor
+    {
+      get { return m_Conductor; }
+      set { m_Conductor = value; }
     }
 
     public string FileName

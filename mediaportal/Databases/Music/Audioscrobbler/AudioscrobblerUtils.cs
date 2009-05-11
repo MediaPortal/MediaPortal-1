@@ -2260,10 +2260,6 @@ namespace MediaPortal.Music.Database
             {
               nodeSong.Album = DecodeUtf8String(mainchild.ChildNodes[0].Value);
             }
-            else if (mainchild.Name == "mbid" && mainchild.ChildNodes.Count != 0)
-            {
-              nodeSong.MusicBrainzID = mainchild.ChildNodes[0].Value;
-            }
             else if (mainchild.Name == "reach" && mainchild.ChildNodes.Count != 0)
             {
               nodeSong.TimesPlayed = Convert.ToInt32(mainchild.ChildNodes[0].Value);
@@ -2316,10 +2312,6 @@ namespace MediaPortal.Music.Database
         {
           artistInfo.WebImage = nodes[0].Attributes["picture"].Value;
         }
-        if (!string.IsNullOrEmpty(nodes[0].Attributes["mbid"].Value))
-        {
-          artistInfo.MusicBrainzID = nodes[0].Attributes["mbid"].Value;
-        }
       }
       catch
       {
@@ -2346,10 +2338,6 @@ namespace MediaPortal.Music.Database
             if (child.Name == "name" && child.ChildNodes.Count != 0)
             {
               nodeSong.Artist = DecodeUtf8String(child.ChildNodes[0].Value);
-            }
-            else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
-            {
-              nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
             }
             else if (child.Name == "url" && child.ChildNodes.Count != 0)
             {
@@ -2511,10 +2499,6 @@ namespace MediaPortal.Music.Database
                 }
                 break;
             }
-            if (child.Name == "mbid" && child.ChildNodes.Count != 0)
-            {
-              nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
-            }
             if (child.Name == "url" && child.ChildNodes.Count != 0)
             {
               nodeSong.URL = child.ChildNodes[0].Value;
@@ -2560,10 +2544,6 @@ namespace MediaPortal.Music.Database
                 {
                   nodeSong.Title = DecodeUtf8String(child.ChildNodes[0].Value);
                 }
-                else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
-                {
-                  nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
-                }
                 else if (child.Name == "url" && child.ChildNodes.Count != 0)
                 {
                   nodeSong.URL = child.ChildNodes[0].Value;
@@ -2584,10 +2564,6 @@ namespace MediaPortal.Music.Database
                 }
                   //else if (child.Name == "name" && child.ChildNodes.Count != 0)
                   //  nodeSong.Title = ConvertUtf8StringToSystemCodepage(child.ChildNodes[0].Value);
-                else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
-                {
-                  nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
-                }
                 else if (child.Name == "playcount" && child.ChildNodes.Count != 0)
                 {
                   nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
@@ -2611,10 +2587,6 @@ namespace MediaPortal.Music.Database
                 else if (child.Name == "name" && child.ChildNodes.Count != 0)
                 {
                   nodeSong.Title = DecodeUtf8String(child.ChildNodes[0].Value);
-                }
-                else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
-                {
-                  nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
                 }
                 else if (child.Name == "playcount" && child.ChildNodes.Count != 0)
                 {
@@ -2696,10 +2668,6 @@ namespace MediaPortal.Music.Database
                 if (child.Name == "name" && child.ChildNodes.Count != 0)
                 {
                   nodeSong.Artist = DecodeUtf8String(child.ChildNodes[0].Value);
-                }
-                else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
-                {
-                  nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
                 }
                 else if (child.Name == "url" && child.ChildNodes.Count != 0)
                 {
@@ -2796,7 +2764,7 @@ namespace MediaPortal.Music.Database
                 if (reader.LocalName == "artist")
                 {
                   // we reenter level 2 after adding all level 3 info - now we'll add the item
-                  if (mbContainer != null && !string.IsNullOrEmpty(mbContainer.MusicBrainzID))
+                  if (mbContainer != null) // && !string.IsNullOrEmpty(mbContainer.MusicBrainzID))
                   {
                     Song addInfo = mbContainer.Clone();
                     RESTresults.Add(addInfo);
@@ -2807,7 +2775,6 @@ namespace MediaPortal.Music.Database
                     mbContainer = new Song();
                   }
 
-                  mbContainer.MusicBrainzID = reader.GetAttribute("id");
                   mbContainer.LastFMMatch = reader.GetAttribute(@"ext:score");
                 }
                 break;
