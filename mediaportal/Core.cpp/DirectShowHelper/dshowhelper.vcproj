@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="dshowhelper"
+	Name="DirectShowHelper"
 	ProjectGUID="{7C2419B3-501B-4B10-B3D4-E81BEB16843F}"
 	RootNamespace="dshowhelper"
 	Keyword="Win32Proj"
@@ -18,10 +18,9 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="Debug"
-			IntermediateDirectory="Debug"
+			OutputDirectory=".\obj\Debug"
+			IntermediateDirectory=".\obj\Debug"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="2"
 			CharacterSet="2"
 			>
@@ -49,8 +48,12 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
+				PrecompiledHeaderFile=".\obj\Debug\dshowhelper.pch"
+				AssemblerListingLocation=".\obj\Debug/"
+				ObjectFile=".\obj\Debug/"
+				ProgramDataBaseFileName=".\bin\Debug/"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -65,17 +68,17 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="strmbasd.lib winmm.lib comsupp.lib dxguid.lib d3d9.lib d3dx9.lib mfuuid.lib dxva2.lib evr.lib mf.lib strmiids.lib"
-				OutputFile="$(OutDir)/dshowhelper.dll"
+				OutputFile="bin\Debug/dshowhelper.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Debug_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;"
 				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile="dshowhelper.def"
+				ModuleDefinitionFile="./source/dshowhelper.def"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(OutDir)/dshowhelper.pdb"
+				ProgramDatabaseFile="bin\Debug/dshowhelper.pdb"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)/dshowhelper.lib"
+				ImportLibrary="bin\Debug/dshowhelper.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -102,10 +105,9 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			OutputDirectory=".\obj\Release"
+			IntermediateDirectory=".\obj\Release"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
 			UseOfATL="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
@@ -134,8 +136,12 @@
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;DSHOWHELPER_EXPORTS;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
+				PrecompiledHeaderFile=".\obj\Release/dshowhelper.pch"
+				AssemblerListingLocation=".\obj\Release/"
+				ObjectFile=".\obj\Release/"
+				ProgramDataBaseFileName=".\bin\Release/"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="1"
 			/>
 			<Tool
@@ -151,20 +157,21 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="false"
 				AdditionalDependencies="strmbase.lib winmm.lib comsupp.lib dxguid.lib d3d9.lib d3dx9.lib mfuuid.lib dxva2.lib evr.lib mf.lib strmiids.lib"
-				OutputFile="$(OutDir)/dshowhelper.dll"
+				OutputFile="bin\Release/dshowhelper.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Release_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile="dshowhelper.def"
+				ModuleDefinitionFile="./source/dshowhelper.def"
 				AddModuleNamesToAssembly=""
 				GenerateDebugInformation="false"
+				ProgramDatabaseFile="bin\Release/dshowhelper.pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)/dshowhelper.lib"
+				ImportLibrary="bin\Release/dshowhelper.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -199,23 +206,23 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\dshowhelper.cpp"
+				RelativePath=".\source\dshowhelper.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\DX9AllocatorPresenter.cpp"
+				RelativePath=".\source\DX9AllocatorPresenter.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\EVRCustomPresenter.cpp"
+				RelativePath=".\source\EVRCustomPresenter.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\EVRCustomPresenter.h"
+				RelativePath=".\source\EVRCustomPresenter.h"
 				>
 			</File>
 			<File
-				RelativePath=".\GrabBitmaps.cpp"
+				RelativePath=".\source\GrabBitmaps.cpp"
 				>
 			</File>
 		</Filter>
@@ -225,11 +232,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\dshowhelper.h"
+				RelativePath=".\source\dshowhelper.h"
 				>
 			</File>
 			<File
-				RelativePath=".\DX9AllocatorPresenter.h"
+				RelativePath=".\source\DX9AllocatorPresenter.h"
 				>
 			</File>
 		</Filter>
@@ -239,7 +246,7 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\dshowhelper.def"
+				RelativePath=".\source\dshowhelper.def"
 				>
 			</File>
 		</Filter>

@@ -18,8 +18,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory=".\obj\Debug"
+			IntermediateDirectory=".\obj\Debug"
 			ConfigurationType="2"
 			CharacterSet="1"
 			>
@@ -46,8 +46,12 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderFile=".\obj\Debug\dxutil.pch"
+				AssemblerListingLocation=".\obj\Debug/"
+				ObjectFile=".\obj\Debug/"
+				ProgramDataBaseFileName=".\bin\Debug/"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -61,11 +65,14 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				OutputFile="bin\Debug/dxutil.dll"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
+				ProgramDatabaseFile="bin\Debug/dxutil.pdb"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
+				ImportLibrary="bin\Debug/dxutil.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -92,8 +99,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory=".\obj\Release"
+			IntermediateDirectory=".\obj\Release"
 			ConfigurationType="2"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
@@ -115,13 +122,17 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include&quot;;&quot;C:\Program Files\Microsoft DirectX SDK (October 2006)\Include&quot;"
+				AdditionalIncludeDirectories=""
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;DXUTIL_EXPORTS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderFile=".\obj\Release\dxutil.pch"
+				AssemblerListingLocation=".\obj\Release/"
+				ObjectFile=".\obj\Release/"
+				ProgramDataBaseFileName=".\bin\Release/"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
+				Detect64BitPortabilityProblems="false"
+				DebugInformationFormat="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -134,14 +145,17 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				OutputFile="bin\Release/dxutil.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Lib\Win95&quot;;&quot;C:\Program Files\Microsoft DirectX SDK (October 2006)\Lib\x86&quot;"
-				GenerateDebugInformation="true"
+				AdditionalLibraryDirectories=""
+				GenerateDebugInformation="false"
+				ProgramDatabaseFile="bin\Release/dxutil.pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
+				ImportLibrary="bin\Release/dxutil.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -176,11 +190,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\DXUtil.cpp"
+				RelativePath=".\source\DXUtil.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\stdafx.cpp"
+				RelativePath=".\source\stdafx.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -206,7 +220,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\stdafx.h"
+				RelativePath=".\source\stdafx.h"
 				>
 			</File>
 		</Filter>
@@ -216,10 +230,6 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 		</Filter>
-		<File
-			RelativePath=".\ReadMe.txt"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

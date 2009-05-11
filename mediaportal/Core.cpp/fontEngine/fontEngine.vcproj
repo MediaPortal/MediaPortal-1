@@ -18,8 +18,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="Debug"
-			IntermediateDirectory="Debug"
+			OutputDirectory=".\obj\Debug"
+			IntermediateDirectory=".\obj\Debug"
 			ConfigurationType="2"
 			CharacterSet="2"
 			>
@@ -47,6 +47,10 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderFile=".\obj\Debug\fontEngine.pch"
+				AssemblerListingLocation=".\obj\Debug/"
+				ObjectFile=".\obj\Debug/"
+				ProgramDataBaseFileName=".\bin\Debug/"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
@@ -63,16 +67,16 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dxguid.lib d3d9.lib d3dx9.lib"
-				OutputFile="$(OutDir)/fontEngine.dll"
+				OutputFile="bin\Debug/fontEngine.dll"
 				LinkIncremental="0"
 				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Debug_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;"
-				ModuleDefinitionFile=".\fontEngine.def"
+				ModuleDefinitionFile=".\source\fontEngine.def"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(OutDir)/fontEngine.pdb"
+				ProgramDatabaseFile="bin\Debug/fontEngine.pdb"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)/fontEngine.lib"
+				ImportLibrary="bin\Debug/fontEngine.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -99,8 +103,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			OutputDirectory=".\obj\Release"
+			IntermediateDirectory=".\obj\Release"
 			ConfigurationType="2"
 			CharacterSet="2"
 			>
@@ -128,6 +132,10 @@
 				RuntimeLibrary="0"
 				BufferSecurityCheck="false"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderFile=".\obj\Release/fontEngine.pch"
+				AssemblerListingLocation=".\obj\Release/"
+				ObjectFile=".\obj\Release/"
+				ProgramDataBaseFileName=".\bin\Release/"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="0"
@@ -144,18 +152,19 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dxguid.lib d3d9.lib d3dx9.lib shell32.lib"
-				OutputFile="$(OutDir)/fontEngine.dll"
+				OutputFile="bin\Release/fontEngine.dll"
 				LinkIncremental="0"
 				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Release_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;"
-				ModuleDefinitionFile="fontEngine.def"
+				ModuleDefinitionFile="./source/fontEngine.def"
 				GenerateDebugInformation="false"
+				ProgramDatabaseFile="bin\Release/fontEngine.pdb"
 				MapExports="false"
 				SubSystem="2"
 				OptimizeReferences="0"
 				EnableCOMDATFolding="0"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)/fontEngine.lib"
+				ImportLibrary="bin\Release/fontEngine.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -190,15 +199,15 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\fontEngine.cpp"
+				RelativePath=".\source\fontEngine.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\fontEngine.def"
+				RelativePath=".\source\fontEngine.def"
 				>
 			</File>
 			<File
-				RelativePath=".\stdafx.cpp"
+				RelativePath=".\source\stdafx.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -228,11 +237,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\fontEngine.h"
+				RelativePath=".\source\fontEngine.h"
 				>
 			</File>
 			<File
-				RelativePath=".\stdafx.h"
+				RelativePath=".\source\stdafx.h"
 				>
 			</File>
 		</Filter>
