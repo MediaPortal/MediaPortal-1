@@ -30,7 +30,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
-using ICSharpCode.SharpZipLib.Zip;
+using Ionic.Zip;
 using MediaPortal.UserInterface.Controls;
 using Microsoft.Win32;
 
@@ -299,13 +299,13 @@ namespace PostSetup
         progressBar.Minimum = 0;
         progressBar.Maximum = totalBytes;
         progressBar.Value = bytesSoFar;
-        labProgressBytes.Text = (bytesSoFar/1024).ToString("#,##0") + " of " + (totalBytes/1024).ToString("#,##0") +
+        labProgressBytes.Text = (bytesSoFar / 1024).ToString("#,##0") + " of " + (totalBytes / 1024).ToString("#,##0") +
                                 " Kb.";
       }
       else
       {
         progressBar.Visible = false;
-        labProgressBytes.Text = (bytesSoFar/1024).ToString("#,##0") + " Kb downloaded.";
+        labProgressBytes.Text = (bytesSoFar / 1024).ToString("#,##0") + " Kb downloaded.";
       }
     }
 
@@ -342,6 +342,7 @@ namespace PostSetup
     /// </summary>
     /// <param name="indata"></param>
     /// <param name="targetDirectory"></param>
+    /// <param name="excludeDir"></param>
     private void UnZipFile(byte[] indata, string targetDirectory, string excludeDir)
     {
       try
@@ -353,66 +354,39 @@ namespace PostSetup
           targetDirectory += @"\";
         }
 
-        //creates dir that dont exists.
-        try
+        //creates dir that don't exists.
+        if (!Directory.Exists(targetDirectory))
         {
           Directory.CreateDirectory(targetDirectory);
         }
-        catch (Exception)
-        {
-        }
-        ZipInputStream zis = new ZipInputStream(new MemoryStream(indata));
-        ZipEntry theEntry;
-
-        // Buffer size.
-        byte[] data = new byte[2048];
-        int nb = data.Length;
 
         progressBar.Value = 0;
         progressBar.Maximum = indata.Length;
 
-        // for each ZipEntry in Zip Archive.
-        while ((theEntry = zis.GetNextEntry()) != null)
+        using (ZipFile zip = ZipFile.Read(new MemoryStream(indata)))
         {
-          // file to unzip from ziparchive. (path+file)
-          string cfile = targetDirectory + theEntry.Name;
-
-          // exlude some dirs.
-          if (excludeDir != null && !excludeDir.Equals(""))
+          zip.ReadProgress += zip_ReadProgress;
+          foreach (ZipEntry e in zip)
           {
-            cfile = cfile.Replace(@"\" + excludeDir, "");
-          }
-
-          if (theEntry.IsDirectory)
-          {
-            // if its a directory, create it.
-            try
+            if (!e.FileName.Contains(excludeDir))
             {
-              Directory.CreateDirectory(cfile);
+              e.Extract(targetDirectory, true); //overwrite
             }
-            catch (Exception)
-            {
-            }
-          }
-          else
-          {
-            // if its a file, write it.
-            FileStream fs = new FileStream(cfile, FileMode.Create);
-            while ((nb = zis.Read(data, 0, data.Length)) > 0)
-            {
-              fs.Write(data, 0, nb);
-              progressBar.Value = +nb;
-            }
-            fs.Close();
           }
         }
-        zis.Close();
+
         progressBar.Value = progressBar.Maximum;
       }
       catch (Exception e)
       {
         throw e;
       }
+    }
+
+    void zip_ReadProgress(object sender, ReadProgressEventArgs e)
+    {
+      progressBar.Value = Convert.ToInt32(e.BytesTransferred);
+      Application.DoEvents();
     }
 
 
@@ -442,7 +416,7 @@ namespace PostSetup
       set
       {
         description = value;
-        txtDescription.Lines = description.Split(new char[] {'\n'});
+        txtDescription.Lines = description.Split(new char[] { '\n' });
       }
     }
 
@@ -686,7 +660,7 @@ namespace PostSetup
               proc.StartInfo.FileName = ExecCommand;
               proc.StartInfo.Arguments = ExecCmdArguments;
               proc.Start();
-              proc.WaitForExit(60000*3); // the exec got 3 min to finnish. (else error)
+              proc.WaitForExit(60000 * 3); // the exec got 3 min to finnish. (else error)
 
               if (proc.ExitCode == 0)
               {
@@ -807,7 +781,7 @@ namespace PostSetup
     /// <param name="e"></param>
     private void chkInstallThis_CheckedChanged(object sender, EventArgs e)
     {
-      if (((CheckBox) sender).Checked)
+      if (((CheckBox)sender).Checked)
       {
         cbDownloadUrls.Enabled = true;
         CheckedToInstall();
