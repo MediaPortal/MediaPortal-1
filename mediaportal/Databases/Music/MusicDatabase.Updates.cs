@@ -104,7 +104,9 @@ namespace MediaPortal.Music.Database
     private MusicTag _previousMusicTag = null;
     private bool _foundVariousArtist = false;
 
-    private char[] trimChars = {' ', '\x00', '|'};
+    private readonly char[] trimChars = {' ', '\x00', '|'};
+
+    private readonly string[] _multipleValueFields = new string[] {"artist", "albumartist", "genre", "composer"};
 
     #region Favorite / Ratings
 
@@ -1103,11 +1105,8 @@ namespace MediaPortal.Music.Database
             return (int) Errors.ERROR_REORG_SONGS;
           }
 
-          // Now add the Artist, AlbumArtist and Genre to the Artist / Genre Tables
-          AddArtist(tag.Artist);
-          AddAlbumArtist(tag.AlbumArtist);
-          AddGenre(tag.Genre);
-          AddComposer(tag.Composer);
+          // Now add the Multiple Value Fields to their tables
+          AddMultipleValueFields(tag);
 
           if (_treatFolderAsAlbum)
           {
@@ -1124,158 +1123,37 @@ namespace MediaPortal.Music.Database
       return (int) Errors.ERROR_OK;
     }
 
-    /// <summary>
-    /// Add the artist to the Artist table, to allow us having mutiple artists per song
-    /// </summary>
-    /// <param name="strArtist"></param>
-    /// <returns></returns>
-    private void AddArtist(string strArtist)
+
+    private void AddMultipleValueFields(MusicTag tag)
     {
       try
       {
         string strSQL;
+        string strMultiValueFieldValue = "";
 
-        // split up the artist, in case we've got multiple artists
-        string[] artists = strArtist.Split(new char[] {';', '|'});
-        foreach (string artist in artists)
+        foreach (string field in _multipleValueFields)
         {
-          if (artist.Trim() == string.Empty)
+          // split up the multiple value field
+          strMultiValueFieldValue = GetMultipleValueFieldValue(tag, field).Trim(new char[] { '|', ' ' });
+          string[] splittedFields = strMultiValueFieldValue.Split(new char[] { ';', '|' });
+          foreach (string s in splittedFields)
           {
-            continue;
-          }
-
-          // ATTENTION: We need to use the 'like' operator instead of '=' to have case insensitive searching
-          strSQL = String.Format("select idArtist from artist where strArtist like '{0}'", artist.Trim());
-          if (DirectExecute(strSQL).Rows.Count < 1)
-          {
-            // Insert the Artist
-            strSQL = String.Format("insert into artist (strArtist) values ('{0}')", artist.Trim());
-            DirectExecute(strSQL);
+            // ATTENTION: We need to use the 'like' operator instead of '=' to have case insensitive searching
+            strSQL = String.Format("select {0} from {1} where {0} like '{2}'", GetMultipleValueField(field), GetMultipleValueTable(field), s == "" ? " " : s);
+            if (DirectExecute(strSQL).Rows.Count < 1)
+            {
+              // Insert the Artist
+              strSQL = String.Format("insert into {1} ({0}) values ('{2}')", GetMultipleValueField(field), GetMultipleValueTable(field), s == "" ? " " : s);
+              DirectExecute(strSQL);
+            }
           }
         }
-        return;
       }
       catch (Exception ex)
       {
-        Log.Error("Musicdatabase Exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("Musicdatabase: Exception adding multiple field value: {0} stack: {1}", ex.Message, ex.StackTrace);
         Open();
       }
-      return;
-    }
-
-    /// <summary>
-    /// Add the albumartist to the AlbumArtist table, to allow us having mutiple artists per song
-    /// </summary>
-    /// <param name="strArtist"></param>
-    /// <returns></returns>
-    private void AddAlbumArtist(string strAlbumArtist)
-    {
-      try
-      {
-        string strSQL;
-
-        // split up the albumartist, in case we've got multiple albumartists
-        string[] artists = strAlbumArtist.Split(new char[] {';', '|'});
-        foreach (string artist in artists)
-        {
-          if (artist.Trim() == string.Empty)
-          {
-            continue;
-          }
-
-          // ATTENTION: We need to use the 'like' operator instead of '=' to have case insensitive searching
-          strSQL = String.Format("select idAlbumArtist from albumartist where strAlbumArtist like '{0}'", artist.Trim());
-          if (DirectExecute(strSQL).Rows.Count < 1)
-          {
-            // Insert the AlbumArtist
-            strSQL = String.Format("insert into albumartist (strAlbumArtist) values ('{0}')", artist.Trim());
-            DirectExecute(strSQL);
-          }
-        }
-        return;
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Musicdatabase Exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
-      }
-      return;
-    }
-
-    /// <summary>
-    /// Add the genre to the Genre Table, to allow maultiple Genres per song
-    /// </summary>
-    /// <param name="strGenre"></param>
-    private void AddGenre(string strGenre)
-    {
-      try
-      {
-        string strSQL;
-
-        // split up the artist, in case we've got multiple artists
-        string[] genres = strGenre.Split(new char[] {';', '|'});
-        foreach (string genre in genres)
-        {
-          if (genre.Trim() == string.Empty)
-          {
-            continue;
-          }
-
-          // ATTENTION: We need to use the 'like' operator instead of '=' to have case insensitive searching
-          strSQL = String.Format("select idGenre from genre where strGenre like '{0}'", genre.Trim());
-          if (DirectExecute(strSQL).Rows.Count < 1)
-          {
-            // Insert the Genre
-            strSQL = String.Format("insert into genre (strGenre) values ('{0}')", genre.Trim());
-            DirectExecute(strSQL);
-          }
-        }
-        return;
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Musicdatabase Exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
-      }
-      return;
-    }
-
-    /// <summary>
-    /// Add the Composer to the Composer Table, to allow multiple Composers per song
-    /// </summary>
-    /// <param name="strComposer"></param>
-    private void AddComposer(string strComposer)
-    {
-      try
-      {
-        string strSQL;
-
-        // split up the composer, in case we've got multiple composers
-        string[] composers = strComposer.Split(new char[] { ';', '|' });
-        foreach (string composer in composers)
-        {
-          if (composer.Trim() == string.Empty)
-          {
-            continue;
-          }
-
-          // ATTENTION: We need to use the 'like' operator instead of '=' to have case insensitive searching
-          strSQL = String.Format("select idComposer from composer where strComposer like '{0}'", composer.Trim());
-          if (DirectExecute(strSQL).Rows.Count < 1)
-          {
-            // Insert the Composer
-            strSQL = String.Format("insert into composer (strComposer) values ('{0}')", composer.Trim());
-            DirectExecute(strSQL);
-          }
-        }
-        return;
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Musicdatabase Exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
-      }
-      return;
     }
 
     /// <summary>
@@ -1311,9 +1189,7 @@ namespace MediaPortal.Music.Database
             DirectExecute(strSQL);
 
             // Now add the Artist, AlbumArtist and Genre to the Artist / Genre Tables
-            AddArtist(tag.Artist);
-            AddAlbumArtist(tag.AlbumArtist);
-            AddGenre(tag.Genre);
+            AddMultipleValueFields(tag);
 
             if (_treatFolderAsAlbum)
             {
@@ -1753,7 +1629,8 @@ namespace MediaPortal.Music.Database
         {
           // Let's add the "Various Artist" to the albumArtist table
           string varArtist = "| Various Artists | ";
-          AddAlbumArtist(varArtist);
+          strSQL = string.Format("insert into albumartist (strAlbumArtist) values('{0}')", varArtist);
+          DirectExecute(strSQL);
 
           List<SongMap> songs = new List<SongMap>();
           GetSongsByPath(_previousDirectory, ref songs);
@@ -1796,7 +1673,7 @@ namespace MediaPortal.Music.Database
     #region Clean Up Foreign Keys
 
     /// <summary>
-    /// When tags of a song have been updated, it might happen that we have entries in the Artist, AlbumArtist, Composer or Genre Table,
+    /// When tags of a song have been updated, it might happen that we have entries in on of the Multiple Value Fields Table,
     /// for which no longer a song exists.
     /// Do a cleanup to get rid of them.
     /// </summary>
@@ -1808,124 +1685,47 @@ namespace MediaPortal.Music.Database
         MusicDbClient.Execute("drop table tbltmp");
       }
 
-      Log.Info("Musicdatabasereorg: Cleaning up artists with no songs.");
-      string strSQL = "create table tbltmp (strArtist text)";
-      MusicDbClient.Execute(strSQL);
-
-
-      strSQL = "select distinct rtrim(ltrim(strArtist, '| '), ' |') from tracks";
-      SQLiteResultSet results = DirectExecute(strSQL);
-      for (int i = 0; i < results.Rows.Count; i++)
+      try
       {
-        string[] artists = DatabaseUtility.Get(results, i, 0).Split('|');
-        foreach (string artist in artists)
+        string strSQL;
+
+        foreach (string field in _multipleValueFields)
         {
-          string strTmp = artist;
-          DatabaseUtility.RemoveInvalidChars(ref strTmp);
-          if (strTmp == "unknown")
+          Log.Info("Musicdatabasereorg: Cleaning up {0} with no songs.", field);
+          strSQL = "create table tbltmp (strMultiField text)";
+          MusicDbClient.Execute(strSQL);
+
+          strSQL = String.Format("select distinct rtrim(ltrim({0}, '| '), ' |') from tracks", GetMultipleValueField(field));
+          SQLiteResultSet results = DirectExecute(strSQL);
+          for (int i = 0; i < results.Rows.Count; i++)
           {
-            continue;
+            string[] splittedFields = DatabaseUtility.Get(results, i, 0).Split('|');
+            foreach (string s in splittedFields)
+            {
+              string strTmp = s;
+              DatabaseUtility.RemoveInvalidChars(ref strTmp);
+              if (strTmp == "unknown" && field != "genre")  // For Genres we keep "unknown"
+              {
+                strTmp = " ";
+              }
+
+              strSQL = String.Format("insert into tbltmp values('{0}')", strTmp.Trim() == "" ? " " : strTmp.Trim());
+              MusicDbClient.Execute(strSQL);
+            }
           }
 
-          strSQL = String.Format("insert into tbltmp values('{0}')", strTmp.Trim());
+          strSQL = String.Format("delete from {0} where {1} not in (select distinct strMultiField from tbltmp)", GetMultipleValueTable(field), GetMultipleValueField(field));
           MusicDbClient.Execute(strSQL);
+
+          MusicDbClient.Execute("drop table tbltmp");
         }
       }
-
-      strSQL = "delete from artist where strArtist not in (select distinct strArtist from tbltmp)";
-      MusicDbClient.Execute(strSQL);
-
-      MusicDbClient.Execute("drop table tbltmp");
-      Log.Info("Musicdatabasereorg: Finished with cleaning up artists with no songs.");
-
-      Log.Info("Musicdatabasereorg: Cleaning up AlbumArtists with no songs.");
-      strSQL = "create table tbltmp (strArtist text)";
-      MusicDbClient.Execute(strSQL);
-
-
-      strSQL = "select distinct rtrim(ltrim(strAlbumArtist, '| '), ' |') from tracks";
-      results = DirectExecute(strSQL);
-      for (int i = 0; i < results.Rows.Count; i++)
+      catch (Exception ex)
       {
-        string[] artists = DatabaseUtility.Get(results, i, 0).Split('|');
-        foreach (string artist in artists)
-        {
-          string strTmp = artist;
-          DatabaseUtility.RemoveInvalidChars(ref strTmp);
-          if (strTmp == "unknown")
-          {
-            continue;
-          }
-
-          strSQL = String.Format("insert into tbltmp values('{0}')", strTmp.Trim());
-          MusicDbClient.Execute(strSQL);
-        }
+        Log.Error("Musicdatabase: Exception adding multiple field value: {0} stack: {1}", ex.Message, ex.StackTrace);
+        Open();
       }
-
-      strSQL = "delete from albumartist where strAlbumArtist not in (select distinct strArtist from tbltmp)";
-      MusicDbClient.Execute(strSQL);
-
-      MusicDbClient.Execute("drop table tbltmp");
-      Log.Info("Musicdatabasereorg: Finished with cleaning up AlbumArtists with no songs.");
-
-      Log.Info("Musicdatabasereorg: Cleaning up Genres with no songs.");
-      strSQL = "create table tbltmp (strGenre text)";
-      MusicDbClient.Execute(strSQL);
-
-
-      strSQL = "select distinct rtrim(ltrim(strGenre, '| '), ' |') from tracks";
-      results = DirectExecute(strSQL);
-      for (int i = 0; i < results.Rows.Count; i++)
-      {
-        string[] genres = DatabaseUtility.Get(results, i, 0).Split('|');
-        foreach (string genre in genres)
-        {
-          string strTmp = genre;
-          DatabaseUtility.RemoveInvalidChars(ref strTmp);
-          if (strTmp == "unknown")
-          {
-            continue;
-          }
-
-          strSQL = String.Format("insert into tbltmp values('{0}')", strTmp.Trim());
-          MusicDbClient.Execute(strSQL);
-        }
-      }
-
-      strSQL = "delete from genre where strGenre not in (select distinct strGenre from tbltmp)";
-      MusicDbClient.Execute(strSQL);
-
-      MusicDbClient.Execute("drop table tbltmp");
-      Log.Info("Musicdatabasereorg: Finished with cleaning up Genres with no songs.");
-
-      Log.Info("Musicdatabasereorg: Cleaning up Composers with no songs.");
-      strSQL = "create table tbltmp (strComposer text)";
-      MusicDbClient.Execute(strSQL);
-
-      strSQL = "select distinct rtrim(ltrim(strComposer, '| '), ' |') from tracks";
-      results = DirectExecute(strSQL);
-      for (int i = 0; i < results.Rows.Count; i++)
-      {
-        string[] composers = DatabaseUtility.Get(results, i, 0).Split('|');
-        foreach (string composer in composers)
-        {
-          string strTmp = composer;
-          DatabaseUtility.RemoveInvalidChars(ref strTmp);
-          if (strTmp == "unknown")
-          {
-            continue;
-          }
-
-          strSQL = String.Format("insert into tbltmp values('{0}')", strTmp.Trim());
-          MusicDbClient.Execute(strSQL);
-        }
-      }
-
-      strSQL = "delete from composer where strComposer not in (select distinct strComposer from tbltmp)";
-      MusicDbClient.Execute(strSQL);
-
-      MusicDbClient.Execute("drop table tbltmp");
-      Log.Info("Musicdatabasereorg: Finished with cleaning up Composers with no songs.");
+      Log.Info("Musicdatabasereorg: Finished with cleaning up Mutiple Value Fields Tables.");
     }
 
     /// <summary>
@@ -1954,6 +1754,85 @@ namespace MediaPortal.Music.Database
 
       Log.Info("Musicdatabasereorg: CleanupForeignKeys completed");
       return (int) Errors.ERROR_OK;
+    }
+
+    /// <summary>
+    /// Returns the SQLITE Table name for the requested field
+    /// </summary>
+    /// <param name="field"></param>
+    /// <returns></returns>
+    private string GetMultipleValueTable(string field)
+    {
+      if (field == "artist")
+      {
+        return "artist";
+      }
+      else if (field == "albumartist")
+      {
+        return "albumartist";
+      }
+      else if (field == "genre")
+      {
+        return "genre";
+      }
+      else if (field == "composer")
+      {
+        return "composer";
+      }
+      return "";
+    }
+
+    /// <summary>
+    /// Returns the Sqlite field name for the requested field
+    /// </summary>
+    /// <param name="field"></param>
+    /// <returns></returns>
+    private string GetMultipleValueField(string field)
+    {
+      if (field == "artist")
+      {
+        return "strArtist";
+      }
+      else if (field == "albumartist")
+      {
+        return "strAlbumartist";
+      }
+      else if (field == "genre")
+      {
+        return "strGenre";
+      }
+      else if (field == "composer")
+      {
+        return "strComposer";
+      }
+      return "";
+    }
+
+    /// <summary>
+    /// Returns the field value out of the MusicTag
+    /// </summary>
+    /// <param name="tag"></param>
+    /// <param name="field"></param>
+    /// <returns></returns>
+    private string GetMultipleValueFieldValue(MusicTag tag, string field)
+    {
+      if (field == "artist")
+      {
+        return tag.Artist;
+      }
+      else if (field == "albumartist")
+      {
+        return tag.AlbumArtist;
+      }
+      else if (field == "genre")
+      {
+        return tag.Genre;
+      }
+      else if (field == "composer")
+      {
+        return tag.Composer;
+      }
+      return "";
     }
 
     #endregion

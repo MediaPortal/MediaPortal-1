@@ -464,10 +464,17 @@ namespace MediaPortal.GUI.Music
         string selectedValue = filter.SelectedValue;
         DatabaseUtility.RemoveInvalidChars(ref selectedValue);
 
-        // we don't store "unknown" into the conductor field, so let's correct empty values
-        if (selectedValue == "unknown" && filter.Where == "conductor")
+        // we don't store "unknown" into Multiple Value fields and the conductor field, so let's correct empty values
+        if (selectedValue == "unknown" && (IsMultipleValueField(GetField(filter.Where)) || (filter.Where == "conductor")))
         {
-          selectedValue = "";
+          if (filter.Where == "genre")  // Genre is an exception, tough it is a multiple value field
+          {
+            selectedValue = "unknown";
+          }
+          else
+          {
+            selectedValue = "";
+          }
         }
 
         // If we have a multiple values field then we need to compare with like
