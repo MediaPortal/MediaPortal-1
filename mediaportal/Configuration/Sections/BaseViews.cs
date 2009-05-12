@@ -26,119 +26,20 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.Windows.Forms;
 using MediaPortal.GUI.View;
-using MediaPortal.UserInterface.Controls;
 
 #pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class BaseViews : SectionSettings
+  public partial class BaseViews : SectionSettings
   {
-    public class SyncedCheckBox : CheckBox
-    {
-      private DataGrid grid;
-      private int cell;
-
-      public int Cell
-      {
-        get { return cell; }
-        set { cell = value; }
-      }
-
-      public DataGrid Grid
-      {
-        get { return grid; }
-        set { grid = value; }
-      }
-
-      protected override void OnLayout(LayoutEventArgs levent)
-      {
-        DataGridCell currentCell = Grid.CurrentCell;
-
-        if (currentCell.ColumnNumber == Cell)
-        {
-          DataTable ds = Grid.DataSource as DataTable;
-          if (ds != null)
-          {
-            if (currentCell.RowNumber < ds.Rows.Count)
-            {
-              DataRow row = ds.Rows[currentCell.RowNumber];
-              this.Checked = (bool) row.ItemArray[Cell];
-            }
-          }
-        }
-        base.OnLayout(levent);
-      }
-    }
-
-    public class SyncedComboBox : ComboBox
-    {
-      private DataGrid grid;
-      private int cell;
-
-      public SyncedComboBox(string name)
-      {
-        this.Cursor = Cursors.Arrow;
-        this.DropDownStyle = ComboBoxStyle.DropDownList;
-        this.Dock = DockStyle.Fill;
-        this.DisplayMember = name;
-        this.MaxDropDownItems = 10;
-      }
-
-      public int Cell
-      {
-        get { return cell; }
-        set { cell = value; }
-      }
-
-      public DataGrid Grid
-      {
-        get { return grid; }
-        set { grid = value; }
-      }
-
-      protected override void OnLayout(LayoutEventArgs levent)
-      {
-        try
-        {
-          DataGridCell currentCell = Grid.CurrentCell;
-
-          if (currentCell.ColumnNumber == Cell)
-          {
-            DataTable ds = Grid.DataSource as DataTable;
-            if (ds != null)
-            {
-              foreach (string item in Items)
-              {
-                if (currentCell.RowNumber < ds.Rows.Count)
-                {
-                  DataRow row = ds.Rows[currentCell.RowNumber];
-                  string currentValue = (string) row.ItemArray[Cell];
-                  if (currentValue == item)
-                  {
-                    SelectedItem = item;
-                    break;
-                  }
-                }
-              }
-            }
-          }
-          base.OnLayout(levent);
-        }
-        catch (Exception)
-        {
-        }
-      }
-    }
-
-    private DataGrid dataGrid;
+    #region Variables
+    private DataGridView dataGrid;
     private DataTable datasetFilters;
     private ViewDefinition currentView;
     public ArrayList views;
@@ -149,17 +50,9 @@ namespace MediaPortal.Configuration.Sections
     private List<string> _sqloperators = new List<string>();
     private List<string> _viewsAs = new List<string>();
     private List<string> _sortBy = new List<string>();
+    #endregion
 
-    private MPGroupBox groupBox;
-    private MPComboBox cbViews;
-    private MPLabel lblViewName;
-    private MPTextBox tbViewName;
-    private MPLabel lblActionCodes;
-    private MPButton btnSave;
-    private MPButton btnDelete;
-    private MPLabel lblViews;
-    private IContainer components = null;
-
+    #region Properties
     public string[] Selections
     {
       get { return _selections.ToArray(); }
@@ -199,14 +92,15 @@ namespace MediaPortal.Configuration.Sections
         _sortBy.AddRange(value);
       }
     }
+    #endregion
+
+    #region ctor
 
     public BaseViews()
       : base("<Unknown>")
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
-
-      // TODO: Add any initialization after the InitializeComponent call
     }
 
     public BaseViews(string name)
@@ -214,256 +108,40 @@ namespace MediaPortal.Configuration.Sections
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
-
-      // TODO: Add any initialization after the InitializeComponent call
-    }
-
-    /// <summary>
-    /// Clean up any resources being used.
-    /// </summary>
-    protected override void Dispose(bool disposing)
-    {
-      if (disposing)
-      {
-        if (components != null)
-        {
-          components.Dispose();
-        }
-      }
-      base.Dispose(disposing);
-    }
-
-    #region Designer generated code
-
-    /// <summary>
-    /// Required method for Designer support - do not modify
-    /// the contents of this method with the code editor.
-    /// </summary>
-    private void InitializeComponent()
-    {
-      this.groupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.lblViews = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.cbViews = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.lblViewName = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbViewName = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.dataGrid = new System.Windows.Forms.DataGrid();
-      this.lblActionCodes = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.btnSave = new MediaPortal.UserInterface.Controls.MPButton();
-      this.btnDelete = new MediaPortal.UserInterface.Controls.MPButton();
-      this.groupBox.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.dataGrid)).BeginInit();
-      this.SuspendLayout();
-      // 
-      // groupBox
-      // 
-      this.groupBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox.Controls.Add(this.lblViews);
-      this.groupBox.Controls.Add(this.cbViews);
-      this.groupBox.Controls.Add(this.lblViewName);
-      this.groupBox.Controls.Add(this.tbViewName);
-      this.groupBox.Controls.Add(this.dataGrid);
-      this.groupBox.Controls.Add(this.lblActionCodes);
-      this.groupBox.Controls.Add(this.btnSave);
-      this.groupBox.Controls.Add(this.btnDelete);
-      this.groupBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox.Location = new System.Drawing.Point(0, 0);
-      this.groupBox.Name = "groupBox";
-      this.groupBox.Size = new System.Drawing.Size(472, 408);
-      this.groupBox.TabIndex = 0;
-      this.groupBox.TabStop = false;
-      // 
-      // lblViews
-      // 
-      this.lblViews.AutoSize = true;
-      this.lblViews.Location = new System.Drawing.Point(13, 27);
-      this.lblViews.Name = "lblViews";
-      this.lblViews.Size = new System.Drawing.Size(33, 13);
-      this.lblViews.TabIndex = 0;
-      this.lblViews.Text = "View:";
-      // 
-      // cbViews
-      // 
-      this.cbViews.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.cbViews.BorderColor = System.Drawing.Color.Empty;
-      this.cbViews.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbViews.Location = new System.Drawing.Point(145, 24);
-      this.cbViews.Name = "cbViews";
-      this.cbViews.Size = new System.Drawing.Size(311, 21);
-      this.cbViews.TabIndex = 1;
-      this.cbViews.SelectedIndexChanged += new System.EventHandler(this.cbViews_SelectedIndexChanged);
-      // 
-      // lblViewName
-      // 
-      this.lblViewName.AutoSize = true;
-      this.lblViewName.Location = new System.Drawing.Point(13, 54);
-      this.lblViewName.Name = "lblViewName";
-      this.lblViewName.Size = new System.Drawing.Size(126, 13);
-      this.lblViewName.TabIndex = 2;
-      this.lblViewName.Text = "Name or Localized Code:";
-      // 
-      // tbViewName
-      // 
-      this.tbViewName.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.tbViewName.BorderColor = System.Drawing.Color.Empty;
-      this.tbViewName.Location = new System.Drawing.Point(145, 51);
-      this.tbViewName.Name = "tbViewName";
-      this.tbViewName.Size = new System.Drawing.Size(311, 20);
-      this.tbViewName.TabIndex = 3;
-      // 
-      // dataGrid
-      // 
-      this.dataGrid.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.dataGrid.DataMember = "";
-      this.dataGrid.FlatMode = true;
-      this.dataGrid.HeaderForeColor = System.Drawing.SystemColors.ControlText;
-      this.dataGrid.Location = new System.Drawing.Point(16, 78);
-      this.dataGrid.Name = "dataGrid";
-      this.dataGrid.Size = new System.Drawing.Size(440, 258);
-      this.dataGrid.TabIndex = 4;
-      // 
-      // lblActionCodes
-      // 
-      this.lblActionCodes.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.lblActionCodes.Location = new System.Drawing.Point(16, 339);
-      this.lblActionCodes.Name = "lblActionCodes";
-      this.lblActionCodes.Size = new System.Drawing.Size(440, 29);
-      this.lblActionCodes.TabIndex = 7;
-      this.lblActionCodes.Text = "Actions Codes in last column: a = Insert line after, b = Insert line before, d = " +
-                                 "delete line";
-      this.lblActionCodes.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-      // 
-      // btnSave
-      // 
-      this.btnSave.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnSave.Location = new System.Drawing.Point(304, 376);
-      this.btnSave.Name = "btnSave";
-      this.btnSave.Size = new System.Drawing.Size(72, 22);
-      this.btnSave.TabIndex = 5;
-      this.btnSave.Text = "Save";
-      this.btnSave.UseVisualStyleBackColor = true;
-      this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-      // 
-      // btnDelete
-      // 
-      this.btnDelete.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnDelete.Location = new System.Drawing.Point(384, 376);
-      this.btnDelete.Name = "btnDelete";
-      this.btnDelete.Size = new System.Drawing.Size(72, 22);
-      this.btnDelete.TabIndex = 6;
-      this.btnDelete.Text = "Delete";
-      this.btnDelete.UseVisualStyleBackColor = true;
-      this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
-      // 
-      // BaseViews
-      // 
-      this.Controls.Add(this.groupBox);
-      this.Name = "BaseViews";
-      this.Size = new System.Drawing.Size(472, 408);
-      this.groupBox.ResumeLayout(false);
-      this.groupBox.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.dataGrid)).EndInit();
-      this.ResumeLayout(false);
     }
 
     #endregion
 
-    public void LoadViews()
+    #region Initialisation
+    /// <summary>
+    /// Set up the Datagrid column and the DataTable to which the grid is bound
+    /// </summary>
+    private void SetupGrid()
     {
-      updating = true;
-      cbViews.Items.Clear();
-      foreach (ViewDefinition view in views)
-      {
-        if (view.Name != string.Empty)
-        {
-          cbViews.Items.Add(view);
-        }
-      }
-      ViewDefinition newDef = new ViewDefinition();
-      newDef.Name = "new...";
-      cbViews.Items.Add(newDef);
-      if (cbViews.Items.Count > 0)
-      {
-        cbViews.SelectedIndex = 0;
-      }
-
-      UpdateView();
-      updating = false;
-    }
-
-    private void UpdateView()
-    {
-      updating = true;
-      currentView = (ViewDefinition) cbViews.SelectedItem;
-      if (currentView == null)
-      {
-        return;
-      }
-      tbViewName.Text = currentView.Name;
-
       // Declare and initialize local variables used
       DataColumn dtCol = null; //Data Column variable
       string[] arrColumnNames = null; //string array variable
 
-
-      // Create the combo box object and set its properties
-      SyncedComboBox cbSelection = new SyncedComboBox("Selection");
+      // Fill the Combo Values
       foreach (string strText in Selections)
       {
-        cbSelection.Items.Add(strText);
+        dgSelection.Items.Add(strText);
       }
-      cbSelection.Grid = dataGrid;
-      cbSelection.Cell = 0;
-      //Event that will be fired when selected index in the combo box is changed
-      cbSelection.SelectionChangeCommitted += new EventHandler(ComboBox_SelectionChangeCommitted);
 
-      SyncedComboBox cbOperators = new SyncedComboBox("Operator");
       foreach (string strText in Sqloperators)
       {
-        cbOperators.Items.Add(strText);
+        dgOperator.Items.Add(strText);
       }
-      cbOperators.Grid = dataGrid;
-      cbOperators.Cell = 1;
-      cbOperators.SelectionChangeCommitted += new EventHandler(ComboBox_SelectionChangeCommitted);
 
-      SyncedComboBox cbView = new SyncedComboBox("ViewAs");
       foreach (string strText in ViewsAs)
       {
-        cbView.Items.Add(strText);
+        dgViewAs.Items.Add(strText);
       }
-      cbView.Grid = dataGrid;
-      cbView.Cell = 4;
-      cbView.SelectionChangeCommitted += new EventHandler(ComboBox_SelectionChangeCommitted);
 
-      SyncedComboBox cbSort = new SyncedComboBox("SortBy");
       foreach (string strText in SortBy)
       {
-        cbSort.Items.Add(strText);
+        dgSortBy.Items.Add(strText);
       }
-      cbSort.Grid = dataGrid;
-      cbSort.Cell = 5;
-      cbSort.SelectionChangeCommitted += new EventHandler(ComboBox_SelectionChangeCommitted);
-
 
       //Create the String array object, initialize the array with the column
       //names to be displayed
@@ -490,18 +168,63 @@ namespace MediaPortal.Configuration.Sections
       }
 
       // Add a Column with checkbox at last in the Grid     
-      DataColumn dtcCheck = new DataColumn("Sort Ascending"); //create the data          //column object with the name 
-      dtcCheck.DataType = Type.GetType("System.Boolean"); //Set its //data Type
+      DataColumn dtcCheck = new DataColumn("SortAsc"); //create the data column object
+      dtcCheck.DataType = Type.GetType("System.Boolean"); //Set its data Type
       dtcCheck.DefaultValue = false; //Set the default value
       dtcCheck.AllowDBNull = false;
-      dtcCheck.ColumnName = "Asc";
-      datasetFilters.Columns.Add(dtcCheck); //Add the above column to the //Data Table
+      datasetFilters.Columns.Add(dtcCheck); //Add the above column to the Data Table
 
-      // Add the Action column
-      dtCol = new DataColumn("Act");
-      dtCol.DataType = Type.GetType("System.String");
-      dtCol.DefaultValue = "";
-      datasetFilters.Columns.Add(dtCol);
+      // Set the Data Properties for the field to map to the data table
+      dgSelection.DataPropertyName = "Selection";
+      dgOperator.DataPropertyName = "Operator";
+      dgRestriction.DataPropertyName = "Restriction";
+      dgLimit.DataPropertyName = "Limit";
+      dgViewAs.DataPropertyName = "ViewAs";
+      dgSortBy.DataPropertyName = "SortBy";
+      dgAsc.DataPropertyName = "SortAsc"; // Set the data property for the grif
+
+      //Set the Data Grid Source as the Data Table created above
+      dataGrid.AutoGenerateColumns = false;
+      dataGrid.DataSource = datasetFilters;
+    }
+
+    public void LoadViews()
+    {
+      updating = true;
+      cbViews.Items.Clear();
+      foreach (ViewDefinition view in views)
+      {
+        if (view.Name != string.Empty)
+        {
+          cbViews.Items.Add(view);
+        }
+      }
+      ViewDefinition newDef = new ViewDefinition();
+      newDef.Name = "new...";
+      cbViews.Items.Add(newDef);
+      if (cbViews.Items.Count > 0)
+      {
+        cbViews.SelectedIndex = 0;
+      }
+
+      UpdateView();
+      updating = false;
+    }
+
+    #endregion
+
+    #region Private Methods
+    private void UpdateView()
+    {
+      updating = true;
+      datasetFilters.Clear();
+      currentView = (ViewDefinition) cbViews.SelectedItem;
+      if (currentView == null)
+      {
+        return;
+      }
+      tbViewName.Text = currentView.Name;
+
 
       //fill in all rows...
       for (int i = 0; i < currentView.Filters.Count; ++i)
@@ -522,78 +245,21 @@ namespace MediaPortal.Configuration.Sections
               def.DefaultView,
               def.DefaultSort,
               def.SortAscending,
-              ""
             }
           );
       }
 
-      //Set the Data Grid Source as the Data Table created above
-      dataGrid.CaptionText = string.Empty;
-      dataGrid.DataSource = datasetFilters;
-
-      //set style property when first time the grid loads, next time onwards it //will maintain its property
-      if (!dataGrid.TableStyles.Contains("Selection"))
-      {
-        //Create a DataGridTableStyle object     
-        DataGridTableStyle dgdtblStyle = new DataGridTableStyle();
-        //Set its properties
-        dgdtblStyle.MappingName = datasetFilters.TableName; //its table name of dataset
-        dataGrid.TableStyles.Add(dgdtblStyle);
-        dgdtblStyle.RowHeadersVisible = false;
-        dgdtblStyle.HeaderBackColor = Color.LightSteelBlue;
-        dgdtblStyle.AllowSorting = false;
-        dgdtblStyle.HeaderBackColor = Color.FromArgb(8, 36, 107);
-        dgdtblStyle.RowHeadersVisible = false;
-        dgdtblStyle.HeaderForeColor = Color.White;
-        dgdtblStyle.HeaderFont = new Font("Microsoft Sans Serif", 9F, FontStyle.Bold, GraphicsUnit.Point, ((Byte) (0)));
-        dgdtblStyle.GridLineColor = Color.DarkGray;
-        dgdtblStyle.PreferredRowHeight = 22;
-        dataGrid.BackgroundColor = Color.White;
-
-        //Take the columns in a GridColumnStylesCollection object and set //the size of the
-        //individual columns   
-        GridColumnStylesCollection colStyle;
-        colStyle = dataGrid.TableStyles[0].GridColumnStyles;
-        colStyle[0].Width = 80;
-        colStyle[1].Width = 60;
-        colStyle[2].Width = 78;
-        colStyle[3].Width = 48;
-        colStyle[4].Width = 55;
-        colStyle[5].Width = 55;
-        colStyle[6].Width = 30;
-        colStyle[7].Width = 30;
-
-        // Set an eventhandler to be fired, when entering something in the action column
-        DataGridTextBoxColumn tbAction = (DataGridTextBoxColumn) dgdtblStyle.GridColumnStyles[7];
-        tbAction.TextBox.KeyPress += new KeyPressEventHandler(tbAction_KeyPress);
-
-        /*
-				DataGridColumnStyle boolCol = new FormattableBooleanColumn();
-				boolCol.MappingName = "Sort Ascending";
-				boolCol.HeaderText = "Sort Ascending";
-				boolCol.Width = 60;
-				dgdtblStyle.GridColumnStyles.Add(boolCol);
-				*/
-      }
-      DataGridTextBoxColumn dgtb = (DataGridTextBoxColumn) dataGrid.TableStyles[0].GridColumnStyles[0];
-      //Add the combo box to the text box taken in the above step 
-      dgtb.TextBox.Controls.Add(cbSelection);
-
-      dgtb = (DataGridTextBoxColumn) dataGrid.TableStyles[0].GridColumnStyles[1];
-      dgtb.TextBox.Controls.Add(cbOperators);
-
-      dgtb = (DataGridTextBoxColumn) dataGrid.TableStyles[0].GridColumnStyles[4];
-      dgtb.TextBox.Controls.Add(cbView);
-
-      dgtb = (DataGridTextBoxColumn) dataGrid.TableStyles[0].GridColumnStyles[5];
-      dgtb.TextBox.Controls.Add(cbSort);
-
-      DataGridBoolColumn boolColumn = (DataGridBoolColumn) dataGrid.TableStyles[0].GridColumnStyles[6];
-      boolColumn.AllowNull = false;
-
       updating = false;
     }
+    #endregion
 
+    #region Event Handler
+    /// <summary>
+    /// A new View has selected. 
+    /// Store the changes of the current one and fill the grid with the data of the selected one
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void cbViews_SelectedIndexChanged(object sender, EventArgs e)
     {
       if (updating)
@@ -601,68 +267,22 @@ namespace MediaPortal.Configuration.Sections
         return;
       }
       StoreGridInView();
-      dataGrid.DataSource = null;
       UpdateView();
     }
 
-    private void ComboBox_SelectionChangeCommitted(object sender, EventArgs e)
-    {
-      if (updating)
-      {
-        return;
-      }
-      SyncedComboBox box = sender as SyncedComboBox;
-      if (box == null)
-      {
-        return;
-      }
-      DataGridCell currentCell = dataGrid.CurrentCell;
-      DataTable table = dataGrid.DataSource as DataTable;
-
-      if (currentCell.RowNumber == table.Rows.Count)
-      {
-        table.Rows.Add(new object[] {"", "", "", ""});
-      }
-      table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string) box.SelectedItem;
-    }
-
-    private void tbAction_KeyPress(object sender, KeyPressEventArgs e)
-    {
-      DataRow row = datasetFilters.NewRow();
-      row[0] = row[1] = row[2] = row[3] = row[4] = row[5] = row[7] = "";
-      row[6] = false;
-
-      e.Handled = true;
-
-      int rowSelected = dataGrid.CurrentRowIndex;
-      if (rowSelected == -1)
-      {
-        return;
-      }
-      if (rowSelected == datasetFilters.Rows.Count)
-      {
-        return;
-      }
-
-      switch (e.KeyChar)
-      {
-        case 'a':
-          datasetFilters.Rows.InsertAt(row, rowSelected + 1);
-          break;
-        case 'b':
-          datasetFilters.Rows.InsertAt(row, rowSelected);
-          break;
-        case 'd':
-          datasetFilters.Rows.RemoveAt(rowSelected);
-          break;
-      }
-    }
-
+    /// <summary>
+    /// The Save button has been pressed
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void btnSave_Click(object sender, EventArgs e)
     {
       StoreGridInView();
     }
 
+    /// <summary>
+    /// Store the Grid Values in the View
+    /// </summary>
     private void StoreGridInView()
     {
       if (updating)
@@ -735,6 +355,11 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
+    /// <summary>
+    /// Delete the selected View
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void btnDelete_Click(object sender, EventArgs e)
     {
       ViewDefinition viewSelected = cbViews.SelectedItem as ViewDefinition;
@@ -754,7 +379,108 @@ namespace MediaPortal.Configuration.Sections
       LoadViews();
     }
 
+    /// <summary>
+    /// Only allow valid values to be entered.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void dataGrid_DataError(object sender, DataGridViewDataErrorEventArgs e)
+    {
+      if (e.Exception == null) return;
 
+      // If the user-specified value is invalid, cancel the change 
+      if ((e.Context & DataGridViewDataErrorContexts.Commit) != 0 &&
+          (typeof(FormatException).IsAssignableFrom(e.Exception.GetType()) ||
+          typeof(ArgumentException).IsAssignableFrom(e.Exception.GetType())))
+      {
+        e.Cancel = true;
+      }
+      else
+      {
+        // Rethrow any exceptions that aren't related to the user input.
+        e.ThrowException = true;
+      }
+    }
+
+    /// <summary>
+    /// Handles editing of data columns
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void dataGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e)
+    {
+      // For combo box and check box cells, commit any value change as soon
+      // as it is made rather than waiting for the focus to leave the cell.
+      if (!dataGrid.CurrentCell.OwningColumn.GetType().Equals(typeof(DataGridViewTextBoxColumn)))
+      {
+        dataGrid.CommitEdit(DataGridViewDataErrorContexts.Commit);
+      }
+    }
+
+    /// <summary>
+    /// Handle the Keypress for the action column
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void dataGrid_KeyPress(object sender, KeyPressEventArgs e)
+    {
+      if (dataGrid.CurrentCell != null && dataGrid.CurrentCell.OwningColumn.Name == "dgAct")
+      {
+        dgAct_KeyPress(sender, e);
+      }
+    }
+
+    /// <summary>
+    /// Handle the Keypress in the Action Column
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void dgAct_KeyPress(object sender, KeyPressEventArgs e)
+    {
+      DataRow row = datasetFilters.NewRow();
+      row[0] = row[1] = row[2] = row[3] = row[4] = row[5] = "";
+      row[6] = false;
+
+      e.Handled = true;
+
+      int rowSelected = -1;
+      if (dataGrid.CurrentRow != null)
+      {
+        rowSelected = dataGrid.CurrentRow.Index;
+        if (rowSelected == -1)
+        {
+          return;
+        }
+        if (rowSelected == datasetFilters.Rows.Count)
+        {
+          return;
+        }
+      }
+
+      switch (e.KeyChar)
+      {
+        case 'a':
+          datasetFilters.Rows.InsertAt(row, rowSelected + 1);
+          break;
+        case 'b':
+          datasetFilters.Rows.InsertAt(row, rowSelected);
+          break;
+        case 'd':
+          datasetFilters.Rows.RemoveAt(rowSelected);
+          break;
+      }
+    }
+    #endregion
+
+    #region Overridden Methods
+    /// <summary>
+    /// Load the Views
+    /// </summary>
+    /// <param name="mediaType"></param>
+    /// <param name="selections"></param>
+    /// <param name="sqloperators"></param>
+    /// <param name="viewsAs"></param>
+    /// <param name="sortBy"></param>
     protected void LoadSettings(
       string mediaType,
       string[] selections,
@@ -790,9 +516,14 @@ namespace MediaPortal.Configuration.Sections
       {
       }
 
+      SetupGrid();
       LoadViews();
     }
 
+    /// <summary>
+    /// Save the Views
+    /// </summary>
+    /// <param name="mediaType"></param>
     protected void SaveSettings(string mediaType)
     {
       string customViews = Config.GetFile(Config.Dir.Config, mediaType + "Views.xml");
@@ -812,5 +543,6 @@ namespace MediaPortal.Configuration.Sections
         }
       }
     }
+    #endregion
   }
 }

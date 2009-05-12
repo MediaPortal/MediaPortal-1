@@ -1,7 +1,7 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{68168FAA-A363-4F64-981C-32629A537900}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -252,6 +252,9 @@
     </Compile>
     <Compile Include="HelpSystem.cs" />
     <Compile Include="ListViewSort.cs" />
+    <Compile Include="Sections\BaseViews.Designer.cs">
+      <DependentUpon>BaseViews.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\GeneralDynamicRefreshRate.cs">
       <SubType>UserControl</SubType>
     </Compile>
