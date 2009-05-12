@@ -25,55 +25,34 @@
 
 using System;
 using System.IO;
-using ICSharpCode.SharpZipLib.Checksums;
-using ICSharpCode.SharpZipLib.Zip;
+using Ionic.Zip;
+using Ionic.Zlib;
 
 namespace MediaPortal.Support
 {
   public class Archiver : IDisposable
   {
-    private ZipOutputStream zipStream;
+    public ZipFile zip = new ZipFile();
 
-    public Archiver(string file)
+    public void AddFile(string file, string zipfile)
     {
-      zipStream = CreateZipStream(file);
+      zip.CompressionLevel = CompressionLevel.BEST_COMPRESSION;
+      zip.AddFile(file);
+      zip.Save(zipfile);
     }
 
-    public void AddFile(string file)
-    {
-      Crc32 crc = new Crc32();
-      FileStream fs = File.OpenRead(file);
-      byte[] buf = new byte[fs.Length];
-      fs.Read(buf, 0, buf.Length);
-      ZipEntry ze = new ZipEntry(file.Substring(file.LastIndexOf("\\") + 1));
-      ze.Size = fs.Length;
-      fs.Close();
-      crc.Reset();
-      crc.Update(buf);
-      ze.Crc = crc.Value;
-      zipStream.PutNextEntry(ze);
-      zipStream.Write(buf, 0, buf.Length);
-    }
-
-    public void AddDirectory(string directory)
+    public void AddDirectory(string directory, string zipfile)
     {
       string[] filesInDir = Directory.GetFiles(directory);
       foreach (string file in filesInDir)
       {
-        this.AddFile(file);
+        AddFile(file, zipfile);
       }
     }
 
-    private static ZipOutputStream CreateZipStream(string zipFile)
+   public void Dispose()
     {
-      ZipOutputStream zos = new ZipOutputStream(File.Create(zipFile));
-      zos.SetLevel(9);
-      return zos;
-    }
-
-    public void Dispose()
-    {
-      zipStream.Dispose();
+      zip.Dispose();
     }
   }
 }

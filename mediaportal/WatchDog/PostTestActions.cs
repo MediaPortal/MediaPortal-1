@@ -140,9 +140,9 @@ namespace WatchDog
         {
           File.Delete(_zipFile);
         }
-        using (Archiver archiver = new Archiver(_zipFile))
+        using (Archiver archiver = new Archiver())
         {
-          archiver.AddDirectory(_tmpDir);
+          archiver.AddDirectory(_tmpDir, _zipFile);
         }
         Directory.Delete(_tmpDir, true);
       }
