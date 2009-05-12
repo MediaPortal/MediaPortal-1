@@ -32,6 +32,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dvblib", "dvblib\dvblib.vcproj", "{0DD8968F-A6F6-4365-9CC1-9CF87A76178B}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TsMuxer", "TsMuxer\TsMuxer.vcproj", "{8AC0B595-EB93-4CBE-BEC7-E4A3D65DF3A6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3C398BD4-5714-4802-AB86-D43ADD15B3C0} = {3C398BD4-5714-4802-AB86-D43ADD15B3C0}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dxerr9", "DXErr9\dxerr9.vcproj", "{1FC036DE-1148-45E1-ADD3-FE1B20B652A7}"
 EndProject

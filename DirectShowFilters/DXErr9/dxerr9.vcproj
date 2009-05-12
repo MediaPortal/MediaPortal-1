@@ -41,6 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;&quot;$(WINDOWS_SDK)Include\&quot;;&quot;$(DXSDK_DIR)Include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;DXERR9_EXPORTS"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
@@ -69,6 +70,7 @@
 				AdditionalDependencies="dxerr9.lib comsupp.lib"
 				OutputFile="bin\Debug/dxerr9.dll"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Debug_MBCS&quot;;&quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="bin\Debug/dxerr9.pdb"
 				SubSystem="2"
@@ -123,6 +125,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;DXERR9_EXPORTS"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="2"
@@ -150,6 +153,7 @@
 				AdditionalDependencies="dxerr9.lib comsuppw.lib"
 				OutputFile="bin\Release/dxerr9.dll"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Release_MBCS&quot;;&quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;"
 				GenerateDebugInformation="false"
 				ProgramDatabaseFile="bin\Release/dxerr9.pcb"
 				SubSystem="2"
