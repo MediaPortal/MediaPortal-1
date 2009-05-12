@@ -206,7 +206,9 @@ namespace MediaPortal.GUI.Library
     #region variables
 
     private List<PackedTexture> _packedTextures;
-    private const int MAXTEXTURESIZE = 2048; // the maximum width and height which fits into the texture cache - depends on drivers / gfx hardware
+    private const int MAXTEXTUREDIMENSION = 2048;
+    private int _maxTextureWidth = 0;
+    private int _maxTextureHeight = 0;
 
     #endregion
 
@@ -369,27 +371,31 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      //Determine maximum texture dimensions
-      //We limit the max resolution to 2048x2048
-      int iMaxWidth = MAXTEXTURESIZE;
-      int iMaxHeight = MAXTEXTURESIZE;
+      // Determine maximum texture dimensions
       try
       {
         Caps d3dcaps = GUIGraphicsContext.DX9Device.DeviceCaps;
-        iMaxWidth = d3dcaps.MaxTextureWidth;
-        iMaxHeight = d3dcaps.MaxTextureHeight;
-        Log.Info("TexturePacker: D3D device does support {0}x{1} textures", iMaxWidth, iMaxHeight);
+        _maxTextureWidth = d3dcaps.MaxTextureWidth;
+        _maxTextureHeight = d3dcaps.MaxTextureHeight;
+        Log.Info("TexturePacker: D3D device does support {0}x{1} textures", _maxTextureWidth, _maxTextureHeight);
       }
-      catch (Exception) { }
+      catch (Exception) 
+      { 
+        _maxTextureWidth = 2048;
+        _maxTextureHeight = 2048;
+      }
 
-      if (iMaxWidth > MAXTEXTURESIZE)
+      if (_maxTextureWidth > MAXTEXTUREDIMENSION)
       {
-        iMaxWidth = MAXTEXTURESIZE;
+        _maxTextureWidth = MAXTEXTUREDIMENSION;
       }
-      if (iMaxHeight > MAXTEXTURESIZE)
+      if (_maxTextureHeight > MAXTEXTUREDIMENSION)
       {
-        iMaxHeight = MAXTEXTURESIZE;
+        _maxTextureHeight = MAXTEXTUREDIMENSION;
       }
+
+      Log.Info("TexturePacker: using {0}x{1} as packed textures limit", _maxTextureWidth, _maxTextureHeight);
+      Log.Info("TexturePacker: using {0}x{1} as single texture limit", _maxTextureWidth/2, _maxTextureHeight/2);
 
       while (true)
       {
@@ -399,9 +405,9 @@ namespace MediaPortal.GUI.Library
         bigOne.root = new PackedTextureNode();
         bigOne.texture = null;
         bigOne.textureNo = -1;
-        using (Bitmap rootImage = new Bitmap(iMaxWidth, iMaxHeight))
+        using (Bitmap rootImage = new Bitmap(_maxTextureWidth, _maxTextureHeight))
         {
-          bigOne.root.Rect = new Rectangle(0, 0, iMaxWidth, iMaxHeight);
+          bigOne.root.Rect = new Rectangle(0, 0, _maxTextureWidth, _maxTextureHeight);
           for (int i = 0; i < files.Count; ++i)
           {
             if (files[i] == null)
@@ -537,9 +543,10 @@ namespace MediaPortal.GUI.Library
       }
 
       //if (bmp.Width >= GUIGraphicsContext.Width || bmp.Height >= GUIGraphicsContext.Height)
-      if (bmp.Width >= MAXTEXTURESIZE || bmp.Height >= MAXTEXTURESIZE)
+      if (bmp.Width > (_maxTextureHeight / 2) || bmp.Height > (_maxTextureWidth / 2))
       {
-        Log.Warn("TexturePacker: Texture {0} is too large to be cached", file);
+        Log.Warn("TexturePacker: Texture {0} is too large to be cached. Texture {1}x{2} - limit {3}x{4}",
+          file, bmp.Width, bmp.Height, _maxTextureHeight, _maxTextureWidth);
         dontAdd = true;
         return false;
       }
