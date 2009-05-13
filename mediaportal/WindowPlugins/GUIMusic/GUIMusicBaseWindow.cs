@@ -777,7 +777,8 @@ namespace MediaPortal.GUI.Music
       if (playlist.Count == 1)
       {
         Log.Info("GUIMusic:Play: play single playlist item - {0}", playlist[0].FileName);
-        g_Player.Play(playlist[0].FileName);
+        // Default to type Music, when a playlist has been selected from My Music
+        g_Player.Play(playlist[0].FileName, g_Player.MediaType.Music);
         return;
       }
 

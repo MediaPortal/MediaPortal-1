@@ -355,28 +355,8 @@ namespace MediaPortal.Player
             }
           }
 
-          if (Util.Utils.IsAudio(aFileName))
+          if (Util.Utils.IsAudio(aFileName) || localType == g_Player.MediaType.Music)
           {
-            //// choose player for Internet radio streams 
-            //if (Util.Utils.IsLastFMStream(fileName))
-            //{
-            //  switch (streamPlayer)
-            //  {
-            //    case 0:
-            //      if (BassMusicPlayer.BassFreed)
-            //        BassMusicPlayer.Player.InitBass();
-            //      return BassMusicPlayer.Player;
-            //    case 1:
-            //      return new Player.AudioPlayerWMP9();
-            //    case 2:
-            //      return new Player.AudioPlayerVMR7();
-            //    default:
-            //      if (BassMusicPlayer.BassFreed)
-            //        BassMusicPlayer.Player.InitBass();
-            //      return BassMusicPlayer.Player;
-            //  }
-            //}
-
             if (String.Compare(strAudioPlayer, "BASS engine", true) == 0)
             {
               if (BassMusicPlayer.BassFreed)
