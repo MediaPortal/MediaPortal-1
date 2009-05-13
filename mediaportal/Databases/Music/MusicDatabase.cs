@@ -339,6 +339,7 @@ namespace MediaPortal.Music.Database
 
     public void RollbackTransaction()
     {
+      Log.Debug("MusicDatabase: Rolling back transactions due to unrecoverable error. Effecting {0} rows", Instance.DbConnection.ChangedRows());
       try
       {
         DirectExecute("rollback");

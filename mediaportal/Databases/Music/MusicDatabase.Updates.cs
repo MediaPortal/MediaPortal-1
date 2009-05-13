@@ -534,6 +534,9 @@ namespace MediaPortal.Music.Database
       {
         Log.Error("Musicdatabasereorg: Unhandled error {0} - scan aborted!\n{1}\n{2}", ex.Message, ex.Source,
                   ex.StackTrace);
+
+        RollbackTransaction();
+        return (int) Errors.ERROR_CANCEL;
       }
       finally
       {
