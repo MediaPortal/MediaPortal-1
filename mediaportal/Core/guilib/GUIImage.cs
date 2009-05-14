@@ -90,6 +90,7 @@ namespace MediaPortal.GUI.Library
         [XMLSkin("texture", "diffuse")] protected string _diffuseFileName = "";
         [XMLSkinElement("filtered")] private bool _filterImage = true;
         [XMLSkinElement("centered")] private bool _centerImage = false;
+        [XMLSkinElement("imagepath")] private string _imagePath = "";  // Image path used to store VUMeter files
 
         private int _diffuseTexWidth = 0;
         private int _diffuseTexHeight = 0;
@@ -307,6 +308,15 @@ namespace MediaPortal.GUI.Library
         {
             get { return _textureFileNameTag; }
             set { SetFileName(value); }
+        }
+
+        /// <summary>
+        /// Returns the Imagepath for the Control
+        /// </summary>
+        public string ImagePath
+        {
+            get { return _imagePath; }
+            set { _imagePath = value; }
         }
 
         /// <summary>

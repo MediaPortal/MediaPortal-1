@@ -267,7 +267,6 @@ namespace MediaPortal.GUI.Library
     protected AutoHideTopBar _autoHideTopbarType = AutoHideTopBar.UseDefault;
     protected bool _autoHideTopbar = false;
     protected bool _disableTopBar = false; // skin file can hide Topbar when needed
-    protected bool _hasVUMeter = false;    // skin file implements a VUMeter
     private bool _isSkinLoaded = false;
     protected bool _shouldRestore = false;
     private string _lastSkin = string.Empty;
@@ -626,21 +625,6 @@ namespace MediaPortal.GUI.Library
             if (allowed == "yes" || allowed == "true")
             {
               _disableTopBar = true;
-            }
-          }
-        }
-
-        // Configure the VUMeter disable setting
-        XmlNode nodeHasVUMeter = doc.DocumentElement.SelectSingleNode("/window/vumeter");
-        _hasVUMeter = false;
-        if (nodeHasVUMeter != null)
-        {
-          if (nodeHasVUMeter.InnerText != null)
-          {
-            string vumeter = nodeHasVUMeter.InnerText.ToLower();
-            if (vumeter == "yes" || vumeter == "true")
-            {
-              _hasVUMeter = true;
             }
           }
         }

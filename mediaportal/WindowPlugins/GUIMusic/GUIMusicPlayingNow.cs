@@ -104,6 +104,9 @@ namespace MediaPortal.GUI.Music
       IMGLIST_FAMOUS_TRACK1 = 87,
       IMGLIST_FAMOUS_TRACK2 = 88,
       IMGLIST_FAMOUS_TRACK3 = 89,
+
+      VUMETER_LEFT = 999,
+      VUMETER_RIGHT = 998,
     }
 
     public enum TrackProgressType
@@ -146,6 +149,8 @@ namespace MediaPortal.GUI.Music
     [SkinControl((int) ControlIDs.IMGLIST_FAMOUS_TRACK1)] protected GUIImageList ImgListFamousTrack1 = null;
     [SkinControl((int) ControlIDs.IMGLIST_FAMOUS_TRACK2)] protected GUIImageList ImgListFamousTrack2 = null;
     [SkinControl((int) ControlIDs.IMGLIST_FAMOUS_TRACK3)] protected GUIImageList ImgListFamousTrack3 = null;
+    [SkinControl((int)ControlIDs.VUMETER_LEFT)] protected GUIImage VUMeterLeft = null;
+    [SkinControl((int)ControlIDs.VUMETER_RIGHT)] protected GUIImage VUMeterRight = null;
 
     #endregion
 
@@ -194,6 +199,7 @@ namespace MediaPortal.GUI.Music
     private bool _showVisualization = false;
     private bool _enqueueDefault = true;
     private object _imageMutex = null;
+    private string _vuMeter = "none";
 
     #endregion
 
@@ -234,6 +240,7 @@ namespace MediaPortal.GUI.Music
         _doAlbumLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtopalbums", true);
         _doTrackTagLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtracktags", true);
         _enqueueDefault = xmlreader.GetValueAsBool("musicmisc", "enqueuenext", true);
+        _vuMeter = xmlreader.GetValueAsString("musicmisc", "vumeter", "none");
 
         if (ShowViz && VizName != "None")
         {
@@ -367,10 +374,43 @@ namespace MediaPortal.GUI.Music
     #endregion
 
     #region Overrides
+    /// <summary>
+    /// We must not do a delayed loading, because we need to know if a VUMeter skin file exists, 
+    /// so that we can fallback to the default Now Playing skin, if something goes wrong
+    /// </summary>
+    public override bool SupportsDelayedLoad
+    {
+      get
+      {
+        return false;
+      }
+    }
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\MyMusicPlayingNow.xml");
+      bool success = false;
+
+      // Load the various Music NowPlaying files
+      // we might have:
+      // 1. A standard Now Playing to which we fall back
+      // 2. a Now Playing with Analog VUMeter
+      // 3. a Now Playing with Led VUMeter
+      if (_vuMeter.ToLower() == "analog")
+      {
+        success = Load(GUIGraphicsContext.Skin + @"\MyMusicPlayingNowAnVu.xml");
+      }
+      else if (_vuMeter.ToLower() == "led")
+      {
+        success = Load(GUIGraphicsContext.Skin + @"\MyMusicPlayingNowLedVu.xml");
+      } 
+
+      if (!success)
+      {
+        _vuMeter = "none";
+        success = Load(GUIGraphicsContext.Skin + @"\MyMusicPlayingNow.xml");
+      }
+
+      return success;
     }
 
     public override void OnAction(Action action)
@@ -541,7 +581,7 @@ namespace MediaPortal.GUI.Music
       GUIPropertyManager.SetProperty("#VUMeterL", @"VU1.png");
       GUIPropertyManager.SetProperty("#VUMeterR", @"VU1.png");
       if (VUMeterTimer == null && _usingBassEngine &&
-          _hasVUMeter)
+          _vuMeter.ToLower() != "none")
       {
         VUMeterTimer = new Timer();
         VUMeterTimer.Interval = 200;
@@ -1081,7 +1121,7 @@ namespace MediaPortal.GUI.Music
       {
         file = "VU15.png";
       }
-      GUIPropertyManager.SetProperty("#VUMeterL", Path.Combine(@"Animations\Vu", file));
+      GUIPropertyManager.SetProperty("#VUMeterL", Path.Combine(VUMeterLeft.ImagePath, file));
       
       if ((int)dbLevelR < -15)
       {
@@ -1143,7 +1183,7 @@ namespace MediaPortal.GUI.Music
       {
         file = "VU15.png";
       }
-      GUIPropertyManager.SetProperty("#VUMeterR", Path.Combine(@"Animations\Vu", file));
+      GUIPropertyManager.SetProperty("#VUMeterR", Path.Combine(VUMeterRight.ImagePath, file));
     }
 
     private void UpdateImagePathContainer()
