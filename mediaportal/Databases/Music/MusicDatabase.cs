@@ -166,12 +166,25 @@ namespace MediaPortal.Music.Database
 
         if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV11.db3")))
         {
+          if (File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV10.db3")))
+          {
+            Log.Info("MusicDatabase: Found older version of database. Upgrade to new layout.");
+            File.Copy(Config.GetFile(Config.Dir.Database, "MusicDatabaseV10.db3"), Config.GetFile(Config.Dir.Database, "MusicDatabaseV11.db3"));
+            
+            // Get the DB handle or create it if necessary
+            MusicDbClient = DbConnection;
+            
+            UpgradeDBV10_V11();
+            return;
+          }
+
           // Get the DB handle or create it if necessary
           MusicDbClient = DbConnection;
 
           // When we have deleted the database, we need to scan from the beginning, regardsless of the last import setting
           _lastImport = DateTime.ParseExact("1900-01-01 00:00:00", "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
 
+          Log.Info("MusicDatabase: Database does not exist. Create it.");
           if (!CreateDatabase())
           {
             return;
@@ -187,6 +200,39 @@ namespace MediaPortal.Music.Database
         Log.Error("MusicDatabase: exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
       Log.Info("MusicDatabase: Database opened");
+    }
+
+    private void UpgradeDBV10_V11()
+    {
+      try
+      {
+        // First rename the tracks table
+        string strSQL = "alter table tracks rename to tracksV10";
+        MusicDbClient.Execute(strSQL);
+
+        // Now call the Create Datbase function to create the new table
+        if (!CreateDatabase())
+        {
+          Log.Error("MusicDatabase: Error creating new database. aborting upgrade}");
+          return;
+        }
+
+        // Now copy the content of the old V10 tracks table to the new V11 tracks table
+        strSQL = "insert into tracks select idTrack, strPath, strArtist, strAlbumArtist, strAlbum, strGenre, '|  |', '', " +
+          "strTitle, iTRack, iNumTracks, iDuration, iYear, iTimesPlayed, iRating, iFavorite, iResumeAt, iDisc, iNumDisc, " +
+          "strLyrics, dateLastPlayed, dateAdded from tracksV10";
+
+        MusicDbClient.Execute(strSQL);
+
+        strSQL = "drop table tracksV10";
+        MusicDbClient.Execute(strSQL);
+
+        Log.Info("MusicDatabase: Finished upgrading database.");
+      }
+      catch (Exception ex)
+      {
+        Log.Error("MusicDatabase: exception while renaming table:{0} stack:{1}", ex.Message, ex.StackTrace);
+      }
     }
 
     private bool CreateDatabase()
