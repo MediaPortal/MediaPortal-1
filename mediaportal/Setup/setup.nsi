@@ -64,7 +64,7 @@
 
 # additional path definitions
 !ifdef SVN_BUILD
-  !define MEDIAPORTAL.BASE "E:\compile\compare_mp1_test"
+  !define MEDIAPORTAL.BASE "C:\compile\compare_mp1_test"
 !else
   !define MEDIAPORTAL.BASE "${svn_MP}\MediaPortal.Base"
 !endif
