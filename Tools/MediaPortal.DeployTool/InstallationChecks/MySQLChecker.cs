@@ -220,7 +220,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "MySQL AB\\MySQL Server 5.0");
+      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.0");
       if (key == null)
         result.state = CheckState.NOT_INSTALLED;
       else

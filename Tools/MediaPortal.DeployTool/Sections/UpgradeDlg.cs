@@ -52,7 +52,7 @@ namespace MediaPortal.DeployTool.Sections
       //
 
       // MediaPortal
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
+      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
       string MpVer = string.Empty;
       string MpBuild = string.Empty;
       if (key != null)
@@ -65,7 +65,7 @@ namespace MediaPortal.DeployTool.Sections
       }
 
       // TV-Server
-      key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
+      key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
       string Tv3Ver = string.Empty;
       string Tv3Build = string.Empty;
       if (key != null)

@@ -46,7 +46,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       WritePrivateProfileString("Options", "COMPANYNAME", "\"Team MediaPortal\"", iniFile);
       WritePrivateProfileString("Options", "INSTALLSQLDIR", "\"" + InstallationProperties.Instance["DBMSDir"] + "\"", iniFile);
       WritePrivateProfileString("Options", "ADDLOCAL", "ALL", iniFile);
-      WritePrivateProfileString("Options", "INSTANCENAME", "SQLEXPRESS", iniFile);
+      WritePrivateProfileString("Options", "INSTANCENAME", GetIstanceName(), iniFile);
       WritePrivateProfileString("Options", "SQLBROWSERAUTOSTART", "1", iniFile);
       WritePrivateProfileString("Options", "SQLAUTOSTART", "1", iniFile);
       WritePrivateProfileString("Options", "SECURITYMODE", "SQL", iniFile);
@@ -56,18 +56,15 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     private static void FixTcpPort()
     {
-      RegistryKey keySql =
-        Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] +
-                                         "\\Microsoft\\Microsoft SQL Server\\Instance Names\\SQL");
+      RegistryKey keySql = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\Instance Names\\SQL");
       if (keySql == null)
       {
         return;
       }
-      string instanceSQL = (string)keySql.GetValue("SQLEXPRESS");
+      string instanceSQL = (string)keySql.GetValue(GetIstanceName());
       keySql.Close();
 
-      keySql = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] +
-                                         "\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll", true);
+      keySql = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll", true);
       if (keySql == null)
       {
         return;
@@ -79,7 +76,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     private static void StartStopService(bool start)
     {
-      string[] services = { "MSSQL$SQLEXPRESS", "SQLBrowser" };
+      string[] services = { "MSSQL$" + GetIstanceName(), "SQLBrowser" };
       foreach (string service in services)
       {
         ServiceController ctrl = new ServiceController(service);
@@ -107,6 +104,11 @@ namespace MediaPortal.DeployTool.InstallationChecks
     public string GetDisplayName()
     {
       return "MS SQL Express 2005";
+    }
+
+    private static string GetIstanceName()
+    {
+      return "SQLEXPRESS";
     }
 
     public bool Download()
@@ -183,7 +185,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
-      using (RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion"))
+      using (RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion"))
       {
         if (key == null)
           result.state = CheckState.NOT_INSTALLED;

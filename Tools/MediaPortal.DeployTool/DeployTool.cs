@@ -64,18 +64,6 @@ namespace MediaPortal.DeployTool
 
     public DeployTool()
     {
-      //Check if x86 or x64 architecture
-      if (Utils.Check64bit())
-      {
-        InstallationProperties.Instance.Set("RegistryKeyAdd", "Wow6432Node\\");
-        InstallationProperties.Instance.Set("CurrentArch", "64");
-      }
-      else
-      {
-        InstallationProperties.Instance.Set("RegistryKeyAdd", "");
-        InstallationProperties.Instance.Set("CurrentArch", "32");
-      }
-
       //Create necessary directory tree
       if (!Directory.Exists(Application.StartupPath + "\\deploy"))
         Directory.CreateDirectory(Application.StartupPath + "\\deploy");
@@ -126,7 +114,7 @@ namespace MediaPortal.DeployTool
         // at least 0.5 GB free disk space are required for installation
         const double requiredDiskSpace = 0.5;
         double actualDiskSpace = InstallationChecks.DiskSpaceChecker.GetRemainingHardDiskCapacity(_currentDialog.installationPath);
-        
+
         if (actualDiskSpace < requiredDiskSpace)
         {
           MessageBox.Show(string.Format(Localizer.GetBestTranslation("DiskSpace_Error"), requiredDiskSpace * 1000), "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -152,7 +140,7 @@ namespace MediaPortal.DeployTool
           // Starting processes might fail - prefer a not opening Explorer instead of a big crash window...
           catch (Exception) { }
         }
-        
+
         //
         // If in install mode, start the included setup guide
         //
@@ -209,7 +197,7 @@ namespace MediaPortal.DeployTool
       SwitchDialog(_currentDialog);
     }
 
-    
+
     private void bExit_Click(object sender, EventArgs e)
     {
       string message = Localizer.GetBestTranslation("Exit_Installation");
@@ -230,7 +218,7 @@ namespace MediaPortal.DeployTool
       {
         Process.Start(Application.StartupPath + "\\HelpContent\\DeployToolGuide\\DeployToolGuide.htm");
       }
-      catch (Exception ex) 
+      catch (Exception ex)
       {
         MessageBox.Show(String.Format("Unable to open the help page with your default browser - {0}", ex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }

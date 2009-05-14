@@ -110,7 +110,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
       foreach (string UnistKey in UninstKeys)
       {
-        RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + UnistKey);
+        RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + UnistKey);
 
         if (key != null)
         {

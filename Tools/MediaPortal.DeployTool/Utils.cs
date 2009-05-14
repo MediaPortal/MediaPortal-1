@@ -259,7 +259,7 @@ namespace MediaPortal.DeployTool
 
     public static string CheckUninstallString(string clsid, bool delete)
     {
-      string keyPath = "SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid;
+      string keyPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid;
       RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath);
       if (key != null)
       {
@@ -283,9 +283,7 @@ namespace MediaPortal.DeployTool
       CheckResult result = new CheckResult();
       result.state = CheckState.NOT_INSTALLED;
 
-      RegistryKey key =
-        Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] +
-                                         "Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + RegistryPath);
+      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + RegistryPath);
       if (key != null)
       {
         int _IsInstalled = (int)key.GetValue(MementoSection, 0);
@@ -435,14 +433,14 @@ namespace MediaPortal.DeployTool
 
     public static string GetPackageVersion(char type)
     {
-      switch(type.ToString().ToLower())
+      switch (type.ToString().ToLower())
       {
         case "c":                       //current
-                  return "1.0.2";
+          return "1.0.2";
         case "p":                       //previous
-                  return "1.0.1";
+          return "1.0.1";
         case "s":                       //stable
-                  return "1.0.0";
+          return "1.0.0";
         default:
           return string.Empty;
       }
