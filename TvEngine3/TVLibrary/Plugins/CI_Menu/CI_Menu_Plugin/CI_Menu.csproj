@@ -53,6 +53,7 @@
     <Compile Include="CiMenuEntry.cs" />
     <Compile Include="CI_Menu.cs" />
     <Compile Include="CI_Menu_Dialog.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="CI_Menu_Dialog.Designer.cs">
       <DependentUpon>CI_Menu_Dialog.cs</DependentUpon>
