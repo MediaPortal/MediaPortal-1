@@ -932,9 +932,9 @@ namespace TvPlugin
     public override void Process()
     {
       TVHome.UpdateProgressPercentageBar();
-
+      
       OnKeyTimeout();
-
+      
       //if we did a manual rec. on the tvguide directly, then we have to wait for it to start and the update the GUI.
       if (_recordingExpected != null)
       {
@@ -1010,6 +1010,11 @@ namespace TvPlugin
             ts = DateTime.Now - _updateTimer;
             if (ts.TotalMinutes >= 1)
             {
+              if ((DateTime.Now - _viewingTime).TotalMinutes >= iTimeWidth / 2)
+              {
+                _cursorY = 0;
+                _viewingTime = DateTime.Now;
+              }
               Update(false);
             }
           }
@@ -1151,10 +1156,10 @@ namespace TvPlugin
           iHour = dt.Hour;
           iMin = dt.Minute;
           string strTime = dt.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
-          label.Label = strTime;
+          label.Label = " " + strTime;
           dt = dt.AddMinutes(_timePerBlock);
 
-          label.TextAlignment = GUIControl.Alignment.ALIGN_CENTER;
+          label.TextAlignment = GUIControl.Alignment.ALIGN_LEFT;
           label.IsVisible = !_singleChannelView;
           label.Width = iLabelWidth;
           label.Height = cntlHeaderBkgImg.RenderHeight;
@@ -2603,6 +2608,7 @@ namespace TvPlugin
           if (control != null)
           {
             Program prog = (Program)control.Data;
+            
             if (x == 1 && m_dtStartTime < prog.StartTime || _singleChannelView)
             {
               _cursorY = x;
@@ -2610,7 +2616,14 @@ namespace TvPlugin
               break;
             }
 
-            if (m_dtStartTime >= prog.StartTime && m_dtStartTime < prog.EndTime)
+            if (m_dtStartTime >= prog.StartTime && m_dtStartTime < prog.EndTime && DateTime.Now < prog.EndTime)
+            {
+              _cursorY = x;
+              bOK = true;
+              break;
+            }
+            // this one will skip past programs
+            if (m_dtStartTime < DateTime.Now && DateTime.Now < prog.EndTime)
             {
               _cursorY = x;
               bOK = true;
@@ -3434,6 +3447,7 @@ namespace TvPlugin
               }
               else
               {
+                bool isPlayingTV = (g_Player.FullScreen && g_Player.IsTV);
                 // zap to selected show's channel
                 TVHome.UserChannelChanged = true;
                 // fixing mantis 1874: TV doesn't start when from other playing media to TVGuide & select program 
@@ -3442,7 +3456,8 @@ namespace TvPlugin
                 GUIWaitCursor.Hide();
                 if (g_Player.Playing)
                 {
-                  g_Player.ShowFullScreenWindow();
+                  if (isPlayingTV) GUIWindowManager.CloseCurrentWindow();
+                  g_Player.ShowFullScreenWindow();                  
                 }
               }
             }
