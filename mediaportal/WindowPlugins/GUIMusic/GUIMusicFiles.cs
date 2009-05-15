@@ -1420,7 +1420,7 @@ namespace MediaPortal.GUI.Music
           strArtistName = tag.Artist;
         }
       }
-      if (!isfolder && strAlbumName.Length == 0 && strArtistName.Length == 0)
+      if (!isfolder && strAlbumName.Length == 0 && strArtistName.Length == 0 && !Util.Utils.IsAVStream(filename))
       {
         FileInfo fI = new FileInfo(filename);
         string dir = fI.Directory.FullName;
