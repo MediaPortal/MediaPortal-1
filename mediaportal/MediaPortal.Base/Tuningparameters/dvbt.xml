@@ -2136,6 +2136,12 @@
     <carrier frequency="842000"></carrier>
     <carrier frequency="850000"></carrier>
     <carrier frequency="858000"></carrier>
+  </country>  
+  <country name="Netherlands - Utrecht" offset="0">
+	<carrier frequency="498000" bandwidth="8" />
+	<carrier frequency="706000" bandwidth="8" />
+	<carrier frequency="762000" bandwidth="8" />
+	<carrier frequency="818000" bandwidth="8" />
   </country>
   <country name="New Zealand - All Regions" offset="0">
     <carrier frequency="522000" bandwidth="8"></carrier>
