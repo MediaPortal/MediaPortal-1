@@ -225,7 +225,7 @@ namespace TvLibrary.Implementations.DVB
           _hasCAM = IsCamPresent();
           Log.Log.WriteFile("FireDTV detected CAM:{0} ", _hasCAM);
           Log.Log.WriteFile("FireDTV Driver version:{0} ", GetDriverVersionNumber());
-          //Log.Log.WriteFile("FireDTV FW version:{0} ", GetFirmwareVersionNumber());
+          Log.Log.WriteFile("FireDTV {0} ", GetHardwareFirmwareVersionNumber());
         }
       }
       _isInitialized = true;
@@ -562,49 +562,55 @@ namespace TvLibrary.Implementations.DVB
 
       return true;
     }
-    /*
-    public string GetFirmwareVersionNumber()
+
+    /// <summary>
+    ///  Get the hardware and firmware versions
+    /// </summary>
+    /// <returns></returns>
+    public string GetHardwareFirmwareVersionNumber()
     {
-      DirectShowLib.IKsPropertySet propertySet = _filterTuner as DirectShowLib.IKsPropertySet;
+      IKsPropertySet propertySet = _filterTuner as IKsPropertySet;
       Guid propertyGuid = KSPROPSETID_Firesat;
-      KSPropertySupport isTypeSupported = 0;
-      int hr = propertySet.QuerySupported(propertyGuid, (int)KSPROPERTY_FIRESAT_GET_FIRMWARE_VERSION, out isTypeSupported);
-      if (hr != 0 || (isTypeSupported & KSPropertySupport.Get) == 0)
-      {
-        Log.Log.WriteFile("FireDTV:GetDriverVersion() not supported");
-        return String.Empty;
-      }
-      int byteCount = 0;
-      hr = propertySet.Get(propertyGuid,
-                                  (int)KSPROPERTY_FIRESAT_GET_FIRMWARE_VERSION,
-                                  _ptrDataInstance, (int)100,
-                                  _ptrDataReturned, (int)100, out byteCount);
-
-
-      if (hr != 0)
-      {
-        Log.Log.WriteFile("FireDTV:GetFirmwareVersionNumber() failed 0x{0:X}", hr);
-        return String.Empty;
-      }
-      Log.Log.WriteFile("count:{0}", byteCount);
-
       string version = String.Empty;
-      for (int i = 0; i < byteCount; ++i)
+      if (propertySet != null)
       {
-        char ch;
-        byte k = Marshal.ReadByte(_ptrDataReturned, i);
+        KSPropertySupport isTypeSupported;
+        int hr = propertySet.QuerySupported(propertyGuid, KSPROPERTY_FIRESAT_GET_FIRMWARE_VERSION, out isTypeSupported);
+        if (hr != 0 || (isTypeSupported & KSPropertySupport.Get) == 0)
+        {
+          Log.Log.WriteFile("FireDTV:GetFirmwareVersion() not supported");
+          return String.Empty;
+        }
+        int byteCount;
+        hr = propertySet.Get(propertyGuid,
+                             KSPROPERTY_FIRESAT_GET_FIRMWARE_VERSION,
+                             _ptrDataInstance, 22,
+                             _ptrDataReturned, 22, out byteCount);
 
-        Log.Log.WriteFile("{0} = 0x{1:X} = {2} = {3}",
-                i, k, k, (char)k);
-        if (k < 0x20)
-          ch = '.';
-        else
-          ch = (char)k;
-        version += ch;
+
+        if (hr != 0)
+        {
+          Log.Log.WriteFile("FireDTV:GetFirmwareVersion() failed 0x{0:X}", hr);
+          return String.Empty;
+        }
+
+        byte[] k = { 0, 0, 0, 0, 0, 0 };
+        Marshal.Copy(_ptrDataReturned, k, 0, 6);
+
+        // HW in first 3 bytes of returned data ( 8 = 3bytes of 2 chars and 2 separators )
+        string hwrev = BitConverter.ToString(k).Replace("-", ".").Substring(0, 8);
+
+        // SW firmware 3 bytes of returned data ( 8 = 3bytes of 2 chars and 2 separators )
+        string fwrev = BitConverter.ToString(k).Replace("-", ".").Substring(9, 8);
+
+        // SW firmware build in next 2 bytes
+        string fwbuild = (((int)Marshal.ReadByte(_ptrDataReturned, 6) * 256) + Marshal.ReadByte(_ptrDataReturned, 7)).ToString();
+
+        version = String.Format("HW: {0}, FW: {1} build {2}", hwrev, fwrev, fwbuild);
       }
       return version;
     }
-    */
+
     /// <summary>
     /// Gets the driver version number.
     /// </summary>
@@ -700,6 +706,7 @@ namespace TvLibrary.Implementations.DVB
         }
         ushort camStatus = (ushort)Marshal.ReadInt16(_ptrDataReturned, 0);
 
+        Log.Log.Debug("FireDTV:GetCAMStatus() status is <{0}>", camStatus);
         return camStatus;
       }
       finally
