@@ -344,7 +344,9 @@ namespace MediaPortal.Player
             //check if a subtitle extension exists
             bool subsPresent = false;
             string look4sub = Path.ChangeExtension(m_strCurrentFile, null).ToLower();
-            if (File.Exists(look4sub + ".srt") || File.Exists(look4sub + ".sub"))
+            if (File.Exists(look4sub + ".srt") || File.Exists(look4sub + ".sub") ||
+            (Directory.GetFiles(Path.GetDirectoryName(look4sub), Path.GetFileNameWithoutExtension(look4sub) + ".*.srt").Length > 0) ||
+            (Directory.GetFiles(Path.GetDirectoryName(look4sub), Path.GetFileNameWithoutExtension(look4sub) + ".*.sub").Length > 0))
             {
               subsPresent = true;
             }
