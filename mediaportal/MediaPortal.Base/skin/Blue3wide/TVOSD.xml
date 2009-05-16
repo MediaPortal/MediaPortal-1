@@ -55,7 +55,7 @@
       <description>rec logo</description>
       <type>image</type>
       <id>39</id>
-      <posX>626</posX>
+      <posX>90</posX>
       <posY>647</posY>
       <texture>rec.png</texture>
       <animation effect="fade" time="150">visiblechange</animation>

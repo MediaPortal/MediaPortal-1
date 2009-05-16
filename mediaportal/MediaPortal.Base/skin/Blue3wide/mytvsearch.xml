@@ -60,14 +60,15 @@
     <control>
       <type>group</type>
       <description>group element</description>
-      <posX>71</posX>
-      <posY>121</posY>
-      <layout>StackLayout</layout>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
       <control>
         <type>sortbutton</type>
         <id>2</id>
+        <posX>71</posX>
+        <posY>121</posY>
+        <width>270</width>
+        <height>45</height>
         <label>620</label>
         <onleft>10</onleft>
         <onright>10</onright>
@@ -78,6 +79,10 @@
         <description>Search by Genres</description>
         <type>togglebutton</type>
         <id>4</id>
+        <posX>71</posX>
+        <posY>166</posY>
+        <width>270</width>
+        <height>45</height>
         <textcolor>ffffffff</textcolor>
         <colordiffuse>ffffffff</colordiffuse>
         <label>725</label>
@@ -90,6 +95,10 @@
         <description>Search by Title</description>
         <type>togglebutton</type>
         <id>5</id>
+        <posX>71</posX>
+        <posY>211</posY>
+        <width>270</width>
+        <height>45</height>
         <textcolor>ffffffff</textcolor>
         <colordiffuse>ffffffff</colordiffuse>
         <label>726</label>
@@ -102,6 +111,10 @@
         <description>Search by Description</description>
         <type>togglebutton</type>
         <id>6</id>
+         <posX>71</posX>
+        <posY>256</posY>
+        <width>270</width>
+        <height>45</height>
         <label>922</label>
         <textcolor>ffffffff</textcolor>
         <colordiffuse>ffffffff</colordiffuse>
@@ -114,6 +127,10 @@
         <description>Letter button</description>
         <type>selectbutton</type>
         <id>7</id>
+        <posX>71</posX>
+        <posY>301</posY>
+        <width>263</width>
+        <height>45</height>
         <label>872</label>
         <onleft>7</onleft>
         <onright>10</onright>
@@ -124,6 +141,10 @@
         <description>sms input</description>
         <type>button</type>
         <id>19</id>
+        <posX>71</posX>
+        <posY>346</posY>
+        <width>270</width>
+        <height>45</height>
         <label>137</label>
         <onup>7</onup>
         <ondown>8</ondown>
@@ -134,6 +155,10 @@
         <description>Title button</description>
         <type>selectbutton</type>
         <id>8</id>
+        <posX>71</posX>
+        <posY>391</posY>
+        <width>263</width>
+        <height>45</height>
         <label>873</label>
         <onleft>19</onleft>
         <onright>10</onright>
@@ -144,6 +169,10 @@
         <description>Episode button</description>
         <type>selectbutton</type>
         <id>9</id>
+        <posX>71</posX>
+        <posY>436</posY>
+        <width>263</width>
+        <height>45</height>
         <label>874</label>
         <onleft>19</onleft>
         <onright>10</onright>
@@ -166,15 +195,27 @@
         <ondown>2</ondown>
         <textcolor>FFFFFFFF</textcolor>
         <height>380</height>
+        <textureHeight>65</textureHeight>
+        <keepaspectratio>yes</keepaspectratio>
+         <itemWidth>50</itemWidth>
+         <itemHeight>50</itemHeight>
+         <IconXOff>7</IconXOff>
+         <IconYOff>8</IconYOff>
+         <PinIconXOff>90</PinIconXOff>
+         <PinIconYOff>10</PinIconYOff>
+         <textXOff>88</textXOff>
+      <textYOff>2</textYOff>
+      <textXOff2>743</textXOff2>
+      <textYOff2>36</textYOff2>
+      <textXOff3>177</textXOff3>
+      <textYOff3>36</textYOff3>
       </control>
       <control>
         <description>scheduler recordings listcontrol</description>
         <type>listcontrol</type>
         <id>11</id>
         <height>380</height>
-        <textureHeight>55</textureHeight>
-        <itemHeight>55</itemHeight>
-        <itemWidth>60</itemWidth>
+        <textureHeight>75</textureHeight>
         <keepaspectratio>yes</keepaspectratio>
         <font2>font10</font2>
         <font3>font10</font3>
@@ -182,6 +223,18 @@
         <onright>2</onright>
         <onup>2</onup>
         <ondown>2</ondown>
+         <itemWidth>50</itemWidth>
+         <itemHeight>50</itemHeight>
+         <IconXOff>7</IconXOff>
+         <IconYOff>8</IconYOff>
+         <PinIconXOff>90</PinIconXOff>
+         <PinIconYOff>10</PinIconYOff>
+         <textXOff>88</textXOff>
+      <textYOff>2</textYOff>
+      <textXOff2>743</textXOff2>
+      <textYOff2>2</textYOff2>
+      <textXOff3>177</textXOff3>
+      <textYOff3>36</textYOff3>
       </control>
     </control>
     <control>

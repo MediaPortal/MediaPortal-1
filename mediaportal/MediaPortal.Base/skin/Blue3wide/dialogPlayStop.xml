@@ -11,9 +11,9 @@
       <id>10</id>
       <posX>675</posX>
       <posY>415</posY>
-      <textXOff>53</textXOff>
+      <textXOff>49</textXOff>
       <textYOff>8</textYOff>
-      <width>186</width>
+      <width>196</width>
       <height>47</height>
       <textureFocus>small_button_focus.png</textureFocus>
       <textureNoFocus>small_button_nofocus.png</textureNoFocus>
@@ -31,9 +31,9 @@
       <id>11</id>
       <posX>408</posX>
       <posY>415</posY>
-      <textXOff>56</textXOff>
+      <textXOff>50</textXOff>
       <textYOff>8</textYOff>
-      <width>186</width>
+      <width>196</width>
       <height>47</height>
       <textureFocus>small_button_focus.png</textureFocus>
       <textureNoFocus>small_button_nofocus.png</textureNoFocus>

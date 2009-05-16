@@ -123,14 +123,14 @@
       <IconXOff>21</IconXOff>
       <PinIconXOff>110</PinIconXOff>
       <PinIconYOff>15</PinIconYOff>
-      <spinPosX>1031</spinPosX>
+      <spinPosX>1125</spinPosX>
       <itemWidth>74</itemWidth>
       <itemHeight>52</itemHeight>
       <textureFocus>album_background_focus.png</textureFocus>
       <textureNoFocus>album_background_nofocus.png</textureNoFocus>
       <spaceBetweenItems>8</spaceBetweenItems>
       <textureHeight>62</textureHeight>
-      <keepaspectratio>no</keepaspectratio>
+      <keepaspectratio>yes</keepaspectratio>
       <font2>font10</font2>
       <font3>font10</font3>
       <onleft>2</onleft>
