@@ -941,8 +941,13 @@ namespace MediaPortal.Video.Database
       int id = movieDetails.ID;
       if (id < 0)
       {
-        Log.Info("Adding file:{0}", file);
-        id = VideoDatabase.AddMovieFile(file);
+        if (File.Exists(file))
+        {
+          Log.Info("Adding file:{0}", file);
+          id = VideoDatabase.AddMovieFile(file);
+        }
+        else
+          Log.Info("File doesn't exists. So no info is stored in db.");
         VirtualDirectory dir = new VirtualDirectory();
         dir.SetExtensions(Util.Utils.VideoExtensions);
         List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
