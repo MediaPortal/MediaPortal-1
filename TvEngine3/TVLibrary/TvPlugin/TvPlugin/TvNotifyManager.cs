@@ -356,32 +356,27 @@ namespace TvPlugin
 
           if (newRecording != null)
           {
-            IList<Program> prgs = Program.RetrieveByTitleAndTimesInterval(newRecording.Title,
+            IList<Schedule> schedules = Schedule.RetrieveByTitleAndTimesInterval(newRecording.Title,
                                                                           newRecording.StartTime.AddHours(-4),
-                                                                          newRecording.EndTime);
+                                                                          newRecording.StartTime,
+                                                                          newRecording.IdChannel);
 
-            Program prg = null;
-            if (prgs != null && prgs.Count > 0)
+            Schedule schedule = null;
+            if (schedules != null && schedules.Count > 0)
             {
-              prg = prgs[0];
+              schedule = schedules[0];
             }
-            string text = "";
-            if (prg != null)
+            string endTime = string.Empty;
+            if (schedule != null)
             {
-              text = String.Format("{0} {1}-{2}",
-                                   prg.Title,
-                                   //prg.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                   DateTime.Now.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                   prg.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+              endTime = schedule.EndTime.AddMinutes(schedule.PostRecordInterval).ToString("t",
+                                                                                          CultureInfo.CurrentCulture.
+                                                                                            DateTimeFormat);
             }
-            else
-            {
-              text = String.Format("{0} {1}-{2}",
-                                   newRecording.Title,
-                                   newRecording.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                   DateTime.Now.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-              //text = GUILocalizeStrings.Get(736);//no tvguide data available
-            }
+            string text = String.Format("{0} {1}-{2}",
+                                 newRecording.Title,
+                                 newRecording.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                 endTime);
 
             if (!Notify(GUILocalizeStrings.Get(1446), text, newRecording.ReferencedChannel().DisplayName))
             {

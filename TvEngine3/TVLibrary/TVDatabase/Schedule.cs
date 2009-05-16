@@ -1002,5 +1002,33 @@ namespace TvDatabase
     {
       return String.Format("{0} on {1} {2} - {3}  ID={4}", ProgramName, IdChannel, StartTime, EndTime, idSchedule);
     }
+
+    /// <summary>
+    /// Retreives the programs with a given title and starting between given Start and End Times 
+    /// </summary>
+    /// <param name="title">Title we wanna look for</param>
+    /// <param name="startTime">StartTime</param>
+    /// <param name="endTime">EndTime</param>
+    /// <param name="idChannel">The id of the channel</param>
+    /// <returns></returns>
+    public static IList<Schedule> RetrieveByTitleAndTimesInterval(string title, DateTime startTime, DateTime endTime, int idChannel)
+    {
+      //select * from 'foreigntable'
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Schedule));
+
+      // where foreigntable.foreignkey = ourprimarykey
+      sb.AddConstraint(Operator.Equals, "programName", title);
+      sb.AddConstraint(Operator.GreaterThanOrEquals, "startTime", startTime);
+      sb.AddConstraint(Operator.GreaterThanOrEquals, "endTime", endTime);
+      sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+      // execute the statement/query and create a collection of User instances from the result set
+      return ObjectFactory.GetCollection<Schedule>(stmt.Execute());
+
+    }
+
+
   }
 }
