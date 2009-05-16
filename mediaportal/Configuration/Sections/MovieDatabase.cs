@@ -1209,25 +1209,19 @@ namespace MediaPortal.Configuration.Sections
       string strPath = string.Empty;
       Util.Utils.Split(listViewFiles.Items[0].Text, out strPath, out strFilename);
 
-      DirectoryInfo di = new DirectoryInfo(strPath);
-      FileInfo[] jpgFiles = di.GetFiles("*.jpg");
-
-      int count = 1;
-
-      foreach (FileInfo file in jpgFiles)
+      if (Directory.Exists(strPath))
       {
-        ComboBoxArt art = new ComboBoxArt(String.Format("Local Picture {0}", count), file.FullName);
-        imagesListBox.Items.Add(art);
-        ++count;
-      }
+        DirectoryInfo di = new DirectoryInfo(strPath);
+        FileInfo[] jpgFiles = di.GetFiles("*.jpg");
 
-      jpgFiles = di.GetFiles("*.jpeg");
+        int count = 1;
 
-      foreach (FileInfo file in jpgFiles)
-      {
-        ComboBoxArt art = new ComboBoxArt(String.Format("Local Picture {0}", count), file.FullName);
-        imagesListBox.Items.Add(art);
-        ++count;
+        foreach (FileInfo file in jpgFiles)
+        {
+          ComboBoxArt art = new ComboBoxArt(String.Format("Local Picture {0}", count), file.FullName);
+          imagesListBox.Items.Add(art);
+          ++count;
+        }
       }
 
       IMPawardsSearch impSearch = new IMPawardsSearch();
