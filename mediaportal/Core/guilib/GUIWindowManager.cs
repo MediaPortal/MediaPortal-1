@@ -745,6 +745,16 @@ namespace MediaPortal.GUI.Library
                 _listHistory.RemoveAt(0);
               }
               _listHistory.Add(_activeWindowId);
+
+              // GEMX: Prevent a sequence of window to re-occure after one another
+              if (_listHistory.Count > 3)
+              {
+                if (_listHistory[_listHistory.Count - 1] == _listHistory[_listHistory.Count - 3] && _listHistory[_listHistory.Count - 2] == _listHistory[_listHistory.Count - 4])
+                {
+                  _listHistory.RemoveAt(_listHistory.Count - 1);
+                  _listHistory.RemoveAt(_listHistory.Count - 1);
+                }
+              }
               //Log.Info("Window list add Id:{0} new count: {1}", _activeWindowId, _listHistory.Count);
             }
           }
