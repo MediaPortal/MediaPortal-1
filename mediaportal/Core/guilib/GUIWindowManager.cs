@@ -908,7 +908,8 @@ namespace MediaPortal.GUI.Library
         // Exit if there is no previous window
         if (_listHistory.Count == 0)
         {
-          return;
+          // if _listhistorycount gets corrupted, go home
+          _listHistory.Add((int)GUIWindow.Window.WINDOW_HOME);
         }
 
         if (OnPostRenderAction != null)
