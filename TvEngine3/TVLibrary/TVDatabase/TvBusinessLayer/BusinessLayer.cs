@@ -206,6 +206,34 @@ namespace TvDatabase
         map.Persist();
       }
     }
+    /// <summary>
+    /// Add a radio channel to radio group by name
+    /// </summary>
+    /// <param name="channel">channel to add</param>
+    /// <param name="groupName">target group name</param>
+    public void AddChannelToRadioGroup(Channel channel, string groupName)
+    {
+      RadioChannelGroup currentRadioGroup = null;
+      IList<RadioChannelGroup> allRadioGroups = RadioChannelGroup.ListAll();
+
+      // check for existing group
+      foreach (RadioChannelGroup radioGroup in allRadioGroups)
+      {
+        if (radioGroup.GroupName == groupName)
+        {
+          currentRadioGroup = radioGroup;
+          break;
+        }
+      }
+      // no group found yet? then create new one
+      if (currentRadioGroup == null)
+      {
+        currentRadioGroup = new RadioChannelGroup(groupName, allRadioGroups.Count);
+        currentRadioGroup.Persist();
+      }
+      // add channel to group
+      AddChannelToRadioGroup(channel, currentRadioGroup);
+    }
 
     public void AddChannelToRadioGroup(Channel channel, RadioChannelGroup group)
     {

@@ -308,7 +308,14 @@ namespace SetupTv.Sections
 
             if (checkBoxCreateGroups.Checked)
             {
-              layer.AddChannelToGroup(dbChannel, channel.Provider);
+              if (dbChannel.IsTv)
+              {
+                layer.AddChannelToGroup(dbChannel, channel.Provider);
+              }
+              if (dbChannel.IsRadio)
+              {
+                layer.AddChannelToRadioGroup(dbChannel, channel.Provider);
+              }
             }
             if (currentDetail == null)
             {
