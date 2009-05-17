@@ -3210,7 +3210,7 @@ namespace TvService
           {
             // we will only update user created groups, since it will often have fewer channels than "all channels"
             // going into "all channels" group in mini EPG will always be slower.
-            if (group.GroupName.Equals("All Channels"))
+            if (group.GroupName.Equals(TvConstants.TvGroupNames.AllChannels))
               continue;
 
             if (_tvChannelListGroups == null)

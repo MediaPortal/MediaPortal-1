@@ -34,6 +34,7 @@ using System.Diagnostics;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Log;
+using TvLibrary.Interfaces;
 
 namespace SetupTv
 {
@@ -207,7 +208,7 @@ namespace SetupTv
 
       // Mantis #0002138: impossible to configure TVGroups 
       TvBusinessLayer layer = new TvBusinessLayer();
-      layer.CreateGroup("All Channels");
+      layer.CreateGroup(TvConstants.TvGroupNames.AllChannels);
 
       try
       {

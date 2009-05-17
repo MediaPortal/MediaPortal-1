@@ -36,6 +36,7 @@ using MediaPortal.Profile;
 using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
+using TvLibrary.Interfaces;
 
 namespace TvPlugin
 {
@@ -705,7 +706,7 @@ namespace TvPlugin
         {
           if (!showAllChannelsGroup)
           {
-            if (group.GroupName == "All Channels")
+            if (group.GroupName == TvConstants.RadioGroupNames.AllChannels)
             {
               continue;
             }

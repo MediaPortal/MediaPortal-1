@@ -1133,7 +1133,7 @@ namespace SetupTv.Sections
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.VideoInput1;
         layer.AddTuningDetails(dbChannel, tuningDetail);
         layer.MapChannelToCard(card, dbChannel, false);
-        layer.AddChannelToGroup(dbChannel, "All Channels");
+        layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.VideoInput2))
       {
@@ -1146,7 +1146,7 @@ namespace SetupTv.Sections
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.VideoInput2;
         layer.AddTuningDetails(dbChannel, tuningDetail);
         layer.MapChannelToCard(card, dbChannel, false);
-        layer.AddChannelToGroup(dbChannel, "All Channels");
+        layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.VideoInput3))
       {
@@ -1159,7 +1159,7 @@ namespace SetupTv.Sections
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.VideoInput3;
         layer.AddTuningDetails(dbChannel, tuningDetail);
         layer.MapChannelToCard(card, dbChannel, false);
-        layer.AddChannelToGroup(dbChannel, "All Channels");
+        layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.SvhsInput1))
       {
@@ -1172,7 +1172,7 @@ namespace SetupTv.Sections
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput1;
         layer.AddTuningDetails(dbChannel, tuningDetail);
         layer.MapChannelToCard(card, dbChannel, false);
-        layer.AddChannelToGroup(dbChannel, "All Channels");
+        layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.SvhsInput2))
       {
@@ -1185,7 +1185,7 @@ namespace SetupTv.Sections
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput2;
         layer.AddTuningDetails(dbChannel, tuningDetail);
         layer.MapChannelToCard(card, dbChannel, false);
-        layer.AddChannelToGroup(dbChannel, "All Channels");
+        layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.SvhsInput3))
       {
@@ -1198,7 +1198,7 @@ namespace SetupTv.Sections
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput3;
         layer.AddTuningDetails(dbChannel, tuningDetail);
         layer.MapChannelToCard(card, dbChannel, false);
-        layer.AddChannelToGroup(dbChannel, "All Channels");
+        layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.RgbInput1))
       {
@@ -1211,7 +1211,7 @@ namespace SetupTv.Sections
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput1;
         layer.AddTuningDetails(dbChannel, tuningDetail);
         layer.MapChannelToCard(card, dbChannel, false);
-        layer.AddChannelToGroup(dbChannel, "All Channels");
+        layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.RgbInput2))
       {
@@ -1224,7 +1224,7 @@ namespace SetupTv.Sections
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput2;
         layer.AddTuningDetails(dbChannel, tuningDetail);
         layer.MapChannelToCard(card, dbChannel, false);
-        layer.AddChannelToGroup(dbChannel, "All Channels");
+        layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.RgbInput3))
       {
@@ -1237,7 +1237,7 @@ namespace SetupTv.Sections
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput3;
         layer.AddTuningDetails(dbChannel, tuningDetail);
         layer.MapChannelToCard(card, dbChannel, false);
-        layer.AddChannelToGroup(dbChannel, "All Channels");
+        layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.YRYBYInput1))
       {
@@ -1250,7 +1250,7 @@ namespace SetupTv.Sections
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.YRYBYInput1;
         layer.AddTuningDetails(dbChannel, tuningDetail);
         layer.MapChannelToCard(card, dbChannel, false);
-        layer.AddChannelToGroup(dbChannel, "All Channels");
+        layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.YRYBYInput2))
       {
@@ -1263,7 +1263,7 @@ namespace SetupTv.Sections
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.YRYBYInput2;
         layer.AddTuningDetails(dbChannel, tuningDetail);
         layer.MapChannelToCard(card, dbChannel, false);
-        layer.AddChannelToGroup(dbChannel, "All Channels");
+        layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.YRYBYInput3))
       {
@@ -1276,7 +1276,7 @@ namespace SetupTv.Sections
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.YRYBYInput3;
         layer.AddTuningDetails(dbChannel, tuningDetail);
         layer.MapChannelToCard(card, dbChannel, false);
-        layer.AddChannelToGroup(dbChannel, "All Channels");
+        layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
       }
       MessageBox.Show(this, "Channels added.");
     }

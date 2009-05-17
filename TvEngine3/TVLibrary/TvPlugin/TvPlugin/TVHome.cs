@@ -3713,11 +3713,11 @@ namespace TvPlugin
 
         TvBusinessLayer layer = new TvBusinessLayer();
         Log.Info("Checking if radio group for all radio channels exists");
-        RadioChannelGroup allRadioChannelsGroup = layer.GetRadioChannelGroupByName("All Channels");
+        RadioChannelGroup allRadioChannelsGroup = layer.GetRadioChannelGroupByName(TvConstants.RadioGroupNames.AllChannels);
         if (allRadioChannelsGroup == null)
         {
           Log.Info("All channels group for radio channels does not exist. Creating it...");
-          allRadioChannelsGroup = new RadioChannelGroup("All Channels", 9999);
+          allRadioChannelsGroup = new RadioChannelGroup(TvConstants.RadioGroupNames.AllChannels, 9999);
           allRadioChannelsGroup.Persist();
         }
         IList<Channel> radioChannels = layer.GetAllRadioChannels();
@@ -3753,7 +3753,7 @@ namespace TvPlugin
         found = false;
         foreach (ChannelGroup group in groups)
         {
-          if (group.GroupName == "All Channels")
+          if (group.GroupName == TvConstants.TvGroupNames.AllChannels)
           {
             found = true;
             foreach (Channel channel in channels)
@@ -3777,7 +3777,7 @@ namespace TvPlugin
               }
               if (!groupContainsChannel)
               {
-                layer.AddChannelToGroup(channel, "All Channels");
+                layer.AddChannelToGroup(channel, TvConstants.TvGroupNames.AllChannels);
               }
             }
             break;
@@ -3786,12 +3786,12 @@ namespace TvPlugin
 
         if (!found)
         {
-          Log.Info(" group:{0} not found. create it", "All Channels");
+          Log.Info(" group:{0} not found. create it", TvConstants.TvGroupNames.AllChannels);
           foreach (Channel channel in channels)
           {
-            layer.AddChannelToGroup(channel, "All Channels");
+            layer.AddChannelToGroup(channel, TvConstants.TvGroupNames.AllChannels);
           }
-          Log.Info(" group:{0} created", "All Channels");
+          Log.Info(" group:{0} created", TvConstants.TvGroupNames.AllChannels);
         }
 
 
@@ -3799,7 +3799,7 @@ namespace TvPlugin
         foreach (ChannelGroup group in groups)
         {
           //group.GroupMaps.ApplySort(new GroupMap.Comparer(), false);
-          if (hideAllChannelsGroup && group.GroupName.Equals("All Channels") && groups.Count > 1)
+          if (hideAllChannelsGroup && group.GroupName.Equals(TvConstants.TvGroupNames.AllChannels) && groups.Count > 1)
           {
             continue;
           }
@@ -4447,7 +4447,7 @@ namespace TvPlugin
       Log.Info("ChannelNavigator::LoadSettings()");
       string currentchannelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
       m_zapdelay = 1000*xmlreader.GetValueAsInt("movieplayer", "zapdelay", 2);
-      string groupname = xmlreader.GetValueAsString("mytv", "group", "All Channels");
+      string groupname = xmlreader.GetValueAsString("mytv", "group", TvConstants.TvGroupNames.AllChannels);
       m_currentgroup = GetGroupIndex(groupname);
       if (m_currentgroup < 0 || m_currentgroup >= m_groups.Count) // Group no longer exists?
       {

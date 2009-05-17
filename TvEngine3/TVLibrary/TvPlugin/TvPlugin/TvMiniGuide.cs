@@ -36,6 +36,7 @@ using MediaPortal.Profile;
 using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
+using TvLibrary.Interfaces;
 
 namespace TvPlugin
 {
@@ -492,7 +493,7 @@ namespace TvPlugin
       benchClock.Reset();
       benchClock.Start();
 
-      if (TVHome.Navigator.CurrentGroup.GroupName.Equals("All Channels") || (!g_Player.IsTV && !g_Player.Playing))
+      if (TVHome.Navigator.CurrentGroup.GroupName.Equals(TvConstants.TvGroupNames.AllChannels) || (!g_Player.IsTV && !g_Player.Playing))
       {
         //we have no way of using the cached channelstates on the server in the following situations.
         // 1) when the "all channels" group is selected - too many channels.

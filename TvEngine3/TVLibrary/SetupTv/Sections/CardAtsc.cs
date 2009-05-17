@@ -316,7 +316,7 @@ namespace SetupTv.Sections
 
             dbChannel.Persist();
 
-            layer.AddChannelToGroup(dbChannel, "All Channels");
+            layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
 
             if (currentDetail == null)
             {
