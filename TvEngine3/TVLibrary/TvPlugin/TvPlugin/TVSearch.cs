@@ -597,7 +597,7 @@ namespace TvPlugin
               }
               else
               {
-                titles = layer.SearchPrograms(filterShow);
+                titles = layer.SearchPrograms("%"+filterShow);
               }
             }
             else
@@ -608,7 +608,7 @@ namespace TvPlugin
               }
               else
               {
-                titles = layer.SearchPrograms(filterShow);
+                titles = layer.SearchPrograms("%"+filterShow);
               }
             }
             foreach (Program program in titles)
