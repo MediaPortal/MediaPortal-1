@@ -37,7 +37,6 @@ namespace TvControl
   /// </summary>
   public class RemoteControl
   {
-    private static bool _channelRegistered = false;
     private static IController _tvControl;
     private static string _hostName = "localhost";
     private static TcpChannel CallbackChannel; // callback channel
@@ -49,19 +48,18 @@ namespace TvControl
     private static void RegisterChannel()
     {
       try {
-        // start listening on local port only once!
         if (CallbackChannel == null)
         {
+          Log.Debug("RemoteControl: RegisterChannel first called in Domain {0} for thread {1} with id {2}", AppDomain.CurrentDomain.FriendlyName, Thread.CurrentThread.Name, Thread.CurrentThread.ManagedThreadId);
+          
           //turn off customErrors to receive full exception messages
           RemotingConfiguration.CustomErrorsMode = CustomErrorsModes.Off;
 
           // Creating a custom formatter for a TcpChannel sink chain.
           BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
-          //SoapServerFormatterSinkProvider provider   = new SoapServerFormatterSinkProvider();
           provider.TypeFilterLevel                   = TypeFilterLevel.Full; // needed for passing objref!
           IDictionary channelProperties              = new Hashtable(); // Creating the IDictionary to set the port on the channel instance.
-          channelProperties.Add("port", 31459); // "0" chooses one available port
-          channelProperties.Add("exclusiveAddressUse", false);
+          channelProperties.Add("port", 0);         // "0" chooses one available port
 
           // Pass the properties for the port setting and the server provider in the server chain argument. (Client remains null here.)
           CallbackChannel = new TcpChannel(channelProperties, null, provider);
