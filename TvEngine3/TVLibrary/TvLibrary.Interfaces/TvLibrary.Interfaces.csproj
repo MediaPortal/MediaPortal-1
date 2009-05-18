@@ -112,6 +112,7 @@
     <Compile Include="Simmetrics\Levenstein.cs" />
     <Compile Include="Simmetrics\MathFuncs.cs" />
     <Compile Include="Simmetrics\SubCost01.cs" />
+    <Compile Include="TvConstants.cs" />
     <Compile Include="TvException.cs" />
   </ItemGroup>
   <ItemGroup>
