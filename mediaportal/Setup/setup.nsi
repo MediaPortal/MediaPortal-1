@@ -440,6 +440,10 @@ Section "MediaPortal core files (required)" SecCore
   ; Core
   File "..\core\bin\${BUILD_TYPE}\Core.dll"
   File "..\core\bin\${BUILD_TYPE}\DirectShowLib.dll"
+  File "..\core.cpp\fontEngine\bin\${BUILD_TYPE}\fontengine.dll"
+  File "..\core.cpp\DirectShowHelper\bin\${BUILD_TYPE}\dshowhelper.dll"
+  File "..\core.cpp\DxUtil\bin\${BUILD_TYPE}\dxutil.dll"
+  File "${svn_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\Dxerr9.dll"
   File "..\MiniDisplayLibrary\bin\${BUILD_TYPE}\MiniDisplayLibrary.dll"
   ; Utils
   File "..\Utils\bin\${BUILD_TYPE}\Utils.dll"
