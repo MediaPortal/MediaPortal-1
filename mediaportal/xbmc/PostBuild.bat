@@ -82,9 +82,16 @@ xcopy /y %1\XPImapiBurner\bin\%2\XPBurnComponent.dll .
 REM xcopy /y %1\WindowPlugins\GUIBurner\XPBurnComponent.dll .
 
 
-
-REM Copy All new files from base
+REM Copy all new files from base
 xcopy %1\MediaPortal.Base\*.* . /E /R /Y /D
+
+REM Copy all dll files from cpp solution
+xcopy %1\Core.cpp\DirectShowHelper\bin\%2\dshowhelper.dll .
+xcopy %1\Core.cpp\DXUtil\bin\%2\dxutil.dll .
+xcopy %1\Core.cpp\fontEngine\bin\%2\fontEngine.dll .
+
+REM Copy one dll from DirectShowFilters folder
+xcopy %1\..\DirectShowFilters\DXErr9\bin\%2\dxerr9.dll .
 
 REM mpWatchDog
 xcopy /y %1\WatchDog\bin\%2\WatchDog.exe .
