@@ -20,6 +20,7 @@
  */
 using System;
 using DirectShowLib.BDA;
+using TvLibrary.Interfaces;
 
 namespace TvLibrary.Channels
 {
@@ -213,6 +214,23 @@ namespace TvLibrary.Channels
       //return base.GetHashCode() ^ _physicalChannel.GetHashCode() ^ _majorChannel.GetHashCode() ^ _minorChannel.GetHashCode() ^ _symbolRate.GetHashCode() ^ _modulation.GetHashCode() ^ _videoPid.GetHashCode() ^ _audioPid.GetHashCode();
       return base.GetHashCode() ^ _physicalChannel.GetHashCode() ^ _majorChannel.GetHashCode() ^
              _minorChannel.GetHashCode() ^ _symbolRate.GetHashCode() ^ _modulation.GetHashCode();
+    }
+
+    /// <summary>
+    /// Checks if the given channel and this instance are on the different transponder
+    /// </summary>
+    /// <param name="channel">Channel to check</param>
+    /// <returns>true, if the channels are on the same transponder</returns>
+    public override bool IsDifferentTransponder(IChannel channel)
+    {
+      ATSCChannel atscChannel = channel as ATSCChannel;
+      if (atscChannel == null)
+      {
+        return true;
+      }
+      return atscChannel.MajorChannel != MajorChannel ||
+             atscChannel.MinorChannel != MinorChannel ||
+             atscChannel.PhysicalChannel != PhysicalChannel;
     }
   }
 }

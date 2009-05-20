@@ -2394,7 +2394,7 @@ namespace TvService
                 continue;
               }
 
-              bool isDiffTS = tvcard.Tuner.IsDifferentTransponder(tuneChannel, tmpChannel);
+              bool isDiffTS = tuneChannel.IsDifferentTransponder(tmpChannel);
 
               if (isDiffTS)
               {

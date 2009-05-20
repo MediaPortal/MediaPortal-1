@@ -44,7 +44,6 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected IDVBTuneRequest _tuneRequest;
 
-
     #endregion
 
     #region ctor
@@ -217,56 +216,64 @@ namespace TvLibrary.Implementations.DVB
         subChannelId = GetNewSubChannel(channel);
       }
 
-      //_pmtPid = -1;
-      ILocator locator;
-
-      int lowOsc;
-      int hiOsc;
-      int lnbSwitch;
-      BandTypeConverter.GetDefaultLnbSetup(Parameters, dvbsChannel.BandType, out lowOsc, out hiOsc, out lnbSwitch);
-      Log.Log.Info("LNB low:{0} hi:{1} switch:{2}", lowOsc, hiOsc, lnbSwitch);
-      if (lnbSwitch == 0)
-        lnbSwitch = 18000;
-      _tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
-      _tuningSpace.put_LowOscillator(lowOsc * 1000);
-      _tuningSpace.put_HighOscillator(hiOsc * 1000);
-
-      ITuneRequest request;
-      _tuningSpace.CreateTuneRequest(out request);
-      _tuneRequest = (IDVBTuneRequest)request;
-
-      _tuningSpace.get_DefaultLocator(out locator);
-      IDVBSLocator dvbsLocator = (IDVBSLocator)locator;
-      _tuneRequest.put_ONID(dvbsChannel.NetworkId);
-      _tuneRequest.put_SID(dvbsChannel.ServiceId);
-      _tuneRequest.put_TSID(dvbsChannel.TransportId);
-      locator.put_CarrierFrequency((int)dvbsChannel.Frequency);
-      dvbsLocator.put_SymbolRate(dvbsChannel.SymbolRate);
-      dvbsLocator.put_SignalPolarisation(dvbsChannel.Polarisation);
-
-      //DVB-S2 specific modulation class call here if DVB-S2 card detected
-      DVBSChannel tuneChannel = dvbsChannel;
-      if (_conditionalAccess != null)
+      ITvSubChannel ch;
+      if (_previousChannel == null ||  _previousChannel.IsDifferentTransponder(dvbsChannel))
       {
-        //Log.Log.WriteFile("Set DVB-S2 modulation...");
-        tuneChannel = _conditionalAccess.SetDVBS2Modulation(_parameters, dvbsChannel);
-      }
-      dvbsLocator.put_Modulation(tuneChannel.ModulationType);
-      Log.Log.WriteFile("  Channel modulation is set to {0}", tuneChannel.ModulationType);
-      //Log.Log.Info("Put Modulation returned:{0:X}", hr);
-      dvbsLocator.put_InnerFECRate(dvbsChannel.InnerFecRate);
-      Log.Log.WriteFile("  Channel FECRate is set to {0}", tuneChannel.InnerFecRate);
-      //Log.Log.Info("Put InnerFECRate returned:{0:X}", hr);
 
-      _tuneRequest.put_Locator(locator);
+        //_pmtPid = -1;
+        ILocator locator;
 
-      if (_conditionalAccess != null)
+        int lowOsc;
+        int hiOsc;
+        int lnbSwitch;
+        BandTypeConverter.GetDefaultLnbSetup(Parameters, dvbsChannel.BandType, out lowOsc, out hiOsc, out lnbSwitch);
+        Log.Log.Info("LNB low:{0} hi:{1} switch:{2}", lowOsc, hiOsc, lnbSwitch);
+        if (lnbSwitch == 0)
+          lnbSwitch = 18000;
+        _tuningSpace.put_LNBSwitch(lnbSwitch*1000);
+        _tuningSpace.put_LowOscillator(lowOsc*1000);
+        _tuningSpace.put_HighOscillator(hiOsc*1000);
+
+        ITuneRequest request;
+        _tuningSpace.CreateTuneRequest(out request);
+        _tuneRequest = (IDVBTuneRequest) request;
+
+        _tuningSpace.get_DefaultLocator(out locator);
+        IDVBSLocator dvbsLocator = (IDVBSLocator) locator;
+        _tuneRequest.put_ONID(dvbsChannel.NetworkId);
+        _tuneRequest.put_SID(dvbsChannel.ServiceId);
+        _tuneRequest.put_TSID(dvbsChannel.TransportId);
+        locator.put_CarrierFrequency((int) dvbsChannel.Frequency);
+        dvbsLocator.put_SymbolRate(dvbsChannel.SymbolRate);
+        dvbsLocator.put_SignalPolarisation(dvbsChannel.Polarisation);
+
+        //DVB-S2 specific modulation class call here if DVB-S2 card detected
+        DVBSChannel tuneChannel = dvbsChannel;
+        if (_conditionalAccess != null)
+        {
+          //Log.Log.WriteFile("Set DVB-S2 modulation...");
+          tuneChannel = _conditionalAccess.SetDVBS2Modulation(_parameters, dvbsChannel);
+        }
+        dvbsLocator.put_Modulation(tuneChannel.ModulationType);
+        Log.Log.WriteFile("  Channel modulation is set to {0}", tuneChannel.ModulationType);
+        //Log.Log.Info("Put Modulation returned:{0:X}", hr);
+        dvbsLocator.put_InnerFECRate(dvbsChannel.InnerFecRate);
+        Log.Log.WriteFile("  Channel FECRate is set to {0}", tuneChannel.InnerFecRate);
+        //Log.Log.Info("Put InnerFECRate returned:{0:X}", hr);
+
+        _tuneRequest.put_Locator(locator);
+
+        if (_conditionalAccess != null)
+        {
+          _conditionalAccess.SendDiseqcCommand(_parameters, dvbsChannel);
+        }
+
+        ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest,true);
+        _previousChannel = dvbsChannel;
+      }else
       {
-        _conditionalAccess.SendDiseqcCommand(_parameters, dvbsChannel);
+        ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest,false);
       }
-
-      ITvSubChannel ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest);
-
       //move diseqc motor to correct satellite
       if (_conditionalAccess != null)
       {
@@ -330,6 +337,15 @@ namespace TvLibrary.Implementations.DVB
       if ((channel as DVBSChannel) == null)
         return false;
       return true;
+    }
+
+    /// <summary>
+    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+    /// </summary>
+    public override void Dispose()
+    {
+      _previousChannel = null;
+      base.Dispose();
     }
   }
 }

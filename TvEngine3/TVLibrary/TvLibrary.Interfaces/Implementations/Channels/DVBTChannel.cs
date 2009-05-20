@@ -19,6 +19,7 @@
  *
  */
 using System;
+using TvLibrary.Interfaces;
 
 namespace TvLibrary.Channels
 {
@@ -98,6 +99,21 @@ namespace TvLibrary.Channels
     public override int GetHashCode()
     {
       return base.GetHashCode() ^ _bandWidth.GetHashCode();
+    }
+
+    /// <summary>
+    /// Checks if the given channel and this instance are on the different transponder
+    /// </summary>
+    /// <param name="channel">Channel to check</param>
+    /// <returns>true, if the channels are on the same transponder</returns>
+    public override bool IsDifferentTransponder(IChannel channel)
+    {
+      DVBTChannel dvbtChannel = channel as DVBTChannel;
+      if (dvbtChannel == null)
+      {
+        return true;
+      }
+      return dvbtChannel.Frequency != Frequency;
     }
   }
 }

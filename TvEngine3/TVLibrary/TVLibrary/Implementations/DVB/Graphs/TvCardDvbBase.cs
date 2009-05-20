@@ -154,6 +154,10 @@ namespace TvLibrary.Implementations.DVB
     protected bool matchDevicePath;
     private readonly TimeShiftingEPGGrabber _timeshiftingEPGGrabber;
     WinTvCiModule winTvCiHandler;
+    /// <summary>
+    /// The previous channel
+    /// </summary>
+    protected IChannel _previousChannel;
     #endregion
 
     #region ctor
@@ -277,8 +281,9 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="subChannelId">The sub channel id.</param>
     /// <param name="channel">The channel.</param>
     /// <param name="tuneRequest">tune requests</param>
+    /// <param name="performTune">Indicates if a tune is required</param>
     /// <returns></returns>
-    protected ITvSubChannel SubmitTuneRequest(int subChannelId, IChannel channel, ITuneRequest tuneRequest)
+    protected ITvSubChannel SubmitTuneRequest(int subChannelId, IChannel channel, ITuneRequest tuneRequest, bool performTune)
     {
       Log.Log.Info("dvb:Submiting tunerequest Channel:{0} subChannel:{1} ", channel.Name, subChannelId);
       bool newSubChannel = false;
@@ -302,6 +307,8 @@ namespace TvLibrary.Implementations.DVB
         {
           _interfaceEpgGrabber.Reset();
         }
+        if (performTune)
+        {
           Log.Log.WriteFile("dvb:Submit tunerequest calling put_TuneRequest");
           int hr = ((ITuner) _filterNetworkProvider).put_TuneRequest(tuneRequest);
           Log.Log.WriteFile("dvb:Submit tunerequest done calling put_TuneRequest");
@@ -315,7 +322,7 @@ namespace TvLibrary.Implementations.DVB
             }*/
             throw new TvException("Unable to tune to channel");
           }
-
+        }
         _lastSignalUpdate = DateTime.MinValue;
         _mapSubChannels[subChannelId].OnAfterTune();
       } catch (Exception)

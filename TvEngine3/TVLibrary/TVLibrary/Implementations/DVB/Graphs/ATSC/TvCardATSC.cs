@@ -193,24 +193,34 @@ namespace TvLibrary.Implementations.DVB
         {
           BuildGraph();
         }
-        ILocator locator;
-        _tuningSpace.get_DefaultLocator(out locator);
-        IATSCLocator atscLocator = (IATSCLocator)locator;
-        //hr = _tuningSpace.put_InputType(TunerInputType.Cable);
-        atscLocator.put_PhysicalChannel(atscChannel.PhysicalChannel);
-        atscLocator.put_SymbolRate(-1);//atscChannel.SymbolRate);
-        atscLocator.put_TSID(-1);//atscChannel.TransportId);
-        atscLocator.put_CarrierFrequency((int)atscChannel.Frequency);
-        atscLocator.put_InnerFEC(FECMethod.MethodNotSet);
-        atscLocator.put_Modulation(atscChannel.ModulationType);
-        _tuneRequest.put_MinorChannel(atscChannel.MinorChannel);
-        _tuneRequest.put_Channel(atscChannel.MajorChannel);
-        _tuneRequest.put_Locator(locator);
-        //ViXS ATSC QAM check
-        _conditionalAccess.CheckVIXSQAM(atscChannel);
-        //QAM set paramters...
-        _conditionalAccess.CheckATSCQAM(atscChannel);
-        ITvSubChannel ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest);
+
+        ITvSubChannel ch;
+        if (_previousChannel == null ||  _previousChannel.IsDifferentTransponder(atscChannel))
+        {
+
+          ILocator locator;
+          _tuningSpace.get_DefaultLocator(out locator);
+          IATSCLocator atscLocator = (IATSCLocator)locator;
+          //hr = _tuningSpace.put_InputType(TunerInputType.Cable);
+          atscLocator.put_PhysicalChannel(atscChannel.PhysicalChannel);
+          atscLocator.put_SymbolRate(-1); //atscChannel.SymbolRate);
+          atscLocator.put_TSID(-1); //atscChannel.TransportId);
+          atscLocator.put_CarrierFrequency((int)atscChannel.Frequency);
+          atscLocator.put_InnerFEC(FECMethod.MethodNotSet);
+          atscLocator.put_Modulation(atscChannel.ModulationType);
+          _tuneRequest.put_MinorChannel(atscChannel.MinorChannel);
+          _tuneRequest.put_Channel(atscChannel.MajorChannel);
+          _tuneRequest.put_Locator(locator);
+          //ViXS ATSC QAM check
+          _conditionalAccess.CheckVIXSQAM(atscChannel);
+          //QAM set paramters...
+          _conditionalAccess.CheckATSCQAM(atscChannel);
+          ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest,true);
+          _previousChannel = atscChannel;
+        } else
+        {
+          ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest,false);
+        }
         //ViXS QAM set is done here...
         _conditionalAccess.CheckViXSATSCQAM(atscChannel);
         try
@@ -269,6 +279,15 @@ namespace TvLibrary.Implementations.DVB
       if ((channel as ATSCChannel) == null)
         return false;
       return true;
+    }
+
+    /// <summary>
+    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+    /// </summary>
+    public override void Dispose()
+    {
+      _previousChannel = null;
+      base.Dispose();
     }
   }
 }

@@ -155,5 +155,15 @@ namespace TvLibrary.Implementations
       return base.GetHashCode() ^ _channelName.GetHashCode() ^ _url.GetHashCode() ^
              _country.GetHashCode();
     }
+
+    /// <summary>
+    /// Checks if the given channel and this instance are on the different transponder
+    /// </summary>
+    /// <param name="channel">Channel to check</param>
+    /// <returns>true, if the channels are on the same transponder</returns>
+    public bool IsDifferentTransponder(IChannel channel)
+    {
+      return true;
+    }
   }
 }

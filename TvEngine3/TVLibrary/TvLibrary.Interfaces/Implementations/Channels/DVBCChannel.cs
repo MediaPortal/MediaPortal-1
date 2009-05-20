@@ -20,6 +20,7 @@
  */
 using System;
 using DirectShowLib.BDA;
+using TvLibrary.Interfaces;
 
 namespace TvLibrary.Channels
 {
@@ -120,6 +121,21 @@ namespace TvLibrary.Channels
     public override int GetHashCode()
     {
       return base.GetHashCode() ^ _modulation.GetHashCode() ^ _symbolRate.GetHashCode();
+    }
+
+    /// <summary>
+    /// Checks if the given channel and this instance are on the different transponder
+    /// </summary>
+    /// <param name="channel">Channel to check</param>
+    /// <returns>true, if the channels are on the same transponder</returns>
+    public override bool IsDifferentTransponder(IChannel channel)
+    {
+      DVBCChannel dvbcChannel = channel as DVBCChannel;
+      if (dvbcChannel == null)
+      {
+        return true;
+      }
+      return dvbcChannel.Frequency != Frequency;
     }
   }
 }

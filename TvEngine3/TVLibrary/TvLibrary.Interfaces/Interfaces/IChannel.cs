@@ -39,5 +39,12 @@ namespace TvLibrary.Interfaces
     /// boolean indication if this is a tv channel
     /// </summary>
     bool IsTv { get; set; }
+
+    /// <summary>
+    /// Checks if the given channel and this instance are on the different transponder
+    /// </summary>
+    /// <param name="channel">Channel to check</param>
+    /// <returns>true, if the channels are on the same transponder</returns>
+    bool IsDifferentTransponder(IChannel channel);
   }
 }

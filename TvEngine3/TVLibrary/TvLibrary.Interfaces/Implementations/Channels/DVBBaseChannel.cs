@@ -318,5 +318,15 @@ namespace TvLibrary.Channels
              _pcrPid.GetHashCode() ^ _networkId.GetHashCode() ^ _serviceId.GetHashCode() ^ _transportId.GetHashCode() ^
              _lcn.GetHashCode() ^ _videoPid.GetHashCode() ^ _audioPid.GetHashCode();
     }
+
+    /// <summary>
+    /// Checks if the given channel and this instance are on the different transponder
+    /// </summary>
+    /// <param name="channel">Channel to check</param>
+    /// <returns>true, if the channels are on the same transponder</returns>
+    public virtual bool IsDifferentTransponder(IChannel channel)
+    {
+      return true;
+    }
   }
 }

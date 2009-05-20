@@ -195,9 +195,10 @@ namespace TvLibrary.Implementations.DVB
           //@FIX this fails for back-2-back recordings
           //if (oldChannel.Equals(channel)) return _mapSubChannels[0];
           Log.Log.Info("dvbt: tune: Current Channel != null {0}", CurrentChannel.ToString());
+        } else
+        {
+          Log.Log.Info("dvbt: tune: Current channel is null");
         }
-        else
-        { Log.Log.Info("dvbt: tune: Current channel is null"); }
         if (_graphState == GraphState.Idle)
         {
           Log.Log.Info("dvbt: tune: Building graph");
@@ -206,34 +207,44 @@ namespace TvLibrary.Implementations.DVB
           {
             subChannelId = GetNewSubChannel(channel);
           }
+        } else
+        {
+          Log.Log.Info("dvbt: tune: Graph is tunning");
         }
-        else
-        { Log.Log.Info("dvbt: tune: Graph is tunning"); }
+        ITvSubChannel ch;
+        if (_previousChannel == null || _previousChannel.IsDifferentTransponder(dvbtChannel))
+        {
+          //_pmtPid = -1;
+          Log.Log.Info("dvbt: tune: Getting default locator");
+          ILocator locator;
+          _tuningSpace.get_DefaultLocator(out locator);
+          Log.Log.Info("dvbt: tune: Putting bandwidth {0}", dvbtChannel.BandWidth);
+          IDVBTLocator dvbtLocator = (IDVBTLocator) locator;
+          dvbtLocator.put_Bandwidth(dvbtChannel.BandWidth);
+          Log.Log.Info("dvbt: tune: put_ONID {0}", dvbtChannel.NetworkId);
+          _tuneRequest.put_ONID(dvbtChannel.NetworkId);
+          Log.Log.Info("dvbt: tune: put_SID {0}", dvbtChannel.ServiceId);
+          _tuneRequest.put_SID(dvbtChannel.ServiceId);
+          Log.Log.Info("dvbt: tune: put_TSID {0}", dvbtChannel.TransportId);
+          _tuneRequest.put_TSID(dvbtChannel.TransportId);
+          Log.Log.Info("dvbt: tune: Carrier frequency {0}", (int) dvbtChannel.Frequency);
+          locator.put_CarrierFrequency((int) dvbtChannel.Frequency);
+          //Log.Log.Info("dvbt: tune: put_Locator {0}", locator.ToString());
+          Log.Log.Info("dvbt: tune: put_Locator");
+          _tuneRequest.put_Locator(locator);
 
-        //_pmtPid = -1;
-        Log.Log.Info("dvbt: tune: Getting default locator");
-        ILocator locator;
-        _tuningSpace.get_DefaultLocator(out locator);
-        Log.Log.Info("dvbt: tune: Putting bandwidth {0}", dvbtChannel.BandWidth);
-        IDVBTLocator dvbtLocator = (IDVBTLocator)locator;
-        dvbtLocator.put_Bandwidth(dvbtChannel.BandWidth);
-        Log.Log.Info("dvbt: tune: put_ONID {0}", dvbtChannel.NetworkId);
-        _tuneRequest.put_ONID(dvbtChannel.NetworkId);
-        Log.Log.Info("dvbt: tune: put_SID {0}", dvbtChannel.ServiceId);
-        _tuneRequest.put_SID(dvbtChannel.ServiceId);
-        Log.Log.Info("dvbt: tune: put_TSID {0}", dvbtChannel.TransportId);
-        _tuneRequest.put_TSID(dvbtChannel.TransportId);
-        Log.Log.Info("dvbt: tune: Carrier frequency {0}", (int)dvbtChannel.Frequency);
-        locator.put_CarrierFrequency((int)dvbtChannel.Frequency);
-        //Log.Log.Info("dvbt: tune: put_Locator {0}", locator.ToString());
-        Log.Log.Info("dvbt: tune: put_Locator");
-        _tuneRequest.put_Locator(locator);
-
-        Log.Log.Info("dvbt: tune: Submitting tune request: SubId {0}, channel {1}", subChannelId, channel.ToString());
-        Log.Log.Info("dvbt: tune: Submitting tune request: {0}", _tuneRequest.ToString());
-        ITvSubChannel ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest);
-        Log.Log.Info("dvbt: tune: Running graph for channel {0}", ch.ToString());
-        Log.Log.Info("dvbt: tune: SubChannel {0}", ch.SubChannelId);
+          Log.Log.Info("dvbt: tune: Submitting tune request: SubId {0}, channel {1}", subChannelId, channel.ToString());
+          Log.Log.Info("dvbt: tune: Submitting tune request: {0}", _tuneRequest.ToString());
+          ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest,true);
+          Log.Log.Info("dvbt: tune: Running graph for channel {0}", ch.ToString());
+          Log.Log.Info("dvbt: tune: SubChannel {0}", ch.SubChannelId);
+          _previousChannel = dvbtChannel;
+        }else
+        {
+          ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest, false);
+          Log.Log.Info("dvbt: tune: Running graph for channel {0}", ch.ToString());
+          Log.Log.Info("dvbt: tune: SubChannel {0}", ch.SubChannelId);
+        }
         try
         {
           RunGraph(ch.SubChannelId);
@@ -296,6 +307,15 @@ namespace TvLibrary.Implementations.DVB
       if ((channel as DVBTChannel) == null)
         return false;
       return true;
+    }
+
+    /// <summary>
+    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+    /// </summary>
+    public override void Dispose()
+    {
+      _previousChannel = null;
+      base.Dispose();
     }
   }
 }

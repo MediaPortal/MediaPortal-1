@@ -360,5 +360,27 @@ namespace TvLibrary.Implementations
              _tunerSource.GetHashCode() ^ _videoInputType.GetHashCode() ^ _audioInputType.GetHashCode() ^ _vcrSginal.GetHashCode();
     }
     #endregion
+
+
+    /// <summary>
+    /// Checks if the given channel and this instance are on the different transponder
+    /// </summary>
+    /// <param name="channel">Channel to check</param>
+    /// <returns>true, if the channels are on the same transponder</returns>
+    public bool IsDifferentTransponder(IChannel channel)
+    {
+      AnalogChannel analogChannel = channel as AnalogChannel;
+      if (analogChannel == null)
+      {
+        return true;
+      }
+      return analogChannel.IsTv != IsTv ||
+             analogChannel.IsRadio != IsRadio ||
+             analogChannel.Country.Id != Country.Id ||
+             analogChannel.VideoSource != VideoSource ||
+             analogChannel.TunerSource != TunerSource ||
+             analogChannel.ChannelNumber != ChannelNumber ||
+             analogChannel.Frequency != Frequency;
+    }
   }
 }

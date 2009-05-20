@@ -203,26 +203,36 @@ namespace TvLibrary.Implementations.DVB
           subChannelId = GetNewSubChannel(channel);
         }
       }
-      //_pmtPid = -1; 
-      ILocator locator;
-      _tuningSpace.get_DefaultLocator(out locator);
-      IDVBCLocator dvbcLocator = (IDVBCLocator)locator;
-      dvbcLocator.put_InnerFEC(FECMethod.MethodNotSet);
-      dvbcLocator.put_InnerFECRate(BinaryConvolutionCodeRate.RateNotSet);
-      dvbcLocator.put_OuterFEC(FECMethod.MethodNotSet);
-      dvbcLocator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
+
+      ITvSubChannel ch;
+      if (_previousChannel == null ||  _previousChannel.IsDifferentTransponder(dvbcChannel))
+      {
+
+        //_pmtPid = -1; 
+        ILocator locator;
+        _tuningSpace.get_DefaultLocator(out locator);
+        IDVBCLocator dvbcLocator = (IDVBCLocator) locator;
+        dvbcLocator.put_InnerFEC(FECMethod.MethodNotSet);
+        dvbcLocator.put_InnerFECRate(BinaryConvolutionCodeRate.RateNotSet);
+        dvbcLocator.put_OuterFEC(FECMethod.MethodNotSet);
+        dvbcLocator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
 
 
-      dvbcLocator.put_Modulation(dvbcChannel.ModulationType);
-      dvbcLocator.put_SymbolRate(dvbcChannel.SymbolRate);
-      _tuneRequest.put_ONID(dvbcChannel.NetworkId);
-      _tuneRequest.put_SID(dvbcChannel.ServiceId);
-      _tuneRequest.put_TSID(dvbcChannel.TransportId);
-      locator.put_CarrierFrequency((int)dvbcChannel.Frequency);
+        dvbcLocator.put_Modulation(dvbcChannel.ModulationType);
+        dvbcLocator.put_SymbolRate(dvbcChannel.SymbolRate);
+        _tuneRequest.put_ONID(dvbcChannel.NetworkId);
+        _tuneRequest.put_SID(dvbcChannel.ServiceId);
+        _tuneRequest.put_TSID(dvbcChannel.TransportId);
+        locator.put_CarrierFrequency((int) dvbcChannel.Frequency);
 
-      _tuneRequest.put_Locator(locator);
+        _tuneRequest.put_Locator(locator);
 
-      ITvSubChannel ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest);
+        ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest,true);
+        _previousChannel = dvbcChannel;
+      }else
+      {
+        ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest,false);
+      }
       try
       {
         RunGraph(ch.SubChannelId);
@@ -279,6 +289,15 @@ namespace TvLibrary.Implementations.DVB
       if ((channel as DVBCChannel) == null)
         return false;
       return true;
+    }
+
+    /// <summary>
+    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+    /// </summary>
+    public override void Dispose()
+    {
+      _previousChannel = null;
+      base.Dispose();
     }
   }
 }
