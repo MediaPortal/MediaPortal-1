@@ -380,6 +380,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\ICSharpCode.SharpZipLib.dll"
 
   File "${svn_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
+  
+  File "${svn_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\dxerr9.dll"
   ; binary used for skystar2 support
   File "${svn_DirectShowFilters}\dvblib\bin\${BUILD_TYPE}\dvblib.dll"
 

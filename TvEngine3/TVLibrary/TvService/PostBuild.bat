@@ -17,3 +17,4 @@ xcopy %1\Plugins\XmlTvImport\bin\%2\*.* Plugins\ /R /Y
 xcopy %1\TVServer.Base\*.* . /R /Y
 xcopy %1\SetupControls\bin\%2\*.* . /R /Y
 xcopy %1\..\..\DirectShowFilters\StreamingServer\bin\%2\*.* . /R /Y
+xcopy %1\..\..\DirectShowFilters\DXErr9\bin\%2\*.* . /R /Y
