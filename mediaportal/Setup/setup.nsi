@@ -587,6 +587,10 @@ SectionEnd
   ; Core
   Delete /REBOOTOK "$MPdir.Base\Core.dll"
   Delete /REBOOTOK "$MPdir.Base\DirectShowLib.dll"
+  Delete /REBOOTOK "$MPdir.Base\fontengine.dll"
+  Delete /REBOOTOK "$MPdir.Base\dshowhelper.dll"
+  Delete /REBOOTOK "$MPdir.Base\dxutil.dll"
+  Delete /REBOOTOK "$MPdir.Base\Dxerr9.dll"
   Delete /REBOOTOK "$MPdir.Base\MiniDisplayLibrary.dll"
   ; Utils
   Delete /REBOOTOK "$MPdir.Base\Utils.dll"
@@ -598,6 +602,8 @@ SectionEnd
   Delete /REBOOTOK "$MPdir.Base\TVCapture.dll"
   ; TvGuideScheduler
   Delete /REBOOTOK "$MPdir.Base\TVGuideScheduler.exe"
+  ; TVE2 Skystar2 support
+  Delete /REBOOTOK "$MPdir.Base\dvblib.dll"
   ; MusicShareWatcher
   Delete /REBOOTOK "$MPdir.Base\MusicShareWatcher.exe"
   Delete /REBOOTOK "$MPdir.Base\MusicShareWatcherHelper.dll"
@@ -638,8 +644,6 @@ SectionEnd
   RMDir "$MPdir.Base\Docs"
   ; Wizards
   RMDir /r /REBOOTOK "$MPdir.Base\Wizards"
-  ; binary used for skystar2 support
-  Delete /REBOOTOK "$MPdir.Base\dvblib.dll"
 !macroend
 
 !ifndef HEISE_BUILD
