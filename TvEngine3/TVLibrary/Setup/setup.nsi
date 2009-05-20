@@ -371,7 +371,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File ..\SetupControls\bin\${BUILD_TYPE}\SetupControls.dll
 
   ; 3rd party assemblys
-  File "${TVSERVER.BASE}\dxerr9.dll"
   File "${TVSERVER.BASE}\hauppauge.dll"
   File "${TVSERVER.BASE}\hcwWinTVCI.dll"
   File "${TVSERVER.BASE}\KNCBDACTRL.dll"
