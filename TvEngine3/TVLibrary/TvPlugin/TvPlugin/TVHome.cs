@@ -3712,14 +3712,7 @@ namespace TvPlugin
         m_groups.Clear();
 
         TvBusinessLayer layer = new TvBusinessLayer();
-        Log.Info("Checking if radio group for all radio channels exists");
         RadioChannelGroup allRadioChannelsGroup = layer.GetRadioChannelGroupByName(TvConstants.RadioGroupNames.AllChannels);
-        if (allRadioChannelsGroup == null)
-        {
-          Log.Info("All channels group for radio channels does not exist. Creating it...");
-          allRadioChannelsGroup = new RadioChannelGroup(TvConstants.RadioGroupNames.AllChannels, 9999);
-          allRadioChannelsGroup.Persist();
-        }
         IList<Channel> radioChannels = layer.GetAllRadioChannels();
         if (radioChannels != null)
         {
@@ -3734,7 +3727,6 @@ namespace TvPlugin
         Log.Info("Done.");
 
         Log.Info("get all groups from database");
-        bool found = false;
         sb = new SqlBuilder(StatementType.Select, typeof (ChannelGroup));
         sb.AddOrderByField(true, "groupName");
         stmt = sb.GetStatement(true);
@@ -3750,12 +3742,10 @@ namespace TvPlugin
         }
 
 
-        found = false;
         foreach (ChannelGroup group in groups)
         {
           if (group.GroupName == TvConstants.TvGroupNames.AllChannels)
           {
-            found = true;
             foreach (Channel channel in channels)
             {
               if (channel.IsTv == false)
@@ -3783,17 +3773,6 @@ namespace TvPlugin
             break;
           }
         }
-
-        if (!found)
-        {
-          Log.Info(" group:{0} not found. create it", TvConstants.TvGroupNames.AllChannels);
-          foreach (Channel channel in channels)
-          {
-            layer.AddChannelToGroup(channel, TvConstants.TvGroupNames.AllChannels);
-          }
-          Log.Info(" group:{0} created", TvConstants.TvGroupNames.AllChannels);
-        }
-
 
         groups = ChannelGroup.ListAll();
         foreach (ChannelGroup group in groups)
