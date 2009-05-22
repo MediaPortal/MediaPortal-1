@@ -1,6 +1,7 @@
 
 
-1. Update to the latest Windows SDK (previously the Platform SDK).
+1. Update to Windows SDK v6.1:
+
         http://www.microsoft.com/downloads/details.aspx?FamilyId=F26B1AA4-741A-433A-9BE5-FA919850BDBF&displaylang=en
 
 
@@ -16,11 +17,11 @@
 
 
 
-3. Check "\svnroot\mediaportal\trunk\Tools\InstallationScripts\DeployToolUnPacker.nsi" for the above path:
+3. If you have a x64 system, check "\svnroot\mediaportal\trunk\Tools\InstallationScripts\DeployToolUnPacker.nsi" for the above line:
 
-	!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /p:ALToolPath="%ProgramFiles%\Microsoft SDKs\Windows\v6.1\Bin" /target:Rebuild /property:Configuration=Release;Platform=x86 "${svn_DeployTool}\MediaPortal.DeployTool.sln"' = 0
+	!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /p:ALToolPath="%WINDOWS_SDK%\Bin" /target:Rebuild /property:Configuration=Release;Platform=x86 "${svn_DeployTool}\MediaPortal.DeployTool.sln"' = 0
 
-  If you have a x64 system, you have to use "%ProgramFiles%\Microsoft SDKs\Windows\v6.1\Bin\x64"
+  and change the ALToolPath parameter to /p:ALToolPath="%WINDOWS_SDK%\Bin\x64"
 
 
 
