@@ -32,6 +32,24 @@
 #                        - MediaPortalUpdater.nsi
 #
 #**********************************************************************************************************#
+/*
+# detect x32/x64 build environment
+!tempfile FILE
+!system 'if not "%ProgramFiles(x86)%".=="". echo !define x64Environment > "${FILE}"'
+!include "${FILE}"
+!delfile "${FILE}"
+!undef FILE
+
+# set different paths, whether env is x32 or x64
+!ifdef x64Environment
+  !define ALToolPath "%WINDOWS_SDK%\Bin\x64"
+!else
+  !define ALToolPath "%WINDOWS_SDK%\Bin"
+!endif
+
+!error "Stop the x64 env test here!  should be removed later"
+*/
+  !define ALToolPath "%WINDOWS_SDK%\Bin"
 
 # The following commands needs to be defined by the parent script (the one, which includes this file).
 ;!define BUILD_MediaPortal
@@ -66,7 +84,7 @@
 !endif
 
 !ifdef BUILD_DeployTool
-!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /p:ALToolPath="%WINDOWS_SDK%\Bin" /target:Rebuild /property:Configuration=Release;Platform=x86 "${svn_DeployTool}\MediaPortal.DeployTool.sln"' = 0
+!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /p:ALToolPath="${ALToolPath}" /target:Rebuild /property:Configuration=Release;Platform=x86 "${svn_DeployTool}\MediaPortal.DeployTool.sln"' = 0
 !endif
 
 !ifdef BUILD_Installer
