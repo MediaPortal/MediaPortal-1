@@ -35,11 +35,14 @@ namespace MediaPortal.GUI.Settings
   [PluginIcons("WindowPlugins.GUISettings.Settings.gif", "WindowPlugins.GUISettings.SettingsDisabled.gif")]
   public class GUISettings : GUIWindow, ISetupForm, IShowPlugin
   {
-    [SkinControl(11)] protected GUIButtonControl btnMiniDisplay = null;
+    [SkinControl(11)]
+    protected GUIButtonControl btnMiniDisplay = null;
+    [SkinControl(10)]
+    protected GUIButtonControl btnTV = null;
 
     public GUISettings()
     {
-      GetID = (int) Window.WINDOW_SETTINGS;
+      GetID = (int)Window.WINDOW_SETTINGS;
     }
 
     public override bool Init()
@@ -68,7 +71,7 @@ namespace MediaPortal.GUI.Settings
           {
             base.OnMessage(message);
             btnMiniDisplay.Visible = MiniDisplayHelper.IsSetupAvailable();
-
+            btnTV.Visible = Util.Utils.UsingTvServer;
             return true;
           }
 

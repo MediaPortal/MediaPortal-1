@@ -271,11 +271,6 @@
       <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
       <Name>Utils</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WebEPG\WebEPG\WebEPG.csproj">
-      <Name>WebEPG %28WebEPG\WebEPG%29</Name>
-      <Project>{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-    </ProjectReference>
     <ProjectReference Include="..\XPImapiBurner\XPImapiBurner.csproj">
       <Project>{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}</Project>
       <Name>XPImapiBurner</Name>
@@ -323,6 +318,9 @@
     <Compile Include="GUISettings\MiniDisplay\KeyPadWindow.cs" />
     <Compile Include="GUISettings\MiniDisplay\MainMenuWindow.cs" />
     <Compile Include="GUISettings\MiniDisplay\RemoteWindow.cs" />
+    <Compile Include="GUISettings\TV\GUISettingsTv.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="GUITetris\MyTetrisControl.cs" />
     <Compile Include="GUITV\GUITVTeletextBase.cs" />
     <Compile Include="GUIVideoFiles\MatroskaTagLib.cs" />
@@ -487,7 +485,6 @@
     <Compile Include="GUISettings\General\GUISettingsSkipSteps.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUISettings\GUIEpgSelectBase.cs" />
     <Compile Include="GUISettings\GUISettings.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -513,71 +510,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUISettings\MusicDatabaseReorg.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUISettings\TV\GUISettingsEpg.cs" />
-    <Compile Include="GUISettings\TV\GUISettingsEpgMapping.cs" />
-    <Compile Include="GUISettings\TV\GUISettingsRecordings.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUISettings\TV\GUISettingsSortChannels.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUISettings\TV\GUISettingsTv.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUISettings\Wizard\Analog\GUIWizardAnalogCity.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUISettings\Wizard\Analog\GUIWizardAnalogcountry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUISettings\Wizard\Analog\GUIWizardAnalogcountry2.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUISettings\Wizard\Analog\GUIWizardAnalogImported.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUISettings\Wizard\Analog\GUIWizardAnalogRename.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUISettings\Wizard\Analog\GUIWizardAnalogRenameRadio.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUISettings\Wizard\Analog\GUIWizardAnalogTune.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUISettings\Wizard\Analog\GUIWizardAnalogTuneRadio.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUISettings\Wizard\ATSC\GUIWizardATSCScan.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUISettings\Wizard\DVBC\GUIWizardDVBCCountry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUISettings\Wizard\DVBC\GUIWizardDVBCScan.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUISettings\Wizard\DVBS\GUIWizardDVBSLNBDetails.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUISettings\Wizard\DVBS\GUIWizardDVBSScan.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUISettings\Wizard\DVBS\GUIWizardDVBSSelectLNBs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUISettings\Wizard\DVBS\GUIWizardDVBSSelectSat.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUISettings\Wizard\DVBT\GUIWizardDVBTCountry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUISettings\Wizard\DVBT\GUIWizardDVBTScan.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUISettings\Wizard\Epg\GUIWizardEpgSelect.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUISettings\Wizard\General\GUIWizardGeneral.cs" />

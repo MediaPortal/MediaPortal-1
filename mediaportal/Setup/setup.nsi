@@ -61,6 +61,8 @@
 !define svn_DeployTool "${svn_ROOT}\Tools\MediaPortal.DeployTool"
 !define svn_DirectShowFilters "${svn_ROOT}\DirectShowFilters"
 !define svn_InstallScripts "${svn_ROOT}\Tools\InstallationScripts"
+!define svn_TvEngine2 "${svn_ROOT}\TvEngine2"
+
 
 # additional path definitions
 !ifdef SVN_BUILD
@@ -380,8 +382,8 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Profiles\*"
   SetOutPath "$MPdir.Base\Tuningparameters"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Tuningparameters\*"
-  SetOutPath "$MPdir.Base\WebEPG"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\WebEPG\*"
+  ;SetOutPath "$MPdir.Base\WebEPG"
+  ;File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\WebEPG\*"
   SetOutPath "$MPdir.Base\Wizards"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Wizards\*"
 
@@ -454,9 +456,9 @@ Section "MediaPortal core files (required)" SecCore
   ; TvCapture
   File "..\tvcapture\bin\${BUILD_TYPE}\TVCapture.dll"
   ; TvGuideScheduler
-  File "..\TVGuideScheduler\bin\${BUILD_TYPE}\TVGuideScheduler.exe"
+  ;File "..\TVGuideScheduler\bin\${BUILD_TYPE}\TVGuideScheduler.exe"
   ; TVE2 Skystar2 support
-  File "${svn_DirectShowFilters}\dvblib\bin\${BUILD_TYPE}\dvblib.dll"
+  File "${svn_TvEngine2}\Filters\dvblib\bin\${BUILD_TYPE}\dvblib.dll"
   ; MusicShareWatcher
   File "..\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\${BUILD_TYPE}\MusicShareWatcher.exe"
   File "..\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\${BUILD_TYPE}\MusicShareWatcherHelper.dll"
@@ -472,9 +474,9 @@ Section "MediaPortal core files (required)" SecCore
   File "..\WatchDog\bin\${BUILD_TYPE}\DirectShowLib-2005.dll"
   File "..\WatchDog\bin\${BUILD_TYPE}\MediaFoundation.dll"
   ; WebEPG
-  File "..\WebEPG\WebEPG\bin\${BUILD_TYPE}\WebEPG.dll"
-  File /oname=WebEPG.exe "..\WebEPG\WebEPG-xmltv\bin\${BUILD_TYPE}\WebEPG-xmltv.exe"
-  File "..\WebEPG\WebEPG-conf\bin\${BUILD_TYPE}\WebEPG-conf.exe"
+  ;File "..\WebEPG\WebEPG\bin\${BUILD_TYPE}\WebEPG.dll"
+  ;File /oname=WebEPG.exe "..\WebEPG\WebEPG-xmltv\bin\${BUILD_TYPE}\WebEPG-xmltv.exe"
+  ;File "..\WebEPG\WebEPG-conf\bin\${BUILD_TYPE}\WebEPG-conf.exe"
   ; Plugins
   File "..\RemotePlugins\bin\${BUILD_TYPE}\RemotePlugins.dll"
   File "..\RemotePlugins\Remotes\HcwRemote\HCWHelper\bin\${BUILD_TYPE}\HcwHelper.exe"
@@ -509,7 +511,7 @@ Section "MediaPortal core files (required)" SecCore
   ##### MAYBE used by VideoEditor
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\bin\Release\CLDump.ax"                                 "$MPdir.Base\CLDump.ax"           "$MPdir.Base"
   ; used for scanning in tve2
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\MPSA\bin\${BUILD_TYPE}\MPSA.ax"                        "$MPdir.Base\MPSA.ax"             "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_TvEngine2}\Filters\MPSA\bin\${BUILD_TYPE}\MPSA.ax"                        "$MPdir.Base\MPSA.ax"             "$MPdir.Base"
   ;filter for analog tv
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\bin\Release\PDMpgMux.ax"                               "$MPdir.Base\PDMpgMux.ax"         "$MPdir.Base"
   ; used for shoutcast
@@ -601,7 +603,7 @@ SectionEnd
   ; TvCapture
   Delete /REBOOTOK "$MPdir.Base\TVCapture.dll"
   ; TvGuideScheduler
-  Delete /REBOOTOK "$MPdir.Base\TVGuideScheduler.exe"
+  ;Delete /REBOOTOK "$MPdir.Base\TVGuideScheduler.exe"
   ; TVE2 Skystar2 support
   Delete /REBOOTOK "$MPdir.Base\dvblib.dll"
   ; MusicShareWatcher
@@ -619,9 +621,9 @@ SectionEnd
   Delete /REBOOTOK "$MPdir.Base\DirectShowLib-2005.dll"
   Delete /REBOOTOK "$MPdir.Base\MediaFoundation.dll"
   ; WebEPG
-  Delete /REBOOTOK "$MPdir.Base\WebEPG.dll"
-  Delete /REBOOTOK "$MPdir.Base\WebEPG.exe"
-  Delete /REBOOTOK "$MPdir.Base\WebEPG-conf.exe"
+  ;Delete /REBOOTOK "$MPdir.Base\WebEPG.dll"
+  ;Delete /REBOOTOK "$MPdir.Base\WebEPG.exe"
+  ;Delete /REBOOTOK "$MPdir.Base\WebEPG-conf.exe"
   ; Plugins
   Delete /REBOOTOK "$MPdir.Base\RemotePlugins.dll"
   Delete /REBOOTOK "$MPdir.Base\HcwHelper.exe"

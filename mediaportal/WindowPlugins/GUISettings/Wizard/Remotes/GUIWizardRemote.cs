@@ -30,20 +30,29 @@ namespace MediaPortal.GUI.Settings.Wizard
 {
   public class GUIWizardRemote : GUIWindow
   {
-    [SkinControl(4)] protected GUICheckMarkControl cmMicrosoftMCE = null;
-    [SkinControl(6)] protected GUICheckMarkControl cmHauppauge = null;
-    [SkinControl(7)] protected GUICheckMarkControl cmX10Medion = null;
-    [SkinControl(11)] protected GUICheckMarkControl cmX10Ati = null;
-    [SkinControl(8)] protected GUICheckMarkControl cmFireDTV = null;
-    [SkinControl(9)] protected GUICheckMarkControl cmOther = null;
-    [SkinControl(26)] protected GUIButtonControl btnNext = null;
-    [SkinControl(25)] protected GUIButtonControl btnBack = null;
-    [SkinControl(10)] protected GUIImage imgRemote = null;
+    [SkinControl(4)]
+    protected GUICheckMarkControl cmMicrosoftMCE = null;
+    [SkinControl(6)]
+    protected GUICheckMarkControl cmHauppauge = null;
+    [SkinControl(7)]
+    protected GUICheckMarkControl cmX10Medion = null;
+    [SkinControl(11)]
+    protected GUICheckMarkControl cmX10Ati = null;
+    [SkinControl(8)]
+    protected GUICheckMarkControl cmFireDTV = null;
+    [SkinControl(9)]
+    protected GUICheckMarkControl cmOther = null;
+    [SkinControl(26)]
+    protected GUIButtonControl btnNext = null;
+    [SkinControl(25)]
+    protected GUIButtonControl btnBack = null;
+    [SkinControl(10)]
+    protected GUIImage imgRemote = null;
 
 
     public GUIWizardRemote()
     {
-      GetID = (int) Window.WINDOW_WIZARD_REMOTE;
+      GetID = (int)Window.WINDOW_WIZARD_REMOTE;
     }
 
 
@@ -191,24 +200,19 @@ namespace MediaPortal.GUI.Settings.Wizard
         if (useMicrosoft)
         {
           OnMicrosoftMCE();
-        }
-        else if (useHCW)
+        } else if (useHCW)
         {
           OnHauppauge();
-        }
-        else if (useX10 && useX10Medion)
+        } else if (useX10 && useX10Medion)
         {
           OnX10Medion();
-        }
-        else if (useX10 && useX10Ati)
+        } else if (useX10 && useX10Ati)
         {
           OnX10Ati();
-        }
-        else if (useFireDTV)
+        } else if (useFireDTV)
         {
           OnFireDTV();
-        }
-        else
+        } else
         {
           OnOther();
         }
@@ -232,20 +236,8 @@ namespace MediaPortal.GUI.Settings.Wizard
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESTART_REMOTE_CONTROLS, 0, 0, 0, 0, 0, null);
       GUIGraphicsContext.SendMessage(msg);
 
-      bool tvPluginInstalled;
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        tvPluginInstalled = xmlreader.GetValueAsBool("pluginsdlls", "TvPlugin.dll", false);
-      }
+      GUIWindowManager.ActivateWindow((int)Window.WINDOW_WIZARD_FINISHED);
 
-      if (tvPluginInstalled)
-      {
-        GUIWindowManager.ActivateWindow((int) Window.WINDOW_WIZARD_FINISHED);
-      }
-      else
-      {
-        GUIWindowManager.ActivateWindow((int) Window.WINDOW_WIZARD_CARDS_DETECTED);
-      }
     }
   }
 }
