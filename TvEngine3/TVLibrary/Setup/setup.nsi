@@ -333,8 +333,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ; Tuning Parameter Directory
   SetOutPath $INSTDIR\TuningParameters
   File /r /x .svn "${TVSERVER.BASE}\TuningParameters\*"
-  File "${MEDIAPORTAL.BASE}\TuningParameters\*.dvbc"
-  File "${MEDIAPORTAL.BASE}\TuningParameters\dvbt.xml"
 
   ; The Plugin Directory
   SetOutPath $INSTDIR\Plugins
