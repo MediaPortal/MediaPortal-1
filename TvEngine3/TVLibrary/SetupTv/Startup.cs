@@ -110,6 +110,26 @@ namespace SetupTv
         ServicePack = " (" + os.OSCSDVersion + ")";
       Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on " + os.OSVersionString + ServicePack + " ----");
 
+      // Store OS version for next checks
+      int OsVer = (os.OSMajorVersion * 10) + os.OSMinorVersion;
+
+      //If OS = WIndpwsXP64, WindowsServer2003 or Windows7 then we won't support them
+      bool unsupported = false;
+      switch (OsVer)
+      {
+        case 52:  //WindowsXP 64 and Windows2003
+        case 61:  //Windows 7
+          unsupported = true;
+          break;
+      }
+      if (unsupported)
+      {
+        //Used .Info as .Warning is missing
+        Log.Info("****************************************");
+        Log.Info("* WARNING, OS not officially supported *");
+        Log.Info("****************************************");
+      }
+
       NameValueCollection appSettings = ConfigurationManager.AppSettings;
       appSettings.Set("GentleConfigFile", String.Format(@"{0}\gentle.config", Log.GetPathName()));
 
@@ -208,7 +228,7 @@ namespace SetupTv
 
       // Mantis #0002138: impossible to configure TVGroups 
       TvBusinessLayer layer = new TvBusinessLayer();
-      layer.CreateGroup(TvConstants.TvGroupNames.AllChannels);
+      layer.CreateGroup(TvConstants.DefaultGroupName.AllChannels);
 
       try
       {

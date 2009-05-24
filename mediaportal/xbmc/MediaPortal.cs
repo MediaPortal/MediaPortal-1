@@ -325,6 +325,22 @@ public class MediaPortalApp : D3DApp, IRender
       // Store OS version for next checks
       int OsVer = (os.OSMajorVersion * 10) + os.OSMinorVersion;
 
+      //If OS = WIndpwsXP64, WindowsServer2003 or Windows7 then we won't support them
+      bool unsupported = false;
+      switch (OsVer)
+      {
+        case 52:  //WindowsXP 64 and Windows2003
+        case 61:  //Windows 7
+          unsupported = true;
+          break;
+      }
+      if (unsupported)
+      {
+        Log.Warn("****************************************");
+        Log.Warn("* WARNING, OS not officially supported *");
+        Log.Warn("****************************************");
+      }
+
       //Log last install of WindowsUpdate patches
       string LastSuccessTime = "NEVER !!!";
       UIntPtr res = UIntPtr.Zero;
