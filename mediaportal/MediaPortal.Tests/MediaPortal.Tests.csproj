@@ -100,20 +100,8 @@
     <Compile Include="Support\FileHelper.cs" />
     <Compile Include="Support\HotFixInformationLoggerTests.cs" />
     <Compile Include="Support\MediaPortalLogsTests.cs" />
-    <Compile Include="TVCapture\Commands\TestCommandProcessor.cs" />
     <Compile Include="Plugins\ProcessPlugins\CallerId\ISDN\OutlookHelperTest.cs" />
-    <Compile Include="TVCapture\Commands\TestMultiTunerStrategy.cs" />
-    <Compile Include="TVCapture\DiskManagement\DeleteOldRecordings.cs" />
-    <Compile Include="TVCapture\DiskManagement\TestEpisodeManagement.cs" />
-    <Compile Include="TVCapture\Scheduler\TestConflictManager.cs" />
-    <Compile Include="TVCapture\Teletext\RendererTest.cs" />
-    <Compile Include="TVCapture\Teletext\TeletextDecoder.cs" />
-    <Compile Include="TVCapture\Teletext\TeletextPageCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TVCapture\Teletext\TestFastText.cs" />
-    <Compile Include="TVCapture\DiskManagement\TestFreeDiskSpace.cs" />
-    <Compile Include="TVCapture\Teletext\TestTopText.cs" />
-    <Compile Include="TVCapture\TestRecorder.cs" />
     <Compile Include="Utils\Web\HttpRequestTest.cs" />
     <Compile Include="Utils\Services\LogTest.cs" />
     <Compile Include="Utils\Time\WorldTimeZoneTest.cs" />
@@ -151,23 +139,6 @@
       <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
       <Name>Utils</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TVCapture\Teletext\100" />
-    <EmbeddedResource Include="TVCapture\Teletext\199" />
-    <EmbeddedResource Include="TVCapture\Teletext\234" />
-    <EmbeddedResource Include="TVCapture\Teletext\333" />
-    <EmbeddedResource Include="TVCapture\Teletext\503" />
-    <EmbeddedResource Include="TVCapture\Teletext\541" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TVCapture\Teletext\FastTextPage" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TVCapture\Teletext\TopAdditional" />
-    <EmbeddedResource Include="TVCapture\Teletext\TopBasic" />
-    <EmbeddedResource Include="TVCapture\Teletext\LogoPage" />
-    <EmbeddedResource Include="TVCapture\Teletext\TopMulti" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Core\Playlists\TestData\exampleList.b4s">

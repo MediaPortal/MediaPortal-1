@@ -279,37 +279,6 @@
     <Compile Include="CallerId\YAC\CallerIdPlugin.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ComSkipLauncher\ComSkipLauncher.cs" />
-    <Compile Include="ComSkipLauncher\Configuration.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ComSkipLauncher\Configuration.Designer.cs">
-      <DependentUpon>Configuration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DirecTV Serial Control\Command.cs" />
-    <Compile Include="DirecTV Serial Control\CommandSet.cs" />
-    <Compile Include="DirecTV Serial Control\DirecTVSettings.cs" />
-    <Compile Include="DirecTV Serial Control\KeyMap.cs" />
-    <Compile Include="DirecTV Serial Control\SerialInterface.cs" />
-    <Compile Include="DirecTV Serial Control\SetupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DirecTV Serial Control\SetupForm.Designer.cs">
-      <DependentUpon>SetupForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DirecTV Serial Control\TunerPlugin.cs" />
-    <Compile Include="DiskManagement\DiskManagement.cs" />
-    <Compile Include="DiskManagement\EpisodeManagement.cs" />
-    <Compile Include="DiskManagement\RecordingManagement.cs" />
-    <Compile Include="HCWBlaster\HCWBlaster.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="HCWBlaster\HCWBlasterSetupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="HCWBlaster\HCWIRBlaster.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="MameDevice\MameDevice.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -320,12 +289,6 @@
     <Compile Include="MiniDisplay\SetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MPExTuneCmd\MPExTuneCmd.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MPExTuneCmd\MPExTuneCmdForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="MusicDBReorg\MusicDBReorg.cs" />
     <Compile Include="MusicDBReorg\MusicDBReorgSettings.cs">
       <SubType>Form</SubType>
@@ -334,34 +297,10 @@
       <DependentUpon>MusicDBReorgSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="MusicShareWatcher\MusicShareWatcherPlugin.cs" />
-    <Compile Include="PowerScheduler\PowerException.cs" />
-    <Compile Include="PowerScheduler\PowerManager.cs" />
-    <Compile Include="PowerScheduler\PowerScheduler.cs" />
-    <Compile Include="PowerScheduler\PowerSchedulerSetupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="PowerScheduler\TimerException.cs" />
-    <Compile Include="PowerScheduler\WaitableTimer.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="TvMovie\TvMovieSchedules.cs" />
-    <Compile Include="TvMovie\TvMovieSettings.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="TvMovie\TvMovieSettings.designer.cs">
-      <DependentUpon>TvMovieSettings.cs</DependentUpon>
-    </Compile>
-    <Compile Include="TvMovie\TvMovieDatabase.cs" />
-    <Compile Include="TvMovie\TvMovie.cs" />
-    <Compile Include="TvNotifies\NotifyManager.cs" />
-    <Compile Include="TvNotifies\NotifySetupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="TvNotifies\NotifySetupForm.Designer.cs">
-      <DependentUpon>NotifySetupForm.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="AudioScrobbler\AudioscrobblerSettings.resx">
       <SubType>Designer</SubType>
@@ -370,23 +309,13 @@
     <EmbeddedResource Include="CallerId\ISDN\ISDNSetupForm.resx">
       <DependentUpon>ISDNSetupForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="HCWBlaster\HCWBlasterSetupForm.resx">
-      <DependentUpon>HCWBlasterSetupForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="MameDevice\MappingForm.resx">
       <DependentUpon>MappingForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MPExTuneCmd\MPExTuneCmdForm.resx">
-      <DependentUpon>MPExTuneCmdForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="TvMovie\TvMovieSettings.resx">
-      <DependentUpon>TvMovieSettings.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -396,53 +325,19 @@
     <EmbeddedResource Include="Audioscrobbler\AudioscrobblerDisabled.gif" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="PowerScheduler\PowerSchedulerSetupForm.resx">
-      <DependentUpon>PowerSchedulerSetupForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="MusicShareWatcher\MusicShareWatcher.gif" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MusicShareWatcher\MusicShareWatcher_deactivated.gif" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="TvNotifies\Notifybutton.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TvNotifies\Notifybutton_disabled.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="PowerScheduler\PowerScheduler.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="PowerScheduler\PowerScheduler_disabled.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TvMovie\tvmovie.gif" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="AutoCropper\AutoCropperSetup.resx">
       <DependentUpon>AutoCropperSetup.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ComSkipLauncher\Configuration.resx">
-      <DependentUpon>Configuration.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DirecTV Serial Control\SetupForm.resx">
-      <DependentUpon>SetupForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="MusicDBReorg\MusicDBReorgSettings.resx">
       <DependentUpon>MusicDBReorgSettings.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="TvMovie\tvmovie_inactive.gif" />
-    <EmbeddedResource Include="TvNotifies\NotifySetupForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>NotifySetupForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

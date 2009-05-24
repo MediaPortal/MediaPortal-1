@@ -106,8 +106,6 @@ namespace MediaPortal.Configuration.Sections
         EnumeratePlugins();
         LoadPlugins();
 
-        CheckPowerScheduler();
-
         LoadSettings();
         PopulateListView();
         LoadListFiles();
@@ -190,41 +188,6 @@ namespace MediaPortal.Configuration.Sections
             {
               continue;
             }
-          }
-          if (tag.IsProcess)
-          {
-            // Do not show plugins related to the old tv module
-            if (tag.SetupForm.PluginName() == "ComSkip Launcher")
-            {
-              continue;
-            }
-            if (tag.SetupForm.PluginName() == "DirecTV serial tuner")
-            {
-              continue;
-            }
-            if (tag.SetupForm.PluginName() == "TV Diskspace")
-            {
-              continue;
-            }
-            if (tag.SetupForm.PluginName() == "TV Episodes Cleanup")
-            {
-              continue;
-            }
-            if (tag.SetupForm.PluginName() == "TV Recordings Cleanup")
-            {
-              continue;
-            }
-            if (tag.SetupForm.PluginName() == "TV Movie Clickfinder")
-            {
-              continue;
-            }
-            if (tag.SetupForm.PluginName() == "TV Notifier")
-            {
-              continue;
-            }
-            // Unsure about this one - people might use it to get the xml file grabbed which _then_ is imported by some other app like tvserver
-            //if (tag.SetupForm.PluginName() == "WebEPG grabber")
-            //  continue;
           }
         }
 
@@ -1030,27 +993,5 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #endregion
-
-    private void CheckPowerScheduler()
-    {
-      Log.Info("CheckPowerScheduler");
-      foreach (ItemTag tag in loadedPlugins)
-      {
-        if (tag.SetupForm.PluginName().Equals("PowerScheduler client plugin"))
-        {
-          for (int i = 0; i < loadedPlugins.Count; i++)
-          {
-            ItemTag item = (ItemTag) loadedPlugins[i];
-            if (item.SetupForm.PluginName().Equals("PowerScheduler") &&
-                item.SetupForm.Author().Equals("Bavarian"))
-            {
-              loadedPlugins.RemoveAt(i);
-              Log.Info("Hiding inbuild PowerScheduler");
-              return;
-            }
-          }
-        }
-      }
-    }
   }
 }
