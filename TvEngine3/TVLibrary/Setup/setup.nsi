@@ -128,7 +128,6 @@ BrandingText  "${NAME} ${VERSION} by ${COMPANY}"
 !include Library.nsh
 !include FileFunc.nsh
 !include Memento.nsh
-!include "${svn_InstallScripts}\include-WinVerEx.nsh"
 
 
 !include "${svn_InstallScripts}\include\*"
