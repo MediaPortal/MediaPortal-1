@@ -17,13 +17,11 @@
 
 
 
-3. If you have a x64 system, check "\svnroot\mediaportal\trunk\Tools\InstallationScripts\DeployToolUnPacker.nsi" for the above line:
+3. If you have a x64 system, compiling   should be done by   
 
-	!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /p:ALToolPath="%WINDOWS_SDK%\Bin" /target:Rebuild /property:Configuration=Release;Platform=x86 "${svn_DeployTool}\MediaPortal.DeployTool.sln"' = 0
-
-  and change the ALToolPath parameter to /p:ALToolPath="%WINDOWS_SDK%\Bin\x64"
-
-
+      DeployToolUnPacker-x64.nsi
+      
+      instead of            DeployToolUnPacker.nsi .
 
 
 NOTE: Used http://msdn.microsoft.com/en-us/windowsserver/bb986638.aspx, chapter 5.1.2 as reference

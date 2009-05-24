@@ -27,18 +27,8 @@
 #   include-MP-PreBuild.nsh
 #
 #       This is a NSIS header file, containing the commands to compile the MediaPortal source files.
-#       This file is used by:
-#                        - DeployToolUnPacker.nsi
-#                        - MediaPortalUpdater.nsi
 #
 #**********************************************************************************************************#
-/*
-# detect x32/x64 build environment
-!tempfile FILE
-!system 'if not "%ProgramFiles(x86)%".=="". echo !define x64Environment > "${FILE}"'
-!include "${FILE}"
-!delfile "${FILE}"
-!undef FILE
 
 # set different paths, whether env is x32 or x64
 !ifdef x64Environment
@@ -46,10 +36,6 @@
 !else
   !define ALToolPath "%WINDOWS_SDK%\Bin"
 !endif
-
-!error "Stop the x64 env test here!  should be removed later"
-*/
-  !define ALToolPath "%WINDOWS_SDK%\Bin"
 
 # The following commands needs to be defined by the parent script (the one, which includes this file).
 ;!define BUILD_MediaPortal
