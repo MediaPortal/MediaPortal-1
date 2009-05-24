@@ -550,18 +550,23 @@ DeleteRegKey HKCU "Software\MediaPortal"
 # HideWarnings   is used to disable some Warning MessageBoxes if needed, for example:     if $DeployMode = 1
   ${LOG_TEXT} "INFO" ".: Operating System Check :."
 
+
+  !insertmacro GetServicePack $R1 $R2
+  ${LOG_TEXT} "INFO" "GetServicePack-Macro:: major: $R1"
+  ${LOG_TEXT} "INFO" "GetServicePack-Macro:: minor: $R2"
+
   GetVersion::WindowsName
   Pop $R0
-  ${LOG_TEXT} "INFO" "GetVersion::WindowsName: $R0"
-  !insertmacro GetServicePack $R1 $R2
-  ${LOG_TEXT} "INFO" "GetServicePack major: $R1"
-  ${LOG_TEXT} "INFO" "GetServicePack minor: $R2"
+  ${LOG_TEXT} "INFO" "GetVersion-Plugin::WindowsName: $R0"
 
 
   ; show error that the OS is not supported and abort the installation
   ${If} ${AtMostWin2000Srv}
+    ${LOG_TEXT} "INFO" "OSTest::AtMostWin2000"
     StrCpy $0 "OSabort"
+
   ${ElseIf} ${IsWinXP}
+    ${LOG_TEXT} "INFO" "OSTest::IsWinXP"
     !insertmacro GetServicePack $R1 $R2
     ${If} $R2 > 0
       StrCpy $0 "OSwarnBetaSP"
@@ -572,12 +577,15 @@ DeleteRegKey HKCU "Software\MediaPortal"
     ${EndIf}
 
   ${ElseIf} ${IsWinXP64}
+    ${LOG_TEXT} "INFO" "OSTest::IsWinXP::x64"
     StrCpy $0 "OSabort"
 
   ${ElseIf} ${IsWin2003}
+    ${LOG_TEXT} "INFO" "OSTest::IsWin2003"
     StrCpy $0 "OSwarn"
 
   ${ElseIf} ${IsWinVISTA}
+    ${LOG_TEXT} "INFO" "OSTest::IsWinVISTA"
     !insertmacro GetServicePack $R1 $R2
     ${If} $R2 > 0
       StrCpy $0 "OSwarnBetaSP"
@@ -588,9 +596,11 @@ DeleteRegKey HKCU "Software\MediaPortal"
     ${EndIf}
 
   ${ElseIf} ${IsWin2008}
+    ${LOG_TEXT} "INFO" "OSTest::IsWin2008"
     StrCpy $0 "OSwarn"
 
   ${Else}
+    ${LOG_TEXT} "INFO" "OSTest::unknown OS"
     StrCpy $0 "OSabort"
   ${EndIf}
 
@@ -652,8 +662,8 @@ DeleteRegKey HKCU "Software\MediaPortal"
   ; check if .Net Framework 3.5 SP1 is installed
   ReadRegDWORD $1 HKLM "SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5" "SP"
 
-  ${LOG_TEXT} "INFO" ".Net 3.5 installed? $2"
-  ${LOG_TEXT} "INFO" ".Net 3.5 ServicePack: $3"
+  ${LOG_TEXT} "INFO" ".Net 3.5 installed? $0"
+  ${LOG_TEXT} "INFO" ".Net 3.5 ServicePack: $1"
 
   ${If} $0 != 1  ; if no 3.5
     MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_DOTNET35)" IDNO +2
