@@ -1142,11 +1142,11 @@ namespace MediaPortal.Music.Database
           foreach (string s in splittedFields)
           {
             // ATTENTION: We need to use the 'like' operator instead of '=' to have case insensitive searching
-            strSQL = String.Format("select {0} from {1} where {0} like '{2}'", GetMultipleValueField(field), GetMultipleValueTable(field), s == "" ? " " : s);
+            strSQL = String.Format("select {0} from {1} where {0} like '{2}'", GetMultipleValueField(field), GetMultipleValueTable(field), s == "" ? " " : s.Trim());
             if (DirectExecute(strSQL).Rows.Count < 1)
             {
               // Insert the Artist
-              strSQL = String.Format("insert into {1} ({0}) values ('{2}')", GetMultipleValueField(field), GetMultipleValueTable(field), s == "" ? " " : s);
+              strSQL = String.Format("insert into {1} ({0}) values ('{2}')", GetMultipleValueField(field), GetMultipleValueTable(field), s == "" ? " " : s.Trim());
               DirectExecute(strSQL);
             }
           }
