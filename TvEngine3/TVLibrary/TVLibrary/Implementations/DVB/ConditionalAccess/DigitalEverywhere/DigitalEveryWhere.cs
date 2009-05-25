@@ -207,7 +207,6 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
     public DigitalEverywhere(IBaseFilter tunerFilter)
-    //: base(filter)
     {
       _previousChannel = null;
       _filterTuner = tunerFilter;
@@ -258,6 +257,7 @@ namespace TvLibrary.Implementations.DVB
         return true;
       }
     }
+
     /// <summary>
     /// This function sends the PMT (Program Map Table) to the FireDTV DVB-T/DVB-C/DVB-S card
     /// This allows the integrated CI and CAM module inside the FireDTv device to decrypt the current TV channel
@@ -276,7 +276,7 @@ namespace TvLibrary.Implementations.DVB
     /// 1. FireDTV device should be tuned to a digital DVB-C/S/T TV channel
     /// 2. PMT should have been received
     /// </preconditions>
-    public bool SendPMTToFireDTV(byte[] PMT, int pmtLength, int current, int max)
+    private bool SendPMTToFireDTV(byte[] PMT, int pmtLength, int current, int max)
     {
 
       //typedef struct _FIRESAT_CA_DATA{ 
@@ -287,14 +287,20 @@ namespace TvLibrary.Implementations.DVB
       //  UCHAR uData[MAX_PMT_SIZE];        //10....
       //}FIRESAT_CA_DATA, *PFIRESAT_CA_DATA;
 
-      if (!IsCamPresent())
+      if (!_hasCAM)
+      {
         return true;
+      }
       if (PMT == null)
+      {
         return false;
+      }
       if (pmtLength == 0)
+      {
         return false;
+      }
 
-      //Log.Log.WriteFile("SendPMTToFireDTV pmt:{0}", pmtLength);
+      Log.Log.WriteFile("SendPMTToFireDTV pmtLength:{0}", pmtLength);
       Guid propertyGuid = KSPROPSETID_Firesat;
       const int propId = KSPROPERTY_FIRESAT_HOST2CA;
       IKsPropertySet propertySet = _filterTuner as IKsPropertySet;
@@ -311,7 +317,6 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("FireDTV:SendPmt() not supported");
         return true;
       }
-
 
       byte[] byData = new byte[1036];
       uint uLength = (uint)(2 + pmtLength); //bytes 0-1 contain the length of pmt
@@ -358,7 +363,7 @@ namespace TvLibrary.Implementations.DVB
         return false;
       }
       return true;
-    }//public bool SendPMTToFireDTV(byte[] PMT)
+    }
 
     /// <summary>
     /// Resets the CAM.
@@ -410,8 +415,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("FireDTV:ResetCAM() failed 0x{0:X}", hr);
           return;
         }
-      }
-      finally
+      } finally
       {
         Log.Log.WriteFile("FireDTV:ResetCAM() cam has been reset");
       }
@@ -426,6 +430,10 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public bool SendPMTToFireDTV(Dictionary<int, ConditionalAccessContext> subChannels)
     {
+      if(!_hasCAM)
+      {
+        return true;
+      }
       List<ConditionalAccessContext> filteredChannels = new List<ConditionalAccessContext>();
       bool succeeded = true;
       Dictionary<int, ConditionalAccessContext>.Enumerator en = subChannels.GetEnumerator();
@@ -454,6 +462,7 @@ namespace TvLibrary.Implementations.DVB
       }
       return succeeded;
     }
+
     /// <summary>
     /// Sets the pids for hardware pid filtering.
     /// </summary>
@@ -721,7 +730,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>
     /// 	<c>true</c> if cam is present; otherwise, <c>false</c>.
     /// </returns>
-    public bool IsCamPresent()
+    private bool IsCamPresent()
     {
       if (_isInitialized)
         return _hasCAM;
@@ -765,12 +774,25 @@ namespace TvLibrary.Implementations.DVB
           {
             //CAM is initialized
             Log.Log.WriteFile("  FireDTV:cam is ready");
-            return true;
           }
-          Log.Log.WriteFile("  FireDTV:cam is not ready");
-          return false;
+          else
+          {
+            Log.Log.WriteFile("  FireDTV:cam is NOT ready");
+            return false;
+          }
+          if ((camStatus & CI_APP_INFO_AVAILABLE) != 0)
+          {
+            Log.Log.WriteFile("  FireDTV:cam is able to descramble");
+          }
+          else
+          {
+            Log.Log.WriteFile("  FireDTV:cam is UNABLE to descramble");
+            return false;
+          }
+          return true;
         }
-        return true;
+        Log.Log.WriteFile("  FireDTV:cam is NOT valid");
+        return false;
       }
       return true;
     }
@@ -791,10 +813,25 @@ namespace TvLibrary.Implementations.DVB
             _previousChannel.Rolloff == channel.Rolloff &&
             _previousChannel.InnerFecRate == channel.InnerFecRate)
         {
+      _previousChannel = channel;
           Log.Log.WriteFile("FireDTV: already tuned to diseqc:{0}, frequency:{1}, polarisation:{2}",
               channel.DisEqc, channel.Frequency, channel.Polarisation);
           return;
         }
+        if (_previousChannel.DisEqc == DisEqcType.None && channel.DisEqc == DisEqcType.None)
+        {
+          _previousChannel = channel;
+          Log.Log.WriteFile("FireDTV: already no diseqc used",
+              channel.DisEqc, channel.Frequency, channel.Polarisation);
+          return;
+        }
+      }
+      if (_previousChannel == null && channel.DisEqc == DisEqcType.None)
+      {
+        _previousChannel = channel;
+        Log.Log.WriteFile("FireDTV: diseqc isn't used - skip it",
+            channel.DisEqc, channel.Frequency, channel.Polarisation);
+        return;
       }
       _previousChannel = channel;
       int antennaNr = BandTypeConverter.GetAntennaNr(channel);
