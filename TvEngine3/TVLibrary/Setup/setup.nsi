@@ -1,19 +1,19 @@
 #region Copyright (C) 2005-2009 Team MediaPortal
 
-/* 
- *	Copyright (C) 2005-2009 Team MediaPortal
- *	http://www.team-mediaportal.com
+/*
+ *  Copyright (C) 2005-2009 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *   
+ *
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *   
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
  *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
@@ -575,6 +575,19 @@ ${MementoSectionEnd}
   ${LOG_TEXT} "DEBUG" "MACRO Remove_${SecClient}"
   ${LOG_TEXT} "INFO" "Uninstalling MediaPortal TV Client plugin..."
 
+  ${If} ${TVClientIsInstalled}
+    ${LOG_TEXT} "INFO" "TV Client plugin is installed"
+
+    ${If} $MPdir.Base = ""
+      ${LOG_TEXT} "ERROR" "MediaPortal Directory not found, TVClient plugin uninstallation will fail!!"
+    ${Else}
+      ${LOG_TEXT} "INFO" "Removing TV Client plugin in: $MPdir.Base"
+    ${EndIf}
+
+    ${Else}
+    ${LOG_TEXT} "INFO" "TV Client plugin is -- NOT -- installed"
+  ${EndIf}
+
   ; Kill running Programs
   ${LOG_TEXT} "INFO" "Terminating processes ..."
   ${KillProcess} "MediaPortal.exe"
@@ -649,6 +662,12 @@ Section -Post
   CreateDirectory "${COMMON_APPDATA}\log\OldLogs"
   CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\log\*" "${COMMON_APPDATA}\log\OldLogs"
   Delete "${COMMON_APPDATA}\log\*"
+
+  ; if TVplugin is enabled, save MP installation path to uninstall it even if mp is already uninstalled
+  ${If} ${TVClientIsInstalled}
+    WriteRegDWORD HKLM "${REG_UNINSTALL}" "MediaPortalInstallationDir" "$MPdir.Base"
+  ${EndIf}
+  
 
   ${If} $noStartMenuSC != 1
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
@@ -880,7 +899,12 @@ Function un.onInit
   ${AndIfNot} ${MPIsInstalled}
     Sleep 1
   ${else}
-    !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
+    ReadRegStr $MPdir.Base HKLM "${REG_UNINSTALL}" "MediaPortalInstallationDir"
+
+    ${If} $MPdir.Base = ""
+      !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
+    ${EndIf}
+
     ${un.ReadMediaPortalDirs} $MPdir.Base
   ${EndIf}
 
