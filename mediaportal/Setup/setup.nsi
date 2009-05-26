@@ -260,14 +260,14 @@ ShowUninstDetails show
 
   ${KillProcess} "WatchDog.exe"
   ${KillProcess} "MusicShareWatcher.exe"
-  ${KillProcess} "TVGuideScheduler.exe"
+  ;${KillProcess} "TVGuideScheduler.exe"
 
   ; MovieThumbnailer
   ${KillProcess} "mtn.exe"
 
   ; WebEPG apps
-  ${KillProcess} "WebEPG.exe"
-  ${KillProcess} "WebEPG-conf.exe"
+  ;${KillProcess} "WebEPG.exe"
+  ;${KillProcess} "WebEPG-conf.exe"
   
   ;3rd party
   ${KillProcess} "mptray.exe"
