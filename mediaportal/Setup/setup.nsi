@@ -288,6 +288,7 @@ Section "-prepare" SecPrepare
   RMDir /r "$MPdir.Cache"
 
   # if it is an update include a file with last update/cleanup instructions
+  ;future note: if silent, uninstall old, if not, do nothing.
   ${If} $UpdateMode = 1
     !insertmacro MP_GET_VERSION $0
     ${If} $0 == 1.0.0.0
@@ -877,7 +878,7 @@ Function .onInit
   ClearErrors
   ${GetOptions} $R0 "/UpdateMode" $R1
   IfErrors +2
-  IntOp $UpdateMode $DeployMode & 1
+  StrCpy $UpdateMode 1
   #### END of check and parse cmdline parameter
 
   ; reads components status for registry
