@@ -593,6 +593,7 @@ SectionEnd
   Delete /REBOOTOK "$MPdir.Base\dshowhelper.dll"
   Delete /REBOOTOK "$MPdir.Base\dxutil.dll"
   Delete /REBOOTOK "$MPdir.Base\Dxerr9.dll"
+  Delete /REBOOTOK "$MPdir.Base\mpcSubs.dll"
   Delete /REBOOTOK "$MPdir.Base\MiniDisplayLibrary.dll"
   ; Utils
   Delete /REBOOTOK "$MPdir.Base\Utils.dll"
