@@ -216,6 +216,9 @@ namespace MediaPortal.GUI.Music
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(OnPlayBackStopped);
       g_Player.PlayBackEnded += new g_Player.EndedHandler(OnPlayBackEnded);
 
+      // Get notification, that an Internet Stream has changed
+      BassMusicPlayer.Player.InternetStreamSongChanged += new BassAudioEngine.InternetStreamSongChangedDelegate(OnInternetStreamSongChanged);
+
       // GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
 
       LoadSettings();
@@ -303,6 +306,21 @@ namespace MediaPortal.GUI.Music
         GUIGraphicsContext.OnAction(action);
       }
     }
+
+    /// <summary>
+    /// A song change happened on an Internet Stream
+    /// </summary>
+    /// <param name="sender"></param>
+    private void OnInternetStreamSongChanged(object sender)
+    {
+      if (!ControlsInitialized)
+      {
+        return;
+      }
+
+      GUIGraphicsContext.form.Invoke(new PlaybackChangedDelegate(DoOnStarted), new object[] { g_Player.MediaType.Music, BassMusicPlayer.Player.CurrentFile });
+    }
+
 
     private void OnPlayBackStarted(g_Player.MediaType type, string filename)
     {
@@ -1706,6 +1724,7 @@ namespace MediaPortal.GUI.Music
     {
       bool isCurSongCdTrack = IsCdTrack(CurrentTrackFileName);
       bool isNextSongCdTrack = IsCdTrack(NextTrackFileName);
+      bool isInternetStream = Util.Utils.IsAVStream(CurrentTrackFileName);
       MusicDatabase dbs = MusicDatabase.Instance;
 
       if (CurrentTrackTag != null)
@@ -1713,7 +1732,7 @@ namespace MediaPortal.GUI.Music
         PreviousTrackTag = CurrentTrackTag;
       }
 
-      if (!isCurSongCdTrack)
+      if (!isCurSongCdTrack && !isInternetStream)
       {
         // CurrentTrackTag = GetTrackTag(dbs, CurrentTrackFileName, UseID3);
         // always use the tagreader now if the info is not in the database
@@ -1721,12 +1740,13 @@ namespace MediaPortal.GUI.Music
         CurrentTrackTag = GetTrackTag(dbs, CurrentTrackFileName, true);
       }
 
-      if (!isNextSongCdTrack)
+      if (!isNextSongCdTrack && !isInternetStream)
       {
         //NextTrackFileName = PlaylistPlayer.GetNext();
         NextTrackTag = GetTrackTag(dbs, NextTrackFileName, true);
       }
 
+      // Get Information from CD Track
       if (isCurSongCdTrack || isNextSongCdTrack)
       {
         PlayList curPlaylist = PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
@@ -1779,6 +1799,14 @@ namespace MediaPortal.GUI.Music
             NextTrackTag = GetTrackTag(nextTrack);
           }
         }
+      }
+
+      // If we got an Internetstream and are playing via BASS Player
+      // then receive the MusicTags from the stream
+      if (isInternetStream && _usingBassEngine)
+      {
+        NextTrackTag = null;
+        CurrentTrackTag = BassMusicPlayer.Player.GetStreamTags();
       }
     }
 

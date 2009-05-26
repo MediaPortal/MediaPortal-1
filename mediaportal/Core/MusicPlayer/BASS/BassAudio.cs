@@ -28,9 +28,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
@@ -43,6 +41,7 @@ using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Cd;
 using Un4seen.Bass.AddOn.Fx;
 using Un4seen.Bass.AddOn.Mix;
+using Un4seen.Bass.AddOn.Tags;
 using Un4seen.Bass.AddOn.Vst;
 using Un4seen.Bass.AddOn.WaDsp;
 using Un4seen.Bass.Misc;
@@ -286,7 +285,6 @@ namespace MediaPortal.Player
     private bool _CrossFading = false; // true if crossfading has started
     private bool _Mixing = false;
     private int _playBackType;
-    private string _prevMetaTag;
     private bool _isRadio = false;
     private bool _isLastFMRadio = false;
 
@@ -345,6 +343,8 @@ namespace MediaPortal.Player
     private float cueTrackStartPos = 0;
     private float cueTrackEndPos = 0;
     private int cueTrackEndEventHandler;
+
+    private TAG_INFO _tagInfo;
     #endregion
 
     #region Properties
@@ -932,7 +932,7 @@ namespace MediaPortal.Player
             // not playing anything via BASS, so don't need an update thread
             Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_UPDATEPERIOD, 0);
             // setup BASS - "no sound" device but 48000 (default for ASIO)
-            initOK = (Bass.BASS_Init(0, 48000, 0, IntPtr.Zero, null) && BassAsio.BASS_ASIO_Init(_asioDeviceNumber));
+            initOK = (Bass.BASS_Init(0, 48000, 0, IntPtr.Zero) && BassAsio.BASS_ASIO_Init(_asioDeviceNumber));
 
             // Get number of available output Channels
             BASS_ASIO_INFO info = BassAsio.BASS_ASIO_GetInfo();
@@ -959,7 +959,7 @@ namespace MediaPortal.Player
         {
           int soundDevice = GetSoundDevice();
 
-          initOK = (Bass.BASS_Init(soundDevice, 44100, BASSInit.BASS_DEVICE_DEFAULT | BASSInit.BASS_DEVICE_LATENCY, IntPtr.Zero, null));
+          initOK = (Bass.BASS_Init(soundDevice, 44100, BASSInit.BASS_DEVICE_DEFAULT | BASSInit.BASS_DEVICE_LATENCY, IntPtr.Zero));
         }
         if (initOK)
         {
@@ -1780,9 +1780,14 @@ namespace MediaPortal.Player
             if (stream != 0)
             {
               // Get the Tags and set the Meta Tag SyncProc
-              _prevMetaTag = string.Empty;
+              _tagInfo = new TAG_INFO(filePath);
               SetStreamTags(stream);
-              GetMetaTags(Bass.BASS_ChannelGetTags(stream, BASSTag.BASS_TAG_META));
+
+              if (BassTags.BASS_TAG_GetFromURL(stream, _tagInfo))
+              {
+                GetMetaTags();
+              }
+
               Bass.BASS_ChannelSetSync(stream, BASSSync.BASS_SYNC_META, 0, MetaTagSyncProcDelegate, IntPtr.Zero);
             }
             Log.Debug("BASSAudio: Webstream found - trying to fetch stream {0}", Convert.ToString(stream));
@@ -2378,9 +2383,7 @@ namespace MediaPortal.Player
     /// <summary>
     /// Gets the tags from the Internet Stream.
     /// </summary>
-    /// <param name="buffer"></param>
-    /// <param name="length"></param>
-    /// <param name="user"></param>
+    /// <param name="stream"></param>
     private void SetStreamTags(int stream)
     {
       string[] tags = Bass.BASS_ChannelGetTagsICY(stream);
@@ -2398,7 +2401,18 @@ namespace MediaPortal.Player
             GUIPropertyManager.SetProperty("#Play.Current.Genre", item.Substring(10));
           }
 
-          Log.Debug("BASS: Connection Information: {0}", item);
+          Log.Info("BASS: Connection Information: {0}", item);
+        }
+      }
+      else
+      {
+        tags = Bass.BASS_ChannelGetTagsHTTP(stream);
+        if (tags != null)
+        {
+          foreach (string item in tags)
+          {
+            Log.Info("BASS: Connection Information: {0}", item);
+          } 
         }
       }
     }
@@ -2412,65 +2426,75 @@ namespace MediaPortal.Player
     /// <param name="user"></param>
     private void MetaTagSyncProc(int handle, int channel, int data, IntPtr user)
     {
-      // BASS_SYNC_META delivers a pointer to the metadata in data parameter...
-      if (data != 0)
+      // BASS_SYNC_META is triggered on meta changes of SHOUTcast streams
+      if (_tagInfo.UpdateFromMETA(Bass.BASS_ChannelGetTags(channel, BASSTag.BASS_TAG_META), false, false))
       {
-        GetMetaTags(new IntPtr(data));
+        GetMetaTags();
       }
     }
 
     /// <summary>
     /// Set the Properties out of the Tags
     /// </summary>
-    /// <param name="tagPtr"></param>
-    private void GetMetaTags(IntPtr tagPtr)
+    private void GetMetaTags()
     {
-      string title = string.Empty;
-      string artist = string.Empty;
-      try
+      // There seems to be an issue with setting correctly the title via taginfo
+      // So let's filter it out ourself
+      string title = _tagInfo.title;
+      int streamUrlIndex = title.IndexOf("';StreamUrl=");
+      if ( streamUrlIndex > -1)
       {
-        string tag = Marshal.PtrToStringAnsi(tagPtr);
-        if (tag != null)
-        {
-          if (tag == _prevMetaTag)
-          {
-            return;
-          }
+        title = _tagInfo.title.Substring(0, streamUrlIndex);
+      }
 
-          _prevMetaTag = tag;
-          Log.Info("BASS: Title sent via Stream: {0}", tag);
-          Regex r = new Regex("StreamTitle='(.+?)';StreamUrl=", RegexOptions.IgnoreCase);
-          Match m = r.Match(tag);
-          if (m.Success)
-          {
-            Group g1 = m.Groups[1];
-            CaptureCollection captures = g1.Captures;
-            Capture c = captures[0];
-            Regex r1 = new Regex("( - )");
-            string[] s = r1.Split(c.ToString());
-            if (s != null)
-            {
-              artist = s[0];
-              title = s[2];
-            }
-            else
-            {
-              title = c.ToString(); // Set the Title as sent via the stream
-            }
-          }
-        }
-      }
-      catch (Exception)
-      {
-        // No need to do anything, just leave the title and artist empty.
-      }
+      Log.Info("BASS: Internet Stream. New Song: {0} - {1}", _tagInfo.artist, title);
+      // and display what we get
+      GUIPropertyManager.SetProperty("#Play.Current.Album", _tagInfo.album);
+      GUIPropertyManager.SetProperty("#Play.Current.Artist", _tagInfo.artist);
       GUIPropertyManager.SetProperty("#Play.Current.Title", title);
-      GUIPropertyManager.SetProperty("#Play.Current.Artist", artist);
+      GUIPropertyManager.SetProperty("#Play.Current.Comment", _tagInfo.comment);
+      GUIPropertyManager.SetProperty("#Play.Current.Genre", _tagInfo.genre);
+      GUIPropertyManager.SetProperty("#Play.Current.Year", _tagInfo.year);
 
       if (InternetStreamSongChanged != null)
       {
         InternetStreamSongChanged(this);
       }
+    }
+
+    /// <summary>
+    /// Returns the Tags of an AV Stream
+    /// </summary>
+    /// <returns></returns>
+    public MusicTag GetStreamTags()
+    {
+      MusicTag tag = new MusicTag();
+      if (_tagInfo == null)
+      {
+        return tag;
+      }
+
+            // So let's filter it out ourself
+      string title = _tagInfo.title;
+      int streamUrlIndex = title.IndexOf("';StreamUrl=");
+      if ( streamUrlIndex > -1)
+      {
+        title = _tagInfo.title.Substring(0, streamUrlIndex);
+      }
+
+      tag.Album = _tagInfo.album;
+      tag.Artist = _tagInfo.artist;
+      tag.Title = title;
+      tag.Genre = _tagInfo.genre;
+      try
+      {
+        tag.Year = Convert.ToInt32(_tagInfo.year);
+      }
+      catch(FormatException)
+      {
+        tag.Year = 0;
+      }
+      return tag;
     }
 
     /// <summary>
