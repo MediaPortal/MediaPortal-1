@@ -35,6 +35,7 @@ using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TV.Recording;
 using MediaPortal.Video.Database;
+using MediaPortal.Player.Subtitles;
 
 namespace MediaPortal.GUI.Video
 {
@@ -685,10 +686,18 @@ namespace MediaPortal.GUI.Video
           break;
 
         case Action.ActionType.ACTION_SUBTITLE_DELAY_MIN:
-          //g_application.m_pPlayer.SubtitleOffset(false);
+          if (g_Player.EnableSubtitle)
+          {
+            SubEngine.GetInstance().DelayMinus();
+            ShowSubtitleDelayStatus();
+          }
           break;
         case Action.ActionType.ACTION_SUBTITLE_DELAY_PLUS:
-          //g_application.m_pPlayer.SubtitleOffset(true);
+          if (g_Player.EnableSubtitle)
+          {
+            SubEngine.GetInstance().DelayPlus();
+            ShowSubtitleDelayStatus();
+          }
           break;
         case Action.ActionType.ACTION_AUDIO_DELAY_MIN:
           //g_application.m_pPlayer.AudioOffset(false);
@@ -813,6 +822,17 @@ namespace MediaPortal.GUI.Video
       }
 
       base.OnAction(action);
+    }
+
+    private void ShowSubtitleDelayStatus()
+    {
+      _showStatus = true;
+      _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
+                                      (int)Control.LABEL_ROW1, 0, 0, null);
+      msg.Label = string.Format("{0} ms", SubEngine.GetInstance().Delay);
+      OnMessage(msg);
+      Log.Info("GUIVideoFullscreen subtitles delay: {0}", msg.Label);
     }
 
     private bool OnOsdMessage(GUIMessage message)

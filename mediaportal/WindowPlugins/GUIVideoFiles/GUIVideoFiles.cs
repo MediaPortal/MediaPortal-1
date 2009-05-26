@@ -39,6 +39,7 @@ using MediaPortal.Services;
 using MediaPortal.TV.Database;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
+using MediaPortal.Player.Subtitles;
 
 #pragma warning disable 108
 
@@ -1470,6 +1471,26 @@ namespace MediaPortal.GUI.Video
         else
         {
           Log.Debug("GUIVideoFiles: No LoadDirectory needed {0}", caller);
+        }
+      }
+
+      if (SubEngine.GetInstance().IsModified())
+      {
+        bool shouldSave = false;
+        if (SubEngine.GetInstance().AutoSaveType == AutoSaveTypeEnum.ASK)
+        {
+          if (!g_Player.Paused)
+            g_Player.Pause();
+          GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
+          dlgYesNo.SetHeading("Save subtitle");
+          dlgYesNo.SetLine(1, "Save modified subtitle file?");
+          dlgYesNo.SetDefaultToYes(true);
+          dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+          shouldSave = dlgYesNo.IsConfirmed;
+        }
+        if (shouldSave || SubEngine.GetInstance().AutoSaveType == AutoSaveTypeEnum.ALWAYS)
+        {
+          SubEngine.GetInstance().SaveToDisk();
         }
       }
     }

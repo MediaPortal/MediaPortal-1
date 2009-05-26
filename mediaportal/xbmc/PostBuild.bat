@@ -23,9 +23,6 @@ xcopy /y %1\TVGuideScheduler\bin\%2\TVGuideScheduler.* .
 REM Core
 xcopy /y %1\core\bin\%2\DirectShowLib.* .
 xcopy /y %1\core\bin\%2\Core.* .
-xcopy /y %1\core\directshowhelper\directshowhelper\Release\dshowhelper.dll .
-xcopy /y %1\core\DXUtil\Release\DXUtil.dll .
-xcopy /y %1\core\fontengine\fontengine\%2\fontengine.* .
 
 REM TvCapture
 xcopy /y %1\tvcapture\bin\%2\tvcapture.* .
@@ -89,6 +86,7 @@ REM Copy all dll files from cpp solution
 xcopy %1\Core.cpp\DirectShowHelper\bin\%2\dshowhelper.dll .
 xcopy %1\Core.cpp\DXUtil\bin\%2\dxutil.dll .
 xcopy %1\Core.cpp\fontEngine\bin\%2\fontEngine.dll .
+copy /y %1\Core.cpp\mpc-hc_subs\bin\%2\mpcSubs.dll .
 
 REM Copy one dll from DirectShowFilters folder
 xcopy %1\..\DirectShowFilters\DXErr9\bin\%2\dxerr9.dll .

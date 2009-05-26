@@ -1178,6 +1178,7 @@ HRESULT MPEVRCustomPresenter::PresentSample(IMFSample* pSample)
       pSample->GetSampleTime(&hnsTimeScheduled);
       if ( hnsTimeScheduled > 0 )
       {
+			  m_pCallback->SetSampleTime(hnsTimeScheduled);
         LONGLONG deviation = hnsTimeNow - hnsTimeScheduled;
         if ( deviation < 0 ) deviation = -deviation;
         m_hnsTotalDiff += deviation;

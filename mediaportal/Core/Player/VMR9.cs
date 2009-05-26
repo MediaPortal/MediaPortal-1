@@ -63,6 +63,11 @@ namespace MediaPortal.Player
   {
     [PreserveSig]
     int PresentImage(Int16 cx, Int16 cy, Int16 arx, Int16 ary, uint pImage, uint pTexture);
+
+    //called by EVR presenter, before sample is rendered
+    //used to synchronize subtitle's clock
+    [PreserveSig]
+    void SetSampleTime(Int64 nsSampleTime);
   }
 
   #endregion

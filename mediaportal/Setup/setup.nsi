@@ -444,6 +444,7 @@ Section "MediaPortal core files (required)" SecCore
   File "..\core.cpp\fontEngine\bin\${BUILD_TYPE}\fontengine.dll"
   File "..\core.cpp\DirectShowHelper\bin\${BUILD_TYPE}\dshowhelper.dll"
   File "..\core.cpp\DxUtil\bin\${BUILD_TYPE}\dxutil.dll"
+  File "..\core.cpp\mpc-hc_subs\bin\${BUILD_TYPE}\mpcSubs.dll"
   File "${svn_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\Dxerr9.dll"
   File "..\MiniDisplayLibrary\bin\${BUILD_TYPE}\MiniDisplayLibrary.dll"
   ; Utils

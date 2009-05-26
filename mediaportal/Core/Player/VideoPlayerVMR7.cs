@@ -35,11 +35,12 @@ using DShowNET.Helper;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
+using MediaPortal.Player.Subtitles;
 
 
 namespace MediaPortal.Player
 {
-  public class VideoPlayerVMR7 : IPlayer
+  public abstract class VideoPlayerVMR7 : IPlayer
   {
     protected const int MAX_STREAMS = 100;
 
@@ -194,8 +195,7 @@ namespace MediaPortal.Player
     protected IBaseFilter aacaudioCodecFilter = null;
     protected IBaseFilter audioRendererFilter = null;
     protected IBaseFilter[] customFilters; // FlipGer: array for custom directshow filters
-    protected IBaseFilter vob = null;
-    protected IDirectVobSub vobSub = null;
+
     private DateTime elapsedTimer = DateTime.Now;
 
     /// <summary> audio interface used to control volume. </summary>
@@ -1018,270 +1018,12 @@ namespace MediaPortal.Player
     #region Get/Close Interfaces
 
     /// <summary> create the used COM components and get the interfaces. </summary>
-    protected virtual bool GetInterfaces()
-    {
-      //Type comtype = null;
-      //object comobj = null;
-      try
-      {
-        graphBuilder = (IGraphBuilder) new FilterGraph();
-        vmr7 = new VMR7Util();
-        vmr7.AddVMR7(graphBuilder);
-        // add preferred video & audio codecs
-        string strVideoCodec = "";
-        string strH264VideoCodec = "";
-        string strAudioCodec = "";
-        string strAACAudioCodec = "";
-        string strAudiorenderer = "";
-        int intFilters = 0; // FlipGer: count custom filters
-        string strFilters = ""; // FlipGer: collect custom filters
-        string defaultLanguage;
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-        {
-          strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
-          strH264VideoCodec = xmlreader.GetValueAsString("movieplayer", "h264videocodec", "");
-          strAudioCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
-          strAACAudioCodec = xmlreader.GetValueAsString("movieplayer", "aacaudiocodec", "");
-          strAudiorenderer = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
-          defaultLanguage = xmlreader.GetValueAsString("subtitles", "language", "English");
-          // FlipGer: load infos for custom filters
-          int intCount = 0;
-          while (xmlreader.GetValueAsString("movieplayer", "filter" + intCount.ToString(), "undefined") != "undefined")
-          {
-            if (xmlreader.GetValueAsBool("movieplayer", "usefilter" + intCount.ToString(), false))
-            {
-              strFilters += xmlreader.GetValueAsString("movieplayer", "filter" + intCount.ToString(), "undefined") + ";";
-              intFilters++;
-            }
-            intCount++;
-          }
-        }
-        string extension = Path.GetExtension(m_strCurrentFile).ToLower();
-        if (extension.Equals(".dvr-ms") || extension.Equals(".mpg") || extension.Equals(".mpeg") ||
-            extension.Equals(".bin") || extension.Equals(".dat"))
-        {
-          if (strVideoCodec.Length > 0)
-          {
-            videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strVideoCodec);
-          }
-          if (strAudioCodec.Length > 0)
-          {
-            audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
-          }
-        }
-        if (extension.Equals(".mp4") || extension.Equals(".mkv"))
-        {
-          if (strH264VideoCodec.Length > 0)
-          {
-            h264videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strH264VideoCodec);
-          }
-          if (strAudioCodec.Length > 0)
-          {
-            audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
-          }
-          if (strAACAudioCodec.Length > 0)
-          {
-            aacaudioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAACAudioCodec);
-          }
-        }
-        // FlipGer: add custom filters to graph
-        customFilters = new IBaseFilter[intFilters];
-        string[] arrFilters = strFilters.Split(';');
-        for (int i = 0; i < intFilters; i++)
-        {
-          customFilters[i] = DirectShowUtil.AddFilterToGraph(graphBuilder, arrFilters[i]);
-        }
-        if (strAudiorenderer.Length > 0)
-        {
-          audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder, strAudiorenderer, false);
-        }
-        int hr = graphBuilder.RenderFile(m_strCurrentFile, null);
-        if (hr < 0)
-        {
-          Marshal.ThrowExceptionForHR(hr);
-        }
-        ushort b;
-        unchecked
-        {
-          b = (ushort) 0xfffff845;
-        }
-        Guid classID = new Guid(0x9852a670, b, 0x491b, 0x9b, 0xe6, 0xeb, 0xd8, 0x41, 0xb8, 0xa6, 0x13);
-        if (vob != null)
-        {
-          DirectShowUtil.ReleaseComObject(vob);
-          vob = null;
-        }
-        DirectShowUtil.FindFilterByClassID(graphBuilder, classID, out vob);
-        vobSub = null;
-        vobSub = (IDirectVobSub) vob;
-        if (vobSub != null)
-        {
-          using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-          {
-            string strTmp = "";
-            string strFont = xmlreader.GetValueAsString("subtitles", "fontface", "Arial");
-            int iFontSize = xmlreader.GetValueAsInt("subtitles", "fontsize", 18);
-            bool bBold = xmlreader.GetValueAsBool("subtitles", "bold", true);
-            strTmp = xmlreader.GetValueAsString("subtitles", "color", "ffffff");
-            long iColor = Convert.ToInt64(strTmp, 16);
-            int iShadow = xmlreader.GetValueAsInt("subtitles", "shadow", 5);
-            LOGFONT logFont = new LOGFONT();
-            int color;
-            bool fShadow, fOutLine, fAdvancedRenderer = false;
-            int size = Marshal.SizeOf(typeof (LOGFONT));
-            vobSub.get_TextSettings(logFont, size, out color, out fShadow, out fOutLine, out fAdvancedRenderer);
-            FontStyle fontStyle = FontStyle.Regular;
-            if (bBold)
-            {
-              fontStyle = FontStyle.Bold;
-            }
-            Font Subfont = new Font(strFont, iFontSize, fontStyle, GraphicsUnit.Point, 1);
-            Subfont.ToLogFont(logFont);
-            int R = (int) ((iColor >> 16) & 0xff);
-            int G = (int) ((iColor >> 8) & 0xff);
-            int B = (int) ((iColor) & 0xff);
-            color = (B << 16) + (G << 8) + R;
-            if (iShadow > 0)
-            {
-              fShadow = true;
-            }
-            int res = vobSub.put_TextSettings(logFont, size, color, fShadow, fOutLine, fAdvancedRenderer);
-          }
-        }
-        mediaCtrl = (IMediaControl) graphBuilder;
-        mediaEvt = (IMediaEventEx) graphBuilder;
-        mediaSeek = (IMediaSeeking) graphBuilder;
-        mediaPos = (IMediaPosition) graphBuilder;
-        videoWin = graphBuilder as IVideoWindow;
-        basicVideo = graphBuilder as IBasicVideo2;
-        basicAudio = graphBuilder as IBasicAudio;
-        DirectShowUtil.SetARMode(graphBuilder, AspectRatioMode.Stretched);
-        DirectShowUtil.EnableDeInterlace(graphBuilder);
-        return true;
-      }
-      catch (Exception ex)
-      {
-        Log.Error("VideoPlayer:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
-        return false;
-      }
-    }
+    // VMR7 is no longer used and GetInterfaces() overridden by VideoPlayerVMR9
+    protected abstract bool GetInterfaces();
 
     /// <summary> do cleanup and release DirectShow. </summary>
-    protected virtual void CloseInterfaces()
-    {
-      if (graphBuilder == null)
-      {
-        return;
-      }
-      int hr;
-      Log.Info("VideoPlayer:cleanup DShow graph");
-      try
-      {
-        if (videoWin != null)
-        {
-          videoWin.put_Visible(OABool.False);
-        }
-
-        if (mediaCtrl != null)
-        {
-          hr = mediaCtrl.Stop();
-          mediaCtrl = null;
-        }
-        m_state = PlayState.Init;
-        mediaEvt = null;
-        if (vmr7 != null)
-        {
-          vmr7.RemoveVMR7();
-        }
-        vmr7 = null;
-        m_bVisible = false;
-        videoWin = null;
-        mediaSeek = null;
-        mediaPos = null;
-        basicVideo = null;
-        basicAudio = null;
-        if (videoCodecFilter != null)
-        {
-          DirectShowUtil.ReleaseComObject(videoCodecFilter);
-        }
-        videoCodecFilter = null;
-        if (h264videoCodecFilter != null)
-        {
-          DirectShowUtil.ReleaseComObject(h264videoCodecFilter);
-        }
-        h264videoCodecFilter = null;
-        if (audioCodecFilter != null)
-        {
-          DirectShowUtil.ReleaseComObject(audioCodecFilter);
-        }
-        audioCodecFilter = null;
-        if (aacaudioCodecFilter != null)
-        {
-          DirectShowUtil.ReleaseComObject(aacaudioCodecFilter);
-        }
-        aacaudioCodecFilter = null;
-        if (audioRendererFilter != null)
-        {
-          DirectShowUtil.ReleaseComObject(audioRendererFilter);
-        }
-        audioRendererFilter = null;
-        // FlipGer: release custom filters
-        for (int i = 0; i < customFilters.Length; i++)
-        {
-          if (customFilters[i] != null)
-          {
-            while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0)
-            {
-              ;
-            }
-          }
-          customFilters[i] = null;
-        }
-        if (vobSub != null)
-        {
-          while ((hr = DirectShowUtil.ReleaseComObject(vobSub)) > 0)
-          {
-            Log.Info("VobSub test release");
-          }
-          vobSub = null;
-        }
-        if (vob != null)
-        {
-          DirectShowUtil.ReleaseComObject(vob);
-        }
-        vob = null;
-        DirectShowUtil.RemoveFilters(graphBuilder);
-        if (_rotEntry != null)
-        {
-          _rotEntry.Dispose();
-        }
-        _rotEntry = null;
-        if (graphBuilder != null)
-        {
-          while ((hr = DirectShowUtil.ReleaseComObject(graphBuilder)) > 0)
-          {
-            ;
-          }
-          graphBuilder = null;
-        }
-        m_state = PlayState.Init;
-        GUIGraphicsContext.form.Invalidate(true);
-        GC.Collect();
-        GC.Collect();
-        GC.Collect();
-        // switch back to directx windowed mode
-        if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
-        {
-          Log.Info("VideoPlayerVMR7: Disabling DX9 exclusive mode");
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
-          GUIWindowManager.SendMessage(msg);
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("VideoPlayerVMR7: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
-      }
-    }
+    // VMR7 is no longer used and CloseInterfaces() overridden by VideoPlayerVMR9
+    protected abstract void CloseInterfaces();
 
     #endregion
 
@@ -1474,6 +1216,9 @@ namespace MediaPortal.Player
     {
       get
       {
+        return SubEngine.GetInstance().GetCount();
+
+      /*
         // embedded subtitles
         int subsStreamCount = FStreams.GetStreamCount(StreamType.Subtitle);
         if (subsStreamCount > 0)
@@ -1487,6 +1232,7 @@ namespace MediaPortal.Player
           vobSub.get_LanguageCount(out ret);
         }
         return ret;
+      */
       }
     }
 
@@ -1497,6 +1243,9 @@ namespace MediaPortal.Player
     {
       get
       {
+        return SubEngine.GetInstance().Current;
+
+        /*
         // embedded subtitles
         int subsStreamCount = FStreams.GetStreamCount(StreamType.Subtitle);
         if (subsStreamCount > 0)
@@ -1517,9 +1266,12 @@ namespace MediaPortal.Player
           vobSub.get_SelectedLanguage(out ret);
         }
         return ret;
+        */
       }
       set
       {
+        SubEngine.GetInstance().Current = value;
+        /*
         // embedded subtitles
         int subsStreamCount = FStreams.GetStreamCount(StreamType.Subtitle);
         if (subsStreamCount > 0)
@@ -1541,6 +1293,7 @@ namespace MediaPortal.Player
           vobSub.put_SelectedLanguage(value);
           return;
         }
+        */
       }
     }
 
@@ -1549,6 +1302,10 @@ namespace MediaPortal.Player
     /// </summary>
     public override string SubtitleLanguage(int iStream)
     {
+      string ret = SubEngine.GetInstance().GetLanguage(iStream);
+      return (ret == null ? Strings.Unknown : ret);
+
+      /*
       // embedded subtitles
       if (FStreams.GetStreamCount(StreamType.Subtitle) > 0)
       {
@@ -1589,12 +1346,15 @@ namespace MediaPortal.Player
         }
       }
       return ret;
+       */
     }
 
     public override bool EnableSubtitle
     {
       get
       {
+        return SubEngine.GetInstance().Enable;
+        /*
         bool ret = false;
         if (this.vobSub != null)
         {
@@ -1609,9 +1369,12 @@ namespace MediaPortal.Player
           return !FStreams.GetStreamInfos(StreamType.Subtitle_hidden, 0).Current;
         }
         return ret;
+        */
       }
       set
       {
+        SubEngine.GetInstance().Enable = value;
+/*
         if (this.vobSub != null)
         {
           bool hide = !value;
@@ -1640,6 +1403,7 @@ namespace MediaPortal.Player
             }
           }
         }
+ */
       }
     }
 

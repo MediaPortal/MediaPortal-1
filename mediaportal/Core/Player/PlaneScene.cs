@@ -93,6 +93,7 @@ namespace MediaPortal.Player
     private float _uValue = 1.0f;
     private float _vValue = 1.0f;
     private Rectangle _rectPrevious;
+    private Rectangle _subsRect;
     private bool _shouldRenderTexture = false;
     private bool _lastOverlayVisible = false;
     private bool _isEnabled = true;
@@ -443,6 +444,7 @@ namespace MediaPortal.Player
         //settings (position,size,aspect ratio) changed.
         //Store these settings and start calucating the new video window
         _rectPrevious = new Rectangle((int)x, (int)y, (int)nw, (int)nh);
+        _subsRect = _rectPrevious;
         _aspectRatioType = GUIGraphicsContext.ARType;
         _lastOverlayVisible = GUIGraphicsContext.Overlay;
         _prevVideoWidth = videoSize.Width;
@@ -908,6 +910,11 @@ namespace MediaPortal.Player
       }
     }
 
+        public void SetSampleTime(long nsSampleTime)
+        {
+          SubEngine.GetInstance().SetTime(nsSampleTime);
+        }
+
 
     #endregion
 
@@ -944,6 +951,7 @@ namespace MediaPortal.Player
         GUIGraphicsContext.RenderBlackImage = false;
       }
       SubtitleRenderer.GetInstance().Render();
+      SubEngine.GetInstance().Render(_subsRect, _destinationRect);
     }
 
     public bool ShouldRenderLayer()

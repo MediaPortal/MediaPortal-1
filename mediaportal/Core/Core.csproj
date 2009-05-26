@@ -326,6 +326,10 @@
     <Compile Include="Player\IMPAudioSwitcher.cs" />
     <Compile Include="Player\IPlayerFactory.cs" />
     <Compile Include="Player\MediaInfo.cs" />
+    <Compile Include="Player\Subtitles\DirectVobSubEngine.cs" />
+    <Compile Include="Player\Subtitles\SubEngine.cs" />
+    <Compile Include="Player\Subtitles\MpcEngine.cs" />
+    <Compile Include="Player\Subtitles\SubSettings.cs" />
     <Compile Include="Player\Teletext\Hamming.cs" />
     <Compile Include="Player\Teletext\IDVBTeletextDecoder.cs" />
     <Compile Include="Player\Teletext\ITeletextSource.cs" />
