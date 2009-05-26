@@ -1007,10 +1007,10 @@ namespace MediaPortal.Music.Database
         string strTmp;
         strTmp = tag.Album;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
-        tag.Album = strTmp; // For Albums, we need the string unknown, in case they're empty
+        tag.Album = strTmp == "unknown" ? "" : strTmp;
         strTmp = tag.Genre;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
-        tag.Genre = strTmp; // We want to see unknown Genre
+        tag.Genre = strTmp == "unknown" ? "" : strTmp;
         strTmp = tag.Artist;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         tag.Artist = strTmp == "unknown" ? "" : strTmp;
@@ -1707,7 +1707,7 @@ namespace MediaPortal.Music.Database
             {
               string strTmp = s;
               DatabaseUtility.RemoveInvalidChars(ref strTmp);
-              if (strTmp == "unknown" && field != "genre")  // For Genres we keep "unknown"
+              if (strTmp == "unknown") 
               {
                 strTmp = " ";
               }
