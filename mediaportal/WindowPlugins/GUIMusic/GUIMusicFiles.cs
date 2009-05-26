@@ -152,6 +152,7 @@ namespace MediaPortal.GUI.Music
     private bool _useFileMenu = false;
     private bool m_bScan = false;
     private bool _shuffleOnLoad = true;
+    private string _autoPlayCD = "No";
 
     private DateTime Previous_ACTION_PLAY_Time = DateTime.Now;
     private TimeSpan AntiRepeatInterval = new TimeSpan(0, 0, 0, 0, 500);
@@ -169,6 +170,7 @@ namespace MediaPortal.GUI.Music
       {
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
         MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);
+        _autoPlayCD = xmlreader.GetValueAsString("audioplayer", "autoplay", "No");
       }
 
       GUIWindowManager.OnNewAction += new OnActionHandler(GUIWindowManager_OnNewAction);
@@ -1811,9 +1813,11 @@ namespace MediaPortal.GUI.Music
                       }
                       else if (cds.Length > 1)
                       {
-                        if (_discId == cds[0].DiscId)
+                        // If we have "Autoplay" set to "Yes", we get the first element of the list, to avoid user input.
+                        if ((_discId == cds[0].DiscId) || (_autoPlayCD == "Yes"))
                         {
-                          MusicCD = freedb.GetDiscDetails(cds[_selectedAlbum].Category, cds[_selectedAlbum].DiscId);
+                          _discId = cds[0].DiscId;
+                          MusicCD = freedb.GetDiscDetails(cds[0].Category, cds[0].DiscId);
                         }
                         else
                         {
