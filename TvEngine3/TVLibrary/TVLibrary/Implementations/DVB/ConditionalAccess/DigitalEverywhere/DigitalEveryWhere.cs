@@ -434,6 +434,10 @@ namespace TvLibrary.Implementations.DVB
       {
         return true;
       }
+      if (!IsCamReady())
+      {
+        return true;
+      }
       List<ConditionalAccessContext> filteredChannels = new List<ConditionalAccessContext>();
       bool succeeded = true;
       Dictionary<int, ConditionalAccessContext>.Enumerator en = subChannels.GetEnumerator();
