@@ -370,7 +370,7 @@ namespace TvService
 
     public void Init()
     {
-      Log.Info("Controller: Initilizing TVServer");
+      Log.Info("Controller: Initializing TVServer");
       bool result = false;
 
       for (int i = 0; i < 5 && !result; i++)
