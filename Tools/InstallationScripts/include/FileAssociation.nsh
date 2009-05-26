@@ -32,7 +32,7 @@ _____________________________________________________________________________
  Based on code taken from http://nsis.sourceforge.net/File_Association 
 
  Usage in script:
- 1. !include "FileFunc.nsh"
+ 1. !include "FileAssociation.nsh"
  2. [Section|Function]
       ${FileAssociationFunction} "Param1" "Param2" "..." $var
     [SectionEnd|FunctionEnd]
@@ -82,39 +82,39 @@ _____________________________________________________________________________
 !verbose push
 !verbose 3
 !ifndef _FileAssociation_VERBOSE
-	!define _FileAssociation_VERBOSE 3
+  !define _FileAssociation_VERBOSE 3
 !endif
 !verbose ${_FileAssociation_VERBOSE}
 !define FileAssociation_VERBOSE `!insertmacro FileAssociation_VERBOSE`
 !verbose pop
 
 !macro FileAssociation_VERBOSE _VERBOSE
-	!verbose push
-	!verbose 3
-	!undef _FileAssociation_VERBOSE
-	!define _FileAssociation_VERBOSE ${_VERBOSE}
-	!verbose pop
+  !verbose push
+  !verbose 3
+  !undef _FileAssociation_VERBOSE
+  !define _FileAssociation_VERBOSE ${_VERBOSE}
+  !verbose pop
 !macroend
 
 
 
 !macro RegisterExtensionCall _EXECUTABLE _EXTENSION _DESCRIPTION
-	!verbose push
-	!verbose ${_FileAssociation_VERBOSE}
-	Push `${_EXECUTABLE}`
-	Push `${_EXTENSION}`
-	Push `${_DESCRIPTION}`
-	${CallArtificialFunction} RegisterExtension_
-	!verbose pop
+  !verbose push
+  !verbose ${_FileAssociation_VERBOSE}
+  Push `${_DESCRIPTION}`
+  Push `${_EXTENSION}`
+  Push `${_EXECUTABLE}`
+  ${CallArtificialFunction} RegisterExtension_
+  !verbose pop
 !macroend
 
 !macro UnRegisterExtensionCall _EXTENSION _DESCRIPTION
-	!verbose push
-	!verbose ${_FileAssociation_VERBOSE}
-	Push `${_EXTENSION}`
-	Push `${_DESCRIPTION}`
-	${CallArtificialFunction} UnRegisterExtension_
-	!verbose pop
+  !verbose push
+  !verbose ${_FileAssociation_VERBOSE}
+  Push `${_EXTENSION}`
+  Push `${_DESCRIPTION}`
+  ${CallArtificialFunction} UnRegisterExtension_
+  !verbose pop
 !macroend
 
 
@@ -132,35 +132,30 @@ _____________________________________________________________________________
   !verbose push
   !verbose ${_FileAssociation_VERBOSE}
 
-  Exch $R2 ;desc
+  Exch $R2 ;exe
   Exch
   Exch $R1 ;ext
   Exch
   Exch 2
-  Exch $R0 ;exe
+  Exch $R0 ;desc
   Exch 2
   Push $0
   Push $1
 
-!define Index "Line${__LINE__}"
-  ReadRegStr $1 HKCR $R1 ""
-  StrCmp $1 "" "${Index}-NoBackup"
-    StrCmp $1 "OptionsFile" "${Index}-NoBackup"
-    WriteRegStr HKCR $R1 "backup_val" $1
+  ReadRegStr $1 HKCR $R1 ""  ; read current file association
+  StrCmp "$1" "" NoBackup  ; is it empty
+  StrCmp "$1" "$R0" NoBackup  ; is it our own
+    WriteRegStr HKCR $R1 "backup_val" "$1"  ; backup current value
+NoBackup:
+  WriteRegStr HKCR $R1 "" "$R0"  ; set our file association
 
-"${Index}-NoBackup:"
-  WriteRegStr HKCR $R1 "" $R0
-  ReadRegStr $0 HKCR $R0 ""
-  StrCmp $0 "" 0 "${Index}-Skip"
-  WriteRegStr HKCR $R0 "" $R0
+  WriteRegStr HKCR "$R0" "" "$R0"
   WriteRegStr HKCR "$R0\shell" "" "open"
   WriteRegStr HKCR "$R0\DefaultIcon" "" "$R2,0"
 
-"${Index}-Skip:"
-  WriteRegStr HKCR "$R0\shell\open\command" "" '$R2 "%1"'
+  WriteRegStr HKCR "$R0\shell\open\command" "" '"$R2" "%1"'
   WriteRegStr HKCR "$R0\shell\edit" "" "Edit $R0"
-  WriteRegStr HKCR "$R0\shell\edit\command" "" '$R2 "%1"'
-!undef Index
+  WriteRegStr HKCR "$R0\shell\edit\command" "" '"$R2" "%1"'
 
   Pop $1
   Pop $0
@@ -193,21 +188,19 @@ _____________________________________________________________________________
   Push $0
   Push $1
 
-!define Index "Line${__LINE__}"
   ReadRegStr $1 HKCR $R0 ""
-  StrCmp $1 $R1 0 "${Index}-NoOwn" ; only do this if we own it
+  StrCmp $1 $R1 0 NoOwn ; only do this if we own it
   ReadRegStr $1 HKCR $R0 "backup_val"
-  StrCmp $1 "" 0 "${Index}-Restore" ; if backup="" then delete the whole key
+  StrCmp $1 "" 0 Restore ; if backup="" then delete the whole key
   DeleteRegKey HKCR $R0
-  Goto "${Index}-NoOwn"
+  Goto NoOwn
 
-"${Index}-Restore:"
+Restore:
   WriteRegStr HKCR $R0 "" $1
   DeleteRegValue HKCR $R0 "backup_val"
   DeleteRegKey HKCR $R1 ;Delete key with association name settings
 
-"${Index}-NoOwn:"
-!undef Index
+NoOwn:
 
   Pop $1
   Pop $0

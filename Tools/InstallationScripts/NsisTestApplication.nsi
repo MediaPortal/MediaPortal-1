@@ -249,16 +249,22 @@ SectionEnd
 
 Section /o "RegisterExtension"
 
-      ${LOG_TEXT} "INFO" "RegisterExtension"
-  ${RegisterExtension} "$MPdir.Base\MPIMaker.exe" ".xmp" "MediaPortal extension project"
+  ${LOG_TEXT} "INFO" "RegisterExtension"
+  ${RegisterExtension} "$MPdir.Base\MPInstaller.exe"  ".mpi"  "MediaPortal extension package"
+  ${RegisterExtension} "$MPdir.Base\MPInstaller.exe"  ".mpe1" "MediaPortal extension package"
+  ${RegisterExtension} "$MPdir.Base\MPIMaker.exe"     ".xmp"  "MediaPortal extension project"
 
+  ${RefreshShellIcons}
 SectionEnd
 
 Section /o "UnRegisterExtension"
 
-      ${LOG_TEXT} "INFO" "UnRegisterExtension"
-  ${UnRegisterExtension} ".xmp" "MediaPortal extension project"
+  ${LOG_TEXT} "INFO" "UnRegisterExtension"
+  ${UnRegisterExtension} ".mpi"   "MediaPortal extension package"
+  ${UnRegisterExtension} ".mpe1"  "MediaPortal extension package"
+  ${UnRegisterExtension} ".xmp"   "MediaPortal extension project"
 
+  ${RefreshShellIcons}
 SectionEnd
 
 Section /o "CleanLogDirectory"
