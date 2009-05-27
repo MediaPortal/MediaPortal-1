@@ -24,7 +24,6 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -34,8 +33,6 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
-using MediaPortal.Radio.Database;
-using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Alarm
 {
@@ -94,9 +91,8 @@ namespace MediaPortal.GUI.Alarm
     public enum MediaType
     {
       PlayList = 0,
-      Radio = 1,
-      File = 2,
-      Message = 3
+      File = 1,
+      Message = 2
     }
 
     #endregion
@@ -703,32 +699,6 @@ namespace MediaPortal.GUI.Alarm
             ShowErrorDialog();
           }
           break;
-        case MediaType.Radio:
-          ArrayList stations = new ArrayList();
-          RadioDatabase.GetStations(ref stations);
-          foreach (RadioStation station in stations)
-          {
-            if (station.Name == _Sound)
-            {
-              SetVolume();
-
-              if (station.URL.Length < 5)
-              {
-                // FM radio
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO,
-                                                (int) GUIWindow.Window.WINDOW_RADIO, 0, 0, 0, 0, null);
-                msg.Label = station.Name;
-                GUIGraphicsContext.SendMessage(msg);
-              }
-              else
-              {
-                // internet radio stream
-                g_Player.PlayAudioStream(station.URL);
-              }
-              break;
-            }
-          }
-          break;
         case MediaType.File:
           if (AlarmSoundPath.Length != 0 && _Sound.Length != 0)
           {
@@ -990,15 +960,6 @@ namespace MediaPortal.GUI.Alarm
             return "defaultAudio.png";
           case MediaType.PlayList:
             return "DefaultPlaylist.png";
-          case MediaType.Radio:
-            {
-              string thumb = Util.Utils.GetCoverArt(Thumbs.Radio, this.Sound);
-              if (thumb.Length != 0)
-              {
-                return thumb;
-              }
-              return "DefaultMyradio.png";
-            }
           case MediaType.Message:
             {
               return "dialog_information.png";

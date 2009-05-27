@@ -23,51 +23,34 @@
 
 #endregion
 
-using Databases.Folders;
-using Databases.Folders.SqlServer;
-using MediaPortal.Picture.Database;
-using MediaPortal.Video.Database;
+using System;
 
-namespace MediaPortal.Database
+namespace SQLite.NET
 {
-  public class DatabaseFactory
+  /// <summary>
+  /// 
+  /// </summary>
+  public class SQLiteException : Exception
   {
-    private static bool UseADO = false;
+    private SQLiteClient.SqliteError errorCode;
 
-    public static IFolderSettings GetFolderDatabase()
+    // Methods
+    public SQLiteException(string message) : base(message)
     {
-      if (UseADO)
-      {
-        return new FolderSettingAdo();
-      }
-      else
-      {
-        return new FolderSettingsSqlLite();
-      }
     }
 
-    public static IPictureDatabase GetPictureDatabase()
+
+    // Properties
+    public SQLiteException(string message, SQLiteClient.SqliteError code) : base(message)
     {
-      if (UseADO)
-      {
-        return new PictureDatabaseADO();
-      }
-      else
-      {
-        return new PictureDatabaseSqlLite();
-      }
+      this.errorCode = code;
     }
 
-    public static IVideoDatabase GetVideoDatabase()
+
+    // Fields
+    public SQLiteClient.SqliteError ErrorCode
     {
-      if (UseADO)
-      {
-        return null;
-      }
-      else
-      {
-        return new VideoDatabaseSqlLite();
-      }
+      get { return this.errorCode; }
     }
   }
 }

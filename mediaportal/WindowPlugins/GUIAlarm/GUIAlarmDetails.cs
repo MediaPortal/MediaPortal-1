@@ -24,11 +24,9 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using MediaPortal.Radio.Database;
 using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Alarm
@@ -263,32 +261,6 @@ namespace MediaPortal.GUI.Alarm
 
       switch (mediaType)
       {
-        case Alarm.MediaType.Radio:
-          _CurrentAlarm.AlarmMediaType = Alarm.MediaType.Radio;
-          //set the labels
-          GUIControl.SetControlLabel(GetID, (int) Controls.SoundListLabel, GUILocalizeStrings.Get(862));
-          GUIControl.SetControlLabel(GetID, (int) Controls.NoMediaFoundLabel, GUILocalizeStrings.Get(872));
-          //load radios
-          ArrayList stations = new ArrayList();
-          RadioDatabase.GetStations(ref stations);
-          foreach (RadioStation station in stations)
-          {
-            GUIListItem pItem = new GUIListItem(station.Name);
-            if (pItem.Label == _CurrentAlarm.Sound)
-            {
-              pItem.IconImage = "check-box.png";
-              _CurrentAlarm.SelectedItem = pItem;
-            }
-
-            GUIControl.AddListItemControl(GetID, (int) Controls.SoundList, pItem);
-          }
-          GUIControl.HideControl(GetID, (int) Controls.NoMediaFoundLabel);
-
-          if (stations.Count == 0)
-          {
-            GUIControl.ShowControl(GetID, (int) Controls.NoMediaFoundLabel);
-          }
-          break;
         case Alarm.MediaType.File:
           _CurrentAlarm.AlarmMediaType = Alarm.MediaType.File;
           GUIControl.SetControlLabel(GetID, (int) Controls.SoundListLabel, GUILocalizeStrings.Get(863));

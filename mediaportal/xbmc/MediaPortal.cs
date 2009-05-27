@@ -51,7 +51,6 @@ using MediaPortal.InputDevices;
 using MediaPortal.IR;
 using MediaPortal.Player;
 using MediaPortal.Profile;
-using MediaPortal.Radio.Database;
 using MediaPortal.RedEyeIR;
 using MediaPortal.Ripper;
 using MediaPortal.SerialIR;
@@ -1066,13 +1065,6 @@ public class MediaPortalApp : D3DApp, IRender
       Log.Info("Main: disposing PictureDatabase sqllite database.");
       DatabaseFactory.GetPictureDatabase().Dispose();
     }
-    dbPath = Config.GetFile(Config.Dir.Database, "RadioDatabase4.db3");
-    isRemotePath = PathIsNetworkPath(dbPath);
-    if (isRemotePath)
-    {
-      Log.Info("Main: disposing RadioDatabase4 sqllite database.");
-      DatabaseFactory.GetRadioDatabase().Dispose();
-    }
     dbPath = Config.GetFile(Config.Dir.Database, "VideoDatabaseV5.db3");
     isRemotePath = PathIsNetworkPath(dbPath);
     if (isRemotePath)
@@ -1406,25 +1398,6 @@ public class MediaPortalApp : D3DApp, IRender
     using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
     {
       _dateFormat = xmlreader.GetValueAsString("home", "dateformat", "<Day> <Month> <DD>");
-      string strDefault = xmlreader.GetValueAsString("myradio", "default", "");
-      if (strDefault != "")
-      {
-        RadioStation station;
-        RadioDatabase.GetStation(strDefault, out station);
-        GUIMessage msg;
-        if (station.URL != null && !station.URL.Equals(string.Empty) && station.Frequency == 0)
-        {
-          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_FILE, 0, 0, 0, 0, 0, null);
-          msg.Label = station.URL;
-        }
-        else
-        {
-          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO,
-                               (int)GUIWindow.Window.WINDOW_RADIO, 0, 0, 0, 0, null);
-          msg.Label = strDefault;
-        }
-        GUIGraphicsContext.SendMessage(msg);
-      }
     }
     // Asynchronously pre-initialize the music engine if we're using the BassMusicPlayer
     if (BassMusicPlayer.IsDefaultMusicPlayer)

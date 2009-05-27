@@ -31,7 +31,6 @@ using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
-using MediaPortal.Radio.Database;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
 
@@ -539,41 +538,6 @@ namespace MediaPortal.GUI.Music
             thumb = string.Empty;
           }
         }
-        else
-        {
-          //no, radio via MediaPortal TVEngine2
-          ArrayList stations = new ArrayList();
-          RadioDatabase.GetStations(ref stations);
-          foreach (RadioStation station in stations)
-          {
-            if (strFName.IndexOf(".radio") > 0)
-            {
-              string strChan = Path.GetFileNameWithoutExtension(strFName);
-              if (station.Frequency.ToString().Equals(strChan))
-              {
-                // got it, check if it has a thumbnail
-                tag.Title = station.Name;
-                coverart = Util.Utils.GetCoverArt(Thumbs.Radio, station.Name);
-                if (coverart != string.Empty)
-                {
-                  thumb = coverart;
-                }
-              }
-            }
-            else
-            {
-              if (station.URL.Equals(strFName))
-              {
-                tag.Title = station.Name;
-                coverart = Util.Utils.GetCoverArt(Thumbs.Radio, station.Name);
-                if (coverart != string.Empty)
-                {
-                  thumb = coverart;
-                }
-              }
-            }
-          } //foreach (RadioStation station in stations)
-        } // if (strFName.Contains(".tsbuffer"))
       } //if (g_Player.IsRadio)
 
 
