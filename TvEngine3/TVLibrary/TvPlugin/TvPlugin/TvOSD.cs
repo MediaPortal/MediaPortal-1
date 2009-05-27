@@ -122,14 +122,6 @@ namespace TvPlugin
       GetID = (int) Window.WINDOW_TVOSD;
     }
 
-    public override void OnAdded()
-    {
-      GUIWindowManager.Replace((int) Window.WINDOW_TVOSD, this);
-      Restore();
-      PreInit();
-      ResetAllControls();
-    }
-
     public override bool IsTv
     {
       get { return true; }

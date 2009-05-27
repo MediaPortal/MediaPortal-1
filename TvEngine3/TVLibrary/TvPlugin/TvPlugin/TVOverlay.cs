@@ -43,15 +43,6 @@ namespace TvPlugin
       GetID = (int) Window.WINDOW_TV_OVERLAY;
     }
 
-    public override void OnAdded()
-    {
-      GUIWindowManager.Replace((int) Window.WINDOW_TV_OVERLAY, this);
-      Restore();
-      PreInit();
-      ResetAllControls();
-      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.TvOverlay);
-    }
-
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\tvOverlay.xml");

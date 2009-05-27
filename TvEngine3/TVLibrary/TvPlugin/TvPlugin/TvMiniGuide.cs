@@ -92,14 +92,6 @@ namespace TvPlugin
       GetID = (int) Window.WINDOW_MINI_GUIDE;
     }
 
-    public override void OnAdded()
-    {
-      GUIWindowManager.Replace((int) Window.WINDOW_MINI_GUIDE, this);
-      Restore();
-      PreInit();
-      ResetAllControls();
-    }
-
     public override bool SupportsDelayedLoad
     {
       get { return false; }

@@ -50,14 +50,6 @@ namespace TvPlugin
       GetID = (int) Window.WINDOW_TV_RECORDED_INFO; //759
     }
 
-    public override void OnAdded()
-    {
-      GUIWindowManager.Replace((int) Window.WINDOW_TV_RECORDED_INFO, this);
-      Restore();
-      PreInit();
-      ResetAllControls();
-    }
-
     public override bool IsTv
     {
       get { return true; }

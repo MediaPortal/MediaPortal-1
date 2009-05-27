@@ -57,15 +57,6 @@ namespace TvPlugin
 
     #region overrides
 
-    public override void OnAdded()
-    {
-      Log.Debug("TvConflicts:OnAdded");
-      GUIWindowManager.Replace((int) Window.WINDOW_TV_CONFLICTS, this);
-      Restore();
-      PreInit();
-      ResetAllControls();
-    }
-
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvconflicts.xml");

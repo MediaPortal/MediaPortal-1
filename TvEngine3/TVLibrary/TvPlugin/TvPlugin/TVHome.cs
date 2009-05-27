@@ -431,10 +431,6 @@ namespace TvPlugin
       // replace g_player's ShowFullScreenWindowTV
       g_Player.ShowFullScreenWindowTV = ShowFullScreenWindowTVHandler;
 
-      GUIWindowManager.Replace((int) Window.WINDOW_TV, this);
-      Restore();
-      PreInit();
-      ResetAllControls();
       Connected = RemoteControl.IsConnected;
     }
 

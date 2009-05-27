@@ -87,29 +87,12 @@ namespace TvPlugin
       return bResult;
     }
 
-    public override void OnAdded()
-    {
-      GUIWindowManager.Replace((int) Window.WINDOW_TV_CROP_SETTINGS, this);
-      Restore();
-      PreInit();
-      ResetAllControls();
-    }
-
     /// <summary>
     /// Delayed load
     /// </summary>
     public override bool SupportsDelayedLoad
     {
       get { return false; }
-    }
-
-    /// <summary>
-    /// Renderer
-    /// </summary>
-    /// <param name="timePassed"></param>
-    public override void Render(float timePassed)
-    {
-      base.Render(timePassed); // render our controls to the screen
     }
 
     /// <summary>

@@ -77,15 +77,6 @@ namespace TvPlugin
     {
     }
 
-    public override void OnAdded()
-    {
-      Log.Debug("TvRecorded:OnAdded");
-      GUIWindowManager.Replace((int) Window.WINDOW_SCHEDULER, this);
-      Restore();
-      PreInit();
-      ResetAllControls();
-    }
-
     public override bool IsTv
     {
       get { return true; }

@@ -190,15 +190,6 @@ namespace TvPlugin
       ciMenuHandler = new CiMenuHandler();
     }
 
-    public override void OnAdded()
-    {
-      Log.Debug("TvFullScreen:OnAdded");
-      GUIWindowManager.Replace((int) Window.WINDOW_TVFULLSCREEN, this);
-      Restore();
-      PreInit();
-      ResetAllControls();
-    }
-
     public override bool SupportsDelayedLoad
     {
       get { return false; }
@@ -3399,7 +3390,7 @@ namespace TvPlugin
         if (refDlg != null)
           refDlg.CiMenuCallback(Menu);
       }
-      catch (Exception re)
+      catch
       {
         Menu = new CiMenu("Remoting Exception", "Communication with server failed", null, TvLibrary.Interfaces.CiMenuState.Error);
         // pass menu to calling dialog

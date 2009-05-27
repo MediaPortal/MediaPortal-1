@@ -52,14 +52,6 @@ namespace TvPlugin
       return Load(GUIGraphicsContext.Skin + @"\settings_tvSort.xml");
     }
 
-    public override void OnAdded()
-    {
-      GUIWindowManager.Replace((int) Window.WINDOW_SETTINGS_SORT_CHANNELS, this);
-      Restore();
-      PreInit();
-      ResetAllControls();
-    }
-
     protected override void OnPageLoad()
     {
       _currentGroup = null;

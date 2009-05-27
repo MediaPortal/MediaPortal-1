@@ -56,15 +56,6 @@ namespace TvPlugin
       return result;
     }
 
-    public override void OnAdded()
-    {
-      Log.Debug("TVGuide:OnAdded");
-      GUIWindowManager.Replace((int) Window.WINDOW_TVGUIDE, this);
-      Restore();
-      PreInit();
-      ResetAllControls();
-    }
-
     public override bool IsTv
     {
       get { return true; }
@@ -73,16 +64,6 @@ namespace TvPlugin
     public override bool SupportsDelayedLoad
     {
       get { return false; }
-    }
-
-    protected override void OnPageLoad()
-    {
-      base.OnPageLoad();
-    }
-
-    protected override void OnPageDestroy(int newWindowId)
-    {
-      base.OnPageDestroy(newWindowId);
     }
 
     #endregion

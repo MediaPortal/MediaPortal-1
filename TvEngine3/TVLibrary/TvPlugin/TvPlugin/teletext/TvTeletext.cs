@@ -60,14 +60,6 @@ namespace TvPlugin.teletext
       return Load(GUIGraphicsContext.Skin + @"\myteletext.xml");
     }
 
-    public override void OnAdded()
-    {
-      GUIWindowManager.Replace((int) Window.WINDOW_TELETEXT, this);
-      Restore();
-      PreInit();
-      ResetAllControls();
-    }
-
     protected override void OnPageDestroy(int newWindowId)
     {
       // Save the settings and then stop the update thread. Also the teletext grabbing

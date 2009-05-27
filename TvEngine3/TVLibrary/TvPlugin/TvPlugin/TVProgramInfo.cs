@@ -152,15 +152,6 @@ namespace TvPlugin
 
     #region Overrides
 
-    public override void OnAdded()
-    {
-      Log.Debug("TVProgramInfo:OnAdded");
-      GUIWindowManager.Replace((int)Window.WINDOW_TV_PROGRAM_INFO, this);
-      Restore();
-      PreInit();
-      ResetAllControls();
-    }
-
     public override bool IsTv
     {
       get { return true; }

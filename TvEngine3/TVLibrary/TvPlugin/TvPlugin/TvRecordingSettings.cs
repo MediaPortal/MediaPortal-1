@@ -45,14 +45,6 @@ namespace TvPlugin
       GetID = (int) Window.WINDOW_SETTINGS_RECORDINGS;
     }
 
-    public override void OnAdded()
-    {
-      GUIWindowManager.Replace((int) Window.WINDOW_SETTINGS_RECORDINGS, this);
-      Restore();
-      PreInit();
-      ResetAllControls();
-    }
-
     public override bool Init()
     {
       return Load(GUIGraphicsContext.Skin + @"\settings_recording.xml");

@@ -144,7 +144,7 @@ namespace TvPlugin
     private bool _recalculateProgramOffset;
 
     // current minimum/maximum indexes
-    private int MaxXIndex; // means rows here (channels)
+    //private int MaxXIndex; // means rows here (channels)
     private int MinYIndex; // means cols here (programs/time)
 
     /// <summary>

@@ -32,18 +32,9 @@ namespace TvPlugin
   /// </summary>
   public class RadioGuide : RadioGuideBase
   {
-    public RadioGuide() : base()
+    public RadioGuide()
     {
       GetID = (int) Window.WINDOW_RADIO_GUIDE;
-    }
-
-    public override void OnAdded()
-    {
-      Log.Info("RadioGuide:OnAdded");
-      GUIWindowManager.Replace((int) Window.WINDOW_RADIO_GUIDE, this);
-      Restore();
-      PreInit();
-      ResetAllControls();
     }
 
     public override bool Init()
@@ -54,14 +45,5 @@ namespace TvPlugin
       return result;
     }
 
-    protected override void OnPageLoad()
-    {
-      base.OnPageLoad();
-    }
-
-    protected override void OnPageDestroy(int newWindowId)
-    {
-      base.OnPageDestroy(newWindowId);
-    }
   }
 }

@@ -322,7 +322,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUITetris\MyTetrisControl.cs" />
-    <Compile Include="GUITV\GUITVTeletextBase.cs" />
     <Compile Include="GUIVideoFiles\MatroskaTagLib.cs" />
     <Compile Include="GUIVideoFiles\SelectDVDHandler.cs" />
     <Compile Include="GUIWeather\WeatherChannel.cs" />
@@ -381,11 +380,6 @@
       <DependentUpon>PluginSetupForm.cs</DependentUpon>
     </Compile>
     <Compile Include="GUIRadioLastFM\StreamControl.cs" />
-    <Compile Include="GUIRadio\GUIRadio.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIRadio\GUIRadioGuide.cs" />
-    <Compile Include="GUIRadio\GUIRadioGuideBase.cs" />
     <Compile Include="GUIRSSFeed\DBBool.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -544,80 +538,6 @@
     </Compile>
     <Compile Include="GUITopbar\TopBarSetupForm.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GUITV\GUIFullscreenTeletext.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITV\GUIFullScreenTV.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITV\GUIMiniGuide.cs" />
-    <Compile Include="GUITV\GUIRecordedTV.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITV\GUIRecordedTVChannel.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITV\GUIRecordedTVGenre.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITV\GUITVCompress.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITV\GUITVCompressAuto.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITV\GUITVCompressMain.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITV\GUITVCompressSettings.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITV\GUITVCompressStatus.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITV\GUITVConflicts.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITV\GUITVCropManager.cs" />
-    <Compile Include="GUITV\GUITVCropSettings.cs" />
-    <Compile Include="GUITV\GUITVGuide.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITV\GUITvGuideBase.cs" />
-    <Compile Include="GUITV\GUITVGuideDialog.cs" />
-    <Compile Include="GUITV\GUITVHome.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITV\GUITVNoSignal.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITV\GUITVOSD.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITV\GUITVOverlay.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITV\GUITVPriorities.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITV\GUITVProgramInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITV\GUITVRecordedInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITV\GUITVScheduler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITV\GUITVSearch.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITV\GUITVTeletext.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITV\GUITVZapOSD.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUIVideoFiles\GUIVideoArtistInfo.cs">
       <SubType>Code</SubType>
@@ -787,12 +707,6 @@
     <EmbeddedResource Include="GUISettings\SettingsDisabled.gif" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="GUITV\Television.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="GUITV\TelevisionDisabled.gif" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="GUIBurner\Burner.gif" />
   </ItemGroup>
   <ItemGroup>
@@ -833,12 +747,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GUITopbar\Topbar_disabled.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="GUIRadio\Radio.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="GUIRadio\Radio_disabled.gif" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GUIRadioLastFM\BallonRadio.ico" />

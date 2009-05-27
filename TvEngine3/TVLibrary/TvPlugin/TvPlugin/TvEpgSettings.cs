@@ -42,14 +42,6 @@ namespace TvPlugin
       GetID = (int) Window.WINDOW_SETTINGS_TV_EPG;
     }
 
-    public override void OnAdded()
-    {
-      GUIWindowManager.Replace((int) Window.WINDOW_SETTINGS_TV_EPG, this);
-      Restore();
-      PreInit();
-      ResetAllControls();
-    }
-
     public override bool Init()
     {
       return Load(GUIGraphicsContext.Skin + @"\settings_tvEpg.xml");

@@ -54,14 +54,6 @@ namespace TvPlugin
       return Load(GUIGraphicsContext.Skin + @"\myfsteletext.xml");
     }
 
-    public override void OnAdded()
-    {
-      GUIWindowManager.Replace((int) Window.WINDOW_FULLSCREEN_TELETEXT, this);
-      Restore();
-      PreInit();
-      ResetAllControls();
-    }
-
     protected override void OnPageDestroy(int newWindowId)
     {
       SaveSettings();

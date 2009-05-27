@@ -271,14 +271,6 @@ namespace TvPlugin
       }
     }
 
-    public override void OnAdded()
-    {
-      GUIWindowManager.Replace((int) Window.WINDOW_RADIO, this);
-      Restore();
-      PreInit();
-      ResetAllControls();
-    }
-
     public override bool Init()
     {
       currentFolder = null;
