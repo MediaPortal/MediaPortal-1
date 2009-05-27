@@ -278,7 +278,6 @@ ShowUninstDetails show
 # SECTIONS and REMOVEMACROS
 #---------------------------------------------------------------------------
 Section "-prepare" SecPrepare
-  ${LOG_TEXT} "DEBUG" "SECTION SecPrepare"
   ${LOG_TEXT} "INFO" "Prepare installation..."
   ${ReadMediaPortalDirs} "$INSTDIR"
 
@@ -308,7 +307,7 @@ Section "-prepare" SecPrepare
 SectionEnd
 
 !macro BackupInstallDirectory
-  ${LOG_TEXT} "DEBUG" "SECTION SecBackup"
+  ${LOG_TEXT} "DEBUG" "MACRO::BackupInstallDirectory"
 
   !insertmacro GET_BACKUP_POSTFIX $R0
 
@@ -321,7 +320,7 @@ SectionEnd
   CopyFiles /SILENT "$MPdir.Config\*.*" "$MPdir.Config_$R0"
 !macroend
 !macro RenameInstallDirectory
-  ${LOG_TEXT} "DEBUG" "SECTION SecBackup"
+  ${LOG_TEXT} "DEBUG" "MACRO::RenameInstallDirectory"
 
   !insertmacro GET_BACKUP_POSTFIX $R0
 
@@ -351,7 +350,6 @@ SectionEnd
 
 Section "MediaPortal core files (required)" SecCore
   SectionIn RO
-  ${LOG_TEXT} "DEBUG" "SECTION SecCore"
   ${LOG_TEXT} "INFO" "Installing MediaPortal core files..."
 
   SetOverwrite on
@@ -380,8 +378,8 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\MusicPlayer\*"
   SetOutPath "$MPdir.Base\Profiles"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Profiles\*"
-  SetOutPath "$MPdir.Base\Tuningparameters"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Tuningparameters\*"
+  ;SetOutPath "$MPdir.Base\Tuningparameters"
+  ;File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Tuningparameters\*"
   ;SetOutPath "$MPdir.Base\WebEPG"
   ;File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\WebEPG\*"
   SetOutPath "$MPdir.Base\Wizards"
@@ -426,8 +424,8 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal "${MEDIAPORTAL.BASE}\Installer\cleanup.xml"
   SetOutPath "$MPdir.Config\scripts\MovieInfo"
   File /nonfatal "${MEDIAPORTAL.BASE}\scripts\MovieInfo\IMDB.csscript"
-  SetOutPath "$MPdir.Config\xmltv"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\xmltv\*"
+  ;SetOutPath "$MPdir.Config\xmltv"
+  ;File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\xmltv\*"
   
 
 
@@ -576,9 +574,9 @@ SectionEnd
   Delete /REBOOTOK "$MPdir.Config\scripts\MovieInfo\IMDB.csscript"
   RMDir "$MPdir.Config\scripts\MovieInfo"
   RMDir "$MPdir.Config\scripts"
-  Delete /REBOOTOK "$MPdir.Base\xmltv\ReadMe.txt"
-  Delete /REBOOTOK "$MPdir.Base\xmltv\xmltv.dtd"
-  RMDir "$MPdir.Config\xmltv"
+  ;Delete /REBOOTOK "$MPdir.Base\xmltv\ReadMe.txt"
+  ;Delete /REBOOTOK "$MPdir.Base\xmltv\xmltv.dtd"
+  ;RMDir "$MPdir.Config\xmltv"
 
 
   ; MediaPortal.exe
