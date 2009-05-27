@@ -561,7 +561,7 @@ DeleteRegKey HKCU "Software\MediaPortal"
 
 
   ; show error that the OS is not supported and abort the installation
-  ${If} ${AtMostWin2000Srv}
+  ${If} ${AtMostWin2000}
     ${LOG_TEXT} "INFO" "OSTest::AtMostWin2000"
     StrCpy $0 "OSabort"
 
@@ -576,9 +576,11 @@ DeleteRegKey HKCU "Software\MediaPortal"
       StrCpy $0 "OSok"
     ${EndIf}
 
-  ${ElseIf} ${IsWinXP64}
-    ${LOG_TEXT} "INFO" "OSTest::IsWinXP::x64"
-    StrCpy $0 "OSabort"
+  ;${ElseIf} ${IsWinXP64}
+    ${If} ${RunningX64}
+      ${LOG_TEXT} "INFO" "OSTest::IsWinXP::x64"
+      StrCpy $0 "OSabort"
+    ${EndIf}
 
   ${ElseIf} ${IsWin2003}
     ${LOG_TEXT} "INFO" "OSTest::IsWin2003"
