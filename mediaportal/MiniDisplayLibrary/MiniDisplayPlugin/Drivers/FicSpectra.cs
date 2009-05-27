@@ -30,7 +30,6 @@ using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Control;
-using MediaPortal.TV.Recording;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
@@ -307,17 +306,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           vfd.updateFICSymbol(control.FICSymbols.Mute, false);
         }
 
-        // Recording in progress
-        if (Recorder.IsAnyCardRecording())
-        {
-          Log.Debug("FICSpectra.SetLine: REC ON");
-          vfd.updateFICSymbol(control.FICSymbols.REC, true);
-        }
-        else
-        {
-          Log.Debug("FICSpectra.SetLine: REC OFF");
-          vfd.updateFICSymbol(control.FICSymbols.REC, false);
-        }
+        Log.Debug("FICSpectra.SetLine: REC OFF");
+        vfd.updateFICSymbol(control.FICSymbols.REC, false);
         if (GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_HOME)
         {
           Log.Debug("FICSpectra.SetLine: HOME ON");

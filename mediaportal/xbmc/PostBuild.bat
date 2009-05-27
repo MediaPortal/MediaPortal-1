@@ -16,16 +16,9 @@ REM Configuration
 xcopy /y %1\Configuration\Wizards\*.* Wizards\
 xcopy /y %1\Configuration\bin\%2\Configuration.* .
 
-
-REM TvGuideScheduler
-xcopy /y %1\TVGuideScheduler\bin\%2\TVGuideScheduler.* .
-
 REM Core
 xcopy /y %1\core\bin\%2\DirectShowLib.* .
 xcopy /y %1\core\bin\%2\Core.* .
-
-REM TvCapture
-xcopy /y %1\tvcapture\bin\%2\tvcapture.* .
 
 REM Databases
 xcopy /y %1\databases\bin\%2\databases.* .
@@ -61,11 +54,6 @@ xcopy /y %1\RemotePlugins\Remotes\X10Remote\Interop.X10.dll .
 
 REM Utils
 xcopy /y %1\Utils\bin\%2\Utils.dll .
-
-REM WebEPG
-xcopy /y %1\WebEPG\WebEPG\bin\%2\WebEPG.dll .
-copy %1\WebEPG\WebEPG-xmltv\bin\%2\WebEPG-xmltv.exe WebEPG.exe
-xcopy /y %1\WebEPG\WebEPG-conf\bin\%2\WebEPG-conf.exe .
 
 rem C#scripts
 rem don't need to be copied seperate, those files are already in MediaPortal.Base

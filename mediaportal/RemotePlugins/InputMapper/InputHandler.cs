@@ -33,7 +33,6 @@ using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
-using MediaPortal.TV.Recording;
 using MediaPortal.Util;
 
 namespace MediaPortal.InputDevices
@@ -566,7 +565,7 @@ namespace MediaPortal.InputDevices
                   switch (map.ConProperty)
                   {
                     case "TV":
-                      if (Recorder.IsViewing())
+                      if (g_Player.IsTimeShifting || g_Player.IsTV || g_Player.IsTVRecording)
                       {
                         found = map;
                       }

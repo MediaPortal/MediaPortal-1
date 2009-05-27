@@ -45,7 +45,6 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Profile;
-using MediaPortal.TV.Recording;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
@@ -264,9 +263,6 @@ namespace MediaPortal
     private PlayListType _currentPlayListType = PlayListType.PLAYLIST_NONE;
     private PlayList _currentPlayList = null;
     private bool _fullscreen = false;
-    private bool _wasTV = false;
-    private string _tvChannel = string.Empty;
-    private bool _tvTimeshift = false;
     private int m_iSleepingTime = 50;
     protected bool autoHideTaskbar = true;
     private bool alwaysOnTop = false;
@@ -1310,54 +1306,43 @@ namespace MediaPortal
           (g_Player.Playing && (g_Player.IsTV || g_Player.IsVideo || g_Player.IsDVD)))
       {
         _wasPlayingVideo = true;
-        _wasTV = Recorder.IsViewing();
         _fullscreen = g_Player.FullScreen;
 
-        if (_wasTV)
-        {
-          // TV is active
-          _tvChannel = Recorder.TVChannelName;
-          _tvTimeshift = Recorder.IsTimeShifting();
-          Log.Info("D3D: Form resized - Stopping TV - Current channel: {0} / Timeshifting: {1}", _tvChannel,
-                   _tvTimeshift);
-          Recorder.StopViewing();
-        }
-        else
-        {
-          // Some Audio/video is playing
-          _currentPlayerPos = g_Player.CurrentPosition;
-          _currentPlayListType = playlistPlayer.CurrentPlaylistType;
-          _currentPlayList = new PlayList();
+        
+        // Some Audio/video is playing
+        _currentPlayerPos = g_Player.CurrentPosition;
+        _currentPlayListType = playlistPlayer.CurrentPlaylistType;
+        _currentPlayList = new PlayList();
 
-          Log.Info("D3D: Saving fullscreen state for resume: {0}", _fullscreen);
-          PlayList tempList = playlistPlayer.GetPlaylist(_currentPlayListType);
-          if (tempList.Count == 0 && g_Player.IsDVD == true)
-          {
-            // DVD is playing
-            PlayListItem itemDVD = new PlayListItem();
-            itemDVD.FileName = g_Player.CurrentFile;
-            itemDVD.Played = true;
-            itemDVD.Type = PlayListItem.PlayListItemType.DVD;
-            tempList.Add(itemDVD);
-          }
-          if (tempList != null)
-          {
-            for (int i = 0; i < (int)tempList.Count; ++i)
-            {
-              PlayListItem itemNew = tempList[i];
-              _currentPlayList.Add(itemNew);
-            }
-          }
-          _strCurrentFile = playlistPlayer.Get(playlistPlayer.CurrentSong);
-          if (_strCurrentFile.Equals(string.Empty) && g_Player.IsDVD == true)
-          {
-            _strCurrentFile = g_Player.CurrentFile;
-          }
-          Log.Info(
-            "D3D: Form resized - Stopping media - Current playlist: Type: {0} / Size: {1} / Current item: {2} / Filename: {3} / Position: {4}",
-            _currentPlayListType, _currentPlayList.Count, playlistPlayer.CurrentSong, _strCurrentFile, _currentPlayerPos);
-          g_Player.Stop();
+        Log.Info("D3D: Saving fullscreen state for resume: {0}", _fullscreen);
+        PlayList tempList = playlistPlayer.GetPlaylist(_currentPlayListType);
+        if (tempList.Count == 0 && g_Player.IsDVD == true)
+        {
+          // DVD is playing
+          PlayListItem itemDVD = new PlayListItem();
+          itemDVD.FileName = g_Player.CurrentFile;
+          itemDVD.Played = true;
+          itemDVD.Type = PlayListItem.PlayListItemType.DVD;
+          tempList.Add(itemDVD);
         }
+        if (tempList != null)
+        {
+          for (int i = 0; i < (int)tempList.Count; ++i)
+          {
+            PlayListItem itemNew = tempList[i];
+            _currentPlayList.Add(itemNew);
+          }
+        }
+        _strCurrentFile = playlistPlayer.Get(playlistPlayer.CurrentSong);
+        if (_strCurrentFile.Equals(string.Empty) && g_Player.IsDVD == true)
+        {
+          _strCurrentFile = g_Player.CurrentFile;
+        }
+        Log.Info(
+          "D3D: Form resized - Stopping media - Current playlist: Type: {0} / Size: {1} / Current item: {2} / Filename: {3} / Position: {4}",
+          _currentPlayListType, _currentPlayList.Count, playlistPlayer.CurrentSong, _strCurrentFile, _currentPlayerPos);
+        g_Player.Stop();
+        
         _iActiveWindow = GUIWindowManager.ActiveWindow;
       }
     }
@@ -1371,84 +1356,55 @@ namespace MediaPortal
       {
         _wasPlayingVideo = false;
 
-        if (_wasTV)
+        
+        // we were watching some audio/video
+        Log.Info("D3D: RestorePlayers - Resuming: {0}", _strCurrentFile);
+        playlistPlayer.Init();
+        playlistPlayer.Reset();
+        playlistPlayer.CurrentPlaylistType = _currentPlayListType;
+        PlayList playlist = playlistPlayer.GetPlaylist(_currentPlayListType);
+        playlist.Clear();
+        if (_currentPlayList != null)
         {
-          // we were watching TV
-          Log.Info("D3D: RestorePlayers - Resuming: {0}", _tvChannel);
-          string _errorMessage = string.Empty;
-          bool success = Recorder.StartViewing(_tvChannel, true, _tvTimeshift, true, out _errorMessage);
-          if (success)
+          for (int i = 0; i < (int)_currentPlayList.Count; ++i)
           {
-            if ((_iActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN) ||
-                (_iActiveWindow == (int)GUIWindow.Window.WINDOW_TV))
-            {
-              GUIWindowManager.ActivateWindow(_iActiveWindow);
-              Log.Info("D3D: Resumed TV successfully");
-            }
-            else
-            {
-              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-              Thread tvWaitThread = new Thread(TvWaitThread);
-              tvWaitThread.IsBackground = true;
-              tvWaitThread.Name = "TvWaitThread";
-              tvWaitThread.Start();
-            }
+            PlayListItem itemNew = _currentPlayList[i];
+            playlist.Add(itemNew);
           }
-          else
+        }
+        if (playlist.Count > 0 && playlist[0].Type.Equals(PlayListItem.PlayListItemType.DVD))
+        {
+          // we were watching DVD
+          IMDBMovie movieDetails = new IMDBMovie();
+          string fileName = playlist[0].FileName;
+          VideoDatabase.GetMovieInfo(fileName, ref movieDetails);
+          int idFile = VideoDatabase.GetFileId(fileName);
+          int idMovie = VideoDatabase.GetMovieId(fileName);
+          int timeMovieStopped = 0;
+          byte[] resumeData = null;
+          if ((idMovie >= 0) && (idFile >= 0))
           {
-            Log.Info("D3D: Error resuming TV: {0}", _errorMessage);
+            timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);
+            g_Player.PlayDVD(fileName);
+            if (g_Player.Playing)
+            {
+              g_Player.Player.SetResumeState(resumeData);
+            }
           }
         }
         else
         {
-          // we were watching some audio/video
-          Log.Info("D3D: RestorePlayers - Resuming: {0}", _strCurrentFile);
-          playlistPlayer.Init();
-          playlistPlayer.Reset();
-          playlistPlayer.CurrentPlaylistType = _currentPlayListType;
-          PlayList playlist = playlistPlayer.GetPlaylist(_currentPlayListType);
-          playlist.Clear();
-          if (_currentPlayList != null)
-          {
-            for (int i = 0; i < (int)_currentPlayList.Count; ++i)
-            {
-              PlayListItem itemNew = _currentPlayList[i];
-              playlist.Add(itemNew);
-            }
-          }
-          if (playlist.Count > 0 && playlist[0].Type.Equals(PlayListItem.PlayListItemType.DVD))
-          {
-            // we were watching DVD
-            IMDBMovie movieDetails = new IMDBMovie();
-            string fileName = playlist[0].FileName;
-            VideoDatabase.GetMovieInfo(fileName, ref movieDetails);
-            int idFile = VideoDatabase.GetFileId(fileName);
-            int idMovie = VideoDatabase.GetMovieId(fileName);
-            int timeMovieStopped = 0;
-            byte[] resumeData = null;
-            if ((idMovie >= 0) && (idFile >= 0))
-            {
-              timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);
-              g_Player.PlayDVD(fileName);
-              if (g_Player.Playing)
-              {
-                g_Player.Player.SetResumeState(resumeData);
-              }
-            }
-          }
-          else
-          {
-            playlistPlayer.Play(_strCurrentFile); // some standard audio/video
-          }
-
-          if (g_Player.Playing)
-          {
-            g_Player.SeekAbsolute(_currentPlayerPos);
-          }
-
-          GUIGraphicsContext.IsFullScreenVideo = _fullscreen;
-          GUIWindowManager.ReplaceWindow(_iActiveWindow);
+          playlistPlayer.Play(_strCurrentFile); // some standard audio/video
         }
+
+        if (g_Player.Playing)
+        {
+          g_Player.SeekAbsolute(_currentPlayerPos);
+        }
+
+        GUIGraphicsContext.IsFullScreenVideo = _fullscreen;
+        GUIWindowManager.ReplaceWindow(_iActiveWindow);
+        
       }
     }
 
@@ -1541,7 +1497,7 @@ namespace MediaPortal
     {
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
       {
-        if (g_Player.Playing || Recorder.IsViewing())
+        if (g_Player.Playing)
         {
           if (!RefreshRateChanger.RefreshRateChangePending)
           {

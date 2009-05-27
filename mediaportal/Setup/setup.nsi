@@ -455,11 +455,11 @@ Section "MediaPortal core files (required)" SecCore
   ; Databases
   File "..\databases\bin\${BUILD_TYPE}\Databases.dll"
   ; TvCapture
-  File "..\tvcapture\bin\${BUILD_TYPE}\TVCapture.dll"
+  ;File "..\tvcapture\bin\${BUILD_TYPE}\TVCapture.dll"
   ; TvGuideScheduler
   ;File "..\TVGuideScheduler\bin\${BUILD_TYPE}\TVGuideScheduler.exe"
   ; TVE2 Skystar2 support
-  File "${svn_TvEngine2}\Filters\dvblib\bin\${BUILD_TYPE}\dvblib.dll"
+  ;File "${svn_TvEngine2}\Filters\dvblib\bin\${BUILD_TYPE}\dvblib.dll"
   ; MusicShareWatcher
   File "..\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\${BUILD_TYPE}\MusicShareWatcher.exe"
   File "..\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\${BUILD_TYPE}\MusicShareWatcherHelper.dll"
@@ -499,8 +499,8 @@ Section "MediaPortal core files (required)" SecCore
   File "..\Docs\BASS License.txt"
   File "..\Docs\MediaPortal License.rtf"
   ; Wizards
-  SetOutPath "$MPdir.Base\Wizards"
-  File "..\Configuration\Wizards\*.*"
+  ;SetOutPath "$MPdir.Base\Wizards"
+  ;File "..\Configuration\Wizards\*.*"
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION
@@ -512,8 +512,8 @@ Section "MediaPortal core files (required)" SecCore
   ##### MAYBE used by VideoEditor
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\bin\Release\CLDump.ax"                                 "$MPdir.Base\CLDump.ax"           "$MPdir.Base"
   ; used for scanning in tve2
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_TvEngine2}\Filters\MPSA\bin\${BUILD_TYPE}\MPSA.ax"                        "$MPdir.Base\MPSA.ax"             "$MPdir.Base"
-  ;filter for analog tv
+  ;!insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_TvEngine2}\Filters\MPSA\bin\${BUILD_TYPE}\MPSA.ax"                        "$MPdir.Base\MPSA.ax"             "$MPdir.Base"
+  ;filter for analog tv and videoeditor
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\bin\Release\PDMpgMux.ax"                               "$MPdir.Base\PDMpgMux.ax"         "$MPdir.Base"
   ; used for shoutcast
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\bin\Release\shoutcastsource.ax"                        "$MPdir.Base\shoutcastsource.ax"  "$MPdir.Base"
@@ -542,8 +542,8 @@ SectionEnd
   ##### MAYBE used by VideoEditor
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\CLDump.ax"
   ; used for scanning in tve2
-  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MPSA.ax"
-  ;filter for analog tv
+  ;!insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MPSA.ax"
+  ;filter for analog tv and videoeditor
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\PDMpgMux.ax"
   ; used for shoutcast
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\shoutcastsource.ax"
@@ -603,11 +603,11 @@ SectionEnd
   ; Databases
   Delete /REBOOTOK "$MPdir.Base\Databases.dll"
   ; TvCapture
-  Delete /REBOOTOK "$MPdir.Base\TVCapture.dll"
+  ;Delete /REBOOTOK "$MPdir.Base\TVCapture.dll"
   ; TvGuideScheduler
   ;Delete /REBOOTOK "$MPdir.Base\TVGuideScheduler.exe"
   ; TVE2 Skystar2 support
-  Delete /REBOOTOK "$MPdir.Base\dvblib.dll"
+  ;Delete /REBOOTOK "$MPdir.Base\dvblib.dll"
   ; MusicShareWatcher
   Delete /REBOOTOK "$MPdir.Base\MusicShareWatcher.exe"
   Delete /REBOOTOK "$MPdir.Base\MusicShareWatcherHelper.dll"

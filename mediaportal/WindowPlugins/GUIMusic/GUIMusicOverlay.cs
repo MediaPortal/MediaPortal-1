@@ -33,7 +33,6 @@ using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Radio.Database;
 using MediaPortal.TagReader;
-using MediaPortal.TV.Recording;
 using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Music
@@ -186,12 +185,6 @@ namespace MediaPortal.GUI.Music
           }
           SetCurrentFile(_fileName);
         }
-      }
-
-      if ((Recorder.IsRadio()) && (Recorder.RadioStationName() != _fileName))
-      {
-        _fileName = Recorder.RadioStationName();
-        SetCurrentFile(_fileName);
       }
 
       if (GUIGraphicsContext.IsFullScreenVideo || GUIGraphicsContext.Calibrating)
@@ -523,17 +516,6 @@ namespace MediaPortal.GUI.Music
 
       tag = TagReader.TagReader.ReadTag(fileName);
 
-      // if we're playing a radio
-      if (Recorder.IsRadio())
-      {
-        tag = new MusicTag();
-        string cover = Util.Utils.GetCoverArt(Thumbs.Radio, Recorder.RadioStationName());
-        if (cover != string.Empty)
-        {
-          thumb = cover;
-        }
-        tag.Title = Recorder.RadioStationName();
-      }
       if (g_Player.IsRadio)
       {
         // then check which radio station we're playing

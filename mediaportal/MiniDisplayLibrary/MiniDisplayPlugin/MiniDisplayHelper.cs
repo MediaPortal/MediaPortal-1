@@ -4,7 +4,6 @@ using DShowNET.AudioMixer;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using MediaPortal.TV.Recording;
 using Un4seen.Bass;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
@@ -317,20 +316,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           DynaInvoke.InvokeMethod(Config.GetFolder(Config.Dir.Base) + @"\TvControl.dll", "TvServer",
                                   "IsAnyCardRecording", null);
       }
-      return Recorder.IsAnyCardRecording();
+      return false;
     }
 
     public static bool IsCaptureCardViewing()
     {
       if (UseTVServer)
       {
-        bool flag =
+        return 
           (bool)
           DynaInvoke.InvokeMethod(Config.GetFolder(Config.Dir.Base) + @"\TvControl.dll", "TvServer",
                                   "IsAnyCardRecording", null);
-        return (((flag | Recorder.IsViewing()) | Recorder.IsTimeShifting()) | Recorder.IsRadio());
       }
-      return ((Recorder.IsViewing() | Recorder.IsTimeShifting()) | Recorder.IsRadio());
+      return false;
     }
 
     public static bool Player_Playing()

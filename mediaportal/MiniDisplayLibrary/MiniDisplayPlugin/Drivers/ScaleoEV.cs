@@ -31,7 +31,6 @@ using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Control;
-using MediaPortal.TV.Recording;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
@@ -174,14 +173,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
         // Display symbols
         // LiveTV, LiveRadio
-        if (Recorder.IsViewing() || Recorder.IsRadio())
-        {
-          vfd.updateSymbol(control.VFDSymbols.Antenna, true);
-        }
-        else
-        {
-          vfd.updateSymbol(control.VFDSymbols.Antenna, false);
-        }
+        vfd.updateSymbol(control.VFDSymbols.Antenna, false);
 
         // DVD
         if (g_Player.IsDVD)
@@ -267,14 +259,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
 
         // Recording in progress
-        if (Recorder.IsRecording())
-        {
-          vfd.updateSymbol(control.VFDSymbols.REC, true);
-        }
-        else
-        {
-          vfd.updateSymbol(control.VFDSymbols.REC, false);
-        }
+        vfd.updateSymbol(control.VFDSymbols.REC, false);
       }
       catch (Exception ex)
       {

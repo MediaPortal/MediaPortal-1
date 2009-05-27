@@ -55,7 +55,6 @@ using MediaPortal.Radio.Database;
 using MediaPortal.RedEyeIR;
 using MediaPortal.Ripper;
 using MediaPortal.SerialIR;
-using MediaPortal.TV.Recording;
 using MediaPortal.Util;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
@@ -874,10 +873,6 @@ public class MediaPortalApp : D3DApp, IRender
           //Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
           case PBT_APMQUERYSUSPEND:
             Log.Info("Main: Windows is requesting hibernate mode - UI bit: {0}", msg.LParam.ToInt32());
-            if (!OnQuerySuspend(ref msg))
-            {
-              return;
-            }
             break;
 
           //The PBT_APMQUERYSTANDBY message is sent to request permission to suspend the computer.
@@ -886,10 +881,6 @@ public class MediaPortalApp : D3DApp, IRender
           case PBT_APMQUERYSTANDBY:
             // Stop all media before suspending or hibernating
             Log.Info("Main: Windows is requesting standby mode - UI bit: {0}", msg.LParam.ToInt32());
-            if (!OnQuerySuspend(ref msg))
-            {
-              return;
-            }
             break;
 
           //The PBT_APMQUERYSUSPENDFAILED message is sent to notify the application that suspension was denied
@@ -912,19 +903,11 @@ public class MediaPortalApp : D3DApp, IRender
 
           case PBT_APMSTANDBY:
             Log.Info("Main: Windows is going to standby");
-            if (!OnQuerySuspend(ref msg))
-            {
-              return;
-            }
             OnSuspend(ref msg);
             break;
 
           case PBT_APMSUSPEND:
             Log.Info("Main: Windows is suspending");
-            if (!OnQuerySuspend(ref msg))
-            {
-              return;
-            }
             OnSuspend(ref msg);
             break;
 
@@ -972,17 +955,9 @@ public class MediaPortalApp : D3DApp, IRender
       {
         Log.Info("Main: Windows is requesting shutdown mode");
         base.WndProc(ref msg);
-        if (!OnQueryShutDown(ref msg))
-        {
-          Log.Info("Main: shutdown mode denied");
-          return;
-        }
-        else
-        {
-          Log.Info("Main: shutdown mode granted");
-          base._shuttingDown = true;
-          msg.Result = (IntPtr)1; //tell windows we are ready to shutdown          
-        }
+        Log.Info("Main: shutdown mode granted");
+        _shuttingDown = true;
+        msg.Result = (IntPtr)1; //tell windows we are ready to shutdown          
       }
       // gibman - http://mantis.team-mediaportal.com/view.php?id=1073     
       else if (msg.Msg == WM_ENDSESSION) // && msg.WParam == ((IntPtr)1))
@@ -1073,40 +1048,6 @@ public class MediaPortalApp : D3DApp, IRender
 
   private static object syncObj = new object();
 
-  //called when windows asks permission to restart, shutdown or logout
-  private bool OnQueryShutDown(ref Message msg)
-  {
-    lock (syncObj)
-    {
-      if (Recorder.IsAnyCardRecording()) // if we are recording then deny request
-      {
-        msg.Result = new IntPtr(BROADCAST_QUERY_DENY);
-        Log.Info("Main: TVRecording running -> Shutdown stopped");
-        return false;
-      }
-      return true;
-    }
-  }
-
-  //called when windows asks permission to hibernate or standby
-  private bool OnQuerySuspend(ref Message msg)
-  {
-    lock (syncObj)
-    {
-      if (_suspended)
-      {
-        return true;
-      }
-      if (Recorder.IsAnyCardRecording()) // if we are recording then deny request
-      {
-        msg.Result = new IntPtr(BROADCAST_QUERY_DENY);
-        Log.Info("Main: TVRecording running -> Suspend stopped");
-        return false;
-      }
-      return true;
-    }
-  }
-
   // we only dispose the DB connection if the DB path is remote.      
   // since local db's have no problems.
   private void DisposeDBs()
@@ -1191,8 +1132,6 @@ public class MediaPortalApp : D3DApp, IRender
       _suspended = true;
       _runAutomaticResume = true;
       InputDevices.Stop();
-      Log.Info("Main: Stopping recorder");
-      Recorder.Stop();
       Log.Info("Main: Stopping AutoPlay");
       AutoPlay.StopListening();
       // we only dispose the DB connection if the DB path is remote.      
@@ -1248,14 +1187,6 @@ public class MediaPortalApp : D3DApp, IRender
       {
         Log.Info("Main: OnResumeAutomatic - OnResume called but !_suspended");
         return;
-      }
-
-      _onResumeAutomaticRunning = true;
-      Recorder.Stop();
-      if (!Recorder.Running)
-      {
-        Log.Info("Main: OnResumeAutomatic - Starting recorder");
-        Recorder.Start();
       }
 
       _onResumeAutomaticRunning = false;
@@ -1461,7 +1392,6 @@ public class MediaPortalApp : D3DApp, IRender
     {
       splashScreen.SetInformation("Starting recorder...");
     }
-    Recorder.Start();
     if (splashScreen != null)
     {
       splashScreen.SetInformation("Starting plugins...");
@@ -1598,11 +1528,6 @@ public class MediaPortalApp : D3DApp, IRender
     g_Player.Stop();
     // tell window manager that application is closing
     // this gives the windows the chance to do some cleanup
-    if (Recorder.IsAnyCardRecording())
-    {
-      Recorder.StopRecording();
-    }
-    Recorder.Stop();
     InputDevices.Stop();
     AutoPlay.StopListening();
     PluginManager.Stop();
@@ -1748,7 +1673,6 @@ public class MediaPortalApp : D3DApp, IRender
                                                     Format.A8R8G8B8);
 
     new GUILayerRenderer();
-    Recorder.Start();
     WorkingSet.Minimize();
   }
 
@@ -1916,7 +1840,6 @@ public class MediaPortalApp : D3DApp, IRender
 #if AUTOUPDATE
     CheckForNewUpdate();
 #endif
-    Recorder.Process();
     g_Player.Process();
     // update playing status
     if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
@@ -1989,13 +1912,9 @@ public class MediaPortalApp : D3DApp, IRender
     }
     else
     {
-      if (!Recorder.View)
-      {
-        GUIGraphicsContext.IsFullScreenVideo = false;
-      }
       GUIGraphicsContext.IsPlaying = false;
     }
-    if (!g_Player.Playing && !Recorder.IsRecording())
+    if (!g_Player.Playing)
     {
       if (m_bPlayingState)
       {
@@ -2314,7 +2233,7 @@ public class MediaPortalApp : D3DApp, IRender
             }
             WindowState = FormWindowState.Minimized;
             Hide();
-            if (base.autoHideTaskbar)
+            if (autoHideTaskbar)
             {
               // only re-show the startbar if MP is the one that has hidden it.
               Win32API.EnableStartBar(true);
@@ -2331,24 +2250,8 @@ public class MediaPortalApp : D3DApp, IRender
               {
                 g_Player.Pause();
               }
-              else if (GUIGraphicsContext.IsVMR9Exclusive)
-              {
-                Recorder.StopViewing();
-              }
             }
             return;
-          }
-          if (Recorder.IsAnyCardRecording())
-          {
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO, 0, 0, 0, 0, 0, 0);
-            msg.Param1 = 1033;
-            msg.Param2 = 506;
-            msg.Param3 = 0;
-            GUIWindowManager.SendMessage(msg);
-            if (msg.Param1 != 1)
-            {
-              return;
-            }
           }
           GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
           return;
@@ -2381,18 +2284,6 @@ public class MediaPortalApp : D3DApp, IRender
             GUIWindowManager.SendMessage(msg);
             if (msg.Param1 == 1)
             {
-              if (Recorder.IsAnyCardRecording())
-              {
-                msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO, 0, 0, 0, 0, 0, 0);
-                msg.Param1 = 1033;
-                msg.Param2 = 506;
-                msg.Param3 = 0;
-                GUIWindowManager.SendMessage(msg);
-                if (msg.Param1 != 1)
-                {
-                  return;
-                }
-              }
               useRestartOptions = true;
               restartOptions = RestartOptions.Reboot;
               GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
@@ -2436,30 +2327,6 @@ public class MediaPortalApp : D3DApp, IRender
                  }*/
                 return;
               }
-              if (Recorder.IsAnyCardRecording())
-              {
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO, 0, 0, 0, 0, 0, 0);
-                msg.Param1 = 1033;
-                msg.Param2 = 506;
-                msg.Param3 = 0;
-                GUIWindowManager.SendMessage(msg);
-                if (msg.Param1 != 1)
-                {
-                  GUIWindow win = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_HOME);
-                  if (win != null)
-                  {
-                    win.OnAction(new Action(Action.ActionType.ACTION_MOVE_LEFT, 0, 0));
-                  }
-                  /*GUIOverlayWindow topBar =
-                      (GUIOverlayWindow)
-                      GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TOPBARHOME);
-                  if (topBar != null)
-                  {
-                    topBar.Focused = true;
-                  }*/
-                  return;
-                }
-              }
               switch (dlg.SelectedId)
               {
                 case 1030:
@@ -2492,10 +2359,6 @@ public class MediaPortalApp : D3DApp, IRender
 
         //stop radio
         case Action.ActionType.ACTION_STOP:
-          if (Recorder.IsRadio())
-          {
-            Recorder.StopRadio();
-          }
           break;
 
         // Take Screenshot
@@ -2539,7 +2402,7 @@ public class MediaPortalApp : D3DApp, IRender
           }
           break;
       }
-      if (g_Player.Playing || Recorder.IsRadio())
+      if (g_Player.Playing)
       {
         switch (action.wID)
         {

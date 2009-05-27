@@ -33,7 +33,6 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
-using MediaPortal.TV.Recording;
 using MediaPortal.Video.Database;
 using MediaPortal.Player.Subtitles;
 
@@ -113,7 +112,6 @@ namespace MediaPortal.GUI.Video
     private bool _playNotifyBeep = true;
     private DateTime _volumeTimer = DateTime.MinValue;
     private DateTime _forbiddenTimer = DateTime.MinValue;
-    private VMR9OSD _vmr9OSD = new VMR9OSD();
     private PlayListPlayer playlistPlayer;
     private const int SKIPBAR_PADDING = 10;
     private List<Geometry.Type> _allowedArModes = new List<Geometry.Type>();
@@ -375,10 +373,6 @@ namespace MediaPortal.GUI.Video
             GUIWindowManager.IsOsdVisible = false;
             GUIGraphicsContext.IsFullScreenVideo = false;
             GUIWindowManager.ShowPreviousWindow();
-            if (_vmr9OSD != null)
-            {
-              _vmr9OSD.HideBitmap();
-            }
             return;
           }
         case Action.ActionType.ACTION_AUTOCROP:
@@ -925,7 +919,6 @@ namespace MediaPortal.GUI.Video
             _playNotifyBeep = true;
             _volumeTimer = DateTime.MinValue;
             _forbiddenTimer = DateTime.MinValue;
-            _vmr9OSD = new VMR9OSD();
 
             screenState = new FullScreenState();
             NotifyDialogVisible = false;
@@ -1575,11 +1568,6 @@ namespace MediaPortal.GUI.Video
 
     private void CheckTimeOuts()
     {
-      if (_vmr9OSD != null)
-      {
-        _vmr9OSD.CheckTimeOuts();
-      }
-
       if (_isVolumeVisible)
       {
         TimeSpan ts = DateTime.Now - _volumeTimer;

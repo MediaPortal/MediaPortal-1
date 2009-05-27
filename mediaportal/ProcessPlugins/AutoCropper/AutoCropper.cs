@@ -32,7 +32,6 @@ using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
-using MediaPortal.TV.Recording;
 using WindowPlugins.AutoCropper;
 
 namespace ProcessPlugins.AutoCropper
@@ -130,23 +129,6 @@ namespace ProcessPlugins.AutoCropper
     }
 
     /// <summary>
-    ///  Event handler for TV playback start
-    /// </summary>
-    /// <param name="j"></param>
-    /// <param name="dev"></param>
-    public void OnTVStarted(int j, TVCaptureDevice dev)
-    {
-      if (verboseLog)
-      {
-        Log.Debug("AutoCropper: On TV Playback Started");
-      }
-      if (mode == Mode.DYNAMIC)
-      {
-        workerEvent.Set();
-      }
-    }
-
-    /// <summary>
     ///  Event handler for video playback start
     /// </summary>
     /// <param name="type"></param>
@@ -175,7 +157,7 @@ namespace ProcessPlugins.AutoCropper
     /// <returns></returns>
     private bool IsPlaying()
     {
-      return g_Player.Playing || Recorder.IsViewing();
+      return g_Player.Playing;
     }
 
     /// <summary>
@@ -329,10 +311,9 @@ namespace ProcessPlugins.AutoCropper
 
       // register to handle playback events so we can wake
       // the above thread when playback starts
-      Recorder.OnTvViewingStarted += new Recorder.OnTvViewHandler(OnTVStarted);
       if (useForMyVideos)
       {
-        g_Player.PlayBackStarted += new g_Player.StartedHandler(OnVideoStarted);
+        g_Player.PlayBackStarted += OnVideoStarted;
       }
     }
 

@@ -45,8 +45,7 @@ namespace MediaPortal.Configuration
   {
     private enum StartupMode
     {
-      Normal,
-      Wizard
+      Normal
     }
 
     private StartupMode startupMode = StartupMode.Normal;
@@ -200,10 +199,6 @@ string MpConfig = Assembly.GetExecutingAssembly().Location;
             applicationForm = new SettingsForm();
             break;
 
-          case StartupMode.Wizard:
-            Log.Info("Create new wizard setup");
-            applicationForm = new WizardForm(sectionsConfiguration);
-            break;
         }
 
         if (applicationForm != null)

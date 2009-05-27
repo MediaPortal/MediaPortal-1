@@ -236,11 +236,6 @@
       <Project>{0A234721-1F13-4DF8-9B1E-64D9E3111203}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
-    <ProjectReference Include="..\TVCapture\TVCapture.csproj">
-      <Name>TVCapture</Name>
-      <Project>{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-    </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
       <Name>Utils</Name>
@@ -291,22 +286,7 @@
     <Compile Include="Subdialogs\DlgConfigModeHint.Designer.cs">
       <DependentUpon>DlgConfigModeHint.cs</DependentUpon>
     </Compile>
-    <Compile Include="Subdialogs\EditCaptureCardForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Subdialogs\EditGroupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Subdialogs\editName.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Subdialogs\EditRadioStationForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Subdialogs\EditShareForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Subdialogs\EditTVChannelForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Subdialogs\EditWeatherCityForm.cs">
@@ -322,9 +302,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="RadioStation.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="Subdialogs\SearchCityForm.cs">
       <SubType>Form</SubType>
@@ -473,15 +450,6 @@
     <Compile Include="Sections\MusicMisc.Designer.cs">
       <DependentUpon>MusicMisc.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\Wizard_AnalogRadio.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Wizard_ATSCTV.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Wizard_ScanBase.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Sections\MusicImport.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -554,67 +522,19 @@
     <Compile Include="Sections\PluginsNew.Designer.cs">
       <DependentUpon>PluginsNew.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\Radio.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\RadioStations.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Sections\Remote.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\Television.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\TVCaptureCards.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Subdialogs\SearchSHOUTcast.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Subdialogs\TvChannelLookupService.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Sections\TVChannels.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\TVGroups.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Sections\TVPostProcessing.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\TVProgramGuide.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\TVRecording.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\Weather.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\RemoteWinLirc.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Wizard_AnalogTV.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Wizard_DVBCTV.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Wizard_DVBSTV.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Wizard_DVBTTV.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Wizard_Finished.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Wizard_SelectPlugins.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Wizard_Welcome.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SectionTreeNode.cs">
@@ -635,9 +555,6 @@
     </Compile>
     <Compile Include="WeatherChannel.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="WizardForm.cs">
-      <SubType>Form</SubType>
     </Compile>
     <EmbeddedResource Include="Sections\BaseShares.resx">
       <SubType>Designer</SubType>
@@ -683,29 +600,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>DlgConfigModeHint.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Subdialogs\EditCaptureCardForm.resx">
-      <DependentUpon>EditCaptureCardForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Subdialogs\EditGroupForm.resx">
-      <DependentUpon>EditGroupForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Subdialogs\editName.resx">
-      <DependentUpon>editName.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Subdialogs\EditRadioStationForm.resx">
-      <DependentUpon>EditRadioStationForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Subdialogs\EditShareForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>EditShareForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Subdialogs\EditTVChannelForm.resx">
-      <DependentUpon>EditTVChannelForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Subdialogs\EditWeatherCityForm.resx">
       <DependentUpon>EditWeatherCityForm.cs</DependentUpon>
@@ -848,18 +745,6 @@
       <DependentUpon>MusicMisc.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Wizard_AnalogRadio.resx">
-      <DependentUpon>Wizard_AnalogRadio.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Wizard_ATSCTV.resx">
-      <DependentUpon>Wizard_ATSCTV.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Wizard_ScanBase.resx">
-      <DependentUpon>Wizard_ScanBase.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Sections\MusicImport.resx">
       <DependentUpon>MusicImport.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -905,32 +790,8 @@
       <SubType>Designer</SubType>
       <DependentUpon>PluginsNew.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Radio.resx">
-      <DependentUpon>Radio.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\RadioStations.resx">
-      <DependentUpon>RadioStations.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Sections\Television.resx">
       <DependentUpon>Television.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\TVCaptureCards.resx">
-      <DependentUpon>TVCaptureCards.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Subdialogs\TvChannelLookupService.resx">
-      <DependentUpon>TvChannelLookupService.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\TVChannels.resx">
-      <DependentUpon>TVChannels.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\TVGroups.resx">
-      <DependentUpon>TVGroups.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\TVProgramGuide.resx">
-      <DependentUpon>TVProgramGuide.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\TVRecording.resx">
-      <DependentUpon>TVRecording.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Weather.resx">
       <DependentUpon>Weather.cs</DependentUpon>
@@ -938,27 +799,6 @@
     <EmbeddedResource Include="Sections\RemoteWinLirc.resx">
       <DependentUpon>RemoteWinLirc.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Wizard_AnalogTV.resx">
-      <DependentUpon>Wizard_AnalogTV.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Wizard_DVBCTV.resx">
-      <DependentUpon>Wizard_DVBCTV.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Wizard_DVBSTV.resx">
-      <DependentUpon>Wizard_DVBSTV.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Wizard_DVBTTV.resx">
-      <DependentUpon>Wizard_DVBTTV.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Wizard_Finished.resx">
-      <DependentUpon>Wizard_Finished.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Wizard_SelectPlugins.resx">
-      <DependentUpon>Wizard_SelectPlugins.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Wizard_Welcome.resx">
-      <DependentUpon>Wizard_Welcome.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Resources\config.ico" />
     <None Include="Resources\wizard_background.png" />
@@ -974,18 +814,6 @@
     <None Include="Resources\remote.Mce2005TT.png" />
     <EmbeddedResource Include="Resources\mplogo.gif" />
     <None Include="Resources\mepo_donation.png" />
-    <Content Include="Wizards\DVD.xml" />
-    <Content Include="Wizards\FirstTimeSetup.xml" />
-    <Content Include="Wizards\Movies.xml" />
-    <Content Include="Wizards\Music.xml" />
-    <Content Include="Wizards\Pictures.xml" />
-    <Content Include="Wizards\Television.xml" />
-    <Content Include="Wizards\wizard_dvd.png" />
-    <Content Include="Wizards\wizard_fts.png" />
-    <Content Include="Wizards\wizard_movie.png" />
-    <Content Include="Wizards\wizard_music.png" />
-    <Content Include="Wizards\wizard_picture.png" />
-    <Content Include="Wizards\wizard_television.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

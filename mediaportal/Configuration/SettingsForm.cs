@@ -244,7 +244,6 @@ namespace MediaPortal.Configuration
       AddTabMovies();
       AddTabDvd();
       AddTabTelevision();
-      AddTabRadio();
       AddTabMusic();
       AddTabPictures();
       AddTabRemote();
@@ -459,47 +458,12 @@ namespace MediaPortal.Configuration
       {
         Log.Info("  add tv client section");
         AddSection(new ConfigPage(television, new TVClient(), false));
-      }
-      else
-      {
-        Log.Info("  add tv capture cards section");
-        AddSection(new ConfigPage(television, new TVCaptureCards(), false));
-        Log.Info("  add tv channels section");
-        AddSection(new ConfigPage(television, new TVChannels(), false));
-        Log.Info("  add tv channel groups section");
-        AddSection(new ConfigPage(television, new TVGroups(), false));
-        Log.Info("  add tv program guide section");
-        AddSection(new ConfigPage(television, new TVProgramGuide(), false));
-        Log.Info("  add tv recording section");
-        AddSection(new ConfigPage(television, new TVRecording(), false));
+        Log.Info("  add tv postprocessing section");
+        AddSection(new ConfigPage(television, new TVPostProcessing(), true));
+        Log.Info("  add tv teletext section");
+        AddSection(new ConfigPage(television, new TVTeletext(), true));
       }
 
-      Log.Info("  add tv postprocessing section");
-      AddSection(new ConfigPage(television, new TVPostProcessing(), true));
-      Log.Info("  add tv teletext section");
-      AddSection(new ConfigPage(television, new TVTeletext(), true));
-    }
-
-    private void AddTabRadio()
-    {
-      //add radio section
-      if (UseTvServer)
-      {
-        Log.Info("radio section not added - tv server plugin installed");
-      }
-      else
-      {
-        Log.Info("add radio section");
-        if (splashScreen != null)
-        {
-          splashScreen.SetInformation("Adding radio section...");
-        }
-
-        SectionSettings radio = new Sections.Radio();
-        AddSection(new ConfigPage(null, radio, false));
-        Log.Info("  add radio stations section");
-        AddSection(new ConfigPage(radio, new RadioStations(), false));
-      }
     }
 
     private void AddTabPictures()

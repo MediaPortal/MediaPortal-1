@@ -262,11 +262,6 @@
       <Project>{0A234721-1F13-4DF8-9B1E-64D9E3111203}</Project>
       <Name>RemotePlugins</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TVCapture\TVCapture.csproj">
-      <Name>TVCapture</Name>
-      <Project>{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-    </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
       <Name>Utils</Name>
@@ -507,13 +502,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUISettings\Wizard\General\GUIWizardGeneral.cs" />
-    <Compile Include="GUISettings\Wizard\GUIWizardCardsDetected.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="GUISettings\Wizard\GUIWizardFinished.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUISettings\Wizard\GUIWizardScanBase.cs" />
     <Compile Include="GUISettings\Wizard\GUIWizardWelcome.cs">
       <SubType>Code</SubType>
     </Compile>
