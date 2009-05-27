@@ -356,7 +356,6 @@ Section "MediaPortal core files (required)" SecCore
 
   #CONFIG FILES ARE ALWAYS INSTALLED by SVN and FINAL releases, BECAUSE of the config dir location
   !define EXCLUDED_CONFIG_FILES "\
-    /x CaptureCardDefinitions.xml \
     /x 'eHome Infrared Transceiver List XP.xml' \
     /x HelpReferences.xml \
     /x ISDNCodes.xml \
@@ -412,7 +411,7 @@ Section "MediaPortal core files (required)" SecCore
 
   ; Config Files
   SetOutPath "$MPdir.Config"
-  File /nonfatal "${MEDIAPORTAL.BASE}\CaptureCardDefinitions.xml"
+  ;File /nonfatal "${MEDIAPORTAL.BASE}\CaptureCardDefinitions.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\eHome Infrared Transceiver List XP.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\HelpReferences.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\ISDNCodes.xml"
