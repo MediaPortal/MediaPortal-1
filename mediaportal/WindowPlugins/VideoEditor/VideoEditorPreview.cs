@@ -32,7 +32,6 @@ using System.Web.UI.WebControls;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using MediaPortal.TV.Database;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
 using Mpeg2SplitterPackage;
@@ -228,30 +227,8 @@ namespace WindowPlugins.VideoEditor
       cutPointsList.Clear();
       cutBtn.IsEnabled = false;
       addBtn.IsEnabled = false;
-      TVRecorded rec = new TVRecorded();
       int fileId = VideoDatabase.GetFileId(inFilename.FullName);
       VideoDatabase.SetMovieDuration(fileId, (int) durationNew);
-      if (
-        TVDatabase.GetRecordedTVByFilename(
-          inFilename.FullName.Replace("_original" + inFilename.Extension, inFilename.Extension), ref rec))
-      {
-        TVDatabase.RemoveRecordedTV(rec);
-        DateTime ende = rec.StartTime.AddSeconds(durationNew);
-        rec.End = Utils.datetolong(ende);
-        TVDatabase.AddRecordedTV(rec);
-      }
-      else
-      {
-        //TVDatabase.CommitTransaction();	
-        //rec.Channel = "Pro7";
-        //rec.Start = MediaPortal.Util.Utils.datetolong(DateTime.Now);
-        //rec.End = MediaPortal.Util.Utils.datetolong(rec.StartTime.AddSeconds(durationNew));
-        //rec.FileName = inFilename.FullName.Replace("_original" + inFilename.Extension, inFilename.Extension);
-        //rec.Title = "pro7Test";
-        //rec.Description = "werbung";
-        //rec.KeepRecordingMethod = TVRecorded.KeepMethod.Always;
-        //int i = TVDatabase.AddRecordedTV(rec);
-      }
     }
 
     private void dvrMod_OnProgress(int percentage)

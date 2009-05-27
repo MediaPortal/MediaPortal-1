@@ -35,7 +35,6 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
-using MediaPortal.TV.Database;
 using MediaPortal.Util;
 using Mpeg2SplitterPackage;
 
@@ -71,7 +70,6 @@ namespace WindowPlugins.VideoEditor
     private VideoEditorPreview cutScr;
     private List<FileInfo> joiningList;
     private string filetoConvert;
-    private TVRecorded recInfo;
     private DvrMsModifier dvrmsMod;
     private Thread joinThread;
     private bool working = false;
@@ -235,7 +233,6 @@ namespace WindowPlugins.VideoEditor
 
           if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2068)) // Dvrms to divx
           {
-            recInfo = new TVRecorded();
             filetoConvert = item.Path;
             progressBar.Percentage = 0;
             progressBar.Visible = true;
@@ -464,14 +461,7 @@ namespace WindowPlugins.VideoEditor
       yesnoDialog.DoModal(GetID);
       if (yesnoDialog.IsConfirmed)
       {
-        recInfo = new TVRecorded();
         File.Delete(filetoConvert);
-        if (TVDatabase.GetRecordedTVByFilename(filetoConvert, ref recInfo))
-        {
-          TVDatabase.RemoveRecordedTV(recInfo);
-          recInfo.FileName = Path.ChangeExtension(filetoConvert, ".mpeg");
-          TVDatabase.AddRecordedTV(recInfo);
-        }
       }
 
       progressBar.Visible = false;

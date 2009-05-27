@@ -31,7 +31,6 @@ using System.IO;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using MediaPortal.TV.Database;
 using MediaPortal.Util;
 
 #endregion
@@ -281,7 +280,7 @@ namespace MediaPortal.GUI.Home
         case GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM:
           //if (GUIGraphicsContext.IsFullScreenVideo) return;
           GUIDialogNotify dialogNotify = (GUIDialogNotify) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_NOTIFY);
-          TVProgram notify = message.Object as TVProgram;
+          TVProgramDescription notify = message.Object as TVProgramDescription;
           if (notify == null)
           {
             return;

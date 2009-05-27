@@ -24,11 +24,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using MediaPortal.GUI.Library;
-using MediaPortal.TV.Database;
 using MediaPortal.Util;
 
 namespace MediaPortal.Dialogs
@@ -53,7 +51,7 @@ namespace MediaPortal.Dialogs
 
     // Private Variables
     // Protected Variables
-    protected bool _conflictingEpisodes = false;
+    protected bool _conflictingEpisodes;
     // Public Variables
 
     #endregion
@@ -84,27 +82,6 @@ namespace MediaPortal.Dialogs
       SetControlLabel(GetID, (int) Controls.HEADING, HeadingText);
     }
 
-    public void AddConflictRecordings(List<TVRecording> conflicts)
-    {
-      if ((conflicts == null) || (conflicts.Count < 1))
-      {
-        return;
-      }
-      GUIListControl list = (GUIListControl) GetControl((int) Controls.LIST);
-
-      if (list != null)
-      {
-        foreach (TVRecording conflict in conflicts)
-        {
-          GUIListItem item = new GUIListItem(conflict.Title);
-          item.Label2 = GetRecordingDateTime(conflict);
-          item.Label3 = conflict.Channel;
-          item.TVTag = conflict;
-          AddConflictRecording(item);
-        }
-      }
-    }
-
     public void AddConflictRecording(GUIListItem item)
     {
       string logo = Util.Utils.GetCoverArt(Thumbs.TVChannel, item.Label3);
@@ -115,7 +92,7 @@ namespace MediaPortal.Dialogs
       item.ThumbnailImage = logo;
       item.IconImageBig = logo;
       item.IconImage = logo;
-      item.OnItemSelected += new GUIListItem.ItemSelectedHandler(OnListItemSelected);
+      item.OnItemSelected += OnListItemSelected;
 
       GUIListControl list = (GUIListControl) GetControl((int) Controls.LIST);
       if (list != null)
@@ -128,7 +105,7 @@ namespace MediaPortal.Dialogs
 
     #region Private Methods
 
-    private void OnListItemSelected(GUIListItem item, GUIControl parent)
+    private static void OnListItemSelected(GUIListItem item, GUIControl parent)
     {
       if ((item == null) || (item.TVTag == null))
       {
@@ -137,7 +114,7 @@ namespace MediaPortal.Dialogs
       // to be implemented
     }
 
-    private string GetRecordingDateTime(TVRecording rec)
+    private static string GetRecordingDateTime(TVProgramDescription rec)
     {
       return String.Format("{0} {1} - {2}",
                            Util.Utils.GetShortDayString(rec.StartTime),

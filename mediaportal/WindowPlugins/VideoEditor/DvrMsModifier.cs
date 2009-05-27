@@ -33,7 +33,6 @@ using DirectShowLib.SBE;
 using DShowNET.Helper;
 using MediaPortal.Core.Transcoding;
 using MediaPortal.GUI.Library;
-using MediaPortal.TV.Database;
 using Timer=System.Timers.Timer;
 
 namespace WindowPlugins.VideoEditor
@@ -63,7 +62,6 @@ namespace WindowPlugins.VideoEditor
     private Dvrms2Divx toDivx;
     //string filetoConvert;
     //bool inDatabase;
-    private TVRecorded recInfo;
 
     public DvrMsModifier()
     {
@@ -372,35 +370,21 @@ namespace WindowPlugins.VideoEditor
       try
       {
         tompeg = new Dvrms2Mpeg();
-        recInfo = new TVRecorded();
         transcodeProgresstime = new Timer(1000);
         transcodeProgresstime.Elapsed += new ElapsedEventHandler(TranscodeProgresstime_Elapsed);
 
         TranscodeInfo mpegInfo = new TranscodeInfo();
         mpegInfo.Author = "MediaPortal";
 
-        if (TVDatabase.GetRecordedTVByFilename(inFilename.FullName, ref recInfo))
-        {
-          mpegInfo.Channel = recInfo.Channel;
-          mpegInfo.Description = recInfo.Description;
-          mpegInfo.Duration = (int) (recInfo.EndTime.Subtract(recInfo.StartTime)).Seconds;
-          mpegInfo.End = recInfo.EndTime;
-          mpegInfo.file = recInfo.FileName;
-          mpegInfo.Start = recInfo.StartTime;
-          mpegInfo.Title = recInfo.Title;
-        }
-        else
-        {
-          mpegInfo.Channel = "none";
-          mpegInfo.Description = "none";
-          //MediaPortal.Player.g_Player.Play(inFilename.FullName);
-          mpegInfo.Duration = (int) newDuration; //(int)MediaPortal.Player.g_Player.Duration;
-          //MediaPortal.Player.g_Player.Stop();
-          mpegInfo.file = inFilename.FullName;
-          mpegInfo.Start = DateTime.Now;
-          mpegInfo.End = mpegInfo.Start.AddSeconds(mpegInfo.Duration);
-          mpegInfo.Title = inFilename.Name;
-        }
+        mpegInfo.Channel = "none";
+        mpegInfo.Description = "none";
+        //MediaPortal.Player.g_Player.Play(inFilename.FullName);
+        mpegInfo.Duration = (int) newDuration; //(int)MediaPortal.Player.g_Player.Duration;
+        //MediaPortal.Player.g_Player.Stop();
+        mpegInfo.file = inFilename.FullName;
+        mpegInfo.Start = DateTime.Now;
+        mpegInfo.End = mpegInfo.Start.AddSeconds(mpegInfo.Duration);
+        mpegInfo.Title = inFilename.Name;
         transcodeProgresstime.Start();
         //filetoConvert = inFilename.FullName;
 
@@ -439,34 +423,20 @@ namespace WindowPlugins.VideoEditor
       try
       {
         toDivx = new Dvrms2Divx();
-        recInfo = new TVRecorded();
         convertProgresstime = new Timer(1000);
         convertProgresstime.Elapsed += new ElapsedEventHandler(convertProgresstime_Elapsed);
         TranscodeInfo divxInfo = new TranscodeInfo();
         divxInfo.Author = "MediaPortal";
 
-        if (TVDatabase.GetRecordedTVByFilename(inFilename.FullName, ref recInfo))
-        {
-          divxInfo.Channel = recInfo.Channel;
-          divxInfo.Description = recInfo.Description;
-          divxInfo.Duration = (int) (recInfo.EndTime.Subtract(recInfo.StartTime)).Seconds;
-          divxInfo.End = recInfo.EndTime;
-          divxInfo.file = recInfo.FileName;
-          divxInfo.Start = recInfo.StartTime;
-          divxInfo.Title = recInfo.Title;
-        }
-        else
-        {
-          divxInfo.Channel = "none";
-          divxInfo.Description = "none";
-          //MediaPortal.Player.g_Player.Play(inFilename.FullName);
-          divxInfo.Duration = (int) newDuration; //(int)MediaPortal.Player.g_Player.Duration;
-          //MediaPortal.Player.g_Player.Stop();
-          divxInfo.file = inFilename.FullName;
-          divxInfo.Start = DateTime.Now;
-          divxInfo.End = divxInfo.Start.AddSeconds(divxInfo.Duration);
-          divxInfo.Title = inFilename.Name;
-        }
+        divxInfo.Channel = "none";
+        divxInfo.Description = "none";
+        //MediaPortal.Player.g_Player.Play(inFilename.FullName);
+        divxInfo.Duration = (int) newDuration; //(int)MediaPortal.Player.g_Player.Duration;
+        //MediaPortal.Player.g_Player.Stop();
+        divxInfo.file = inFilename.FullName;
+        divxInfo.Start = DateTime.Now;
+        divxInfo.End = divxInfo.Start.AddSeconds(divxInfo.Duration);
+        divxInfo.Title = inFilename.Name;
 
         //filetoConvert = inFilename.FullName;
         toDivx.CreateProfile(new Size(360, 288), 2000, 25);

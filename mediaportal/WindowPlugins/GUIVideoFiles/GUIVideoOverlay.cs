@@ -27,7 +27,6 @@ using System;
 using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using MediaPortal.TV.Database;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
 
@@ -372,29 +371,7 @@ namespace MediaPortal.GUI.Video
       {
         // this is a recorded movie.
         // check the TVDatabase for the description,genre,title,...
-        TVRecorded recording = new TVRecorded();
-        if (TVDatabase.GetRecordedTVByFilename(fileName, ref recording))
-        {
-          TimeSpan ts = recording.EndTime - recording.StartTime;
-          string time = String.Format("{0} {1} ",
-                                      Util.Utils.GetShortDayString(recording.StartTime),
-                                      Util.Utils.SecondsToHMString((int) ts.TotalSeconds));
-          GUIPropertyManager.SetProperty("#Play.Current.Title", recording.Title);
-          GUIPropertyManager.SetProperty("#Play.Current.Plot", recording.Title + "\n" + recording.Description);
-          GUIPropertyManager.SetProperty("#Play.Current.PlotOutline", recording.Description);
-          GUIPropertyManager.SetProperty("#Play.Current.Genre", recording.Genre);
-          GUIPropertyManager.SetProperty("#Play.Current.Year", time);
-          GUIPropertyManager.SetProperty("#Play.Current.Channel", recording.Channel);
-          string logo = Util.Utils.GetCoverArt(Thumbs.TVChannel, recording.Channel);
-          if (!File.Exists(logo))
-          {
-            logo = "defaultVideoBig.png";
-          }
-          GUIPropertyManager.SetProperty("#Play.Current.Thumb", logo);
-          _thumbLogo = logo;
-          return;
-        }
-        else if (g_Player.currentTitle != "")
+        if (g_Player.currentTitle != "")
         {
           GUIPropertyManager.SetProperty("#Play.Current.Title", g_Player.currentTitle);
           GUIPropertyManager.SetProperty("#Play.Current.Plot",

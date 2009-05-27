@@ -272,30 +272,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SqlServerUtility.cs" />
-    <Compile Include="TV\DVBChannel.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="TV\TVChannel.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="TV\TVDatabase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="TV\TVProgram.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="TV\TVRecorded.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="TV\TVRecording.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="TV\TVUtil.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="TV\XMLTVImport.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Video\IMDBFetcher.cs" />
     <Compile Include="Video\SqlLite\VideoDatabaseSqlLite.cs">
       <SubType>Code</SubType>

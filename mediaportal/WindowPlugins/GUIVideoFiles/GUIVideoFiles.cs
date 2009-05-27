@@ -36,7 +36,6 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Services;
-using MediaPortal.TV.Database;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
 using MediaPortal.Player.Subtitles;
@@ -2072,7 +2071,6 @@ namespace MediaPortal.GUI.Video
             Log.Error(ex);
           }
           VideoDatabase.DeleteMovie(item.Path);
-          TVDatabase.RemoveRecordedTVByFileName(item.Path);
           if (_currentSelectedItem > 0 && decreaseSelectedItem)
           {
             _currentSelectedItem--;
@@ -2082,7 +2080,6 @@ namespace MediaPortal.GUI.Video
       else
       {
         VideoDatabase.DeleteMovie(item.Path);
-        TVDatabase.RemoveRecordedTVByFileName(item.Path);
 
         if (item.IsRemote)
         {

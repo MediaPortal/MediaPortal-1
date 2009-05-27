@@ -34,7 +34,6 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
-using MediaPortal.TV.Database;
 using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
@@ -279,13 +278,13 @@ namespace TvPlugin
                          program.StartTime);
                 program.Notify = false;
                 program.Persist();
-                TVProgram tvProg = new TVProgram();
+                TVProgramDescription tvProg = new TVProgramDescription();
                 tvProg.Channel = program.ReferencedChannel().DisplayName;
                 tvProg.Title = program.Title;
                 tvProg.Description = program.Description;
                 tvProg.Genre = program.Genre;
-                tvProg.Start = Utils.datetolong(program.StartTime);
-                tvProg.End = Utils.datetolong(program.EndTime);
+                tvProg.StartTime = program.StartTime;
+                tvProg.EndTime = program.EndTime;
 
                 _notifiesList.Remove(program);
                 Log.Info("send notify");

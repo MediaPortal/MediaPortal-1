@@ -65,9 +65,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Databases\TV\TestTvDatabase.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Core\guilib\CacheSettingsProviderTest.cs" />
     <Compile Include="Core\guilib\Layers.cs" />
     <Compile Include="Core\guilib\SettingsTest.cs" />
