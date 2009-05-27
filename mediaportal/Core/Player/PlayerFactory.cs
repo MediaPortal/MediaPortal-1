@@ -332,11 +332,6 @@ namespace MediaPortal.Player
             }
           }
 
-          if (extension == ".radio")
-          {
-            return new RadioTuner();
-          }
-
           if (Util.Utils.IsCDDA(aFileName))
           {
             // Check if, we should use BASS for CD Playback

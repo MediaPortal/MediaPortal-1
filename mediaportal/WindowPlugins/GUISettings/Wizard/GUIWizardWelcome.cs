@@ -140,13 +140,7 @@ namespace MediaPortal.GUI.Settings
     protected override void OnPageLoad()
     {
       GUIPropertyManager.SetProperty("#Wizard.General.Done", "no");
-      GUIPropertyManager.SetProperty("#Wizard.DVBT.Done", "no");
-      GUIPropertyManager.SetProperty("#Wizard.DVBC.Done", "no");
-      GUIPropertyManager.SetProperty("#Wizard.DVBS.Done", "no");
-      GUIPropertyManager.SetProperty("#Wizard.ATSC.Done", "no");
-      GUIPropertyManager.SetProperty("#Wizard.Analog.Done", "no");
       GUIPropertyManager.SetProperty("#Wizard.Remote.Done", "no");
-      GUIPropertyManager.SetProperty("#Wizard.EPG.Done", "no");
       GUIPropertyManager.SetProperty("#WizardCard", "0");
 
       base.OnPageLoad();

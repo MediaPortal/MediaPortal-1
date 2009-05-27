@@ -89,18 +89,9 @@ namespace MediaPortal.GUI.Home
         _fixedScroll = xmlreader.GetValueAsBool("home", "scrollfixed", true); // fix scrollbar in the middle of menu
         _useMyPlugins = xmlreader.GetValueAsBool("home", "usemyplugins", true); // use previous menu handling
         _enableAnimation = xmlreader.GetValueAsBool("home", "enableanimation", true);
-        if (!File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
-        {
-          _notifyTVTimeout = xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 15);
-          _playNotifyBeep = xmlreader.GetValueAsBool("movieplayer", "notifybeep", true);
-          _preNotifyConfig = xmlreader.GetValueAsInt("movieplayer", "notifyTVBefore", 300);
-        }
-        else
-        {
-          _notifyTVTimeout = xmlreader.GetValueAsInt("mytv", "notifyTVTimeout", 15);
-          _playNotifyBeep = xmlreader.GetValueAsBool("mytv", "notifybeep", true);
-          _preNotifyConfig = xmlreader.GetValueAsInt("mytv", "notifyTVBefore", 300);
-        }
+        _notifyTVTimeout = xmlreader.GetValueAsInt("mytv", "notifyTVTimeout", 15);
+        _playNotifyBeep = xmlreader.GetValueAsBool("mytv", "notifybeep", true);
+        _preNotifyConfig = xmlreader.GetValueAsInt("mytv", "notifyTVBefore", 300);
       }
     }
 

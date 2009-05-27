@@ -25,7 +25,6 @@
 
 using System;
 using System.Collections;
-using System.IO;
 using System.Windows.Forms;
 using DirectShowLib;
 using DShowNET;
@@ -50,9 +49,6 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel labelMPEG2Decoder;
     private MPComboBox defaultZoomModeComboBox;
     private MPLabel label6;
-    private MPGroupBox groupBox4;
-    private MPLabel label7;
-    private MPTextBox textBoxTimeShiftBuffer;
     private MPLabel label8;
     private MPComboBox cbDeinterlace;
     private MPGroupBox groupBox3;
@@ -61,7 +57,6 @@ namespace MediaPortal.Configuration.Sections
     private Label lblChanNumMaxLen;
     private NumericUpDown channelNumberMaxLengthNumUpDn;
     private bool _init;
-    private MPCheckBox cbTurnOnTimeShift;
     private MPGroupBox groupBox5;
     private MPCheckBox cbTurnOnTv;
     private MPGroupBox gAllowedModes;
@@ -195,10 +190,6 @@ namespace MediaPortal.Configuration.Sections
       this.labelAudioRenderer = new MediaPortal.UserInterface.Controls.MPLabel();
       this.audioRendererComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.radioButton1 = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.groupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.cbTurnOnTimeShift = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.textBoxTimeShiftBuffer = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label7 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.byIndexCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.showChannelNumberCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -216,7 +207,6 @@ namespace MediaPortal.Configuration.Sections
       this.cbAllowStretch = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbAllowNonLinearStretch = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
-      this.groupBox4.SuspendLayout();
       this.groupBox3.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.channelNumberMaxLengthNumUpDn)).BeginInit();
       this.groupBox5.SuspendLayout();
@@ -396,53 +386,6 @@ namespace MediaPortal.Configuration.Sections
       this.radioButton1.Size = new System.Drawing.Size(104, 24);
       this.radioButton1.TabIndex = 0;
       this.radioButton1.UseVisualStyleBackColor = true;
-      // 
-      // groupBox4
-      // 
-      this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox4.Controls.Add(this.cbTurnOnTimeShift);
-      this.groupBox4.Controls.Add(this.textBoxTimeShiftBuffer);
-      this.groupBox4.Controls.Add(this.label7);
-      this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox4.Location = new System.Drawing.Point(192, 341);
-      this.groupBox4.Name = "groupBox4";
-      this.groupBox4.Size = new System.Drawing.Size(277, 71);
-      this.groupBox4.TabIndex = 2;
-      this.groupBox4.TabStop = false;
-      this.groupBox4.Text = "Timeshifting";
-      // 
-      // cbTurnOnTimeShift
-      // 
-      this.cbTurnOnTimeShift.AutoSize = true;
-      this.cbTurnOnTimeShift.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbTurnOnTimeShift.Location = new System.Drawing.Point(16, 19);
-      this.cbTurnOnTimeShift.Name = "cbTurnOnTimeShift";
-      this.cbTurnOnTimeShift.Size = new System.Drawing.Size(230, 17);
-      this.cbTurnOnTimeShift.TabIndex = 0;
-      this.cbTurnOnTimeShift.Text = "Auto turn timeshift on when entering My TV ";
-      this.cbTurnOnTimeShift.UseVisualStyleBackColor = true;
-      this.cbTurnOnTimeShift.CheckedChanged += new System.EventHandler(this.cbTurnOnTimeShift_CheckedChanged);
-      // 
-      // textBoxTimeShiftBuffer
-      // 
-      this.textBoxTimeShiftBuffer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxTimeShiftBuffer.BorderColor = System.Drawing.Color.Empty;
-      this.textBoxTimeShiftBuffer.Location = new System.Drawing.Point(168, 43);
-      this.textBoxTimeShiftBuffer.Name = "textBoxTimeShiftBuffer";
-      this.textBoxTimeShiftBuffer.Size = new System.Drawing.Size(68, 20);
-      this.textBoxTimeShiftBuffer.TabIndex = 2;
-      this.textBoxTimeShiftBuffer.Text = "30";
-      this.textBoxTimeShiftBuffer.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      // 
-      // label7
-      // 
-      this.label7.Location = new System.Drawing.Point(16, 46);
-      this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(136, 16);
-      this.label7.TabIndex = 1;
-      this.label7.Text = "Timeshift buffer (minutes):";
       // 
       // groupBox3
       // 
@@ -650,13 +593,10 @@ namespace MediaPortal.Configuration.Sections
       this.Controls.Add(this.gAllowedModes);
       this.Controls.Add(this.groupBox5);
       this.Controls.Add(this.groupBox3);
-      this.Controls.Add(this.groupBox4);
       this.Controls.Add(this.groupBox1);
       this.Name = "Television";
       this.Size = new System.Drawing.Size(472, 427);
       this.groupBox1.ResumeLayout(false);
-      this.groupBox4.ResumeLayout(false);
-      this.groupBox4.PerformLayout();
       this.groupBox3.ResumeLayout(false);
       this.groupBox3.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.channelNumberMaxLengthNumUpDn)).EndInit();
@@ -676,34 +616,6 @@ namespace MediaPortal.Configuration.Sections
       {
         return;
       }
-      pluginVersion = File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll") ? 3 : 2;
-
-      //Add call to enable/disable objects. 
-      // test call ony
-      switch (pluginVersion)
-      {
-        case 3:
-          // timeshifting section. 
-          groupBox4.Enabled = false;
-          groupBox4.Visible = false;
-          //h.264 section 
-          labelH264Decoder.Enabled = true;
-          h264videoCodecComboBox.Enabled = true;
-          labelAACDecoder.Enabled = true;
-          aacAudioCodecComboBox.Enabled = true;
-          break;
-        case 2:
-          // timeshifting section. 
-          groupBox4.Enabled = true;
-          groupBox4.Visible = true;
-          //h.264 section 
-          labelH264Decoder.Enabled = false;
-          h264videoCodecComboBox.Enabled = false;
-          labelAACDecoder.Enabled = false;
-          aacAudioCodecComboBox.Enabled = false;
-          break;
-      }
-      // end of test call. 
 
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -717,9 +629,6 @@ namespace MediaPortal.Configuration.Sections
 
         cbTurnOnTv.Checked = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
         cbAutoFullscreen.Checked = xmlreader.GetValueAsBool("mytv", "autofullscreen", false);
-        cbTurnOnTimeShift.Checked = xmlreader.GetValueAsBool("mytv", "autoturnontimeshifting", false);
-
-        textBoxTimeShiftBuffer.Text = xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30).ToString();
         byIndexCheckBox.Checked = xmlreader.GetValueAsBool("mytv", "byindex", true);
         showChannelNumberCheckBox.Checked = xmlreader.GetValueAsBool("mytv", "showchannelnumber", false);
 
@@ -880,19 +789,10 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValueAsBool("mytv", "autoturnontv", cbTurnOnTv.Checked);
         xmlwriter.SetValueAsBool("mytv", "autofullscreen", cbAutoFullscreen.Checked);
-        xmlwriter.SetValueAsBool("mytv", "autoturnontimeshifting", cbTurnOnTimeShift.Checked);
         xmlwriter.SetValueAsBool("mytv", "byindex", byIndexCheckBox.Checked);
         xmlwriter.SetValueAsBool("mytv", "showchannelnumber", showChannelNumberCheckBox.Checked);
         xmlwriter.SetValue("mytv", "channelnumbermaxlength", channelNumberMaxLengthNumUpDn.Value);
 
-        try
-        {
-          int buffer = Int32.Parse(textBoxTimeShiftBuffer.Text);
-          xmlwriter.SetValue("capture", "timeshiftbuffer", buffer.ToString());
-        }
-        catch
-        {
-        }
         xmlwriter.SetValue("mytv", "defaultar", defaultZoomModeComboBox.SelectedItem);
         //
         // Set codecs
@@ -911,12 +811,6 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("mytv", "allowarnonlinear", cbAllowNonLinearStretch.Checked);
         xmlwriter.SetValueAsBool("mytv", "allowarletterbox", cbAllowLetterbox.Checked);
       }
-    }
-
-    private void cbTurnOnTimeShift_CheckedChanged(object sender, EventArgs e)
-    {
-      //if ( cbTurnOnTimeShift.Checked )
-      //  cbTurnOnTv.Checked = true;
     }
 
     private void cbAutoFullscreen_CheckedChanged(object sender, EventArgs e)

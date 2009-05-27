@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
@@ -115,118 +114,114 @@ namespace MediaPortal.Configuration.Sections
         checkBoxNotifyPlaySound.Checked = xmlreader.GetValueAsBool("mytv", "notifybeep", true);
       }
       chkTVnotifications_CheckedChanged(null, null);
-      if (File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
+      // Enable this Panel if the TvPlugin exists in the plug-in Directory
+      Enabled = true;
+
+      try
       {
-        // Enable this Panel if the TvPlugin exists in the plug-in Directory
-        this.Enabled = true;
-
-        try
+        Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvLibrary.Interfaces.dll");
+        if (assem != null)
         {
-          Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvLibrary.Interfaces.dll");
-          if (assem != null)
+          Type[] types = assem.GetExportedTypes();
+          foreach (Type exportedType in types)
           {
-            Type[] types = assem.GetExportedTypes();
-            foreach (Type exportedType in types)
+            try
             {
-              try
+              if (exportedType.Name == "Languages")
               {
-                if (exportedType.Name == "Languages")
-                {
-                  // Load available languages into variables. 
-                  Object languageObject = null;
-                  languageObject = Activator.CreateInstance(exportedType);
-                  MethodInfo methodInfo = exportedType.GetMethod("GetLanguages",
-                                                                 BindingFlags.Public | BindingFlags.Instance);
-                  _languagesAvail = methodInfo.Invoke(languageObject, null) as List<String>;
-                  methodInfo = exportedType.GetMethod("GetLanguageCodes", BindingFlags.Public | BindingFlags.Instance);
-                  _languageCodes = (List<String>)methodInfo.Invoke(languageObject, null);
+                // Load available languages into variables. 
+                Object languageObject = null;
+                languageObject = Activator.CreateInstance(exportedType);
+                MethodInfo methodInfo = exportedType.GetMethod("GetLanguages",
+                                                               BindingFlags.Public | BindingFlags.Instance);
+                _languagesAvail = methodInfo.Invoke(languageObject, null) as List<String>;
+                methodInfo = exportedType.GetMethod("GetLanguageCodes", BindingFlags.Public | BindingFlags.Instance);
+                _languageCodes = (List<String>)methodInfo.Invoke(languageObject, null);
 
-                  if (_languagesAvail == null || _languageCodes == null)
+                if (_languagesAvail == null || _languageCodes == null)
+                {
+                  Log.Debug("Failed to load languages");
+                  return;
+                } else
+                {
+                  mpListViewAvailAudioLang.Items.Clear();
+                  mpListViewPreferredAudioLang.Items.Clear();
+                  for (int i = 0; i < _languagesAvail.Count; i++)
                   {
-                    Log.Debug("Failed to load languages");
-                    return;
-                  }
-                  else
-                  {
-                    mpListViewAvailAudioLang.Items.Clear();
-                    mpListViewPreferredAudioLang.Items.Clear();
-                    for (int i = 0; i < _languagesAvail.Count; i++)
+                    if (!_preferredAudioLanguages.Contains(_languagesAvail[i]))
                     {
-                      if (!_preferredAudioLanguages.Contains(_languagesAvail[i]))
+                      ListViewItem item = new ListViewItem(new string[] { _languagesAvail[i], _languageCodes[i] });
+                      item.Name = _languageCodes[i];
+                      if (!mpListViewAvailAudioLang.Items.ContainsKey(item.Name))
                       {
-                        ListViewItem item = new ListViewItem(new string[] { _languagesAvail[i], _languageCodes[i] });
-                        item.Name = _languageCodes[i];
-                        if (!mpListViewAvailAudioLang.Items.ContainsKey(item.Name))
-                        {
-                          mpListViewAvailAudioLang.Items.Add(item);
-                        }
+                        mpListViewAvailAudioLang.Items.Add(item);
                       }
                     }
-                    mpListViewAvailAudioLang.ListViewItemSorter = _columnSorter = new ListViewColumnSorter();
-                    _columnSorter.SortColumn = 0;
-                    _columnSorter.Order = SortOrder.Ascending;
-                    mpListViewAvailAudioLang.Sort();
+                  }
+                  mpListViewAvailAudioLang.ListViewItemSorter = _columnSorter = new ListViewColumnSorter();
+                  _columnSorter.SortColumn = 0;
+                  _columnSorter.Order = SortOrder.Ascending;
+                  mpListViewAvailAudioLang.Sort();
 
-                    if (_preferredAudioLanguages.Length > 0)
+                  if (_preferredAudioLanguages.Length > 0)
+                  {
+                    string[] langArr = _preferredAudioLanguages.Split(';');
+
+                    for (int i = 0; i < langArr.Length; i++)
                     {
-                      string[] langArr = _preferredAudioLanguages.Split(';');
-
-                      for (int i = 0; i < langArr.Length; i++)
+                      string langStr = langArr[i];
+                      if (langStr.Trim().Length > 0)
                       {
-                        string langStr = langArr[i];
-                        if (langStr.Trim().Length > 0)
+                        for (int j = 0; j < _languagesAvail.Count; j++)
                         {
-                          for (int j = 0; j < _languagesAvail.Count; j++)
+                          if (_languageCodes[j].Contains(langStr))
                           {
-                            if (_languageCodes[j].Contains(langStr))
-                            {
-                              ListViewItem item = new ListViewItem(new string[] { _languagesAvail[j], _languageCodes[j] });
-                              item.Name = _languageCodes[j];
-                              mpListViewPreferredAudioLang.Items.Add(item);
-                              break;
-                            }
+                            ListViewItem item = new ListViewItem(new string[] { _languagesAvail[j], _languageCodes[j] });
+                            item.Name = _languageCodes[j];
+                            mpListViewPreferredAudioLang.Items.Add(item);
+                            break;
                           }
                         }
                       }
                     }
+                  }
 
-                    mpListViewAvailSubLang.Items.Clear();
-                    mpListViewPreferredSubLang.Items.Clear();
-                    for (int i = 0; i < _languagesAvail.Count; i++)
+                  mpListViewAvailSubLang.Items.Clear();
+                  mpListViewPreferredSubLang.Items.Clear();
+                  for (int i = 0; i < _languagesAvail.Count; i++)
+                  {
+                    if (!_preferredSubLanguages.Contains(_languagesAvail[i]))
                     {
-                      if (!_preferredSubLanguages.Contains(_languagesAvail[i]))
+                      ListViewItem item = new ListViewItem(new string[] { _languagesAvail[i], _languageCodes[i] });
+                      item.Name = _languageCodes[i];
+                      if (!mpListViewAvailSubLang.Items.ContainsKey(item.Name))
                       {
-                        ListViewItem item = new ListViewItem(new string[] { _languagesAvail[i], _languageCodes[i] });
-                        item.Name = _languageCodes[i];
-                        if (!mpListViewAvailSubLang.Items.ContainsKey(item.Name))
-                        {
-                          mpListViewAvailSubLang.Items.Add(item);
-                        }
+                        mpListViewAvailSubLang.Items.Add(item);
                       }
                     }
-                    mpListViewAvailSubLang.ListViewItemSorter = _columnSorter = new ListViewColumnSorter();
-                    _columnSorter.SortColumn = 0;
-                    _columnSorter.Order = SortOrder.Ascending;
-                    mpListViewAvailSubLang.Sort();
+                  }
+                  mpListViewAvailSubLang.ListViewItemSorter = _columnSorter = new ListViewColumnSorter();
+                  _columnSorter.SortColumn = 0;
+                  _columnSorter.Order = SortOrder.Ascending;
+                  mpListViewAvailSubLang.Sort();
 
-                    if (_preferredSubLanguages.Length > 0)
+                  if (_preferredSubLanguages.Length > 0)
+                  {
+                    string[] langArr = _preferredSubLanguages.Split(';');
+
+                    for (int i = 0; i < langArr.Length; i++)
                     {
-                      string[] langArr = _preferredSubLanguages.Split(';');
-
-                      for (int i = 0; i < langArr.Length; i++)
+                      string langStr = langArr[i];
+                      if (langStr.Trim().Length > 0)
                       {
-                        string langStr = langArr[i];
-                        if (langStr.Trim().Length > 0)
+                        for (int j = 0; j < _languagesAvail.Count; j++)
                         {
-                          for (int j = 0; j < _languagesAvail.Count; j++)
+                          if (_languageCodes[j].Contains(langStr))
                           {
-                            if (_languageCodes[j].Contains(langStr))
-                            {
-                              ListViewItem item = new ListViewItem(new string[] { _languagesAvail[j], _languageCodes[j] });
-                              item.Name = _languageCodes[j];
-                              mpListViewPreferredSubLang.Items.Add(item);
-                              break;
-                            }
+                            ListViewItem item = new ListViewItem(new string[] { _languagesAvail[j], _languageCodes[j] });
+                            item.Name = _languageCodes[j];
+                            mpListViewPreferredSubLang.Items.Add(item);
+                            break;
                           }
                         }
                       }
@@ -234,27 +229,20 @@ namespace MediaPortal.Configuration.Sections
                   }
                 }
               }
-              catch (TargetInvocationException ex)
-              {
-                Log.Warn("TVClient: Failed to load languages {0}", ex.ToString());
-                continue;
-              }
-              catch (Exception gex)
-              {
-                Log.Warn("TVClient: Failed to load settings {0}", gex.Message);
-              }
+            } catch (TargetInvocationException ex)
+            {
+              Log.Warn("TVClient: Failed to load languages {0}", ex.ToString());
+              continue;
+            } catch (Exception gex)
+            {
+              Log.Warn("TVClient: Failed to load settings {0}", gex.Message);
             }
           }
         }
-        catch (Exception ex)
-        {
-          Log.Debug("Configuration: Loading TVLibrary.Interface assembly");
-          Log.Debug("Configuration: Exception: {0}", ex);
-        }
-      }
-      else
+      } catch (Exception ex)
       {
-        this.Enabled = false;
+        Log.Debug("Configuration: Loading TVLibrary.Interface assembly");
+        Log.Debug("Configuration: Exception: {0}", ex);
       }
     }
 
@@ -1146,8 +1134,7 @@ namespace MediaPortal.Configuration.Sections
         if (index + 1 < mplistView.Items.Count)
         {
           mplistView.Items.Insert(index + 1, item);
-        }
-        else
+        } else
         {
           mplistView.Items.Add(item);
         }
@@ -1182,8 +1169,7 @@ namespace MediaPortal.Configuration.Sections
         checkBoxNotifyPlaySound.Enabled = true;
         labelNotifyTimeout.Enabled = true;
         mpLabel2.Enabled = true;
-      }
-      else
+      } else
       {
         txtNotifyAfter.Enabled = false;
         txtNotifyBefore.Enabled = false;

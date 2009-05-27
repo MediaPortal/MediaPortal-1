@@ -444,18 +444,18 @@ namespace MediaPortal.Configuration
 
     private void AddTabTelevision()
     {
-      //add television section
-      Log.Info("add television section");
-      if (splashScreen != null)
-      {
-        splashScreen.SetInformation("Adding television section...");
-      }
-
-      SectionSettings television = new Television();
-      AddSection(new ConfigPage(null, television, false));
-
       if (UseTvServer)
       {
+        //add television section
+        Log.Info("add television section");
+        if (splashScreen != null)
+        {
+          splashScreen.SetInformation("Adding television section...");
+        }
+
+        SectionSettings television = new Television();
+        AddSection(new ConfigPage(null, television, false));
+
         Log.Info("  add tv client section");
         AddSection(new ConfigPage(television, new TVClient(), false));
         Log.Info("  add tv postprocessing section");

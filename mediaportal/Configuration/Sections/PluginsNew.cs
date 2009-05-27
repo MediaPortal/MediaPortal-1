@@ -178,19 +178,6 @@ namespace MediaPortal.Configuration.Sections
           }
         }
 
-        // The tvplugin uses the same IDs and names as the inbuild plugin for backward compatibility reasons.
-        // Do not display the "old" plugins to avoid confusion.
-        if (Util.Utils.UsingTvServer)
-        {
-          if (tag.DllName == "WindowPlugins.dll")
-          {
-            if (tag.WindowId == (int) GUIWindow.Window.WINDOW_TV || tag.WindowId == (int) GUIWindow.Window.WINDOW_RADIO)
-            {
-              continue;
-            }
-          }
-        }
-
         ListViewItem item;
         if (tag.IsProcess)
         {

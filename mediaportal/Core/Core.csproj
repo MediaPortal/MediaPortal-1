@@ -273,8 +273,51 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DShowNET\Helper\cards\TechnoTrend.cs" />
-    <Compile Include="DShowNET\Helper\IksPropertyUtils2.cs" />
+    <Compile Include="DShowNET\Helper\AudioMixerHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\ClassId.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\DirectShowUtil.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\DirectShowVolume.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\DirectVobSub.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\Filters\Filter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\Filters\FilterCategory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\Filters\FilterCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\Filters\FilterHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\Filters\Filters.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\PropertyPages\DirectShowPropertyPage.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\PropertyPages\PropertyPage.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Helper\TunerCountry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\IPersistMemory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\MediaSubTypeEx.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Player\MediaInfoWrapper.cs" />
     <Compile Include="Player\RefreshRateChanger.cs" />
     <Compile Include="guilib\Tween.cs" />
@@ -345,6 +388,9 @@
     <Compile Include="Player\TeletextSubtitles\TextConversion.cs" />
     <Compile Include="Player\TSHeader.cs" />
     <Compile Include="Player\TSReaderPlayer.cs" />
+    <Compile Include="RedEye\RedEye.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="TagReader\CUE\CueFakeTrack.cs" />
     <Compile Include="TagReader\CUE\CueSharp.cs" />
     <Compile Include="TagReader\CUE\CueTrackFileGUIListItemBuilder.cs" />
@@ -654,80 +700,6 @@
     <Compile Include="Drawing\VerticalAlignment.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DShowNET\BitMapInfoHeader.cs" />
-    <Compile Include="DShowNET\Helper\AudioMixerHelper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\Helper\ClassId.cs" />
-    <Compile Include="DShowNET\Helper\CrossBar.cs" />
-    <Compile Include="DShowNET\Helper\DirectShowUtil.cs" />
-    <Compile Include="DShowNET\Helper\DirectShowVolume.cs" />
-    <Compile Include="DShowNET\Helper\DirectVobSub.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\Helper\Filters\Filter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\Helper\Filters\FilterCategory.cs" />
-    <Compile Include="DShowNET\Helper\Filters\FilterCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\Helper\Filters\FilterHelper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\Helper\Filters\Filters.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\Helper\cards\hauppauge.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\Helper\PropertyPages\AudioSource.cs" />
-    <Compile Include="DShowNET\Helper\PropertyPages\CrossbarSource.cs" />
-    <Compile Include="DShowNET\Helper\PropertyPages\DirectShowPropertyPage.cs" />
-    <Compile Include="DShowNET\Helper\PropertyPages\FilterPersist.cs" />
-    <Compile Include="DShowNET\Helper\PropertyPages\PropertyPage.cs" />
-    <Compile Include="DShowNET\Helper\PropertyPages\PropertyPageCollection.cs" />
-    <Compile Include="DShowNET\Helper\PropertyPages\Source.cs" />
-    <Compile Include="DShowNET\Helper\PropertyPages\SourceCollection.cs" />
-    <Compile Include="DShowNET\Helper\PropertyPages\VfwCompressorPropertyPage.cs" />
-    <Compile Include="DShowNET\Helper\VideoProcAmp.cs" />
-    <Compile Include="DShowNET\Helper\IksPropertyUtils.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\IPersistMemory.cs" />
-    <Compile Include="DShowNET\MediaSubTypeEx.cs" />
-    <Compile Include="DShowNET\MetaData\AsfMetadataEditor.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\MetaData\DvrmsMetadataEditor.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\MetaData\MetadataEditor.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\Helper\Capture\MPEG2Demux.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\Helper\cards\DigitalEveryWhere.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\Helper\TunerCountry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\Helper\cards\Twinhan.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\Helper\Capture\VideoCaptureDeviceEx.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\Helper\cards\VideoCaptureProperties.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\Mpeg2VideoInfo.cs" />
-    <Compile Include="DShowNET\MPSA\IATSCGrabber.cs" />
-    <Compile Include="DShowNET\MPSA\IEPGGrabber.cs" />
-    <Compile Include="DShowNET\MPSA\IMHWGrabber.cs" />
-    <Compile Include="DShowNET\MPSA\IStreamAnalyzer.cs" />
     <Compile Include="FreeDB\CDInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1113,12 +1085,6 @@
     <Compile Include="Player\PlayerFactory.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Player\RadioGraph.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Player\RadioTuner.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Player\StreamBufferPlayer9.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1154,9 +1120,6 @@
     <Compile Include="PlayList\PlayListPLSIO.cs" />
     <Compile Include="PlayList\PlayListType.cs" />
     <Compile Include="PlayList\PlayListWPLIO.cs" />
-    <Compile Include="RedEye\RedEye.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Resource1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
