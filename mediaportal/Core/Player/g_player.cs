@@ -2067,6 +2067,9 @@ namespace MediaPortal.Player
         {
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendThreadMessage(msg);
+          GUIGraphicsContext.IsFullScreenVideo = false;
+          GUIGraphicsContext.IsPlaying = false;
+          GUIGraphicsContext.IsPlayingVideo = false;
           OnEnded();
           return;
         }
