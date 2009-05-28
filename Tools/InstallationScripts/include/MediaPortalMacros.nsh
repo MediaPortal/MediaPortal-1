@@ -432,7 +432,54 @@
   
   #!define MPIsInstalled `${SF_SELECTED} SectionFlagIsSet`
 !define MPIsInstalled "!insertmacro _MPIsInstalled"
-  */
+*/
+
+
+
+!macro BackupConfigDir
+  ${LOG_TEXT} "INFO" "Creating backup of configuration dir"
+
+  ${WordReplace} "$MPdir.Thumbs" "$MPdir.Config\" "" "+" $R1  ; is thumbs a subdir of config?
+  ${If} "$R1" == "$MPdir.Thumbs"  ; no replace >> thumbs is not a subdir of config
+    ${LOG_TEXT} "INFO" "BackupConfigDir: Thumbs is NOT a subdir of config"
+
+    ${LOG_TEXT} "INFO" "BackupConfigDir: Copying complete config-dir"
+    CreateDirectory "$MPdir.Config_$R0"
+    CopyFiles /SILENT "$MPdir.Config\*.*" "$MPdir.Config_$R0"
+  ${Else}
+    ${LOG_TEXT} "INFO" "BackupConfigDir: Thumbs is a subdir of config"
+
+    ${LOG_TEXT} "INFO" "BackupConfigDir: Rename thumbs-dir to get it out of config-dir"
+    Rename "$MPdir.Thumbs" "$MPdir.Config$R0$R1"
+
+    ${LOG_TEXT} "INFO" "BackupConfigDir: Copying complete config-dir"
+    CreateDirectory "$MPdir.Config_$R0"
+    CopyFiles /SILENT "$MPdir.Config\*.*" "$MPdir.Config_$R0"
+
+    ${LOG_TEXT} "INFO" "BackupConfigDir: Rename thumbs-dir to get it back in config-dir"
+    Rename "$MPdir.Config$R0$R1" "$MPdir.Thumbs"
+  ${EndIf}
+!macroend
+
+!macro BackupThumbsDir
+  ${LOG_TEXT} "INFO" "Creating backup of thumbs dir"
+
+  ${WordReplace} "$MPdir.Thumbs" "$MPdir.Config\" "" "+" $R1  ; is thumbs a subdir of config?
+  ${If} "$R1" == "$MPdir.Thumbs"  ; no replace >> thumbs is not a subdir of config
+    ${LOG_TEXT} "INFO" "BackupThumbsDir: Thumbs is NOT a subdir of config"
+
+    ${LOG_TEXT} "INFO" "BackupThumbsDir: Copying complete thumbs-dir"
+    CreateDirectory "$MPdir.Thumbs_$R0"
+    CopyFiles /SILENT "$MPdir.Thumbs\*.*" "$MPdir.Thumbs_$R0"
+  ${Else}
+    ${LOG_TEXT} "INFO" "BackupThumbsDir: Thumbs is a subdir of config"
+
+    ${LOG_TEXT} "INFO" "BackupThumbsDir: Copying complete thumbs-dir"
+    CreateDirectory "$MPdir.Config_$R0\$R1"  ; create thumbsdir in config-backupdir
+    CopyFiles /SILENT "$MPdir.Thumbs\*.*" "$MPdir.Config_$R0\$R1"
+  ${EndIf}
+!macroend
+
 
 #---------------------------------------------------------------------------
 #   COMPLETE MEDIAPORTAL CLEANUP

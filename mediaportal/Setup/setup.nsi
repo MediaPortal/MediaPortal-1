@@ -277,6 +277,41 @@ ShowUninstDetails show
 #---------------------------------------------------------------------------
 # SECTIONS and REMOVEMACROS
 #---------------------------------------------------------------------------
+!macro BackupInstallDirectory
+  ${LOG_TEXT} "DEBUG" "MACRO::BackupInstallDirectory"
+
+  !insertmacro GET_BACKUP_POSTFIX $R0
+
+  ${If} ${SectionIsSelected} SecBackupInstDir
+    ${LOG_TEXT} "INFO" "Creating backup of installation dir, this might take some minutes."
+    CreateDirectory "$MPdir.Base_$R0"
+    CopyFiles /SILENT "$MPdir.Base\*.*" "$MPdir.Base_$R0"
+  ${EndIf}
+
+  ${If} ${SectionIsSelected} SecBackupConfig
+    !insertmacro BackupConfigDir
+  ${EndIf}
+
+  ${If} ${SectionIsSelected} SecBackupThumbs
+    !insertmacro BackupThumbsDir
+  ${EndIf}
+
+!macroend
+
+!macro RenameInstallDirectory
+  ${LOG_TEXT} "DEBUG" "MACRO::RenameInstallDirectory"
+
+  !insertmacro GET_BACKUP_POSTFIX $R0
+
+  !insertmacro RenameDirectory "$MPdir.Base" "$MPdir.Base_$R0"
+  !insertmacro RenameDirectory "$MPdir.Config" "$MPdir.Config_$R0"
+
+  ${If} ${FileExists} "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml"
+    ${LOG_TEXT} "INFO" "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml already exists. It will be renamed."
+    Rename "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml" "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml_$R0"
+  ${EndIf}
+!macroend
+
 Section "-prepare" SecPrepare
   ${LOG_TEXT} "INFO" "Prepare installation..."
   ${ReadMediaPortalDirs} "$INSTDIR"
@@ -304,49 +339,16 @@ Section "-prepare" SecPrepare
       ${LOG_TEXT} "INFO" "MediaPortal $0 is installed."
     ${EndIf}
   ${EndIf}
-SectionEnd
 
-!macro BackupInstallDirectory
-  ${LOG_TEXT} "DEBUG" "MACRO::BackupInstallDirectory"
-
-  !insertmacro GET_BACKUP_POSTFIX $R0
-
-  ${LOG_TEXT} "INFO" "Creating backup of installation dir, this might take some minutes."
-  CreateDirectory "$MPdir.Base_$R0"
-  CopyFiles /SILENT "$MPdir.Base\*.*" "$MPdir.Base_$R0"
-
-  ${LOG_TEXT} "INFO" "Creating backup of configuration dir, this might take some minutes."
-  CreateDirectory "$MPdir.Config_$R0"
-  CopyFiles /SILENT "$MPdir.Config\*.*" "$MPdir.Config_$R0"
-!macroend
-!macro RenameInstallDirectory
-  ${LOG_TEXT} "DEBUG" "MACRO::RenameInstallDirectory"
-
-  !insertmacro GET_BACKUP_POSTFIX $R0
-
-  !insertmacro RenameDirectory "$MPdir.Base" "$MPdir.Base_$R0"
-  !insertmacro RenameDirectory "$MPdir.Config" "$MPdir.Config_$R0"
-
-  ${If} ${FileExists} "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml"
-    ${LOG_TEXT} "INFO" "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml already exists. It will be renamed."
-    Rename "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml" "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml_$R0"
-  ${EndIf}
-!macroend
-; the following section will:
-;   - official release -> clean installation -> rename existing install dirs
-;   - official release -> update procedure -> do nothing
-;   - svn release -> create an (optional) backup of existing install dirs
 !if ${VER_BUILD} == 0       # it's an official release
-Section "-rename existing dirs" SecBackup
   ${If} $UpdateMode = 0     # official release -> clean installation
     !insertmacro RenameInstallDirectory
   ${EndIf}
-SectionEnd
 !else                       # it's a svn release
-Section "Backup current installation status" SecBackup
   !insertmacro BackupInstallDirectory
-SectionEnd
 !endif
+
+SectionEnd
 
 Section "MediaPortal core files (required)" SecCore
   SectionIn RO
@@ -676,6 +678,17 @@ ${MementoSectionEnd}
   ; remove the tool to adjust the merit
   Delete /REBOOTOK "$MPdir.Base\SetMerit.exe"
 !macroend
+!endif
+
+!if ${VER_BUILD} != 0       # it's a svn release
+SectionGroup "Backup"
+  ${MementoSection} "Installation directory" SecBackupInstDir
+  ${MementoSectionEnd}
+  ${MementoSection} "Configuration directory" SecBackupConfig
+  ${MementoSectionEnd}
+  ${MementoUnselectedSection} "Thumbs directory" SecBackupThumbs
+  ${MementoSectionEnd}
+SectionGroupEnd
 !endif
 
 ${MementoSectionDone}

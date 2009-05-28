@@ -209,9 +209,9 @@ SectionEnd
 
 Section /o "Rename MP dir"
 
-    !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
-    ${ReadMediaPortalDirs} $MPdir.Base
-    
+  !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
+  ${ReadMediaPortalDirs} $MPdir.Base
+
   !insertmacro GET_BACKUP_POSTFIX $R0
 
   !insertmacro RenameDirectory "$MPdir.Base" "$MPdir.Base_$R0"
@@ -231,6 +231,26 @@ Section /o "Rename MP dir"
     ${EndIf}
 
   !insertmacro RenameDirectory "C:\MPTestDir" "C:\MPTestDir_$R0"
+SectionEnd
+
+Section /o "Backup ConfigDir"
+
+  !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
+  ${ReadMediaPortalDirs} $MPdir.Base
+
+  !insertmacro GET_BACKUP_POSTFIX $R0
+  !insertmacro BackupConfigDir
+
+SectionEnd
+
+Section /o "Backup ThumbsDir"
+
+  !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
+  ${ReadMediaPortalDirs} $MPdir.Base
+
+  !insertmacro GET_BACKUP_POSTFIX $R0
+  !insertmacro BackupThumbsDir
+
 SectionEnd
 
 Section /o "Stop TVService"
