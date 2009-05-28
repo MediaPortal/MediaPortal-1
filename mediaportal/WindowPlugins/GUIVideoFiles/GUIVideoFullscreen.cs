@@ -813,7 +813,66 @@ namespace MediaPortal.GUI.Video
         case Action.ActionType.ACTION_CONTEXT_MENU:
           ShowContextMenu();
           break;
+        case Action.ActionType.ACTION_PREV_BOOKMARK:
+          {
+            ArrayList bookmarks = new ArrayList();
+            VideoDatabase.GetBookMarksForMovie(g_Player.CurrentFile, ref bookmarks);
+            if (bookmarks.Count <= 0)
+            {
+              break; // no bookmarks? leave if so ...
+            }
+            List<double> bookmarkList = new List<double>();
+            for (int i = 0; i < bookmarks.Count; i++)
+            {
+              bookmarkList.Add((double)bookmarks[i]);
+            }
+            bookmarkList.Sort();
+            double dCurTime = g_Player.CurrentPosition;
+            int bookmarkIndex = bookmarkList.Count - 1;
+            for (int i = 0; i < bookmarkList.Count; i++)
+            {
+              double pos = bookmarkList[i];
+              if (pos + 0.5 < dCurTime)
+              {
+                bookmarkIndex = i;
+              }
+              else
+                break;
+            }
+            g_Player.SeekAbsolute(bookmarkList[bookmarkIndex]);
+            break;
+          }
+        case Action.ActionType.ACTION_NEXT_BOOKMARK:
+          {
+            ArrayList bookmarks = new ArrayList();
+            VideoDatabase.GetBookMarksForMovie(g_Player.CurrentFile, ref bookmarks);
+            if (bookmarks.Count <= 0)
+            {
+              break; // no bookmarks? leave if so ...
+            }
+            List<double> bookmarkList = new List<double>();
+            for (int i = 0; i < bookmarks.Count; i++)
+            {
+              bookmarkList.Add((double)bookmarks[i]);
+            }
+            bookmarkList.Sort();
+            double dCurTime = g_Player.CurrentPosition;
+            int bookmarkIndex = 0;
+            for(int i = 0; i < bookmarkList.Count; i++)
+            {
+              double pos = bookmarkList[i];
+              if (pos >= dCurTime)
+              {
+                bookmarkIndex = i;
+                break;
+              }
+            }
+            g_Player.SeekAbsolute(bookmarkList[bookmarkIndex]);
+            break;
+          }
       }
+
+
 
       base.OnAction(action);
     }

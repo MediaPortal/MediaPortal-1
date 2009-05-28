@@ -592,6 +592,16 @@
       <sound />
       <description>Next subtitle</description>
     </action>
+    <action>
+      <id>140</id>
+      <key>J</key>
+      <description>Previous bookmark</description>
+    </action>
+    <action>
+      <id>141</id>
+      <key>K</key>
+      <description>Next bookmark</description>
+    </action>
   </window>
   <window>
     <id>2</id>
