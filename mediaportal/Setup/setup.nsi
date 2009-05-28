@@ -282,17 +282,17 @@ ShowUninstDetails show
 
   !insertmacro GET_BACKUP_POSTFIX $R0
 
-  ${If} ${SectionIsSelected} SecBackupInstDir
+  ${If} ${SectionIsSelected} ${SecBackupInstDir}
     ${LOG_TEXT} "INFO" "Creating backup of installation dir, this might take some minutes."
     CreateDirectory "$MPdir.Base_$R0"
     CopyFiles /SILENT "$MPdir.Base\*.*" "$MPdir.Base_$R0"
   ${EndIf}
 
-  ${If} ${SectionIsSelected} SecBackupConfig
+  ${If} ${SectionIsSelected} ${SecBackupConfig}
     !insertmacro BackupConfigDir
   ${EndIf}
 
-  ${If} ${SectionIsSelected} SecBackupThumbs
+  ${If} ${SectionIsSelected} ${SecBackupThumbs}
     !insertmacro BackupThumbsDir
   ${EndIf}
 
@@ -681,7 +681,7 @@ ${MementoSectionEnd}
 !endif
 
 !if ${VER_BUILD} != 0       # it's a svn release
-SectionGroup "Backup"
+SectionGroup /e "Backup"
   ${MementoSection} "Installation directory" SecBackupInstDir
   ${MementoSectionEnd}
   ${MementoSection} "Configuration directory" SecBackupConfig
