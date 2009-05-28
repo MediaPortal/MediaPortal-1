@@ -277,26 +277,6 @@ ShowUninstDetails show
 #---------------------------------------------------------------------------
 # SECTIONS and REMOVEMACROS
 #---------------------------------------------------------------------------
-!macro BackupInstallDirectory
-  ${LOG_TEXT} "DEBUG" "MACRO::BackupInstallDirectory"
-
-  !insertmacro GET_BACKUP_POSTFIX $R0
-
-  ${If} ${SectionIsSelected} ${SecBackupInstDir}
-    ${LOG_TEXT} "INFO" "Creating backup of installation dir, this might take some minutes."
-    CreateDirectory "$MPdir.Base_$R0"
-    CopyFiles /SILENT "$MPdir.Base\*.*" "$MPdir.Base_$R0"
-  ${EndIf}
-
-  ${If} ${SectionIsSelected} ${SecBackupConfig}
-    !insertmacro BackupConfigDir
-  ${EndIf}
-
-  ${If} ${SectionIsSelected} ${SecBackupThumbs}
-    !insertmacro BackupThumbsDir
-  ${EndIf}
-
-!macroend
 
 !macro RenameInstallDirectory
   ${LOG_TEXT} "DEBUG" "MACRO::RenameInstallDirectory"
@@ -345,7 +325,7 @@ Section "-prepare" SecPrepare
     !insertmacro RenameInstallDirectory
   ${EndIf}
 !else                       # it's a svn release
-  !insertmacro BackupInstallDirectory
+  Call BackupInstallDirectory
 !endif
 
 SectionEnd
@@ -1007,6 +987,26 @@ Function un.onUninstSuccess
   ${un.LOG_CLOSE}
 FunctionEnd
 
+Function BackupInstallDirectory
+  ${LOG_TEXT} "DEBUG" "MACRO::BackupInstallDirectory"
+
+  !insertmacro GET_BACKUP_POSTFIX $R0
+
+  ${If} ${SectionIsSelected} ${SecBackupInstDir}
+    ${LOG_TEXT} "INFO" "Creating backup of installation dir, this might take some minutes."
+    CreateDirectory "$MPdir.Base_$R0"
+    CopyFiles /SILENT "$MPdir.Base\*.*" "$MPdir.Base_$R0"
+  ${EndIf}
+
+  ${If} ${SectionIsSelected} ${SecBackupConfig}
+    !insertmacro BackupConfigDir
+  ${EndIf}
+
+  ${If} ${SectionIsSelected} ${SecBackupThumbs}
+    !insertmacro BackupThumbsDir
+  ${EndIf}
+
+FunctionEnd
 #---------------------------------------------------------------------------
 # SECTION DECRIPTIONS     must be at the end
 #---------------------------------------------------------------------------
