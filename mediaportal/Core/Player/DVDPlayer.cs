@@ -153,6 +153,7 @@ namespace MediaPortal.Player
     protected bool _forceSubtitles = true;
     protected bool _freeNavigator = false;
     protected bool _menuOn = false;
+    protected bool _rootMenuShown = false;
     protected int _UOPs;
     protected string _currentFile;
     protected double _duration;
@@ -213,6 +214,7 @@ namespace MediaPortal.Player
       _currTime = new DvdHMSFTimeCode();
       _UOPs = 0;
       _menuOn = false;
+      _rootMenuShown = false;
       _started = false;
       _visible = false;
       _positionX = 80;
@@ -775,6 +777,9 @@ namespace MediaPortal.Player
     private void OnDvdEvent()
     {
       //			Log.Info("OnDvdEvent()");
+      if (_mediaEvt == null)
+        return;
+
       int p1, p2, hr = 0;
       EventCode code;
       try
@@ -926,8 +931,7 @@ namespace MediaPortal.Player
                     _menuOn = false;
                   }
                   Log.Info("EVT:DVDPlayer:domain=title (menu:{0})", _menuOn);
-                }
-
+                }                
                 Log.Info("EVT:DvdButtonChange: buttons:#{0}", p1);
                 if (p1 <= 0)
                 {
@@ -936,6 +940,12 @@ namespace MediaPortal.Player
                 else
                 {
                   _menuMode = MenuMode.Buttons;
+                }
+                if (_menuOn && !_rootMenuShown)
+                {
+                  _rootMenuShown = true;
+                  _dvdCtrl.ShowMenu(DvdMenuId.Root, (DvdCmdFlags)((int)DvdCmdFlags.Block | (int)DvdCmdFlags.Flush),
+                                      out _cmdOption);
                 }
                 break;
               }
@@ -968,8 +978,13 @@ namespace MediaPortal.Player
                   case DvdDomain.FirstPlay:
                     Log.Info("EVT:DVDPlayer:domain=firstplay");
                     break;
+                    // The DVD Navigator has completed playback of the title or 
+                    // chapter and did not find any other branching instruction for 
+                    // subsequent playback.
                   case DvdDomain.Stop:
                     Log.Info("EVT:DVDPlayer:domain=stop");
+                    if (!_rootMenuShown) // ripped DVD with main movie only
+                      Stop();                    
                     break;
                   case DvdDomain.VideoManagerMenu:
                     Log.Info("EVT:DVDPlayer:domain=videomanagermenu (menu)");
