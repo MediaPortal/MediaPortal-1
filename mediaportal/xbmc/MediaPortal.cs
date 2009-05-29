@@ -1934,7 +1934,7 @@ public class MediaPortalApp : D3DApp, IRender
       }
       if (useScreenSaver)
       {
-        if (GUIGraphicsContext.IsFullScreenVideo ||
+        if ((GUIGraphicsContext.IsFullScreenVideo && g_Player.Paused == false) ||
             GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW)
         {
           GUIGraphicsContext.ResetLastActivity();
