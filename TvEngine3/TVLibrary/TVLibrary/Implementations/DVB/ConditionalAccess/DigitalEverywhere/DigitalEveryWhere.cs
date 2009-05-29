@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using TvLibrary.Channels;
@@ -33,6 +34,9 @@ namespace TvLibrary.Implementations.DVB
   /// </summary>
   public class DigitalEverywhere : IDiSEqCController
   {
+    private const int MAX_PMT_SIZE = 1024;
+    private const int CA_DATA_SIZE = 1036;
+
     #region structs
     [StructLayout(LayoutKind.Explicit, Size = 60), ComVisible(true)]
     struct FIRESAT_SELECT_PIDS_DVBS //also for DVBC
@@ -158,6 +162,47 @@ namespace TvLibrary.Implementations.DVB
       [FieldOffset(54)]
       public ushort dummy3;
     }
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
+    struct FIRESAT_CA_DATA          //  CA_DATA_SIZE
+    {
+      public byte uSlot;            //     1
+      public byte uTag;             //     2
+      public byte bMoreSpacer1;     //     3
+      public byte bMoreSpacer2;     //     4
+      public byte bMoreSpacer3;     //     5
+      public byte bMore;            //     6
+      public byte uLengthSpacer1;   //     7
+      public byte uLengthSpacer2;   //     8
+      public byte uLength1;         //     9
+      public byte uLength2;         //    10
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_PMT_SIZE)]
+      public byte[] uData;          //  1034
+      public byte uDataSpacer1;     //  1035
+      public byte uDataSpacer2;     //  1036
+    } ;
+    #endregion
+
+    #region helper
+    static FIRESAT_CA_DATA GET_FIRESAT_CA_DATA(byte tag, ushort length)
+    {
+      FIRESAT_CA_DATA CA = new FIRESAT_CA_DATA
+                             {
+                               uSlot = 0,                   //reserved for future implementations with multiple CI slots
+                               uTag = tag,
+                               bMoreSpacer1 = 0,
+                               bMoreSpacer2 = 0,
+                               bMoreSpacer3 = 0,
+                               bMore = 0,                   //don’t care; set by driver
+                               uLengthSpacer1 = 0,
+                               uLengthSpacer2 = 0,
+                               uLength1 = ((byte)(length % 256)),
+                               uLength2 = ((byte)(length / 256)),
+                               uData = new byte[MAX_PMT_SIZE],
+                               uDataSpacer1 = 0,
+                               uDataSpacer2 = 0
+                             };
+      return CA;
+    }
     #endregion
 
     /// <summary>
@@ -170,6 +215,7 @@ namespace TvLibrary.Implementations.DVB
     const int KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_T = 6;
     const int KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_S = 2;
     const int KSPROPERTY_FIRESAT_HOST2CA = 22;
+    const int KSPROPERTY_FIRESAT_CA2HOST = 23;
     const int KSPROPERTY_FIRESAT_DRIVER_VERSION = 4;
     const int KSPROPERTY_FIRESAT_GET_FIRMWARE_VERSION = 11;
     const int KSPROPERTY_FIRESAT_GET_CI_STATUS = 28;
@@ -214,16 +260,20 @@ namespace TvLibrary.Implementations.DVB
       _isInitialized = false;
       _isDigitalEverywhere = false;
 
-      _ptrDataInstance = Marshal.AllocCoTaskMem(1036);
-      _ptrDataReturned = Marshal.AllocCoTaskMem(1036);
+      _ptrDataInstance = Marshal.AllocCoTaskMem(CA_DATA_SIZE);
+      _ptrDataReturned = Marshal.AllocCoTaskMem(CA_DATA_SIZE);
       if (_filterTuner != null)
       {
         _isDigitalEverywhere = IsDigitalEverywhere;
         if (_isDigitalEverywhere)
         {
           _hasCAM = IsCamPresent();
-          Log.Log.WriteFile("FireDTV detected CAM:{0} ", _hasCAM);
-          Log.Log.WriteFile("FireDTV Driver version:{0} ", GetDriverVersionNumber());
+          Log.Log.WriteFile("FireDTV cam detected: {0} ", _hasCAM);
+          if (_hasCAM)
+          {
+            Log.Log.WriteFile("FireDTV cam name: \"{0}\" ", GetCAMName());
+          }
+          Log.Log.WriteFile("FireDTV driver version: {0} ", GetDriverVersionNumber());
           Log.Log.WriteFile("FireDTV {0} ", GetHardwareFirmwareVersionNumber());
         }
       }
@@ -278,15 +328,6 @@ namespace TvLibrary.Implementations.DVB
     /// </preconditions>
     private bool SendPMTToFireDTV(byte[] PMT, int pmtLength, int current, int max)
     {
-
-      //typedef struct _FIRESAT_CA_DATA{ 
-      //  UCHAR uSlot;                      //0
-      //  UCHAR uTag;                       //1   (2..3 = padding)
-      //  BOOL bMore;                       //4   (5..7 = padding)
-      //  USHORT uLength;                   //8..9
-      //  UCHAR uData[MAX_PMT_SIZE];        //10....
-      //}FIRESAT_CA_DATA, *PFIRESAT_CA_DATA;
-
       if (!_hasCAM)
       {
         return true;
@@ -300,7 +341,7 @@ namespace TvLibrary.Implementations.DVB
         return false;
       }
 
-      Log.Log.WriteFile("SendPMTToFireDTV pmtLength:{0}", pmtLength);
+      //Log.Log.WriteFile("SendPMTToFireDTV pmtLength:{0}", pmtLength);
       Guid propertyGuid = KSPROPSETID_Firesat;
       const int propId = KSPROPERTY_FIRESAT_HOST2CA;
       IKsPropertySet propertySet = _filterTuner as IKsPropertySet;
@@ -318,43 +359,35 @@ namespace TvLibrary.Implementations.DVB
         return true;
       }
 
-      byte[] byData = new byte[1036];
-      uint uLength = (uint)(2 + pmtLength); //bytes 0-1 contain the length of pmt
-      byData[0] = 0;//slot       0
-      byData[1] = 2;//utag       1
-      byData[2] = 0;//padding    2
-      byData[3] = 0;//padding    3
-      byData[4] = 0;//bmore      4
-      byData[5] = 0;//padding    5
-      byData[6] = 0;//padding    6
-      byData[7] = 0;//padding    7
-      byData[8] = (byte)(uLength % 256);		//ulength lo    8..9
-      byData[9] = (byte)(uLength / 256);		//ulength hi
-      if (current == 0 && max == 1)
-        byData[10] = 3;     // 10     List Management = ONLY (only=3, first=1, more=0, last=2)
-      else if (current == 0 && max > 1)
-        byData[10] = 1;     // 10     List Management = ONLY (only=3, first=1, more=0, last=2)
-      else if (current > 0 && current < max - 1)
-        byData[10] = 0;     // 10     List Management = ONLY (only=3, first=1, more=0, last=2)
-      else if (current == max - 1)
-        byData[10] = 2;     // 10
-
-      byData[11] = 1;     // 11     pmt_cmd = OK DESCRAMBLING		
-      for (int i = 0; i < pmtLength; ++i)
-      {
-        byData[i + 12] = PMT[i];
-      }
+      FIRESAT_CA_DATA caData = GET_FIRESAT_CA_DATA(2, (ushort)(2 + pmtLength));
 
       string log = String.Format("FireDTV: #{0}/{1} pmt data:", current, max);
-      for (int i = 0; i < 1036; ++i)
-      {
-        Marshal.WriteByte(_ptrDataInstance, i, byData[i]);
-        Marshal.WriteByte(_ptrDataReturned, i, byData[i]);
-        log += String.Format("0x{0:X} ", byData[i]);
-      }
+      log += String.Format("0x0 0x{0:X} 0x0 0x0 0x0 0x0 0x0 0x0 0x{1:X} 0x{2:X}",
+                          caData.uTag, caData.uLength2, caData.uLength1);
 
+      if (current == 0 && max == 1)
+        caData.uData[0] = 3;     //      List Management = ONLY  (only=3, first=1, more=0, last=2)
+      else if (current == 0 && max > 1)
+        caData.uData[0] = 1;     //      List Management = FIRST (only=3, first=1, more=0, last=2)
+      else if (current > 0 && current < max - 1)
+        caData.uData[0] = 0;     //      List Management = MORE  (only=3, first=1, more=0, last=2)
+      else if (current == max - 1)
+        caData.uData[0] = 2;     //      List Management = LAST  (only=3, first=1, more=0, last=2)
+      log += String.Format("0x{0:X} ", caData.uData[0]);
+
+      caData.uData[1] = 1;       //      pmt_cmd = OK DESCRAMBLING
+      log += String.Format("0x{0:X} ", caData.uData[1]);
+
+      for (int i = 0; i < pmtLength; i++)
+      {
+        caData.uData[i + 2] = PMT[i];
+        log += String.Format("0x{0:X} ", PMT[i]);
+      }
       Log.Log.WriteFile(log);
-      hr = propertySet.Set(propertyGuid, propId, _ptrDataInstance, 1036, _ptrDataReturned, 1036);
+
+      Marshal.StructureToPtr(caData, _ptrDataInstance, true);
+      Marshal.StructureToPtr(caData, _ptrDataReturned, true);
+      hr = propertySet.Set(propertyGuid, propId, _ptrDataInstance, CA_DATA_SIZE, _ptrDataReturned, CA_DATA_SIZE);
 
       if (hr != 0)
       {
@@ -381,44 +414,25 @@ namespace TvLibrary.Implementations.DVB
         return;
       }
 
-      int hr = propertySet.QuerySupported(propertyGuid, (int)propId, out isTypeSupported);
+      int hr = propertySet.QuerySupported(propertyGuid, propId, out isTypeSupported);
       if (hr != 0 || (isTypeSupported & KSPropertySupport.Set) == 0)
       {
         Log.Log.WriteFile("FireDTV:ResetCAM() Reset CI is not supported");
         return;
       }
-      try
-      {
-        byte[] byData = new byte[1036];
-        byData[0] = 0; //slot
-        byData[1] = 0; //utag (CA RESET)
-        byData[2] = 0; //padding
-        byData[3] = 0; //padding
-        byData[4] = 0; //bmore (FALSE)
-        byData[5] = 0; //padding
-        byData[6] = 0; //padding
-        byData[7] = 0; //padding
-        byData[8] = 1; 		//ulength lo
-        byData[9] = 0; 		//ulength hi
-        byData[10] = 0; // HW Reset of CI part
-        for (int i = 0; i < 1036; ++i)
-        {
-          Marshal.WriteByte(_ptrDataInstance, i, byData[i]);
-          Marshal.WriteByte(_ptrDataReturned, i, byData[i]);
-        }
 
-        //Log.Log.WriteFile(log);
-        hr = propertySet.Set(propertyGuid, propId, _ptrDataInstance, 1036, _ptrDataReturned, 1036);
+      FIRESAT_CA_DATA caData = GET_FIRESAT_CA_DATA(0, 1);
+      caData.uData[0] = 0;  // HW Reset of CI part
 
-        if (hr != 0)
-        {
-          Log.Log.WriteFile("FireDTV:ResetCAM() failed 0x{0:X}", hr);
-          return;
-        }
-      } finally
+      Marshal.StructureToPtr(caData, _ptrDataInstance, true);
+      Marshal.StructureToPtr(caData, _ptrDataReturned, true);
+      hr = propertySet.Set(propertyGuid, propId, _ptrDataInstance, CA_DATA_SIZE, _ptrDataReturned, CA_DATA_SIZE);
+      if (hr != 0)
       {
-        Log.Log.WriteFile("FireDTV:ResetCAM() cam has been reset");
+        Log.Log.WriteFile("FireDTV:ResetCAM() failed 0x{0:X}", hr);
+        return;
       }
+      Log.Log.WriteFile("FireDTV:ResetCAM() cam has been reset");
       return;
 
     }
@@ -430,7 +444,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public bool SendPMTToFireDTV(Dictionary<int, ConditionalAccessContext> subChannels)
     {
-      if(!_hasCAM)
+      if (!_hasCAM)
       {
         return true;
       }
@@ -580,7 +594,7 @@ namespace TvLibrary.Implementations.DVB
     ///  Get the hardware and firmware versions
     /// </summary>
     /// <returns></returns>
-    public string GetHardwareFirmwareVersionNumber()
+    private string GetHardwareFirmwareVersionNumber()
     {
       IKsPropertySet propertySet = _filterTuner as IKsPropertySet;
       Guid propertyGuid = KSPROPSETID_Firesat;
@@ -617,7 +631,7 @@ namespace TvLibrary.Implementations.DVB
         string fwrev = BitConverter.ToString(k).Replace("-", ".").Substring(9, 8);
 
         // SW firmware build in next 2 bytes
-        string fwbuild = (((int)Marshal.ReadByte(_ptrDataReturned, 6) * 256) + Marshal.ReadByte(_ptrDataReturned, 7)).ToString();
+        string fwbuild = ((Marshal.ReadByte(_ptrDataReturned, 6) * 256) + Marshal.ReadByte(_ptrDataReturned, 7)).ToString();
 
         version = String.Format("HW: {0}, FW: {1} build {2}", hwrev, fwrev, fwbuild);
       }
@@ -628,7 +642,7 @@ namespace TvLibrary.Implementations.DVB
     /// Gets the driver version number.
     /// </summary>
     /// <returns></returns>
-    public string GetDriverVersionNumber()
+    private string GetDriverVersionNumber()
     {
       IKsPropertySet propertySet = _filterTuner as IKsPropertySet;
       Guid propertyGuid = KSPROPSETID_Firesat;
@@ -654,16 +668,12 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("FireDTV:GetDriverVersion() failed 0x{0:X}", hr);
           return String.Empty;
         }
-        //      Log.Log.WriteFile("count:{0}", byteCount);
-
 
         for (int i = 0; i < byteCount; ++i)
         {
           char ch;
           byte k = Marshal.ReadByte(_ptrDataReturned, i);
 
-          // Log.Log.WriteFile("{0} = 0x{1:X} = {2} = {3}",
-          //         i, k, k, (char)k);
           if (k < 0x20)
             ch = '.';
           else
@@ -678,7 +688,7 @@ namespace TvLibrary.Implementations.DVB
     /// Gets the CAM status.
     /// </summary>
     /// <returns></returns>
-    int GetCAMStatus()
+    private int GetCAMStatus()
     {
       Guid propertyGuid = KSPROPSETID_Firesat;
       const int propId = KSPROPERTY_FIRESAT_GET_CI_STATUS;
@@ -719,13 +729,92 @@ namespace TvLibrary.Implementations.DVB
         }
         ushort camStatus = (ushort)Marshal.ReadInt16(_ptrDataReturned, 0);
 
-        Log.Log.Debug("FireDTV:GetCAMStatus() status is <{0}>", camStatus);
+        //Log.Log.WriteFile("FireDTV:GetCAMStatus() status is <0x{0:X}>", camStatus);
         return camStatus;
       }
       finally
       {
         Log.Log.WriteFile("FireDTV:GetCAMStatus() finished");
       }
+    }
+
+    private string GetCAMName()
+    {
+      Guid propertyGuid = KSPROPSETID_Firesat;
+      const int propId = KSPROPERTY_FIRESAT_CA2HOST;
+      IKsPropertySet propertySet = _filterTuner as IKsPropertySet;
+      KSPropertySupport isTypeSupported;
+      if (propertySet == null)
+      {
+        Log.Log.WriteFile("FireDTV:GetCAMName() properySet=null");
+        return string.Empty;
+      }
+
+      int hr = propertySet.QuerySupported(propertyGuid, propId, out isTypeSupported);
+      if (hr != 0 || (isTypeSupported & KSPropertySupport.Set) == 0)
+      {
+        Log.Log.WriteFile("FireDTV:GetCAMName() not supported");
+        return string.Empty;
+      }
+
+      FIRESAT_CA_DATA caData = GET_FIRESAT_CA_DATA(1, 0);
+
+      Marshal.StructureToPtr(caData, _ptrDataInstance, true);
+      Marshal.StructureToPtr(caData, _ptrDataReturned, true);
+      hr = propertySet.Set(propertyGuid, propId, _ptrDataInstance, CA_DATA_SIZE, _ptrDataReturned, CA_DATA_SIZE);
+      if (hr != 0)
+      {
+        Log.Log.WriteFile("FireDTV: unable to set \"CA_APPLICATION_INFO\"");
+      }
+
+      const int timeout = 250;              // at least 7 seconds for SamsungCAM - Italia (chemelli)
+      const int loops = 40;                 // timeout * loops =  250 * 40 = 10.000 milliseconds
+
+      for (int j = 0; j < loops; j++)
+      {
+        int bytesread;
+        hr = propertySet.Get(propertyGuid, propId, _ptrDataInstance, CA_DATA_SIZE, _ptrDataReturned, CA_DATA_SIZE,
+                             out bytesread);
+        if (bytesread != 0)
+        {
+          break;
+        }
+        if (j == 0)
+        {
+          Log.Log.WriteFile("FireDTV: GetCAMName() looping for {0}s and retrying", (timeout * loops / 1000));
+        }
+        Thread.Sleep(timeout);
+      }
+      if (hr != 0)
+      {
+        Log.Log.WriteFile("FireDTV: GetCAMName() failed 0x{0:X}", hr);
+        return string.Empty;
+      }
+
+      // cast ptr back to struct and handle it in c#
+      FIRESAT_CA_DATA caDataReturned =
+        (FIRESAT_CA_DATA)Marshal.PtrToStructure(_ptrDataReturned, typeof(FIRESAT_CA_DATA));
+
+      short manufacturer_code = BitConverter.ToInt16(caDataReturned.uData, 0);
+      short application_manufacturer = BitConverter.ToInt16(caDataReturned.uData, 2);
+      Log.Log.WriteFile("FireDTV cam manufacturer_code={0}, application_manufacturer={1}",
+                         manufacturer_code, application_manufacturer);
+
+      int Length = Convert.ToInt16(caDataReturned.uData[4]);
+      if (Length > 0)
+      {
+        string cam_name = string.Empty;
+        for (int i = 0; i < Length; i++)
+        {
+          if (caDataReturned.uData[i + 5] == 0)
+          {
+            break;
+          }
+          cam_name += (char)caDataReturned.uData[i + 5];
+        }
+        return cam_name;
+      }
+      return "erroneous name";
     }
 
     /// <summary>
@@ -817,7 +906,7 @@ namespace TvLibrary.Implementations.DVB
             _previousChannel.Rolloff == channel.Rolloff &&
             _previousChannel.InnerFecRate == channel.InnerFecRate)
         {
-      _previousChannel = channel;
+          _previousChannel = channel;
           Log.Log.WriteFile("FireDTV: already tuned to diseqc:{0}, frequency:{1}, polarisation:{2}",
               channel.DisEqc, channel.Frequency, channel.Polarisation);
           return;
