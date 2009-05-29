@@ -58,16 +58,74 @@ namespace TvPlugin
         }
         catch (System.Exception ex)
         {
-          Log.Error("Error loading TuningDetails /  HasCiMenuSupport:" +ex.StackTrace);
+          Log.Error("Error loading TuningDetails /  HasCiMenuSupport:" + ex.StackTrace);
         }
 
         IList<TuningDetail> details = chan.ReferringTuningDetail();
         if (details.Count > 0)
         {
-          TuningDetail detail = details[0];
+          TuningDetail detail = null;
+          switch (TVHome.Card.Type)
+          {
+            case TvLibrary.Interfaces.CardType.Analog:
+              foreach (TuningDetail t in details)
+              {
+                if (t.ChannelType == 0)
+                  detail = t;
+              }
+              break;
+            case TvLibrary.Interfaces.CardType.Atsc:
+              foreach (TuningDetail t in details)
+              {
+                if (t.ChannelType == 1)
+                  detail = t;
+              }
+              break;
+            case TvLibrary.Interfaces.CardType.DvbC:
+              foreach (TuningDetail t in details)
+              {
+                if (t.ChannelType == 2)
+                  detail = t;
+              }
+              break;
+            case TvLibrary.Interfaces.CardType.DvbS:
+              foreach (TuningDetail t in details)
+              {
+                if (t.ChannelType == 3)
+                  detail = t;
+              }
+              break;
+            case TvLibrary.Interfaces.CardType.DvbT:
+              foreach (TuningDetail t in details)
+              {
+                if (t.ChannelType == 4)
+                  detail = t;
+              }
+              break;
+            default:
+              detail = details[0];
+              break;
+          }
           GUIPropertyManager.SetProperty("#TV.TuningDetails.Band", detail.Band.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.BandWidth", detail.Bandwidth.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelType", detail.ChannelType.ToString());
+          switch (detail.ChannelType)
+          {
+              case 0:
+                  GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelType", "Analog");
+                  break;
+              case 1:
+                  GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelType", "Atsc");
+                  break;
+              case 2:
+                  GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelType", "DVB-C");
+                  break;
+              case 3:
+                  GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelType", "DVB-S");
+                  break;
+              case 4:
+                  GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelType", "DVB-T");
+                  break;
+          }
           GUIPropertyManager.SetProperty("#TV.TuningDetails.CountryId", detail.CountryId.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.FreeToAir", detail.FreeToAir.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.Frequency", detail.Frequency.ToString());
