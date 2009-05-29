@@ -362,7 +362,7 @@ namespace TvLibrary.Implementations.DVB
       FIRESAT_CA_DATA caData = GET_FIRESAT_CA_DATA(2, (ushort)(2 + pmtLength));
 
       string log = String.Format("FireDTV: #{0}/{1} pmt data:", current, max);
-      log += String.Format("0x0 0x{0:X} 0x0 0x0 0x0 0x0 0x0 0x0 0x{1:X} 0x{2:X}",
+      log += String.Format("0x0 0x{0:X} 0x0 0x0 0x0 0x0 0x0 0x0 0x{1:X} 0x{2:X} ",
                           caData.uTag, caData.uLength2, caData.uLength1);
 
       if (current == 0 && max == 1)
