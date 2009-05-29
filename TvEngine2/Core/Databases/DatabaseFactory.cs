@@ -23,10 +23,7 @@
 
 #endregion
 
-using Databases.Folders;
-using Databases.Folders.SqlServer;
-using MediaPortal.Picture.Database;
-using MediaPortal.Video.Database;
+using MediaPortal.Radio.Database;
 
 namespace MediaPortal.Database
 {
@@ -34,40 +31,13 @@ namespace MediaPortal.Database
   {
     private static bool UseADO = false;
 
-    public static IFolderSettings GetFolderDatabase()
+    public static IRadioDatabase GetRadioDatabase()
     {
       if (UseADO)
       {
-        return new FolderSettingAdo();
+        return new RadioDatabaseADO();
       }
-      else
-      {
-        return new FolderSettingsSqlLite();
-      }
-    }
-
-    public static IPictureDatabase GetPictureDatabase()
-    {
-      if (UseADO)
-      {
-        return new PictureDatabaseADO();
-      }
-      else
-      {
-        return new PictureDatabaseSqlLite();
-      }
-    }
-
-    public static IVideoDatabase GetVideoDatabase()
-    {
-      if (UseADO)
-      {
-        return null;
-      }
-      else
-      {
-        return new VideoDatabaseSqlLite();
-      }
+      return new RadioDatabaseSqlLite();
     }
   }
 }

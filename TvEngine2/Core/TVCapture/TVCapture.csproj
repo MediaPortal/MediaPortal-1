@@ -1,7 +1,7 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -162,6 +162,22 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Core, Version=1.0.2.33093, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\mediaportal\Core\bin\Release\Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Databases, Version=1.0.2.33095, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\mediaportal\Databases\bin\Release\Databases.dll</HintPath>
+    </Reference>
+    <Reference Include="Dialogs, Version=1.0.2.33096, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\mediaportal\Dialogs\bin\Release\Dialogs.dll</HintPath>
+    </Reference>
+    <Reference Include="DirectShowLib, Version=2.0.0.22680, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\mediaportal\DirectShowLib\bin\Release\DirectShowLib.dll</HintPath>
+    </Reference>
     <Reference Include="Interop.TunerLib, Version=1.0.0.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\Interop.TunerLib.dll</HintPath>
@@ -199,29 +215,10 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <ProjectReference Include="..\Core\Core.csproj">
-      <Name>Core</Name>
-      <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-    </ProjectReference>
-    <ProjectReference Include="..\Databases\Databases.csproj">
-      <Name>Databases</Name>
-      <Project>{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-    </ProjectReference>
-    <ProjectReference Include="..\Dialogs\Dialogs.csproj">
-      <Name>Dialogs</Name>
-      <Project>{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-    </ProjectReference>
-    <ProjectReference Include="..\DirectShowLib\DirectShowLib.csproj">
-      <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
-      <Name>DirectShowLib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Utils\Utils.csproj">
-      <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
-      <Name>Utils</Name>
-    </ProjectReference>
+    <Reference Include="Utils, Version=2.2.7.33092, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\mediaportal\Utils\bin\Release\Utils.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BDA\BdaFilterCategories.cs" />
@@ -245,6 +242,33 @@
     <Compile Include="CommandProcessor\TvCardCollection.cs" />
     <Compile Include="CommandProcessor\Commands\ViewTvCommand.cs" />
     <Compile Include="DiskManagement\RecordingImporterWorker.cs" />
+    <Compile Include="DShowNet\AudioSource.cs" />
+    <Compile Include="DShowNet\BitMapInfoHeader.cs" />
+    <Compile Include="DShowNet\Capture\MPEG2Demux.cs" />
+    <Compile Include="DShowNet\Capture\VideoCaptureDeviceEx.cs" />
+    <Compile Include="DShowNet\cards\DigitalEveryWhere.cs" />
+    <Compile Include="DShowNet\cards\hauppauge.cs" />
+    <Compile Include="DShowNet\cards\TechnoTrend.cs" />
+    <Compile Include="DShowNet\cards\Twinhan.cs" />
+    <Compile Include="DShowNet\cards\VideoCaptureProperties.cs" />
+    <Compile Include="DShowNet\CrossBar.cs" />
+    <Compile Include="DShowNet\CrossbarSource.cs" />
+    <Compile Include="DShowNet\FilterPersist.cs" />
+    <Compile Include="DShowNet\IksPropertyUtils.cs" />
+    <Compile Include="DShowNet\IksPropertyUtils2.cs" />
+    <Compile Include="DShowNet\MetaData\AsfMetadataEditor.cs" />
+    <Compile Include="DShowNet\MetaData\DvrmsMetadataEditor.cs" />
+    <Compile Include="DShowNet\MetaData\MetadataEditor.cs" />
+    <Compile Include="DShowNet\Mpeg2VideoInfo.cs" />
+    <Compile Include="DShowNet\MPSA\IATSCGrabber.cs" />
+    <Compile Include="DShowNet\MPSA\IEPGGrabber.cs" />
+    <Compile Include="DShowNet\MPSA\IMHWGrabber.cs" />
+    <Compile Include="DShowNet\MPSA\IStreamAnalyzer.cs" />
+    <Compile Include="DShowNet\PropertyPageCollection.cs" />
+    <Compile Include="DShowNet\Source.cs" />
+    <Compile Include="DShowNet\SourceCollection.cs" />
+    <Compile Include="DShowNet\VfwCompressorPropertyPage.cs" />
+    <Compile Include="DShowNet\VideoProcAmp.cs" />
     <Compile Include="DvbTextConverter.cs" />
     <Compile Include="EPG\Iso6937ToUnicode.cs" />
     <Compile Include="Graphs\Dummy\DummyGraph.cs" />
@@ -354,6 +378,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="teletext\LogoPage" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Databases\TVCapture-Databases.csproj">
+      <Project>{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}</Project>
+      <Name>TVCapture-Databases</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

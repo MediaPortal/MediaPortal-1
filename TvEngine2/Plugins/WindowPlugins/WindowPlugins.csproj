@@ -1,0 +1,433 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B282C55B-A37B-4CEC-A4FC-00791069BF00}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>WindowPlugins</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>WindowPlugins</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <OldToolsVersion>2.0</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureCardDefinitions|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureDefintionsRelease|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;UseCaptureCardDefinitions</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>
+    </DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureCardDefinitions|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\UseCaptureCardDefinitions\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureDefintionsRelease|x86' ">
+    <OutputPath>bin\UseCaptureDefintionsRelease\</OutputPath>
+    <DefineConstants>TRACE;UseCaptureCardDefinitions</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>
+    </DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Core, Version=1.0.2.39157, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\mediaportal\Core\bin\Release\Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Databases, Version=1.0.2.39158, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\mediaportal\Databases\bin\Release\Databases.dll</HintPath>
+    </Reference>
+    <Reference Include="Dialogs, Version=1.0.2.39159, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\mediaportal\Dialogs\bin\Release\Dialogs.dll</HintPath>
+    </Reference>
+    <Reference Include="DirectShowLib, Version=2.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\mediaportal\DirectShowLib\bin\Release\DirectShowLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.Direct3DX, Version=1.0.2911.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.DirectDraw, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Drawing.Design">
+      <Name>System.Drawing.Design</Name>
+    </Reference>
+    <Reference Include="System.Management">
+      <Name>System.Management</Name>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap">
+      <Name>System.Runtime.Serialization.Formatters.Soap</Name>
+    </Reference>
+    <Reference Include="System.Web">
+      <Name>System.Web</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <Reference Include="Utils, Version=2.2.7.39155, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\mediaportal\Utils\bin\Release\Utils.dll</HintPath>
+    </Reference>
+    <ProjectReference Include="..\..\Core\Databases\TVCapture-Databases.csproj">
+      <Project>{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}</Project>
+      <Name>TVCapture-Databases</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\TVCapture\TVCapture.csproj">
+      <Name>TVCapture</Name>
+      <Project>{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Tools\WebEPG\WebEPG\WebEPG.csproj">
+      <Name>WebEPG %28WebEPG\WebEPG%29</Name>
+      <Project>{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITV\GUITVTeletextBase.cs" />
+    <Compile Include="GUIRadio\GUIRadio.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRadio\GUIRadioGuide.cs" />
+    <Compile Include="GUIRadio\GUIRadioGuideBase.cs" />
+    <Compile Include="GUISettings\GUIEpgSelectBase.cs" />
+    <Compile Include="GUISettings\TV\GUISettingsEpg.cs" />
+    <Compile Include="GUISettings\TV\GUISettingsEpgMapping.cs" />
+    <Compile Include="GUISettings\TV\GUISettingsRecordings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\TV\GUISettingsSortChannels.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\TV\GUISettingsTv.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\Analog\GUIWizardAnalogCity.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\Analog\GUIWizardAnalogcountry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\Analog\GUIWizardAnalogcountry2.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\Analog\GUIWizardAnalogImported.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\Analog\GUIWizardAnalogRename.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\Analog\GUIWizardAnalogRenameRadio.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\Analog\GUIWizardAnalogTune.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\Analog\GUIWizardAnalogTuneRadio.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\ATSC\GUIWizardATSCScan.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\DVBC\GUIWizardDVBCCountry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\DVBC\GUIWizardDVBCScan.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\DVBS\GUIWizardDVBSLNBDetails.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\DVBS\GUIWizardDVBSScan.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\DVBS\GUIWizardDVBSSelectLNBs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\DVBS\GUIWizardDVBSSelectSat.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\DVBT\GUIWizardDVBTCountry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\DVBT\GUIWizardDVBTScan.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\Epg\GUIWizardEpgSelect.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\GUIWizardCardsDetected.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\GUIWizardScanBase.cs" />
+    <Compile Include="GUITV\GUIFullscreenTeletext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITV\GUIFullScreenTV.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITV\GUIMiniGuide.cs" />
+    <Compile Include="GUITV\GUIRecordedTV.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITV\GUIRecordedTVChannel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITV\GUIRecordedTVGenre.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITV\GUITVCompress.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITV\GUITVCompressAuto.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITV\GUITVCompressMain.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITV\GUITVCompressSettings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITV\GUITVCompressStatus.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITV\GUITVConflicts.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITV\GUITVCropManager.cs" />
+    <Compile Include="GUITV\GUITVCropSettings.cs" />
+    <Compile Include="GUITV\GUITVGuide.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITV\GUITvGuideBase.cs" />
+    <Compile Include="GUITV\GUITVGuideDialog.cs" />
+    <Compile Include="GUITV\GUITVHome.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITV\GUITVNoSignal.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITV\GUITVOSD.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITV\GUITVOverlay.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITV\GUITVPriorities.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITV\GUITVProgramInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITV\GUITVRecordedInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITV\GUITVScheduler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITV\GUITVSearch.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITV\GUITVTeletext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITV\GUITVZapOSD.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUITV\Television.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUITV\TelevisionDisabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIRadio\Radio.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIRadio\Radio_disabled.gif" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

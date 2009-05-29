@@ -852,7 +852,17 @@ namespace MediaPortal.GUI.TV
         {
           dlg.Reset();
           dlg.SetHeading(GUILocalizeStrings.Get(879)); // "recording conflict"
-          dlg.AddConflictRecordings(conflicts);
+          foreach(TVRecording conflict in conflicts)
+          {
+            GUIListItem item = new GUIListItem(conflict.Title);
+            item.Label2 = String.Format("{0} {1} - {2}",
+                           Util.Utils.GetShortDayString(rec.StartTime),
+                           rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                           rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+            item.Label3 = conflict.Channel;
+            item.TVTag = conflict;
+            dlg.AddConflictRecording(item);
+          }
           dlg.DoModal(GetID);
           switch (dlg.SelectedLabel)
           {

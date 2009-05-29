@@ -1,7 +1,7 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -95,6 +95,10 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Core, Version=1.0.2.39157, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\mediaportal\Core\bin\Release\Core.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -105,18 +109,13 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <ProjectReference Include="..\..\Core\Core.csproj">
-      <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
-      <Name>Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Databases\Databases.csproj">
+    <Reference Include="Utils, Version=2.2.7.39155, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\mediaportal\Utils\bin\Release\Utils.dll</HintPath>
+    </Reference>
+    <ProjectReference Include="..\..\..\Core\Databases\TVCapture-Databases.csproj">
       <Project>{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}</Project>
-      <Name>Databases</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Utils\Utils.csproj">
-      <Name>Utils</Name>
-      <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+      <Name>TVCapture-Databases</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
