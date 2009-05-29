@@ -56,7 +56,7 @@ namespace MediaPortal.Configuration
     private MPLabel WaitLabel;
     private ColumnHeader columnHeader3;
 
-    private RadioStation Selected_Radiostation = null; //Our return station info
+    private ConfigRadioStation Selected_Radiostation = null; //Our return station info
 
     public SearchSHOUTcast()
     {
@@ -210,7 +210,7 @@ namespace MediaPortal.Configuration
 
     #endregion
 
-    public RadioStation Station
+    public ConfigRadioStation Station
     {
       //Fill in station settings with search
       get
@@ -349,7 +349,7 @@ namespace MediaPortal.Configuration
       ArrayList stations = new ArrayList();
       for (int i = 0; i < total; i++)
       {
-        RadioStation station = new RadioStation();
+        ConfigRadioStation station = new ConfigRadioStation();
         station.URL = SCstanum[i];
         station.Name = SCstaname[i];
         station.Bitrate = Convert.ToInt32(SCstabr[i]);
@@ -382,9 +382,9 @@ namespace MediaPortal.Configuration
       {
         ResultsBox.Items.Clear();
       }
-      foreach (RadioStation station in Station_List)
+      foreach (ConfigRadioStation station in Station_List)
       {
-        RadioStation radiostation = new RadioStation();
+        ConfigRadioStation radiostation = new ConfigRadioStation();
         radiostation.Bitrate = station.Bitrate;
         radiostation.Name = station.Name;
         radiostation.URL = station.URL;
@@ -411,7 +411,7 @@ namespace MediaPortal.Configuration
         myWebClient.Proxy.Credentials = CredentialCache.DefaultCredentials;
         string file_loc = "http://www.shoutcast.com/sbin/shoutcast-playlist.pls?rn=";
         //Get station file number to get the file
-        RadioStation radiostation = listItem.Tag as RadioStation;
+        ConfigRadioStation radiostation = listItem.Tag as ConfigRadioStation;
         file_loc = file_loc + radiostation.URL + "&file=filename.pls";
         //Download the file to extract url information
         myWebClient.DownloadFile(file_loc, "SCtemp.tmp");

@@ -172,6 +172,10 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Configuration, Version=1.0.2.39161, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\mediaportal\Configuration\bin\Release\Configuration.exe</HintPath>
+    </Reference>
     <Reference Include="Core, Version=1.0.2.39157, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\mediaportal\Core\bin\Release\Core.dll</HintPath>
@@ -187,6 +191,10 @@
     <Reference Include="DirectShowLib, Version=2.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\mediaportal\DirectShowLib\bin\Release\DirectShowLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.TunerLib, Version=1.0.0.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\TvEngine2.Base\Interop.TunerLib.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>True</SpecificVersion>
@@ -206,6 +214,7 @@
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
@@ -226,6 +235,10 @@
     </Reference>
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
+    </Reference>
+    <Reference Include="TaskScheduler, Version=1.1.1007.26951, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\TvEngine2.Base\TaskScheduler.dll</HintPath>
     </Reference>
     <Reference Include="Utils, Version=2.2.7.39155, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -249,6 +262,84 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\LaunchGuideScheduler.cs" />
+    <Compile Include="GUITV\Configuration\Radio.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\ConfigRadioStation.cs" />
+    <Compile Include="GUITV\Configuration\RadioStations.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\Subdialogs\EditCaptureCardForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\Subdialogs\EditGroupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\Subdialogs\editName.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\Subdialogs\EditRadioStationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\Subdialogs\EditTVChannelForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\Subdialogs\SearchSHOUTcast.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\Subdialogs\TvChannelLookupService.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\TaskScheduler.cs" />
+    <Compile Include="GUITV\Configuration\Television.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\TVCaptureCards.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\TVChannels.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\TVClient.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\TVGroups.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\TVPostProcessing.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\TVProgramGuide.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\TVRecording.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\TVTeletext.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\Wizard_AnalogRadio.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\Wizard_AnalogTV.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\Wizard_ATSCTV.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\Wizard_DVBCTV.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\Wizard_DVBSTV.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\Wizard_DVBTTV.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUITV\Configuration\Wizard_ScanBase.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="GUITV\GUITVTeletextBase.cs" />
     <Compile Include="GUIRadio\GUIRadio.cs">
@@ -422,6 +513,75 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GUIRadio\Radio_disabled.gif" />
+    <EmbeddedResource Include="GUITV\Configuration\Radio.resx">
+      <DependentUpon>Radio.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUITV\Configuration\RadioStations.resx">
+      <DependentUpon>RadioStations.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUITV\Configuration\Subdialogs\EditCaptureCardForm.resx">
+      <DependentUpon>EditCaptureCardForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUITV\Configuration\Subdialogs\EditGroupForm.resx">
+      <DependentUpon>EditGroupForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUITV\Configuration\Subdialogs\editName.resx">
+      <DependentUpon>editName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUITV\Configuration\Subdialogs\EditRadioStationForm.resx">
+      <DependentUpon>EditRadioStationForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUITV\Configuration\Subdialogs\EditTVChannelForm.resx">
+      <DependentUpon>EditTVChannelForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUITV\Configuration\Subdialogs\TvChannelLookupService.resx">
+      <DependentUpon>TvChannelLookupService.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUITV\Configuration\Television.resx">
+      <DependentUpon>Television.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUITV\Configuration\TVCaptureCards.resx">
+      <DependentUpon>TVCaptureCards.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUITV\Configuration\TVChannels.resx">
+      <DependentUpon>TVChannels.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUITV\Configuration\TVClient.resx">
+      <DependentUpon>TVClient.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUITV\Configuration\TVGroups.resx">
+      <DependentUpon>TVGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUITV\Configuration\TVProgramGuide.resx">
+      <DependentUpon>TVProgramGuide.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUITV\Configuration\TVRecording.resx">
+      <DependentUpon>TVRecording.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUITV\Configuration\TVTeletext.resx">
+      <DependentUpon>TVTeletext.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUITV\Configuration\Wizard_AnalogRadio.resx">
+      <DependentUpon>Wizard_AnalogRadio.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUITV\Configuration\Wizard_AnalogTV.resx">
+      <DependentUpon>Wizard_AnalogTV.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUITV\Configuration\Wizard_ATSCTV.resx">
+      <DependentUpon>Wizard_ATSCTV.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUITV\Configuration\Wizard_DVBCTV.resx">
+      <DependentUpon>Wizard_DVBCTV.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUITV\Configuration\Wizard_DVBSTV.resx">
+      <DependentUpon>Wizard_DVBSTV.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUITV\Configuration\Wizard_DVBTTV.resx">
+      <DependentUpon>Wizard_DVBTTV.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUITV\Configuration\Wizard_ScanBase.resx">
+      <DependentUpon>Wizard_ScanBase.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

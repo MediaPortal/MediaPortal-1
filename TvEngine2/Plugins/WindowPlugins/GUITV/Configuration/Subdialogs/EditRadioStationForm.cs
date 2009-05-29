@@ -59,7 +59,7 @@ namespace MediaPortal.Configuration
     /// </summary>
     private Container components = null;
 
-    private RadioStation station = new RadioStation();
+    private ConfigRadioStation station = new ConfigRadioStation();
 
     public EditRadioStationForm()
     {
@@ -408,7 +408,7 @@ namespace MediaPortal.Configuration
       urlTextBox.Text = fm.Station.URL;
     }
 
-    public RadioStation Station
+    public ConfigRadioStation Station
     {
       get
       {
@@ -473,7 +473,7 @@ namespace MediaPortal.Configuration
 
       set
       {
-        station = value as RadioStation;
+        station = value as ConfigRadioStation;
 
         typeComboBox.SelectedItem = (string) station.Type;
         nameTextBox.Text = station.Name;

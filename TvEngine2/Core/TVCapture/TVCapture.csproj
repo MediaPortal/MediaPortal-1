@@ -180,7 +180,7 @@
     </Reference>
     <Reference Include="Interop.TunerLib, Version=1.0.0.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\Interop.TunerLib.dll</HintPath>
+      <HintPath>..\..\TvEngine2.Base\Interop.TunerLib.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>True</SpecificVersion>

@@ -27,7 +27,7 @@ using System;
 
 namespace MediaPortal.Configuration
 {
-  public class RadioStation
+  public class ConfigRadioStation
   {
     public bool Scrambled = false;
     public int ID = -1;
@@ -38,11 +38,11 @@ namespace MediaPortal.Configuration
     public string URL = "";
     public Frequency Frequency;
 
-    public RadioStation()
+    public ConfigRadioStation()
     {
     }
 
-    public RadioStation(int channel, long frequency)
+    public ConfigRadioStation(int channel, long frequency)
     {
       this.Frequency = frequency;
     }

@@ -173,10 +173,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\CSScriptLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="Interop.TunerLib, Version=1.0.0.0, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\Interop.TunerLib.dll</HintPath>
-    </Reference>
     <Reference Include="Interop.X10, Version=1.0.0.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\RemotePlugins\Remotes\X10Remote\Interop.X10.dll</HintPath>
@@ -189,9 +185,6 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Data">
       <Name>System.Data</Name>
-    </Reference>
-    <Reference Include="System.DirectoryServices">
-      <Name>System.DirectoryServices</Name>
     </Reference>
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
@@ -208,10 +201,6 @@
     </Reference>
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
-    </Reference>
-    <Reference Include="TaskScheduler, Version=1.1.1007.26951, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\TaskScheduler.dll</HintPath>
     </Reference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Name>Core</Name>
@@ -291,9 +280,6 @@
     </Compile>
     <Compile Include="Subdialogs\EditWeatherCityForm.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LaunchGuideScheduler.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="Subdialogs\ParameterForm.cs">
       <SubType>Form</SubType>
@@ -545,9 +531,6 @@
     </Compile>
     <Compile Include="ConfigSplashScreen.cs" />
     <Compile Include="Startup.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="TaskScheduler.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="VideoRenderers.cs">

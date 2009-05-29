@@ -470,7 +470,7 @@ namespace MediaPortal.Configuration.Sections
     {
       //			isDirty = true;
 
-      RadioStation newStation = new RadioStation();
+      ConfigRadioStation newStation = new ConfigRadioStation();
       newStation.Type = "Radio";
       newStation.Frequency = new Frequency(0);
       EditRadioStationForm editStation = new EditRadioStationForm();
@@ -517,7 +517,7 @@ namespace MediaPortal.Configuration.Sections
       foreach (ListViewItem listItem in stationsListView.SelectedItems)
       {
         EditRadioStationForm editStation = new EditRadioStationForm();
-        editStation.Station = listItem.Tag as RadioStation;
+        editStation.Station = listItem.Tag as ConfigRadioStation;
 
         DialogResult dialogResult = editStation.ShowDialog(this);
 
@@ -616,9 +616,9 @@ namespace MediaPortal.Configuration.Sections
       ArrayList stations = new ArrayList();
       RadioDatabase.GetStations(ref stations);
 
-      foreach (MediaPortal.Radio.Database.RadioStation station in stations)
+      foreach (RadioStation station in stations)
       {
-        RadioStation radioStation = new RadioStation();
+        ConfigRadioStation radioStation = new ConfigRadioStation();
 
         radioStation.ID = station.ID;
         radioStation.Type = station.URL.Length == 0 ? "Radio" : "Stream";

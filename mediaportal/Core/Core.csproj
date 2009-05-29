@@ -213,10 +213,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\edtftpnet-1.2.2.dll</HintPath>
     </Reference>
-    <Reference Include="Interop.TunerLib, Version=1.0.0.0, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\Interop.TunerLib.dll</HintPath>
-    </Reference>
     <Reference Include="Interop.WMPLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\Interop.WMPLib.dll</HintPath>
