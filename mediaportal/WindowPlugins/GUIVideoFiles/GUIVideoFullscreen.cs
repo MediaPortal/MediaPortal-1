@@ -33,6 +33,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
+using MediaPortal.Profile;
 using MediaPortal.Video.Database;
 using MediaPortal.Player.Subtitles;
 
@@ -116,6 +117,8 @@ namespace MediaPortal.GUI.Video
     private const int SKIPBAR_PADDING = 10;
     private List<Geometry.Type> _allowedArModes = new List<Geometry.Type>();
     private FullScreenState screenState = new FullScreenState();
+    private bool _immediateSeekIsRelative = true;
+    private int _immediateSeekValue = 10;
 
     public GUIVideoFullscreen()
     {
@@ -127,6 +130,11 @@ namespace MediaPortal.GUI.Video
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\videoFullScreen.xml");
       GetID = (int) Window.WINDOW_FULLSCREEN_VIDEO;
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        _immediateSeekIsRelative = xmlreader.GetValueAsBool("movieplayer", "immediateskipstepsisrelative", true);
+        _immediateSeekValue = xmlreader.GetValueAsInt("movieplayer", "immediateskipstepsize", 10);
+      }
       return bResult;
     }
 
@@ -537,15 +545,26 @@ namespace MediaPortal.GUI.Video
                   UpdateGUI();
                 }
 
-                double currentpos = g_Player.CurrentPosition;
-                double duration = g_Player.Duration;
-                double percent = (currentpos/duration)*100d;
-                percent -= 10d;
-                if (percent < 0)
+                if (_immediateSeekIsRelative)
                 {
-                  percent = 0;
+                  double currentpos = g_Player.CurrentPosition;
+                  double duration = g_Player.Duration;
+                  double percent = (currentpos/duration)*100d;
+                  percent -= _immediateSeekValue;
+                  if (percent < 0)
+                  {
+                    percent = 0;
+                  }
+                  g_Player.SeekAsolutePercentage((int) percent);
                 }
-                g_Player.SeekAsolutePercentage((int) percent);
+                else
+                {
+                  double dTime = (int) g_Player.CurrentPosition - _immediateSeekValue;
+                  if (dTime > g_Player.Duration) dTime = g_Player.Duration - 5;
+                  if (dTime < 0) dTime = 0d;
+                  Log.Debug("BIG_STEP_BACK - Preparing to seek to {0}:{1}:{2}", (int)(dTime / 3600d), (int)((dTime % 3600d) / 60d), (int)(dTime % 60d));
+                  g_Player.SeekAbsolute(dTime);
+                }
               }
             }
             return;
@@ -572,15 +591,27 @@ namespace MediaPortal.GUI.Video
                   UpdateGUI();
                 }
 
-                double currentpos = g_Player.CurrentPosition;
-                double duration = g_Player.Duration;
-                double percent = (currentpos/duration)*100d;
-                percent += 10d;
-                if (percent > 100d)
+                if (_immediateSeekIsRelative)
                 {
-                  percent = 100d;
+                  double currentpos = g_Player.CurrentPosition;
+                  double duration = g_Player.Duration;
+                  double percent = (currentpos/duration)*100d;
+                  percent += _immediateSeekValue;
+                  if (percent > 99)
+                  {
+                    percent = 99;
+
+                  }
+                  g_Player.SeekAsolutePercentage((int) percent);
                 }
-                g_Player.SeekAsolutePercentage((int) percent);
+                else
+                {
+                  double dTime = (int)g_Player.CurrentPosition + _immediateSeekValue;
+                  if (dTime > g_Player.Duration) dTime = g_Player.Duration - 5;                  
+                  if (dTime < 0) dTime = 0d;
+                  Log.Debug("BIG_STEP_FORWARD - Preparing to seek to {0}:{1}:{2}", (int)(dTime / 3600d), (int)((dTime % 3600d) / 60d), (int)(dTime % 60d));
+                  g_Player.SeekAbsolute(dTime);                  
+                }
               }
             }
             return;

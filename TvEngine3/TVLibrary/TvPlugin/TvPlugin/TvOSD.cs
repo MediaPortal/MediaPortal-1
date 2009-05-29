@@ -28,9 +28,11 @@ using System.Collections;
 using System.Globalization;
 using System.IO;
 using Gentle.Framework;
+using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using MediaPortal.Profile;
 using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
@@ -114,6 +116,8 @@ namespace TvPlugin
     private DateTime m_dateTime = DateTime.Now;
     private DateTime _RecIconLastCheck = DateTime.Now;
     private Program previousProgram = null;
+    private bool _immediateSeekIsRelative = true;
+    private int _immediateSeekValue = 10;
 
     private IList listTvChannels;
 
@@ -129,6 +133,11 @@ namespace TvPlugin
 
     public override bool Init()
     {
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        _immediateSeekIsRelative = xmlreader.GetValueAsBool("movieplayer", "immediateskipstepsisrelative", true);
+        _immediateSeekValue = xmlreader.GetValueAsInt("movieplayer", "immediateskipstepsize", 10);
+      }
       bool bResult = Load(GUIGraphicsContext.Skin + @"\tvOSD.xml");
       return bResult;
     }
@@ -575,13 +584,27 @@ namespace TvPlugin
 
             if (iControl == (int) Controls.OSD_SKIPBWD)
             {
-              g_Player.SeekRelativePercentage(-10);
+              if (_immediateSeekIsRelative)
+              {
+                g_Player.SeekRelativePercentage(-_immediateSeekValue);
+              }
+              else
+              {
+                g_Player.SeekRelative(-_immediateSeekValue);
+              }
               ToggleButton((int) Controls.OSD_SKIPBWD, false); // pop the button back to it's up state
             }
 
             if (iControl == (int) Controls.OSD_SKIPFWD)
             {
-              g_Player.SeekRelativePercentage(+10);
+              if (_immediateSeekIsRelative)
+              {
+                g_Player.SeekRelativePercentage(_immediateSeekValue);
+              }
+              else
+              {
+                g_Player.SeekRelative(_immediateSeekValue);
+              }
               ToggleButton((int) Controls.OSD_SKIPFWD, false); // pop the button back to it's up state
             }
 

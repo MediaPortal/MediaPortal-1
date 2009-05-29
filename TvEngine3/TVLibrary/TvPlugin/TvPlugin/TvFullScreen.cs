@@ -133,6 +133,8 @@ namespace TvPlugin
     private bool _playNotifyBeep = true;
     private bool _needToClearScreen = false;
     private bool _useVMR9Zap = false;
+    private bool _immediateSeekIsRelative = true;
+    private int _immediateSeekValue = 10;
 
     ///@
     ///VMR9OSD _vmr9OSD = null;
@@ -218,6 +220,9 @@ namespace TvPlugin
         _useVMR9Zap = xmlreader.GetValueAsBool("general", "useVMR9ZapOSD", false);
         _notifyTVTimeout = xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 10);
         _playNotifyBeep = xmlreader.GetValueAsBool("movieplayer", "notifybeep", true);
+        _immediateSeekIsRelative = xmlreader.GetValueAsBool("movieplayer", "immediateskipstepsisrelative", true);
+        _immediateSeekValue = xmlreader.GetValueAsInt("movieplayer", "immediateskipstepsize", 10);
+        
       }
       Load(GUIGraphicsContext.Skin + @"\mytvFullScreen.xml");
       GetID = (int) Window.WINDOW_TVFULLSCREEN;
@@ -749,7 +754,14 @@ namespace TvPlugin
               }
               _statusVisible = true;
               _statusTimeOutTimer = DateTime.Now;
-              g_Player.SeekRelativePercentage(-10);
+              if (_immediateSeekIsRelative)
+              {
+                g_Player.SeekRelativePercentage(-_immediateSeekValue);
+              }
+              else
+              {
+                g_Player.SeekRelative(-_immediateSeekValue);
+              }
             }
           }
           break;
@@ -768,7 +780,14 @@ namespace TvPlugin
               }
               _statusVisible = true;
               _statusTimeOutTimer = DateTime.Now;
-              g_Player.SeekRelativePercentage(10);
+              if (_immediateSeekIsRelative)
+              {
+                g_Player.SeekRelativePercentage(_immediateSeekValue);
+              }
+              else
+              {
+                g_Player.SeekRelative(_immediateSeekValue);
+              }
             }
           }
           break;
