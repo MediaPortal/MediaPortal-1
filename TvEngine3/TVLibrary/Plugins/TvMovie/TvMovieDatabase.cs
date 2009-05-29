@@ -847,7 +847,7 @@ namespace TvEngine
                 description = shortCritic + "\n" + description;
           }
 
-          Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre, false, OnAirDate, string.Empty, string.Empty, EPGStarRating, classification, 0);
+          Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre, false, OnAirDate, string.Empty, string.Empty, string.Empty, string.Empty, EPGStarRating, classification, 0);
           if (useGentlePersist)
             prog.Persist();
 

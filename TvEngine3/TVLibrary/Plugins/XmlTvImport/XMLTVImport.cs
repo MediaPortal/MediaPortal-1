@@ -468,11 +468,11 @@ namespace TvEngine
                 {
                   string description = "";
                   string category = "-";
-                  string episode = "";
                   string serEpNum = "";
                   string date = "";
                   string seriesNum = "";
                   string episodeNum = "";
+                  string episodeName = "";
                   string episodePart = "";
                   int starRating = -1;
                   string classification = "";
@@ -577,7 +577,7 @@ namespace TvEngine
                   }
                   if (nodeEpisode != null)
                   {
-                    episode = ConvertHTMLToAnsi(nodeEpisode);
+                    episodeName = ConvertHTMLToAnsi(nodeEpisode);
                     if (title.Length == 0)
                       title = nodeEpisode;
                   }
@@ -655,7 +655,7 @@ namespace TvEngine
                           continue;
                         }
 
-                        Program prog = new Program(chan.IdChannel, longtodate(startDate), longtodate(stopDate), title, description, category, false, System.Data.SqlTypes.SqlDateTime.MinValue.Value, seriesNum, episodeNum, starRating, classification, -1);
+                        Program prog = new Program(chan.IdChannel, longtodate(startDate), longtodate(stopDate), title, description, category, false, System.Data.SqlTypes.SqlDateTime.MinValue.Value, seriesNum, episodeNum, episodeName, episodePart, starRating, classification, -1);
                         channelPrograms.programs.Add(prog);
                         programIndex++;
                         //prog.Description = ConvertHTMLToAnsi(strDescription);

@@ -100,7 +100,7 @@ namespace TvService
       //no program? then treat this as a manual recording
       if (_program == null)
       {
-        _program = new TvDatabase.Program(0, DateTime.Now, endTime, "manual", "", "", false, System.Data.SqlTypes.SqlDateTime.MinValue.Value, string.Empty, string.Empty, -1, string.Empty, 0);
+        _program = new TvDatabase.Program(0, DateTime.Now, endTime, "manual", "", "", false, System.Data.SqlTypes.SqlDateTime.MinValue.Value, string.Empty, string.Empty, string.Empty, string.Empty, -1, string.Empty, 0);
       }
     }
     #endregion
@@ -263,10 +263,10 @@ namespace TvService
 
       string[] TagNames = { "%channel%", 
                             "%title%", 
-                            //"%name%", 
+                            "%name%", 
                             "%series%", 
                             "%episode%", 
-                            //"%part%", 
+                            "%part%", 
                             "%date%",
                             "%start%",
                             "%end%",
@@ -284,10 +284,10 @@ namespace TvService
                           };
       string[] TagValues = { _schedule.ReferencedChannel().DisplayName,
                              Program.Title,
-                             //Program.Episode,
+                             Program.EpisodeName,
                              Program.SeriesNum,
                              Program.EpisodeNum,
-                             //Program.EpisodePart,
+                             Program.EpisodePart,
                              Program.StartTime.ToString("yyyy-MM-dd"),
                              Program.StartTime.ToShortTimeString(),
                              Program.EndTime.ToShortTimeString(),

@@ -29,6 +29,8 @@ namespace TvDatabase
     [TableColumn("originalAirDate", NotNull = true)] private DateTime originalAirDate;
     [TableColumn("seriesNum", NotNull = true)] private string seriesNum;
     [TableColumn("episodeNum", NotNull = true)] private string episodeNum;
+    [TableColumn("episodePart", NotNull = true)] private string episodePart;
+    [TableColumn("episodeName", NotNull = true)] private string episodeName;
     [TableColumn("starRating", NotNull = true)] private int starRating;
     [TableColumn("classification", NotNull = true)] private string classification;
     [TableColumn("parentalRating", NotNull = true)] private int parentalRating;
@@ -41,7 +43,7 @@ namespace TvDatabase
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
     /// </summary> 
     public Program(int idChannel, DateTime startTime, DateTime endTime, string title, string description, string genre,
-                   bool notify, DateTime originalAirDate, string seriesNum, string episodeNum, int starRating,
+                   bool notify, DateTime originalAirDate, string seriesNum, string episodeNum, string episodeName, string episodePart, int starRating,
                    string classification, int parentalRating)
     {
       isChanged = true;
@@ -55,6 +57,8 @@ namespace TvDatabase
       this.originalAirDate = originalAirDate;
       this.seriesNum = seriesNum;
       this.episodeNum = episodeNum;
+      this.episodeName = episodeName;
+      this.episodePart = episodePart;
       this.starRating = starRating;
       this.classification = classification;
       this.parentalRating = parentalRating;
@@ -231,6 +235,32 @@ namespace TvDatabase
       {
         isChanged |= episodeNum != value;
         episodeNum = value;
+      }
+    }
+
+    /// <summary>
+    /// The programs episode title from the distributor
+    /// </summary>
+    public string EpisodeName
+    {
+      get { return episodeName; }
+      set
+      {
+        isChanged |= episodeName != value;
+        episodeName = value;
+      }
+    }
+
+    /// <summary>
+    /// The programs episode part from the distributor
+    /// </summary>
+    public string EpisodePart
+    {
+      get { return episodePart; }
+      set
+      {
+        isChanged |= episodePart != value;
+        episodePart = value;
       }
     }
 
@@ -554,7 +584,7 @@ namespace TvDatabase
     public Program Clone()
     {
       Program p = new Program(idChannel, StartTime, EndTime, Title, Description, Genre, Notify, OriginalAirDate,
-                              SeriesNum, EpisodeNum, StarRating, Classification, parentalRating);
+                              SeriesNum, EpisodeNum, EpisodeName, EpisodePart, StarRating, Classification, parentalRating);
       return p;
     }
 

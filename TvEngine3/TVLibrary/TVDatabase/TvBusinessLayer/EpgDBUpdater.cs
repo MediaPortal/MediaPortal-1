@@ -423,7 +423,7 @@ namespace TvDatabase
       if (dbProg == null)
       {
         dbProg = new Program(dbChannel.IdChannel, ep.StartTime, ep.EndTime, title, description, genre, false,
-                             SqlDateTime.MinValue.Value, string.Empty, string.Empty, starRating, classification,
+                             SqlDateTime.MinValue.Value, string.Empty, string.Empty, string.Empty, string.Empty, starRating, classification,
                              parentRating);
       }
       else
