@@ -72,7 +72,8 @@ namespace SetupTv.Sections
             mpComboBoxCountry.Items.Add(attribute.Value);
           }
         mpComboBoxCountry.SelectedIndex = 0;
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         MessageBox.Show(@"Unable to open TuningParameters\dvbt.xml");
         return;
@@ -304,19 +305,23 @@ namespace SetupTv.Sections
             dbChannel.FreeToAir = channel.FreeToAir;
             dbChannel.Persist();
 
-            layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
-
-            if (checkBoxCreateGroups.Checked)
+            if (dbChannel.IsTv)
             {
-              if (dbChannel.IsTv)
+              layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
+              if (checkBoxCreateGroups.Checked)
               {
                 layer.AddChannelToGroup(dbChannel, channel.Provider);
               }
-              if (dbChannel.IsRadio)
+            }
+            if (dbChannel.IsRadio)
+            {
+              layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.AllChannels);
+              if (checkBoxCreateGroups.Checked)
               {
                 layer.AddChannelToRadioGroup(dbChannel, channel.Provider);
               }
             }
+
             if (currentDetail == null)
             {
               layer.AddTuningDetails(dbChannel, channel);
@@ -360,7 +365,8 @@ namespace SetupTv.Sections
           }
         }
         //DatabaseManager.Instance.SaveChanges();
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
       }

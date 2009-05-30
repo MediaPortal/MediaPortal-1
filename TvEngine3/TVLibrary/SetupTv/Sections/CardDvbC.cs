@@ -172,7 +172,8 @@ namespace SetupTv.Sections
                 }
                 _dvbcChannels[_channelCount].symbolrate = Int32.Parse(tpdata[2]) / 1000;
                 _channelCount += 1;
-              } catch
+              }
+              catch
               {
               }
             }
@@ -197,7 +198,8 @@ namespace SetupTv.Sections
           mpComboBoxCountry.Items.Add(fileName);
         }
         mpComboBoxCountry.SelectedIndex = 0;
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         return;
       }
@@ -373,19 +375,23 @@ namespace SetupTv.Sections
             dbChannel.FreeToAir = channel.FreeToAir;
             dbChannel.Persist();
 
-            layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
-
-            if (checkBoxCreateGroups.Checked)
+            if (dbChannel.IsTv)
             {
-              if (dbChannel.IsTv)
+              layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
+              if (checkBoxCreateGroups.Checked)
               {
                 layer.AddChannelToGroup(dbChannel, channel.Provider);
               }
-              if (dbChannel.IsRadio)
+            }
+            if (dbChannel.IsRadio)
+            {
+              layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.AllChannels);
+              if (checkBoxCreateGroups.Checked)
               {
                 layer.AddChannelToRadioGroup(dbChannel, channel.Provider);
               }
             }
+
             if (currentDetail == null)
             {
               layer.AddTuningDetails(dbChannel, channel);
@@ -431,7 +437,8 @@ namespace SetupTv.Sections
 
         //DatabaseManager.Instance.SaveChanges();
 
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
       }

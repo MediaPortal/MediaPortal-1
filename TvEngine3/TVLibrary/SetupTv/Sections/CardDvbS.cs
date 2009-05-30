@@ -947,30 +947,32 @@ namespace SetupTv.Sections
           dbChannel.FreeToAir = channel.FreeToAir;
           dbChannel.Persist();
 
-          layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
 
-          if (checkBoxCreateGroupsSat.Checked)
+          if (dbChannel.IsTv)
           {
-            if (dbChannel.IsTv)
+            layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
+            if (checkBoxCreateGroupsSat.Checked)
             {
               layer.AddChannelToGroup(dbChannel, context.Satelite.SatelliteName);
             }
-            if (dbChannel.IsRadio)
-            {
-              layer.AddChannelToRadioGroup(dbChannel, context.Satelite.SatelliteName);
-            }
-          }
-          else if (checkBoxCreateGroups.Checked)
-          {
-            if (dbChannel.IsTv)
+            if (checkBoxCreateGroups.Checked)
             {
               layer.AddChannelToGroup(dbChannel, channel.Provider);
             }
-            if (dbChannel.IsRadio)
+          }
+          if (dbChannel.IsRadio)
+          {
+            layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.AllChannels);
+            if (checkBoxCreateGroupsSat.Checked)
+            {
+              layer.AddChannelToRadioGroup(dbChannel, context.Satelite.SatelliteName);
+            }
+            if (checkBoxCreateGroups.Checked)
             {
               layer.AddChannelToRadioGroup(dbChannel, channel.Provider);
             }
           }
+
           if (currentDetail == null)
           {
             channel.SatelliteIndex = position;// context.Satelite.IdSatellite;

@@ -87,7 +87,8 @@ namespace SetupTv.Sections
               {
                 _atscChannels[_channelCount].frequency = Int32.Parse(tpdata[0]);
                 _channelCount += 1;
-              } catch
+              }
+              catch
               {
               }
             }
@@ -116,7 +117,8 @@ namespace SetupTv.Sections
           mpComboBoxFrequencies.Items.Add(fileName);
         }
         mpComboBoxFrequencies.SelectedIndex = 0;
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         return;
       }
@@ -316,7 +318,14 @@ namespace SetupTv.Sections
 
             dbChannel.Persist();
 
-            layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
+            if (dbChannel.IsTv)
+            {
+              layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
+            }
+            if (dbChannel.IsRadio)
+            {
+              layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.AllChannels);
+            }
 
             if (currentDetail == null)
             {
@@ -361,7 +370,8 @@ namespace SetupTv.Sections
           }
         }
         //DatabaseManager.Instance.SaveChanges();
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
       }
