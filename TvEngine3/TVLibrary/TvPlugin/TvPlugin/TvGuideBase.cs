@@ -2608,8 +2608,8 @@ namespace TvPlugin
           if (control != null)
           {
             Program prog = (Program)control.Data;
-            
-            if (x == 1 && m_dtStartTime < prog.StartTime || _singleChannelView)
+
+            if (DateTime.Now < prog.EndTime && m_dtStartTime < prog.StartTime || _singleChannelView)
             {
               _cursorY = x;
               bOK = true;
