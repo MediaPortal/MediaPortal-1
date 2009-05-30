@@ -75,7 +75,6 @@ namespace TvLibrary.Implementations.Analog
     private Dictionary<AnalogChannel.AudioInputType, int> _audioPinMap;
     private int _videoOutPinIndex;
     private int _audioOutPinIndex;
-    private int _cardId;
 
     #endregion
 
@@ -363,7 +362,7 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Gets or sets the unique id of this card
     /// </summary>
-    public int CardId
+    public override int CardId
     {
       get
       {

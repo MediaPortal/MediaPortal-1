@@ -518,7 +518,9 @@ namespace TvLibrary.Implementations
     #endregion
 
     #region HelperMethods
-
+    /// <summary>
+    /// Reads the preload bit and card id from the db
+    /// </summary>
     protected void GetPreloadBitAndCardId()
     {
       //fetch preload value from db and apply it.

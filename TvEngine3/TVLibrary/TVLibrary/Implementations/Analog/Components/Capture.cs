@@ -265,7 +265,6 @@ namespace TvLibrary.Implementations.Analog.Components
     /// <summary>
     /// Creates the filter based on the configuration file
     /// </summary>
-    /// </summary>
     /// <param name="tvAudio">The tvaudio component</param>
     /// <param name="crossbar">The crossbar componen</param>
     /// <param name="tuner">The tuner component</param>
@@ -399,7 +398,6 @@ namespace TvLibrary.Implementations.Analog.Components
 
     /// <summary>
     /// Creates the filter by trying to detect it
-    /// </summary>
     /// </summary>
     /// <param name="tvAudio">The tvaudio component</param>
     /// <param name="crossbar">The crossbar componen</param>
