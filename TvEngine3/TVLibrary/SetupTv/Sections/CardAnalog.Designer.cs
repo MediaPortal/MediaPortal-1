@@ -131,6 +131,7 @@ namespace SetupTv.Sections
       this.lowPlayback = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.portablePlayback = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.defaultPlayback = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.checkBoxCreateGroups = new System.Windows.Forms.CheckBox();
       this.mpTabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage3.SuspendLayout();
@@ -186,7 +187,7 @@ namespace SetupTv.Sections
       // mpButtonScanTv
       // 
       this.mpButtonScanTv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonScanTv.Location = new System.Drawing.Point(319, 320);
+      this.mpButtonScanTv.Location = new System.Drawing.Point(319, 313);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
       this.mpButtonScanTv.Size = new System.Drawing.Size(131, 23);
       this.mpButtonScanTv.TabIndex = 4;
@@ -260,7 +261,7 @@ namespace SetupTv.Sections
       // mpButton1
       // 
       this.mpButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButton1.Location = new System.Drawing.Point(102, 320);
+      this.mpButton1.Location = new System.Drawing.Point(101, 313);
       this.mpButton1.Name = "mpButton1";
       this.mpButton1.Size = new System.Drawing.Size(131, 23);
       this.mpButton1.TabIndex = 3;
@@ -272,7 +273,7 @@ namespace SetupTv.Sections
       // 
       this.checkBoxNoMerge.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.checkBoxNoMerge.AutoSize = true;
-      this.checkBoxNoMerge.Location = new System.Drawing.Point(25, 353);
+      this.checkBoxNoMerge.Location = new System.Drawing.Point(24, 342);
       this.checkBoxNoMerge.Name = "checkBoxNoMerge";
       this.checkBoxNoMerge.Size = new System.Drawing.Size(208, 17);
       this.checkBoxNoMerge.TabIndex = 15;
@@ -296,6 +297,7 @@ namespace SetupTv.Sections
       // 
       // tabPage1
       // 
+      this.tabPage1.Controls.Add(this.checkBoxCreateGroups);
       this.tabPage1.Controls.Add(this.progressBarQuality);
       this.tabPage1.Controls.Add(this.progressBarLevel);
       this.tabPage1.Controls.Add(this.label2);
@@ -1287,6 +1289,16 @@ namespace SetupTv.Sections
       this.defaultPlayback.TabStop = true;
       this.defaultPlayback.UseVisualStyleBackColor = true;
       // 
+      // checkBoxCreateGroups
+      // 
+      this.checkBoxCreateGroups.AutoSize = true;
+      this.checkBoxCreateGroups.Location = new System.Drawing.Point(23, 365);
+      this.checkBoxCreateGroups.Name = "checkBoxCreateGroups";
+      this.checkBoxCreateGroups.Size = new System.Drawing.Size(101, 17);
+      this.checkBoxCreateGroups.TabIndex = 34;
+      this.checkBoxCreateGroups.Text = "Group channels";
+      this.checkBoxCreateGroups.UseVisualStyleBackColor = true;
+      // 
       // CardAnalog
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1428,5 +1440,6 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPLabel label5;
     private System.Windows.Forms.Button defaultValuesButton;
     private System.Windows.Forms.Label label31;
+    private System.Windows.Forms.CheckBox checkBoxCreateGroups;
   }
 }

@@ -18,6 +18,10 @@ namespace TvLibrary.Interfaces
       /// Name of group where all (new) channels are stored
       /// </summary>
       public static string AllChannels = "All Channels";
+      /// <summary>
+      /// Name of group where all analog channels are stored
+      /// </summary>
+      public static string Analog = "Analog";
     }
 
     /// <summary>
@@ -29,6 +33,10 @@ namespace TvLibrary.Interfaces
       /// Name of group where all (new) channels are stored
       /// </summary>
       public static string AllChannels = "All Channels";
+      /// <summary>
+      /// Name of group where all analog channels are stored
+      /// </summary>
+      public static string Analog = "Analog";
     }
   }
 }

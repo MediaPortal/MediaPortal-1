@@ -104,7 +104,8 @@ namespace SetupTv.Sections
         SetVideoProcAmp(_configuration.Graph.Capture.VideoProcAmpValues);
         SetVideoDecoder();
         SetStreamConfig();
-      } else
+      }
+      else
       {
         SetVideoProcAmp(new Dictionary<VideoProcAmpProperty, VideoQuality>());
         videoStandardComboBox.Enabled = false;
@@ -119,7 +120,8 @@ namespace SetupTv.Sections
       if (frameRate < 0)
       {
         frameRateComboBox.Enabled = false;
-      } else
+      }
+      else
       {
         frameRateComboBox.Enabled = true;
         string frameRateString = frameRate + " fps";
@@ -137,7 +139,8 @@ namespace SetupTv.Sections
       if (imageWidth < 0)
       {
         resolutionComboBox.Enabled = false;
-      } else
+      }
+      else
       {
         resolutionComboBox.Enabled = true;
         string resolution = imageWidth + "x" + imageHeight;
@@ -245,7 +248,8 @@ namespace SetupTv.Sections
         {
           videoStandardComboBox.SelectedItem = currentStandard;
         }
-      } else
+      }
+      else
       {
         videoStandardComboBox.Enabled = false;
       }
@@ -264,10 +268,12 @@ namespace SetupTv.Sections
         if (quality.Value > quality.MaxValue)
         {
           brightnessScrollbar.Value = quality.MaxValue;
-        } else if (quality.Value < quality.MinValue)
+        }
+        else if (quality.Value < quality.MinValue)
         {
           brightnessScrollbar.Value = quality.MinValue;
-        } else
+        }
+        else
         {
           brightnessScrollbar.Value = quality.Value;
         }
@@ -275,7 +281,8 @@ namespace SetupTv.Sections
         brightnessScrollbar.Enabled = true;
         brightnessValue.Enabled = true;
         label5.Enabled = true;
-      } else
+      }
+      else
       {
         brightnessScrollbar.Enabled = false;
         brightnessValue.Text = string.Empty;
@@ -292,10 +299,12 @@ namespace SetupTv.Sections
         if (quality.Value > quality.MaxValue)
         {
           contrastScrollbar.Value = quality.MaxValue;
-        } else if (quality.Value < quality.MinValue)
+        }
+        else if (quality.Value < quality.MinValue)
         {
           contrastScrollbar.Value = quality.MinValue;
-        } else
+        }
+        else
         {
           contrastScrollbar.Value = quality.Value;
         }
@@ -303,7 +312,8 @@ namespace SetupTv.Sections
         contrastScrollbar.Enabled = true;
         contrastValue.Enabled = true;
         label6.Enabled = true;
-      } else
+      }
+      else
       {
         contrastScrollbar.Enabled = false;
         contrastValue.Text = string.Empty;
@@ -320,10 +330,12 @@ namespace SetupTv.Sections
         if (quality.Value > quality.MaxValue)
         {
           hueScrollbar.Value = quality.MaxValue;
-        } else if (quality.Value < quality.MinValue)
+        }
+        else if (quality.Value < quality.MinValue)
         {
           hueScrollbar.Value = quality.MinValue;
-        } else
+        }
+        else
         {
           hueScrollbar.Value = quality.Value;
         }
@@ -331,7 +343,8 @@ namespace SetupTv.Sections
         hueScrollbar.Enabled = true;
         hueValue.Enabled = true;
         label7.Enabled = true;
-      } else
+      }
+      else
       {
         hueScrollbar.Enabled = false;
         hueValue.Text = string.Empty;
@@ -348,10 +361,12 @@ namespace SetupTv.Sections
         if (quality.Value > quality.MaxValue)
         {
           saturationScrollbar.Value = quality.MaxValue;
-        } else if (quality.Value < quality.MinValue)
+        }
+        else if (quality.Value < quality.MinValue)
         {
           saturationScrollbar.Value = quality.MinValue;
-        } else
+        }
+        else
         {
           saturationScrollbar.Value = quality.Value;
         }
@@ -359,7 +374,8 @@ namespace SetupTv.Sections
         saturationScrollbar.Enabled = true;
         saturationValue.Enabled = true;
         label8.Enabled = true;
-      } else
+      }
+      else
       {
         saturationScrollbar.Enabled = false;
         saturationValue.Text = string.Empty;
@@ -376,10 +392,12 @@ namespace SetupTv.Sections
         if (quality.Value > quality.MaxValue)
         {
           sharpnessScrollbar.Value = quality.MaxValue;
-        } else if (quality.Value < quality.MinValue)
+        }
+        else if (quality.Value < quality.MinValue)
         {
           sharpnessScrollbar.Value = quality.MinValue;
-        } else
+        }
+        else
         {
           sharpnessScrollbar.Value = quality.Value;
         }
@@ -387,7 +405,8 @@ namespace SetupTv.Sections
         sharpnessScrollbar.Enabled = true;
         sharpnessValue.Enabled = true;
         label9.Enabled = true;
-      } else
+      }
+      else
       {
         sharpnessScrollbar.Enabled = false;
         sharpnessValue.Text = string.Empty;
@@ -404,10 +423,12 @@ namespace SetupTv.Sections
         if (quality.Value > quality.MaxValue)
         {
           gammaScrollbar.Value = quality.MaxValue;
-        } else if (quality.Value < quality.MinValue)
+        }
+        else if (quality.Value < quality.MinValue)
         {
           gammaScrollbar.Value = quality.MinValue;
-        } else
+        }
+        else
         {
           gammaScrollbar.Value = quality.Value;
         }
@@ -415,7 +436,8 @@ namespace SetupTv.Sections
         gammaScrollbar.Enabled = true;
         gammaValue.Enabled = true;
         label10.Enabled = true;
-      } else
+      }
+      else
       {
         gammaScrollbar.Enabled = false;
         gammaValue.Text = string.Empty;
@@ -432,10 +454,12 @@ namespace SetupTv.Sections
         if (quality.Value > quality.MaxValue)
         {
           colorEnableScrollbar.Value = quality.MaxValue;
-        } else if (quality.Value < quality.MinValue)
+        }
+        else if (quality.Value < quality.MinValue)
         {
           colorEnableScrollbar.Value = quality.MinValue;
-        } else
+        }
+        else
         {
           colorEnableScrollbar.Value = quality.Value;
         }
@@ -443,7 +467,8 @@ namespace SetupTv.Sections
         colorEnableScrollbar.Enabled = true;
         colorEnableValue.Enabled = true;
         label11.Enabled = true;
-      } else
+      }
+      else
       {
         colorEnableScrollbar.Enabled = false;
         colorEnableValue.Text = string.Empty;
@@ -460,10 +485,12 @@ namespace SetupTv.Sections
         if (quality.Value > quality.MaxValue)
         {
           whiteBalanceScrollbar.Value = quality.MaxValue;
-        } else if (quality.Value < quality.MinValue)
+        }
+        else if (quality.Value < quality.MinValue)
         {
           whiteBalanceScrollbar.Value = quality.MinValue;
-        } else
+        }
+        else
         {
           whiteBalanceScrollbar.Value = quality.Value;
         }
@@ -471,7 +498,8 @@ namespace SetupTv.Sections
         whiteBalanceScrollbar.Enabled = true;
         whiteBalanceValue.Enabled = true;
         label12.Enabled = true;
-      } else
+      }
+      else
       {
         whiteBalanceScrollbar.Enabled = false;
         whiteBalanceValue.Text = string.Empty;
@@ -488,10 +516,12 @@ namespace SetupTv.Sections
         if (quality.Value > quality.MaxValue)
         {
           backlightCompensationScrollbar.Value = quality.MaxValue;
-        } else if (quality.Value < quality.MinValue)
+        }
+        else if (quality.Value < quality.MinValue)
         {
           backlightCompensationScrollbar.Value = quality.MinValue;
-        } else
+        }
+        else
         {
           backlightCompensationScrollbar.Value = quality.Value;
         }
@@ -499,7 +529,8 @@ namespace SetupTv.Sections
         backlightCompensationScrollbar.Enabled = true;
         backlightCompensationValue.Enabled = true;
         label13.Enabled = true;
-      } else
+      }
+      else
       {
         backlightCompensationScrollbar.Enabled = false;
         backlightCompensationValue.Text = string.Empty;
@@ -600,7 +631,8 @@ namespace SetupTv.Sections
         try
         {
           RemoteControl.Instance.ReloadCardConfiguration(_cardNumber);
-        } catch
+        }
+        catch
         {
           Log.WriteFile("Could not reload card configuration");
         }
@@ -615,58 +647,72 @@ namespace SetupTv.Sections
       if (cbrPlayback.Checked)
       {
         _configuration.PlaybackQualityMode = VIDEOENCODER_BITRATE_MODE.ConstantBitRate;
-      } else if (vbrPlayback.Checked)
+      }
+      else if (vbrPlayback.Checked)
       {
         _configuration.PlaybackQualityMode = VIDEOENCODER_BITRATE_MODE.VariableBitRateAverage;
-      } else if (vbrPeakPlayback.Checked)
+      }
+      else if (vbrPeakPlayback.Checked)
       {
         _configuration.PlaybackQualityMode = VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak;
       }
       if (cbrRecord.Checked)
       {
         _configuration.RecordQualityMode = VIDEOENCODER_BITRATE_MODE.ConstantBitRate;
-      } else if (vbrRecord.Checked)
+      }
+      else if (vbrRecord.Checked)
       {
         _configuration.RecordQualityMode = VIDEOENCODER_BITRATE_MODE.VariableBitRateAverage;
-      } else if (vbrPeakRecord.Checked)
+      }
+      else if (vbrPeakRecord.Checked)
       {
         _configuration.RecordQualityMode = VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak;
       }
       if (defaultPlayback.Checked)
       {
         _configuration.PlaybackQualityType = QualityType.Default;
-      } else if (customPlayback.Checked)
+      }
+      else if (customPlayback.Checked)
       {
         _configuration.PlaybackQualityType = QualityType.Custom;
-      } else if (portablePlayback.Checked)
+      }
+      else if (portablePlayback.Checked)
       {
         _configuration.PlaybackQualityType = QualityType.Portable;
-      } else if (lowPlayback.Checked)
+      }
+      else if (lowPlayback.Checked)
       {
         _configuration.PlaybackQualityType = QualityType.Low;
-      } else if (mediumPlayback.Checked)
+      }
+      else if (mediumPlayback.Checked)
       {
         _configuration.PlaybackQualityType = QualityType.Medium;
-      } else if (highPlayback.Checked)
+      }
+      else if (highPlayback.Checked)
       {
         _configuration.PlaybackQualityType = QualityType.High;
       }
       if (defaultRecord.Checked)
       {
         _configuration.RecordQualityType = QualityType.Default;
-      } else if (customRecord.Checked)
+      }
+      else if (customRecord.Checked)
       {
         _configuration.RecordQualityType = QualityType.Custom;
-      } else if (portableRecord.Checked)
+      }
+      else if (portableRecord.Checked)
       {
         _configuration.RecordQualityType = QualityType.Portable;
-      } else if (lowRecord.Checked)
+      }
+      else if (lowRecord.Checked)
       {
         _configuration.RecordQualityType = QualityType.Low;
-      } else if (mediumRecord.Checked)
+      }
+      else if (mediumRecord.Checked)
       {
         _configuration.RecordQualityType = QualityType.Medium;
-      } else if (highRecord.Checked)
+      }
+      else if (highRecord.Checked)
       {
         _configuration.RecordQualityType = QualityType.High;
       }
@@ -678,7 +724,8 @@ namespace SetupTv.Sections
           if (videoStandardComboBox.SelectedIndex != -1 && !videoStandardComboBox.SelectedItem.Equals(AnalogVideoStandard.None))
           {
             _configuration.Graph.Capture.CurrentVideoStandard = (AnalogVideoStandard)videoStandardComboBox.SelectedItem;
-          } else
+          }
+          else
           {
             _configuration.Graph.Capture.CurrentVideoStandard = AnalogVideoStandard.None;
           }
@@ -764,7 +811,8 @@ namespace SetupTv.Sections
         Thread scanThread = new Thread(DoTvScan);
         scanThread.Name = "Analog TV scan thread";
         scanThread.Start();
-      } else
+      }
+      else
       {
         _stopScanning = true;
       }
@@ -863,14 +911,16 @@ namespace SetupTv.Sections
           if (checkBoxNoMerge.Checked)
           {
             dbChannel = new Channel(channel.Name, false, false, 0, new DateTime(2000, 1, 1), false, new DateTime(2000, 1, 1), -1, true, "", true, channel.Name);
-          } else
+          }
+          else
           {
             dbChannel = layer.GetChannelByName("", channel.Name);
             if (dbChannel != null)
             {
               dbChannel.Name = channel.Name;
               exists = true;
-            } else
+            }
+            else
             {
               dbChannel = layer.AddNewChannel(channel.Name);
             }
@@ -881,19 +931,33 @@ namespace SetupTv.Sections
           dbChannel.Persist();
           layer.AddTuningDetails(dbChannel, channel);
           layer.MapChannelToCard(card, dbChannel, false);
-          layer.AddChannelToGroup(dbChannel, "Analog");
+
+          if (checkBoxCreateGroups.Checked)
+          {
+            if (dbChannel.IsTv)
+            {
+              layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.Analog);
+            }
+            if (dbChannel.IsRadio)
+            {
+              layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.Analog);
+            }
+          }
+
           if (exists)
           {
             line = String.Format("channel:{0} source:{1} : Channel update found - {2}", channel.ChannelNumber, mpComboBoxSource.SelectedItem, channel.Name);
             channelsUpdated++;
-          } else
+          }
+          else
           {
             line = String.Format("channel:{0} source:{1} : New channel found - {2}", channel.ChannelNumber, mpComboBoxSource.SelectedItem, channel.Name);
             channelsNew++;
           }
           item.Text = line;
         }
-      } finally
+      }
+      finally
       {
         User user = new User();
         user.CardId = _cardNumber;
@@ -955,7 +1019,8 @@ namespace SetupTv.Sections
         Thread scanThread = new Thread(DoRadioScan);
         scanThread.Name = "Analog Radio scan thread";
         scanThread.Start();
-      } else
+      }
+      else
       {
         _stopScanning = true;
       }
@@ -1048,7 +1113,8 @@ namespace SetupTv.Sections
               dbChannel.Name = channel.Name;
               line = String.Format("frequence:{0} MHz : Channel update found - {1}", freqMHz.ToString("f2"), channel.Name);
               channelsUpdated++;
-            } else
+            }
+            else
             {
               dbChannel = layer.AddNewChannel(channel.Name);
               line = String.Format("frequence:{0} MHz : New channel found - {1}", freqMHz.ToString("f2"), channel.Name);
@@ -1059,21 +1125,33 @@ namespace SetupTv.Sections
             dbChannel.IsRadio = channel.IsRadio;
             dbChannel.FreeToAir = true;
             dbChannel.Persist();
-            layer.AddChannelToGroup(dbChannel, "Analog channels");
+
+            if (dbChannel.IsTv)
+            {
+              layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.Analog);
+            }
+            if (dbChannel.IsRadio)
+            {
+              layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.Analog);
+            }
+
             layer.AddTuningDetails(dbChannel, channel);
             layer.MapChannelToCard(card, dbChannel, false);
             freq += 300000;
-          } else
+          }
+          else
           {
             line = String.Format("frequence:{0} MHz : No Signal", freqMHz.ToString("f2"));
             item.Text = line;
             item.ForeColor = Color.Red;
           }
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
-      } finally
+      }
+      finally
       {
         checkButton.Enabled = true;
         User user = new User();
@@ -1311,7 +1389,8 @@ namespace SetupTv.Sections
         {
           MessageBox.Show(this, "Card is disabled, please enable the card before checking quality control");
           return;
-        } else if (!RemoteControl.Instance.CardPresent(card.IdCard))
+        }
+        else if (!RemoteControl.Instance.CardPresent(card.IdCard))
         {
           MessageBox.Show(this, "Card is not found, please make sure card is present before checking quality control");
           return;
@@ -1339,7 +1418,8 @@ namespace SetupTv.Sections
           {
             vbrPeakPlayback.Enabled = true;
             vbrPeakRecord.Enabled = true;
-          } else
+          }
+          else
           {
             vbrPeakPlayback.Enabled = false;
             vbrPeakRecord.Enabled = false;
@@ -1350,7 +1430,8 @@ namespace SetupTv.Sections
             customSettingsGroup.Enabled = true;
             customValue.Enabled = true;
             customValuePeak.Enabled = true;
-          } else
+          }
+          else
           {
             bitRate.Enabled = false;
             customSettingsGroup.Enabled = false;
@@ -1363,7 +1444,8 @@ namespace SetupTv.Sections
           SetBitRateModes();
           SetBitRate();
           ReCheckSettings();
-        } else
+        }
+        else
         {
           Log.WriteFile("Card doesn't support quality control");
           MessageBox.Show("The used encoder doesn't support quality control.", "MediaPortal - TV Server management console", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1373,7 +1455,8 @@ namespace SetupTv.Sections
             ReCheckSettings();
           }
         }
-      } finally
+      }
+      finally
       {
         user = new User();
         user.CardId = _cardNumber;
