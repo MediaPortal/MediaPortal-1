@@ -547,6 +547,11 @@ public class MediaPortalApp : D3DApp, IRender
               strLine += "Please update the older component to the same version as the newer one.\r\n";
               strLine += "MediaPortal Version: " + MpVersion + "\r\n";
               strLine += "TvPlugin    Version: " + tvPluginVersion;
+              if (splashScreen != null)
+              {
+                splashScreen.Stop();
+                splashScreen = null;
+              }
               MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
               Log.Info(strLine);
               return;
