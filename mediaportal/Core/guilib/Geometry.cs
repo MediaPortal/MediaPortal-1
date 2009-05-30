@@ -318,7 +318,7 @@ namespace MediaPortal.GUI.Library
             // If screen is 16:9 do non-linear stretch, otherwise panscan
             float fScreenRatio = (float) ScreenWidth/ScreenHeight;
             fScreenRatio *= PixelRatio;
-            if (fScreenRatio < 1.6)
+            if (fScreenRatio < 1.59)
             {
               // pan and scan
               // assume that the movie is widescreen first, so use full height
@@ -355,7 +355,12 @@ namespace MediaPortal.GUI.Library
               //The non-linear stretching part will be handled by the VMR9 presenter
               int newTop = cropSettings.Top + (int) (0.083f*((float) croppedImageHeight)/2.0f);
               int newHeight = (int) (((float) croppedImageHeight)*(1.0f - 0.083f));
-
+              //For 16:10 screens the cropping should not be done, which fixes the aspect ratio issue within tolerable accuracy
+              if ((fScreenRatio < 1.61) && (fScreenRatio > 1.59))
+              {
+                newTop = cropSettings.Top;
+                newHeight = (int)croppedImageHeight;
+              }              
               rSource = new Rectangle(cropSettings.Left, newTop, croppedImageWidth, newHeight);
               rDest = new Rectangle(0, 0, ScreenWidth, ScreenHeight);
             }
