@@ -343,6 +343,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File ..\Plugins\ServerBlaster\ServerBlaster\bin\${BUILD_TYPE}\ServerBlaster.dll
   File ..\Plugins\TvMovie\bin\${BUILD_TYPE}\TvMovie.dll
   File ..\Plugins\XmlTvImport\bin\${BUILD_TYPE}\XmlTvImport.dll
+  File ..\Plugins\CI_Menu\CI_Menu_Plugin\bin\${BUILD_TYPE}\CI_Menu_Plugin.dll
 
   ; Rest of Files
   SetOutPath $INSTDIR
@@ -479,6 +480,7 @@ ${MementoSectionEnd}
   Delete /REBOOTOK $INSTDIR\Plugins\ServerBlaster.dll
   Delete /REBOOTOK $INSTDIR\Plugins\TvMovie.dll
   Delete /REBOOTOK $INSTDIR\Plugins\XmlTvImport.dll
+  Delete /REBOOTOK $INSTDIR\Plugins\CI_Menu_Plugin.dll
   RMDir "$INSTDIR\Plugins"
 
   ; And finally remove all the files installed
