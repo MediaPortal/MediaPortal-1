@@ -153,6 +153,7 @@ namespace MediaPortal.Configuration
 
             if (dialogResult == DialogResult.Yes)
             {
+              Util.Utils.KillProcess("Watchdog");
               Util.Utils.KillProcess("MediaPortal");
               Log.Info("MediaPortal closed, continue running Configuration.");
             }
