@@ -1039,7 +1039,7 @@ namespace TvPlugin
                   Program prog =
                     new Program(conflict.IdChannel, conflict.StartTime, conflict.EndTime, conflict.ProgramName, "-", "-",
                                 false,
-                                DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty, -1);
+                                DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1, string.Empty, -1);
                   CancelProgram(prog, Schedule.Retrieve(conflict.IdSchedule));
                 }
                 break;

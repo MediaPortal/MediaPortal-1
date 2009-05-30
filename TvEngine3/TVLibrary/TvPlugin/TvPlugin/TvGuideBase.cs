@@ -1738,7 +1738,7 @@ namespace TvPlugin
           if (programs.Count == 0)
           {
             program = new Program(channel.IdChannel, _viewingTime, _viewingTime, "-", string.Empty, string.Empty, false,
-                                  DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty, -1);
+                                  DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1, string.Empty, -1);
           }
           else
           {
@@ -1746,12 +1746,12 @@ namespace TvPlugin
             if (program.EndTime.DayOfYear == _viewingTime.DayOfYear)
             {
               program = new Program(channel.IdChannel, program.EndTime, program.EndTime, "-", "-", "-", false,
-                                    DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty, -1);
+                                    DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1, string.Empty, -1);
             }
             else
             {
               program = new Program(channel.IdChannel, _viewingTime, _viewingTime, "-", "-", "-", false,
-                                    DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty, -1);
+                                    DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1, string.Empty, -1);
             }
           }
         }
@@ -2001,7 +2001,7 @@ namespace TvPlugin
         long iProgEnd = Utils.datetolong(dt);
         Program prog = new Program(channel.IdChannel, Utils.longtodate(iStart), Utils.longtodate(iProgEnd),
                                    GUILocalizeStrings.Get(736), "", "", false, DateTime.MinValue, string.Empty,
-                                   string.Empty, -1, string.Empty, -1);
+                                   string.Empty, string.Empty, string.Empty, -1, string.Empty, -1);
         programs.Add(prog);
       }
 
