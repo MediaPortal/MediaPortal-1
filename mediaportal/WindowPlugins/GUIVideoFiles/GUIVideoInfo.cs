@@ -479,19 +479,19 @@ namespace MediaPortal.GUI.Video
               }
               if (File.Exists(temporaryFilename))
               {
-                Util.Picture.CreateThumbnail(temporaryFilename, coverArtImage, (int) Thumbs.ThumbResolution,
-                                             (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
+                Util.Picture.CreateThumbnail(temporaryFilename, coverArtImage, (int)Thumbs.ThumbResolution,
+                                             (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
 
                 if (File.Exists(temporaryFilenameLarge))
                 {
                   Util.Picture.CreateThumbnail(temporaryFilenameLarge, largeCoverArtImageConvert,
-                                               (int) Thumbs.ThumbLargeResolution, (int) Thumbs.ThumbLargeResolution, 0,
+                                               (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0,
                                                Thumbs.SpeedThumbsLarge); //edited by Boelshit              
                 }
                 else
                 {
                   Util.Picture.CreateThumbnail(temporaryFilename, largeCoverArtImageConvert,
-                                               (int) Thumbs.ThumbLargeResolution, (int) Thumbs.ThumbLargeResolution, 0,
+                                               (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0,
                                                Thumbs.SpeedThumbsLarge); //edited by Boelshit              
                 }
               }
@@ -500,6 +500,27 @@ namespace MediaPortal.GUI.Video
             else
             {
               Log.Info("image has no extension:{0}", imageUrl);
+            }
+          }
+          if(!File.Exists(coverArtImage))
+          {
+            int idMovie = currentMovie.ID;
+            System.Collections.ArrayList movies = new System.Collections.ArrayList();
+            VideoDatabase.GetFiles(idMovie, ref movies);
+            if (movies.Count > 0)
+            {
+              for(int i =0; i < movies.Count; i++)
+              {
+                string thumbFile = Util.Utils.EncryptLine((string)movies[i]);
+                coverArtImage = Util.Utils.GetCoverArtName(Thumbs.Videos, thumbFile);
+                largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.Videos, thumbFile);
+                if (File.Exists(largeCoverArtImage))
+                {
+                  currentMovie.ThumbURL = "file://" + largeCoverArtImage;
+                  Refresh(forceFolderThumb);
+                  break;
+                }
+              }
             }
           }
 

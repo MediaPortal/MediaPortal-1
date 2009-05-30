@@ -633,7 +633,7 @@ namespace MediaPortal.Util
               if (!File.Exists(strThumb))
               {
                 bool createVideoThumbs = false;
-                using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+                using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
                 {
                   createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
                 }
@@ -657,10 +657,11 @@ namespace MediaPortal.Util
                       Log.Error(ex);
                     }
                     item.IconImage = strThumb;
-                    if (File.Exists(ConvertToLargeCoverArt(strThumb)))
+                    string strLargeThumb = ConvertToLargeCoverArt(strThumb);
+                    if (File.Exists(strLargeThumb))
                     {
-                      item.ThumbnailImage = ConvertToLargeCoverArt(strThumb);
-                      item.IconImageBig = ConvertToLargeCoverArt(strThumb);
+                      item.ThumbnailImage = strLargeThumb;
+                      item.IconImageBig = strLargeThumb;
                     }
                     else
                     {
@@ -679,7 +680,7 @@ namespace MediaPortal.Util
                 }
 
               }
-                return;
+              return;
             }
           }
         }
@@ -704,7 +705,7 @@ namespace MediaPortal.Util
       }
       if (!string.IsNullOrEmpty(strThumb))
       {
-        strThumb = Util.Utils.ConvertToLargeCoverArt(strThumb);
+        strThumb = ConvertToLargeCoverArt(strThumb);
         if (File.Exists(strThumb))
           item.ThumbnailImage = strThumb;
       }
