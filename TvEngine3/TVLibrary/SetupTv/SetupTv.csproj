@@ -230,7 +230,7 @@
     <EmbeddedResource Include="43_upgrade_mysql_database.sql" />
     <EmbeddedResource Include="43_upgrade_sqlserver_database.sql" />
     <EmbeddedResource Include="44_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="44_upgrade_sqlserver_databas.sql" />
+    <EmbeddedResource Include="44_upgrade_sqlserver_database.sql" />
     <None Include="App.config" />
     <EmbeddedResource Include="42_upgrade_mysql_database.sql" />
     <EmbeddedResource Include="42_upgrade_sqlserver_database.sql" />
