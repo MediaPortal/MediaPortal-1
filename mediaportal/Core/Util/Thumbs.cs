@@ -38,7 +38,7 @@ namespace MediaPortal.Util
   /// </summary>
   public class Thumbs
   {
-    public enum ThumbQuality : int
+    public enum ThumbQuality
     {
       fastest = 0,
       fast = 1,
@@ -47,14 +47,14 @@ namespace MediaPortal.Util
       highest = 4,
     }
 
-    public enum LargeThumbSize : int
+    public enum LargeThumbSize
     {
       small = 400,
       average = 500,
       large = 600,
     }
 
-    public enum ThumbSize : int
+    public enum ThumbSize
     {
       small = 100,
       average = 120,
@@ -90,6 +90,7 @@ namespace MediaPortal.Util
     public static readonly string Yac = Config.GetSubFolder(Config.Dir.Thumbs, @"yac");
     public static readonly string News = Config.GetSubFolder(Config.Dir.Thumbs, @"News");
     public static readonly string Trailers = Config.GetSubFolder(Config.Dir.Thumbs, @"Trailers");
+    public static readonly string Videos = Config.GetSubFolder(Config.Dir.Thumbs, @"Videos");
 
     private static ThumbQuality _currentThumbQuality = ThumbQuality.average;
     private static CompositingQuality _currentCompositingQuality = CompositingQuality.Default;
@@ -98,10 +99,10 @@ namespace MediaPortal.Util
 
     private static LargeThumbSize _currentLargeThumbSize = LargeThumbSize.average;
     private static ThumbSize _currentThumbSize = ThumbSize.average;
-    private static ImageFormat _currentThumbFormat = ImageFormat.Jpeg;
+    private static readonly ImageFormat _currentThumbFormat = ImageFormat.Jpeg;
 
-    private static ImageCodecInfo _currentImageCodecInfo = null;
-    private static EncoderParameters _currentEncoderParams = null;
+    private static ImageCodecInfo _currentImageCodecInfo;
+    private static EncoderParameters _currentEncoderParams;
 
     static Thumbs()
     {
@@ -112,7 +113,7 @@ namespace MediaPortal.Util
     {
       try
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           int configQuality = xmlreader.GetValueAsInt("thumbnails", "quality", 2);
           switch (configQuality)
@@ -306,7 +307,7 @@ namespace MediaPortal.Util
       for (int i = 0; i < ImgEncoders.Length; i++)
       {
         // Until the one that we are interested in is found, which might be "*.JPG;*.JPEG;*.JPE;*.JFIF"
-        string[] possibleExtensions = ImgEncoders[i].FilenameExtension.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] possibleExtensions = ImgEncoders[i].FilenameExtension.Split(new [] { ';' }, StringSplitOptions.RemoveEmptyEntries);
         foreach (string ext in possibleExtensions)
         {
           // .jpg in *.JPG ?

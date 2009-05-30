@@ -39,7 +39,6 @@ using System.Text;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Xml;
 using System.ServiceProcess;
 using System.Windows.Forms;
 
@@ -47,9 +46,7 @@ using Microsoft.Win32;
 
 using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
-using MediaPortal.Player;
 using MediaPortal.Configuration;
-using MediaPortal.TagReader;
 
 namespace MediaPortal.Util
 {
@@ -157,28 +154,28 @@ namespace MediaPortal.Util
 
     static Utils()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         m_bHideExtensions = xmlreader.GetValueAsBool("general", "hideextensions", true);
         string artistNamePrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
         _artistNamePrefixes = artistNamePrefixes.Split(',');
 
         string strTmp = xmlreader.GetValueAsString("music", "extensions", ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc");
-        Tokens tok = new Tokens(strTmp, new char[] { ',' });
+        Tokens tok = new Tokens(strTmp, new [] { ',' });
         foreach (string extension in tok)
         {
           m_AudioExtensions.Add(extension.ToLower());
         }
 
         strTmp = xmlreader.GetValueAsString("movies", "extensions", ".avi,.mpg,.ogm,.mpeg,.mkv,.wmv,.ifo,.qt,.rm,.mov,.sbe,.dvr-ms,.ts,.mp4,.divx");
-        tok = new Tokens(strTmp, new char[] { ',' });
+        tok = new Tokens(strTmp, new [] { ',' });
         foreach (string extension in tok)
         {
           m_VideoExtensions.Add(extension.ToLower());
         }
 
         strTmp = xmlreader.GetValueAsString("pictures", "extensions", ".jpg,.jpeg,.gif,.bmp,.png");
-        tok = new Tokens(strTmp, new char[] { ',' });
+        tok = new Tokens(strTmp, new [] { ',' });
         foreach (string extension in tok)
         {
           m_PictureExtensions.Add(extension.ToLower());
@@ -634,6 +631,54 @@ namespace MediaPortal.Util
             {
               strThumb = GetThumb(item.Path);
               if (!File.Exists(strThumb))
+              {
+                bool createVideoThumbs = false;
+                using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+                {
+                  createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
+                }
+
+                if (IsVideo(item.Path) && createVideoThumbs)
+                {
+                  strThumb = String.Format(@"{0}\{1}.jpg", Thumbs.Videos, EncryptLine(item.Path));
+                  if (File.Exists(strThumb))
+                  {
+                    try
+                    {
+                      File.SetLastAccessTime(strThumb, DateTime.Now); //useful for later creating a process plugin that deletes old thumbnails
+                      if (!File.Exists(ConvertToLargeCoverArt(strThumb)))
+                      {
+                        File.Copy(strThumb, ConvertToLargeCoverArt(strThumb));
+                        File.SetLastAccessTime(ConvertToLargeCoverArt(strThumb), DateTime.Now);
+                      }
+                    }
+                    catch (Exception ex)
+                    {
+                      Log.Error(ex);
+                    }
+                    item.IconImage = strThumb;
+                    if (File.Exists(ConvertToLargeCoverArt(strThumb)))
+                    {
+                      item.ThumbnailImage = ConvertToLargeCoverArt(strThumb);
+                      item.IconImageBig = ConvertToLargeCoverArt(strThumb);
+                    }
+                    else
+                    {
+                      item.ThumbnailImage = strThumb;
+                      item.IconImageBig = strThumb;
+                    }
+                    
+                  }
+                  else
+                  {
+                    Thread extractVideoThumbThread = new Thread(GetVideoThumb);
+                    extractVideoThumbThread.IsBackground = true;
+                    extractVideoThumbThread.Priority = ThreadPriority.Lowest;
+                    extractVideoThumbThread.Start(item);
+                  }
+                }
+
+              }
                 return;
             }
           }
@@ -665,6 +710,51 @@ namespace MediaPortal.Util
       }
     }
 
+    public static void GetVideoThumb(object i)
+    {
+      GUIListItem item = (GUIListItem)i;
+      string path = item.Path;
+      string strThumb = String.Format(@"{0}\{1}.jpg", Thumbs.Videos, EncryptLine(path));
+      if(File.Exists(strThumb))
+        return;
+      Image thumb = null;
+      try
+      {
+        bool success = VideoThumbCreator.CreateVideoThumb(path, strThumb, true, false);
+        if (!success)
+        {
+          //Failed due to incompatible format or no write permissions on folder. Try querying Explorer for thumb.
+          Log.Error("Failed to extract thumb for {0}, trying another method.", path);
+          if (Environment.OSVersion.Version.Major >= 6)
+          {
+            thumb = VistaToolbelt.Shell.ThumbnailGenerator.GenerateThumbnail(path); //only works for Vista/7
+          }
+          else
+          {
+            using (ThumbnailExtractor extractor = new ThumbnailExtractor())
+            {
+              thumb = extractor.GetThumbnail(path); //works on XP but not too well threaded
+            }
+          }
+          if (thumb != null)
+            if (Picture.CreateThumbnail(thumb, strThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false))
+              SetThumbnails(ref item);
+        }
+        else
+          SetThumbnails(ref item);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Could not create thumbnail for {0}", path);
+        Log.Error(ex);
+      }
+      finally
+      {
+        if (thumb != null)
+          thumb.Dispose();
+      }
+    }
+    
     public static string SecondsToShortHMSString(int lSeconds)
     {
       if (lSeconds < 0) return ("0:00");

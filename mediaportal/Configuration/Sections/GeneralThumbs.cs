@@ -280,7 +280,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxTVThumbs.Size = new System.Drawing.Size(428, 94);
       this.groupBoxTVThumbs.TabIndex = 3;
       this.groupBoxTVThumbs.TabStop = false;
-      this.groupBoxTVThumbs.Text = "TV thumbs";
+      this.groupBoxTVThumbs.Text = "TV/Videos thumbs";
       // 
       // buttonClearTVThumbs
       // 
@@ -288,7 +288,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonClearTVThumbs.Name = "buttonClearTVThumbs";
       this.buttonClearTVThumbs.Size = new System.Drawing.Size(178, 23);
       this.buttonClearTVThumbs.TabIndex = 1;
-      this.buttonClearTVThumbs.Text = "Clear recorded TV thumbs";
+      this.buttonClearTVThumbs.Text = "Clear TV/Videos thumbs";
       this.buttonClearTVThumbs.UseVisualStyleBackColor = true;
       this.buttonClearTVThumbs.Click += new System.EventHandler(this.buttonClearTVThumbs_Click);
       // 
@@ -302,7 +302,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxTVThumbs.Name = "checkBoxTVThumbs";
       this.checkBoxTVThumbs.Size = new System.Drawing.Size(177, 17);
       this.checkBoxTVThumbs.TabIndex = 0;
-      this.checkBoxTVThumbs.Text = "Autocreate thumbs of recordings";
+      this.checkBoxTVThumbs.Text = "Autocreate thumbs";
       this.checkBoxTVThumbs.UseVisualStyleBackColor = true;
       // 
       // groupBoxPictureThumbs
@@ -676,6 +676,7 @@ namespace MediaPortal.Configuration.Sections
     private void buttonClearTVThumbs_Click(object sender, EventArgs e)
     {
       Util.Utils.DeleteFiles(Thumbs.TVRecorded, String.Format(@"*{0}", Util.Utils.GetThumbExtension()));
+      Util.Utils.DeleteFiles(Thumbs.Videos, String.Format(@"*{0}", Util.Utils.GetThumbExtension()));
     }
   }
 }
