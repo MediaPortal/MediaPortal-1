@@ -1069,7 +1069,8 @@ namespace MediaPortal.GUI.Library
             pntPosition.Y /= scaleY;
 
             _isFullScreenImage = false;
-            if (m_iRenderWidth == GUIGraphicsContext.Width && m_iRenderHeight == GUIGraphicsContext.Height)
+            if (m_iRenderWidth == Math.Round((float)GUIGraphicsContext.Width * GUIGraphicsContext.ZoomHorizontal) 
+              && m_iRenderHeight == Math.Round((float)GUIGraphicsContext.Height * GUIGraphicsContext.ZoomVertical))
             {
                 _isFullScreenImage = true;
             }
