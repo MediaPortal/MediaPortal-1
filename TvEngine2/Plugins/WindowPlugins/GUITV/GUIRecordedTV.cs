@@ -237,7 +237,7 @@ namespace MediaPortal.GUI.TV
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(OnPlayRecordingBackStopped);
       g_Player.PlayBackEnded += new g_Player.EndedHandler(OnPlayRecordingBackEnded);
       g_Player.PlayBackStarted += new g_Player.StartedHandler(OnPlayRecordingBackStarted);
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvrecordedtv.xml");
+      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvrecordedtv_TVE2.xml");
       //LoadSettings();
       return bResult;
     }

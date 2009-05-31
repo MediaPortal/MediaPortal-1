@@ -500,10 +500,10 @@ namespace MediaPortal.GUI.TV
     {
       using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        _hiddenMode = xmlreader.GetValueAsBool("mytv", "teletextHidden", false);
-        _transparentMode = xmlreader.GetValueAsBool("mytv", "teletextTransparent", false);
-        _rememberLastValues = xmlreader.GetValueAsBool("mytv", "teletextRemember", true);
-        _percentageOfMaximumHeight = xmlreader.GetValueAsInt("mytv", "teletextMaxFontSize", 100);
+        _hiddenMode = xmlreader.GetValueAsBool("mytve2", "teletextHidden", false);
+        _transparentMode = xmlreader.GetValueAsBool("mytve2", "teletextTransparent", false);
+        _rememberLastValues = xmlreader.GetValueAsBool("mytve2", "teletextRemember", true);
+        _percentageOfMaximumHeight = xmlreader.GetValueAsInt("mytve2", "teletextMaxFontSize", 100);
       }
     }
 
@@ -516,8 +516,8 @@ namespace MediaPortal.GUI.TV
       {
         using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          xmlreader.SetValueAsBool("mytv", "teletextHidden", _hiddenMode);
-          xmlreader.SetValueAsBool("mytv", "teletextTransparent", _transparentMode);
+          xmlreader.SetValueAsBool("mytve2", "teletextHidden", _hiddenMode);
+          xmlreader.SetValueAsBool("mytve2", "teletextTransparent", _transparentMode);
         }
       }
     }

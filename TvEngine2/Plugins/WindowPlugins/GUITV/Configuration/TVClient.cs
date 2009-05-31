@@ -104,15 +104,15 @@ namespace MediaPortal.Configuration.TVE2.Sections
         mpCheckBoxEnableDVBSub.Checked = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
         mpCheckBoxEnableTTXTSub.Checked = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
         enableAudioDualMonoModes.Checked = xmlreader.GetValueAsBool("tvservice", "audiodualmono", false);
-        cbHideAllChannels.Checked = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
-        cbShowChannelStateIcons.Checked = xmlreader.GetValueAsBool("mytv", "showChannelStateIcons", true);
-        cbRelaxTsReader.Checked = xmlreader.GetValueAsBool("mytv", "relaxTsReader", false);
+        cbHideAllChannels.Checked = xmlreader.GetValueAsBool("mytve2", "hideAllChannelsGroup", false);
+        cbShowChannelStateIcons.Checked = xmlreader.GetValueAsBool("mytve2", "showChannelStateIcons", true);
+        cbRelaxTsReader.Checked = xmlreader.GetValueAsBool("mytve2", "relaxTsReader", false);
 
-        chkRecnotifications.Checked = xmlreader.GetValueAsBool("mytv", "enableRecNotifier", false);
-        chkTVnotifications.Checked = xmlreader.GetValueAsBool("mytv", "enableTvNotifier", false);
-        txtNotifyBefore.Text = xmlreader.GetValueAsString("mytv", "notifyTVBefore", "300");
-        txtNotifyAfter.Text = xmlreader.GetValueAsString("mytv", "notifyTVTimeout", "15");
-        checkBoxNotifyPlaySound.Checked = xmlreader.GetValueAsBool("mytv", "notifybeep", true);
+        chkRecnotifications.Checked = xmlreader.GetValueAsBool("mytve2", "enableRecNotifier", false);
+        chkTVnotifications.Checked = xmlreader.GetValueAsBool("mytve2", "enableTvNotifier", false);
+        txtNotifyBefore.Text = xmlreader.GetValueAsString("mytve2", "notifyTVBefore", "300");
+        txtNotifyAfter.Text = xmlreader.GetValueAsString("mytve2", "notifyTVTimeout", "15");
+        checkBoxNotifyPlaySound.Checked = xmlreader.GetValueAsBool("mytve2", "notifybeep", true);
       }
       chkTVnotifications_CheckedChanged(null, null);
       if (File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
@@ -270,15 +270,15 @@ namespace MediaPortal.Configuration.TVE2.Sections
         xmlwriter.SetValueAsBool("tvservice", "dvbbitmapsubtitles", mpCheckBoxEnableDVBSub.Checked);
         xmlwriter.SetValueAsBool("tvservice", "dvbttxtsubtitles", mpCheckBoxEnableTTXTSub.Checked);
         xmlwriter.SetValueAsBool("tvservice", "audiodualmono", enableAudioDualMonoModes.Checked);
-        xmlwriter.SetValueAsBool("mytv", "hideAllChannelsGroup", cbHideAllChannels.Checked);
-        xmlwriter.SetValueAsBool("mytv", "showChannelStateIcons", cbShowChannelStateIcons.Checked);
-        xmlwriter.SetValueAsBool("mytv", "relaxTsReader", cbRelaxTsReader.Checked);
+        xmlwriter.SetValueAsBool("mytve2", "hideAllChannelsGroup", cbHideAllChannels.Checked);
+        xmlwriter.SetValueAsBool("mytve2", "showChannelStateIcons", cbShowChannelStateIcons.Checked);
+        xmlwriter.SetValueAsBool("mytve2", "relaxTsReader", cbRelaxTsReader.Checked);
 
-        xmlwriter.SetValueAsBool("mytv", "enableRecNotifier", chkRecnotifications.Checked);
-        xmlwriter.SetValueAsBool("mytv", "enableTvNotifier", chkTVnotifications.Checked);
-        xmlwriter.SetValue("mytv", "notifyTVBefore", txtNotifyBefore.Text);
-        xmlwriter.SetValue("mytv", "notifyTVTimeout", txtNotifyAfter.Text);
-        xmlwriter.SetValueAsBool("mytv", "notifybeep", checkBoxNotifyPlaySound.Checked);
+        xmlwriter.SetValueAsBool("mytve2", "enableRecNotifier", chkRecnotifications.Checked);
+        xmlwriter.SetValueAsBool("mytve2", "enableTvNotifier", chkTVnotifications.Checked);
+        xmlwriter.SetValue("mytve2", "notifyTVBefore", txtNotifyBefore.Text);
+        xmlwriter.SetValue("mytve2", "notifyTVTimeout", txtNotifyAfter.Text);
+        xmlwriter.SetValueAsBool("mytve2", "notifybeep", checkBoxNotifyPlaySound.Checked);
 
         foreach (ListViewItem item in mpListViewPreferredAudioLang.Items)
         {

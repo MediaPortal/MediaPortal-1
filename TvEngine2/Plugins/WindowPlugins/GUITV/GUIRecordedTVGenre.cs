@@ -82,7 +82,7 @@ namespace MediaPortal.GUI.TV
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvrecordedtvgenre.xml");
+      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvrecordedtvgenre_TVE2.xml");
       LoadSettings();
       return bResult;
     }

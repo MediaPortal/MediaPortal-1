@@ -65,14 +65,14 @@ namespace MediaPortal.Player
         string strTunerType = "Antenna";
         using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          m_bInternal = xmlreader.GetValueAsBool("radio", "internal", true);
-          strPlayerFile = xmlreader.GetValueAsString("radio", "player", "");
-          strPlayerArgs = xmlreader.GetValueAsString("radio", "args", "f %MHZ%");
-          strTunerType = xmlreader.GetValueAsString("radio", "tuner", "Antenna");
+          m_bInternal = xmlreader.GetValueAsBool("radiotve2", "internal", true);
+          strPlayerFile = xmlreader.GetValueAsString("radiotve2", "player", "");
+          strPlayerArgs = xmlreader.GetValueAsString("radiotve2", "args", "f %MHZ%");
+          strTunerType = xmlreader.GetValueAsString("radiotve2", "tuner", "Antenna");
           iTunerCountry = xmlreader.GetValueAsInt("capture", "country", 31);
-          m_strRadioDevice = xmlreader.GetValueAsString("radio", "device", "");
-          m_strAudioDevice = xmlreader.GetValueAsString("radio", "audiodevice", "");
-          m_strLineInput = xmlreader.GetValueAsString("radio", "lineinput", "");
+          m_strRadioDevice = xmlreader.GetValueAsString("radiotve2", "device", "");
+          m_strAudioDevice = xmlreader.GetValueAsString("radiotve2", "audiodevice", "");
+          m_strLineInput = xmlreader.GetValueAsString("radiotve2", "lineinput", "");
         }
 
         m_dtTime = DateTime.Now;

@@ -143,7 +143,7 @@ namespace MediaPortal.GUI.TV
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvscheduler.xml");
+      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvscheduler_TVE2.xml");
       LoadSettings();
       return bResult;
     }

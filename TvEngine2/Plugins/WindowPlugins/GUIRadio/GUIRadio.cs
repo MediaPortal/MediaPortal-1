@@ -103,7 +103,7 @@ namespace MediaPortal.GUI.Radio
     public override bool Init()
     {
       currentFolder = string.Empty;
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\MyRadio.xml");
+      bool bResult = Load(GUIGraphicsContext.Skin + @"\MyRadio_TVE2.xml");
 
       return bResult;
     }
@@ -114,7 +114,7 @@ namespace MediaPortal.GUI.Radio
     {
       using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        currentRadioFolder = xmlreader.GetValueAsString("radio", "folder", string.Empty);
+        currentRadioFolder = xmlreader.GetValueAsString("radiotve2", "folder", string.Empty);
 
         string tmpLine = string.Empty;
         tmpLine = (string) xmlreader.GetValue("myradio", "viewby");

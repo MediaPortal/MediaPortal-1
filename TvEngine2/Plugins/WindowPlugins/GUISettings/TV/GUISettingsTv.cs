@@ -109,7 +109,7 @@ namespace WindowPlugins.GUISettings.TV
       string strVideoCodec = "";
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
+        strVideoCodec = xmlreader.GetValueAsString("mytve2", "videocodec", "");
       }
       ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
       //Remove Muxer's from the list to avoid confusion.
@@ -155,7 +155,7 @@ namespace WindowPlugins.GUISettings.TV
       }
       using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        xmlwriter.SetValue("mytv", "videocodec", (string)availableVideoFilters[dlg.SelectedLabel]);
+        xmlwriter.SetValue("mytve2", "videocodec", (string)availableVideoFilters[dlg.SelectedLabel]);
       }
     }
 
@@ -164,7 +164,7 @@ namespace WindowPlugins.GUISettings.TV
       string strH264VideoCodec = "";
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        strH264VideoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
+        strH264VideoCodec = xmlreader.GetValueAsString("mytve2", "h264videocodec", "");
       }
       ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
@@ -192,7 +192,7 @@ namespace WindowPlugins.GUISettings.TV
       }
       using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        xmlwriter.SetValue("mytv", "h264videocodec", (string)availableH264VideoFilters[dlg.SelectedLabel]);
+        xmlwriter.SetValue("mytve2", "h264videocodec", (string)availableH264VideoFilters[dlg.SelectedLabel]);
       }
     }
 
@@ -201,7 +201,7 @@ namespace WindowPlugins.GUISettings.TV
       string strAudioCodec = "";
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
+        strAudioCodec = xmlreader.GetValueAsString("mytve2", "audiocodec", "");
       }
       ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
       //Remove Muxer's from the list to avoid confusion.
@@ -247,7 +247,7 @@ namespace WindowPlugins.GUISettings.TV
       }
       using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        xmlwriter.SetValue("mytv", "audiocodec", (string)availableAudioFilters[dlg.SelectedLabel]);
+        xmlwriter.SetValue("mytve2", "audiocodec", (string)availableAudioFilters[dlg.SelectedLabel]);
       }
     }
 
@@ -256,7 +256,7 @@ namespace WindowPlugins.GUISettings.TV
       string strAACAudioCodec = "";
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        strAACAudioCodec = xmlreader.GetValueAsString("mytv", "aacaudiocodec", "");
+        strAACAudioCodec = xmlreader.GetValueAsString("mytve2", "aacaudiocodec", "");
       }
       ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.LATMAAC);
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
@@ -284,7 +284,7 @@ namespace WindowPlugins.GUISettings.TV
       }
       using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        xmlwriter.SetValue("mytv", "aacaudiocodec", (string)availableAACAudioFilters[dlg.SelectedLabel]);
+        xmlwriter.SetValue("mytve2", "aacaudiocodec", (string)availableAACAudioFilters[dlg.SelectedLabel]);
       }
     }
 
@@ -293,7 +293,7 @@ namespace WindowPlugins.GUISettings.TV
       Geometry.Type aspectRatio = Geometry.Type.Normal;
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        string aspectRatioText = xmlreader.GetValueAsString("mytv", "defaultar", "Normal");
+        string aspectRatioText = xmlreader.GetValueAsString("mytve2", "defaultar", "Normal");
         aspectRatio = Utils.GetAspectRatio(aspectRatioText);
       }
 
@@ -328,7 +328,7 @@ namespace WindowPlugins.GUISettings.TV
       using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string aspectRatioText = Utils.GetAspectRatio(aspectRatio);
-        xmlwriter.SetValue("mytv", "defaultar", aspectRatioText);
+        xmlwriter.SetValue("mytve2", "defaultar", aspectRatioText);
       }
     }
 
@@ -338,7 +338,7 @@ namespace WindowPlugins.GUISettings.TV
       int deInterlaceMode = 1;
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        deInterlaceMode = xmlreader.GetValueAsInt("mytv", "deinterlace", 3);
+        deInterlaceMode = xmlreader.GetValueAsInt("mytve2", "deinterlace", 3);
       }
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
@@ -357,7 +357,7 @@ namespace WindowPlugins.GUISettings.TV
         }
         using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          xmlwriter.SetValue("mytv", "deinterlace", dlg.SelectedLabel);
+          xmlwriter.SetValue("mytve2", "deinterlace", dlg.SelectedLabel);
         }
       }
     }
@@ -367,7 +367,7 @@ namespace WindowPlugins.GUISettings.TV
       bool autoTurnOn = false;
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        autoTurnOn = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
+        autoTurnOn = xmlreader.GetValueAsBool("mytve2", "autoturnontv", false);
       }
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
@@ -384,7 +384,7 @@ namespace WindowPlugins.GUISettings.TV
         }
         using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          xmlwriter.SetValueAsBool("mytv", "autoturnontv", (dlg.SelectedLabel == 0));
+          xmlwriter.SetValueAsBool("mytve2", "autoturnontv", (dlg.SelectedLabel == 0));
         }
       }
     }
@@ -394,7 +394,7 @@ namespace WindowPlugins.GUISettings.TV
       string strAudioRenderer = "";
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
+        strAudioRenderer = xmlreader.GetValueAsString("mytve2", "audiorenderer", "Default DirectSound Device");
       }
       ArrayList availableAudioFilters = FilterHelper.GetAudioRenderers();
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
@@ -422,7 +422,7 @@ namespace WindowPlugins.GUISettings.TV
       }
       using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        xmlwriter.SetValue("mytv", "audiorenderer", (string)availableAudioFilters[dlg.SelectedLabel]);
+        xmlwriter.SetValue("mytve2", "audiorenderer", (string)availableAudioFilters[dlg.SelectedLabel]);
       }
     }
   }

@@ -183,9 +183,9 @@ namespace MediaPortal.GUI.TV
         _currentTvChannel = xmlreader.GetValueAsString("tvguide", "channel", string.Empty);
         _cursorX = xmlreader.GetValueAsInt("tvguide", "ypos", 0);
         _channelOffset = xmlreader.GetValueAsInt("tvguide", "yoffset", 0);
-        _autoTurnOnTv = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
+        _autoTurnOnTv = xmlreader.GetValueAsBool("mytve2", "autoturnontv", false);
         _disableXMLTVImportOption = xmlreader.GetValueAsBool("plugins", "TV Movie Clickfinder", false);
-        _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
+        _byIndex = xmlreader.GetValueAsBool("mytve2", "byindex", true);
         _notificationEnabled = xmlreader.GetValueAsBool("plugins", "TV Notifier", false);
       }
 

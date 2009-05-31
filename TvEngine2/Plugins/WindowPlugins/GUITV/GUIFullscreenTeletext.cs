@@ -53,7 +53,7 @@ namespace MediaPortal.GUI.TV
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\myfsteletext.xml");
+      return Load(GUIGraphicsContext.Skin + @"\myfsteletext_TVE2.xml");
     }
 
     protected override void OnPageDestroy(int newWindowId)

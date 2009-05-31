@@ -51,7 +51,7 @@ namespace MediaPortal.GUI.TV
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\dialogTvGuide.xml");
+      return Load(GUIGraphicsContext.Skin + @"\dialogTvGuide_TVE2.xml");
     }
 
     protected override void OnPageDestroy(int new_windowId)

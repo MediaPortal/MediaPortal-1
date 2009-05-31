@@ -625,27 +625,27 @@ namespace MediaPortal.Configuration.TVE2.Sections
       }
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        cbAllowNormal.Checked = xmlreader.GetValueAsBool("mytv", "allowarnormal", true);
-        cbAllowOriginal.Checked = xmlreader.GetValueAsBool("mytv", "allowaroriginal", true);
-        cbAllowZoom.Checked = xmlreader.GetValueAsBool("mytv", "allowarzoom", true);
-        cbAllowZoom149.Checked = xmlreader.GetValueAsBool("mytv", "allowarzoom149", true);
-        cbAllowStretch.Checked = xmlreader.GetValueAsBool("mytv", "allowarstretch", true);
-        cbAllowNonLinearStretch.Checked = xmlreader.GetValueAsBool("mytv", "allowarnonlinear", true);
-        cbAllowLetterbox.Checked = xmlreader.GetValueAsBool("mytv", "allowarletterbox", true);
+        cbAllowNormal.Checked = xmlreader.GetValueAsBool("mytve2", "allowarnormal", true);
+        cbAllowOriginal.Checked = xmlreader.GetValueAsBool("mytve2", "allowaroriginal", true);
+        cbAllowZoom.Checked = xmlreader.GetValueAsBool("mytve2", "allowarzoom", true);
+        cbAllowZoom149.Checked = xmlreader.GetValueAsBool("mytve2", "allowarzoom149", true);
+        cbAllowStretch.Checked = xmlreader.GetValueAsBool("mytve2", "allowarstretch", true);
+        cbAllowNonLinearStretch.Checked = xmlreader.GetValueAsBool("mytve2", "allowarnonlinear", true);
+        cbAllowLetterbox.Checked = xmlreader.GetValueAsBool("mytve2", "allowarletterbox", true);
 
-        cbTurnOnTv.Checked = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
-        cbAutoFullscreen.Checked = xmlreader.GetValueAsBool("mytv", "autofullscreen", false);
-        cbTurnOnTimeShift.Checked = xmlreader.GetValueAsBool("mytv", "autoturnontimeshifting", false);
+        cbTurnOnTv.Checked = xmlreader.GetValueAsBool("mytve2", "autoturnontv", false);
+        cbAutoFullscreen.Checked = xmlreader.GetValueAsBool("mytve2", "autofullscreen", false);
+        cbTurnOnTimeShift.Checked = xmlreader.GetValueAsBool("mytve2", "autoturnontimeshifting", false);
 
         textBoxTimeShiftBuffer.Text = xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30).ToString();
-        byIndexCheckBox.Checked = xmlreader.GetValueAsBool("mytv", "byindex", true);
-        showChannelNumberCheckBox.Checked = xmlreader.GetValueAsBool("mytv", "showchannelnumber", false);
+        byIndexCheckBox.Checked = xmlreader.GetValueAsBool("mytve2", "byindex", true);
+        showChannelNumberCheckBox.Checked = xmlreader.GetValueAsBool("mytve2", "showchannelnumber", false);
 
-        int channelNumberMaxLen = xmlreader.GetValueAsInt("mytv", "channelnumbermaxlength", 3);
+        int channelNumberMaxLen = xmlreader.GetValueAsInt("mytve2", "channelnumbermaxlength", 3);
         channelNumberMaxLengthNumUpDn.Value = channelNumberMaxLen;
 
 
-        int DeInterlaceMode = xmlreader.GetValueAsInt("mytv", "deinterlace", 0);
+        int DeInterlaceMode = xmlreader.GetValueAsInt("mytve2", "deinterlace", 0);
         if (DeInterlaceMode < 0 || DeInterlaceMode > 3)
         {
           DeInterlaceMode = 3;
@@ -654,9 +654,9 @@ namespace MediaPortal.Configuration.TVE2.Sections
         //
         // Set codecs
         //
-        string audioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
-        string videoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
-        string audioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
+        string audioCodec = xmlreader.GetValueAsString("mytve2", "audiocodec", "");
+        string videoCodec = xmlreader.GetValueAsString("mytve2", "videocodec", "");
+        string audioRenderer = xmlreader.GetValueAsString("mytve2", "audiorenderer", "Default DirectSound Device");
 
         if (audioCodec == string.Empty)
         {
@@ -724,7 +724,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
         //
         // Set default aspect ratio
         //
-        string defaultAspectRatio = xmlreader.GetValueAsString("mytv", "defaultar", defaultZoomModeComboBox.Items[0].ToString());
+        string defaultAspectRatio = xmlreader.GetValueAsString("mytve2", "defaultar", defaultZoomModeComboBox.Items[0].ToString());
         foreach (Geometry.Type item in Enum.GetValues(typeof(Geometry.Type)))
         {
           string currentAspectRatio = Util.Utils.GetAspectRatio(item);
@@ -748,15 +748,15 @@ namespace MediaPortal.Configuration.TVE2.Sections
       {
         if (cbDeinterlace.SelectedIndex >= 0)
         {
-          xmlwriter.SetValue("mytv", "deinterlace", cbDeinterlace.SelectedIndex.ToString());
+          xmlwriter.SetValue("mytve2", "deinterlace", cbDeinterlace.SelectedIndex.ToString());
         }
 
-        xmlwriter.SetValueAsBool("mytv", "autoturnontv", cbTurnOnTv.Checked);
-        xmlwriter.SetValueAsBool("mytv", "autofullscreen", cbAutoFullscreen.Checked);
-        xmlwriter.SetValueAsBool("mytv", "autoturnontimeshifting", cbTurnOnTimeShift.Checked);
-        xmlwriter.SetValueAsBool("mytv", "byindex", byIndexCheckBox.Checked);
-        xmlwriter.SetValueAsBool("mytv", "showchannelnumber", showChannelNumberCheckBox.Checked);
-        xmlwriter.SetValue("mytv", "channelnumbermaxlength", channelNumberMaxLengthNumUpDn.Value);
+        xmlwriter.SetValueAsBool("mytve2", "autoturnontv", cbTurnOnTv.Checked);
+        xmlwriter.SetValueAsBool("mytve2", "autofullscreen", cbAutoFullscreen.Checked);
+        xmlwriter.SetValueAsBool("mytve2", "autoturnontimeshifting", cbTurnOnTimeShift.Checked);
+        xmlwriter.SetValueAsBool("mytve2", "byindex", byIndexCheckBox.Checked);
+        xmlwriter.SetValueAsBool("mytve2", "showchannelnumber", showChannelNumberCheckBox.Checked);
+        xmlwriter.SetValue("mytve2", "channelnumbermaxlength", channelNumberMaxLengthNumUpDn.Value);
 
         try
         {
@@ -766,21 +766,21 @@ namespace MediaPortal.Configuration.TVE2.Sections
         catch
         {
         }
-        xmlwriter.SetValue("mytv", "defaultar", defaultZoomModeComboBox.SelectedItem);
+        xmlwriter.SetValue("mytve2", "defaultar", defaultZoomModeComboBox.SelectedItem);
         //
         // Set codecs
         //
-        xmlwriter.SetValue("mytv", "audiocodec", audioCodecComboBox.Text);
-        xmlwriter.SetValue("mytv", "videocodec", videoCodecComboBox.Text);
-        xmlwriter.SetValue("mytv", "audiorenderer", audioRendererComboBox.Text);
+        xmlwriter.SetValue("mytve2", "audiocodec", audioCodecComboBox.Text);
+        xmlwriter.SetValue("mytve2", "videocodec", videoCodecComboBox.Text);
+        xmlwriter.SetValue("mytve2", "audiorenderer", audioRendererComboBox.Text);
 
-        xmlwriter.SetValueAsBool("mytv", "allowarnormal", cbAllowNormal.Checked);
-        xmlwriter.SetValueAsBool("mytv", "allowaroriginal", cbAllowOriginal.Checked);
-        xmlwriter.SetValueAsBool("mytv", "allowarzoom", cbAllowZoom.Checked);
-        xmlwriter.SetValueAsBool("mytv", "allowarzoom149", cbAllowZoom149.Checked);
-        xmlwriter.SetValueAsBool("mytv", "allowarstretch", cbAllowStretch.Checked);
-        xmlwriter.SetValueAsBool("mytv", "allowarnonlinear", cbAllowNonLinearStretch.Checked);
-        xmlwriter.SetValueAsBool("mytv", "allowarletterbox", cbAllowLetterbox.Checked);
+        xmlwriter.SetValueAsBool("mytve2", "allowarnormal", cbAllowNormal.Checked);
+        xmlwriter.SetValueAsBool("mytve2", "allowaroriginal", cbAllowOriginal.Checked);
+        xmlwriter.SetValueAsBool("mytve2", "allowarzoom", cbAllowZoom.Checked);
+        xmlwriter.SetValueAsBool("mytve2", "allowarzoom149", cbAllowZoom149.Checked);
+        xmlwriter.SetValueAsBool("mytve2", "allowarstretch", cbAllowStretch.Checked);
+        xmlwriter.SetValueAsBool("mytve2", "allowarnonlinear", cbAllowNonLinearStretch.Checked);
+        xmlwriter.SetValueAsBool("mytve2", "allowarletterbox", cbAllowLetterbox.Checked);
       }
     }
 

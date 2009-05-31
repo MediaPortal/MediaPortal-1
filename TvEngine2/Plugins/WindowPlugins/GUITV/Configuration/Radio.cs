@@ -170,7 +170,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
     {
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        folderNameTextBox.Text = xmlreader.GetValueAsString("radio", "folder", "");
+        folderNameTextBox.Text = xmlreader.GetValueAsString("radiotve2", "folder", "");
       }
     }
 
@@ -178,7 +178,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
     {
       using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        xmlwriter.SetValue("radio", "folder", folderNameTextBox.Text);
+        xmlwriter.SetValue("radiotve2", "folder", folderNameTextBox.Text);
       }
     }
 

@@ -171,7 +171,7 @@ namespace MediaPortal.GUI.TV
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvcompressstatus.xml");
+      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvcompressstatus_TVE2.xml");
       LoadSettings();
       return bResult;
     }

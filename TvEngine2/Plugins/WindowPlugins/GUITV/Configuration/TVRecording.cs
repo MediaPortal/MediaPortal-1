@@ -737,7 +737,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
         cbAddRecordingsToMovie.Checked = xmlreader.GetValueAsBool("capture", "addrecordingstomoviedatabase", true);
         formatString[0] = xmlreader.GetValueAsString("capture", "moviesformat", string.Empty);
         formatString[1] = xmlreader.GetValueAsString("capture", "seriesformat", string.Empty);
-        cbBackToBack.Checked = xmlreader.GetValueAsBool("mytv", "automaticbacktoback", false);
+        cbBackToBack.Checked = xmlreader.GetValueAsBool("mytve2", "automaticbacktoback", false);
       }
       comboBoxRecording.SelectedIndex = 0;
       textBoxSample.Text = ShowExample(formatString[comboBoxRecording.SelectedIndex], comboBoxRecording.SelectedIndex);
@@ -763,7 +763,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
         xmlwriter.SetValue("capture", "prerecord", startTextBox.Text);
         xmlwriter.SetValue("capture", "postrecord", endTextBox.Text);
 
-        xmlwriter.SetValueAsBool("mytv", "automaticbacktoback", cbBackToBack.Checked);
+        xmlwriter.SetValueAsBool("mytve2", "automaticbacktoback", cbBackToBack.Checked);
         xmlwriter.SetValueAsBool("capture", "deletewatchedshows", cbDeleteWatchedShows.Checked);
         xmlwriter.SetValueAsBool("capture", "addrecordingstomoviedatabase", cbAddRecordingsToMovie.Checked);
 

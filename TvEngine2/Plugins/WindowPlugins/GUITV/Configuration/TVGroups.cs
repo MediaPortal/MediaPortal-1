@@ -476,7 +476,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
     {
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        cbHideAllChannels.Checked = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
+        cbHideAllChannels.Checked = xmlreader.GetValueAsBool("mytve2", "hideAllChannelsGroup", false);
       }
       LoadGroups();
     }
@@ -485,7 +485,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
     {
       using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        xmlwriter.SetValueAsBool("mytv", "hideAllChannelsGroup", cbHideAllChannels.Checked);
+        xmlwriter.SetValueAsBool("mytve2", "hideAllChannelsGroup", cbHideAllChannels.Checked);
       }
       if (_reloadList)
       {

@@ -66,7 +66,7 @@ namespace MediaPortal.GUI.TV
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvprogram.xml");
+      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvprogram_TVE2.xml");
       return bResult;
     }
 

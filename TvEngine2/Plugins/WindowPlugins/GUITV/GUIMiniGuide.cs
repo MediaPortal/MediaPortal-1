@@ -68,9 +68,9 @@ namespace MediaPortal.GUI.TV
     {
       using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        _altLayout = xmlreader.GetValueAsBool("mytv", "altminiguide", true);
+        _altLayout = xmlreader.GetValueAsBool("mytve2", "altminiguide", true);
       }
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\TVMiniGuide.xml");
+      bool bResult = Load(GUIGraphicsContext.Skin + @"\TVMiniGuide_TVE2.xml");
 
       GetID = (int) Window.WINDOW_MINI_GUIDE;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);

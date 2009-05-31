@@ -50,7 +50,7 @@ namespace MediaPortal.GUI.TV
 
     public override bool Init()
     {
-      bool result = Load(GUIGraphicsContext.Skin + @"\mytvguide.xml");
+      bool result = Load(GUIGraphicsContext.Skin + @"\mytvguide_TVE2.xml");
       Initialize();
       return result;
     }

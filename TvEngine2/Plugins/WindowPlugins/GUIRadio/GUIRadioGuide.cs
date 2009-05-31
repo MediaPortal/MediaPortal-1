@@ -36,26 +36,17 @@ namespace MediaPortal.GUI.Radio
   /// </summary>
   public class GUIRadioGuide : GUIRadioGuideBase
   {
-    public GUIRadioGuide() : base()
+    public GUIRadioGuide()
     {
       GetID = (int) Window.WINDOW_RADIO_GUIDE;
     }
 
     public override bool Init()
     {
-      bool result = Load(GUIGraphicsContext.Skin + @"\myradioguide.xml");
+      bool result = Load(GUIGraphicsContext.Skin + @"\myradioguide_TVE2.xml");
       Initialize();
       return result;
     }
 
-    protected override void OnPageLoad()
-    {
-      base.OnPageLoad();
-    }
-
-    protected override void OnPageDestroy(int newWindowId)
-    {
-      base.OnPageDestroy(newWindowId);
-    }
   }
 }

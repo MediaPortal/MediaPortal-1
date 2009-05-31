@@ -82,7 +82,7 @@ namespace MediaPortal.GUI.TV
     /// <returns></returns>
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\TVCropSettings.xml");
+      bool bResult = Load(GUIGraphicsContext.Skin + @"\TVCropSettings_TVE2.xml");
       GetID = (int) Window.WINDOW_TV_CROP_SETTINGS;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
       return bResult;

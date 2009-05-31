@@ -58,7 +58,7 @@ namespace MediaPortal.GUI.TV
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\myteletext.xml");
+      return Load(GUIGraphicsContext.Skin + @"\myteletext_TVE2.xml");
     }
 
     protected override void OnPageDestroy(int newWindowId)

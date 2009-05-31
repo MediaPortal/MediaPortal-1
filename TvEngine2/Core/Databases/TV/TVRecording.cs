@@ -51,7 +51,7 @@ namespace MediaPortal.TV.Database
       {
         _preRecordInterval = xmlreader.GetValueAsInt("capture", "prerecord", 5);
         _postRecordInterval = xmlreader.GetValueAsInt("capture", "postrecord", 5);
-        _preRecordingWarningTime = xmlreader.GetValueAsInt("mytv", "recordwarningtime", 2);
+        _preRecordingWarningTime = xmlreader.GetValueAsInt("mytve2", "recordwarningtime", 2);
       }
     }
 

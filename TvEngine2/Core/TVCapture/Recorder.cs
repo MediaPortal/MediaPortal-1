@@ -161,10 +161,10 @@ namespace MediaPortal.TV.Recording
       RecorderProperties.Init();
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        automaticbacktoback = xmlreader.GetValueAsBool("mytv", "automaticbacktoback", false);
+        automaticbacktoback = xmlreader.GetValueAsBool("mytve2", "automaticbacktoback", false);
         if (_commandProcessor != null)
         {
-          _commandProcessor.TVChannelName = xmlreader.GetValueAsString("mytv", "channel", string.Empty);
+          _commandProcessor.TVChannelName = xmlreader.GetValueAsString("mytve2", "channel", string.Empty);
         }
       }
 

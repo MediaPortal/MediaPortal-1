@@ -190,7 +190,7 @@ namespace MediaPortal.GUI.TV
         _notifyTVTimeout = xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 15);
         _playNotifyBeep = xmlreader.GetValueAsBool("movieplayer", "notifybeep", true);
       }
-      return Load(GUIGraphicsContext.Skin + @"\mytvFullScreen.xml");
+      return Load(GUIGraphicsContext.Skin + @"\mytvFullScreen_TVE2.xml");
     }
 
     #region serialisation
@@ -202,8 +202,8 @@ namespace MediaPortal.GUI.TV
         _timeOsdOnscreen = 1000*xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 5);
         //				m_iZapDelay = 1000*xmlreader.GetValueAsInt("movieplayer","zapdelay",2);
         _zapTimeOutValue = 1000*xmlreader.GetValueAsInt("movieplayer", "zaptimeout", 5);
-        _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
-        string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "Normal");
+        _byIndex = xmlreader.GetValueAsBool("mytve2", "byindex", true);
+        string strValue = xmlreader.GetValueAsString("mytve2", "defaultar", "Normal");
         GUIGraphicsContext.ARType = Util.Utils.GetAspectRatio(strValue);
       }
     }
@@ -449,31 +449,31 @@ namespace MediaPortal.GUI.TV
             using (
               Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             {
-              if (xmlreader.GetValueAsBool("mytv", "allowarzoom", true))
+              if (xmlreader.GetValueAsBool("mytve2", "allowarzoom", true))
               {
                 allowedModes.Add(Geometry.Type.Zoom);
               }
-              if (xmlreader.GetValueAsBool("mytv", "allowarstretch", true))
+              if (xmlreader.GetValueAsBool("mytve2", "allowarstretch", true))
               {
                 allowedModes.Add(Geometry.Type.Stretch);
               }
-              if (xmlreader.GetValueAsBool("mytv", "allowarnormal", true))
+              if (xmlreader.GetValueAsBool("mytve2", "allowarnormal", true))
               {
                 allowedModes.Add(Geometry.Type.Normal);
               }
-              if (xmlreader.GetValueAsBool("mytv", "allowaroriginal", true))
+              if (xmlreader.GetValueAsBool("mytve2", "allowaroriginal", true))
               {
                 allowedModes.Add(Geometry.Type.Original);
               }
-              if (xmlreader.GetValueAsBool("mytv", "allowarletterbox", true))
+              if (xmlreader.GetValueAsBool("mytve2", "allowarletterbox", true))
               {
                 allowedModes.Add(Geometry.Type.LetterBox43);
               }
-              if (xmlreader.GetValueAsBool("mytv", "allowarnonlinear", true))
+              if (xmlreader.GetValueAsBool("mytve2", "allowarnonlinear", true))
               {
                 allowedModes.Add(Geometry.Type.NonLinearStretch);
               }
-              if (xmlreader.GetValueAsBool("mytv", "allowarzoom149", true))
+              if (xmlreader.GetValueAsBool("mytve2", "allowarzoom149", true))
               {
                 allowedModes.Add(Geometry.Type.Zoom14to9);
               }

@@ -110,15 +110,15 @@ namespace MediaPortal.GUI.TV
       using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         m_navigator.LoadSettings(xmlreader);
-        _isTvOn = xmlreader.GetValueAsBool("mytv", "tvon", false);
-        _isTimeShifting = xmlreader.GetValueAsBool("mytv", "autoturnontimeshifting", false);
-        _autoTurnOnTv = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
+        _isTvOn = xmlreader.GetValueAsBool("mytve2", "tvon", false);
+        _isTimeShifting = xmlreader.GetValueAsBool("mytve2", "autoturnontimeshifting", false);
+        _autoTurnOnTv = xmlreader.GetValueAsBool("mytve2", "autoturnontv", false);
         _showlastactivemodule = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
         _showlastactivemoduleFullscreen = xmlreader.GetValueAsBool("general", "lastactivemodulefullscreen", false);
-        _autoFullScreen = xmlreader.GetValueAsBool("mytv", "autofullscreen", false);
-        _autoFullScreenOnly = xmlreader.GetValueAsBool("mytv", "autofullscreenonly", false);
+        _autoFullScreen = xmlreader.GetValueAsBool("mytve2", "autofullscreen", false);
+        _autoFullScreenOnly = xmlreader.GetValueAsBool("mytve2", "autofullscreenonly", false);
 
-        string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "Normal");
+        string strValue = xmlreader.GetValueAsString("mytve2", "defaultar", "Normal");
         GUIGraphicsContext.ARType = Util.Utils.GetAspectRatio(strValue);
       }
     }
@@ -128,7 +128,7 @@ namespace MediaPortal.GUI.TV
       using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         m_navigator.SaveSettings(xmlwriter);
-        xmlwriter.SetValueAsBool("mytv", "tvon", _isTvOn);
+        xmlwriter.SetValueAsBool("mytve2", "tvon", _isTvOn);
       }
     }
 
@@ -148,7 +148,7 @@ namespace MediaPortal.GUI.TV
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvhome.xml");
+      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvhome_TVE2.xml");
       LoadSettings();
 
       return bResult;
@@ -1154,7 +1154,7 @@ namespace MediaPortal.GUI.TV
       bool hideAllChannelsGroup = false;
       using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        hideAllChannelsGroup = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
+        hideAllChannelsGroup = xmlreader.GetValueAsBool("mytve2", "hideAllChannelsGroup", false);
       }
 
       TVDatabase.GetChannels(ref channels); // Load all channels
@@ -1694,9 +1694,9 @@ namespace MediaPortal.GUI.TV
 
     public void LoadSettings(Profile.Settings xmlreader)
     {
-      m_currentchannel = xmlreader.GetValueAsString("mytv", "channel", string.Empty);
+      m_currentchannel = xmlreader.GetValueAsString("mytve2", "channel", string.Empty);
       m_zapdelay = 1000*xmlreader.GetValueAsInt("movieplayer", "zapdelay", 2);
-      string groupname = xmlreader.GetValueAsString("mytv", "group", GUILocalizeStrings.Get(972));
+      string groupname = xmlreader.GetValueAsString("mytve2", "group", GUILocalizeStrings.Get(972));
       m_currentgroup = GetGroupIndex(groupname);
       if (m_currentgroup < 0 || m_currentgroup >= m_groups.Count) // Group no longer exists?
       {
@@ -1721,12 +1721,12 @@ namespace MediaPortal.GUI.TV
     {
       if (m_currentchannel.Trim() != string.Empty)
       {
-        xmlwriter.SetValue("mytv", "channel", m_currentchannel);
+        xmlwriter.SetValue("mytve2", "channel", m_currentchannel);
       }
 
       if (CurrentGroup.GroupName.Trim() != string.Empty)
       {
-        xmlwriter.SetValue("mytv", "group", CurrentGroup.GroupName);
+        xmlwriter.SetValue("mytve2", "group", CurrentGroup.GroupName);
       }
     }
 

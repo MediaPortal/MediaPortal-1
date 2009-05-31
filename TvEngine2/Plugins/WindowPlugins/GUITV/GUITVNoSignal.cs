@@ -45,7 +45,7 @@ namespace WindowPlugins.GUITV
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvNoSignal.xml");
+      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvNoSignal_TVE2.xml");
       return bResult;
     }
 

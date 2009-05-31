@@ -50,7 +50,7 @@ namespace MediaPortal.GUI.TV
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\mytvcompresssettings.xml");
+      return Load(GUIGraphicsContext.Skin + @"\mytvcompresssettings_TVE2.xml");
     }
 
     protected override void OnPageLoad()

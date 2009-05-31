@@ -735,7 +735,7 @@ namespace MediaPortal.TV.Recording
       _isGraphRunning = true;
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "Normal");
+        string strValue = xmlreader.GetValueAsString("mytve2", "defaultar", "Normal");
         GUIGraphicsContext.ARType = Util.Utils.GetAspectRatio(strValue);
       }
       GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
@@ -1400,19 +1400,19 @@ namespace MediaPortal.TV.Recording
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         int intCount = 0;
-        while (xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") != "undefined")
+        while (xmlreader.GetValueAsString("mytve2", "filter" + intCount.ToString(), "undefined") != "undefined")
         {
-          if (xmlreader.GetValueAsBool("mytv", "usefilter" + intCount.ToString(), false))
+          if (xmlreader.GetValueAsBool("mytve2", "usefilter" + intCount.ToString(), false))
           {
-            strFilters += xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") + ";";
+            strFilters += xmlreader.GetValueAsString("mytve2", "filter" + intCount.ToString(), "undefined") + ";";
             intFilters++;
           }
           intCount++;
         }
-        strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
-        strH264VideoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
-        strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
-        strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
+        strVideoCodec = xmlreader.GetValueAsString("mytve2", "videocodec", "");
+        strH264VideoCodec = xmlreader.GetValueAsString("mytve2", "h264videocodec", "");
+        strAudioCodec = xmlreader.GetValueAsString("mytve2", "audiocodec", "");
+        strAudioRenderer = xmlreader.GetValueAsString("mytve2", "audiorenderer", "Default DirectSound Device");
       }
       if (video && strVideoCodec.Length > 0)
       {
@@ -1450,18 +1450,18 @@ namespace MediaPortal.TV.Recording
       using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
           int intCount = 0;
-          while (xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") != "undefined")
+          while (xmlreader.GetValueAsString("mytve2", "filter" + intCount.ToString(), "undefined") != "undefined")
           {
-              if (xmlreader.GetValueAsBool("mytv", "usefilter" + intCount.ToString(), false))
+              if (xmlreader.GetValueAsBool("mytve2", "usefilter" + intCount.ToString(), false))
               {
-                  strFilters += xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") + ";";
+                  strFilters += xmlreader.GetValueAsString("mytve2", "filter" + intCount.ToString(), "undefined") + ";";
                   intFilters++;
               }
               intCount++;
           }
-        strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodecMPEG4", "Elecard AVC/H.264 Decoder DMO");
-        strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
-        strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
+        strVideoCodec = xmlreader.GetValueAsString("mytve2", "videocodecMPEG4", "Elecard AVC/H.264 Decoder DMO");
+        strAudioCodec = xmlreader.GetValueAsString("mytve2", "audiocodec", "");
+        strAudioRenderer = xmlreader.GetValueAsString("mytve2", "audiorenderer", "Default DirectSound Device");
       }
       if ( video && strVideoCodec.Length > 0 )
         DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);

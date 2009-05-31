@@ -43,12 +43,12 @@ namespace MediaPortal.Configuration.TVE2.Sections
 
     public override void LoadSettings()
     {
-      LoadSettings("mytv");
+      LoadSettings("mytve2");
     }
 
     public override void SaveSettings()
     {
-      SaveSettings("mytv");
+      SaveSettings("mytve2");
     }
   }
 }
