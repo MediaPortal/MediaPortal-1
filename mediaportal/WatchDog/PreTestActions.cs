@@ -84,7 +84,10 @@ namespace WatchDog
     private void ClearDir(string strDir)
     {
       string[] files = Directory.GetFiles(strDir);
-      int subActions = files.Length;
+      string[] dirs = Directory.GetDirectories(strDir);
+
+      int subActions = files.Length + dirs.Length;
+
       foreach (string file in files)
       {
         if (File.Exists(file))
@@ -93,6 +96,16 @@ namespace WatchDog
           updateProgress(subActions);
         }
       }
+
+      foreach (string dir in dirs)
+      {
+        if (Directory.Exists(dir))
+        {
+          Directory.Delete(dir, true);
+          updateProgress(subActions);
+        }
+      }
+
       if (subActions == 0)
       {
         updateProgress(1);
