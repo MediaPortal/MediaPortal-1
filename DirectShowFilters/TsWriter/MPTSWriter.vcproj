@@ -352,18 +352,6 @@
 					RelativePath=".\source\VideoAudioScrambledAnalyzer.cpp"
 					>
 				</File>
-				<Filter
-					Name="ConditionalAccess"
-					>
-					<File
-						RelativePath=".\source\ConditionalAccess.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\source\FireDtv.cpp"
-						>
-					</File>
-				</Filter>
 			</Filter>
 			<Filter
 				Name="Writer"
@@ -374,18 +362,6 @@
 				</File>
 				<File
 					RelativePath=".\source\MultiFileWriter.cpp"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="Conditional Access"
-				>
-				<File
-					RelativePath=".\source\Knc.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\source\Technotrend.cpp"
 					>
 				</File>
 			</Filter>
@@ -428,10 +404,6 @@
 			</File>
 			<File
 				RelativePath=".\source\EpgScanner.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\Knc.h"
 				>
 			</File>
 			<File
@@ -563,26 +535,6 @@
 				</File>
 				<File
 					RelativePath=".\source\EnterCriticalSection.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="Conditional Access"
-				>
-				<File
-					RelativePath=".\source\ConditionalAccess.h"
-					>
-				</File>
-				<File
-					RelativePath=".\source\FireDtv.h"
-					>
-				</File>
-				<File
-					RelativePath=".\source\KNC\KNCBDACI.h"
-					>
-				</File>
-				<File
-					RelativePath=".\source\Technotrend.h"
 					>
 				</File>
 			</Filter>

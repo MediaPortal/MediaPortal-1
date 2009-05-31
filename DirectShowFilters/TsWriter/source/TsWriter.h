@@ -29,8 +29,6 @@
 #include "DiskRecorder.h"
 #include "teletextgrabber.h"
 #include "cagrabber.h"
-#include "technotrend.h"
-#include "knc.h"
 #include "channellinkagescanner.h"
 #include "tschannel.h"
 #include "videoaudioobserver.h"
@@ -225,8 +223,6 @@ private:
 		CEpgScanner*		m_pEpgScanner;
 		FileWriter* m_rawPaketWriter;
 		bool b_dumpRawPakets;
-    CTechnotrend*   m_pTechnoTrend;
-		CKnc* m_pKNC;
 		CChannelLinkageScanner* m_pChannelLinkageScanner;
 		vector<CTsChannel*> m_vecChannels;
     typedef vector<CTsChannel*>::iterator ivecChannels;

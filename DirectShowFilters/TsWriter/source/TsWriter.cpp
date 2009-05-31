@@ -349,8 +349,6 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *phr)
 
   m_pChannelScanner= new CChannelScan(GetOwner(),phr,m_pFilter);
   m_pEpgScanner = new CEpgScanner(GetOwner(),phr);
-  m_pTechnoTrend= new CTechnotrend(GetOwner(),phr);
-  m_pKNC= new CKnc(GetOwner(),phr);
   m_pChannelLinkageScanner = new CChannelLinkageScanner(GetOwner(),phr);
   m_rawPaketWriter=new FileWriter();
   m_pPin->AssignRawPaketWriter(m_rawPaketWriter);
@@ -363,8 +361,6 @@ CMpTs::~CMpTs()
   delete m_pFilter;
 	delete m_pChannelScanner;
 	delete m_pEpgScanner;
-  delete m_pTechnoTrend;
-	delete m_pKNC;
 	delete m_pChannelLinkageScanner;
 	delete m_rawPaketWriter;
   CAutoLock lock(&m_Lock);
@@ -421,19 +417,9 @@ STDMETHODIMP CMpTs::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
 		//LogDebug("CMpTs:NonDelegatingQueryInterface IID_TSFilter");
 		return GetInterface((ITSFilter*)this, ppv);
 	}
-	else if (riid == IID_ITechnoTrend)
-	{
-		//LogDebug("CMpTs:NonDelegatingQueryInterface IID_ITechnoTrend");
-		return GetInterface((ITechnoTrend*)m_pTechnoTrend, ppv);
-	}
-	else if (riid == IID_IKNC)
-	{
-		//LogDebug("CMpTs:NonDelegatingQueryInterface IID_ITechnoTrend");
-		return GetInterface((IKNC*)m_pKNC, ppv);
-	}
 	else if (riid == IID_ITsChannelLinkageScanner)
 	{
-		//LogDebug("CMpTs:NonDelegatingQueryInterface IID_ITechnoTrend");
+		//LogDebug("CMpTs:NonDelegatingQueryInterface IID_ITsChannelLinkageScanner");
 		return GetInterface((ITsChannelLinkageScanner*)m_pChannelLinkageScanner, ppv);
 	}
   else if (riid == IID_IBaseFilter || riid == IID_IMediaFilter || riid == IID_IPersist) 
