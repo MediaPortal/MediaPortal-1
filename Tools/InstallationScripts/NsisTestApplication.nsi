@@ -51,13 +51,9 @@ ShowInstDetails show
 
 ;--------------------------------
 
-Page components
-Page instfiles
-
-;--------------------------------
-
 #!define INSTALL_LOG_FILE "$DESKTOP\install_$(^Name).log"
 
+!include MUI2.nsh
 #!include "x64.nsh"
 #!include Sections.nsh
 #!include LogicLib.nsh
@@ -68,15 +64,48 @@ Page instfiles
 
 !include "${svn_InstallScripts}\include\*"
 
+;--------------------------------
+
+!define MUI_COMPONENTSPAGE_SMALLDESC
+!define MUI_FINISHPAGE_NOAUTOCLOSE
+
+!insertmacro MUI_PAGE_COMPONENTS
+!insertmacro MUI_PAGE_INSTFILES
 
 ;--------------------------------
 
-; The stuff to install
-Section "" ;No components page, name is not important
-  
-SectionEnd ; end the section
+SectionGroup "run nsis installed"
 
-;--------------------------------
+Section /o "Install TestApp 2"
+  ExecWait '"$EXEDIR\NsisTestApplication2.nsi.exe"'
+SectionEnd
+Section /o "Uninstall TestApp 2"
+  ExecWait '"$EXEDIR\uninstall.exe"'
+SectionEnd
+Section /o "SILENT Install TestApp 2"
+  ExecWait '"$EXEDIR\NsisTestApplication2.nsi.exe" /S'
+SectionEnd
+Section /o "SILENT Uninstall TestApp 2"
+  ExecWait '"$EXEDIR\uninstall.exe" /S'
+SectionEnd
+
+
+Section /o "SILENT Uninstall TestApp 2 - QUIT"
+    HideWindow
+    ClearErrors
+    ExecWait '"$EXEDIR\uninstall.exe" /frominstall'
+    BringToFront
+
+    ; if an error occured, ask to cancel installation
+    ${If} ${Errors}
+      MessageBox MB_OK|MB_ICONEXCLAMATION "ERROR"
+    ${EndIf}
+SectionEnd
+
+SectionGroupEnd
+
+
+SectionGroup "Get infos"
 
 Section /o "MediaPortal Product information"
 
@@ -179,6 +208,11 @@ Section /o "MediaPortal Update Procedure Check"
 
 SectionEnd
 
+SectionGroupEnd
+
+
+SectionGroup "cleanup tests"
+
 Section /o "MediaPortal CleanUp: 1.0 for 1.0.1/1.0.2 Update"
 
 ;MP secPrepare
@@ -206,6 +240,11 @@ Section /o "MediaPortal CleanUp: 1.0.1 for 1.0.2 Update"
       !include "${svn_MP}\Setup\update-1.0.2.nsh"
 
 SectionEnd
+
+SectionGroupEnd
+
+
+SectionGroup "Backup Tests"
 
 Section /o "Rename MP dir"
 
@@ -252,6 +291,11 @@ Section /o "Backup ThumbsDir"
   !insertmacro BackupThumbsDir
 
 SectionEnd
+
+SectionGroupEnd
+
+
+SectionGroup "other macro Tests"
 
 Section /o "Stop TVService"
 
@@ -303,3 +347,6 @@ Section /o "CleanLogDirectory"
   ${EndIf}
 
 SectionEnd
+
+SectionGroupEnd
+
