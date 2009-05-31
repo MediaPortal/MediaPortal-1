@@ -1126,13 +1126,16 @@ namespace SetupTv.Sections
             dbChannel.FreeToAir = true;
             dbChannel.Persist();
 
-            if (dbChannel.IsTv)
+            if (checkBoxCreateGroups.Checked)
             {
-              layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.Analog);
-            }
-            if (dbChannel.IsRadio)
-            {
-              layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.Analog);
+              if (dbChannel.IsTv)
+              {
+                layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.Analog);
+              }
+              if (dbChannel.IsRadio)
+              {
+                layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.Analog);
+              }
             }
 
             layer.AddTuningDetails(dbChannel, channel);
