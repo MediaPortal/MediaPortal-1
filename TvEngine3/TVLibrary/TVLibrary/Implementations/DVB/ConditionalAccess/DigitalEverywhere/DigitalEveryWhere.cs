@@ -246,6 +246,8 @@ namespace TvLibrary.Implementations.DVB
     readonly IntPtr _ptrDataReturned;
 
     DVBSChannel _previousChannel;
+
+    private bool _readCamName;
     #endregion
 
     /// <summary>
@@ -277,6 +279,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("FireDTV {0} ", GetHardwareFirmwareVersionNumber());
         }
       }
+      _readCamName = true;
       _isInitialized = true;
 
     }
@@ -339,6 +342,11 @@ namespace TvLibrary.Implementations.DVB
       if (pmtLength == 0)
       {
         return false;
+      }
+
+      if (_readCamName)
+      {
+        GetCAMName();
       }
 
       //Log.Log.WriteFile("SendPMTToFireDTV pmtLength:{0}", pmtLength);
@@ -812,6 +820,7 @@ namespace TvLibrary.Implementations.DVB
           }
           cam_name += (char)caDataReturned.uData[i + 5];
         }
+        _readCamName = false;
         return cam_name;
       }
       return "erroneous name";
@@ -1053,6 +1062,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void OnStopGraph()
     {
+      _readCamName = true;
       _previousChannel = null;
     }
   }
