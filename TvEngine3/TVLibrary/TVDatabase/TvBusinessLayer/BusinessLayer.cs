@@ -2218,7 +2218,7 @@ namespace TvDatabase
       List<Program> currentInserts = new List<Program>(aProgramList);
 
       sqlCmd.CommandText =
-        "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, notify, parentalRating) VALUES (?idChannel, ?startTime, ?endTime, ?title, ?description, ?seriesNum, ?episodeNum, ?genre, ?originalAirDate, ?classification, ?starRating, ?notify, ?parentalRating)";
+        "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, notify, parentalRating, episodeName, episodePart) VALUES (?idChannel, ?startTime, ?endTime, ?title, ?description, ?seriesNum, ?episodeNum, ?genre, ?originalAirDate, ?classification, ?starRating, ?notify, ?parentalRating, ?episodeName, ?episodePart)";
 
       sqlCmd.Parameters.Add("?idChannel", MySqlDbType.Int32);
       sqlCmd.Parameters.Add("?startTime", MySqlDbType.Datetime);
@@ -2233,6 +2233,8 @@ namespace TvDatabase
       sqlCmd.Parameters.Add("?starRating", MySqlDbType.Int32);
       sqlCmd.Parameters.Add("?notify", MySqlDbType.Bit);
       sqlCmd.Parameters.Add("?parentalRating", MySqlDbType.Int32);
+      sqlCmd.Parameters.Add("?episodeName", MySqlDbType.Text);
+      sqlCmd.Parameters.Add("?episodePart", MySqlDbType.Text);
 
       try
       {
@@ -2261,6 +2263,8 @@ namespace TvDatabase
         sqlCmd.Parameters["?starRating"].Value = prog.StarRating;
         sqlCmd.Parameters["?notify"].Value = prog.Notify;
         sqlCmd.Parameters["?parentalRating"].Value = prog.ParentalRating;
+        sqlCmd.Parameters["?episodeName"].Value = prog.EpisodeName;
+        sqlCmd.Parameters["?episodePart"].Value = prog.EpisodePart;
         try
         {
           // Finally insert all our data
@@ -2306,7 +2310,7 @@ namespace TvDatabase
       List<Program> currentInserts = new List<Program>(aProgramList);
 
       sqlCmd.CommandText =
-        "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, notify, parentalRating) VALUES (@idChannel, @startTime, @endTime, @title, @description, @seriesNum, @episodeNum, @genre, @originalAirDate, @classification, @starRating, @notify, @parentalRating)";
+        "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, notify, parentalRating, episodeName, episodePart) VALUES (@idChannel, @startTime, @endTime, @title, @description, @seriesNum, @episodeNum, @genre, @originalAirDate, @classification, @starRating, @notify, @parentalRating, @episodeName, @episodePart)";
 
       sqlCmd.Parameters.Add("idChannel", SqlDbType.Int);
       sqlCmd.Parameters.Add("startTime", SqlDbType.DateTime);
@@ -2321,6 +2325,8 @@ namespace TvDatabase
       sqlCmd.Parameters.Add("starRating", SqlDbType.Int);
       sqlCmd.Parameters.Add("notify", SqlDbType.Bit);
       sqlCmd.Parameters.Add("parentalRating", SqlDbType.Int);
+      sqlCmd.Parameters.Add("episodeName", SqlDbType.VarChar);
+      sqlCmd.Parameters.Add("episodePart", SqlDbType.VarChar);
 
       try
       {
@@ -2348,6 +2354,8 @@ namespace TvDatabase
         sqlCmd.Parameters["starRating"].Value = prog.StarRating;
         sqlCmd.Parameters["notify"].Value = prog.Notify;
         sqlCmd.Parameters["parentalRating"].Value = prog.ParentalRating;
+        sqlCmd.Parameters["episodeName"].Value = prog.EpisodeName;
+        sqlCmd.Parameters["episodePart"].Value = prog.EpisodePart;
 
         try
         {
