@@ -346,7 +346,7 @@ namespace TvLibrary.Implementations.DVB
 
       if (_readCamName)
       {
-        GetCAMName();
+        Log.Log.WriteFile("FireDTV cam name: \"{0}\" ", GetCAMName());
       }
 
       //Log.Log.WriteFile("SendPMTToFireDTV pmtLength:{0}", pmtLength);
