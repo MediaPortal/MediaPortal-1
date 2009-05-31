@@ -36,7 +36,7 @@ using MediaPortal.Radio.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.UserInterface.Controls;
 
-namespace MediaPortal.Configuration.Sections
+namespace MediaPortal.Configuration.TVE2.Sections
 {
   public class Wizard_AnalogRadio : Wizard_ScanBase
   {

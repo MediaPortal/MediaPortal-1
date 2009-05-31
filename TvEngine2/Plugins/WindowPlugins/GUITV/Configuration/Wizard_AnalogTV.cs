@@ -37,7 +37,7 @@ using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.UserInterface.Controls;
 
-namespace MediaPortal.Configuration.Sections
+namespace MediaPortal.Configuration.TVE2.Sections
 {
   public class Wizard_AnalogTV : Wizard_ScanBase
   {

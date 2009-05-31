@@ -30,7 +30,7 @@ using MediaPortal.Radio.Database;
 using MediaPortal.TV.Database;
 using MediaPortal.UserInterface.Controls;
 
-namespace MediaPortal.Configuration.Sections
+namespace MediaPortal.Configuration.TVE2.Sections
 {
   /// <summary>
   /// Summary description for TvChannelLookupService.

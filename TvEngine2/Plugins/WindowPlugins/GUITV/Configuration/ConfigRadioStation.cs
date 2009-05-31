@@ -25,7 +25,7 @@
 
 using System;
 
-namespace MediaPortal.Configuration
+namespace MediaPortal.Configuration.TVE2
 {
   public class ConfigRadioStation
   {

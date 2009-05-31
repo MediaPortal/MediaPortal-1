@@ -37,7 +37,7 @@ using MWControls;
 
 #pragma warning disable 108
 
-namespace MediaPortal.Configuration.Sections
+namespace MediaPortal.Configuration.TVE2.Sections
 {
   public class TVGroups : SectionSettings
   {

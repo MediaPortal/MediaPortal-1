@@ -28,7 +28,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using MediaPortal.UserInterface.Controls;
 
-namespace MediaPortal
+namespace MediaPortal.Configuration.TVE2
 {
   /// <summary>
   /// Summary description for editName.

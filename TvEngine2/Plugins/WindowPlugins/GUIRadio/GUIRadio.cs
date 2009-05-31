@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
+using MediaPortal.Configuration.TVE2;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Playlists;
@@ -1271,7 +1272,7 @@ namespace MediaPortal.GUI.Radio
 
     public bool HasSetup()
     {
-      return false;
+      return true;
     }
 
     public bool DefaultEnabled()
@@ -1306,7 +1307,8 @@ namespace MediaPortal.GUI.Radio
 
     public void ShowPlugin()
     {
-      // TODO:  Add GUIRadio.ShowPlugin implementation
+      Form setup = new TVE2_SettingsForm();
+      setup.ShowDialog();
     }
 
     #endregion

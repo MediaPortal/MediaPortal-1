@@ -28,7 +28,7 @@ using System.DirectoryServices;
 using System.Windows.Forms;
 using TaskScheduler;
 
-namespace MediaPortal.Configuration
+namespace MediaPortal.Configuration.TVE2
 {
   internal class TaskScheduler
   {

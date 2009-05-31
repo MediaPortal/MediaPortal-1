@@ -30,7 +30,7 @@ using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.UserInterface.Controls;
 
-namespace MediaPortal.Configuration
+namespace MediaPortal.Configuration.TVE2
 {
   /// <summary>
   /// Summary description for EditRadioStationForm.

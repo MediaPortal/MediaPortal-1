@@ -25,7 +25,6 @@
 
 using System;
 using System.Collections;
-using System.IO;
 using System.Windows.Forms;
 using DirectShowLib;
 using DShowNET;
@@ -36,7 +35,7 @@ using MediaPortal.UserInterface.Controls;
 
 #pragma warning disable 108
 
-namespace MediaPortal.Configuration.Sections
+namespace MediaPortal.Configuration.TVE2.Sections
 {
   public class Television : SectionSettings
   {
@@ -72,11 +71,7 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox cbAllowLetterbox;
     private MPCheckBox cbAllowStretch;
     private MPCheckBox cbAllowNonLinearStretch;
-    private MPComboBox h264videoCodecComboBox;
-    private MPLabel labelH264Decoder;
     private MPCheckBox cbAutoFullscreen;
-    private MPLabel labelAACDecoder;
-    private MPComboBox aacAudioCodecComboBox;
     public int pluginVersion;
 
     public Television()
@@ -144,9 +139,7 @@ namespace MediaPortal.Configuration.Sections
         ArrayList availableAudioRenderers = FilterHelper.GetAudioRenderers();
         availableAudioRenderers.Sort();
         videoCodecComboBox.Items.AddRange(availableVideoFilters.ToArray());
-        h264videoCodecComboBox.Items.AddRange(availableH264VideoFilters.ToArray());
         audioCodecComboBox.Items.AddRange(availableAudioFilters.ToArray());
-        aacAudioCodecComboBox.Items.AddRange(availableAACAudioFilters.ToArray());
         audioRendererComboBox.Items.AddRange(availableAudioRenderers.ToArray());
         _init = true;
         //
@@ -181,10 +174,6 @@ namespace MediaPortal.Configuration.Sections
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.audioCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.labelAACDecoder = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.aacAudioCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.h264videoCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.labelH264Decoder = new MediaPortal.UserInterface.Controls.MPLabel();
       this.cbDeinterlace = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label8 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.defaultZoomModeComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -228,10 +217,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.audioCodecComboBox);
-      this.groupBox1.Controls.Add(this.labelAACDecoder);
-      this.groupBox1.Controls.Add(this.aacAudioCodecComboBox);
-      this.groupBox1.Controls.Add(this.h264videoCodecComboBox);
-      this.groupBox1.Controls.Add(this.labelH264Decoder);
       this.groupBox1.Controls.Add(this.cbDeinterlace);
       this.groupBox1.Controls.Add(this.label8);
       this.groupBox1.Controls.Add(this.defaultZoomModeComboBox);
@@ -244,7 +229,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 185);
+      this.groupBox1.Size = new System.Drawing.Size(472, 168);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
@@ -255,48 +240,10 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.audioCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.audioCodecComboBox.Location = new System.Drawing.Point(168, 63);
+      this.audioCodecComboBox.Location = new System.Drawing.Point(168, 43);
       this.audioCodecComboBox.Name = "audioCodecComboBox";
       this.audioCodecComboBox.Size = new System.Drawing.Size(288, 21);
       this.audioCodecComboBox.TabIndex = 5;
-      // 
-      // labelAACDecoder
-      // 
-      this.labelAACDecoder.Location = new System.Drawing.Point(16, 90);
-      this.labelAACDecoder.Name = "labelAACDecoder";
-      this.labelAACDecoder.Size = new System.Drawing.Size(146, 17);
-      this.labelAACDecoder.TabIndex = 12;
-      this.labelAACDecoder.Text = "AAC audio decoder:";
-      // 
-      // aacAudioCodecComboBox
-      // 
-      this.aacAudioCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.aacAudioCodecComboBox.BorderColor = System.Drawing.Color.Empty;
-      this.aacAudioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.aacAudioCodecComboBox.Location = new System.Drawing.Point(168, 87);
-      this.aacAudioCodecComboBox.Name = "aacAudioCodecComboBox";
-      this.aacAudioCodecComboBox.Size = new System.Drawing.Size(288, 21);
-      this.aacAudioCodecComboBox.TabIndex = 13;
-      // 
-      // h264videoCodecComboBox
-      // 
-      this.h264videoCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.h264videoCodecComboBox.BorderColor = System.Drawing.Color.Empty;
-      this.h264videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.h264videoCodecComboBox.Location = new System.Drawing.Point(168, 39);
-      this.h264videoCodecComboBox.Name = "h264videoCodecComboBox";
-      this.h264videoCodecComboBox.Size = new System.Drawing.Size(288, 21);
-      this.h264videoCodecComboBox.TabIndex = 3;
-      // 
-      // labelH264Decoder
-      // 
-      this.labelH264Decoder.Location = new System.Drawing.Point(16, 43);
-      this.labelH264Decoder.Name = "labelH264Decoder";
-      this.labelH264Decoder.Size = new System.Drawing.Size(132, 17);
-      this.labelH264Decoder.TabIndex = 2;
-      this.labelH264Decoder.Text = "H.264 Video decoder:";
       // 
       // cbDeinterlace
       // 
@@ -309,14 +256,14 @@ namespace MediaPortal.Configuration.Sections
             "Bob",
             "Weave",
             "Best"});
-      this.cbDeinterlace.Location = new System.Drawing.Point(168, 133);
+      this.cbDeinterlace.Location = new System.Drawing.Point(168, 97);
       this.cbDeinterlace.Name = "cbDeinterlace";
       this.cbDeinterlace.Size = new System.Drawing.Size(288, 21);
       this.cbDeinterlace.TabIndex = 9;
       // 
       // label8
       // 
-      this.label8.Location = new System.Drawing.Point(16, 137);
+      this.label8.Location = new System.Drawing.Point(16, 100);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(146, 17);
       this.label8.TabIndex = 8;
@@ -328,14 +275,14 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultZoomModeComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 157);
+      this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 124);
       this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
       this.defaultZoomModeComboBox.Size = new System.Drawing.Size(288, 21);
       this.defaultZoomModeComboBox.TabIndex = 11;
       // 
       // label6
       // 
-      this.label6.Location = new System.Drawing.Point(16, 161);
+      this.label6.Location = new System.Drawing.Point(16, 127);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(112, 16);
       this.label6.TabIndex = 10;
@@ -362,7 +309,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelAudioDecoder
       // 
-      this.labelAudioDecoder.Location = new System.Drawing.Point(16, 66);
+      this.labelAudioDecoder.Location = new System.Drawing.Point(16, 46);
       this.labelAudioDecoder.Name = "labelAudioDecoder";
       this.labelAudioDecoder.Size = new System.Drawing.Size(157, 18);
       this.labelAudioDecoder.TabIndex = 4;
@@ -370,7 +317,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelAudioRenderer
       // 
-      this.labelAudioRenderer.Location = new System.Drawing.Point(15, 113);
+      this.labelAudioRenderer.Location = new System.Drawing.Point(16, 73);
       this.labelAudioRenderer.Name = "labelAudioRenderer";
       this.labelAudioRenderer.Size = new System.Drawing.Size(88, 16);
       this.labelAudioRenderer.TabIndex = 6;
@@ -382,7 +329,7 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.audioRendererComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioRendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.audioRendererComboBox.Location = new System.Drawing.Point(168, 110);
+      this.audioRendererComboBox.Location = new System.Drawing.Point(168, 70);
       this.audioRendererComboBox.Name = "audioRendererComboBox";
       this.audioRendererComboBox.Size = new System.Drawing.Size(288, 21);
       this.audioRendererComboBox.TabIndex = 7;
@@ -676,35 +623,6 @@ namespace MediaPortal.Configuration.Sections
       {
         return;
       }
-      pluginVersion = File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll") ? 3 : 2;
-
-      //Add call to enable/disable objects. 
-      // test call ony
-      switch (pluginVersion)
-      {
-        case 3:
-          // timeshifting section. 
-          groupBox4.Enabled = false;
-          groupBox4.Visible = false;
-          //h.264 section 
-          labelH264Decoder.Enabled = true;
-          h264videoCodecComboBox.Enabled = true;
-          labelAACDecoder.Enabled = true;
-          aacAudioCodecComboBox.Enabled = true;
-          break;
-        case 2:
-          // timeshifting section. 
-          groupBox4.Enabled = true;
-          groupBox4.Visible = true;
-          //h.264 section 
-          labelH264Decoder.Enabled = false;
-          h264videoCodecComboBox.Enabled = false;
-          labelAACDecoder.Enabled = false;
-          aacAudioCodecComboBox.Enabled = false;
-          break;
-      }
-      // end of test call. 
-
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         cbAllowNormal.Checked = xmlreader.GetValueAsBool("mytv", "allowarnormal", true);
@@ -738,8 +656,6 @@ namespace MediaPortal.Configuration.Sections
         //
         string audioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
         string videoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
-        string h264videoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
-        string aacaudioCodec = xmlreader.GetValueAsString("mytv", "aacaudiocodec", "");
         string audioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
 
         if (audioCodec == string.Empty)
@@ -801,52 +717,9 @@ namespace MediaPortal.Configuration.Sections
           }
         }
 
-        if (h264videoCodec == string.Empty)
-        {
-          ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
-          bool h264DecFilterFound = false;
-          if (availableH264VideoFilters.Count > 0)
-          {
-            h264videoCodec = (string) availableH264VideoFilters[0];
-            foreach (string filter in availableH264VideoFilters)
-            {
-              if (filter.Equals("CoreAVC Video Decoder"))
-              {
-                h264DecFilterFound = true;
-              }
-            }
-            if (h264DecFilterFound)
-            {
-              h264videoCodec = "CoreAVC Video Decoder";
-            }
-          }
-        }
-
-        if (aacaudioCodec == string.Empty)
-        {
-          ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.LATMAAC);
-          if (availableAACAudioFilters.Count > 0)
-          {
-            bool MonogramAACFound = false;
-            aacaudioCodec = (string) availableAACAudioFilters[0];
-            foreach (string filter in availableAACAudioFilters)
-            {
-              if (filter.Equals("MONOGRAM AAC Decoder"))
-              {
-                MonogramAACFound = true;
-              }
-            }
-            if (MonogramAACFound)
-            {
-              aacaudioCodec = "MONOGRAM AAC Decoder";
-            }
-          }
-        }
         audioCodecComboBox.Text = audioCodec;
         videoCodecComboBox.Text = videoCodec;
-        h264videoCodecComboBox.Text = h264videoCodec;
         audioRendererComboBox.Text = audioRenderer;
-        aacAudioCodecComboBox.Text = aacaudioCodec;
 
         //
         // Set default aspect ratio
@@ -899,9 +772,7 @@ namespace MediaPortal.Configuration.Sections
         //
         xmlwriter.SetValue("mytv", "audiocodec", audioCodecComboBox.Text);
         xmlwriter.SetValue("mytv", "videocodec", videoCodecComboBox.Text);
-        xmlwriter.SetValue("mytv", "h264videocodec", h264videoCodecComboBox.Text);
         xmlwriter.SetValue("mytv", "audiorenderer", audioRendererComboBox.Text);
-        xmlwriter.SetValue("mytv", "aacaudiocodec", aacAudioCodecComboBox.Text);
 
         xmlwriter.SetValueAsBool("mytv", "allowarnormal", cbAllowNormal.Checked);
         xmlwriter.SetValueAsBool("mytv", "allowaroriginal", cbAllowOriginal.Checked);

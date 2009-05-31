@@ -10,7 +10,7 @@
     </ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
-    <AssemblyName>WindowPlugins</AssemblyName>
+    <AssemblyName>TVE2_GUIPlugins</AssemblyName>
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
     <DefaultClientScript>JScript</DefaultClientScript>
@@ -271,6 +271,9 @@
     <Compile Include="GUITV\Configuration\RadioStations.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="GUITV\Configuration\TVE2_SettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="GUITV\Configuration\Subdialogs\EditCaptureCardForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -519,6 +522,9 @@
     <EmbeddedResource Include="GUITV\Configuration\RadioStations.resx">
       <DependentUpon>RadioStations.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="GUITV\Configuration\TVE2_SettingsForm.resx">
+      <DependentUpon>TVE2_SettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUITV\Configuration\Subdialogs\EditCaptureCardForm.resx">
       <DependentUpon>EditCaptureCardForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -582,6 +588,23 @@
     <EmbeddedResource Include="GUITV\Configuration\Wizard_ScanBase.resx">
       <DependentUpon>Wizard_ScanBase.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\config.ico" />
+    <Content Include="Resources\icon_folder.png" />
+    <Content Include="Resources\icon_help.png" />
+    <Content Include="Resources\icon_refresh.png" />
+    <Content Include="Resources\mepo_donation.png" />
+    <Content Include="Resources\mplogo.gif" />
+    <Content Include="Resources\remote.Centarea.png" />
+    <Content Include="Resources\remote.firedtv.png" />
+    <Content Include="Resources\remote.HidKeys.png" />
+    <Content Include="Resources\remote.Mce2004.png" />
+    <Content Include="Resources\remote.Mce2005TT.png" />
+    <Content Include="Resources\remote.MceVista.png" />
+    <Content Include="Resources\splashscreen_configuration.png" />
+    <Content Include="Resources\wizard_background.png" />
+    <Content Include="Resources\wizard_header.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

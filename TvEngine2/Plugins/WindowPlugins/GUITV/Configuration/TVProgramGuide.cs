@@ -35,7 +35,7 @@ using MediaPortal.UserInterface.Controls;
 
 #pragma warning disable 108
 
-namespace MediaPortal.Configuration.Sections
+namespace MediaPortal.Configuration.TVE2.Sections
 {
   public class TVProgramGuide : SectionSettings
   {

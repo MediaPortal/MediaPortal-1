@@ -28,7 +28,7 @@ using System.IO;
 using MediaPortal.TV.Recording;
 using MediaPortal.UserInterface.Controls;
 
-namespace MediaPortal.Configuration.Sections
+namespace MediaPortal.Configuration.TVE2.Sections
 {
   public class Wizard_DVBCTV : Wizard_ScanBase
   {

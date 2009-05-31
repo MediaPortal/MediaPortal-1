@@ -23,10 +23,11 @@
 
 #endregion
 
+using MediaPortal.Configuration.Sections;
 
 #pragma warning disable 108
 
-namespace MediaPortal.Configuration.Sections
+namespace MediaPortal.Configuration.TVE2.Sections
 {
   public class TVPostProcessing : BasePostProcessing
   {
@@ -42,12 +43,12 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      base.LoadSettings("mytv");
+      LoadSettings("mytv");
     }
 
     public override void SaveSettings()
     {
-      base.SaveSettings("mytv");
+      SaveSettings("mytv");
     }
   }
 }

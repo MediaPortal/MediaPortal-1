@@ -31,7 +31,7 @@ using System.Reflection;
 // associated with an assembly.
 //
 
-[assembly: AssemblyTitle("ProcessPlugins")]
+[assembly: AssemblyTitle("TVE2_ProcessPlugins")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Team MediaPortal")]

@@ -35,7 +35,7 @@ using MediaPortal.TV.Recording;
 using MediaPortal.UserInterface.Controls;
 using TunerLib;
 
-namespace MediaPortal.Configuration
+namespace MediaPortal.Configuration.TVE2
 {
   /// <summary>
   /// Summary description for EditTVChannelForm.

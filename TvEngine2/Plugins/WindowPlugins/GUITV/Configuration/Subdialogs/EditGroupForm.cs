@@ -29,7 +29,7 @@ using System.Windows.Forms;
 using MediaPortal.TV.Database;
 using MediaPortal.UserInterface.Controls;
 
-namespace MediaPortal.Configuration
+namespace MediaPortal.Configuration.TVE2
 {
   /// <summary>
   /// Summary description for EditGroupForm.

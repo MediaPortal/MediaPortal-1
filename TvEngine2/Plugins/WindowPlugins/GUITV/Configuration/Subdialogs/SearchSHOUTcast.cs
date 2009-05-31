@@ -34,7 +34,7 @@ using System.Windows.Forms;
 using MediaPortal.UserInterface.Controls;
 using Microsoft.Win32;
 
-namespace MediaPortal.Configuration
+namespace MediaPortal.Configuration.TVE2
 {
   /// <summary>
   /// Summary description for SearchSHOUTcast.

@@ -31,7 +31,6 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.Windows.Forms;
 using DShowNET.Helper;
-using MediaPortal.Configuration.Sections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
@@ -39,8 +38,9 @@ using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.UserInterface.Controls;
 using TVCapture;
+using MediaPortal.Configuration.TVE2.Sections;
 
-namespace MediaPortal.Configuration
+namespace MediaPortal.Configuration.TVE2
 {
   /// <summary>
   /// Summary description for EditCaptureCardForm.

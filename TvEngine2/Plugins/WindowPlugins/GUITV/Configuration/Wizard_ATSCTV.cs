@@ -29,7 +29,7 @@ using MediaPortal.UserInterface.Controls;
 
 #pragma warning disable 108,649
 
-namespace MediaPortal.Configuration.Sections
+namespace MediaPortal.Configuration.TVE2.Sections
 {
   public class Wizard_ATSCTV : Wizard_ScanBase
   {

@@ -29,6 +29,7 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
+using MediaPortal.Configuration.TVE2;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
@@ -1088,11 +1089,13 @@ namespace MediaPortal.GUI.TV
 
     public bool HasSetup()
     {
-      return false;
+      return true;
     }
 
     public void ShowPlugin()
     {
+      Form setup = new TVE2_SettingsForm();
+      setup.ShowDialog();
     }
 
     #endregion

@@ -27,7 +27,7 @@ using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 
-namespace MediaPortal.Configuration
+namespace MediaPortal.Configuration.TVE2
 {
   internal class SetupGrabber
   {
