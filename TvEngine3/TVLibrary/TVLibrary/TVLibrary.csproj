@@ -100,7 +100,6 @@
     <Compile Include="Implementations\DVB\ConditionalAccess\GenericBDAS.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\HaupPauge\Hauppauge.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\HaupPauge\WinTvCiModule.cs" />
-    <Compile Include="Implementations\DVB\ConditionalAccess\KNC\KNC.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\KNC\KNCAPI.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\KNC\KNCDeviceLookup.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\OnAirATSC.cs" />
@@ -115,7 +114,6 @@
     <Compile Include="Implementations\Helper\DevicesInUse.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\ConditionalAccess.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\DigitalEverywhere\DigitalEveryWhere.cs" />
-    <Compile Include="Implementations\DVB\ConditionalAccess\TechnoTrend\TechnoTrend.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\TwinHan\Twinhan.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\AnalogScanning.cs" />
     <Compile Include="Implementations\DVB\Graphs\ATSC\ATSCScanning.cs" />
@@ -145,7 +143,6 @@
     <Compile Include="Implementations\RadioWebStream\RadioWebStreamCard.cs" />
     <Compile Include="Implementations\TvCardBase.cs" />
     <Compile Include="Implementations\TvCardCollection.cs" />
-    <Compile Include="Interfaces\Analyzer\IKNC.cs" />
     <Compile Include="Interfaces\Analyzer\ITsCaGrabber.cs" />
     <Compile Include="Interfaces\Analyzer\IMPRecord.cs">
       <SubType>Code</SubType>
@@ -153,7 +150,6 @@
     <Compile Include="Interfaces\Analyzer\IStreamAnalyzer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Interfaces\Analyzer\ITechnoTrend.cs" />
     <Compile Include="Interfaces\Analyzer\ITsChannel.cs" />
     <Compile Include="Interfaces\Analyzer\ITsChannelLinkageScanner.cs" />
     <Compile Include="Interfaces\Analyzer\ITsFilter.cs" />
