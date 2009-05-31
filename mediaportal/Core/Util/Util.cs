@@ -638,7 +638,7 @@ namespace MediaPortal.Util
                   createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
                 }
 
-                if (IsVideo(item.Path) && createVideoThumbs)
+                if (IsVideo(item.Path) && !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower()) && createVideoThumbs)
                 {
                   strThumb = String.Format(@"{0}\{1}.jpg", Thumbs.Videos, EncryptLine(item.Path));
                   if (File.Exists(strThumb))
