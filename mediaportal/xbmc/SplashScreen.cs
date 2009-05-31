@@ -114,14 +114,31 @@ namespace MediaPortal
       {
         bool useFullScreenSplash = true;
         bool startFullScreen = true;
+        int screennumber = 0;
+        bool ShouldUseNormalSplashScreen = false;
 
         using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           useFullScreenSplash = xmlreader.GetValueAsBool("general", "usefullscreensplash", true);
           startFullScreen = xmlreader.GetValueAsBool("general", "startfullscreen", true);
+          screennumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
         }
 
-        if (useFullScreenSplash && startFullScreen)
+        if (useFullScreenSplash && screennumber > 0)
+        {
+          int AvailableScreensNumber = 0;
+          foreach (Screen screen in Screen.AllScreens)
+          {
+            AvailableScreensNumber++;
+          }
+
+          if (AvailableScreensNumber < screennumber + 1)
+          {
+            ShouldUseNormalSplashScreen = true;
+          }
+        }
+
+        if (useFullScreenSplash && startFullScreen && !ShouldUseNormalSplashScreen)
         {
           ShowFullScreenSplashScreen();
         }
