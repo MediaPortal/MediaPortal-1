@@ -570,6 +570,11 @@ namespace TvService
       {
         case PowerEventType.StandBy:
         case PowerEventType.Suspend:
+          User tmpUser = new User();
+          foreach (ITvCardHandler cardhandler in _controller.CardCollection.Values)
+          {
+            cardhandler.StopCard(tmpUser);
+          }
           return true;
         case PowerEventType.QuerySuspend:
         case PowerEventType.QueryStandBy:
