@@ -19,7 +19,6 @@
  *
  */
 #include "patparser.h"
-#include "ConditionalAccess.h"
 #include "criticalsection.h"
 #include "entercriticalsection.h"
 #include "nitdecoder.h"
