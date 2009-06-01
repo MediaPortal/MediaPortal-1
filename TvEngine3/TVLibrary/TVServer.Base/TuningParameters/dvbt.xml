@@ -406,11 +406,16 @@
     <carrier frequency="506000" bandwidth="8"></carrier>
     <carrier frequency="538000" bandwidth="8"></carrier>
     <carrier frequency="554000" bandwidth="8"></carrier>
+	<carrier frequency="562000" bandwidth="8"></carrier>
+	<carrier frequency="570000" bandwidth="8"></carrier>	
+	<carrier frequency="586000" bandwidth="8"></carrier>
     <carrier frequency="602000" bandwidth="8"></carrier>
     <carrier frequency="658000" bandwidth="8"></carrier>
     <carrier frequency="682000" bandwidth="8"></carrier>
     <carrier frequency="690000" bandwidth="8"></carrier>
+	<carrier frequency="698000" bandwidth="8"></carrier>
     <carrier frequency="714000" bandwidth="8"></carrier>
+	<carrier frequency="722000" bandwidth="8"></carrier>
     <carrier frequency="738000" bandwidth="8"></carrier>
     <carrier frequency="778000" bandwidth="8"></carrier>
     <carrier frequency="826000" bandwidth="8"></carrier>
