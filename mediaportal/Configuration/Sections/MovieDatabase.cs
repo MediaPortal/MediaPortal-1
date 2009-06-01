@@ -1197,6 +1197,7 @@ namespace MediaPortal.Configuration.Sections
       }
 
       LoadMovies(details.ID);
+      UpdateActiveMovieImageAndThumbs(tbImageLocation.Text);
     }
 
     private void btnAmazon_Click(object sender, EventArgs e)
