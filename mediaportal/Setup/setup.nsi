@@ -51,6 +51,7 @@
   !define BUILD_TYPE "Release"
 !endif
 
+
 #---------------------------------------------------------------------------
 # DEVELOPMENT ENVIRONMENT
 #---------------------------------------------------------------------------
@@ -72,6 +73,7 @@
 !endif
 !define MEDIAPORTAL.XBMCBIN "${svn_MP}\xbmc\bin\${BUILD_TYPE}"
 
+
 #---------------------------------------------------------------------------
 # pre build commands
 #---------------------------------------------------------------------------
@@ -79,31 +81,17 @@
 
 
 #---------------------------------------------------------------------------
-# VARIABLES
-#---------------------------------------------------------------------------
-Var StartMenuGroup  ; Holds the Startmenu\Programs folder
-; variables for commandline parameters for Installer
-!ifndef HEISE_BUILD
-Var noGabest
-!endif
-Var noDesktopSC
-Var noStartMenuSC
-Var DeployMode
-Var UpdateMode
-; variables for commandline parameters for UnInstaller
-
-#---------------------------------------------------------------------------
 # DEFINES
 #---------------------------------------------------------------------------
-!define NAME    "MediaPortal"
-!define COMPANY "Team MediaPortal"
-!define URL     "www.team-mediaportal.com"
-
+!define PRODUCT_NAME          "MediaPortal"
+!define PRODUCT_PUBLISHER     "Team MediaPortal"
+!define PRODUCT_WEB_SITE      "www.team-mediaportal.com"
 
 !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
 !define MEMENTO_REGISTRY_ROOT HKLM
 !define MEMENTO_REGISTRY_KEY  "${REG_UNINSTALL}"
 !define COMMON_APPDATA        "$APPDATA\Team MediaPortal\MediaPortal"
+!define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal"
 
 !define VER_MAJOR       1
 !define VER_MINOR       0
@@ -122,9 +110,29 @@ Var UpdateMode
     !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION} SVN build ${VER_BUILD} for TESTING ONLY"
 !endif
 !endif
-Name          "${NAME}"
+
 SetCompressor /SOLID lzma
-BrandingText  "${NAME} ${VERSION} by ${COMPANY}"
+
+
+#---------------------------------------------------------------------------
+# VARIABLES
+#---------------------------------------------------------------------------
+;Var StartMenuGroup  ; Holds the Startmenu\Programs folder
+!ifndef HEISE_BUILD
+Var noGabest
+!endif
+Var noDesktopSC
+;Var noStartMenuSC
+Var DeployMode
+Var UpdateMode
+
+Var PREVIOUS_INSTALLDIR
+Var PREVIOUS_VERSION
+Var PREVIOUS_VERSION_STATE
+Var EXPRESS_UPDATE
+
+Var frominstall
+
 
 #---------------------------------------------------------------------------
 # INCLUDE FILES
@@ -135,12 +143,9 @@ BrandingText  "${NAME} ${VERSION} by ${COMPANY}"
 !include FileFunc.nsh
 !include Memento.nsh
 
-
 !include "${svn_InstallScripts}\include\*"
 
-
 !include "${svn_InstallScripts}\pages\AddRemovePage.nsh"
-!insertmacro AddRemovePage "${REG_UNINSTALL}"
 !include "${svn_InstallScripts}\pages\UninstallModePage.nsh"
 
 
@@ -162,11 +167,11 @@ BrandingText  "${NAME} ${VERSION} by ${COMPANY}"
 !define MUI_HEADERIMAGE_RIGHT
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
-!define MUI_STARTMENUPAGE_NODISABLE
-!define MUI_STARTMENUPAGE_DEFAULTFOLDER       "Team MediaPortal\MediaPortal"
-!define MUI_STARTMENUPAGE_REGISTRY_ROOT       HKLM
-!define MUI_STARTMENUPAGE_REGISTRY_KEY        "${REG_UNINSTALL}"
-!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME  StartMenuGroup
+;!define MUI_STARTMENUPAGE_NODISABLE
+;!define MUI_STARTMENUPAGE_DEFAULTFOLDER       "Team MediaPortal\MediaPortal"
+;!define MUI_STARTMENUPAGE_REGISTRY_ROOT       HKLM
+;!define MUI_STARTMENUPAGE_REGISTRY_KEY        "${REG_UNINSTALL}"
+;!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME  StartMenuGroup
 !define MUI_FINISHPAGE_NOAUTOCLOSE
 !define MUI_FINISHPAGE_RUN            "$MPdir.Base\Configuration.exe"
 !define MUI_FINISHPAGE_RUN_TEXT       "Run MediaPortal Configuration"
@@ -182,63 +187,71 @@ BrandingText  "${NAME} ${VERSION} by ${COMPANY}"
 #---------------------------------------------------------------------------
 # INSTALLER INTERFACE
 #---------------------------------------------------------------------------
-#!define MUI_PAGE_CUSTOMFUNCTION_LEAVE WelcomeLeave
 !insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_LICENSE "${svn_MP}\Docs\MediaPortal License.rtf"
+!insertmacro MUI_PAGE_LICENSE "${svn_MP}\Docs\BASS License.txt"
 
-!ifndef SVN_BUILD
-Page custom PageReinstall PageLeaveReinstall
-!insertmacro MUI_PAGE_LICENSE "..\Docs\MediaPortal License.rtf"
-!insertmacro MUI_PAGE_LICENSE "..\Docs\BASS License.txt"
-!else
-#!insertmacro MUI_PAGE_LICENSE "..\Docs\svn-info.rtf"
-!endif
+Page custom PageReinstallMode PageLeaveReinstallMode
 
-!ifndef HEISE_BUILD
+!define MUI_PAGE_CUSTOMFUNCTION_PRE PageComponentsPre
 !insertmacro MUI_PAGE_COMPONENTS
-!endif
+
+!define MUI_PAGE_CUSTOMFUNCTION_PRE PageDirectoryPre
 !insertmacro MUI_PAGE_DIRECTORY
-!insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
+
+;!define MUI_PAGE_CUSTOMFUNCTION_PRE PageStartmenuPre
+;!insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
+
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
 
+
 ; UnInstaller Interface
+!define MUI_PAGE_CUSTOMFUNCTION_PRE un.WelcomePagePre
 !insertmacro MUI_UNPAGE_WELCOME
 UninstPage custom un.UninstallModePage un.UninstallModePageLeave
+;!define MUI_PAGE_CUSTOMFUNCTION_PRE un.ConfirmPagePre
+;!insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
+!define MUI_PAGE_CUSTOMFUNCTION_PRE un.FinishPagePre
 !insertmacro MUI_UNPAGE_FINISH
+
 
 #---------------------------------------------------------------------------
 # INSTALLER LANGUAGES
 #---------------------------------------------------------------------------
 !insertmacro LANG_LOAD "English"
 
+
 #---------------------------------------------------------------------------
 # INSTALLER ATTRIBUTES
 #---------------------------------------------------------------------------
+Name          "${PRODUCT_NAME}"
+BrandingText  "${PRODUCT_NAME} ${VERSION} by ${PRODUCT_PUBLISHER}"
 !if ${VER_BUILD} == 0       # it's an official release
   OutFile "Release\package-mediaportal.exe"
 !else                       # it's a svn release
   OutFile "Release\MediaPortal-svn-.exe"
 !endif
-InstallDir "$PROGRAMFILES\Team MediaPortal\MediaPortal"
-InstallDirRegKey HKLM "${REG_UNINSTALL}" InstallPath
+InstallDir ""
 CRCCheck on
 XPStyle on
 RequestExecutionLevel admin
 ShowInstDetails show
 VIProductVersion "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName       "${NAME}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName       "${PRODUCT_NAME}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} ProductVersion    "${VERSION}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName       "${COMPANY}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite    "${URL}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName       "${PRODUCT_PUBLISHER}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite    "${PRODUCT_WEB_SITE}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion       "${VERSION}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription   "${NAME} installation ${VERSION}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright © 2005-2009 ${COMPANY}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription   "${PRODUCT_NAME} installation ${VERSION}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright © 2005-2009 ${PRODUCT_PUBLISHER}"
 ShowUninstDetails show
+
 
 #---------------------------------------------------------------------------
 # USEFUL MACROS
-#--------------------------------------------------------------------------- 
+#---------------------------------------------------------------------------
 !macro SectionList MacroName
   ${LOG_TEXT} "DEBUG" "MACRO SectionList ${MacroName}"
   ; This macro used to perform operation on multiple sections.
@@ -274,10 +287,6 @@ ShowUninstDetails show
   
 !macroend
 
-#---------------------------------------------------------------------------
-# SECTIONS and REMOVEMACROS
-#---------------------------------------------------------------------------
-
 !macro RenameInstallDirectory
   ${LOG_TEXT} "DEBUG" "MACRO::RenameInstallDirectory"
 
@@ -292,6 +301,24 @@ ShowUninstDetails show
   ${EndIf}
 !macroend
 
+Function RunUninstaller
+
+!ifndef SVN_BUILD
+  ${VersionCompare} 1.0.2.22779 $PREVIOUS_VERSION $R0
+  ; old (un)installers should be called silently
+  ${If} $R0 == 2 ;previous is higher than 22780
+    !insertmacro RunUninstaller "NoSilent"
+  ${Else}
+    !insertmacro RunUninstaller "silent"
+  ${EndIf}
+!endif
+
+FunctionEnd
+
+
+#---------------------------------------------------------------------------
+# SECTIONS and REMOVEMACROS
+#---------------------------------------------------------------------------
 Section "-prepare" SecPrepare
   ${LOG_TEXT} "INFO" "Prepare installation..."
   ${ReadMediaPortalDirs} "$INSTDIR"
@@ -303,30 +330,43 @@ Section "-prepare" SecPrepare
 
   # if it is an update include a file with last update/cleanup instructions
   ;future note: if silent, uninstall old, if not, do nothing.
-  ${If} $UpdateMode = 1
-    !insertmacro MP_GET_VERSION $0
-    ${If} $0 == 1.0.0.0
+  ${If} $DeployMode == 1
+  ${AndIf} $UpdateMode == 1
+    ${LOG_TEXT} "DEBUG" "SecPrepare: DeployMode = 1 | UpdateMode = 1"
+
+    ${If} $PREVIOUS_VERSION == 1.0.0.0
       ${LOG_TEXT} "INFO" "Removing 1.0 files..."
       !include "update-1.0.1.nsh"
-    ${ElseIf} $0 == 1.0.1.0
+    ${ElseIf} $PREVIOUS_VERSION == 1.0.1.0
       ${LOG_TEXT} "INFO" "Removing 1.0.1 files..."
       !include "update-1.0.2.nsh"
-    ${ElseIf} $0 == ""
+    ${ElseIf} $PREVIOUS_VERSION == ""
       ${LOG_TEXT} "INFO" "It seems MP is not installed, no update procedure will be done"
     ${ElseIf} $R3 != 0
       ${LOG_TEXT} "INFO" "An SVN version ($0) of MP is installed. Update is not supported."
     ${Else}
       ${LOG_TEXT} "INFO" "MediaPortal $0 is installed."
     ${EndIf}
-  ${EndIf}
 
-!if ${VER_BUILD} == 0       # it's an official release
-  ${If} $UpdateMode = 0     # official release -> clean installation
+  ${ElseIf} $DeployMode == 1
+    ${LOG_TEXT} "DEBUG" "SecPrepare: DeployMode = 1 | UpdateMode = 0"
+
     !insertmacro RenameInstallDirectory
+
+  ${Else}
+    ${LOG_TEXT} "DEBUG" "SecPrepare: DeployMode = 0 | UpdateMode = 0"
+
+    ${LOG_TEXT} "INFO" "Uninstalling old version ..."
+    ${If} ${Silent}
+      !insertmacro RunUninstaller "silent"
+    ${ElseIf} $EXPRESS_UPDATE != ""
+      Call RunUninstaller
+      BringToFront
+    ${EndIf}
+
+    Call BackupInstallDirectory
+
   ${EndIf}
-!else                       # it's a svn release
-  Call BackupInstallDirectory
-!endif
 
 SectionEnd
 
@@ -660,16 +700,14 @@ ${MementoSectionEnd}
 !macroend
 !endif
 
-!if ${VER_BUILD} != 0       # it's a svn release
-SectionGroup /e "Backup"
-  ${MementoSection} "Installation directory" SecBackupInstDir
+SectionGroup /e "Backup" SecBackup
+  ${MementoUnselectedSection} "Installation directory" SecBackupInstDir
   ${MementoSectionEnd}
   ${MementoSection} "Configuration directory" SecBackupConfig
   ${MementoSectionEnd}
   ${MementoUnselectedSection} "Thumbs directory" SecBackupThumbs
   ${MementoSectionEnd}
 SectionGroupEnd
-!endif
 
 ${MementoSectionDone}
 
@@ -712,22 +750,20 @@ Section -Post
   ${EndIf}
 
   ; create startmenu shortcuts
-  ${If} $noStartMenuSC != 1
-    !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+  ;${If} $noStartMenuSC != 1
       ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
-      CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
-      CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk"                            "$MPdir.Base\MediaPortal.exe"   ""      "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
-      CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Configuration.lnk"              "$MPdir.Base\Configuration.exe" ""      "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
-      CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug-Mode.lnk"                 "$MPdir.Base\WatchDog.exe"   "-auto"    "$MPdir.Base\WatchDog.exe"   0 "" "" "MediaPortal Debug-Mode"
-      CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Extension Installer.lnk"        "$MPdir.Base\MPInstaller.exe"   ""      "$MPdir.Base\MPInstaller.exe"   0 "" "" "MediaPortal Extension Installer"
-      CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Extension Maker.lnk"            "$MPdir.Base\MPIMaker.exe"   ""         "$MPdir.Base\MPIMaker.exe"   0 "" "" "MediaPortal Extension Maker"
-      CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Logs Collector.lnk"             "$MPdir.Base\WatchDog.exe"   ""         "$MPdir.Base\WatchDog.exe"   0 "" "" "MediaPortal WatchDog"
-      CreateShortCut "$SMPROGRAMS\$StartMenuGroup\uninstall MediaPortal.lnk"                  "$MPdir.Base\uninstall-mp.exe"
-      CreateShortCut "$SMPROGRAMS\$StartMenuGroup\User Files.lnk"                             "$MPdir.Config"                 ""      "$MPdir.Config"                 0 "" "" "Browse you config files, databases, thumbs, logs, ..."
-      WriteINIStr "$SMPROGRAMS\$StartMenuGroup\Help.url"      "InternetShortcut" "URL" "http://wiki.team-mediaportal.com/"
-      WriteINIStr "$SMPROGRAMS\$StartMenuGroup\web site.url"  "InternetShortcut" "URL" "${URL}"
-    !insertmacro MUI_STARTMENU_WRITE_END
-  ${EndIf}
+      CreateDirectory "${STARTMENU_GROUP}"
+      CreateShortCut "${STARTMENU_GROUP}\MediaPortal.lnk"                            "$MPdir.Base\MediaPortal.exe"   ""      "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
+      CreateShortCut "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"              "$MPdir.Base\Configuration.exe" ""      "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
+      CreateShortCut "${STARTMENU_GROUP}\MediaPortal Debug-Mode.lnk"                 "$MPdir.Base\WatchDog.exe"   "-auto"    "$MPdir.Base\WatchDog.exe"   0 "" "" "MediaPortal Debug-Mode"
+      CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Installer.lnk"        "$MPdir.Base\MPInstaller.exe"   ""      "$MPdir.Base\MPInstaller.exe"   0 "" "" "MediaPortal Extension Installer"
+      CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"            "$MPdir.Base\MPIMaker.exe"   ""         "$MPdir.Base\MPIMaker.exe"   0 "" "" "MediaPortal Extension Maker"
+      CreateShortCut "${STARTMENU_GROUP}\MediaPortal Logs Collector.lnk"             "$MPdir.Base\WatchDog.exe"   ""         "$MPdir.Base\WatchDog.exe"   0 "" "" "MediaPortal WatchDog"
+      CreateShortCut "${STARTMENU_GROUP}\uninstall MediaPortal.lnk"                  "$MPdir.Base\uninstall-mp.exe"
+      CreateShortCut "${STARTMENU_GROUP}\User Files.lnk"                             "$MPdir.Config"                 ""      "$MPdir.Config"                 0 "" "" "Browse you config files, databases, thumbs, logs, ..."
+      WriteINIStr "${STARTMENU_GROUP}\Help.url"      "InternetShortcut" "URL" "http://wiki.team-mediaportal.com/"
+      WriteINIStr "${STARTMENU_GROUP}\web site.url"  "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
+  ;${EndIf}
 
   WriteRegDWORD HKLM "${REG_UNINSTALL}" "VersionMajor"    "${VER_MAJOR}"
   WriteRegDWORD HKLM "${REG_UNINSTALL}" "VersionMinor"    "${VER_MINOR}"
@@ -736,10 +772,10 @@ Section -Post
 
   ; Write Uninstall Information
   WriteRegStr HKLM "${REG_UNINSTALL}" InstallPath        "$MPdir.Base"
-  WriteRegStr HKLM "${REG_UNINSTALL}" DisplayName        "${NAME}"
+  WriteRegStr HKLM "${REG_UNINSTALL}" DisplayName        "${PRODUCT_NAME}"
   WriteRegStr HKLM "${REG_UNINSTALL}" DisplayVersion     "${VERSION}"
-  WriteRegStr HKLM "${REG_UNINSTALL}" Publisher          "${COMPANY}"
-  WriteRegStr HKLM "${REG_UNINSTALL}" URLInfoAbout       "${URL}"
+  WriteRegStr HKLM "${REG_UNINSTALL}" Publisher          "${PRODUCT_PUBLISHER}"
+  WriteRegStr HKLM "${REG_UNINSTALL}" URLInfoAbout       "${PRODUCT_WEB_SITE}"
   WriteRegStr HKLM "${REG_UNINSTALL}" DisplayIcon        "$MPdir.Base\MediaPortal.exe,0"
   WriteRegStr HKLM "${REG_UNINSTALL}" UninstallString    "$MPdir.Base\uninstall-mp.exe"
   WriteRegDWORD HKLM "${REG_UNINSTALL}" NoModify 1
@@ -768,18 +804,18 @@ Section Uninstall
 
   ; remove Start Menu shortcuts
   ; $StartMenuGroup (default): "Team MediaPortal\MediaPortal"
-  Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk"
-  Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Configuration.lnk"
-  Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug-Mode.lnk"
-  Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Log-Files.lnk"
-  Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Plugins-Skins Installer.lnk"
-  Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal TestTool.lnk"
-  Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Logs Collector.lnk"
-  Delete "$SMPROGRAMS\$StartMenuGroup\uninstall MediaPortal.lnk"
-  Delete "$SMPROGRAMS\$StartMenuGroup\User Files.lnk"
-  Delete "$SMPROGRAMS\$StartMenuGroup\Help.url"
-  Delete "$SMPROGRAMS\$StartMenuGroup\web site.url"
-  RMDir "$SMPROGRAMS\$StartMenuGroup"
+  Delete "${STARTMENU_GROUP}\MediaPortal.lnk"
+  Delete "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"
+  Delete "${STARTMENU_GROUP}\MediaPortal Debug-Mode.lnk"
+  Delete "${STARTMENU_GROUP}\MediaPortal Log-Files.lnk"
+  Delete "${STARTMENU_GROUP}\MediaPortal Plugins-Skins Installer.lnk"
+  Delete "${STARTMENU_GROUP}\MediaPortal TestTool.lnk"
+  Delete "${STARTMENU_GROUP}\MediaPortal Logs Collector.lnk"
+  Delete "${STARTMENU_GROUP}\uninstall MediaPortal.lnk"
+  Delete "${STARTMENU_GROUP}\User Files.lnk"
+  Delete "${STARTMENU_GROUP}\Help.url"
+  Delete "${STARTMENU_GROUP}\web site.url"
+  RMDir "${STARTMENU_GROUP}"
   RMDir "$SMPROGRAMS\Team MediaPortal"
 
   ; remove Desktop shortcuts
@@ -820,59 +856,37 @@ Section Uninstall
     !insertmacro CompleteMediaPortalCleanup
 
   ${EndIf}
+
+
+  ${If} $frominstall == 1
+    Quit
+  ${EndIf}
 SectionEnd
 
+
 #---------------------------------------------------------------------------
-# FUNCTIONS
+# SOME MACROS AND FUNCTIONS
 #---------------------------------------------------------------------------
-Function .onInit
-  ${LOG_OPEN}
-  ${LOG_TEXT} "DEBUG" "FUNCTION .onInit"
+Function ReadPreviousSettings
+  ; read and analyze previous version
+  !insertmacro ReadPreviousVersion
 
-  #### check and parse cmdline parameter
-  ; set default values for parameters ........
-!ifndef HEISE_BUILD
-  StrCpy $noGabest 0
-!endif
-  StrCpy $noDesktopSC 0
-  StrCpy $noStartMenuSC 0
-  StrCpy $DeployMode 0
-  StrCpy $UpdateMode 0
+  ; read previous used directories
+  !insertmacro MP_GET_INSTALL_DIR $PREVIOUS_INSTALLDIR
+FunctionEnd
 
-  ; gets comandline parameter
-  ${GetParameters} $R0
-  ${LOG_TEXT} "DEBUG" "commandline parameters: $R0"
+Function LoadPreviousSettings
+  ; reset INSTDIR
+  ${If} $PREVIOUS_INSTALLDIR != ""
+    StrCpy $INSTDIR "$PREVIOUS_INSTALLDIR"
+  ${Else}
+    StrCpy $INSTDIR "$PROGRAMFILES\Team MediaPortal\MediaPortal"
+  ${EndIf}
 
-!ifndef HEISE_BUILD
-  ClearErrors
-  ${GetOptions} $R0 "/noGabest" $R1
-  IfErrors +2
-  StrCpy $noGabest 1
-!endif
-
-  ClearErrors
-  ${GetOptions} $R0 "/noDesktopSC" $R1
-  IfErrors +2
-  StrCpy $noDesktopSC 1
-
-  ClearErrors
-  ${GetOptions} $R0 "/noStartMenuSC" $R1
-  IfErrors +2
-  StrCpy $noStartMenuSC 1
-
-  ClearErrors
-  ${GetOptions} $R0 "/DeployMode" $R1
-  IfErrors +2
-  StrCpy $DeployMode 1
-
-  ClearErrors
-  ${GetOptions} $R0 "/UpdateMode" $R1
-  IfErrors +2
-  StrCpy $UpdateMode 1
-  #### END of check and parse cmdline parameter
-
-  ; reads components status for registry
+  ; reset previous component selection from registry
   ${MementoSectionRestore}
+
+  !insertmacro UpdateBackupSections
 
 !ifndef HEISE_BUILD
   ; update the component status -> commandline parameters have higher priority than registry values
@@ -881,53 +895,49 @@ Function .onInit
   ${EndIf}
 !endif
 
+  ; update component selection, according to possible selections
+  ;Call .onSelChange
 
-${If} $DeployMode = 0
+FunctionEnd
 
-  ; OS and other common initialization checks are done in the following NSIS header file
-  !insertmacro MediaPortalOperatingSystemCheck $DeployMode
-  !insertmacro MediaPortalAdminCheck $DeployMode
-  !insertmacro MediaPortalVCRedistCheck $DeployMode
-  !insertmacro MediaPortalNetFrameworkCheck $DeployMode
 
-  ; check if old mp 0.2.2 is installed
-  ${If} ${MP022IsInstalled}
-    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MP022)"
-    Abort
+#---------------------------------------------------------------------------
+# INSTALLER CALLBACKS
+#---------------------------------------------------------------------------
+Function .onInit
+  ${LOG_OPEN}
+  ${LOG_TEXT} "DEBUG" "FUNCTION .onInit"
+
+
+  #### check and parse cmdline parameter
+  ; set default values for parameters ........
+!ifndef HEISE_BUILD
+  StrCpy $noGabest 0
+!endif
+  StrCpy $noDesktopSC 0
+  ;StrCpy $noStartMenuSC 0
+  StrCpy $DeployMode 0
+  StrCpy $UpdateMode 0
+
+  ${InitCommandlineParameter}
+!ifndef HEISE_BUILD
+  ${ReadCommandlineParameter} "noGabest"
+!endif
+  ${ReadCommandlineParameter} "noDesktopSC"
+  ;${ReadCommandlineParameter} "noStartMenuSC"
+  ${ReadCommandlineParameter} "DeployMode"
+  ${ReadCommandlineParameter} "UpdateMode"
+  #### END of check and parse cmdline parameter
+
+
+  ${If} $DeployMode != 1
+    !insertmacro DoPreInstallChecks
   ${EndIf}
 
-  ; check if old mp 0.2.3 RC3 is installed
-  ${If} ${MP023RC3IsInstalled}
-    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MP023RC3)"
-    Abort
-  ${EndIf}
 
-  ; check if old mp 0.2.3 is installed.
-  ${If} ${MP023IsInstalled}
-    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MP023)"
-    Abort
-  ${EndIf}
+  Call ReadPreviousSettings
+  Call LoadPreviousSettings
 
-  ; check if reboot is required
-  ${If} ${FileExists} "$MPdir.Base\rebootflag"
-    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
-    Abort
-  ${EndIf}
-
-${EndIf}
-
-
-  ; Read installation dir from registry, ONLY if
-  ;   - installer is started in UpdateMode
-  ;   - MediaPortal is already installed
-  ${If} $UpdateMode = 1
-    ${If} ${MPIsInstalled}
-      !insertmacro MP_GET_INSTALL_DIR $INSTDIR
-    ${Else}
-      MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_UPDATE_BUT_NOT_INSTALLED)"
-      Abort
-    ${EndIf}
-  ${EndIf}
 
   SetShellVarContext all
 FunctionEnd
@@ -942,16 +952,37 @@ Function .onInstSuccess
   ${LOG_CLOSE}
 FunctionEnd
 
+;======================================
+
+Function PageComponentsPre
+  ; skip page if previous settings are used for update
+  ${If} $EXPRESS_UPDATE == 1
+    Abort
+  ${EndIf}
+FunctionEnd
+
+Function PageDirectoryPre
+  ; skip page if previous settings are used for update
+  ${If} $EXPRESS_UPDATE == 1
+    Abort
+  ${EndIf}
+FunctionEnd
+
+
+#---------------------------------------------------------------------------
+# UNINSTALLER CALLBACKS
+#---------------------------------------------------------------------------
 Function un.onInit
   ${un.LOG_OPEN}
   ${LOG_TEXT} "DEBUG" "FUNCTION un.onInit"
+
+
   #### check and parse cmdline parameter
   ; set default values for parameters ........
   StrCpy $UnInstallMode 0
 
-  ; gets comandline parameter
-  ${un.GetParameters} $R0
-  ${LOG_TEXT} "DEBUG" "commandline parameters: $R0"
+  ${un.InitCommandlineParameter}
+  ${un.ReadCommandlineParameter} "frominstall"
 
   ; check for special parameter and set the their variables
   ClearErrors
@@ -960,9 +991,10 @@ Function un.onInit
   StrCpy $UnInstallMode 1
   #### END of check and parse cmdline parameter
 
+
   ReadRegStr $INSTDIR HKLM "${REG_UNINSTALL}" "InstallPath"
   ${un.ReadMediaPortalDirs} "$INSTDIR"
-  !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
+  ;!insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
 
   SetShellVarContext all
 FunctionEnd
@@ -987,6 +1019,35 @@ Function un.onUninstSuccess
   ${un.LOG_CLOSE}
 FunctionEnd
 
+;======================================
+
+Function un.WelcomePagePre
+
+  ${If} $frominstall == 1
+    Abort
+  ${EndIf}
+
+FunctionEnd
+
+/*
+Function un.ConfirmPagePre
+
+  ${If} $frominstall == 1
+    Abort
+  ${EndIf}
+
+FunctionEnd
+*/
+Function un.FinishPagePre
+
+  ${If} $frominstall == 1
+    SetRebootFlag false
+    Abort
+  ${EndIf}
+
+FunctionEnd
+
+
 Function BackupInstallDirectory
   ${LOG_TEXT} "DEBUG" "MACRO::BackupInstallDirectory"
 
@@ -1007,8 +1068,10 @@ Function BackupInstallDirectory
   ${EndIf}
 
 FunctionEnd
+
+
 #---------------------------------------------------------------------------
-# SECTION DECRIPTIONS     must be at the end
+# SECTION DESCRIPTIONS
 #---------------------------------------------------------------------------
 !ifndef HEISE_BUILD
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN

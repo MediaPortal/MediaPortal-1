@@ -34,89 +34,131 @@ _____________________________________________________________________________
   and modified for our needs.
 */
 
-!ifndef UninstallModePage
+!ifndef ___ADD_REMOVE_PAGE__NSH___
 !define ___ADD_REMOVE_PAGE__NSH___
-
-!macro AddRemovePage RegKey
 
 !include WordFunc.nsh
 !include FileFunc.nsh
 
 #####    Add/Remove/Reinstall page
-Var ReinstallPageCheck
+Var ReinstallMode
+Var ReinstallModePage.optBtn1
+Var ReinstallModePage.optBtn1.state
+Var ReinstallModePage.optBtn2
+Var ReinstallModePage.optBtn2.state
 
-Function PageReinstall
-  ; abort displaying page if software is not installed
-  ReadRegStr $R0 HKLM "${RegKey}" "UninstallString"
-  ${IfNot} ${FileExists} "$R0"
+Function PageReinstallMode
+  ; check if software is already installed
+  ${If} $PREVIOUS_VERSION == ""
     Abort
   ${EndIf}
 
-  ReadRegDWORD $R0 HKLM "${RegKey}" "VersionMajor"
-  ReadRegDWORD $R1 HKLM "${RegKey}" "VersionMinor"
-  ReadRegDWORD $R2 HKLM "${RegKey}" "VersionRevision"
-  ReadRegDWORD $R3 HKLM "${RegKey}" "VersionBuild"
-  StrCpy $R0 $R0.$R1.$R2.$R3
 
-  ${VersionCompare} ${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD} $R0 $R0
-  ${If} $R0 == 0
-    StrCpy $R1 "$(TEXT_ADDREMOVE_INFO_REPAIR)"
-    StrCpy $R2 "$(TEXT_ADDREMOVE_REPAIR_OPT1)"
-    StrCpy $R3 "$(TEXT_ADDREMOVE_REPAIR_OPT2)"
-    !insertmacro MUI_HEADER_TEXT "$(TEXT_ADDREMOVE_HEADER)" "$(TEXT_ADDREMOVE_HEADER2_REPAIR)"
-    StrCpy $R0 "2"
-  ${ElseIf} $R0 == 1
+  ; save current values to stack
+  Push $R0
+  Push $R1
+  Push $R2
+  Push $R3
+
+
+  ; set string for control texts
+  ${If} $PREVIOUS_VERSION_STATE == "newer"
     StrCpy $R1 "$(TEXT_ADDREMOVE_INFO_UPGRADE)"
     StrCpy $R2 "$(TEXT_ADDREMOVE_UPDOWN_OPT1)"
     StrCpy $R3 "$(TEXT_ADDREMOVE_UPDOWN_OPT2)"
     !insertmacro MUI_HEADER_TEXT "$(TEXT_ADDREMOVE_HEADER)" "$(TEXT_ADDREMOVE_HEADER2_UPDOWN)"
-    StrCpy $R0 "1"
-  ${ElseIf} $R0 == 2
+
+  ${ElseIf} $PREVIOUS_VERSION_STATE == "older"
     StrCpy $R1 "$(TEXT_ADDREMOVE_INFO_DOWNGRADE)"
     StrCpy $R2 "$(TEXT_ADDREMOVE_UPDOWN_OPT1)"
     StrCpy $R3 "$(TEXT_ADDREMOVE_UPDOWN_OPT2)"
     !insertmacro MUI_HEADER_TEXT "$(TEXT_ADDREMOVE_HEADER)" "$(TEXT_ADDREMOVE_HEADER2_UPDOWN)"
-    StrCpy $R0 "1"
+
+  ${ElseIf} $PREVIOUS_VERSION_STATE == "same"
+    StrCpy $R1 "$(TEXT_ADDREMOVE_INFO_REPAIR)"
+    StrCpy $R2 "$(TEXT_ADDREMOVE_REPAIR_OPT1)"
+    StrCpy $R3 "$(TEXT_ADDREMOVE_REPAIR_OPT2)"
+    !insertmacro MUI_HEADER_TEXT "$(TEXT_ADDREMOVE_HEADER)" "$(TEXT_ADDREMOVE_HEADER2_REPAIR)"
+
   ${Else}
+    MessageBox MB_ICONSTOP "Unknown value of PREVIOUS_VERSION_STATE, aborting" /SD IDOK
     Abort
   ${EndIf}
 
+
+  ; create controls
   nsDialogs::Create /NOUNLOAD 1018
+  Pop $R0
 
   ${NSD_CreateLabel} 0 0 300u 24u $R1
   Pop $R1
 
   ${NSD_CreateRadioButton} 30u 50u -30u 8u $R2
-  Pop $R2
-  ${NSD_OnClick} $R2 PageReinstallUpdateSelection
+  Pop $ReinstallModePage.optBtn1
+  ${NSD_OnClick} $ReinstallModePage.optBtn1 PageReinstallModeUpdateSelection
 
   ${NSD_CreateRadioButton} 30u 70u -30u 8u $R3
-  Pop $R3
-  ${NSD_OnClick} $R3 PageReinstallUpdateSelection
+  Pop $ReinstallModePage.optBtn2
+  ${NSD_OnClick} $ReinstallModePage.optBtn2 PageReinstallModeUpdateSelection
 
-  ${If} $ReinstallPageCheck != 2
-    SendMessage $R2 ${BM_SETCHECK} ${BST_CHECKED} 0
+
+  ; set current ReinstallMode to option buttons
+  ${If} $ReinstallMode == 2
+    ${NSD_Check} $ReinstallModePage.optBtn2
   ${Else}
-    SendMessage $R3 ${BM_SETCHECK} ${BST_CHECKED} 0
+    ${NSD_Check} $ReinstallModePage.optBtn1
   ${EndIf}
+
 
   nsDialogs::Show
+
+  ; restore values from stack
+  Pop $R3
+  Pop $R2
+  Pop $R1
+  Pop $R0
 FunctionEnd
 
-Function PageReinstallUpdateSelection
-  Pop $R1
+Function PageReinstallModeUpdateSelection
 
-  ${NSD_GetState} $R2 $R1
+  ${NSD_GetState} $ReinstallModePage.optBtn1 $ReinstallModePage.optBtn1.state
+  ${NSD_GetState} $ReinstallModePage.optBtn2 $ReinstallModePage.optBtn2.state
 
-  ${If} $R1 == ${BST_CHECKED}
-    StrCpy $ReinstallPageCheck 1
+  ${If} $ReinstallModePage.optBtn2.state == ${BST_CHECKED}
+    StrCpy $ReinstallMode 2
   ${Else}
-    StrCpy $ReinstallPageCheck 2
+    StrCpy $ReinstallMode 1
   ${EndIf}
 
 FunctionEnd
 
-Function PageLeaveReinstall
+Function PageLeaveReinstallMode
+
+  StrCpy $EXPRESS_UPDATE 0
+
+  ; Uninstall is selected
+  ${If} $PREVIOUS_VERSION_STATE == "same"
+  ${AndIf} $ReinstallMode == 2
+
+    StrCpy $EXPRESS_UPDATE 1
+    Call RunUninstaller
+    Quit
+
+  ${EndIf}
+
+
+  ; ExpressUpdate is selected
+  ${If} $PREVIOUS_VERSION_STATE != "same"
+  ${AndIf} $ReinstallMode == 1
+
+    StrCpy $EXPRESS_UPDATE 1
+    Call LoadPreviousSettings
+
+  ${EndIf}
+
+FunctionEnd
+
+/*
   ${NSD_GetState} $R2 $R1
 
   StrCmp $R0 "1" 0 +2
@@ -153,7 +195,6 @@ Function PageLeaveReinstall
 
   finish:
 FunctionEnd
-
-!macroend
+*/
 
 !endif # !___ADD_REMOVE_PAGE__NSH___

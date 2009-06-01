@@ -43,6 +43,11 @@ Var uninstModePage.optBtn2
 Var uninstModePage.optBtn2.state
 
 Function un.UninstallModePage
+  ${If} $frominstall == 1
+    StrCpy $UnInstallMode 0
+    Abort
+  ${EndIf}
+
   !insertmacro MUI_HEADER_TEXT "$(TEXT_UNMODE_HEADER)" "$(TEXT_UNMODE_HEADER2)"
 
   nsDialogs::Create /NOUNLOAD 1018

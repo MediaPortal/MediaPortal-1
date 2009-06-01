@@ -51,6 +51,7 @@
   !define BUILD_TYPE "Release"
 !endif
 
+
 #---------------------------------------------------------------------------
 # DEVELOPMENT ENVIRONMENT
 #---------------------------------------------------------------------------
@@ -71,33 +72,20 @@
   !define MEDIAPORTAL.BASE "${svn_MP}\MediaPortal.Base"
 !endif
 
-#---------------------------------------------------------------------------
-# VARIABLES
-#---------------------------------------------------------------------------
-Var StartMenuGroup  ; Holds the Startmenu\Programs folder
-Var InstallPath
-; variables for commandline parameters for Installer
-Var noClient
-Var noServer
-Var noDesktopSC
-Var noStartMenuSC
-Var DeployMode
-Var UpdateMode
-; variables for commandline parameters for UnInstaller
 
 #---------------------------------------------------------------------------
 # DEFINES
 #---------------------------------------------------------------------------
-!define NAME    "MediaPortal TV Server / Client"
-!define COMPANY "Team MediaPortal"
-!define URL     "www.team-mediaportal.com"
-
+!define PRODUCT_NAME          "MediaPortal TV Server / Client"
+!define PRODUCT_PUBLISHER     "Team MediaPortal"
+!define PRODUCT_WEB_SITE      "www.team-mediaportal.com"
 
 !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
 !define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
 !define MEMENTO_REGISTRY_ROOT HKLM
 !define MEMENTO_REGISTRY_KEY  "${REG_UNINSTALL}"
 !define COMMON_APPDATA        "$APPDATA\Team MediaPortal\MediaPortal TV Server"
+!define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server"
 
 !define VER_MAJOR       1
 !define VER_MINOR       0
@@ -116,9 +104,29 @@ Var UpdateMode
   !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION} SVN build ${VER_BUILD} for TESTING ONLY"
 !endif
 !endif
-Name          "${NAME}"
+
 SetCompressor /SOLID lzma
-BrandingText  "${NAME} ${VERSION} by ${COMPANY}"
+
+
+#---------------------------------------------------------------------------
+# VARIABLES
+#---------------------------------------------------------------------------
+;Var StartMenuGroup  ; Holds the Startmenu\Programs folder
+Var InstallPath
+Var noClient
+Var noServer
+Var noDesktopSC
+;Var noStartMenuSC
+Var DeployMode
+Var UpdateMode
+
+Var PREVIOUS_INSTALLDIR
+Var PREVIOUS_VERSION
+Var PREVIOUS_VERSION_STATE
+Var EXPRESS_UPDATE
+
+Var frominstall
+
 
 #---------------------------------------------------------------------------
 # INCLUDE FILES
@@ -129,12 +137,11 @@ BrandingText  "${NAME} ${VERSION} by ${COMPANY}"
 !include FileFunc.nsh
 !include Memento.nsh
 
-
 !include "${svn_InstallScripts}\include\*"
 
-
+!ifndef SVN_BUILD
 !include "${svn_InstallScripts}\pages\AddRemovePage.nsh"
-!insertmacro AddRemovePage "${REG_UNINSTALL}"
+!endif
 !include "${svn_InstallScripts}\pages\UninstallModePage.nsh"
 
 
@@ -156,11 +163,11 @@ BrandingText  "${NAME} ${VERSION} by ${COMPANY}"
 !define MUI_HEADERIMAGE_RIGHT
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
-!define MUI_STARTMENUPAGE_NODISABLE
-!define MUI_STARTMENUPAGE_DEFAULTFOLDER       "Team MediaPortal\TV Server"
-!define MUI_STARTMENUPAGE_REGISTRY_ROOT       HKLM
-!define MUI_STARTMENUPAGE_REGISTRY_KEY        "${REG_UNINSTALL}"
-!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME  StartMenuGroup
+;!define MUI_STARTMENUPAGE_NODISABLE
+;!define MUI_STARTMENUPAGE_DEFAULTFOLDER       "Team MediaPortal\TV Server"
+;!define MUI_STARTMENUPAGE_REGISTRY_ROOT       HKLM
+;!define MUI_STARTMENUPAGE_REGISTRY_KEY        "${REG_UNINSTALL}"
+;!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME  StartMenuGroup
 !define MUI_FINISHPAGE_NOAUTOCLOSE
 !define MUI_FINISHPAGE_RUN      "$INSTDIR\SetupTV.exe"
 !define MUI_FINISHPAGE_RUN_TEXT "Run TV-Server Configuration"
@@ -172,49 +179,60 @@ BrandingText  "${NAME} ${VERSION} by ${COMPANY}"
 
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
 
+
 #---------------------------------------------------------------------------
 # INSTALLER INTERFACE
 #---------------------------------------------------------------------------
-#!define MUI_PAGE_CUSTOMFUNCTION_LEAVE WelcomeLeave
 !insertmacro MUI_PAGE_WELCOME
-Page custom PageReinstall PageLeaveReinstall
+!insertmacro MUI_PAGE_LICENSE "${svn_MP}\Docs\MediaPortal License.rtf"
 
 !ifndef SVN_BUILD
-#!insertmacro MUI_PAGE_LICENSE "..\Docs\license.rtf"
-!else
-#!insertmacro MUI_PAGE_LICENSE "..\Docs\svn-info.rtf"
+Page custom PageReinstallMode PageLeaveReinstallMode
 !endif
 
-!define MUI_PAGE_CUSTOMFUNCTION_PRE ComponentsPre       #check, if MediaPortal is installed, if not uncheck and disable the ClientPluginSection
+!define MUI_PAGE_CUSTOMFUNCTION_PRE PageComponentsPre
 !insertmacro MUI_PAGE_COMPONENTS
-!define MUI_PAGE_CUSTOMFUNCTION_PRE DirectoryPre        # Check, if the Server Component has been selected. Only display the directory page in this vase
+
+!define MUI_PAGE_CUSTOMFUNCTION_PRE PageDirectoryPre
 !insertmacro MUI_PAGE_DIRECTORY
-!insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
+
+;!define MUI_PAGE_CUSTOMFUNCTION_PRE PageStartmenuPre
+;!insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
+
 !insertmacro MUI_PAGE_INSTFILES
-!define MUI_PAGE_CUSTOMFUNCTION_SHOW FinishShow           # Check, if the Server Component has been selected. Only display the Startmenu page in this vase
+
+!define MUI_PAGE_CUSTOMFUNCTION_SHOW PageFinishShow
 !insertmacro MUI_PAGE_FINISH
 
+
 ; UnInstaller Interface
+!define MUI_PAGE_CUSTOMFUNCTION_PRE un.WelcomePagePre
 !insertmacro MUI_UNPAGE_WELCOME
 UninstPage custom un.UninstallModePage un.UninstallModePageLeave
+;!define MUI_PAGE_CUSTOMFUNCTION_PRE un.ConfirmPagePre
+;!insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
+!define MUI_PAGE_CUSTOMFUNCTION_PRE un.FinishPagePre
 !insertmacro MUI_UNPAGE_FINISH
+
 
 #---------------------------------------------------------------------------
 # INSTALLER LANGUAGES
 #---------------------------------------------------------------------------
 !insertmacro LANG_LOAD "English"
 
+
 #---------------------------------------------------------------------------
 # INSTALLER ATTRIBUTES
 #---------------------------------------------------------------------------
+Name          "${PRODUCT_NAME}"
+BrandingText  "${PRODUCT_NAME} ${VERSION} by ${PRODUCT_PUBLISHER}"
 !if ${VER_BUILD} == 0
   OutFile "Release\package-tvengine.exe"
 !else
   OutFile "Release\setup-tve3.exe"
 !endif
-InstallDir "$PROGRAMFILES\Team MediaPortal\MediaPortal TV Server"
-InstallDirRegKey HKLM "${REG_UNINSTALL}" InstallPath
+InstallDir ""
 CRCCheck on
 XPStyle on
 RequestExecutionLevel admin
@@ -222,12 +240,13 @@ ShowInstDetails show
 VIProductVersion "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName       "MediaPortal TV Server"
 VIAddVersionKey /LANG=${LANG_ENGLISH} ProductVersion    "${VERSION}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName       "${COMPANY}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite    "${URL}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName       "${PRODUCT_PUBLISHER}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite    "${PRODUCT_WEB_SITE}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion       "${VERSION}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription   "${NAME} installation ${VERSION}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright © 2005-2009 ${COMPANY}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription   "${PRODUCT_NAME} installation ${VERSION}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright © 2005-2009 ${PRODUCT_PUBLISHER}"
 ShowUninstDetails show
+
 
 #---------------------------------------------------------------------------
 # USEFUL MACROS
@@ -240,9 +259,6 @@ ShowUninstDetails show
   !insertmacro "${MacroName}" "SecClient"
 !macroend
 
-#---------------------------------------------------------------------------
-# SECTIONS and REMOVEMACROS
-#---------------------------------------------------------------------------
 !macro RenameInstallDirectory
   !insertmacro GET_BACKUP_POSTFIX $R0
 
@@ -258,13 +274,31 @@ ShowUninstDetails show
 
   ${EndIf}
 !macroend
+
+Function RunUninstaller
+
+  ${VersionCompare} 1.0.2.22779 $PREVIOUS_VERSION $R0
+  ; old (un)installers should be called silently
+  ${If} $R0 == 2 ;previous is higher than 22780
+    !insertmacro RunUninstaller "NoSilent"
+  ${Else}
+    !insertmacro RunUninstaller "silent"
+  ${EndIf}
+
+FunctionEnd
+
+
+#---------------------------------------------------------------------------
+# SECTIONS and REMOVEMACROS
+#---------------------------------------------------------------------------
 Section "-prepare" SecPrepare
   ${LOG_TEXT} "DEBUG" "SECTION SecPrepare"
   ${LOG_TEXT} "INFO" "Prepare installation..."
   SetShellVarContext all
 
+  ; uninstall old version if necessary
   ${If} $UpdateMode = 1
-    ${LOG_TEXT} "INFO" "Installer started in UpdateMode."
+    ${LOG_TEXT} "DEBUG" "SecPrepare: DeployMode = 1 | UpdateMode = 1"
 
     ; check current install mode: TVServer / TVClient / SingleSeat (both)
     ; if only TVServer, uninstall current one and go on with installation of new one
@@ -297,12 +331,21 @@ Section "-prepare" SecPrepare
 
     ${EndIf}
 
-  ${Else}
+  ${ElseIf} $DeployMode == 1
+    ${LOG_TEXT} "DEBUG" "SecPrepare: DeployMode = 1 | UpdateMode = 0"
 
-    ${LOG_TEXT} "DEBUG" "SecPrepare: not in updateMode"
-    !if ${VER_BUILD} == 0       # it's an official release
-      !insertmacro RenameInstallDirectory
-    !endif
+    !insertmacro RenameInstallDirectory
+
+  ${Else}
+    ${LOG_TEXT} "DEBUG" "SecPrepare: DeployMode = 0 | UpdateMode = 0"
+
+    ${LOG_TEXT} "INFO" "Uninstalling old version ..."
+    ${If} ${Silent}
+      !insertmacro RunUninstaller "silent"
+    ${ElseIf} $EXPRESS_UPDATE != ""
+      Call RunUninstaller
+      BringToFront
+    ${EndIf}
 
   ${EndIf}
 
@@ -414,16 +457,16 @@ ${MementoSection} "MediaPortal TV Server" SecServer
     CreateShortCut "$DESKTOP\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
   ${EndIf}
 
-  ${If} $noStartMenuSC != 1
-    !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+  ;${If} $noStartMenuSC != 1
+    ;!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
-    CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
-    CreateShortCut "$SMPROGRAMS\$StartMenuGroup\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe"  "" "$INSTDIR\SetupTV.exe"  0 "" "" "TV-Server Configuration"
+    CreateDirectory "${STARTMENU_GROUP}"
+    CreateShortCut "${STARTMENU_GROUP}\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe"  "" "$INSTDIR\SetupTV.exe"  0 "" "" "TV-Server Configuration"
     CreateDirectory "${COMMON_APPDATA}\log"
-    CreateShortCut "$SMPROGRAMS\$StartMenuGroup\TV-Server Log-Files.lnk"     "${COMMON_APPDATA}\log" "" "${COMMON_APPDATA}\log" 0 "" "" "TV-Server Log-Files"
-    # [OBSOLETE] CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MCE Blaster Learn.lnk" "$INSTDIR\Blaster.exe" "" "$INSTDIR\Blaster.exe" 0 "" "" "MCE Blaster Learn"
-    !insertmacro MUI_STARTMENU_WRITE_END
-  ${EndIf}
+    CreateShortCut "${STARTMENU_GROUP}\TV-Server Log-Files.lnk"     "${COMMON_APPDATA}\log" "" "${COMMON_APPDATA}\log" 0 "" "" "TV-Server Log-Files"
+    # [OBSOLETE] CreateShortcut "${STARTMENU_GROUP}\MCE Blaster Learn.lnk" "$INSTDIR\Blaster.exe" "" "$INSTDIR\Blaster.exe" 0 "" "" "MCE Blaster Learn"
+    ;!insertmacro MUI_STARTMENU_WRITE_END
+  ;${EndIf}
 ${MementoSectionEnd}
 !macro Remove_${SecServer}
   ${LOG_TEXT} "DEBUG" "MACRO Remove_${SecServer}"
@@ -520,9 +563,9 @@ ${MementoSectionEnd}
   Delete /REBOOTOK $INSTDIR\ICSharpCode.SharpZipLib.dll
 
   ; remove Start Menu shortcuts
-  Delete "$SMPROGRAMS\$StartMenuGroup\TV-Server Configuration.lnk"
-  Delete "$SMPROGRAMS\$StartMenuGroup\TV-Server Log-Files.lnk"
-  # [OBSOLETE] Delete "$SMPROGRAMS\$StartMenuGroup\MCE Blaster Learn.lnk"
+  Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"
+  Delete "${STARTMENU_GROUP}\TV-Server Log-Files.lnk"
+  # [OBSOLETE] Delete "${STARTMENU_GROUP}\MCE Blaster Learn.lnk"
   ; remove Desktop shortcuts
   Delete "$DESKTOP\TV-Server Configuration.lnk"
 !macroend
@@ -671,15 +714,15 @@ Section -Post
   ${EndIf}
   
 
-  ${If} $noStartMenuSC != 1
-    !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+  ;${If} $noStartMenuSC != 1
+    ;!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
-    CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
-    CreateShortCut "$SMPROGRAMS\$StartMenuGroup\uninstall TV-Server.lnk" "$INSTDIR\uninstall-tve3.exe"
-    WriteINIStr "$SMPROGRAMS\$StartMenuGroup\Help.url"      "InternetShortcut" "URL" "http://wiki.team-mediaportal.com/"
-    WriteINIStr "$SMPROGRAMS\$StartMenuGroup\web site.url"  "InternetShortcut" "URL" "${URL}"
-    !insertmacro MUI_STARTMENU_WRITE_END
-  ${EndIf}
+    CreateDirectory "${STARTMENU_GROUP}"
+    CreateShortCut "${STARTMENU_GROUP}\uninstall TV-Server.lnk" "$INSTDIR\uninstall-tve3.exe"
+    WriteINIStr "${STARTMENU_GROUP}\Help.url"      "InternetShortcut" "URL" "http://wiki.team-mediaportal.com/"
+    WriteINIStr "${STARTMENU_GROUP}\web site.url"  "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
+    ;!insertmacro MUI_STARTMENU_WRITE_END
+  ;${EndIf}
 
   WriteRegDWORD HKLM "${REG_UNINSTALL}" "VersionMajor"    "${VER_MAJOR}"
   WriteRegDWORD HKLM "${REG_UNINSTALL}" "VersionMinor"    "${VER_MINOR}"
@@ -688,10 +731,10 @@ Section -Post
 
   ; Write Uninstall Information
   WriteRegStr HKLM "${REG_UNINSTALL}" InstallPath        $INSTDIR
-  WriteRegStr HKLM "${REG_UNINSTALL}" DisplayName        "${NAME}"
+  WriteRegStr HKLM "${REG_UNINSTALL}" DisplayName        "${PRODUCT_NAME}"
   WriteRegStr HKLM "${REG_UNINSTALL}" DisplayVersion     "${VERSION}"
-  WriteRegStr HKLM "${REG_UNINSTALL}" Publisher          "${COMPANY}"
-  WriteRegStr HKLM "${REG_UNINSTALL}" URLInfoAbout       "${URL}"
+  WriteRegStr HKLM "${REG_UNINSTALL}" Publisher          "${PRODUCT_PUBLISHER}"
+  WriteRegStr HKLM "${REG_UNINSTALL}" URLInfoAbout       "${PRODUCT_WEB_SITE}"
   WriteRegStr HKLM "${REG_UNINSTALL}" DisplayIcon        "$INSTDIR\SetupTv.exe,0"
   WriteRegStr HKLM "${REG_UNINSTALL}" UninstallString    "$INSTDIR\uninstall-tve3.exe"
   WriteRegDWORD HKLM "${REG_UNINSTALL}" NoModify 1
@@ -712,10 +755,10 @@ Section Uninstall
 
   ; remove Start Menu shortcuts
   ; $StartMenuGroup (default): "Team MediaPortal\TV Server"
-  Delete "$SMPROGRAMS\$StartMenuGroup\uninstall TV-Server.lnk"
-  Delete "$SMPROGRAMS\$StartMenuGroup\Help.url"
-  Delete "$SMPROGRAMS\$StartMenuGroup\web site.url"
-  RMDir "$SMPROGRAMS\$StartMenuGroup"
+  Delete "${STARTMENU_GROUP}\uninstall TV-Server.lnk"
+  Delete "${STARTMENU_GROUP}\Help.url"
+  Delete "${STARTMENU_GROUP}\web site.url"
+  RMDir "${STARTMENU_GROUP}"
   RMDir "$SMPROGRAMS\Team MediaPortal"
 
   ; remove last files and instdir
@@ -741,53 +784,75 @@ Section Uninstall
     !insertmacro CompleteMediaPortalCleanup
 
   ${EndIf}
+
+
+  ${If} $frominstall == 1
+    Quit
+  ${EndIf}
 SectionEnd
 
+
 #---------------------------------------------------------------------------
-# FUNCTIONS
+# SOME MACROS AND FUNCTIONS
+#---------------------------------------------------------------------------
+Function ReadPreviousSettings
+  ; read and analyze previous version
+  !insertmacro ReadPreviousVersion
+
+  ; read previous used directories
+  !insertmacro TVSERVER_GET_INSTALL_DIR $PREVIOUS_INSTALLDIR
+FunctionEnd
+
+Function LoadPreviousSettings
+  ; reset INSTDIR
+  ${If} $PREVIOUS_INSTALLDIR != ""
+    StrCpy $INSTDIR "$PREVIOUS_INSTALLDIR"
+  ${Else}
+    StrCpy $INSTDIR "$PROGRAMFILES\Team MediaPortal\MediaPortal TV Server"
+  ${EndIf}
+
+
+  ; reset previous component selection from registry
+  ${MementoSectionRestore}
+
+  ; set sections, according to possible selections
+  ${IfNot} ${MPIsInstalled}
+    !insertmacro DisableSection "${SecClient}" "MediaPortal TV Client plugin" " ($(TEXT_MP_NOT_INSTALLED))"
+  ${else}
+    !insertmacro EnableSection "${SecClient}" "MediaPortal TV Client plugin"
+
+    !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
+    ${ReadMediaPortalDirs} $MPdir.Base
+  ${EndIf}
+
+  ; update component selection
+  Call .onSelChange
+FunctionEnd
+
+
+#---------------------------------------------------------------------------
+# INSTALLER CALLBACKS
 #---------------------------------------------------------------------------
 Function .onInit
   ${LOG_OPEN}
   ${LOG_TEXT} "DEBUG" "FUNCTION .onInit"
+
 
   #### check and parse cmdline parameter
   ; set default values for parameters ........
   StrCpy $noClient 0
   StrCpy $noServer 0
   StrCpy $noDesktopSC 0
-  StrCpy $noStartMenuSC 0
+  ;StrCpy $noStartMenuSC 0
   StrCpy $DeployMode 0
   StrCpy $UpdateMode 0
 
-  ; gets comandline parameter
-  ${GetParameters} $R0
-  ${LOG_TEXT} "DEBUG" "commandline parameters: $R0"
-
-  ; check for special parameter and set the their variables
-  ClearErrors
-  ${GetOptions} $R0 "/noClient" $R1
-  IfErrors +2
-  StrCpy $noClient 1
-
-  ClearErrors
-  ${GetOptions} $R0 "/noServer" $R1
-  IfErrors +2
-  StrCpy $noServer 1
-
-  ClearErrors
-  ${GetOptions} $R0 "/noDesktopSC" $R1
-  IfErrors +2
-  StrCpy $noDesktopSC 1
-
-  ClearErrors
-  ${GetOptions} $R0 "/noStartMenuSC" $R1
-  IfErrors +2
-  StrCpy $noStartMenuSC 1
-
-  ClearErrors
-  ${GetOptions} $R0 "/DeployMode" $R1
-  IfErrors +2
-  StrCpy $DeployMode 1
+  ${InitCommandlineParameter}
+  ${ReadCommandlineParameter} "noClient"
+  ${ReadCommandlineParameter} "noServer"
+  ${ReadCommandlineParameter} "noDesktopSC"
+  ;${ReadCommandlineParameter} "noStartMenuSC"
+  ${ReadCommandlineParameter} "DeployMode"
 
   ClearErrors
   ${GetOptions} $R0 "/UpdateMode" $R1
@@ -795,8 +860,15 @@ Function .onInit
   IntOp $UpdateMode $DeployMode & 1
   #### END of check and parse cmdline parameter
 
-  ; reads components status for registry
-  ${MementoSectionRestore}
+
+  ${If} $DeployMode != 1
+    !insertmacro DoPreInstallChecks
+  ${EndIf}
+
+
+  Call ReadPreviousSettings
+  Call LoadPreviousSettings
+
 
   ; update the component status -> commandline parameters have higher priority than registry values
   ${If} $noClient = 1
@@ -809,61 +881,6 @@ Function .onInit
   ${ElseIf} $noServer = 1
     !insertmacro SelectSection ${SecClient}
     !insertmacro UnselectSection ${SecServer}
-  ${EndIf}
-
-
-${If} $DeployMode = 0
-
-  ; OS and other common initialization checks are done in the following NSIS header file
-  !insertmacro MediaPortalOperatingSystemCheck $DeployMode
-  !insertmacro MediaPortalAdminCheck $DeployMode
-  !insertmacro MediaPortalVCRedistCheck $DeployMode
-
-  ; check if old msi based client plugin is installed.
-  ${If} ${MSI_TVClientIsInstalled}
-    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MSI_CLIENT)"
-    Abort
-  ${EndIf}
-
-  ; check if old msi based server is installed.
-  ${If} ${MSI_TVServerIsInstalled}
-    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MSI_SERVER)"
-    Abort
-  ${EndIf}
-
-  ; check if reboot is required
-  ${If} ${FileExists} "$INSTDIR\rebootflag"
-    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
-    Abort
-  ${EndIf}
-
-${EndIf}
-
-
-  ; Read installation dir from registry, ONLY if
-  ;   - installer is started in UpdateMode
-  ;   - MediaPortal is already installed
-  ${If} $UpdateMode = 1
-    ${If} ${TVServerIsInstalled}
-    ${OrIf} ${TVClientIsInstalled}
-      !insertmacro TVSERVER_GET_INSTALL_DIR $INSTDIR
-    ${Else}
-      MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_UPDATE_BUT_NOT_INSTALLED)"
-      Abort
-    ${EndIf}
-  ${EndIf}
-
-  ; If Silent:   check if MP is installed -> if not disable that component
-  ; If notSilent: do nothing    -> MP check is done on ComponentsPagePre, so it will checked dynamically
-  ${If} ${Silent}
-
-    ${IfNot} ${MPIsInstalled}
-      !insertmacro UnselectSection "${SecClient}"
-    ${else}
-      !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
-      ${ReadMediaPortalDirs} $MPdir.Base
-    ${EndIf}
-
   ${EndIf}
 
   SetShellVarContext all
@@ -879,16 +896,70 @@ Function .onInstSuccess
   ${LOG_CLOSE}
 FunctionEnd
 
+Function .onSelChange
+  ${LOG_TEXT} "DEBUG" "FUNCTION .onSelChange"
+
+  ; disable the next button if nothing is selected
+  ${IfNot} ${SectionIsSelected} ${SecServer}
+  ${AndIfNot} ${SectionIsSelected} ${SecClient}
+    EnableWindow $mui.Button.Next 0
+  ${Else}
+    EnableWindow $mui.Button.Next 1
+  ${EndIf}
+FunctionEnd
+
+;======================================
+
+Function PageComponentsPre
+  ; skip page if previous settings are used for update
+  ${If} $EXPRESS_UPDATE == 1
+    Abort
+  ${EndIf}
+FunctionEnd
+
+Function PageDirectoryPre
+  ; skip page if previous settings are used for update
+  ${If} $EXPRESS_UPDATE == 1
+    Abort
+  ${EndIf}
+
+  ; It checks, if the Server has been selected and only displays the Directory page in this case
+  ${IfNot} ${SectionIsSelected} SecServer
+    Abort
+  ${EndIf}
+FunctionEnd
+
+Function PageFinishShow
+  ; This function is called, after the Finish Page creation is finished
+
+  ; It checks, if the Server has been selected and only displays the run checkbox in this case
+  ${IfNot} ${TVServerIsInstalled}
+    SendMessage $mui.FinishPage.Run ${BM_CLICK} 0 0
+    ShowWindow  $mui.FinishPage.Run ${SW_HIDE}
+  ${Else}
+    EnableWindow $mui.FinishPage.Run 0 # start out disabled
+  ${EndIf}
+FunctionEnd
+
+
+
+
+
+
+#---------------------------------------------------------------------------
+# UNINSTALLER CALLBACKS
+#---------------------------------------------------------------------------
 Function un.onInit
   ${un.LOG_OPEN}
   ${LOG_TEXT} "DEBUG" "FUNCTION un.onInit"
+
+
   #### check and parse cmdline parameter
   ; set default values for parameters ........
   StrCpy $UnInstallMode 0
 
-  ; gets comandline parameter
-  ${un.GetParameters} $R0
-  ${LOG_TEXT} "DEBUG" "commandline parameters: $R0"
+  ${un.InitCommandlineParameter}
+  ${un.ReadCommandlineParameter} "frominstall"
 
   ; check for special parameter and set the their variables
   ClearErrors
@@ -896,6 +967,7 @@ Function un.onInit
   IfErrors +2
   StrCpy $UnInstallMode 1
   #### END of check and parse cmdline parameter
+
 
   ${IfNot} ${MP023IsInstalled}
   ${AndIfNot} ${MPIsInstalled}
@@ -911,7 +983,7 @@ Function un.onInit
   ${EndIf}
 
   !insertmacro TVSERVER_GET_INSTALL_DIR $INSTDIR
-  !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
+  ;!insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
 
   SetShellVarContext all
 FunctionEnd
@@ -936,96 +1008,33 @@ Function un.onUninstSuccess
   ${un.LOG_CLOSE}
 FunctionEnd
 
+;======================================
 
-Function .onSelChange
-  ${LOG_TEXT} "DEBUG" "FUNCTION .onSelChange"
+Function un.WelcomePagePre
 
-  ; disable the next button if nothing is selected
-  ${IfNot} ${SectionIsSelected} ${SecServer}
-  ${AndIfNot} ${SectionIsSelected} ${SecClient}
-    EnableWindow $mui.Button.Next 0
-  ${Else}
-    EnableWindow $mui.Button.Next 1
-  ${EndIf}
-FunctionEnd
-/*
-Function WelcomeLeave
-    ; check if MP is already installed
-    ReadRegStr $R0 HKLM "${REG_UNINSTALL}" UninstallString
-    ${If} ${FileExists} "$R0"
-        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_IS_INSTALLED)"
-
-        ; get parent folder of uninstallation EXE (RO) and save it to R1
-        ${GetParent} $R0 $R1
-        ; start uninstallation of installed MP, from tmp folder, so it will delete itself
-        HideWindow
-        ClearErrors
-        CopyFiles $R0 "$TEMP\uninstall-tve3.exe"
-        ExecWait '"$TEMP\uninstall-tve3.exe" _?=$R1'
-        BringToFront
-
-        ; if an error occured, ask to cancel installation
-        ${If} ${Errors}
-            MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_ON_UNINSTALL)" /SD IDNO IDYES unInstallDone IDNO 0
-            Quit
-        ${EndIf}
-    ${EndIf}
-
-    ; if reboot flag is set, abort the installation, and continue the installer on next startup
-    ${If} ${FileExists} "$INSTDIR\rebootflag"
-        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)" IDOK 0
-        WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" "${NAME}" $EXEPATH
-        Quit
-    ${EndIf}
-FunctionEnd
-*/
-Function ComponentsPre
-
-  ${IfNot} ${MPIsInstalled}
-
-    ; uncheck the component, so that it won't be installed
-    !insertmacro UnselectSection "${SecClient}"
-    ; add the read only flag to the section, see Sections.nsh of official NSIS header files
-    !insertmacro SetSectionFlag "${SecClient}" ${SF_RO}
-    ; set new text for the component
-    SectionSetText ${SecClient} "MediaPortal TV Client plugin ($(TEXT_MP_NOT_INSTALLED))"
-
-  ${else}
-
-    ; check the component
-    !insertmacro SelectSection "${SecClient}"
-    ; remove the read only flag to the section, see Sections.nsh of official NSIS header files
-    !insertmacro ClearSectionFlag "${SecClient}" ${SF_RO}
-    ; set new text for the component
-    SectionSetText ${SecClient} "MediaPortal TV Client plugin"
-
-    !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
-    ${ReadMediaPortalDirs} $MPdir.Base
-
-  ${EndIf}
-
-FunctionEnd
-
-Function DirectoryPre
-  ; This function is called, before the Directory Page is displayed
-
-  ; It checks, if the Server has been selected and only displays the Directory page in this case
-  ${IfNot} ${SectionIsSelected} SecServer
+  ${If} $frominstall == 1
     Abort
   ${EndIf}
+
 FunctionEnd
+/*
+Function un.ConfirmPagePre
 
-Function FinishShow
-  ; This function is called, after the Finish Page creation is finished
-
-  ; It checks, if the Server has been selected and only displays the run checkbox in this case
-  ${IfNot} ${TVServerIsInstalled}
-    SendMessage $mui.FinishPage.Run ${BM_CLICK} 0 0
-    ShowWindow  $mui.FinishPage.Run ${SW_HIDE}
-  ${Else}
-    EnableWindow $mui.FinishPage.Run 0 # start out disabled
+  ${If} $frominstall == 1
+    Abort
   ${EndIf}
+
 FunctionEnd
+*/
+Function un.FinishPagePre
+
+  ${If} $frominstall == 1
+    SetRebootFlag false
+    Abort
+  ${EndIf}
+
+FunctionEnd
+
 
 #---------------------------------------------------------------------------
 # SECTION DECRIPTIONS     must be at the end
