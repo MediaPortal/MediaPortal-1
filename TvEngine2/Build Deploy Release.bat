@@ -17,6 +17,11 @@ set progpath=%ProgramFiles%
 if not "%ProgramFiles(x86)%".=="". set progpath=%ProgramFiles(x86)%
 
 
+REM set logfile where the infos are written to, and clear that file
+set LOG=build_%BUILD_TYPE%.log
+echo. > %LOG%
+
+
 echo.
 echo -= TVEngine2 Plugin =-
 echo -= build mode: %BUILD_TYPE% =-
@@ -32,7 +37,7 @@ echo Writing SVN revision assemblies...
 
 echo.
 echo Building TVEngine2...
-"%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 TvEngine2.sln >> build.log
+"%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform="Mixed Platforms" TvEngine2.sln >> build.log
 
 echo.
 echo Reverting assemblies...
