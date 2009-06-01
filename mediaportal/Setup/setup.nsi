@@ -877,9 +877,9 @@ FunctionEnd
 
 Function LoadPreviousSettings
   ; reset INSTDIR
-  ${If} $PREVIOUS_INSTALLDIR != ""
+  ${If} "$PREVIOUS_INSTALLDIR" != ""
     StrCpy $INSTDIR "$PREVIOUS_INSTALLDIR"
-  ${Else}
+  ${ElseIf} "$INSTDIR" == ""
     StrCpy $INSTDIR "$PROGRAMFILES\Team MediaPortal\MediaPortal"
   ${EndIf}
 
