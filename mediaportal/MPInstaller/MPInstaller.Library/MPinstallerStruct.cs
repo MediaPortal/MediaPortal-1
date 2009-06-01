@@ -580,7 +580,7 @@ namespace MediaPortal.MPInstaller
         }
         catch (Exception)
         {
-          MessageBox.Show(ex.Message + "\n" + ex.StackTrace); // Probably file access error
+          //MessageBox.Show(ex.Message + "\n" + ex.StackTrace); // Probably file access error
         }
       }
       XmlNode nodeproperties = ver.SelectSingleNode("Properties");
