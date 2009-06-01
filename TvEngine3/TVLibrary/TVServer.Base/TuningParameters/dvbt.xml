@@ -395,9 +395,12 @@
   </country>
   <country name="Czech Republic - Domazlice" offset="125">
     <carrier frequency="610000" bandwidth="8"></carrier>
-  </country>
+  </country>  
   <country name="Czech Republic - Ostrava" offset="125">
-    <carrier frequency="618000" bandwidth="8"></carrier>
+	<carrier frequency="562000" bandwidth="8"></carrier>
+	<carrier frequency="618000" bandwidth="8"></carrier>
+	<carrier frequency="738000" bandwidth="8"></carrier>
+	<carrier frequency="810000" bandwidth="8"></carrier>
   </country>
   <country name="Danmark - All Regions">
     <carrier frequency="506000" bandwidth="8"></carrier>
