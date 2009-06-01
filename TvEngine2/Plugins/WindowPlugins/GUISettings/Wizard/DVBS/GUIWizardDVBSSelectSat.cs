@@ -181,7 +181,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
       GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
       dlg.Reset();
       dlg.SetHeading("Select transponder"); //Menu
-      string[] files = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Base, "Tuningparameters"));
+      string[] files = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Config, "Tuningparameters"));
       ArrayList items = new ArrayList();
       foreach (string file in files)
       {

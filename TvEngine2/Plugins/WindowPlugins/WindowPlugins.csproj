@@ -305,9 +305,6 @@
     <Compile Include="GUITV\Configuration\TVChannels.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="GUITV\Configuration\TVClient.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="GUITV\Configuration\TVGroups.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -551,9 +548,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUITV\Configuration\TVChannels.resx">
       <DependentUpon>TVChannels.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUITV\Configuration\TVClient.resx">
-      <DependentUpon>TVClient.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUITV\Configuration\TVGroups.resx">
       <DependentUpon>TVGroups.cs</DependentUpon>

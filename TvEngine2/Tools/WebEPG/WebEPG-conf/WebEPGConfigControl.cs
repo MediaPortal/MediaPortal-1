@@ -82,7 +82,7 @@ namespace WebEPG_conf
 
       _log = GlobalServiceProvider.Get<ILog>();
 
-      _webepgFilesDir = Config.GetSubFolder(Config.Dir.Base, @"WebEPG\");
+      _webepgFilesDir = Config.GetSubFolder(Config.Dir.Config, @"WebEPG\");
 
       if (!Directory.Exists(_webepgFilesDir))
       {

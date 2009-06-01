@@ -76,7 +76,7 @@ namespace MediaPortal.EPG.WebEPGxmltv
           mediaPortalPresent = true;
         }
 
-        string webepgDirectory = Config.GetFolder(Config.Dir.Base);
+        string webepgDirectory = Config.GetFolder(Config.Dir.Config);
         if (webepgArgs.IsOption(CommandLineOptions.Option.webepg))
         {
           webepgDirectory = webepgArgs.GetOption(CommandLineOptions.Option.webepg);

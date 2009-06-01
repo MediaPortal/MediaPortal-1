@@ -282,7 +282,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
           }
         }
       }
-      string[] files = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Base, "Tuningparameters"), "*.dvbc");
+      string[] files = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Config, "Tuningparameters"), "*.dvbc");
       Array.Sort(files);
       foreach (string file in files)
       {
@@ -301,7 +301,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
     {
       String[] parameters = new String[1];
       string countryName = (string) cbCountry.SelectedItem;
-      parameters[0] = Config.GetFile(Config.Dir.Base, "Tuningparameters", countryName);
+      parameters[0] = Config.GetFile(Config.Dir.Config, "Tuningparameters", countryName);
       return parameters;
     }
 

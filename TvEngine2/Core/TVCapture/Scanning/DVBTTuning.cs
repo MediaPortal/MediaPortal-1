@@ -80,7 +80,7 @@ namespace MediaPortal.TV.Scanning
 
       Log.Info("dvbt-scan:Opening dvbt.xml");
       XmlDocument doc = new XmlDocument();
-      doc.Load(Config.GetFile(Config.Dir.Base, "Tuningparameters", "dvbt.xml"));
+      doc.Load(Config.GetFile(Config.Dir.Config, "Tuningparameters", "dvbt.xml"));
       XPathNavigator nav = doc.CreateNavigator();
       // Ensure we are at the root node
       nav.MoveToRoot();
