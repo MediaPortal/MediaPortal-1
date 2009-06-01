@@ -15,7 +15,7 @@ using System.Drawing;
 using System.Globalization;
 
 using CSScriptLibrary;
-using ICSharpCode.SharpZipLib.Zip;
+using Ionic.Zip;
 
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
@@ -169,18 +169,14 @@ namespace MediaPortal.MPInstaller
     /// <param name="lb">Listbox for file listing(can bee null) </param>
     public void InstallPackage(ProgressBar pb, ProgressBar pb1, ListBox lb)
     {
-      string fil = FileName;
-      byte[] data = new byte[2048];
-      int nb = data.Length;
-      ZipEntry entry;
       try
       {
-        if (File.Exists(fil))
+        if (File.Exists(FileName))
         {
-          ZipInputStream s = new ZipInputStream(File.OpenRead(fil));
-          while ((entry = s.GetNextEntry()) != null)
+          ZipFile zip = new ZipFile(FileName);
+          foreach (ZipEntry entry in zip)
           {
-            MPIFileList fl = InstallerInfo.FindFileFromZipEntry(entry.Name);
+            MPIFileList fl = InstallerInfo.FindFileFromZipEntry(entry.FileName);
 
             if ((fl!=null)&&test_file(fl, entry))
             {
@@ -200,25 +196,9 @@ namespace MediaPortal.MPInstaller
                 Directory.CreateDirectory(Path.GetDirectoryName(tpf));
   
               FileStream fs = new FileStream(tpf, FileMode.Create);
-              if (pb != null)
-              {
-                pb.Minimum = 0;
-                pb.Maximum = (int)entry.Size;
-                pb.Value = 0;
-              }
-              while ((nb = s.Read(data, 0, data.Length)) > 0)
-              {
-                if (pb != null)
-                {
-                  //MessageBox.Show(String.Format("{0} {1} {2}",pb.Minimum,pb.Value,pb.Maximum));
-                  pb.Value += nb;
-                  pb.Refresh();
-                  pb.Update();
-                }
-                fs.Write(data, 0, nb);
-              }
+              entry.Extract(fs);
               fs.Close();
-              File.SetLastWriteTimeUtc(tpf, entry.DateTime);
+              File.SetLastWriteTimeUtc(tpf, entry.LastModified);
               if (fl.SkinType && fl.FileProperties.DefaultFile)
               {
                 foreach (string sd in this.InstallableSkinList)
@@ -230,10 +210,10 @@ namespace MediaPortal.MPInstaller
                       Directory.CreateDirectory(Path.GetDirectoryName(newtpf));
                     }
                     // overwrite file only if the file is older like package skin file
-                    if (!File.Exists(newtpf) || File.GetLastWriteTimeUtc(newtpf) < entry.DateTime)
+                    if (!File.Exists(newtpf) || File.GetLastWriteTimeUtc(newtpf) < entry.LastModified)
                     {
                       File.Copy(tpf, newtpf, true);
-                      File.SetLastWriteTimeUtc(newtpf, entry.DateTime);
+                      File.SetLastWriteTimeUtc(newtpf, entry.LastModified);
                       this.InstallerInfo.Uninstall.Add(new UninstallInfo(newtpf));
                       if (lb != null)
                       {
@@ -277,13 +257,13 @@ namespace MediaPortal.MPInstaller
               pb1.Parent.Update();
             }
           }
-          s.Close();
+          zip.Dispose();
           load();
         }
       }
       catch (Exception ex)
       {
-        MessageBox.Show(ex.Message+"\n"+ex.StackTrace);
+        MessageBox.Show(ex.Message+"\n"+ex.StackTrace); // Probably file access error
       }
     }
 
@@ -293,7 +273,7 @@ namespace MediaPortal.MPInstaller
       {
         if (fl.SkinType)
         {
-          if (ze.Name.Contains(MPinstallerStruct.GetZipEntry(fl)))
+          if (ze.FileName.Contains(MPinstallerStruct.GetZipEntry(fl)))
           {
             return true;
           }
@@ -301,7 +281,7 @@ namespace MediaPortal.MPInstaller
         }
         else
         {
-          if (ze.Name.Contains(MPinstallerStruct.GetZipEntry(fl)))
+          if (ze.FileName.Contains(MPinstallerStruct.GetZipEntry(fl)))
             return true;
           else return false;
         }
@@ -364,93 +344,70 @@ namespace MediaPortal.MPInstaller
 
         this.InstallerScript.CurrentPackage = this;
 
-
-        byte[] data = new byte[2048];
-        int nb = data.Length;
-        ZipEntry entry;
         try
         {
           if (File.Exists(FileName))
           {
-            ZipInputStream s = new ZipInputStream(File.OpenRead(FileName));
-            while ((entry = s.GetNextEntry()) != null)
+            ZipFile zip = new ZipFile(FileName);
+            foreach (ZipEntry entry in zip)
             {
-              MPIFileList fl = InstallerInfo.FindFileFromZipEntry(entry.Name);
-              if (fl != null)
+              MPIFileList fl = InstallerInfo.FindFileFromZipEntry(entry.FileName);
+              if (fl != null && fl.Type == MPinstallerStruct.TEXT_TYPE)
               {
-                if (fl.Type==MPinstallerStruct.TEXT_TYPE && fl.SubType==MPinstallerStruct.TEXT_EULA_TYPE)
+                MemoryStream ms = new MemoryStream((int)entry.UncompressedSize);
+                entry.Extract(ms);
+                switch (fl.SubType)
                 {
-                  txt_EULA = string.Empty;
-                  while ((nb = s.Read(data, 0, data.Length)) > 0)
-                  {
-                    txt_EULA += new ASCIIEncoding().GetString(data, 0, data.Length);
-                  }
-                }
-                if (fl.Type == MPinstallerStruct.TEXT_TYPE && fl.SubType == MPinstallerStruct.TEXT_LOG_TYPE)
-                {
-                  txt_log = string.Empty;
-                  while ((nb = s.Read(data, 0, data.Length)) > 0)
-                  {
-                    txt_log += new ASCIIEncoding().GetString(data, 0, data.Length);
-                  }
-                }
-                if (fl.Type == MPinstallerStruct.TEXT_TYPE && fl.SubType == MPinstallerStruct.TEXT_README_TYPE)
-                {
-                  txt_readme = string.Empty;
-                  while ((nb = s.Read(data, 0, data.Length)) > 0)
-                  {
-                    txt_readme += new ASCIIEncoding().GetString(data, 0, data.Length);
-                  }
+                  case MPinstallerStruct.TEXT_EULA_TYPE:
+                    txt_EULA = ms.ToString();
+                  break;
+                  case MPinstallerStruct.TEXT_LOG_TYPE:
+                    txt_log = ms.ToString();
+                  break;
+                  case MPinstallerStruct.TEXT_README_TYPE:
+                    txt_readme = ms.ToString();
+                  break;
                 }
               }
             }
-            s.Close();
           }
         }
         catch (Exception)
         {
-          
+          MessageBox.Show(ex.Message + "\n" + ex.StackTrace); // Probably file access error
         }
         this.InstallerScript.Init();
       }
     }
 
 
-    public void LoadFromFile(string fil)
+    public void LoadFromFile(string file)
     {
-      FileName = fil;
-      byte[] data = new byte[2048];
-      int nb = data.Length;
-      ZipEntry entry;
+      FileName = file;  // set the local property
+      isValid = false;  // unless becomes valid
       try
       {
-        if (File.Exists(fil))
+        if (File.Exists(file))
         {
-          ZipInputStream s = new ZipInputStream(File.OpenRead(fil));
-          while ((entry = s.GetNextEntry()) != null)
+          ZipFile zip = new ZipFile(file);
+          foreach (ZipEntry entry in zip)
           {
-            if (entry.Name == "instaler.xmp")
+            if (entry.FileName == "instaler.xmp")
             {
               string tpf = Path.GetFullPath(Environment.GetEnvironmentVariable("TEMP")) + @"\" + "instaler.xmp";
               isValid = true;
               FileStream fs = new FileStream(tpf, FileMode.Create);
-              while ((nb = s.Read(data, 0, data.Length)) > 0)
-              {
-                fs.Write(data, 0, nb);
-              }
+              entry.Extract(fs);
               fs.Close();
               InstallerInfo.LoadFromFile(tpf);
             }
 
-            if (entry.Name.Contains(MPinstallerStruct.INTERNAL_TYPE + @"\" + MPinstallerStruct.INTERNAL_PLUGIN_SUBTYPE))
+            if (entry.FileName.Contains(MPinstallerStruct.INTERNAL_TYPE + @"\" + MPinstallerStruct.INTERNAL_PLUGIN_SUBTYPE))
             {
               string tpf = Path.GetTempFileName();
               isValid = true;
               FileStream fs = new FileStream(tpf, FileMode.Create);
-              while ((nb = s.Read(data, 0, data.Length)) > 0)
-              {
-                fs.Write(data, 0, nb);
-              }
+              entry.Extract(fs);
               fs.Close();
               try
               {
@@ -488,7 +445,6 @@ namespace MediaPortal.MPInstaller
               }
             }
           }
-          s.Close();
           load();
         }
       }

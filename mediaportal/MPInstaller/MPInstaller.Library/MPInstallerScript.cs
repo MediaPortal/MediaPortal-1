@@ -5,8 +5,6 @@ using System.IO;
 using System.Windows.Forms;
 using System.Text;
 
-using ICSharpCode.SharpZipLib.Zip;
-
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 
@@ -166,31 +164,6 @@ namespace MediaPortal.MPInstaller
     }
 
     #region Generic methods
-
-    public bool ExtractFile(string FileName, string OutFile)
-    {
-      try
-      {
-        FastZip zipobj = new FastZip();
-        string intenalFileName = MPinstallerStruct.GetZipEntry(this.CurrentPackage.InstallerInfo.FindFile(FileName));
-        if (File.Exists(Path.Combine(Path.GetDirectoryName(OutFile), Path.GetFileName(OutFile))))
-        {
-          File.Delete(Path.Combine(Path.GetDirectoryName(OutFile), Path.GetFileName(OutFile)));
-        }
-        if (File.Exists(Path.Combine(Path.GetDirectoryName(OutFile), intenalFileName)))
-        {
-          File.Delete(Path.Combine(Path.GetDirectoryName(OutFile), intenalFileName));
-        }
-        zipobj.ExtractZip(this.CurrentPackage.FileName, Path.GetDirectoryName(OutFile), intenalFileName);
-        File.Move(Path.Combine(Path.GetDirectoryName(OutFile), intenalFileName), Path.Combine(Path.GetDirectoryName(OutFile), Path.GetFileName(OutFile)));
-      }
-      catch (Exception ex)
-      {
-        MessageBox.Show(ex.Message + ex.InnerException + ex.StackTrace);
-        return false;
-      }
-      return true;
-    }
     #endregion
 
 

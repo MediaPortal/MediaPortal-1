@@ -33,7 +33,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using System.IO;
-using ICSharpCode.SharpZipLib.Zip;
+using Ionic.Zip;
 using MediaPortal.Configuration;
 using MediaPortal.Util;
 using MediaPortal.MPInstaller;
@@ -439,50 +439,48 @@ namespace MediaPortal.MPInstaller
 
     public void BuildFile(ListBox ls, ProgressBar pb)
     {
-      ZipOutputStream s = new ZipOutputStream(File.Create(_builFileName));
-      s.UseZip64 = UseZip64.Off;
-      ls.Items.Clear();
-      s.SetLevel(5); // 0 - store only to 9 - means best compression
-      pb.Value = 0;
-      pb.Maximum = FileList.Count;
-      ls.Items.Add("Build file :" + _builFileName);
-      if (File.Exists(ProiectFileName))
+      try
       {
-        FileStream fs = File.OpenRead(Path.GetFullPath(ProiectFileName));
-        byte[] buffer = new byte[fs.Length];
-        fs.Read(buffer, 0, buffer.Length);
-
-        ZipEntry entry = new ZipEntry("instaler.xmp");
-        s.PutNextEntry(entry);
-
-        s.Write(buffer, 0, buffer.Length);
-      }
-      else ls.Items.Add("Error : Proiect file not found !");
-
-      foreach (MPIFileList file in FileList)
-      {
-        ls.Items.Add("Adding file :" + file.FileName);
-        pb.Value++;
-        ls.Refresh();
-        ls.Update();
-        if (!string.IsNullOrEmpty(file.FileName) && File.Exists(file.FileName))
+        using (ZipFile zip = new ZipFile())
         {
-          string filename = Path.GetFullPath(file.FileName);
-          FileStream fs = File.OpenRead(filename);
-          byte[] buffer = new byte[fs.Length];
-          fs.Read(buffer, 0, buffer.Length);
-          ZipEntry entry = new ZipEntry(GetZipEntry(file));
-          entry.DateTime = File.GetLastWriteTimeUtc(filename);
-          s.PutNextEntry(entry);
+          StreamReader sr;
 
-          s.Write(buffer, 0, buffer.Length);
-          ls.Items.Add("Added file :" + GetZipEntry(file));
+          zip.CompressionLevel = Ionic.Zlib.CompressionLevel.BEST_COMPRESSION;
+          ls.Items.Clear();
+          pb.Value = 0;
+          pb.Maximum = FileList.Count;
+          ls.Items.Add("Build file :" + _builFileName);
+
+          if (File.Exists(ProiectFileName))
+          {
+            sr = new StreamReader(Path.GetFullPath(ProiectFileName));
+            zip.AddFileStream("instaler.xmp", "", sr.BaseStream);
+          }
+          else ls.Items.Add("Error : Proiect file not found !");
+
+          foreach (MPIFileList file in FileList)
+          {
+            ls.Items.Add("Adding file :" + file.FileName);
+            pb.Value++;
+            ls.Refresh();
+            ls.Update();
+            if (!string.IsNullOrEmpty(file.FileName) && File.Exists(file.FileName))
+            {
+              string filename = Path.GetFullPath(file.FileName);
+              ZipEntry entry = zip.AddFile(filename);
+              entry.FileName = GetZipEntry(file);
+              entry.LastModified = File.GetLastWriteTimeUtc(filename);
+              ls.Items.Add("Added file :" + GetZipEntry(file));
+            }
+            else ls.Items.Add("Error : File not found !");
+          }
+          zip.Save(_builFileName);
         }
-        else ls.Items.Add("Error : File not found !");
-
       }
-      s.Finish();
-      s.Close();
+      catch (System.Exception ex1)
+      {
+        ls.Items.Add("exception: " + ex1); // Probably due to file access error
+      }
     }
     
     string RelativePath(string refpath, string file)
@@ -582,7 +580,7 @@ namespace MediaPortal.MPInstaller
         }
         catch (Exception)
         {
-
+          MessageBox.Show(ex.Message + "\n" + ex.StackTrace); // Probably file access error
         }
       }
       XmlNode nodeproperties = ver.SelectSingleNode("Properties");
