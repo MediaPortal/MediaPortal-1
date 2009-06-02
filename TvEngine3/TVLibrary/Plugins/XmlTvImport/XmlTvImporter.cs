@@ -35,7 +35,7 @@ using System.Runtime.CompilerServices;
 using Gentle.Common;
 using Gentle.Framework;
 
-using ICSharpCode.SharpZipLib.Zip;
+using Ionic.Zip;
 
 namespace TvEngine
 {
@@ -234,8 +234,8 @@ namespace TvEngine
                   {
                     string newLoc = layer.GetSetting("xmlTv", "").Value + @"\";
                     Log.Info("extracting zip file {0} to location {1}", path, newLoc);
-                    FastZip fz = new FastZip();
-                    fz.ExtractZip(path, newLoc, "");
+                    ZipFile zip = new ZipFile(path);
+                    zip.ExtractAll(newLoc);
                   }
                 }
               }
