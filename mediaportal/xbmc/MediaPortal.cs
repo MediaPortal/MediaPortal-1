@@ -96,6 +96,7 @@ public class MediaPortalApp : D3DApp, IRender
   private RedEye redeyedevice; //PB00//
   private bool useScreenSaver = true;
   private bool useIdleblankScreen = false;
+  private static bool isWinScreenSaverInUse = false;
   private int timeScreenSaver = 300;
   private bool restoreTopMost = false;
   private bool _startWithBasicHome = false;
@@ -139,6 +140,9 @@ public class MediaPortalApp : D3DApp, IRender
   private const int PBT_APMRESUMEAUTOMATIC = 0x0012;
   private const int BROADCAST_QUERY_DENY = 0x424D5144;
   private const int SC_SCREENSAVE = 0xF140;
+  private const int SPI_SETSCREENSAVEACTIVE = 17;
+  private const int SPI_GETSCREENSAVEACTIVE = 16;
+  private const int SPIF_SENDWININICHANGE = 0x0002;
   private const string mpMutex = "{E0151CBA-7F81-41df-9849-F5298A779EB3}";
   private const string configMutex = "{0BFD648F-A59F-482A-961B-337D70968611}";
   private bool supportsFiltering = false;
@@ -151,6 +155,10 @@ public class MediaPortalApp : D3DApp, IRender
 
   #endregion
 
+  [DllImport("user32")]
+  private static extern bool SystemParametersInfo(int uAction, int uParam, ref bool lpvParam, int fuWinIni);
+  [DllImport("user32")]
+  private static extern bool SystemParametersInfo(int uAction, int uParam, int lpvParam, int fuWinIni);
   [DllImport("Kernel32.DLL")]
   private static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE state);
 
@@ -308,7 +316,6 @@ public class MediaPortalApp : D3DApp, IRender
         mpWatchDog.Start();
       }
 #endif
-
       //Log MediaPortal version build and operating system level
       OSVersionInfo os = new OperatingSystemVersion();
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
@@ -1435,6 +1442,12 @@ public class MediaPortalApp : D3DApp, IRender
         }
         splashScreen = null;
       }
+      // disable screen saver when MP running
+      SystemParametersInfo(SPI_GETSCREENSAVEACTIVE, 0, ref isWinScreenSaverInUse, 0);
+      if (isWinScreenSaverInUse)
+      {
+        SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, 0, 0, SPIF_SENDWININICHANGE);
+      }
     }
     catch (Exception ex)
     {
@@ -1525,6 +1538,10 @@ public class MediaPortalApp : D3DApp, IRender
     VolumeHandler.Dispose();
     // Restart MCE Services
     Utils.RestartMCEServices();
+    if (isWinScreenSaverInUse)
+    {
+      SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, 1, 0, SPIF_SENDWININICHANGE);
+    }
   }
 
   /// <summary>
@@ -1827,6 +1844,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     if (g_Player.Playing)
     {
+      m_bPlayingState = true;
       if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
       {
         GUIGraphicsContext.IsFullScreenVideo = true;
@@ -1890,19 +1908,12 @@ public class MediaPortalApp : D3DApp, IRender
     }
     else
     {
-      GUIGraphicsContext.IsPlaying = false;
-    }
-    if (!g_Player.Playing)
-    {
+      GUIGraphicsContext.IsPlaying = false;      
       if (m_bPlayingState)
       {
         GUIPropertyManager.RemovePlayerProperties();
-      }
-      m_bPlayingState = false;
-    }
-    else
-    {
-      m_bPlayingState = true;
+        m_bPlayingState = false;
+      }      
     }
   }
 
