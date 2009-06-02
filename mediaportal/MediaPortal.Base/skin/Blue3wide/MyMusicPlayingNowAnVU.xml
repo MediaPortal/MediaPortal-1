@@ -74,7 +74,17 @@
       <width>462</width>
       <height>165</height>
       <texture>vu_background.png</texture>
-      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="50">WindowOpen</animation>
+    </control>
+     <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>136</posX>
+      <posY>33</posY>
+      <width>107</width>
+      <height>107</height>
+      <texture>VU aus.png</texture>
+      <visible>!Player.playing</visible>
     </control>
     <control>
       <type>image</type>
@@ -86,6 +96,17 @@
       <imagepath>Animations\AnVu</imagepath>
       <texture>#VUMeterL</texture>
       <visible>Player.HasAudio + Player.playing</visible>
+      <animation effect="fade" time="150">Visible</animation>
+    </control>
+     <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>293</posX>
+      <posY>33</posY>
+      <width>107</width>
+      <height>107</height>
+      <texture>VU aus.png</texture>
+      <visible>!Player.playing</visible>
     </control>
     <control>
       <type>image</type>
@@ -97,6 +118,7 @@
 	  <imagepath>Animations\AnVu</imagepath>
       <texture>#VUMeterR</texture>
       <visible>Player.HasAudio + Player.playing</visible>
+      <animation effect="fade" time="150">Visible</animation>
     </control>
     <control>
       <type>image</type>
