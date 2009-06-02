@@ -52,10 +52,10 @@ namespace TvLibrary.Implementations.DVB
     {
       string CardFolder;
       int InstanceNumber;
-      Log.Log.Info("mdplugs: Create");
 
       if (IsMDApiEnabled(captureDevice, out CardFolder, out InstanceNumber))
       {
+        Log.Log.Info("mdplugs: Create - IsMDApiEnabled for {0} - {1}", CardFolder, InstanceNumber );
         MDPlugs ret = new MDPlugs(CardFolder, InstanceNumber);
         return ret;
       }
