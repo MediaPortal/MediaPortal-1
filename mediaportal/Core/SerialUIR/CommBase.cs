@@ -623,11 +623,13 @@ namespace JH.CommBase
 
       if (!Win32Com.SetCommState(hPort, ref PortDCB))
       {
-        ThrowException("Bad com settings");
+        MediaPortal.GUI.Library.Log.Error("CommBase: Bad com settings");
+        return false;
       }
       if (!Win32Com.SetCommTimeouts(hPort, ref CommTimeouts))
       {
-        ThrowException("Bad timeout settings");
+        MediaPortal.GUI.Library.Log.Error("CommBase: Bad timeout settings");
+        return false;
       }
 
       stateBRK = 0;
