@@ -34,9 +34,7 @@ namespace MediaPortal.DeployTool
     DownloadOnly,
     DownloadSettings,
     Upgrade,
-    WatchTV,
-    WatchHDTv,
-    TvEngineType,
+    WatchTV,        
     BASE_INSTALLATION_TYPE,
     BASE_INSTALLATION_TYPE_WITHOUT_TVENGINE,
     CUSTOM_INSTALLATION_TYPE,
@@ -118,13 +116,7 @@ namespace MediaPortal.DeployTool
             dlg = new UpgradeDlg();
             break;
           case DialogType.WatchTV:
-            dlg = new WatchTVDlg();
-            break;
-          case DialogType.WatchHDTv:
-            dlg = new WatchHDTvDlg();
-            break;
-          case DialogType.TvEngineType:
-            dlg = new TvEngineTypeDlg();
+            dlg = new WatchTVDlg();                   
             break;
           case DialogType.BASE_INSTALLATION_TYPE_WITHOUT_TVENGINE:
             dlg = new BaseInstallationTypeWithoutTvEngineDlg();

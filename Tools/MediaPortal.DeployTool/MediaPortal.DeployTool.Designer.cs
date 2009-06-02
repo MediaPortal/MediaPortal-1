@@ -1028,50 +1028,6 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Which TV-Engine do you want to use ?.
-        /// </summary>
-        internal static string TvEngineType_labelSectionHeader {
-            get {
-                return ResourceManager.GetString("TvEngineType_labelSectionHeader", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Differences between TV-Server 1.0 and inbuild TV-Plugin of MediaPortal 1.0:
-        ///+ full DVB-subtitle support
-        ///+ support for HD-TV (dvb-s2 / h.264) and AAC audio (Norway, New Zealand, Australia)
-        ///+ hybrid tuner support (cards that share a tuner for DVB or analog)
-        ///+ automatically detects any TV-card (analog, DVB-C, -S, -S2, -T, ATSC)
-        ///+ ATSC QAM (Cable TV) support
-        ///+ allows to record in .mpg or .ts file format
-        ///+ ATSC/DVB allows tuning multiple channels within same transponder/mux with one card
-        ///+ provides TV to [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string TvEngineType_labelTvEngine {
-            get {
-                return ResourceManager.GetString("TvEngineType_labelTvEngine", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Inbuild TV-Plugin of MediaPortal 1.0..
-        /// </summary>
-        internal static string TvEngineType_rbTvBuildIn {
-            get {
-                return ResourceManager.GetString("TvEngineType_rbTvBuildIn", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to MediaPortal TV-Server 1.0.
-        /// </summary>
-        internal static string TvEngineType_rbTvEngine {
-            get {
-                return ResourceManager.GetString("TvEngineType_rbTvEngine", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Configure Windows Firewall to allow external access to TV-Server.
         /// </summary>
         internal static string TvServerSettings_checkBoxFirewall {
@@ -1159,42 +1115,6 @@ namespace MediaPortal.DeployTool {
         internal static string Upgrade_yes {
             get {
                 return ResourceManager.GetString("Upgrade_yes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do you want to watch HDTV with MediaPortal ?.
-        /// </summary>
-        internal static string WatchHDTv_labelSectionHeader {
-            get {
-                return ResourceManager.GetString("WatchHDTv_labelSectionHeader", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to I do not know what HD content is..
-        /// </summary>
-        internal static string WatchHDTv_maybe {
-            get {
-                return ResourceManager.GetString("WatchHDTv_maybe", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No - I will not use MediaPortal to watch HD content..
-        /// </summary>
-        internal static string WatchHDTv_no {
-            get {
-                return ResourceManager.GetString("WatchHDTv_no", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Yes - I will use MediaPortal to watch HD content..
-        /// </summary>
-        internal static string WatchHDTv_yes {
-            get {
-                return ResourceManager.GetString("WatchHDTv_yes", resourceCulture);
             }
         }
         

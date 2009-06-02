@@ -56,7 +56,7 @@ namespace MediaPortal.DeployTool.Sections
     {
       if (rbYesChecked)
       {
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.WatchHDTv);
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.BASE_INSTALLATION_TYPE);
       }
       return DialogFlowHandler.Instance.GetDialogInstance(DialogType.BASE_INSTALLATION_TYPE_WITHOUT_TVENGINE);
     }

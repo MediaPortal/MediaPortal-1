@@ -384,14 +384,6 @@
       <DependentUpon>DownloadOnlyDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\TvEngineTypeDlg.resx">
-      <DependentUpon>TvEngineTypeDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\WatchHDTvDlg.resx">
-      <DependentUpon>WatchHDTvDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Sections\WatchTvDlg.resx">
       <DependentUpon>WatchTvDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -471,18 +463,6 @@
     </Compile>
     <Compile Include="Sections\DownloadOnlyDlg.Designer.cs">
       <DependentUpon>DownloadOnlyDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\TvEngineTypeDlg.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\TvEngineTypeDlg.Designer.cs">
-      <DependentUpon>TvEngineTypeDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\WatchHDTvDlg.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\WatchHDTvDlg.Designer.cs">
-      <DependentUpon>WatchHDTvDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\WatchTvDlg.cs">
       <SubType>UserControl</SubType>
@@ -635,7 +615,6 @@
     <None Include="Resources\Background middle internet connection.png" />
     <None Include="Resources\Background middle one click install choose.png" />
     <None Include="Resources\Background middle TV  yes no.png" />
-    <None Include="Resources\Background middle TV install.png" />
     <None Include="Resources\Background middle with MP Box.png" />
     <None Include="Resources\Background middle empty.png" />
     <None Include="Resources\Choose button on.png" />
