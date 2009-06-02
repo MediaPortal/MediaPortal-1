@@ -76,6 +76,16 @@
       <texture>vu_background_led.png</texture>
       <animation effect="fade" time="150">WindowOpen</animation>
     </control>
+     <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>66</posX>
+      <posY>80</posY>
+      <width>398</width>
+      <height>20</height>
+      <texture>VU aus led.png</texture>
+      <visible>!Player.playing</visible>
+    </control>
     <control>
       <type>image</type>
       <id>999</id>
@@ -86,6 +96,17 @@
       <imagepath>Animations\LedVu</imagepath>
       <texture>#VUMeterL</texture>
       <visible>Player.HasAudio + Player.playing</visible>
+      <animation effect="fade" time="150">Visible</animation>
+    </control>
+     <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>66</posX>
+      <posY>98</posY>
+      <width>398</width>
+      <height>20</height>
+      <texture>VU aus led.png</texture>
+      <visible>!Player.playing</visible>
     </control>
     <control>
       <type>image</type>
@@ -97,6 +118,7 @@
 	  <imagepath>Animations\LedVu</imagepath>
       <texture>#VUMeterR</texture>
       <visible>Player.HasAudio + Player.playing</visible>
+      <animation effect="fade" time="150">Visible</animation>
     </control>
     <control>
       <type>image</type>
