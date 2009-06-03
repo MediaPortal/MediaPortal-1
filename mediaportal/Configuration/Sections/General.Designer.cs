@@ -186,7 +186,8 @@ namespace MediaPortal.Configuration.Sections
             "Restart MediaPortal on resume (avoids stuttering playback with nvidia)",
             "Show last active module when starting / resuming from standby",
             "Automatically skip commercials for videos with ComSkip data available",
-            "Use screenselector to choose on which screen MP should start"});
+            "Use screenselector to choose on which screen MP should start",
+            "Allow remember last focused item on supported window/skin"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(6, 20);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
       this.settingsCheckedListBox.Size = new System.Drawing.Size(454, 319);

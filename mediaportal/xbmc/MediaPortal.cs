@@ -793,6 +793,7 @@ public class MediaPortalApp : D3DApp, IRender
         m_strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
         _autoHideMouse = xmlreader.GetValueAsBool("general", "autohidemouse", true);
         GUIGraphicsContext.MouseSupport = xmlreader.GetValueAsBool("general", "mousesupport", false);
+        GUIGraphicsContext.AllowRememberLastFocusedItem = xmlreader.GetValueAsBool("general", "allowRememberLastFocusedItem", false);
         GUIGraphicsContext.DBLClickAsRightClick =
           xmlreader.GetValueAsBool("general", "dblclickasrightclick", false);
         _minimizeOnStartup = xmlreader.GetValueAsBool("general", "minimizeonstartup", false);

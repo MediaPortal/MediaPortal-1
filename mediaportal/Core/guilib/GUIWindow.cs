@@ -255,6 +255,8 @@ namespace MediaPortal.GUI.Library
     private int _windowId = -1;
     private int _previousWindowId = -1;
     private int _previousFocusedControlId = -1;
+    private int _rememberLastFocusedControlId = -1;
+    private bool _rememberLastFocusedControl = false;
     protected int _defaultControlId = 0;
     protected List<CPosition> _listPositions = new List<CPosition>();
     protected string _windowXmlFileName = "";
@@ -319,6 +321,12 @@ namespace MediaPortal.GUI.Library
     public int PreviousFocusedId
     {
       get { return _previousFocusedControlId; }
+    }
+
+    public bool RememberLastFocusedControl
+    {
+      get { return _rememberLastFocusedControl; }
+      set { _rememberLastFocusedControl = value; }
     }
 
     /// <summary>
@@ -628,7 +636,20 @@ namespace MediaPortal.GUI.Library
             }
           }
         }
-
+        _rememberLastFocusedControl = false;
+        if (GUIGraphicsContext.AllowRememberLastFocusedItem)
+        {
+          XmlNode nodeRememberLastFocusedControl =
+            doc.DocumentElement.SelectSingleNode("/window/rememberLastFocusedControl");
+          if (nodeRememberLastFocusedControl != null)
+          {
+            string rememberLastFocusedControlStr = nodeRememberLastFocusedControl.InnerText.ToLower();
+            if (rememberLastFocusedControlStr == "yes" || rememberLastFocusedControlStr == "true")
+            {
+              _rememberLastFocusedControl = true;
+            }
+          }
+        }
         XmlNodeList nodeList = doc.DocumentElement.SelectNodes("/window/controls/*");
 
         foreach (XmlNode node in nodeList)
@@ -882,12 +903,38 @@ namespace MediaPortal.GUI.Library
         LoadSkin();
       }
 
+      if (_rememberLastFocusedControl && _rememberLastFocusedControlId >= 0)
+      {
+
+        GUIControl cntl = GetControl(_rememberLastFocusedControlId);
+        if (cntl != null)
+        {
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, _rememberLastFocusedControlId, 0, 0, null);
+            OnMessage(msg);
+            msg = null;
+        }
+        int id = GetFocusControlId();
+        if (id >= 0)
+        {
+          _previousFocusedControlId = id;
+        }
+      }
+
       SetControlVisibility();
       QueueAnimation(AnimationType.WindowOpen);
     }
 
     protected virtual void OnPageDestroy(int new_windowId)
     {
+      if (_rememberLastFocusedControl)
+      {
+        int id = GetFocusControlId();
+        if (id >= 0)
+        {
+          _rememberLastFocusedControlId = id;
+        }
+      }
+
       if (GUIGraphicsContext.IsFullScreenVideo == false)
       {
         if (new_windowId != (int) Window.WINDOW_FULLSCREEN_VIDEO &&

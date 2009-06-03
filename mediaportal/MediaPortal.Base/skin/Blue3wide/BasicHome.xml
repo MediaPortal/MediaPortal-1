@@ -5,6 +5,7 @@
   <defaultcontrol>6</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <disabletopbar>no</disabletopbar>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
     <control>
       <description>BG</description>

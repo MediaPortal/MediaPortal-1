@@ -179,6 +179,7 @@ namespace MediaPortal.GUI.Library
     private static bool _isDX9EXused = Environment.OSVersion.Version.Major >= 6;
 
     private static Point _screenCenterPos = new Point();
+    private static bool m_bAllowRememberLastFocusedItem = true;
 
     [DllImport("user32.dll")]
     private static extern bool SendMessage(IntPtr hWnd, uint Msg, uint wParam, IntPtr lParam);
@@ -1222,6 +1223,15 @@ namespace MediaPortal.GUI.Library
     {
       get { return m_bMouseSupport; }
       set { m_bMouseSupport = value; }
+    }
+
+    /// <summary>
+    /// Get/Set  if it is allowed to remember last focused item on supported window/skin 
+    /// </summary>
+    public static bool AllowRememberLastFocusedItem
+    {
+      get { return m_bAllowRememberLastFocusedItem; }
+      set { m_bAllowRememberLastFocusedItem = value; }
     }
 
     /// <summary>

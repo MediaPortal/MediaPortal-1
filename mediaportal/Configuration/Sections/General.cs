@@ -127,6 +127,8 @@ namespace MediaPortal.Configuration.Sections
                                             new string[] {"comskip", "automaticskip", "false"},
                                             // 21 Automatically skip commercials for videos with ComSkip data available
                                             new string[] {"screenselector", "usescreenselector", "false"},
+                                            // 21 Automatically skip commercials for videos with ComSkip data available
+                                            new string[] {"general", "allowRememberLastFocusedItem", "true"},
                                             //new string[] { "general", "autohidemouse", "true" }, 
                                             //new string[] { "general", "dblclickasrightclick", "false" },
                                             //new string[] { "general", "userenderthread", "true" }
