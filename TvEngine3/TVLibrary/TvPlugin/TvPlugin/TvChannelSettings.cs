@@ -31,7 +31,6 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using TvDatabase;
-//using MediaPortal.Utils.Services;
 
 namespace TvPlugin
 {
@@ -40,7 +39,10 @@ namespace TvPlugin
     [SkinControl(24)] protected GUIButtonControl btnTvGroup = null;
     [SkinControl(10)] protected GUIUpDownListControl listChannels = null;
 
-    private ChannelGroup _currentGroup = null;
+    private ChannelGroup _currentGroup 
+    {
+      get { return TVHome.Navigator.CurrentGroup;}
+    }
 
     public ChannelSettings()
     {
@@ -49,12 +51,15 @@ namespace TvPlugin
 
     public override bool Init()
     {
+      /* Attention: to get this code working, be sure the skinfile uses an "updownlistcontrol" !
+       * <type>updownlistcontrol</type> 
+       * <!-- type>playlistcontrol</type-->
+       */
       return Load(GUIGraphicsContext.Skin + @"\settings_tvSort.xml");
     }
 
     protected override void OnPageLoad()
     {
-      _currentGroup = null;
       base.OnPageLoad();
       UpdateList();
     }
@@ -67,60 +72,26 @@ namespace TvPlugin
 
     private void UpdateList()
     {
-      IList channels;
       listChannels.Clear();
-      if (_currentGroup == null)
+      int count = 0;
+      IList<GroupMap> maps = TVHome.Navigator.CurrentGroup.ReferringGroupMap();
+      foreach (GroupMap map in maps)
       {
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
-        sb.AddConstraint(Operator.Equals, "isTv", 1);
-        sb.AddOrderByField(true, "sortOrder");
-        SqlStatement stmt = sb.GetStatement(true);
-        channels = ObjectFactory.GetCollection(typeof (Channel), stmt.Execute());
-        int count = 0;
-        foreach (Channel chan in channels)
+        Channel chan = map.ReferencedChannel();
+        chan.SortOrder = count;
+        GUIListItem item = new GUIListItem();
+        item.Label = chan.DisplayName;
+        item.MusicTag = chan;
+        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.DisplayName);
+        if (!File.Exists(strLogo))
         {
-          if (chan.SortOrder != count)
-          {
-            chan.SortOrder = count;
-            chan.Persist();
-          }
-          GUIListItem item = new GUIListItem();
-          item.Label = chan.DisplayName;
-          item.MusicTag = chan;
-          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.DisplayName);
-          if (!File.Exists(strLogo))
-          {
-            strLogo = "defaultVideoBig.png";
-          }
-          item.ThumbnailImage = strLogo;
-          item.IconImage = strLogo;
-          item.IconImageBig = strLogo;
-          listChannels.Add(item);
-          count++;
+          strLogo = "defaultVideoBig.png";
         }
-      }
-      else
-      {
-        int count = 0;
-        IList<GroupMap> maps = _currentGroup.ReferringGroupMap();
-        foreach (GroupMap map in maps)
-        {
-          Channel chan = map.ReferencedChannel();
-          chan.SortOrder = count;
-          GUIListItem item = new GUIListItem();
-          item.Label = chan.DisplayName;
-          item.MusicTag = chan;
-          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.DisplayName);
-          if (!File.Exists(strLogo))
-          {
-            strLogo = "defaultVideoBig.png";
-          }
-          item.ThumbnailImage = strLogo;
-          item.IconImage = strLogo;
-          item.IconImageBig = strLogo;
-          listChannels.Add(item);
-          count++;
-        }
+        item.ThumbnailImage = strLogo;
+        item.IconImage = strLogo;
+        item.IconImageBig = strLogo;
+        listChannels.Add(item);
+        count++;
       }
     }
 
@@ -153,7 +124,8 @@ namespace TvPlugin
     {
       if (control == btnTvGroup)
       {
-        OnTvGroup();
+        TVHome.OnSelectGroup();
+        UpdateList();
       }
       base.OnClicked(controlId, control, actionType);
     }
@@ -183,7 +155,7 @@ namespace TvPlugin
       else
       {
         List<Channel> channelsInGroup = new List<Channel>();
-        IList<GroupMap> maps = _currentGroup.ReferringGroupMap();
+        IList<GroupMap> maps = TVHome.Navigator.CurrentGroup.ReferringGroupMap();
         foreach (GroupMap map in maps)
         {
           Channel chan = map.ReferencedChannel();
@@ -219,7 +191,7 @@ namespace TvPlugin
       else
       {
         List<Channel> channelsInGroup = new List<Channel>();
-        IList<GroupMap> maps = _currentGroup.ReferringGroupMap();
+        IList<GroupMap> maps = TVHome.Navigator.CurrentGroup.ReferringGroupMap();
         foreach (GroupMap map in maps)
         {
           Channel chan = map.ReferencedChannel();
@@ -234,39 +206,12 @@ namespace TvPlugin
 
     private void OnTvGroup()
     {
-      IList<ChannelGroup> tvGroups = ChannelGroup.ListAll();
+      List<ChannelGroup> tvGroups = TVHome.Navigator.Groups;
       GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
-        dlg.Reset();
-        dlg.SetHeading(GUILocalizeStrings.Get(924)); //Menu
-        dlg.SelectedLabel = 0;
-        dlg.Add("All channels");
-        for (int i = 0; i < tvGroups.Count; ++i)
-        {
-          ChannelGroup group = (ChannelGroup) tvGroups[i];
-          dlg.Add(group.GroupName);
-          if (_currentGroup != null)
-          {
-            if (group.GroupName == _currentGroup.GroupName)
-            {
-              dlg.SelectedLabel = i + 1;
-            }
-          }
-        }
-        dlg.DoModal(GetID);
-        if (dlg.SelectedLabel == 0)
-        {
-          _currentGroup = null;
-          UpdateList();
-          return;
-        }
-
-        if (dlg.SelectedLabel > 0)
-        {
-          _currentGroup = (ChannelGroup) tvGroups[dlg.SelectedLabel - 1];
-          UpdateList();
-        }
+        TVHome.OnSelectGroup();
+        UpdateList();
       }
     }
 
