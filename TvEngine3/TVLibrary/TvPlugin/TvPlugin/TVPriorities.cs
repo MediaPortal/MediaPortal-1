@@ -266,6 +266,7 @@ namespace TvPlugin
 
     private void SetLabels()
     {
+      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
       for (int i = 0; i < GetItemCount(); ++i)
       {
         GUIListItem item = GetItem(i);
@@ -334,8 +335,8 @@ namespace TvPlugin
 
           case ScheduleRecordingType.WorkingDays:
             strTime = String.Format("{0}-{1} {2}-{3}",
-                                    GUILocalizeStrings.Get(657), //657=Mon
-                                    GUILocalizeStrings.Get(661), //661=Fri
+                                    GUILocalizeStrings.Get(weekEndTool.GetText(DayType.FirstWorkingDay)),
+                                    GUILocalizeStrings.Get(weekEndTool.GetText(DayType.LastWorkingDay)),
                                     rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                     rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
             strType = GUILocalizeStrings.Get(648);
@@ -344,8 +345,8 @@ namespace TvPlugin
 
           case ScheduleRecordingType.Weekends:
             strTime = String.Format("{0}-{1} {2}-{3}",
-                                    GUILocalizeStrings.Get(662), //662=Sat
-                                    GUILocalizeStrings.Get(663), //6613Sun
+                                    GUILocalizeStrings.Get(weekEndTool.GetText(DayType.FirstWeekendDay)),
+                                    GUILocalizeStrings.Get(weekEndTool.GetText(DayType.LastWeekendDay)),
                                     rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                     rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
             strType = GUILocalizeStrings.Get(649);
@@ -564,7 +565,8 @@ namespace TvPlugin
 
     private void ChangeType(Schedule rec)
     {
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
         dlg.Reset();
@@ -578,8 +580,8 @@ namespace TvPlugin
         {
           dlg.Add(GUILocalizeStrings.Get(i));
         }
-        dlg.Add(GUILocalizeStrings.Get(672)); // 672=Record Mon-Fri
-        dlg.Add(GUILocalizeStrings.Get(1051)); // 1051=Record Sat-Sun 
+        dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WorkingDays)));
+        dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WeekendDays)));
         switch ((ScheduleRecordingType) rec.ScheduleType)
         {
           case ScheduleRecordingType.Once:
@@ -631,11 +633,11 @@ namespace TvPlugin
             rec.ScheduleType = (int) ScheduleRecordingType.Daily;
             rec.Canceled = Schedule.MinSchedule;
             break;
-          case 5: //Mo-Fi
+          case 5: //WorkingDays
             rec.ScheduleType = (int) ScheduleRecordingType.WorkingDays;
             rec.Canceled = Schedule.MinSchedule;
             break;
-          case 6: //Sat-Sun
+          case 6: //Weekends
             rec.ScheduleType = (int) ScheduleRecordingType.Weekends;
             rec.Canceled = Schedule.MinSchedule;
             break;
@@ -650,6 +652,7 @@ namespace TvPlugin
 
     private string GetRecType(ScheduleRecordingType recType)
     {
+      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
       string strType = String.Empty;
       switch (recType)
       {
@@ -666,10 +669,10 @@ namespace TvPlugin
           strType = GUILocalizeStrings.Get(647); //Once
           break;
         case ScheduleRecordingType.WorkingDays:
-          strType = GUILocalizeStrings.Get(680); //Mon-Fri
+          strType = GUILocalizeStrings.Get(weekEndTool.GetText(DayType.WorkingDays)); //Working Days
           break;
         case ScheduleRecordingType.Weekends:
-          strType = GUILocalizeStrings.Get(1050); //Sat-Sun
+          strType = GUILocalizeStrings.Get(weekEndTool.GetText(DayType.WeekendDays)); //Weekend Days
           break;
         case ScheduleRecordingType.Weekly:
           strType = GUILocalizeStrings.Get(679); //Weekly

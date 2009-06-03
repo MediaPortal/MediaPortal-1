@@ -1141,6 +1141,7 @@ namespace TvPlugin
 
     private void OnRecord(Program program)
     {
+      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
       TvServer server = new TvServer();
       if (program == null)
       {
@@ -1162,8 +1163,8 @@ namespace TvPlugin
         {
           dlg.Add(GUILocalizeStrings.Get(i));
         }
-        dlg.Add(GUILocalizeStrings.Get(672)); // 672=Record Mon-Fri
-        dlg.Add(GUILocalizeStrings.Get(1051)); // 1051=Record Sat-Sun
+        dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WorkingDays)));
+        dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WeekendDays)));
 
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel == -1)
@@ -1225,10 +1226,10 @@ namespace TvPlugin
           case 5: //daily
             rec.ScheduleType = (int) ScheduleRecordingType.Daily;
             break;
-          case 6: //Mo-Fi
+          case 6: //WorkingDays
             rec.ScheduleType = (int) ScheduleRecordingType.WorkingDays;
             break;
-          case 7: //Sat-Sun
+          case 7: //Weekends
             rec.ScheduleType = (int) ScheduleRecordingType.Weekends;
             break;
         }

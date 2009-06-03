@@ -893,6 +893,10 @@
     <String id="1054">(wird aufgenommen)</String>
     <String id="1055">(puffern)</String>
     <String id="1056">(nicht verfügbar)</String>
+    <String id="1057">Sontags bis Donnerstags</String>
+    <String id="1058">Freitags und Samstags</String>
+    <String id="1059">Sonntag - Donnerstag</String>
+    <String id="1060">Fr+Sa</String>
     <String id="1061">Wechseldatenspeicher</String>
     <String id="1062">Objekt</String>
     <String id="1064">Lesezeichen</String>

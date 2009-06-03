@@ -24,7 +24,6 @@
 #region Usings
 using System;
 using System.Collections.Generic;
-using System.Text;
 using TvDatabase;
 using TvLibrary.Interfaces;
 using TvEngine.PowerScheduler.Interfaces;
@@ -48,7 +47,7 @@ namespace TvEngine.PowerScheduler.Handlers
         IPowerScheduler ips = GlobalServiceProvider.Instance.Get<IPowerScheduler>();
         if (ips != null)
         {
-          ips.OnPowerSchedulerEvent += new PowerSchedulerEventHandler(ScheduledRecordingsHandler_OnPowerSchedulerEvent);
+          ips.OnPowerSchedulerEvent += ScheduledRecordingsHandler_OnPowerSchedulerEvent;
           if (ips.Settings != null)
           {
             _idleTimeout = ips.Settings.IdleTimeout;
@@ -129,12 +128,13 @@ namespace TvEngine.PowerScheduler.Handlers
     /// </summary>
     /// <param name="schedule">Schedule to determine next wakeup time for</param>
     /// <returns>DateTime indicating the wakeup time for this Schedule</returns>
-    private DateTime GetWakeupTime(Schedule schedule)
+    private static DateTime GetWakeupTime(Schedule schedule)
     {
       ScheduleRecordingType type = (ScheduleRecordingType)schedule.ScheduleType;
       DateTime now = DateTime.Now;
       DateTime start = new DateTime(now.Year, now.Month, now.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, schedule.StartTime.Second);
       DateTime stop = new DateTime(now.Year, now.Month, now.Day, schedule.EndTime.Hour, schedule.EndTime.Minute, schedule.EndTime.Second);
+      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
       switch (type)
       {
         case ScheduleRecordingType.Once:
@@ -146,30 +146,27 @@ namespace TvEngine.PowerScheduler.Handlers
           return start.AddMinutes(-schedule.PreRecordInterval);
         case ScheduleRecordingType.Weekends:
           // check if it's a weekend currently
-          if (now.DayOfWeek == DayOfWeek.Saturday || now.DayOfWeek == DayOfWeek.Sunday)
+          if (weekEndTool.IsWeekend(now.DayOfWeek))
           {
             // check if schedule has been due already today
             if (now > stop.AddMinutes(schedule.PostRecordInterval))
             {
               // if so, add appropriate days to wakeup time
-              if (now.DayOfWeek == DayOfWeek.Saturday)
-                start = start.AddDays(1);
-              else
-                start = start.AddDays(6);
+              start = weekEndTool.IsFirstWeekendDay(now.DayOfWeek) ? start.AddDays(1) : start.AddDays(6);
             }
           }
           else
           {
             // it's not a weekend so calculate number of days to add to current time
-            int days = (int)DayOfWeek.Saturday - (int)now.DayOfWeek;
+            int days = (int)weekEndTool.FirstWeekendDay - (int)now.DayOfWeek;
             start = start.AddDays(days);
           }
           return start.AddMinutes(-schedule.PreRecordInterval);
         case ScheduleRecordingType.WorkingDays:
           // check if current time is in weekend; if so add appropriate number of days
-          if (now.DayOfWeek == DayOfWeek.Saturday)
+          if (now.DayOfWeek == weekEndTool.FirstWeekendDay)
             start = start.AddDays(2);
-          else if (now.DayOfWeek == DayOfWeek.Sunday)
+          else if (now.DayOfWeek == weekEndTool.SecondWeekendDay)
             start = start.AddDays(1);
           else
           {
@@ -177,10 +174,7 @@ namespace TvEngine.PowerScheduler.Handlers
             if (now > stop.AddMinutes(schedule.PostRecordInterval))
             {
               // schedule has been due, so add appropriate number of days
-              if (now.DayOfWeek < DayOfWeek.Friday)
-                start = start.AddDays(1);
-              else
-                start = start.AddDays(3);
+              start = now.DayOfWeek < (weekEndTool.FirstWeekendDay - 1) ? start.AddDays(1) : start.AddDays(3);
             }
           }
           return start.AddMinutes(-schedule.PreRecordInterval);

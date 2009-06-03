@@ -354,7 +354,8 @@ namespace TvService
 
       if (type == ScheduleRecordingType.Weekends)
       {
-        if (currentTime.DayOfWeek == DayOfWeek.Saturday || currentTime.DayOfWeek == DayOfWeek.Sunday)
+        WeekEndTool weekEndTool = Setting.GetWeekEndTool();
+        if (weekEndTool.IsWeekend(currentTime.DayOfWeek))
         {
           DateTime start = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, schedule.StartTime.Second);
           DateTime end = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.EndTime.Hour, schedule.EndTime.Minute, schedule.EndTime.Second);
@@ -375,7 +376,8 @@ namespace TvService
       }
       if (type == ScheduleRecordingType.WorkingDays)
       {
-        if (currentTime.DayOfWeek != DayOfWeek.Saturday && currentTime.DayOfWeek != DayOfWeek.Sunday)
+        WeekEndTool weekEndTool = Setting.GetWeekEndTool();
+        if (weekEndTool.IsWorkingDay(currentTime.DayOfWeek))
         {
           DateTime start = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, schedule.StartTime.Second);
           DateTime end = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.EndTime.Hour, schedule.EndTime.Minute, schedule.EndTime.Second);

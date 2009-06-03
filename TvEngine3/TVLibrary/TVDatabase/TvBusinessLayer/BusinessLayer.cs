@@ -2583,11 +2583,12 @@ namespace TvDatabase
         return recordings;
       }
 
-      if (rec.ScheduleType == (int)ScheduleRecordingType.WorkingDays)
+      if (rec.ScheduleType == (int) ScheduleRecordingType.WorkingDays)
       {
+        WeekEndTool weekEndTool = Setting.GetWeekEndTool();
         for (int i = 0; i < days; ++i)
         {
-          if (dtDay.DayOfWeek != DayOfWeek.Saturday && dtDay.DayOfWeek != DayOfWeek.Sunday)
+          if (weekEndTool.IsWorkingDay(dtDay.DayOfWeek))
           {
             Schedule recNew = rec.Clone();
             recNew.ScheduleType = (int)ScheduleRecordingType.Once;
@@ -2622,10 +2623,11 @@ namespace TvDatabase
         IList<Program> progList = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName,
                                                               rec.ReferencedChannel());
 
+        WeekEndTool weekEndTool = Setting.GetWeekEndTool();
         foreach (Program prog in progList)
         {
           if ((rec.IsRecordingProgram(prog, false)) &&
-              (prog.StartTime.DayOfWeek == DayOfWeek.Saturday || prog.StartTime.DayOfWeek == DayOfWeek.Sunday))
+              (weekEndTool.IsWeekend(prog.StartTime.DayOfWeek)) )
           {
             Schedule recNew = rec.Clone();
             recNew.ScheduleType = (int)ScheduleRecordingType.Once;

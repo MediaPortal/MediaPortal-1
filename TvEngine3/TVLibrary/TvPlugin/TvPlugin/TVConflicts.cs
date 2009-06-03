@@ -49,10 +49,6 @@ namespace TvPlugin
       GetID = (int) Window.WINDOW_TV_CONFLICTS;
     }
 
-    ~GUITVConflicts()
-    {
-    }
-
     #endregion
 
     #region overrides
@@ -227,6 +223,7 @@ namespace TvPlugin
 
     private void SetLabels()
     {
+      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
       for (int i = 0; i < GetItemCount(); ++i)
       {
         GUIListItem item = GetItem(i);
@@ -262,8 +259,8 @@ namespace TvPlugin
 
           case (int) ScheduleRecordingType.WorkingDays:
             strTime = String.Format("{0}-{1} {2}-{3}",
-                                    GUILocalizeStrings.Get(657), //657=Mon
-                                    GUILocalizeStrings.Get(661), //661=Fri
+                                    GUILocalizeStrings.Get(weekEndTool.GetText(DayType.FirstWorkingDay)),
+                                    GUILocalizeStrings.Get(weekEndTool.GetText(DayType.LastWorkingDay)),
                                     rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                     rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
             strType = GUILocalizeStrings.Get(648);
@@ -272,8 +269,8 @@ namespace TvPlugin
 
           case (int) ScheduleRecordingType.Weekends:
             strTime = String.Format("{0}-{1} {2}-{3}",
-                                    GUILocalizeStrings.Get(662), //662=Sat
-                                    GUILocalizeStrings.Get(663), //663=Sun
+                                    GUILocalizeStrings.Get(weekEndTool.GetText(DayType.FirstWeekendDay)),
+                                    GUILocalizeStrings.Get(weekEndTool.GetText(DayType.LastWeekendDay)),
                                     rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                     rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
             strType = GUILocalizeStrings.Get(649);

@@ -148,6 +148,27 @@ namespace TvDatabase
       }
     }
 
+    public static WeekEndTool GetWeekEndTool()
+    {
+      SqlBuilder sb;
+      try
+      {
+        sb = new SqlBuilder(StatementType.Select, typeof(Setting));
+      } catch (TypeInitializationException ex)
+      {
+        Log.Error("Exception in Setting.GetWeekendTool() with Message {0}", ex.Message);
+        return new WeekEndTool(false);
+      }
+
+      sb.AddConstraint(Operator.Equals, "tag", "FirstWorkingDay");
+      SqlStatement stmt = sb.GetStatement(true);
+      IList<Setting> settingsFound = ObjectFactory.GetCollection<Setting>(stmt.Execute());
+      if (settingsFound.Count == 0)
+      {
+        return new WeekEndTool(false);
+      }
+      return new WeekEndTool(Convert.ToInt32(settingsFound[0].value)!=0);
+    }
     #endregion
   }
 }

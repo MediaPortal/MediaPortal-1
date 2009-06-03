@@ -75,7 +75,7 @@ namespace SetupTv.Sections
             break;
           case ScheduleRecordingType.WorkingDays:
             item.ImageIndex = 0;
-            item.SubItems.Add("Mon-Fri");
+            item.SubItems.Add("WorkingDays");
             item.SubItems.Add(String.Format("{0}", schedule.StartTime.ToString("HH:mm:ss", mmddFormat)));
             break;
           case ScheduleRecordingType.Once:

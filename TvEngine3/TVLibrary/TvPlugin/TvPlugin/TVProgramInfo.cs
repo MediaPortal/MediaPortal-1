@@ -1106,6 +1106,7 @@ namespace TvPlugin
 
     private void OnAdvancedRecord()
     {
+      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
       if (CurrentProgram == null)
       {
         return;
@@ -1126,8 +1127,8 @@ namespace TvPlugin
         {
           dlg.AddLocalizedString(i);
         }
-        dlg.AddLocalizedString(672); // 672=Record Mon-Fri
-        dlg.AddLocalizedString(1051); // 1051=Record Sat-Sun
+        dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WorkingDays)));
+        dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WeekendDays)));
 
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel == -1)
@@ -1136,27 +1137,27 @@ namespace TvPlugin
         }
 
         int scheduleType = (int)ScheduleRecordingType.Once;
-        switch (dlg.SelectedId)
+        switch (dlg.SelectedLabel)    
         {
-          case 611: //once
+          case 0: //once
             scheduleType = (int)ScheduleRecordingType.Once;
             break;
-          case 612: //everytime, this channel
+          case 1: //everytime, this channel
             scheduleType = (int)ScheduleRecordingType.EveryTimeOnThisChannel;
             break;
-          case 613: //everytime, all channels
+          case 2: //everytime, all channels
             scheduleType = (int)ScheduleRecordingType.EveryTimeOnEveryChannel;
             break;
-          case 614: //weekly
+          case 3: //weekly
             scheduleType = (int)ScheduleRecordingType.Weekly;
             break;
-          case 615: //daily
+          case 4: //daily
             scheduleType = (int)ScheduleRecordingType.Daily;
             break;
-          case 672: //Mo-Fi
+          case 5: //WorkingDays
             scheduleType = (int)ScheduleRecordingType.WorkingDays;
             break;
-          case 1051: //Record Sat-Sun
+          case 6: //Weekends
             scheduleType = (int)ScheduleRecordingType.Weekends;
             break;
         }

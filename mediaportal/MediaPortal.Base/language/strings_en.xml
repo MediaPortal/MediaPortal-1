@@ -894,6 +894,10 @@
     <String id="1054">(recording)</String>
     <String id="1055">(timeshifting)</String>
     <String id="1056">(unavailable)</String>
+    <String id="1057">Record Sun-Thu</String>
+    <String id="1058">Record Fri-Sat</String>
+    <String id="1059">Sun-Thu</String>
+    <String id="1060">Fri-Sat</String>
     <String id="1061">Removable</String>
     <String id="1062">Object</String>
     <String id="1064">Bookmarks</String>

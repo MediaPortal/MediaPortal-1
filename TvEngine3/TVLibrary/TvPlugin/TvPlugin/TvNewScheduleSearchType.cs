@@ -49,10 +49,6 @@ namespace TvPlugin
       GetID = (int) Window.WINDOW_TV_SEARCHTYPE;
     }
 
-    ~TvNewScheduleSearchType()
-    {
-    }
-
     public override bool IsTv
     {
       get { return true; }
@@ -119,7 +115,8 @@ namespace TvPlugin
 
     private void OnQuickRecord()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
         return;
@@ -146,15 +143,15 @@ namespace TvPlugin
         return;
       }
 
-      Channel selectedChannel = ((GroupMap) channels[dlg.SelectedLabel]).ReferencedChannel() as Channel;
+      Channel selectedChannel = (channels[dlg.SelectedLabel]).ReferencedChannel();
       dlg.Reset();
       dlg.SetHeading(616); //select recording type
       for (int i = 611; i <= 615; ++i)
       {
         dlg.Add(GUILocalizeStrings.Get(i));
       }
-      dlg.Add(GUILocalizeStrings.Get(672)); // 672=Record Mon-Fri
-      dlg.Add(GUILocalizeStrings.Get(1051)); // 1051=Record Sat-Sun
+      dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WorkingDays)));
+      dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WeekendDays)));
 
       Schedule rec = new Schedule(selectedChannel.IdChannel, "", Schedule.MinSchedule, Schedule.MinSchedule);
 
@@ -183,10 +180,10 @@ namespace TvPlugin
           {
             continue;
           }
-          string time = "";
+          string time;
           if (hour < 10)
           {
-            time = "0" + hour.ToString();
+            time = "0" + hour;
           }
           else
           {
@@ -195,7 +192,7 @@ namespace TvPlugin
           time += ":";
           if (minute < 10)
           {
-            time = time + "0" + minute.ToString();
+            time = time + "0" + minute;
           }
           else
           {
@@ -247,7 +244,8 @@ namespace TvPlugin
 
     private void OnAdvancedRecord()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
         return;
@@ -275,15 +273,15 @@ namespace TvPlugin
         return;
       }
 
-      Channel selectedChannel = ((GroupMap) channels[dlg.SelectedLabel]).ReferencedChannel() as Channel;
+      Channel selectedChannel = (channels[dlg.SelectedLabel]).ReferencedChannel();
       dlg.Reset();
       dlg.SetHeading(616); //select recording type
       for (int i = 611; i <= 615; ++i)
       {
         dlg.Add(GUILocalizeStrings.Get(i));
       }
-      dlg.Add(GUILocalizeStrings.Get(672)); // 672=Record Mon-Fri
-      dlg.Add(GUILocalizeStrings.Get(1051)); // 1051=Record Sat-Sun
+      dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WorkingDays)));
+      dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WeekendDays)));
 
       Schedule rec = new Schedule(selectedChannel.IdChannel, "", Schedule.MinSchedule, Schedule.MinSchedule);
 
@@ -314,10 +312,10 @@ namespace TvPlugin
         case 4: //daily
           rec.ScheduleType = (int) ScheduleRecordingType.Daily;
           break;
-        case 5: //Mo-Fi
+        case 5: //WorkingDays
           rec.ScheduleType = (int) ScheduleRecordingType.WorkingDays;
           break;
-        case 6: //Sat-Sun
+        case 6: //Weekend
           rec.ScheduleType = (int) ScheduleRecordingType.Weekends;
           break;
       }
@@ -361,10 +359,10 @@ namespace TvPlugin
           {
             continue;
           }
-          string time = "";
+          string time;
           if (hour < 10)
           {
-            time = "0" + hour.ToString();
+            time = "0" + hour;
           }
           else
           {
@@ -373,7 +371,7 @@ namespace TvPlugin
           time += ":";
           if (minute < 10)
           {
-            time = time + "0" + minute.ToString();
+            time = time + "0" + minute;
           }
           else
           {

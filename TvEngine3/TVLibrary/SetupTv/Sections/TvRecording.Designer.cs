@@ -32,6 +32,7 @@ namespace SetupTv.Sections
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tpSettings = new System.Windows.Forms.TabPage();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.comboBoxFirstWorkingDay = new System.Windows.Forms.ComboBox();
       this.numericUpDownPostRec = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownPreRec = new System.Windows.Forms.NumericUpDown();
       this.checkBoxCreateTagInfoXML = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -39,6 +40,7 @@ namespace SetupTv.Sections
       this.checkBoxAutoDelete = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label4 = new System.Windows.Forms.Label();
       this.label3 = new System.Windows.Forms.Label();
+      this.label12 = new System.Windows.Forms.Label();
       this.label2 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
       this.tpCustom = new System.Windows.Forms.TabPage();
@@ -137,6 +139,7 @@ namespace SetupTv.Sections
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.comboBoxFirstWorkingDay);
       this.groupBox1.Controls.Add(this.numericUpDownPostRec);
       this.groupBox1.Controls.Add(this.numericUpDownPreRec);
       this.groupBox1.Controls.Add(this.checkBoxCreateTagInfoXML);
@@ -144,6 +147,7 @@ namespace SetupTv.Sections
       this.groupBox1.Controls.Add(this.checkBoxAutoDelete);
       this.groupBox1.Controls.Add(this.label4);
       this.groupBox1.Controls.Add(this.label3);
+      this.groupBox1.Controls.Add(this.label12);
       this.groupBox1.Controls.Add(this.label2);
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Location = new System.Drawing.Point(6, 3);
@@ -151,6 +155,18 @@ namespace SetupTv.Sections
       this.groupBox1.Size = new System.Drawing.Size(445, 365);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
+      // 
+      // comboBoxFirstWorkingDay
+      // 
+      this.comboBoxFirstWorkingDay.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxFirstWorkingDay.FormattingEnabled = true;
+      this.comboBoxFirstWorkingDay.Items.AddRange(new object[] {
+            "Monday",
+            "Sunday"});
+      this.comboBoxFirstWorkingDay.Location = new System.Drawing.Point(125, 191);
+      this.comboBoxFirstWorkingDay.Name = "comboBoxFirstWorkingDay";
+      this.comboBoxFirstWorkingDay.Size = new System.Drawing.Size(67, 21);
+      this.comboBoxFirstWorkingDay.TabIndex = 12;
       // 
       // numericUpDownPostRec
       // 
@@ -234,6 +250,15 @@ namespace SetupTv.Sections
       this.label3.Size = new System.Drawing.Size(151, 13);
       this.label3.TabIndex = 4;
       this.label3.Text = "minute(s) before program starts";
+      // 
+      // label12
+      // 
+      this.label12.AutoSize = true;
+      this.label12.Location = new System.Drawing.Point(27, 194);
+      this.label12.Name = "label12";
+      this.label12.Size = new System.Drawing.Size(92, 13);
+      this.label12.TabIndex = 1;
+      this.label12.Text = "First working day: ";
       // 
       // label2
       // 
@@ -868,5 +893,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.GroupBox groupBoxRecordSettings;
     private System.Windows.Forms.TextBox textBoxRecordingFormat;
     private System.Windows.Forms.Button buttonChangeChannel;
+    private System.Windows.Forms.ComboBox comboBoxFirstWorkingDay;
+    private System.Windows.Forms.Label label12;
   }
 }

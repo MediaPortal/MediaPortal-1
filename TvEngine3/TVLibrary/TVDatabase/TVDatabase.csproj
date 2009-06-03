@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{0FD8DEAE-37A4-49CC-A7BE-E86E0E0D85BD}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -92,6 +92,7 @@
     <Compile Include="Setting.cs" />
     <Compile Include="Timespan.cs" />
     <Compile Include="TuningDetail.cs" />
+    <Compile Include="WeekEndTool.cs" />
     <Compile Include="TvMovieMapping.cs" />
     <Compile Include="Version.cs" />
     <Compile Include="CardGroup.cs" />

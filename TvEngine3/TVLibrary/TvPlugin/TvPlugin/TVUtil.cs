@@ -29,7 +29,6 @@ namespace TvPlugin
   /// <summary>
   /// Helper class which can be used to determine which tv program is
   /// running at a specific time and date
-  /// <seealso cref="MediaPortal.TV.Database.Program"/>
   /// </summary>
   public class TVUtil
   {
@@ -51,6 +50,7 @@ namespace TvPlugin
 
     public List<Schedule> GetRecordingTimes(Schedule rec)
     {
+      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
       TvBusinessLayer layer = new TvBusinessLayer();
       List<Schedule> recordings = new List<Schedule>();
 
@@ -96,7 +96,7 @@ namespace TvPlugin
       {
         for (int i = 0; i < _days; ++i)
         {
-          if (dtDay.DayOfWeek != DayOfWeek.Saturday && dtDay.DayOfWeek != DayOfWeek.Sunday)
+          if (weekEndTool.IsWorkingDay(dtDay.DayOfWeek))
           {
             Schedule recNew = rec.Clone();
             recNew.ScheduleType = (int) ScheduleRecordingType.Once;
@@ -133,8 +133,7 @@ namespace TvPlugin
 
         foreach (Program prog in progList)
         {
-          if ((rec.IsRecordingProgram(prog, false)) &&
-              (prog.StartTime.DayOfWeek == DayOfWeek.Saturday || prog.StartTime.DayOfWeek == DayOfWeek.Sunday))
+          if ((rec.IsRecordingProgram(prog, false)) && (weekEndTool.IsWeekend(prog.StartTime.DayOfWeek)))
           {
             Schedule recNew = rec.Clone();
             recNew.ScheduleType = (int) ScheduleRecordingType.Once;

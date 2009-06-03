@@ -713,6 +713,7 @@ namespace TvDatabase
       {
         return false;
       }
+      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
 
       ScheduleRecordingType scheduleRecordingType = (ScheduleRecordingType) ScheduleType;
       switch (scheduleRecordingType)
@@ -773,7 +774,7 @@ namespace TvDatabase
           }
           break;
         case ScheduleRecordingType.WorkingDays:
-          if (program.StartTime.DayOfWeek >= DayOfWeek.Monday && program.StartTime.DayOfWeek <= DayOfWeek.Friday)
+          if (weekEndTool.IsWorkingDay(program.StartTime.DayOfWeek))
           {
             if (program.IdChannel == IdChannel)
             {
@@ -797,7 +798,7 @@ namespace TvDatabase
           break;
 
         case ScheduleRecordingType.Weekends:
-          if (program.StartTime.DayOfWeek == DayOfWeek.Saturday || program.StartTime.DayOfWeek == DayOfWeek.Sunday)
+          if (weekEndTool.IsWeekend(program.StartTime.DayOfWeek))
           {
             if (program.IdChannel == IdChannel)
             {
