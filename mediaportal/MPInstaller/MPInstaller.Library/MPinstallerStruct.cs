@@ -578,9 +578,9 @@ namespace MediaPortal.MPInstaller
         {
           File.Delete(t);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          //MessageBox.Show(ex.Message + "\n" + ex.StackTrace); // Probably file access error
+          MessageBox.Show(ex.Message + "\n" + ex.StackTrace); // Probably file access error
         }
       }
       XmlNode nodeproperties = ver.SelectSingleNode("Properties");
