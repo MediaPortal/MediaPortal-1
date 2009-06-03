@@ -266,6 +266,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="TVE2-Recorder\TVE2-Recorder.cs" />
     <Compile Include="TvMovie\TvMovie.cs" />
     <Compile Include="TvMovie\TvMovieDatabase.cs" />
     <Compile Include="TvMovie\TvMovieSchedules.cs" />
