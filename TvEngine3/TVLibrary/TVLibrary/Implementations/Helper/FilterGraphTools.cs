@@ -1005,8 +1005,12 @@ namespace TvLibrary.Implementations.DVB
         object o = Activator.CreateInstance(type);
         retval = true;
         Marshal.ReleaseComObject(o);
-      } catch (Exception ex) { Log.Log.WriteFile("Error while checking if a com object is installed - {0} - {1}", clsid, ex); }
-
+      }
+      catch (Exception ex)
+      {
+        // If we want to test for failure, we don't need the info in log. this confuses users.
+        //Log.Log.WriteFile("Error while checking if a com object is installed - {0} - {1}", clsid, ex); 
+      }
       return retval;
     }
 
