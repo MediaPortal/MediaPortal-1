@@ -448,6 +448,7 @@
     <String id="517">Erreur fatale, l'action ne peut aboutir</String>
     <String id="518">Effacer ce morceau ?</String>
     <String id="519">Sous-titres off</String>
+    <String id="527">Tri par: Déjà vus</String>
     <String id="528">Album Artistes</String>
     <String id="529">Vue: Grande liste d'icône</String>
     <String id="530">Disque de Photo inséré, voulez-vous l'ouvrir ?</String>
@@ -511,7 +512,7 @@
     <String id="614">Enregistrer toutes les semaines à cette heure</String>
     <String id="615">Enregistrer tous les jours à cette heure</String>
     <String id="616">Sélectionnez le type d'enregistrement</String>
-    <String id="617">Nouvelle alarme</String>
+    <String id="617">Nouveau</String>
     <String id="618">Effacer</String>
     <String id="619">Changer Date/Heure</String>
     <String id="620">Tri par Chaîne</String>
@@ -640,7 +641,7 @@
     <String id="750">Images</String>
     <String id="751">Montrez toutes les chansons de cet artiste</String>
     <String id="752">Aucun enregistrement spécifié</String>
-    <String id="753">Aucune carte TV installé</String>
+    <String id="753">Aucune carte TV installée</String>
     <String id="754">Pas de tuner pour enregistrer la visualisation specifiée</String>
     <String id="755">Pas de tuner pour regarder la télé</String>
     <String id="756">Aucun tuner ne peut recevoir:{0}</String>
@@ -655,8 +656,8 @@
     <String id="765">Pas assez d'espace disque libre</String>
     <String id="766">déjà importé...</String>
     <String id="767">Fichier XMLTV invalide</String>
-    <String id="768">Aucuns canaux trouvés</String>
-    <String id="769">Aucuns programmes trouvés</String>
+    <String id="768">Aucun canal trouvé</String>
+    <String id="769">Aucun programme trouvé</String>
     <String id="770">Aucun fichier xmltv trouvé</String>
     <String id="771">Le PIN entré n'a pas pu être accepté</String>
     <String id="772">Voulez-vous encore essayer ?</String>
@@ -687,9 +688,9 @@
     <String id="810">Carte</String>
     <String id="820">Supprimer l'enregistrement non vu ?</String>
     <String id="830">Enlever statut déjà vu</String>
-    <String id="831">Ejecter le périphérique</String>
-    <String id="832">Ejection impossible:</String>
-    <String id="833">Le périphérique peut être retiré</String>
+    <String id="831">Ejecter le lecteur amovible</String>
+    <String id="832">Impossible d'enlever le lecteur : </String>
+    <String id="833">Le lecteur peut être enlevé</String>
     <String id="850" prefix="Mon ">Réveil</String>
     <String id="851">Liste</String>
     <String id="852">Alarme active</String>
@@ -742,7 +743,7 @@
     <String id="899">WMV</String>
     <String id="900">Reprendre le film à l'endroit laissé ?</String>
     <String id="901">MSN Messenger</String>
-    <String id="902">Contacts connectés</String>
+    <String id="902">Contacts en ligne</String>
     <String id="903">Ouverture de session</String>
     <String id="904">Fermeture de session</String>
     <String id="905">Vous devez d'abord configurer ce plugin</String>
@@ -785,7 +786,7 @@
     <String id="942">Etiré</String>
     <String id="943">Normal</String>
     <String id="944">Original</String>
-    <String id="945">Boîte aux lettres</String>
+    <String id="945">Letterbox 4:3</String>
     <String id="946">Pan et Scan</String>
     <String id="947">Zoom</String>
     <String id="948">En ligne</String>
@@ -836,10 +837,10 @@
     <String id="997">Terminé</String>
     <String id="998">XviD</String>
     <String id="999">Ce plugin vous permet de convertir vos</String>
-    <String id="1000">enregistrements TV dvr-ms en mpg, xvid ou wmv</String>
-    <String id="1001">Attention. Vous devrez avoir le</String>
-    <String id="1002">décodeur vidéo Elecard MPEG2 installé</String>
-    <String id="1003">pour convertir en xvid</String>
+    <String id="1000">enregistrements TV dvr-ms en mpg ou wmv</String>
+    <String id="1001">Attention. Vous devrez avoir vos enregistrements</String>
+    <String id="1002">fonctionnant en audio et vidéo avec MediaPortal</String>
+    <String id="1003">avant d'essayer de transcoder en wmv.</String>
     <String id="1004">A propos du démarrage de l'enregistrement</String>
     <String id="1005">pour la chaîne</String>
     <String id="1006">Permettre à l'enregistrement de démarrer</String>
@@ -934,7 +935,7 @@
     <String id="1110">Garder ancien rec.</String>
     <String id="1111">Utiliser nouveau</String>
     <String id="1112">Laisser conflit</String>
-    <String id="1113">Passer le conflit</String>
+    <String id="1113">Sauter episode(s) en conflit</String>
     <String id="1190">Zoom 14:9</String>
     <String id="1191">Répète Listes</String>
     <String id="1192">Utiliser VMR9 pour flux Web</String>
@@ -976,7 +977,9 @@
     <String id="1514">Timeshifting arrêté par un administrateur</String>
     <String id="1515">Timeshifting arrêté par le serveur télé</String>
     <String id="1516">Timeshifting arrêté pour une raison inconnue</String>
-    <String id="1517">Timeshifting arrêté\rpar une autre personne</String>
+    <String id="1517">Timeshifting arrêté\rpar un autre utilisateur</String>
+    <String id="1518">Impossible de créer un graphe</String>
+    <String id="1519">Pas d'encodeur logiciel supporté d'installé</String>
     <String id="1950" prefix="Mon ">Etat</String>
     <String id="1951">Disque dur</String>
     <String id="1952">Ventilateur</String>
@@ -1125,7 +1128,7 @@
     <String id="2122">démarre !</String>
     <String id="2123">Infos Disque</String>
     <String id="2124">Impossible d'effacer : le media n'est pas inscriptible</String>
-    <String id="2125">Effacer le CD...</String>
+    <String id="2125">Efface le CD...</String>
     <String id="2126">Ejecter le CD</String>
     <String id="2127">Le CD n'est pas inscriptible</String>
     <String id="2128">Préparation gravure : temps estimé :</String>
@@ -1182,7 +1185,7 @@
     <String id="2505">Liens vers d'autres articles:</String>
     <String id="2506">Pas de lien pour cet article.</String>
     <String id="2507">Images pour cet article:</String>
-    <String id="2508">Pas d'image référencées pour cet article.</String>
+    <String id="2508">Pas d'image référencée pour cet article.</String>
     <String id="2509">Cette page est seulement une redirection.</String>
     <String id="2510">Choisissez la cible de redirection à partir de la liste de liens.</String>
     <String id="2511">Liens</String>
@@ -1209,6 +1212,7 @@
     <String id="2610">Polonais</String>
     <String id="2611">Tchèque</String>
     <String id="2612">Hongrois</String>
+    <String id="2700">Ouvre menu CI</String>
     <String id="2997">h</String>
     <String id="2998">min</String>
     <String id="2999">sec</String>
@@ -1230,7 +1234,7 @@
     <String id="3015">Jours</String>
     <String id="3016">Déjà Terminé</String>
     <String id="3017">Démarré</String>
-    <String id="3018">Minute Restant</String>
+    <String id="3018">Minutes Restantes</String>
     <String id="3019">Séries</String>
     <String id="3020">Episode</String>
     <String id="3021">Partie</String>
@@ -1305,7 +1309,7 @@
     <String id="6003">Désentrelacement</String>
     <String id="6004">Aspect ratio</String>
     <String id="6005">Tampon timeshift</String>
-    <String id="6006">Allumer automatique la TV</String>
+    <String id="6006">Allumage automatique de la TV</String>
     <String id="6007">Options d'enregistrement</String>
     <String id="6008">Tri des canaux</String>
     <String id="6009">Guide DVB</String>
@@ -1375,19 +1379,19 @@
     <String id="9004">Compensation de l'exposition:</String>
     <String id="9005">Vitesse d'obturation:</String>
     <String id="9006">Date :</String>
-    <String id="9007">Fstop:</String>
+    <String id="9007">F-stop:</String>
     <String id="9008">Temps d'exposition :</String>
     <String id="9009">Modèle de l'appareil :</String>
     <String id="9010">Fabriquant :</String>
     <String id="9011">Voir commentaires :</String>
     <String id="9100" prefix="Mon">Mini affichage</String>
-    <String id="9101">Plugin non configuré</String>
-    <String id="9102">Veuillez lancer la configuraton de MediaPortal au préalable !</String>
+    <String id="9101">Le plugin n'est pas configuré.</String>
+    <String id="9102">Veuillez lancer la configuration de MediaPortal au préalable !</String>
     <String id="9103">Options du clavier</String>
     <String id="9104">Options d'affichage</String>
     <String id="9105">Afficher les options de contrôle</String>
     <String id="9106">Options de l'égaliseur</String>
-    <String id="9107">Options de la lumière d'ambiance</String>
+    <String id="9107">Options du Retro-éclairage</String>
     <String id="9108">Options de la télécommande</String>
     <String id="9109">Etat du moniteur</String>
     <String id="9110">Contraste</String>
@@ -1397,6 +1401,8 @@
     <String id="9114">Bleu</String>
     <String id="9115">Inverser l'affichage</String>
     <String id="9116">Eteindre l'écran avec une vidéo</String>
+    <String id="9117">Activer actions d'affichage</String>
+    <String id="9118">Action d'affichage de l'heure</String>
     <String id="9119">Eteindre l'écran pendant la veille</String>
     <String id="9120">Délai de mise en veille</String>
     <String id="9121">Affichage du volume</String>
@@ -1412,7 +1418,7 @@
     <String id="9131">Editeur d'icône</String>
     <String id="9132">Activer l'égaliseur</String>
     <String id="9133">Apparence de l'égaliseur</String>
-    <String id="9134">Lisser l'égaliseur</String>
+    <String id="9134">Utiliser lissage Equaliseur</String>
     <String id="9135">Démarrage différé</String>
     <String id="9136">Durée du différé</String>
     <String id="9137">Afficher le titre</String>
@@ -1440,7 +1446,7 @@
     <String id="10103" prefix="Mon ">Démineur</String>
     <String id="10104">Mini EPG</String>
     <String id="10105">Maintenant</String>
-    <String id="11000">Crop settings</String>
+    <String id="11000">Réglages Rogner</String>
     <String id="11001">Haut :</String>
     <String id="11002">Bas :</String>
     <String id="11003">Gauche :</String>
@@ -1470,24 +1476,25 @@
     <String id="13033">Les lancés récemment</String>
     <String id="13034">Titre</String>
     <String id="13041">Affiche Infos</String>
-    <String id="14001">Extensions</String>
+    <String id="14001" prefix="Mes ">Extensions</String>
     <String id="14002">Vues</String>
     <String id="14003">Extensions installées</String>
     <String id="14004">Extensions en ligne</String>
-    <String id="14005">Installer l'extension</String>
-    <String id="14006">Désinstaller l'extension</String>
-    <String id="14007">Réinstaller l'extension</String>
-    <String id="14008">Annuler la dernière action</String>
-    <String id="14009">Cette action sera prise en compte au prochain démarrage</String>
+    <String id="14005">Installer une extension</String>
+    <String id="14006">Désinstaller une extension</String>	
+    <String id="14007">RéInstaller une extension</String>
+    <String id="14008">Annuler action précédente</String>
+    <String id="14009">Au prochain redémarrage, cette action sera executée</String>
     <String id="14010">Télécharger l'extension</String>
-    <String id="14011">Choisir une option</String>
-    <String id="14012">Version de MP non supportée ! (version {0} requise)</String>
-    <String id="14013">Voulez-vous continuer ?</String>
-    <String id="14014">Mise à jour en ligne</String>
-    <String id="14015">Mises à jour</String>
-    <String id="14016">Trier par: téléchargements</String>
-    <String id="14017">Trier par: popularité</String>
-    <String id="16001">Mixage de soirée</String>
+    <String id="14011">Selectionner une option</String>
+    <String id="14012">Version de Mediaportal non supportée !(Version demandée {0})</String>	
+    <String id="14013">Voulez-vous continuer ?</String>		
+    <String id="14014">Mise à jour infos en ligne</String>			
+    <String id="14015">Mises à jour</String>			
+    <String id="14016">Tri par: Téléchargement</String>
+    <String id="14017">Tri par: Classement</String>
+    <String id="14018">Installer Mise à jour</String>		
+    <String id="16001">Au hasard</String>
     <String id="19001" prefix="Mon ">Tetris</String>
     <String id="19002">Nouvelle partie</String>
     <String id="19003">Musique</String>
@@ -1495,7 +1502,7 @@
     <String id="19005">Score</String>
     <String id="19006">Niveau</String>
     <String id="19007">Lignes</String>
-    <String id="19008">Scores</String>
+    <String id="19008">Meilleur score</String>
     <String id="19009">Suivant</String>
     <String id="19010">Appuyez ou cliquez pour commencer...</String>
     <String id="19011">En pause</String>
@@ -1594,12 +1601,13 @@
     <String id="34002">Ami : </String>
     <String id="34003">Voisin :</String>
     <String id="34004">Groupe : </String>
+    <String id="34005">Changer compte utilisateur</String>
     <String id="34010">Aime</String>
     <String id="34011">Bannir</String>
     <String id="34012">Sauter</String>
     <String id="34013">Mode découverte</String>
-    <String id="34014">Soumettre profil</String>
-    <String id="34015">Recharger</String>
+    <String id="34014">Activer scrobbling</String>
+    <String id="34015">Recharger paramètres</String>
     <String id="34016">Lire le morceau d'un artiste similaire</String>
     <String id="34017">Lire un morceau avec les mêmes caractéristiques</String>
     <String id="34020">Flux courant :</String>
@@ -1607,8 +1615,8 @@
     <String id="34031">Pas d'ami</String>
     <String id="34032">Aucun artiste</String>
     <String id="34039">Artiste similaire :</String>
-    <String id="34040">Radio recommandée</String>
-    <String id="34041">Balayer dans Tag : </String>
+    <String id="34040">Mes recommandations</String>
+    <String id="34041">Similaire au tag : </String>
     <String id="34042">Pas de Tag encore choisi</String>
     <String id="34043">Radio personnelle de: </String>
     <String id="34044">Piste préférée de: </String>
@@ -1727,6 +1735,8 @@
     <String id="100707">EPG -&gt; Associer les chaînes</String>
     <String id="100708">Sauter les réglages</String>
     <String id="100709">Réglages serveur Télé</String>
+    <String id="100746">Type recherche TV</String>
+    <String id="100747">Recherche TV</String>
     <String id="100748">Infos du programme</String>
     <String id="100749">TV/Pas de signal</String>
     <String id="100750">Recettes</String>
@@ -1739,10 +1749,12 @@
     <String id="100761">Guide télé</String>
     <String id="100762">Guide radio</String>
     <String id="100770">Explorateur</String>
+    <String id="100800" prefix="Mes ">Extensions</String>
+    <String id="108888">Menu Musique</String>	
     <String id="101000">Clavier</String>
     <String id="101002">Clavier virtuel</String>
-    <String id="101003">Clavier Web virtuel</String>
-    <String id="101004">Clavier SMS virtuel</String>
+    <String id="101003">Clavier virtuel Web</String>
+    <String id="101004">Clavier virtuel SMS</String>
     <String id="102000">Boîte de sélection</String>
     <String id="102001" prefix="Ma ">Musique/info</String>
     <String id="102002">Boîte OK</String>
@@ -1771,11 +1783,11 @@
     <String id="103007" prefix="Mon ">TV/Zap OSD</String>
     <String id="103009" prefix="Mon ">TV/Mini EPG</String>
     <String id="103011" prefix="Mes ">TV/Réglages Crop</String>
-    <String id="103012">Détails des réglages TV</String>
+    <String id="103012">Details tuning TV</String>
     <String id="104711" prefix="Mon ">Wikipedia</String>
     <String id="105000">Alarme</String>
-    <String id="105001">Alarme - détails de l'alarme</String>
-    <String id="105002">Alarme - durée avant arrêt</String>
+    <String id="105001">Alarme - Details Alarme</String>
+    <String id="105002">Alarme - Sleeptime</String>
     <String id="105900" prefix="Mes ">Bandes Annonces</String>
     <String id="106666">Attente mise en veille</String>
     <String id="107700" prefix="Mon ">TV/Télétexte</String>
@@ -1784,12 +1796,15 @@
     <String id="107890" prefix="Ma ">Last.fm radio</String>
     <String id="108888">Menu Musique</String>
     <String id="109000">Mini écran - Configuration</String>
-    <String id="109001">Mini écran - Configuration - Eclairage d'ambiance</String>
+    <String id="109001">Mini écran - Configuration - Retro-éclairage</String>
     <String id="109002">Mini écran - Configuration - Afficher les contrôles</String>
     <String id="109003">Mini écran - Configuration - Afficher les options</String>
     <String id="109004">Mini écran - Configuration - Egaliseur</String>
     <String id="109005">Mini écran - Configuration - Pavé numérique</String>
     <String id="109006">Mini écran - Configuration - Télécommande</String>
+    <String id="109811" prefix="Mes ">Series TV</String>
+    <String id="190478" prefix="Mes ">Lyriques</String>
+    <String id="196742">Images Animées</String>
     <String id="200000">Sélectionnez le logiciel de récupération des programmes TV. Note : Si votre pays n'est</String>
     <String id="200001">pas dans la liste, il vous faudra remplir manuellement le fichier tvguide.xml.</String>
     <String id="200002">Vous pouvez maintenant relier vos programmes TV à vos chaînes TV.</String>
@@ -1842,7 +1857,7 @@
     <String id="200050">Cela supprimera les enregs du disque dur</String>
     <String id="200051">Supprimer cet épisode ?</String>
     <String id="200052">Enregistrements en cours</String>
-    <String id="200053">Pas d'enregistrements en cours</String>
+    <String id="200053">Pas d'enregistrement en cours</String>
     <String id="200054">Impossible de supprimer l'enregistrement TV.</String>
     <String id="200055">La TV Live pourrait être interrompue</String>
     <String id="200059">Mode audio bi-phonique</String>
@@ -1850,13 +1865,20 @@
     <String id="200061">Piste audio gauche sur les haut-parleurs droit et gauche</String>
     <String id="200062">Piste audio droite sur les haut-parleurs droit et gauche</String>
     <String id="200063">Mélanger les deux</String>
-    <String id="200064">Connecté à TvServer</String>
+    <String id="200064">Connecté au Serveur Télé</String>
     <String id="200065">Certains ports semblent être inaccessibles</String>
-    <String id="200066">Impossible de se connecter au TvServer</String>
+    <String id="200066">Impossible de se connecter au Serveur Télé</String>
     <String id="200067">Connecté à la base de données</String>
     <String id="200068">Impossible de se connecter à la base de données</String>
     <String id="200069">Tous les ports IP semblent être corrects</String>
     <String id="200070">Veuillez vérifier la configuration du pare-feu</String>
-    <String id="200071">Supprimer ce dossier et tous les sous-dossiers ?</String>
+    <String id="200071">Supprimer ce dossier et ses sous-dossiers ?</String>
+    <String id="107986">Mes Films</String>
+    <String id="107987">Films</String>
+    <String id="1079871">Mise à jour</String>
+    <String id="1079872">Premier</String>
+    <String id="1079873">Dernier</String>
+    <String id="1079874">Activer image courante comme Fanart</String>
+    <String id="1079875">Activer image courante par defaut</String>
   </Section>
 </Language>
