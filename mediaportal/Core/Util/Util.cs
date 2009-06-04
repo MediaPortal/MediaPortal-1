@@ -716,8 +716,17 @@ namespace MediaPortal.Util
       GUIListItem item = (GUIListItem)i;
       string path = item.Path;
       string strThumb = String.Format(@"{0}\{1}.jpg", Thumbs.Videos, EncryptLine(path));
-      if(File.Exists(strThumb))
+      if (File.Exists(strThumb))
+      {
         return;
+      }
+      
+      // Do not try to create thumbnails for DVDs
+      if (path.Contains("VIDEO_TS\\VIDEO_TS.IFO"))
+      {
+        return;
+      }
+
       Image thumb = null;
       try
       {

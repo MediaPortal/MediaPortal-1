@@ -76,7 +76,10 @@ namespace MediaPortal.Util
     public static bool CreateVideoThumb(string aVideoPath, string aThumbPath, bool aCacheThumb, bool aOmitCredits)
     {
       if (NeedsConfigRefresh)
+      {
         LoadSettings();
+      }
+
       if (String.IsNullOrEmpty(aVideoPath) || String.IsNullOrEmpty(aThumbPath))
       {
         Log.Warn("VideoThumbCreator: Invalid arguments to generate thumbnails of your video!");
