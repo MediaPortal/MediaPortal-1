@@ -106,7 +106,10 @@ Function PageReinstallMode
   ${If} $ReinstallMode == 2
     ${NSD_Check} $ReinstallModePage.optBtn2
   ${Else}
+    ; if not 2, set to 1
     ${NSD_Check} $ReinstallModePage.optBtn1
+    ; set reinstallmode to 1, if reinstallmode = ""
+    StrCpy $ReinstallMode 1
   ${EndIf}
 
 
