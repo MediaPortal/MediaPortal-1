@@ -82,7 +82,8 @@ Name "MediaPortal Unpacker"
 # INSTALLER ATTRIBUTES
 #---------------------------------------------------------------------------
 Icon "${svn_DeployTool}\Install.ico"
-OutFile "MediaPortalSetup_1.0.2_SVN${SVN_REVISION}.exe"
+!define /date buildTIMESTAMP "%Y-%m-%d-%H-%M"
+OutFile "MediaPortalSetup_1.0.2_SVN${SVN_REVISION}_${buildTIMESTAMP}.exe"
 InstallDir "$TEMP\MediaPortal Installation"
 
 CRCCheck on
