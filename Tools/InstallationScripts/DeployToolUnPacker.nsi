@@ -128,7 +128,7 @@ Section
 SectionEnd
 
 Function .onInit
-  !insertmacro MediaPortalNetFrameworkCheck 0
+  !insertmacro MediaPortalNetFrameworkCheck
 FunctionEnd
 
 Function .onInstSuccess
