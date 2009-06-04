@@ -32,17 +32,20 @@ namespace MPLanguageTool
     private static string MainNodeSelection = string.Empty;
     private static string SingleNodeSelection = string.Empty;
     private static string Field = string.Empty;
+    private static string Prefix = string.Empty;
 
-    private static string BuildFileName(string languageID)
+    public static string BuildFileName(string languageID, bool ReturnFullPath)
     {
       string LangDefaultID = "en";
       string LangPrefix = string.Empty;
       switch (frmMain.LangType)
       {
         case frmMain.StringsType.MovingPictures:
+        case frmMain.StringsType.TvSeries:
           LangDefaultID = "en-US";
           break;
-        case frmMain.StringsType.MediaPortal:
+        case frmMain.StringsType.MediaPortal_1:
+        case frmMain.StringsType.MpTagThat:
           LangPrefix = "strings_";
           break;
       }
@@ -50,22 +53,44 @@ namespace MPLanguageTool
       {
         LangDefaultID = languageID;
       }
-      return frmMain.languagePath + "\\" + LangPrefix + LangDefaultID + ".xml";
+      return ReturnFullPath
+               ? frmMain.languagePath + "\\" + LangPrefix + LangDefaultID + ".xml"
+               : LangPrefix + LangDefaultID + ".xml";
     }
 
     public static void InitializeXmlValues()
     {
       switch (frmMain.LangType)
       {
-        case frmMain.StringsType.MediaPortal:
+        case frmMain.StringsType.MediaPortal_1:
           MainNodeSelection = "/Language/Section";
           SingleNodeSelection = "String";
           Field = "id";
+          Prefix = "prefix";
           break;
         case frmMain.StringsType.MovingPictures:
           MainNodeSelection = "/strings";
           SingleNodeSelection = "string";
           Field = "Field";
+          break;
+        case frmMain.StringsType.TvSeries:
+          MainNodeSelection = "/strings";
+          SingleNodeSelection = "string";
+          Field = "Field";
+          Prefix = "Original";
+          break;
+      }
+    }
+
+    public static void InitializeXmlValues(string Section)
+    {
+      switch (frmMain.LangType)
+      {
+        case frmMain.StringsType.MpTagThat:
+        case frmMain.StringsType.MediaPortal_II:
+          MainNodeSelection = "/Language/Section[@name='" + Section + "']";
+          SingleNodeSelection = "String";
+          Field = "id";
           break;
       }
     }
@@ -74,7 +99,7 @@ namespace MPLanguageTool
     public static DataTable Load(string languageID, out Dictionary<string, DataRow> originalMapping)
     {
       originalMapping = new Dictionary<string, DataRow>();
-      string xml = BuildFileName(languageID);
+      string xml = BuildFileName(languageID, true);
       if (!File.Exists(xml))
       {
         if (languageID == null)
@@ -114,7 +139,7 @@ namespace MPLanguageTool
 
             if (keyNode.Attributes.Count == 2)
             {
-              prefixValue = keyNode.Attributes["prefix"].Value;
+              prefixValue = keyNode.Attributes[Prefix].Value;
             }
 
             DataRow row = translations.NewRow();
@@ -137,7 +162,7 @@ namespace MPLanguageTool
     // Load Translations
     public static DataTable Load_Traslation(string languageID, DataTable originalTranslation, Dictionary<string, DataRow> originalMapping)
     {
-      string xml = BuildFileName(languageID);
+      string xml = BuildFileName(languageID, true);
       DataTable translations = new DataTable();
 
       DataColumn col0 = new DataColumn("id", Type.GetType("System.String"));
@@ -180,7 +205,7 @@ namespace MPLanguageTool
 
             if (keyNode.Attributes.Count == 2)
             {
-              prefixValue = keyNode.Attributes["prefix"].Value;
+              prefixValue = keyNode.Attributes[Prefix].Value;
             }
 
             DataRow row = translations.NewRow();
@@ -215,20 +240,62 @@ namespace MPLanguageTool
       return originalTranslation;
     }
 
+    // Get list of sections
+    public static List<string> ListSections(string strSection, string attribute)
+    {
+      string xml = BuildFileName(null, true);
+      XmlDocument doc = new XmlDocument();
+      doc.Load(xml);
+
+      List<string> Sections = new List<string>();
+
+      if (doc.DocumentElement != null)
+      {
+        XmlNodeList nodes = doc.DocumentElement.SelectNodes(strSection);
+
+        if (nodes != null)
+        {
+          foreach (XmlNode keyNode in nodes)
+          {
+            if (keyNode.Attributes.Count > 0)
+            {
+              Sections.Add(keyNode.Attributes[attribute].Value);
+            }
+          }
+        }
+      }
+      return Sections;
+    }
+
+    // Save file
     public static void Save(string languageID, string LanguageNAME, DataTable translations)
     {
-      string xml = BuildFileName(languageID);
+      string xml = BuildFileName(languageID, true);
       StreamWriter writer = new StreamWriter(xml, false, Encoding.UTF8);
       switch (frmMain.LangType)
       {
-        case frmMain.StringsType.MediaPortal:
+        case frmMain.StringsType.MediaPortal_1:
           writer.Write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
           writer.Write("<Language name=\"" + LanguageNAME + "\" characters=\"255\">\n");
           writer.Write("  <Section name=\"unmapped\">\n");
           writer.Write("  </Section>\n");
           writer.Write("</Language>\n");
           break;
+        case frmMain.StringsType.MpTagThat:
+          writer.Write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+          writer.Write("<!-- MpTagThat translation file -->\n");
+          writer.Write("<Section name=\"main\">");
+          writer.Write("</Section>\n");
+          break;
         case frmMain.StringsType.MovingPictures:
+          writer.Write("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n");
+          writer.Write("<!-- MP-TV-Series translation file -->\n");
+          writer.Write("<!-- " + LanguageNAME + " -->\n");
+          writer.Write("<!-- Note: English is the fallback for any strings not found in other languages -->\n");
+          writer.Write("  <strings>\n");
+          writer.Write("  </strings>\n");
+          break;
+        case frmMain.StringsType.TvSeries:
           writer.Write("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n");
           writer.Write("<!-- Moving Pictures translation file -->\n");
           writer.Write("<!-- " + LanguageNAME + " -->\n");
@@ -254,7 +321,7 @@ namespace MPLanguageTool
 
         if (!String.IsNullOrEmpty(row["PrefixTranslated"].ToString()))
         {
-          attr = nValue.OwnerDocument.CreateAttribute("prefix");
+          attr = nValue.OwnerDocument.CreateAttribute(Prefix);
           attr.InnerText = row["PrefixTranslated"].ToString();
         }
         nValue.Attributes.Append(attr);

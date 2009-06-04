@@ -35,11 +35,12 @@ namespace MPLanguageTool
       System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
       this.menuStrip1 = new System.Windows.Forms.MenuStrip();
       this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.openMpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.openMp1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.openDeployToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
       this.openTagThatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.openMovingPicturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.openTvSeriesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
       this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -50,6 +51,7 @@ namespace MPLanguageTool
       this.statusStrip1 = new System.Windows.Forms.StatusStrip();
       this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
       this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+      this.openMpIIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.menuStrip1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.gv)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.gv2)).BeginInit();
@@ -69,11 +71,13 @@ namespace MPLanguageTool
       // fileToolStripMenuItem
       // 
       this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openMpToolStripMenuItem,
+            this.openMp1ToolStripMenuItem,
+            this.openMpIIToolStripMenuItem,
             this.openDeployToolToolStripMenuItem,
             this.toolStripSeparator1,
             this.openTagThatToolStripMenuItem,
             this.openMovingPicturesToolStripMenuItem,
+            this.openTvSeriesToolStripMenuItem,
             this.toolStripSeparator2,
             this.saveToolStripMenuItem,
             this.quitToolStripMenuItem});
@@ -81,12 +85,12 @@ namespace MPLanguageTool
       this.fileToolStripMenuItem.Size = new System.Drawing.Size(116, 20);
       this.fileToolStripMenuItem.Text = "Load language file";
       // 
-      // openMpToolStripMenuItem
+      // openMp1ToolStripMenuItem
       // 
-      this.openMpToolStripMenuItem.Name = "openMpToolStripMenuItem";
-      this.openMpToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
-      this.openMpToolStripMenuItem.Text = "MediaPortal";
-      this.openMpToolStripMenuItem.Click += new System.EventHandler(this.openMpToolStripMenuItem_Click);
+      this.openMp1ToolStripMenuItem.Name = "openMp1ToolStripMenuItem";
+      this.openMp1ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+      this.openMp1ToolStripMenuItem.Text = "MediaPortal 1";
+      this.openMp1ToolStripMenuItem.Click += new System.EventHandler(this.openMpToolStripMenuItem_Click);
       // 
       // openDeployToolToolStripMenuItem
       // 
@@ -102,7 +106,6 @@ namespace MPLanguageTool
       // 
       // openTagThatToolStripMenuItem
       // 
-      this.openTagThatToolStripMenuItem.Enabled = false;
       this.openTagThatToolStripMenuItem.Name = "openTagThatToolStripMenuItem";
       this.openTagThatToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
       this.openTagThatToolStripMenuItem.Text = "MPTagThat";
@@ -114,6 +117,13 @@ namespace MPLanguageTool
       this.openMovingPicturesToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
       this.openMovingPicturesToolStripMenuItem.Text = "Moving Pictures";
       this.openMovingPicturesToolStripMenuItem.Click += new System.EventHandler(this.openMovingPicturesToolStripMenuItem_Click);
+      // 
+      // openTvSeriesToolStripMenuItem
+      // 
+      this.openTvSeriesToolStripMenuItem.Name = "openTvSeriesToolStripMenuItem";
+      this.openTvSeriesToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+      this.openTvSeriesToolStripMenuItem.Text = "Tv-Series";
+      this.openTvSeriesToolStripMenuItem.Click += new System.EventHandler(this.openTvSeriesToolStripMenuItem_Click);
       // 
       // toolStripSeparator2
       // 
@@ -217,6 +227,14 @@ namespace MPLanguageTool
       this.folderBrowserDialog1.RootFolder = System.Environment.SpecialFolder.MyComputer;
       this.folderBrowserDialog1.ShowNewFolderButton = false;
       // 
+      // openMpIIToolStripMenuItem
+      // 
+      this.openMpIIToolStripMenuItem.Enabled = false;
+      this.openMpIIToolStripMenuItem.Name = "openMpIIToolStripMenuItem";
+      this.openMpIIToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+      this.openMpIIToolStripMenuItem.Text = "MediaPortal II";
+      this.openMpIIToolStripMenuItem.Click += new System.EventHandler(this.openMpIIToolStripMenuItem_Click);
+      // 
       // frmMain
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -252,7 +270,7 @@ namespace MPLanguageTool
     private System.Windows.Forms.DataGridView gv;
     private System.Windows.Forms.StatusStrip statusStrip1;
     private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-    private System.Windows.Forms.ToolStripMenuItem openMpToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem openMp1ToolStripMenuItem;
     private System.Windows.Forms.DataGridViewTextBoxColumn ID;
     private System.Windows.Forms.DataGridViewTextBoxColumn Translated;
     private System.Windows.Forms.DataGridView gv2;
@@ -261,6 +279,8 @@ namespace MPLanguageTool
     private System.Windows.Forms.ToolStripMenuItem openTagThatToolStripMenuItem;
     private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
     private System.Windows.Forms.ToolStripMenuItem openMovingPicturesToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem openTvSeriesToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem openMpIIToolStripMenuItem;
   }
 }
 
