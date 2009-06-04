@@ -1294,6 +1294,7 @@ public class MediaPortalApp : D3DApp, IRender
       }
 
       Log.Debug("Main: OnResume - autoplay start listening");
+      AutoPlay.SetWakeupTime(DateTime.Now);
       AutoPlay.StartListening();
       _onResumeRunning = false;
       ignoreContextMenuAction = false;

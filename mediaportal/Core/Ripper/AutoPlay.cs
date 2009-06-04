@@ -32,6 +32,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Profile;
+using MediaPortal.Util;
 using Win32.Utils.Cd;
 
 namespace MediaPortal.Ripper
@@ -48,10 +49,16 @@ namespace MediaPortal.Ripper
     private static string m_audiocd = "No";
     private static ArrayList allfiles;
 
-    // a hidden window to allow us to listen to WndProc messages
+    // A hidden window to allow us to listen to WndProc messages
     // Winamp viz doesn't like when it receives notify that the WndProc handler has changed
     private static NativeWindow _nativeWindow;
     private static IntPtr _windowHandle;
+
+    // For event filtering
+    private static DateTime _wakeupTime = new DateTime();
+    private static DateTime _volumeRemovalTime = new DateTime();
+    private static int _wakeupDelay = 10000;       // In milliseconds
+    private static int _volumeRemovalDelay = 7500; // In milliseconds
 
     private enum MediaType
     {
@@ -112,6 +119,14 @@ namespace MediaPortal.Ripper
       StopListeningForEvents();
     }
 
+    /// <summary>
+    /// Provides system last wake uptime (from S3/S4 state)
+    /// </summary>
+    public static void SetWakeupTime(DateTime wakeupTime)
+    {
+      _wakeupTime = wakeupTime;
+    }
+
     #region initialization + serialization
 
     private static void LoadSettings()
@@ -120,6 +135,8 @@ namespace MediaPortal.Ripper
       {
         m_dvd = xmlreader.GetValueAsString("dvdplayer", "autoplay", "Ask");
         m_audiocd = xmlreader.GetValueAsString("audioplayer", "autoplay", "No");
+        _wakeupDelay = xmlreader.GetValueAsInt("debug", "wakeupDelay", 10000);
+        _volumeRemovalDelay = xmlreader.GetValueAsInt("debug", "volumeRemovalDelay", 7500);
       }
     }
 
@@ -197,7 +214,22 @@ namespace MediaPortal.Ripper
     {
       string driveLetter = _deviceMonitor.MaskToLogicalPaths(bitMask);
 
+      _volumeRemovalTime = DateTime.Now;
+      TimeSpan ts = DateTime.Now - _wakeupTime;
+
+      // AnyDVD is causing media removed & inserted events when waking up from S3/S4 
+      // We need to filter out those as it could trigger false autoplay event 
+      // Event filtering is skipped for mounted images
+      if (DaemonTools.GetVirtualDrive() != driveLetter
+        && ts.TotalMilliseconds < _wakeupDelay)
+      {
+        Log.Info("Ignoring volume removed event - drive {0} - time after wakeup {1} s",
+          driveLetter, ts.TotalMilliseconds / 1000);
+        return;
+      }
+
       Log.Info("volume removed drive {0}", driveLetter);
+      Log.Debug("  time after wakeup {0} s", ts.TotalMilliseconds / 1000);
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VOLUME_REMOVED,
                                       (int) 0,
                                       GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
@@ -212,6 +244,26 @@ namespace MediaPortal.Ripper
     private static void VolumeInserted(int bitMask)
     {
       string driveLetter = _deviceMonitor.MaskToLogicalPaths(bitMask);
+
+      TimeSpan tsWakeup = DateTime.Now - _wakeupTime;
+      TimeSpan tsVolumeRemoval = DateTime.Now - _volumeRemovalTime;
+
+      // no AnyDVD check is made for mounted images
+      if (DaemonTools.GetVirtualDrive() != driveLetter)
+      {
+        // AnyDVD is causing media removed & inserted events when waking up from S3/S4 
+        // We need to filter out those as it could trigger false autoplay event 
+        if (tsWakeup.TotalMilliseconds < (_wakeupDelay + _volumeRemovalDelay)
+          || (tsVolumeRemoval.TotalMilliseconds < _volumeRemovalDelay
+          && tsWakeup.TotalMilliseconds < (_wakeupDelay + _volumeRemovalDelay * 2)))
+        {
+          Log.Info("Ignoring volume inserted event - drive {0} - timespan wakeup {1} s - timespan volume removal {2} s",
+            driveLetter, tsWakeup.TotalMilliseconds / 1000, tsVolumeRemoval.TotalMilliseconds / 1000);
+          Log.Debug("   _wakeupDelay = {0} _volumeRemovalDelay = {1}", _wakeupDelay, _volumeRemovalDelay);
+          return;
+        }
+      }
+
       Log.Info("volume inserted drive {0}", driveLetter);
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VOLUME_INSERTED,
                                       (int) 0,
