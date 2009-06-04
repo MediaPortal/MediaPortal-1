@@ -32,13 +32,16 @@ namespace MPLanguageTool
     /// </summary>
     private void InitializeComponent()
     {
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
       this.menuStrip1 = new System.Windows.Forms.MenuStrip();
       this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.openDeployToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.openMpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.openDeployToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+      this.openTagThatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.openMovingPicturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
       this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
       this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.gv = new System.Windows.Forms.DataGridView();
       this.ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -66,46 +69,69 @@ namespace MPLanguageTool
       // fileToolStripMenuItem
       // 
       this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openDeployToolToolStripMenuItem,
             this.openMpToolStripMenuItem,
+            this.openDeployToolToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.openTagThatToolStripMenuItem,
+            this.openMovingPicturesToolStripMenuItem,
+            this.toolStripSeparator2,
             this.saveToolStripMenuItem,
-            this.toolStripMenuItem1,
             this.quitToolStripMenuItem});
       this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-      this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
-      this.fileToolStripMenuItem.Text = "File";
-      // 
-      // openDeployToolToolStripMenuItem
-      // 
-      this.openDeployToolToolStripMenuItem.Name = "openDeployToolToolStripMenuItem";
-      this.openDeployToolToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
-      this.openDeployToolToolStripMenuItem.Text = "Open (DeployTool)";
-      this.openDeployToolToolStripMenuItem.Click += new System.EventHandler(this.openDeployToolToolStripMenuItem_Click);
+      this.fileToolStripMenuItem.Size = new System.Drawing.Size(116, 20);
+      this.fileToolStripMenuItem.Text = "Load language file";
       // 
       // openMpToolStripMenuItem
       // 
       this.openMpToolStripMenuItem.Name = "openMpToolStripMenuItem";
-      this.openMpToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
-      this.openMpToolStripMenuItem.Text = "Open (MediaPortal)";
+      this.openMpToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+      this.openMpToolStripMenuItem.Text = "MediaPortal";
       this.openMpToolStripMenuItem.Click += new System.EventHandler(this.openMpToolStripMenuItem_Click);
+      // 
+      // openDeployToolToolStripMenuItem
+      // 
+      this.openDeployToolToolStripMenuItem.Name = "openDeployToolToolStripMenuItem";
+      this.openDeployToolToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+      this.openDeployToolToolStripMenuItem.Text = "DeployTool";
+      this.openDeployToolToolStripMenuItem.Click += new System.EventHandler(this.openDeployToolToolStripMenuItem_Click);
+      // 
+      // toolStripSeparator1
+      // 
+      this.toolStripSeparator1.Name = "toolStripSeparator1";
+      this.toolStripSeparator1.Size = new System.Drawing.Size(157, 6);
+      // 
+      // openTagThatToolStripMenuItem
+      // 
+      this.openTagThatToolStripMenuItem.Enabled = false;
+      this.openTagThatToolStripMenuItem.Name = "openTagThatToolStripMenuItem";
+      this.openTagThatToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+      this.openTagThatToolStripMenuItem.Text = "MPTagThat";
+      this.openTagThatToolStripMenuItem.Click += new System.EventHandler(this.openTagThatToolStripMenuItem_Click);
+      // 
+      // openMovingPicturesToolStripMenuItem
+      // 
+      this.openMovingPicturesToolStripMenuItem.Name = "openMovingPicturesToolStripMenuItem";
+      this.openMovingPicturesToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+      this.openMovingPicturesToolStripMenuItem.Text = "Moving Pictures";
+      this.openMovingPicturesToolStripMenuItem.Click += new System.EventHandler(this.openMovingPicturesToolStripMenuItem_Click);
+      // 
+      // toolStripSeparator2
+      // 
+      this.toolStripSeparator2.Name = "toolStripSeparator2";
+      this.toolStripSeparator2.Size = new System.Drawing.Size(157, 6);
       // 
       // saveToolStripMenuItem
       // 
       this.saveToolStripMenuItem.Enabled = false;
       this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-      this.saveToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+      this.saveToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
       this.saveToolStripMenuItem.Text = "Save";
       this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
-      // 
-      // toolStripMenuItem1
-      // 
-      this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-      this.toolStripMenuItem1.Size = new System.Drawing.Size(175, 6);
       // 
       // quitToolStripMenuItem
       // 
       this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
-      this.quitToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+      this.quitToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
       this.quitToolStripMenuItem.Text = "Quit";
       this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
       // 
@@ -118,14 +144,14 @@ namespace MPLanguageTool
       this.gv.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ID,
             this.Translated});
-      dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-      dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-      dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.gv.DefaultCellStyle = dataGridViewCellStyle1;
+      dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
+      dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
+      dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.gv.DefaultCellStyle = dataGridViewCellStyle4;
       this.gv.Dock = System.Windows.Forms.DockStyle.Fill;
       this.gv.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
       this.gv.Location = new System.Drawing.Point(0, 24);
@@ -222,7 +248,6 @@ namespace MPLanguageTool
     private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem openDeployToolToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
-    private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
     private System.Windows.Forms.ToolStripMenuItem quitToolStripMenuItem;
     private System.Windows.Forms.DataGridView gv;
     private System.Windows.Forms.StatusStrip statusStrip1;
@@ -232,6 +257,10 @@ namespace MPLanguageTool
     private System.Windows.Forms.DataGridViewTextBoxColumn Translated;
     private System.Windows.Forms.DataGridView gv2;
     private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+    private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+    private System.Windows.Forms.ToolStripMenuItem openTagThatToolStripMenuItem;
+    private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+    private System.Windows.Forms.ToolStripMenuItem openMovingPicturesToolStripMenuItem;
   }
 }
 

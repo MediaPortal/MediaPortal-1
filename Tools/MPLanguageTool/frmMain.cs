@@ -31,12 +31,11 @@ namespace MPLanguageTool
   {
     #region Variables
     NameValueCollection defaultTranslations;
-    CultureInfo culture;
-    bool DeployTool;
-    bool MediaPortal;
     DataTable originalTranslations;
+    CultureInfo culture;
 
     public static string languagePath;
+    public static StringsType LangType;
 
     #endregion
 
@@ -107,13 +106,15 @@ namespace MPLanguageTool
     #region Menu-events
     private void openDeployToolToolStripMenuItem_Click(object sender, EventArgs e)
     {
+      LangType = StringsType.DeployTool;
+
       folderBrowserDialog1.Description = "Please select a path where [MediaPortal.DeployTool.resx] can be found:";
       folderBrowserDialog1.SelectedPath = Application.StartupPath;
       folderBrowserDialog1.RootFolder = Environment.SpecialFolder.Desktop;
-      
+
       if (folderBrowserDialog1.ShowDialog() == DialogResult.Cancel)
         return;
-          
+
       languagePath = folderBrowserDialog1.SelectedPath;
       // check if selected path contains the default resx file
       defaultTranslations = ResxHandler.Load(null);
@@ -131,17 +132,16 @@ namespace MPLanguageTool
       gv.Dock = DockStyle.Fill;
       gv2.Dock = DockStyle.None;
       gv2.Visible = false;
-              
-      DeployTool = true;
-      openMpToolStripMenuItem.Enabled = false;
-      openDeployToolToolStripMenuItem.Enabled = false;
-      SelectCulture dlg = new SelectCulture("DeployTool");
+
+      DisableMenuItems();
+
+      SelectCulture dlg = new SelectCulture();
       if (dlg.ShowDialog() != DialogResult.OK) return;
       culture = dlg.GetSelectedCulture();
       Text = "MPLanguageTool -- Current language: " + culture.NativeName + " -- File: MediaPortal.DeployTool." + culture.Name + ".resx";
       ToolStripText("Loading \"MediaPortal.DeployTool." + culture.Name + ".resx\"...");
 
-      this.Cursor = Cursors.WaitCursor;
+      Cursor = Cursors.WaitCursor;
       NameValueCollection translations = ResxHandler.Load(culture.Name);
       int untranslated = 0;
       foreach (string key in defaultTranslations.AllKeys)
@@ -156,19 +156,22 @@ namespace MPLanguageTool
       }
       ToolStripText(untranslated);
       saveToolStripMenuItem.Enabled = true;
-      this.Cursor = Cursors.Default;  
+      Cursor = Cursors.Default;
     }
 
     private void openMpToolStripMenuItem_Click(object sender, EventArgs e)
     {
+      LangType = StringsType.MediaPortal;
+      XmlHandler.InitializeXmlValues();
+
       Dictionary<string, DataRow> originalMapping;
-      
+
       folderBrowserDialog1.Description = "Please select a path where [strings_en.xml] can be found:";
       folderBrowserDialog1.SelectedPath = Application.StartupPath;
       folderBrowserDialog1.RootFolder = Environment.SpecialFolder.Desktop;
-      
+
       if (folderBrowserDialog1.ShowDialog() == DialogResult.Cancel)
-        return; 
+        return;
 
       languagePath = folderBrowserDialog1.SelectedPath;
       // check if selected path contains the default translation file
@@ -189,16 +192,15 @@ namespace MPLanguageTool
       gv2.Dock = DockStyle.Fill;
       gv2.Visible = true;
 
-      MediaPortal = true;
-      openMpToolStripMenuItem.Enabled = false;
-      openDeployToolToolStripMenuItem.Enabled = false;
-      SelectCulture dlg = new SelectCulture("MediaPortal");
+      DisableMenuItems();
+
+      SelectCulture dlg = new SelectCulture();
       if (dlg.ShowDialog() != DialogResult.OK) return;
       culture = dlg.GetSelectedCulture();
       Text = "MPLanguageTool -- Current language: " + culture.NativeName + " -- File: strings_" + culture.Name + ".xml";
       ToolStripText("Loading \"strings_" + culture.Name + ".xml\"...");
 
-      this.Cursor = Cursors.WaitCursor;
+      Cursor = Cursors.WaitCursor;
       // Modified
       DataTable translations = XmlHandler.Load_Traslation(culture.Name, originalTranslations, originalMapping);
 
@@ -220,42 +222,120 @@ namespace MPLanguageTool
 
       ToolStripText(untranslated);
       saveToolStripMenuItem.Enabled = true;
-      this.Cursor = Cursors.Default;
+      Cursor = Cursors.Default;
     }
 
-      private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+    private void openTagThatToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      LangType = StringsType.MpTagThat;
+    }
+
+    private void openMovingPicturesToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      LangType = StringsType.MovingPictures;
+      XmlHandler.InitializeXmlValues();
+
+      Dictionary<string, DataRow> originalMapping;
+
+      folderBrowserDialog1.Description = "Please select a path where [en-US.xml] can be found:";
+      folderBrowserDialog1.SelectedPath = Application.StartupPath;
+      folderBrowserDialog1.RootFolder = Environment.SpecialFolder.Desktop;
+
+      if (folderBrowserDialog1.ShowDialog() == DialogResult.Cancel)
+        return;
+
+      languagePath = folderBrowserDialog1.SelectedPath;
+      // check if selected path contains the default translation file
+      originalTranslations = XmlHandler.Load(null, out originalMapping);
+
+      // if not show folderbrowserdlg until user cancels or selects a path that contains it 
+      while (originalTranslations == null)
       {
-        if (DeployTool)
+        MessageBox.Show("The file [en-US.xml] could not be found.\nThe LanguageTool does not work without it.",
+          "MPLanguageTool -- Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        if (folderBrowserDialog1.ShowDialog() == DialogResult.Cancel)
+          return;
+        languagePath = folderBrowserDialog1.SelectedPath;
+        originalTranslations = XmlHandler.Load(null, out originalMapping);
+      }
+
+      gv.Dock = DockStyle.None;
+      gv2.Dock = DockStyle.Fill;
+      gv2.Visible = true;
+
+      DisableMenuItems();
+
+      SelectCulture dlg = new SelectCulture();
+      if (dlg.ShowDialog() != DialogResult.OK) return;
+      culture = dlg.GetSelectedCulture();
+      Text = "MPLanguageTool -- Current language: " + culture.NativeName + " -- File: " + culture.Name + ".xml";
+      ToolStripText("Loading \"" + culture.Name + ".xml\"...");
+
+      Cursor = Cursors.WaitCursor;
+      // Modified
+      DataTable translations = XmlHandler.Load_Traslation(culture.Name, originalTranslations, originalMapping);
+
+      int untranslated = 0;
+
+      DataView dv = new DataView(translations);
+      gv2.DataSource = dv;
+
+      // Count Not Translated
+      for (int z = 0; z < translations.Rows.Count; z++)
+      {
+        if (String.IsNullOrEmpty((translations.Rows[z]["Translated"].ToString())))
         {
-          NameValueCollection translations = new NameValueCollection();
-
-          foreach (DataGridViewRow row in gv.Rows)
-            translations.Add((string)row.Cells[0].Value, (string)row.Cells[1].Value);
-
-
-          ResxHandler.Save(culture.Name, translations);
+          gv2.Rows[z].Cells[0].Style.ForeColor = System.Drawing.Color.Red;
+          gv2.Rows[z].Cells[1].Style.ForeColor = System.Drawing.Color.Red;
+          untranslated++;
         }
+      }
 
-        if (MediaPortal)
-        {
-          DataTable translations = new DataTable();
+      ToolStripText(untranslated);
+      saveToolStripMenuItem.Enabled = true;
+      Cursor = Cursors.Default;
+    }
 
-          DataColumn col0 = new DataColumn("id", Type.GetType("System.String"));
-          DataColumn col1 = new DataColumn("Translated", Type.GetType("System.String"));
-          DataColumn col2 = new DataColumn("PrefixTranslated", Type.GetType("System.String"));
+    #endregion
 
-          translations.Columns.Add(col0);
-          translations.Columns.Add(col1);
-          translations.Columns.Add(col2);
+    #region Common ToolStrips
+    private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      switch (LangType)
+      {
+        case StringsType.DeployTool:
+          {
+            NameValueCollection translations = new NameValueCollection();
 
-          foreach (DataGridViewRow row in gv2.Rows)
-            translations.Rows.Add((string)row.Cells["id"].Value, (string)row.Cells["Translated"].Value, (string)row.Cells["PrefixTranslated"].Value);
+            foreach (DataGridViewRow row in gv.Rows)
+              translations.Add((string)row.Cells[0].Value, (string)row.Cells[1].Value);
 
-          XmlHandler.Save(culture.Name, culture.EnglishName, translations);
-        }
+            ResxHandler.Save(culture.Name, translations);
+          }
+          break;
+        case StringsType.MediaPortal:
+        case StringsType.MovingPictures:
+          {
+            DataTable translations = new DataTable();
 
+            DataColumn col0 = new DataColumn("id", Type.GetType("System.String"));
+            DataColumn col1 = new DataColumn("Translated", Type.GetType("System.String"));
+            DataColumn col2 = new DataColumn("PrefixTranslated", Type.GetType("System.String"));
 
-        MessageBox.Show("Your translations have been saved.", "MPLanguageTool -- Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            translations.Columns.Add(col0);
+            translations.Columns.Add(col1);
+            translations.Columns.Add(col2);
+
+            foreach (DataGridViewRow row in gv2.Rows)
+              translations.Rows.Add((string)row.Cells["id"].Value, (string)row.Cells["Translated"].Value,
+                                    (string)row.Cells["PrefixTranslated"].Value);
+
+            XmlHandler.Save(culture.Name, culture.EnglishName, translations);
+          }
+          break;
+      }
+
+      MessageBox.Show("Your translations have been saved.", "MPLanguageTool -- Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     private void quitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -267,7 +347,6 @@ namespace MPLanguageTool
       }
       Close();
     }
-    #endregion
 
     public void ToolStripText(int lines)
     {
@@ -291,5 +370,23 @@ namespace MPLanguageTool
       toolStripStatusLabel1.Text = status;
       statusStrip1.Refresh();
     }
+
+    private void DisableMenuItems()
+    {
+      openMpToolStripMenuItem.Enabled = false;
+      openDeployToolToolStripMenuItem.Enabled = false;
+      openTagThatToolStripMenuItem.Enabled = false;
+      openMovingPicturesToolStripMenuItem.Enabled = false;
+    }
+    #endregion
+
+    public enum StringsType
+    {
+      MediaPortal,
+      DeployTool,
+      MpTagThat,
+      MovingPictures
+    }
+
   }
 }

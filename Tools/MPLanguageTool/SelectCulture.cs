@@ -26,7 +26,7 @@ namespace MPLanguageTool
 {
   public partial class SelectCulture : Form
   {
-    public SelectCulture(string Source)
+    public SelectCulture()
     {
       InitializeComponent();
       CultureInfo[] cinfos = CultureInfo.GetCultures(CultureTypes.AllCultures);
@@ -35,7 +35,7 @@ namespace MPLanguageTool
         cbCulture.Items.Add(ci);
       }
       CultureInfo current = System.Threading.Thread.CurrentThread.CurrentCulture;
-      if ((current.CultureTypes & CultureTypes.SpecificCultures) != 0 && Source == "MediaPortal")
+      if ((current.CultureTypes & CultureTypes.SpecificCultures) != 0 && frmMain.LangType != frmMain.StringsType.DeployTool)
       {
         // Select neutral culture like "it"
         cbCulture.SelectedItem = current.Parent;
