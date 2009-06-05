@@ -125,7 +125,7 @@ namespace SetupTv.Sections
       foreach (Channel channel in channels)
       {
         // Only export TV or radio channels if the corresponding checkbox was checked
-        if ((channel.IsTv && !exporttv) || (!channel.IsRadio && !exportradio))
+        if ((channel.IsTv && !exporttv) || (channel.IsRadio && !exportradio))
           continue;
 
         XmlNode nodechannel = xmlDoc.CreateElement("channel");
