@@ -73,6 +73,7 @@ namespace MediaPortal.GUI.Library
             {
                 foreach (CachedTexture cached in _cache)
                 {
+                    cached.Disposed -= new EventHandler(cachedTexture_Disposed);
                     cached.Dispose();
                 }
                 _cache.Clear();
