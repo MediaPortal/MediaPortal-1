@@ -289,9 +289,7 @@ namespace MPLanguageTool
             ResxHandler.Save(culture.Name, translations);
           }
           break;
-        case StringsType.MediaPortal_1:
-        case StringsType.MovingPictures:
-        case StringsType.TvSeries:
+        default:
           {
             DataTable translations = new DataTable();
 
