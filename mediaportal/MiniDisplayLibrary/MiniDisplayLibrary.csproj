@@ -331,6 +331,11 @@
       <Name>Utils</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MiniDisplayPlugin\Drivers\iMONLCDg_AdvancedSetupForm.resx">
+      <DependentUpon>iMONLCDg_AdvancedSetupForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

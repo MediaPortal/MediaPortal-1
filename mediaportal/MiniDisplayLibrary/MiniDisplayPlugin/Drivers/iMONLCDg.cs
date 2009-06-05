@@ -15,29 +15,14 @@ using System.Xml;
 using System.Xml.Serialization;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
-using MediaPortal.InputDevices;
 using MediaPortal.Ripper;
 using Microsoft.Win32;
 using Win32.Utils.Cd;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class iMONLCDg : BaseDisplay, IDisplay, IDisposable
+  public class iMONLCDg : BaseDisplay, IDisplay
   {
-    private bool _Backlight;
-    private ulong _BacklightLevel = 0x7fL;
-    private bool _BlankDisplayOnExit;
-    private bool _Contrast = true;
-    private ulong _ContrastLevel = 10L;
-    private int _CurrentLargeIcon;
-    private int _delay;
-    private int _delayG;
-    private bool _DelayStartup;
-    private bool _displayTest;
-    private static int _DisplayType = -1;
-    private bool _EnsureManagerStartup;
-    private string _errorMessage = "";
-
     public static readonly byte[,] _Font8x5 = new byte[,]
                                                 {
                                                   {0, 0, 0, 0, 0, 0}, {0, 100, 0x18, 4, 100, 0x18},
@@ -169,16 +154,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                                   {0, 0x7c, 40, 40, 0x10, 0}, {0, 12, 0x51, 80, 0x51, 60}
                                                 };
 
-    private string _ForceDisplay;
-    private bool _ForceKeyBoardMode;
-    private bool _ForceManagerRestart;
-    private bool _ForceManagerReload;
-    private int _gcols = 0x60;
-    private int _grows = 0x10;
-    private Thread _iconThread;
-    private iMONDisplay _IMON;
-
-    private static readonly int[,] _iMON_FW_Display = new int[,]
+    private static readonly int[,] _iMON_FW_Display = new[,]
                                                         {
                                                           {8, 0, 2, 0, 0}, {0x36, 0, 9, 0, 3}, {0x39, 0, 10, 0, 0},
                                                           {0x3a, 0, 9, 0, 3}, {0x3b, 0, 0x11, 0, 3},
@@ -199,54 +175,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                                           {0x3e00, 0x3eff, 0x1a, 0, 0},
                                                           {0x3f00, 0x3fff, 0x1b, 0x8888, 4}, {0, 0, 0, 0, 2}
                                                         };
-
-    private static readonly int[,] _iMON_FW_Display_OLD = new int[,]
-                                                            {
-                                                              {8, 0, 2, 0, 0}, {30, 0, 0x17, 0, 0}, {0x30, 0, 4, 0, 0},
-                                                              {0x31, 0, 4, 0, 0}, {50, 0, 4, 0, 0}, {0x33, 0, 6, 0, 0},
-                                                              {0x34, 0, 6, 0, 0}, {0x35, 0, 6, 0, 0}, {0x36, 0, 6, 0, 0}
-                                                              , {0x37, 0, 6, 0, 0}, {0x38, 0, 6, 0, 0},
-                                                              {0x39, 0, 10, 0, 0}, {0x39, 0, 6, 0, 0},
-                                                              {0x3a, 0, 9, 0, 2}, {0x3b, 0, 0x11, 0, 3},
-                                                              {60, 0, 6, 0, 0},
-                                                              {0x3d, 0, 0x10, 0, 0}, {0x3e, 0, 11, 0, 0},
-                                                              {0x3f, 0, 11, 0, 0}, {0x40, 0, 8, 0, 0},
-                                                              {0x41, 0, 12, 0, 0}, {0x42, 0, 12, 0, 0},
-                                                              {0x43, 0, 12, 0, 0}, {0x44, 0, 12, 0, 0},
-                                                              {0x45, 0, 12, 0, 0}, {70, 0, 12, 0, 0},
-                                                              {0x47, 0, 12, 0, 0}, {0x48, 0, 13, 0, 0},
-                                                              {0x49, 0, 0x12, 0, 0}, {0x4a, 0, 13, 0, 0},
-                                                              {0x4b, 0, 20, 0, 0}, {0x4c, 0, 13, 0, 0},
-                                                              {0x4d, 0, 13, 0, 0}, {0x4e, 0, 13, 0, 0},
-                                                              {0x4f, 0, 13, 0, 0}, {0x70, 0, 7, 0, 0},
-                                                              {0x71, 0, 7, 0, 0}, {0x72, 0, 7, 0, 0}, {0x73, 0, 7, 0, 0}
-                                                              , {0x74, 0, 7, 0, 0}, {0x75, 0, 7, 0, 0},
-                                                              {0x76, 0, 7, 0, 0}, {0x77, 0, 7, 0, 0}, {120, 0, 14, 0, 0}
-                                                              , {0x79, 0, 14, 0, 0}, {0x7a, 0, 14, 0, 0},
-                                                              {0x7b, 0, 14, 0, 0}, {0x7c, 0, 14, 0, 0},
-                                                              {0x7d, 0, 14, 0, 0}, {0x7e, 0, 14, 0, 0},
-                                                              {0x7f, 0, 14, 0, 0}, {0x80, 0, 15, 0, 0},
-                                                              {0x81, 0, 15, 0, 0}, {130, 0, 15, 0, 0},
-                                                              {0x83, 0, 15, 0, 0}, {0x84, 0, 0x10, 0, 0},
-                                                              {0x85, 0, 0x10, 0, 2}, {0x86, 0, 0x10, 0, 0},
-                                                              {0x87, 0, 0x10, 0, 0}, {0x88, 0, 0x10, 0, 0},
-                                                              {0x89, 0, 0x10, 0, 0}, {0x8a, 0, 0x10, 0, 0},
-                                                              {0x8b, 0, 0x10, 0, 0}, {140, 0, 0x10, 0, 0},
-                                                              {0x8d, 0, 0x10, 0, 0}, {0x8e, 0, 0x10, 0, 0},
-                                                              {0x8f, 0, 0x10, 0, 0}, {0x90, 0x91, 0x13, 0x8888, 1},
-                                                              {0x92, 0x97, 0x15, 0x8888, 1}, {0x98, 0, 0x18, 0x8888, 1},
-                                                              {0x99, 0, 0x18, 0x8888, 1}, {0x9a, 0, 0x19, 0x8888, 1},
-                                                              {0x9b, 0, 0x19, 0x8888, 1}, {0x9c, 0, 0x16, 0x8888, 1},
-                                                              {0x9d, 0, 0x16, 0x8888, 1}, {0x9e, 0, 0x16, 0x8888, 1},
-                                                              {0x9f, 0, 0x16, 0x8888, 1}, {160, 0, 0x10, 0, 0},
-                                                              {0xa1, 0, 0x16, 0x8888, 1},
-                                                              {0x3600, 0x37ff, 0x1a, 0x8888, 0},
-                                                              {0x3801, 0, 0x1b, 0x8888, 4},
-                                                              {0x3800, 0x39ff, 0x1b, 0x8888, 4},
-                                                              {0x3f00, 0x3fff, 0x1b, 0x8888, 4}, {0, 0, 0, 0, 2}
-                                                            };
-
-    private InputHandler _inputHandler;
 
     public static readonly byte[,] _InternalLargeIcons = new byte[,]
                                                            {
@@ -306,40 +234,65 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                                                                         }
                                                            };
 
+    private static readonly object DWriteMutex = new object();
+    private static readonly int[] Inserted_Media = new int[0x1b];
+
+    private static readonly object ThreadMutex = new object();
+    private static int _DisplayType = -1;
+    private static bool _stopUpdateIconThread;
+    private static bool _VFD_UseV3DLL;
+    private static int _VfdReserved = 0x8888;
+    private static int _VfdType = 0x18;
+    private static DeviceVolumeMonitor DVM;
+    private readonly string[] _lines = new string[2];
+    private readonly SHA256Managed _sha256 = new SHA256Managed();
+
+
+    private bool _Backlight;
+    private ulong _BacklightLevel = 0L;
+    private bool _BlankDisplayOnExit;
+    private bool _Contrast = true;
+    private ulong _ContrastLevel = 10L;
+    private int _CurrentLargeIcon;
+    private int _delay;
+    private int _delayG;
+    private bool _DelayStartup;
+    private bool _displayTest;
+    private bool _EnsureManagerStartup;
+    private string _errorMessage = "";
+
+    private string _ForceDisplay;
+    private bool _ForceKeyBoardMode;
+    private bool _ForceManagerReload;
+    private bool _ForceManagerRestart;
+    private int _gcols = 0x60;
+    private int _grows = 0x10;
+    private Thread _iconThread;
+    private iMONDisplay _IMON;
+
     private bool _IsConfiguring;
     private bool _isDisabled;
     private bool _IsDisplayOff;
     private bool _IsHandlingPowerEvent;
-    private static bool _IsVistaOS = (Environment.OSVersion.Version.Major > 5);
     private byte[] _lastHash;
-    private readonly string[] _lines = new string[2];
     private bool _MonitorPower;
     private bool _mpIsIdle;
-    private Thread _RemoteThread;
     private bool _RestartFrontviewOnExit;
-    private readonly SHA256Managed _sha256 = new SHA256Managed();
-    private static bool _stopRemoteThread = false;
-    private static bool _stopUpdateIconThread = false;
-    private int _tcols = 0x10;
+    private bool _LeaveFrontviewActive;
+    private const int _tcols = 0x10;
     private int _trows = 2;
     private bool _USE_VFD_ICONS = false;
-    //private bool _UseRC;
+
     private bool _UsingAntecManager;
     private bool _UsingSoundgraphManager;
-    private static bool _VFD_UseV3DLL;
-    private static int _VfdReserved = 0x8888;
-    private static int _VfdType = 0x18;
     private AdvancedSettings AdvSettings = AdvancedSettings.Load();
     private byte[] bitmapData;
     private CustomFont CFont;
-    private readonly BitmapConverter converter = new BitmapConverter(true);
     private LargeIcon CustomLargeIcon;
     private DisplayOptions DisplayOptions;
     private DisplayControl DisplaySettings;
     private bool DoDebug;
-    private static DeviceVolumeMonitor DVM;
     private bool DVMactive;
-    private static object DWriteMutex = new object();
     private EQControl EQSettings;
     private string IdleMessage = string.Empty;
     //private char IMON_CHAR_1_BAR;
@@ -368,101 +321,625 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     //private char IMON_VFD_CHAR_TRI_DOWN = '\x001f';
     //private char IMON_VFD_CHAR_TRI_UP = '\x001e';
     private string imonVFD_DLLFile;
-    private static readonly int[] Inserted_Media = new int[0x1b];
     private int LastProgLevel;
     private DateTime LastSettingsCheck = DateTime.Now;
     private int LastVolLevel;
 
-    private static int[] MCEKeyCodeToKeyCode = new int[]
-                                                 {
-                                                   0, 0, 0, 0, 0x41, 0x42, 0x43, 0x44, 0x45, 70, 0x47, 0x48, 0x49, 0x4a,
-                                                   0x4b, 0x4c,
-                                                   0x4d, 0x4e, 0x4f, 80, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58,
-                                                   0x59, 90, 0x31, 50,
-                                                   0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x30, 13, 0x1b, 8, 9, 0x20,
-                                                   0x6d, 0xbb, 0xdb,
-                                                   0xdd, 0xe2, 0, 0xba, 0xde, 0xc0, 0xbc, 190, 0xbf, 20, 0x70, 0x71,
-                                                   0x72, 0x73, 0x74, 0x75,
-                                                   0x76, 0x77, 120, 0x79, 0x7a, 0x7b, 0, 0, 0, 0x2d, 0x24, 0x21, 0x2e,
-                                                   0x23, 0x22, 0x27,
-                                                   0x25, 40, 0x26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                                   0, 0, 0, 0, 0, 0xa5
-                                                 };
-
-    private static string[] MCEKeyCodeToKeyString = new string[]
-                                                      {
-                                                        "", "", "", "", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j"
-                                                        , "k", "l",
-                                                        "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y",
-                                                        "z", "1", "2",
-                                                        "3", "4", "5", "6", "7", "8", "9", "0", "{ENTER}", "{ESC}",
-                                                        "{BS}", "{TAB}", " ", "-", "=", "{[}",
-                                                        "{]}", @"\", "", ";", "'", "`", ",", ".", "?", "{CAPSLOCK}",
-                                                        "{F1}", "{F2}", "{F3}", "{F4}", "{F5}", "{F6}",
-                                                        "{F7}", "{F8}", "{F9}", "{F10}", "{F11}", "{F12}", "", "", "",
-                                                        "{INSERT}", "{HOME}", "{PGUP}", "{DELETE}", "{END}", "{PGDN}",
-                                                        "{RIGHT}",
-                                                        "{LEFT}", "{DOWN}", "{UP}", "", "", "", "", "", "", "", "", "",
-                                                        "", "", "", "",
-                                                        "", "", "", "", "", ""
-                                                      };
-
-    private static int[] MCEModifierToKeyModifier = new int[]
-                                                      {
-                                                        0, 0x20000, 0x10000, 0, 0x40000, 0, 0, 0, 0x5b, 0, 0, 0, 0, 0, 0,
-                                                        0
-                                                      };
-
-    private static string[] MCEModifierToModifierString = new string[]
-                                                            {
-                                                              "*", "^{*}", "+{*}", "^{+{*}}", "%{*}", "%{^{*}}",
-                                                              "%{+{*}}", "%{^{+{*}}}", "*", "^{*}", "+{*}", "+{^{*}}",
-                                                              "%{*}", "%{^{*}}", "%{+{*}}", "%{+{^{*}}}"
-                                                            };
-
-    private SystemStatus MPStatus = new SystemStatus();
-    private DateTime NullTime;
+    private SystemStatus MPStatus;
     private int progLevel;
-    private static object RemoteMutex = new object();
-    private RemoteControl RemoteSettings;
-    private RemoteState RemoteStatus;
     private int SendData_Error_Count;
     private DateTime SettingsLastModTime;
-    private static object ThreadMutex = new object();
     private int volLevel;
+
+    #region IDisplay Members
+
+    public void CleanUp()
+    {
+      if (!_isDisabled)
+      {
+        Log.Info("(IDisplay) iMONLCDg.CleanUp(): called", new object[0]);
+        AdvancedSettings.OnSettingsChanged -=
+          AdvancedSettings_OnSettingsChanged;
+        CloseLcd();
+        Log.Info("(IDisplay) iMONLCDg.CleanUp(): completed", new object[0]);
+      }
+    }
+
+    public void Configure()
+    {
+      Form form = new iMONLCDg_AdvancedSetupForm();
+      form.ShowDialog();
+      form.Dispose();
+    }
+
+    public void Dispose()
+    {
+      Log.Debug("iMONLCDg.Dispose(): called", new object[0]);
+      //
+      // If IRSS (Input Remote Server Suite by and-81) is installed
+      // we need to restart the service to re-register dll handler
+      //
+      const string irss_srv = "InputService";
+      foreach (ServiceController ctrl in ServiceController.GetServices())
+      {
+        if (ctrl.ServiceName.ToLower() == irss_srv.ToLower())
+        {
+          Log.Debug("iMONLCDg.Dispose(): Restarting \"" + irss_srv + "\" from IRSS", new object[0]);
+          try
+          {
+            ctrl.Stop();
+            ctrl.WaitForStatus(ServiceControllerStatus.Stopped);
+            ctrl.Start();
+            ctrl.WaitForStatus(ServiceControllerStatus.Running);
+          }
+          catch (Exception ex)
+          {
+            Log.Error("iMONLCDg.Dispose(): Unable to restart \"" + irss_srv + "\" from IRSS: " + ex.Message,
+                      new object[0]);
+          }
+        }
+      }
+      Log.Debug("iMONLCDg.Dispose(): completed", new object[0]);
+    }
+
+    public void DrawImage(Bitmap bitmap)
+    {
+      if (!_isDisabled)
+      {
+        if (EQSettings._EqDataAvailable || _IsDisplayOff)
+        {
+          if (DoDebug)
+          {
+            Log.Info("iMONLCDg.DrawImage(): Suppressing display update!", new object[0]);
+          }
+        }
+        else
+        {
+          if (DoDebug)
+          {
+            Log.Info("(IDisplay) iMONLCDg.DrawImage(): called", new object[0]);
+          }
+          if (bitmap == null)
+          {
+            Log.Debug("(IDisplay) iMONLCDg.DrawImage():  bitmap null", new object[0]);
+          }
+          else
+          {
+            BitmapData bitmapdata = bitmap.LockBits(new Rectangle(new Point(0, 0), bitmap.Size), ImageLockMode.ReadOnly,
+                                                    bitmap.PixelFormat);
+            try
+            {
+              if (bitmapData == null)
+              {
+                bitmapData = new byte[bitmapdata.Stride * _grows];
+              }
+              Marshal.Copy(bitmapdata.Scan0, bitmapData, 0, bitmapData.Length);
+            }
+            finally
+            {
+              bitmap.UnlockBits(bitmapdata);
+            }
+            byte[] buffer = _sha256.ComputeHash(bitmapData);
+            if (ByteArray.AreEqual(buffer, _lastHash))
+            {
+              if (DoDebug)
+              {
+                Log.Info("(IDisplay) iMONLCDg.DrawImage():  bitmap not changed", new object[0]);
+              }
+            }
+            else
+            {
+              UpdateAdvancedSettings();
+              var pixelArray = new byte[0xc0];
+              for (int i = 0; i < (_gcols - 1); i++)
+              {
+                pixelArray[i] = 0;
+                pixelArray[i + 0x60] = 0;
+                for (int j = 0; j < 8; j++)
+                {
+                  int index = (j * bitmapdata.Stride) + (i * 4);
+                  if (
+                    Color.FromArgb(bitmapData[index + 2], bitmapData[index + 1], bitmapData[index]).
+                      GetBrightness() < 0.5f)
+                  {
+                    pixelArray[i] = (byte)(pixelArray[i] | ((byte)((1) << (7 - j))));
+                  }
+                }
+                for (int k = 8; k < 0x10; k++)
+                {
+                  int num5 = (k * bitmapdata.Stride) + (i * 4);
+                  if (
+                    Color.FromArgb(bitmapData[num5 + 2], bitmapData[num5 + 1], bitmapData[num5]).
+                      GetBrightness() < 0.5f)
+                  {
+                    pixelArray[i + 0x60] = (byte)(pixelArray[i + 0x60] | ((byte)((1) << (15 - k))));
+                  }
+                }
+              }
+              SendPixelArray(pixelArray);
+              if (DoDebug)
+              {
+                Log.Info("(IDisplay) iMONLCDg.DrawImage(): Sending pixel array to iMON Handler", new object[0]);
+              }
+              _lastHash = buffer;
+            }
+          }
+        }
+      }
+    }
+
+    public void Initialize()
+    {
+      Log.Info("(IDisplay) iMONLCDg.Initialize(): called", new object[0]);
+      if (_isDisabled)
+      {
+        Log.Info("(IDisplay) iMONLCDg.Initialize(): completed\n\n iMONLCDg DRIVER DISABLED\n\n", new object[0]);
+      }
+      else
+      {
+        OpenLcd();
+        Clear();
+        Log.Info("(IDisplay) iMONLCDg.Initialize(): completed", new object[0]);
+      }
+    }
+
+    public void SetCustomCharacters(int[][] customCharacters)
+    {
+    }
+
+    public void SetLine(int line, string message)
+    {
+      if (!_isDisabled)
+      {
+        try
+        {
+          if (DoDebug)
+          {
+            Log.Info("(IDisplay) iMONLCDg.SetLine(): called for Line {0} msg: '{1}'",
+                     new object[] { line.ToString(), message });
+          }
+          if (_USE_VFD_ICONS & (_DisplayType == DisplayType.VFD))
+          {
+            _lines[line] = Add_VFD_Icons(line, message);
+          }
+          else
+          {
+            _lines[line] = message;
+          }
+          if (line == (_trows - 1))
+          {
+            DisplayLines();
+          }
+          if (DoDebug)
+          {
+            Log.Info("(IDisplay) iMONLCDg.SetLine(): completed", new object[0]);
+          }
+        }
+        catch (Exception exception)
+        {
+          Log.Debug("(IDisplay) iMONLCDg.SetLine(): CAUGHT EXCEPTION {0}", new object[] { exception });
+        }
+      }
+    }
+
+    public void Setup(string port, int lines, int cols, int delay, int linesG, int colsG, int timeG, bool backLight,
+                      int backlightLevel, bool contrast, int contrastLevel, bool blankOnExit)
+    {
+      Log.Info("(IDisplay) iMONLCDg.Setup(): called", new object[0]);
+      MiniDisplayHelper.InitEQ(ref EQSettings);
+      MiniDisplayHelper.InitDisplayControl(ref DisplaySettings);
+      MiniDisplayHelper.InitDisplayOptions(ref DisplayOptions);
+      _BlankDisplayOnExit = blankOnExit;
+      _Backlight = false;
+      _BacklightLevel = (ulong)backlightLevel;
+      _Contrast = true;
+      _ContrastLevel = ((ulong)contrastLevel) >> 2;
+      InitializeDriver();
+      if (_DelayStartup)
+      {
+        Log.Info("iMONLCDg.Setup(): Delaying device initialization by 10 seconds", new object[0]);
+        Thread.Sleep(0x2710);
+      }
+      Check_iMON_Manager_Status();
+      if (_IMON == null)
+      {
+        _IMON = new iMONDisplay();
+      }
+      int fWVersion = -1;
+      int rEGVersion = -1;
+      switch (_ForceDisplay)
+      {
+        case "LCD":
+          _DisplayType = DisplayType.LCD;
+          _VfdType = 0x18;
+          _VfdReserved = 0x8888;
+          Log.Info("(IDisplay) iMONLCDg.Setup(): Advanced options forces display type to LCD", new object[0]);
+          break;
+        case "LCD2":
+          _DisplayType = DisplayType.LCD2;
+          _VfdType = 0x1b;
+          _VfdReserved = 0x8888;
+          Log.Info("(IDisplay) iMONLCDg.Setup(): Advanced options forces display type to LCD2", new object[0]);
+          break;
+        case "VFD":
+          _DisplayType = DisplayType.VFD;
+          _VfdType = 0x10;
+          _VfdType = 0x1a;
+          _VfdReserved = 0;
+          Log.Info("(IDisplay) iMONLCDg.Setup(): Advanced options forces display type to VFD", new object[0]);
+          break;
+        case "LCD3R":
+          _DisplayType = DisplayType.ThreeRsystems;
+          _VfdType = 9;
+          _VfdReserved = 0;
+          Log.Info("(IDisplay) iMONLCDg.Setup(): Advanced options forces display type to LCD3R", new object[0]);
+          break;
+        default:
+          Log.Info("(IDisplay) iMONLCDg.Setup(): Autodetecting iMON Display device", new object[0]);
+          try
+          {
+            Log.Info("(IDisplay) iMONLCDg.Setup(): attempting hardware information test", new object[0]);
+            if (_IMON.RC_Available())
+            {
+              Log.Info("(IDisplay) iMONLCDg.Setup(): hardware information test - Opening SG_RC.dll", new object[0]);
+              if (_IMON.iMONRC_Init(0x77, 0x83, 0x8888))
+              {
+                _IMON.iMONRC_ChangeRCSet(0x77);
+                _IMON.iMONRC_ChangeRC6(1);
+                long num4 = _IMON.iMONRC_CheckDriverVersion();
+                int num5 = _IMON.iMONRC_GetFirmwareVer();
+                int num6 = _IMON.iMONRC_GetHWType();
+                int num7 = _IMON.iMONRC_GetLastRFMode();
+                Log.Info(
+                  "(IDisplay) iMONLCDg.Setup(): RC TEST returned DRVR: 0x{0}, FW: 0x{1} (HW: 0x{2}), RC_HW: 0x{3}, RF: 0x{4}",
+                  new object[]
+                    {
+                      num4.ToString("x0000000000000000"), num5.ToString("x00000000"),
+                      GetVFDTypeFromFirmware(num5).ToString("x00000000"), num6.ToString("x00000000"),
+                      num7.ToString("x00000000")
+                    });
+                if (num5 > 0)
+                {
+                  fWVersion = num5;
+                }
+                Log.Info("(IDisplay) iMONLCDg.Setup(): Closing SG_RC.dll", new object[0]);
+                _IMON.iMONRC_Uninit();
+              }
+              else
+              {
+                long num8 = _IMON.iMONRC_CheckDriverVersion();
+                int num9 = _IMON.iMONRC_GetFirmwareVer();
+                int num10 = _IMON.iMONRC_GetHWType();
+                int num11 = _IMON.iMONRC_GetLastRFMode();
+                Log.Info("iMONLCDg.Setup(): RC TEST returned DRVR: 0x{0}, FW: 0x{1} (HW: {2}), RC_HW: 0x{3}, RF: 0x{4}",
+                         new object[]
+                           {
+                             num8.ToString("x0000000000000000"), num9.ToString("x00000000"),
+                             GetVFDTypeFromFirmware(num9).ToString("x00000000"), num10.ToString("x00000000"),
+                             num11.ToString("x00000000")
+                           });
+                if (num9 > 0)
+                {
+                  Log.Info("iMONLCDg.Setup(): Found valid display information", new object[0]);
+                  fWVersion = num9;
+                }
+                Log.Info("iMONLCDg.Setup(): Closing SG_RC.dll", new object[0]);
+              }
+            }
+            else
+            {
+              Log.Info("iMONLCDg.Setup(): Hardware AutoDetect not available", new object[0]);
+            }
+          }
+          catch (Exception exception)
+          {
+            Log.Info("iMONLCDg.Setup(): RC TEST FAILED... SG_RC.dll not found. Exception: {0}",
+                     new object[] { exception.ToString() });
+          }
+          try
+          {
+            int num3;
+            Log.Info("iMONLCDg.Setup(): checking registry for ANTEC entries", new object[0]);
+            RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Antec\VFD", false);
+            if (key != null)
+            {
+              num3 = (int)key.GetValue("LastVFD", 0);
+              if (num3 > 0)
+              {
+                Log.Info("iMONLCDg.Setup(): ANTEC registry entries found - HW: {0}", new object[] { num3.ToString("x00") });
+                rEGVersion = num3;
+              }
+              else
+              {
+                Log.Info("iMONLCDg.Setup(): ANTEC \"LastVFD\" key not found", new object[0]);
+              }
+            }
+            else
+            {
+              Log.Info("iMONLCDg.Setup(): ANTEC registry entries NOT found", new object[0]);
+            }
+            Registry.CurrentUser.Close();
+            if (rEGVersion < 0)
+            {
+              Log.Info("iMONLCDg.Setup(): checking registry for SOUNDGRAPH entries", new object[0]);
+              key = Registry.CurrentUser.OpenSubKey(@"Software\SOUNDGRAPH\iMON", false);
+              if (key != null)
+              {
+                num3 = (int)key.GetValue("LastVFD", 0);
+                if (num3 > 0)
+                {
+                  Log.Info("iMONLCDg.Setup(): SOUNDGRAPH registry entries found - HW: {0}",
+                           new object[] { num3.ToString("x00") });
+                  rEGVersion = num3;
+                }
+                else
+                {
+                  Log.Info("iMONLCDg.Setup(): SOUNDGRAPH \"LastVFD\" key not found", new object[0]);
+                }
+              }
+              else
+              {
+                Log.Info("iMONLCDg.Setup(): SOUNDGRAPH registry entries NOT found", new object[0]);
+              }
+              Registry.CurrentUser.Close();
+            }
+          }
+          catch (Exception exception2)
+          {
+            Log.Info("iMONLCDg.Setup(): registry test caught exception {0}", new object[] { exception2.ToString() });
+          }
+          if (fWVersion > -1)
+          {
+            if (GetDisplayInfoFromFirmware(fWVersion))
+            {
+              Log.Info("iMONLCDg.Setup(): Hardware tests determined - iMON Type: {0}, Display Type: {1} Rsrvd: {2}",
+                       new object[] { _VfdType.ToString("x00"), DisplayType.TypeName(_DisplayType), _VfdReserved.ToString("x00") });
+            }
+            else
+            {
+              Log.Info("iMONLCDg.Setup(): Hardware tests determined UNSUPPORTED display type!", new object[0]);
+              _DisplayType = DisplayType.Unsupported;
+            }
+          }
+          else if (rEGVersion > -1)
+          {
+            if (GetDisplayInfoFromRegistry(rEGVersion))
+            {
+              Log.Info("iMONLCDg.Setup(): Registry tests determined - iMON Type: {0}, Display Type: {1} Rsrvd: {2}",
+                       new object[] { _VfdType.ToString("x00"), DisplayType.TypeName(_DisplayType), _VfdReserved.ToString("x00") });
+            }
+            else
+            {
+              Log.Info("iMONLCDg.Setup(): Registry tests determined UNSUPPORTED display type!", new object[0]);
+              _DisplayType = DisplayType.Unsupported;
+              _isDisabled = true;
+            }
+          }
+          else
+          {
+            Log.Info("(IDisplay) iMONLCDg.Setup(): Display Type could not be determined", new object[0]);
+            _DisplayType = DisplayType.Unsupported;
+            _isDisabled = true;
+          }
+          if (_DisplayType == DisplayType.Unsupported)
+          {
+            _isDisabled = true;
+            Log.Info("(IDisplay) iMONLCDg.Setup(): Display Type is NOT SUPPORTED - Plugin disabled", new object[0]);
+          }
+          break;
+      }
+
+      if (!_isDisabled)
+      {
+        try
+        {
+          Log.Info("(IDisplay) iMONLCDg.Setup(): Testing iMON Display device", new object[0]);
+          if (_IMON.iMONVFD_IsInited())
+          {
+            Log.Info("(IDisplay) iMONLCDg.Setup(): iMON Display found", new object[0]);
+            _IMON.iMONVFD_Uninit();
+          }
+          Log.Info("(IDisplay) iMONLCDg.Setup(): opening display type {0}",
+                   new object[] { DisplayType.TypeName(_DisplayType) });
+          if (!_IMON.iMONVFD_Init(_VfdType, _VfdReserved))
+          {
+            Log.Info("(IDisplay) iMONLCDg.Setup(): Open failed - No iMON device found", new object[0]);
+            _isDisabled = true;
+            _errorMessage = "iMONLCDg could not find an iMON LCD display";
+          }
+          else
+          {
+            Log.Info("(IDisplay) iMONLCDg.Setup(): iMON Display device found", new object[0]);
+            _IMON.iMONVFD_Uninit();
+          }
+        }
+        catch (Exception exception3)
+        {
+          _isDisabled = true;
+          _errorMessage = exception3.Message;
+          Log.Info("(IDisplay) iMONLCDg.Setup(): caught an exception.", new object[0]);
+        }
+      }
+      string property = GUIPropertyManager.GetProperty("#currentmodule");
+      Log.Info("(IDisplay) iMONLCDg.Setup(): current module = {0}", new object[] { property });
+      if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
+      {
+        _grows = linesG;
+        if (_grows > 0x10)
+        {
+          _grows = 0x10;
+          Log.Info(
+            "(IDisplay) iMONLCDg.Setup(): DISPLAY CONFIGURATION (GRAPHICS MODE) ERROR - Rows must be less then or equal to 16",
+            new object[0]);
+        }
+        _gcols = colsG;
+        if (_gcols > 0x60)
+        {
+          _gcols = 0x60;
+          Log.Info(
+            "(IDisplay) iMONLCDg.Setup(): DISPLAY CONFIGURATION (GRAPHICS MODE) ERROR - Columns must be less then or equal to 96",
+            new object[0]);
+        }
+      }
+      else if (_DisplayType == DisplayType.VFD)
+      {
+        _trows = lines;
+        if (_trows > 2)
+        {
+          _trows = 2;
+          Log.Info(
+            "(IDisplay) iMONLCDg.Setup(): DISPLAY CONFIGURATION (TEXT MODE) ERROR - Rows must be less then or equal to 2",
+            new object[0]);
+        }
+        else
+        {
+          Log.Info("(IDisplay) iMONLCDg.Setup(): _trows (Text Mode Rows) set to {0}", new object[] { _trows });
+        }
+        Log.Info("(IDisplay) iMONLCDg.Setup(): _tcols (Text Mode Columns) set to {0}", new object[] { _tcols });
+        DisplayOptions.DiskMediaStatus = false;
+        DisplayOptions.VolumeDisplay = false;
+        DisplayOptions.ProgressDisplay = false;
+        DisplayOptions.UseCustomFont = false;
+        DisplayOptions.UseLargeIcons = false;
+        DisplayOptions.UseCustomIcons = false;
+        DisplayOptions.UseInvertedIcons = false;
+      }
+      else if (_DisplayType == DisplayType.ThreeRsystems)
+      {
+        _trows = lines;
+        if (_trows > 1)
+        {
+          _trows = 1;
+          Log.Info("(IDisplay) iMONLCDg.Setup(): DISPLAY CONFIGURATION (3Rsystems MODE) ERROR - Rows must be 1",
+                   new object[0]);
+        }
+        _gcols = 12;
+        Log.Info(
+          "(IDisplay) iMONLCDg.Setup(): DISPLAY CONFIGURATION (3Rsystems MODE) ERROR - Columns must be less then or equal to 12",
+          new object[0]);
+
+        DisplayOptions.DiskMediaStatus = false;
+        DisplayOptions.VolumeDisplay = false;
+        DisplayOptions.ProgressDisplay = false;
+        DisplayOptions.UseCustomFont = false;
+        DisplayOptions.UseLargeIcons = false;
+        DisplayOptions.UseCustomIcons = false;
+        DisplayOptions.UseInvertedIcons = false;
+      }
+      _delay = delay;
+      _delayG = timeG;
+      _delay = Math.Max(_delay, _delayG);
+      if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
+      {
+        _delay = Math.Min(2, _delay);
+      }
+      Log.Info("(IDisplay) iMONLCDg.Setup(): Completed", new object[0]);
+    }
+
+    public string Description
+    {
+      get { return "SoundGraph iMON USB VFD/LCD Plugin v20_05_2009 - build 2"; }
+    }
+
+    public string ErrorMessage
+    {
+      get { return _errorMessage; }
+    }
+
+    public bool IsDisabled
+    {
+      get
+      {
+        Log.Debug("iMONLCDg.IsDisabled: returning {0}", new object[] { _isDisabled });
+        return _isDisabled;
+      }
+    }
+
+    public string Name
+    {
+      get { return "iMONLCDg"; }
+    }
+
+    public bool SupportsGraphics
+    {
+      get
+      {
+        if (_isDisabled)
+        {
+          return true;
+        }
+        if (_IMON == null)
+        {
+          return true;
+        }
+        if (DoDebug)
+        {
+          Log.Info("(IDisplay) iMONLCDg.SupportsGraphics(): _displayType = {0}",
+                   new object[] { DisplayType.TypeName(_DisplayType) });
+        }
+        if (!_IMON.iMONVFD_IsInited())
+        {
+          if (DoDebug)
+          {
+            Log.Info("(IDisplay) iMONLCDg.SupportsGraphics(): forcing true for configuration", new object[0]);
+          }
+          return true;
+        }
+        if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
+        {
+          if (DoDebug)
+          {
+            Log.Info("(IDisplay) iMONLCDg.SupportsGraphics(): returned true", new object[0]);
+          }
+          return true;
+        }
+        if (DoDebug)
+        {
+          Log.Info("(IDisplay) iMONLCDg.SupportsGraphics(): returned false", new object[0]);
+        }
+        return false;
+      }
+    }
+
+    public bool SupportsText
+    {
+      get { return true; }
+    }
+
+    #endregion
 
     private void ActivateDVM()
     {
       try
       {
-        if (!this.DVMactive)
+        if (!DVMactive)
         {
           DVM = new DeviceVolumeMonitor(GUIGraphicsContext.form.Handle);
           if (DVM != null)
           {
-            DVM.OnVolumeInserted += new DeviceVolumeAction(VolumeInserted);
-            DVM.OnVolumeRemoved += new DeviceVolumeAction(VolumeRemoved);
+            DVM.OnVolumeInserted += VolumeInserted;
+            DVM.OnVolumeRemoved += VolumeRemoved;
             DVM.AsynchronousEvents = true;
             DVM.Enabled = true;
             Log.Debug("iMONLCDg.ActivateDVM(): DVM Activated", new object[0]);
-            this.DVMactive = true;
+            DVMactive = true;
           }
         }
       }
       catch (Exception exception)
       {
-        this.DVMactive = true;
-        Log.Debug("iMONLCDg.ActivateDVM(): caught exception: {0}", new object[] {exception});
+        DVMactive = true;
+        Log.Debug("iMONLCDg.ActivateDVM(): caught exception: {0}", new object[] { exception });
       }
     }
 
     private string Add_VFD_Icons(int _line, string message)
     {
-      if (!this._USE_VFD_ICONS)
+      if (!_USE_VFD_ICONS)
       {
         return message;
       }
-      if (this._USE_VFD_ICONS)
+      if (_USE_VFD_ICONS)
       {
         return message;
       }
@@ -470,39 +947,31 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         return message;
       }
-      string str = string.Empty;
-      if (message.Length < 0x10)
-      {
-        str = message.PadRight(14, ' ');
-      }
-      else
-      {
-        str = message.Substring(0, 14);
-      }
+      string str = message.Length < 0x10 ? message.PadRight(14, ' ') : message.Substring(0, 14);
       str = str + ' ';
       if (_line == 0)
       {
-        if (this.MPStatus.MP_Is_Idle || !this.MPStatus.MediaPlayer_Active)
+        if (MPStatus.MP_Is_Idle || !MPStatus.MediaPlayer_Active)
         {
-          return (str + this.IMON_VFD_CHAR_BLOCK_FILLED);
+          return (str + IMON_VFD_CHAR_BLOCK_FILLED);
         }
-        if (this.MPStatus.MediaPlayer_Playing)
+        if (MPStatus.MediaPlayer_Playing)
         {
-          if (this.MPStatus.Media_Speed < 0)
+          if (MPStatus.Media_Speed < 0)
           {
-            return (str + this.IMON_VFD_CHAR_RPLAY);
+            return (str + IMON_VFD_CHAR_RPLAY);
           }
-          return (str + this.IMON_VFD_CHAR_PLAY);
+          return (str + IMON_VFD_CHAR_PLAY);
         }
-        if (this.MPStatus.MediaPlayer_Paused)
+        if (MPStatus.MediaPlayer_Paused)
         {
-          str = str + this.IMON_VFD_CHAR_PAUSE;
+          str = str + IMON_VFD_CHAR_PAUSE;
         }
         return str;
       }
-      if (this.MPStatus.Media_IsRecording)
+      if (MPStatus.Media_IsRecording)
       {
-        return (str + this.IMON_VFD_CHAR_RECORD);
+        return (str + IMON_VFD_CHAR_RECORD);
       }
       return (str + " ");
     }
@@ -510,7 +979,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private void AdvancedSettings_OnSettingsChanged()
     {
       Log.Info("iMONLCDg.AdvancedSettings_OnSettingsChanged(): RELOADING SETTINGS", new object[0]);
-      AdvancedSettings advSettings = this.AdvSettings;
+      AdvancedSettings advSettings = AdvSettings;
       AdvancedSettings settings2 = AdvancedSettings.Load();
       bool flag = false;
       if (!advSettings.Equals(settings2))
@@ -519,28 +988,28 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       if (flag)
       {
-        this.CleanUp();
+        CleanUp();
         Thread.Sleep(100);
       }
-      this.LoadAdvancedSettings();
+      LoadAdvancedSettings();
       if (flag)
       {
-        this.Setup("", Settings.Instance.TextHeight, Settings.Instance.TextWidth, 0, Settings.Instance.GraphicHeight,
-                   Settings.Instance.GraphicWidth, 0, Settings.Instance.BackLightControl, Settings.Instance.Backlight,
-                   Settings.Instance.ContrastControl, Settings.Instance.Contrast, Settings.Instance.BlankOnExit);
-        this.Initialize();
+        Setup("", Settings.Instance.TextHeight, Settings.Instance.TextWidth, 0, Settings.Instance.GraphicHeight,
+              Settings.Instance.GraphicWidth, 0, Settings.Instance.BackLightControl, Settings.Instance.Backlight,
+              Settings.Instance.ContrastControl, Settings.Instance.Contrast, Settings.Instance.BlankOnExit);
+        Initialize();
       }
     }
 
     private static byte BitReverse(byte inByte)
     {
       byte num = 0;
-      for (byte i = 0x80; Convert.ToInt32(i) > 0; i = (byte) (i >> 1))
+      for (byte i = 0x80; Convert.ToInt32(i) > 0; i = (byte)(i >> 1))
       {
-        num = (byte) (num >> 1);
-        if (((byte) (inByte & i)) != 0)
+        num = (byte)(num >> 1);
+        if (((byte)(inByte & i)) != 0)
         {
-          num = (byte) (num | 0x80);
+          num = (byte)(num | 0x80);
         }
       }
       return num;
@@ -548,46 +1017,46 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void Check_Idle_State()
     {
-      if (this.MPStatus.MP_Is_Idle)
+      if (MPStatus.MP_Is_Idle)
       {
-        if (this.DoDebug)
+        if (DoDebug)
         {
           Log.Info("iMONLCDg.DisplayLines(): _BlankDisplayWhenIdle = {0}, _BlankIdleTimeout = {1}",
-                   new object[] {this.DisplaySettings.BlankDisplayWhenIdle, this.DisplaySettings._BlankIdleTimeout});
+                   new object[] { DisplaySettings.BlankDisplayWhenIdle, DisplaySettings._BlankIdleTimeout });
         }
-        if (this.DisplaySettings.BlankDisplayWhenIdle)
+        if (DisplaySettings.BlankDisplayWhenIdle)
         {
-          if (!this._mpIsIdle)
+          if (!_mpIsIdle)
           {
-            if (this.DoDebug)
+            if (DoDebug)
             {
               Log.Info("iMONLCDg.DisplayLines(): MP going IDLE", new object[0]);
             }
-            this.DisplaySettings._BlankIdleTime = DateTime.Now.Ticks;
+            DisplaySettings._BlankIdleTime = DateTime.Now.Ticks;
           }
-          if (!this._IsDisplayOff &&
-              ((DateTime.Now.Ticks - this.DisplaySettings._BlankIdleTime) > this.DisplaySettings._BlankIdleTimeout))
+          if (!_IsDisplayOff &&
+              ((DateTime.Now.Ticks - DisplaySettings._BlankIdleTime) > DisplaySettings._BlankIdleTimeout))
           {
-            if (this.DoDebug)
+            if (DoDebug)
             {
               Log.Info("iMONLCDg.DisplayLines(): Blanking display due to IDLE state", new object[0]);
             }
-            this.DisplayOff();
+            DisplayOff();
           }
         }
-        this._mpIsIdle = true;
+        _mpIsIdle = true;
       }
       else
       {
-        if (this.DisplaySettings.BlankDisplayWhenIdle & this._mpIsIdle)
+        if (DisplaySettings.BlankDisplayWhenIdle & _mpIsIdle)
         {
-          if (this.DoDebug)
+          if (DoDebug)
           {
             Log.Info("iMONLCDg.DisplayLines(): MP no longer IDLE - restoring display", new object[0]);
           }
-          this.DisplayOn();
+          DisplayOn();
         }
-        this._mpIsIdle = false;
+        _mpIsIdle = false;
       }
     }
 
@@ -598,17 +1067,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       bool flag;
       bool flag2;
       Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Checking iMON/VFD Manager configuration", new object[0]);
-      string str = string.Empty;
-      int num = -1;
+      string str; // = string.Empty;
+      int num;
       Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Checking Antec VFD Manager registry subkey.", new object[0]);
       RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Antec\VFD", true);
       if (key != null)
       {
         Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): The Antec VFD Manager registry subkey found.", new object[0]);
         flag2 = true;
-        str = (string) key.GetValue("CurRemote", string.Empty);
-        num = (int) key.GetValue("MouseMode", -1);
-        if ((str.Equals("iMON PAD") & (num != 0)) & this._ForceKeyBoardMode)
+        str = (string)key.GetValue("CurRemote", string.Empty);
+        num = (int)key.GetValue("MouseMode", -1);
+        if ((str.Equals("iMON PAD") & (num != 0)) & _ForceKeyBoardMode)
         {
           Log.Info("iMONLCDgCheck_iMON_Manager_Status(): \"iMON PAD\" configuration error.", new object[0]);
           Log.Info(
@@ -616,7 +1085,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             new object[0]);
           flag2 = false;
         }
-        if (((int) key.GetValue("RCPlugin", -1)) != 1)
+        if (((int)key.GetValue("RCPlugin", -1)) != 1)
         {
           Log.Info("iMONLCDgCheck_iMON_Manager_Status(): \"RCPlugin\" configuration error.", new object[0]);
           Log.Info(
@@ -624,13 +1093,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             new object[0]);
           flag2 = false;
         }
-        if (((int) key.GetValue("RunFront", -1)) != 0)
+        if (!_LeaveFrontviewActive)
         {
-          Log.Info("iMONLCDgCheck_iMON_Manager_Status(): \"RunFront\" configuration error.", new object[0]);
-          Log.Info(
-            "iMONLCDg.Check_iMON_Manager_Status(): The Antec VFD Manager is not set correctly. The configuration has been corrected.",
-            new object[0]);
-          flag2 = false;
+          if (((int)key.GetValue("RunFront", -1)) != 0)
+          {
+            Log.Info("iMONLCDgCheck_iMON_Manager_Status(): \"RunFront\" configuration error.", new object[0]);
+            Log.Info(
+              "iMONLCDg.Check_iMON_Manager_Status(): The Antec VFD Manager is not set correctly. The configuration has been corrected.",
+              new object[0]);
+            flag2 = false;
+          }
         }
         if (_ForceManagerReload)
         {
@@ -640,7 +1112,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         if (!flag2)
         {
           key.SetValue("RCPlugin", 1, RegistryValueKind.DWord);
-          key.SetValue("RunFront", 0, RegistryValueKind.DWord);
+          if (!_LeaveFrontviewActive)
+          {
+            key.SetValue("RunFront", 0, RegistryValueKind.DWord);
+          }
           if (str.Equals("iMON PAD") & (num != 0))
           {
             key.SetValue("MouseMode", 0, RegistryValueKind.DWord);
@@ -651,10 +1126,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Thread.Sleep(100);
           processesByName = Process.GetProcessesByName("VFD");
           Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Found {0} instances of Antec VFD Manager",
-                    new object[] {processesByName.Length});
+                    new object[] { processesByName.Length });
           if (processesByName.Length > 0)
           {
-            this._UsingAntecManager = true;
+            _UsingAntecManager = true;
             Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Stopping VFD Manager", new object[0]);
             processesByName[0].Kill();
             flag = false;
@@ -671,21 +1146,29 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): VFD Manager Stopped", new object[0]);
             Win32Functions.RedrawNotificationArea();
-            process = new Process();
-            process.StartInfo.WorkingDirectory = this.FindAntecManagerPath();
-            process.StartInfo.FileName = "VFD.exe";
+            process = new Process
+                        {
+                          StartInfo =
+                          {
+                            WorkingDirectory = FindAntecManagerPath(),
+                            FileName = "VFD.exe"
+                          }
+                        };
             Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): ReStarting VFD Manager", new object[0]);
             Process.Start(process.StartInfo);
           }
         }
         else
         {
-          Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): The Antec VFD Manager registry entries are correct.",
-                    new object[0]);
-          key.SetValue("RunFront", 0, RegistryValueKind.DWord);
+          if (!_LeaveFrontviewActive)
+          {
+            Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): The Antec VFD Manager registry entries are correct.",
+                      new object[0]);
+            key.SetValue("RunFront", 0, RegistryValueKind.DWord);
+          }
           processesByName = Process.GetProcessesByName("VFD");
           Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Found {0} instances of Antec VFD Manager",
-                    new object[] {processesByName.Length});
+                    new object[] { processesByName.Length });
         }
         key.Close();
       }
@@ -696,7 +1179,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Registry.CurrentUser.Close();
         processesByName = Process.GetProcessesByName("VFD");
         Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): state check: Found {0} instances of Antec VFD Manager",
-                  new object[] {processesByName.Length});
+                  new object[] { processesByName.Length });
         if (processesByName.Length > 0)
         {
           Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Inconsistant state: Forcing shutdown of Antec VFD Manager",
@@ -725,9 +1208,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): The Soundgraph iMON Manager registry subkey found.",
                   new object[0]);
         flag2 = true;
-        str = (string) key.GetValue("CurRemote", string.Empty);
-        num = (int) key.GetValue("MouseMode", -1);
-        if ((str.Equals("iMON PAD") & (num != 0)) & this._ForceKeyBoardMode)
+        str = (string)key.GetValue("CurRemote", string.Empty);
+        num = (int)key.GetValue("MouseMode", -1);
+        if ((str.Equals("iMON PAD") & (num != 0)) & _ForceKeyBoardMode)
         {
           Log.Info("iMONLCDgCheck_iMON_Manager_Status(): \"iMON PAD\" configuration error.", new object[0]);
           Log.Info(
@@ -735,7 +1218,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             new object[0]);
           flag2 = false;
         }
-        if (((int) key.GetValue("RCPlugin", -1)) != 1)
+        if (((int)key.GetValue("RCPlugin", -1)) != 1)
         {
           Log.Info("iMONLCDgCheck_iMON_Manager_Status(): \"RCPlugin\" configuration error.", new object[0]);
           Log.Info(
@@ -743,14 +1226,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             new object[0]);
           flag2 = false;
         }
-
-        if (((int) key.GetValue("RunFront", -1)) != 0)
+        if (!_LeaveFrontviewActive)
         {
-          Log.Info("iMONLCDgCheck_iMON_Manager_Status(): \"RunFront\" configuration error.", new object[0]);
-          Log.Info(
-            "iMONLCDgCheck_iMON_Manager_Status(): The Soundgraph iMON Manager is not set correctly. The configuration has been corrected.",
-            new object[0]);
-          flag2 = false;
+          if (((int)key.GetValue("RunFront", -1)) != 0)
+          {
+            Log.Info("iMONLCDgCheck_iMON_Manager_Status(): \"RunFront\" configuration error.", new object[0]);
+            Log.Info(
+              "iMONLCDgCheck_iMON_Manager_Status(): The Soundgraph iMON Manager is not set correctly. The configuration has been corrected.",
+              new object[0]);
+            flag2 = false;
+          }
         }
         if (_ForceManagerReload)
         {
@@ -760,7 +1245,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         if (!flag2)
         {
           key.SetValue("RCPlugin", 1, RegistryValueKind.DWord);
-          key.SetValue("RunFront", 0, RegistryValueKind.DWord);
+          if (!_LeaveFrontviewActive)
+          {
+            key.SetValue("RunFront", 0, RegistryValueKind.DWord);
+          }
           if (str.Equals("iMON PAD") & (num != 0))
           {
             key.SetValue("MouseMode", 0, RegistryValueKind.DWord);
@@ -771,10 +1259,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Thread.Sleep(100);
           processesByName = Process.GetProcessesByName("iMON");
           Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Found {0} instances of SoundGraph iMON Manager",
-                    new object[] {processesByName.Length});
+                    new object[] { processesByName.Length });
           if (processesByName.Length > 0)
           {
-            this._UsingSoundgraphManager = true;
+            _UsingSoundgraphManager = true;
             Log.Info("iMONLCDg.Check_iMON_Manager_Status(): Stopping iMON Manager", new object[0]);
             processesByName[0].Kill();
             flag = false;
@@ -791,21 +1279,29 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             Log.Info("iMONLCDg.Check_iMON_Manager_Status(): iMON Manager Stopped", new object[0]);
             Win32Functions.RedrawNotificationArea();
-            process = new Process();
-            process.StartInfo.WorkingDirectory = this.FindSoundGraphManagerPath();
-            process.StartInfo.FileName = "iMON.exe";
+            process = new Process
+                        {
+                          StartInfo =
+                          {
+                            WorkingDirectory = FindSoundGraphManagerPath(),
+                            FileName = "iMON.exe"
+                          }
+                        };
             Log.Info("iMONLCDg.Check_iMON_Manager_Status(): ReStarting iMON Manager", new object[0]);
             Process.Start(process.StartInfo);
           }
         }
         else
         {
-          Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): The SoundGraph iMON Manager registry entries are correct.",
-                    new object[0]);
-          key.SetValue("RunFront", 0, RegistryValueKind.DWord);
+          if (!_LeaveFrontviewActive)
+          {
+            Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): The SoundGraph iMON Manager registry entries are correct.",
+                      new object[0]);
+            key.SetValue("RunFront", 0, RegistryValueKind.DWord);
+          }
           processesByName = Process.GetProcessesByName("iMON");
           Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Found {0} instances of SoundGraph iMON Manager",
-                    new object[] {processesByName.Length});
+                    new object[] { processesByName.Length });
         }
         key.Close();
       }
@@ -815,7 +1311,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): SoundGraph Registry subkey NOT FOUND", new object[0]);
         processesByName = Process.GetProcessesByName("iMON");
         Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): STATE CHECK: Found {0} instances of SoundGraph iMON Manager",
-                  new object[] {processesByName.Length});
+                  new object[] { processesByName.Length });
         if (processesByName.Length > 0)
         {
           Log.Debug(
@@ -840,7 +1336,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
       }
       Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): iMON/VFD Manager configuration check completed", new object[0]);
-      if (this._EnsureManagerStartup)
+      if (_EnsureManagerStartup)
       {
         Log.Debug(
           "iMONLCDg.Check_iMON_Manager_Status(): Ensure Manager Start is selected.. ensuring that the manager is running",
@@ -850,9 +1346,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         string processName = string.Empty;
         if ((processArray2.Length == 0) & (processArray3.Length == 0))
         {
-          Process process2 = new Process();
-          string str3 = this.FindAntecManagerPath();
-          string str4 = this.FindSoundGraphManagerPath();
+          var process2 = new Process();
+          string str3 = FindAntecManagerPath();
+          string str4 = FindSoundGraphManagerPath();
           if ((str3 == string.Empty) & (str4 == string.Empty))
           {
             Log.Info(
@@ -897,85 +1393,68 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             if (!flag3)
             {
-              this._UsingAntecManager = false;
-              this._UsingSoundgraphManager = false;
+              _UsingAntecManager = false;
+              _UsingSoundgraphManager = false;
               Log.Info("iMONLCDg.Check_iMON_Manager_Status(): Could not start Antec/iMON Manager process", new object[0]);
             }
             else if (processName.Equals("VFD"))
             {
-              this._UsingAntecManager = true;
-              this._UsingSoundgraphManager = false;
+              _UsingAntecManager = true;
+              _UsingSoundgraphManager = false;
               Log.Info("iMONLCDg.Check_iMON_Manager_Status(): Started Antec VFD Manager", new object[0]);
             }
             else
             {
-              this._UsingAntecManager = false;
-              this._UsingSoundgraphManager = true;
+              _UsingAntecManager = false;
+              _UsingSoundgraphManager = true;
               Log.Info("iMONLCDg.Check_iMON_Manager_Status(): Started iMON Manager", new object[0]);
             }
           }
         }
         else if (processArray2.Length > 0)
         {
-          this._UsingAntecManager = true;
-          this._UsingSoundgraphManager = false;
+          _UsingAntecManager = true;
+          _UsingSoundgraphManager = false;
           Log.Info("iMONLCDg.Check_iMON_Manager_Status(): Antec VFD Manager is running", new object[0]);
         }
         else if (processArray3.Length > 0)
         {
-          this._UsingAntecManager = false;
-          this._UsingSoundgraphManager = true;
+          _UsingAntecManager = false;
+          _UsingSoundgraphManager = true;
           Log.Info("iMONLCDg.Check_iMON_Manager_Status(): iMON Manager is running", new object[0]);
         }
       }
     }
 
-    public void CleanUp()
-    {
-      if (!this._isDisabled)
-      {
-        Log.Info("(IDisplay) iMONLCDg.CleanUp(): called", new object[0]);
-        AdvancedSettings.OnSettingsChanged -=
-          new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
-        this.CloseLcd();
-        Log.Info("(IDisplay) iMONLCDg.CleanUp(): completed", new object[0]);
-      }
-    }
-
     public void Clear()
     {
-      if (!this._isDisabled)
+      if (!_isDisabled)
       {
         Log.Debug("iMONLCDg.Clear(): called", new object[0]);
         for (int i = 0; i < 2; i++)
         {
-          this._lines[i] = new string(' ', Settings.Instance.TextWidth);
+          _lines[i] = new string(' ', Settings.Instance.TextWidth);
         }
-        this.DisplayLines();
+        DisplayLines();
         Log.Debug("iMONLCDg.Clear(): completed", new object[0]);
       }
     }
 
     private void ClearDisplay()
     {
-      this.Clear();
-    }
-
-    private void ClearPixels()
-    {
-      this.Clear();
+      Clear();
     }
 
     private void CloseLcd()
     {
       Log.Info("iMONLCDg.CloseLcd(): called", new object[0]);
-      if (this._IMON.iMONVFD_IsInited())
+      if (_IMON.iMONVFD_IsInited())
       {
         if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
         {
-          if (!this._displayTest)
+          if (!_displayTest)
           {
-            while (this._iconThread.IsAlive)
+            while (_iconThread.IsAlive)
             {
               Log.Info("iMONLCDg.CloseLcd(): Stopping iMONLCDg.UpdateIcons() Thread", new object[0]);
               lock (ThreadMutex)
@@ -987,22 +1466,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
           }
           Log.Info("iMONLCDg.CloseLcd(): Preparing for shutdown", new object[0]);
-          this.SendData(Command.SetIcons);
-          this.SendData(Command.SetLines0);
-          this.SendData(Command.SetLines1);
-          this.SendData(Command.SetLines2);
-          if (this._BlankDisplayOnExit)
+          SendData(Command.SetIcons);
+          SendData(Command.SetLines0);
+          SendData(Command.SetLines1);
+          SendData(Command.SetLines2);
+          if (_BlankDisplayOnExit)
           {
             if (_DisplayType == DisplayType.LCD2)
             {
               Log.Info("iMONLCDg.CloseLcd(): sending display shutdown command to LCD2", new object[0]);
-              this.SendData(-8646911284551352312L);
-              this.SendData(-8502796096475496448L);
+              SendData(-8646911284551352312L);
+              SendData(-8502796096475496448L);
             }
             else
             {
               Log.Info("iMONLCDg.CloseLcd(): sending display shutdown command to LCD", new object[0]);
-              this.SendData(Command.Shutdown);
+              SendData(Command.Shutdown);
             }
           }
           else
@@ -1019,30 +1498,30 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               Log.Debug("iMONLCDg.CloseLcd(): sending clock enable command to LCD", new object[0]);
               num = 0x5000000000000000L;
             }
-            num += ((ulong) now.Second) << 0x30;
-            num += ((ulong) now.Minute) << 40;
-            num += ((ulong) now.Hour) << 0x20;
-            num += ((ulong) now.Day) << 0x18;
-            num += ((ulong) now.Month) << 0x10;
-            num += (ulong) ((now.Year & 15L) << 8);
-            num += (ulong) 0x80L;
-            this.SendData(num);
+            num += ((ulong)now.Second) << 0x30;
+            num += ((ulong)now.Minute) << 40;
+            num += ((ulong)now.Hour) << 0x20;
+            num += ((ulong)now.Day) << 0x18;
+            num += ((ulong)now.Month) << 0x10;
+            num += (ulong)((now.Year & 15L) << 8);
+            num += 0x80L;
+            SendData(num);
           }
-          this.SendData(Command.KeypadLightOff);
-          if (this.DisplayOptions.UseCustomFont)
+          SendData(Command.KeypadLightOff);
+          if (DisplayOptions.UseCustomFont)
           {
-            this.CFont.CloseFont();
+            CFont.CloseFont();
           }
-          if (this.DisplayOptions.UseLargeIcons & this.DisplayOptions.UseCustomIcons)
+          if (DisplayOptions.UseLargeIcons & DisplayOptions.UseCustomIcons)
           {
-            this.CustomLargeIcon.CloseIcons();
+            CustomLargeIcon.CloseIcons();
           }
         }
         else if (_DisplayType == DisplayType.VFD)
         {
-          if (this.EQSettings.UseEqDisplay || this.DisplaySettings.BlankDisplayWithVideo)
+          if (EQSettings.UseEqDisplay || DisplaySettings.BlankDisplayWithVideo)
           {
-            while (this._iconThread.IsAlive)
+            while (_iconThread.IsAlive)
             {
               Log.Info("iMONLCDg.CloseLcd(): Stoping iMONLCDg.VFD_EQ_Update() Thread", new object[0]);
               lock (ThreadMutex)
@@ -1053,30 +1532,30 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               Thread.Sleep(500);
             }
           }
-          if (this._BlankDisplayOnExit)
+          if (_BlankDisplayOnExit)
           {
             Log.Info("iMONLCDg.CloseLcd(): Shutting down VFD display!!", new object[0]);
-            this.SetText("", "");
+            SetText("", "");
           }
           else
           {
             Log.Info("iMONLCDg.CloseLcd(): Sending Shutdown message to VFD display!!", new object[0]);
-            if ((this.DisplaySettings._Shutdown1 != string.Empty) || (this.DisplaySettings._Shutdown2 != string.Empty))
+            if ((DisplaySettings._Shutdown1 != string.Empty) || (DisplaySettings._Shutdown2 != string.Empty))
             {
-              this.SetText(this.DisplaySettings._Shutdown1, this.DisplaySettings._Shutdown2);
+              SetText(DisplaySettings._Shutdown1, DisplaySettings._Shutdown2);
             }
             else
             {
-              this.SetText("   MediaPortal  ", "   not active   ");
-              this.SetVFDClock();
+              SetText("   MediaPortal  ", "   not active   ");
+              SetVFDClock();
             }
           }
         }
         else if (_DisplayType == DisplayType.ThreeRsystems)
         {
-          if (this.EQSettings.UseEqDisplay || this.DisplaySettings.BlankDisplayWithVideo)
+          if (EQSettings.UseEqDisplay || DisplaySettings.BlankDisplayWithVideo)
           {
-            while (this._iconThread.IsAlive)
+            while (_iconThread.IsAlive)
             {
               Log.Info("iMONLCDg.CloseLcd(): Stoping iMONLCDg.VFD_EQ_Update() Thread", new object[0]);
               lock (ThreadMutex)
@@ -1087,153 +1566,146 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               Thread.Sleep(500);
             }
           }
-          if (this._BlankDisplayOnExit)
+          if (_BlankDisplayOnExit)
           {
             Log.Info("iMONLCDg.CloseLcd(): Sending Shutdown message to LCD3R display!!", new object[0]);
-            if (this.DisplaySettings._Shutdown1 != string.Empty)
+            if (DisplaySettings._Shutdown1 != string.Empty)
             {
-              this.SendText3R(this.DisplaySettings._Shutdown1);
+              SendText3R(DisplaySettings._Shutdown1);
             }
             else
             {
-              this.SendData((long) 0x21c000000000000L);
-              this.SendData((long) 2L);
-              this.SendText3R(" not active ");
+              SendData(0x21c000000000000L);
+              SendData(2L);
+              SendText3R(" not active ");
             }
           }
           else
           {
             Log.Info("iMONLCDg.CloseLcd(): Shutting down LCD3R display (with clock)!!", new object[0]);
-            this.SendData((long) 0x21c010000000000L);
-            this.SendData((long) 2L);
+            SendData(0x21c010000000000L);
+            SendData(2L);
           }
         }
-        this._IMON.iMONVFD_Uninit();
+        _IMON.iMONVFD_Uninit();
       }
       else
       {
         Log.Info("iMONLCDg.CloseLcd(): Display is not open!!", new object[0]);
       }
-      if (this._MonitorPower && !this._IsHandlingPowerEvent)
+      if (_MonitorPower && !_IsHandlingPowerEvent)
       {
         Log.Info("iMONLCDg.CloseLcd(): Removing Power State Monitor callback from system event thread", new object[0]);
-        SystemEvents.PowerModeChanged -= new PowerModeChangedEventHandler(this.SystemEvents_PowerModeChanged);
+        SystemEvents.PowerModeChanged -= SystemEvents_PowerModeChanged;
       }
-      this.Remote_Stop();
-      this.RestartFrontview();
+
+      RestartFrontview();
       Log.Info("iMONLCDg.CloseLcd(): completed", new object[0]);
     }
 
-    public void Configure()
+    private static ulong ConvertPluginIconsToDriverIcons(ulong IconMask)
     {
-      Form form = new iMONLCDg_AdvancedSetupForm();
-      form.ShowDialog();
-      form.Dispose();
-    }
-
-    private ulong ConvertPluginIconsToDriverIcons(ulong IconMask)
-    {
-      return (IconMask & ((ulong) 0xffffffffffL));
+      return (IconMask & (0xffffffffffL));
     }
 
     private void DisplayEQ()
     {
-      if (!(this.EQSettings.UseEqDisplay & this.EQSettings._EqDataAvailable))
+      if (!(EQSettings.UseEqDisplay & EQSettings._EqDataAvailable))
       {
         return;
       }
-      if (this.EQSettings.RestrictEQ &
-          ((DateTime.Now.Ticks - this.EQSettings._LastEQupdate.Ticks) < this.EQSettings._EqUpdateDelay))
+      if (EQSettings.RestrictEQ &
+          ((DateTime.Now.Ticks - EQSettings._LastEQupdate.Ticks) < EQSettings._EqUpdateDelay))
       {
         return;
       }
-      if (this.DoDebug)
+      if (DoDebug)
       {
         Log.Info("\niMONLCDg.DisplayEQ(): Retrieved {0} samples of Equalizer data.",
-                 new object[] {this.EQSettings.EqFftData.Length/2});
+                 new object[] { EQSettings.EqFftData.Length / 2 });
       }
-      if ((this.EQSettings.UseStereoEq || this.EQSettings.UseVUmeter) || this.EQSettings.UseVUmeter2)
+      if ((EQSettings.UseStereoEq || EQSettings.UseVUmeter) || EQSettings.UseVUmeter2)
       {
-        if (this.EQSettings.UseStereoEq)
+        if (EQSettings.UseStereoEq)
         {
-          this.EQSettings.Render_MaxValue = 100;
-          this.EQSettings.Render_BANDS = 8;
-          this.EQSettings.EqArray[0] = 0x63;
+          EQSettings.Render_MaxValue = 100;
+          EQSettings.Render_BANDS = 8;
+          EQSettings.EqArray[0] = 0x63;
           if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
           {
-            this.EQSettings.Render_MaxValue = (this.EQSettings._useEqMode == 2) ? 8 : 0x10;
-            this.EQSettings.EqArray[0] = (byte) this.EQSettings._useEqMode;
+            EQSettings.Render_MaxValue = (EQSettings._useEqMode == 2) ? 8 : 0x10;
+            EQSettings.EqArray[0] = (byte)EQSettings._useEqMode;
           }
           else if (_DisplayType == DisplayType.ThreeRsystems)
           {
-            this.EQSettings.Render_MaxValue = 6;
-            this.EQSettings.EqArray[0] = 0;
+            EQSettings.Render_MaxValue = 6;
+            EQSettings.EqArray[0] = 0;
           }
-          MiniDisplayHelper.ProcessEqData(ref this.EQSettings);
-          for (int i = 0; i < this.EQSettings.Render_BANDS; i++)
+          MiniDisplayHelper.ProcessEqData(ref EQSettings);
+          for (int i = 0; i < EQSettings.Render_BANDS; i++)
           {
-            switch (this.EQSettings.EqArray[0])
+            switch (EQSettings.EqArray[0])
             {
               case 2:
                 {
-                  byte num2 = (byte) (this.EQSettings.EqArray[1 + i] & 15);
-                  this.EQSettings.EqArray[1 + i] = (byte) ((num2 << 4) | num2);
-                  byte num3 = (byte) (this.EQSettings.EqArray[9 + i] & 15);
-                  this.EQSettings.EqArray[9 + i] = (byte) ((num3 << 4) | num3);
+                  var num2 = (byte)(EQSettings.EqArray[1 + i] & 15);
+                  EQSettings.EqArray[1 + i] = (byte)((num2 << 4) | num2);
+                  var num3 = (byte)(EQSettings.EqArray[9 + i] & 15);
+                  EQSettings.EqArray[9 + i] = (byte)((num3 << 4) | num3);
                   break;
                 }
             }
           }
           for (int j = 15; j > 7; j--)
           {
-            this.EQSettings.EqArray[j + 1] = this.EQSettings.EqArray[j];
+            EQSettings.EqArray[j + 1] = EQSettings.EqArray[j];
           }
-          this.EQSettings.EqArray[8] = 0;
-          this.EQSettings.EqArray[9] = 0;
+          EQSettings.EqArray[8] = 0;
+          EQSettings.EqArray[9] = 0;
         }
         else
         {
-          this.EQSettings.Render_MaxValue = 80;
-          this.EQSettings.Render_BANDS = 1;
+          EQSettings.Render_MaxValue = 80;
+          EQSettings.Render_BANDS = 1;
           if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
           {
-            this.EQSettings.Render_MaxValue = 0x60;
-            if (this.EQSettings._useVUindicators)
+            EQSettings.Render_MaxValue = 0x60;
+            if (EQSettings._useVUindicators)
             {
-              this.EQSettings.Render_MaxValue = 0x60;
+              EQSettings.Render_MaxValue = 0x60;
             }
           }
-          else if (this.EQSettings._useVUindicators)
+          else if (EQSettings._useVUindicators)
           {
-            this.EQSettings.Render_MaxValue = 0x4b;
+            EQSettings.Render_MaxValue = 0x4b;
           }
-          MiniDisplayHelper.ProcessEqData(ref this.EQSettings);
+          MiniDisplayHelper.ProcessEqData(ref EQSettings);
         }
       }
       else
       {
-        this.EQSettings.Render_MaxValue = 100;
-        this.EQSettings.Render_BANDS = 0x10;
-        this.EQSettings.EqArray[0] = 0x63;
+        EQSettings.Render_MaxValue = 100;
+        EQSettings.Render_BANDS = 0x10;
+        EQSettings.EqArray[0] = 0x63;
         if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
         {
-          this.EQSettings.Render_MaxValue = (this.EQSettings._useEqMode == 2) ? 8 : 0x10;
-          this.EQSettings.EqArray[0] = (byte) this.EQSettings._useEqMode;
+          EQSettings.Render_MaxValue = (EQSettings._useEqMode == 2) ? 8 : 0x10;
+          EQSettings.EqArray[0] = (byte)EQSettings._useEqMode;
         }
         else if (_DisplayType == DisplayType.ThreeRsystems)
         {
-          this.EQSettings.Render_MaxValue = 6;
-          this.EQSettings.EqArray[0] = 0;
+          EQSettings.Render_MaxValue = 6;
+          EQSettings.EqArray[0] = 0;
         }
-        MiniDisplayHelper.ProcessEqData(ref this.EQSettings);
-        for (int k = 0; k < this.EQSettings.Render_BANDS; k++)
+        MiniDisplayHelper.ProcessEqData(ref EQSettings);
+        for (int k = 0; k < EQSettings.Render_BANDS; k++)
         {
-          switch (this.EQSettings.EqArray[0])
+          switch (EQSettings.EqArray[0])
           {
             case 2:
               {
-                byte num6 = (byte) (this.EQSettings.EqArray[1 + k] & 15);
-                this.EQSettings.EqArray[1 + k] = (byte) ((num6 << 4) | num6);
+                var num6 = (byte)(EQSettings.EqArray[1 + k] & 15);
+                EQSettings.EqArray[1 + k] = (byte)((num6 << 4) | num6);
                 break;
               }
           }
@@ -1241,138 +1713,138 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
       {
-        if (!this.EQSettings.UseVUmeter && !this.EQSettings.UseVUmeter2)
+        if (!EQSettings.UseVUmeter && !EQSettings.UseVUmeter2)
         {
-          this.SetEQ(this.EQSettings.EqArray);
+          SetEQ(EQSettings.EqArray);
         }
         else
         {
-          this.DrawVU(this.EQSettings.EqArray);
+          DrawVU(EQSettings.EqArray);
         }
       }
       else if (_DisplayType == DisplayType.ThreeRsystems)
       {
         for (int m = 0; m < 8; m++)
         {
-          this.EQSettings.EqArray[1 + m] =
-            (byte) ((this.EQSettings.EqArray[1 + m] << 4) + this.EQSettings.EqArray[9 + m]);
+          EQSettings.EqArray[1 + m] =
+            (byte)((EQSettings.EqArray[1 + m] << 4) + EQSettings.EqArray[9 + m]);
         }
         ulong data = 0x901000000000000L;
         ulong num9 = 2L;
-        data = data + this.EQSettings.EqArray[1] << 40;
-        data = data + this.EQSettings.EqArray[2] << 0x20;
-        data = data + this.EQSettings.EqArray[3] << 0x18;
-        data = data + this.EQSettings.EqArray[4] << 0x10;
-        data = data + this.EQSettings.EqArray[5] << 8;
-        num9 = num9 + this.EQSettings.EqArray[6] << 40;
-        num9 = num9 + this.EQSettings.EqArray[7] << 0x20;
-        num9 = num9 + this.EQSettings.EqArray[8] << 0x18;
-        this.SendData((long) 0x200020000000000L);
-        this.SendData((long) 2L);
-        this.SendData((long) 0xd0f202020202000L);
-        this.SendData((long) 0x2020202020202002L);
-        this.SendData(data);
-        this.SendData(num9);
+        data = data + EQSettings.EqArray[1] << 40;
+        data = data + EQSettings.EqArray[2] << 0x20;
+        data = data + EQSettings.EqArray[3] << 0x18;
+        data = data + EQSettings.EqArray[4] << 0x10;
+        data = data + EQSettings.EqArray[5] << 8;
+        num9 = num9 + EQSettings.EqArray[6] << 40;
+        num9 = num9 + EQSettings.EqArray[7] << 0x20;
+        num9 = num9 + EQSettings.EqArray[8] << 0x18;
+        SendData(0x200020000000000L);
+        SendData(2L);
+        SendData(0xd0f202020202000L);
+        SendData(0x2020202020202002L);
+        SendData(data);
+        SendData(num9);
       }
       else
       {
-        if (!this.EQSettings.UseVUmeter && !this.EQSettings.UseVUmeter2)
+        if (!EQSettings.UseVUmeter && !EQSettings.UseVUmeter2)
         {
-          int[] destinationArray = new int[0x10];
-          Array.Copy(this.EQSettings.EqArray, 1, destinationArray, 0, 0x10);
+          var destinationArray = new int[0x10];
+          Array.Copy(EQSettings.EqArray, 1, destinationArray, 0, 0x10);
           lock (DWriteMutex)
           {
-            this._IMON.iMONVFD_SetEQ(destinationArray);
+            _IMON.iMONVFD_SetEQ(destinationArray);
             goto Label_0613;
           }
         }
-        this.DrawVU(this.EQSettings.EqArray);
+        DrawVU(EQSettings.EqArray);
       }
-      Label_0613:
-      this.EQSettings._LastEQupdate = DateTime.Now;
-      if ((DateTime.Now.Ticks - this.EQSettings._EQ_FPS_time.Ticks) < 0x989680L)
+    Label_0613:
+      EQSettings._LastEQupdate = DateTime.Now;
+      if ((DateTime.Now.Ticks - EQSettings._EQ_FPS_time.Ticks) < 0x989680L)
       {
-        this.EQSettings._EQ_Framecount++;
+        EQSettings._EQ_Framecount++;
       }
       else
       {
-        this.EQSettings._Max_EQ_FPS = Math.Max(this.EQSettings._Max_EQ_FPS, this.EQSettings._EQ_Framecount);
-        this.EQSettings._EQ_Framecount = 0;
-        this.EQSettings._EQ_FPS_time = DateTime.Now;
+        EQSettings._Max_EQ_FPS = Math.Max(EQSettings._Max_EQ_FPS, EQSettings._EQ_Framecount);
+        EQSettings._EQ_Framecount = 0;
+        EQSettings._EQ_FPS_time = DateTime.Now;
       }
     }
 
     private void DisplayLines()
     {
-      this.UpdateAdvancedSettings();
-      if (this.DoDebug)
+      UpdateAdvancedSettings();
+      if (DoDebug)
       {
         Log.Info("iMONLCDg.DisplayLines(): Sending text to display type {0}",
-                 new object[] {DisplayType.TypeName(_DisplayType)});
+                 new object[] { DisplayType.TypeName(_DisplayType) });
       }
       try
       {
-        MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
-        this.Check_Idle_State();
-        if (this.EQSettings._EqDataAvailable || this._IsDisplayOff)
+        MiniDisplayHelper.GetSystemStatus(ref MPStatus);
+        Check_Idle_State();
+        if (EQSettings._EqDataAvailable || _IsDisplayOff)
         {
-          if (this.DoDebug)
+          if (DoDebug)
           {
             Log.Info("iMONLCDg.DisplayLines(): Suppressing display update!", new object[0]);
           }
         }
         else if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
         {
-          if (this.DoDebug)
+          if (DoDebug)
           {
             Log.Info("iMONLCDg.DisplayLines(): Calling SendText() to emulate VFD for {0}",
-                     new object[] {DisplayType.TypeName(_DisplayType)});
+                     new object[] { DisplayType.TypeName(_DisplayType) });
           }
-          this.SendText(this._lines[0], this._lines[1]);
+          SendText(_lines[0], _lines[1]);
         }
         else if (_DisplayType == DisplayType.VFD)
         {
-          if (this.DoDebug)
+          if (DoDebug)
           {
             Log.Info("iMONLCDg.DisplayLines(): Calling SetText()", new object[0]);
           }
-          this.SetText(this._lines[0], this._lines[1]);
+          SetText(_lines[0], _lines[1]);
         }
         else if (_DisplayType == DisplayType.ThreeRsystems)
         {
-          this.SendText3R(this._lines[0]);
+          SendText3R(_lines[0]);
         }
       }
       catch (Exception exception)
       {
-        Log.Debug("iMONLCDg.DisplayLines(): CAUGHT EXCEPTION {0}", new object[] {exception});
+        Log.Debug("iMONLCDg.DisplayLines(): CAUGHT EXCEPTION {0}", new object[] { exception });
       }
     }
 
     private void DisplayOff()
     {
-      if (!this._IsDisplayOff)
+      if (!_IsDisplayOff)
       {
-        if (this.DisplaySettings.EnableDisplayAction & this.DisplaySettings._DisplayControlAction)
+        if (DisplaySettings.EnableDisplayAction & DisplaySettings._DisplayControlAction)
         {
-          if ((DateTime.Now.Ticks - this.DisplaySettings._DisplayControlLastAction) <
-              this.DisplaySettings._DisplayControlTimeout)
+          if ((DateTime.Now.Ticks - DisplaySettings._DisplayControlLastAction) <
+              DisplaySettings._DisplayControlTimeout)
           {
-            if (this.DoDebug)
+            if (DoDebug)
             {
               Log.Info("iMONLCDg.DisplayOff(): DisplayControlAction Timer = {0}.",
-                       new object[] {DateTime.Now.Ticks - this.DisplaySettings._DisplayControlLastAction});
+                       new object[] { DateTime.Now.Ticks - DisplaySettings._DisplayControlLastAction });
             }
             return;
           }
-          if (this.DoDebug)
+          if (DoDebug)
           {
             Log.Info("iMONLCDg.DisplayOff(): DisplayControlAction Timeout expired.", new object[0]);
           }
-          this.DisplaySettings._DisplayControlAction = false;
-          this.DisplaySettings._DisplayControlLastAction = 0L;
+          DisplaySettings._DisplayControlAction = false;
+          DisplaySettings._DisplayControlLastAction = 0L;
         }
-        if (this.DoDebug)
+        if (DoDebug)
         {
           Log.Info("iMONLCDg.DisplayOff(): called", new object[0]);
         }
@@ -1380,30 +1852,30 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
           {
-            if (this.DoDebug)
+            if (DoDebug)
             {
               Log.Info("iMONLCDg.DisplayOff(): Sending Shutdown command to LCD", new object[0]);
             }
             if (_DisplayType == DisplayType.LCD2)
             {
-              this.SendData(-8646911284551352312L);
+              SendData(-8646911284551352312L);
             }
             else
             {
-              this.SendData(Command.Shutdown);
+              SendData(Command.Shutdown);
             }
           }
           else
           {
-            if (this.DoDebug)
+            if (DoDebug)
             {
               Log.Info("iMONLCDg.DisplayOff(): Sending blank display to VFD", new object[0]);
             }
-            this._IMON.iMONVFD_SetText(new string(' ', 0x10), new string(' ', 0x10));
+            _IMON.iMONVFD_SetText(new string(' ', 0x10), new string(' ', 0x10));
           }
-          this._IsDisplayOff = true;
+          _IsDisplayOff = true;
         }
-        if (this.DoDebug)
+        if (DoDebug)
         {
           Log.Info("iMONLCDg.DisplayOff(): completed", new object[0]);
         }
@@ -1412,11 +1884,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void DisplayOn()
     {
-      if (!this._IsDisplayOff)
+      if (!_IsDisplayOff)
       {
         return;
       }
-      if (this.DoDebug)
+      if (DoDebug)
       {
         Log.Info("iMONLCDg.DisplayOn(): called", new object[0]);
       }
@@ -1424,234 +1896,118 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         lock (DWriteMutex)
         {
-          if (this.DoDebug)
+          if (DoDebug)
           {
             Log.Info("iMONLCDg.DisplayOn(): Sending Display ON command to LCD", new object[0]);
           }
-          this._IsDisplayOff = false;
+          _IsDisplayOff = false;
           if (_DisplayType == DisplayType.LCD2)
           {
-            this.SendData(-8646911284551352256L);
-            this.SendData(-8646911284551352256L);
-            this.SendData(-8502796096475496448L);
-            this.SendData(Command.SetContrast, this._ContrastLevel);
-            this.SendData(-8791026472627208192L);
-            this.SendData(Command.SetIcons);
-            this.SendData(Command.SetLines0);
-            this.SendData(Command.SetLines1);
-            this.SendData(Command.SetLines2);
-            this.ClearDisplay();
-            this.SendData(-8358680908399640433L);
+            SendData(-8646911284551352256L);
+            SendData(-8646911284551352256L);
+            SendData(-8502796096475496448L);
+            SendData(Command.SetContrast, _ContrastLevel);
+            SendData(-8791026472627208192L);
+            SendData(Command.SetIcons);
+            SendData(Command.SetLines0);
+            SendData(Command.SetLines1);
+            SendData(Command.SetLines2);
+            ClearDisplay();
+            SendData(-8358680908399640433L);
           }
           else
           {
-            this.SendData(Command.DisplayOn);
+            SendData(Command.DisplayOn);
           }
           goto Label_0150;
         }
       }
       lock (DWriteMutex)
       {
-        this._IsDisplayOff = false;
+        _IsDisplayOff = false;
       }
-      Label_0150:
-      if (this.DoDebug)
+    Label_0150:
+      if (DoDebug)
       {
         Log.Info("iMONLCDg.DisplayOn(): called", new object[0]);
       }
     }
 
-    public void Dispose()
-    {
-      Log.Debug("iMONLCDg.Dispose(): called", new object[0]);
-      //
-      // If IRSS (Input Remote Server Suite by and-81) is installed
-      // we need to restart the service to re-register dll handler
-      //
-      string irss_srv = "InputService";
-      foreach (ServiceController ctrl in ServiceController.GetServices())
-      {
-        if (ctrl.ServiceName.ToLower() == irss_srv.ToLower())
-        {
-          Log.Debug("iMONLCDg.Dispose(): Restarting \"" + irss_srv + "\" from IRSS", new object[0]);
-          try
-          {
-            ctrl.Stop();
-            ctrl.WaitForStatus(ServiceControllerStatus.Stopped);
-            ctrl.Start();
-            ctrl.WaitForStatus(ServiceControllerStatus.Running);
-          }
-          catch (Exception ex)
-          {
-            Log.Error("iMONLCDg.Dispose(): Unable to restart \"" + irss_srv + "\" from IRSS: " + ex.Message,
-                      new object[0]);
-          }
-        }
-      }
-      Log.Debug("iMONLCDg.Dispose(): completed", new object[0]);
-    }
-
     public void DoDisplayTest()
     {
-      BuiltinIconMask mask = new BuiltinIconMask();
+      var mask = new BuiltinIconMask();
       if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
       {
         Log.Debug("(IDisplay) iMONLCDg.Setup() configure - do display test", new object[0]);
-        this._displayTest = true;
-        this.OpenLcd();
-        this.ClearDisplay();
+        _displayTest = true;
+        OpenLcd();
+        ClearDisplay();
         Thread.Sleep(500);
-        this.SendText("iMONLCDg", "Display Test");
+        SendText("iMONLCDg", "Display Test");
         Thread.Sleep(500);
-        this.SendText("iMONLCDg", "All Icons");
+        SendText("iMONLCDg", "All Icons");
         for (int i = 0; i < 2; i++)
         {
-          this.SendData(Command.SetIcons, mask.ICON_ALL);
+          SendData(Command.SetIcons, mask.ICON_ALL);
           Thread.Sleep(500);
-          this.SendData(Command.SetIcons);
+          SendData(Command.SetIcons);
           Thread.Sleep(500);
         }
-        DiskIcon icon = new DiskIcon();
+        var icon = new DiskIcon();
         icon.Reset();
         icon.On();
-        this.SendText("iMONLCDg", "Disk On");
+        SendText("iMONLCDg", "Disk On");
         Thread.Sleep(500);
-        this.SendText("iMONLCDg", "Disk Spin CW");
+        SendText("iMONLCDg", "Disk Spin CW");
         icon.RotateCW();
         for (int j = 0; j < 0x10; j++)
         {
           icon.Animate();
-          this.SendData(Command.SetIcons, icon.Mask);
+          SendData(Command.SetIcons, icon.Mask);
           Thread.Sleep(250);
         }
-        this.SendText("iMONLCDg", "Disk Spin CCW");
+        SendText("iMONLCDg", "Disk Spin CCW");
         icon.RotateCCW();
         for (int k = 0; k < 0x10; k++)
         {
           icon.Animate();
-          this.SendData(Command.SetIcons, icon.Mask);
+          SendData(Command.SetIcons, icon.Mask);
           Thread.Sleep(250);
         }
-        this.SendText("iMONLCDg", "Disk Flash");
+        SendText("iMONLCDg", "Disk Flash");
         icon.RotateOff();
         icon.FlashOn();
         for (int m = 0; m < 0x10; m++)
         {
           icon.Animate();
-          this.SendData(Command.SetIcons, icon.Mask);
+          SendData(Command.SetIcons, icon.Mask);
           Thread.Sleep(250);
         }
-        this.CloseLcd();
-        this._displayTest = false;
+        CloseLcd();
+        _displayTest = false;
         Log.Debug("(IDisplay) iMONLCDg.Setup() configure - display test complete", new object[0]);
-      }
-    }
-
-    public void DrawImage(Bitmap bitmap)
-    {
-      if (!this._isDisabled)
-      {
-        if (this.EQSettings._EqDataAvailable || this._IsDisplayOff)
-        {
-          if (this.DoDebug)
-          {
-            Log.Info("iMONLCDg.DrawImage(): Suppressing display update!", new object[0]);
-          }
-        }
-        else
-        {
-          if (this.DoDebug)
-          {
-            Log.Info("(IDisplay) iMONLCDg.DrawImage(): called", new object[0]);
-          }
-          if (bitmap == null)
-          {
-            Log.Debug("(IDisplay) iMONLCDg.DrawImage():  bitmap null", new object[0]);
-          }
-          else
-          {
-            BitmapData bitmapdata = bitmap.LockBits(new Rectangle(new Point(0, 0), bitmap.Size), ImageLockMode.ReadOnly,
-                                                    bitmap.PixelFormat);
-            try
-            {
-              if (this.bitmapData == null)
-              {
-                this.bitmapData = new byte[bitmapdata.Stride*this._grows];
-              }
-              Marshal.Copy(bitmapdata.Scan0, this.bitmapData, 0, this.bitmapData.Length);
-            }
-            finally
-            {
-              bitmap.UnlockBits(bitmapdata);
-            }
-            byte[] buffer = this._sha256.ComputeHash(this.bitmapData);
-            if (ByteArray.AreEqual(buffer, this._lastHash))
-            {
-              if (this.DoDebug)
-              {
-                Log.Info("(IDisplay) iMONLCDg.DrawImage():  bitmap not changed", new object[0]);
-              }
-            }
-            else
-            {
-              this.UpdateAdvancedSettings();
-              byte[] pixelArray = new byte[0xc0];
-              for (int i = 0; i < (this._gcols - 1); i++)
-              {
-                pixelArray[i] = 0;
-                pixelArray[i + 0x60] = 0;
-                for (int j = 0; j < 8; j++)
-                {
-                  int index = (j*bitmapdata.Stride) + (i*4);
-                  if (
-                    Color.FromArgb(this.bitmapData[index + 2], this.bitmapData[index + 1], this.bitmapData[index]).
-                      GetBrightness() < 0.5f)
-                  {
-                    pixelArray[i] = (byte) (pixelArray[i] | ((byte) (((int) 1) << (7 - j))));
-                  }
-                }
-                for (int k = 8; k < 0x10; k++)
-                {
-                  int num5 = (k*bitmapdata.Stride) + (i*4);
-                  if (
-                    Color.FromArgb(this.bitmapData[num5 + 2], this.bitmapData[num5 + 1], this.bitmapData[num5]).
-                      GetBrightness() < 0.5f)
-                  {
-                    pixelArray[i + 0x60] = (byte) (pixelArray[i + 0x60] | ((byte) (((int) 1) << (15 - k))));
-                  }
-                }
-              }
-              this.SendPixelArray(pixelArray);
-              if (this.DoDebug)
-              {
-                Log.Info("(IDisplay) iMONLCDg.DrawImage(): Sending pixel array to iMON Handler", new object[0]);
-              }
-              this._lastHash = buffer;
-            }
-          }
-        }
       }
     }
 
     private void DrawVU(byte[] EqDataArray)
     {
-      if (this.DoDebug)
+      if (DoDebug)
       {
         Log.Info("iMONLCDg.DrawVU(): Called", new object[0]);
       }
       if ((_DisplayType != DisplayType.LCD) && (_DisplayType != DisplayType.LCD2))
       {
-        if (this.DoDebug)
+        if (DoDebug)
         {
           Log.Info("iMONLCDg.DrawVU(): Drawing VU meter for VFD display", new object[0]);
         }
         string firstLine = "";
         string secondLine = "";
-        char ch = this.IMON_CHAR_6_BARS;
+        char ch = IMON_CHAR_6_BARS;
         int num7 = 0x10;
-        if (this.EQSettings._useVUindicators)
+        if (EQSettings._useVUindicators)
         {
-          if (this.EQSettings.UseVUmeter)
+          if (EQSettings.UseVUmeter)
           {
             firstLine = "L";
             secondLine = "R";
@@ -1668,7 +2024,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             firstLine = firstLine + ' ';
           }
-          else if (((i + 1)*5) < EqDataArray[1])
+          else if (((i + 1) * 5) < EqDataArray[1])
           {
             firstLine = firstLine + ch;
           }
@@ -1676,14 +2032,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             secondLine = secondLine + ' ';
           }
-          else if (this.EQSettings.UseVUmeter)
+          else if (EQSettings.UseVUmeter)
           {
-            if (((i + 1)*5) < EqDataArray[2])
+            if (((i + 1) * 5) < EqDataArray[2])
             {
               secondLine = secondLine + ch;
             }
           }
-          else if (EqDataArray[2] > ((num7 - i)*5))
+          else if (EqDataArray[2] > ((num7 - i) * 5))
           {
             secondLine = secondLine + ch;
           }
@@ -1692,41 +2048,36 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             secondLine = secondLine + ' ';
           }
         }
-        if (this.EQSettings.UseVUmeter2 && this.EQSettings._useVUindicators)
+        if (EQSettings.UseVUmeter2 && EQSettings._useVUindicators)
         {
           secondLine = secondLine + "R";
         }
-        if (this.DoDebug)
+        if (DoDebug)
         {
           Log.Info("iMONLCDg.DrawVU(): Sending VU meter data to display: L = \"{0}\" - R = \"{1}\"",
-                   new object[] {firstLine, secondLine});
+                   new object[] { firstLine, secondLine });
         }
-        this._IMON.iMONVFD_SetText(firstLine, secondLine);
+        _IMON.iMONVFD_SetText(firstLine, secondLine);
       }
       else
       {
-        if (this.DoDebug)
+        if (DoDebug)
         {
           Log.Info("iMONLCDg.DrawVU(): Drawing Graphical VU meter for LCD display", new object[0]);
         }
         int num = 0x60;
         int num2 = 0;
-        byte[] pixelArray = new byte[0xc0];
-        if (this.EQSettings._useVUindicators)
+        var pixelArray = new byte[0xc0];
+        if (EQSettings._useVUindicators)
         {
           num = 0x58;
           for (int m = 5; m >= 0; m--)
           {
             if ((m + num2) < 0x60)
             {
-              if (this.DisplayOptions.UseCustomFont)
-              {
-                pixelArray[num2 + m] = BitReverse(this.CFont.PixelData(0x4c, m));
-              }
-              else
-              {
-                pixelArray[num2 + m] = BitReverse(_Font8x5[0x4c, m]);
-              }
+              pixelArray[num2 + m] = DisplayOptions.UseCustomFont
+                                       ? BitReverse(CFont.PixelData(0x4c, m))
+                                       : BitReverse(_Font8x5[0x4c, m]);
             }
           }
           num2 += 8;
@@ -1740,22 +2091,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           pixelArray[num2 + j] = 0x7e;
         }
         num2 = 0x60;
-        if (this.EQSettings._useVUindicators)
+        if (EQSettings._useVUindicators)
         {
           for (int n = 5; n >= 0; n--)
           {
-            if (this.DisplayOptions.UseCustomFont)
+            if (DisplayOptions.UseCustomFont)
             {
-              if (this.EQSettings.UseVUmeter)
+              if (EQSettings.UseVUmeter)
               {
-                pixelArray[num2 + n] = BitReverse(this.CFont.PixelData(0x52, n));
+                pixelArray[num2 + n] = BitReverse(CFont.PixelData(0x52, n));
               }
               else
               {
-                pixelArray[(num2 + 90) + n] = BitReverse(this.CFont.PixelData(0x52, n));
+                pixelArray[(num2 + 90) + n] = BitReverse(CFont.PixelData(0x52, n));
               }
             }
-            else if (this.EQSettings.UseVUmeter)
+            else if (EQSettings.UseVUmeter)
             {
               pixelArray[num2 + n] = BitReverse(_Font8x5[0x52, n]);
             }
@@ -1764,7 +2115,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               pixelArray[(num2 + 90) + n] = BitReverse(_Font8x5[0x52, n]);
             }
           }
-          if (this.EQSettings.UseVUmeter)
+          if (EQSettings.UseVUmeter)
           {
             num2 += 8;
           }
@@ -1775,7 +2126,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             break;
           }
-          if (this.EQSettings.UseVUmeter)
+          if (EQSettings.UseVUmeter)
           {
             pixelArray[num2 + k] = 0x7e;
           }
@@ -1784,9 +2135,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             pixelArray[(num2 + (num - 1)) - k] = 0x7e;
           }
         }
-        this.SendPixelArrayRaw(pixelArray);
+        SendPixelArrayRaw(pixelArray);
       }
-      if (this.DoDebug)
+      if (DoDebug)
       {
         Log.Info("iMONLCDg.DrawVU(): completed", new object[0]);
       }
@@ -1794,7 +2145,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public string FindAntecManagerPath()
     {
-      if (this.DoDebug)
+      if (DoDebug)
       {
         Log.Info("iMONLCDg.FindAntecManagerPath(): called.", new object[0]);
       }
@@ -1806,7 +2157,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\VFD.exe", false);
         if (key != null)
         {
-          str = (string) key.GetValue("Path", string.Empty);
+          str = (string)key.GetValue("Path", string.Empty);
         }
         Registry.LocalMachine.Close();
       }
@@ -1814,9 +2165,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         Registry.CurrentUser.Close();
       }
-      if (this.DoDebug)
+      if (DoDebug)
       {
-        Log.Info("iMONLCDg.FindAntecManagerPath(): selected path = \"{0}\".", new object[] {str});
+        Log.Info("iMONLCDg.FindAntecManagerPath(): selected path = \"{0}\".", new object[] { str });
       }
       return str;
     }
@@ -1825,7 +2176,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       RegistryKey key;
       string str;
-      if (this.DoDebug)
+      if (DoDebug)
       {
         Log.Info("iMONLCDg.FindImonVFDdll(): called.", new object[0]);
       }
@@ -1837,7 +2188,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       string str5 = string.Empty;
       if (Registry.CurrentUser.OpenSubKey(@"Software\Antec\VFD", false) != null)
       {
-        if (this.DoDebug)
+        if (DoDebug)
         {
           Log.Info("iMONLCDg.FindImonVFDdll(): found Antec registry keys.", new object[0]);
         }
@@ -1846,24 +2197,24 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\VFD.exe", false);
         if (key != null)
         {
-          str4 = (string) key.GetValue("Path", string.Empty);
+          str4 = (string)key.GetValue("Path", string.Empty);
           if (str4 == string.Empty)
           {
-            if (this.DoDebug)
+            if (DoDebug)
             {
               Log.Info("iMONLCDg.FindImonVFDdll(): Antec file Path registry key not found. trying default path",
                        new object[0]);
             }
             str4 = folderPath + @"\Antec\VFD";
           }
-          else if (this.DoDebug)
+          else if (DoDebug)
           {
             Log.Info("iMONLCDg.FindImonVFDdll(): found Antec file Path registry key.", new object[0]);
           }
         }
         else
         {
-          if (this.DoDebug)
+          if (DoDebug)
           {
             Log.Info("iMONLCDg.FindImonVFDdll(): Antec file Path registry key not found. trying default path",
                      new object[0]);
@@ -1878,7 +2229,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       if (Registry.CurrentUser.OpenSubKey(@"Software\SOUNDGRAPH\iMON", false) != null)
       {
-        if (this.DoDebug)
+        if (DoDebug)
         {
           Log.Info("iMONLCDg.FindImonVFDdll(): found SoundGraph registry keys.", new object[0]);
         }
@@ -1887,24 +2238,24 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\iMON.exe", false);
         if (key != null)
         {
-          str5 = (string) key.GetValue("Path", string.Empty);
+          str5 = (string)key.GetValue("Path", string.Empty);
           if (str5 == string.Empty)
           {
-            if (this.DoDebug)
+            if (DoDebug)
             {
               Log.Info("iMONLCDg.FindImonVFDdll(): SoundGraph file Path registry key not found. trying default path",
                        new object[0]);
             }
             str5 = folderPath + @"\SoundGraph\iMON";
           }
-          else if (this.DoDebug)
+          else if (DoDebug)
           {
             Log.Info("iMONLCDg.FindImonVFDdll(): found SoundGraph file Path registry key.", new object[0]);
           }
         }
         else
         {
-          if (this.DoDebug)
+          if (DoDebug)
           {
             Log.Info("iMONLCDg.FindImonVFDdll(): SoundGraph file Path registry key not found. trying default path",
                      new object[0]);
@@ -1922,7 +2273,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         str = str4 + @"\sg_vfd.dll";
         if (File.Exists(str))
         {
-          if (this.DoDebug)
+          if (DoDebug)
           {
             Log.Info("iMONLCDg.FindImonVFDdll(): Selected Antec DLL.", new object[0]);
           }
@@ -1934,7 +2285,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         str = str5 + @"\sg_vfd.dll";
         if (File.Exists(str))
         {
-          if (this.DoDebug)
+          if (DoDebug)
           {
             Log.Info("iMONLCDg.FindImonVFDdll(): Selected SoundGraph DLL.", new object[0]);
           }
@@ -1946,7 +2297,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         str = str4 + @"\sg_vfd.dll";
         if (File.Exists(str))
         {
-          if (this.DoDebug)
+          if (DoDebug)
           {
             Log.Info("iMONLCDg.FindImonVFDdll(): Picked Antec DLL.", new object[0]);
           }
@@ -1957,7 +2308,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           str = str5 + @"\sg_vfd.dll";
           if (File.Exists(str))
           {
-            if (this.DoDebug)
+            if (DoDebug)
             {
               Log.Info("iMONLCDg.FindImonVFDdll(): Picked Soundgraph DLL.", new object[0]);
             }
@@ -1965,16 +2316,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
         }
       }
-      if (this.DoDebug)
+      if (DoDebug)
       {
-        Log.Info("iMONLCDg.FindImonVFDdll(): completed - selected file \"{0}\".", new object[] {str2});
+        Log.Info("iMONLCDg.FindImonVFDdll(): completed - selected file \"{0}\".", new object[] { str2 });
       }
       return str2;
     }
 
     public string FindSoundGraphManagerPath()
     {
-      if (this.DoDebug)
+      if (DoDebug)
       {
         Log.Info("iMONLCDg.FindSoundGraphManagerPath(): called.", new object[0]);
       }
@@ -1986,7 +2337,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\iMON.exe", false);
         if (key != null)
         {
-          str = (string) key.GetValue("Path", string.Empty);
+          str = (string)key.GetValue("Path", string.Empty);
         }
         Registry.LocalMachine.Close();
       }
@@ -1994,57 +2345,31 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         Registry.CurrentUser.Close();
       }
-      if (this.DoDebug)
+      if (DoDebug)
       {
-        Log.Info("iMONLCDg.FindSoundGraphManagerPath(): selected path = \"{0}\".", new object[] {str});
+        Log.Info("iMONLCDg.FindSoundGraphManagerPath(): selected path = \"{0}\".", new object[] { str });
       }
       return str;
     }
 
-    private void FireRemoteEvent(byte KeyCode)
-    {
-      int btnCode = KeyCode;
-      if (this.DoDebug)
-      {
-        Log.Info("iMONLCDg.FireRemoteEvent(): called", new object[0]);
-      }
-      if (!this._inputHandler.MapAction(btnCode))
-      {
-        if (this.DoDebug)
-        {
-          Log.Info("iMONLCDg.FireRemoteEvent(): No button mapping for remote button = {0}",
-                   new object[] {btnCode.ToString("x00")});
-        }
-      }
-      else if (this.DoDebug)
-      {
-        Log.Info("iMONLCDg.FireRemoteEvent(): fired event for remote button = {0}",
-                 new object[] {btnCode.ToString("x00")});
-      }
-      if (this.DoDebug)
-      {
-        Log.Info("iMONLCDg.FireRemoteEvent(): completed", new object[0]);
-      }
-    }
-
     public void ForceManagerRestart()
     {
-      string str = string.Empty;
-      string str2 = string.Empty;
-      if (!this._ForceManagerRestart)
+      string str;
+      string str2;
+      if (!_ForceManagerRestart)
       {
-        if (this.DoDebug)
+        if (DoDebug)
         {
           Log.Info("iMONLCDg.ForceManagerRestart(): Option not selected... restart not required.", new object[0]);
         }
       }
       else
       {
-        str = this.FindAntecManagerPath();
-        str2 = this.FindSoundGraphManagerPath();
+        str = FindAntecManagerPath();
+        str2 = FindSoundGraphManagerPath();
         if (str.Equals(string.Empty) & str2.Equals(string.Empty))
         {
-          if (this.DoDebug)
+          if (DoDebug)
           {
             Log.Info("iMONLCDg.ForceManagerRestart(): Manager installation not found... restart not possible.",
                      new object[0]);
@@ -2058,22 +2383,25 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           RegistryKey key;
           if (!str.Equals(string.Empty))
           {
-            if (this._ForceKeyBoardMode)
+            if (_ForceKeyBoardMode)
             {
               key = Registry.CurrentUser.OpenSubKey(@"Software\ANTEC\VFD", true);
-              if ((key != null) && key.GetValue("CurRemote").Equals("iMON PAD"))
+              if (key != null)
               {
-                Log.Debug("iMONLCDg.ForceManagerRestart(): Forcing iMON PAD mode setting to KeyBoard.", new object[0]);
-                key.SetValue("MouseMode", 0, RegistryValueKind.DWord);
+                if (key.GetValue("CurRemote").Equals("iMON PAD"))
+                {
+                  Log.Debug("iMONLCDg.ForceManagerRestart(): Forcing iMON PAD mode setting to KeyBoard.", new object[0]);
+                  key.SetValue("MouseMode", 0, RegistryValueKind.DWord);
+                }
+                key.Close();
               }
-              key.Close();
               Registry.CurrentUser.Close();
             }
             processesByName = Process.GetProcessesByName("VFD");
             if (processesByName.Length > 0)
             {
-              this._UsingAntecManager = true;
-              if (this.DoDebug)
+              _UsingAntecManager = true;
+              if (DoDebug)
               {
                 Log.Info("iMONLCDg.ForceManagerRestart(): Found Antec Manager process.", new object[0]);
               }
@@ -2092,9 +2420,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               }
               Log.Debug("iMONLCDg.ForceManagerRestart(): VFD Manager Stopped", new object[0]);
               Win32Functions.RedrawNotificationArea();
-              process = new Process();
-              process.StartInfo.WorkingDirectory = str;
-              process.StartInfo.FileName = "VFD.exe";
+              process = new Process
+              {
+                StartInfo =
+                {
+                  WorkingDirectory = str,
+                  FileName = "VFD.exe"
+                }
+              };
               Log.Debug("iMONLCDg.ForceManagerRestart(): ReStarting VFD Manager", new object[0]);
               Process.Start(process.StartInfo);
               GUIGraphicsContext.form.Activate();
@@ -2102,7 +2435,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           if (!str2.Equals(string.Empty))
           {
-            if (this._ForceKeyBoardMode)
+            if (_ForceKeyBoardMode)
             {
               key = Registry.CurrentUser.OpenSubKey(@"Software\SOUNDGRAPH\iMON", true);
               if ((key != null) && key.GetValue("CurRemote").Equals("iMON PAD"))
@@ -2110,14 +2443,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 Log.Debug("iMONLCDg.ForceManagerRestart(): Forcing iMON PAD mode setting to KeyBoard.", new object[0]);
                 key.SetValue("MouseMode", 0, RegistryValueKind.DWord);
               }
-              key.Close();
+
               Registry.CurrentUser.Close();
             }
             processesByName = Process.GetProcessesByName("iMON");
             if (processesByName.Length > 0)
             {
-              this._UsingSoundgraphManager = true;
-              if (this.DoDebug)
+              _UsingSoundgraphManager = true;
+              if (DoDebug)
               {
                 Log.Info("iMONLCDg.ForceManagerRestart(): Found iMON Manager process.", new object[0]);
               }
@@ -2136,9 +2469,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               }
               Log.Debug("iMONLCDg.ForceManagerRestart(): iMON Manager Stopped", new object[0]);
               Win32Functions.RedrawNotificationArea();
-              process = new Process();
-              process.StartInfo.WorkingDirectory = str2;
-              process.StartInfo.FileName = "iMON.exe";
+              process = new Process
+              {
+                StartInfo =
+                {
+                  WorkingDirectory = str2,
+                  FileName = "iMON.exe"
+                }
+              };
               Log.Debug("iMONLCDg.ForceManagerRestart(): ReStarting iMON Manager", new object[0]);
               Process.Start(process.StartInfo);
               GUIGraphicsContext.form.Activate();
@@ -2154,7 +2492,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       if (flag)
       {
         Log.Info("iMONLCDg.GetDisplayInfoFromFirmware(): Searching for Firmware version = {0}",
-                 new object[] {FWVersion.ToString("x00")});
+                 new object[] { FWVersion.ToString("x00") });
       }
       for (int i = 0; (_iMON_FW_Display[i, 0] != 0) & (i < _iMON_FW_Display.Length); i++)
       {
@@ -2208,7 +2546,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       if (flag)
       {
         Log.Info("iMONLCDg.GetDisplayInfoFromRegistry(): searching for display type {0}",
-                 new object[] {REGVersion.ToString("x00")});
+                 new object[] { REGVersion.ToString("x00") });
       }
       for (int i = 0; (_iMON_FW_Display[i, 0] != 0) & (i < _iMON_FW_Display.Length); i++)
       {
@@ -2223,7 +2561,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           _DisplayType = _iMON_FW_Display[i, 4];
           Log.Info(
             "iMONLCDg.GetDisplayInfoFromRegistry(): Found display type match - iMON Type: {0}, Reserved: {1}, Display Type: {2}",
-            new object[] {_VfdType.ToString("x00"), _VfdReserved.ToString("x00"), DisplayType.TypeName(_DisplayType)});
+            new object[] { _VfdType.ToString("x00"), _VfdReserved.ToString("x00"), DisplayType.TypeName(_DisplayType) });
           return true;
         }
       }
@@ -2238,15 +2576,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       lock (DWriteMutex)
       {
-        this.EQSettings._EqDataAvailable = MiniDisplayHelper.GetEQ(ref this.EQSettings);
-        if (this.EQSettings._EqDataAvailable)
-        {
-          this._iconThread.Priority = ThreadPriority.AboveNormal;
-        }
-        else
-        {
-          this._iconThread.Priority = ThreadPriority.BelowNormal;
-        }
+        EQSettings._EqDataAvailable = MiniDisplayHelper.GetEQ(ref EQSettings);
+        _iconThread.Priority = EQSettings._EqDataAvailable ? ThreadPriority.AboveNormal : ThreadPriority.BelowNormal;
       }
     }
 
@@ -2256,7 +2587,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       if (flag)
       {
         Log.Info("iMONLCDg.GetVFDTypeFromFirmware(): Searching for Firmware version {0}",
-                 new object[] {FWVersion.ToString("x00")});
+                 new object[] { FWVersion.ToString("x00") });
       }
       for (int i = 0; (_iMON_FW_Display[i, 0] != 0) & (i < _iMON_FW_Display.Length); i++)
       {
@@ -2292,278 +2623,175 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       return -1;
     }
 
-    public void Initialize()
-    {
-      Log.Info("(IDisplay) iMONLCDg.Initialize(): called", new object[0]);
-      if (this._isDisabled)
-      {
-        Log.Info("(IDisplay) iMONLCDg.Initialize(): completed\n\n iMONLCDg DRIVER DISABLED\n\n", new object[0]);
-      }
-      else
-      {
-        this.OpenLcd();
-        this.Clear();
-        Log.Info("(IDisplay) iMONLCDg.Initialize(): completed", new object[0]);
-      }
-    }
-
     private void InitializeDriver()
     {
-      this.DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
-      this._IsConfiguring = Assembly.GetEntryAssembly().FullName.Contains("Configuration");
+      DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
+      _IsConfiguring = Assembly.GetEntryAssembly().FullName.Contains("Configuration");
       Log.Info("iMONLCDg.InitializeDriver(): started.", new object[0]);
-      Log.Info("iMONLCDg.InitializeDriver(): iMONLCDg Driver - {0}", new object[] {this.Description});
-      Log.Info("iMONLCDg.InitializeDriver(): Called by \"{0}\".", new object[] {Assembly.GetEntryAssembly().FullName});
-      FileInfo info = new FileInfo(Assembly.GetExecutingAssembly().Location);
-      if (this.DoDebug)
+      Log.Info("iMONLCDg.InitializeDriver(): iMONLCDg Driver - {0}", new object[] { Description });
+      Log.Info("iMONLCDg.InitializeDriver(): Called by \"{0}\".", new object[] { Assembly.GetEntryAssembly().FullName });
+      var info = new FileInfo(Assembly.GetExecutingAssembly().Location);
+      if (DoDebug)
       {
         Log.Info("iMONLCDg.InitializeDriver(): Assembly creation time: {0} ( {1} UTC )",
-                 new object[] {info.LastWriteTime, info.LastWriteTimeUtc.ToUniversalTime()});
+                 new object[] { info.LastWriteTime, info.LastWriteTimeUtc.ToUniversalTime() });
       }
-      if (this.DoDebug)
+      if (DoDebug)
       {
-        Log.Info("iMONLCDg.InitializeDriver(): Platform: {0}", new object[] {Environment.OSVersion.VersionString});
+        Log.Info("iMONLCDg.InitializeDriver(): Platform: {0}", new object[] { Environment.OSVersion.VersionString });
       }
-      this.LoadAdvancedSettings();
+      LoadAdvancedSettings();
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Idle Message: {0}",
-               new object[] {Settings.Instance.IdleMessage});
+               new object[] { Settings.Instance.IdleMessage });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Delay driver startup: {0}",
-               new object[] {this._DelayStartup.ToString()});
+               new object[] { _DelayStartup.ToString() });
       Log.Info(
         "iMONLCDg.InitializeDriver(): Advanced options - Ensure Antec/iMON Manager is running before driver startup: {0}",
-        new object[] {this._EnsureManagerStartup.ToString()});
+        new object[] { _EnsureManagerStartup.ToString() });
       Log.Info(
         "iMONLCDg.InitializeDriver(): Advanced options - Force Antec/iMON Manager Restart after driver startup: {0}",
-        new object[] {this._ForceManagerRestart.ToString()});
+        new object[] { _ForceManagerRestart.ToString() });
       Log.Info(
         "iMONLCDg.InitializeDriver(): Advanced options - Force Antec/iMON Manager Reload during driver startup: {0}",
-        new object[] {this._ForceManagerReload.ToString()});
+        new object[] { _ForceManagerReload.ToString() });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Restart Antec/iMON Manager FrontView on exit: {0}",
-               new object[] {this._RestartFrontviewOnExit.ToString()});
+               new object[] { _RestartFrontviewOnExit.ToString() });
+      Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Leave Antec/iMON Manager FrontView active: {0}",
+               new object[] { _LeaveFrontviewActive.ToString() });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Force Manager to use KeyBoard mode for iMON PAD: {0}",
-               new object[] {this._ForceKeyBoardMode.ToString()});
+               new object[] { _ForceKeyBoardMode.ToString() });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Force Display Type: {0}",
-               new object[] {this._ForceDisplay});
+               new object[] { _ForceDisplay });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Blank display on MediaPortal exit: {0}",
-               new object[] {this._BlankDisplayOnExit});
-      Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Control Brightness: {0}", new object[] {this._Backlight});
-      Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Control Contrast: {0}", new object[] {this._Contrast});
+               new object[] { _BlankDisplayOnExit });
+      Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Control Brightness: {0}", new object[] { _Backlight });
+      Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Control Contrast: {0}", new object[] { _Contrast });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Force Graphic Text: {0}",
-               new object[] {Settings.Instance.ForceGraphicText});
+               new object[] { Settings.Instance.ForceGraphicText });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Use Disk Icon: {0}",
-               new object[] {this.DisplayOptions.DiskIcon.ToString()});
+               new object[] { DisplayOptions.DiskIcon.ToString() });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Volume Bar: {10",
-               new object[] {this.DisplayOptions.VolumeDisplay.ToString()});
+               new object[] { DisplayOptions.VolumeDisplay.ToString() });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Progress Bar: {0}",
-               new object[] {this.DisplayOptions.ProgressDisplay.ToString()});
+               new object[] { DisplayOptions.ProgressDisplay.ToString() });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Use Disk Icon For Media Status: {0}",
-               new object[] {this.DisplayOptions.DiskMediaStatus.ToString()});
+               new object[] { DisplayOptions.DiskMediaStatus.ToString() });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Use Disk Icon For CD/DVD device status: {0}",
-               new object[] {this.DisplayOptions.DiskMonitor.ToString()});
+               new object[] { DisplayOptions.DiskMonitor.ToString() });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Custom Font: {0}",
-               new object[] {this.DisplayOptions.UseCustomFont.ToString()});
+               new object[] { DisplayOptions.UseCustomFont.ToString() });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Large Icons: {0}",
-               new object[] {this.DisplayOptions.UseLargeIcons.ToString()});
+               new object[] { DisplayOptions.UseLargeIcons.ToString() });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Custom Large Icons: {0}",
-               new object[] {this.DisplayOptions.UseCustomIcons.ToString()});
+               new object[] { DisplayOptions.UseCustomIcons.ToString() });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Equalizer Display: {0}",
-               new object[] {this.EQSettings.UseEqDisplay});
+               new object[] { EQSettings.UseEqDisplay });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   EQMode: {0}",
-               new object[] {this.EQSettings._useEqMode});
+               new object[] { EQSettings._useEqMode });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   Normal Equalizer Display: {0}",
-               new object[] {this.EQSettings.UseNormalEq});
+               new object[] { EQSettings.UseNormalEq });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   Stereo Equalizer Display: {0}",
-               new object[] {this.EQSettings.UseStereoEq});
+               new object[] { EQSettings.UseStereoEq });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   VU Meter Display: {0}",
-               new object[] {this.EQSettings.UseVUmeter});
+               new object[] { EQSettings.UseVUmeter });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   VU Meter Style 2 Display: {0}",
-               new object[] {this.EQSettings.UseVUmeter2});
+               new object[] { EQSettings.UseVUmeter2 });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -     Use VU Channel indicators: {0}",
-               new object[] {this.EQSettings._useVUindicators});
+               new object[] { EQSettings._useVUindicators });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   Restrict EQ Update Rate: {0}",
-               new object[] {this.EQSettings.RestrictEQ});
+               new object[] { EQSettings.RestrictEQ });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -     Restricted EQ Update Rate: {0} updates per second",
-               new object[] {this.EQSettings._EQ_Restrict_FPS});
+               new object[] { EQSettings._EQ_Restrict_FPS });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   Delay EQ Startup: {0}",
-               new object[] {this.EQSettings.DelayEQ});
+               new object[] { EQSettings.DelayEQ });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -     Delay EQ Startup Time: {0} seconds",
-               new object[] {this.EQSettings._DelayEQTime});
+               new object[] { EQSettings._DelayEQTime });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   Smooth EQ Amplitude Decay: {0}",
-               new object[] {this.EQSettings.SmoothEQ});
+               new object[] { EQSettings.SmoothEQ });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   Show Track Info with EQ display: {0}",
-               new object[] {this.EQSettings.EQTitleDisplay});
+               new object[] { EQSettings.EQTitleDisplay });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -     Show Track Info Interval: {0} seconds",
-               new object[] {this.EQSettings._EQTitleDisplayTime});
+               new object[] { EQSettings._EQTitleDisplayTime });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -     Show Track Info duration: {0} seconds",
-               new object[] {this.EQSettings._EQTitleShowTime});
+               new object[] { EQSettings._EQTitleShowTime });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Blank display with video: {0}",
-               new object[] {this.DisplaySettings.BlankDisplayWithVideo});
+               new object[] { DisplaySettings.BlankDisplayWithVideo });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   Enable Display on Action: {0}",
-               new object[] {this.DisplaySettings.EnableDisplayAction});
+               new object[] { DisplaySettings.EnableDisplayAction });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -     Enable display for: {0} seconds",
-               new object[] {this.DisplaySettings.DisplayActionTime});
+               new object[] { DisplaySettings.DisplayActionTime });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Monitor PowerState Events: {0}",
-               new object[] {this._MonitorPower});
+               new object[] { _MonitorPower });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Blank display when idle: {0}",
-               new object[] {this.DisplaySettings.BlankDisplayWhenIdle});
+               new object[] { DisplaySettings.BlankDisplayWhenIdle });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -     blank display after: {0} seconds",
-               new object[] {this.DisplaySettings._BlankIdleTimeout/0xf4240L});
+               new object[] { DisplaySettings._BlankIdleTimeout / 0xf4240L });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Shutdown Message - Line 1: {0}",
-               new object[] {this.DisplaySettings._Shutdown1});
+               new object[] { DisplaySettings._Shutdown1 });
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Shutdown Message - Line 2: {0}",
-               new object[] {this.DisplaySettings._Shutdown2});
-      if (this.RemoteSettings.EnableRemote)
-      {
-        Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Remote Type: {0}",
-                 new object[] {this.RemoteSettings.RemoteType});
-        Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Disable Remote Key Repeat: {0}",
-                 new object[] {this.RemoteSettings.DisableRepeat});
-        Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Remote Key Repeat Delay: {0}",
-                 new object[] {this.RemoteSettings.RepeatDelay});
-      }
+               new object[] { DisplaySettings._Shutdown2 });
       Log.Info("iMONLCDg.InitializeDriver(): Setting - Audio using ASIO: {0}",
-               new object[] {this.EQSettings._AudioUseASIO});
+               new object[] { EQSettings._AudioUseASIO });
       Log.Info("iMONLCDg.InitializeDriver(): Setting - Audio using Mixer: {0}",
-               new object[] {this.EQSettings._AudioIsMixing});
-      if (!this.DisplayOptions.DiskMonitor & !this.DisplayOptions.DiskMediaStatus)
+               new object[] { EQSettings._AudioIsMixing });
+      if (!DisplayOptions.DiskMonitor & !DisplayOptions.DiskMediaStatus)
       {
-        this.DisplayOptions.DiskIcon = false;
+        DisplayOptions.DiskIcon = false;
       }
-      if (this._ForceDisplay == "LCD")
+      if (_ForceDisplay == "LCD")
       {
         _DisplayType = DisplayType.LCD;
         Log.Info("iMONLCDg.InitializeDriver(): Advanced options forces display type to LCD", new object[0]);
       }
-      else if (this._ForceDisplay == "LCD2")
+      else if (_ForceDisplay == "LCD2")
       {
         _DisplayType = DisplayType.LCD2;
         Log.Info("iMONLCDg.InitializeDriver(): Advanced options forces display type to LCD2", new object[0]);
       }
-      else if (this._ForceDisplay == "VFD")
+      else if (_ForceDisplay == "VFD")
       {
         _DisplayType = DisplayType.VFD;
         Log.Info("iMONLCDg.InitializeDriver(): Advanced options forces display type to VFD", new object[0]);
       }
-      else if (this._ForceDisplay == "LCD3R")
+      else if (_ForceDisplay == "LCD3R")
       {
         _DisplayType = DisplayType.VFD;
         Log.Info("iMONLCDg.InitializeDriver(): Advanced options forces display type to LCD3R", new object[0]);
       }
-      Log.Info("iMONLCDg.InitializeDriver(): Extensive logging: {0}", new object[] {this.DoDebug});
-      Log.Info("iMONLCDg.InitializeDriver(): Use V3 DLL for VFD: {0}", new object[] {_VFD_UseV3DLL});
-      Log.Info("iMONLCDg.InitializeDriver(): Display Type: {0}", new object[] {DisplayType.TypeName(_DisplayType)});
-      if (((this.imonVFD_DLLFile = this.FindImonVFDdll()) == string.Empty) & !_VFD_UseV3DLL)
+      Log.Info("iMONLCDg.InitializeDriver(): Extensive logging: {0}", new object[] { DoDebug });
+      Log.Info("iMONLCDg.InitializeDriver(): Use V3 DLL for VFD: {0}", new object[] { _VFD_UseV3DLL });
+      Log.Info("iMONLCDg.InitializeDriver(): Display Type: {0}", new object[] { DisplayType.TypeName(_DisplayType) });
+      if (((imonVFD_DLLFile = FindImonVFDdll()) == string.Empty) & !_VFD_UseV3DLL)
       {
         Log.Info("iMONLCDg.InitializeDriver(): Failed - installed sg_vfd.dll not found - driver disabled", new object[0]);
-        this._isDisabled = true;
+        _isDisabled = true;
       }
       else
       {
-        this._IMON = new iMONDisplay();
-        if (!this._IMON.Initialize(this.imonVFD_DLLFile))
+        _IMON = new iMONDisplay();
+        if (!_IMON.Initialize(imonVFD_DLLFile))
         {
           Log.Info("iMONLCDg.InitializeDriver(): DLL linking Failed - driver disabled", new object[0]);
-          this._isDisabled = true;
+          _isDisabled = true;
         }
         else
         {
-          this._isDisabled = false;
+          _isDisabled = false;
           Log.Info("iMONLCDg.InitializeDriver(): completed.", new object[0]);
         }
       }
     }
 
-    private void InitRemoteSettings(ref RemoteControl RCsettings)
-    {
-      RCsettings.EnableRemote = false;
-      RCsettings.RemoteType = "MCE";
-      RCsettings.DisableRepeat = false;
-      RCsettings.RepeatDelay = 4;
-    }
-
-    private void InitRemoteState(ref RemoteState RemoteStatus)
-    {
-      RemoteStatus.KeyPressed = 0xff;
-      RemoteStatus.KeyModifier = 0xff;
-      RemoteStatus.LastKeyPressed = 0xff;
-      RemoteStatus.LastKeyModifier = 0xff;
-      RemoteStatus.LastButtonPressed = 0xff;
-      RemoteStatus.LastButtonToggle = 0xff;
-      RemoteStatus.LastButtonPressTimestamp = DateTime.Now;
-      RemoteStatus.LastMouseKeyEvent.Last_L_Button = 0;
-      RemoteStatus.LastMouseKeyEvent.Last_R_Button = 0;
-      RemoteStatus.LastMouseKeyEvent.Last_X_Delta = 0;
-      RemoteStatus.LastMouseKeyEvent.Last_Y_Delta = 0;
-      RemoteStatus.LastMouseKeyEvent.Last_X_Size = 0;
-      RemoteStatus.LastMouseKeyEvent.Last_Y_Size = 0;
-    }
-
-    private string KeyCodeToKeyString(int KeyPress, int KeyMod)
-    {
-      if ((KeyPress > MCEKeyCodeToKeyString.Length) | (KeyMod > MCEModifierToModifierString.Length))
-      {
-        return "";
-      }
-      return MCEModifierToModifierString[KeyMod].Replace("*", MCEKeyCodeToKeyString[KeyPress]);
-    }
-
-    private void KillManager()
-    {
-      bool flag = false;
-      Process[] processesByName = Process.GetProcessesByName("VFD");
-      if (processesByName.Length > 0)
-      {
-        this._UsingAntecManager = true;
-        Log.Debug("iMONLCDg.KillManager(): Shutting down VFD Manager...", new object[0]);
-        processesByName[0].Kill();
-        flag = false;
-        while (!flag)
-        {
-          Thread.Sleep(100);
-          Log.Debug("iMONLCDg.KillManager(): Waiting for iMON Manager to exit", new object[0]);
-          processesByName[0].Dispose();
-          processesByName = Process.GetProcessesByName("iMON");
-          if (processesByName.Length == 0)
-          {
-            flag = true;
-          }
-        }
-        Log.Info("iMONLCDg.KillManager(): Antec VFD Manager Stopped", new object[0]);
-        Win32Functions.RedrawNotificationArea();
-      }
-      processesByName = Process.GetProcessesByName("iMON");
-      if (processesByName.Length > 0)
-      {
-        this._UsingSoundgraphManager = true;
-        Log.Debug("iMONLCDg.KillManager(): Shutting down iMON Manager...", new object[0]);
-        processesByName[0].Kill();
-        flag = false;
-        while (!flag)
-        {
-          Thread.Sleep(100);
-          Log.Debug("iMONLCDg.KillManager(): Waiting for iMON Manager to exit", new object[0]);
-          processesByName[0].Dispose();
-          processesByName = Process.GetProcessesByName("iMON");
-          if (processesByName.Length == 0)
-          {
-            flag = true;
-          }
-        }
-        Log.Info("iMONLCDg.KillManager(): Soundgraph iMON Manager Stopped", new object[0]);
-        Win32Functions.RedrawNotificationArea();
-      }
-    }
-
     private static uint LengthToPixels(int Length)
     {
-      uint[] numArray = new uint[]
-                          {
-                            0, 0x80, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc, 0xfe, 0xff, 0x80ff, 0xc0ff, 0xe0ff, 0xf0ff, 0xf8ff,
-                            0xfcff, 0xfeff,
-                            0xffff, 0x80ffff, 0xc0ffff, 0xe0ffff, 0xf0ffff, 0xf8ffff, 0xfcffff, 0xfeffff, 0xffffff,
-                            0x80ffffff, 0xc0ffffff, 0xe0ffffff, 0xf0ffffff, 0xf8ffffff, 0xfcffffff, 0xfeffffff,
-                            uint.MaxValue
-                          };
+      var numArray = new uint[]
+                       {
+                         0, 0x80, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc, 0xfe, 0xff, 0x80ff, 0xc0ff, 0xe0ff, 0xf0ff, 0xf8ff,
+                         0xfcff, 0xfeff,
+                         0xffff, 0x80ffff, 0xc0ffff, 0xe0ffff, 0xf0ffff, 0xf8ffff, 0xfcffff, 0xfeffff, 0xffffff,
+                         0x80ffffff, 0xc0ffffff, 0xe0ffffff, 0xf0ffffff, 0xf8ffffff, 0xfcffffff, 0xfeffffff,
+                         uint.MaxValue
+                       };
       if (Math.Abs(Length) > 0x20)
       {
         return 0;
@@ -2577,74 +2805,71 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void LoadAdvancedSettings()
     {
-      this.AdvSettings = AdvancedSettings.Load();
-      this.IdleMessage = (Settings.Instance.IdleMessage != string.Empty) ? Settings.Instance.IdleMessage : "MediaPortal";
-      this._DelayStartup = this.AdvSettings.DelayStartup;
-      this._EnsureManagerStartup = this.AdvSettings.EnsureManagerStartup;
-      this._ForceManagerRestart = this.AdvSettings.ForceManagerRestart;
-      this._ForceManagerReload = this.AdvSettings.ForceManagerReload;
-      this._RestartFrontviewOnExit = this.AdvSettings.RestartFrontviewOnExit;
-      this._ForceKeyBoardMode = this.AdvSettings.ForceKeyBoardMode;
-      this.RemoteSettings.EnableRemote = false;
-      this.RemoteSettings.RemoteType = this.AdvSettings.RemoteType;
-      this.RemoteSettings.DisableRepeat = this.AdvSettings.DisableRepeat;
-      this.RemoteSettings.RepeatDelay = this.AdvSettings.RepeatDelay*0x19;
-      this._ForceDisplay = this.AdvSettings.DisplayType;
-      if (this._ForceDisplay == null || this._ForceDisplay.Equals(string.Empty))
+      AdvSettings = AdvancedSettings.Load();
+      IdleMessage = (Settings.Instance.IdleMessage != string.Empty) ? Settings.Instance.IdleMessage : "MediaPortal";
+      _DelayStartup = AdvSettings.DelayStartup;
+      _EnsureManagerStartup = AdvSettings.EnsureManagerStartup;
+      _ForceManagerRestart = AdvSettings.ForceManagerRestart;
+      _ForceManagerReload = AdvSettings.ForceManagerReload;
+      _RestartFrontviewOnExit = AdvSettings.RestartFrontviewOnExit;
+      _LeaveFrontviewActive = AdvSettings.LeaveFrontviewActive;
+      _ForceKeyBoardMode = AdvSettings.ForceKeyBoardMode;
+      _ForceDisplay = AdvSettings.DisplayType;
+      if (String.IsNullOrEmpty(_ForceDisplay))
       {
-        this._ForceDisplay = "AutoDetect";
+        _ForceDisplay = "AutoDetect";
       }
-      this.DisplayOptions.VolumeDisplay = this.AdvSettings.VolumeDisplay;
-      this.DisplayOptions.ProgressDisplay = this.AdvSettings.ProgressDisplay;
-      this.DisplayOptions.DiskIcon = this.AdvSettings.DiskIcon;
-      this.DisplayOptions.DiskMediaStatus = this.AdvSettings.DiskMediaStatus;
-      this.DisplayOptions.DiskMonitor = this.AdvSettings.DeviceMonitor;
-      this.DisplayOptions.UseCustomFont = this.AdvSettings.UseCustomFont;
-      this.DisplayOptions.UseLargeIcons = this.AdvSettings.UseLargeIcons;
-      this.DisplayOptions.UseCustomIcons = this.AdvSettings.UseCustomIcons;
-      this.DisplayOptions.UseInvertedIcons = this.AdvSettings.UseInvertedIcons;
-      this.EQSettings.UseEqDisplay = this.AdvSettings.EqDisplay;
-      this.EQSettings.UseNormalEq = this.AdvSettings.NormalEQ;
-      this.EQSettings.UseStereoEq = this.AdvSettings.StereoEQ;
-      this.EQSettings.UseVUmeter = this.AdvSettings.VUmeter;
-      this.EQSettings.UseVUmeter2 = this.AdvSettings.VUmeter2;
-      this.EQSettings._useVUindicators = this.AdvSettings.VUindicators;
-      this.EQSettings._useEqMode = this.AdvSettings.EqMode;
-      this.EQSettings.RestrictEQ = this.AdvSettings.RestrictEQ;
-      this.EQSettings._EQ_Restrict_FPS = this.AdvSettings.EqRate;
-      this.EQSettings.DelayEQ = this.AdvSettings.DelayEQ;
-      this.EQSettings._DelayEQTime = this.AdvSettings.DelayEqTime;
-      this.EQSettings.SmoothEQ = this.AdvSettings.SmoothEQ;
-      this.EQSettings.EQTitleDisplay = this.AdvSettings.EQTitleDisplay;
-      this.EQSettings._EQTitleShowTime = this.AdvSettings.EQTitleShowTime;
-      this.EQSettings._EQTitleDisplayTime = this.AdvSettings.EQTitleDisplayTime;
-      this.EQSettings._EqUpdateDelay = (this.EQSettings._EQ_Restrict_FPS == 0)
-                                         ? 0
-                                         : ((0x989680/this.EQSettings._EQ_Restrict_FPS) -
-                                            (0xf4240/this.EQSettings._EQ_Restrict_FPS));
-      _VFD_UseV3DLL = this.AdvSettings.VFD_UseV3DLL;
-      this._MonitorPower = this.AdvSettings.MonitorPowerState;
-      this.DisplaySettings.BlankDisplayWithVideo = this.AdvSettings.BlankDisplayWithVideo;
-      this.DisplaySettings.EnableDisplayAction = this.AdvSettings.EnableDisplayAction;
-      this.DisplaySettings.DisplayActionTime = this.AdvSettings.EnableDisplayActionTime;
-      this.DisplaySettings.BlankDisplayWhenIdle = this.AdvSettings.BlankDisplayWhenIdle;
-      this.DisplaySettings.BlankIdleDelay = this.AdvSettings.BlankIdleTime;
-      this.DisplaySettings._BlankIdleTimeout = this.DisplaySettings.BlankIdleDelay*0x989680;
-      this.DisplaySettings._Shutdown1 = Settings.Instance.Shutdown1;
-      this.DisplaySettings._Shutdown2 = Settings.Instance.Shutdown2;
-      this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime*0x989680;
-      FileInfo info = new FileInfo(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml"));
-      this.SettingsLastModTime = info.LastWriteTime;
-      this.LastSettingsCheck = DateTime.Now;
+      DisplayOptions.VolumeDisplay = AdvSettings.VolumeDisplay;
+      DisplayOptions.ProgressDisplay = AdvSettings.ProgressDisplay;
+      DisplayOptions.DiskIcon = AdvSettings.DiskIcon;
+      DisplayOptions.DiskMediaStatus = AdvSettings.DiskMediaStatus;
+      DisplayOptions.DiskMonitor = AdvSettings.DeviceMonitor;
+      DisplayOptions.UseCustomFont = AdvSettings.UseCustomFont;
+      DisplayOptions.UseLargeIcons = AdvSettings.UseLargeIcons;
+      DisplayOptions.UseCustomIcons = AdvSettings.UseCustomIcons;
+      DisplayOptions.UseInvertedIcons = AdvSettings.UseInvertedIcons;
+      EQSettings.UseEqDisplay = AdvSettings.EqDisplay;
+      EQSettings.UseNormalEq = AdvSettings.NormalEQ;
+      EQSettings.UseStereoEq = AdvSettings.StereoEQ;
+      EQSettings.UseVUmeter = AdvSettings.VUmeter;
+      EQSettings.UseVUmeter2 = AdvSettings.VUmeter2;
+      EQSettings._useVUindicators = AdvSettings.VUindicators;
+      EQSettings._useEqMode = AdvSettings.EqMode;
+      EQSettings.RestrictEQ = AdvSettings.RestrictEQ;
+      EQSettings._EQ_Restrict_FPS = AdvSettings.EqRate;
+      EQSettings.DelayEQ = AdvSettings.DelayEQ;
+      EQSettings._DelayEQTime = AdvSettings.DelayEqTime;
+      EQSettings.SmoothEQ = AdvSettings.SmoothEQ;
+      EQSettings.EQTitleDisplay = AdvSettings.EQTitleDisplay;
+      EQSettings._EQTitleShowTime = AdvSettings.EQTitleShowTime;
+      EQSettings._EQTitleDisplayTime = AdvSettings.EQTitleDisplayTime;
+      EQSettings._EqUpdateDelay = (EQSettings._EQ_Restrict_FPS == 0)
+                                    ? 0
+                                    : ((0x989680 / EQSettings._EQ_Restrict_FPS) -
+                                       (0xf4240 / EQSettings._EQ_Restrict_FPS));
+      _VFD_UseV3DLL = AdvSettings.VFD_UseV3DLL;
+      _MonitorPower = AdvSettings.MonitorPowerState;
+      DisplaySettings.BlankDisplayWithVideo = AdvSettings.BlankDisplayWithVideo;
+      DisplaySettings.EnableDisplayAction = AdvSettings.EnableDisplayAction;
+      DisplaySettings.DisplayActionTime = AdvSettings.EnableDisplayActionTime;
+      DisplaySettings.BlankDisplayWhenIdle = AdvSettings.BlankDisplayWhenIdle;
+      DisplaySettings.BlankIdleDelay = AdvSettings.BlankIdleTime;
+      DisplaySettings._BlankIdleTimeout = DisplaySettings.BlankIdleDelay * 0x989680;
+      DisplaySettings._Shutdown1 = Settings.Instance.Shutdown1;
+      DisplaySettings._Shutdown2 = Settings.Instance.Shutdown2;
+      DisplaySettings._DisplayControlTimeout = DisplaySettings.DisplayActionTime * 0x989680;
+      var info = new FileInfo(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml"));
+      SettingsLastModTime = info.LastWriteTime;
+      LastSettingsCheck = DateTime.Now;
     }
 
     private void OnExternalAction(Action action)
     {
-      if (this.DisplaySettings.EnableDisplayAction)
+      if (DisplaySettings.EnableDisplayAction)
       {
-        if (this.DoDebug)
+        if (DoDebug)
         {
-          Log.Info("iMONLCDg.OnExternalAction(): received action {0}", new object[] {action.wID.ToString()});
+          Log.Info("iMONLCDg.OnExternalAction(): received action {0}", new object[] { action.wID.ToString() });
         }
         Action.ActionType wID = action.wID;
         if (wID <= Action.ActionType.ACTION_SHOW_OSD)
@@ -2659,54 +2884,56 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           return;
         }
-        this.DisplaySettings._DisplayControlAction = true;
-        this.DisplaySettings._DisplayControlLastAction = DateTime.Now.Ticks;
-        if (this.DoDebug)
+        DisplaySettings._DisplayControlAction = true;
+        DisplaySettings._DisplayControlLastAction = DateTime.Now.Ticks;
+        if (DoDebug)
         {
           Log.Info("iMONLCDg.OnExternalAction(): received DisplayControlAction", new object[0]);
         }
-        this.DisplayOn();
+        DisplayOn();
       }
     }
 
     private void OpenLcd()
     {
-      if (!this._isDisabled)
+      if (!_isDisabled)
       {
         Log.Info("iMONLCDg.OpenLcd(): called", new object[0]);
-        if (!this._IMON.iMONVFD_IsInited())
+        if (!_IMON.iMONVFD_IsInited())
         {
           Log.Info("iMONLCDg.OpenLcd(): opening display", new object[0]);
           Log.Info("iMONLCDg.OpenLcd(): opening display with iMONVFD_Init({0},{1})",
-                   new object[] {_VfdType.ToString("x00"), _VfdReserved.ToString("x0000")});
-          if (!this._IMON.iMONVFD_Init(_VfdType, _VfdReserved))
+                   new object[] { _VfdType.ToString("x00"), _VfdReserved.ToString("x0000") });
+          if (!_IMON.iMONVFD_Init(_VfdType, _VfdReserved))
           {
             Log.Info("iMONLCDg.OpenLcd(): Could not open display with Open({0},{1})",
-                     new object[] {_VfdType.ToString("x00"), _VfdReserved.ToString("x0000")});
-            this._isDisabled = true;
-            this._errorMessage = "Could not open iMON display device";
+                     new object[] { _VfdType.ToString("x00"), _VfdReserved.ToString("x0000") });
+            _isDisabled = true;
+            _errorMessage = "Could not open iMON display device";
           }
           else
           {
             Log.Info("iMONLCDg.OpenLcd(): display opened", new object[0]);
-            if (!this._displayTest & ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2)))
+            if (!_displayTest & ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2)))
             {
-              if (this.DisplayOptions.UseCustomFont)
+              if (DisplayOptions.UseCustomFont)
               {
-                this.CFont = new CustomFont();
-                this.CFont.InitializeCustomFont();
+                CFont = new CustomFont();
+                CFont.InitializeCustomFont();
               }
-              if (this.DisplayOptions.UseLargeIcons)
+              if (DisplayOptions.UseLargeIcons)
               {
-                this.CustomLargeIcon = new LargeIcon();
-                this.CustomLargeIcon.InitializeLargeIcons();
+                CustomLargeIcon = new LargeIcon();
+                CustomLargeIcon.InitializeLargeIcons();
               }
-              this._iconThread = new Thread(new ThreadStart(this.UpdateIcons));
-              this._iconThread.IsBackground = true;
-              this._iconThread.Priority = ThreadPriority.BelowNormal;
-              this._iconThread.Name = "UpdateIconThread";
-              this._iconThread.Start();
-              if (this._iconThread.IsAlive)
+              _iconThread = new Thread(UpdateIcons)
+                              {
+                                IsBackground = true,
+                                Priority = ThreadPriority.BelowNormal,
+                                Name = "UpdateIconThread"
+                              };
+              _iconThread.Start();
+              if (_iconThread.IsAlive)
               {
                 Log.Info("iMONLCDg.OpenLcd(): iMONLCDg.UpdateIcons() Thread Started", new object[0]);
               }
@@ -2715,16 +2942,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 Log.Info("iMONLCDg.OpenLcd(): iMONLCDg.UpdateIcons() FAILED TO START", new object[0]);
               }
             }
-            else if (!this._displayTest & (_DisplayType == DisplayType.VFD))
+            else if (!_displayTest & (_DisplayType == DisplayType.VFD))
             {
-              if (this.EQSettings.UseEqDisplay || this.DisplaySettings.BlankDisplayWithVideo)
+              if (EQSettings.UseEqDisplay || DisplaySettings.BlankDisplayWithVideo)
               {
-                this._iconThread = new Thread(new ThreadStart(this.VFD_EQ_Update));
-                this._iconThread.IsBackground = true;
-                this._iconThread.Priority = ThreadPriority.BelowNormal;
-                this._iconThread.Name = "VFD_EQ_Update";
-                this._iconThread.Start();
-                if (this._iconThread.IsAlive)
+                _iconThread = new Thread(VFD_EQ_Update)
+                                {
+                                  IsBackground = true,
+                                  Priority = ThreadPriority.BelowNormal,
+                                  Name = "VFD_EQ_Update"
+                                };
+                _iconThread.Start();
+                if (_iconThread.IsAlive)
                 {
                   Log.Info("iMONLCDg.OpenLcd(): iMONLCDg.VFD_EQ_Update() Thread Started", new object[0]);
                 }
@@ -2734,16 +2963,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 }
               }
             }
-            else if ((!this._displayTest & (_DisplayType == DisplayType.ThreeRsystems)) &&
-                     (this.EQSettings.UseEqDisplay || this.DisplaySettings.BlankDisplayWithVideo))
+            else if ((!_displayTest & (_DisplayType == DisplayType.ThreeRsystems)) &&
+                     (EQSettings.UseEqDisplay || DisplaySettings.BlankDisplayWithVideo))
             {
-              this._iconThread = new Thread(new ThreadStart(this.VFD_EQ_Update));
-              this._iconThread.IsBackground = true;
-              this._iconThread.Priority = ThreadPriority.BelowNormal;
-              this._iconThread.Name = "VFD_EQ_Update";
-              this._iconThread.TrySetApartmentState(ApartmentState.MTA);
-              this._iconThread.Start();
-              if (this._iconThread.IsAlive)
+              _iconThread = new Thread(VFD_EQ_Update)
+                              {
+                                IsBackground = true,
+                                Priority = ThreadPriority.BelowNormal,
+                                Name = "VFD_EQ_Update"
+                              };
+              _iconThread.TrySetApartmentState(ApartmentState.MTA);
+              _iconThread.Start();
+              if (_iconThread.IsAlive)
               {
                 Log.Info("iMONLCDg.OpenLcd(): iMONLCDg.VFD_EQ_Update() Thread Started", new object[0]);
               }
@@ -2758,10 +2989,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           Log.Info("iMONLCDg.OpenLcd: Display already open", new object[0]);
         }
-        if (this._MonitorPower && !this._IsHandlingPowerEvent)
+        if (_MonitorPower && !_IsHandlingPowerEvent)
         {
           Log.Info("iMONLCDg.OpenLcd(): Adding Power State Monitor callback to system event thread", new object[0]);
-          SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(this.SystemEvents_PowerModeChanged);
+          SystemEvents.PowerModeChanged += SystemEvents_PowerModeChanged;
         }
         lock (DWriteMutex)
         {
@@ -2769,577 +3000,60 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (_DisplayType == DisplayType.LCD2)
             {
-              this.SendData(-8646911284551352256L);
-              this.SendData(-8502796096475496448L);
-              if (this._Contrast)
+              SendData(-8646911284551352256L);
+              SendData(-8502796096475496448L);
+              if (_Contrast)
               {
-                Log.Info("iMONLCDg.OpenLcd(): Setting LCD2 contrast level to {0}", new object[] {this._ContrastLevel});
-                this.SendData(Command.SetContrast, this._ContrastLevel);
+                Log.Info("iMONLCDg.OpenLcd(): Setting LCD2 contrast level to {0}", new object[] { _ContrastLevel });
+                SendData(Command.SetContrast, _ContrastLevel);
               }
-              this.SendData(-8791026472627208192L);
-              this.SendData(Command.SetIcons);
-              this.SendData(Command.SetLines0);
-              this.SendData(Command.SetLines1);
-              this.SendData(Command.SetLines2);
-              this.ClearDisplay();
-              this.SendData(-8358680908399640433L);
+              SendData(-8791026472627208192L);
+              SendData(Command.SetIcons);
+              SendData(Command.SetLines0);
+              SendData(Command.SetLines1);
+              SendData(Command.SetLines2);
+              ClearDisplay();
+              SendData(-8358680908399640433L);
             }
             else
             {
-              this.SendData(Command.DisplayOn);
-              this.SendData(Command.ClearAlarm);
-              if (this._Contrast)
+              SendData(Command.DisplayOn);
+              SendData(Command.ClearAlarm);
+              if (_Contrast)
               {
-                Log.Info("iMONLCDg.OpenLcd(): Setting LCD contrast level to {0}", new object[] {this._ContrastLevel});
-                this.SendData(Command.SetContrast, this._ContrastLevel);
+                Log.Info("iMONLCDg.OpenLcd(): Setting LCD contrast level to {0}", new object[] { _ContrastLevel });
+                SendData(Command.SetContrast, _ContrastLevel);
               }
-              this.SendData(Command.KeypadLightOn);
+              SendData(Command.KeypadLightOn);
             }
           }
           else if (_DisplayType == DisplayType.ThreeRsystems)
           {
-            this.SendData((long) 0x2020202020202000L);
-            this.SendData((long) 0x2020202020202002L);
-            this.SendData((long) 0x2020202020202004L);
-            this.SendData((long) 0x2020202020202006L);
-            this.SendData((long) 0x20202020ffffff08L);
-            this.SendData((long) 0x21c020000000000L);
-            this.SendData((long) 2L);
-            this.SendData((long) 0x200020000000000L);
-            this.SendData((long) 2L);
-            this.SendData((long) 0x21b010000000000L);
-            this.SendData((long) 2L);
+            SendData(0x2020202020202000L);
+            SendData(0x2020202020202002L);
+            SendData(0x2020202020202004L);
+            SendData(0x2020202020202006L);
+            SendData(0x20202020ffffff08L);
+            SendData(0x21c020000000000L);
+            SendData(2L);
+            SendData(0x200020000000000L);
+            SendData(2L);
+            SendData(0x21b010000000000L);
+            SendData(2L);
           }
         }
         AdvancedSettings.OnSettingsChanged +=
-          new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
-        this.ForceManagerRestart();
-        this.Remote_Start();
+          AdvancedSettings_OnSettingsChanged;
+        ForceManagerRestart();
         Log.Info("iMONLCDg.OpenLcd(): completed", new object[0]);
-      }
-    }
-
-    private void Remote_Process_MCE(byte[] RCBuffer, ref RemoteState RemoteStatus)
-    {
-      bool extensiveLogging = Settings.Instance.ExtensiveLogging;
-      if (RCBuffer.Length == 8)
-      {
-        if ((RCBuffer[0] == 0x80) & (RCBuffer[7] == 0xae))
-        {
-          byte num2 = RCBuffer[2];
-          byte keyCode = RCBuffer[3];
-          if (num2 != RemoteStatus.LastButtonToggle)
-          {
-            this.FireRemoteEvent(keyCode);
-            RemoteStatus.LastButtonPressTimestamp = DateTime.Now;
-            if (extensiveLogging)
-            {
-              Log.Info("iMONLCDg.Remote_Run(): received Button press - code = {0}",
-                       new object[] {keyCode.ToString("X00")});
-            }
-          }
-          else if ((DateTime.Now.Ticks >
-                    RemoteStatus.LastButtonPressTimestamp.AddMilliseconds((double) this.RemoteSettings.RepeatDelay).Ticks) &&
-                   !this.RemoteSettings.DisableRepeat)
-          {
-            this.FireRemoteEvent(keyCode);
-            RemoteStatus.LastButtonPressTimestamp = DateTime.Now;
-            if (extensiveLogging)
-            {
-              Log.Info("iMONLCDg.Remote_Run(): REPEATING buttonpress - code = {0}",
-                       new object[] {keyCode.ToString("X00")});
-            }
-          }
-          RemoteStatus.LastButtonPressed = keyCode;
-          RemoteStatus.LastButtonToggle = num2;
-        }
-        else if ((RCBuffer[7] == 190) & (RCBuffer[3] < 0x66))
-        {
-          byte index = RCBuffer[2];
-          byte keyMod = RCBuffer[3];
-          int num5 = (((keyMod & 240) >> 4) | (keyMod & 15)) & 15;
-          int num6 = MCEKeyCodeToKeyCode[index] | MCEModifierToKeyModifier[num5];
-          if ((index != RemoteStatus.LastKeyPressed) | (keyMod != RemoteStatus.LastKeyModifier))
-          {
-            Keys.Return.ToString();
-            SendKeys.SendWait(this.KeyCodeToKeyString(index, keyMod));
-            if (extensiveLogging)
-            {
-              Log.Info("iMONLCDg.Remote_Run(): keyboard key press - code = {0} -> {1}",
-                       new object[] {index, num6.ToString("X00")});
-            }
-            RemoteStatus.LastKeyPressed = index;
-            RemoteStatus.LastKeyModifier = keyMod;
-            RemoteStatus.LastButtonPressTimestamp = DateTime.Now;
-          }
-          else if ((DateTime.Now.Ticks >
-                    RemoteStatus.LastButtonPressTimestamp.AddMilliseconds((double) this.RemoteSettings.RepeatDelay).Ticks) &&
-                   !this.RemoteSettings.DisableRepeat)
-          {
-            SendKeys.SendWait(this.KeyCodeToKeyString(index, keyMod));
-            RemoteStatus.LastButtonPressTimestamp = DateTime.Now;
-            if (extensiveLogging)
-            {
-              Log.Info("iMONLCDg.Remote_Run(): REPEATING keyboard key press - code = {0}",
-                       new object[] {num6.ToString("X00")});
-            }
-          }
-        }
-        else if (RCBuffer[7] != 0xce)
-        {
-          if ((RemoteStatus.LastKeyPressed != 0xff) && extensiveLogging)
-          {
-            Log.Info("iMONLCDg.Remote_Run(): RELEASED key - code = {0}", new object[] {RemoteStatus.LastKeyPressed});
-          }
-          if ((RemoteStatus.LastButtonPressed != 0xff) && extensiveLogging)
-          {
-            Log.Info("iMONLCDg.Remote_Run(): RELEASED button - code = {0}",
-                     new object[] {RemoteStatus.LastButtonPressed});
-          }
-          RemoteStatus.LastKeyPressed = 0xff;
-          RemoteStatus.LastKeyModifier = 0xff;
-          RemoteStatus.LastButtonPressed = 0xff;
-          RemoteStatus.LastButtonToggle = 0xff;
-          RemoteStatus.LastButtonPressTimestamp = this.NullTime;
-        }
-      }
-    }
-
-    private void Remote_Process_PAD(byte[] RCBuffer, ref RemoteState RemoteStatus)
-    {
-      Log.Info("iMONLCDg.Remote_Process_PAD(): called", new object[0]);
-      if ((RCBuffer[0] & 0xfc) == 40)
-      {
-        int num = 0;
-        num += (RCBuffer[0] & 3) << 6;
-        num += RCBuffer[1] & 0x30;
-        num += (RCBuffer[1] & 6) << 1;
-        num += (RCBuffer[2] & 0xc0) >> 6;
-        if (num != RemoteStatus.KeyPressed)
-        {
-          this.FireRemoteEvent((byte) num);
-          RemoteStatus.LastButtonPressTimestamp = DateTime.Now;
-          Log.Info("iMONLCDg.Remote_Run(): received Button press - code = {0}", new object[] {num.ToString("X00")});
-        }
-        else if ((DateTime.Now.Ticks >
-                  RemoteStatus.LastButtonPressTimestamp.AddMilliseconds((double) this.RemoteSettings.RepeatDelay).Ticks) &&
-                 !this.RemoteSettings.DisableRepeat)
-        {
-          this.FireRemoteEvent((byte) num);
-          RemoteStatus.LastButtonPressTimestamp = DateTime.Now;
-          Log.Info("iMONLCDg.Remote_Run(): REPEATING buttonpress - code = {0}", new object[] {num.ToString("X00")});
-        }
-      }
-      else if ((RCBuffer[0] & 0xfc) == 0x68)
-      {
-        int num2 = ((RCBuffer[0] & 2) > 0) ? 1 : -1;
-        int num3 = ((RCBuffer[0] & 1) > 0) ? 1 : -1;
-        int dx = (RCBuffer[1] & 120) >> 3;
-        int dy = (RCBuffer[2] & 120) >> 3;
-        byte num1 = RCBuffer[1];
-        byte num6 = RCBuffer[1];
-        if (num2 > 0)
-        {
-          if ((Cursor.Position.X + dx) > Screen.PrimaryScreen.Bounds.Right)
-          {
-            SetCursorPos(Screen.PrimaryScreen.Bounds.Right, Cursor.Position.Y);
-          }
-          else
-          {
-            Cursor.Position.Offset(dx, 0);
-          }
-        }
-        else if ((Cursor.Position.X - dx) < Screen.PrimaryScreen.Bounds.Left)
-        {
-          SetCursorPos(Screen.PrimaryScreen.Bounds.Left, Cursor.Position.Y);
-        }
-        else
-        {
-          Cursor.Position.Offset(-dx, 0);
-        }
-        if (num3 > 0)
-        {
-          if ((Cursor.Position.Y + dy) > Screen.PrimaryScreen.Bounds.Bottom)
-          {
-            SetCursorPos(Cursor.Position.X, Screen.PrimaryScreen.Bounds.Bottom);
-          }
-          else
-          {
-            Cursor.Position.Offset(0, dy);
-          }
-        }
-        else if ((Cursor.Position.Y - num3) < Screen.PrimaryScreen.Bounds.Top)
-        {
-          SetCursorPos(Cursor.Position.X, Screen.PrimaryScreen.Bounds.Top);
-        }
-        else
-        {
-          Cursor.Position.Offset(0, -dy);
-        }
-      }
-    }
-
-    private void Remote_Run()
-    {
-      byte[] outBuffer = new byte[8];
-      uint bytesReturned = 0;
-      string str = string.Empty;
-      int num2 = 0;
-      this.NullTime = DateTime.Now;
-      this.InitRemoteState(ref this.RemoteStatus);
-      if (this.RemoteSettings.RemoteType == "MCE")
-      {
-        num2 = 0x77;
-      }
-      else
-      {
-        num2 = 0x73;
-      }
-      IntPtr zero = IntPtr.Zero;
-      string fileName = @"\\.\SGIMON";
-      if (!this._IMON.iMONRC_IsInited())
-      {
-        if (!this._IMON.iMONRC_Init(num2, 0x83, 0x8888))
-        {
-          Log.Info("iMONLCDg.Remote_Run(): Unable to open RC hardware - thread not started", new object[0]);
-          return;
-        }
-        this._IMON.iMONRC_ChangeRCSet(num2);
-        this._IMON.iMONRC_Uninit();
-      }
-      zero = Win32Functions.CreateFile(fileName, 0xc0000000, 3, IntPtr.Zero, 3, 0, IntPtr.Zero);
-      if ((((int) zero) == -1) | (((int) zero) == 0))
-      {
-        Log.Info("iMONLCDg.Remote_Run(): Unable to open RC device - thread not started", new object[0]);
-      }
-      else
-      {
-        if (this.RemoteSettings.RemoteType == "MCE")
-        {
-          this.Remote_Set_RC6(zero, true);
-        }
-        else
-        {
-          this.Remote_Set_RC6(zero, false);
-        }
-        Log.Info("iMONLCDg.Remote_Run(): iMON RC Device opened", new object[0]);
-        while (true)
-        {
-          lock (RemoteMutex)
-          {
-            if (this.DoDebug)
-            {
-              Log.Info("iMONLCDg.Remote_Run(): Checking for Remote Thread termination request", new object[0]);
-            }
-            if (_stopRemoteThread)
-            {
-              Log.Info("iMONLCDg.Remote_Run(): Remote Manager Thread terminating", new object[0]);
-              _stopRemoteThread = false;
-              Win32Functions.CloseHandle(zero);
-              return;
-            }
-            Win32Functions.DeviceIoControl(zero, 0x222030, null, 0, outBuffer, 8, ref bytesReturned, IntPtr.Zero);
-            if ((outBuffer[0] != 0xff) | (outBuffer[0] != 0))
-            {
-              str = string.Empty;
-              for (int i = 0; i < 8; i++)
-              {
-                str = str + outBuffer[i].ToString("X00") + " ";
-              }
-              Log.Info("iMONLCDg.Remote_Run(): DeviceIoControl - Read = {0} : {1}", new object[] {bytesReturned, str});
-            }
-            if (outBuffer[6] == 1)
-            {
-              this.Remote_Process_PAD(outBuffer, ref this.RemoteStatus);
-            }
-            if (((outBuffer[7] == 0xae) | (outBuffer[7] == 0xae)) | (outBuffer[7] == 0xae))
-            {
-              this.Remote_Process_MCE(outBuffer, ref this.RemoteStatus);
-            }
-          }
-          Thread.Sleep(0x19);
-        }
-      }
-    }
-
-    private void Remote_Run_OLD()
-    {
-      byte[] outBuffer = new byte[8];
-      uint bytesReturned = 0;
-      byte iChar = 0xff;
-      byte iCode = 0xff;
-      byte num4 = 0xff;
-      byte num5 = 0xff;
-      byte keyCode = 0xff;
-      byte num7 = 0xff;
-      byte num8 = 0xff;
-      DateTime now = DateTime.Now;
-      DateTime time1 = DateTime.Now;
-      IntPtr zero = IntPtr.Zero;
-      string fileName = @"\\.\SGIMON";
-      if (!this._IMON.iMONRC_IsInited())
-      {
-        if (!this._IMON.iMONRC_Init(0x77, 0x83, 0x8888))
-        {
-          Log.Info("iMONLCDg.Remote_Run(): Unable to open RC hardware - thread not started", new object[0]);
-          return;
-        }
-        this._IMON.iMONRC_Uninit();
-      }
-      zero = Win32Functions.CreateFile(fileName, 0xc0000000, 3, IntPtr.Zero, 3, 0, IntPtr.Zero);
-      if ((((int) zero) == -1) | (((int) zero) == 0))
-      {
-        Log.Info("iMONLCDg.Remote_Run(): Unable to open RC device - thread not started", new object[0]);
-      }
-      else
-      {
-        Log.Info("iMONLCDg.Remote_Run(): iMON RC Device opened", new object[0]);
-        while (true)
-        {
-          lock (RemoteMutex)
-          {
-            if (this.DoDebug)
-            {
-              Log.Info("iMONLCDg.Remote_Run(): Checking for Remote Thread termination request", new object[0]);
-            }
-            if (_stopUpdateIconThread)
-            {
-              Log.Info("iMONLCDg.Remote_Run(): Remote Manager Thread terminating", new object[0]);
-              _stopRemoteThread = false;
-              Win32Functions.CloseHandle(zero);
-              return;
-            }
-            Win32Functions.DeviceIoControl(zero, 0x222030, null, 0, outBuffer, 8, ref bytesReturned, IntPtr.Zero);
-            if (outBuffer[0] == 0x80)
-            {
-              string str2 = string.Empty;
-              for (int i = 0; i < 8; i++)
-              {
-                str2 = str2 + outBuffer[i].ToString("X00") + " ";
-              }
-              Log.Info("iMONLCDg.Remote_Run(): DeviceIoControl - Read = {0} : {1}", new object[] {bytesReturned, str2});
-              if (this.RemoteSettings.RemoteType == "MCE")
-              {
-                num7 = outBuffer[2];
-                keyCode = outBuffer[3];
-                if (num7 != num8)
-                {
-                  this.FireRemoteEvent(keyCode);
-                  now = DateTime.Now;
-                  Log.Info("iMONLCDg.Remote_Run(): received Button press - code = {0}", new object[] {keyCode});
-                }
-                else if ((DateTime.Now.Ticks > now.AddMilliseconds((double) this.RemoteSettings.RepeatDelay).Ticks) &&
-                         !this.RemoteSettings.DisableRepeat)
-                {
-                  this.FireRemoteEvent(keyCode);
-                  now = DateTime.Now;
-                  Log.Info("iMONLCDg.Remote_Run(): REPEATING buttonpress - code = {0}", new object[] {keyCode});
-                }
-                num8 = num7;
-              }
-            }
-            else if (outBuffer[7] == 190)
-            {
-              iChar = outBuffer[2];
-              iCode = outBuffer[3];
-              if ((iChar != num4) | (iCode != num5))
-              {
-                Key key = new Key(iChar, iCode);
-                Action action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0f, 0f);
-                GUIGraphicsContext.OnAction(action);
-                num4 = iChar;
-                num5 = iCode;
-              }
-            }
-            else if (outBuffer[7] != 0xce)
-            {
-              if (num4 != 0xff)
-              {
-                Log.Info("iMONLCDg.Remote_Run(): RELEASED key - code = {0}", new object[] {iChar});
-              }
-              num4 = 0xff;
-            }
-          }
-          Thread.Sleep(0x19);
-        }
-      }
-    }
-
-    private void Remote_Set_RC6(IntPtr dHandle, bool RC6on)
-    {
-      uint bytesReturned = 0;
-      byte[] inBuffer = new byte[] {0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0};
-      for (int i = 0; i < 11; i += 2)
-      {
-        if (i == 8)
-        {
-          byte num3;
-          inBuffer[6] = (byte) (num3 = 0);
-          inBuffer[4] = inBuffer[5] = num3;
-          inBuffer[4] = RC6on ? ((byte) 1) : ((byte) 0);
-        }
-        else
-        {
-          byte num5;
-          inBuffer[6] = (byte) (num5 = 0x20);
-          inBuffer[4] = inBuffer[5] = num5;
-        }
-        inBuffer[7] = (byte) i;
-        Win32Functions.DeviceIoControl(dHandle, 0x222018, inBuffer, 8, null, 0, ref bytesReturned, IntPtr.Zero);
-      }
-    }
-
-    private void Remote_Start()
-    {
-      if (this.RemoteSettings.EnableRemote)
-      {
-        Log.Info("iMONLCDg.Remote_Start(): testing for RC hardware", new object[0]);
-        int num = 0;
-        if (this.RemoteSettings.RemoteType == "MCE")
-        {
-          num = 0x77;
-        }
-        else
-        {
-          num = 0x73;
-        }
-        if (this._IMON.RC_Available())
-        {
-          if (this._IMON.iMONRC_Init(num, 0x83, 0x8888))
-          {
-            this._IMON.iMONRC_ChangeRCSet(num);
-            int num2 = this._IMON.iMONRC_GetHWType();
-            Log.Info("iMONLCDg.Remote_Start(): RC TEST returned RC_HW: 0x{0}", new object[] {num2.ToString("x00000000")});
-            if (num2 < 1)
-            {
-              Log.Info("iMONLCDg.Remote_Start(): No remote control hardware found.", new object[0]);
-              return;
-            }
-            this._IMON.iMONRC_Uninit();
-          }
-          Log.Info("iMONLCDg.Remote_Start(): remote control hardware found.", new object[0]);
-          bool flag2 = false;
-          bool flag3 = false;
-          if (this.RemoteSettings.EnableRemote)
-          {
-            try
-            {
-              if (this.TestXmlVersion(Config.GetFile(Config.Dir.CustomInputDefault, "iMon_Remote.xml")) < 3)
-              {
-                Log.Info("iMONLCDg.Remote_Start(): Deleting iMon_Remote mapping file with the wrong version stamp.",
-                         new object[0]);
-                File.Delete(Config.GetFile(Config.Dir.CustomInputDefault, "iMon_Remote.xml"));
-              }
-              if (!File.Exists(Config.GetFile(Config.Dir.CustomInputDefault, "iMon_Remote.xml")))
-              {
-                Log.Info("iMONLCDg.Remote_Start(): Creating default iMON_Remote mapping file", new object[0]);
-                if (!AdvancedSettings.CreateDefaultRemoteMapping())
-                {
-                  Log.Info("iMONLCDg.Remote_Start(): ERROR Creating default iMON_Remote mapping file", new object[0]);
-                  flag2 = false;
-                }
-                else
-                {
-                  flag2 = true;
-                }
-              }
-              else
-              {
-                flag2 = true;
-              }
-            }
-            catch (Exception exception)
-            {
-              Log.Info("iMONLCDg.Remote_Start(): CAUGHT EXCEPTION while loading InputHander - {0}",
-                       new object[] {exception});
-              flag2 = false;
-              flag3 = false;
-            }
-            if (flag2)
-            {
-              Log.Info("iMONLCDg_Remote_Start(): Loading InputHandler", new object[0]);
-              this._inputHandler = new InputHandler("iMon_Remote");
-              Log.Info("iMONLCDg.Remote_Start(): InputHandler loaded = {0}", new object[] {this._inputHandler.IsLoaded});
-              if (this._inputHandler.IsLoaded)
-              {
-                flag3 = true;
-              }
-              else
-              {
-                flag3 = false;
-                Log.Info("iMONLCDg.Remote_Start(): error loading InputHandler - remote support disabled", new object[0]);
-              }
-            }
-            else
-            {
-              Log.Info("iMONLCDg.Remote_Start(): Remote support disabled - no remote mapping file", new object[0]);
-              flag3 = false;
-            }
-            if (!flag3 || !this._inputHandler.IsLoaded)
-            {
-              Log.Info("iMONLCDg.Remote_Start(): Error loading remote mapping file - Remote support disabled",
-                       new object[0]);
-              flag3 = false;
-            }
-          }
-          else
-          {
-            flag3 = false;
-          }
-          if (!flag3)
-          {
-            Log.Info("iMONLCDg.Remote_Start(): Unable to load remote input mapper - remote control support disabled.",
-                     new object[0]);
-          }
-          else
-          {
-            Log.Info("iMONLCDg.Remote_Start(): Starting iMONLCDg.Remote_Run() Thread", new object[0]);
-            this._RemoteThread = new Thread(new ThreadStart(this.Remote_Run));
-            this._RemoteThread.IsBackground = true;
-            this._RemoteThread.Priority = ThreadPriority.Lowest;
-            this._RemoteThread.Name = "iMON_Remote_Manager";
-            this._RemoteThread.TrySetApartmentState(ApartmentState.MTA);
-            this._RemoteThread.Start();
-            if (this._RemoteThread.IsAlive)
-            {
-              Log.Info("iMONLCDg.Remote_Start(): iMONLCDg.Remote_Run() Thread Started", new object[0]);
-            }
-            else
-            {
-              Log.Info("iMONLCDg.Remote_Start(): iMONLCDg.Remote_Run() FAILED TO START", new object[0]);
-            }
-          }
-        }
-        else
-        {
-          Log.Info("iMONLCDg.Remote_Start(): No remote control hardware found.", new object[0]);
-        }
-      }
-    }
-
-    private void Remote_Stop()
-    {
-      if (this.RemoteSettings.EnableRemote)
-      {
-        while (this._RemoteThread.IsAlive)
-        {
-          Log.Info("iMONLCDg.Remote_Stop(): Stopping iMONLCDg.Remote_Run() Thread", new object[0]);
-          lock (RemoteMutex)
-          {
-            _stopRemoteThread = true;
-          }
-          _stopRemoteThread = true;
-          Thread.Sleep(500);
-        }
-        Log.Info("iMONLCDg.Remote_Stop(): iMONLCDg.Remote_Run() Thread has stopped", new object[0]);
       }
     }
 
     public void RestartFrontview()
     {
-      if (this._RestartFrontviewOnExit)
+      if (_RestartFrontviewOnExit)
       {
-        if (!this._UsingAntecManager & !this._UsingSoundgraphManager)
+        if (!_UsingAntecManager & !_UsingSoundgraphManager)
         {
           Log.Info("iMONLCDg.RestartFrontview(): Antec/Imon Manager is not running... restart not possible",
                    new object[0]);
@@ -3350,7 +3064,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Process process;
           bool flag;
           RegistryKey key;
-          if (this._UsingAntecManager)
+          if (_UsingAntecManager)
           {
             Log.Debug("iMONLCDg.RestartFrontview(): Resetting Antec Manager registry subkey.", new object[0]);
             key = Registry.CurrentUser.OpenSubKey(@"Software\ANTEC\VFD", true);
@@ -3358,7 +3072,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               Log.Debug("iMONLCDg.RestartFrontview(): Restarting Antec Manager with FrontView enabled.", new object[0]);
               key.SetValue("RunFront", 1, RegistryValueKind.DWord);
-              if (this._ForceKeyBoardMode && key.GetValue("CurRemote").Equals("iMON PAD"))
+              if (_ForceKeyBoardMode && key.GetValue("CurRemote").Equals("iMON PAD"))
               {
                 Log.Debug("iMONLCDg.RestartFrontview(): Forcing iMON PAD mode setting to KeyBoard.", new object[0]);
                 key.SetValue("MouseMode", 0, RegistryValueKind.DWord);
@@ -3366,7 +3080,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               Registry.CurrentUser.Close();
               processesByName = Process.GetProcessesByName("VFD");
               Log.Debug("iMONLCDg.RestartFrontview(): Found {0} instances of Antec Manager",
-                        new object[] {processesByName.Length});
+                        new object[] { processesByName.Length });
               if (processesByName.Length > 0)
               {
                 Log.Info("iMONLCDg.RestartFrontview(): Stopping Antec Manager", new object[0]);
@@ -3385,9 +3099,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 }
                 Log.Info("iMONLCDg.RestartFrontview(): Antec Manager Stopped", new object[0]);
                 Win32Functions.RedrawNotificationArea();
-                process = new Process();
-                process.StartInfo.WorkingDirectory = this.FindAntecManagerPath();
-                process.StartInfo.FileName = "VFD.exe";
+                process = new Process
+                            {
+                              StartInfo =
+                              {
+                                WorkingDirectory = FindAntecManagerPath(),
+                                FileName = "VFD.exe"
+                              }
+                            };
                 Log.Info("iMONLCDg.RestartFrontview(): ReStarting Antec Manager", new object[0]);
                 Process.Start(process.StartInfo);
               }
@@ -3411,7 +3130,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               Log.Debug("iMONLCDg.RestartFrontview(): Restarting iMON Manager with FrontView enabled.", new object[0]);
               key.SetValue("RunFront", 1, RegistryValueKind.DWord);
-              if (this._ForceKeyBoardMode && key.GetValue("CurRemote").Equals("iMON PAD"))
+              if (_ForceKeyBoardMode && key.GetValue("CurRemote").Equals("iMON PAD"))
               {
                 Log.Debug("iMONLCDg.RestartFrontview(): Forcing iMON PAD mode setting to KeyBoard.", new object[0]);
                 key.SetValue("MouseMode", 0, RegistryValueKind.DWord);
@@ -3420,7 +3139,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               Thread.Sleep(100);
               processesByName = Process.GetProcessesByName("iMON");
               Log.Debug("iMONLCDg.RestartFrontview(): Found {0} instances of SoundGraph iMON Manager",
-                        new object[] {processesByName.Length});
+                        new object[] { processesByName.Length });
               if (processesByName.Length > 0)
               {
                 Log.Info("iMONLCDg.RestartFrontview(): Stopping iMON Manager", new object[0]);
@@ -3439,9 +3158,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 }
                 Log.Info("iMONLCDg.RestartFrontview(): iMON Manager Stopped", new object[0]);
                 Win32Functions.RedrawNotificationArea();
-                process = new Process();
-                process.StartInfo.WorkingDirectory = this.FindSoundGraphManagerPath();
-                process.StartInfo.FileName = "iMON.exe";
+                process = new Process
+                            {
+                              StartInfo =
+                              {
+                                WorkingDirectory = FindSoundGraphManagerPath(),
+                                FileName = "iMON.exe"
+                              }
+                            };
                 Log.Info("iMONLCDg.RestartFrontview(): ReStarting iMON Manager", new object[0]);
                 Process.Start(process.StartInfo);
               }
@@ -3461,72 +3185,72 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void RestoreDisplayFromVideoOrIdle()
     {
-      if (this.DisplaySettings.BlankDisplayWithVideo)
+      if (DisplaySettings.BlankDisplayWithVideo)
       {
-        if (this.DisplaySettings.BlankDisplayWhenIdle)
+        if (DisplaySettings.BlankDisplayWhenIdle)
         {
-          if (!this.MPStatus.MP_Is_Idle)
+          if (!MPStatus.MP_Is_Idle)
           {
-            this.DisplayOn();
+            DisplayOn();
           }
         }
         else
         {
-          this.DisplayOn();
+          DisplayOn();
         }
       }
     }
 
     private void SendData(Command command)
     {
-      this.SendData((ulong) command);
+      SendData((ulong)command);
     }
 
     private void SendData(long data)
     {
-      this.SendData((ulong) data);
+      SendData((ulong)data);
     }
 
     private void SendData(ulong data)
     {
       try
       {
-        if (this.DoDebug)
+        if (DoDebug)
         {
-          Log.Info("iMONLCDg.SendData(): Sending {0} to display", new object[] {data.ToString("x0000000000000000")});
+          Log.Info("iMONLCDg.SendData(): Sending {0} to display", new object[] { data.ToString("x0000000000000000") });
         }
-        if (!this._IMON.iMONLCD_SendData(ref data))
+        if (!_IMON.iMONLCD_SendData(ref data))
         {
-          this.SendData_Error_Count++;
-          if (this.SendData_Error_Count > 20)
+          SendData_Error_Count++;
+          if (SendData_Error_Count > 20)
           {
-            this._isDisabled = true;
-            if (this.DoDebug)
+            _isDisabled = true;
+            if (DoDebug)
             {
               Log.Info("iMONLCDg.SendData(): ERROR Sending {0} to display",
-                       new object[] {data.ToString("x0000000000000000")});
+                       new object[] { data.ToString("x0000000000000000") });
             }
-            if (this.DoDebug)
+            if (DoDebug)
             {
               Log.Info("iMONLCDg.SendData(): ERROR LIMIT EXCEEDED - DISPLAY DISABLED", new object[0]);
             }
           }
-          if (this.DoDebug)
+          if (DoDebug)
           {
             Log.Info("iMONLCDg.SendData(): ERROR Sending {0} to display",
-                     new object[] {data.ToString("x0000000000000000")});
+                     new object[] { data.ToString("x0000000000000000") });
           }
         }
         else
         {
-          this.SendData_Error_Count = 0;
-          Thread.Sleep(this._delay);
+          SendData_Error_Count = 0;
+          Thread.Sleep(_delay);
         }
       }
       catch (Exception exception)
       {
-        this._isDisabled = true;
-        this._errorMessage = exception.Message;
+        _isDisabled = true;
+        _errorMessage = exception.Message;
         Log.Info("iMONLCDg.SendData(): caught exception '{0}'\nIs your SG_VFD.dll version 5.1 or higher??",
                  new object[0]);
       }
@@ -3534,19 +3258,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void SendData(Command command, ulong optionBitmask)
     {
-      this.SendData((ulong) (command) | optionBitmask);
+      SendData((ulong)(command) | optionBitmask);
     }
 
     private void SendPixelArray(byte[] PixelArray)
     {
-      if (!this._IsDisplayOff)
+      if (!_IsDisplayOff)
       {
         if (PixelArray.Length > 0xc0)
         {
           Log.Error("ERROR in iMONLCDg SendPixelArray", new object[0]);
         }
-        if (this.DisplayOptions.UseLargeIcons ||
-            (this.DisplayOptions.UseLargeIcons & this.DisplayOptions.UseCustomIcons))
+        if (DisplayOptions.UseLargeIcons ||
+            (DisplayOptions.UseLargeIcons & DisplayOptions.UseCustomIcons))
         {
           for (int i = 0x5f; i > 0x11; i--)
           {
@@ -3558,34 +3282,34 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             PixelArray[j] = 0;
             PixelArray[j + 0x60] = 0;
           }
-          if ((this.DisplayOptions.UseLargeIcons & !this.DisplayOptions.UseCustomIcons) & this.DoDebug)
+          if ((DisplayOptions.UseLargeIcons & !DisplayOptions.UseCustomIcons) & DoDebug)
           {
             Log.Debug("iMONLCDg.SendText(): Inserting Large Icons", new object[0]);
           }
-          if (this.DisplayOptions.UseCustomIcons & this.DoDebug)
+          if (DisplayOptions.UseCustomIcons & DoDebug)
           {
             Log.Debug("iMONLCDg.SendText(): Inserting Custom Large Icons", new object[0]);
           }
-          if (this.DisplayOptions.UseInvertedIcons & this.DoDebug)
+          if (DisplayOptions.UseInvertedIcons & DoDebug)
           {
             Log.Debug("iMONLCDg.SendText(): Using inverted Large Icon data", new object[0]);
           }
           for (int k = 0; k < 0x10; k++)
           {
-            if (this.DisplayOptions.UseCustomIcons)
+            if (DisplayOptions.UseCustomIcons)
             {
-              PixelArray[k] = this.CustomLargeIcon.PixelData(this._CurrentLargeIcon, k);
-              PixelArray[k + 0x60] = this.CustomLargeIcon.PixelData(this._CurrentLargeIcon, k + 0x10);
+              PixelArray[k] = CustomLargeIcon.PixelData(_CurrentLargeIcon, k);
+              PixelArray[k + 0x60] = CustomLargeIcon.PixelData(_CurrentLargeIcon, k + 0x10);
             }
             else
             {
-              PixelArray[k] = _InternalLargeIcons[this._CurrentLargeIcon, k];
-              PixelArray[k + 0x60] = _InternalLargeIcons[this._CurrentLargeIcon, k + 0x10];
+              PixelArray[k] = _InternalLargeIcons[_CurrentLargeIcon, k];
+              PixelArray[k + 0x60] = _InternalLargeIcons[_CurrentLargeIcon, k + 0x10];
             }
-            if (this.DisplayOptions.UseInvertedIcons)
+            if (DisplayOptions.UseInvertedIcons)
             {
-              PixelArray[k] = (byte) (PixelArray[k] ^ 0xff);
-              PixelArray[k + 0x60] = (byte) (PixelArray[k + 0x60] ^ 0xff);
+              PixelArray[k] = (byte)(PixelArray[k] ^ 0xff);
+              PixelArray[k + 0x60] = (byte)(PixelArray[k + 0x60] ^ 0xff);
             }
           }
         }
@@ -3605,7 +3329,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             if (num4 <= 0x3b)
             {
-              this.SendData(data);
+              SendData(data);
             }
             num4++;
           }
@@ -3615,7 +3339,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void SendPixelArrayRaw(byte[] PixelArray)
     {
-      if (!this._IsDisplayOff)
+      if (!_IsDisplayOff)
       {
         if (PixelArray.Length > 0xc0)
         {
@@ -3637,7 +3361,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             if (num <= 0x3b)
             {
-              this.SendData(data);
+              SendData(data);
             }
             num++;
           }
@@ -3647,16 +3371,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void SendText(string Line1, string Line2)
     {
-      if (this.DoDebug)
+      if (DoDebug)
       {
         Log.Info("iMONLCDg.SendText(): Called", new object[0]);
       }
-      if (this.DisplayOptions.UseCustomFont & this.DoDebug)
+      if (DisplayOptions.UseCustomFont & DoDebug)
       {
         Log.Debug("iMONLCDg.SendText(): Using CustomFont", new object[0]);
       }
       int num = 0;
-      byte[] pixelArray = new byte[0xc0];
+      var pixelArray = new byte[0xc0];
       for (int i = 0; i < Math.Min(0x10, Line1.Length); i++)
       {
         char charID = Line1[i];
@@ -3664,14 +3388,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if ((k + num) < 0x60)
           {
-            if (this.DisplayOptions.UseCustomFont)
-            {
-              pixelArray[num + k] = BitReverse(this.CFont.PixelData(charID, k));
-            }
-            else
-            {
-              pixelArray[num + k] = BitReverse(_Font8x5[charID, k]);
-            }
+            pixelArray[num + k] = DisplayOptions.UseCustomFont
+                                    ? BitReverse(CFont.PixelData(charID, k))
+                                    : BitReverse(_Font8x5[charID, k]);
           }
         }
         num += 6;
@@ -3684,51 +3403,44 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if ((m + num) < 0xc0)
           {
-            if (this.DisplayOptions.UseCustomFont)
-            {
-              pixelArray[num + m] = BitReverse(this.CFont.PixelData(ch2, m));
-            }
-            else
-            {
-              pixelArray[num + m] = BitReverse(_Font8x5[ch2, m]);
-            }
+            pixelArray[num + m] = DisplayOptions.UseCustomFont ? BitReverse(CFont.PixelData(ch2, m)) : BitReverse(_Font8x5[ch2, m]);
           }
         }
         num += 6;
       }
-      this.SendPixelArray(pixelArray);
+      SendPixelArray(pixelArray);
     }
 
     private void SendText3R(string Line1)
     {
-      if (this.DoDebug)
+      if (DoDebug)
       {
         Log.Info("iMONLCDg.SendText3R(): Called", new object[0]);
       }
-      byte[] buffer = new byte[] {13, 15, 0x20, 0x20, 0x20, 0x20, 0x20, 0, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 2};
+      var buffer = new byte[] { 13, 15, 0x20, 0x20, 0x20, 0x20, 0x20, 0, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 2 };
       Line1 = Line1 + "            ";
       Line1 = Line1.Substring(0, 12);
       for (int i = 0; i < 5; i++)
       {
-        buffer[2 + i] = (byte) Line1[i];
+        buffer[2 + i] = (byte)Line1[i];
       }
       for (int j = 5; j < 12; j++)
       {
-        buffer[3 + j] = (byte) Line1[j];
+        buffer[3 + j] = (byte)Line1[j];
       }
-      ulong data =
+      var data =
         (ulong)
         ((((((((buffer[0] << 0x38) + (buffer[1] << 0x30)) | (buffer[2] << 40)) | (buffer[3] << 0x20)) |
             (buffer[4] << 0x18)) | (buffer[5] << 0x10)) | (buffer[6] << 8)) | buffer[7]);
-      ulong num4 =
+      var num4 =
         (ulong)
         ((((((((buffer[8] << 0x38) + (buffer[9] << 0x30)) | (buffer[10] << 40)) | (buffer[11] << 0x20)) |
             (buffer[12] << 0x18)) | (buffer[13] << 0x10)) | (buffer[14] << 8)) | buffer[15]);
-      this.SendData((long) 0x200020000000000L);
-      this.SendData((long) 2L);
-      this.SendData(data);
-      this.SendData(num4);
-      if (this.DoDebug)
+      SendData(0x200020000000000L);
+      SendData(2L);
+      SendData(data);
+      SendData(num4);
+      if (DoDebug)
       {
         Log.Info("iMONLCDg.SendText3R(): Completed", new object[0]);
       }
@@ -3736,10 +3448,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     [DllImport("user32.dll")]
     private static extern bool SetCursorPos(int X, int Y);
-
-    public void SetCustomCharacters(int[][] customCharacters)
-    {
-    }
 
     private void SetEQ(byte[] EqDataArray)
     {
@@ -3759,52 +3467,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           if (num <= 0x42)
           {
-            this.SendData(data);
+            SendData(data);
           }
           num++;
         }
       }
     }
 
-    public void SetLine(int line, string message)
-    {
-      if (!this._isDisabled)
-      {
-        try
-        {
-          if (this.DoDebug)
-          {
-            Log.Info("(IDisplay) iMONLCDg.SetLine(): called for Line {0} msg: '{1}'",
-                     new object[] {line.ToString(), message});
-          }
-          if (this._USE_VFD_ICONS & (_DisplayType == DisplayType.VFD))
-          {
-            this._lines[line] = this.Add_VFD_Icons(line, message);
-          }
-          else
-          {
-            this._lines[line] = message;
-          }
-          if (line == (this._trows - 1))
-          {
-            this.DisplayLines();
-          }
-          if (this.DoDebug)
-          {
-            Log.Info("(IDisplay) iMONLCDg.SetLine(): completed", new object[0]);
-          }
-        }
-        catch (Exception exception)
-        {
-          Log.Debug("(IDisplay) iMONLCDg.SetLine(): CAUGHT EXCEPTION {0}", new object[] {exception});
-        }
-      }
-    }
-
     private void SetLineLength(int TopLine, int BotLine, int TopProgress, int BotProgress)
     {
-      this.SetLinePixels(LengthToPixels(TopLine), LengthToPixels(BotLine), LengthToPixels(TopProgress),
-                         LengthToPixels(BotProgress));
+      SetLinePixels(LengthToPixels(TopLine), LengthToPixels(BotLine), LengthToPixels(TopProgress),
+                    LengthToPixels(BotProgress));
     }
 
     private void SetLinePixels(ulong TopLine, ulong BotLine, ulong TopProgress, ulong BotProgress)
@@ -3813,15 +3486,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         ulong optionBitmask = TopProgress << 0x20;
         optionBitmask += TopLine;
-        optionBitmask &= (ulong) 0xffffffffffffffL;
-        this.SendData(Command.SetLines0, optionBitmask);
+        optionBitmask &= 0xffffffffffffffL;
+        SendData(Command.SetLines0, optionBitmask);
         optionBitmask = TopProgress >> 0x18;
         optionBitmask += BotProgress << 8;
         optionBitmask += BotLine << 40;
-        optionBitmask &= (ulong) 0xffffffffffffffL;
-        this.SendData(Command.SetLines1, optionBitmask);
+        optionBitmask &= 0xffffffffffffffL;
+        SendData(Command.SetLines1, optionBitmask);
         optionBitmask = BotLine >> 0x10;
-        this.SendData(Command.SetLines2, optionBitmask);
+        SendData(Command.SetLines2, optionBitmask);
       }
     }
 
@@ -3829,379 +3502,46 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       lock (DWriteMutex)
       {
-        if (this.DoDebug)
+        if (DoDebug)
         {
           Log.Info("iMONLCDg.SetText(): Sending text to display", new object[0]);
         }
-        this._IMON.iMONVFD_SetText(Line1, Line2);
-        Thread.Sleep(this._delay);
+        _IMON.iMONVFD_SetText(Line1, Line2);
+        Thread.Sleep(_delay);
       }
-    }
-
-    public void Setup(string port, int lines, int cols, int delay, int linesG, int colsG, int timeG, bool backLight,
-                      int backlightLevel, bool contrast, int contrastLevel, bool blankOnExit)
-    {
-      Log.Info("(IDisplay) iMONLCDg.Setup(): called", new object[0]);
-      MiniDisplayHelper.InitEQ(ref this.EQSettings);
-      MiniDisplayHelper.InitDisplayControl(ref this.DisplaySettings);
-      MiniDisplayHelper.InitDisplayOptions(ref this.DisplayOptions);
-      this.InitRemoteSettings(ref this.RemoteSettings);
-      this._BlankDisplayOnExit = blankOnExit;
-      this._Backlight = false;
-      this._BacklightLevel = (ulong) backlightLevel;
-      this._Contrast = true;
-      this._ContrastLevel = ((ulong) contrastLevel) >> 2;
-      this.InitializeDriver();
-      if (this._DelayStartup)
-      {
-        Log.Info("iMONLCDg.Setup(): Delaying device initialization by 10 seconds", new object[0]);
-        Thread.Sleep(0x2710);
-      }
-      this.Check_iMON_Manager_Status();
-      if (this._IMON == null)
-      {
-        this._IMON = new iMONDisplay();
-      }
-      int fWVersion = -1;
-      int rEGVersion = -1;
-      if ((this._ForceDisplay == "LCD") || (this._ForceDisplay == "LCD2"))
-      {
-        if (this._ForceDisplay == "LCD")
-        {
-          _DisplayType = DisplayType.LCD;
-          _VfdType = 0x18;
-          Log.Info("(IDisplay) iMONLCDg.Setup(): Advanced options forces display type to LCD", new object[0]);
-        }
-        else
-        {
-          _DisplayType = DisplayType.LCD2;
-          _VfdType = 0x1b;
-          Log.Info("(IDisplay) iMONLCDg.Setup(): Advanced options forces display type to LCD2", new object[0]);
-        }
-        _VfdReserved = 0x8888;
-      }
-      else if (this._ForceDisplay == "VFD")
-      {
-        _DisplayType = DisplayType.VFD;
-        _VfdType = 0x10;
-        _VfdType = 0x1a;
-        _VfdReserved = 0;
-        Log.Info("(IDisplay) iMONLCDg.Setup(): Advanced options forces display type to VFD", new object[0]);
-      }
-      else if (this._ForceDisplay == "LCD3R")
-      {
-        _DisplayType = DisplayType.ThreeRsystems;
-        _VfdType = 9;
-        _VfdReserved = 0;
-        Log.Info("(IDisplay) iMONLCDg.Setup(): Advanced options forces display type to LCD3R", new object[0]);
-      }
-      else
-      {
-        Log.Info("(IDisplay) iMONLCDg.Setup(): Autodetecting iMON Display device", new object[0]);
-        try
-        {
-          Log.Info("(IDisplay) iMONLCDg.Setup(): attempting hardware information test", new object[0]);
-          if (this._IMON.RC_Available())
-          {
-            Log.Info("(IDisplay) iMONLCDg.Setup(): hardware information test - Opening SG_RC.dll", new object[0]);
-            if (this._IMON.iMONRC_Init(0x77, 0x83, 0x8888))
-            {
-              this._IMON.iMONRC_ChangeRCSet(0x77);
-              this._IMON.iMONRC_ChangeRC6(1);
-              long num4 = this._IMON.iMONRC_CheckDriverVersion();
-              int num5 = this._IMON.iMONRC_GetFirmwareVer();
-              int num6 = this._IMON.iMONRC_GetHWType();
-              int num7 = this._IMON.iMONRC_GetLastRFMode();
-              Log.Info(
-                "(IDisplay) iMONLCDg.Setup(): RC TEST returned DRVR: 0x{0}, FW: 0x{1} (HW: 0x{2}), RC_HW: 0x{3}, RF: 0x{4}",
-                new object[]
-                  {
-                    num4.ToString("x0000000000000000"), num5.ToString("x00000000"),
-                    GetVFDTypeFromFirmware(num5).ToString("x00000000"), num6.ToString("x00000000"),
-                    num7.ToString("x00000000")
-                  });
-              if (num5 > 0)
-              {
-                fWVersion = num5;
-              }
-              Log.Info("(IDisplay) iMONLCDg.Setup(): Closing SG_RC.dll", new object[0]);
-              this._IMON.iMONRC_Uninit();
-            }
-            else
-            {
-              long num8 = this._IMON.iMONRC_CheckDriverVersion();
-              int num9 = this._IMON.iMONRC_GetFirmwareVer();
-              int num10 = this._IMON.iMONRC_GetHWType();
-              int num11 = this._IMON.iMONRC_GetLastRFMode();
-              Log.Info("iMONLCDg.Setup(): RC TEST returned DRVR: 0x{0}, FW: 0x{1} (HW: {2}), RC_HW: 0x{3}, RF: 0x{4}",
-                       new object[]
-                         {
-                           num8.ToString("x0000000000000000"), num9.ToString("x00000000"),
-                           GetVFDTypeFromFirmware(num9).ToString("x00000000"), num10.ToString("x00000000"),
-                           num11.ToString("x00000000")
-                         });
-              if (num9 > 0)
-              {
-                Log.Info("iMONLCDg.Setup(): Found valid display information", new object[0]);
-                fWVersion = num9;
-              }
-              Log.Info("iMONLCDg.Setup(): Closing SG_RC.dll", new object[0]);
-            }
-          }
-          else
-          {
-            Log.Info("iMONLCDg.Setup(): Hardware AutoDetect not available", new object[0]);
-          }
-        }
-        catch (Exception exception)
-        {
-          Log.Info("iMONLCDg.Setup(): RC TEST FAILED... SG_RC.dll not found. Exception: {0}",
-                   new object[] {exception.ToString()});
-        }
-        try
-        {
-          int num3;
-          Log.Info("iMONLCDg.Setup(): checking registry for ANTEC entries", new object[0]);
-          RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Antec\VFD", false);
-          if (key != null)
-          {
-            num3 = (int) key.GetValue("LastVFD", 0);
-            if (num3 > 0)
-            {
-              Log.Info("iMONLCDg.Setup(): ANTEC registry entries found - HW: {0}", new object[] {num3.ToString("x00")});
-              rEGVersion = num3;
-            }
-            else
-            {
-              Log.Info("iMONLCDg.Setup(): ANTEC \"LastVFD\" key not found", new object[0]);
-            }
-          }
-          else
-          {
-            Log.Info("iMONLCDg.Setup(): ANTEC registry entries NOT found", new object[0]);
-          }
-          Registry.CurrentUser.Close();
-          if (rEGVersion < 0)
-          {
-            Log.Info("iMONLCDg.Setup(): checking registry for SOUNDGRAPH entries", new object[0]);
-            key = Registry.CurrentUser.OpenSubKey(@"Software\SOUNDGRAPH\iMON", false);
-            if (key != null)
-            {
-              num3 = (int) key.GetValue("LastVFD", 0);
-              if (num3 > 0)
-              {
-                Log.Info("iMONLCDg.Setup(): SOUNDGRAPH registry entries found - HW: {0}",
-                         new object[] {num3.ToString("x00")});
-                rEGVersion = num3;
-              }
-              else
-              {
-                Log.Info("iMONLCDg.Setup(): SOUNDGRAPH \"LastVFD\" key not found", new object[0]);
-              }
-            }
-            else
-            {
-              Log.Info("iMONLCDg.Setup(): SOUNDGRAPH registry entries NOT found", new object[0]);
-            }
-            Registry.CurrentUser.Close();
-          }
-        }
-        catch (Exception exception2)
-        {
-          Log.Info("iMONLCDg.Setup(): registry test caught exception {0}", new object[] {exception2.ToString()});
-        }
-        if (fWVersion > -1)
-        {
-          if (GetDisplayInfoFromFirmware(fWVersion))
-          {
-            Log.Info("iMONLCDg.Setup(): Hardware tests determined - iMON Type: {0}, Display Type: {1} Rsrvd: {2}",
-                     new object[]
-                       {_VfdType.ToString("x00"), DisplayType.TypeName(_DisplayType), _VfdReserved.ToString("x00")});
-          }
-          else
-          {
-            Log.Info("iMONLCDg.Setup(): Hardware tests determined UNSUPPORTED display type!", new object[0]);
-            _DisplayType = DisplayType.Unsupported;
-          }
-        }
-        else if (rEGVersion > -1)
-        {
-          if (GetDisplayInfoFromRegistry(rEGVersion))
-          {
-            Log.Info("iMONLCDg.Setup(): Registry tests determined - iMON Type: {0}, Display Type: {1} Rsrvd: {2}",
-                     new object[]
-                       {_VfdType.ToString("x00"), DisplayType.TypeName(_DisplayType), _VfdReserved.ToString("x00")});
-          }
-          else
-          {
-            Log.Info("iMONLCDg.Setup(): Registry tests determined UNSUPPORTED display type!", new object[0]);
-            _DisplayType = DisplayType.Unsupported;
-            this._isDisabled = true;
-          }
-        }
-        else
-        {
-          Log.Info("(IDisplay) iMONLCDg.Setup(): Display Type could not be determined", new object[0]);
-          _DisplayType = DisplayType.Unsupported;
-          this._isDisabled = true;
-        }
-        if (_DisplayType == DisplayType.Unsupported)
-        {
-          this._isDisabled = true;
-          Log.Info("(IDisplay) iMONLCDg.Setup(): Display Type is NOT SUPPORTED - Plugin disabled", new object[0]);
-        }
-      }
-      if (!this._isDisabled)
-      {
-        try
-        {
-          Log.Info("(IDisplay) iMONLCDg.Setup(): Testing iMON Display device", new object[0]);
-          if (this._IMON.iMONVFD_IsInited())
-          {
-            Log.Info("(IDisplay) iMONLCDg.Setup(): iMON Display found", new object[0]);
-            this._IMON.iMONVFD_Uninit();
-          }
-          Log.Info("(IDisplay) iMONLCDg.Setup(): opening display type {0}",
-                   new object[] {DisplayType.TypeName(_DisplayType)});
-          if (!this._IMON.iMONVFD_Init(_VfdType, _VfdReserved))
-          {
-            Log.Info("(IDisplay) iMONLCDg.Setup(): Open failed - No iMON device found", new object[0]);
-            this._isDisabled = true;
-            this._errorMessage = "iMONLCDg could not find an iMON LCD display";
-          }
-          else
-          {
-            Log.Info("(IDisplay) iMONLCDg.Setup(): iMON Display device found", new object[0]);
-            this._IMON.iMONVFD_Uninit();
-          }
-        }
-        catch (Exception exception3)
-        {
-          this._isDisabled = true;
-          this._errorMessage = exception3.Message;
-          Log.Info("(IDisplay) iMONLCDg.Setup(): caught an exception.", new object[0]);
-        }
-      }
-      string property = GUIPropertyManager.GetProperty("#currentmodule");
-      Log.Info("(IDisplay) iMONLCDg.Setup(): current module = {0}", new object[] {property});
-      if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
-      {
-        this._grows = linesG;
-        if (this._grows > 0x10)
-        {
-          this._grows = 0x10;
-          Log.Info(
-            "(IDisplay) iMONLCDg.Setup(): DISPLAY CONFIGURATION (GRAPHICS MODE) ERROR - Rows must be less then or equal to 16",
-            new object[0]);
-        }
-        this._gcols = colsG;
-        if (this._gcols > 0x60)
-        {
-          this._gcols = 0x60;
-          Log.Info(
-            "(IDisplay) iMONLCDg.Setup(): DISPLAY CONFIGURATION (GRAPHICS MODE) ERROR - Columns must be less then or equal to 96",
-            new object[0]);
-        }
-      }
-      else if (_DisplayType == DisplayType.VFD)
-      {
-        this._trows = lines;
-        if (this._trows > 2)
-        {
-          this._trows = 2;
-          Log.Info(
-            "(IDisplay) iMONLCDg.Setup(): DISPLAY CONFIGURATION (TEXT MODE) ERROR - Rows must be less then or equal to 2",
-            new object[0]);
-        }
-        else
-        {
-          Log.Info("(IDisplay) iMONLCDg.Setup(): _trows (Text Mode Rows) set to {0}", new object[] {this._trows});
-        }
-        if (this._tcols > 0x10)
-        {
-          this._gcols = 0x10;
-          Log.Info(
-            "(IDisplay) iMONLCDg.Setup(): DISPLAY CONFIGURATION (TEXT MODE) ERROR - Columns must be less then or equal to 16",
-            new object[0]);
-        }
-        else
-        {
-          Log.Info("(IDisplay) iMONLCDg.Setup(): _tcols (Text Mode Columns) set to {0}", new object[] {this._tcols});
-        }
-        this.DisplayOptions.DiskMediaStatus = false;
-        this.DisplayOptions.VolumeDisplay = false;
-        this.DisplayOptions.ProgressDisplay = false;
-        this.DisplayOptions.UseCustomFont = false;
-        this.DisplayOptions.UseLargeIcons = false;
-        this.DisplayOptions.UseCustomIcons = false;
-        this.DisplayOptions.UseInvertedIcons = false;
-      }
-      else if (_DisplayType == DisplayType.ThreeRsystems)
-      {
-        this._trows = lines;
-        if (this._trows > 1)
-        {
-          this._trows = 1;
-          Log.Info("(IDisplay) iMONLCDg.Setup(): DISPLAY CONFIGURATION (3Rsystems MODE) ERROR - Rows must be 1",
-                   new object[0]);
-        }
-        if (this._tcols > 12)
-        {
-          this._gcols = 12;
-          Log.Info(
-            "(IDisplay) iMONLCDg.Setup(): DISPLAY CONFIGURATION (3Rsystems MODE) ERROR - Columns must be less then or equal to 12",
-            new object[0]);
-        }
-        this.DisplayOptions.DiskMediaStatus = false;
-        this.DisplayOptions.VolumeDisplay = false;
-        this.DisplayOptions.ProgressDisplay = false;
-        this.DisplayOptions.UseCustomFont = false;
-        this.DisplayOptions.UseLargeIcons = false;
-        this.DisplayOptions.UseCustomIcons = false;
-        this.DisplayOptions.UseInvertedIcons = false;
-      }
-      this._delay = delay;
-      this._delayG = timeG;
-      this._delay = Math.Max(this._delay, this._delayG);
-      if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
-      {
-        this._delay = Math.Min(2, this._delay);
-      }
-      Log.Info("(IDisplay) iMONLCDg.Setup(): Completed", new object[0]);
     }
 
     private void SetVFDClock()
     {
-      if (this._BlankDisplayOnExit | (_DisplayType != DisplayType.VFD))
+      const string fileName = @"\\.\SGIMON";
+      if (_BlankDisplayOnExit | (_DisplayType != DisplayType.VFD))
       {
         Log.Info("iMONLCDg.SetVFDClock(): Options specify diplay blank on exit - clock not set", new object[0]);
       }
-      else if ((this.DisplaySettings._Shutdown1 != string.Empty) || (this.DisplaySettings._Shutdown2 != string.Empty))
+      else if ((DisplaySettings._Shutdown1 != string.Empty) || (DisplaySettings._Shutdown2 != string.Empty))
       {
         Log.Info("iMONLCDg.SetVFDClock(): Custom Shutdown message defined - clock not set", new object[0]);
       }
       else
       {
-        IntPtr zero = IntPtr.Zero;
-        string fileName = @"\\.\SGIMON";
         uint bytesReturned = 0;
         DateTime now = DateTime.Now;
-        byte[] buffer3 = new byte[8];
+        var buffer3 = new byte[8];
         buffer3[7] = 0x40;
         byte[] inBuffer = buffer3;
-        byte[] buffer4 = new byte[8];
+        var buffer4 = new byte[8];
         buffer4[2] = 1;
         buffer4[7] = 0x42;
         byte[] buffer2 = buffer4;
-        inBuffer[0] = (byte) (now.Year & 15L);
+        inBuffer[0] = (byte)(now.Year & 15L);
         inBuffer[1] = 3;
-        inBuffer[2] = (byte) now.Day;
-        inBuffer[3] = (byte) now.Month;
-        inBuffer[4] = (byte) now.Hour;
-        inBuffer[5] = (byte) now.Minute;
-        inBuffer[6] = (byte) now.Second;
-        zero = Win32Functions.CreateFile(fileName, 0xc0000000, 3, IntPtr.Zero, 3, 0, IntPtr.Zero);
-        if ((((int) zero) == -1) | (((int) zero) == 0))
+        inBuffer[2] = (byte)now.Day;
+        inBuffer[3] = (byte)now.Month;
+        inBuffer[4] = (byte)now.Hour;
+        inBuffer[5] = (byte)now.Minute;
+        inBuffer[6] = (byte)now.Second;
+        IntPtr zero = Win32Functions.CreateFile(fileName, 0xc0000000, 3, IntPtr.Zero, 3, 0, IntPtr.Zero);
+        if ((((int)zero) == -1) | (((int)zero) == 0))
         {
           Log.Info("iMONLCDg.SetVFDClock(): Unable to open device - clock not set", new object[0]);
         }
@@ -4217,47 +3557,47 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void ShowProgressBars()
     {
-      this.progLevel = 0;
-      this.volLevel = 0;
-      if ((this.MPStatus.MediaPlayer_Playing || MiniDisplayHelper.IsCaptureCardViewing()) &
-          this.DisplayOptions.VolumeDisplay)
+      progLevel = 0;
+      volLevel = 0;
+      if ((MPStatus.MediaPlayer_Playing || MiniDisplayHelper.IsCaptureCardViewing()) &
+          DisplayOptions.VolumeDisplay)
       {
         try
         {
-          if (!this.MPStatus.IsMuted)
+          if (!MPStatus.IsMuted)
           {
-            this.volLevel = this.MPStatus.SystemVolumeLevel/2048;
+            volLevel = MPStatus.SystemVolumeLevel / 2048;
           }
         }
         catch (Exception exception)
         {
-          if (this.DoDebug)
+          if (DoDebug)
           {
-            Log.Info("iMONLCDg.ShowProgressBars(): Audio Mixer NOT available! exception: {0}", new object[] {exception});
+            Log.Info("iMONLCDg.ShowProgressBars(): Audio Mixer NOT available! exception: {0}", new object[] { exception });
           }
         }
       }
-      if (this.MPStatus.MediaPlayer_Playing & this.DisplayOptions.ProgressDisplay)
+      if (MPStatus.MediaPlayer_Playing & DisplayOptions.ProgressDisplay)
       {
-        this.progLevel =
-          ((int) (((((float) this.MPStatus.Media_CurrentPosition)/((float) this.MPStatus.Media_Duration)) - 0.01)*32.0)) +
+        progLevel =
+          ((int)(((((float)MPStatus.Media_CurrentPosition) / ((float)MPStatus.Media_Duration)) - 0.01) * 32.0)) +
           1;
       }
-      if ((this.LastVolLevel != this.volLevel) || (this.LastProgLevel != this.progLevel))
+      if ((LastVolLevel != volLevel) || (LastProgLevel != progLevel))
       {
-        if (this.DoDebug)
+        if (DoDebug)
         {
           Log.Info("iMONLCDg.ShowProgressBars(): Sending vol: {0} prog: {1} cur: {2} dur: {3} to LCD.",
                    new object[]
                      {
-                       this.volLevel.ToString(), this.progLevel.ToString(),
-                       this.MPStatus.Media_CurrentPosition.ToString(), this.MPStatus.Media_Duration.ToString()
+                       volLevel.ToString(), progLevel.ToString(),
+                       MPStatus.Media_CurrentPosition.ToString(), MPStatus.Media_Duration.ToString()
                      });
         }
-        this.SetLineLength(this.volLevel, this.progLevel, this.volLevel, this.progLevel);
+        SetLineLength(volLevel, progLevel, volLevel, progLevel);
       }
-      this.LastVolLevel = this.volLevel;
-      this.LastProgLevel = this.progLevel;
+      LastVolLevel = volLevel;
+      LastProgLevel = progLevel;
     }
 
     private void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
@@ -4269,9 +3609,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Info(
             "iMONLCDg.SystemEvents_PowerModeChanged: Resume from Suspend or Hibernation detected, restarting display",
             new object[0]);
-          this._IsHandlingPowerEvent = true;
-          this.OpenLcd();
-          this._IsHandlingPowerEvent = false;
+          _IsHandlingPowerEvent = true;
+          OpenLcd();
+          _IsHandlingPowerEvent = false;
           break;
 
         case PowerModes.StatusChange:
@@ -4280,9 +3620,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         case PowerModes.Suspend:
           Log.Info("iMONLCDg.SystemEvents_PowerModeChanged: Suspend or Hibernation detected, shutting down display",
                    new object[0]);
-          this._IsHandlingPowerEvent = true;
-          this.CloseLcd();
-          this._IsHandlingPowerEvent = false;
+          _IsHandlingPowerEvent = true;
+          CloseLcd();
+          _IsHandlingPowerEvent = false;
           return;
 
         default:
@@ -4296,32 +3636,36 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         return 3;
       }
-      XmlDocument document = new XmlDocument();
+      var document = new XmlDocument();
       document.Load(xmlPath);
-      return Convert.ToInt32(document.DocumentElement.SelectSingleNode("/mappings").Attributes["version"].Value);
+      if (document.DocumentElement != null)
+      {
+        return Convert.ToInt32(document.DocumentElement.SelectSingleNode("/mappings").Attributes["version"].Value);
+      }
+      return -1;
     }
 
     private void UpdateAdvancedSettings()
     {
-      if (DateTime.Now.Ticks >= this.LastSettingsCheck.AddMinutes(1.0).Ticks)
+      if (DateTime.Now.Ticks >= LastSettingsCheck.AddMinutes(1.0).Ticks)
       {
-        if (this.DoDebug)
+        if (DoDebug)
         {
           Log.Info("iMONLCDg.UpdateAdvancedSettings(): called", new object[0]);
         }
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml")))
         {
-          FileInfo info = new FileInfo(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml"));
-          if (info.LastWriteTime.Ticks > this.SettingsLastModTime.Ticks)
+          var info = new FileInfo(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml"));
+          if (info.LastWriteTime.Ticks > SettingsLastModTime.Ticks)
           {
-            if (this.DoDebug)
+            if (DoDebug)
             {
               Log.Info("iMONLCDg.UpdateAdvancedSettings(): updating advanced settings", new object[0]);
             }
-            this.LoadAdvancedSettings();
+            LoadAdvancedSettings();
           }
         }
-        if (this.DoDebug)
+        if (DoDebug)
         {
           Log.Info("iMONLCDg.UpdateAdvancedSettings(): completed", new object[0]);
         }
@@ -4331,31 +3675,31 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private void UpdateIcons()
     {
       ulong optionBitmask = 0L;
-      ulong num2 = 0L;
+      ulong num2;
       bool flag = false;
-      DiskIcon icon = new DiskIcon();
+      var icon = new DiskIcon();
       Log.Debug("iMONLCDg.UpdateIcons(): Starting Icon Update Thread", new object[0]);
-      BuiltinIconMask mask = new BuiltinIconMask();
-      CDDrive drive = new CDDrive();
-      if (this.DisplaySettings.BlankDisplayWithVideo & this.DisplaySettings.EnableDisplayAction)
+      var mask = new BuiltinIconMask();
+      var drive = new CDDrive();
+      if (DisplaySettings.BlankDisplayWithVideo & DisplaySettings.EnableDisplayAction)
       {
-        GUIWindowManager.OnNewAction += new OnActionHandler(this.OnExternalAction);
+        GUIWindowManager.OnNewAction += OnExternalAction;
       }
       for (int i = 0; i < 0x1b; i++)
       {
         Inserted_Media[i] = 0;
       }
-      if (this.DisplayOptions.DiskIcon & this.DisplayOptions.DiskMonitor)
+      if (DisplayOptions.DiskIcon & DisplayOptions.DiskMonitor)
       {
         char[] cDDriveLetters = CDDrive.GetCDDriveLetters();
-        object[] arg = new object[] {cDDriveLetters.Length.ToString()};
+        var arg = new object[] { cDDriveLetters.Length.ToString() };
         Log.Debug("iMONLCDg.UpdateIcons(): Found {0} CD/DVD Drives.", arg);
         for (int j = 0; j < cDDriveLetters.Length; j++)
         {
           if (drive.Open(cDDriveLetters[j]))
           {
             Log.Debug("iMONLCDg.UpdateIcons(): Checking media in Drive {0}.",
-                      new object[] {cDDriveLetters[j].ToString()});
+                      new object[] { cDDriveLetters[j].ToString() });
             bool flag2 = false;
             for (int k = 0; k < 10; k++)
             {
@@ -4371,39 +3715,39 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             if (flag2)
             {
               Log.Debug("iMONLCDg.UpdateIcons(): Waiting for Drive {0} to refresh.",
-                        new object[] {cDDriveLetters[j].ToString()});
+                        new object[] { cDDriveLetters[j].ToString() });
               drive.Refresh();
               if (drive.GetNumAudioTracks() > 0)
               {
                 Inserted_Media[cDDriveLetters[j] - 'A'] = 1;
                 Log.Debug("iMONLCDg.UpdateIcons(): Found Audio CD in Drive {0}.",
-                          new object[] {cDDriveLetters[j].ToString()});
+                          new object[] { cDDriveLetters[j].ToString() });
               }
               else if (File.Exists(cDDriveLetters[j] + @"\VIDEO_TS"))
               {
                 Inserted_Media[cDDriveLetters[j] - 'A'] = 2;
-                Log.Debug("iMONLCDg.UpdateIcons(): Found DVD in Drive {0}.", new object[] {cDDriveLetters[j].ToString()});
+                Log.Debug("iMONLCDg.UpdateIcons(): Found DVD in Drive {0}.", new object[] { cDDriveLetters[j].ToString() });
               }
               else
               {
                 Inserted_Media[cDDriveLetters[j] - 'A'] = 4;
                 Log.Debug("iMONLCDg.UpdateIcons(): Unknown media found in Drive {0}.",
-                          new object[] {cDDriveLetters[j].ToString()});
+                          new object[] { cDDriveLetters[j].ToString() });
               }
             }
             else
             {
               Inserted_Media[cDDriveLetters[j] - 'A'] = 0;
               Log.Debug("iMONLCDg.UpdateIcons(): No media found in Drive {0}.",
-                        new object[] {cDDriveLetters[j].ToString()});
+                        new object[] { cDDriveLetters[j].ToString() });
             }
           }
           drive.Close();
         }
       }
-      if (this.DisplayOptions.DiskIcon & this.DisplayOptions.DiskMonitor)
+      if (DisplayOptions.DiskIcon & DisplayOptions.DiskMonitor)
       {
-        this.ActivateDVM();
+        ActivateDVM();
       }
       icon.Reset();
       while (true)
@@ -4412,7 +3756,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           lock (ThreadMutex)
           {
-            if (this.DoDebug)
+            if (DoDebug)
             {
               Log.Info("iMONLCDg.UpdateIcons(): Checking for Thread termination request", new object[0]);
             }
@@ -4420,9 +3764,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               Log.Info("iMONLCDg.UpdateIcons(): Icon Update Thread terminating", new object[0]);
               _stopUpdateIconThread = false;
-              if (this.DisplaySettings.BlankDisplayWithVideo & this.DisplaySettings.EnableDisplayAction)
+              if (DisplaySettings.BlankDisplayWithVideo & DisplaySettings.EnableDisplayAction)
               {
-                GUIWindowManager.OnNewAction -= new OnActionHandler(this.OnExternalAction);
+                GUIWindowManager.OnNewAction -= OnExternalAction;
               }
               if (DVM != null)
               {
@@ -4431,20 +3775,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               }
               return;
             }
-            if ((!this.DVMactive & this.DisplayOptions.DiskIcon) & this.DisplayOptions.DiskMonitor)
+            if ((!DVMactive & DisplayOptions.DiskIcon) & DisplayOptions.DiskMonitor)
             {
-              this.ActivateDVM();
+              ActivateDVM();
             }
             num2 = optionBitmask;
             flag = !flag;
-            int num7 = this._CurrentLargeIcon;
-            this.LastVolLevel = this.volLevel;
-            this.LastProgLevel = this.progLevel;
+            int num7 = _CurrentLargeIcon;
+            LastVolLevel = volLevel;
+            LastProgLevel = progLevel;
             int num8 = 0;
-            optionBitmask = 0L;
             icon.Off();
             icon.Animate();
-            if (this.DoDebug)
+            if (DoDebug)
             {
               Log.Info("iMONLCDg.UpdateIcons(): Checking TV Card status: IsAnyCardRecording = {0}, IsViewing = {1}",
                        new object[]
@@ -4453,36 +3796,36 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                            MiniDisplayHelper.IsCaptureCardViewing().ToString()
                          });
             }
-            MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
-            this.Check_Idle_State();
-            if (this.DoDebug)
+            MiniDisplayHelper.GetSystemStatus(ref MPStatus);
+            Check_Idle_State();
+            if (DoDebug)
             {
               Log.Info("iMONLCDg.UpdateIcons(): System Status: Plugin Status = {0}, IsIdle = {1}",
-                       new object[] {this.MPStatus.CurrentPluginStatus.ToString(), this.MPStatus.MP_Is_Idle});
+                       new object[] { MPStatus.CurrentPluginStatus.ToString(), MPStatus.MP_Is_Idle });
             }
-            optionBitmask = this.ConvertPluginIconsToDriverIcons(this.MPStatus.CurrentIconMask);
-            if ((optionBitmask & ((ulong) 0x400000000L)) > 0L)
+            optionBitmask = ConvertPluginIconsToDriverIcons(MPStatus.CurrentIconMask);
+            if ((optionBitmask & (0x400000000L)) > 0L)
             {
               num8 = 5;
             }
-            else if ((optionBitmask & ((ulong) 8L)) > 0L)
+            else if ((optionBitmask & (8L)) > 0L)
             {
               num8 = 1;
             }
-            if (MiniDisplayHelper.IsCaptureCardViewing() && !this.MPStatus.Media_IsTimeshifting)
+            if (MiniDisplayHelper.IsCaptureCardViewing() && !MPStatus.Media_IsTimeshifting)
             {
               icon.On();
               icon.InvertOn();
               icon.RotateCW();
             }
-            if (this._mpIsIdle)
+            if (_mpIsIdle)
             {
               num8 = 0;
             }
-            if (this.MPStatus.MediaPlayer_Playing)
+            if (MPStatus.MediaPlayer_Playing)
             {
               icon.On();
-              if ((this.MPStatus.CurrentIconMask & ((ulong) 0x10L)) > 0L)
+              if ((MPStatus.CurrentIconMask & (0x10L)) > 0L)
               {
                 icon.InvertOff();
               }
@@ -4490,7 +3833,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               {
                 icon.InvertOn();
               }
-              if ((this.MPStatus.CurrentIconMask & ((ulong) 0x10000000000L)) > 0L)
+              if ((MPStatus.CurrentIconMask & (0x10000000000L)) > 0L)
               {
                 icon.RotateCCW();
               }
@@ -4499,15 +3842,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 icon.RotateCW();
               }
               icon.FlashOff();
-              if (((((((this.MPStatus.CurrentIconMask & ((ulong) 0x40L)) > 0L) |
-                      ((this.MPStatus.CurrentIconMask & ((ulong) 8L)) > 0L)) |
-                     (this.MPStatus.CurrentPluginStatus == Status.PlayingDVD)) |
-                    (this.MPStatus.CurrentPluginStatus == Status.PlayingTV)) |
-                   (this.MPStatus.CurrentPluginStatus == Status.PlayingVideo)) |
-                  (this.MPStatus.CurrentPluginStatus == Status.Timeshifting))
+              if (((((((MPStatus.CurrentIconMask & (0x40L)) > 0L) |
+                      ((MPStatus.CurrentIconMask & (8L)) > 0L)) |
+                     (MPStatus.CurrentPluginStatus == Status.PlayingDVD)) |
+                    (MPStatus.CurrentPluginStatus == Status.PlayingTV)) |
+                   (MPStatus.CurrentPluginStatus == Status.PlayingVideo)) |
+                  (MPStatus.CurrentPluginStatus == Status.Timeshifting))
               {
-                if ((this.MPStatus.CurrentPluginStatus == Status.PlayingTV) |
-                    ((this.MPStatus.CurrentIconMask & ((ulong) 8L)) > 0L))
+                if ((MPStatus.CurrentPluginStatus == Status.PlayingTV) |
+                    ((MPStatus.CurrentIconMask & (8L)) > 0L))
                 {
                   num8 = 1;
                 }
@@ -4515,44 +3858,44 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 {
                   num8 = 2;
                 }
-                if (this.DisplaySettings.BlankDisplayWithVideo)
+                if (DisplaySettings.BlankDisplayWithVideo)
                 {
-                  this.DisplayOff();
+                  DisplayOff();
                 }
               }
               else
               {
                 num8 = 3;
               }
-              this.GetEQ();
+              GetEQ();
             }
-            else if (this.MPStatus.MediaPlayer_Paused)
+            else if (MPStatus.MediaPlayer_Paused)
             {
               icon.On();
               lock (DWriteMutex)
               {
-                this.EQSettings._EqDataAvailable = false;
-                this._iconThread.Priority = ThreadPriority.BelowNormal;
+                EQSettings._EqDataAvailable = false;
+                _iconThread.Priority = ThreadPriority.BelowNormal;
               }
-              this.RestoreDisplayFromVideoOrIdle();
+              RestoreDisplayFromVideoOrIdle();
               icon.FlashOn();
               num8 = 6;
             }
             else
             {
               icon.Off();
-              this.RestoreDisplayFromVideoOrIdle();
+              RestoreDisplayFromVideoOrIdle();
               lock (DWriteMutex)
               {
-                this.EQSettings._EqDataAvailable = false;
-                this._iconThread.Priority = ThreadPriority.BelowNormal;
+                EQSettings._EqDataAvailable = false;
+                _iconThread.Priority = ThreadPriority.BelowNormal;
               }
             }
             if ((!MiniDisplayHelper.Player_Playing() & !MiniDisplayHelper.IsCaptureCardViewing()) ||
-                (this.DisplayOptions.DiskIcon & !this.DisplayOptions.DiskMediaStatus))
+                (DisplayOptions.DiskIcon & !DisplayOptions.DiskMediaStatus))
             {
               int num9 = 0;
-              if (this.DisplayOptions.DiskIcon)
+              if (DisplayOptions.DiskIcon)
               {
                 for (int m = 0; m < 0x1b; m++)
                 {
@@ -4574,12 +3917,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 }
               }
             }
-            Label_06B0:
-            if (this.DisplayOptions.DiskIcon & this.DisplayOptions.DiskMediaStatus)
+          Label_06B0:
+            if (DisplayOptions.DiskIcon & DisplayOptions.DiskMediaStatus)
             {
               optionBitmask |= icon.Mask;
             }
-            if (this.DoDebug)
+            if (DoDebug)
             {
               Log.Info("iMONLCDg.UpdateIcons(): last = {0}, new = {1}, disk mask = {2}",
                        new object[]
@@ -4592,32 +3935,32 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               lock (DWriteMutex)
               {
-                this.SendData(Command.SetIcons, optionBitmask);
+                SendData(Command.SetIcons, optionBitmask);
               }
             }
-            this.DisplayEQ();
-            if (this.DisplayOptions.VolumeDisplay || this.DisplayOptions.ProgressDisplay)
+            DisplayEQ();
+            if (DisplayOptions.VolumeDisplay || DisplayOptions.ProgressDisplay)
             {
               lock (DWriteMutex)
               {
-                this.ShowProgressBars();
+                ShowProgressBars();
               }
             }
             if (num8 != num7)
             {
-              this._CurrentLargeIcon = num8;
+              _CurrentLargeIcon = num8;
             }
           }
-        } while (this.EQSettings._EqDataAvailable && !this.MPStatus.MediaPlayer_Paused);
+        } while (EQSettings._EqDataAvailable && !MPStatus.MediaPlayer_Paused);
         Thread.Sleep(200);
       }
     }
 
     private void VFD_EQ_Update()
     {
-      if (this.DisplaySettings.BlankDisplayWithVideo & this.DisplaySettings.EnableDisplayAction)
+      if (DisplaySettings.BlankDisplayWithVideo & DisplaySettings.EnableDisplayAction)
       {
-        GUIWindowManager.OnNewAction += new OnActionHandler(this.OnExternalAction);
+        GUIWindowManager.OnNewAction += OnExternalAction;
       }
       while (true)
       {
@@ -4625,65 +3968,65 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Monitor.Enter(obj2 = ThreadMutex);
         try
         {
-          if (this.DoDebug)
+          if (DoDebug)
           {
             Log.Info("iMONLCDg.VFD_EQ_Update(): Checking for Thread termination request", new object[0]);
           }
           if (_stopUpdateIconThread)
           {
-            if (this.DisplaySettings.BlankDisplayWithVideo & this.DisplaySettings.EnableDisplayAction)
+            if (DisplaySettings.BlankDisplayWithVideo & DisplaySettings.EnableDisplayAction)
             {
-              GUIWindowManager.OnNewAction -= new OnActionHandler(this.OnExternalAction);
+              GUIWindowManager.OnNewAction -= OnExternalAction;
             }
             Log.Info("iMONLCDg.VFD_EQ_Update(): VFD_EQ_Update Thread terminating", new object[0]);
             _stopUpdateIconThread = false;
             break;
           }
-          MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
-          if (((!this.MPStatus.MediaPlayer_Active | !this.MPStatus.MediaPlayer_Playing) &
-               this.DisplaySettings.BlankDisplayWithVideo) &
-              (this.DisplaySettings.BlankDisplayWhenIdle & !this._mpIsIdle))
+          MiniDisplayHelper.GetSystemStatus(ref MPStatus);
+          if (((!MPStatus.MediaPlayer_Active | !MPStatus.MediaPlayer_Playing) &
+               DisplaySettings.BlankDisplayWithVideo) &
+              (DisplaySettings.BlankDisplayWhenIdle & !_mpIsIdle))
           {
-            this.DisplayOn();
+            DisplayOn();
           }
-          if (this.MPStatus.MediaPlayer_Playing)
+          if (MPStatus.MediaPlayer_Playing)
           {
             if (EQSettings.UseEqDisplay && (MPStatus.Media_IsCD || MPStatus.Media_IsMusic || MPStatus.Media_IsRadio))
             {
-              this.GetEQ();
-              this.DisplayEQ();
+              GetEQ();
+              DisplayEQ();
             }
-            if (this.DisplaySettings.BlankDisplayWithVideo &
-                (((this.MPStatus.Media_IsDVD || this.MPStatus.Media_IsVideo) || this.MPStatus.Media_IsTV) ||
-                 this.MPStatus.Media_IsTVRecording))
+            if (DisplaySettings.BlankDisplayWithVideo &
+                (((MPStatus.Media_IsDVD || MPStatus.Media_IsVideo) || MPStatus.Media_IsTV) ||
+                 MPStatus.Media_IsTVRecording))
             {
-              if (this.DoDebug)
+              if (DoDebug)
               {
                 Log.Info("iMONLCDg.VFD_EQ_Update(): Turning off display while playing video", new object[0]);
               }
-              this.DisplayOff();
+              DisplayOff();
             }
           }
           else
           {
-            this.RestoreDisplayFromVideoOrIdle();
+            RestoreDisplayFromVideoOrIdle();
             lock (DWriteMutex)
             {
-              this.EQSettings._EqDataAvailable = false;
-              this._iconThread.Priority = ThreadPriority.BelowNormal;
+              EQSettings._EqDataAvailable = false;
+              _iconThread.Priority = ThreadPriority.BelowNormal;
             }
           }
         }
         catch (Exception exception)
         {
-          Log.Info("iMONLCDg.VFD_EQ_Update(): CAUGHT EXCEPTION - EXITING! - {0}", new object[] {exception});
+          Log.Info("iMONLCDg.VFD_EQ_Update(): CAUGHT EXCEPTION - EXITING! - {0}", new object[] { exception });
           break;
         }
         finally
         {
           Monitor.Exit(obj2);
         }
-        if (!this.EQSettings._EqDataAvailable || this.MPStatus.MediaPlayer_Paused)
+        if (!EQSettings._EqDataAvailable || MPStatus.MediaPlayer_Paused)
         {
           Thread.Sleep(250);
         }
@@ -4695,9 +4038,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       string str = DVM.MaskToLogicalPaths(bitMask);
       if (Settings.Instance.ExtensiveLogging)
       {
-        Log.Info("iMONLCDg.UpdateDisplay.VolumeInserted(): volume inserted in drive {0}", new object[] {str});
+        Log.Info("iMONLCDg.UpdateDisplay.VolumeInserted(): volume inserted in drive {0}", new object[] { str });
       }
-      CDDrive drive = new CDDrive();
+      var drive = new CDDrive();
       if (drive.IsOpened)
       {
         drive.Close();
@@ -4713,7 +4056,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Inserted_Media[str[0] - 'A'] = 1;
         if (Settings.Instance.ExtensiveLogging)
         {
-          Log.Info("iMONLCDg.UpdateDisplay.VolumeInserted(): Audio CD inserted in drive {0}", new object[] {str});
+          Log.Info("iMONLCDg.UpdateDisplay.VolumeInserted(): Audio CD inserted in drive {0}", new object[] { str });
         }
         drive.Close();
       }
@@ -4725,7 +4068,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Inserted_Media[str[0] - 'A'] = 2;
           if (Settings.Instance.ExtensiveLogging)
           {
-            Log.Info("iMONLCDg.UpdateDisplay.VolumeInserted(): DVD inserted in drive {0}", new object[] {str});
+            Log.Info("iMONLCDg.UpdateDisplay.VolumeInserted(): DVD inserted in drive {0}", new object[] { str });
           }
         }
         else
@@ -4733,7 +4076,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Inserted_Media[str[0] - 'A'] = 4;
           if (Settings.Instance.ExtensiveLogging)
           {
-            Log.Info("iMONLCDg.UpdateDisplay.VolumeInserted(): Unknown Media inserted in drive {0}", new object[] {str});
+            Log.Info("iMONLCDg.UpdateDisplay.VolumeInserted(): Unknown Media inserted in drive {0}", new object[] { str });
           }
         }
       }
@@ -4744,2384 +4087,208 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       string str = DVM.MaskToLogicalPaths(bitMask);
       if (Settings.Instance.ExtensiveLogging)
       {
-        Log.Info("iMONLCDg.UpdateDisplay.VolumeRemoved(): volume removed from drive {0}", new object[] {str});
+        Log.Info("iMONLCDg.UpdateDisplay.VolumeRemoved(): volume removed from drive {0}", new object[] { str });
       }
       Inserted_Media[str[0] - 'A'] = 0;
     }
 
-    public string Description
-    {
-      get { return "SoundGraph iMON USB VFD/LCD Plugin V03_03_2009"; }
-    }
-
-    public string ErrorMessage
-    {
-      get { return this._errorMessage; }
-    }
-
-    public bool IsDisabled
-    {
-      get
-      {
-        Log.Debug("iMONLCDg.IsDisabled: returning {0}", new object[] {this._isDisabled});
-        return this._isDisabled;
-      }
-    }
-
-    public string Name
-    {
-      get { return "iMONLCDg"; }
-    }
-
-    public bool SupportsGraphics
-    {
-      get
-      {
-        if (this._isDisabled)
-        {
-          return true;
-        }
-        if (this._IMON == null)
-        {
-          return true;
-        }
-        if (this.DoDebug)
-        {
-          Log.Info("(IDisplay) iMONLCDg.SupportsGraphics(): _displayType = {0}",
-                   new object[] {DisplayType.TypeName(_DisplayType)});
-        }
-        if (!this._IMON.iMONVFD_IsInited())
-        {
-          if (this.DoDebug)
-          {
-            Log.Info("(IDisplay) iMONLCDg.SupportsGraphics(): forcing true for configuration", new object[0]);
-          }
-          return true;
-        }
-        if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
-        {
-          if (this.DoDebug)
-          {
-            Log.Info("(IDisplay) iMONLCDg.SupportsGraphics(): returned true", new object[0]);
-          }
-          return true;
-        }
-        if (this.DoDebug)
-        {
-          Log.Info("(IDisplay) iMONLCDg.SupportsGraphics(): returned false", new object[0]);
-        }
-        return false;
-      }
-    }
-
-    public bool SupportsText
-    {
-      get { return true; }
-    }
+    #region Nested type: AdvancedSettings
 
     [Serializable]
     public class AdvancedSettings
     {
-      private static bool DoDebug = Settings.Instance.ExtensiveLogging;
-      private bool m_BlankDisplayWhenIdle;
-      private bool m_BlankDisplayWithVideo;
+      #region Delegates
+
+      public delegate void OnSettingsChangedHandler();
+
+      #endregion
+
+      private static readonly bool DoDebug = Settings.Instance.ExtensiveLogging;
+      private static AdvancedSettings m_Instance;
       private int m_BlankIdleTime = 30;
-      private bool m_DelayEQ;
       private int m_DelayEqTime = 10;
-      private bool m_DelayStartup;
-      private bool m_DeviceMonitor;
-      private bool m_DisableRepeat;
-      private bool m_DiskIcon;
-      private bool m_DiskMediaStatus;
-      private string m_DisplayType;
-      private bool m_EnableDisplayAction;
       private int m_EnableDisplayActionTime = 5;
-      private bool m_EnsureManagerStart;
-      private bool m_EqDisplay;
-      private int m_EqMode;
       private int m_EqRate = 10;
-      private bool m_EQTitleDisplay;
       private int m_EQTitleDisplayTime = 10;
       private int m_EQTitleShowTime = 2;
-      private bool m_ForceKeyBoardMode;
-      private bool m_ForceManagerRestart;
-      private bool m_ForceManagerReload;
-      private static AdvancedSettings m_Instance;
-      private bool m_MonitorPowerState;
       private bool m_NormalEQ = true;
-      private bool m_ProgressDisplay;
       private string m_RemoteType = "MCE";
-      private int m_RepeatDelay;
-      private bool m_RestartFrontviewOnExit;
-      private bool m_RestrictEQ;
-      private bool m_SmoothEQ;
-      private bool m_StereoEQ;
-      private bool m_UseCustomFont;
-      private bool m_UseCustomIcons;
-      private bool m_UseInvertedIcons;
-      private bool m_UseLargeIcons;
-      private bool m_UseRC;
-      private bool m_VFD_UseV3DLL;
-      private bool m_VolumeDisplay;
-      private bool m_VUindicators;
-      private bool m_VUmeter;
-      private bool m_VUmeter2;
+
+      [XmlAttribute]
+      public bool BlankDisplayWhenIdle { get; set; }
+
+      [XmlAttribute]
+      public bool BlankDisplayWithVideo { get; set; }
+
+      [XmlAttribute]
+      public int BlankIdleTime
+      {
+        get { return m_BlankIdleTime; }
+        set { m_BlankIdleTime = value; }
+      }
+
+      [XmlAttribute]
+      public bool DelayEQ { get; set; }
+
+      [XmlAttribute]
+      public int DelayEqTime
+      {
+        get { return m_DelayEqTime; }
+        set { m_DelayEqTime = value; }
+      }
+
+      [XmlAttribute]
+      public bool DelayStartup { get; set; }
+
+      [XmlAttribute]
+      public bool DeviceMonitor { get; set; }
+
+      [XmlAttribute]
+      public bool DisableRepeat { get; set; }
+
+      [XmlAttribute]
+      public bool DiskIcon { get; set; }
+
+      [XmlAttribute]
+      public bool DiskMediaStatus { get; set; }
+
+      [XmlAttribute]
+      public string DisplayType { get; set; }
+
+      [XmlAttribute]
+      public bool EnableDisplayAction { get; set; }
+
+      [XmlAttribute]
+      public int EnableDisplayActionTime
+      {
+        get { return m_EnableDisplayActionTime; }
+        set { m_EnableDisplayActionTime = value; }
+      }
+
+      [XmlAttribute]
+      public bool EnsureManagerStartup { get; set; }
+
+      [XmlAttribute]
+      public bool EqDisplay { get; set; }
+
+      [XmlAttribute]
+      public int EqMode { get; set; }
+
+      [XmlAttribute]
+      public int EqRate
+      {
+        get { return m_EqRate; }
+        set { m_EqRate = value; }
+      }
+
+      [XmlAttribute]
+      public bool EQTitleDisplay { get; set; }
+
+      [XmlAttribute]
+      public int EQTitleDisplayTime
+      {
+        get { return m_EQTitleDisplayTime; }
+        set { m_EQTitleDisplayTime = value; }
+      }
+
+      [XmlAttribute]
+      public int EQTitleShowTime
+      {
+        get { return m_EQTitleShowTime; }
+        set { m_EQTitleShowTime = value; }
+      }
+
+      [XmlAttribute]
+      public bool ForceKeyBoardMode { get; set; }
+
+      [XmlAttribute]
+      public bool ForceManagerRestart { get; set; }
+
+      [XmlAttribute]
+      public bool ForceManagerReload { get; set; }
+
+      public static AdvancedSettings Instance
+      {
+        get
+        {
+          if (m_Instance == null)
+          {
+            m_Instance = Load();
+          }
+          return m_Instance;
+        }
+        set { m_Instance = value; }
+      }
+
+      [XmlAttribute]
+      public bool MonitorPowerState { get; set; }
+
+      [XmlAttribute]
+      public bool NormalEQ
+      {
+        get { return m_NormalEQ; }
+        set { m_NormalEQ = value; }
+      }
+
+      [XmlAttribute]
+      public bool ProgressDisplay { get; set; }
+
+      [XmlAttribute]
+      public string RemoteType
+      {
+        get { return m_RemoteType; }
+        set { m_RemoteType = value; }
+      }
+
+      [XmlAttribute]
+      public int RepeatDelay { get; set; }
+
+      [XmlAttribute]
+      public bool RestartFrontviewOnExit { get; set; }
+
+      [XmlAttribute]
+      public bool LeaveFrontviewActive { get; set; }
+
+      [XmlAttribute]
+      public bool RestrictEQ { get; set; }
+
+      [XmlAttribute]
+      public bool SmoothEQ { get; set; }
+
+      [XmlAttribute]
+      public bool StereoEQ { get; set; }
+
+      [XmlAttribute]
+      public bool UseCustomFont { get; set; }
+
+      [XmlAttribute]
+      public bool UseCustomIcons { get; set; }
+
+      [XmlAttribute]
+      public bool UseInvertedIcons { get; set; }
+
+      [XmlAttribute]
+      public bool UseLargeIcons { get; set; }
+
+      [XmlAttribute]
+      public bool UseRC { get; set; }
+
+      [XmlAttribute]
+      public bool VFD_UseV3DLL { get; set; }
+
+      [XmlAttribute]
+      public bool VolumeDisplay { get; set; }
+
+      [XmlAttribute]
+      public bool VUindicators { get; set; }
+
+      [XmlAttribute]
+      public bool VUmeter { get; set; }
+
+      [XmlAttribute]
+      public bool VUmeter2 { get; set; }
 
       public static event OnSettingsChangedHandler OnSettingsChanged;
-
-      public static bool CreateDefaultRemoteMapping()
-      {
-        Log.Info("iMONLCDg.AdvancedSettings.CreateDefaultRemoteMapping(): called", new object[0]);
-        bool flag = false;
-        string str = "iMon_Remote";
-        try
-        {
-          Log.Info(
-            "iMONLCDg.AdvancedSettings.CreateDefaultRemoteMapping(): remote mapping file does not exist - Creating default mapping file",
-            new object[0]);
-          XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.CustomInputDefault, str + ".xml"),
-                                                   Encoding.UTF8);
-          writer.Formatting = Formatting.Indented;
-          writer.Indentation = 1;
-          writer.IndentChar = '\t';
-          writer.WriteStartDocument(true);
-          writer.WriteStartElement("mappings");
-          writer.WriteAttributeString("version", "3");
-          writer.WriteStartElement("remote");
-          writer.WriteAttributeString("family", str + "_MCE");
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Power TV");
-          writer.WriteAttributeString("code", "101");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "POWER");
-          writer.WriteAttributeString("cmdproperty", "EXIT");
-          writer.WriteAttributeString("sound", "back.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Record");
-          writer.WriteAttributeString("code", "23");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "501");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "113");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "89");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Stop");
-          writer.WriteAttributeString("code", "25");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "13");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Pause");
-          writer.WriteAttributeString("code", "24");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "105");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "12");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Rewind");
-          writer.WriteAttributeString("code", "21");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "600");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "87");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "29");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "17");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Play");
-          writer.WriteAttributeString("code", "22");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "105");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "68");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Forward");
-          writer.WriteAttributeString("code", "20");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "600");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "86");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "28");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "16");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Replay");
-          writer.WriteAttributeString("code", "27");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "PLAYER");
-          writer.WriteAttributeString("conproperty", "DVD");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "92");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "600");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "6");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "29");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2005");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "92");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "15");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Skip");
-          writer.WriteAttributeString("code", "26");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "PLAYER");
-          writer.WriteAttributeString("conproperty", "DVD");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "91");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "600");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "5");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "28");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2005");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "91");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "14");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Back");
-          writer.WriteAttributeString("code", "35");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "10");
-          writer.WriteAttributeString("sound", "back.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "UP");
-          writer.WriteAttributeString("code", "30");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "3");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "DOWN");
-          writer.WriteAttributeString("code", "31");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "4");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "LEFT");
-          writer.WriteAttributeString("code", "32");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "1");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "RIGHT");
-          writer.WriteAttributeString("code", "33");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "2");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "OK");
-          writer.WriteAttributeString("code", "34");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "11");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "47");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "10");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "10");
-          writer.WriteAttributeString("sound", "back.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "7");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Info");
-          writer.WriteAttributeString("code", "15");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "FULLSCREEN");
-          writer.WriteAttributeString("conproperty", "true");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "24");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "106");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Volume +");
-          writer.WriteAttributeString("code", "16");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "103");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "VOL-");
-          writer.WriteAttributeString("code", "17");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "102");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Start");
-          writer.WriteAttributeString("code", "13");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "115");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteAttributeString("focus", "True");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Channel Up");
-          writer.WriteAttributeString("code", "18");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "7701");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "9979");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "7700");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "9979");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "31");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "95");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "602");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "95");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "5");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Channel Down");
-          writer.WriteAttributeString("code", "19");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "7701");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "9980");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "7700");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "9980");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "30");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "94");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "602");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "94");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "6");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Mute");
-          writer.WriteAttributeString("code", "14");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "9982");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Recorded TV");
-          writer.WriteAttributeString("code", "72");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "WINDOW");
-          writer.WriteAttributeString("cmdproperty", "603");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Guide");
-          writer.WriteAttributeString("code", "38");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "600");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "10");
-          writer.WriteAttributeString("sound", "back.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "WINDOW");
-          writer.WriteAttributeString("cmdproperty", "600");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Live TV");
-          writer.WriteAttributeString("code", "37");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "7701");
-          writer.WriteAttributeString("command", "WINDOW");
-          writer.WriteAttributeString("cmdproperty", "602");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "18");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "602");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "18");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "7700");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "18");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "WINDOW");
-          writer.WriteAttributeString("cmdproperty", "1");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "DVD Menu");
-          writer.WriteAttributeString("code", "36");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "PLAYER");
-          writer.WriteAttributeString("conproperty", "DVD");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "90");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "WINDOW");
-          writer.WriteAttributeString("cmdproperty", "3001");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "1");
-          writer.WriteAttributeString("code", "1");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "37");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "93");
-          writer.WriteAttributeString("cmdkeychar", "49");
-          writer.WriteAttributeString("cmdkeycode", "0");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "2");
-          writer.WriteAttributeString("code", "2");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "38");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "93");
-          writer.WriteAttributeString("cmdkeychar", "50");
-          writer.WriteAttributeString("cmdkeycode", "0");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "3");
-          writer.WriteAttributeString("code", "3");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "39");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "93");
-          writer.WriteAttributeString("cmdkeychar", "51");
-          writer.WriteAttributeString("cmdkeycode", "0");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "4");
-          writer.WriteAttributeString("code", "4");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "40");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "93");
-          writer.WriteAttributeString("cmdkeychar", "52");
-          writer.WriteAttributeString("cmdkeycode", "0");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "5");
-          writer.WriteAttributeString("code", "5");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "41");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "93");
-          writer.WriteAttributeString("cmdkeychar", "53");
-          writer.WriteAttributeString("cmdkeycode", "0");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "6");
-          writer.WriteAttributeString("code", "6");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "42");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "93");
-          writer.WriteAttributeString("cmdkeychar", "54");
-          writer.WriteAttributeString("cmdkeycode", "0");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "7");
-          writer.WriteAttributeString("code", "7");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "43");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "93");
-          writer.WriteAttributeString("cmdkeychar", "55");
-          writer.WriteAttributeString("cmdkeycode", "0");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "8");
-          writer.WriteAttributeString("code", "8");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "44");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "93");
-          writer.WriteAttributeString("cmdkeychar", "56");
-          writer.WriteAttributeString("cmdkeycode", "0");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "9");
-          writer.WriteAttributeString("code", "9");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "45");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "93");
-          writer.WriteAttributeString("cmdkeychar", "57");
-          writer.WriteAttributeString("cmdkeycode", "0");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "0");
-          writer.WriteAttributeString("code", "0");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "80");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "80");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "25");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "80");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "603");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "80");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "605");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "80");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "606");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "80");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "501");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "80");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "601");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "80");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "759");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "80");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "6");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "80");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "10");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "48");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "11");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "48");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "600");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "88");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "93");
-          writer.WriteAttributeString("cmdkeychar", "48");
-          writer.WriteAttributeString("cmdkeycode", "0");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "*");
-          writer.WriteAttributeString("code", "29");
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "#");
-          writer.WriteAttributeString("code", "28");
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Clear");
-          writer.WriteAttributeString("code", "10");
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Enter");
-          writer.WriteAttributeString("code", "11");
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Teletext");
-          writer.WriteAttributeString("code", "90");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "602");
-          writer.WriteAttributeString("command", "WINDOW");
-          writer.WriteAttributeString("cmdproperty", "7701");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "1");
-          writer.WriteAttributeString("command", "WINDOW");
-          writer.WriteAttributeString("cmdproperty", "7700");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "7701");
-          writer.WriteAttributeString("command", "WINDOW");
-          writer.WriteAttributeString("cmdproperty", "7700");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "7700");
-          writer.WriteAttributeString("command", "WINDOW");
-          writer.WriteAttributeString("cmdproperty", "7701");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Red");
-          writer.WriteAttributeString("code", "91");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "7701");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "9975");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "7700");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "9975");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "18");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Green");
-          writer.WriteAttributeString("code", "92");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "7701");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "9976");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "7700");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "9976");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "26");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Yellow");
-          writer.WriteAttributeString("code", "93");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "7701");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "9977");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "7700");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "9977");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "FULLSCREEN");
-          writer.WriteAttributeString("conproperty", "true");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "119");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "11");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Blue");
-          writer.WriteAttributeString("code", "94");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "7701");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "9978");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "7700");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "9978");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "511");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "9886");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "19");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "My TV");
-          writer.WriteAttributeString("code", "70");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "7701");
-          writer.WriteAttributeString("command", "WINDOW");
-          writer.WriteAttributeString("cmdproperty", "602");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "18");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "602");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "18");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "7700");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "18");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "WINDOW");
-          writer.WriteAttributeString("cmdproperty", "1");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "My Music");
-          writer.WriteAttributeString("code", "71");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "WINDOW");
-          writer.WriteAttributeString("cmdproperty", "501");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "My Pictures");
-          writer.WriteAttributeString("code", "73");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "WINDOW");
-          writer.WriteAttributeString("cmdproperty", "2");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "My Videos");
-          writer.WriteAttributeString("code", "74");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "6");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "18");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2005");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "18");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "WINDOW");
-          writer.WriteAttributeString("cmdproperty", "6");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "My Radio");
-          writer.WriteAttributeString("code", "80");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "WINDOW");
-          writer.WriteAttributeString("cmdproperty", "30");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Messenger");
-          writer.WriteAttributeString("code", "105");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "WINDOW");
-          writer.WriteAttributeString("cmdproperty", "32");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Aspect Ratio / Power PC");
-          writer.WriteAttributeString("code", "12");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "19");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Print");
-          writer.WriteAttributeString("code", "78");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "19");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("remote");
-          writer.WriteAttributeString("family", str + "_PAD");
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "App Exit");
-          writer.WriteAttributeString("code", "2");
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Power");
-          writer.WriteAttributeString("code", "16");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "POWER");
-          writer.WriteAttributeString("cmdproperty", "EXIT");
-          writer.WriteAttributeString("sound", "back.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Record");
-          writer.WriteAttributeString("code", "64");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "501");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "113");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "89");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Play");
-          writer.WriteAttributeString("code", "128");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "105");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "68");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Eject");
-          writer.WriteAttributeString("code", "114");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "105");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "68");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Rewind");
-          writer.WriteAttributeString("code", "130");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "600");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "87");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "29");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "17");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Pause");
-          writer.WriteAttributeString("code", "144");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "105");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "12");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Forward");
-          writer.WriteAttributeString("code", "192");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "600");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "86");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "28");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "16");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Replay");
-          writer.WriteAttributeString("code", "208");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "PLAYER");
-          writer.WriteAttributeString("conproperty", "DVD");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "92");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "600");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "6");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "29");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2005");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "92");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "15");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Stop");
-          writer.WriteAttributeString("code", "220");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "13");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Skip");
-          writer.WriteAttributeString("code", "66");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "PLAYER");
-          writer.WriteAttributeString("conproperty", "DVD");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "91");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "600");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "5");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "28");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2005");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "91");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "14");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Backspace");
-          writer.WriteAttributeString("code", "32");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "10");
-          writer.WriteAttributeString("sound", "back.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Mouse / Keyboard");
-          writer.WriteAttributeString("code", "80");
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Select / Space");
-          writer.WriteAttributeString("code", "148");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "11");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "47");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "10");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "10");
-          writer.WriteAttributeString("sound", "back.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "7");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Windows Key");
-          writer.WriteAttributeString("code", "192");
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Menu Key");
-          writer.WriteAttributeString("code", "60");
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Enter");
-          writer.WriteAttributeString("code", "34");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "11");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "47");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "10");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "10");
-          writer.WriteAttributeString("sound", "back.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "7");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Esc");
-          writer.WriteAttributeString("code", "252");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "10");
-          writer.WriteAttributeString("sound", "back.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Eject2");
-          writer.WriteAttributeString("code", "86");
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "App Launch");
-          writer.WriteAttributeString("code", "124");
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Start Button");
-          writer.WriteAttributeString("code", "178");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "115");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteAttributeString("focus", "True");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Task Switcher");
-          writer.WriteAttributeString("code", "150");
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Mute");
-          writer.WriteAttributeString("code", "218");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "9982");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Volume +");
-          writer.WriteAttributeString("code", "38");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "103");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Channel Up");
-          writer.WriteAttributeString("code", "22");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "7701");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "9979");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "7700");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "9979");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "31");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "95");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "602");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "95");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "5");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Timer");
-          writer.WriteAttributeString("code", "198");
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Volume Down");
-          writer.WriteAttributeString("code", "42");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "102");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Channel Down");
-          writer.WriteAttributeString("code", "14");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "7701");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "9980");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "7700");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "9980");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "30");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "94");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "602");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "94");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "6");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "1");
-          writer.WriteAttributeString("code", "58");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "37");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "93");
-          writer.WriteAttributeString("cmdkeychar", "49");
-          writer.WriteAttributeString("cmdkeycode", "0");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "2");
-          writer.WriteAttributeString("code", "242");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "38");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "93");
-          writer.WriteAttributeString("cmdkeychar", "50");
-          writer.WriteAttributeString("cmdkeycode", "0");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "3");
-          writer.WriteAttributeString("code", "50");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "39");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "93");
-          writer.WriteAttributeString("cmdkeychar", "51");
-          writer.WriteAttributeString("cmdkeycode", "0");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "4");
-          writer.WriteAttributeString("code", "138");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "40");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "93");
-          writer.WriteAttributeString("cmdkeychar", "52");
-          writer.WriteAttributeString("cmdkeycode", "0");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "5");
-          writer.WriteAttributeString("code", "90");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "41");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "93");
-          writer.WriteAttributeString("cmdkeychar", "53");
-          writer.WriteAttributeString("cmdkeycode", "0");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "6");
-          writer.WriteAttributeString("code", "170");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "42");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "93");
-          writer.WriteAttributeString("cmdkeychar", "54");
-          writer.WriteAttributeString("cmdkeycode", "0");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "7");
-          writer.WriteAttributeString("code", "214");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "43");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "93");
-          writer.WriteAttributeString("cmdkeychar", "55");
-          writer.WriteAttributeString("cmdkeycode", "0");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "8");
-          writer.WriteAttributeString("code", "136");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "44");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "93");
-          writer.WriteAttributeString("cmdkeychar", "56");
-          writer.WriteAttributeString("cmdkeycode", "0");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "9");
-          writer.WriteAttributeString("code", "160");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "45");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "93");
-          writer.WriteAttributeString("cmdkeychar", "57");
-          writer.WriteAttributeString("cmdkeycode", "0");
-          writer.WriteAttributeString("sound", "cursor.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "*");
-          writer.WriteAttributeString("code", "56");
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "0");
-          writer.WriteAttributeString("code", "234");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2007");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "80");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "80");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "25");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "80");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "603");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "80");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "605");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "80");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "606");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "80");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "501");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "80");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "601");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "80");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "759");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "80");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "6");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "80");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "10");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "48");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "11");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "48");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "600");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "88");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "93");
-          writer.WriteAttributeString("cmdkeychar", "48");
-          writer.WriteAttributeString("cmdkeycode", "0");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "#");
-          writer.WriteAttributeString("code", "96");
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "My Movie");
-          writer.WriteAttributeString("code", "200");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "6");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "18");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "2005");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "18");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "WINDOW");
-          writer.WriteAttributeString("cmdproperty", "6");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "My Music");
-          writer.WriteAttributeString("code", "82");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "WINDOW");
-          writer.WriteAttributeString("cmdproperty", "501");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "My Photo");
-          writer.WriteAttributeString("code", "240");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "WINDOW");
-          writer.WriteAttributeString("cmdproperty", "2");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "My TV");
-          writer.WriteAttributeString("code", "40");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "7701");
-          writer.WriteAttributeString("command", "WINDOW");
-          writer.WriteAttributeString("cmdproperty", "602");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "18");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "602");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "18");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "WINDOW");
-          writer.WriteAttributeString("conproperty", "7700");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "18");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "WINDOW");
-          writer.WriteAttributeString("cmdproperty", "1");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Bookmark");
-          writer.WriteAttributeString("code", "8");
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Thumbnail");
-          writer.WriteAttributeString("code", "188");
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Aspect Ratio");
-          writer.WriteAttributeString("code", "106");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "19");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Fullscreen");
-          writer.WriteAttributeString("code", "166");
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "My DVD");
-          writer.WriteAttributeString("code", "102");
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "PLAYER");
-          writer.WriteAttributeString("conproperty", "DVD");
-          writer.WriteAttributeString("command", "ACTION");
-          writer.WriteAttributeString("cmdproperty", "90");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteStartElement("action");
-          writer.WriteAttributeString("layer", "0");
-          writer.WriteAttributeString("condition", "*");
-          writer.WriteAttributeString("conproperty", "-1");
-          writer.WriteAttributeString("command", "WINDOW");
-          writer.WriteAttributeString("cmdproperty", "3001");
-          writer.WriteAttributeString("sound", "click.wav");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Menu");
-          writer.WriteAttributeString("code", "246");
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Caption");
-          writer.WriteAttributeString("code", "74");
-          writer.WriteEndElement();
-          writer.WriteStartElement("button");
-          writer.WriteAttributeString("name", "Language");
-          writer.WriteAttributeString("code", "202");
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteEndDocument();
-          writer.Close();
-          flag = true;
-          Log.Info("iMONLCDg.AdvancedSettings.CreateDefaultRemoteMapping: remote mapping file created", new object[0]);
-        }
-        catch
-        {
-          Log.Info("iMONLCDg.AdvancedSettings.CreateDefaultRemoteMapping: Error saving remote mapping to XML file",
-                   new object[0]);
-          flag = false;
-        }
-        Log.Info("iMONLCDg.AdvancedSettings.CreateDefaultRemoteMapping: completed", new object[0]);
-        return flag;
-      }
 
       private static void Default(AdvancedSettings _settings)
       {
@@ -7140,6 +4307,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         _settings.ForceManagerRestart = false;
         _settings.ForceManagerReload = false;
         _settings.RestartFrontviewOnExit = false;
+        _settings.LeaveFrontviewActive = false;
         _settings.ForceKeyBoardMode = false;
         _settings.EqDisplay = false;
         _settings.NormalEQ = true;
@@ -7176,9 +4344,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml")))
         {
           Log.Info("iMONLCDg.AdvancedSettings.Load(): Loading settings from XML file", new object[0]);
-          XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
-          XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml"));
-          settings = (AdvancedSettings) serializer.Deserialize(xmlReader);
+          var serializer = new XmlSerializer(typeof(AdvancedSettings));
+          var xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml"));
+          settings = (AdvancedSettings)serializer.Deserialize(xmlReader);
           xmlReader.Close();
         }
         else
@@ -7211,12 +4379,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           Log.Info("iMONLCDg.AdvancedSettings.Save(): Saving settings to XML file", new object[0]);
         }
-        XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
-        XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml"),
-                                                 Encoding.UTF8);
-        writer.Formatting = Formatting.Indented;
-        writer.Indentation = 2;
-        serializer.Serialize((XmlWriter) writer, ToSave);
+        var serializer = new XmlSerializer(typeof(AdvancedSettings));
+        var writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml"),
+                                       Encoding.UTF8) { Formatting = Formatting.Indented, Indentation = 2 };
+        serializer.Serialize(writer, ToSave);
         writer.Close();
         if (DoDebug)
         {
@@ -7228,316 +4394,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         Default(Instance);
       }
-
-      [XmlAttribute]
-      public bool BlankDisplayWhenIdle
-      {
-        get { return this.m_BlankDisplayWhenIdle; }
-        set { this.m_BlankDisplayWhenIdle = value; }
-      }
-
-      [XmlAttribute]
-      public bool BlankDisplayWithVideo
-      {
-        get { return this.m_BlankDisplayWithVideo; }
-        set { this.m_BlankDisplayWithVideo = value; }
-      }
-
-      [XmlAttribute]
-      public int BlankIdleTime
-      {
-        get { return this.m_BlankIdleTime; }
-        set { this.m_BlankIdleTime = value; }
-      }
-
-      [XmlAttribute]
-      public bool DelayEQ
-      {
-        get { return this.m_DelayEQ; }
-        set { this.m_DelayEQ = value; }
-      }
-
-      [XmlAttribute]
-      public int DelayEqTime
-      {
-        get { return this.m_DelayEqTime; }
-        set { this.m_DelayEqTime = value; }
-      }
-
-      [XmlAttribute]
-      public bool DelayStartup
-      {
-        get { return this.m_DelayStartup; }
-        set { this.m_DelayStartup = value; }
-      }
-
-      [XmlAttribute]
-      public bool DeviceMonitor
-      {
-        get { return this.m_DeviceMonitor; }
-        set { this.m_DeviceMonitor = value; }
-      }
-
-      [XmlAttribute]
-      public bool DisableRepeat
-      {
-        get { return this.m_DisableRepeat; }
-        set { this.m_DisableRepeat = value; }
-      }
-
-      [XmlAttribute]
-      public bool DiskIcon
-      {
-        get { return this.m_DiskIcon; }
-        set { this.m_DiskIcon = value; }
-      }
-
-      [XmlAttribute]
-      public bool DiskMediaStatus
-      {
-        get { return this.m_DiskMediaStatus; }
-        set { this.m_DiskMediaStatus = value; }
-      }
-
-      [XmlAttribute]
-      public string DisplayType
-      {
-        get { return this.m_DisplayType; }
-        set { this.m_DisplayType = value; }
-      }
-
-      [XmlAttribute]
-      public bool EnableDisplayAction
-      {
-        get { return this.m_EnableDisplayAction; }
-        set { this.m_EnableDisplayAction = value; }
-      }
-
-      [XmlAttribute]
-      public int EnableDisplayActionTime
-      {
-        get { return this.m_EnableDisplayActionTime; }
-        set { this.m_EnableDisplayActionTime = value; }
-      }
-
-      [XmlAttribute]
-      public bool EnsureManagerStartup
-      {
-        get { return this.m_EnsureManagerStart; }
-        set { this.m_EnsureManagerStart = value; }
-      }
-
-      [XmlAttribute]
-      public bool EqDisplay
-      {
-        get { return this.m_EqDisplay; }
-        set { this.m_EqDisplay = value; }
-      }
-
-      [XmlAttribute]
-      public int EqMode
-      {
-        get { return this.m_EqMode; }
-        set { this.m_EqMode = value; }
-      }
-
-      [XmlAttribute]
-      public int EqRate
-      {
-        get { return this.m_EqRate; }
-        set { this.m_EqRate = value; }
-      }
-
-      [XmlAttribute]
-      public bool EQTitleDisplay
-      {
-        get { return this.m_EQTitleDisplay; }
-        set { this.m_EQTitleDisplay = value; }
-      }
-
-      [XmlAttribute]
-      public int EQTitleDisplayTime
-      {
-        get { return this.m_EQTitleDisplayTime; }
-        set { this.m_EQTitleDisplayTime = value; }
-      }
-
-      [XmlAttribute]
-      public int EQTitleShowTime
-      {
-        get { return this.m_EQTitleShowTime; }
-        set { this.m_EQTitleShowTime = value; }
-      }
-
-      [XmlAttribute]
-      public bool ForceKeyBoardMode
-      {
-        get { return this.m_ForceKeyBoardMode; }
-        set { this.m_ForceKeyBoardMode = value; }
-      }
-
-      [XmlAttribute]
-      public bool ForceManagerRestart
-      {
-        get { return this.m_ForceManagerRestart; }
-        set { this.m_ForceManagerRestart = value; }
-      }
-
-      [XmlAttribute]
-      public bool ForceManagerReload
-      {
-        get { return this.m_ForceManagerReload; }
-        set { this.m_ForceManagerReload = value; }
-      }
-
-      public static AdvancedSettings Instance
-      {
-        get
-        {
-          if (m_Instance == null)
-          {
-            m_Instance = Load();
-          }
-          return m_Instance;
-        }
-        set { m_Instance = value; }
-      }
-
-      [XmlAttribute]
-      public bool MonitorPowerState
-      {
-        get { return this.m_MonitorPowerState; }
-        set { this.m_MonitorPowerState = value; }
-      }
-
-      [XmlAttribute]
-      public bool NormalEQ
-      {
-        get { return this.m_NormalEQ; }
-        set { this.m_NormalEQ = value; }
-      }
-
-      [XmlAttribute]
-      public bool ProgressDisplay
-      {
-        get { return this.m_ProgressDisplay; }
-        set { this.m_ProgressDisplay = value; }
-      }
-
-      [XmlAttribute]
-      public string RemoteType
-      {
-        get { return this.m_RemoteType; }
-        set { this.m_RemoteType = value; }
-      }
-
-      [XmlAttribute]
-      public int RepeatDelay
-      {
-        get { return this.m_RepeatDelay; }
-        set { this.m_RepeatDelay = value; }
-      }
-
-      [XmlAttribute]
-      public bool RestartFrontviewOnExit
-      {
-        get { return this.m_RestartFrontviewOnExit; }
-        set { this.m_RestartFrontviewOnExit = value; }
-      }
-
-      [XmlAttribute]
-      public bool RestrictEQ
-      {
-        get { return this.m_RestrictEQ; }
-        set { this.m_RestrictEQ = value; }
-      }
-
-      [XmlAttribute]
-      public bool SmoothEQ
-      {
-        get { return this.m_SmoothEQ; }
-        set { this.m_SmoothEQ = value; }
-      }
-
-      [XmlAttribute]
-      public bool StereoEQ
-      {
-        get { return this.m_StereoEQ; }
-        set { this.m_StereoEQ = value; }
-      }
-
-      [XmlAttribute]
-      public bool UseCustomFont
-      {
-        get { return this.m_UseCustomFont; }
-        set { this.m_UseCustomFont = value; }
-      }
-
-      [XmlAttribute]
-      public bool UseCustomIcons
-      {
-        get { return this.m_UseCustomIcons; }
-        set { this.m_UseCustomIcons = value; }
-      }
-
-      [XmlAttribute]
-      public bool UseInvertedIcons
-      {
-        get { return this.m_UseInvertedIcons; }
-        set { this.m_UseInvertedIcons = value; }
-      }
-
-      [XmlAttribute]
-      public bool UseLargeIcons
-      {
-        get { return this.m_UseLargeIcons; }
-        set { this.m_UseLargeIcons = value; }
-      }
-
-      [XmlAttribute]
-      public bool UseRC
-      {
-        get { return this.m_UseRC; }
-        set { this.m_UseRC = value; }
-      }
-
-      [XmlAttribute]
-      public bool VFD_UseV3DLL
-      {
-        get { return this.m_VFD_UseV3DLL; }
-        set { this.m_VFD_UseV3DLL = value; }
-      }
-
-      [XmlAttribute]
-      public bool VolumeDisplay
-      {
-        get { return this.m_VolumeDisplay; }
-        set { this.m_VolumeDisplay = value; }
-      }
-
-      [XmlAttribute]
-      public bool VUindicators
-      {
-        get { return this.m_VUindicators; }
-        set { this.m_VUindicators = value; }
-      }
-
-      [XmlAttribute]
-      public bool VUmeter
-      {
-        get { return this.m_VUmeter; }
-        set { this.m_VUmeter = value; }
-      }
-
-      [XmlAttribute]
-      public bool VUmeter2
-      {
-        get { return this.m_VUmeter2; }
-        set { this.m_VUmeter2 = value; }
-      }
-
-      public delegate void OnSettingsChangedHandler();
     }
+
+    #endregion
+
+    #region Nested type: BuiltinIconMask
 
     public class BuiltinIconMask
     {
@@ -7588,6 +4449,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       public readonly ulong SPKR_SR = 0x800L;
     }
 
+    #endregion
+
+    #region Nested type: Command
+
     private enum Command : ulong
     {
       ClearAlarm = 0x5100000000000000L,
@@ -7613,8 +4478,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       VFD2_ShowClock = 9943949076745683200L
     }
 
+    #endregion
+
+    #region Nested type: CustomFont
+
     private class CustomFont
     {
+      private static byte[,] CstmFont;
       private readonly DataColumn CData0 = new DataColumn("CData0");
       private readonly DataColumn CData1 = new DataColumn("CData1");
       private readonly DataColumn CData2 = new DataColumn("CData2");
@@ -7622,50 +4492,49 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       private readonly DataColumn CData4 = new DataColumn("CData4");
       private readonly DataColumn CData5 = new DataColumn("CData5");
       private readonly DataColumn CID = new DataColumn("CharID");
-      private static byte[,] CstmFont;
       private DisplayOptions CustomOptions = XMLUTILS.LoadDisplayOptionsSettings();
       private DataTable FontData = new DataTable("Character");
 
       public void CloseFont()
       {
-        if (this.FontData != null)
+        if (FontData != null)
         {
-          this.FontData.Dispose();
+          FontData.Dispose();
         }
       }
 
       public void InitializeCustomFont()
       {
-        if (this.CustomOptions.UseCustomFont)
+        if (CustomOptions.UseCustomFont)
         {
-          if (this.FontData.Columns.Count == 0)
+          if (FontData.Columns.Count == 0)
           {
-            this.FontData.Rows.Clear();
-            this.FontData.Columns.Clear();
-            CstmFont = new byte[0x100,6];
-            this.CID.DataType = typeof (byte);
-            this.FontData.Columns.Add(this.CID);
-            this.CData0.DataType = typeof (byte);
-            this.FontData.Columns.Add(this.CData0);
-            this.CData1.DataType = typeof (byte);
-            this.FontData.Columns.Add(this.CData1);
-            this.CData2.DataType = typeof (byte);
-            this.FontData.Columns.Add(this.CData2);
-            this.CData3.DataType = typeof (byte);
-            this.FontData.Columns.Add(this.CData3);
-            this.CData4.DataType = typeof (byte);
-            this.FontData.Columns.Add(this.CData4);
-            this.CData5.DataType = typeof (byte);
-            this.FontData.Columns.Add(this.CData5);
-            this.FontData.Clear();
+            FontData.Rows.Clear();
+            FontData.Columns.Clear();
+            CstmFont = new byte[0x100, 6];
+            CID.DataType = typeof(byte);
+            FontData.Columns.Add(CID);
+            CData0.DataType = typeof(byte);
+            FontData.Columns.Add(CData0);
+            CData1.DataType = typeof(byte);
+            FontData.Columns.Add(CData1);
+            CData2.DataType = typeof(byte);
+            FontData.Columns.Add(CData2);
+            CData3.DataType = typeof(byte);
+            FontData.Columns.Add(CData3);
+            CData4.DataType = typeof(byte);
+            FontData.Columns.Add(CData4);
+            CData5.DataType = typeof(byte);
+            FontData.Columns.Add(CData5);
+            FontData.Clear();
           }
-          if (this.LoadCustomFontData())
+          if (LoadCustomFontData())
           {
             Log.Debug("iMONLCDg.InitializeCustomFont(): Custom font data loaded", new object[0]);
           }
           else
           {
-            this.SaveDefaultFontData();
+            SaveDefaultFontData();
             Log.Debug(
               "iMONLCDg.InitializeCustomFont(): Custom font file not found. Template file saved. loaded default file.",
               new object[0]);
@@ -7678,23 +4547,23 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Log.Debug("LoadCustomFontData(): called", new object[0]);
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml")))
         {
-          this.FontData.Rows.Clear();
-          XmlSerializer serializer = new XmlSerializer(typeof (DataTable));
-          XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml"));
+          FontData.Rows.Clear();
+          var serializer = new XmlSerializer(typeof(DataTable));
+          var xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml"));
           Log.Debug("LoadCustomFontData(): DeSerializing data", new object[0]);
-          this.FontData = (DataTable) serializer.Deserialize(xmlReader);
+          FontData = (DataTable)serializer.Deserialize(xmlReader);
           Log.Debug("LoadCustomFontData(): Read data from file", new object[0]);
           xmlReader.Close();
           Log.Debug("LoadCustomFontData(): Converting font data", new object[0]);
           for (int j = 0; j < 0x100; j++)
           {
-            DataRow row = this.FontData.Rows[j];
-            CstmFont[j, 0] = (byte) row[1];
-            CstmFont[j, 1] = (byte) row[2];
-            CstmFont[j, 2] = (byte) row[3];
-            CstmFont[j, 3] = (byte) row[4];
-            CstmFont[j, 4] = (byte) row[5];
-            CstmFont[j, 5] = (byte) row[6];
+            DataRow row = FontData.Rows[j];
+            CstmFont[j, 0] = (byte)row[1];
+            CstmFont[j, 1] = (byte)row[2];
+            CstmFont[j, 2] = (byte)row[3];
+            CstmFont[j, 3] = (byte)row[4];
+            CstmFont[j, 4] = (byte)row[5];
+            CstmFont[j, 5] = (byte)row[6];
           }
           Log.Debug("LoadCustomFontData(): completed", new object[0]);
           return true;
@@ -7720,10 +4589,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         Log.Debug("SaveFontData(): called", new object[0]);
         Log.Debug("SaveFontData(): Converting font data", new object[0]);
-        this.FontData.Rows.Clear();
+        FontData.Rows.Clear();
         for (int i = 0; i < 0x100; i++)
         {
-          DataRow row = this.FontData.NewRow();
+          DataRow row = FontData.NewRow();
           row[0] = i;
           row[1] = _Font8x5[i, 0];
           row[2] = _Font8x5[i, 1];
@@ -7731,26 +4600,28 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           row[4] = _Font8x5[i, 3];
           row[5] = _Font8x5[i, 4];
           row[6] = _Font8x5[i, 5];
-          this.FontData.Rows.Add(row);
+          FontData.Rows.Add(row);
         }
-        XmlSerializer serializer = new XmlSerializer(typeof (DataTable));
+        var serializer = new XmlSerializer(typeof(DataTable));
         TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml"));
         Log.Debug("SaveFontData(): Serializing data", new object[0]);
-        serializer.Serialize(textWriter, this.FontData);
+        serializer.Serialize(textWriter, FontData);
         Log.Debug("SaveFontData(): Writing data to file", new object[0]);
         textWriter.Close();
         Log.Debug("SaveFontData(): completed", new object[0]);
       }
     }
 
+    #endregion
+
+    #region Nested type: DiskIcon
+
     public class DiskIcon
     {
-      private bool _diskFlash;
-      private bool _diskInverted;
-
       private readonly ulong[] _DiskMask = new ulong[]
                                              {
-                                               0x80fe0000000000L, 0x80fd0000000000L, 0x80fb0000000000L, 0x80f70000000000L
+                                               0x80fe0000000000L, 0x80fd0000000000L, 0x80fb0000000000L,
+                                               0x80f70000000000L
                                                , 0x80ef0000000000L, 0x80df0000000000L, 0x80bf0000000000L,
                                                0x807f0000000000L
                                              };
@@ -7762,78 +4633,136 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                                   0x80400000000000L, 0x80800000000000L
                                                 };
 
+      private const ulong _diskSolidOffMask = 0L;
+      private const ulong _diskSolidOnMask = 0x80ff0000000000L;
+      private bool _diskFlash;
+      private bool _diskInverted;
+
       private bool _diskOn;
       private bool _diskRotate;
       private bool _diskRotateClockwise = true;
       private int _diskSegment;
-      private readonly ulong _diskSolidOffMask = 0;
-      private readonly ulong _diskSolidOnMask = 0x80ff0000000000L;
       private bool _diskSRWFlash = true;
       private int _flashState = 1;
       private DateTime _LastAnimate;
 
+      public bool IsFlashing
+      {
+        get { return _diskFlash; }
+      }
+
+      public bool IsInverted
+      {
+        get { return _diskInverted; }
+      }
+
+      public bool IsOn
+      {
+        get { return _diskOn; }
+      }
+
+      public bool IsRotating
+      {
+        get { return _diskFlash; }
+      }
+
+      public ulong Mask
+      {
+        get
+        {
+          Log.Info("ON: {0}, flashing: {1}, FLASHSTATE : {2}, Rotate: {3}, Invert: {4}",
+                   new object[] { _diskOn, _diskFlash, _flashState.ToString(), _diskRotate, _diskInverted });
+          if (!_diskOn)
+          {
+            return _diskSolidOffMask;
+          }
+          if (!_diskRotate)
+          {
+            if (!_diskFlash)
+            {
+              return _diskSolidOnMask;
+            }
+            if (_flashState == 1)
+            {
+              return _diskSolidOnMask;
+            }
+            return _diskSolidOffMask;
+          }
+          if (!_diskFlash)
+          {
+            if (!_diskInverted)
+            {
+              return _DiskMask[_diskSegment];
+            }
+            return _DiskMaskInv[_diskSegment];
+          }
+          if (_flashState <= 0)
+          {
+            return _diskSolidOffMask;
+          }
+          if (!_diskInverted)
+          {
+            return _DiskMask[_diskSegment];
+          }
+          return _DiskMaskInv[_diskSegment];
+        }
+      }
+
       public void Animate()
       {
-        if ((DateTime.Now.Ticks - this._LastAnimate.Ticks) >= 0x7a120L)
+        if ((DateTime.Now.Ticks - _LastAnimate.Ticks) >= 0x7a120L)
         {
-          if ((this._diskRotate & !this._diskFlash) || (this._diskRotate & (this._diskFlash & !this._diskSRWFlash)))
+          if ((_diskRotate & !_diskFlash) || (_diskRotate & (_diskFlash & !_diskSRWFlash)))
           {
-            if (this._diskRotateClockwise)
+            if (_diskRotateClockwise)
             {
-              this._diskSegment++;
-              if (this._diskSegment > 7)
+              _diskSegment++;
+              if (_diskSegment > 7)
               {
-                this._diskSegment = 0;
+                _diskSegment = 0;
               }
             }
             else
             {
-              this._diskSegment--;
-              if (this._diskSegment < 0)
+              _diskSegment--;
+              if (_diskSegment < 0)
               {
-                this._diskSegment = 7;
+                _diskSegment = 7;
               }
             }
           }
-          if (this._diskFlash)
+          if (_diskFlash)
           {
-            if (this._flashState == 1)
-            {
-              this._flashState = 0;
-            }
-            else
-            {
-              this._flashState = 1;
-            }
+            _flashState = _flashState == 1 ? 0 : 1;
           }
-          this._LastAnimate = DateTime.Now;
+          _LastAnimate = DateTime.Now;
         }
       }
 
       public void FlashOff()
       {
-        this._diskFlash = false;
-        this._flashState = 1;
+        _diskFlash = false;
+        _flashState = 1;
       }
 
       public void FlashOn()
       {
-        this._diskFlash = true;
+        _diskFlash = true;
       }
 
       public void InvertOff()
       {
-        this._diskInverted = false;
+        _diskInverted = false;
       }
 
       public void InvertOn()
       {
-        this._diskInverted = true;
+        _diskInverted = true;
       }
 
       public void Off()
       {
-        this._diskOn = false;
+        _diskOn = false;
       }
 
       public void On()
@@ -7842,142 +4771,56 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           Log.Info("DISK ON CALLED", new object[0]);
         }
-        this._diskOn = true;
+        _diskOn = true;
       }
 
       public void Reset()
       {
-        this._diskFlash = false;
-        this._diskRotate = false;
-        this._diskSegment = 0;
-        this._diskRotateClockwise = true;
-        this._diskOn = false;
-        this._flashState = 1;
-        this._diskInverted = false;
-        this._diskSRWFlash = true;
+        _diskFlash = false;
+        _diskRotate = false;
+        _diskSegment = 0;
+        _diskRotateClockwise = true;
+        _diskOn = false;
+        _flashState = 1;
+        _diskInverted = false;
+        _diskSRWFlash = true;
       }
 
       public void RotateCCW()
       {
-        this._diskRotateClockwise = false;
-        this._diskRotate = true;
+        _diskRotateClockwise = false;
+        _diskRotate = true;
       }
 
       public void RotateCW()
       {
-        this._diskRotateClockwise = true;
-        this._diskRotate = true;
+        _diskRotateClockwise = true;
+        _diskRotate = true;
       }
 
       public void RotateOff()
       {
-        this._diskRotateClockwise = false;
-        this._diskRotate = false;
+        _diskRotateClockwise = false;
+        _diskRotate = false;
       }
 
       public void SRWFlashOff()
       {
-        this._diskSRWFlash = false;
+        _diskSRWFlash = false;
       }
 
       public void SRWFlashOn()
       {
-        this._diskSRWFlash = true;
-      }
-
-      public bool IsFlashing
-      {
-        get { return this._diskFlash; }
-      }
-
-      public bool IsInverted
-      {
-        get { return this._diskInverted; }
-      }
-
-      public bool IsOn
-      {
-        get { return this._diskOn; }
-      }
-
-      public bool IsRotating
-      {
-        get { return this._diskFlash; }
-      }
-
-      public ulong Mask
-      {
-        get
-        {
-          Log.Info("ON: {0}, flashing: {1}, FLASHSTATE : {2}, Rotate: {3}, Invert: {4}",
-                   new object[]
-                     {this._diskOn, this._diskFlash, this._flashState.ToString(), this._diskRotate, this._diskInverted});
-          if (!this._diskOn)
-          {
-            return this._diskSolidOffMask;
-          }
-          if (!this._diskRotate)
-          {
-            if (!this._diskFlash)
-            {
-              return this._diskSolidOnMask;
-            }
-            if (this._flashState == 1)
-            {
-              return this._diskSolidOnMask;
-            }
-            return this._diskSolidOffMask;
-          }
-          if (!this._diskFlash)
-          {
-            if (!this._diskInverted)
-            {
-              return this._DiskMask[this._diskSegment];
-            }
-            return this._DiskMaskInv[this._diskSegment];
-          }
-          if (this._flashState <= 0)
-          {
-            return this._diskSolidOffMask;
-          }
-          if (!this._diskInverted)
-          {
-            return this._DiskMask[this._diskSegment];
-          }
-          return this._DiskMaskInv[this._diskSegment];
-        }
+        _diskSRWFlash = true;
       }
     }
 
+    #endregion
+
+    #region Nested type: DisplayType
+
     private class DisplayType
     {
-      public static string TypeName(int DisplayType)
-      {
-        switch (DisplayType)
-        {
-          case -1:
-            return "AutoDetect";
-
-          case 0:
-            return "VFD";
-
-          case 1:
-            return "LCD";
-
-          case 3:
-            return "3Rsystems";
-
-          case 4:
-            return "LCD2";
-        }
-        return "Unsupported";
-      }
-
-      public static int AutoDetect
-      {
-        get { return -1; }
-      }
-
       public static int LCD
       {
         get { return 1; }
@@ -8002,12 +4845,37 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         get { return 0; }
       }
+
+      public static string TypeName(int DisplayType)
+      {
+        switch (DisplayType)
+        {
+          case -1:
+            return "AutoDetect";
+
+          case 0:
+            return "VFD";
+
+          case 1:
+            return "LCD";
+
+          case 3:
+            return "3Rsystems";
+
+          case 4:
+            return "LCD2";
+        }
+        return "Unsupported";
+      }
     }
+
+    #endregion
+
+    #region Nested type: LargeIcon
 
     private class LargeIcon
     {
       private static byte[,] CustomIcons;
-      private DisplayOptions CustomOptions = XMLUTILS.LoadDisplayOptionsSettings();
       private readonly DataColumn IData0 = new DataColumn("IData0");
       private readonly DataColumn IData1 = new DataColumn("IData1");
       private readonly DataColumn IData10 = new DataColumn("IData10");
@@ -8040,109 +4908,110 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       private readonly DataColumn IData7 = new DataColumn("IData7");
       private readonly DataColumn IData8 = new DataColumn("IData8");
       private readonly DataColumn IData9 = new DataColumn("IData9");
-      private DataTable LIconData = new DataTable("LargeIcons");
       private readonly DataColumn LIID = new DataColumn("IconID");
+      private DisplayOptions CustomOptions = XMLUTILS.LoadDisplayOptionsSettings();
+      private DataTable LIconData = new DataTable("LargeIcons");
 
       public void CloseIcons()
       {
-        if (this.LIconData != null)
+        if (LIconData != null)
         {
-          this.LIconData.Dispose();
+          LIconData.Dispose();
         }
       }
 
       public void InitializeLargeIcons()
       {
-        if (this.CustomOptions.UseLargeIcons || this.CustomOptions.UseCustomIcons)
+        if (CustomOptions.UseLargeIcons || CustomOptions.UseCustomIcons)
         {
           Log.Debug("iMONLCDg.InitializeLargeIcons(): Using Large Icons.", new object[0]);
-          if (!this.CustomOptions.UseCustomIcons)
+          if (!CustomOptions.UseCustomIcons)
           {
             Log.Debug("iMONLCDg.InitializeLargeIcons(): Using Internal Large Icon Data.", new object[0]);
           }
           else
           {
             Log.Debug("iMONLCDg.InitializeLargeIcons(): Using Custom Large Icon Data.", new object[0]);
-            if (this.LIconData.Columns.Count == 0)
+            if (LIconData.Columns.Count == 0)
             {
-              this.LIconData.Rows.Clear();
-              this.LIconData.Columns.Clear();
-              CustomIcons = new byte[10,0x20];
-              this.LIID.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.LIID);
-              this.IData0.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData0);
-              this.IData1.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData1);
-              this.IData2.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData2);
-              this.IData3.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData3);
-              this.IData4.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData4);
-              this.IData5.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData5);
-              this.IData6.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData6);
-              this.IData7.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData7);
-              this.IData8.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData8);
-              this.IData9.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData9);
-              this.IData10.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData10);
-              this.IData11.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData11);
-              this.IData12.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData12);
-              this.IData13.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData13);
-              this.IData14.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData14);
-              this.IData15.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData15);
-              this.IData16.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData16);
-              this.IData17.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData17);
-              this.IData18.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData18);
-              this.IData19.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData19);
-              this.IData20.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData20);
-              this.IData21.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData21);
-              this.IData22.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData22);
-              this.IData23.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData23);
-              this.IData24.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData24);
-              this.IData25.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData25);
-              this.IData26.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData26);
-              this.IData27.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData27);
-              this.IData28.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData28);
-              this.IData29.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData29);
-              this.IData30.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData30);
-              this.IData31.DataType = typeof (byte);
-              this.LIconData.Columns.Add(this.IData31);
-              this.LIconData.Clear();
+              LIconData.Rows.Clear();
+              LIconData.Columns.Clear();
+              CustomIcons = new byte[10, 0x20];
+              LIID.DataType = typeof(byte);
+              LIconData.Columns.Add(LIID);
+              IData0.DataType = typeof(byte);
+              LIconData.Columns.Add(IData0);
+              IData1.DataType = typeof(byte);
+              LIconData.Columns.Add(IData1);
+              IData2.DataType = typeof(byte);
+              LIconData.Columns.Add(IData2);
+              IData3.DataType = typeof(byte);
+              LIconData.Columns.Add(IData3);
+              IData4.DataType = typeof(byte);
+              LIconData.Columns.Add(IData4);
+              IData5.DataType = typeof(byte);
+              LIconData.Columns.Add(IData5);
+              IData6.DataType = typeof(byte);
+              LIconData.Columns.Add(IData6);
+              IData7.DataType = typeof(byte);
+              LIconData.Columns.Add(IData7);
+              IData8.DataType = typeof(byte);
+              LIconData.Columns.Add(IData8);
+              IData9.DataType = typeof(byte);
+              LIconData.Columns.Add(IData9);
+              IData10.DataType = typeof(byte);
+              LIconData.Columns.Add(IData10);
+              IData11.DataType = typeof(byte);
+              LIconData.Columns.Add(IData11);
+              IData12.DataType = typeof(byte);
+              LIconData.Columns.Add(IData12);
+              IData13.DataType = typeof(byte);
+              LIconData.Columns.Add(IData13);
+              IData14.DataType = typeof(byte);
+              LIconData.Columns.Add(IData14);
+              IData15.DataType = typeof(byte);
+              LIconData.Columns.Add(IData15);
+              IData16.DataType = typeof(byte);
+              LIconData.Columns.Add(IData16);
+              IData17.DataType = typeof(byte);
+              LIconData.Columns.Add(IData17);
+              IData18.DataType = typeof(byte);
+              LIconData.Columns.Add(IData18);
+              IData19.DataType = typeof(byte);
+              LIconData.Columns.Add(IData19);
+              IData20.DataType = typeof(byte);
+              LIconData.Columns.Add(IData20);
+              IData21.DataType = typeof(byte);
+              LIconData.Columns.Add(IData21);
+              IData22.DataType = typeof(byte);
+              LIconData.Columns.Add(IData22);
+              IData23.DataType = typeof(byte);
+              LIconData.Columns.Add(IData23);
+              IData24.DataType = typeof(byte);
+              LIconData.Columns.Add(IData24);
+              IData25.DataType = typeof(byte);
+              LIconData.Columns.Add(IData25);
+              IData26.DataType = typeof(byte);
+              LIconData.Columns.Add(IData26);
+              IData27.DataType = typeof(byte);
+              LIconData.Columns.Add(IData27);
+              IData28.DataType = typeof(byte);
+              LIconData.Columns.Add(IData28);
+              IData29.DataType = typeof(byte);
+              LIconData.Columns.Add(IData29);
+              IData30.DataType = typeof(byte);
+              LIconData.Columns.Add(IData30);
+              IData31.DataType = typeof(byte);
+              LIconData.Columns.Add(IData31);
+              LIconData.Clear();
             }
-            if (this.LoadLargeIconData())
+            if (LoadLargeIconData())
             {
               Log.Debug("iMONLCDg.InitializeLargeIcons(): Custom Large Icon data loaded", new object[0]);
             }
             else
             {
-              this.SaveDefaultLargeIconData();
+              SaveDefaultLargeIconData();
               Log.Debug(
                 "iMONLCDg.InitializeLargeIcons(): Custom Large Icon file not found. Template file saved. loaded default data.",
                 new object[0]);
@@ -8156,21 +5025,21 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Log.Debug("LoadLargeIconData(): called", new object[0]);
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_icons.xml")))
         {
-          this.LIconData.Rows.Clear();
-          XmlSerializer serializer = new XmlSerializer(typeof (DataTable));
-          XmlTextReader xmlReader =
+          LIconData.Rows.Clear();
+          var serializer = new XmlSerializer(typeof(DataTable));
+          var xmlReader =
             new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_icons.xml"));
           Log.Debug("LoadLargeIconData(): DeSerializing data", new object[0]);
-          this.LIconData = (DataTable) serializer.Deserialize(xmlReader);
+          LIconData = (DataTable)serializer.Deserialize(xmlReader);
           Log.Debug("LoadLargeIconData(): Read data from file", new object[0]);
           xmlReader.Close();
           Log.Debug("LoadLargeIconData(): Converting icon data", new object[0]);
           for (int j = 0; j < 10; j++)
           {
-            DataRow row = this.LIconData.Rows[j];
+            DataRow row = LIconData.Rows[j];
             for (int k = 1; k < 0x21; k++)
             {
-              CustomIcons[j, k - 1] = (byte) row[k];
+              CustomIcons[j, k - 1] = (byte)row[k];
             }
           }
           Log.Debug("LoadLargeIconData(): completed", new object[0]);
@@ -8197,37 +5066,30 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         Log.Debug("SaveDefaultLargeIconData(): called", new object[0]);
         Log.Debug("SaveDefaultLargeIconData(): Converting icon data", new object[0]);
-        this.LIconData.Rows.Clear();
+        LIconData.Rows.Clear();
         for (int i = 0; i < 10; i++)
         {
-          DataRow row = this.LIconData.NewRow();
+          DataRow row = LIconData.NewRow();
           row[0] = i;
           for (int j = 1; j < 0x21; j++)
           {
             row[j] = _InternalLargeIcons[i, j - 1];
           }
-          this.LIconData.Rows.Add(row);
+          LIconData.Rows.Add(row);
         }
-        XmlSerializer serializer = new XmlSerializer(typeof (DataTable));
+        var serializer = new XmlSerializer(typeof(DataTable));
         TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_icons.xml"));
         Log.Debug("SaveDefaultLargeIconData(): Serializing data", new object[0]);
-        serializer.Serialize(textWriter, this.LIconData);
+        serializer.Serialize(textWriter, LIconData);
         Log.Debug("SaveDefaultLargeIconData(): Writing data to file", new object[0]);
         textWriter.Close();
         Log.Debug("SaveDefaultLargeIconData(): completed", new object[0]);
       }
     }
 
-    private enum LargeIconType
-    {
-      IDLE,
-      TV,
-      MOVIE,
-      MUSIC,
-      VIDEO,
-      RECORDING,
-      PAUSED
-    }
+    #endregion
+
+    #region Nested type: MouseKeyEvent
 
     [StructLayout(LayoutKind.Sequential)]
     public struct MouseKeyEvent
@@ -8240,6 +5102,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       public int Last_R_Button;
     }
 
+    #endregion
+
+    #region Nested type: RemoteControl
+
     [StructLayout(LayoutKind.Sequential)]
     public struct RemoteControl
     {
@@ -8248,6 +5114,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       public bool DisableRepeat;
       public int RepeatDelay;
     }
+
+    #endregion
+
+    #region Nested type: RemoteState
 
     [StructLayout(LayoutKind.Sequential)]
     public struct RemoteState
@@ -8261,5 +5131,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       public DateTime LastButtonPressTimestamp;
       public MouseKeyEvent LastMouseKeyEvent;
     }
+
+    #endregion
   }
 }
