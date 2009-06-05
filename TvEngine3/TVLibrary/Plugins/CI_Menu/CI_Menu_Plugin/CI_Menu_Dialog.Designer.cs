@@ -164,9 +164,9 @@
           this.lblComment.AutoSize = true;
           this.lblComment.Location = new System.Drawing.Point(72, 327);
           this.lblComment.Name = "lblComment";
-          this.lblComment.Size = new System.Drawing.Size(212, 13);
+          this.lblComment.Size = new System.Drawing.Size(328, 13);
           this.lblComment.TabIndex = 8;
-          this.lblComment.Text = "*) currently supporting only KNC1 dvb cards";
+          this.lblComment.Text = "*) currently supporting FireDTV, KNC1 and TechnoTrend DVB cards";
           // 
           // CI_Menu_Dialog
           // 

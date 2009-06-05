@@ -110,7 +110,6 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("Check for KNC");
           // Lookup device index of current card. only counting KNC cards by device path
           int DeviceIndex = KNCDeviceLookup.GetDeviceIndex(card);
-          //_knc = new KNC(tunerFilter, analyzerFilter, DeviceIndex);
           _knc = new KNCAPI(tunerFilter, (uint)DeviceIndex);
           if (_knc.IsKNC)
           {
@@ -127,6 +126,12 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.WriteFile("Digital Everywhere card detected");
             _diSEqCMotor = new DiSEqCMotor(_digitalEveryWhere);
+
+            if (_digitalEveryWhere.IsCamReady())
+            {
+              Log.Log.WriteFile("Digital Everywhere registering CI menu capabilities");
+              _ciMenu = _digitalEveryWhere; // Register FireDTV CI Menu capabilities when CAM detected and ready
+            }
             //_digitalEveryWhere.ResetCAM();
             return;
           }
@@ -143,7 +148,6 @@ namespace TvLibrary.Implementations.DVB
           _twinhan = null;
 
           Log.Log.WriteFile("Check for TechnoTrend");
-          //_technoTrend = new TechnoTrend(tunerFilter, analyzerFilter);
           _technoTrend = new TechnoTrendAPI(tunerFilter);
           if (_technoTrend.IsTechnoTrend)
           {
@@ -1020,6 +1024,11 @@ namespace TvLibrary.Implementations.DVB
       {
         _technoTrend.Dispose();
       }
+      if (_digitalEveryWhere != null)
+      {
+        _digitalEveryWhere.Dispose();
+      }
+
     }
 
     #endregion

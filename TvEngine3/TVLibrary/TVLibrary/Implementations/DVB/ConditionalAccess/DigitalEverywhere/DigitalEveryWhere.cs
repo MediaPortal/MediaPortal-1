@@ -25,6 +25,8 @@ using System.Threading;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using TvLibrary.Channels;
+using TvLibrary.Interfaces;
+using System.Text;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -32,7 +34,7 @@ namespace TvLibrary.Implementations.DVB
   /// Handles the CI/CAM interface for FireDtv and FloppyDtv devices from 
   /// Digital Everywhere
   /// </summary>
-  public class DigitalEverywhere : IDiSEqCController
+  public class DigitalEverywhere : IDiSEqCController, ICiMenuActions, IDisposable
   {
     private const int MAX_PMT_SIZE = 1024;
     private const int CA_DATA_SIZE = 1036;
@@ -222,16 +224,39 @@ namespace TvLibrary.Implementations.DVB
     const int KSPROPERTY_FIRESAT_LNB_CONTROL = 12;
     #endregion
 
+    /// <summary>
+    /// MMI Tags inside MMI object
+    /// </summary>
+    private enum MMI_TAGS
+    {
+      CLOSE     = 0x9F8800,
+      ENQUIRY   = 0x9F8807,
+      MENU_MORE = 0x9F880A,
+      MENU_LAST = 0x9F8809,
+      LIST_MORE = 0x9F880D,
+      LIST_LAST = 0x9F880C,
+      TEXT_MORE = 0x9F8804,
+      TEXT_LAST = 0x9F8803
+    };
+
     #region CI STATUS bits
-    const int CI_MMI_REQUEST = 0x0100;
-    const int CI_PMT_REPLY = 0x0080;
-    const int CI_DATE_TIME_REQEST = 0x0040;
-    const int CI_APP_INFO_AVAILABLE = 0x0020;
-    const int CI_MODULE_PRESENT = 0x0010;
-    const int CI_MODULE_IS_DVB = 0x0008;
-    const int CI_MODULE_ERROR = 0x0004;
-    const int CI_MODULE_INIT_READY = 0x0002;
-    const int CI_ERR_MSG_AVAILABLE = 0x0001;
+    
+    /// <summary>
+    /// DE CI Status bits
+    /// </summary>
+    [Flags]
+    public enum DE_CI_STATUS
+    {
+      CI_ERR_MSG_AVAILABLE  = 0x01,
+      CI_MODULE_INIT_READY  = 0x02,
+      CI_MODULE_ERROR       = 0x04,
+      CI_MODULE_IS_DVB      = 0x08,
+      CI_MODULE_PRESENT     = 0x10,
+      CI_APP_INFO_AVAILABLE = 0x20,
+      CI_DATE_TIME_REQEST   = 0x40,
+      CI_PMT_REPLY          = 0x80,
+      CI_MMI_REQUEST        = 0x100
+    }
 #pragma warning restore 169
     #endregion
 
@@ -244,10 +269,16 @@ namespace TvLibrary.Implementations.DVB
 
     readonly IntPtr _ptrDataInstance;
     readonly IntPtr _ptrDataReturned;
+    readonly IntPtr _ptrDataCiHandler;
 
     DVBSChannel _previousChannel;
-
+    
     private bool _readCamName;
+    // CI menu related handlers
+    private bool StopThread;
+    private ICiMenuCallbacks m_ciMenuCallback;
+    Thread CiMenuThread;
+
     #endregion
 
     /// <summary>
@@ -264,6 +295,7 @@ namespace TvLibrary.Implementations.DVB
 
       _ptrDataInstance = Marshal.AllocCoTaskMem(CA_DATA_SIZE);
       _ptrDataReturned = Marshal.AllocCoTaskMem(CA_DATA_SIZE);
+      _ptrDataCiHandler = Marshal.AllocCoTaskMem(CA_DATA_SIZE);
       if (_filterTuner != null)
       {
         _isDigitalEverywhere = IsDigitalEverywhere;
@@ -344,6 +376,7 @@ namespace TvLibrary.Implementations.DVB
         return false;
       }
 
+      // read CAM name, when it works, this usually means that CAM is ready to descramble (needed i.e. after resume)
       if (_readCamName)
       {
         Log.Log.WriteFile("FireDTV cam name: \"{0}\" ", GetCAMName());
@@ -746,6 +779,11 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Read out CAM name
+    /// When it works, this usually means that CAM is ready to descramble (i.e. after resume)
+    /// </summary>
+    /// <returns>CAM name</returns>
     private string GetCAMName()
     {
       Guid propertyGuid = KSPROPSETID_Firesat;
@@ -836,11 +874,11 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_isInitialized)
         return _hasCAM;
-      int camStatus = GetCAMStatus();
-      if ((camStatus & CI_MODULE_PRESENT) != 0)
+      DE_CI_STATUS camStatus = (DE_CI_STATUS)GetCAMStatus();
+      if ((camStatus & DE_CI_STATUS.CI_MODULE_PRESENT) != 0)
       {
         //CAM is inserted
-        if ((camStatus & CI_MODULE_IS_DVB) != 0)
+        if ((camStatus & DE_CI_STATUS.CI_MODULE_IS_DVB) != 0)
         {
           //CAM is DVB
           return true;
@@ -857,22 +895,22 @@ namespace TvLibrary.Implementations.DVB
     /// </returns>
     public bool IsCamReady()
     {
-      int camStatus = GetCAMStatus();
-      if ((camStatus & CI_MODULE_PRESENT) != 0)
+      DE_CI_STATUS camStatus = (DE_CI_STATUS)GetCAMStatus();
+      if ((camStatus & DE_CI_STATUS.CI_MODULE_PRESENT) != 0)
       {
         //CAM is inserted
         Log.Log.WriteFile("  FireDTV:cam is inserted");
-        if ((camStatus & CI_MODULE_IS_DVB) != 0)
+        if ((camStatus & DE_CI_STATUS.CI_MODULE_IS_DVB) != 0)
         {
           //CAM is DVB CAM 
           Log.Log.WriteFile("  FireDTV:cam is valid");
-          if ((camStatus & CI_MODULE_ERROR) != 0)
+          if ((camStatus & DE_CI_STATUS.CI_MODULE_ERROR) != 0)
           {
             //CAM has an error
             Log.Log.WriteFile("  FireDTV:cam has error");
             return false;
           }
-          if ((camStatus & CI_MODULE_INIT_READY) != 0)
+          if ((camStatus & DE_CI_STATUS.CI_MODULE_INIT_READY) != 0)
           {
             //CAM is initialized
             Log.Log.WriteFile("  FireDTV:cam is ready");
@@ -882,7 +920,7 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.WriteFile("  FireDTV:cam is NOT ready");
             return false;
           }
-          if ((camStatus & CI_APP_INFO_AVAILABLE) != 0)
+          if ((camStatus & DE_CI_STATUS.CI_APP_INFO_AVAILABLE) != 0)
           {
             Log.Log.WriteFile("  FireDTV:cam is able to descramble");
           }
@@ -1064,6 +1102,563 @@ namespace TvLibrary.Implementations.DVB
     {
       _readCamName = true;
       _previousChannel = null;
+      StopCiHandlerThread();
     }
+
+    #region CiMenuHandlerThread start and stop
+    /// <summary>
+    /// Stops CiHandler thread
+    /// </summary>
+    private void StopCiHandlerThread()
+    {
+      if (CiMenuThread != null)
+      {
+        CiMenuThread.Abort();
+        CiMenuThread = null;
+      }
+    }
+
+    /// <summary>
+    /// Starts CiHandler thread
+    /// </summary>
+    private void StartCiHandlerThread()
+    {
+      if (CiMenuThread == null)
+      {
+        Log.Log.Debug("FireDTV: Starting new CI handler thread");
+        StopThread = false;
+        CiMenuThread = new Thread(new ThreadStart(CiMenuHandler));
+        CiMenuThread.Name = "FireDTV CiMenuHandler";
+        CiMenuThread.IsBackground = true;
+        CiMenuThread.Priority = ThreadPriority.Lowest;
+        CiMenuThread.Start();
+      }
+    }
+    #endregion
+
+    #region ICiMenuActions Member
+
+    /// <summary>
+    /// Sets the callback handler
+    /// </summary>
+    /// <param name="ciMenuHandler"></param>
+    public bool SetCiMenuHandler(ICiMenuCallbacks ciMenuHandler)
+    {
+      if (ciMenuHandler != null)
+      {
+        Log.Log.Debug("FireDTV: registering ci callbacks");
+        m_ciMenuCallback=ciMenuHandler;        
+        StartCiHandlerThread();
+        return true;
+      }
+      return false;
+    }
+
+
+    /// <summary>
+    /// Enters the CI menu 
+    /// </summary>
+    /// <returns></returns>
+    public bool EnterCIMenu()
+    {
+      Log.Log.Debug("FireDTV: Enter CI Menu");
+      IKsPropertySet propertySet = _filterTuner as IKsPropertySet;
+      if (propertySet == null)
+      {
+        Log.Log.Debug("FireDTV:EnterCIMenu() properySet=null");
+        return false;
+      }
+      /* QuerySupported has been done in GetCAMName already */
+      FIRESAT_CA_DATA caData = GET_FIRESAT_CA_DATA(7 /*CA_ENTER_MENU*/, 0);
+
+      Marshal.StructureToPtr(caData, _ptrDataInstance, true);
+      Marshal.StructureToPtr(caData, _ptrDataReturned, true);
+      int hr = propertySet.Set(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_HOST2CA, _ptrDataInstance, CA_DATA_SIZE, _ptrDataReturned, CA_DATA_SIZE);
+      if (hr != 0)
+      {
+        Log.Log.Debug("FireDTV: unable to send CA_ENTER_MENU");
+      }
+      Log.Log.Debug("FireDTV: Enter CI Menu successful");
+      return true;
+    }
+
+    /// <summary>
+    /// Closes the CI menu 
+    /// </summary>
+    /// <returns></returns>
+    public bool CloseCIMenu()
+    {
+      Log.Log.Debug("FireDTV: Close CI Menu");
+      IKsPropertySet propertySet = _filterTuner as IKsPropertySet;
+      if (propertySet == null)
+      {
+        Log.Log.Debug("FireDTV:EnterCIMenu() properySet=null");
+        return false;
+      }
+      /* QuerySupported has been done in GetCAMName already */
+      FIRESAT_CA_DATA caData = GET_FIRESAT_CA_DATA(5 /*CA_MMI*/, 5);
+      // MMI Tag
+      caData.uData[0] = 0x9F;
+      caData.uData[1] = 0x88;
+      caData.uData[2] = 0x00;
+      caData.uData[3] = 0x01; // length field
+      caData.uData[4] = 0x00; // close_mmi_cmd_id (immediately)
+
+      Marshal.StructureToPtr(caData, _ptrDataInstance, true);
+      Marshal.StructureToPtr(caData, _ptrDataReturned, true);
+      int hr = propertySet.Set(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_HOST2CA, _ptrDataInstance, CA_DATA_SIZE, _ptrDataReturned, CA_DATA_SIZE);
+      if (hr != 0)
+      {
+        Log.Log.Debug("FireDTV: unable to send CA_MMI close");
+      }
+      Log.Log.Debug("FireDTV: Close CI Menu successful");
+      return true;
+    }
+
+    /// <summary>
+    /// Selects a CI menu entry
+    /// </summary>
+    /// <param name="choice"></param>
+    /// <returns></returns>
+    public bool SelectMenu(byte choice)
+    {
+      Log.Log.Debug("FireDTV: Select CI Menu entry {0}", choice);
+      IKsPropertySet propertySet = _filterTuner as IKsPropertySet;
+      if (propertySet == null)
+      {
+        Log.Log.Debug("FireDTV:SelectMenu() properySet=null");
+        return false;
+      }
+      /* QuerySupported has been done in GetCAMName already */
+      FIRESAT_CA_DATA caData = GET_FIRESAT_CA_DATA(5 /*CA_MMI*/, 5);
+      // MMI Tag
+      caData.uData[0] = 0x9F;
+      caData.uData[1] = 0x88;
+      caData.uData[2] = 0x0B; // send choice
+      caData.uData[3] = 0x01; // length field
+      caData.uData[4] = choice; // choice
+
+      Marshal.StructureToPtr(caData, _ptrDataInstance, true);
+      Marshal.StructureToPtr(caData, _ptrDataReturned, true);
+      int hr = propertySet.Set(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_HOST2CA, _ptrDataInstance, CA_DATA_SIZE, _ptrDataReturned, CA_DATA_SIZE);
+      if (hr != 0)
+      {
+        Log.Log.Debug("FireDTV: unable to select CI Menu entry");
+      }
+      Log.Log.Debug("FireDTV: Close CI Menu successful");
+      return true;
+    }
+
+    /// <summary>
+    /// Sends an answer after CI request
+    /// </summary>
+    /// <param name="Cancel"></param>
+    /// <param name="Answer"></param>
+    /// <returns></returns>
+    public bool SendMenuAnswer(bool Cancel, String Answer)
+    {
+      if (Answer == null) Answer = "";
+      Log.Log.Debug("FireDTV: Send CI Menu answer {0}", Answer);
+      IKsPropertySet propertySet = _filterTuner as IKsPropertySet;
+      if (propertySet == null)
+      {
+        Log.Log.Debug("FireDTV:SendMenuAnswer() properySet=null");
+        return false;
+      }
+      /* QuerySupported has been done in GetCAMName already */
+      FIRESAT_CA_DATA caData = GET_FIRESAT_CA_DATA(5 /*CA_MMI*/, 0);
+      // MMI Tag
+      caData.uData[0] = 0x9F;
+      caData.uData[1] = 0x88;
+      caData.uData[2] = 0x08; // send enquiry answer
+      if (Cancel == true)
+      {
+        caData.uData[3] = 0; // length field
+        caData.uData[4] = 0; // answ_id "cancel"
+        caData.uLength1 = 5; // set correct length
+      }
+      else
+      {
+        caData.uData[3] = (byte)Answer.Length; // length field
+        caData.uData[4] = 1; // answ_id "answer"
+        char[] answerChars = Answer.ToCharArray();
+        for (int p = 0; p < answerChars.Length; p++)
+        {
+          caData.uData[5 + p] = (byte)answerChars[p]; // answer string
+        }
+        caData.uLength1 = (byte)(5 + (byte)answerChars.Length); // set correct length
+      }
+
+      Marshal.StructureToPtr(caData, _ptrDataInstance, true);
+      Marshal.StructureToPtr(caData, _ptrDataReturned, true);
+      int hr = propertySet.Set(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_HOST2CA, _ptrDataInstance, CA_DATA_SIZE, _ptrDataReturned, CA_DATA_SIZE);
+      if (hr != 0)
+      {
+        Log.Log.Debug("FireDTV: unable to send CI Menu answer");
+      }
+      Log.Log.Debug("FireDTV: send CI Menu successful");
+      return true;
+    }
+    #endregion
+
+    #region CiMenuHandlerThread for polling status and handling MMI
+
+    /// <summary>
+    /// interpretes parts of an byte[] as status int
+    /// </summary>
+    /// <param name="sourceData"></param>
+    /// <param name="offset"></param>
+    /// <returns></returns>
+    private MMI_TAGS ToMMITag(byte[] sourceData, int offset)
+    {
+      return (MMI_TAGS)(((Int32)sourceData[offset] << 16) | ((Int32)sourceData[offset + 1] << 8) | ((Int32)sourceData[offset + 2]));
+    }
+
+    /// <summary>
+    /// interpretes length() info which can be of different size
+    /// </summary>
+    /// <param name="sourceData">source byte array</param>
+    /// <param name="offset">index to start</param>
+    /// <param name="bytesRead">returns the number of bytes interpreted</param>
+    /// <returns>length of following object</returns>
+    private int GetLength(byte[] sourceData, int offset, out int bytesRead)
+    {
+      byte bLen = sourceData[offset];
+      // if highest bit set, it means there are > 127 bytes
+      if ((bLen & 0x80) == 0)
+      {
+        bytesRead = 1;
+        return bLen;
+      }
+      else
+      {
+        bLen &= 0x7f; // clear 8th bit; remaining 7 bit tell the number of following bytes to interpret (most probably 2)
+        bytesRead = 1 + bLen;
+        Int32 shiftBy;
+        Int32 iLen = 0;
+        for (Int32 p = 0; p < bLen; p++)
+        {
+          shiftBy = (Int32)(bLen - p - 1) * 8; // number of bits to shift up, i.e. 2 bytes -> 1st byte <<8, 2nd byte <<0
+          iLen = iLen | (sourceData[offset + 1 + p] << shiftBy); // shift byte to right position, concat by "or" operation
+        }
+        return iLen;
+      }
+    }
+
+
+    /// <summary>
+    /// Converts bytes to String
+    /// </summary>
+    /// <param name="sourceData">source byte[]</param>
+    /// <param name="offset">starting offset</param>
+    /// <param name="length">length</param>
+    /// <returns>String</returns>
+    private String BytesToString(byte[] sourceData, int offset, int length)
+    {
+      StringBuilder StringEntry = new StringBuilder();
+      for (int l = offset; l < offset + length; l++)
+      {
+        StringEntry.Append((char)sourceData[l]);
+      }
+      return StringEntry.ToString();
+    }
+
+    /// <summary>
+    /// intepretes string for ci menu entries
+    /// </summary>
+    /// <param name="sourceData">source byte array</param>
+    /// <param name="offset">index to start</param>
+    /// <param name="menuEntries">reference to target string list</param>
+    /// <returns>offset for further readings</returns>
+    private int GetCIText(byte[] sourceData, int offset, ref List<String> menuEntries)
+    {
+	    byte     Length; // We assume that text Length is smaller 127
+	    MMI_TAGS Tag;
+
+	    Tag = ToMMITag(sourceData, offset);
+      if ((Tag != MMI_TAGS.TEXT_MORE) && (Tag != MMI_TAGS.TEXT_LAST))
+      {
+        return -1;
+      }
+
+      Length = sourceData[offset+3];
+
+	    // Check if our assumption is TRUE
+	    if(Length > 127)
+		    return -1; // Length is > 127
+
+      if (Length > 0)
+      {
+        // Create string from byte array 
+        String menuEntry = BytesToString(sourceData, offset + 4, Length);
+        //Log.Log.Debug("FireDTV: MMI Parse GetCIText: {0}", menuEntry.ToString());
+        menuEntries.Add(menuEntry.ToString());
+      }
+      else
+      { 
+        // empty String ? add to keep correct index positions
+        menuEntries.Add(""); 
+      }
+	    return (Length +4);
+    }
+
+    /// <summary>
+    /// returns a safe "printable" character or _
+    /// </summary>
+    /// <param name="b">byte code</param>
+    /// <returns>char</returns>
+    private char ToSafeAscii(byte b)
+    {
+      if (b >= 32 && b <= 126)
+      {
+        return (char)b;
+      }
+      return '_';
+    }
+    /// <summary>
+    /// Output binary buffer to log for debugging
+    /// </summary>
+    /// <param name="sourceData"></param>
+    /// <param name="offset"></param>
+    /// <param name="length"></param>
+    private void DumpBinary(byte[] sourceData, int offset, int length)
+    {
+      StringBuilder row = new StringBuilder();
+      StringBuilder rowText = new StringBuilder();
+
+      for (int position = offset; position < offset + length; position++)
+      {
+        if (position == offset || position % 0x10 == 0)
+        {
+          if (row.Length > 0)
+          {
+            Log.Log.WriteFile(String.Format("{0}|{1}", row.ToString().PadRight(55, ' '), rowText.ToString().PadRight(16, ' ')));
+          }
+          rowText.Length = 0;
+          row.Length = 0;
+          row.AppendFormat("{0:X4}|", position);
+        }
+        row.AppendFormat("{0:X2} ", sourceData[position]); // the hex code
+        rowText.Append(ToSafeAscii(sourceData[position])); // the ascii char
+      }
+      if (row.Length > 0)
+      {
+         Log.Log.WriteFile(String.Format("{0}|{1}", row.ToString().PadRight(55, ' '), rowText.ToString().PadRight(16, ' ')));
+      }
+    }
+    /// <summary>
+    /// Thread that checks for CI menu 
+    /// </summary>
+    private void CiMenuHandler()
+    {
+      Log.Log.Debug("FireDTV: CI handler thread start polling status");
+      int bytesReturned;
+      int hr;
+      int nChoices;
+      List<String> Choices;
+      DE_CI_STATUS CiStatus;
+      
+      // Init CiStatus word to 0
+      Marshal.WriteInt16(_ptrDataCiHandler, 0);
+      IKsPropertySet propertySet = _filterTuner as IKsPropertySet;
+
+      if (propertySet == null)
+      {
+        Log.Log.Debug("FireDTV:CiMenuHandler() properySet=null");
+        return;
+      }
+
+      while (!StopThread)
+      {
+        try
+        {
+          // this code is equal to GetCAMStatus, but implemented separately to avoid memory / threading conflicts with used pointers!
+          hr = propertySet.Get(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_GET_CI_STATUS, _ptrDataCiHandler, CA_DATA_SIZE, _ptrDataCiHandler, CA_DATA_SIZE, out bytesReturned);
+          if (hr != 0)
+          {
+            Log.Log.Debug("FireDTV: error reading CI state.");
+          }
+          else
+          {
+            CiStatus = (DE_CI_STATUS)Marshal.ReadInt16(_ptrDataCiHandler);
+            Log.Log.Debug("FireDTV: CI iStatus:{0}" , CiStatus);
+            if ((CiStatus & DE_CI_STATUS.CI_MMI_REQUEST) != 0)
+            {
+              Log.Log.Debug("FireDTV: CI menu object available!");
+
+              // Get the MMI object
+              FIRESAT_CA_DATA caData = GET_FIRESAT_CA_DATA(5 /*CA_MMI*/, 0);
+
+              Marshal.StructureToPtr(caData, _ptrDataInstance, true);
+              Marshal.StructureToPtr(caData, _ptrDataCiHandler, true);
+              hr = propertySet.Set(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_CA2HOST, _ptrDataInstance, CA_DATA_SIZE, _ptrDataCiHandler, CA_DATA_SIZE);
+              if (hr != 0)
+              {
+                Log.Log.Debug("FireDTV: unable to set \"CA_MMI\"");
+              }
+
+              hr = propertySet.Get(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_CA2HOST, _ptrDataInstance, CA_DATA_SIZE, _ptrDataCiHandler, CA_DATA_SIZE, out bytesReturned);
+              if (hr != 0)
+              {
+                Log.Log.Debug("FireDTV: unable to get \"CA_MMI\": hr {0:X}", hr);
+              }
+              else
+              {
+                // cast ptr back to struct and handle it in c#
+                FIRESAT_CA_DATA caDataReturned = (FIRESAT_CA_DATA)Marshal.PtrToStructure(_ptrDataCiHandler, typeof(FIRESAT_CA_DATA));
+
+                MMI_TAGS uMMITag = ToMMITag(caDataReturned.uData, 0);
+                Int32 caDataLength = caDataReturned.uLength2 << 8 | caDataReturned.uLength1;
+#if DEBUG
+                // dumping binary APDU
+                DumpBinary(caDataReturned.uData, 0, caDataLength);
+#endif
+                // calculate length and offset
+                int countLengthBytes;
+                int mmiLength = GetLength(caDataReturned.uData, 3 /* bytes for mmi_tag */, out countLengthBytes);
+                int mmiOffset = 3 + countLengthBytes; // 3 bytes mmi tag + 1 byte length field ?
+
+                Log.Log.Debug("FireDTV: MMITag:{0}, CaDataLength: {1} ({1:X2}), MMIObjectLength: {2} ({2:X2}), mmiOffset: {3}", uMMITag, caDataLength, mmiLength, mmiOffset);
+
+                int offset = 0; // starting with 0; reading whole struct from start
+                if (uMMITag==MMI_TAGS.CLOSE)
+                {                 
+                    // Close menu
+                    byte nDelay = 0;
+                    byte CloseCmd = caDataReturned.uData[mmiOffset + 0]; 
+                    if (CloseCmd != 0) 
+                    {
+                      nDelay = caDataReturned.uData[mmiOffset + 1]; 
+                    }
+                    if (m_ciMenuCallback != null)
+                    {
+                      Log.Log.Debug("FireDTV: OnCiClose()");
+                      try
+                      {
+                        m_ciMenuCallback.OnCiCloseDisplay(nDelay);
+                      }
+                      catch { }
+                    }
+                    else
+                    {
+                      Log.Log.Debug("FireDTV: OnCiCloseDisplay: cannot do callback!");
+                    }
+                }
+                if (uMMITag==MMI_TAGS.ENQUIRY)
+                {                 
+                    // request input
+                    bool bPasswordMode		= false;
+                    byte answer_text_length = caDataReturned.uData[mmiOffset + 1];
+			              string  strText = "";
+
+                    if ((caDataReturned.uData[mmiOffset + 0] & 0x01) != 0)
+                    {
+                      bPasswordMode = true;
+                    }
+
+                    strText = BytesToString(caDataReturned.uData, mmiOffset + 2, caDataReturned.uLength1 - 2);
+                    if (m_ciMenuCallback != null)
+                    {
+                      Log.Log.Debug("FireDTV: OnCiRequest(bPasswordMode, answer_text_length, strText) {0} {1} {2}", bPasswordMode, answer_text_length, strText );
+                      try
+                      {
+                        m_ciMenuCallback.OnCiRequest(bPasswordMode, answer_text_length, strText);
+                      }
+                      catch { }
+                    }
+                    else
+                    {
+                      Log.Log.Debug("FireDTV: OnCiRequest: cannot do callback!");
+                    }
+                }
+                if (uMMITag == MMI_TAGS.LIST_LAST || uMMITag == MMI_TAGS.MENU_LAST || uMMITag == MMI_TAGS.MENU_MORE || uMMITag == MMI_TAGS.LIST_MORE)
+                {
+                  // step forward; begin with offset+1; stop when 0x9F reached
+                  offset++;
+                  while (caDataReturned.uData[offset] != (byte)0x9F)
+                  {
+                    //Log.Log.Debug("Skip to offset {0} value {1:X2}", offset, caDataReturned.uData[offset]);
+                    offset++;
+                  }
+                  uMMITag = ToMMITag(caDataReturned.uData, offset); // get next MMI tag
+                  Log.Log.Debug("FireDTV: MMI Parse: Got MENU_LAST, skipped to next block on index: {0}; new Tag {1}", offset, uMMITag);
+
+                  nChoices = 0;
+                  Choices = new List<string>();
+                  // Always three line with menu info (DVB Standard)
+                  // Title Text
+                  offset += GetCIText(caDataReturned.uData, offset, ref Choices);
+                  // Subtitle Text
+                  offset += GetCIText(caDataReturned.uData, offset, ref Choices);
+                  // Bottom Text
+                  offset += GetCIText(caDataReturned.uData, offset, ref Choices);
+
+                  // first step through the choices, to get info and count them
+                  int max = 20;
+                  while (max-- > 0)
+                  {
+                    // if the offset gets to mmi object length then end here
+                    if (offset >= mmiLength - 1)
+                      break;
+
+                    offset += GetCIText(caDataReturned.uData, offset, ref Choices);
+                    nChoices++;
+                  }
+                  // when title and choices are ready now, send to client
+                  if (m_ciMenuCallback != null)
+                  {
+                    m_ciMenuCallback.OnCiMenu(Choices[0], Choices[1], Choices[2], nChoices);
+                    for (int c = 3; c < Choices.Count; c++)
+                    {
+                      m_ciMenuCallback.OnCiMenuChoice(c - 3, Choices[c]);
+                    }
+                  }
+                  else
+                  {
+                    Log.Log.Debug("FireDTV: OnCiMenu: cannot do callback!");
+                    for (int c = 0; c < Choices.Count; c++)
+                    {
+                      Log.Log.Debug("FireDTV: {0} : {1}", c, Choices[c]);
+                    }
+                  }
+                }                
+              }
+            }
+          }
+          Thread.Sleep(500);
+        }
+        catch (ThreadAbortException) { }
+        catch (Exception ex)
+        {
+          Log.Log.Debug("FireDTV: error in CiMenuHandler thread\r\n{0}", ex.ToString());
+          return;
+        }
+      }
+    }
+
+    #endregion
+
+    #region IDisposable Member
+
+    /// <summary>
+    /// Disposes DE class and free up memory
+    /// </summary>
+    public void Dispose()
+    {
+      if (CiMenuThread != null)
+      {
+        try
+        {
+          CiMenuThread.Abort();
+        }
+        catch
+        {}
+      }
+      Marshal.FreeCoTaskMem(_ptrDataInstance);
+      Marshal.FreeCoTaskMem(_ptrDataReturned);
+      Marshal.FreeCoTaskMem(_ptrDataCiHandler);
+    }
+
+    #endregion
   }
 }
