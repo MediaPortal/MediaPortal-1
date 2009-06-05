@@ -71,6 +71,8 @@ namespace SetupTv.Sections
       this.label11 = new System.Windows.Forms.Label();
       this.tpRecording = new System.Windows.Forms.TabPage();
       this.groupBoxRecordSettings = new System.Windows.Forms.GroupBox();
+      this.buttonSameTimeshiftFolder = new System.Windows.Forms.Button();
+      this.buttonSameRecFolder = new System.Windows.Forms.Button();
       this.textBoxRecordingFormat = new System.Windows.Forms.TextBox();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.labelTSFolder = new System.Windows.Forms.Label();
@@ -568,6 +570,8 @@ namespace SetupTv.Sections
       // 
       // groupBoxRecordSettings
       // 
+      this.groupBoxRecordSettings.Controls.Add(this.buttonSameTimeshiftFolder);
+      this.groupBoxRecordSettings.Controls.Add(this.buttonSameRecFolder);
       this.groupBoxRecordSettings.Controls.Add(this.textBoxRecordingFormat);
       this.groupBoxRecordSettings.Controls.Add(this.pictureBox1);
       this.groupBoxRecordSettings.Controls.Add(this.labelTSFolder);
@@ -585,6 +589,29 @@ namespace SetupTv.Sections
       this.groupBoxRecordSettings.TabIndex = 26;
       this.groupBoxRecordSettings.TabStop = false;
       this.groupBoxRecordSettings.Text = "Card settings";
+      // 
+      // buttonSameTimeshiftFolder
+      // 
+      this.buttonSameTimeshiftFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonSameTimeshiftFolder.DialogResult = System.Windows.Forms.DialogResult.OK;
+      this.buttonSameTimeshiftFolder.Location = new System.Drawing.Point(227, 315);
+      this.buttonSameTimeshiftFolder.Name = "buttonSameTimeshiftFolder";
+      this.buttonSameTimeshiftFolder.Size = new System.Drawing.Size(181, 20);
+      this.buttonSameTimeshiftFolder.TabIndex = 28;
+      this.buttonSameTimeshiftFolder.Text = "Same timeshift folder for all cards";
+      this.buttonSameTimeshiftFolder.UseVisualStyleBackColor = true;
+      this.buttonSameTimeshiftFolder.Click += new System.EventHandler(this.buttonSameTimeshiftFolder_Click);
+      // 
+      // buttonSameRecFolder
+      // 
+      this.buttonSameRecFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonSameRecFolder.Location = new System.Drawing.Point(23, 315);
+      this.buttonSameRecFolder.Name = "buttonSameRecFolder";
+      this.buttonSameRecFolder.Size = new System.Drawing.Size(185, 20);
+      this.buttonSameRecFolder.TabIndex = 28;
+      this.buttonSameRecFolder.Text = "Same recording folder for all cards";
+      this.buttonSameRecFolder.UseVisualStyleBackColor = true;
+      this.buttonSameRecFolder.Click += new System.EventHandler(this.buttonSameRecFolder_Click);
       // 
       // textBoxRecordingFormat
       // 
@@ -895,5 +922,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Button buttonChangeChannel;
     private System.Windows.Forms.ComboBox comboBoxFirstWorkingDay;
     private System.Windows.Forms.Label label12;
+    private System.Windows.Forms.Button buttonSameTimeshiftFolder;
+    private System.Windows.Forms.Button buttonSameRecFolder;
   }
 }

@@ -313,6 +313,7 @@ namespace SetupTv.Sections
             */
         }
 
+        // Browse Recording folder
         private void buttonBrowse_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog dlg = new FolderBrowserDialog();
@@ -377,6 +378,7 @@ namespace SetupTv.Sections
             }
         }
 
+        // Browse TimeShift folder
         private void buttonTimeShiftBrowse_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog dlg = new FolderBrowserDialog();
@@ -386,6 +388,9 @@ namespace SetupTv.Sections
             if (dlg.ShowDialog(this) == DialogResult.OK)
             {
                 textBoxTimeShiftFolder.Text = dlg.SelectedPath;
+                /*
+                 * This code is never executed: recording test instead of timeshifting
+                 * 
                 CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
                 if (info.card.RecordingFolder != textBoxFolder.Text)
                 {
@@ -395,9 +400,11 @@ namespace SetupTv.Sections
                     _needRestart = true;
                     LoadComboBoxDrive();
                 }
+                */
             }
         }
 
+        // When TimeShift folder has been changed
         private void textBoxTimeShiftFolder_TextChanged(object sender, EventArgs e)
         {
             CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
@@ -406,6 +413,44 @@ namespace SetupTv.Sections
                 info.card.TimeShiftFolder = textBoxTimeShiftFolder.Text;
                 info.card.Persist();
                 _needRestart = true;
+            }
+        }
+
+        // Click on Same recording folder for all cards
+        private void buttonSameRecFolder_Click(object sender, EventArgs e)
+        {
+            // Change RecordingFolder for all cards
+            for (int iIndex = 0; iIndex < comboBoxCards.Items.Count; iIndex++)
+            {
+                CardInfo info = (CardInfo)comboBoxCards.Items[iIndex];
+                if (info.card.RecordingFolder != textBoxFolder.Text)
+                {
+                    info.card.RecordingFolder = textBoxFolder.Text;
+                    info.card.Persist();
+                    if (!_needRestart)
+                    {
+                        _needRestart = true;
+                    }
+                }
+            }
+        }
+
+        // Click on Same timeshift folder for all cards
+        private void buttonSameTimeshiftFolder_Click(object sender, EventArgs e)
+        {
+            // Change timeshiftFolder for all cards
+            for (int iIndex = 0; iIndex < comboBoxCards.Items.Count; iIndex++)
+            {
+                CardInfo info = (CardInfo)comboBoxCards.Items[iIndex];
+                if (info.card.TimeShiftFolder != textBoxTimeShiftFolder.Text)
+                {
+                    info.card.TimeShiftFolder = textBoxTimeShiftFolder.Text;
+                    info.card.Persist();
+                    if (!_needRestart)
+                    {
+                        _needRestart = true;
+                    }
+                }
             }
         }
 
