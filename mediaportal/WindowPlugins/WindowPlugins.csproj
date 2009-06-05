@@ -297,7 +297,7 @@
     <Compile Include="GUIBurner\SetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUIDVD\GUIDVDFullscreen.cs" />
+    <Compile Include="GUIDisc\GUIDisc.cs" />
     <Compile Include="GUIExtensions\GUIExtensions.cs" />
     <Compile Include="GUIMusic\GUIMusicMenu.cs" />
     <Compile Include="GUIPictures\GUISlidePicture.cs" />
@@ -700,12 +700,6 @@
     <EmbeddedResource Include="GUIBurner\BurnerDisabled.gif" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="GUIDVD\DVD.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="GUIDVD\DVDDisabled.gif" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="GUINumberPlace\NumberPlace.gif" />
   </ItemGroup>
   <ItemGroup>
@@ -737,6 +731,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GUIRadioLastFM\BallonRadio.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIDisc\DVD.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIDisc\DVDDisabled.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
