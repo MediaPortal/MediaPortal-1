@@ -168,18 +168,25 @@ namespace MediaPortal.Video.Database
           }
           string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, movieDetails.Title);
           string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, movieDetails.Title);
-          Util.Utils.FileDelete(largeCoverArt);
-          Util.Utils.FileDelete(coverArt);
-          line1 = GUILocalizeStrings.Get(1009);
-          OnProgress(line1, movieDetails.Title, string.Empty, -1);
+
+          if (movieDetails.ID >= 0)
+          {
+            Util.Utils.FileDelete(largeCoverArt);
+            Util.Utils.FileDelete(coverArt);
+            line1 = GUILocalizeStrings.Get(1009);
+            OnProgress(line1, movieDetails.Title, string.Empty, -1);
+          }
           //Only get actors if we really want to.
           if (getActors)
           {
             _fetchActorsInMovie();
           }
           OnDisableCancel(this);
-          DownloadCoverArt(Thumbs.MovieTitle, movieDetails.ThumbURL, movieDetails.Title);
-          VideoDatabase.SetMovieInfoById(movieDetails.ID, ref movieDetails);
+          if (movieDetails.ID >= 0)
+          {
+            DownloadCoverArt(Thumbs.MovieTitle, movieDetails.ThumbURL, movieDetails.Title);
+            VideoDatabase.SetMovieInfoById(movieDetails.ID, ref movieDetails);
+          }
         }
         else
         {
@@ -611,7 +618,7 @@ namespace MediaPortal.Video.Database
     /// Download IMDB info for a movie
     /// </summary>
     public static bool RefreshIMDB(IMDB.IProgress progress, ref IMDBMovie currentMovie, bool fuzzyMatching,
-                                   bool getActors)
+                                   bool getActors, bool addToDatabase)
     {
       Log.Info("RefreshIMDB() - Refreshing MovieInfo for {0}-{1}", currentMovie.Title, currentMovie.SearchString);
       string strMovieName = currentMovie.SearchString;
@@ -670,12 +677,12 @@ namespace MediaPortal.Video.Database
           return true;
         }
       }
-      if (currentMovie.ID == -1)
+      if (currentMovie.ID == -1 && addToDatabase)
       {
         currentMovie.ID = VideoDatabase.AddMovieFile(strFileName);
       }
       currentMovie.SearchString = strMovieName;
-      if (currentMovie.ID >= 0)
+      if (currentMovie.ID >= 0 || !addToDatabase)
       {
         if (!Win32API.IsConnectedToInternet())
         {
@@ -938,6 +945,7 @@ namespace MediaPortal.Video.Database
         file = filename;
       }
 
+      bool addToDB = true;
       int id = movieDetails.ID;
       if (id < 0)
       {
@@ -945,32 +953,37 @@ namespace MediaPortal.Video.Database
         {
           Log.Info("Adding file:{0}", file);
           id = VideoDatabase.AddMovieFile(file);
+
+          VirtualDirectory dir = new VirtualDirectory();
+          dir.SetExtensions(Util.Utils.VideoExtensions);
+          List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
+          foreach (GUIListItem item in items)
+          {
+            if (item.IsFolder)
+            {
+              continue;
+            }
+            if (Util.Utils.ShouldStack(item.Path, file) && item.Path != file)
+            {
+              string strPath, strFileName;
+
+              DatabaseUtility.Split(item.Path, out strPath, out strFileName);
+              DatabaseUtility.RemoveInvalidChars(ref strPath);
+              DatabaseUtility.RemoveInvalidChars(ref strFileName);
+              int pathId = VideoDatabase.AddPath(strPath);
+              VideoDatabase.AddFile(id, pathId, strFileName);
+            }
+          }
+          movieDetails.ID = id;
         }
         else
-          Log.Info("File doesn't exists. So no info is stored in db.");
-        VirtualDirectory dir = new VirtualDirectory();
-        dir.SetExtensions(Util.Utils.VideoExtensions);
-        List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
-        foreach (GUIListItem item in items)
         {
-          if (item.IsFolder)
-          {
-            continue;
-          }
-          if (Util.Utils.ShouldStack(item.Path, file) && item.Path != file)
-          {
-            string strPath, strFileName;
-
-            DatabaseUtility.Split(item.Path, out strPath, out strFileName);
-            DatabaseUtility.RemoveInvalidChars(ref strPath);
-            DatabaseUtility.RemoveInvalidChars(ref strFileName);
-            int pathId = VideoDatabase.AddPath(strPath);
-            VideoDatabase.AddFile(id, pathId, strFileName);
-          }
+          Log.Info("File doesn't exists. So no info is stored in db.");
+          getActors = false;
+          addToDB = false;
         }
-        movieDetails.ID = id;
       }
-      if (RefreshIMDB(progress, ref movieDetails, isFuzzyMatching, getActors))
+      if (RefreshIMDB(progress, ref movieDetails, isFuzzyMatching, getActors, addToDB))
       {
         if (movieDetails != null)
         {

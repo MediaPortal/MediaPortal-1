@@ -1111,7 +1111,7 @@ namespace MediaPortal.Configuration.Sections
         VideoDatabase.SetMovieInfoById(movieDetails.ID, ref movieDetails);
         movieDetails.SearchString = searchString;
       }
-      if (IMDBFetcher.RefreshIMDB(this, ref movieDetails, fuzzyMatch, false))
+      if (IMDBFetcher.RefreshIMDB(this, ref movieDetails, fuzzyMatch, false, true))
       {
         if (movieDetails != null)
         {
