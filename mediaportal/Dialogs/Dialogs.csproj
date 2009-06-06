@@ -1,7 +1,7 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -138,6 +138,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dialogs\GUIDialogCIMenu.cs" />
+    <Compile Include="Dialogs\GUIDialogMenu.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Dialogs\GUIDialogPlayStop.cs" />
     <Compile Include="Dialogs\GUIDialogDateTime.cs">
       <SubType>Code</SubType>
@@ -149,9 +153,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Dialogs\GUIDialogFileStacking.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Dialogs\GUIDialogMenu.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Dialogs\GUIDialogMenuBottomRight.cs">
