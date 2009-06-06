@@ -118,6 +118,7 @@ namespace TvPlugin
     private bool _isDialogVisible = false;
     //bool _isMsnChatPopup = false;       // msn related can be removed
     private GUIDialogMenu dlg;
+    private GUIDialogCIMenu dlgCiMenu;
     private GUIDialogNotify _dialogNotify = null;
     private GUIDialogMenuBottomRight _dialogBottomMenu = null;
     private GUIDialogYesNo _dlgYesNo = null;
@@ -2024,27 +2025,28 @@ namespace TvPlugin
     /// <param name="Menu">complete CI menu object</param>
     public void CiMenuCallback(CiMenu Menu)
     {
-      if (dlg == null)
+      if (dlgCiMenu == null)
       {
-        return;
-      }
+        dlgCiMenu = (GUIDialogCIMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_CIMENU);
+      } 
+      
       switch (Menu.State)
       {
           // choices available, so show them
         case TvLibrary.Interfaces.CiMenuState.Ready:
-          dlg.Reset();
-          dlg.SetHeading(Menu.Title + ": " + Menu.Subtitle); // CI Menu
+          dlgCiMenu.Reset();
+          dlgCiMenu.SetHeading(Menu.Title, Menu.Subtitle, Menu.BottomText); // CI Menu
 
           for (int i = 0; i < Menu.NumChoices; i++) // CI Menu Entries
-            dlg.Add(Menu.MenuEntries[i].Message); // take only message, numbers come from dialog
+            dlgCiMenu.Add(Menu.MenuEntries[i].Message); // take only message, numbers come from dialog
 
           // show dialog and wait for result       
-          dlg.DoModal(GUIWindowManager.ActiveWindow);
+          dlgCiMenu.DoModal(GUIWindowManager.ActiveWindow);
           if (Menu.State != TvLibrary.Interfaces.CiMenuState.Error)
           {
-            if (dlg.SelectedId != -1)
+            if (dlgCiMenu.SelectedId != -1)
             {
-              TVHome.Card.SelectCiMenu(Convert.ToByte(dlg.SelectedId));
+              TVHome.Card.SelectCiMenu(Convert.ToByte(dlgCiMenu.SelectedId));
             }
             else
             {
