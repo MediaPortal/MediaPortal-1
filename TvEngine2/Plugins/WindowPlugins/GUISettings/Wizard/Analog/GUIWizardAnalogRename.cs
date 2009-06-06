@@ -44,7 +44,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
     [SkinControl(5)] protected GUIButtonControl btnNext = null;
     [SkinControl(25)] protected GUIButtonControl btnBack = null;
 
-    private TVCaptureDevice captureCard = null;
+    private TVCaptureDevice captureCard;
 
     protected ArrayList listTvChannels = new ArrayList();
 
@@ -56,7 +56,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\wizard_tvcard_analog_rename.xml");
+      return Load(GUIGraphicsContext.Skin + @"\wizard_tvcard_analog_rename_TVE2.xml");
     }
 
     protected override void OnPageLoad()
@@ -116,7 +116,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
         item.IconImage = strLogo;
         item.IconImageBig = strLogo;
         item.MusicTag = chan;
-        item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+        item.OnItemSelected += item_OnItemSelected;
         listChannelsFound.Add(item);
       }
       while (selectedItem > 0 && selectedItem >= listTvChannels.Count)

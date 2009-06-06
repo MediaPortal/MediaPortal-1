@@ -46,7 +46,7 @@ namespace WindowPlugins.GUISettings.TV
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\settings_recording.xml");
+      return Load(GUIGraphicsContext.Skin + @"\settings_recording_TVE2.xml");
     }
 
     protected override void OnPageLoad()

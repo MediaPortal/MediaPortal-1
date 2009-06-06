@@ -45,7 +45,7 @@ namespace WindowPlugins.GUISettings.TV
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\settings_tvEpg.xml");
+      return Load(GUIGraphicsContext.Skin + @"\settings_tvEpg_TVE2.xml");
     }
 
     protected override void OnPageLoad()

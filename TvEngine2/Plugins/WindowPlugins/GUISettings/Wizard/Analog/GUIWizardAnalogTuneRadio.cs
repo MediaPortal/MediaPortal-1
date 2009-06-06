@@ -64,7 +64,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\wizard_tvcard_analog_scanradio.xml");
+      return Load(GUIGraphicsContext.Skin + @"\wizard_tvcard_analog_scanradio_TVE2.xml");
     }
 
     protected override void OnPageDestroy(int newWindowId)

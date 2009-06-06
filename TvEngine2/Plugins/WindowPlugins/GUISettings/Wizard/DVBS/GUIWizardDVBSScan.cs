@@ -42,7 +42,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\wizard_tvcard_DVBS_scan.xml");
+      return Load(GUIGraphicsContext.Skin + @"\wizard_tvcard_DVBS_scan_TVE2.xml");
     }
 
     protected override void OnScanDone()

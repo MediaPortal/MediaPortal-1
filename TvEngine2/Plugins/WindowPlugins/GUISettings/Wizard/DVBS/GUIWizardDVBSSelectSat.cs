@@ -76,7 +76,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\wizard_tvcard_dvbs_LNB3.xml");
+      return Load(GUIGraphicsContext.Skin + @"\wizard_tvcard_dvbs_LNB3_TVE2.xml");
     }
 
     protected override void OnPageLoad()

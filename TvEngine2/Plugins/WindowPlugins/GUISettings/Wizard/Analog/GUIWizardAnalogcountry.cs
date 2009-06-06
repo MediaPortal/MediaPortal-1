@@ -47,7 +47,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\wizard_tvcard_analog_country.xml");
+      return Load(GUIGraphicsContext.Skin + @"\wizard_tvcard_analog_country_TVE2.xml");
     }
 
     protected override void OnPageLoad()

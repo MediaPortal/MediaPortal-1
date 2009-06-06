@@ -263,6 +263,9 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUISettings\GUISettings.cs" />
+    <Compile Include="GUISettings\Wizard\GUIWizardFinished.cs" />
+    <Compile Include="GUISettings\Wizard\GUIWizardWelcome.cs" />
     <Compile Include="GUITV\Configuration\LaunchGuideScheduler.cs" />
     <Compile Include="GUITV\Configuration\Radio.cs">
       <SubType>UserControl</SubType>
@@ -584,6 +587,8 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="GUISettings\Settings.gif" />
+    <EmbeddedResource Include="GUISettings\SettingsDisabled.gif" />
     <Content Include="Resources\config.ico" />
     <Content Include="Resources\icon_folder.png" />
     <Content Include="Resources\icon_help.png" />

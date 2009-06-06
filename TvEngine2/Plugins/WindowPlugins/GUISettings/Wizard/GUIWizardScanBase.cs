@@ -49,13 +49,9 @@ namespace WindowPlugins.GUISettings.Wizard
     [SkinControl(25)] protected GUIButtonControl btnBack = null;
     [SkinControl(20)] protected GUIProgressControl progressBar = null;
 
-    private int card = 0;
-    private bool updateList = false;
-    private bool _autoTuneRunning = false;
-
-    public GUIWizardScanBase()
-    {
-    }
+    private int card;
+    private bool updateList;
+    private bool _autoTuneRunning;
 
     protected override void OnPageDestroy(int newWindowId)
     {
@@ -73,7 +69,7 @@ namespace WindowPlugins.GUISettings.Wizard
       progressBar.Disabled = false;
       progressBar.IsVisible = true;
       DoUpdateList();
-      Thread WorkerThread = new Thread(new ThreadStart(ScanThread));
+      Thread WorkerThread = new Thread(ScanThread);
       WorkerThread.SetApartmentState(ApartmentState.STA);
       //WorkerThread.IsBackground=true;
       WorkerThread.Start();
@@ -92,7 +88,6 @@ namespace WindowPlugins.GUISettings.Wizard
     public void ScanThread()
     {
       card = Int32.Parse(GUIPropertyManager.GetProperty("#WizardCard"));
-      string country = GUIPropertyManager.GetProperty("#WizardCountry");
       //Recorder.Paused = true;
 
       updateList = false;

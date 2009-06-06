@@ -44,7 +44,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBC
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\wizard_tvcard_DVBC_country.xml");
+      return Load(GUIGraphicsContext.Skin + @"\wizard_tvcard_DVBC_country_TVE2.xml");
     }
 
     protected override void OnPageLoad()

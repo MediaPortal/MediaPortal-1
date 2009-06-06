@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>712</id>
+  <defaultcontrol>3</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:5</define>
+  <define>#header.image:settings_logo.png</define>
+  <define>#header.hover:hover_settings.png</define>
+  <!-- cheat a little, we don't use two of the items in the imported file to blank their labels -->
+  <define>#itemcount:-</define>
+  <define>#selecteditem:-</define>
+  <controls>
+    <import>common.window.xml</import>
+    <control>
+      <description>buttons</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="-300,0">WindowClose</animation>
+      <posX>280</posX>
+      <posY>165</posY>
+      <layout>StackLayout</layout>
+      <control>
+        <description>Wizard</description>
+        <type>button</type>
+        <id>3</id>
+        <width>197</width>
+        <label>1200</label>
+        <hyperlink>711</hyperlink>
+        <onup>17</onup>
+      </control>
+      <control>
+        <description>TV</description>
+        <type>button</type>
+        <id>10</id>
+        <width>197</width>
+        <label>605</label>
+        <hyperlink>713</hyperlink>
+      </control>
+    </control>
+  </controls>
+</window>

@@ -51,7 +51,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\wizard_tvcards_detected.xml");
+      return Load(GUIGraphicsContext.Skin + @"\wizard_tvcards_detected_TVE2.xml");
     }
 
     protected override void OnPageLoad()
@@ -66,7 +66,6 @@ namespace MediaPortal.GUI.Settings.Wizard
 
       ArrayList availableVideoDevices = FilterHelper.GetVideoInputDevices();
       ArrayList availableVideoDeviceMonikers = FilterHelper.GetVideoInputDeviceMonikers();
-      ArrayList availableAudioDevices = FilterHelper.GetAudioInputDevices();
       string recFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
       recFolder += @"\My Recordings";
       try
@@ -295,11 +294,6 @@ namespace MediaPortal.GUI.Settings.Wizard
           }
         }
       }
-      if (GUIPropertyManager.GetProperty("#Wizard.Remote.Done") != "yes")
-      {
-        GUIWindowManager.ActivateWindow((int) Window.WINDOW_WIZARD_REMOTE);
-        return;
-      }
 
       if (GUIPropertyManager.GetProperty("#Wizard.EPG.Done") != "yes")
       {
@@ -308,7 +302,7 @@ namespace MediaPortal.GUI.Settings.Wizard
       }
 
       Log.Info("ScanNextCardType:goto finished");
-      GUIWindowManager.ActivateWindow((int) Window.WINDOW_WIZARD_FINISHED);
+      GUIWindowManager.ActivateWindow((int) Window.WINDOW_WIZARD_FINISHED_TVE2);
     }
   }
 }

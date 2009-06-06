@@ -42,13 +42,7 @@ namespace WindowPlugins.GUISettings.Epg
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\settings_tvepg_select.xml");
-    }
-
-
-    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
-    {
-      base.OnClicked(controlId, control, actionType);
+      return Load(GUIGraphicsContext.Skin + @"\settings_tvepg_select_TVE2.xml");
     }
 
 

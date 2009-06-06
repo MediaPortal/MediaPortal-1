@@ -43,7 +43,7 @@ namespace WindowPlugins.GUISettings.Epg
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\wizard_epg_select.xml");
+      return Load(GUIGraphicsContext.Skin + @"\wizard_epg_select_TVE2.xml");
     }
 
 
@@ -76,8 +76,6 @@ namespace WindowPlugins.GUISettings.Epg
 
     private void OnNext()
     {
-      string country = GUIPropertyManager.GetProperty("#WizardCountryCode");
-
       MapChannels();
       GUIPropertyManager.SetProperty("#Wizard.EPG.Done", "yes");
       GUIWizardCardsDetected.ScanNextCardType();

@@ -64,7 +64,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\wizard_tvcard_dvbs_LNB2.xml");
+      return Load(GUIGraphicsContext.Skin + @"\wizard_tvcard_dvbs_LNB2_TVE2.xml");
     }
 
     protected override void OnPageLoad()
@@ -338,15 +338,15 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
           lnbKey = "lnbKind";
         }
         ivalue = 0;
-        if (cmLnbBandKU.Selected == true)
+        if (cmLnbBandKU.Selected)
         {
           ivalue = 0;
         }
-        if (cmLnbBandC.Selected == true)
+        if (cmLnbBandC.Selected)
         {
           ivalue = 1;
         }
-        if (cmLnbBandCircular.Selected == true)
+        if (cmLnbBandCircular.Selected)
         {
           ivalue = 2;
         }

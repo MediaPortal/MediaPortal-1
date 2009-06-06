@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-  <id>700</id>
+  <id>713</id>
   <defaultcontrol>24</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <define>#header.label:6014</define>
@@ -15,9 +15,9 @@
       <animation effect="fade" time="250">WindowClose</animation>
       <animation effect="slide" time="150" start="800,0">WindowOpen</animation>
       <animation effect="slide" time="250" end="800,0">WindowClose</animation>
-      <posX>99</posX>
-      <posY>188</posY>
-      <layout>GridLayout(2, 6, 52, 8, 1)</layout>
+      <posX>56</posX>
+      <posY>151</posY>
+      <layout>GridLayout(2, 6, 46, 6, 1)</layout>
       <control>
         <description>MPEG-2 Video Codecs</description>
         <type>button</type>
@@ -26,22 +26,10 @@
         <onup>17</onup>
       </control>
       <control>
-        <description>H.264 Video Codecs</description>
-        <type>button</type>
-        <id>35</id>
-        <label>6036</label>
-      </control>
-      <control>
         <description>Audio Codecs</description>
         <type>button</type>
         <id>25</id>
         <label>6001</label>
-      </control>
-      <control>
-        <description>LATM AAC Audio Codecs</description>
-        <type>button</type>
-        <id>36</id>
-        <label>6039</label>
       </control>
       <control>
         <description>Audio Renderer</description>

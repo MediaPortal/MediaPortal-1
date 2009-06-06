@@ -50,7 +50,7 @@ namespace WindowPlugins.GUISettings.TV
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\settings_tvSort.xml");
+      return Load(GUIGraphicsContext.Skin + @"\settings_tvSort_TVE2.xml");
     }
 
     protected override void OnPageLoad()
@@ -290,7 +290,7 @@ namespace WindowPlugins.GUISettings.TV
         dlg.Add("All channels");
         for (int i = 0; i < tvGroups.Count; ++i)
         {
-          TVGroup group = (TVGroup) tvGroups[i];
+          TVGroup group = tvGroups[i];
           dlg.Add(group.GroupName);
           if (currentGroup != null)
           {
@@ -310,7 +310,7 @@ namespace WindowPlugins.GUISettings.TV
 
         if (dlg.SelectedLabel > 0)
         {
-          currentGroup = (TVGroup) tvGroups[dlg.SelectedLabel - 1];
+          currentGroup = tvGroups[dlg.SelectedLabel - 1];
           UpdateList();
         }
       }
@@ -340,8 +340,8 @@ namespace WindowPlugins.GUISettings.TV
 
     public int Compare(TVChannel x, TVChannel y)
     {
-      TVChannel ch1 = (TVChannel) x;
-      TVChannel ch2 = (TVChannel) y;
+      TVChannel ch1 = x;
+      TVChannel ch2 = y;
       if (ch1.Sort < ch2.Sort)
       {
         return -1;
