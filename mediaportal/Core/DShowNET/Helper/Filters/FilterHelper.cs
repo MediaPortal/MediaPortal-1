@@ -158,7 +158,7 @@ namespace DShowNET.Helper
         if (String.Compare(filter.Name, "DVD Navigator", true) == 0 ||
             String.Compare(filter.Name, "InterVideo Navigator", true) == 0 ||
             String.Compare(filter.Name, "NVIDIA Navigator", true) == 0 ||
-            String.Compare(filter.Name, 0, "CyberLink DVD Navigator", 0, "CyberLink DVD Navigator".Length) == 0)
+            filter.Name.ToLower().Contains("cyberlink dvd navigator"))
         {
           navigators.Add(filter.Name);
         }
