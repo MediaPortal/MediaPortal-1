@@ -1188,8 +1188,11 @@ namespace TvLibrary.Implementations.DVB
         {
           charChode=Marshal.ReadByte((IntPtr)(pStringArray.ToInt32() + i));
           if (Entries[idx] == null) Entries[idx] = new StringBuilder();
-          Entries[idx].Append((char)charChode);
-          if (charChode == 0) // if string ends before maxlength
+          if (charChode != 0) // we don't need \0 at end of string
+          {
+            Entries[idx].Append((char)charChode);
+          }
+          else // if string ends before maxlength
           {
             Log.Log.Debug("TechnoTrend: {0}: {1} ", idx, Entries[idx].ToString());
             // is title part finished?
