@@ -25,25 +25,24 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.IO;
 using System.Drawing;
-using System.Drawing.Text;
-using System.Text;
+using System.IO;
 using System.Windows.Forms;
 using System.Xml;
-using System.Collections.Specialized;
 
 namespace MPTail
 {
   public partial class frmMain : Form
   {
-    private string mpLogPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)+@"\Team Mediaportal\Mediaportal\Log\";
-    private string tveLogPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Team Mediaportal\MediaPortal TV Server\log\";
+    private readonly string mpLogPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
+                                        @"\Team Mediaportal\Mediaportal\Log\";
+
+    private readonly string tveLogPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
+                                         @"\Team Mediaportal\MediaPortal TV Server\log\";
+
     private LastSettings lastSettings;
-    private List<string> customFiles;
-    private List<TailedRichTextBox> loggerCollection;
+    private readonly List<string> customFiles;
+    private readonly List<TailedRichTextBox> loggerCollection;
 
     public frmMain()
     {
@@ -51,23 +50,23 @@ namespace MPTail
       loggerCollection = new List<TailedRichTextBox>();
       customFiles = new List<string>();
 
-      lastSettings.left = this.Left;
-      lastSettings.top = this.Top;
-      lastSettings.width = this.Width;
-      lastSettings.height = this.Height;
+      lastSettings.left = Left;
+      lastSettings.top = Top;
+      lastSettings.width = Width;
+      lastSettings.height = Height;
       lastSettings.categoryIndex = 0;
       lastSettings.tabIndex = 0;
 
       LoadSettings();
       AddAllLoggers();
-
     }
 
     #region Persistance
+
     private void LoadSettings()
     {
-      string font_family=this.Font.FontFamily.Name;
-      float font_size=this.Font.Size;
+      string font_family = Font.FontFamily.Name;
+      float font_size = Font.Size;
 
       if (File.Exists("MPTailConfig.xml"))
       {
@@ -99,7 +98,7 @@ namespace MPTail
           lastSettings.width = Int32.Parse(node.Attributes["WindowWidth"].Value);
         }
         else
-          this.WindowState = lastSettings.windowState;
+          WindowState = lastSettings.windowState;
         lastSettings.categoryIndex = Int32.Parse(node.Attributes["CategoryTabIndex"].Value);
         lastSettings.tabIndex = Int32.Parse(node.Attributes["LoggerIndex"].Value);
 
@@ -107,26 +106,27 @@ namespace MPTail
         foreach (XmlNode cnode in customNodes)
           customFiles.Add(cnode.ChildNodes[0].ChildNodes[0].Attributes["filename"].Value);
       }
-      this.Font = new Font(new FontFamily(font_family), font_size);
+      Font = new Font(new FontFamily(font_family), font_size);
     }
+
     private void SaveSettings()
     {
       XmlDocument doc = new XmlDocument();
       XmlNode root = doc.CreateElement("mptail");
       XmlNode config = doc.CreateElement("config");
 
-      XmlUtils.NewAttribute(config,"font-family",this.Font.FontFamily.Name);
-      XmlUtils.NewAttribute(config,"font-size",this.Font.Size);
-      XmlUtils.NewAttribute(config,"clear-log-on-create",cbClearOnCreate.Checked);
+      XmlUtils.NewAttribute(config, "font-family", Font.FontFamily.Name);
+      XmlUtils.NewAttribute(config, "font-size", Font.Size);
+      XmlUtils.NewAttribute(config, "clear-log-on-create", cbClearOnCreate.Checked);
 
-      if (this.WindowState == FormWindowState.Normal)
+      if (WindowState == FormWindowState.Normal)
       {
-        XmlUtils.NewAttribute(config, "WindowPosX", this.Left);
-        XmlUtils.NewAttribute(config, "WindowPosY", this.Top);
-        XmlUtils.NewAttribute(config, "WindowHeight", this.Height);
-        XmlUtils.NewAttribute(config, "WindowWidth", this.Width);
+        XmlUtils.NewAttribute(config, "WindowPosX", Left);
+        XmlUtils.NewAttribute(config, "WindowPosY", Top);
+        XmlUtils.NewAttribute(config, "WindowHeight", Height);
+        XmlUtils.NewAttribute(config, "WindowWidth", Width);
       }
-      XmlUtils.NewAttribute(config, "WindowState", this.WindowState.ToString());
+      XmlUtils.NewAttribute(config, "WindowState", WindowState.ToString());
 
       XmlUtils.NewAttribute(config, "CategoryTabIndex", PageCtrlCategory.SelectedIndex);
       switch (PageCtrlCategory.SelectedIndex)
@@ -143,11 +143,12 @@ namespace MPTail
       }
 
       foreach (TailedRichTextBox tr in loggerCollection)
-        tr.SaveSettings(doc,root);
+        tr.SaveSettings(doc, root);
       root.AppendChild(config);
       doc.AppendChild(root);
       doc.Save("MPTailConfig.xml");
     }
+
     #endregion
 
     private void AddLogger(string filename, TabControl ctrl)
@@ -158,7 +159,7 @@ namespace MPTail
         cat = LoggerCategory.TvEngine;
       else if (ctrl == CustomTabCtrl)
         cat = LoggerCategory.Custom;
-      TailedRichTextBox tr = new TailedRichTextBox(filename,cat,tab);
+      TailedRichTextBox tr = new TailedRichTextBox(filename, cat, tab);
       tr.WordWrap = false;
       tab.Controls.Add(tr);
       tr.Dock = DockStyle.Fill;
@@ -187,30 +188,33 @@ namespace MPTail
       foreach (string logfile in customFiles)
         AddLogger(logfile, CustomTabCtrl);
     }
+
     private string FormatFileSize(long fs)
     {
       if (fs < 1024)
-        return " ("+fs.ToString() + " bytes)";
-      if (fs < 1024 * 1024)
+        return " (" + fs.ToString() + " bytes)";
+      if (fs < 1024*1024)
       {
-        long kb = fs / 1024;
+        long kb = fs/1024;
         return " (" + kb.ToString() + " kb)";
       }
-      long mb = (fs / 1024) / 1024;
+      long mb = (fs/1024)/1024;
       return " (" + mb.ToString() + " MB)";
     }
-    private string FormatCombinedLogLine(string logger, DateTime dt, string line,int maxLoggerSize)
+
+    private string FormatCombinedLogLine(string logger, DateTime dt, string line, int maxLoggerSize)
     {
-      string s = dt.ToShortDateString() + " " + dt.ToLongTimeString()+".";
+      string s = dt.ToShortDateString() + " " + dt.ToLongTimeString() + ".";
       string milli = dt.Millisecond.ToString();
       while (milli.Length < 3)
         milli += "0";
       s += milli;
       while (logger.Length < maxLoggerSize)
-        logger = " "+logger;
+        logger = " " + logger;
       s += " [" + logger + "] " + line;
       return s;
     }
+
     private void ProcessAllLoggers()
     {
       SortedDictionary<MyDateTime, string> mpCombined = new SortedDictionary<MyDateTime, string>();
@@ -225,7 +229,7 @@ namespace MPTail
         tr.ParentTab.Text = newCaption;
         if (tr.Category == LoggerCategory.Custom) continue;
 
-        string[] lines = newText.Split(new char[] { '\n' });
+        string[] lines = newText.Split(new char[] {'\n'});
         foreach (string line in lines)
         {
           if (line == "") continue;
@@ -235,14 +239,15 @@ namespace MPTail
           string dtStr = line.Substring(0, line.IndexOf(' ', 13));
           string nline = line.Remove(0, line.IndexOf(' ', 13) + 1);
           DateTime dt;
-          if (!DateTime.TryParse(dtStr, out dt)) 
+          if (!DateTime.TryParse(dtStr, out dt))
             continue;
-          if (tr.Category==LoggerCategory.TvEngine)
-            tveCombined.Add(new MyDateTime(dt), FormatCombinedLogLine(Path.GetFileNameWithoutExtension(tr.Filename), dt, nline,16));
+          if (tr.Category == LoggerCategory.TvEngine)
+            tveCombined.Add(new MyDateTime(dt),
+                            FormatCombinedLogLine(Path.GetFileNameWithoutExtension(tr.Filename), dt, nline, 16));
           else
-            mpCombined.Add(new MyDateTime(dt), FormatCombinedLogLine(Path.GetFileNameWithoutExtension(tr.Filename), dt, nline,13));
+            mpCombined.Add(new MyDateTime(dt),
+                           FormatCombinedLogLine(Path.GetFileNameWithoutExtension(tr.Filename), dt, nline, 13));
         }
-
       }
       foreach (string cline in tveCombined.Values)
         richTextBoxTvEngine.AppendText(cline);
@@ -256,10 +261,10 @@ namespace MPTail
 
     private void Form1_Shown(object sender, EventArgs e)
     {
-      this.Left = lastSettings.left;
-      this.Top = lastSettings.top;
-      this.Width = lastSettings.width;
-      this.Height = lastSettings.height;
+      Left = lastSettings.left;
+      Top = lastSettings.top;
+      Width = lastSettings.width;
+      Height = lastSettings.height;
       PageCtrlCategory.SelectedIndex = lastSettings.categoryIndex;
       if (lastSettings.tabIndex != -1)
       {
@@ -278,9 +283,10 @@ namespace MPTail
       }
       timer1.Enabled = true;
     }
+
     private void ScrollInView(TabPage tab)
     {
-      RichTextBox tr = (RichTextBox)tab.Tag;
+      RichTextBox tr = (RichTextBox) tab.Tag;
       if (tr != null)
       {
         tr.SelectionStart = tr.TextLength;
@@ -289,6 +295,7 @@ namespace MPTail
     }
 
     #region Events
+
     private void MPTabCtrl_Selected(object sender, TabControlEventArgs e)
     {
       ScrollInView(e.TabPage);
@@ -297,23 +304,26 @@ namespace MPTail
     private void button1_Click(object sender, EventArgs e)
     {
       FontDialog dlg = new FontDialog();
-      dlg.Font = this.Font;
+      dlg.Font = Font;
       if (dlg.ShowDialog() == DialogResult.OK)
-        this.Font = dlg.Font;
+        Font = dlg.Font;
     }
+
     private void cbFollowTail_CheckedChanged(object sender, EventArgs e)
     {
       foreach (TailedRichTextBox tr in loggerCollection)
         tr.FollowMe = cbFollowTail.Checked;
     }
+
     private void cbClearOnCreate_CheckedChanged(object sender, EventArgs e)
     {
       foreach (TailedRichTextBox tr in loggerCollection)
         tr.ClearLogOnCreate = cbClearOnCreate.Checked;
     }
+
     private void PageCtrlCategory_Selected(object sender, TabControlEventArgs e)
     {
-      btnAddLogfile.Visible=false;
+      btnAddLogfile.Visible = false;
       btnRemoveLog.Visible = false;
       if (e.TabPage == tabPage1)
         ScrollInView(MPTabCtrl.TabPages[MPTabCtrl.SelectedIndex]);
@@ -321,12 +331,13 @@ namespace MPTail
         ScrollInView(TVETabCtrl.TabPages[TVETabCtrl.SelectedIndex]);
       else
       {
-        if (CustomTabCtrl.TabCount>0)
+        if (CustomTabCtrl.TabCount > 0)
           ScrollInView(CustomTabCtrl.TabPages[CustomTabCtrl.SelectedIndex]);
         btnAddLogfile.Visible = true;
         btnRemoveLog.Visible = true;
       }
     }
+
     private void timer1_Tick(object sender, EventArgs e)
     {
       timer1.Enabled = false;
@@ -345,17 +356,21 @@ namespace MPTail
       if (dlg.ShowDialog() == DialogResult.OK)
         AddLogger(dlg.FileName, CustomTabCtrl);
     }
+
     private void btnRemoveLog_Click(object sender, EventArgs e)
     {
       TabPage tab = CustomTabCtrl.SelectedTab;
       if (tab == null) return;
-      TailedRichTextBox tr = (TailedRichTextBox)tab.Tag;
-      if (MessageBox.Show("Do you really want to remove the logfile [" + tr.Filename + "] ?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+      TailedRichTextBox tr = (TailedRichTextBox) tab.Tag;
+      if (
+        MessageBox.Show("Do you really want to remove the logfile [" + tr.Filename + "] ?", "Confirmation",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
       {
         loggerCollection.Remove(tr);
         CustomTabCtrl.TabPages.Remove(tab);
       }
     }
+
     private void saveToFileToolStripMenuItem_Click(object sender, EventArgs e)
     {
       RichTextBox rtb = richTextBoxMP;
@@ -369,10 +384,12 @@ namespace MPTail
       if (dlg.ShowDialog() == DialogResult.OK)
         rtb.SaveFile(dlg.FileName);
     }
+
     private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
     {
       SaveSettings();
     }
+
     #endregion
 
     private void searchToolStripMenuItem_Click(object sender, EventArgs e)

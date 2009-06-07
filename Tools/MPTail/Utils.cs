@@ -24,11 +24,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
-using System.Xml;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace MPTail
 {
@@ -42,16 +40,18 @@ namespace MPTail
     public int tabIndex;
     public FormWindowState windowState;
   }
+
   // This is just a helper class to allow to insert duplicate keys in a SortedDictionary
   // If a timestamp is equal to an existing one we just return 1 instead of 0
   public class MyDateTime : IComparable
   {
-    DateTime dt;
+    private readonly DateTime dt;
 
     public MyDateTime(DateTime dateTime)
     {
       dt = dateTime;
     }
+
     public MyDateTime(string dateTimeStr)
     {
       dt = DateTime.Parse(dateTimeStr);
@@ -59,18 +59,19 @@ namespace MPTail
 
     public int CompareTo(object obj)
     {
-      MyDateTime mdt = (MyDateTime)obj;
+      MyDateTime mdt = (MyDateTime) obj;
       int ret = DateTime.Compare(dt, mdt.dt);
       if (ret == 0)
         ret = 1;
       return ret;
     }
   }
+
   public class SearchParameters
   {
     public string searchStr = "";
     public bool caseSensitive = false;
-    public System.Drawing.Color highlightColor = System.Drawing.Color.Yellow;
+    public Color highlightColor = Color.Yellow;
   }
 
   public enum LoggerCategory
@@ -79,14 +80,16 @@ namespace MPTail
     TvEngine,
     Custom
   }
-  class XmlUtils
+
+  internal class XmlUtils
   {
-    public static void NewAttribute(XmlNode node,string name, string value)
+    public static void NewAttribute(XmlNode node, string name, string value)
     {
       XmlAttribute attr = node.OwnerDocument.CreateAttribute(name);
       attr.InnerText = value;
       node.Attributes.Append(attr);
     }
+
     public static void NewAttribute(XmlNode node, string name, bool value)
     {
       XmlAttribute attr = node.OwnerDocument.CreateAttribute(name);
@@ -96,18 +99,21 @@ namespace MPTail
         attr.InnerText = "0";
       node.Attributes.Append(attr);
     }
+
     public static void NewAttribute(XmlNode node, string name, int value)
     {
       XmlAttribute attr = node.OwnerDocument.CreateAttribute(name);
       attr.InnerText = value.ToString();
       node.Attributes.Append(attr);
     }
+
     public static void NewAttribute(XmlNode node, string name, float value)
     {
       XmlAttribute attr = node.OwnerDocument.CreateAttribute(name);
       attr.InnerText = value.ToString();
       node.Attributes.Append(attr);
     }
+
     public static void NewAttribute(XmlNode node, string name, Color value)
     {
       XmlAttribute attr = node.OwnerDocument.CreateAttribute(name);

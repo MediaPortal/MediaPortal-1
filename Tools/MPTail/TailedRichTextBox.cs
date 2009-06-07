@@ -24,40 +24,43 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using System.IO;
 using System.Xml;
 
 namespace MPTail
 {
-  public class TailedRichTextBox: RingBufferedRichTextBox
+  public class TailedRichTextBox : RingBufferedRichTextBox
   {
     #region Variables
+
     private bool followMe = true;
     private bool clearOnCreate = true;
     private string filename;
-    private int maxBytes = 1024 * 16;
+    private int maxBytes = 1024*16;
     private long previousSeekPosition;
     private long previousFileSize;
-    private TabPage parentTab;
-    private SearchParameters searchParams;
-    private ContextMenuStrip ctxMenu;
+    private readonly TabPage parentTab;
+    private readonly SearchParameters searchParams;
+    private readonly ContextMenuStrip ctxMenu;
     public LoggerCategory Category;
+
     #endregion
 
     #region constructor
-    public TailedRichTextBox(string filename,LoggerCategory loggerCategory,TabPage parentTabPage)
+
+    public TailedRichTextBox(string filename, LoggerCategory loggerCategory, TabPage parentTabPage)
     {
       this.filename = filename;
-      this.ShortcutsEnabled = true;
+      ShortcutsEnabled = true;
       Category = loggerCategory;
       parentTab = parentTabPage;
-      previousSeekPosition=0;
+      previousSeekPosition = 0;
       previousFileSize = 0;
       ctxMenu = new ContextMenuStrip();
-      this.ContextMenuStrip = ctxMenu;
+      ContextMenuStrip = ctxMenu;
       if (Category != LoggerCategory.Custom)
       {
         ToolStripItem relocateItem = ctxMenu.Items.Add("Correct logfile location");
@@ -67,7 +70,7 @@ namespace MPTail
       ToolStripItem searchItem = ctxMenu.Items.Add("Find");
       searchItem.Click += new EventHandler(searchItem_Click);
       ctxMenu.Items.Add("-");
-      
+
       ToolStripItem cfgItem = ctxMenu.Items.Add("Configure search parameters");
       cfgItem.Click += new EventHandler(Config_Click);
       ctxMenu.Items.Add("-");
@@ -82,26 +85,32 @@ namespace MPTail
     #endregion
 
     #region Contextmenu handlers
-    void searchItem_Click(object sender, EventArgs e)
+
+    private void searchItem_Click(object sender, EventArgs e)
     {
       frmFindSettings dlg = new frmFindSettings();
       if (dlg.ShowDialog() != DialogResult.OK)
         return;
-      this.Find(dlg.SearchString, dlg.Options);
+      Find(dlg.SearchString, dlg.Options);
     }
-    void clearFileItem_Click(object sender, EventArgs e)
+
+    private void clearFileItem_Click(object sender, EventArgs e)
     {
-      if (MessageBox.Show("Do you really want to delete this file?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+      if (
+        MessageBox.Show("Do you really want to delete this file?", "Confirmation", MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question) == DialogResult.Yes)
       {
         File.Delete(filename);
-        this.Text = "";
+        Text = "";
       }
     }
-    void clearWindowItem_Click(object sender, EventArgs e)
+
+    private void clearWindowItem_Click(object sender, EventArgs e)
     {
-      this.Text = "";
+      Text = "";
     }
-    void relocateItem_Click(object sender, EventArgs e)
+
+    private void relocateItem_Click(object sender, EventArgs e)
     {
       OpenFileDialog dlg = new OpenFileDialog();
       dlg.CheckFileExists = true;
@@ -112,47 +121,56 @@ namespace MPTail
         filename = dlg.FileName;
     }
 
-    void Config_Click(object sender, EventArgs e)
+    private void Config_Click(object sender, EventArgs e)
     {
-      frmSearchParams dlg = new frmSearchParams("Hightlight settings for [" + Path.GetFileName(filename) + "]",searchParams);
+      frmSearchParams dlg = new frmSearchParams("Hightlight settings for [" + Path.GetFileName(filename) + "]",
+                                                searchParams);
       if (dlg.ShowDialog() == DialogResult.OK)
       {
         dlg.GetConfig(searchParams);
         SelectAll();
-        SelectionBackColor = System.Drawing.Color.White;
-        SelectionFont = new System.Drawing.Font(this.Font, System.Drawing.FontStyle.Regular);
+        SelectionBackColor = Color.White;
+        SelectionFont = new Font(Font, FontStyle.Regular);
         HighlightSearchTerms(0);
       }
     }
+
     #endregion
 
     #region Properties
+
     public TabPage ParentTab
     {
       get { return parentTab; }
     }
+
     public string Filename
     {
-      get { return this.filename; }
+      get { return filename; }
     }
+
     public int MaxBytes
     {
-      get { return this.maxBytes; }
-      set { this.maxBytes = value; }
+      get { return maxBytes; }
+      set { maxBytes = value; }
     }
+
     public bool FollowMe
     {
       get { return followMe; }
       set { followMe = value; }
     }
+
     public bool ClearLogOnCreate
     {
-      get { return this.clearOnCreate; }
+      get { return clearOnCreate; }
       set { clearOnCreate = value; }
     }
+
     #endregion
 
     #region Persistance
+
     private void LoadSettings()
     {
       if (File.Exists("MPTailConfig.xml"))
@@ -163,25 +181,30 @@ namespace MPTail
         XmlNode node = null;
         try
         {
-          node = doc.SelectSingleNode("/mptail/loggers/" + Category.ToString() + "/" + name.Replace(' ', '_') + "/config");
+          node =
+            doc.SelectSingleNode("/mptail/loggers/" + Category.ToString() + "/" + name.Replace(' ', '_') + "/config");
         }
-        catch (Exception) { return; }
+        catch (Exception)
+        {
+          return;
+        }
         if (node == null) return;
         string fname = node.Attributes["filename"].Value;
         if (filename != fname)
           filename = fname;
         searchParams.searchStr = node.Attributes["search-string"].Value;
         string color = node.Attributes["search-highlight-color"].Value;
-        searchParams.highlightColor = System.Drawing.Color.FromArgb(Int32.Parse(color));
+        searchParams.highlightColor = Color.FromArgb(Int32.Parse(color));
         searchParams.caseSensitive = (node.Attributes["search-casesensitive"].Value == "1");
       }
     }
-    public void SaveSettings(XmlDocument doc,XmlNode n_root)
+
+    public void SaveSettings(XmlDocument doc, XmlNode n_root)
     {
       XmlNode n_logger = doc.CreateElement("loggers");
       XmlNode n_category = doc.CreateElement(Category.ToString());
       string name = Path.GetFileNameWithoutExtension(filename);
-      XmlNode n_name = doc.CreateElement(name.Replace(' ','_'));
+      XmlNode n_name = doc.CreateElement(name.Replace(' ', '_'));
       XmlNode n_config = doc.CreateElement("config");
 
       XmlUtils.NewAttribute(n_config, "filename", filename);
@@ -194,9 +217,11 @@ namespace MPTail
       n_logger.AppendChild(n_category);
       n_root.AppendChild(n_logger);
     }
+
     #endregion
 
     #region public members
+
     public long Process(out string newText)
     {
       newText = "";
@@ -206,14 +231,14 @@ namespace MPTail
         return 0;
       }
       if (previousSeekPosition == 0 && clearOnCreate)
-        this.Text = "";
+        Text = "";
       byte[] bytesRead = new byte[maxBytes];
-      FileStream fs = new FileStream(this.filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+      FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
       if (fs.Length < previousFileSize)
       {
         // new file
         if (clearOnCreate)
-          this.Text = "";
+          Text = "";
         previousSeekPosition = 0;
       }
       previousFileSize = fs.Length;
@@ -223,43 +248,46 @@ namespace MPTail
         return previousFileSize;
       }
       if (fs.Length > maxBytes)
-        this.previousSeekPosition = fs.Length - maxBytes;
-      this.previousSeekPosition = (int)fs.Seek(this.previousSeekPosition, SeekOrigin.Begin);
+        previousSeekPosition = fs.Length - maxBytes;
+      previousSeekPosition = (int) fs.Seek(previousSeekPosition, SeekOrigin.Begin);
       int numBytes = fs.Read(bytesRead, 0, maxBytes);
       fs.Close();
-      this.previousSeekPosition += numBytes;
+      previousSeekPosition += numBytes;
 
       StringBuilder sb = new StringBuilder();
       for (int i = 0; i < numBytes; i++)
-        sb.Append((char)bytesRead[i]);
-      long lastPos = this.TextLength;
-      this.AppendText(sb.ToString());
+        sb.Append((char) bytesRead[i]);
+      long lastPos = TextLength;
+      AppendText(sb.ToString());
       newText = sb.ToString();
       HighlightSearchTerms(lastPos);
       if (followMe)
-        this.Focus();
+        Focus();
       return previousFileSize;
     }
+
     #endregion
 
     #region private members
+
     private void HighlightSearchTerms(long lastPos)
     {
       if (searchParams.searchStr == "") return;
       StringComparison comp = StringComparison.InvariantCultureIgnoreCase;
       if (searchParams.caseSensitive)
         comp = StringComparison.InvariantCulture;
-      while ((lastPos = this.Text.IndexOf(searchParams.searchStr, (int)lastPos, comp)) != -1)
+      while ((lastPos = Text.IndexOf(searchParams.searchStr, (int) lastPos, comp)) != -1)
       {
-        this.SelectionStart = (int)lastPos;
-        this.SelectionLength = searchParams.searchStr.Length;
-        this.SelectionFont = new System.Drawing.Font(this.Font, System.Drawing.FontStyle.Bold);
-        this.SelectionBackColor = searchParams.highlightColor;
+        SelectionStart = (int) lastPos;
+        SelectionLength = searchParams.searchStr.Length;
+        SelectionFont = new Font(Font, FontStyle.Bold);
+        SelectionBackColor = searchParams.highlightColor;
         lastPos += searchParams.searchStr.Length;
-        if (lastPos >= this.Text.Length) break;
+        if (lastPos >= Text.Length) break;
       }
-      this.SelectionStart = this.TextLength;
+      SelectionStart = TextLength;
     }
+
     #endregion
   }
 }
