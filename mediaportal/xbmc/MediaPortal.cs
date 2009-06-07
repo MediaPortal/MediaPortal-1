@@ -140,6 +140,7 @@ public class MediaPortalApp : D3DApp, IRender
   private const int PBT_APMRESUMEAUTOMATIC = 0x0012;
   private const int BROADCAST_QUERY_DENY = 0x424D5144;
   private const int SC_SCREENSAVE = 0xF140;
+  private const int SC_MONITORPOWER = 0xF170;
   private const int SPI_SETSCREENSAVEACTIVE = 17;
   private const int SPI_GETSCREENSAVEACTIVE = 16;
   private const int SPIF_SENDWININICHANGE = 0x0002;
@@ -1037,10 +1038,10 @@ public class MediaPortalApp : D3DApp, IRender
       }
 
       // plugins menu clicked?
-      if (msg.Msg == WM_SYSCOMMAND && msg.WParam.ToInt32() == SC_SCREENSAVE)
+      if (msg.Msg == WM_SYSCOMMAND && (msg.WParam.ToInt32() == SC_SCREENSAVE || msg.WParam.ToInt32() == SC_MONITORPOWER))
       {
         // windows wants to activate the screensaver
-        if (GUIGraphicsContext.IsFullScreenVideo ||
+        if ((GUIGraphicsContext.IsFullScreenVideo && !g_Player.Paused) ||
             GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW)
         {
           //disable it when we're watching tv/movies/...
@@ -1444,11 +1445,14 @@ public class MediaPortalApp : D3DApp, IRender
         }
         splashScreen = null;
       }
-      // disable screen saver when MP running
-      SystemParametersInfo(SPI_GETSCREENSAVEACTIVE, 0, ref isWinScreenSaverInUse, 0);
-      if (isWinScreenSaverInUse)
+      // disable screen saver when MP running and internal selected
+      if (useScreenSaver)
       {
-        SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, 0, 0, SPIF_SENDWININICHANGE);
+        SystemParametersInfo(SPI_GETSCREENSAVEACTIVE, 0, ref isWinScreenSaverInUse, 0);
+        if (isWinScreenSaverInUse)
+        {
+          SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, 0, 0, SPIF_SENDWININICHANGE);
+        }
       }
     }
     catch (Exception ex)
