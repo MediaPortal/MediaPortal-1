@@ -58,7 +58,6 @@ namespace MPTail
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.MPTabCtrl = new System.Windows.Forms.TabControl();
       this.tabPage4 = new System.Windows.Forms.TabPage();
-      this.richTextBoxMP = new MPTail.RingBufferedRichTextBox();
       this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.searchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
@@ -66,7 +65,6 @@ namespace MPTail
       this.tabPage2 = new System.Windows.Forms.TabPage();
       this.TVETabCtrl = new System.Windows.Forms.TabControl();
       this.tabPageTvEngine = new System.Windows.Forms.TabPage();
-      this.richTextBoxTvEngine = new MPTail.RingBufferedRichTextBox();
       this.tabPage3 = new System.Windows.Forms.TabPage();
       this.CustomTabCtrl = new System.Windows.Forms.TabControl();
       this.panel1 = new System.Windows.Forms.Panel();
@@ -76,6 +74,8 @@ namespace MPTail
       this.btnChooseFont = new System.Windows.Forms.Button();
       this.cbFollowTail = new System.Windows.Forms.CheckBox();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
+      this.richTextBoxMP = new MPTail.RingBufferedRichTextBox();
+      this.richTextBoxTvEngine = new MPTail.RingBufferedRichTextBox();
       this.PageCtrlCategory.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.MPTabCtrl.SuspendLayout();
@@ -136,18 +136,6 @@ namespace MPTail
       this.tabPage4.Text = "Combined view";
       this.tabPage4.UseVisualStyleBackColor = true;
       // 
-      // richTextBoxMP
-      // 
-      this.richTextBoxMP.ContextMenuStrip = this.contextMenuStrip1;
-      this.richTextBoxMP.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.richTextBoxMP.Location = new System.Drawing.Point(0, 0);
-      this.richTextBoxMP.Name = "richTextBoxMP";
-      this.richTextBoxMP.RingBufferSizeInMB = ((long)(3));
-      this.richTextBoxMP.Size = new System.Drawing.Size(750, 259);
-      this.richTextBoxMP.TabIndex = 0;
-      this.richTextBoxMP.Text = "";
-      this.richTextBoxMP.WordWrap = false;
-      // 
       // contextMenuStrip1
       // 
       this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -155,7 +143,7 @@ namespace MPTail
             this.toolStripMenuItem1,
             this.saveToFileToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(122, 54);
+      this.contextMenuStrip1.Size = new System.Drawing.Size(125, 54);
       // 
       // searchToolStripMenuItem
       // 
@@ -163,14 +151,14 @@ namespace MPTail
       this.searchToolStripMenuItem.ShortcutKeyDisplayString = "CTRL+F";
       this.searchToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
       this.searchToolStripMenuItem.ShowShortcutKeys = false;
-      this.searchToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
+      this.searchToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
       this.searchToolStripMenuItem.Text = "Find";
       this.searchToolStripMenuItem.Click += new System.EventHandler(this.searchToolStripMenuItem_Click);
       // 
       // toolStripMenuItem1
       // 
       this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-      this.toolStripMenuItem1.Size = new System.Drawing.Size(182, 6);
+      this.toolStripMenuItem1.Size = new System.Drawing.Size(121, 6);
       // 
       // saveToFileToolStripMenuItem
       // 
@@ -178,7 +166,7 @@ namespace MPTail
       this.saveToFileToolStripMenuItem.ShortcutKeyDisplayString = "CTRL+S";
       this.saveToFileToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
       this.saveToFileToolStripMenuItem.ShowShortcutKeys = false;
-      this.saveToFileToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
+      this.saveToFileToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
       this.saveToFileToolStripMenuItem.Text = "Save to file";
       this.saveToFileToolStripMenuItem.Click += new System.EventHandler(this.saveToFileToolStripMenuItem_Click);
       // 
@@ -200,7 +188,7 @@ namespace MPTail
       this.TVETabCtrl.Location = new System.Drawing.Point(3, 3);
       this.TVETabCtrl.Name = "TVETabCtrl";
       this.TVETabCtrl.SelectedIndex = 0;
-      this.TVETabCtrl.Size = new System.Drawing.Size(758, 287);
+      this.TVETabCtrl.Size = new System.Drawing.Size(758, 289);
       this.TVETabCtrl.TabIndex = 1;
       this.TVETabCtrl.Selected += new System.Windows.Forms.TabControlEventHandler(this.MPTabCtrl_Selected);
       // 
@@ -210,22 +198,10 @@ namespace MPTail
       this.tabPageTvEngine.Location = new System.Drawing.Point(4, 24);
       this.tabPageTvEngine.Name = "tabPageTvEngine";
       this.tabPageTvEngine.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageTvEngine.Size = new System.Drawing.Size(750, 259);
+      this.tabPageTvEngine.Size = new System.Drawing.Size(750, 261);
       this.tabPageTvEngine.TabIndex = 0;
       this.tabPageTvEngine.Text = "Combined view";
       this.tabPageTvEngine.UseVisualStyleBackColor = true;
-      // 
-      // richTextBoxTvEngine
-      // 
-      this.richTextBoxTvEngine.ContextMenuStrip = this.contextMenuStrip1;
-      this.richTextBoxTvEngine.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.richTextBoxTvEngine.Location = new System.Drawing.Point(3, 3);
-      this.richTextBoxTvEngine.Name = "richTextBoxTvEngine";
-      this.richTextBoxTvEngine.RingBufferSizeInMB = ((long)(3));
-      this.richTextBoxTvEngine.Size = new System.Drawing.Size(744, 253);
-      this.richTextBoxTvEngine.TabIndex = 0;
-      this.richTextBoxTvEngine.Text = "";
-      this.richTextBoxTvEngine.WordWrap = false;
       // 
       // tabPage3
       // 
@@ -244,7 +220,7 @@ namespace MPTail
       this.CustomTabCtrl.Location = new System.Drawing.Point(3, 3);
       this.CustomTabCtrl.Name = "CustomTabCtrl";
       this.CustomTabCtrl.SelectedIndex = 0;
-      this.CustomTabCtrl.Size = new System.Drawing.Size(758, 287);
+      this.CustomTabCtrl.Size = new System.Drawing.Size(758, 289);
       this.CustomTabCtrl.TabIndex = 0;
       // 
       // panel1
@@ -328,8 +304,33 @@ namespace MPTail
       this.timer1.Interval = 250;
       this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
       // 
+      // richTextBoxMP
+      // 
+      this.richTextBoxMP.ContextMenuStrip = this.contextMenuStrip1;
+      this.richTextBoxMP.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.richTextBoxMP.Location = new System.Drawing.Point(0, 0);
+      this.richTextBoxMP.Name = "richTextBoxMP";
+      this.richTextBoxMP.RingBufferSizeInMB = ((long)(3));
+      this.richTextBoxMP.Size = new System.Drawing.Size(750, 259);
+      this.richTextBoxMP.TabIndex = 0;
+      this.richTextBoxMP.Text = "";
+      this.richTextBoxMP.WordWrap = false;
+      // 
+      // richTextBoxTvEngine
+      // 
+      this.richTextBoxTvEngine.ContextMenuStrip = this.contextMenuStrip1;
+      this.richTextBoxTvEngine.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.richTextBoxTvEngine.Location = new System.Drawing.Point(3, 3);
+      this.richTextBoxTvEngine.Name = "richTextBoxTvEngine";
+      this.richTextBoxTvEngine.RingBufferSizeInMB = ((long)(3));
+      this.richTextBoxTvEngine.Size = new System.Drawing.Size(744, 255);
+      this.richTextBoxTvEngine.TabIndex = 0;
+      this.richTextBoxTvEngine.Text = "";
+      this.richTextBoxTvEngine.WordWrap = false;
+      // 
       // frmMain
       // 
+      this.AllowDrop = true;
       this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(773, 390);
@@ -339,6 +340,8 @@ namespace MPTail
       this.Name = "frmMain";
       this.Text = "MediaPortal Tail";
       this.Shown += new System.EventHandler(this.Form1_Shown);
+      this.DragDrop += new System.Windows.Forms.DragEventHandler(this.frmMain_DragDrop);
+      this.DragEnter += new System.Windows.Forms.DragEventHandler(this.frmMain_DragEnter);
       this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
       this.PageCtrlCategory.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);

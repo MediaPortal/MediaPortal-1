@@ -402,5 +402,30 @@ namespace MPTail
         rb = richTextBoxTvEngine;
       rb.Find(dlg.SearchString, dlg.Options);
     }
+
+    private void frmMain_DragEnter(object sender, DragEventArgs e)
+    {
+      // If the data is a file, display the copy cursor.
+      if (e.Data.GetDataPresent(DataFormats.FileDrop))
+      {
+        e.Effect = DragDropEffects.Copy;
+      }
+      else
+      {
+        e.Effect = DragDropEffects.None;
+      }
+    }
+
+    private void frmMain_DragDrop(object sender, DragEventArgs e)
+    {
+      // Handle FileDrop data.
+      if (e.Data.GetDataPresent(DataFormats.FileDrop))
+      {
+        foreach (string filename in (string[])e.Data.GetData(DataFormats.FileDrop))
+        {
+          AddLogger(filename, CustomTabCtrl);
+        }
+      }
+    }
   }
 }
