@@ -38,6 +38,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TsMuxer", "TsMuxer\TsMuxer.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dxerr9", "DXErr9\dxerr9.vcproj", "{1FC036DE-1148-45E1-ADD3-FE1B20B652A7}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPIPTVSource", "MPIPTVSource\MPIPTVSource.vcproj", "{5350E032-962F-495B-A178-3CE264B5619E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -88,6 +90,10 @@ Global
 		{1FC036DE-1148-45E1-ADD3-FE1B20B652A7}.Debug|Win32.Build.0 = Debug|Win32
 		{1FC036DE-1148-45E1-ADD3-FE1B20B652A7}.Release|Win32.ActiveCfg = Release|Win32
 		{1FC036DE-1148-45E1-ADD3-FE1B20B652A7}.Release|Win32.Build.0 = Release|Win32
+		{5350E032-962F-495B-A178-3CE264B5619E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5350E032-962F-495B-A178-3CE264B5619E}.Debug|Win32.Build.0 = Debug|Win32
+		{5350E032-962F-495B-A178-3CE264B5619E}.Release|Win32.ActiveCfg = Release|Win32
+		{5350E032-962F-495B-A178-3CE264B5619E}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
