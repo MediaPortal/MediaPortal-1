@@ -210,7 +210,7 @@ namespace MediaPortal.Configuration.Sections
       System.Windows.Forms.ListViewItem listViewItem22 = new System.Windows.Forms.ListViewItem(new string[]
                                                                                                  {
                                                                                                    "General",
-                                                                                                   "=",
+                                                                                                   "= or +",
                                                                                                    "Volume +"
                                                                                                  }, -1);
       System.Windows.Forms.ListViewItem listViewItem23 = new System.Windows.Forms.ListViewItem(new string[]

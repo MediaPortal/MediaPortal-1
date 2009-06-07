@@ -200,6 +200,12 @@
       <sound>click.wav</sound>
       <description>volume up</description>
     </action>
+	<action>
+      <id>103</id>
+      <key>+</key>
+      <sound>click.wav</sound>
+      <description>volume up (2)</description>
+    </action>
     <action>
       <id>89</id>
       <key>r</key>
@@ -595,11 +601,13 @@
     <action>
       <id>140</id>
       <key>J</key>
+      <sound />
       <description>Previous bookmark</description>
     </action>
     <action>
       <id>141</id>
       <key>K</key>
+      <sound />
       <description>Next bookmark</description>
     </action>
   </window>
