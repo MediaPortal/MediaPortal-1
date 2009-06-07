@@ -264,8 +264,8 @@ bool CMPIptvSourceStream::Load(const TCHAR* fn)
 	url.lpszPassword = NULL;
 	url.lpszUrlPath = NULL;
 	url.lpszUserName = NULL;
-	TCHAR *srcurl = "udp://192.168.2.197@233.1.1.1:1234";
-	if (!InternetCrackUrl(srcurl, 0, 0, &url)) {
+//	TCHAR *srcurl = "udp://192.168.2.197@233.1.1.1:1234";
+	if (!InternetCrackUrl(fn, 0, 0, &url)) {
 		return false;
 	}
 	if (!(ip = (TCHAR*) CoTaskMemAlloc((url.dwHostNameLength + 1) * sizeof(TCHAR)))) {
