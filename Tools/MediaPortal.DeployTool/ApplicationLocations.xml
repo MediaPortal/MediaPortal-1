@@ -22,10 +22,23 @@
     <TYPE>Manual</TYPE>
   </MSSQLExpress64>
   <MySQL>
+    <!--- Section used only by 1.0.2 installer -->
     <URL>http://install.team-mediaportal.com/MySql</URL>
     <FILE>mysql-essential-5.0.77-win32.msi</FILE>
     <TYPE>Automatic</TYPE>
   </MySQL>
+  <MySQL32>
+    <!--- Section used by 1.1.0 alpha installer -->
+    <URL>http://install.team-mediaportal.com/MySql_32bit</URL>
+    <FILE>mysql-essential-5.1.35-win32.msi</FILE>
+    <TYPE>Automatic</TYPE>
+  </MySQL32>
+  <MySQL64>
+    <!--- Section used by 1.1.0 alpha installer -->
+    <URL>http://install.team-mediaportal.com/MySql_64bit</URL>
+    <FILE>mysql-essential-5.1.35-winx64.msi</FILE>
+    <TYPE>Automatic</TYPE>
+  </MySQL64>
   <MediaPortal>
     <URL>http://install.team-mediaportal.com/MediaPortal</URL>
     <FILE>package-mediaportal.exe</FILE>

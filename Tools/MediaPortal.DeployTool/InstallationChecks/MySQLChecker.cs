@@ -38,6 +38,10 @@ namespace MediaPortal.DeployTool.InstallationChecks
     [DllImport("kernel32")]
     private static extern long WritePrivateProfileString(string section, string key, string val, string filePath);
 
+    private static readonly string arch = Utils.Check64bit() ? "64" : "32";
+
+    public string prg = "MySQL" + arch;
+
     private void PrepareMyIni(string iniFile)
     {
       WritePrivateProfileString("client", "port", "3306", iniFile);
@@ -69,11 +73,9 @@ namespace MediaPortal.DeployTool.InstallationChecks
       WritePrivateProfileString("mysqld", "innodb_thread_concurrency", "8", iniFile);
     }
 
-    public const string prg = "MySQL";
-
     public string GetDisplayName()
     {
-      return "MySQL 5";
+      return "MySQL 5.1";
     }
 
     public bool Download()
@@ -155,7 +157,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       // mysqladmin.exe is used to set MySQL password
       //
       cmdLine = "-u root password " + InstallationProperties.Instance["DBMSPassword"];
-      
+
       try
       {
         Process mysqladmin = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
@@ -221,7 +223,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.0");
+      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.1");
       if (key == null)
         result.state = CheckState.NOT_INSTALLED;
       else
