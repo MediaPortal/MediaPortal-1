@@ -39,6 +39,8 @@ namespace SetupTv.Sections
       this.mpLabelChannel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label12 = new System.Windows.Forms.Label();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpLabelSignalQuality = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabelSignalLevel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabelRecording = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabelTimeShift = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -131,6 +133,8 @@ namespace SetupTv.Sections
       // 
       // mpGroupBox1
       // 
+      this.mpGroupBox1.Controls.Add(this.mpLabelSignalQuality);
+      this.mpGroupBox1.Controls.Add(this.mpLabelSignalLevel);
       this.mpGroupBox1.Controls.Add(this.mpLabelRecording);
       this.mpGroupBox1.Controls.Add(this.mpLabelTimeShift);
       this.mpGroupBox1.Controls.Add(this.label1);
@@ -148,6 +152,24 @@ namespace SetupTv.Sections
       this.mpGroupBox1.TabIndex = 53;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Status:";
+      // 
+      // mpLabelSignalQuality
+      // 
+      this.mpLabelSignalQuality.AutoSize = true;
+      this.mpLabelSignalQuality.Location = new System.Drawing.Point(420, 99);
+      this.mpLabelSignalQuality.Name = "mpLabelSignalQuality";
+      this.mpLabelSignalQuality.Size = new System.Drawing.Size(13, 13);
+      this.mpLabelSignalQuality.TabIndex = 58;
+      this.mpLabelSignalQuality.Text = "0";
+      // 
+      // mpLabelSignalLevel
+      // 
+      this.mpLabelSignalLevel.AutoSize = true;
+      this.mpLabelSignalLevel.Location = new System.Drawing.Point(420, 76);
+      this.mpLabelSignalLevel.Name = "mpLabelSignalLevel";
+      this.mpLabelSignalLevel.Size = new System.Drawing.Size(13, 13);
+      this.mpLabelSignalLevel.TabIndex = 57;
+      this.mpLabelSignalLevel.Text = "0";
       // 
       // mpLabelRecording
       // 
@@ -368,5 +390,7 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabelTimeShift;
     private SetupControls.ComboBoxEx comboBoxGroups;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabelSignalLevel;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabelSignalQuality;
   }
 }

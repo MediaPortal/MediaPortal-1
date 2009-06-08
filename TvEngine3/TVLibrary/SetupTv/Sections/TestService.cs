@@ -197,12 +197,22 @@ namespace SetupTv.Sections
       {
         buttonRestart.Text = "Start Service";
         mpButtonReGrabEpg.Enabled = false;
+        mpButtonTimeShift.Text = "Start TimeShift";
+        mpButtonTimeShift.Enabled = false;
+        mpButtonRec.Text = "Record";
+        mpButtonRec.Enabled = false;
+        mpGroupBox1.Visible = false;
+        comboBoxGroups.Enabled = false;
+        mpComboBoxChannels.Enabled = false;
+        mpListView1.Items.Clear();
         return;
       }
       buttonRestart.Text = "Stop Service";
       if (!buttonRestart.Visible)
         buttonRestart.Visible = true;
       mpButtonReGrabEpg.Enabled = true;
+      comboBoxGroups.Enabled = true;
+      mpComboBoxChannels.Enabled = true;
       UpdateCardStatus();
 
       if (mpComboBoxChannels.SelectedItem != null)
@@ -215,8 +225,9 @@ namespace SetupTv.Sections
           mpGroupBox1.Text = String.Format("Status of card {0}", card.Name);
           mpLabelTunerLocked.Text = card.IsTunerLocked ? "yes" : "no";
           progressBarLevel.Value = Math.Min(100, card.SignalLevel);
+          mpLabelSignalLevel.Text = card.SignalLevel.ToString();
           progressBarQuality.Value = Math.Min(100, card.SignalQuality);
-
+          mpLabelSignalQuality.Text = card.SignalQuality.ToString();
 
           mpLabelRecording.Text = card.RecordingFileName;
 
@@ -233,11 +244,14 @@ namespace SetupTv.Sections
       }
       mpLabelTunerLocked.Text = "no";
       progressBarLevel.Value = 0;
+      mpLabelSignalLevel.Text = "";
       progressBarQuality.Value = 0;
+      mpLabelSignalQuality.Text = "";
       mpLabelRecording.Text = "";
       mpLabelTimeShift.Text = "";
       mpButtonRec.Text = "Record";
       mpButtonTimeShift.Text = "Start TimeShift";
+      mpButtonTimeShift.Enabled = true;
     }
 
     void UpdateCardStatus()
