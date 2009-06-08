@@ -140,6 +140,7 @@ namespace TvPlugin
     private bool _showChannelNumber = false;
     private int _channelNumberMaxLength = 3;
     private bool _useNewRecordingButtonColor = false;
+    private bool _useNewNotifyButtonColor = false;
     private bool _notificationEnabled = false;
     private bool _recalculateProgramOffset;
 
@@ -219,6 +220,8 @@ namespace TvPlugin
       }
       _useNewRecordingButtonColor =
         File.Exists(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_recButton_Focus_middle.png"));
+      _useNewNotifyButtonColor =
+        File.Exists(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_notifyButton_Focus_middle.png"));
     }
 
     private void SaveSettings()
@@ -1902,7 +1905,19 @@ namespace TvPlugin
         img.TexutureIcon = String.Empty;
         if (ShouldNotifyProgram(program))
         {
-          img.TexutureIcon = Thumbs.TvNotifyIcon;
+          if (_useNewNotifyButtonColor)
+          {
+            img.TexutureFocusLeftName = "tvguide_notifyButton_Focus_left.png";
+            img.TexutureFocusMidName = "tvguide_notifyButton_Focus_middle.png";
+            img.TexutureFocusRightName = "tvguide_notifyButton_Focus_right.png";
+            img.TexutureNoFocusLeftName = "tvguide_notifyButton_noFocus_left.png";
+            img.TexutureNoFocusMidName = "tvguide_notifyButton_noFocus_middle.png";
+            img.TexutureNoFocusRightName = "tvguide_notifyButton_noFocus_right.png";
+          }
+          else
+          {
+            img.TexutureIcon = Thumbs.TvNotifyIcon;
+          }
         }
         if (bRecording)
         {
@@ -2198,7 +2213,19 @@ namespace TvPlugin
             img.TexutureIcon = String.Empty;
             if (ShouldNotifyProgram(program))
             {
-              img.TexutureIcon = Thumbs.TvNotifyIcon;
+              if (_useNewNotifyButtonColor)
+              {
+                img.TexutureFocusLeftName = "tvguide_notifyButton_Focus_left.png";
+                img.TexutureFocusMidName = "tvguide_notifyButton_Focus_middle.png";
+                img.TexutureFocusRightName = "tvguide_notifyButton_Focus_right.png";
+                img.TexutureNoFocusLeftName = "tvguide_notifyButton_noFocus_left.png";
+                img.TexutureNoFocusMidName = "tvguide_notifyButton_noFocus_middle.png";
+                img.TexutureNoFocusRightName = "tvguide_notifyButton_noFocus_right.png";
+              }
+              else
+              {
+                img.TexutureIcon = Thumbs.TvNotifyIcon;
+              }
             }
             if (bRecording)
             {
