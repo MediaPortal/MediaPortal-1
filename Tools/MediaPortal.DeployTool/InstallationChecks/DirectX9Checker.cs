@@ -121,7 +121,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
             {
               if (!File.Exists(WinDir + "\\" + DllFile))
               {
-                result.state = CheckState.VERSION_MISMATCH;
+                // Changed from ".VERSION_MISMATCH" to avoid complaining about "removal of newer DirectX"
+                result.state = CheckState.NOT_INSTALLED;
                 return result;
               }
             }
