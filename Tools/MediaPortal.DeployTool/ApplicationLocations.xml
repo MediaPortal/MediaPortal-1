@@ -1,9 +1,16 @@
 ﻿<Applications>
   <DirectX9c>
+    <!--- Section used only by 1.0.2 installer -->
     <URL>http://install.team-mediaportal.com/DirectX</URL>
     <FILE>directx_aug2008_redist.exe</FILE>
     <TYPE>Automatic</TYPE>
   </DirectX9c>
+  <DirectXRedist>
+    <!--- Section used by 1.1.0 alpha installer -->
+    <URL>http://install.team-mediaportal.com/DirectXRedist</URL>
+    <FILE>directx_mar2009_redist.exe</FILE>
+    <TYPE>Automatic</TYPE>
+  </DirectXRedist>
   <MSSQLExpress32>
     <URL>http://install.team-mediaportal.com/Sql2005_32bit</URL>
     <FILE>sqlexpr32.exe</FILE>
@@ -29,12 +36,8 @@
     <FILE>package-tvengine.exe</FILE>
     <TYPE>Automatic</TYPE>
   </TvServer>
-  <VCRedist>
-    <URL>http://install.team-mediaportal.com/VcRedist</URL>
-    <FILE>vcredist_x86.exe</FILE>
-    <TYPE>Automatic</TYPE>
-  </VCRedist>
   <VCRedist2005>
+    <!--- Section used only by 1.0.2 installer -->
     <URL>http://install.team-mediaportal.com/VcRedist2005</URL>
     <FILE>vcredist2005_x86.exe</FILE>
     <TYPE>Automatic</TYPE>

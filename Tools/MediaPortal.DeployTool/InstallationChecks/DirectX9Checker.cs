@@ -33,14 +33,15 @@ namespace MediaPortal.DeployTool.InstallationChecks
 {
   class DirectX9Checker : IInstallationPackage
   {
+    public const string prg = "DirectXRedist";
+
     public string GetDisplayName()
     {
-      return "DirectX 9c - August 2008";
+      return "DirectX 9c - March 2009";
     }
 
     public bool Download()
     {
-      const string prg = "DirectX9c";
       string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
       DialogResult result = Utils.RetryDownloadFile(FileName, prg);
       return (result == DialogResult.OK);
@@ -49,7 +50,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
     public bool Install()
     {
       // Extract package
-      string exe = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("DirectX9c", "FILE");
+      string exe = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
 
       try
       {
@@ -85,7 +86,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       CheckResult result = new CheckResult();
       result.needsDownload = true;
-      string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("DirectX9c", "FILE");
+      string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
       FileInfo dxFile = new FileInfo(fileName);
 
       if (dxFile.Exists && dxFile.Length != 0)

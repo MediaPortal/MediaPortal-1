@@ -33,6 +33,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
 {
   class WindowsMediaPlayerChecker : IInstallationPackage
   {
+    public const string prg = "WindowsMediaPlayer";
+
     public string GetDisplayName()
     {
       return "Windows Media Player 11";
@@ -40,7 +42,6 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool Download()
     {
-      const string prg = "WindowsMediaPlayer";
       DialogResult result = Utils.RetryDownloadFile(InstallationProperties.Instance["Wmp11FileName"], prg);
       return (result == DialogResult.OK);
     }
@@ -69,7 +70,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       CheckResult result;
       result.needsDownload = true;
-      const string prg = "WindowsMediaPlayer";
+
       string FileName = Application.StartupPath + "\\deploy\\" + Utils.LocalizeDownloadFile(Utils.GetDownloadString(prg, "FILE"), Utils.GetDownloadString(prg, "TYPE"), prg);
       FileInfo wmpFile = new FileInfo(FileName);
       InstallationProperties.Instance.Set("Wmp11FileName", FileName);

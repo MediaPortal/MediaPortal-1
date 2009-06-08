@@ -115,7 +115,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       }
       if (InstallationProperties.Instance["ConfigureMediaPortalFirewall"] == "1")
       {
-        //MediaProtal
+        //MediaPortal
         app = InstallationProperties.Instance["MPDir"] + "\\MediaPortal.exe";
         AuthorizeApplication("MediaPortal", app, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
       }

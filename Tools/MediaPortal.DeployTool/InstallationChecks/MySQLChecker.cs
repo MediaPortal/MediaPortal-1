@@ -69,6 +69,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
       WritePrivateProfileString("mysqld", "innodb_thread_concurrency", "8", iniFile);
     }
 
+    public const string prg = "MySQL";
+
     public string GetDisplayName()
     {
       return "MySQL 5";
@@ -76,7 +78,6 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool Download()
     {
-      const string prg = "MySQL";
       string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
       DialogResult result = Utils.RetryDownloadFile(FileName, prg);
       return (result == DialogResult.OK);
@@ -84,7 +85,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool Install()
     {
-      string cmdLine = "/i \"" + Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("MySQL", "FILE") + "\"";
+      string cmdLine = "/i \"" + Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE") + "\"";
       cmdLine += " ADDLOCAL=\"Server,ClientPrograms,MySQLCommandLineShell,MysqlCommandLineUtilsFeature,ServerInstanceConfig\"";
       cmdLine += " INSTALLDIR=\"" + InstallationProperties.Instance["DBMSDir"] + "\"";
       cmdLine += " /qn";
@@ -209,7 +210,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       CheckResult result;
       result.needsDownload = true;
-      string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("MySQL", "FILE");
+      string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
       FileInfo mySqlFile = new FileInfo(fileName);
 
       if (mySqlFile.Exists && mySqlFile.Length != 0)

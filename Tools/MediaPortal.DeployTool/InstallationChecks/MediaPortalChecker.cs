@@ -33,6 +33,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
 {
   class MediaPortalChecker : IInstallationPackage
   {
+    public const string prg = "MediaPortal";
+
     public string GetDisplayName()
     {
       return "MediaPortal " + Utils.GetPackageVersion('c');
@@ -40,7 +42,6 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool Download()
     {
-      const string prg = "MediaPortal";
       string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
       DialogResult result = Utils.RetryDownloadFile(FileName, prg);
       return (result == DialogResult.OK);
@@ -48,13 +49,13 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool Install()
     {
-      string nsis = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("MediaPortal", "FILE");
+      string nsis = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
       if (!File.Exists(nsis)) return false;
       string targetDir = InstallationProperties.Instance["MPDir"];
-      
+
       //NSIS installer need to to if it's a fresh install or an update (chefkoch)
       string UpdateMode = InstallationProperties.Instance["UpdateMode"] == "yes" ? "/UpdateMode" : string.Empty;
-      
+
       //NSIS installer doesn't want " in parameters (chefkoch)
       //Rember that /D must be the last one         (chefkoch)
       Process setup = Process.Start(nsis, String.Format("/S /DeployMode {0} /D={1}", UpdateMode, targetDir));
@@ -91,7 +92,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       CheckResult result;
       result.needsDownload = true;
-      string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("MediaPortal", "FILE");
+      string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
       FileInfo mpFile = new FileInfo(fileName);
 
       if (mpFile.Exists && mpFile.Length != 0)

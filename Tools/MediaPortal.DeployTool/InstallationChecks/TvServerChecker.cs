@@ -33,6 +33,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
 {
   class TvServerChecker : IInstallationPackage
   {
+    public const string prg = "TvServer";
+
     public string GetDisplayName()
     {
       return "MediaPortal TV-Server " + Utils.GetPackageVersion('c');
@@ -40,14 +42,13 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool Download()
     {
-      const string prg = "TvServer";
       string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
       DialogResult result = Utils.RetryDownloadFile(FileName, prg);
       return (result == DialogResult.OK);
     }
     public bool Install()
     {
-      string nsis = Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadString("TvServer", "FILE");
+      string nsis = Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadString(prg, "FILE");
       if (!File.Exists(nsis)) return false;
       string targetDir = InstallationProperties.Instance["TVServerDir"];
 
@@ -85,7 +86,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       CheckResult result;
       result.needsDownload = true;
-      string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("TvServer", "FILE");
+      string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
       FileInfo tvServerFile = new FileInfo(fileName);
 
       if (tvServerFile.Exists && tvServerFile.Length != 0)

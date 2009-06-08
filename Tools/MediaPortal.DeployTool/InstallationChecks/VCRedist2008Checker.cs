@@ -32,6 +32,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
 {
   class VCRedist2008Checker : IInstallationPackage
   {
+    public const string prg = "VCRedist2008";
+
     public string GetDisplayName()
     {
       return "MS Visual C++ 2008 SP1 Redist";
@@ -39,14 +41,13 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool Download()
     {
-      const string prg = "VCRedist2008";
       string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
       DialogResult result = Utils.RetryDownloadFile(FileName, prg);
       return (result == DialogResult.OK);
     }
     public bool Install()
     {
-      Process setup = Process.Start(Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadString("VCRedist2008", "FILE"), "/Q");
+      Process setup = Process.Start(Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadString(prg, "FILE"), "/Q");
       try
       {
         if (setup != null)
@@ -70,7 +71,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       CheckResult result;
       result.needsDownload = true;
-      string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("VCRedist2008", "FILE");
+      string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
       FileInfo vcRedistFile = new FileInfo(fileName);
 
       if (vcRedistFile.Exists && vcRedistFile.Length != 0)
