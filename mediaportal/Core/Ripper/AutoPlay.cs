@@ -322,7 +322,7 @@ namespace MediaPortal.Ripper
     public static void ExamineCD(string strDrive, bool forcePlay)
     {
       // don't interrupt if we're already playing something
-      if (g_Player.Playing)
+      if (g_Player.Playing && !forcePlay)
       {
         return;
       }      
