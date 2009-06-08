@@ -33,7 +33,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 {
   class MediaPortalChecker : IInstallationPackage
   {
-    public const string prg = "MediaPortal";
+    public static string prg = "MediaPortal";
 
     public string GetDisplayName()
     {

@@ -44,7 +44,7 @@ namespace MediaPortal.DeployTool.Sections
       switch (dbmsType)
       {
         case 1:
-          InstallationProperties.Instance.Set("DBMSType", "mssql2005");
+          InstallationProperties.Instance.Set("DBMSType", "msSQL2008");
           break;
         case 2:
           InstallationProperties.Instance.Set("DBMSType", "mysql");

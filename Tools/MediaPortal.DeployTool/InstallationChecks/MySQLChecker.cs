@@ -40,7 +40,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     private static readonly string arch = Utils.Check64bit() ? "64" : "32";
 
-    public string prg = "MySQL" + arch;
+    public static string prg = "MySQL" + arch;
 
     private void PrepareMyIni(string iniFile)
     {

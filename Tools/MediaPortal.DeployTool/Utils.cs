@@ -187,14 +187,14 @@ namespace MediaPortal.DeployTool
       }
       string NewFileName = filename;
 
-      // SQL2005 native language download
-      if (prg.Contains("MSSQLExpress") && downloadtype != "Manual" && LangCode != "ENU")
+      // SQL2008 native language download
+      if (prg == InstallationChecks.MSSQLExpressChecker.prg && downloadtype != "Manual" && LangCode != "ENU")
       {
         NewFileName = filename.Split('.')[0] + "_" + LangCode + ".exe";
       }
 
       // WMP11 native language download
-      if (prg == "WindowsMediaPlayer")
+      if (prg == InstallationChecks.WindowsMediaPlayerChecker.prg)
       {
         string arch = InstallationProperties.Instance["DownloadArch"];
         if (arch == "64")

@@ -32,7 +32,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 {
   class VCRedist2008Checker : IInstallationPackage
   {
-    public const string prg = "VCRedist2008";
+    public static string prg = "VCRedist2008";
 
     public string GetDisplayName()
     {

@@ -33,7 +33,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 {
   class WindowsMediaPlayerChecker : IInstallationPackage
   {
-    public const string prg = "WindowsMediaPlayer";
+    public static string prg = "WindowsMediaPlayer";
 
     public string GetDisplayName()
     {

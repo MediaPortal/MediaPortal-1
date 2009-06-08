@@ -33,7 +33,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 {
   class TvServerChecker : IInstallationPackage
   {
-    public const string prg = "TvServer";
+    public static string prg = "TvServer";
 
     public string GetDisplayName()
     {

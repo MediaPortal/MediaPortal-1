@@ -33,7 +33,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 {
   class DirectX9Checker : IInstallationPackage
   {
-    public const string prg = "DirectXRedist";
+    public static string prg = "DirectXRedist";
 
     public string GetDisplayName()
     {

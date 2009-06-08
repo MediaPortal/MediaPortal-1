@@ -33,8 +33,6 @@ namespace MediaPortal.DeployTool.InstallationChecks
 {
   class TvPluginChecker : IInstallationPackage
   {
-    public const string prg = "TvServer";
-
     public string GetDisplayName()
     {
       return "MediaPortal TV-Plugin " + Utils.GetPackageVersion('c');
@@ -42,14 +40,14 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool Download()
     {
-      string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
-      DialogResult result = Utils.RetryDownloadFile(FileName, prg);
+      string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(TvServerChecker.prg, "FILE");
+      DialogResult result = Utils.RetryDownloadFile(FileName, TvServerChecker.prg);
       return (result == DialogResult.OK);
     }
 
     public bool Install()
     {
-      string nsis = Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadString(prg, "FILE");
+      string nsis = Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadString(TvServerChecker.prg, "FILE");
       if (!File.Exists(nsis)) return false;
 
       //NSIS installer need to to if it's a fresh install or an update (chefkoch)
@@ -86,7 +84,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       CheckResult result;
       result.needsDownload = true;
-      string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
+      string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(TvServerChecker.prg, "FILE");
       FileInfo tvPluginFile = new FileInfo(fileName);
 
       if (tvPluginFile.Exists && tvPluginFile.Length != 0)

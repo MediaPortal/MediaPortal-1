@@ -34,7 +34,7 @@ namespace MediaPortal.DeployTool.Sections
     {
       InitializeComponent();
       type = DialogType.DBMSSettings;
-      if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
+      if (InstallationProperties.Instance["DBMSType"] == "msSQL2008")
         textBoxDir.Text = installationPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Microsoft SQL Server";
       else
         textBoxDir.Text = installationPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\MySQL\\MySQL Server 5.0";

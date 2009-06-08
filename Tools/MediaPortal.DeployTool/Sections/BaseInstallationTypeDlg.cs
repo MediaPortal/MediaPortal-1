@@ -71,7 +71,7 @@ namespace MediaPortal.DeployTool.Sections
       {
         InstallationProperties.Instance.Set("InstallTypeHeader", Localizer.GetBestTranslation("BaseInstallation_rbOneClick"));
         InstallationProperties.Instance.Set("InstallType", "singleseat");
-        InstallationProperties.Instance.Set("DBMSType", "mssql2005");
+        InstallationProperties.Instance.Set("DBMSType", "msSQL2008");
         InstallationProperties.Instance.Set("DBMSDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Microsoft SQL Server");
         InstallationProperties.Instance.Set("DBMSPassword", "MediaPortal");
         InstallationProperties.Instance.Set("ConfigureTVServerFirewall", "1");

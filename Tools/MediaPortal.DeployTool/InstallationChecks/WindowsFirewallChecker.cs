@@ -122,13 +122,13 @@ namespace MediaPortal.DeployTool.InstallationChecks
       if (InstallationProperties.Instance["ConfigureDBMSFirewall"] == "1")
       {
         int port;
-        if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
+        if (InstallationProperties.Instance["DBMSType"] == "msSQL2008")
         {
-          //SQL2005 TCP Port
+          //SQL2008 TCP Port
           port = 1433;
           GloballyOpenPort("Microsoft SQL (TCP)", port, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_TCP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
 
-          //SQL2005 UDP Port
+          //SQL2008 UDP Port
           port = 1434;
           GloballyOpenPort("Microsoft SQL (UDP)", port, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_UDP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
         }
@@ -257,7 +257,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
             INetFwOpenPort app = e2.Current as INetFwOpenPort;
             if (app != null)
             {
-              if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
+              if (InstallationProperties.Instance["DBMSType"] == "msSQL2008")
               {
                 if (app.Port == 1433)
                   result.state = CheckState.CONFIGURED;
