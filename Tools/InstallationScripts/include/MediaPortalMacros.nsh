@@ -755,7 +755,7 @@ DeleteRegKey HKCU "Software\MediaPortal"
     !insertmacro GetServicePack $R1 $R2
     ${If} $R2 > 0
       StrCpy $0 "OSwarnBetaSP"
-    ${ElseIf} $R1 < 2
+    ${ElseIf} $R1 < 3
       StrCpy $0 "OSabort"
     ${Else}
       StrCpy $0 "OSok"
