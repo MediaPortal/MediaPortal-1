@@ -143,9 +143,17 @@ Var frominstall
 !include FileFunc.nsh
 !include Memento.nsh
 
-!include "${svn_InstallScripts}\include\*"
+!include "${svn_InstallScripts}\include\FileAssociation.nsh"
+!include "${svn_InstallScripts}\include\LanguageMacros.nsh"
+!include "${svn_InstallScripts}\include\LoggingMacros.nsh"
+!include "${svn_InstallScripts}\include\MediaPortalDirectories.nsh"
+!include "${svn_InstallScripts}\include\MediaPortalMacros.nsh"
+!include "${svn_InstallScripts}\include\ProcessMacros.nsh"
+!include "${svn_InstallScripts}\include\WinVerEx.nsh"
 
+!ifndef SVN_BUILD
 !include "${svn_InstallScripts}\pages\AddRemovePage.nsh"
+!endif
 !include "${svn_InstallScripts}\pages\UninstallModePage.nsh"
 
 
