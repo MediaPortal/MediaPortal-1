@@ -239,7 +239,7 @@ BrandingText  "${PRODUCT_NAME} ${VERSION} by ${PRODUCT_PUBLISHER}"
 !if ${VER_BUILD} == 0       # it's an official release
   OutFile "Release\package-mediaportal.exe"
 !else                       # it's a svn release
-  OutFile "Release\MediaPortal-svn-.exe"
+  OutFile "Release\Setup-MediaPortal-svn-${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}.exe"
 !endif
 InstallDir ""
 CRCCheck on

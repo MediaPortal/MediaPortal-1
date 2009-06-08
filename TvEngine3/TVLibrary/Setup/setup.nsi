@@ -234,7 +234,7 @@ BrandingText  "${PRODUCT_NAME} ${VERSION} by ${PRODUCT_PUBLISHER}"
 !if ${VER_BUILD} == 0
   OutFile "Release\package-tvengine.exe"
 !else
-  OutFile "Release\setup-tve3.exe"
+  OutFile "Release\Setup-TvEngine-svn-${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}.exe"
 !endif
 InstallDir ""
 CRCCheck on
