@@ -786,6 +786,14 @@ DeleteRegKey HKCU "Software\MediaPortal"
     ${LOG_TEXT} "INFO" "OSTest::IsWin2008"
     StrCpy $0 "OSwarn"
 
+  ${ElseIf} ${IsWin7}
+    ${LOG_TEXT} "INFO" "OSTest::IsWin7"
+    StrCpy $0 "OSok"
+
+  ${ElseIf} ${IsWin2008R2}
+    ${LOG_TEXT} "INFO" "OSTest::IsWin2008R2"
+    StrCpy $0 "OSwarn"
+
   ${Else}
     ${LOG_TEXT} "INFO" "OSTest::unknown OS"
     StrCpy $0 "OSabort"
