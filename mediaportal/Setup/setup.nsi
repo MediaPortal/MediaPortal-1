@@ -199,7 +199,9 @@ Var frominstall
 !insertmacro MUI_PAGE_LICENSE "${svn_MP}\Docs\MediaPortal License.rtf"
 !insertmacro MUI_PAGE_LICENSE "${svn_MP}\Docs\BASS License.txt"
 
+!ifndef SVN_BUILD
 Page custom PageReinstallMode PageLeaveReinstallMode
+!endif
 
 !define MUI_PAGE_CUSTOMFUNCTION_PRE PageComponentsPre
 !insertmacro MUI_PAGE_COMPONENTS
