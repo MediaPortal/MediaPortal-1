@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using DirectShowLib;
 using TvLibrary.Channels;
-using TVLibrary.Implementations.DVB;
+using TvLibrary.Implementations.DVB;
 using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Interfaces;
 using DirectShowLib.BDA;

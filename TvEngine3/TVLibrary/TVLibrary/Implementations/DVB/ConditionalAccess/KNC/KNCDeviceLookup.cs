@@ -33,7 +33,7 @@ using TvDatabase;
  * The device index counts from 0...n for all KNC1 cards.
  * 
  */
-namespace TVLibrary.Implementations.DVB
+namespace TvLibrary.Implementations.DVB
 {
   /// <summary>
   /// Enumerates all KNC cards, sorts by DevicePath and returns matching index.
