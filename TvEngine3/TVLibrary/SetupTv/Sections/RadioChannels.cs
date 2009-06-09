@@ -165,6 +165,7 @@ namespace SetupTv.Sections
         bool dvbt = false;
         bool dvbs = false;
         bool atsc = false;
+        bool dvbip = false;
         bool webstream = false;
         bool fmRadio = false;
         bool notmapped = true;
@@ -211,6 +212,7 @@ namespace SetupTv.Sections
                   atsc = true;
                   notmapped = false;
                   break;
+                case CardType.DvbIP: dvbip = true; notmapped = false; break;
               }
             }
           }
@@ -250,6 +252,11 @@ namespace SetupTv.Sections
           if (builder.Length > 0)
             builder.Append(",");
           builder.Append("ATSC");
+        }
+        if (dvbip)
+        {
+          if (builder.Length > 0) builder.Append(",");
+          builder.Append("DVB-IP");
         }
         if (webstream)
         {
@@ -319,6 +326,9 @@ namespace SetupTv.Sections
               frequency = detail.Frequency;
               frequency /= 1000000.0f;
               item.SubItems.Add(String.Format("{0} MHz", frequency.ToString("f3")));
+              break;
+            case 7:// DVB-IP
+              item.SubItems.Add(detail.Url);
               break;
           }
         }

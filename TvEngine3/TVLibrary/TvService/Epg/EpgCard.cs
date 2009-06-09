@@ -564,6 +564,56 @@ namespace TvService
         Log.Epg("Epg: card:{0} could not tune to dvbt channel:{1}", card.IdCard, tuning.ToString());
         return false;
       }
+
+      //handle DVBIP
+      DVBIPChannel dvbipChannel = tuning as DVBIPChannel;
+      if (dvbipChannel != null)
+      {
+        if (_tvController.Type(card.IdCard) == CardType.DvbIP)
+        {
+          if (IsCardIdle(card.IdCard) == false)
+          {
+            Log.Epg("Epg: card:{0} dvbip card is not idle", card.IdCard);
+            return false;//card is busy
+          }
+          try
+          {
+            _user.CardId = card.IdCard;
+            result = RemoteControl.Instance.Tune(ref _user, tuning, channel.IdChannel);
+            if (result == TvResult.Succeeded)
+            {
+              if (!_isRunning || false == _tvController.GrabEpg(this, card.IdCard))
+              {
+                if (!_isRunning)
+                  Log.Epg("Tuning finished but EpgGrabber no longer enabled");
+                _tvController.StopGrabbingEpg(_user);
+                _user.CardId = -1;
+                Log.Epg("Epg: card:{0} could not start dvbip grabbing", card.IdCard);
+                return false;
+              }
+              _user.CardId = card.IdCard;
+              return true;
+            }
+            else
+            {
+              _user.CardId = -1;
+              Log.Epg("Epg: card:{0} could not tune to channel:{1}", card.IdCard, result.ToString());
+              return false;
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Write(ex);
+            throw ex;
+          }
+          //unreachable return false;
+        }
+        else
+        {
+          Log.Epg("Epg: card:{0} could not tune to dvbip channel:{1}", card.IdCard, tuning.ToString());
+        }
+        return false;
+      }
       Log.Epg("Epg: card:{0} could not tune to channel:{1}", card.IdCard, tuning.ToString());
       return false;
     }

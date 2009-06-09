@@ -255,6 +255,10 @@ namespace SetupTv.Sections
               foundValidTuningDetail = (tDetail.ChannelType == 4);
               break;
 
+            case CardType.DvbIP:
+              foundValidTuningDetail = (tDetail.ChannelType == 7);
+              break;
+
             case CardType.RadioWebStream:
               foundValidTuningDetail = (tDetail.ChannelType == 5);
               break;

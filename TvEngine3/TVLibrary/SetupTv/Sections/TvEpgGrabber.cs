@@ -132,6 +132,7 @@ namespace SetupTv.Sections
         bool dvbt = false;
         bool dvbs = false;
         bool atsc = false;
+        bool dvbip = false;
         if (ch.IsTv == false)
           continue;
         if (ch.IsWebstream())
@@ -162,6 +163,7 @@ namespace SetupTv.Sections
               case CardType.Atsc:
                 atsc = true;
                 break;
+              case CardType.DvbIP: dvbip = true; break;
             }
           }
         }
@@ -193,6 +195,11 @@ namespace SetupTv.Sections
           if (line != "")
             line += ",";
           line += "ATSC";
+        }
+        if (dvbip)
+        {
+          if (line != "") line += ",";
+          line += "DVB-IP";
         }
         item.SubItems.Add(line);
         item.Checked = ch.GrabEpg;

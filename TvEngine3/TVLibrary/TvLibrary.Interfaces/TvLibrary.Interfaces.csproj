@@ -71,6 +71,7 @@
     <Compile Include="Implementations\Analog\GraphComponents\TvAudio.cs" />
     <Compile Include="Implementations\Analog\GraphComponents\Graph.cs" />
     <Compile Include="Implementations\Analog\GraphComponents\Tuner.cs" />
+    <Compile Include="Implementations\Channels\DVBIPChannel.cs" />
     <Compile Include="Implementations\Channels\RadioWebStreamChannel.cs" />
     <Compile Include="Interfaces\ICiMenuActions.cs" />
     <Compile Include="Interfaces\ICiMenuCallbacks.cs" />

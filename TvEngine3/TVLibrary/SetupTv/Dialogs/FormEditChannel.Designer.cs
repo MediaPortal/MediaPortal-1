@@ -151,6 +151,22 @@ namespace SetupTv.Sections
       this.edFMFreq = new System.Windows.Forms.TextBox();
       this.label42 = new System.Windows.Forms.Label();
       this.mpButtonCancel = new MediaPortal.UserInterface.Controls.MPButton();
+      this.tabPage7 = new System.Windows.Forms.TabPage();
+      this.checkBoxDVBIPfta = new System.Windows.Forms.CheckBox();
+      this.labelDVBIPProvider = new System.Windows.Forms.Label();
+      this.textBoxDVBIPProvider = new System.Windows.Forms.TextBox();
+      this.ipPmtLabel = new System.Windows.Forms.Label();
+      this.textBoxDVBIPPmtPid = new System.Windows.Forms.TextBox();
+      this.textBoxDVBIPServiceId = new System.Windows.Forms.TextBox();
+      this.textBoxDVBIPTransportId = new System.Windows.Forms.TextBox();
+      this.textBoxDVBIPNetworkId = new System.Windows.Forms.TextBox();
+      this.textBoxDVBIPChannel = new System.Windows.Forms.TextBox();
+      this.label54 = new System.Windows.Forms.Label();
+      this.label55 = new System.Windows.Forms.Label();
+      this.label56 = new System.Windows.Forms.Label();
+      this.label57 = new System.Windows.Forms.Label();
+      this.label53 = new System.Windows.Forms.Label();
+      this.textBoxDVBIPUrl = new System.Windows.Forms.TextBox();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -163,6 +179,7 @@ namespace SetupTv.Sections
       this.tabSHOUTcast.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.nudStreamBitrate)).BeginInit();
       this.tabFMRadio.SuspendLayout();
+      this.tabPage7.SuspendLayout();
       this.SuspendLayout();
       // 
       // mpButtonOk
@@ -183,6 +200,7 @@ namespace SetupTv.Sections
       this.tabControl1.Controls.Add(this.tabPage4);
       this.tabControl1.Controls.Add(this.tabPage5);
       this.tabControl1.Controls.Add(this.tabPage6);
+      this.tabControl1.Controls.Add(this.tabPage7);
       this.tabControl1.Controls.Add(this.tabSHOUTcast);
       this.tabControl1.Controls.Add(this.tabFMRadio);
       this.tabControl1.Location = new System.Drawing.Point(12, 12);
@@ -1484,6 +1502,158 @@ namespace SetupTv.Sections
       this.mpButtonCancel.UseVisualStyleBackColor = true;
       this.mpButtonCancel.Click += new System.EventHandler(this.mpButtonCancel_Click);
       // 
+      // tabPage7
+      // 
+      this.tabPage7.Controls.Add(this.textBoxDVBIPUrl);
+      this.tabPage7.Controls.Add(this.label53);
+      this.tabPage7.Controls.Add(this.checkBoxDVBIPfta);
+      this.tabPage7.Controls.Add(this.labelDVBIPProvider);
+      this.tabPage7.Controls.Add(this.textBoxDVBIPProvider);
+      this.tabPage7.Controls.Add(this.ipPmtLabel);
+      this.tabPage7.Controls.Add(this.textBoxDVBIPPmtPid);
+      this.tabPage7.Controls.Add(this.textBoxDVBIPServiceId);
+      this.tabPage7.Controls.Add(this.textBoxDVBIPTransportId);
+      this.tabPage7.Controls.Add(this.textBoxDVBIPNetworkId);
+      this.tabPage7.Controls.Add(this.textBoxDVBIPChannel);
+      this.tabPage7.Controls.Add(this.label54);
+      this.tabPage7.Controls.Add(this.label55);
+      this.tabPage7.Controls.Add(this.label56);
+      this.tabPage7.Controls.Add(this.label57);
+      this.tabPage7.Location = new System.Drawing.Point(4, 22);
+      this.tabPage7.Name = "tabPage7";
+      this.tabPage7.Size = new System.Drawing.Size(432, 299);
+      this.tabPage7.TabIndex = 8;
+      this.tabPage7.Text = "DVB-IP";
+      this.tabPage7.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxDVBIPfta
+      // 
+      this.checkBoxDVBIPfta.AutoSize = true;
+      this.checkBoxDVBIPfta.Location = new System.Drawing.Point(95, 196);
+      this.checkBoxDVBIPfta.Name = "checkBoxDVBIPfta";
+      this.checkBoxDVBIPfta.Size = new System.Drawing.Size(78, 17);
+      this.checkBoxDVBIPfta.TabIndex = 94;
+      this.checkBoxDVBIPfta.Text = "Free To Air";
+      this.checkBoxDVBIPfta.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      this.checkBoxDVBIPfta.UseVisualStyleBackColor = true;
+      // 
+      // labelDVBIPProvider
+      // 
+      this.labelDVBIPProvider.AutoSize = true;
+      this.labelDVBIPProvider.Location = new System.Drawing.Point(17, 147);
+      this.labelDVBIPProvider.Name = "labelDVBIPProvider";
+      this.labelDVBIPProvider.Size = new System.Drawing.Size(49, 13);
+      this.labelDVBIPProvider.TabIndex = 93;
+      this.labelDVBIPProvider.Text = "Provider:";
+      // 
+      // textBoxDVBIPProvider
+      // 
+      this.textBoxDVBIPProvider.Location = new System.Drawing.Point(95, 144);
+      this.textBoxDVBIPProvider.Name = "textBoxDVBIPProvider";
+      this.textBoxDVBIPProvider.Size = new System.Drawing.Size(146, 20);
+      this.textBoxDVBIPProvider.TabIndex = 92;
+      // 
+      // ipPmtLabel
+      // 
+      this.ipPmtLabel.AutoSize = true;
+      this.ipPmtLabel.Location = new System.Drawing.Point(17, 121);
+      this.ipPmtLabel.Name = "ipPmtLabel";
+      this.ipPmtLabel.Size = new System.Drawing.Size(43, 13);
+      this.ipPmtLabel.TabIndex = 91;
+      this.ipPmtLabel.Text = "PmtPid:";
+      // 
+      // textBoxDVBIPPmtPid
+      // 
+      this.textBoxDVBIPPmtPid.Location = new System.Drawing.Point(95, 118);
+      this.textBoxDVBIPPmtPid.Name = "textBoxDVBIPPmtPid";
+      this.textBoxDVBIPPmtPid.Size = new System.Drawing.Size(146, 20);
+      this.textBoxDVBIPPmtPid.TabIndex = 90;
+      this.textBoxDVBIPPmtPid.Text = "-1";
+      // 
+      // textBoxDVBIPServiceId
+      // 
+      this.textBoxDVBIPServiceId.Location = new System.Drawing.Point(95, 92);
+      this.textBoxDVBIPServiceId.Name = "textBoxDVBIPServiceId";
+      this.textBoxDVBIPServiceId.Size = new System.Drawing.Size(146, 20);
+      this.textBoxDVBIPServiceId.TabIndex = 83;
+      this.textBoxDVBIPServiceId.Text = "-1";
+      // 
+      // textBoxDVBIPTransportId
+      // 
+      this.textBoxDVBIPTransportId.Location = new System.Drawing.Point(95, 66);
+      this.textBoxDVBIPTransportId.Name = "textBoxDVBIPTransportId";
+      this.textBoxDVBIPTransportId.Size = new System.Drawing.Size(146, 20);
+      this.textBoxDVBIPTransportId.TabIndex = 82;
+      this.textBoxDVBIPTransportId.Text = "-1";
+      // 
+      // textBoxDVBIPNetworkId
+      // 
+      this.textBoxDVBIPNetworkId.Location = new System.Drawing.Point(95, 40);
+      this.textBoxDVBIPNetworkId.Name = "textBoxDVBIPNetworkId";
+      this.textBoxDVBIPNetworkId.Size = new System.Drawing.Size(146, 20);
+      this.textBoxDVBIPNetworkId.TabIndex = 81;
+      this.textBoxDVBIPNetworkId.Text = "-1";
+      // 
+      // textBoxDVBIPChannel
+      // 
+      this.textBoxDVBIPChannel.Location = new System.Drawing.Point(95, 14);
+      this.textBoxDVBIPChannel.Name = "textBoxDVBIPChannel";
+      this.textBoxDVBIPChannel.Size = new System.Drawing.Size(146, 20);
+      this.textBoxDVBIPChannel.TabIndex = 80;
+      this.textBoxDVBIPChannel.Text = "0";
+      // 
+      // label54
+      // 
+      this.label54.AutoSize = true;
+      this.label54.Location = new System.Drawing.Point(17, 69);
+      this.label54.Name = "label54";
+      this.label54.Size = new System.Drawing.Size(64, 13);
+      this.label54.TabIndex = 88;
+      this.label54.Text = "TransportId:";
+      // 
+      // label55
+      // 
+      this.label55.AutoSize = true;
+      this.label55.Location = new System.Drawing.Point(17, 96);
+      this.label55.Name = "label55";
+      this.label55.Size = new System.Drawing.Size(55, 13);
+      this.label55.TabIndex = 87;
+      this.label55.Text = "ServiceId:";
+      // 
+      // label56
+      // 
+      this.label56.AutoSize = true;
+      this.label56.Location = new System.Drawing.Point(17, 43);
+      this.label56.Name = "label56";
+      this.label56.Size = new System.Drawing.Size(59, 13);
+      this.label56.TabIndex = 86;
+      this.label56.Text = "NetworkId:";
+      // 
+      // label57
+      // 
+      this.label57.AutoSize = true;
+      this.label57.Location = new System.Drawing.Point(17, 14);
+      this.label57.Name = "label57";
+      this.label57.Size = new System.Drawing.Size(49, 13);
+      this.label57.TabIndex = 85;
+      this.label57.Text = "Channel:";
+      // 
+      // label53
+      // 
+      this.label53.AutoSize = true;
+      this.label53.Location = new System.Drawing.Point(17, 175);
+      this.label53.Name = "label53";
+      this.label53.Size = new System.Drawing.Size(32, 13);
+      this.label53.TabIndex = 95;
+      this.label53.Text = "URL:";
+      // 
+      // textBoxDVBIPUrl
+      // 
+      this.textBoxDVBIPUrl.Location = new System.Drawing.Point(95, 170);
+      this.textBoxDVBIPUrl.Name = "textBoxDVBIPUrl";
+      this.textBoxDVBIPUrl.Size = new System.Drawing.Size(321, 20);
+      this.textBoxDVBIPUrl.TabIndex = 96;
+      // 
       // FormEditChannel
       // 
       this.AcceptButton = this.mpButtonOk;
@@ -1523,6 +1693,8 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.nudStreamBitrate)).EndInit();
       this.tabFMRadio.ResumeLayout(false);
       this.tabFMRadio.PerformLayout();
+      this.tabPage7.ResumeLayout(false);
+      this.tabPage7.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -1646,11 +1818,27 @@ namespace SetupTv.Sections
     private System.Windows.Forms.CheckBox checkBoxQamfta;
     private System.Windows.Forms.Label label49;
     private System.Windows.Forms.TextBox textBoxQamProvider;
+    private System.Windows.Forms.TabPage tabPage7;
+    private System.Windows.Forms.CheckBox checkBoxDVBIPfta;
+    private System.Windows.Forms.Label label51;
+    private System.Windows.Forms.TextBox textBoxDVBIPProvider;
+    private System.Windows.Forms.Label ipPmtLabel;
+    private System.Windows.Forms.TextBox textBoxDVBIPPmtPid;
+    private System.Windows.Forms.TextBox textBoxDVBIPServiceId;
+    private System.Windows.Forms.TextBox textBoxDVBIPTransportId;
+    private System.Windows.Forms.TextBox textBoxDVBIPNetworkId;
+    private System.Windows.Forms.TextBox textBoxDVBIPChannel;
+    private System.Windows.Forms.Label label54;
+    private System.Windows.Forms.Label label55;
+    private System.Windows.Forms.Label label56;
+    private System.Windows.Forms.Label label57;
+    private System.Windows.Forms.TextBox textBoxDVBIPUrl;
+    private System.Windows.Forms.Label label53;
     private System.Windows.Forms.ComboBox comboBoxAudioSource;
     private System.Windows.Forms.Label label52;
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.GroupBox groupBox2;
-    private System.Windows.Forms.Label label51;
+    private System.Windows.Forms.Label labelDVBIPProvider;
     private System.Windows.Forms.CheckBox checkBoxVCR;
 
   }

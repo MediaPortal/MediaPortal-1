@@ -241,6 +241,7 @@ namespace TvService
           continue;
         if (type == CardType.DvbT && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 4)
           continue;
+        if (type == CardType.DvbIP && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 7) continue;
 
         //find next channel to grab
         while (TransponderList.Instance.CurrentTransponder.GetNextChannel() != null)

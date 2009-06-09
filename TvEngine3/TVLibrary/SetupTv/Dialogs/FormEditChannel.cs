@@ -36,6 +36,7 @@ namespace SetupTv.Sections
     bool _dvbc;
     bool _dvbs;
     bool _atsc;
+    bool _dvbip;
     bool _newChannel;
     bool _isTv = true;
     bool _webstream;
@@ -337,6 +338,44 @@ namespace SetupTv.Sections
           }
         }
 
+        //DVB-IP
+        if (textBoxDVBIPChannel.Text.Length != 0)
+        {
+          string url = textBoxDVBIPChannel.Text;
+          int lcn, onid, tsid, sid, pmt;
+          if (Int32.TryParse(textBoxDVBIPChannel.Text, out lcn))
+          {
+            if (Int32.TryParse(textBoxDVBIPNetworkId.Text, out onid))
+            {
+              if (Int32.TryParse(textBoxDVBIPTransportId.Text, out tsid))
+              {
+                if (Int32.TryParse(textBoxDVBIPServiceId.Text, out sid))
+                {
+                  if (Int32.TryParse(textBoxDVBIPPmtPid.Text, out pmt))
+                  {
+                    if (onid > 0 && tsid >= 0 && sid >= 0)
+                    {
+                      DVBIPChannel dvbipChannel = new DVBIPChannel();
+                      dvbipChannel.IsTv = _isTv;
+                      dvbipChannel.IsRadio = !_isTv;
+                      dvbipChannel.Name = _channel.Name;
+                      dvbipChannel.LogicalChannelNumber = lcn;
+                      dvbipChannel.NetworkId = onid;
+                      dvbipChannel.TransportId = tsid;
+                      dvbipChannel.ServiceId = sid;
+                      dvbipChannel.Provider = textBoxDVBIPProvider.Text;
+                      dvbipChannel.FreeToAir = checkBoxDVBIPfta.Checked;
+                      dvbipChannel.PmtPid = pmt;
+                      dvbipChannel.Url = textBoxDVBIPUrl.Text;
+                      layer.AddTuningDetails(_channel, dvbipChannel);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
         //Webstream
         if (edStreamURL.Text != "")
         {
@@ -489,6 +528,21 @@ namespace SetupTv.Sections
           detail.PmtPid = Int32.Parse(textBoxPmt.Text);
           detail.Persist();
         }
+
+        //DVB-IP tab
+        if (detail.ChannelType == 7)
+        {
+          detail.ChannelNumber = Int32.Parse(textBoxDVBIPChannel.Text);
+          detail.Url = textBoxDVBIPUrl.Text;
+          detail.NetworkId = Int32.Parse(textBoxDVBIPNetworkId.Text);
+          detail.TransportId = Int32.Parse(textBoxDVBIPTransportId.Text);
+          detail.ServiceId = Int32.Parse(textBoxDVBIPServiceId.Text);
+          detail.PmtPid = Int32.Parse(textBoxDVBIPPmtPid.Text);
+          detail.Provider = textBoxDVBIPProvider.Text;
+          detail.FreeToAir = checkBoxDVBIPfta.Checked;
+          detail.Persist();
+        }
+
         //Webstream tab
         if (detail.ChannelType == 5)
         {
@@ -555,6 +609,7 @@ namespace SetupTv.Sections
         _dvbc = true;
         _dvbs = true;
         _atsc = true;
+        _dvbip = true;
         _webstream = true;
         _fmRadio = true;
         textBoxChannel.Text = "";
@@ -696,13 +751,27 @@ namespace SetupTv.Sections
             textBoxPmt.Text = detail.PmtPid.ToString();
           }
 
-          //Webstream Tab
-          if (detail.ChannelType == 5 || _newChannel)
-          {
-            _webstream = true;
-            edStreamURL.Text = detail.Url;
-            nudStreamBitrate.Value = detail.Bitrate;
-          }
+        //DVB-IP Tab
+        if (detail.ChannelType == 7 || _newChannel)
+        {
+          _dvbip = true;
+          textBoxDVBIPChannel.Text = detail.ChannelNumber.ToString();
+          textBoxDVBIPUrl.Text = detail.Url;
+          textBoxDVBIPNetworkId.Text = detail.NetworkId.ToString();
+          textBoxDVBIPTransportId.Text = detail.TransportId.ToString();
+          textBoxDVBIPServiceId.Text = detail.ServiceId.ToString();
+          textBoxDVBIPPmtPid.Text = detail.PmtPid.ToString();
+          textBoxDVBIPProvider.Text = detail.Provider;
+          checkBoxDVBIPfta.Checked = detail.FreeToAir;
+        }
+
+        //Webstream Tab
+        if (detail.ChannelType == 5 || _newChannel)
+        {
+          _webstream = true;
+          edStreamURL.Text = detail.Url;
+          nudStreamBitrate.Value = detail.Bitrate;
+        }
 
           //FM Radio
           if (detail.ChannelType == 6 || _newChannel)
@@ -753,13 +822,20 @@ namespace SetupTv.Sections
           }
           break;
         case 6:
+          if (_dvbip == false)
+          {
+            tabControl1.SelectedIndex = 0;
+            MessageBox.Show(this, "No DVB-IP tuning details available for this channel");
+          }
+          break;
+        case 7:
           if (_webstream == false)
           {
             tabControl1.SelectedIndex = 0;
             MessageBox.Show(this, "No Webstream details available for this channel");
           }
           break;
-        case 7:
+        case 8:
           if (_fmRadio == false)
           {
             tabControl1.SelectedIndex = 0;

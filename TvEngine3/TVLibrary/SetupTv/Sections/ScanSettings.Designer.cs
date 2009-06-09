@@ -105,6 +105,10 @@ namespace SetupTv.Sections
       this.label17 = new System.Windows.Forms.Label();
       this.label19 = new System.Windows.Forms.Label();
       this.label18 = new System.Windows.Forms.Label();
+      this.groupBox10 = new System.Windows.Forms.GroupBox();
+      this.label25 = new System.Windows.Forms.Label();
+      this.iptvUpDown = new System.Windows.Forms.NumericUpDown();
+      this.label26 = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
       this.tabPageApplication.SuspendLayout();
       this.groupBox8.SuspendLayout();
@@ -134,6 +138,8 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFileSize)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFiles)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinFiles)).BeginInit();
+      this.groupBox10.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.iptvUpDown)).BeginInit();
       this.SuspendLayout();
       // 
       // tabControl1
@@ -153,6 +159,7 @@ namespace SetupTv.Sections
       // 
       // tabPageApplication
       // 
+      this.tabPageApplication.Controls.Add(this.groupBox10);
       this.tabPageApplication.Controls.Add(this.groupBox8);
       this.tabPageApplication.Controls.Add(this.groupBox6);
       this.tabPageApplication.Location = new System.Drawing.Point(4, 22);
@@ -1128,6 +1135,49 @@ namespace SetupTv.Sections
       this.label18.TabIndex = 15;
       this.label18.Text = "Minimum";
       // 
+      // groupBox10
+      // 
+      this.groupBox10.Controls.Add(this.label26);
+      this.groupBox10.Controls.Add(this.iptvUpDown);
+      this.groupBox10.Controls.Add(this.label25);
+      this.groupBox10.Location = new System.Drawing.Point(6, 175);
+      this.groupBox10.Name = "groupBox10";
+      this.groupBox10.Size = new System.Drawing.Size(464, 100);
+      this.groupBox10.TabIndex = 82;
+      this.groupBox10.TabStop = false;
+      this.groupBox10.Text = "IPTV";
+      // 
+      // label25
+      // 
+      this.label25.AutoSize = true;
+      this.label25.Location = new System.Drawing.Point(6, 57);
+      this.label25.Name = "label25";
+      this.label25.Size = new System.Drawing.Size(112, 13);
+      this.label25.TabIndex = 0;
+      this.label25.Text = "Number of IPTV cards";
+      // 
+      // iptvUpDown
+      // 
+      this.iptvUpDown.Location = new System.Drawing.Point(124, 55);
+      this.iptvUpDown.Name = "iptvUpDown";
+      this.iptvUpDown.Size = new System.Drawing.Size(47, 20);
+      this.iptvUpDown.TabIndex = 1;
+      this.iptvUpDown.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      // 
+      // label26
+      // 
+      this.label26.Location = new System.Drawing.Point(6, 16);
+      this.label26.Name = "label26";
+      this.label26.Size = new System.Drawing.Size(452, 41);
+      this.label26.TabIndex = 2;
+      this.label26.Text = "If you have enough bandwidth, you can select number of independent IPTV cards, th" +
+          "at will be created. You can then watch different channels on different computers" +
+          "";
+      // 
       // ScanSettings
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1174,6 +1224,9 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFileSize)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFiles)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinFiles)).EndInit();
+      this.groupBox10.ResumeLayout(false);
+      this.groupBox10.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.iptvUpDown)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -1257,6 +1310,10 @@ namespace SetupTv.Sections
     private System.Windows.Forms.NumericUpDown numericUpDownAnalog;
     private System.Windows.Forms.Label label21;
     private System.Windows.Forms.Label label24;
+    private System.Windows.Forms.GroupBox groupBox10;
+    private System.Windows.Forms.Label label25;
+    private System.Windows.Forms.Label label26;
+    private System.Windows.Forms.NumericUpDown iptvUpDown;
 
   }
 }

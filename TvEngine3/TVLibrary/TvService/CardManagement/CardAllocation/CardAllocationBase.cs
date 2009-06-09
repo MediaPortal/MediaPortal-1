@@ -53,6 +53,10 @@ namespace TvService
         {
           fta = ((ATSCChannel)unknownChannel).FreeToAir;
         }
+        else if (unknownChannel is DVBIPChannel)
+        {
+          fta = ((DVBIPChannel)unknownChannel).FreeToAir;
+        }
       }
       return fta;
     }

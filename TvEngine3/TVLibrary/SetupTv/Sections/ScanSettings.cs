@@ -86,6 +86,9 @@ namespace SetupTv.Sections
 
       numericUpDownWaitTimeshifting.Value = ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftWaitForTimeshifting", "15").Value), 1, 30);
       numericUpDownWaitUnscrambled.Value = ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftWaitForUnscrambled", "5").Value), 1, 30);
+
+      //IPTV
+      iptvUpDown.Value = Convert.ToDecimal(layer.GetSetting("iptvCardCount", "1").Value);
     }
     public override void OnSectionDeActivated()
     {
@@ -181,6 +184,11 @@ namespace SetupTv.Sections
 
       s = layer.GetSetting("delayCardDetect", "0");
       s.Value = delayDetectUpDown.Value.ToString();
+      s.Persist();
+
+      //IPTV
+      s = layer.GetSetting("iptvCardCount", "1");
+      s.Value = iptvUpDown.Value.ToString();
       s.Persist();
     }
 

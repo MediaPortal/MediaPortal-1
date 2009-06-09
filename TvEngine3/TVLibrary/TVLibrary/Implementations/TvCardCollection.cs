@@ -84,6 +84,32 @@ namespace TvLibrary.Implementations
           _cards.Add(card);
           //break;  maybe more than one B2C2 card ?
         }
+        else if (String.Compare(devices[i].Name, "Elecard NWSource-Plus", true) == 0)
+        {
+          TvBusinessLayer layer = new TvBusinessLayer();
+          Setting setting;
+          setting = layer.GetSetting("iptvCardCount", "1");
+          int iptvCardCount = Convert.ToInt32(setting.Value);
+          for (int cardNum = 0; cardNum < iptvCardCount; cardNum++)
+          {
+            Log.Log.WriteFile("Detected IP TV Card " + cardNum);
+            TvCardDVBIP card = new TvCardDVBIPElecard(_epgEvents, devices[i], cardNum);
+            _cards.Add(card);
+          }
+        }
+        else if (String.Compare(devices[i].Name, "MediaPortal IPTV Source Filter", true) == 0)
+        {
+          TvBusinessLayer layer = new TvBusinessLayer();
+          Setting setting;
+          setting = layer.GetSetting("iptvCardCount", "1");
+          int iptvCardCount = Convert.ToInt32(setting.Value);
+          for (int cardNum = 0; cardNum < iptvCardCount; cardNum++)
+          {
+            Log.Log.WriteFile("Detected IP TV Card " + cardNum);
+            TvCardDVBIP card = new TvCardDVBIPBuiltIn(_epgEvents, devices[i], cardNum);
+            _cards.Add(card);
+          }
+        }
       }
       devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCrossbar);
       for (int i = 0; i < devices.Length; ++i)
@@ -95,7 +121,6 @@ namespace TvLibrary.Implementations
           _cards.Add(card);
         }
       }
-
 
       devices = DsDevice.GetDevicesOfCat(FilterCategory.BDASourceFiltersCategory);
       if (devices.Length > 0)

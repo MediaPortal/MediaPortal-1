@@ -168,6 +168,11 @@ namespace SetupTv
                   AddChildSection(cardPage, new CardAtsc(cardName, dbsCard.IdCard), 1);
                   DvbCheck = true;
                   break;
+                case CardType.DvbIP:
+                  cardName = String.Format("{0} DVB-IP {1}", cardNo, cardName);
+                  AddChildSection(cardPage, new CardDvbIP(cardName, dbsCard.IdCard), 1);
+                  DvbCheck = true;
+                  break;
                 case CardType.Unknown:
                   cardName = String.Format("{0} Unknown {1}", cardNo, cardName);
                   AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard), 1);

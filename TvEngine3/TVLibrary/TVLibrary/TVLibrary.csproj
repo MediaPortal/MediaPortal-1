@@ -108,6 +108,10 @@
     <Compile Include="Implementations\DVB\DisEqC\DiSEqCMotor.cs" />
     <Compile Include="Implementations\DVB\DisEqC\IDiSEqCController.cs" />
     <Compile Include="Implementations\DVB\Graphs\DvbBaseScanning.cs" />
+    <Compile Include="Implementations\DVB\Graphs\DVBIP\DVBIPScanning.cs" />
+    <Compile Include="Implementations\DVB\Graphs\DVBIP\TvCardDVBIP.cs" />
+    <Compile Include="Implementations\DVB\Graphs\DVBIP\TvCardDVBIPBuiltIn.cs" />
+    <Compile Include="Implementations\DVB\Graphs\DVBIP\TvCardDVBIPElecard.cs" />
     <Compile Include="Implementations\DVB\Graphs\MDPlug.cs" />
     <Compile Include="Implementations\DVB\Graphs\SS2\DVBSS2Scanning.cs" />
     <Compile Include="Implementations\DVB\Graphs\TvDvbChannel.cs" />

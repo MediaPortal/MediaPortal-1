@@ -48,12 +48,12 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// MDPlugs public static Creator to test condition before create an instance
     /// </summary>
-    public static MDPlugs Create(DsDevice captureDevice)
+    public static MDPlugs Create(string deviceName, string devicePath)
     {
       string CardFolder;
       int InstanceNumber;
 
-      if (IsMDApiEnabled(captureDevice, out CardFolder, out InstanceNumber))
+      if (IsMDApiEnabled(deviceName, devicePath, out CardFolder, out InstanceNumber))
       {
         Log.Log.Info("mdplugs: Create - IsMDApiEnabled for {0} - {1}", CardFolder, InstanceNumber );
         MDPlugs ret = new MDPlugs(CardFolder, InstanceNumber);
@@ -96,7 +96,7 @@ namespace TvLibrary.Implementations.DVB
 
     #region static method
 
-    static bool IsMDApiEnabled(DsDevice captureDevice, out string CardFolder, out int InstanceNumber)
+    static bool IsMDApiEnabled(string deviceName, string devicePath, out string CardFolder, out int InstanceNumber)
     {
       CardFolder = "";
       InstanceNumber = 0;
@@ -107,9 +107,7 @@ namespace TvLibrary.Implementations.DVB
       bool useMDAPI = false;
       try
       {
-        string DisplayMoniker;
-        captureDevice.Mon.GetDisplayName(null, null, out DisplayMoniker);
-        CardFolder = captureDevice.Name;
+        CardFolder = deviceName;
         string xmlFile = AppDomain.CurrentDomain.BaseDirectory + "MDPLUGINS\\MDAPICards.xml";
         if (!File.Exists(xmlFile))
         {
@@ -117,10 +115,10 @@ namespace TvLibrary.Implementations.DVB
           XmlNode rootNode = doc.CreateElement("cards");
           XmlNode nodeCard = doc.CreateElement("card");
           XmlAttribute attr = doc.CreateAttribute("DevicePath");
-          attr.InnerText = DisplayMoniker;
+          attr.InnerText = devicePath;
           nodeCard.Attributes.Append(attr);
           attr = doc.CreateAttribute("Name");
-          attr.InnerText = captureDevice.Name;
+          attr.InnerText = deviceName;
           nodeCard.Attributes.Append(attr);
           attr = doc.CreateAttribute("EnableMdapi");
           attr.InnerText = "1";
@@ -141,7 +139,7 @@ namespace TvLibrary.Implementations.DVB
           if (cardList != null)
             foreach (XmlNode nodeCard in cardList)
             {
-              if (nodeCard.Attributes["DevicePath"].Value == DisplayMoniker)
+              if (nodeCard.Attributes["DevicePath"].Value == devicePath)
               {
                 if (nodeCard.Attributes["EnableMdapi"].Value == "yes")
                 {
@@ -167,10 +165,10 @@ namespace TvLibrary.Implementations.DVB
           {
             XmlNode nodeNewCard = doc.CreateElement("card");
             XmlAttribute attr = doc.CreateAttribute("DevicePath");
-            attr.InnerText = DisplayMoniker;
+            attr.InnerText = devicePath;
             nodeNewCard.Attributes.Append(attr);
             attr = doc.CreateAttribute("Name");
-            attr.InnerText = captureDevice.Name;
+            attr.InnerText = deviceName;
             nodeNewCard.Attributes.Append(attr);
             attr = doc.CreateAttribute("EnableMdapi");
             attr.InnerText = "1";

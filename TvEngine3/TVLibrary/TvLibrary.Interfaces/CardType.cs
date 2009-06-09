@@ -50,6 +50,10 @@ namespace TvLibrary.Interfaces
     /// </summary>
     RadioWebStream,
     /// <summary>
+    /// IPTV card
+    /// </summary>
+    DvbIP,
+    /// <summary>
     /// Unknown card
     /// </summary>
     Unknown

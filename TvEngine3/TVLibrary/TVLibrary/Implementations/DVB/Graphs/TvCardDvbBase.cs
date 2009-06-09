@@ -1081,8 +1081,17 @@ namespace TvLibrary.Implementations.DVB
     {
       //multi demux
       int hr;
-      DsDevice dv = _captureDevice ?? _tunerDevice;
-      _mdplugs = MDPlugs.Create(dv);
+      if (_cardType == TvLibrary.Interfaces.CardType.DvbIP)
+      {
+        _mdplugs = MDPlugs.Create(Name, DevicePath);
+      }
+      else
+      {
+        DsDevice dv = _captureDevice ?? _tunerDevice;
+        string DisplayMoniker;
+        dv.Mon.GetDisplayName(null, null, out DisplayMoniker);
+        _mdplugs = MDPlugs.Create(dv.Name, DisplayMoniker);
+      }
       if (_mdplugs != null)
       {
         Log.Log.WriteFile("dvb:add 2nd Inf Tee filter");
