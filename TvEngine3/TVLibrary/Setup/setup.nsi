@@ -88,8 +88,8 @@
 !define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server"
 
 !define VER_MAJOR       1
-!define VER_MINOR       1
-!define VER_REVISION    0
+!define VER_MINOR       0
+!define VER_REVISION    3
 !ifndef VER_BUILD
     !define VER_BUILD   0
 !endif
@@ -99,9 +99,13 @@
   !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION} >>DEBUG<< build ${VER_BUILD} for TESTING ONLY"
 !else
 !if ${VER_BUILD} == 0       # it's an official release
-  !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}"
+  ;!define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}"
+  ;this is for display purposes
+  !define VERSION "1.0.1 ALPHA! for TESTING ONLY"
 !else                       # it's a svn release
-  !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION} SVN build ${VER_BUILD} for TESTING ONLY"
+  ;!define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION} SVN build ${VER_BUILD} for TESTING ONLY"
+  ;this is for display purposes
+  !define VERSION "1.0.1 ALPHA! SVN build ${VER_BUILD} for TESTING ONLY"
 !endif
 !endif
 

@@ -62,14 +62,16 @@ Name "MediaPortal Unpacker"
 !define COMPANY "Team MediaPortal"
 !define URL     "www.team-mediaportal.com"
 !define VER_MAJOR       1
-!define VER_MINOR       1
-!define VER_REVISION    0
+!define VER_MINOR       0
+!define VER_REVISION    3
 !ifdef VER_BUILD
   !undef VER_BUILD
 !endif
 !define VER_BUILD       0
 
-!define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}"
+;!define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}"
+;this is for display purposes
+!define VERSION "1.0.1 ALPHA! for TESTING ONLY"
 
 #---------------------------------------------------------------------------
 # INCLUDE FILES
