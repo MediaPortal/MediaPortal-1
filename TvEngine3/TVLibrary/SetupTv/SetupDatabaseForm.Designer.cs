@@ -30,6 +30,7 @@ namespace SetupTv
     {
       this.gbConnectionSetup = new System.Windows.Forms.GroupBox();
       this.gbDbLogon = new System.Windows.Forms.GroupBox();
+      this.labelPwd = new System.Windows.Forms.Label();
       this.lblUserId = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tbPassword = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.lblPassword = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -68,13 +69,14 @@ namespace SetupTv
       this.gbConnectionSetup.Controls.Add(this.rbSQLServer);
       this.gbConnectionSetup.Location = new System.Drawing.Point(12, 12);
       this.gbConnectionSetup.Name = "gbConnectionSetup";
-      this.gbConnectionSetup.Size = new System.Drawing.Size(374, 375);
+      this.gbConnectionSetup.Size = new System.Drawing.Size(374, 414);
       this.gbConnectionSetup.TabIndex = 0;
       this.gbConnectionSetup.TabStop = false;
       this.gbConnectionSetup.Text = "Connection settings";
       // 
       // gbDbLogon
       // 
+      this.gbDbLogon.Controls.Add(this.labelPwd);
       this.gbDbLogon.Controls.Add(this.lblUserId);
       this.gbDbLogon.Controls.Add(this.tbPassword);
       this.gbDbLogon.Controls.Add(this.lblPassword);
@@ -82,10 +84,19 @@ namespace SetupTv
       this.gbDbLogon.Enabled = false;
       this.gbDbLogon.Location = new System.Drawing.Point(19, 277);
       this.gbDbLogon.Name = "gbDbLogon";
-      this.gbDbLogon.Size = new System.Drawing.Size(335, 82);
+      this.gbDbLogon.Size = new System.Drawing.Size(335, 120);
       this.gbDbLogon.TabIndex = 2;
       this.gbDbLogon.TabStop = false;
       this.gbDbLogon.Text = "Database logon: ";
+      // 
+      // labelPwd
+      // 
+      this.labelPwd.AutoSize = true;
+      this.labelPwd.Location = new System.Drawing.Point(6, 86);
+      this.labelPwd.Name = "labelPwd";
+      this.labelPwd.Size = new System.Drawing.Size(278, 13);
+      this.labelPwd.TabIndex = 8;
+      this.labelPwd.Text = "NOTE: default password is \"MediaPortal\" (case sensitive)";
       // 
       // lblUserId
       // 
@@ -263,7 +274,7 @@ namespace SetupTv
       // btnTest
       // 
       this.btnTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnTest.Location = new System.Drawing.Point(229, 401);
+      this.btnTest.Location = new System.Drawing.Point(229, 432);
       this.btnTest.Name = "btnTest";
       this.btnTest.Size = new System.Drawing.Size(75, 23);
       this.btnTest.TabIndex = 3;
@@ -275,7 +286,7 @@ namespace SetupTv
       // 
       this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnSave.Enabled = false;
-      this.btnSave.Location = new System.Drawing.Point(310, 401);
+      this.btnSave.Location = new System.Drawing.Point(310, 432);
       this.btnSave.Name = "btnSave";
       this.btnSave.Size = new System.Drawing.Size(75, 23);
       this.btnSave.TabIndex = 3;
@@ -296,7 +307,7 @@ namespace SetupTv
       // 
       this.btnDrop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnDrop.Enabled = false;
-      this.btnDrop.Location = new System.Drawing.Point(310, 401);
+      this.btnDrop.Location = new System.Drawing.Point(310, 432);
       this.btnDrop.Name = "btnDrop";
       this.btnDrop.Size = new System.Drawing.Size(75, 23);
       this.btnDrop.TabIndex = 3;
@@ -309,7 +320,7 @@ namespace SetupTv
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(397, 436);
+      this.ClientSize = new System.Drawing.Size(397, 467);
       this.Controls.Add(this.gbConnectionSetup);
       this.Controls.Add(this.btnTest);
       this.Controls.Add(this.mpLabel1);
@@ -358,5 +369,6 @@ namespace SetupTv
     private MediaPortal.UserInterface.Controls.MPTextBox tbDatabaseName;
     private MediaPortal.UserInterface.Controls.MPLabel lblDbName;
     private MediaPortal.UserInterface.Controls.MPButton btnDrop;
+    private System.Windows.Forms.Label labelPwd;
   }
 }
