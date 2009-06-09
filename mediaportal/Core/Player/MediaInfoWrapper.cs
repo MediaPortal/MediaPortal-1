@@ -24,6 +24,7 @@ namespace MediaPortal.Player
     private int _audiochannels = 0;
     private int _numsubtitles = 0;
     private string _aspectRatio = "";
+    private int _videoDuration = 0;
     private string _videoCodec = string.Empty;
     private string _audioCodec = string.Empty;
     private string _scanType = string.Empty;
@@ -48,6 +49,7 @@ namespace MediaPortal.Player
     private bool _isAAC = false;  // AAC
     private bool _isWMA = false;  // Windows Media Audio
     private bool _isPCM = false;  // RAW audio
+    private bool _isFLAC = false;  // FLAC
 
     private bool _hasSubtitles = false;
     private static List<string> _subTitleExtensions = new List<string>();
@@ -92,13 +94,15 @@ namespace MediaPortal.Player
         int.TryParse(_mI.Get(StreamKind.Audio, 0, "Channels"), out _audiochannels);
         int.TryParse(_mI.Get(StreamKind.Audio, 0, "SamplingRate"), out _audiorate);
         int.TryParse(_mI.Get(StreamKind.General, 0, "TextCount"), out _numsubtitles);
-        int intValue;
+        int.TryParse(_mI.Get(StreamKind.Video, 0, "PlayTime"), out _videoDuration);
+
         int iAudioStreams = _mI.Count_Get(StreamKind.Audio);
         for (int i = 0; i < iAudioStreams - 1; i++)
         {
-            if (int.TryParse(_mI.Get(StreamKind.Audio, i, "Channel(s)"), out intValue)
-                && intValue > _audiochannels)
-                _audiochannels = intValue;
+          int intValue;
+          if (int.TryParse(_mI.Get(StreamKind.Audio, i, "Channel(s)"), out intValue)
+              && intValue > _audiochannels)
+            _audiochannels = intValue;
         }
 
         _aspectRatio = _mI.Get(StreamKind.Video, 0, "AspectRatio/String");
@@ -147,64 +151,68 @@ namespace MediaPortal.Player
         _isAAC = (_audioCodec.IndexOf("aac") > -1);
         _isWMA = (_audioCodec.IndexOf("wma") > -1); // e.g. wma3
         _isPCM = (_audioCodec.IndexOf("pcm") > -1);
+        _isFLAC = (_audioCodec.IndexOf("flac") > -1);
 
         if (checkHasExternalSubtitles(strFile))
         {
-            _hasSubtitles = true;
-        } 
+          _hasSubtitles = true;
+        }
         else if (_numsubtitles > 0)
         {
-            _hasSubtitles = true;
+          _hasSubtitles = true;
         }
         else
         {
-            _hasSubtitles = false;
+          _hasSubtitles = false;
         }
 
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: inspecting media : {0}", strFile);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: FrameRate : {0}", _framerate);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: VideoCodec : {0}", _videoCodec);
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: FrameRate        : {0}", _framerate);
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: VideoCodec       : {0}", _videoCodec);
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: VideoDuration    : {0}", _videoDuration);
         if (_isDIVX)
-          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsDIVX: {0}", _isDIVX);
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsDIVX           : {0}", _isDIVX);
         if (_isXVID)
-          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsXVID: {0}", _isXVID);
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsXVID           : {0}", _isXVID);
         if (_isH264)
-          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsH264: {0}", _isH264);
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsH264           : {0}", _isH264);
         if (_isMP1V)
-          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP1V: {0}", _isMP1V);
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP1V           : {0}", _isMP1V);
         if (_isMP2V)
-          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP2V: {0}", _isMP2V);
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP2V           : {0}", _isMP2V);
         if (_isMP4V)
-          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP4V: {0}", _isMP4V);
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP4V           : {0}", _isMP4V);
         if (_isWMV)
-          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsWMV: {0}", _isWMV);
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsWMV            : {0}", _isWMV);
 
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: HasSubtitles : {0}", _hasSubtitles);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: NumSubtitles : {0}", _numsubtitles);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: Scan type : {0}", _scanType);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsInterlaced: {0}", _isInterlaced);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: Width : {0}", _width);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: Height : {0}", _height);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: Audiochannels : {0}", _audiochannels);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: Audiorate : {0}", _audiorate);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: AspectRatio : {0}", _aspectRatio);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: AudioCodec : {0}", _audioCodec);
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: HasSubtitles     : {0}", _hasSubtitles);
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: NumSubtitles     : {0}", _numsubtitles);
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: Scan type        : {0}", _scanType);
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsInterlaced     : {0}", _isInterlaced);
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: Width            : {0}", _width);
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: Height           : {0}", _height);
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: Audiochannels    : {0}", _audiochannels);
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: Audiorate        : {0}", _audiorate);
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: AspectRatio      : {0}", _aspectRatio);
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: AudioCodec       : {0}", _audioCodec);
         if (_isAC3)
-          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsAC3 : {0}", _isAC3);
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsAC3            : {0}", _isAC3);
         if (_isMP3)
-          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP3 : {0}", _isMP3);
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP3            : {0}", _isMP3);
         if (_isMP2A)
-          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP2A: {0}", _isMP2A);
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP2A           : {0}", _isMP2A);
         if (_isDTS)
-          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsDTS : {0}", _isDTS);
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsDTS            : {0}", _isDTS);
         if (_isOGG)
-          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsOGG : {0}", _isOGG);
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsOGG            : {0}", _isOGG);
         if (_isAAC)
-          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsAAC : {0}", _isAAC);
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsAAC            : {0}", _isAAC);
         if (_isWMA)
-          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsWMA: {0}", _isWMA);
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsWMA            : {0}", _isWMA);
         if (_isPCM)
-          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsPCM: {0}", _isPCM);
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsPCM            : {0}", _isPCM);
+        if (_isFLAC)
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsFLAC           : {0}", _isFLAC);
       }
       catch (Exception ex)
       {
@@ -290,25 +298,31 @@ namespace MediaPortal.Player
 
     public string VideoCodec
     {
-      get { 
-          string tempCodec = String.Empty;
-          if (_isDIVX)
-              tempCodec = "DIVX";
-          else if (_isXVID)
-              tempCodec = "XVID";
-          else if (_isH264)
-              tempCodec = "H264";
-          else if (_isMP1V)
-              tempCodec = "MP1V";
-          else if (_isMP2V)
-              tempCodec = "MP2V";
-          else if (_isWMV)
-              tempCodec = "WMV";
-          else
-              tempCodec = _videoCodec;
+      get
+      {
+        string tempCodec = String.Empty;
+        if (_isDIVX)
+          tempCodec = "DIVX";
+        else if (_isXVID)
+          tempCodec = "XVID";
+        else if (_isH264)
+          tempCodec = "H264";
+        else if (_isMP1V)
+          tempCodec = "MP1V";
+        else if (_isMP2V)
+          tempCodec = "MP2V";
+        else if (_isWMV)
+          tempCodec = "WMV";
+        else
+          tempCodec = _videoCodec;
 
-          return tempCodec; 
+        return tempCodec;
       }
+    }
+
+    public int VideoDuration
+    {
+      get { return _videoDuration; }
     }
 
     public double Framerate
@@ -397,27 +411,31 @@ namespace MediaPortal.Player
 
     public string AudioCodec
     {
-      get {
-          string tempCodec = String.Empty;
-          if (_isAC3)
-              tempCodec = "AC3";
-          else if (_isMP3)
-              tempCodec = "MP3";
-          else if (_isMP2A)
-              tempCodec = "MP2A";
-          else if (_isDTS)
-              tempCodec = "DTS";
-          else if (_isOGG)
-              tempCodec = "OGG";
-          else if (_isAAC)
-              tempCodec = "AAC";
-          else if (_isWMA)
-              tempCodec = "WMA";
-          else if (_isPCM)
-              tempCodec = "PCM";
-          else
-              tempCodec = _audioCodec;
-          return tempCodec; 
+      get
+      {
+        string tempCodec = String.Empty;
+        if (_isAC3)
+          tempCodec = "AC3";
+        else if (_isMP3)
+          tempCodec = "MP3";
+        else if (_isMP2A)
+          tempCodec = "MP2A";
+        else if (_isDTS)
+          tempCodec = "DTS";
+        else if (_isOGG)
+          tempCodec = "OGG";
+        else if (_isAAC)
+          tempCodec = "AAC";
+        else if (_isWMA)
+          tempCodec = "WMA";
+        else if (_isPCM)
+          tempCodec = "PCM";
+        else if (_isFLAC)
+          tempCodec = "FLAC";
+        else
+          tempCodec = _audioCodec;
+
+        return tempCodec;
       }
     }
 
@@ -471,6 +489,10 @@ namespace MediaPortal.Player
       get { return _isAAC; }
     }
 
+    public bool IsFLAC
+    {
+      get { return _isFLAC; }
+    }
     #endregion
 
     #region public misc properties
@@ -482,7 +504,7 @@ namespace MediaPortal.Player
 
     public int NumSubtitles
     {
-        get { return _numsubtitles; }
+      get { return _numsubtitles; }
     }
 
     #endregion
