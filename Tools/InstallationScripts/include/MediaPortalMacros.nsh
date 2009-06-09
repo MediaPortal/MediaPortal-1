@@ -23,6 +23,9 @@
 
 #endregion
 
+!if "${NSIS_VERSION}" != "v2.45"
+  !error "$\r$\n$\r$\nPlease update your NSIS installation to latest version. http://nsis.sourceforge.net$\r$\n$\r$\n"
+!endif
 
 !ifndef ___COMMON_MP_MACROS__NSH___
 !define ___COMMON_MP_MACROS__NSH___
