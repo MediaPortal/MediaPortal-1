@@ -53,7 +53,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       WritePrivateProfileString("SQLSERVER2008", "QUIET", "True", iniFile);
       WritePrivateProfileString("SQLSERVER2008", "QUIETSIMPLE", "False", iniFile);
       WritePrivateProfileString("SQLSERVER2008", "X86", "False", iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "MEDIASOURCE", Path.GetDirectoryName(InstallationProperties.Instance["SQL2008FileName"]), iniFile);
+      WritePrivateProfileString("SQLSERVER2008", "MEDIASOURCE", Path.GetDirectoryName(Utils.GetDownloadString(prg, "FILE")), iniFile);
       WritePrivateProfileString("SQLSERVER2008", "ERRORREPORTING", "False", iniFile);
       WritePrivateProfileString("SQLSERVER2008", "INSTALLSHAREDDIR", "\"" + InstallationProperties.Instance["DBMSDir"] + "\"", iniFile);
       WritePrivateProfileString("SQLSERVER2008", "INSTANCEDIR", "\"" + InstallationProperties.Instance["DBMSDir"] + "\"", iniFile);
@@ -132,8 +132,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool Download()
     {
-      string FileName = InstallationProperties.Instance["SQL2008FileName"];
-      DialogResult result = Utils.RetryDownloadFile(FileName, prg);
+      DialogResult result = Utils.RetryDownloadFile(Utils.GetDownloadString(prg, "FILE"), prg);
       return (result == DialogResult.OK);
     }
 
@@ -147,7 +146,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       try
       {
         //run the setup
-        Process setup = Process.Start(InstallationProperties.Instance["SQL2008FileName"], "/CONFIGURATIONFILE=\"" + iniFile + "\" /Q /HIDECONSOLE");
+        Process setup = Process.Start(Utils.GetDownloadString(prg, "FILE"), "/CONFIGURATIONFILE=\"" + iniFile + "\" /Q /HIDECONSOLE");
         if (setup != null)
         {
           setup.WaitForExit();
@@ -185,8 +184,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       CheckResult result;
       result.needsDownload = true;
-      string FileName = Application.StartupPath + "\\deploy\\" + Utils.LocalizeDownloadFile(Utils.GetDownloadString(prg, "FILE"), Utils.GetDownloadString(prg, "TYPE"), prg);
-      InstallationProperties.Instance.Set("SQL2008FileName", FileName);
+      string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
       FileInfo msSqlFile = new FileInfo(FileName);
 
       if (msSqlFile.Exists && msSqlFile.Length != 0)
