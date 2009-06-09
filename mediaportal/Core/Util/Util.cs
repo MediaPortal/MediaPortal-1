@@ -1840,7 +1840,8 @@ namespace MediaPortal.Util
             fstr.Close();
           }
         }
-        GUITextureManager.CleanupThumbs();
+        // Commented out to test: 2247: Coverart in MyVideos dissapears while grabing moviedata for an new movie
+        //GUITextureManager.CleanupThumbs();
       }
       catch (Exception ex)
       {
