@@ -62,8 +62,8 @@ Name "MediaPortal Unpacker"
 !define COMPANY "Team MediaPortal"
 !define URL     "www.team-mediaportal.com"
 !define VER_MAJOR       1
-!define VER_MINOR       0
-!define VER_REVISION    2
+!define VER_MINOR       1
+!define VER_REVISION    0
 !ifdef VER_BUILD
   !undef VER_BUILD
 !endif
@@ -83,7 +83,7 @@ Name "MediaPortal Unpacker"
 #---------------------------------------------------------------------------
 Icon "${svn_DeployTool}\Install.ico"
 !define /date buildTIMESTAMP "%Y-%m-%d-%H-%M"
-OutFile "MediaPortalSetup_1.0.2_SVN${SVN_REVISION}_${buildTIMESTAMP}.exe"
+OutFile "MediaPortalSetup_1.1.0_SVN${SVN_REVISION}_${buildTIMESTAMP}.exe"
 InstallDir "$TEMP\MediaPortal Installation"
 
 CRCCheck on

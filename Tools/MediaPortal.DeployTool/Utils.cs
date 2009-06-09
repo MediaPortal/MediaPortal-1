@@ -187,12 +187,6 @@ namespace MediaPortal.DeployTool
       }
       string NewFileName = filename;
 
-      // SQL2008 native language download
-      if (prg == InstallationChecks.MSSQLExpressChecker.prg && downloadtype != "Manual" && LangCode != "ENU")
-      {
-        NewFileName = filename.Split('.')[0] + "_" + LangCode + ".exe";
-      }
-
       // WMP11 native language download
       if (prg == InstallationChecks.WindowsMediaPlayerChecker.prg)
       {
@@ -435,12 +429,15 @@ namespace MediaPortal.DeployTool
     {
       switch (type.ToString().ToLower())
       {
+        //
+        // Using the same number for all version deactivates upgrade
+        //
         case "c":                       //current
-          return "1.0.2";
+          return "1.1.0";
         case "p":                       //previous
-          return "1.0.1";
+          return "1.1.0";
         case "s":                       //stable
-          return "1.0.0";
+          return "1.1.0";
         default:
           return string.Empty;
       }
