@@ -996,7 +996,12 @@ namespace MediaPortal.GUI.Music
           PlayListItem item = playlist[i];
           if (item.FileName == strFileName)
           {
-            playlistPlayer.CurrentSong = i;
+            // Swap the current playing item with item #0
+            // So that the current playing song is always the first song on the first page and we don#t loose any songs
+            PlayListItem item0 = playlist[0];
+            playlist[0] = item;
+            playlist[i] = item0;
+            playlistPlayer.CurrentSong = 0;
           }
         }
       }

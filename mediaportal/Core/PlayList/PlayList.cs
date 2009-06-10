@@ -161,6 +161,7 @@ namespace MediaPortal.Playlists
     public PlayListItem this[int iItem]
     {
       get { return _listPlayListItems[iItem]; }
+      set { _listPlayListItems[iItem] = value;  }
     }
 
 
