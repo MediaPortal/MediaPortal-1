@@ -267,8 +267,7 @@ namespace SetupTv.Sections
                 frequency = detail.Frequency;
                 frequency /= 1000000.0f;
                 item.SubItems.Add(String.Format("#{0} {1} MHz", detail.ChannelNumber, frequency.ToString("f2")));
-              }
-              else
+              } else
               {
                 item.SubItems.Add(detail.VideoSource.ToString());
               }
@@ -330,8 +329,7 @@ namespace SetupTv.Sections
         group = new ChannelGroup(dlg.GroupName, 9999);
         group.Persist();
         UpdateMenu();
-      }
-      else
+      } else
       {
         group = (ChannelGroup)menuItem.Tag;
       }
@@ -541,8 +539,7 @@ namespace SetupTv.Sections
       {
         // Reverse the current sort direction for this column.
         lvwColumnSorter.Order = lvwColumnSorter.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
-      }
-      else
+      } else
       {
         // Set the column number that is to be sorted; default to ascending.
         lvwColumnSorter.SortColumn = e.Column;
@@ -690,5 +687,38 @@ namespace SetupTv.Sections
       }
       dlg.Close();
     }
+
+    private void mpButtonTestScrambled_Click(object sender, EventArgs e)
+    {
+      NotifyForm dlg = new NotifyForm("Testing all tv channels...", "Please be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
+
+      // Create tunning objects Server, User and Card
+      TvServer _server = new TvServer();
+      User _user = new User();
+      VirtualCard _card;
+
+      foreach (ListViewItem item in mpListView1.Items)
+      {
+        if (item.Checked == false) continue;  // do not test "un-checked" channels
+        Channel _channel = (Channel)item.Tag; // get channel
+        dlg.SetMessage(
+          string.Format("Please be patient...\n\nTesting channel {0} ( {1} of {2} )",
+                        _channel.DisplayName, item.Index + 1, mpListView1.Items.Count));
+        TvResult result = _server.StartTimeShifting(ref _user, _channel.IdChannel, out _card);
+        // test the channel for scrambled or unable to start graph
+        if ((result == TvResult.ChannelIsScrambled))
+        {
+          item.Checked = false;
+        } else if (result == TvResult.Succeeded)
+        {
+          _card.StopTimeShifting();
+        }
+
+      }
+      dlg.Close();
+    }
+
   }
 }

@@ -55,6 +55,7 @@ namespace SetupTv.Sections
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.testScrambled = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnPreview = new System.Windows.Forms.Button();
       this.mpButtonUncheckEncrypted = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnPlaylist = new System.Windows.Forms.Button();
@@ -86,7 +87,7 @@ namespace SetupTv.Sections
       this.mpListView1.LargeImageList = this.imageList1;
       this.mpListView1.Location = new System.Drawing.Point(9, 11);
       this.mpListView1.Name = "mpListView1";
-      this.mpListView1.Size = new System.Drawing.Size(438, 311);
+      this.mpListView1.Size = new System.Drawing.Size(438, 280);
       this.mpListView1.SmallImageList = this.imageList1;
       this.mpListView1.TabIndex = 0;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
@@ -136,51 +137,51 @@ namespace SetupTv.Sections
             this.addSIDInFrontOfNameToolStripMenuItem,
             this.renumberChannelsBySIDToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(256, 142);
+      this.contextMenuStrip1.Size = new System.Drawing.Size(258, 142);
       // 
       // addToFavoritesToolStripMenuItem
       // 
       this.addToFavoritesToolStripMenuItem.Name = "addToFavoritesToolStripMenuItem";
-      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(257, 22);
       this.addToFavoritesToolStripMenuItem.Text = "Add to favorites";
       // 
       // deleteThisChannelToolStripMenuItem
       // 
       this.deleteThisChannelToolStripMenuItem.Name = "deleteThisChannelToolStripMenuItem";
-      this.deleteThisChannelToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+      this.deleteThisChannelToolStripMenuItem.Size = new System.Drawing.Size(257, 22);
       this.deleteThisChannelToolStripMenuItem.Text = "Delete this channel";
       this.deleteThisChannelToolStripMenuItem.Click += new System.EventHandler(this.deleteThisChannelToolStripMenuItem_Click);
       // 
       // editChannelToolStripMenuItem
       // 
       this.editChannelToolStripMenuItem.Name = "editChannelToolStripMenuItem";
-      this.editChannelToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+      this.editChannelToolStripMenuItem.Size = new System.Drawing.Size(257, 22);
       this.editChannelToolStripMenuItem.Text = "Edit channel";
       this.editChannelToolStripMenuItem.Click += new System.EventHandler(this.editChannelToolStripMenuItem_Click);
       // 
       // toolStripMenuItem1
       // 
       this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-      this.toolStripMenuItem1.Size = new System.Drawing.Size(252, 6);
+      this.toolStripMenuItem1.Size = new System.Drawing.Size(254, 6);
       // 
       // renameSelectedChannelsBySIDToolStripMenuItem
       // 
       this.renameSelectedChannelsBySIDToolStripMenuItem.Name = "renameSelectedChannelsBySIDToolStripMenuItem";
-      this.renameSelectedChannelsBySIDToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+      this.renameSelectedChannelsBySIDToolStripMenuItem.Size = new System.Drawing.Size(257, 22);
       this.renameSelectedChannelsBySIDToolStripMenuItem.Text = "Rename selected channel(s) by SID";
       this.renameSelectedChannelsBySIDToolStripMenuItem.Click += new System.EventHandler(this.renameSelectedChannelsBySIDToolStripMenuItem_Click);
       // 
       // addSIDInFrontOfNameToolStripMenuItem
       // 
       this.addSIDInFrontOfNameToolStripMenuItem.Name = "addSIDInFrontOfNameToolStripMenuItem";
-      this.addSIDInFrontOfNameToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+      this.addSIDInFrontOfNameToolStripMenuItem.Size = new System.Drawing.Size(257, 22);
       this.addSIDInFrontOfNameToolStripMenuItem.Text = "Add SID in front of name";
       this.addSIDInFrontOfNameToolStripMenuItem.Click += new System.EventHandler(this.addSIDInFrontOfNameToolStripMenuItem_Click);
       // 
       // renumberChannelsBySIDToolStripMenuItem
       // 
       this.renumberChannelsBySIDToolStripMenuItem.Name = "renumberChannelsBySIDToolStripMenuItem";
-      this.renumberChannelsBySIDToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+      this.renumberChannelsBySIDToolStripMenuItem.Size = new System.Drawing.Size(257, 22);
       this.renumberChannelsBySIDToolStripMenuItem.Text = "Renumber channels by SID";
       this.renumberChannelsBySIDToolStripMenuItem.Click += new System.EventHandler(this.renumberChannelsBySIDToolStripMenuItem_Click);
       // 
@@ -196,7 +197,7 @@ namespace SetupTv.Sections
       // mpButtonClear
       // 
       this.mpButtonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButtonClear.Location = new System.Drawing.Point(257, 351);
+      this.mpButtonClear.Location = new System.Drawing.Point(257, 322);
       this.mpButtonClear.Name = "mpButtonClear";
       this.mpButtonClear.Size = new System.Drawing.Size(50, 23);
       this.mpButtonClear.TabIndex = 7;
@@ -215,7 +216,7 @@ namespace SetupTv.Sections
       // mpButtonDel
       // 
       this.mpButtonDel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButtonDel.Location = new System.Drawing.Point(201, 351);
+      this.mpButtonDel.Location = new System.Drawing.Point(201, 322);
       this.mpButtonDel.Name = "mpButtonDel";
       this.mpButtonDel.Size = new System.Drawing.Size(50, 23);
       this.mpButtonDel.TabIndex = 5;
@@ -226,7 +227,7 @@ namespace SetupTv.Sections
       // buttonUtp
       // 
       this.buttonUtp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonUtp.Location = new System.Drawing.Point(9, 326);
+      this.buttonUtp.Location = new System.Drawing.Point(9, 297);
       this.buttonUtp.Name = "buttonUtp";
       this.buttonUtp.Size = new System.Drawing.Size(45, 23);
       this.buttonUtp.TabIndex = 1;
@@ -237,7 +238,7 @@ namespace SetupTv.Sections
       // buttonDown
       // 
       this.buttonDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonDown.Location = new System.Drawing.Point(9, 351);
+      this.buttonDown.Location = new System.Drawing.Point(9, 322);
       this.buttonDown.Name = "buttonDown";
       this.buttonDown.Size = new System.Drawing.Size(45, 23);
       this.buttonDown.TabIndex = 2;
@@ -248,7 +249,7 @@ namespace SetupTv.Sections
       // mpButtonEdit
       // 
       this.mpButtonEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButtonEdit.Location = new System.Drawing.Point(125, 326);
+      this.mpButtonEdit.Location = new System.Drawing.Point(125, 297);
       this.mpButtonEdit.Name = "mpButtonEdit";
       this.mpButtonEdit.Size = new System.Drawing.Size(50, 23);
       this.mpButtonEdit.TabIndex = 4;
@@ -275,6 +276,7 @@ namespace SetupTv.Sections
       // 
       // tabPage1
       // 
+      this.tabPage1.Controls.Add(this.testScrambled);
       this.tabPage1.Controls.Add(this.btnPreview);
       this.tabPage1.Controls.Add(this.mpButtonUncheckEncrypted);
       this.tabPage1.Controls.Add(this.btnPlaylist);
@@ -295,10 +297,21 @@ namespace SetupTv.Sections
       this.tabPage1.Text = "Channels";
       this.tabPage1.UseVisualStyleBackColor = true;
       // 
+      // testScrambled
+      // 
+      this.testScrambled.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.testScrambled.Location = new System.Drawing.Point(332, 348);
+      this.testScrambled.Name = "testScrambled";
+      this.testScrambled.Size = new System.Drawing.Size(115, 23);
+      this.testScrambled.TabIndex = 11;
+      this.testScrambled.Text = "Test scrambled";
+      this.testScrambled.UseVisualStyleBackColor = true;
+      this.testScrambled.Click += new System.EventHandler(this.testScrambled_Click);
+      // 
       // btnPreview
       // 
       this.btnPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.btnPreview.Location = new System.Drawing.Point(69, 351);
+      this.btnPreview.Location = new System.Drawing.Point(69, 322);
       this.btnPreview.Name = "btnPreview";
       this.btnPreview.Size = new System.Drawing.Size(106, 23);
       this.btnPreview.TabIndex = 10;
@@ -309,7 +322,7 @@ namespace SetupTv.Sections
       // mpButtonUncheckEncrypted
       // 
       this.mpButtonUncheckEncrypted.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonUncheckEncrypted.Location = new System.Drawing.Point(332, 326);
+      this.mpButtonUncheckEncrypted.Location = new System.Drawing.Point(332, 297);
       this.mpButtonUncheckEncrypted.Name = "mpButtonUncheckEncrypted";
       this.mpButtonUncheckEncrypted.Size = new System.Drawing.Size(115, 23);
       this.mpButtonUncheckEncrypted.TabIndex = 8;
@@ -320,7 +333,7 @@ namespace SetupTv.Sections
       // btnPlaylist
       // 
       this.btnPlaylist.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.btnPlaylist.Location = new System.Drawing.Point(201, 326);
+      this.btnPlaylist.Location = new System.Drawing.Point(201, 297);
       this.btnPlaylist.Name = "btnPlaylist";
       this.btnPlaylist.Size = new System.Drawing.Size(106, 23);
       this.btnPlaylist.TabIndex = 6;
@@ -331,7 +344,7 @@ namespace SetupTv.Sections
       // mpButtonDeleteEncrypted
       // 
       this.mpButtonDeleteEncrypted.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonDeleteEncrypted.Location = new System.Drawing.Point(332, 351);
+      this.mpButtonDeleteEncrypted.Location = new System.Drawing.Point(332, 322);
       this.mpButtonDeleteEncrypted.Name = "mpButtonDeleteEncrypted";
       this.mpButtonDeleteEncrypted.Size = new System.Drawing.Size(115, 23);
       this.mpButtonDeleteEncrypted.TabIndex = 9;
@@ -342,7 +355,7 @@ namespace SetupTv.Sections
       // mpButtonAdd
       // 
       this.mpButtonAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButtonAdd.Location = new System.Drawing.Point(69, 326);
+      this.mpButtonAdd.Location = new System.Drawing.Point(69, 297);
       this.mpButtonAdd.Name = "mpButtonAdd";
       this.mpButtonAdd.Size = new System.Drawing.Size(50, 23);
       this.mpButtonAdd.TabIndex = 3;
@@ -397,5 +410,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ToolStripMenuItem renameSelectedChannelsBySIDToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem addSIDInFrontOfNameToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem renumberChannelsBySIDToolStripMenuItem;
+    private MediaPortal.UserInterface.Controls.MPButton testScrambled;
   }
 }

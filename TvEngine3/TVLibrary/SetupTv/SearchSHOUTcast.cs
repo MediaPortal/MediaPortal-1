@@ -43,7 +43,7 @@ namespace SetupTv
   /// <summary>
   /// Summary description for SearchSHOUTcast.
   /// </summary>
-  public class SearchSHOUTcast : Form
+  public class SearchSHOUTcast : SetupControls.MPForm
   {
     private MediaPortal.UserInterface.Controls.MPButton SearchButton;
     private MediaPortal.UserInterface.Controls.MPTextBox SearchText;

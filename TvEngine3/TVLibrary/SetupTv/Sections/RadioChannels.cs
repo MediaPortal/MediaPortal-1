@@ -790,5 +790,37 @@ namespace SetupTv.Sections
       }
       dlg.Close();
     }
+
+    private void testScrambled_Click(object sender, EventArgs e)
+    {
+      NotifyForm dlg = new NotifyForm("Testing all radio channels...", "Please be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
+
+      // Create tunning objects Server, User and Card
+      TvServer _server = new TvServer();
+      User _user = new User();
+      VirtualCard _card;
+
+      foreach (ListViewItem item in mpListView1.Items)
+      {
+        if (item.Checked == false) continue;  // do not test "un-checked" channels
+        Channel _channel = (Channel)item.Tag; // get channel
+        dlg.SetMessage(
+          string.Format("Please be patient...\n\nTesting channel {0} ( {1} of {2} )",
+                        _channel.DisplayName, item.Index + 1, mpListView1.Items.Count));
+        TvResult result = _server.StartTimeShifting(ref _user, _channel.IdChannel, out _card);
+        // test the channel for scrambled or unable to start graph
+        if ((result == TvResult.ChannelIsScrambled))
+        {
+          item.Checked = false;
+        } else if (result == TvResult.Succeeded)
+        {
+          _card.StopTimeShifting();
+        }
+
+      }
+      dlg.Close();
+    }
   }
 }

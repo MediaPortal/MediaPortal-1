@@ -28,7 +28,7 @@ using System.Windows.Forms;
 
 namespace SetupTv
 {
-  public partial class NotifyForm : Form
+  public partial class NotifyForm : SetupControls.MPForm
   {
     public NotifyForm(string caption,string message)
     {
@@ -40,6 +40,13 @@ namespace SetupTv
     {
       Text = caption;
       label1.Text = message;
+    }
+
+    public void SetMessage(string message)
+    {
+      label1.Text = message;
+      label1.Invalidate();
+      label1.Refresh();
     }
 
     public void WaitForDisplay()
