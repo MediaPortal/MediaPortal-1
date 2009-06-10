@@ -355,7 +355,7 @@ namespace MediaPortal.GUI.RSS
               m_strSiteName = strName;
               m_strSiteURL = strURL;
               m_strSiteIcon = strImage;
-              m_strDescription = strDescription;
+              m_strDescription = String.IsNullOrEmpty(m_strDescription) ? strName : strDescription;
               m_strSiteEncoding = strEncoding;
               firstSite = strURL;
             }
@@ -440,8 +440,15 @@ namespace MediaPortal.GUI.RSS
 
       //set object count label
       GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
-
+      
       GUIControl.FocusControl(GetID, (int) Controls.CONTROL_LIST);
+
+      GUIListItem selecteditem = GUIControl.GetSelectedListItem(GetID, (int) Controls.CONTROL_LIST);
+      if (selecteditem != null)
+      {
+          GUIPropertyManager.SetProperty("#selecteditem", selecteditem.Label);
+      }
+
       GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_STORYTEXT, m_feed_details[0].m_description);
     }
 
