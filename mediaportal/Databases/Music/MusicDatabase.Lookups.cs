@@ -1400,5 +1400,42 @@ namespace MediaPortal.Music.Database
       }
       return false;
     }
+
+    /// <summary>
+    /// Returns filename of songs which have a rating
+    /// Needed by the MusicRatingUpdater plugin
+    /// </summary>
+    /// <param name="aSongs"></param>
+    /// <returns></returns>
+    public bool GetSongsWithRating(ref List<Song> aSongs)
+    {
+      try
+      {
+        aSongs.Clear();
+
+        string strSQL = "select strPath, iRating from tracks where iRating > 0";
+        SQLiteResultSet results = DirectExecute(strSQL);
+        if (results.Rows.Count == 0)
+        {
+          return false;
+        }
+
+        Song song = null;
+        for (int i = 0; i < results.Rows.Count; ++i)
+        {
+          song = new Song();
+          AssignAllSongFieldsFromResultSet(ref song, results, i);
+          aSongs.Add(song);
+        }
+        return true;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return false;
+    }
+
   }
 }

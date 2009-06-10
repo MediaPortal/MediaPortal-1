@@ -162,8 +162,12 @@ namespace MediaPortal.TagReader
           TagLib.Id3v2.Tag id32_tag = tag.GetTag(TagLib.TagTypes.Id3v2) as TagLib.Id3v2.Tag;
           if (id32_tag != null)
           {
-            // Do we have a POPM frame written by MPTagThat?
-            TagLib.Id3v2.PopularimeterFrame popmFrame = TagLib.Id3v2.PopularimeterFrame.Get(id32_tag, "MPTagThat", false);
+            // Do we have a POPM frame written by MediaPortal or MPTagThat?
+            TagLib.Id3v2.PopularimeterFrame popmFrame = TagLib.Id3v2.PopularimeterFrame.Get(id32_tag, "MediaPortal", false);
+            if (popmFrame == null)
+            {
+              popmFrame = TagLib.Id3v2.PopularimeterFrame.Get(id32_tag, "MPTagThat", false);
+            }
             if (popmFrame != null)
             {
               musictag.Rating = popmFrame.Rating;

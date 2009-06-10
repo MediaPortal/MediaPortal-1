@@ -63,6 +63,10 @@ namespace MediaPortal.Music.Database
   {
     private ArrayList _shares = new ArrayList();
 
+    public delegate void MusicRatingChangedHandler(object sender, string filePath, int rating);
+
+    public static event MusicRatingChangedHandler MusicRatingChanged;
+
     #region Reorg events
 
     // An event that clients can use to be notified whenever the
@@ -151,6 +155,12 @@ namespace MediaPortal.Music.Database
         strSQL = String.Format("UPDATE tracks SET iRating={0} WHERE strPath='{1}'", aRating, strFileName);
 
         DirectExecute(strSQL);
+
+        // Let's fire the Ratings change event
+        if (MusicRatingChanged != null)
+        {
+          MusicRatingChanged(this, strFileName, aRating);
+        }
         return;
       }
       catch (Exception ex)
