@@ -33,6 +33,9 @@ namespace MediaPortal.DeployTool.InstallationChecks
 {
   class TvPluginChecker : IInstallationPackage
   {
+
+    private readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(TvServerChecker.prg, "FILE");
+
     public string GetDisplayName()
     {
       return "MediaPortal TV-Plugin " + Utils.GetPackageVersion('c');
@@ -40,22 +43,23 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool Download()
     {
-      string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(TvServerChecker.prg, "FILE");
-      DialogResult result = Utils.RetryDownloadFile(FileName, TvServerChecker.prg);
+      DialogResult result = Utils.RetryDownloadFile(_fileName, TvServerChecker.prg);
       return (result == DialogResult.OK);
     }
 
     public bool Install()
     {
-      string nsis = Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadString(TvServerChecker.prg, "FILE");
-      if (!File.Exists(nsis)) return false;
+      if (!File.Exists(_fileName))
+      {
+        return false;
+      }
 
       //NSIS installer need to to if it's a fresh install or an update (chefkoch)
       string UpdateMode = InstallationProperties.Instance["UpdateMode"] == "yes" ? "/UpdateMode" : string.Empty;
 
       //NSIS installer doesn't want " in parameters (chefkoch)
       //Rember that /D must be the last one         (chefkoch)
-      Process setup = Process.Start(nsis, String.Format("/S /noServer /DeployMode {0}", UpdateMode));
+      Process setup = Process.Start(_fileName, String.Format("/S /noServer /DeployMode {0}", UpdateMode));
 
       if (setup != null)
       {
@@ -84,8 +88,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       CheckResult result;
       result.needsDownload = true;
-      string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(TvServerChecker.prg, "FILE");
-      FileInfo tvPluginFile = new FileInfo(fileName);
+      FileInfo tvPluginFile = new FileInfo(_fileName);
 
       if (tvPluginFile.Exists && tvPluginFile.Length != 0)
         result.needsDownload = false;

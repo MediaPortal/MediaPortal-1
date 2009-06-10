@@ -42,6 +42,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public static string prg = "MSSQL2008Express" + arch;
 
+    private readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
+
     private static void PrepareTemplateINI(string iniFile)
     {
       WritePrivateProfileString("SQLSERVER2008", "INSTANCEID", "SQLExpress", iniFile);
@@ -132,7 +134,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool Download()
     {
-      DialogResult result = Utils.RetryDownloadFile(Utils.GetDownloadString(prg, "FILE"), prg);
+      DialogResult result = Utils.RetryDownloadFile(_fileName, prg);
       return (result == DialogResult.OK);
     }
 
@@ -146,7 +148,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       try
       {
         //run the setup
-        Process setup = Process.Start(Utils.GetDownloadString(prg, "FILE"), "/CONFIGURATIONFILE=\"" + iniFile + "\" /Q /HIDECONSOLE");
+        Process setup = Process.Start(_fileName, "/CONFIGURATIONFILE=\"" + iniFile + "\" /Q /HIDECONSOLE");
         if (setup != null)
         {
           setup.WaitForExit();
@@ -184,8 +186,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       CheckResult result;
       result.needsDownload = true;
-      string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
-      FileInfo msSqlFile = new FileInfo(FileName);
+      FileInfo msSqlFile = new FileInfo(_fileName);
 
       if (msSqlFile.Exists && msSqlFile.Length != 0)
         result.needsDownload = false;

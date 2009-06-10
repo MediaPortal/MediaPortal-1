@@ -35,6 +35,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
   {
     public static string prg = "DirectXRedist";
 
+    private string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
+
     public string GetDisplayName()
     {
       return "DirectX 9c - March 2009";
@@ -42,26 +44,23 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool Download()
     {
-      string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
-      DialogResult result = Utils.RetryDownloadFile(FileName, prg);
+      DialogResult result = Utils.RetryDownloadFile(_fileName, prg);
       return (result == DialogResult.OK);
     }
 
     public bool Install()
     {
-      // Extract package
-      string exe = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
-
       try
       {
-        Process setup = Process.Start(exe, "/q /t:\"" + Path.GetTempPath() + "\\directx9c\"");
+        // Extract package
+        Process setup = Process.Start(_fileName, "/q /t:\"" + Path.GetTempPath() + "\\directx9c\"");
         if (setup != null)
         {
           setup.WaitForExit();
         }
 
         // Install package
-        exe = Path.GetTempPath() + "\\directx9c\\DXSetup.exe";
+        string exe = Path.GetTempPath() + "\\directx9c\\DXSetup.exe";
 
         setup = Process.Start(exe, "/silent");
         if (setup != null)
@@ -86,8 +85,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       CheckResult result = new CheckResult();
       result.needsDownload = true;
-      string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
-      FileInfo dxFile = new FileInfo(fileName);
+      FileInfo dxFile = new FileInfo(_fileName);
 
       if (dxFile.Exists && dxFile.Length != 0)
         result.needsDownload = false;

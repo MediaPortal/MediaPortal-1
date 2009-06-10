@@ -35,6 +35,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
   {
     public static string prg = "WindowsMediaPlayer";
 
+    private readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.LocalizeDownloadFile(Utils.GetDownloadString(prg, "FILE"), Utils.GetDownloadString(prg, "TYPE"), prg);
+
     public string GetDisplayName()
     {
       return "Windows Media Player 11";
@@ -42,7 +44,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool Download()
     {
-      DialogResult result = Utils.RetryDownloadFile(InstallationProperties.Instance["Wmp11FileName"], prg);
+      DialogResult result = Utils.RetryDownloadFile(_fileName, prg);
       return (result == DialogResult.OK);
     }
 
@@ -50,7 +52,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       try
       {
-        Process setup = Process.Start(InstallationProperties.Instance["Wmp11FileName"], "/q");
+        Process setup = Process.Start(_fileName, "/q");
         if (setup != null)
         {
           setup.WaitForExit();
@@ -70,10 +72,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       CheckResult result;
       result.needsDownload = true;
-
-      string FileName = Application.StartupPath + "\\deploy\\" + Utils.LocalizeDownloadFile(Utils.GetDownloadString(prg, "FILE"), Utils.GetDownloadString(prg, "TYPE"), prg);
-      FileInfo wmpFile = new FileInfo(FileName);
-      InstallationProperties.Instance.Set("Wmp11FileName", FileName);
+      FileInfo wmpFile = new FileInfo(_fileName);
 
       if (wmpFile.Exists && wmpFile.Length != 0)
         result.needsDownload = false;

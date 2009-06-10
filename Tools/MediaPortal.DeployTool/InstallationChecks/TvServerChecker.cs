@@ -35,6 +35,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
   {
     public static string prg = "TvServer";
 
+    private readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
+
     public string GetDisplayName()
     {
       return "MediaPortal TV-Server " + Utils.GetPackageVersion('c');
@@ -42,14 +44,12 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool Download()
     {
-      string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
-      DialogResult result = Utils.RetryDownloadFile(FileName, prg);
+      DialogResult result = Utils.RetryDownloadFile(_fileName, prg);
       return (result == DialogResult.OK);
     }
     public bool Install()
     {
-      string nsis = Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadString(prg, "FILE");
-      if (!File.Exists(nsis)) return false;
+      if (!File.Exists(_fileName)) return false;
       string targetDir = InstallationProperties.Instance["TVServerDir"];
 
       //NSIS installer need to to if it's a fresh install or an update (chefkoch)
@@ -57,7 +57,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
       //NSIS installer doesn't want " in parameters (chefkoch)
       //Rember that /D must be the last one         (chefkoch)
-      Process setup = Process.Start(nsis, String.Format("/S /noClient /DeployMode {0} /D={1}", UpdateMode, targetDir));
+      Process setup = Process.Start(_fileName, String.Format("/S /noClient /DeployMode {0} /D={1}", UpdateMode, targetDir));
 
       if (setup != null)
       {
@@ -86,8 +86,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       CheckResult result;
       result.needsDownload = true;
-      string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
-      FileInfo tvServerFile = new FileInfo(fileName);
+      FileInfo tvServerFile = new FileInfo(_fileName);
 
       if (tvServerFile.Exists && tvServerFile.Length != 0)
         result.needsDownload = false;

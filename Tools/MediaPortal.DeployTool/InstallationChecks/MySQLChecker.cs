@@ -42,6 +42,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public static string prg = "MySQL" + arch;
 
+    private readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
+
     private void PrepareMyIni(string iniFile)
     {
       WritePrivateProfileString("client", "port", "3306", iniFile);
@@ -80,14 +82,13 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool Download()
     {
-      string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
-      DialogResult result = Utils.RetryDownloadFile(FileName, prg);
+      DialogResult result = Utils.RetryDownloadFile(_fileName, prg);
       return (result == DialogResult.OK);
     }
 
     public bool Install()
     {
-      string cmdLine = "/i \"" + Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE") + "\"";
+      string cmdLine = "/i \"" + _fileName + "\"";
       cmdLine += " ADDLOCAL=\"Server,ClientPrograms,MySQLCommandLineShell,MysqlCommandLineUtilsFeature,ServerInstanceConfig\"";
       cmdLine += " INSTALLDIR=\"" + InstallationProperties.Instance["DBMSDir"] + "\"";
       cmdLine += " /qn";
@@ -212,8 +213,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       CheckResult result;
       result.needsDownload = true;
-      string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
-      FileInfo mySqlFile = new FileInfo(fileName);
+      FileInfo mySqlFile = new FileInfo(_fileName);
 
       if (mySqlFile.Exists && mySqlFile.Length != 0)
         result.needsDownload = false;
