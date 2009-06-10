@@ -23,6 +23,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
   public class iMONLCDg : BaseDisplay, IDisplay
   {
+    public static readonly string[,] _BrandTable = {
+                                                     { "SOUNDGRAPH", "iMON" },
+                                                     { "Antec", "VFD" }
+                                                   };
+
+    public static readonly int _BrandTableLength = 1;
+
     public static readonly byte[,] _Font8x5 = new byte[,]
                                                 {
                                                   {0, 0, 0, 0, 0, 0}, {0, 100, 0x18, 4, 100, 0x18},
@@ -371,6 +378,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             ctrl.WaitForStatus(ServiceControllerStatus.Stopped);
             ctrl.Start();
             ctrl.WaitForStatus(ServiceControllerStatus.Running);
+			break;
           }
           catch (Exception ex)
           {
@@ -639,49 +647,35 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           try
           {
             int num3;
-            Log.Info("iMONLCDg.Setup(): checking registry for ANTEC entries", new object[0]);
-            RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Antec\VFD", false);
-            if (key != null)
+            for (int i = 0; i < _BrandTableLength; i++)
             {
-              num3 = (int)key.GetValue("LastVFD", 0);
-              if (num3 > 0)
-              {
-                Log.Info("iMONLCDg.Setup(): ANTEC registry entries found - HW: {0}", new object[] { num3.ToString("x00") });
-                rEGVersion = num3;
-              }
-              else
-              {
-                Log.Info("iMONLCDg.Setup(): ANTEC \"LastVFD\" key not found", new object[0]);
-              }
-            }
-            else
-            {
-              Log.Info("iMONLCDg.Setup(): ANTEC registry entries NOT found", new object[0]);
-            }
-            Registry.CurrentUser.Close();
-            if (rEGVersion < 0)
-            {
-              Log.Info("iMONLCDg.Setup(): checking registry for SOUNDGRAPH entries", new object[0]);
-              key = Registry.CurrentUser.OpenSubKey(@"Software\SOUNDGRAPH\iMON", false);
+              string curBrand = _BrandTable[i, 0];
+              string curApp = _BrandTable[i, 1];
+              Log.Info("iMONLCDg.Setup(): checking registry for " + curBrand + " entries", new object[0]);
+              RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software" + curBrand + "\\" + curApp, false);
               if (key != null)
               {
                 num3 = (int)key.GetValue("LastVFD", 0);
                 if (num3 > 0)
                 {
-                  Log.Info("iMONLCDg.Setup(): SOUNDGRAPH registry entries found - HW: {0}",
+                  Log.Info("iMONLCDg.Setup(): " + curBrand + " registry entries found - HW: {0}",
                            new object[] { num3.ToString("x00") });
                   rEGVersion = num3;
                 }
                 else
                 {
-                  Log.Info("iMONLCDg.Setup(): SOUNDGRAPH \"LastVFD\" key not found", new object[0]);
+                  Log.Info("iMONLCDg.Setup(): " + curBrand + " \"LastVFD\" key not found", new object[0]);
                 }
               }
               else
               {
-                Log.Info("iMONLCDg.Setup(): SOUNDGRAPH registry entries NOT found", new object[0]);
+                Log.Info("iMONLCDg.Setup(): " + curBrand + " registry entries NOT found", new object[0]);
               }
               Registry.CurrentUser.Close();
+              if (rEGVersion >= 0)
+              {
+                break;
+              }
             }
           }
           catch (Exception exception2)
@@ -1066,362 +1060,221 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       Process process;
       bool flag;
       bool flag2;
-      Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Checking iMON/VFD Manager configuration", new object[0]);
-      string str; // = string.Empty;
-      int num;
-      Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Checking Antec VFD Manager registry subkey.", new object[0]);
-      RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Antec\VFD", true);
-      if (key != null)
+
+      for (int i = 0; i <= _BrandTableLength; i++)
       {
-        Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): The Antec VFD Manager registry subkey found.", new object[0]);
-        flag2 = true;
-        str = (string)key.GetValue("CurRemote", string.Empty);
-        num = (int)key.GetValue("MouseMode", -1);
-        if ((str.Equals("iMON PAD") & (num != 0)) & _ForceKeyBoardMode)
+        string curBrand = _BrandTable[i, 0];
+        string curApp = _BrandTable[i, 1];
+        Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Checking " + curBrand + " " + curApp + " Manager registry subkey.", new object[0]);
+        RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\" + curBrand + "\\" + curApp, true);
+        if (key != null)
         {
-          Log.Info("iMONLCDgCheck_iMON_Manager_Status(): \"iMON PAD\" configuration error.", new object[0]);
-          Log.Info(
-            "iMONLCDg.Check_iMON_Manager_Status(): The Antec VFD Manager is not set correctly. The configuration has been corrected.",
-            new object[0]);
-          flag2 = false;
-        }
-        if (((int)key.GetValue("RCPlugin", -1)) != 1)
-        {
-          Log.Info("iMONLCDgCheck_iMON_Manager_Status(): \"RCPlugin\" configuration error.", new object[0]);
-          Log.Info(
-            "iMONLCDg.Check_iMON_Manager_Status(): The Antec VFD Manager is not set correctly. The configuration has been corrected.",
-            new object[0]);
-          flag2 = false;
-        }
-        if (!_LeaveFrontviewActive)
-        {
-          if (((int)key.GetValue("RunFront", -1)) != 0)
+          Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): The " + curBrand + " " + curApp + " Manager registry subkey found.", new object[0]);
+          flag2 = true;
+          if (((int)key.GetValue("RCPlugin", -1)) != 1)
           {
-            Log.Info("iMONLCDgCheck_iMON_Manager_Status(): \"RunFront\" configuration error.", new object[0]);
+            Log.Info("iMONLCDgCheck_iMON_Manager_Status(): \"RCPlugin\" configuration error.", new object[0]);
             Log.Info(
-              "iMONLCDg.Check_iMON_Manager_Status(): The Antec VFD Manager is not set correctly. The configuration has been corrected.",
+              "iMONLCDg.Check_iMON_Manager_Status(): The " + curBrand + " " + curApp + " Manager is not set correctly. The configuration has been corrected.",
               new object[0]);
             flag2 = false;
           }
-        }
-        if (_ForceManagerReload)
-        {
-          Log.Info("iMONLCDgCheck_iMON_Manager_Status(): Forcing Antec/iMON Manager reload...", new object[0]);
-          flag2 = false;
-        }
-        if (!flag2)
-        {
-          key.SetValue("RCPlugin", 1, RegistryValueKind.DWord);
           if (!_LeaveFrontviewActive)
           {
-            key.SetValue("RunFront", 0, RegistryValueKind.DWord);
-          }
-          if (str.Equals("iMON PAD") & (num != 0))
-          {
-            key.SetValue("MouseMode", 0, RegistryValueKind.DWord);
-            Log.Info("iMONLCDg.Check_iMON_Manager_Status(): Forcing iMON PAD remote setting to Keyboard mode.",
-                     new object[0]);
-          }
-          Registry.CurrentUser.Close();
-          Thread.Sleep(100);
-          processesByName = Process.GetProcessesByName("VFD");
-          Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Found {0} instances of Antec VFD Manager",
-                    new object[] { processesByName.Length });
-          if (processesByName.Length > 0)
-          {
-            _UsingAntecManager = true;
-            Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Stopping VFD Manager", new object[0]);
-            processesByName[0].Kill();
-            flag = false;
-            while (!flag)
+            if (((int)key.GetValue("RunFront", -1)) != 0)
             {
-              Thread.Sleep(100);
-              Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Waiting for VFD Manager to exit", new object[0]);
-              processesByName[0].Dispose();
-              processesByName = Process.GetProcessesByName("VFD");
-              if (processesByName.Length == 0)
-              {
-                flag = true;
-              }
+              Log.Info("iMONLCDgCheck_iMON_Manager_Status(): \"RunFront\" configuration error.", new object[0]);
+              Log.Info(
+                "iMONLCDg.Check_iMON_Manager_Status(): The " + curBrand + " " + curApp + " Manager is not set correctly. The configuration has been corrected.",
+                new object[0]);
+              flag2 = false;
             }
-            Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): VFD Manager Stopped", new object[0]);
-            Win32Functions.RedrawNotificationArea();
-            process = new Process
-                        {
-                          StartInfo =
-                          {
-                            WorkingDirectory = FindAntecManagerPath(),
-                            FileName = "VFD.exe"
-                          }
-                        };
-            Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): ReStarting VFD Manager", new object[0]);
-            Process.Start(process.StartInfo);
           }
+          if (_ForceManagerReload)
+          {
+            Log.Info("iMONLCDgCheck_iMON_Manager_Status(): Forcing " + curBrand + " " + curApp + " Manager reload...", new object[0]);
+            flag2 = false;
+          }
+          if (!flag2)
+          {
+            key.SetValue("RCPlugin", 1, RegistryValueKind.DWord);
+            if (!_LeaveFrontviewActive)
+            {
+              key.SetValue("RunFront", 0, RegistryValueKind.DWord);
+            }
+            Registry.CurrentUser.Close();
+            Thread.Sleep(100);
+            processesByName = Process.GetProcessesByName(curApp);
+            Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Found {0} instances of " + curBrand + " " + curApp + " Manager",
+                      new object[] { processesByName.Length });
+            if (processesByName.Length > 0)
+            {
+              if (curBrand == _BrandTable[0, 0])
+              {
+                _UsingSoundgraphManager = true;
+              }
+              else
+              {
+                _UsingAntecManager = true;
+              }
+              Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Stopping " + curBrand + " " + curApp + " Manager", new object[0]);
+              processesByName[0].Kill();
+              flag = false;
+              while (!flag)
+              {
+                Thread.Sleep(100);
+                Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Waiting for " + curBrand + " " + curApp + " Manager to exit", new object[0]);
+                processesByName[0].Dispose();
+                processesByName = Process.GetProcessesByName(curApp);
+                if (processesByName.Length == 0)
+                {
+                  flag = true;
+                }
+              }
+              Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): " + curBrand + " " + curApp + " Manager Stopped", new object[0]);
+              Win32Functions.RedrawNotificationArea();
+              process = new Process
+                          {
+                            StartInfo =
+                            {
+                              WorkingDirectory = FindManagerPath(curBrand, curApp),
+                              FileName = curApp + ".exe"
+                            }
+                          };
+              Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): ReStarting " + curBrand + " " + curApp + " Manager", new object[0]);
+              Process.Start(process.StartInfo);
+            }
+          }
+          else
+          {
+            if (!_LeaveFrontviewActive)
+            {
+              Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): The " + curBrand + " " + curApp + " Manager registry entries are correct.",
+                        new object[0]);
+              key.SetValue("RunFront", 0, RegistryValueKind.DWord);
+            }
+            processesByName = Process.GetProcessesByName(curApp);
+            Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Found {0} instances of " + curBrand + " " + curApp + " Manager",
+                      new object[] { processesByName.Length });
+          }
+          key.Close();
         }
         else
         {
-          if (!_LeaveFrontviewActive)
-          {
-            Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): The Antec VFD Manager registry entries are correct.",
-                      new object[0]);
-            key.SetValue("RunFront", 0, RegistryValueKind.DWord);
-          }
-          processesByName = Process.GetProcessesByName("VFD");
-          Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Found {0} instances of Antec VFD Manager",
-                    new object[] { processesByName.Length });
-        }
-        key.Close();
-      }
-      else
-      {
-        Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): The Antec VFD Manager registry subkey NOT FOUND.",
-                  new object[0]);
-        Registry.CurrentUser.Close();
-        processesByName = Process.GetProcessesByName("VFD");
-        Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): state check: Found {0} instances of Antec VFD Manager",
-                  new object[] { processesByName.Length });
-        if (processesByName.Length > 0)
-        {
-          Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Inconsistant state: Forcing shutdown of Antec VFD Manager",
+          Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): The " + curBrand + " " + curApp + " Manager registry subkey NOT FOUND.",
                     new object[0]);
-          processesByName[0].Kill();
-          flag = false;
-          while (!flag)
-          {
-            Thread.Sleep(100);
-            Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Waiting for VFD Manager to exit", new object[0]);
-            processesByName[0].Dispose();
-            processesByName = Process.GetProcessesByName("VFD");
-            if (processesByName.Length == 0)
-            {
-              flag = true;
-            }
-          }
-          Log.Info("iMONLCDg.Check_iMON_Manager_Status(): Inconsistant state: Antec VFD Manager Stopped", new object[0]);
-          Win32Functions.RedrawNotificationArea();
-        }
-      }
-      Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Checking SoundGraph iMON Manager registry subkey.", new object[0]);
-      key = Registry.CurrentUser.OpenSubKey(@"Software\SOUNDGRAPH\iMON", true);
-      if (key != null)
-      {
-        Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): The Soundgraph iMON Manager registry subkey found.",
-                  new object[0]);
-        flag2 = true;
-        str = (string)key.GetValue("CurRemote", string.Empty);
-        num = (int)key.GetValue("MouseMode", -1);
-        if ((str.Equals("iMON PAD") & (num != 0)) & _ForceKeyBoardMode)
-        {
-          Log.Info("iMONLCDgCheck_iMON_Manager_Status(): \"iMON PAD\" configuration error.", new object[0]);
-          Log.Info(
-            "iMONLCDgCheck_iMON_Manager_Status(): The Soundgraph iMON Manager is not set correctly. The configuration has been corrected.",
-            new object[0]);
-          flag2 = false;
-        }
-        if (((int)key.GetValue("RCPlugin", -1)) != 1)
-        {
-          Log.Info("iMONLCDgCheck_iMON_Manager_Status(): \"RCPlugin\" configuration error.", new object[0]);
-          Log.Info(
-            "iMONLCDgCheck_iMON_Manager_Status(): The Soundgraph iMON Manager is not set correctly. The configuration has been corrected.",
-            new object[0]);
-          flag2 = false;
-        }
-        if (!_LeaveFrontviewActive)
-        {
-          if (((int)key.GetValue("RunFront", -1)) != 0)
-          {
-            Log.Info("iMONLCDgCheck_iMON_Manager_Status(): \"RunFront\" configuration error.", new object[0]);
-            Log.Info(
-              "iMONLCDgCheck_iMON_Manager_Status(): The Soundgraph iMON Manager is not set correctly. The configuration has been corrected.",
-              new object[0]);
-            flag2 = false;
-          }
-        }
-        if (_ForceManagerReload)
-        {
-          Log.Info("iMONLCDgCheck_iMON_Manager_Status(): Forcing Antec/iMON Manager reload...", new object[0]);
-          flag2 = false;
-        }
-        if (!flag2)
-        {
-          key.SetValue("RCPlugin", 1, RegistryValueKind.DWord);
-          if (!_LeaveFrontviewActive)
-          {
-            key.SetValue("RunFront", 0, RegistryValueKind.DWord);
-          }
-          if (str.Equals("iMON PAD") & (num != 0))
-          {
-            key.SetValue("MouseMode", 0, RegistryValueKind.DWord);
-            Log.Info("iMONLCDg.Check_iMON_Manager_Status(): Forcing iMON PAD remote setting to Keyboard mode.",
-                     new object[0]);
-          }
           Registry.CurrentUser.Close();
-          Thread.Sleep(100);
-          processesByName = Process.GetProcessesByName("iMON");
-          Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Found {0} instances of SoundGraph iMON Manager",
+          processesByName = Process.GetProcessesByName(curApp);
+          Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): state check: Found {0} instances of " + curBrand + " " + curApp + " Manager",
                     new object[] { processesByName.Length });
           if (processesByName.Length > 0)
           {
-            _UsingSoundgraphManager = true;
-            Log.Info("iMONLCDg.Check_iMON_Manager_Status(): Stopping iMON Manager", new object[0]);
+            Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Inconsistant state: Forcing shutdown of " + curBrand + " " + curApp + " Manager",
+                      new object[0]);
             processesByName[0].Kill();
             flag = false;
             while (!flag)
             {
               Thread.Sleep(100);
-              Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Waiting for iMON Manager to exit", new object[0]);
+              Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Waiting for " + curBrand + " " + curApp + " Manager to exit", new object[0]);
               processesByName[0].Dispose();
-              processesByName = Process.GetProcessesByName("iMON");
+              processesByName = Process.GetProcessesByName(curApp);
               if (processesByName.Length == 0)
               {
                 flag = true;
               }
             }
-            Log.Info("iMONLCDg.Check_iMON_Manager_Status(): iMON Manager Stopped", new object[0]);
+            Log.Info("iMONLCDg.Check_iMON_Manager_Status(): Inconsistant state: " + curBrand + " " + curApp + " Manager Stopped", new object[0]);
             Win32Functions.RedrawNotificationArea();
-            process = new Process
-                        {
-                          StartInfo =
-                          {
-                            WorkingDirectory = FindSoundGraphManagerPath(),
-                            FileName = "iMON.exe"
-                          }
-                        };
-            Log.Info("iMONLCDg.Check_iMON_Manager_Status(): ReStarting iMON Manager", new object[0]);
-            Process.Start(process.StartInfo);
           }
-        }
-        else
-        {
-          if (!_LeaveFrontviewActive)
-          {
-            Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): The SoundGraph iMON Manager registry entries are correct.",
-                      new object[0]);
-            key.SetValue("RunFront", 0, RegistryValueKind.DWord);
-          }
-          processesByName = Process.GetProcessesByName("iMON");
-          Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Found {0} instances of SoundGraph iMON Manager",
-                    new object[] { processesByName.Length });
-        }
-        key.Close();
-      }
-      else
-      {
-        Registry.CurrentUser.Close();
-        Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): SoundGraph Registry subkey NOT FOUND", new object[0]);
-        processesByName = Process.GetProcessesByName("iMON");
-        Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): STATE CHECK: Found {0} instances of SoundGraph iMON Manager",
-                  new object[] { processesByName.Length });
-        if (processesByName.Length > 0)
-        {
-          Log.Debug(
-            "iMONLCDg.Check_iMON_Manager_Status(): INCONSISTANT STATE: Forcing shutdown of SoundGraph iMON Manager",
-            new object[0]);
-          processesByName[0].Kill();
-          flag = false;
-          while (!flag)
-          {
-            Thread.Sleep(100);
-            Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Waiting for iMON Manager to exit", new object[0]);
-            processesByName[0].Dispose();
-            processesByName = Process.GetProcessesByName("iMON");
-            if (processesByName.Length == 0)
-            {
-              flag = true;
-            }
-          }
-          Log.Info("iMONLCDg.Check_iMON_Manager_Status(): Inconsistant state: Soundgraph iMON Manager Stopped",
-                   new object[0]);
-          Win32Functions.RedrawNotificationArea();
         }
       }
+
       Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): iMON/VFD Manager configuration check completed", new object[0]);
       if (_EnsureManagerStartup)
       {
         Log.Debug(
           "iMONLCDg.Check_iMON_Manager_Status(): Ensure Manager Start is selected.. ensuring that the manager is running",
           new object[0]);
-        Process[] processArray2 = Process.GetProcessesByName("VFD");
-        Process[] processArray3 = Process.GetProcessesByName("iMON");
-        string processName = string.Empty;
-        if ((processArray2.Length == 0) & (processArray3.Length == 0))
+        for (int i = 0; i <= _BrandTableLength; i++)
         {
-          var process2 = new Process();
-          string str3 = FindAntecManagerPath();
-          string str4 = FindSoundGraphManagerPath();
-          if ((str3 == string.Empty) & (str4 == string.Empty))
+          string curBrand = _BrandTable[i, 0];
+          string curApp = _BrandTable[i, 1];
+          Process[] processArray = Process.GetProcessesByName(curApp);
+          string processName = string.Empty;
+          if (processArray.Length == 0)
           {
-            Log.Info(
-              "iMONLCDg.Check_iMON_Manager_Status(): ERROR: Unable to ensure Antec VFD or iMON Manager is running. Installation not found.",
-              new object[0]);
-          }
-          else
-          {
-            if (str3 != string.Empty)
+            var process2 = new Process();
+            string strPath = FindManagerPath(curBrand, curApp);
+            if (String.IsNullOrEmpty(strPath))
             {
-              process2.StartInfo.WorkingDirectory = str3;
-              process2.StartInfo.FileName = "VFD.exe";
-              processName = "VFD";
-              Log.Info("iMONLCDg.Check_iMON_Manager_Status(): Starting Antec VFD Manager", new object[0]);
-            }
-            else if (str4 != string.Empty)
-            {
-              process2.StartInfo.WorkingDirectory = str4;
-              process2.StartInfo.FileName = "iMON.exe";
-              processName = "iMON";
-              Log.Info("iMONLCDg.Check_iMON_Manager_Status(): Starting iMON Manager", new object[0]);
-            }
-            Process.Start(process2.StartInfo);
-            Thread.Sleep(0x3e8);
-            int num2 = 0x1388;
-            bool flag3 = false;
-            while (!flag3 & (num2 > 0))
-            {
-              processArray2 = Process.GetProcessesByName(processName);
-              if (processArray2.Length > 0)
-              {
-                if (processArray2[0].Responding)
-                {
-                  flag3 = true;
-                }
-                else
-                {
-                  Thread.Sleep(100);
-                  num2 -= 100;
-                }
-              }
-            }
-            if (!flag3)
-            {
-              _UsingAntecManager = false;
-              _UsingSoundgraphManager = false;
-              Log.Info("iMONLCDg.Check_iMON_Manager_Status(): Could not start Antec/iMON Manager process", new object[0]);
-            }
-            else if (processName.Equals("VFD"))
-            {
-              _UsingAntecManager = true;
-              _UsingSoundgraphManager = false;
-              Log.Info("iMONLCDg.Check_iMON_Manager_Status(): Started Antec VFD Manager", new object[0]);
+              Log.Info(
+                "iMONLCDg.Check_iMON_Manager_Status(): ERROR: Unable to ensure " + curBrand + " " + curApp + " Manager is running. Installation not found.",
+                new object[0]);
             }
             else
             {
-              _UsingAntecManager = false;
-              _UsingSoundgraphManager = true;
-              Log.Info("iMONLCDg.Check_iMON_Manager_Status(): Started iMON Manager", new object[0]);
+              processName = _BrandTable[i, 1];
+              process2.StartInfo.WorkingDirectory = strPath;
+              process2.StartInfo.FileName = processName + ".exe";
+              Log.Info("iMONLCDg.Check_iMON_Manager_Status(): Starting " + curBrand + " " + curApp + " Manager", new object[0]);
+
+              Process.Start(process2.StartInfo);
+              Thread.Sleep(0x3e8);
+              int num2 = 0x1388;
+              bool flag3 = false;
+              while (!flag3 & (num2 > 0))
+              {
+                processArray = Process.GetProcessesByName(processName);
+                if (processArray.Length > 0)
+                {
+                  if (processArray[0].Responding)
+                  {
+                    flag3 = true;
+                  }
+                  else
+                  {
+                    Thread.Sleep(100);
+                    num2 -= 100;
+                  }
+                }
+              }
+              if (!flag3)
+              {
+                _UsingAntecManager = false;
+                _UsingSoundgraphManager = false;
+                Log.Info("iMONLCDg.Check_iMON_Manager_Status(): Could not start iMON/VFD Manager process", new object[0]);
+              }
+              else
+              {
+                _UsingAntecManager = false;
+                _UsingSoundgraphManager = false;
+                if (curBrand == _BrandTable[0, 0])
+                {
+                  _UsingSoundgraphManager = true;
+                }
+                else
+                {
+                  _UsingAntecManager = true;
+                }
+                Log.Info("iMONLCDg.Check_iMON_Manager_Status(): Started " + curBrand + " " + curApp + " Manager", new object[0]);
+              }
             }
           }
-        }
-        else if (processArray2.Length > 0)
-        {
-          _UsingAntecManager = true;
-          _UsingSoundgraphManager = false;
-          Log.Info("iMONLCDg.Check_iMON_Manager_Status(): Antec VFD Manager is running", new object[0]);
-        }
-        else if (processArray3.Length > 0)
-        {
-          _UsingAntecManager = false;
-          _UsingSoundgraphManager = true;
-          Log.Info("iMONLCDg.Check_iMON_Manager_Status(): iMON Manager is running", new object[0]);
+          else
+          {
+            _UsingAntecManager = false;
+            _UsingSoundgraphManager = false;
+            if (curBrand == _BrandTable[0, 0])
+            {
+              _UsingSoundgraphManager = true;
+            }
+            else
+            {
+              _UsingAntecManager = true;
+            }
+            Log.Info("iMONLCDg.Check_iMON_Manager_Status(): " + curBrand + " " + curApp + " Manager is running", new object[0]);
+          }
         }
       }
     }
@@ -2143,35 +1996,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public string FindAntecManagerPath()
-    {
-      if (DoDebug)
-      {
-        Log.Info("iMONLCDg.FindAntecManagerPath(): called.", new object[0]);
-      }
-      string str = string.Empty;
-      if (Registry.CurrentUser.OpenSubKey(@"Software\Antec\VFD", false) != null)
-      {
-        Registry.CurrentUser.Close();
-        RegistryKey key =
-          Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\VFD.exe", false);
-        if (key != null)
-        {
-          str = (string)key.GetValue("Path", string.Empty);
-        }
-        Registry.LocalMachine.Close();
-      }
-      else
-      {
-        Registry.CurrentUser.Close();
-      }
-      if (DoDebug)
-      {
-        Log.Info("iMONLCDg.FindAntecManagerPath(): selected path = \"{0}\".", new object[] { str });
-      }
-      return str;
-    }
-
     public string FindImonVFDdll()
     {
       RegistryKey key;
@@ -2323,18 +2147,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       return str2;
     }
 
-    public string FindSoundGraphManagerPath()
+    public string FindManagerPath(string curBrand, string curApp)
     {
       if (DoDebug)
       {
-        Log.Info("iMONLCDg.FindSoundGraphManagerPath(): called.", new object[0]);
+        Log.Info("iMONLCDg.FindManagerPath(): called.", new object[0]);
       }
       string str = string.Empty;
-      if (Registry.CurrentUser.OpenSubKey(@"Software\SOUNDGRAPH\iMON", false) != null)
+      if (Registry.CurrentUser.OpenSubKey("Software\\" + curBrand + "\\" + curApp, false) != null)
       {
         Registry.CurrentUser.Close();
         RegistryKey key =
-          Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\iMON.exe", false);
+          Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\" + curApp + ".exe", false);
         if (key != null)
         {
           str = (string)key.GetValue("Path", string.Empty);
@@ -2347,15 +2171,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       if (DoDebug)
       {
-        Log.Info("iMONLCDg.FindSoundGraphManagerPath(): selected path = \"{0}\".", new object[] { str });
+        Log.Info("iMONLCDg.FindManagerPath(): selected path = \"{0}\".", new object[] { str });
       }
       return str;
     }
 
     public void ForceManagerRestart()
     {
-      string str;
-      string str2;
       if (!_ForceManagerRestart)
       {
         if (DoDebug)
@@ -2365,119 +2187,60 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       else
       {
-        str = FindAntecManagerPath();
-        str2 = FindSoundGraphManagerPath();
-        if (str.Equals(string.Empty) & str2.Equals(string.Empty))
+        for (int i = 0; i <= _BrandTableLength; i++)
         {
-          if (DoDebug)
+          string curBrand = _BrandTable[i, 0];
+          string curApp = _BrandTable[i, 1];
+          string str = FindManagerPath(curBrand, curApp);
+          if (String.IsNullOrEmpty(str))
           {
-            Log.Info("iMONLCDg.ForceManagerRestart(): Manager installation not found... restart not possible.",
-                     new object[0]);
-          }
-        }
-        else
-        {
-          Process[] processesByName;
-          Process process;
-          bool flag;
-          RegistryKey key;
-          if (!str.Equals(string.Empty))
-          {
-            if (_ForceKeyBoardMode)
+            if (DoDebug)
             {
-              key = Registry.CurrentUser.OpenSubKey(@"Software\ANTEC\VFD", true);
-              if (key != null)
-              {
-                if (key.GetValue("CurRemote").Equals("iMON PAD"))
-                {
-                  Log.Debug("iMONLCDg.ForceManagerRestart(): Forcing iMON PAD mode setting to KeyBoard.", new object[0]);
-                  key.SetValue("MouseMode", 0, RegistryValueKind.DWord);
-                }
-                key.Close();
-              }
-              Registry.CurrentUser.Close();
+              Log.Info("iMONLCDg.ForceManagerRestart(): Manager installation not found... restart not possible.", new object[0]);
             }
-            processesByName = Process.GetProcessesByName("VFD");
+          }
+          else
+          {
+            Process process;
+            Process[] processesByName = Process.GetProcessesByName(curApp);
             if (processesByName.Length > 0)
             {
-              _UsingAntecManager = true;
+              if (curBrand == _BrandTable[0, 0])
+              {
+                _UsingSoundgraphManager = true;
+              }
+              else
+              {
+                _UsingAntecManager = true;
+              }
               if (DoDebug)
               {
-                Log.Info("iMONLCDg.ForceManagerRestart(): Found Antec Manager process.", new object[0]);
+                Log.Info("iMONLCDg.ForceManagerRestart(): Found " + curBrand + " " + curApp + " Manager process.", new object[0]);
               }
               processesByName[0].Kill();
-              flag = false;
+              bool flag = false;
               while (!flag)
               {
                 Thread.Sleep(100);
-                Log.Debug("iMONLCDg.ForceManagerRestart(): Waiting for VFD Manager to exit", new object[0]);
+                Log.Debug("iMONLCDg.ForceManagerRestart(): Waiting for " + curBrand + " " + curApp + " Manager to exit", new object[0]);
                 processesByName[0].Dispose();
-                processesByName = Process.GetProcessesByName("VFD");
+                processesByName = Process.GetProcessesByName(curApp);
                 if (processesByName.Length == 0)
                 {
                   flag = true;
                 }
               }
-              Log.Debug("iMONLCDg.ForceManagerRestart(): VFD Manager Stopped", new object[0]);
+              Log.Debug("iMONLCDg.ForceManagerRestart(): " + curBrand + " " + curApp + " Manager Stopped", new object[0]);
               Win32Functions.RedrawNotificationArea();
               process = new Process
-              {
-                StartInfo =
-                {
-                  WorkingDirectory = str,
-                  FileName = "VFD.exe"
-                }
-              };
-              Log.Debug("iMONLCDg.ForceManagerRestart(): ReStarting VFD Manager", new object[0]);
-              Process.Start(process.StartInfo);
-              GUIGraphicsContext.form.Activate();
-            }
-          }
-          if (!str2.Equals(string.Empty))
-          {
-            if (_ForceKeyBoardMode)
-            {
-              key = Registry.CurrentUser.OpenSubKey(@"Software\SOUNDGRAPH\iMON", true);
-              if ((key != null) && key.GetValue("CurRemote").Equals("iMON PAD"))
-              {
-                Log.Debug("iMONLCDg.ForceManagerRestart(): Forcing iMON PAD mode setting to KeyBoard.", new object[0]);
-                key.SetValue("MouseMode", 0, RegistryValueKind.DWord);
-              }
-
-              Registry.CurrentUser.Close();
-            }
-            processesByName = Process.GetProcessesByName("iMON");
-            if (processesByName.Length > 0)
-            {
-              _UsingSoundgraphManager = true;
-              if (DoDebug)
-              {
-                Log.Info("iMONLCDg.ForceManagerRestart(): Found iMON Manager process.", new object[0]);
-              }
-              processesByName[0].Kill();
-              flag = false;
-              while (!flag)
-              {
-                Thread.Sleep(100);
-                Log.Debug("iMONLCDg.ForceManagerRestart(): Waiting for iMON Manager to exit", new object[0]);
-                processesByName[0].Dispose();
-                processesByName = Process.GetProcessesByName("iMON");
-                if (processesByName.Length == 0)
-                {
-                  flag = true;
-                }
-              }
-              Log.Debug("iMONLCDg.ForceManagerRestart(): iMON Manager Stopped", new object[0]);
-              Win32Functions.RedrawNotificationArea();
-              process = new Process
-              {
-                StartInfo =
-                {
-                  WorkingDirectory = str2,
-                  FileName = "iMON.exe"
-                }
-              };
-              Log.Debug("iMONLCDg.ForceManagerRestart(): ReStarting iMON Manager", new object[0]);
+                                    {
+                                      StartInfo =
+                                        {
+                                          WorkingDirectory = str,
+                                          FileName = curApp + ".exe"
+                                        }
+                                    };
+              Log.Debug("iMONLCDg.ForceManagerRestart(): ReStarting " + curBrand + " " + curApp + " Manager", new object[0]);
               Process.Start(process.StartInfo);
               GUIGraphicsContext.form.Activate();
             }
@@ -3063,123 +2826,62 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Process[] processesByName;
           Process process;
           bool flag;
-          RegistryKey key;
-          if (_UsingAntecManager)
+          int index = _UsingSoundgraphManager ? 0 : 1;
+          string curBrand = _BrandTable[index, 0];
+          string curApp = _BrandTable[index, 1];
+
+          Log.Debug("iMONLCDg.RestartFrontview(): Resetting " + curBrand + " " + curApp + " Manager registry subkey.", new object[0]);
+          RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\" + curBrand + "\\" + curApp, true);
+          if (key != null)
           {
-            Log.Debug("iMONLCDg.RestartFrontview(): Resetting Antec Manager registry subkey.", new object[0]);
-            key = Registry.CurrentUser.OpenSubKey(@"Software\ANTEC\VFD", true);
-            if (key != null)
+            Log.Debug("iMONLCDg.RestartFrontview(): Restarting " + curBrand + " " + curApp + " Manager with FrontView enabled.", new object[0]);
+            key.SetValue("RunFront", 1, RegistryValueKind.DWord);
+            Registry.CurrentUser.Close();
+            processesByName = Process.GetProcessesByName(curApp);
+            Log.Debug("iMONLCDg.RestartFrontview(): Found {0} instances of " + curBrand + " " + curApp + " Manager",
+                      new object[] { processesByName.Length });
+            if (processesByName.Length > 0)
             {
-              Log.Debug("iMONLCDg.RestartFrontview(): Restarting Antec Manager with FrontView enabled.", new object[0]);
-              key.SetValue("RunFront", 1, RegistryValueKind.DWord);
-              if (_ForceKeyBoardMode && key.GetValue("CurRemote").Equals("iMON PAD"))
+              Log.Info("iMONLCDg.RestartFrontview(): Stopping " + curBrand + " " + curApp + " Manager", new object[0]);
+              processesByName[0].Kill();
+              flag = false;
+              while (!flag)
               {
-                Log.Debug("iMONLCDg.RestartFrontview(): Forcing iMON PAD mode setting to KeyBoard.", new object[0]);
-                key.SetValue("MouseMode", 0, RegistryValueKind.DWord);
-              }
-              Registry.CurrentUser.Close();
-              processesByName = Process.GetProcessesByName("VFD");
-              Log.Debug("iMONLCDg.RestartFrontview(): Found {0} instances of Antec Manager",
-                        new object[] { processesByName.Length });
-              if (processesByName.Length > 0)
-              {
-                Log.Info("iMONLCDg.RestartFrontview(): Stopping Antec Manager", new object[0]);
-                processesByName[0].Kill();
-                flag = false;
-                while (!flag)
+                Thread.Sleep(100);
+                Log.Debug("iMONLCDg.RestartFrontview(): Waiting for " + curBrand + " " + curApp + " Manager to exit", new object[0]);
+                processesByName[0].Dispose();
+                processesByName = Process.GetProcessesByName(curApp);
+                if (processesByName.Length == 0)
                 {
-                  Thread.Sleep(100);
-                  Log.Debug("iMONLCDg.RestartFrontview(): Waiting for Antec Manager to exit", new object[0]);
-                  processesByName[0].Dispose();
-                  processesByName = Process.GetProcessesByName("VFD");
-                  if (processesByName.Length == 0)
-                  {
-                    flag = true;
-                  }
+                  flag = true;
                 }
-                Log.Info("iMONLCDg.RestartFrontview(): Antec Manager Stopped", new object[0]);
-                Win32Functions.RedrawNotificationArea();
-                process = new Process
+              }
+              Log.Info("iMONLCDg.RestartFrontview(): " + curBrand + " " + curApp + " Manager Stopped", new object[0]);
+              Win32Functions.RedrawNotificationArea();
+              process = new Process
+                          {
+                            StartInfo =
                             {
-                              StartInfo =
-                              {
-                                WorkingDirectory = FindAntecManagerPath(),
-                                FileName = "VFD.exe"
-                              }
-                            };
-                Log.Info("iMONLCDg.RestartFrontview(): ReStarting Antec Manager", new object[0]);
-                Process.Start(process.StartInfo);
-              }
-              else
-              {
-                Log.Info("iMONLCDg.RestartFrontview(): Antec Manager is not running", new object[0]);
-              }
+                              WorkingDirectory = FindManagerPath(curBrand, curApp),
+                              FileName = curApp + ".exe"
+                            }
+                          };
+              Log.Info("iMONLCDg.RestartFrontview(): ReStarting " + curBrand + " " + curApp + " Manager", new object[0]);
+              Process.Start(process.StartInfo);
             }
             else
             {
-              Registry.CurrentUser.Close();
-              Log.Info("iMONLCDg.RestartFrontview(): Antec Registry subkey NOT FOUND. Frontview restart not possible.",
-                       new object[0]);
+              Log.Info("iMONLCDg.RestartFrontview(): " + curBrand + " " + curApp + " Manager is not running", new object[0]);
             }
           }
           else
           {
-            Log.Debug("iMONLCDg.RestartFrontview(): Resetting SoundGraph iMON Manager registry subkey.", new object[0]);
-            key = Registry.CurrentUser.OpenSubKey(@"Software\SOUNDGRAPH\iMON", true);
-            if (key != null)
-            {
-              Log.Debug("iMONLCDg.RestartFrontview(): Restarting iMON Manager with FrontView enabled.", new object[0]);
-              key.SetValue("RunFront", 1, RegistryValueKind.DWord);
-              if (_ForceKeyBoardMode && key.GetValue("CurRemote").Equals("iMON PAD"))
-              {
-                Log.Debug("iMONLCDg.RestartFrontview(): Forcing iMON PAD mode setting to KeyBoard.", new object[0]);
-                key.SetValue("MouseMode", 0, RegistryValueKind.DWord);
-              }
-              Registry.CurrentUser.Close();
-              Thread.Sleep(100);
-              processesByName = Process.GetProcessesByName("iMON");
-              Log.Debug("iMONLCDg.RestartFrontview(): Found {0} instances of SoundGraph iMON Manager",
-                        new object[] { processesByName.Length });
-              if (processesByName.Length > 0)
-              {
-                Log.Info("iMONLCDg.RestartFrontview(): Stopping iMON Manager", new object[0]);
-                processesByName[0].Kill();
-                flag = false;
-                while (!flag)
-                {
-                  Thread.Sleep(100);
-                  Log.Debug("iMONLCDg.RestartFrontview(): Waiting for iMON Manager to exit", new object[0]);
-                  processesByName[0].Dispose();
-                  processesByName = Process.GetProcessesByName("iMON");
-                  if (processesByName.Length == 0)
-                  {
-                    flag = true;
-                  }
-                }
-                Log.Info("iMONLCDg.RestartFrontview(): iMON Manager Stopped", new object[0]);
-                Win32Functions.RedrawNotificationArea();
-                process = new Process
-                            {
-                              StartInfo =
-                              {
-                                WorkingDirectory = FindSoundGraphManagerPath(),
-                                FileName = "iMON.exe"
-                              }
-                            };
-                Log.Info("iMONLCDg.RestartFrontview(): ReStarting iMON Manager", new object[0]);
-                Process.Start(process.StartInfo);
-              }
-            }
-            else
-            {
-              Registry.CurrentUser.Close();
-              Log.Info(
-                "iMONLCDg.RestartFrontview(): SoundGraph Registry subkey NOT FOUND. Frontview restart not possible.",
-                new object[0]);
-            }
+            Registry.CurrentUser.Close();
+            Log.Info("iMONLCDg.RestartFrontview(): " + curBrand + " " + curApp + " Registry subkey NOT FOUND. Frontview restart not possible.",
+                     new object[0]);
           }
-          Log.Info("iMONLCDg.RestartFrontview(): completed", new object[0]);
         }
+        Log.Info("iMONLCDg.RestartFrontview(): completed", new object[0]);
       }
     }
 
@@ -4112,7 +3814,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       private int m_EQTitleDisplayTime = 10;
       private int m_EQTitleShowTime = 2;
       private bool m_NormalEQ = true;
-      private string m_RemoteType = "MCE";
 
       [XmlAttribute]
       public bool BlankDisplayWhenIdle { get; set; }
@@ -4142,9 +3843,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       [XmlAttribute]
       public bool DeviceMonitor { get; set; }
-
-      [XmlAttribute]
-      public bool DisableRepeat { get; set; }
 
       [XmlAttribute]
       public bool DiskIcon { get; set; }
@@ -4234,16 +3932,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       public bool ProgressDisplay { get; set; }
 
       [XmlAttribute]
-      public string RemoteType
-      {
-        get { return m_RemoteType; }
-        set { m_RemoteType = value; }
-      }
-
-      [XmlAttribute]
-      public int RepeatDelay { get; set; }
-
-      [XmlAttribute]
       public bool RestartFrontviewOnExit { get; set; }
 
       [XmlAttribute]
@@ -4331,10 +4019,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         _settings.EQTitleShowTime = 2;
         _settings.BlankDisplayWhenIdle = false;
         _settings.BlankIdleTime = 30;
-        _settings.UseRC = false;
-        _settings.RemoteType = "MCE";
-        _settings.DisableRepeat = false;
-        _settings.RepeatDelay = 4;
       }
 
       public static AdvancedSettings Load()
@@ -5089,49 +4773,5 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     #endregion
 
-    #region Nested type: MouseKeyEvent
-
-    [StructLayout(LayoutKind.Sequential)]
-    public struct MouseKeyEvent
-    {
-      public int Last_X_Delta;
-      public int Last_Y_Delta;
-      public int Last_X_Size;
-      public int Last_Y_Size;
-      public int Last_L_Button;
-      public int Last_R_Button;
-    }
-
-    #endregion
-
-    #region Nested type: RemoteControl
-
-    [StructLayout(LayoutKind.Sequential)]
-    public struct RemoteControl
-    {
-      public string RemoteType;
-      public bool EnableRemote;
-      public bool DisableRepeat;
-      public int RepeatDelay;
-    }
-
-    #endregion
-
-    #region Nested type: RemoteState
-
-    [StructLayout(LayoutKind.Sequential)]
-    public struct RemoteState
-    {
-      public byte KeyPressed;
-      public byte KeyModifier;
-      public byte LastKeyPressed;
-      public byte LastKeyModifier;
-      public byte LastButtonPressed;
-      public byte LastButtonToggle;
-      public DateTime LastButtonPressTimestamp;
-      public MouseKeyEvent LastMouseKeyEvent;
-    }
-
-    #endregion
   }
 }
