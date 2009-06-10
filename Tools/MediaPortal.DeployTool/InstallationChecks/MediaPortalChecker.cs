@@ -39,7 +39,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public string GetDisplayName()
     {
-      return "MediaPortal " + Utils.GetPackageVersion('c');
+      return "MediaPortal " + Utils.GetPackageVersion('d');
     }
 
     public bool Download()

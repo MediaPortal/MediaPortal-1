@@ -438,6 +438,8 @@ namespace MediaPortal.DeployTool
           return "1.0.3";
         case "s":                       //stable
           return "1.0.3";
+        case "d":                       //display
+          return "1.1.0 Alpha";
         default:
           return string.Empty;
       }
