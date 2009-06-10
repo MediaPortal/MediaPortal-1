@@ -1416,7 +1416,10 @@ namespace TvPlugin
                  prev == (int) Window.WINDOW_SEARCHTV ||
                  prev == (int) Window.WINDOW_TV_TUNING_DETAILS
                );
-
+      if(!result && prev == (int) Window.WINDOW_FULLSCREEN_VIDEO && g_Player.IsTVRecording)
+      {
+        result = true;
+      }
       return result;
     }
 
