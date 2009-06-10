@@ -38,7 +38,7 @@ namespace MediaPortal.Configuration.Sections
 {
   public class RemoteUSBUIRT : SectionSettings
   {
-    private const string USBUIRT_PLUGINVER = "1.16 (February 18, 2006)";
+    private const string USBUIRT_PLUGINVER = "1.17 (June 06, 2009)";
 
     private MPGroupBox groupBox1;
     private MPCheckBox inputCheckBox;
@@ -61,9 +61,13 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel label6;
     private MPTextBox testSendIrTxtBox;
     private MPButton testSendIrBtn;
-    private GroupBox groupBox3;
-    private Label lblUSBUIRTConfigVersion;
-    private Label label7;
+    private MPGroupBox groupBox3;
+    private MPLabel lblUSBUIRTConfigVersion;
+    private MPLabel label7;
+    private MPLabel lblDLLVersion;
+    private MPLabel lblAPIVersion;
+    private MPLabel varDLLVersion;
+    private MPLabel varAPIVersion;
     private IContainer components = null;
 
     #region Properties
@@ -113,6 +117,8 @@ namespace MediaPortal.Configuration.Sections
       } 
 
       lblUSBUIRTVersion.Text = USBUIRT.Instance.GetVersions();
+      varAPIVersion.Text = USBUIRT.Instance.GetAPIVersions();
+      varDLLVersion.Text = USBUIRT.Instance.GetDLLVersions();
 
       EnableTestIrControls();
 
@@ -186,8 +192,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources =
-        new System.ComponentModel.ComponentResourceManager(typeof (RemoteUSBUIRT));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RemoteUSBUIRT));
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.SettingsPnl = new System.Windows.Forms.Panel();
       this.testSendIrBtn = new MediaPortal.UserInterface.Controls.MPButton();
@@ -210,23 +215,26 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabel1 = new System.Windows.Forms.LinkLabel();
       this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.varDLLVersion = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.varAPIVersion = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblDLLVersion = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblAPIVersion = new MediaPortal.UserInterface.Controls.MPLabel();
       this.lblUSBUIRTConfigVersion = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label7 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox1.SuspendLayout();
       this.SettingsPnl.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.interCommandDelayNumUpDn)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize) (this.commandRepeatNumUpDn)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.interCommandDelayNumUpDn)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.commandRepeatNumUpDn)).BeginInit();
       this.groupBox2.SuspendLayout();
       this.groupBox3.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.SettingsPnl);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 209);
@@ -259,11 +267,13 @@ namespace MediaPortal.Configuration.Sections
       this.testSendIrBtn.Size = new System.Drawing.Size(160, 23);
       this.testSendIrBtn.TabIndex = 14;
       this.testSendIrBtn.Text = "Test settop box control";
+      this.testSendIrBtn.UseVisualStyleBackColor = true;
       this.testSendIrBtn.Click += new System.EventHandler(this.testSendIrBtn_Click);
       // 
       // testSendIrTxtBox
       // 
       this.testSendIrTxtBox.AcceptsReturn = true;
+      this.testSendIrTxtBox.BorderColor = System.Drawing.Color.Empty;
       this.testSendIrTxtBox.Location = new System.Drawing.Point(288, 156);
       this.testSendIrTxtBox.Name = "testSendIrTxtBox";
       this.testSendIrTxtBox.Size = new System.Drawing.Size(160, 20);
@@ -272,31 +282,25 @@ namespace MediaPortal.Configuration.Sections
       // 
       // interCommandDelayNumUpDn
       // 
-      this.interCommandDelayNumUpDn.Increment = new decimal(new int[]
-                                                              {
-                                                                50,
-                                                                0,
-                                                                0,
-                                                                0
-                                                              });
+      this.interCommandDelayNumUpDn.Increment = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
       this.interCommandDelayNumUpDn.Location = new System.Drawing.Point(153, 106);
-      this.interCommandDelayNumUpDn.Maximum = new decimal(new int[]
-                                                            {
-                                                              1000,
-                                                              0,
-                                                              0,
-                                                              0
-                                                            });
+      this.interCommandDelayNumUpDn.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
       this.interCommandDelayNumUpDn.Name = "interCommandDelayNumUpDn";
       this.interCommandDelayNumUpDn.Size = new System.Drawing.Size(48, 20);
       this.interCommandDelayNumUpDn.TabIndex = 12;
-      this.interCommandDelayNumUpDn.Value = new decimal(new int[]
-                                                          {
-                                                            100,
-                                                            0,
-                                                            0,
-                                                            0
-                                                          });
+      this.interCommandDelayNumUpDn.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
       // 
       // label6
       // 
@@ -311,30 +315,24 @@ namespace MediaPortal.Configuration.Sections
       // commandRepeatNumUpDn
       // 
       this.commandRepeatNumUpDn.Location = new System.Drawing.Point(153, 82);
-      this.commandRepeatNumUpDn.Maximum = new decimal(new int[]
-                                                        {
-                                                          5,
-                                                          0,
-                                                          0,
-                                                          0
-                                                        });
-      this.commandRepeatNumUpDn.Minimum = new decimal(new int[]
-                                                        {
-                                                          1,
-                                                          0,
-                                                          0,
-                                                          0
-                                                        });
+      this.commandRepeatNumUpDn.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+      this.commandRepeatNumUpDn.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
       this.commandRepeatNumUpDn.Name = "commandRepeatNumUpDn";
       this.commandRepeatNumUpDn.Size = new System.Drawing.Size(48, 20);
       this.commandRepeatNumUpDn.TabIndex = 10;
-      this.commandRepeatNumUpDn.Value = new decimal(new int[]
-                                                      {
-                                                        1,
-                                                        0,
-                                                        0,
-                                                        0
-                                                      });
+      this.commandRepeatNumUpDn.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
       // 
       // label5
       // 
@@ -348,81 +346,89 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tunerCommandsButton
       // 
-      this.tunerCommandsButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.tunerCommandsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.tunerCommandsButton.Location = new System.Drawing.Point(288, 53);
       this.tunerCommandsButton.Name = "tunerCommandsButton";
       this.tunerCommandsButton.Size = new System.Drawing.Size(160, 23);
       this.tunerCommandsButton.TabIndex = 8;
       this.tunerCommandsButton.Text = "Learn settop box commands";
+      this.tunerCommandsButton.UseVisualStyleBackColor = true;
       this.tunerCommandsButton.Click += new System.EventHandler(this.tunerCommandsButton_Click);
       // 
       // internalCommandsButton
       // 
-      this.internalCommandsButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.internalCommandsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.internalCommandsButton.Location = new System.Drawing.Point(288, 16);
       this.internalCommandsButton.Name = "internalCommandsButton";
       this.internalCommandsButton.Size = new System.Drawing.Size(160, 23);
       this.internalCommandsButton.TabIndex = 7;
       this.internalCommandsButton.Text = "Learn MediaPortal commands";
+      this.internalCommandsButton.UseVisualStyleBackColor = true;
       this.internalCommandsButton.Click += new System.EventHandler(this.internalCommandsButton_Click);
       // 
       // enterCheckBox
       // 
+      this.enterCheckBox.AutoSize = true;
       this.enterCheckBox.Enabled = false;
+      this.enterCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.enterCheckBox.Location = new System.Drawing.Point(24, 156);
       this.enterCheckBox.Name = "enterCheckBox";
-      this.enterCheckBox.Size = new System.Drawing.Size(192, 16);
+      this.enterCheckBox.Size = new System.Drawing.Size(189, 17);
       this.enterCheckBox.TabIndex = 3;
       this.enterCheckBox.Text = "Send \'Enter\' for changing channels";
+      this.enterCheckBox.UseVisualStyleBackColor = true;
       this.enterCheckBox.CheckedChanged += new System.EventHandler(this.enterCheckBox_CheckedChanged);
       // 
       // digitCheckBox
       // 
+      this.digitCheckBox.AutoSize = true;
       this.digitCheckBox.Enabled = false;
+      this.digitCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.digitCheckBox.Location = new System.Drawing.Point(24, 140);
       this.digitCheckBox.Name = "digitCheckBox";
-      this.digitCheckBox.Size = new System.Drawing.Size(176, 16);
+      this.digitCheckBox.Size = new System.Drawing.Size(180, 17);
       this.digitCheckBox.TabIndex = 2;
       this.digitCheckBox.Text = "Use 3 digits for channel selection";
+      this.digitCheckBox.UseVisualStyleBackColor = true;
       this.digitCheckBox.CheckedChanged += new System.EventHandler(this.digitCheckBox_CheckedChanged);
       // 
       // outputCheckBox
       // 
+      this.outputCheckBox.AutoSize = true;
+      this.outputCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.outputCheckBox.Location = new System.Drawing.Point(8, 56);
       this.outputCheckBox.Name = "outputCheckBox";
-      this.outputCheckBox.Size = new System.Drawing.Size(208, 16);
+      this.outputCheckBox.Size = new System.Drawing.Size(205, 17);
       this.outputCheckBox.TabIndex = 1;
       this.outputCheckBox.Text = "Let MediaPortal control your settopbox";
+      this.outputCheckBox.UseVisualStyleBackColor = true;
       this.outputCheckBox.CheckedChanged += new System.EventHandler(this.outputCheckBox_CheckedChanged);
       // 
       // inputCheckBox
       // 
+      this.inputCheckBox.AutoSize = true;
+      this.inputCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.inputCheckBox.Location = new System.Drawing.Point(8, 16);
       this.inputCheckBox.Name = "inputCheckBox";
-      this.inputCheckBox.Size = new System.Drawing.Size(208, 16);
+      this.inputCheckBox.Size = new System.Drawing.Size(207, 17);
       this.inputCheckBox.TabIndex = 0;
       this.inputCheckBox.Text = "Use your remote to control MediaPortal";
+      this.inputCheckBox.UseVisualStyleBackColor = true;
       this.inputCheckBox.CheckedChanged += new System.EventHandler(this.inputCheckBox_CheckedChanged);
       // 
       // lblUSBUIRTVersion
       // 
-      this.lblUSBUIRTVersion.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.lblUSBUIRTVersion.Location = new System.Drawing.Point(200, 24);
+      this.lblUSBUIRTVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.lblUSBUIRTVersion.Location = new System.Drawing.Point(200, 15);
       this.lblUSBUIRTVersion.Name = "lblUSBUIRTVersion";
-      this.lblUSBUIRTVersion.Size = new System.Drawing.Size(256, 32);
+      this.lblUSBUIRTVersion.Size = new System.Drawing.Size(256, 16);
       this.lblUSBUIRTVersion.TabIndex = 6;
       this.lblUSBUIRTVersion.Text = "Version";
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(16, 24);
+      this.label1.Location = new System.Drawing.Point(16, 15);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(144, 16);
       this.label1.TabIndex = 5;
@@ -437,13 +443,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.label3);
       this.groupBox2.Controls.Add(this.linkLabel1);
       this.groupBox2.Controls.Add(this.label2);
+      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(0, 300);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 104);
@@ -467,15 +472,12 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabel1.TabIndex = 2;
       this.linkLabel1.TabStop = true;
       this.linkLabel1.Text = "http://www.usbuirt.com";
-      this.linkLabel1.LinkClicked +=
-        new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+      this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
       // 
       // label2
       // 
-      this.label2.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.label2.Location = new System.Drawing.Point(16, 24);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(448, 40);
@@ -484,14 +486,17 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox3
       // 
-      this.groupBox3.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox3.Controls.Add(this.varDLLVersion);
+      this.groupBox3.Controls.Add(this.varAPIVersion);
+      this.groupBox3.Controls.Add(this.lblDLLVersion);
+      this.groupBox3.Controls.Add(this.lblAPIVersion);
       this.groupBox3.Controls.Add(this.lblUSBUIRTConfigVersion);
       this.groupBox3.Controls.Add(this.label7);
       this.groupBox3.Controls.Add(this.lblUSBUIRTVersion);
       this.groupBox3.Controls.Add(this.label1);
+      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox3.Location = new System.Drawing.Point(0, 213);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(472, 83);
@@ -499,13 +504,49 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Status";
       // 
+      // varDLLVersion
+      // 
+      this.varDLLVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.varDLLVersion.Location = new System.Drawing.Point(200, 47);
+      this.varDLLVersion.Name = "varDLLVersion";
+      this.varDLLVersion.Size = new System.Drawing.Size(256, 16);
+      this.varDLLVersion.TabIndex = 12;
+      this.varDLLVersion.Text = "Version";
+      // 
+      // varAPIVersion
+      // 
+      this.varAPIVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.varAPIVersion.Location = new System.Drawing.Point(200, 31);
+      this.varAPIVersion.Name = "varAPIVersion";
+      this.varAPIVersion.Size = new System.Drawing.Size(256, 16);
+      this.varAPIVersion.TabIndex = 11;
+      this.varAPIVersion.Text = "Version";
+      // 
+      // lblDLLVersion
+      // 
+      this.lblDLLVersion.AutoSize = true;
+      this.lblDLLVersion.Location = new System.Drawing.Point(16, 47);
+      this.lblDLLVersion.Name = "lblDLLVersion";
+      this.lblDLLVersion.Size = new System.Drawing.Size(118, 13);
+      this.lblDLLVersion.TabIndex = 10;
+      this.lblDLLVersion.Text = "USBUIRT DLL version:";
+      // 
+      // lblAPIVersion
+      // 
+      this.lblAPIVersion.AutoSize = true;
+      this.lblAPIVersion.Location = new System.Drawing.Point(16, 31);
+      this.lblAPIVersion.Name = "lblAPIVersion";
+      this.lblAPIVersion.Size = new System.Drawing.Size(115, 13);
+      this.lblAPIVersion.TabIndex = 9;
+      this.lblAPIVersion.Text = "USBUIRT API version:";
+      // 
       // lblUSBUIRTConfigVersion
       // 
-      this.lblUSBUIRTConfigVersion.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.lblUSBUIRTConfigVersion.Location = new System.Drawing.Point(200, 60);
+      this.lblUSBUIRTConfigVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.lblUSBUIRTConfigVersion.Location = new System.Drawing.Point(200, 63);
       this.lblUSBUIRTConfigVersion.Name = "lblUSBUIRTConfigVersion";
       this.lblUSBUIRTConfigVersion.Size = new System.Drawing.Size(256, 13);
       this.lblUSBUIRTConfigVersion.TabIndex = 8;
@@ -514,29 +555,30 @@ namespace MediaPortal.Configuration.Sections
       // label7
       // 
       this.label7.AutoSize = true;
-      this.label7.Location = new System.Drawing.Point(16, 60);
+      this.label7.Location = new System.Drawing.Point(16, 63);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(126, 13);
       this.label7.TabIndex = 7;
       this.label7.Text = "USBUIRT plugin version:";
       // 
-      // USBUIRT
+      // RemoteUSBUIRT
       // 
       this.Controls.Add(this.groupBox3);
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.groupBox1);
-      this.Name = "USBUIRT";
+      this.Name = "RemoteUSBUIRT";
       this.Size = new System.Drawing.Size(472, 408);
       this.Load += new System.EventHandler(this.USBUIRT_Load);
       this.groupBox1.ResumeLayout(false);
       this.SettingsPnl.ResumeLayout(false);
       this.SettingsPnl.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.interCommandDelayNumUpDn)).EndInit();
-      ((System.ComponentModel.ISupportInitialize) (this.commandRepeatNumUpDn)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.interCommandDelayNumUpDn)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.commandRepeatNumUpDn)).EndInit();
       this.groupBox2.ResumeLayout(false);
       this.groupBox3.ResumeLayout(false);
       this.groupBox3.PerformLayout();
       this.ResumeLayout(false);
+
     }
 
     #endregion
@@ -645,6 +687,8 @@ namespace MediaPortal.Configuration.Sections
       }
 
       lblUSBUIRTVersion.Text = USBUIRT.Instance.GetVersions();
+      varAPIVersion.Text = USBUIRT.Instance.GetAPIVersions();
+      varDLLVersion.Text = USBUIRT.Instance.GetDLLVersions();
       return driverStatusOK;
     }
 

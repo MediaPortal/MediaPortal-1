@@ -120,6 +120,12 @@ namespace MediaPortal.IR
     //private static extern bool UUIRTGetDrvInfo(ref int puDrvVersion);
 
     [DllImport("uuirtdrv.dll")]
+    private static extern bool UUIRTGetDrvInfo(ref int drvAPIVersion);
+
+    [DllImport("uuirtdrv.dll")]
+    private static extern bool UUIRTGetDrvVersion(ref int drvDLLVersion);
+
+    [DllImport("uuirtdrv.dll")]
     private static extern bool UUIRTGetUUIRTInfo(IntPtr hHandle, ref UUINFO puuInfo);
 
     [DllImport("uuirtdrv.dll")]
@@ -920,6 +926,67 @@ namespace MediaPortal.IR
       return "USB-UIRT";
     }
 
+    // this method returns the API version number wich is integrated
+    // in the DLL. We don't need to open driver before. 
+    public string GetAPIVersions()
+    {
+      try
+      {
+        int drvAPIVersion = 0;
+        UUIRTGetDrvInfo(ref drvAPIVersion);
+        string drvAPIVersionName = AddDotsToInteger(drvAPIVersion);
+
+        return drvAPIVersionName;
+      }
+
+      catch (DllNotFoundException)
+      {
+        //most users dont have the dll on their system so will get a exception here
+        return "Driver not installed";
+      }
+    }
+
+    // this method returns the DLL version number wich is integrated in the DLL
+    // We don't need to open driver before. 
+    public string GetDLLVersions()
+    {
+      try
+      {
+        int drvDLLVersion = 0;
+        UUIRTGetDrvVersion(ref drvDLLVersion);
+        string drvDLLVersionName = AddDotsToInteger(drvDLLVersion);
+
+        return drvDLLVersionName;
+      }
+
+      catch (DllNotFoundException)
+      {
+        //most users dont have the dll on their system so will get a exception here
+        return "DLL uuirtdrv.dll not found";
+      }
+    }
+
+    // this method separate string with dots for better look on display.
+    private string AddDotsToInteger(int value)
+    {
+      string Stringedvalue = Convert.ToString(value);
+      string StringConcatenedWithDot = "";
+      Char character;
+      for (int i = 0; i < Stringedvalue.Length; i++)
+      {
+        character = Stringedvalue[i];
+        if (i != Stringedvalue.Length - 1)
+        {
+          StringConcatenedWithDot = StringConcatenedWithDot + String.Concat(character, ".");
+        }
+        else
+        {
+          StringConcatenedWithDot = StringConcatenedWithDot + character;
+        }
+      }
+
+      return StringConcatenedWithDot;
+    }
 
     public string GetVersions()
     {
