@@ -30,7 +30,7 @@ namespace MediaPortal.Picture.Database
 {
   public class PictureDatabase
   {
-    public static readonly IPictureDatabase _database = DatabaseFactory.GetPictureDatabase();
+    public static IPictureDatabase _database = DatabaseFactory.GetPictureDatabase();
 
     private PictureDatabase()
     {
@@ -38,6 +38,11 @@ namespace MediaPortal.Picture.Database
 
     static PictureDatabase()
     {
+    }
+
+    public static void ReOpen()
+    {
+      _database = DatabaseFactory.GetPictureDatabase();
     }
 
     public static void Dispose()

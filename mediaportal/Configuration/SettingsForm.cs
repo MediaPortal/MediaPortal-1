@@ -479,6 +479,7 @@ namespace MediaPortal.Configuration
       AddSection(new ConfigPage(null, picture, false));
 
       AddSection(new ConfigPage(picture, new PictureShares(), false));
+      AddSection(new ConfigPage(picture, new PictureThumbs(), true));
       AddSection(new ConfigPage(picture, new PictureExtensions(), true));
     }
 
