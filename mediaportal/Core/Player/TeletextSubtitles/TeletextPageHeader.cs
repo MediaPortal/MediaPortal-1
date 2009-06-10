@@ -28,7 +28,7 @@ namespace MediaPortal.Player.Subtitles
       //Log.Debug("TeletextPageHeader page: {0}", pageNum);
       //int subpage = ((unham(data[offset + 4], data[offset+5]) << 8) | unham(data[offset+2], data[offset+3])) & 0x3F7F;
 
-      language = ((Hamming.unham(data[offset + 6], data[offset + 7]) >> 5) & 0x07);
+      language = invtab3bit[((Hamming.unham(data[offset + 6], data[offset + 7]) >> 5) & 0x07)];
 
       erasePage = (data[offset + 3] & 0x80) == 0x80; // Byte 9,  bit 8
       newsflash = (data[offset + 5] & 0x20) == 0x20; // Byte 11, bit 6
@@ -102,5 +102,10 @@ namespace MediaPortal.Player.Subtitles
     private bool interruptedSequence;
     private bool inhibitDisplay;
     private bool magazineSerial;
+    // Table to inver bit order of the 3-bit national languange subset code 
+    private byte[] invtab3bit =
+    {
+      0x00, 0x04, 0x02, 0x06, 0x01, 0x05, 0x03, 0x07
+    };
   }
 }
