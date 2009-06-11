@@ -348,6 +348,7 @@ namespace MediaPortal.MPInstaller
         {
           if (File.Exists(FileName))
           {
+            byte[] data;
             ZipFile zip = new ZipFile(FileName);
             foreach (ZipEntry entry in zip)
             {
@@ -355,17 +356,20 @@ namespace MediaPortal.MPInstaller
               if (fl != null && fl.Type == MPinstallerStruct.TEXT_TYPE)
               {
                 MemoryStream ms = new MemoryStream((int)entry.UncompressedSize);
+                data = new byte[entry.UncompressedSize];
                 entry.Extract(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+                ms.Read(data,0,(int)entry.UncompressedSize);
                 switch (fl.SubType)
                 {
                   case MPinstallerStruct.TEXT_EULA_TYPE:
-                    txt_EULA = ms.ToString();
+                    txt_EULA = new ASCIIEncoding().GetString(data, 0, data.Length);
                   break;
                   case MPinstallerStruct.TEXT_LOG_TYPE:
-                    txt_log = ms.ToString();
+                    txt_log = new ASCIIEncoding().GetString(data, 0, data.Length);
                   break;
                   case MPinstallerStruct.TEXT_README_TYPE:
-                    txt_readme = ms.ToString();
+                    txt_readme = new ASCIIEncoding().GetString(data, 0, data.Length);
                   break;
                 }
               }
