@@ -38,42 +38,24 @@ namespace MediaPortal.DeployTool.InstallationChecks
     [DllImport("kernel32")]
     private static extern long WritePrivateProfileString(string section, string key, string val, string filePath);
 
-    private static readonly string arch = Utils.Check64bit() ? "64" : "32";
+    public static string prg = "MSSQLExpress" + Utils._arch;
 
-    public static string prg = "MSSQL2008Express" + arch;
-
-    private readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
+    private readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.LocalizeDownloadFile(Utils.GetDownloadString(prg, "FILE"), Utils.GetDownloadString(prg, "TYPE"), prg);
 
     private static void PrepareTemplateINI(string iniFile)
     {
-      WritePrivateProfileString("SQLSERVER2008", "INSTANCEID", "SQLExpress", iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "ACTION", "Install", iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "FEATURES", "SQLENGINE,SSMS", iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "SAPWD", InstallationProperties.Instance["DBMSPassword"], iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "HELP", "False", iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "INDICATEPROGRESS", "False", iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "QUIET", "True", iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "QUIETSIMPLE", "False", iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "X86", "False", iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "MEDIASOURCE", Path.GetDirectoryName(Utils.GetDownloadString(prg, "FILE")), iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "ERRORREPORTING", "False", iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "INSTALLSHAREDDIR", "\"" + InstallationProperties.Instance["DBMSDir"] + "\"", iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "INSTANCEDIR", "\"" + InstallationProperties.Instance["DBMSDir"] + "\"", iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "SQMREPORTING", "False", iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "INSTANCENAME", GetIstanceName(), iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "SQLSVCSTARTUPTYPE", "Automatic", iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "FILESTREAMLEVEL", "0", iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "SQLCOLLATION", "Latin1_General_CI_AS", iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "SQLSVCACCOUNT", "\"NT AUTHORITY\\NETWORK SERVICE\"", iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "SQLSYSADMINACCOUNTS", "\"Builtin\\Administrators\"", iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "SECURITYMODE", "SQL", iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "ADDCURRENTUSERASSQLADMIN", "True", iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "TCPENABLED", "1", iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "NPENABLED", "0", iniFile);
-      WritePrivateProfileString("SQLSERVER2008", "BROWSERSVCSTARTUPTYPE", "Automatic", iniFile);
+      WritePrivateProfileString("Options", "USERNAME", "MediaPortal", iniFile);
+      WritePrivateProfileString("Options", "COMPANYNAME", "\"Team MediaPortal\"", iniFile);
+      WritePrivateProfileString("Options", "INSTALLSQLDIR", "\"" + InstallationProperties.Instance["DBMSDir"] + "\"", iniFile);
+      WritePrivateProfileString("Options", "ADDLOCAL", "ALL", iniFile);
+      WritePrivateProfileString("Options", "INSTANCENAME", GetIstanceName(), iniFile);
+      WritePrivateProfileString("Options", "SQLBROWSERAUTOSTART", "1", iniFile);
+      WritePrivateProfileString("Options", "SQLAUTOSTART", "1", iniFile);
+      WritePrivateProfileString("Options", "SECURITYMODE", "SQL", iniFile);
+      WritePrivateProfileString("Options", "SAPWD", InstallationProperties.Instance["DBMSPassword"], iniFile);
+      WritePrivateProfileString("Options", "DISABLENETWORKPROTOCOLS", "0", iniFile);
     }
 
-    /*
     private static void FixTcpPort()
     {
       RegistryKey keySql = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\Instance Names\\SQL");
@@ -120,11 +102,10 @@ namespace MediaPortal.DeployTool.InstallationChecks
       }
       return;
     }
-    */
 
     public string GetDisplayName()
     {
-      return "MS SQL Express 2008 SP1";
+      return "MS SQL Express 2005";
     }
 
     private static string GetIstanceName()
@@ -137,48 +118,53 @@ namespace MediaPortal.DeployTool.InstallationChecks
       DialogResult result = Utils.RetryDownloadFile(_fileName, prg);
       return (result == DialogResult.OK);
     }
-
     public bool Install()
     {
-      string iniFile = Path.GetTempPath() + "\\SQL2008CfgFile.ini";
-
-      //Prepare the unattended ini file
-      PrepareTemplateINI(iniFile);
-
+      string tmpPath = Path.GetTempPath() + "\\SQLEXPRESS";
+      //Extract all files
+      Process extract = Process.Start(_fileName, "/X:\"" + tmpPath + "\" /Q");
       try
       {
-        //run the setup
-        Process setup = Process.Start(_fileName, "/CONFIGURATIONFILE=\"" + iniFile + "\" /Q /HIDECONSOLE");
-        if (setup != null)
+        if (extract != null)
         {
-          setup.WaitForExit();
-          return setup.ExitCode == 0;
+          extract.WaitForExit();
         }
-        return false;
       }
       catch
       {
         return false;
       }
+      //Prepare the unattended ini file
+      PrepareTemplateINI(tmpPath + "\\template.ini");
+
+      try
+      {
+        //run the setup
+        Process setup = Process.Start(tmpPath + "\\setup.exe", "/wait /settings \"" + tmpPath + "\\template.ini\" /qn");
+        if (setup != null)
+        {
+          setup.WaitForExit();
+          if (setup.ExitCode == 0)
+          {
+            Directory.Delete(tmpPath, true);
+            StartStopService(false);
+            FixTcpPort();
+            StartStopService(true);
+            return true;
+          }
+          return false;
+        }
+      }
+      catch
+      {
+        return false;
+      }
+      return false;
     }
 
     public bool UnInstall()
     {
-      using (RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\\\CurrentVersion\\Uninstall\\Microsoft SQL Server 10 Release"))
-      {
-        if (key == null)
-        {
-          return false;
-        }
-        string uninstaller = (string)key.GetValue("UninstallString");
-        key.Close();
-        Process setup = Process.Start(uninstaller.Split('"')[0] + "\"", uninstaller.Split(' ')[1]);
-        if (setup != null)
-        {
-          setup.WaitForExit();
-          return setup.ExitCode == 0;
-        }
-      }
+      Utils.UninstallMSI("{2AFFFDD7-ED85-4A90-8C52-5DA9EBDC9B8F}");
       return true;
     }
 
@@ -204,7 +190,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
         {
           string version = (string)key.GetValue("CurrentVersion");
           key.Close();
-          result.state = version.StartsWith("10.0") ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
+          result.state = version.StartsWith("9.0") ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
         }
       }
       return result;

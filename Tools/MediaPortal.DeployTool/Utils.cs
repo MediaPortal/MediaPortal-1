@@ -96,6 +96,8 @@ namespace MediaPortal.DeployTool
 
   class Utils
   {
+    public static readonly string _arch = Check64bit() ? "64" : "32";
+
     #region DialogHelper
     public static void ErrorDlg(string msg)
     {

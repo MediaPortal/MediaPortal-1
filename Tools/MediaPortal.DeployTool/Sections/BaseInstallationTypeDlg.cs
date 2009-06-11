@@ -71,17 +71,18 @@ namespace MediaPortal.DeployTool.Sections
       {
         InstallationProperties.Instance.Set("InstallTypeHeader", Localizer.GetBestTranslation("BaseInstallation_rbOneClick"));
         InstallationProperties.Instance.Set("InstallType", "singleseat");
-        InstallationProperties.Instance.Set("DBMSType", "msSQL2008");
-        InstallationProperties.Instance.Set("DBMSDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Microsoft SQL Server");
-        InstallationProperties.Instance.Set("DBMSPassword", "MediaPortal");
         InstallationProperties.Instance.Set("ConfigureTVServerFirewall", "1");
         InstallationProperties.Instance.Set("ConfigureMediaPortalFirewall", "1");
         InstallationProperties.Instance.Set("ConfigureDBMSFirewall", "1");
+        InstallationProperties.Instance.Set("DBMSPassword", "MediaPortal");
+        // Default DBMS
+        InstallationProperties.Instance.Set("DBMSType", "mysql");
+        InstallationProperties.Instance.Set("DBMSDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\MySQL\\MySQL Server 5.1");
       }
     }
     #endregion
 
-   
+
     private void rbOneClick_Click(object sender, EventArgs e)
     {
       bOneClick_Click(sender, e);

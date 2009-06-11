@@ -9,8 +9,18 @@ namespace MediaPortal.DeployTool.Sections
     {
       InitializeComponent();
       type = DialogType.DBMSType;
-      bMS.Image = Images.Choose_button_on;
-      dbmsType = 1;
+
+      bMySQL.Image = Images.Choose_button_on;
+      dbmsType = 2;
+
+      OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
+      int ver = (os.OSMajorVersion * 10) + os.OSMinorVersion;
+
+      if (ver >= 70)
+      {
+        bMS.Enabled = false;
+      }
+
       UpdateUI();
     }
 
@@ -44,7 +54,7 @@ namespace MediaPortal.DeployTool.Sections
       switch (dbmsType)
       {
         case 1:
-          InstallationProperties.Instance.Set("DBMSType", "msSQL2008");
+          InstallationProperties.Instance.Set("DBMSType", "msSQL2005");
           break;
         case 2:
           InstallationProperties.Instance.Set("DBMSType", "mysql");

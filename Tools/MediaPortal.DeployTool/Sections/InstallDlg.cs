@@ -175,7 +175,7 @@ namespace MediaPortal.DeployTool.Sections
       {
         case "singleseat":
           AddPackageToListView(new MediaPortalChecker());
-          if (InstallationProperties.Instance["DBMSType"] == "msSQL2008")
+          if (InstallationProperties.Instance["DBMSType"] == "msSQL2005")
             AddPackageToListView(new MSSQLExpressChecker());
           if (InstallationProperties.Instance["DBMSType"] == "mysql")
             AddPackageToListView(new MySQLChecker());
@@ -184,7 +184,7 @@ namespace MediaPortal.DeployTool.Sections
           break;
 
         case "tvserver_master":
-          if (InstallationProperties.Instance["DBMSType"] == "msSQL2008")
+          if (InstallationProperties.Instance["DBMSType"] == "msSQL2005")
             AddPackageToListView(new MSSQLExpressChecker());
           if (InstallationProperties.Instance["DBMSType"] == "mysql")
             AddPackageToListView(new MySQLChecker());
