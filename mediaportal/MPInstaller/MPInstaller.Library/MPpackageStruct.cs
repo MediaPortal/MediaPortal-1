@@ -406,7 +406,7 @@ namespace MediaPortal.MPInstaller
               InstallerInfo.LoadFromFile(tpf);
             }
 
-            if (entry.FileName.Contains(MPinstallerStruct.INTERNAL_TYPE + @"\" + MPinstallerStruct.INTERNAL_PLUGIN_SUBTYPE))
+            if (entry.FileName.Contains(MPinstallerStruct.INTERNAL_TYPE + @"/" + MPinstallerStruct.INTERNAL_PLUGIN_SUBTYPE))
             {
               string tpf = Path.GetTempFileName();
               isValid = true;
