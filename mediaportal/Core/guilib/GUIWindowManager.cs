@@ -969,7 +969,7 @@ namespace MediaPortal.GUI.Library
           if (newWindow.GetID == _previousActiveWindowId)
           {
             try
-            {
+            {              
               _previousActiveWindowId = (int)GUIWindow.Window.WINDOW_INVALID;
               if (_listHistory.Count > 0)
               {
@@ -981,9 +981,22 @@ namespace MediaPortal.GUI.Library
               {
                 OnActivateWindow(newWindow.GetID);
               }
-              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, newWindow.GetID, 0, 0, fromWindowId, 0,
+              bool currentmodulefullscreen = (newWindow.GetID == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
+                                      newWindow.GetID == (int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC ||
+                                      newWindow.GetID == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO ||
+                                      newWindow.GetID == (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
+              // do not go to fullscreen back if not playing anymore
+              if (currentmodulefullscreen && !Player.g_Player.Playing)
+              {
+                msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, newWindow.GetID, 0, 0, fromWindowId, 0,
                                    null);
-              newWindow.OnMessage(msg);
+              }
+              else
+              {
+                msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, newWindow.GetID, 0, 0, fromWindowId, 0,
+                                     null);
+              }
+              newWindow.OnMessage(msg);              
               return;
             }
             catch (Exception)
