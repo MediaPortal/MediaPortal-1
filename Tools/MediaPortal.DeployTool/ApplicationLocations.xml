@@ -1,6 +1,16 @@
 ﻿<Applications>
 
   <!--- Common section -->
+  <MSSQLExpress32>
+    <URL>http://install.team-mediaportal.com/Sql2005_32bit</URL>
+    <FILE>sqlexpr32.exe</FILE>
+    <TYPE>Automatic</TYPE>
+  </MSSQLExpress32>
+  <MSSQLExpress64>
+    <URL>http://install.team-mediaportal.com/Sql2005_64bit</URL>
+    <FILE>sqlexpr64.exe</FILE>
+    <TYPE>Manual</TYPE>
+  </MSSQLExpress64>
   <MediaPortal>
     <URL>http://install.team-mediaportal.com/MediaPortal</URL>
     <FILE>package-mediaportal.exe</FILE>
@@ -29,16 +39,6 @@
     <FILE>directx_mar2009_redist.exe</FILE>
     <TYPE>Automatic</TYPE>
   </DirectXRedist>
-  <MSSQL2008Express32>
-    <URL>http://install.team-mediaportal.com/Sql2008_32bit</URL>
-    <FILE>sqlexpr32_x86.exe</FILE>
-    <TYPE>Automatic</TYPE>
-  </MSSQL2008Express32>
-  <MSSQL2008Express64>
-    <URL>http://install.team-mediaportal.com/Sql2008_64bit</URL>
-    <FILE>sqlexpr_x64.exe</FILE>
-    <TYPE>Automatic</TYPE>
-  </MSSQL2008Express64>
   <MySQL32>
     <URL>http://install.team-mediaportal.com/MySql_32bit</URL>
     <FILE>mysql-essential-5.1.35-win32.msi</FILE>
@@ -57,16 +57,6 @@
     <FILE>directx_aug2008_redist.exe</FILE>
     <TYPE>Automatic</TYPE>
   </DirectX9c>
-  <MSSQLExpress32>
-    <URL>http://install.team-mediaportal.com/Sql2005_32bit</URL>
-    <FILE>sqlexpr32.exe</FILE>
-    <TYPE>Automatic</TYPE>
-  </MSSQLExpress32>
-  <MSSQLExpress64>
-    <URL>http://install.team-mediaportal.com/Sql2005_64bit</URL>
-    <FILE>sqlexpr64.exe</FILE>
-    <TYPE>Manual</TYPE>
-  </MSSQLExpress64>
   <MySQL>
     <URL>http://install.team-mediaportal.com/MySql</URL>
     <FILE>mysql-essential-5.0.77-win32.msi</FILE>
