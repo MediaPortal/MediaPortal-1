@@ -129,6 +129,9 @@ Var PREVIOUS_VERSION
 Var PREVIOUS_VERSION_STATE
 Var EXPRESS_UPDATE
 
+Var PREVIOUS_GENTLE_CONFIG
+Var PREVIOUS_GENTLE_CONFIG_PLUGIN
+
 Var frominstall
 
 
@@ -281,6 +284,34 @@ ShowUninstDetails show
   ${EndIf}
 !macroend
 
+!macro BackupGentleConfig
+  ${LOG_TEXT} "INFO" "Backup Gentle.Config ..."
+
+  GetTempFileName $PREVIOUS_GENTLE_CONFIG
+  ${If} ${FileExists} "${COMMON_APPDATA}\Gentle.config"
+    CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\Gentle.config" "$PREVIOUS_GENTLE_CONFIG"
+  ${EndIf}
+
+  GetTempFileName $PREVIOUS_GENTLE_CONFIG_PLUGIN
+  ${If} ${FileExists} "$MPdir.Config\Gentle.config"
+    CopyFiles /SILENT /FILESONLY "$MPdir.Config\Gentle.config" "$PREVIOUS_GENTLE_CONFIG_PLUGIN"
+  ${EndIf}
+
+!macroend
+
+!macro RestoreGentleConfig
+  ${LOG_TEXT} "INFO" "Restoring Gentle.Config..."
+
+  ${If} ${FileExists} "$PREVIOUS_GENTLE_CONFIG"
+    CopyFiles /SILENT /FILESONLY "$PREVIOUS_GENTLE_CONFIG" "${COMMON_APPDATA}\Gentle.config" 
+  ${EndIf}
+
+  ${If} ${FileExists} "$PREVIOUS_GENTLE_CONFIG_PLUGIN"
+    CopyFiles /SILENT /FILESONLY "$PREVIOUS_GENTLE_CONFIG_PLUGIN" "$MPdir.Config\Gentle.config"
+  ${EndIf}
+
+!macroend
+
 Function RunUninstaller
 
   ${VersionCompare} 1.0.2.22779 $PREVIOUS_VERSION $R0
@@ -344,6 +375,8 @@ Section "-prepare" SecPrepare
 
   ${Else}
     ${LOG_TEXT} "DEBUG" "SecPrepare: DeployMode = 0 | UpdateMode = 0"
+
+    !insertmacro BackupGentleConfig
 
     ${LOG_TEXT} "INFO" "Uninstalling old version ..."
     ${If} ${Silent}
@@ -705,6 +738,8 @@ Section -Post
 
     ;writes component status to registry
     ${MementoSectionSave}
+
+    !insertmacro RestoreGentleConfig
 
   ${EndIf}
 
