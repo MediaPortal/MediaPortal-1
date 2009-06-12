@@ -211,7 +211,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
               {
                 if (this.DoDebug)
                 {
-                  Log.Info("xPL.XplListener.HandleConfigMessage(): parsing config.response message", new object[0]);
+                  Log.Info("xPL.XplListener.HandleConfigMessage(): parsing config.response message");
                 }
                 ArrayList list = new ArrayList();
                 for (int i = 0; i < x.XPL_Msg[1].Details.Count; i++)
@@ -316,7 +316,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
               }
               if (this.DoDebug)
               {
-                Log.Info("xPL.XplListener.HandleConfigMessage(): responding to config.list request", new object[0]);
+                Log.Info("xPL.XplListener.HandleConfigMessage(): responding to config.list request");
               }
               this.SendMessage("xpl-stat", "*", "config.list", strMessage);
             }
@@ -362,7 +362,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
     {
       if (this.DoDebug)
       {
-        Log.Info("xPL.XplListener.InitSocket(): Called", new object[0]);
+        Log.Info("xPL.XplListener.InitSocket(): Called");
       }
       this.XPL_Portnum = 0xc350;
       this.sockIncoming = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -611,7 +611,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         {
           if (this.DoDebug)
           {
-            Log.Info("xPL.XplListener.ReceiveData(): reading data", new object[0]);
+            Log.Info("xPL.XplListener.ReceiveData(): reading data");
           }
           XplMsg x = new XplMsg(Encoding.ASCII.GetString(this.XPL_Buff, 0, count));
           if (this.DoDebug)
@@ -625,7 +625,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
             {
               if (this.DoDebug)
               {
-                Log.Info("xPL.XplListener.ReceiveData(): received data is a valid xPL message", new object[0]);
+                Log.Info("xPL.XplListener.ReceiveData(): received data is a valid xPL message");
               }
               string t = x.GetParam(0, "target").ToLower();
               bool flag2 = x.GetParam(0, "target").ToLower() == (this.Source + "." + this.InstanceName).ToLower();
@@ -649,7 +649,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
                 }
                 if (this.DoDebug)
                 {
-                  Log.Info("xPL.XplListener.ReceiveData(): Found xPL hub", new object[0]);
+                  Log.Info("xPL.XplListener.ReceiveData(): Found xPL hub");
                 }
                 this.mHubFound = true;
                 this.XPLTimer.Interval = 60000.0;
@@ -806,7 +806,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         {
           if (extensiveLogging)
           {
-            Log.Info("xPL.XplListener.sListenOnIP: checking registry", new object[0]);
+            Log.Info("xPL.XplListener.sListenOnIP: checking registry");
           }
           key = Registry.LocalMachine.OpenSubKey(@"Software\xPL");
           if (key != null)
@@ -830,7 +830,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         {
           if (extensiveLogging)
           {
-            Log.Info("xPL.XplListener.sListenOnIP: registry read threw exception", new object[0]);
+            Log.Info("xPL.XplListener.sListenOnIP: registry read threw exception");
           }
           str = "ANY_LOCAL";
         }
@@ -1041,7 +1041,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         IPAddress any;
         if (this.DoDebug)
         {
-          Log.Info("xPL.XplListener.ListenOnIP_IP: called", new object[0]);
+          Log.Info("xPL.XplListener.ListenOnIP_IP: called");
         }
         string listenOnIP = this.ListenOnIP;
         if (listenOnIP == "ANY_LOCAL")
@@ -1079,7 +1079,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
           {
             if (this.DoDebug)
             {
-              Log.Info("xPL.XplListener.ListenOnIPs: checking registry", new object[0]);
+              Log.Info("xPL.XplListener.ListenOnIPs: checking registry");
             }
             key = Registry.LocalMachine.OpenSubKey(@"Software\xPL");
             if (key != null)
@@ -1099,7 +1099,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
           {
             if (this.DoDebug)
             {
-              Log.Info("xPL.XplListener.ListenToIPs: registry read threw exception", new object[0]);
+              Log.Info("xPL.XplListener.ListenToIPs: registry read threw exception");
             }
             str = "ANY";
           }

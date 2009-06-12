@@ -17,27 +17,27 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public LCDHypeWrapper_SetupPickerForm()
     {
-      Log.Debug("LCDHypeWrapper_AdvancedSetupForm(): Constructor started", new object[0]);
+      Log.Debug("LCDHypeWrapper_AdvancedSetupForm(): Constructor started");
       this.InitializeComponent();
-      Log.Debug("LCDHypeWrapper_AdvancedSetupForm(): Constructor completed", new object[0]);
+      Log.Debug("LCDHypeWrapper_AdvancedSetupForm(): Constructor completed");
     }
 
     private void btnMiniDisplay_Click(object sender, EventArgs e)
     {
-      Log.Debug("LCDHypeWrapper_SetupPickerForm.btnMiniDisplay(): started", new object[0]);
+      Log.Debug("LCDHypeWrapper_SetupPickerForm.btnMiniDisplay(): started");
       base.Tag = "MiniDisplay";
       base.Hide();
       base.Close();
-      Log.Debug("LCDHypeWrapper_SetupPickerForm.btnMiniDisplay(): Completed", new object[0]);
+      Log.Debug("LCDHypeWrapper_SetupPickerForm.btnMiniDisplay(): Completed");
     }
 
     private void btnLCDHype_Click(object sender, EventArgs e)
     {
-      Log.Debug("LCDHypeWrapper_SetupPickerForm.btnLCDHype(): started", new object[0]);
+      Log.Debug("LCDHypeWrapper_SetupPickerForm.btnLCDHype(): started");
       base.Tag = "LCDHype";
       base.Hide();
       base.Close();
-      Log.Debug("LCDHypeWrapper_SetupPickerForm.btnLCDHype(): Completed", new object[0]);
+      Log.Debug("LCDHypeWrapper_SetupPickerForm.btnLCDHype(): Completed");
     }
 
     protected override void Dispose(bool disposing)

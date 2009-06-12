@@ -116,13 +116,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
           if (extensiveLogging)
           {
-            Log.Info("MiniDisplay.GetEQ(): unable to retreive equalizer data", new object[0]);
+            Log.Info("MiniDisplay.GetEQ(): unable to retreive equalizer data");
           }
           return false;
         }
         if (extensiveLogging)
         {
-          Log.Info("MiniDisplay.GetEQ(): Audio Stream not available", new object[0]);
+          Log.Info("MiniDisplay.GetEQ(): Audio Stream not available");
         }
       }
       return false;
@@ -797,7 +797,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
       if (extensiveLogging)
       {
-        Log.Info("MiniDisplay.ProcessEqData(): called", new object[0]);
+        Log.Info("MiniDisplay.ProcessEqData(): called");
       }
     }
 

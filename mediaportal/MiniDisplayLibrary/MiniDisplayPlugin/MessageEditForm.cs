@@ -497,7 +497,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     {
       TreeNode parent;
       TreeNode node3;
-      Log.Info("buttonNew_Click(): ADDING NEW NODE", new object[0]);
+      Log.Info("buttonNew_Click(): ADDING NEW NODE");
       TreeNode selectedNode = this.treeMapping.SelectedNode;
       Data tag = (Data) selectedNode.Tag;
       TreeNode node = new TreeNode("Idle (NEW MESSAGE)");
@@ -525,7 +525,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               {
                 TreeNode node12 = new TreeNode("LINE Alignment = Centered");
                 node12.Tag = new Data("LINE", "ALIGNMENT", "Centered");
-                Log.Info("buttonNew_Click(): adding new MESSAGE node", new object[0]);
+                Log.Info("buttonNew_Click(): adding new MESSAGE node");
                 node5.Nodes.Add(node6);
                 node.Nodes.Add(node5);
                 node.Nodes.Add(node7);
@@ -536,7 +536,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                 break;
               }
             case "CHARACTERTRANSLATIONS":
-              Log.Info("buttonNew_Click(): adding new MESSAGE node", new object[0]);
+              Log.Info("buttonNew_Click(): adding new MESSAGE node");
               selectedNode.Nodes.Add(node11);
               this.treeMapping.SelectedNode = node11;
               break;
@@ -562,7 +562,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           break;
 
         case "TRANSLATION":
-          Log.Info("buttonNew_Click(): adding new TRANSLATION node", new object[0]);
+          Log.Info("buttonNew_Click(): adding new TRANSLATION node");
           selectedNode.Parent.Nodes.Add(node11);
           this.treeMapping.SelectedNode = node11;
           break;
@@ -591,38 +591,38 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           break;
 
         case "MESSAGE":
-          Log.Info("buttonNew_Click(): adding new LINE node", new object[0]);
+          Log.Info("buttonNew_Click(): adding new LINE node");
           selectedNode.Nodes.Add(node7);
           this.treeMapping.SelectedNode = node6;
           break;
 
         case "WINDOWLIST":
-          Log.Info("buttonNew_Click(): adding new WINDOW node", new object[0]);
+          Log.Info("buttonNew_Click(): adding new WINDOW node");
           selectedNode.Nodes.Add(node6);
           this.treeMapping.SelectedNode = node6;
           break;
 
         case "WINDOW":
-          Log.Info("buttonNew_Click(): adding new WINDOW node", new object[0]);
+          Log.Info("buttonNew_Click(): adding new WINDOW node");
           selectedNode.Parent.Nodes.Add(node6);
           node6.Expand();
           this.treeMapping.SelectedNode = node6;
           break;
 
         case "LINE":
-          Log.Info("buttonNew_Click(): adding new PROCESS node", new object[0]);
+          Log.Info("buttonNew_Click(): adding new PROCESS node");
           selectedNode.Nodes.Add(node8);
           this.treeMapping.SelectedNode = node8;
           break;
 
         case "IMAGE":
-          Log.Info("buttonNew_Click(): adding new PROCESS node", new object[0]);
+          Log.Info("buttonNew_Click(): adding new PROCESS node");
           selectedNode.Nodes.Add(node8);
           this.treeMapping.SelectedNode = node8;
           break;
 
         case "PROCESS":
-          Log.Info("buttonNew_Click(): adding new CONDITION node", new object[0]);
+          Log.Info("buttonNew_Click(): adding new CONDITION node");
           selectedNode.Nodes.Add(node9);
           this.treeMapping.SelectedNode = node9;
           break;
@@ -631,18 +631,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           string str3;
           if (((str3 = (string) tag.Parameter) == null) || (!(str3 == "And") && !(str3 == "Or")))
           {
-            Log.Info("buttonNew_Click(): adding new CONDITION node", new object[0]);
+            Log.Info("buttonNew_Click(): adding new CONDITION node");
             selectedNode.Parent.Nodes.Add(node9);
             this.treeMapping.SelectedNode = node9;
             break;
           }
-          Log.Info("buttonNew_Click(): adding new SUBCONDITION node", new object[0]);
+          Log.Info("buttonNew_Click(): adding new SUBCONDITION node");
           selectedNode.Nodes.Add(node10);
           this.treeMapping.SelectedNode = node10;
           break;
 
         case "SUBCONDITION":
-          Log.Info("buttonNew_Click(): adding new SUBCONDITION node", new object[0]);
+          Log.Info("buttonNew_Click(): adding new SUBCONDITION node");
           selectedNode.Parent.Nodes.Add(node10);
           this.treeMapping.SelectedNode = node10;
           break;
@@ -960,10 +960,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void DrawCustomCharacter(TreeNode CharBaseNode)
     {
       this._CharacterDrawMode = true;
-      Log.Info("DrawCustomCharacter(): called", new object[0]);
+      Log.Info("DrawCustomCharacter(): called");
       if (CharBaseNode.Nodes.Count != 8)
       {
-        Log.Info("DrawCustomCharacter(): Invalid character data", new object[0]);
+        Log.Info("DrawCustomCharacter(): Invalid character data");
       }
       for (int i = 0; i < 8; i++)
       {
@@ -984,7 +984,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           num3 = (byte) (num3 >> 1);
         }
       }
-      Log.Info("DrawCustomCharacter(): completed", new object[0]);
+      Log.Info("DrawCustomCharacter(): completed");
       this._CharacterDrawMode = false;
     }
 
@@ -2762,15 +2762,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           Log.Info("LOADING {0}", new object[] {fileName});
           document.Load(file);
-          Log.Info("Extracting Settings", new object[0]);
+          Log.Info("Extracting Settings");
           XmlNode node = document.DocumentElement.SelectSingleNode("/Settings");
-          Log.Info("Extracting Messages", new object[0]);
+          Log.Info("Extracting Messages");
           XmlNodeList list = node.SelectNodes("Message");
-          Log.Info("Extracting TranslateFrom", new object[0]);
+          Log.Info("Extracting TranslateFrom");
           XmlNodeList list2 = node.SelectNodes("TranslateFrom");
-          Log.Info("Extracting TranslateTo", new object[0]);
+          Log.Info("Extracting TranslateTo");
           XmlNodeList list3 = node.SelectNodes("TranslateTo");
-          Log.Info("Extracting CustomCharacters", new object[0]);
+          Log.Info("Extracting CustomCharacters");
           XmlNodeList list4 = node.SelectNodes("CustomCharacters");
           this.SettingsNode = new TreeNode("Settings");
           this.SettingsNode.Tag = new Data("SECTION", "SETTINGS", "");
@@ -2780,14 +2780,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           node3.Tag = new Data("SECTION", "CHARACTERTRANSLATIONS", "");
           TreeNode node4 = new TreeNode("Custom Characters");
           node4.Tag = new Data("SECTION", "CUSTOMCHARACTERS", "");
-          Log.Info("Enumerating Settings", new object[0]);
+          Log.Info("Enumerating Settings");
           for (int i = 0; i < node.Attributes.Count; i++)
           {
             TreeNode node5 = new TreeNode("Setting: " + node.Attributes[i].Name + " = " + node.Attributes[i].Value);
             node5.Tag = new Data("SETTING", node.Attributes[i].Name, node.Attributes[i].Value);
             this.SettingsNode.Nodes.Add(node5);
           }
-          Log.Info("Enumerating Custom Characters", new object[0]);
+          Log.Info("Enumerating Custom Characters");
           if (list4.Count > 0)
           {
             XmlNodeList list5 = list4[0].SelectNodes("CustomCharacter");
@@ -2819,19 +2819,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               }
               else
               {
-                Log.Info("Ignoring invalid custom character data", new object[0]);
+                Log.Info("Ignoring invalid custom character data");
               }
               newValue++;
             }
           }
           else
           {
-            Log.Info("No character translations", new object[0]);
+            Log.Info("No character translations");
           }
-          Log.Info("Enumerating Character Translations", new object[0]);
+          Log.Info("Enumerating Character Translations");
           if ((list2.Count == 0) && (list3.Count == 0))
           {
-            Log.Info("No character translations", new object[0]);
+            Log.Info("No character translations");
           }
           else
           {
@@ -2855,7 +2855,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               }
             }
           }
-          Log.Info("Enumerating Messages", new object[0]);
+          Log.Info("Enumerating Messages");
           foreach (XmlNode node12 in list)
           {
             string str6;
@@ -2874,7 +2874,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             TreeNode node14 = new TreeNode("WINDOWS");
             node14.Tag = new Data("WINDOWLIST", "", "");
             node13.Nodes.Add(node14);
-            Log.Info("Enuerating Message windows", new object[0]);
+            Log.Info("Enuerating Message windows");
             XmlNodeList list9 = node12.SelectNodes("Window");
             if (list9.Count > 0)
             {
@@ -2904,7 +2904,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               node17.Tag = new Data("WINDOW", "ALL", "");
               node14.Nodes.Add(node17);
             }
-            Log.Info("  Enuerating Lines", new object[0]);
+            Log.Info("  Enuerating Lines");
             XmlNodeList list10 = node12.SelectNodes("Line");
             foreach (XmlNode node18 in node12.ChildNodes)
             {
@@ -2921,11 +2921,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                 }
                 goto Label_1497;
               }
-              Log.Info("    Adding Line", new object[0]);
+              Log.Info("    Adding Line");
               TreeNode node19 = new TreeNode("LINE Alignment = " + node18.Attributes["Alignment"].Value);
               node19.Tag = new Data("LINE", "ALIGNMENT", node18.Attributes["Alignment"].Value);
               node13.Nodes.Add(node19);
-              Log.Info("    Added Line", new object[0]);
+              Log.Info("    Added Line");
               Log.Info("    Enumerating Line properties - child nodes = {0}({1})",
                        new object[] {node18.HasChildNodes, node18.ChildNodes.Count});
               if (node18.HasChildNodes)
@@ -2972,7 +2972,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                   Log.Info("      Added property: {0}", new object[] {node20.LocalName});
                   if (!node20.LocalName.Equals("TextProgressBar") && node20.HasChildNodes)
                   {
-                    Log.Info("      Enumerating Line conditions", new object[0]);
+                    Log.Info("      Enumerating Line conditions");
                     foreach (XmlNode node22 in node20.ChildNodes)
                     {
                       TreeNode node23;
@@ -3006,18 +3006,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                       }
                       Log.Info("        Added Condition: {0}", new object[] {node22.LocalName});
                     }
-                    Log.Info("      Enumerated Line conditions", new object[0]);
+                    Log.Info("      Enumerated Line conditions");
                   }
                 }
               }
-              Log.Info("    Enumerated Line properties", new object[0]);
+              Log.Info("    Enumerated Line properties");
               continue;
               Label_0FD9:
-              Log.Info("    Adding Image", new object[0]);
+              Log.Info("    Adding Image");
               TreeNode node26 = new TreeNode("IMAGE");
               node26.Tag = new Data("IMAGE", "", "");
               node13.Nodes.Add(node26);
-              Log.Info("    Added Image", new object[0]);
+              Log.Info("    Added Image");
               Log.Info("    Enumerating Image properties - child nodes = {0}({1})",
                        new object[] {node18.HasChildNodes, node18.ChildNodes.Count});
               if (node18.HasChildNodes)
@@ -3037,7 +3037,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                     Log.Info("      Added Image property: {0}", new object[] {node27.LocalName});
                     if (node27.HasChildNodes)
                     {
-                      Log.Info("      Enumerating Image conditions", new object[0]);
+                      Log.Info("      Enumerating Image conditions");
                       foreach (XmlNode node29 in node27.ChildNodes)
                       {
                         TreeNode node30;
@@ -3071,23 +3071,23 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                         }
                         Log.Info("        Added Image Condition: {0}", new object[] {node29.LocalName});
                       }
-                      Log.Info("      Enumerated Image conditions", new object[0]);
+                      Log.Info("      Enumerated Image conditions");
                     }
                   }
                 }
               }
-              Log.Info("    Enumerated Image properties", new object[0]);
+              Log.Info("    Enumerated Image properties");
               continue;
               Label_1497:
               ;
               Log.Info("  Enumerating unknown tag \"{0}\"", new object[] {node18.Name});
             }
-            Log.Info("  Enuerated Lines", new object[0]);
-            Log.Info("    MESSAGE ADDED   ", new object[0]);
-            Log.Info("", new object[0]);
+            Log.Info("  Enuerated Lines");
+            Log.Info("    MESSAGE ADDED   ");
+            Log.Info("");
           }
-          Log.Info("    MESSAGE PROCESSING COMPLETE   ", new object[0]);
-          Log.Info("", new object[0]);
+          Log.Info("    MESSAGE PROCESSING COMPLETE   ");
+          Log.Info("");
           this.treeMapping.Nodes.Add(node2);
           this.treeMapping.Nodes.Add(node3);
           this.treeMapping.Nodes.Add(node4);
@@ -3108,7 +3108,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
       catch
       {
-        Log.Info("MAP: Error accessing directory \"InputDeviceMappings\\custom\"", new object[0]);
+        Log.Info("MAP: Error accessing directory \"InputDeviceMappings\\custom\"");
       }
       XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile), Encoding.UTF8);
       writer.Formatting = Formatting.Indented;
@@ -3279,7 +3279,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             }
             else
             {
-              Log.Info("processing WINDOWLIST", new object[0]);
+              Log.Info("processing WINDOWLIST");
               foreach (TreeNode node3 in node2.Nodes)
               {
                 Data data4 = (Data) node3.Tag;
@@ -3352,7 +3352,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           continue;
           Label_05EE:
           writer.WriteStartElement("Image");
-          Log.Info("processing IMAGE", new object[0]);
+          Log.Info("processing IMAGE");
           foreach (TreeNode node7 in node2.Nodes)
           {
             Data data8 = (Data) node7.Tag;
@@ -3389,8 +3389,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         }
         writer.WriteEndElement();
       }
-      Log.Info("PROCESSING MESSAGES COMPLETED", new object[0]);
-      Log.Info("PROCESSING TRANSLATIONS", new object[0]);
+      Log.Info("PROCESSING MESSAGES COMPLETED");
+      Log.Info("PROCESSING TRANSLATIONS");
       writer.WriteStartElement("TranslateFrom");
       foreach (TreeNode node10 in this.treeMapping.Nodes[1].Nodes)
       {
@@ -3409,8 +3409,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         writer.WriteElementString("string", (string) data12.Value);
       }
       writer.WriteEndElement();
-      Log.Info("PROCESSING TRANSLATIONS COMPLETED", new object[0]);
-      Log.Info("PROCESSING CHARACTERS", new object[0]);
+      Log.Info("PROCESSING TRANSLATIONS COMPLETED");
+      Log.Info("PROCESSING CHARACTERS");
       writer.WriteStartElement("CustomCharacters");
       foreach (TreeNode node12 in this.treeMapping.Nodes[2].Nodes)
       {
@@ -3425,7 +3425,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         writer.WriteEndElement();
       }
       writer.WriteEndElement();
-      Log.Info("PROCESSING CHARACTERS COMPLETED", new object[0]);
+      Log.Info("PROCESSING CHARACTERS COMPLETED");
       writer.WriteEndElement();
       writer.WriteEndDocument();
       writer.Close();
@@ -3517,12 +3517,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         return;
       }
-      Log.Info("treeMapping_AfterSelect: PROCESSING Treemapping select click", new object[0]);
+      Log.Info("treeMapping_AfterSelect: PROCESSING Treemapping select click");
       TreeNode charBaseNode = e.Node;
-      Log.Info("treeMapping_AfterSelect: FOUND selected node", new object[0]);
+      Log.Info("treeMapping_AfterSelect: FOUND selected node");
       if (charBaseNode.Tag == null)
       {
-        Log.Info("treeMapping_AfterSelect: SELECTED NODE DOES NOT HAVE A DATA TAG", new object[0]);
+        Log.Info("treeMapping_AfterSelect: SELECTED NODE DOES NOT HAVE A DATA TAG");
         return;
       }
       Data tag = (Data) charBaseNode.Tag;
@@ -3592,7 +3592,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
         case "SECTION":
           string str3;
-          Log.Info("treeMapping_AfterSelect: Processing SECTION message.", new object[0]);
+          Log.Info("treeMapping_AfterSelect: Processing SECTION message.");
           if (((str3 = (string) tag.Parameter) != null) &&
               (((str3 == "STATUSMESSAGES") || (str3 == "CHARACTERTRANSLATIONS")) || (str3 == "CUSTOMCHARACTERS")))
           {
@@ -3657,12 +3657,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           if ((charBaseNode.Index > 0) &&
               (((Data) charBaseNode.Parent.Nodes[charBaseNode.Index - 1].Tag).Type != "WINDOWLIST"))
           {
-            Log.Info("treeMapping_AfterSelect: Processing LINE message. Enabling buttonUp", new object[0]);
+            Log.Info("treeMapping_AfterSelect: Processing LINE message. Enabling buttonUp");
             this.buttonUp.Enabled = true;
           }
           if (charBaseNode.Index < (charBaseNode.Parent.Nodes.Count - 1))
           {
-            Log.Info("treeMapping_AfterSelect: Processing LINE message. enabling buttonDown", new object[0]);
+            Log.Info("treeMapping_AfterSelect: Processing LINE message. enabling buttonDown");
             this.buttonDown.Enabled = true;
           }
           this.groupBoxMessageEdit.Visible = true;
@@ -3680,12 +3680,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           if ((charBaseNode.Index > 0) &&
               (((Data) charBaseNode.Parent.Nodes[charBaseNode.Index - 1].Tag).Type != "WINDOWLIST"))
           {
-            Log.Info("treeMapping_AfterSelect: Processing IMAGE message. Enabling buttonUp", new object[0]);
+            Log.Info("treeMapping_AfterSelect: Processing IMAGE message. Enabling buttonUp");
             this.buttonUp.Enabled = true;
           }
           if (charBaseNode.Index < (charBaseNode.Parent.Nodes.Count - 1))
           {
-            Log.Info("treeMapping_AfterSelect: Processing IMAGE message. enabling buttonDown", new object[0]);
+            Log.Info("treeMapping_AfterSelect: Processing IMAGE message. enabling buttonDown");
             this.buttonDown.Enabled = true;
           }
           this.groupBoxMessageEdit.Visible = true;
@@ -3695,7 +3695,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
         case "PROCESS":
           {
-            Log.Info("treeMapping_AfterSelect: Processing PROCESS message.", new object[0]);
+            Log.Info("treeMapping_AfterSelect: Processing PROCESS message.");
             this.groupBoxProcess.Enabled = true;
             this.comboBoxProcessType.DropDownStyle = ComboBoxStyle.DropDownList;
             this.comboBoxProcessType.Enabled = true;
@@ -3706,7 +3706,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             }
             else
             {
-              Log.Info("treeMapping_AfterSelect: Processing TextProgressBar message.", new object[0]);
+              Log.Info("treeMapping_AfterSelect: Processing TextProgressBar message.");
               string[] strArray = ((string) tag.Value).Split(new char[] {'|'});
               if (strArray.Length >= 7)
               {
@@ -3730,7 +3730,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               }
               this.groupBoxTextProgressBar.Visible = true;
               this.groupBoxTextProgressBar.Enabled = true;
-              Log.Info("treeMapping_AfterSelect: Processed TextProgressBar message.", new object[0]);
+              Log.Info("treeMapping_AfterSelect: Processed TextProgressBar message.");
             }
             Data data2 = (Data) charBaseNode.Parent.Tag;
             if (data2.Type.Equals("IMAGE"))
@@ -3802,7 +3802,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           switch (tag.Type)
           {
             case "SECTION":
-              Log.Info("treeMapping_AfterSelect: Processing SECTION message for display.", new object[0]);
+              Log.Info("treeMapping_AfterSelect: Processing SECTION message for display.");
               flag = true;
               goto Label_1044;
 
@@ -3832,17 +3832,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               goto Label_0F32;
 
             case "LINE":
-              Log.Info("treeMapping_AfterSelect: Processing LINE message for display.", new object[0]);
+              Log.Info("treeMapping_AfterSelect: Processing LINE message for display.");
               this.UpdateCombo(ref this.comboBoxAlignment, this.AlignmentList, (string) tag.Value);
               this.comboBoxAlignment.Enabled = false;
               goto Label_1044;
 
             case "IMAGE":
-              Log.Info("treeMapping_AfterSelect: Processing IMAGE message for display.", new object[0]);
+              Log.Info("treeMapping_AfterSelect: Processing IMAGE message for display.");
               goto Label_1044;
 
             case "PROCESS":
-              Log.Info("treeMapping_AfterSelect: Processing PROCESS message for display.", new object[0]);
+              Log.Info("treeMapping_AfterSelect: Processing PROCESS message for display.");
               this.UpdateCombo(ref this.comboBoxProcessType, this.ProcessList, (string) tag.Parameter);
               this.textBoxProcessValue.Text = (string) tag.Value;
               this.comboBoxProcessType.Enabled = false;

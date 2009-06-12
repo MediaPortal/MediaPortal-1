@@ -79,7 +79,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public VLSYS_AdvancedSetupForm()
     {
-      Log.Debug("VLSYS_Mplay.VLSYS_AdvancedSetupForm(): Constructor started", new object[0]);
+      Log.Debug("VLSYS_Mplay.VLSYS_AdvancedSetupForm(): Constructor started");
       this.InitializeComponent();
       this.cbManageMHC.DataBindings.Add("Checked", VLSYS_Mplay.AdvancedSettings.Instance, "ManageMHC");
       this.cbNoRemote.DataBindings.Add("Checked", VLSYS_Mplay.AdvancedSettings.Instance, "DisableRemote");
@@ -136,12 +136,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.cbUseClockOnShutdown.DataBindings.Add("Checked", VLSYS_Mplay.AdvancedSettings.Instance, "UseClockOnShutdown");
       this.Refresh();
       this.SetControlState();
-      Log.Debug("VLSYS_Mplay.VLSYS_AdvancedSetupForm(): Constructor completed", new object[0]);
+      Log.Debug("VLSYS_Mplay.VLSYS_AdvancedSetupForm(): Constructor completed");
     }
 
     private void btnOK_Click(object sender, EventArgs e)
     {
-      Log.Debug("VLSYS_Mplay.AdvancedSetupForm.btnOK_Click(): started", new object[0]);
+      Log.Debug("VLSYS_Mplay.AdvancedSetupForm.btnOK_Click(): started");
       if (this.cbNormalEQ.Checked)
       {
         VLSYS_Mplay.AdvancedSettings.Instance.NormalEQ = true;
@@ -173,7 +173,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       VLSYS_Mplay.AdvancedSettings.Save();
       base.Hide();
       base.Close();
-      Log.Debug("VLSYS_Mplay.AdvancedSetupForm.btnOK_Click(): Completed", new object[0]);
+      Log.Debug("VLSYS_Mplay.AdvancedSetupForm.btnOK_Click(): Completed");
     }
 
     private void btnRemoteSetup_Click(object sender, EventArgs e)
@@ -194,7 +194,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void btnReset_Click(object sender, EventArgs e)
     {
-      Log.Debug("VLSYS_Mplay.AdvancedSetupForm.btnReset_Click(): started", new object[0]);
+      Log.Debug("VLSYS_Mplay.AdvancedSetupForm.btnReset_Click(): started");
       VLSYS_Mplay.AdvancedSettings.SetDefaults();
       this.cbManageMHC.Checked = VLSYS_Mplay.AdvancedSettings.Instance.ManageMHC;
       this.cbNoRemote.Checked = VLSYS_Mplay.AdvancedSettings.Instance.DisableRemote;
@@ -248,7 +248,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.SetFanLabel(this.tbFan1);
       this.SetFanLabel(this.tbFan2);
       this.Refresh();
-      Log.Debug("VLSYS_Mplay.AdvancedSetupForm.btnReset_Click(): Completed", new object[0]);
+      Log.Debug("VLSYS_Mplay.AdvancedSetupForm.btnReset_Click(): Completed");
     }
 
     private void btnTest_Click(object sender, EventArgs e)

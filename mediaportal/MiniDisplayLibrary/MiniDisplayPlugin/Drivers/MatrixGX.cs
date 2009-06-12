@@ -43,7 +43,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void AdvancedSettings_OnSettingsChanged()
     {
-      Log.Info("MatrixGX.AdvancedSettings_OnSettingsChanged(): called", new object[0]);
+      Log.Info("MatrixGX.AdvancedSettings_OnSettingsChanged(): called");
       this.CleanUp();
       this.LoadAdvancedSettings();
       Thread.Sleep(100);
@@ -58,7 +58,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (this.MOD.IsOpen)
       {
-        Log.Debug("(IDisplay) MatrixGX.CleanUp() - called", new object[0]);
+        Log.Debug("(IDisplay) MatrixGX.CleanUp() - called");
         this.MOD.ClearDisplay();
         this.MOD.CloseDisplay();
         AdvancedSettings.OnSettingsChanged -=
@@ -70,7 +70,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (this.MOD.IsOpen)
       {
-        Log.Debug("(IDisplay) MatrixGX.Clear() - called", new object[0]);
+        Log.Debug("(IDisplay) MatrixGX.Clear() - called");
         this.MOD.ClearDisplay();
       }
     }
@@ -82,17 +82,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public void Dispose()
     {
-      Log.Debug("MatrixGX.Dispose() - called", new object[0]);
+      Log.Debug("MatrixGX.Dispose() - called");
     }
 
     public void DrawImage(Bitmap bitmap)
     {
       if (!this._isDisabled && this.MOD.IsOpen)
       {
-        Log.Debug("(IDisplay) MatrixGX.DrawImage() - called", new object[0]);
+        Log.Debug("(IDisplay) MatrixGX.DrawImage() - called");
         if (bitmap == null)
         {
-          Log.Debug("(IDisplay) MatrixGX.DrawImage():  bitmap null", new object[0]);
+          Log.Debug("(IDisplay) MatrixGX.DrawImage():  bitmap null");
         }
         else
         {
@@ -117,14 +117,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           byte[] buffer = this.sha256.ComputeHash(this.ReceivedBitmapData);
           if (ByteArray.AreEqual(buffer, this.lastHash))
           {
-            Log.Debug("(IDisplay) MatrixGX.DrawImage() - completed - bitmap not changed", new object[0]);
+            Log.Debug("(IDisplay) MatrixGX.DrawImage() - completed - bitmap not changed");
           }
           else
           {
             this.lastHash = buffer;
             this.MOD.SendImage(bitmap);
             this.UpdateAdvancedSettings();
-            Log.Debug("(IDisplay) MatrixGX.DrawImage() - completed", new object[0]);
+            Log.Debug("(IDisplay) MatrixGX.DrawImage() - completed");
           }
         }
       }
@@ -141,18 +141,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         this._IsOpen = this.MOD.OpenDisplay(this.AdvSettings);
         if (this._IsOpen)
         {
-          Log.Debug("(IDisplay) MatrixGX.Initialize() - Display opened.", new object[0]);
+          Log.Debug("(IDisplay) MatrixGX.Initialize() - Display opened.");
           this._isDisabled = false;
           AdvancedSettings.OnSettingsChanged +=
             new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
         }
         else
         {
-          Log.Debug("(IDisplay) MatrixGX.Initialize() - Unable to open device - display disabled", new object[0]);
+          Log.Debug("(IDisplay) MatrixGX.Initialize() - Unable to open device - display disabled");
           this._isDisabled = true;
           this._errorMessage = "MatrixGX.Initialize() failed... No Matrix GX display found";
         }
-        Log.Debug("(IDisplay) MatrixGX.Initialize() - called", new object[0]);
+        Log.Debug("(IDisplay) MatrixGX.Initialize() - called");
         this.Clear();
       }
     }
@@ -180,7 +180,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           this.MOD.SendText(this._Lines[0], this._Lines[1]);
         }
-        Log.Info("(IDisplay) MatrixGX.SetLine() completed", new object[0]);
+        Log.Info("(IDisplay) MatrixGX.SetLine() completed");
       }
     }
 
@@ -189,7 +189,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       this._IsConfiguring = Assembly.GetEntryAssembly().FullName.Contains("Configuration");
       this.DoDebug = this._IsConfiguring | Settings.Instance.ExtensiveLogging;
-      Log.Info("(IDisplay) MatrixGX.Setup() - called", new object[0]);
+      Log.Info("(IDisplay) MatrixGX.Setup() - called");
       Log.Info("(IDisplay) MatrixGX.Setup(): MatrixGX Driver - {0}", new object[] {this.Description});
       Log.Info("(IDisplay) MatrixGX.Setup(): Called by \"{0}\".", new object[] {Assembly.GetEntryAssembly().FullName});
       FileInfo info = new FileInfo(Assembly.GetExecutingAssembly().Location);
@@ -211,12 +211,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         this._Gcols = _colsG;
         if (this._Gcols > 240)
         {
-          Log.Info("(IDisplay) MatrixGX.Setup() - Invalid Graphics Columns value", new object[0]);
+          Log.Info("(IDisplay) MatrixGX.Setup() - Invalid Graphics Columns value");
           this._Grows = 240;
         }
         if (this._Grows > 0x40)
         {
-          Log.Info("(IDisplay) MatrixGX.Setup() - Invalid Graphics Lines value", new object[0]);
+          Log.Info("(IDisplay) MatrixGX.Setup() - Invalid Graphics Lines value");
           this._Grows = 0x40;
         }
       }
@@ -226,7 +226,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         this._isDisabled = true;
         this._errorMessage = "MatrixGX.setup() failed... Did you copy the required files to the MediaPortal directory?";
       }
-      Log.Info("(IDisplay) MatrixGX.Setup() - completed", new object[0]);
+      Log.Info("(IDisplay) MatrixGX.Setup() - completed");
     }
 
     private void UpdateAdvancedSettings()
@@ -235,7 +235,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this.DoDebug)
         {
-          Log.Info("MatrixGX.UpdateAdvancedSettings(): called", new object[0]);
+          Log.Info("MatrixGX.UpdateAdvancedSettings(): called");
         }
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_MatrixGX.xml")))
         {
@@ -244,14 +244,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (this.DoDebug)
             {
-              Log.Info("MatrixGX.UpdateAdvancedSettings(): updating advanced settings", new object[0]);
+              Log.Info("MatrixGX.UpdateAdvancedSettings(): updating advanced settings");
             }
             this.LoadAdvancedSettings();
           }
         }
         if (this.DoDebug)
         {
-          Log.Info("MatrixGX.UpdateAdvancedSettings(): completed", new object[0]);
+          Log.Info("MatrixGX.UpdateAdvancedSettings(): completed");
         }
       }
     }
@@ -297,7 +297,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             this._errorMessage = this._errorMessage + "Required file \"log4net.dll\" is not installed!\n";
             this._isDisabled = true;
-            Log.Info("(IDisplay) MatrixGX.IsDisabled() - Required file \"log4net.dll\" is not installed!", new object[0]);
+            Log.Info("(IDisplay) MatrixGX.IsDisabled() - Required file \"log4net.dll\" is not installed!");
           }
           if ((num & 4) > 0)
           {
@@ -394,10 +394,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       public static AdvancedSettings Load()
       {
         AdvancedSettings settings;
-        Log.Debug("MatrixGX.AdvancedSettings.Load() started", new object[0]);
+        Log.Debug("MatrixGX.AdvancedSettings.Load() started");
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_MatrixGX.xml")))
         {
-          Log.Debug("MatrixGX.AdvancedSettings.Load() Loading settings from XML file", new object[0]);
+          Log.Debug("MatrixGX.AdvancedSettings.Load() Loading settings from XML file");
           XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
           XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_MatrixGX.xml"));
           settings = (AdvancedSettings) serializer.Deserialize(xmlReader);
@@ -405,11 +405,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         else
         {
-          Log.Debug("MatrixGX.AdvancedSettings.Load() Loading settings from defaults", new object[0]);
+          Log.Debug("MatrixGX.AdvancedSettings.Load() Loading settings from defaults");
           settings = new AdvancedSettings();
           Default(settings);
         }
-        Log.Debug("MatrixGX.AdvancedSettings.Load() completed", new object[0]);
+        Log.Debug("MatrixGX.AdvancedSettings.Load() completed");
         return settings;
       }
 
@@ -428,7 +428,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public static void Save(AdvancedSettings ToSave)
       {
-        Log.Debug("MatrixGX.AdvancedSettings.Save() Saving settings to XML file", new object[0]);
+        Log.Debug("MatrixGX.AdvancedSettings.Save() Saving settings to XML file");
         XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
         XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_MatrixGX.xml"),
                                                  Encoding.UTF8);
@@ -436,7 +436,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         writer.Indentation = 2;
         serializer.Serialize((XmlWriter) writer, ToSave);
         writer.Close();
-        Log.Debug("MatrixGX.AdvancedSettings.Save() completed", new object[0]);
+        Log.Debug("MatrixGX.AdvancedSettings.Save() completed");
       }
 
       public static void SetDefaults()
@@ -727,7 +727,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               if (this.DoDebug)
               {
-                Log.Info("MatrixGX.MOGXDisplay.DisplayLines(): MP going IDLE", new object[0]);
+                Log.Info("MatrixGX.MOGXDisplay.DisplayLines(): MP going IDLE");
               }
               this.DisplaySettings._BlankIdleTime = DateTime.Now.Ticks;
             }
@@ -736,7 +736,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               if (this.DoDebug)
               {
-                Log.Info("MatrixGX.MOGXDisplay.DisplayLines(): Blanking display due to IDLE state", new object[0]);
+                Log.Info("MatrixGX.MOGXDisplay.DisplayLines(): Blanking display due to IDLE state");
               }
               this.DisplayOff();
             }
@@ -749,7 +749,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (this.DoDebug)
             {
-              Log.Info("MatrixGX.MOGXDisplay.DisplayLines(): MP no longer IDLE - restoring display", new object[0]);
+              Log.Info("MatrixGX.MOGXDisplay.DisplayLines(): MP no longer IDLE - restoring display");
             }
             this.DisplayOn();
           }
@@ -763,13 +763,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           lock (this.DWriteMutex)
           {
-            Log.Debug("MatrixGX.MOGXDisplay.ClearDisplay() - called", new object[0]);
+            Log.Debug("MatrixGX.MOGXDisplay.ClearDisplay() - called");
             this.GX_Graphics = Graphics.FromImage(this.GX_Surface);
             this.GX_Graphics.Clear(Color.White);
-            Log.Debug("MatrixGX.MOGXDisplay.ClearDisplay() - Sending blank image to device", new object[0]);
+            Log.Debug("MatrixGX.MOGXDisplay.ClearDisplay() - Sending blank image to device");
             this.GX_Session.SendAsyncFrame(this.GX_Surface);
           }
-          Log.Debug("MatrixGX.MOGXDisplay.ClearDisplay() - completed", new object[0]);
+          Log.Debug("MatrixGX.MOGXDisplay.ClearDisplay() - completed");
         }
       }
 
@@ -777,22 +777,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (_useIcons && !this._isClosing)
         {
-          Log.Debug("MatrixGX.MOGXDisplay.ClearIconArea() - called", new object[0]);
+          Log.Debug("MatrixGX.MOGXDisplay.ClearIconArea() - called");
           RectangleF textBounds = this.GetTextBounds();
           this.GX_Graphics.FillRectangle(Brushes.White, textBounds.Width, 0f, this.GX_Surface.Width - textBounds.Width,
                                          (float) this.GX_Surface.Height);
-          Log.Debug("MatrixGX.MOGXDisplay.ClearIconArea() - completed", new object[0]);
+          Log.Debug("MatrixGX.MOGXDisplay.ClearIconArea() - completed");
         }
       }
 
       public void CloseDisplay()
       {
-        Log.Debug("MatrixGX.MOGXDisplay.CloseDisplay() - called", new object[0]);
+        Log.Debug("MatrixGX.MOGXDisplay.CloseDisplay() - called");
         try
         {
           lock (this.StopMutex)
           {
-            Log.Debug("MatrixGX.MOGXDisplay.CloseDisplay() Stopping DisplayUpdate() Thread", new object[0]);
+            Log.Debug("MatrixGX.MOGXDisplay.CloseDisplay() Stopping DisplayUpdate() Thread");
             Thread.Sleep(250);
             this.stopDisplayUpdateThread = true;
             goto Label_004E;
@@ -804,7 +804,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             goto Label_0047;
           }
-          Log.Debug("MatrixGX.MOGXDisplay.CloseDisplay() DisplayUpdate() Thread stopped.", new object[0]);
+          Log.Debug("MatrixGX.MOGXDisplay.CloseDisplay() DisplayUpdate() Thread stopped.");
           this._isClosing = true;
           lock (this.DWriteMutex)
           {
@@ -815,7 +815,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             this.GX_Client = null;
             this._isOpen = false;
           }
-          Log.Debug("MatrixGX.MOGXDisplay.CloseDisplay() - Display closed.", new object[0]);
+          Log.Debug("MatrixGX.MOGXDisplay.CloseDisplay() - Display closed.");
         }
         catch (Exception exception)
         {
@@ -836,7 +836,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             RectangleF textBounds = this.GetTextBounds();
             if (this.DoDebug)
             {
-              Log.Info("MatrixGX.MOGXDisplay.DisplayEQ(): called", new object[0]);
+              Log.Info("MatrixGX.MOGXDisplay.DisplayEQ(): called");
             }
             this.EQSettings.Render_MaxValue = (this.EQSettings.UseNormalEq | this.EQSettings.UseStereoEq)
                                                 ? ((int) textBounds.Height)
@@ -943,20 +943,20 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             if (this.DoDebug)
             {
-              Log.Info("MatrixGX.MOGXDisplay.DisplayOff(): DisplayControlAction Timeout expired.", new object[0]);
+              Log.Info("MatrixGX.MOGXDisplay.DisplayOff(): DisplayControlAction Timeout expired.");
             }
             this.DisplaySettings._DisplayControlAction = false;
             this.DisplaySettings._DisplayControlLastAction = 0L;
           }
-          Log.Info("MatrixGX.MOGXDisplay.DisplayOff(): called", new object[0]);
+          Log.Info("MatrixGX.MOGXDisplay.DisplayOff(): called");
           lock (this.DWriteMutex)
           {
-            Log.Info("MatrixGX.MOGXDisplay.DisplayOff(): Sending Display OFF command to LCD", new object[0]);
+            Log.Info("MatrixGX.MOGXDisplay.DisplayOff(): Sending Display OFF command to LCD");
             this.BacklightOff();
             this.ClearDisplay();
             this._IsDisplayOff = true;
           }
-          Log.Info("MatrixGX.MOGXDisplay.DisplayOff(): completed", new object[0]);
+          Log.Info("MatrixGX.MOGXDisplay.DisplayOff(): completed");
         }
       }
 
@@ -964,14 +964,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this._IsDisplayOff)
         {
-          Log.Info("MatrixGX.MOGXDisplay.DisplayOn(): called", new object[0]);
+          Log.Info("MatrixGX.MOGXDisplay.DisplayOn(): called");
           lock (this.DWriteMutex)
           {
-            Log.Info("MatrixGX.MOGXDisplay.DisplayOn(): Sending Display ON command to LCD", new object[0]);
+            Log.Info("MatrixGX.MOGXDisplay.DisplayOn(): Sending Display ON command to LCD");
             this._IsDisplayOff = false;
             this.BacklightOn();
           }
-          Log.Info("MatrixGX.MOGXDisplay.DisplayOn(): called", new object[0]);
+          Log.Info("MatrixGX.MOGXDisplay.DisplayOn(): called");
         }
       }
 
@@ -982,7 +982,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         DiskIcon icon = new DiskIcon();
         if (this.DoDebug)
         {
-          Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Starting Display Update Thread", new object[0]);
+          Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Starting Display Update Thread");
         }
         CDDrive drive = new CDDrive();
         bool flag2 = false;
@@ -1010,7 +1010,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               if (this.DoDebug)
               {
-                Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Display Update Thread terminating", new object[0]);
+                Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Display Update Thread terminating");
               }
               if (this.DisplaySettings.BlankDisplayWithVideo & this.DisplaySettings.EnableDisplayAction)
               {
@@ -1028,7 +1028,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           icon.Animate();
           if (this.DoDebug)
           {
-            Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Collecting status...", new object[0]);
+            Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Collecting status...");
           }
           if (MiniDisplayHelper.IsCaptureCardRecording())
           {
@@ -1036,7 +1036,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             num4 = 5;
             if (this.DoDebug)
             {
-              Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting REC icon", new object[0]);
+              Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting REC icon");
             }
           }
           if (this.MPStatus.MediaPlayer_Playing)
@@ -1061,7 +1061,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               num4 = 1;
               if (this.DoDebug)
               {
-                Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_TV", new object[0]);
+                Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_TV");
               }
             }
             if (this.MPStatus.Media_IsDVD || this.MPStatus.Media_IsCD)
@@ -1077,7 +1077,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 num4 = 2;
                 if (this.DoDebug)
                 {
-                  Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_DVD & ICON_MOVIE", new object[0]);
+                  Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_DVD & ICON_MOVIE");
                 }
               }
               else if (this.MPStatus.Media_IsCD & !this.MPStatus.Media_IsVideo)
@@ -1087,7 +1087,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 num4 = 3;
                 if (this.DoDebug)
                 {
-                  Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_MUSIC & ICON_CD", new object[0]);
+                  Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_MUSIC & ICON_CD");
                 }
               }
               icon.On();
@@ -1111,7 +1111,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 num4 = 6;
                 if (this.DoDebug)
                 {
-                  Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting PAUSED icon", new object[0]);
+                  Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting PAUSED icon");
                 }
               }
             }
@@ -1119,7 +1119,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               if (this.DoDebug)
               {
-                Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_MUSIC", new object[0]);
+                Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_MUSIC");
               }
               num5 |= 0x10;
               num4 = 3;
@@ -1143,7 +1143,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 num4 = 6;
                 if (this.DoDebug)
                 {
-                  Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting PAUSED icon", new object[0]);
+                  Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting PAUSED icon");
                 }
               }
               if (!_useDiskIconForAllMedia)
@@ -1164,7 +1164,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                       num5 |= 0x80;
                       if (this.DoDebug)
                       {
-                        Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_OGG", new object[0]);
+                        Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_OGG");
                       }
                     }
                     else if (str2 == "wma")
@@ -1172,7 +1172,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                       num5 |= 0x200;
                       if (this.DoDebug)
                       {
-                        Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_WMA", new object[0]);
+                        Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_WMA");
                       }
                     }
                     else if (str2 == "wav")
@@ -1180,7 +1180,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                       num5 |= 0x4000;
                       if (this.DoDebug)
                       {
-                        Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_WAV", new object[0]);
+                        Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_WAV");
                       }
                     }
                   }
@@ -1189,7 +1189,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                     num5 |= 0x100;
                     if (this.DoDebug)
                     {
-                      Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_MP3", new object[0]);
+                      Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_MP3");
                     }
                   }
                 }
@@ -1202,7 +1202,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               num4 = 4;
               if (this.DoDebug)
               {
-                Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_MOVIE", new object[0]);
+                Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_MOVIE");
               }
               icon.On();
               icon.InvertOn();
@@ -1229,7 +1229,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 num4 = 6;
                 if (this.DoDebug)
                 {
-                  Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting PAUSED icon", new object[0]);
+                  Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting PAUSED icon");
                 }
               }
               if (!_useDiskIconForAllMedia)
@@ -1252,7 +1252,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                       num5 |= 0x400;
                       if (this.DoDebug)
                       {
-                        Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_WMV", new object[0]);
+                        Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_WMV");
                       }
                     }
                     else if (str3 == "divx")
@@ -1260,7 +1260,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                       num5 |= 0x20;
                       if (this.DoDebug)
                       {
-                        Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_DIVX", new object[0]);
+                        Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_DIVX");
                       }
                     }
                     else if (str3 == "xvid")
@@ -1268,7 +1268,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                       num5 |= 0x800;
                       if (this.DoDebug)
                       {
-                        Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_XVID", new object[0]);
+                        Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_XVID");
                       }
                     }
                   }
@@ -1277,7 +1277,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                     num5 |= 0x40;
                     if (this.DoDebug)
                     {
-                      Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_MPG", new object[0]);
+                      Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_MPG");
                     }
                   }
                 }
@@ -1323,13 +1323,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               num4 = 0;
               if (this.DoDebug)
               {
-                Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_IDLE", new object[0]);
+                Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Setting ICON_IDLE");
               }
             }
           }
           if (this.DoDebug)
           {
-            Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Status collected...", new object[0]);
+            Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Status collected...");
           }
           if (num4 != num3)
           {
@@ -1341,7 +1341,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (this.DoDebug)
             {
-              Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Building display image", new object[0]);
+              Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Building display image");
             }
             if ((_useProgressDisplay || _useVolumeDisplay) || _useIcons)
             {
@@ -1366,7 +1366,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             if (this.DoDebug)
             {
-              Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() image built - sending to display", new object[0]);
+              Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() image built - sending to display");
             }
             this.GX_Session.SendAsyncFrame(this.GX_Surface);
           }
@@ -1374,12 +1374,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (this.DoDebug)
             {
-              Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Sleeping...", new object[0]);
+              Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Sleeping...");
             }
             Thread.Sleep(250);
             if (this.DoDebug)
             {
-              Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Waking...", new object[0]);
+              Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Waking...");
             }
           }
         }
@@ -1389,7 +1389,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (_useIcons && !this._isClosing)
         {
-          Log.Debug("MatrixGX.MOGXDisplay.DrawDiskIcon() - called", new object[0]);
+          Log.Debug("MatrixGX.MOGXDisplay.DrawDiskIcon() - called");
           try
           {
             for (int i = 0; i < 8; i++)
@@ -1404,7 +1404,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             Log.Debug("MatrixGX.MOGXDisplay.DrawDiskIcon() - caught exception {0}", new object[] {exception.ToString()});
           }
-          Log.Debug("MatrixGX.MOGXDisplay.DrawDiskIcon() - completed", new object[0]);
+          Log.Debug("MatrixGX.MOGXDisplay.DrawDiskIcon() - completed");
         }
       }
 
@@ -1412,7 +1412,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (_useIcons && !this._isClosing)
         {
-          Log.Debug("MatrixGX.MOGXDisplay.DrawIcons() - not yet implimented", new object[0]);
+          Log.Debug("MatrixGX.MOGXDisplay.DrawIcons() - not yet implimented");
         }
       }
 
@@ -1420,8 +1420,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (_useIcons && !this._isClosing)
         {
-          Log.Debug("MatrixGX.MOGXDisplay.DrawLargeIcons() - called", new object[0]);
-          Log.Debug("MatrixGX.MOGXDisplay.DrawLargeIcons() - completed", new object[0]);
+          Log.Debug("MatrixGX.MOGXDisplay.DrawLargeIcons() - called");
+          Log.Debug("MatrixGX.MOGXDisplay.DrawLargeIcons() - completed");
         }
       }
 
@@ -1430,7 +1430,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         if ((!(!_useProgressDisplay & !_useVolumeDisplay) && !this._isClosing) &&
             (!this.DisplaySettings.BlankDisplayWithVideo || !this._IsDisplayOff))
         {
-          Log.Debug("MatrixGX.MOGXDisplay.DrawProgressBars() - called", new object[0]);
+          Log.Debug("MatrixGX.MOGXDisplay.DrawProgressBars() - called");
           MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
           int num = ((int) this.GetTextBounds().Width) - 1;
           if ((this.MPStatus.MediaPlayer_Playing & _useVolumeDisplay) && !this.MPStatus.IsMuted)
@@ -1453,7 +1453,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             this.GX_Graphics.DrawLine(Pens.Black, 0, 0x3d, num, 0x3d);
             this.GX_Graphics.FillRectangle(Brushes.Black, 3, 0x3b, num4, 5);
           }
-          Log.Debug("MatrixGX.MOGXDisplay.DrawProgressBars() - completed", new object[0]);
+          Log.Debug("MatrixGX.MOGXDisplay.DrawProgressBars() - completed");
         }
       }
 
@@ -1523,7 +1523,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           this.DisplaySettings._DisplayControlLastAction = DateTime.Now.Ticks;
           if (this.DoDebug)
           {
-            Log.Info("MatrixGX.MOGXDisplay.OnExternalAction(): received DisplayControlAction", new object[0]);
+            Log.Info("MatrixGX.MOGXDisplay.OnExternalAction(): received DisplayControlAction");
           }
           this.DisplayOn();
         }
@@ -1531,7 +1531,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public bool OpenDisplay(AdvancedSettings UseSettings)
       {
-        Log.Info("MatrixGX.MOGXDisplay.OpenDisplay() - called", new object[0]);
+        Log.Info("MatrixGX.MOGXDisplay.OpenDisplay() - called");
         this.AdvSettings = UseSettings;
         MiniDisplayHelper.InitEQ(ref this.EQSettings);
         MiniDisplayHelper.InitDisplayControl(ref this.DisplaySettings);
@@ -1545,22 +1545,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           this.GX_Client = new DCClient();
           if (!this.GX_Client.Connect())
           {
-            Log.Info("MatrixGX.MOGXDisplay.OpenDisplay() - Could not connect to DriverCore service", new object[0]);
+            Log.Info("MatrixGX.MOGXDisplay.OpenDisplay() - Could not connect to DriverCore service");
             this._isOpen = false;
           }
           else
           {
-            Log.Info("MatrixGX.MOGXDisplay.OpenDisplay() - Connect to the DriverCore service", new object[0]);
+            Log.Info("MatrixGX.MOGXDisplay.OpenDisplay() - Connect to the DriverCore service");
             this.GX_Devices = this.GX_Client.Devices;
             if (this.GX_Devices.Count() > 0)
             {
-              Log.Info("MatrixGX.MOGXDisplay.OpenDisplay() - Found a GX series device", new object[0]);
+              Log.Info("MatrixGX.MOGXDisplay.OpenDisplay() - Found a GX series device");
               this.GX_Session = this.GX_Devices[0].CreateSession("MediaPortal");
               this.GX_Session.CreateGraphics(out this.GX_Surface);
               this.GX_Graphics = Graphics.FromImage(this.GX_Surface);
               this._isOpen = true;
               this._isClosing = false;
-              Log.Info("MatrixGX.MOGXDisplay.OpenDisplay() - Display Opened", new object[0]);
+              Log.Info("MatrixGX.MOGXDisplay.OpenDisplay() - Display Opened");
               this.BacklightOn();
               this.GX_Session.SetOptions(true, false);
               if (this.MOGX_Control.InvertDisplay)
@@ -1575,17 +1575,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               this._displayThread.Start();
               if (this._displayThread.IsAlive)
               {
-                Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Thread Started", new object[0]);
+                Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Thread Started");
               }
               else
               {
-                Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() FAILED TO START", new object[0]);
+                Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() FAILED TO START");
                 this.CloseDisplay();
               }
             }
             else
             {
-              Log.Info("MatrixGX.MOGXDisplay.OpenDisplay() - No GX Series Display found", new object[0]);
+              Log.Info("MatrixGX.MOGXDisplay.OpenDisplay() - No GX Series Display found");
               this._isOpen = false;
             }
           }
@@ -1597,13 +1597,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Error(exception);
           this._isOpen = false;
         }
-        Log.Info("MatrixGX.MOGXDisplay.OpenDisplay() - Completed", new object[0]);
+        Log.Info("MatrixGX.MOGXDisplay.OpenDisplay() - Completed");
         return this._isOpen;
       }
 
       private void ParseAdvancedSettings()
       {
-        Log.Info("MatrixGX.ParseAdvancedSettings(): Called", new object[0]);
+        Log.Info("MatrixGX.ParseAdvancedSettings(): Called");
         this.DoDebug = Settings.Instance.ExtensiveLogging;
         _useVolumeDisplay = this.AdvSettings.VolumeDisplay;
         _useProgressDisplay = this.AdvSettings.ProgressDisplay;
@@ -1646,7 +1646,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                  new object[] {_useProgressDisplay});
         Log.Info("MatrixGX.ParseAdvancedSettings(): Advanced Options - Invert Display = {0}",
                  new object[] {this.MOGX_Control.InvertDisplay});
-        Log.Info("MatrixGX.ParseAdvancedSettings(): Advanced Options - Backlight Color:", new object[0]);
+        Log.Info("MatrixGX.ParseAdvancedSettings(): Advanced Options - Backlight Color:");
         Log.Info("MatrixGX.ParseAdvancedSettings(): Advanced Options -   Red = {0}",
                  new object[] {this.MOGX_Control.BackLightRed});
         Log.Info("MatrixGX.ParseAdvancedSettings(): Advanced Options -   Green = {0}",
@@ -1695,7 +1695,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                  new object[] {this.DisplaySettings.BlankDisplayWhenIdle});
         Log.Info("MatrixGX.ParseAdvancedSettings(): Advanced options -     blank display after: {0} seconds",
                  new object[] {this.DisplaySettings._BlankIdleTimeout/0xf4240L});
-        Log.Info("MatrixGX.ParseAdvancedSettings(): Completed", new object[0]);
+        Log.Info("MatrixGX.ParseAdvancedSettings(): Completed");
       }
 
       private void RestoreDisplayFromVideoOrIdle()
@@ -1725,7 +1725,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             lock (this.DWriteMutex)
             {
-              Log.Debug("MatrixGX.MOGXDisplay.SendImage() - called", new object[0]);
+              Log.Debug("MatrixGX.MOGXDisplay.SendImage() - called");
               if ((_Bitmap.Height == this.GX_Surface.Height) & (_Bitmap.Width == this.GX_Surface.Width))
               {
                 this.GX_Surface = (Bitmap) _Bitmap.Clone();
@@ -1737,7 +1737,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 this.GX_Surface = _Bitmap.Clone(new Rectangle(0, 0, width, height), PixelFormat.Format1bppIndexed);
               }
             }
-            Log.Debug("MatrixGX.MOGXDisplay.SendImage() - completed", new object[0]);
+            Log.Debug("MatrixGX.MOGXDisplay.SendImage() - completed");
           }
         }
       }
@@ -1753,14 +1753,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         else if (this._isClosing)
         {
-          Log.Info("MatrixGX.MOGXDisplay.SendText(): Suppressing display update! Driver is closing", new object[0]);
+          Log.Info("MatrixGX.MOGXDisplay.SendText(): Suppressing display update! Driver is closing");
         }
         else
         {
           RectangleF textBounds = this.GetTextBounds();
           lock (this.DWriteMutex)
           {
-            Log.Info("MatrixGX.MOGXDisplay.SendText() - called", new object[0]);
+            Log.Info("MatrixGX.MOGXDisplay.SendText() - called");
             this.GX_Graphics = Graphics.FromImage(this.GX_Surface);
             this.GX_Graphics.SmoothingMode = SmoothingMode.None;
             this.GX_Graphics.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
@@ -1781,7 +1781,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             this.GX_Graphics.DrawString(_line2.Substring(0, length), font, Brushes.Black, textBounds);
           }
-          Log.Info("MatrixGX.MOGXDisplay.SendText() - completed", new object[0]);
+          Log.Info("MatrixGX.MOGXDisplay.SendText() - completed");
         }
       }
 

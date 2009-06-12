@@ -108,7 +108,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void btnOK_Click(object sender, EventArgs e)
     {
-      Log.Debug("MatrixGX.AdvancedSetupForm.btnOK_Click(): started", new object[0]);
+      Log.Debug("MatrixGX.AdvancedSetupForm.btnOK_Click(): started");
       if (this.cbNormalEQ.Checked)
       {
         MatrixGX.AdvancedSettings.Instance.NormalEQ = true;
@@ -140,7 +140,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       MatrixGX.AdvancedSettings.Save();
       base.Hide();
       base.Close();
-      Log.Debug("MatrixGX.AdvancedSetupForm.btnOK_Click() Completed", new object[0]);
+      Log.Debug("MatrixGX.AdvancedSetupForm.btnOK_Click() Completed");
     }
 
     private void btnReset_Click(object sender, EventArgs e)

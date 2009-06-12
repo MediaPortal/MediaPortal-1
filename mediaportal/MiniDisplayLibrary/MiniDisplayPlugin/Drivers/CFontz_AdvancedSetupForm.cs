@@ -51,7 +51,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public CFontz_AdvancedSetupForm()
     {
-      Log.Debug("CFontz_AdvancedSetupForm(): Constructor started", new object[0]);
+      Log.Debug("CFontz_AdvancedSetupForm(): Constructor started");
       this.InitializeComponent();
       this.cmbDeviceType.SelectedIndex = 0;
       this.cmbDeviceType.DataBindings.Add("SelectedItem", CFontz.AdvancedSettings.Instance, "DeviceType");
@@ -94,12 +94,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.cbVUindicators.DataBindings.Add("Checked", CFontz.AdvancedSettings.Instance, "VUindicators");
       this.Refresh();
       this.SetControlState();
-      Log.Debug("CFontz_AdvancedSetupForm(): Constructor completed", new object[0]);
+      Log.Debug("CFontz_AdvancedSetupForm(): Constructor completed");
     }
 
     private void btnOK_Click(object sender, EventArgs e)
     {
-      Log.Debug("CFontz_AdvancedSetupForm.btnOK_Click(): started", new object[0]);
+      Log.Debug("CFontz_AdvancedSetupForm.btnOK_Click(): started");
       if (this.cbNormalEQ.Checked)
       {
         CFontz.AdvancedSettings.Instance.NormalEQ = true;
@@ -131,7 +131,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       CFontz.AdvancedSettings.Save();
       base.Hide();
       base.Close();
-      Log.Debug("CFontz_AdvancedSetupForm.btnOK_Click(): Completed", new object[0]);
+      Log.Debug("CFontz_AdvancedSetupForm.btnOK_Click(): Completed");
     }
 
     private void btnRemoteSetup_Click(object sender, EventArgs e)
@@ -152,7 +152,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void btnReset_Click(object sender, EventArgs e)
     {
-      Log.Debug("CFontz_AdvancedSetupForm.btnReset_Click(): started", new object[0]);
+      Log.Debug("CFontz_AdvancedSetupForm.btnReset_Click(): started");
       CFontz.AdvancedSettings.SetDefaults();
       this.cbEnableKeypad.Checked = CFontz.AdvancedSettings.Instance.EnableKeypad;
       this.cbEnableCustomKeypadMapping.Checked = CFontz.AdvancedSettings.Instance.UseCustomKeypadMap;
@@ -188,7 +188,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.mpBlankDisplayWhenIdle.Checked = CFontz.AdvancedSettings.Instance.BlankDisplayWhenIdle;
       this.cmbBlankIdleTime.SelectedIndex = CFontz.AdvancedSettings.Instance.BlankIdleTime;
       this.Refresh();
-      Log.Debug("CFontz_AdvancedSetupForm.btnReset_Click(): Completed", new object[0]);
+      Log.Debug("CFontz_AdvancedSetupForm.btnReset_Click(): Completed");
     }
 
     private void btnTest_Click(object sender, EventArgs e)

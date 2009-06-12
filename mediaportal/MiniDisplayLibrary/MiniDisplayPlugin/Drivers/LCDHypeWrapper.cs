@@ -80,7 +80,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void AdvancedSettings_OnSettingsChanged()
     {
-      Log.Info("LCDHypeWrapper.AdvancedSettings_OnSettingsChanged(): called", new object[0]);
+      Log.Info("LCDHypeWrapper.AdvancedSettings_OnSettingsChanged(): called");
       this.CleanUp();
       this.LoadAdvancedSettings();
       Thread.Sleep(100);
@@ -93,14 +93,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public void CleanUp()
     {
-      Log.Info("LCDHypeWrapper.Cleanup(): called", new object[0]);
+      Log.Info("LCDHypeWrapper.Cleanup(): called");
       AdvancedSettings.OnSettingsChanged -=
         new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
       if (this.EQSettings.UseEqDisplay || this.DisplaySettings.BlankDisplayWithVideo)
       {
         while (this._EqThread.IsAlive)
         {
-          Log.Info("LCDHypeWrapper.Cleanup(): Stoping Display_Update() Thread", new object[0]);
+          Log.Info("LCDHypeWrapper.Cleanup(): Stoping Display_Update() Thread");
           lock (this.ThreadMutex)
           {
             _stopUpdateEqThread = true;
@@ -140,12 +140,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         this.LCD_CleanUp();
       }
       Label_024D:
-      Log.Info("LCDHypeWrapper.Cleanup(): completed", new object[0]);
+      Log.Info("LCDHypeWrapper.Cleanup(): completed");
     }
 
     public void Clear()
     {
-      Log.Debug("LCDHypeWrapper.Clear(): called", new object[0]);
+      Log.Debug("LCDHypeWrapper.Clear(): called");
       if (Settings.Instance.ForceGraphicText)
       {
         Bitmap bitmap = new Bitmap(this.LCD_CONFIG.ColumnsGraphics, this.LCD_CONFIG.RowsGraphics);
@@ -159,7 +159,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           this.LCDHypeWrapper_SetLine(i, str);
         }
       }
-      Log.Debug("LCDHypeWrapper.Clear(): completed", new object[0]);
+      Log.Debug("LCDHypeWrapper.Clear(): completed");
     }
 
     public void Configure()
@@ -321,7 +321,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (this.DoDebug)
           {
-            Log.Info("LCDHypeWrapper.Display_Update(): Checking for Thread termination request", new object[0]);
+            Log.Info("LCDHypeWrapper.Display_Update(): Checking for Thread termination request");
           }
           if (_stopUpdateEqThread)
           {
@@ -331,7 +331,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             if (this.DoDebug)
             {
-              Log.Info("LCDHypeWrapper.Display_Update(): Display_Update Thread terminating", new object[0]);
+              Log.Info("LCDHypeWrapper.Display_Update(): Display_Update Thread terminating");
             }
             _stopUpdateEqThread = false;
             return;
@@ -364,7 +364,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               if (this.DoDebug)
               {
-                Log.Info("LCDHypeWrapper.Display_Update(): Turning off display while playing video", new object[0]);
+                Log.Info("LCDHypeWrapper.Display_Update(): Turning off display while playing video");
               }
               this.DisplayOff();
             }
@@ -464,15 +464,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           if (this.DoDebug)
           {
-            Log.Info("LCDHypeWrapper.DisplayOff(): DisplayControlAction Timeout expired.", new object[0]);
+            Log.Info("LCDHypeWrapper.DisplayOff(): DisplayControlAction Timeout expired.");
           }
           this.DisplaySettings._DisplayControlAction = false;
           this.DisplaySettings._DisplayControlLastAction = 0L;
         }
-        Log.Info("LCDHypeWrapper.DisplayOff(): completed", new object[0]);
+        Log.Info("LCDHypeWrapper.DisplayOff(): completed");
         lock (this.DWriteMutex)
         {
-          Log.Info("MODisplay.DisplayOff(): Turning display OFF", new object[0]);
+          Log.Info("MODisplay.DisplayOff(): Turning display OFF");
           this.Clear();
           this._IsDisplayOff = true;
           if (this.info.SupportLightSlider)
@@ -485,7 +485,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                     this.LCD_CONFIG.UnderLineMode, this.LCD_CONFIG.UnderlineOutput);
           }
         }
-        Log.Info("LCDHypeWrapper.DisplayOff(): completed", new object[0]);
+        Log.Info("LCDHypeWrapper.DisplayOff(): completed");
       }
     }
 
@@ -493,10 +493,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (this._IsDisplayOff)
       {
-        Log.Info("LCDHypeWrapper.DisplayOn(): called", new object[0]);
+        Log.Info("LCDHypeWrapper.DisplayOn(): called");
         lock (this.DWriteMutex)
         {
-          Log.Info("LCDHypeWrapper.DisplayOn(): Turning Display ON", new object[0]);
+          Log.Info("LCDHypeWrapper.DisplayOn(): Turning Display ON");
           this._IsDisplayOff = false;
           if (this.info.SupportLightSlider)
           {
@@ -509,7 +509,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
         }
         this._IsDisplayOff = false;
-        Log.Info("LCDHypeWrapper.DisplayOn(): completed", new object[0]);
+        Log.Info("LCDHypeWrapper.DisplayOn(): completed");
       }
     }
 
@@ -587,7 +587,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public void Initialize()
     {
-      Log.Info("LCDHypeWrapper.Initialize(): called", new object[0]);
+      Log.Info("LCDHypeWrapper.Initialize(): called");
       this.LCD_Init();
       this.LCD_SetIOPropertys(this.LCD_CONFIG.Port, this.LCD_CONFIG.DelayText, this.LCD_CONFIG.DelayGraphics,
                               this.LCD_CONFIG.ColumnsText, this.LCD_CONFIG.RowsText, this.LCD_CONFIG.ColumnsGraphics,
@@ -600,7 +600,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.LoadAdvancedSettings();
       if (this.EQSettings.UseEqDisplay || this.DisplaySettings.BlankDisplayWithVideo)
       {
-        Log.Info("LCDHypeWrapper.Setup(): starting Display_Update() thread", new object[0]);
+        Log.Info("LCDHypeWrapper.Setup(): starting Display_Update() thread");
         this._EqThread = new Thread(new ThreadStart(this.Display_Update));
         this._EqThread.IsBackground = true;
         this._EqThread.Priority = ThreadPriority.BelowNormal;
@@ -608,14 +608,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         this._EqThread.Start();
         if (this._EqThread.IsAlive)
         {
-          Log.Info("LCDHypeWrapper.Setup(): Display_Update() Thread Started", new object[0]);
+          Log.Info("LCDHypeWrapper.Setup(): Display_Update() Thread Started");
         }
         else
         {
-          Log.Info("LCDHypeWrapper.Setup(): Display_Update() FAILED TO START", new object[0]);
+          Log.Info("LCDHypeWrapper.Setup(): Display_Update() FAILED TO START");
         }
       }
-      Log.Info("LCDHypeWrapper.Initialize(): completed", new object[0]);
+      Log.Info("LCDHypeWrapper.Initialize(): completed");
     }
 
     public bool IsReadyToReceive()
@@ -631,7 +631,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (this.DoDebug)
       {
-        Log.Info("LCDHypeWrapper.LCD_CleanUp()", new object[0]);
+        Log.Info("LCDHypeWrapper.LCD_CleanUp()");
       }
       this.m_tDllReg.InvokeMember("LCD_CleanUp", BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static,
                                   null, null, null);
@@ -639,7 +639,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public void LCD_Init()
     {
-      Log.Info("LCDHypeWrapper.LCD_Init()", new object[0]);
+      Log.Info("LCDHypeWrapper.LCD_Init()");
       this.m_tDllReg.InvokeMember("LCD_Init", BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static,
                                   null, null, null);
     }
@@ -687,7 +687,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void LoadAdvancedSettings()
     {
-      Log.Info("LCDHypeWrapper.LoadAdvancedSettings(): Called", new object[0]);
+      Log.Info("LCDHypeWrapper.LoadAdvancedSettings(): Called");
       AdvancedSettings settings = AdvancedSettings.Load();
       this.IdleMessage = (Settings.Instance.IdleMessage != string.Empty) ? Settings.Instance.IdleMessage : "MediaPortal";
       this._ReverseLightContrast = AdvancedSettings.Instance.ReverseLightContrast;
@@ -765,7 +765,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                new object[] {this.DisplaySettings._BlankIdleTimeout/0xf4240L});
       Log.Info("LCDHypeWrapper.LoadAdvancedSettings(): Setting - Audio using ASIO: {0}",
                new object[] {this.EQSettings._AudioUseASIO});
-      Log.Info("LCDHypeWrapper.LoadAdvancedSettings(): Completed", new object[0]);
+      Log.Info("LCDHypeWrapper.LoadAdvancedSettings(): Completed");
       FileInfo info = new FileInfo(Config.GetFile(Config.Dir.Config, "MiniDisplay_LCDHypeWrapper.xml"));
       this.SettingsLastModTime = info.LastWriteTime;
       this.LastSettingsCheck = DateTime.Now;
@@ -797,7 +797,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         this.DisplaySettings._DisplayControlLastAction = DateTime.Now.Ticks;
         if (this.DoDebug)
         {
-          Log.Info("LCDHypeWrapper.OnExternalAction(): received DisplayControlAction", new object[0]);
+          Log.Info("LCDHypeWrapper.OnExternalAction(): received DisplayControlAction");
         }
         this.DisplayOn();
       }
@@ -898,7 +898,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (this.DoDebug)
           {
-            Log.Info("LCDHypeWrapper.RenderEQ(): Drawing VU meter", new object[0]);
+            Log.Info("LCDHypeWrapper.RenderEQ(): Drawing VU meter");
           }
           string strLeft = "";
           string strRight = "";
@@ -1005,13 +1005,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.UpdateAdvancedSettings();
       if (this.DoDebug)
       {
-        Log.Info("LCDHypeWrapper.SetLine() Called", new object[0]);
+        Log.Info("LCDHypeWrapper.SetLine() Called");
       }
       if (this.EQSettings._EqDataAvailable || this._IsDisplayOff)
       {
         if (this.DoDebug)
         {
-          Log.Info("LCDHypeWrapper.SetLine(): Suppressing display update!", new object[0]);
+          Log.Info("LCDHypeWrapper.SetLine(): Suppressing display update!");
         }
       }
       else
@@ -1023,7 +1023,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         this.LCDHypeWrapper_SetLine(line, message);
         if (this.DoDebug)
         {
-          Log.Info("LCDHypeWrapper.SetLine(): message sent to display", new object[0]);
+          Log.Info("LCDHypeWrapper.SetLine(): message sent to display");
         }
       }
       MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
@@ -1040,7 +1040,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (this.DoDebug)
             {
-              Log.Info("LCDHypeWrapper.SetLine(): MP going IDLE", new object[0]);
+              Log.Info("LCDHypeWrapper.SetLine(): MP going IDLE");
             }
             this.DisplaySettings._BlankIdleTime = DateTime.Now.Ticks;
           }
@@ -1049,7 +1049,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (this.DoDebug)
             {
-              Log.Info("LCDHypeWrapper.SetLine(): Blanking display due to IDLE state", new object[0]);
+              Log.Info("LCDHypeWrapper.SetLine(): Blanking display due to IDLE state");
             }
             this.DisplayOff();
           }
@@ -1062,7 +1062,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (this.DoDebug)
           {
-            Log.Info("LCDHypeWrapper.SetLine(): MP no longer IDLE - restoring display", new object[0]);
+            Log.Info("LCDHypeWrapper.SetLine(): MP no longer IDLE - restoring display");
           }
           this.DisplayOn();
         }
@@ -1086,7 +1086,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       this.DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
       Log.Info("{0}", new object[] {this.Description});
-      Log.Info("LCDHypeWrapper.Setup(): called", new object[0]);
+      Log.Info("LCDHypeWrapper.Setup(): called");
       this.LoadAdvancedSettings();
       this.LCD_CONFIG.Port = _port;
       this.LCD_CONFIG.DelayText = _time;
@@ -1123,7 +1123,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this.DoDebug)
         {
-          Log.Info("LCDHypeWrapper.UpdateAdvancedSettings(): called", new object[0]);
+          Log.Info("LCDHypeWrapper.UpdateAdvancedSettings(): called");
         }
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_LCDHypeWrapper.xml")))
         {
@@ -1132,14 +1132,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (this.DoDebug)
             {
-              Log.Info("LCDHypeWrapper.UpdateAdvancedSettings(): updating advanced settings", new object[0]);
+              Log.Info("LCDHypeWrapper.UpdateAdvancedSettings(): updating advanced settings");
             }
             this.LoadAdvancedSettings();
           }
         }
         if (this.DoDebug)
         {
-          Log.Info("LCDHypeWrapper.UpdateAdvancedSettings(): completed", new object[0]);
+          Log.Info("LCDHypeWrapper.UpdateAdvancedSettings(): completed");
         }
       }
     }
@@ -1220,7 +1220,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       private static void Default(AdvancedSettings _settings)
       {
-        Log.Info("LCDHypeWrapper.AdvancedSettings.Default(): called", new object[0]);
+        Log.Info("LCDHypeWrapper.AdvancedSettings.Default(): called");
         _settings.EqDisplay = false;
         _settings.NormalEQ = false;
         _settings.StereoEQ = false;
@@ -1239,16 +1239,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         _settings.EQTitleShowTime = 2;
         _settings.BlankDisplayWhenIdle = false;
         _settings.BlankIdleTime = 30;
-        Log.Info("LCDHypeWrapper.AdvancedSettings.Default(): completed", new object[0]);
+        Log.Info("LCDHypeWrapper.AdvancedSettings.Default(): completed");
       }
 
       public static AdvancedSettings Load()
       {
         AdvancedSettings settings;
-        Log.Info("LCDHypeWrapper.AdvancedSettings.Load(): started", new object[0]);
+        Log.Info("LCDHypeWrapper.AdvancedSettings.Load(): started");
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_LCDHypeWrapper.xml")))
         {
-          Log.Info("LCDHypeWrapper.AdvancedSettings.Load(): Loading settings from XML file", new object[0]);
+          Log.Info("LCDHypeWrapper.AdvancedSettings.Load(): Loading settings from XML file");
           XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
           XmlTextReader xmlReader =
             new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_LCDHypeWrapper.xml"));
@@ -1257,11 +1257,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         else
         {
-          Log.Info("LCDHypeWrapper.AdvancedSettings.Load(): Loading settings from defaults", new object[0]);
+          Log.Info("LCDHypeWrapper.AdvancedSettings.Load(): Loading settings from defaults");
           settings = new AdvancedSettings();
           Default(settings);
         }
-        Log.Info("LCDHypeWrapper.AdvancedSettings.Load(): completed", new object[0]);
+        Log.Info("LCDHypeWrapper.AdvancedSettings.Load(): completed");
         return settings;
       }
 
@@ -1280,7 +1280,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public static void Save(AdvancedSettings ToSave)
       {
-        Log.Info("LCDHypeWrapper.AdvancedSettings.Save(): Saving settings to XML file", new object[0]);
+        Log.Info("LCDHypeWrapper.AdvancedSettings.Save(): Saving settings to XML file");
         XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
         XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_LCDHypeWrapper.xml"),
                                                  Encoding.UTF8);
@@ -1288,7 +1288,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         writer.Indentation = 2;
         serializer.Serialize((XmlWriter) writer, ToSave);
         writer.Close();
-        Log.Info("LCDHypeWrapper.AdvancedSettings.Save(): completed", new object[0]);
+        Log.Info("LCDHypeWrapper.AdvancedSettings.Save(): completed");
       }
 
       public static void SetDefaults()

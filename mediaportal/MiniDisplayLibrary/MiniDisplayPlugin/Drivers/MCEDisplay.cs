@@ -24,9 +24,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public void CleanUp()
     {
-      Log.Info("MCEDisplay.Cleanup(): called", new object[0]);
+      Log.Info("MCEDisplay.Cleanup(): called");
       this.Stop();
-      Log.Info("MCEDisplay.Cleanup(): completed", new object[0]);
+      Log.Info("MCEDisplay.Cleanup(): completed");
     }
 
     public void Configure()
@@ -48,30 +48,30 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         new object[] {tag, tagValue});
       if (tag == "#Play.Current.File")
       {
-        Log.Info("MCEDisplay.GUIPropertyManager_OnPropertyChanged(): Play switch detected", new object[0]);
+        Log.Info("MCEDisplay.GUIPropertyManager_OnPropertyChanged(): Play switch detected");
         this.playSwitched = true;
         if (GUIPropertyManager.GetProperty("#duration").Length == 0)
         {
-          Log.Info("MCEDisplay.GUIPropertyManager_OnPropertyChanged(): duration not filled yet", new object[0]);
+          Log.Info("MCEDisplay.GUIPropertyManager_OnPropertyChanged(): duration not filled yet");
         }
       }
       else if (tag == "#currentmodule")
       {
-        Log.Info("MCEDisplay.GUIPropertyManager_OnPropertyChanged(): menu switch detected", new object[0]);
+        Log.Info("MCEDisplay.GUIPropertyManager_OnPropertyChanged(): menu switch detected");
         this.playSwitched = true;
       }
     }
 
     public void Initialize()
     {
-      Log.Info("MCEDisplay.Initialize(): called", new object[0]);
+      Log.Info("MCEDisplay.Initialize(): called");
       this.Start();
-      Log.Info("MCEDisplay.Initialize(): completed", new object[0]);
+      Log.Info("MCEDisplay.Initialize(): completed");
     }
 
     private void Run()
     {
-      Log.Info("MCEDisplay: plugin thread starting...", new object[0]);
+      Log.Info("MCEDisplay: plugin thread starting...");
       Label_0010:
       try
       {
@@ -124,7 +124,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             this.mediaSession.Dispose();
           }
-          Log.Info("MCEDisplay: caught thread stop request... plugin thread stopping...", new object[0]);
+          Log.Info("MCEDisplay: caught thread stop request... plugin thread stopping...");
           return;
         }
         Log.Info("MCEDisplay: Caught the following exception: {0}\n{1}",
@@ -136,7 +136,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           goto Label_0010;
         }
-        Log.Debug("MCEDisplay.Run(): MCEDisplay Thread terminating", new object[0]);
+        Log.Debug("MCEDisplay.Run(): MCEDisplay Thread terminating");
         if (this.mediaSession != null)
         {
           this.mediaSession.Dispose();
@@ -161,31 +161,31 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                       bool _backLight, int _backlightLevel, bool _contrast, int _contrastLevel, bool _blankOnExit)
     {
       Log.Info("{0}", new object[] {this.Description});
-      Log.Info("MCEDisplay.Setup(): called", new object[0]);
+      Log.Info("MCEDisplay.Setup(): called");
     }
 
     public void Start()
     {
-      Log.Info("MCEDisplay.Start(): Starting MCEDisplay driver", new object[0]);
+      Log.Info("MCEDisplay.Start(): Starting MCEDisplay driver");
       this.mainThread = new Thread(new ThreadStart(this.Run));
       this.mainThread.Start();
       GUIPropertyManager.OnPropertyChanged +=
         new GUIPropertyManager.OnPropertyChangedHandler(this.GUIPropertyManager_OnPropertyChanged);
-      Log.Info("MCEDisplay.Start(): MCEDisplay driver started", new object[0]);
+      Log.Info("MCEDisplay.Start(): MCEDisplay driver started");
     }
 
     public void Stop()
     {
-      Log.Info("MCEDisplay.Stop(): Stopping MCEDisplay driver", new object[0]);
+      Log.Info("MCEDisplay.Stop(): Stopping MCEDisplay driver");
       stopRequested = true;
       Thread.Sleep(100);
       while ((this.mainThread != null) && this.mainThread.IsAlive)
       {
-        Log.Info("MCEDisplay.Stop(): waiting for display thread to stop...!", new object[0]);
+        Log.Info("MCEDisplay.Stop(): waiting for display thread to stop...!");
         Application.DoEvents();
         Thread.Sleep(100);
       }
-      Log.Info("MCEDisplay.Stop(): MCEDisplay driver STOPPED!", new object[0]);
+      Log.Info("MCEDisplay.Stop(): MCEDisplay driver STOPPED!");
     }
 
     public string Description
@@ -226,7 +226,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public HomeSession()
       {
-        Log.Info("MCEDisplay.HomeSession: Creating HOME session", new object[0]);
+        Log.Info("MCEDisplay.HomeSession: Creating HOME session");
         MediaStatusPropertyTag[] tags = new MediaStatusPropertyTag[1];
         object[] vals = new object[1];
         tags[0] = MediaStatusPropertyTag.FS_Home;
@@ -236,7 +236,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public override void Dispose()
       {
-        Log.Info("MCEDisplay.HomeSession: Closing Home Session", new object[0]);
+        Log.Info("MCEDisplay.HomeSession: Closing Home Session");
         MediaStatusPropertyTag[] tags = new MediaStatusPropertyTag[] {MediaStatusPropertyTag.SessionEnd};
         object[] vals = new object[] {true};
         base.SetStatus(tags, vals);
@@ -340,7 +340,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       static MCESession()
       {
-        Log.Info("MCESession: Enumerating IMediaStatusSink implementations", new object[0]);
+        Log.Info("MCESession: Enumerating IMediaStatusSink implementations");
         ArrayList list = new ArrayList();
         RegistryKey key = Registry.ClassesRoot.OpenSubKey("CLSID");
         foreach (string str in key.GetSubKeyNames())
@@ -390,25 +390,25 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           sinks[j].Initialize();
         }
-        Log.Info("MCESession: Enumerating IMediaStatusSink completed", new object[0]);
+        Log.Info("MCESession: Enumerating IMediaStatusSink completed");
       }
 
       public MCESession()
       {
-        Log.Info("MCESession: creating MCESession", new object[0]);
+        Log.Info("MCESession: creating MCESession");
         this.session = CreateSession();
-        Log.Info("MCESession: MCESession created", new object[0]);
+        Log.Info("MCESession: MCESession created");
       }
 
       protected void CloseSession()
       {
         if (this.session == null)
         {
-          Log.Info("MCEDisplay.MCESession.CloseSession(): SESSION DOES NOT EXIST", new object[0]);
+          Log.Info("MCEDisplay.MCESession.CloseSession(): SESSION DOES NOT EXIST");
         }
         else
         {
-          Log.Info("MCEDisplay.MCESession.CloseSession(): CLOSING SESSION", new object[0]);
+          Log.Info("MCEDisplay.MCESession.CloseSession(): CLOSING SESSION");
           for (int i = 0; i < this.session.Length; i++)
           {
             try
@@ -421,13 +421,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                        new object[] {i, exception});
             }
           }
-          Log.Info("MCEDisplay.MCESession.CloseSession(): SESSION CLOSED", new object[0]);
+          Log.Info("MCEDisplay.MCESession.CloseSession(): SESSION CLOSED");
         }
       }
 
       protected static IMediaStatusSession[] CreateSession()
       {
-        Log.Info("MCEDisplay.MCESession.CreateSession(): creating MCESession", new object[0]);
+        Log.Info("MCEDisplay.MCESession.CreateSession(): creating MCESession");
         IMediaStatusSession[] sessionArray = new IMediaStatusSession[sinks.Length];
         for (int i = 0; i < sinks.Length; i++)
         {
@@ -437,17 +437,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Info("MCEDisplay.MCESession.CreateSession():    CREATED MCESession for sink {0} of {1}",
                    new object[] {i + 1, sinks.Length});
         }
-        Log.Info("MCEDisplay.MCESession.CreateSession(): MCESession created", new object[0]);
+        Log.Info("MCEDisplay.MCESession.CreateSession(): MCESession created");
         return sessionArray;
       }
 
       public virtual void Dispose()
       {
-        Log.Info("MCESession: disposing session.", new object[0]);
+        Log.Info("MCESession: disposing session.");
         if (this.session != null)
         {
           this.CloseSession();
-          Log.Info("MCESession: SESSION DISPOSED.", new object[0]);
+          Log.Info("MCESession: SESSION DISPOSED.");
         }
       }
 
@@ -514,7 +514,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public MusicSession()
       {
-        Log.Info("MCEDisplay.MusicSession: Creating music session", new object[0]);
+        Log.Info("MCEDisplay.MusicSession: Creating music session");
         string property = GUIPropertyManager.GetProperty("#duration");
         string str2 = GUIPropertyManager.GetProperty("#Play.Current.Album");
         string str3 = GUIPropertyManager.GetProperty("#Play.Current.Artist");
@@ -537,7 +537,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public override void Dispose()
       {
-        Log.Info("MCEDisplay.MusicSession: STOPPING music session", new object[0]);
+        Log.Info("MCEDisplay.MusicSession: STOPPING music session");
         MediaStatusPropertyTag[] tags = new MediaStatusPropertyTag[] {MediaStatusPropertyTag.Stop};
         object[] vals = new object[] {true};
         base.SetStatus(tags, vals);
@@ -589,28 +589,28 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             case 1:
               tags = new MediaStatusPropertyTag[] {MediaStatusPropertyTag.Pause};
               vals = new object[] {true};
-              Log.Info("MCEDisplay.MusicSession.Process(): Updating PlayState to PAUSED", new object[0]);
+              Log.Info("MCEDisplay.MusicSession.Process(): Updating PlayState to PAUSED");
               base.SetStatus(tags, vals);
               break;
 
             case 2:
               tags = new MediaStatusPropertyTag[] {MediaStatusPropertyTag.Play};
               vals = new object[] {true};
-              Log.Info("MCEDisplay.MusicSession.Process(): Updating PlayState to PLAY", new object[0]);
+              Log.Info("MCEDisplay.MusicSession.Process(): Updating PlayState to PLAY");
               base.SetStatus(tags, vals);
               break;
 
             case 3:
               tags = new MediaStatusPropertyTag[] {MediaStatusPropertyTag.FF1};
               vals = new object[] {true};
-              Log.Info("MCEDisplay.MusicSession.Process(): Updating PlayState to FASTFORWARD", new object[0]);
+              Log.Info("MCEDisplay.MusicSession.Process(): Updating PlayState to FASTFORWARD");
               base.SetStatus(tags, vals);
               break;
 
             case 4:
               tags = new MediaStatusPropertyTag[] {MediaStatusPropertyTag.Rewind1};
               vals = new object[] {true};
-              Log.Info("MCEDisplay.MusicSession.Process(): Updating PlayState to REWIND", new object[0]);
+              Log.Info("MCEDisplay.MusicSession.Process(): Updating PlayState to REWIND");
               base.SetStatus(tags, vals);
               break;
 
@@ -619,7 +619,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               {
                 tags = new MediaStatusPropertyTag[] {MediaStatusPropertyTag.Stop, MediaStatusPropertyTag.MediaControl};
                 vals = new object[] {true, false};
-                Log.Info("MCEDisplay.MusicSession.Process(): Updating PlayState to STOP", new object[0]);
+                Log.Info("MCEDisplay.MusicSession.Process(): Updating PlayState to STOP");
                 base.SetStatus(tags, vals);
               }
               break;
@@ -654,7 +654,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public RadioSession()
       {
-        Log.Info("MCEDisplay.RadioSession: Creating Radio session", new object[0]);
+        Log.Info("MCEDisplay.RadioSession: Creating Radio session");
         string property = GUIPropertyManager.GetProperty("#Play.Current.Title");
         MediaStatusPropertyTag[] tags = new MediaStatusPropertyTag[]
                                           {MediaStatusPropertyTag.Radio, MediaStatusPropertyTag.RadioFrequency};
@@ -668,7 +668,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public override void Dispose()
       {
-        Log.Info("MCEDisplay.RadioSession: STOPPING Radio session", new object[0]);
+        Log.Info("MCEDisplay.RadioSession: STOPPING Radio session");
         MediaStatusPropertyTag[] tags = new MediaStatusPropertyTag[] {MediaStatusPropertyTag.Stop};
         object[] vals = new object[] {true};
         base.SetStatus(tags, vals);
@@ -710,7 +710,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public RecordedTVSession()
       {
-        Log.Info("MCEDisplay.RecordedTVSession: Creating Recording session", new object[0]);
+        Log.Info("MCEDisplay.RecordedTVSession: Creating Recording session");
         MediaStatusPropertyTag[] tags = new MediaStatusPropertyTag[] {MediaStatusPropertyTag.PVR};
         object[] vals = new object[] {true};
         base.SetStatus(tags, vals);
@@ -721,7 +721,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public override void Dispose()
       {
-        Log.Info("MCEDisplay.RecordedTVSession: Stopping Recording session", new object[0]);
+        Log.Info("MCEDisplay.RecordedTVSession: Stopping Recording session");
         MediaStatusPropertyTag[] tags = new MediaStatusPropertyTag[] {MediaStatusPropertyTag.Stop};
         object[] vals = new object[] {true};
         base.SetStatus(tags, vals);
@@ -798,7 +798,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public TVSession()
       {
-        Log.Info("MCEDisplay.TVSession: Creating TV session", new object[0]);
+        Log.Info("MCEDisplay.TVSession: Creating TV session");
         MediaStatusPropertyTag[] tags = new MediaStatusPropertyTag[] {MediaStatusPropertyTag.TVTuner};
         object[] vals = new object[] {true};
         base.SetStatus(tags, vals);
@@ -806,7 +806,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public override void Dispose()
       {
-        Log.Info("MCEDisplay.TVSession: Stopping TV session", new object[0]);
+        Log.Info("MCEDisplay.TVSession: Stopping TV session");
         MediaStatusPropertyTag[] tags = new MediaStatusPropertyTag[] {MediaStatusPropertyTag.Stop};
         object[] vals = new object[] {true};
         base.SetStatus(tags, vals);
@@ -907,7 +907,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public VideoSession()
       {
-        Log.Info("MCEDisplay.VideoSession: Creating Video session", new object[0]);
+        Log.Info("MCEDisplay.VideoSession: Creating Video session");
         MediaStatusPropertyTag[] tags = null;
         object[] vals = null;
         tags = new MediaStatusPropertyTag[]
@@ -925,7 +925,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public override void Dispose()
       {
-        Log.Info("MCEDisplay.VideoSession: Stopping Video session", new object[0]);
+        Log.Info("MCEDisplay.VideoSession: Stopping Video session");
         MediaStatusPropertyTag[] tags = new MediaStatusPropertyTag[] {MediaStatusPropertyTag.Stop};
         object[] vals = new object[] {true};
         base.SetStatus(tags, vals);
@@ -975,28 +975,28 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             case 1:
               tags = new MediaStatusPropertyTag[] {MediaStatusPropertyTag.Pause};
               vals = new object[] {true};
-              Log.Info("MCEDisplay.VideoSession.Process(): Updating PlayState to PAUSED", new object[0]);
+              Log.Info("MCEDisplay.VideoSession.Process(): Updating PlayState to PAUSED");
               base.SetStatus(tags, vals);
               break;
 
             case 2:
               tags = new MediaStatusPropertyTag[] {MediaStatusPropertyTag.Play};
               vals = new object[] {true};
-              Log.Info("MCEDisplay.VideoSession.Process(): Updating PlayState to PLAY", new object[0]);
+              Log.Info("MCEDisplay.VideoSession.Process(): Updating PlayState to PLAY");
               base.SetStatus(tags, vals);
               break;
 
             case 3:
               tags = new MediaStatusPropertyTag[] {MediaStatusPropertyTag.FF1};
               vals = new object[] {true};
-              Log.Info("MCEDisplay.VideoSession.Process(): Updating PlayState to FASTFORWARD", new object[0]);
+              Log.Info("MCEDisplay.VideoSession.Process(): Updating PlayState to FASTFORWARD");
               base.SetStatus(tags, vals);
               break;
 
             case 4:
               tags = new MediaStatusPropertyTag[] {MediaStatusPropertyTag.Rewind1};
               vals = new object[] {true};
-              Log.Info("MCEDisplay.VideoSession.Process(): Updating PlayState to REWIND", new object[0]);
+              Log.Info("MCEDisplay.VideoSession.Process(): Updating PlayState to REWIND");
               base.SetStatus(tags, vals);
               break;
           }

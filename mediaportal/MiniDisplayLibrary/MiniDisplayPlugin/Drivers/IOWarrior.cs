@@ -37,7 +37,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void AdvancedSettings_OnSettingsChanged()
     {
-      Log.Info("IOWarrior.AdvancedSettings_OnSettingsChanged(): called", new object[0]);
+      Log.Info("IOWarrior.AdvancedSettings_OnSettingsChanged(): called");
       CleanUp();
       LoadAdvancedSettings();
       Thread.Sleep(100);
@@ -52,7 +52,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (iowcommDisplay.IsOpen)
       {
-        Log.Debug("IOWarrior.CleanUp() - called", new object[0]);
+        Log.Debug("IOWarrior.CleanUp() - called");
         iowcommDisplay.ClearDisplay();
         iowcommDisplay.CloseDisplay();
         AdvancedSettings.OnSettingsChanged -=
@@ -64,7 +64,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (iowcommDisplay.IsOpen)
       {
-        Log.Debug("IOWarrior.Clear() - called", new object[0]);
+        Log.Debug("IOWarrior.Clear() - called");
         iowcommDisplay.ClearDisplay();
       }
     }
@@ -76,17 +76,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public void Dispose()
     {
-      Log.Debug("IOWarrior.Dispose() - called", new object[0]);
+      Log.Debug("IOWarrior.Dispose() - called");
     }
 
     public void DrawImage(Bitmap bitmap)
     {
       if (!_isDisabled && iowcommDisplay.IsOpen)
       {
-        Log.Debug("IOWarrior.DrawImage() - called", new object[0]);
+        Log.Debug("IOWarrior.DrawImage() - called");
         if (bitmap == null)
         {
-          Log.Debug("IOWarrior.DrawImage():  bitmap null", new object[0]);
+          Log.Debug("IOWarrior.DrawImage():  bitmap null");
         }
         else
         {
@@ -111,14 +111,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           byte[] buffer = sha256.ComputeHash(ReceivedBitmapData);
           if (ByteArray.AreEqual(buffer, lastHash))
           {
-            Log.Debug("IOWarrior.DrawImage() - completed - bitmap not changed", new object[0]);
+            Log.Debug("IOWarrior.DrawImage() - completed - bitmap not changed");
           }
           else
           {
             lastHash = buffer;
             iowcommDisplay.SendImage(bitmap);
             UpdateAdvancedSettings();
-            Log.Debug("IOWarrior.DrawImage() - completed", new object[0]);
+            Log.Debug("IOWarrior.DrawImage() - completed");
           }
         }
       }
@@ -135,18 +135,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         _IsOpen = iowcommDisplay.OpenDisplay(AdvSettings);
         if (_IsOpen)
         {
-          Log.Debug("IOWarrior.Initialize() - Display opened.", new object[0]);
+          Log.Debug("IOWarrior.Initialize() - Display opened.");
           _isDisabled = false;
           AdvancedSettings.OnSettingsChanged +=
             new AdvancedSettings.OnSettingsChangedHandler(AdvancedSettings_OnSettingsChanged);
         }
         else
         {
-          Log.Debug("IOWarrior.Initialize() - Unable to open device - display disabled", new object[0]);
+          Log.Debug("IOWarrior.Initialize() - Unable to open device - display disabled");
           _isDisabled = true;
           _errorMessage = "IOWarrior.Initialize() failed... No IOWarrior display found";
         }
-        Log.Debug("IOWarrior.Initialize() - completed", new object[0]);
+        Log.Debug("IOWarrior.Initialize() - completed");
         Clear();
       }
     }
@@ -172,7 +172,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       _IsConfiguring = Assembly.GetEntryAssembly().FullName.Contains("Configuration");
       DoDebug = _IsConfiguring | Settings.Instance.ExtensiveLogging;
-      Log.Info("IOWarrior.Setup() - called", new object[0]);
+      Log.Info("IOWarrior.Setup() - called");
       Log.Info("IOWarrior.Setup(): IOWarrior Graphical LCD Driver - {0}", new object[] {Description});
       Log.Info("IOWarrior.Setup(): Called by \"{0}\".", new object[] {Assembly.GetEntryAssembly().FullName});
       FileInfo info = new FileInfo(Assembly.GetExecutingAssembly().Location);
@@ -194,12 +194,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         _Gcols = _colsG;
         if (_Gcols > 0x80)
         {
-          Log.Info("IOWarrior.Setup() - Invalid Graphics Columns value", new object[0]);
+          Log.Info("IOWarrior.Setup() - Invalid Graphics Columns value");
           _Grows = 0x80;
         }
         if (_Grows > 0x40)
         {
-          Log.Info("IOWarrior.Setup() - Invalid Graphics Lines value", new object[0]);
+          Log.Info("IOWarrior.Setup() - Invalid Graphics Lines value");
           _Grows = 0x40;
         }
       }
@@ -209,7 +209,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         _isDisabled = true;
         _errorMessage = "IOWarrior.setup() failed... Did you copy the required files to the MediaPortal directory?";
       }
-      Log.Info("IOWarrior.Setup() - completed", new object[0]);
+      Log.Info("IOWarrior.Setup() - completed");
     }
 
     private void UpdateAdvancedSettings()
@@ -218,7 +218,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (DoDebug)
         {
-          Log.Info("IOWarrior.UpdateAdvancedSettings(): called", new object[0]);
+          Log.Info("IOWarrior.UpdateAdvancedSettings(): called");
         }
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_IOWarrior.xml")))
         {
@@ -227,14 +227,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (DoDebug)
             {
-              Log.Info("IOWarrior.UpdateAdvancedSettings(): updating advanced settings", new object[0]);
+              Log.Info("IOWarrior.UpdateAdvancedSettings(): updating advanced settings");
             }
             LoadAdvancedSettings();
           }
         }
         if (DoDebug)
         {
-          Log.Info("IOWarrior.UpdateAdvancedSettings(): completed", new object[0]);
+          Log.Info("IOWarrior.UpdateAdvancedSettings(): completed");
         }
       }
     }
@@ -263,7 +263,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           _errorMessage = "Required file \"iowkit.dll\" is not installed!\n";
           _isDisabled = true;
-          Log.Info("MatrixGX.IsDisabled() - Required file \"iowkit.dll\" is not installed!", new object[0]);
+          Log.Info("MatrixGX.IsDisabled() - Required file \"iowkit.dll\" is not installed!");
         }
         return _isDisabled;
       }
@@ -336,10 +336,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       public static AdvancedSettings Load()
       {
         AdvancedSettings settings;
-        Log.Debug("IOWarrior.AdvancedSettings.Load() started", new object[0]);
+        Log.Debug("IOWarrior.AdvancedSettings.Load() started");
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_IOWarrior.xml")))
         {
-          Log.Debug("IOWarrior.AdvancedSettings.Load() Loading settings from XML file", new object[0]);
+          Log.Debug("IOWarrior.AdvancedSettings.Load() Loading settings from XML file");
           XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
           XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_IOWarrior.xml"));
           settings = (AdvancedSettings) serializer.Deserialize(xmlReader);
@@ -347,11 +347,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         else
         {
-          Log.Debug("IOWarrior.AdvancedSettings.Load() Loading settings from defaults", new object[0]);
+          Log.Debug("IOWarrior.AdvancedSettings.Load() Loading settings from defaults");
           settings = new AdvancedSettings();
           Default(settings);
         }
-        Log.Debug("IOWarrior.AdvancedSettings.Load() completed", new object[0]);
+        Log.Debug("IOWarrior.AdvancedSettings.Load() completed");
         return settings;
       }
 
@@ -370,7 +370,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public static void Save(AdvancedSettings ToSave)
       {
-        Log.Debug("IOWarrior.AdvancedSettings.Save() Saving settings to XML file", new object[0]);
+        Log.Debug("IOWarrior.AdvancedSettings.Save() Saving settings to XML file");
         XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
         XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_IOWarrior.xml"),
                                                  Encoding.UTF8);
@@ -378,7 +378,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         writer.Indentation = 2;
         serializer.Serialize((XmlWriter) writer, ToSave);
         writer.Close();
-        Log.Debug("IOWarrior.AdvancedSettings.Save() completed", new object[0]);
+        Log.Debug("IOWarrior.AdvancedSettings.Save() completed");
       }
 
       public static void SetDefaults()
@@ -578,7 +578,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (DoDebug)
         {
-          Log.Info("IOWarrior.iMONDisplay constructor: called", new object[0]);
+          Log.Info("IOWarrior.iMONDisplay constructor: called");
         }
         if (_IOWDLL == null)
         {
@@ -587,7 +587,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         AdvancedSettings.Load();
         if (DoDebug)
         {
-          Log.Info("IOWarrior.IOWDisplay constructor: completed", new object[0]);
+          Log.Info("IOWarrior.IOWDisplay constructor: completed");
         }
       }
 
@@ -606,7 +606,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               if (DoDebug)
               {
-                Log.Info("IOWarrior.IOWDisplay.DisplayLines(): MP going IDLE", new object[0]);
+                Log.Info("IOWarrior.IOWDisplay.DisplayLines(): MP going IDLE");
               }
               DisplaySettings._BlankIdleTime = DateTime.Now.Ticks;
             }
@@ -615,7 +615,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               if (DoDebug)
               {
-                Log.Info("IOWarrior.IOWDisplay.DisplayLines(): Blanking display due to IDLE state", new object[0]);
+                Log.Info("IOWarrior.IOWDisplay.DisplayLines(): Blanking display due to IDLE state");
               }
               DisplayOff();
             }
@@ -628,7 +628,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (DoDebug)
             {
-              Log.Info("IOWarrior.IOWDisplay.DisplayLines(): MP no longer IDLE - restoring display", new object[0]);
+              Log.Info("IOWarrior.IOWDisplay.DisplayLines(): MP no longer IDLE - restoring display");
             }
             DisplayOn();
           }
@@ -642,24 +642,24 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           lock (DWriteMutex)
           {
-            Log.Debug("IOWarrior.IOWDisplay.ClearDisplay() - called", new object[0]);
+            Log.Debug("IOWarrior.IOWDisplay.ClearDisplay() - called");
             IOW_Graphics = Graphics.FromImage(IOW_Surface);
             IOW_Graphics.Clear(Color.White);
-            Log.Debug("IOWarrior.IOWDisplay.ClearDisplay() - Sending blank image to device", new object[0]);
+            Log.Debug("IOWarrior.IOWDisplay.ClearDisplay() - Sending blank image to device");
             IOW_ClearDisplay();
           }
-          Log.Debug("IOWarrior.IOWDisplay.ClearDisplay() - completed", new object[0]);
+          Log.Debug("IOWarrior.IOWDisplay.ClearDisplay() - completed");
         }
       }
 
       public void CloseDisplay()
       {
-        Log.Debug("IOWarrior.IOWDisplay.CloseDisplay() - called", new object[0]);
+        Log.Debug("IOWarrior.IOWDisplay.CloseDisplay() - called");
         try
         {
           lock (StopMutex)
           {
-            Log.Debug("IOWarrior.IOWDisplay.CloseDisplay() Stopping DisplayUpdate() Thread", new object[0]);
+            Log.Debug("IOWarrior.IOWDisplay.CloseDisplay() Stopping DisplayUpdate() Thread");
             Thread.Sleep(250);
             stopDisplayUpdateThread = true;
             goto Label_004E;
@@ -671,7 +671,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             goto Label_0047;
           }
-          Log.Debug("IOWarrior.IOWDisplay.CloseDisplay() DisplayUpdate() Thread stopped.", new object[0]);
+          Log.Debug("IOWarrior.IOWDisplay.CloseDisplay() DisplayUpdate() Thread stopped.");
           _isClosing = true;
           lock (DWriteMutex)
           {
@@ -682,7 +682,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             IOW_Handle = 0;
             _isOpen = false;
           }
-          Log.Debug("IOWarrior.IOWDisplay.CloseDisplay() - Display closed.", new object[0]);
+          Log.Debug("IOWarrior.IOWDisplay.CloseDisplay() - Display closed.");
         }
         catch (Exception exception)
         {
@@ -697,7 +697,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (DoDebug)
         {
-          Log.Info("IOWarrior.IOWDisplay.CreateDLLWrapper(): called", new object[0]);
+          Log.Info("IOWarrior.IOWDisplay.CreateDLLWrapper(): called");
         }
         new FileInfo(Assembly.GetEntryAssembly().Location);
         IOW_DLLFile = Config.GetFile(Config.Dir.Base, "iowkit.dll");
@@ -709,7 +709,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (DoDebug)
           {
-            Log.Info("IOWarrior.IOWDisplay.CreateDLLWrapper(): FAILED - iowkit.dll not found", new object[0]);
+            Log.Info("IOWarrior.IOWDisplay.CreateDLLWrapper(): FAILED - iowkit.dll not found");
           }
           return false;
         }
@@ -753,7 +753,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         if (DoDebug)
         {
-          Log.Info("IOWarrior.IOWDisplay.CreateImonDLLWrapper(): Completed - RC DLL wrapper created.", new object[0]);
+          Log.Info("IOWarrior.IOWDisplay.CreateImonDLLWrapper(): Completed - RC DLL wrapper created.");
         }
         return true;
       }
@@ -768,7 +768,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             RectangleF textBounds = GetTextBounds();
             if (DoDebug)
             {
-              Log.Info("MatrixGX.MOGXDisplay.DisplayEQ(): called", new object[0]);
+              Log.Info("MatrixGX.MOGXDisplay.DisplayEQ(): called");
             }
             EQSettings.Render_MaxValue = (EQSettings.UseNormalEq | EQSettings.UseStereoEq)
                                            ? ((int) textBounds.Height)
@@ -875,20 +875,20 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             if (DoDebug)
             {
-              Log.Info("IOWarrior.IOWDisplay.DisplayOff(): DisplayControlAction Timeout expired.", new object[0]);
+              Log.Info("IOWarrior.IOWDisplay.DisplayOff(): DisplayControlAction Timeout expired.");
             }
             DisplaySettings._DisplayControlAction = false;
             DisplaySettings._DisplayControlLastAction = 0L;
           }
-          Log.Info("IOWarrior.IOWDisplay.DisplayOff(): called", new object[0]);
+          Log.Info("IOWarrior.IOWDisplay.DisplayOff(): called");
           lock (DWriteMutex)
           {
-            Log.Info("IOWarrior.IOWDisplay.DisplayOff(): Sending Display OFF command to LCD", new object[0]);
+            Log.Info("IOWarrior.IOWDisplay.DisplayOff(): Sending Display OFF command to LCD");
             IOW_BacklightOff();
             ClearDisplay();
             _IsDisplayOff = true;
           }
-          Log.Info("IOWarrior.IOWDisplay.DisplayOff(): completed", new object[0]);
+          Log.Info("IOWarrior.IOWDisplay.DisplayOff(): completed");
         }
       }
 
@@ -896,14 +896,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (_IsDisplayOff)
         {
-          Log.Info("MatrixGX.MOGXDisplay.DisplayOn(): called", new object[0]);
+          Log.Info("MatrixGX.MOGXDisplay.DisplayOn(): called");
           lock (DWriteMutex)
           {
-            Log.Info("MatrixGX.MOGXDisplay.DisplayOn(): Sending Display ON command to LCD", new object[0]);
+            Log.Info("MatrixGX.MOGXDisplay.DisplayOn(): Sending Display ON command to LCD");
             _IsDisplayOff = false;
             IOW_BacklightOn();
           }
-          Log.Info("MatrixGX.MOGXDisplay.DisplayOn(): called", new object[0]);
+          Log.Info("MatrixGX.MOGXDisplay.DisplayOn(): called");
         }
       }
 
@@ -911,7 +911,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (DoDebug)
         {
-          Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() Starting Display Update Thread", new object[0]);
+          Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() Starting Display Update Thread");
         }
         if (DisplaySettings.BlankDisplayWithVideo & DisplaySettings.EnableDisplayAction)
         {
@@ -925,7 +925,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               if (DoDebug)
               {
-                Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() Display Update Thread terminating", new object[0]);
+                Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() Display Update Thread terminating");
               }
               if (DisplaySettings.BlankDisplayWithVideo & DisplaySettings.EnableDisplayAction)
               {
@@ -937,7 +937,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           MiniDisplayHelper.GetSystemStatus(ref MPStatus);
           if (DoDebug)
           {
-            Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() Collecting status...", new object[0]);
+            Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() Collecting status...");
           }
           if (MPStatus.MediaPlayer_Playing)
           {
@@ -996,7 +996,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           if (DoDebug)
           {
-            Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() Status collected...", new object[0]);
+            Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() Status collected...");
           }
           GetEQ();
           DisplayEQ();
@@ -1004,7 +1004,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (DoDebug)
             {
-              Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() image built - sending to display", new object[0]);
+              Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() image built - sending to display");
             }
             IOW_SendImage(IOW_Surface);
           }
@@ -1012,12 +1012,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (DoDebug)
             {
-              Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() Sleeping...", new object[0]);
+              Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() Sleeping...");
             }
             Thread.Sleep(250);
             if (DoDebug)
             {
-              Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() Waking...", new object[0]);
+              Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() Waking...");
             }
           }
         }
@@ -1272,7 +1272,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                  new object[] {iowHandle});
             if (DoDebug)
             {
-              Log.Info("IOWarrior.IOWDisplay.IOWLib_IowKitCloseDevice(): called", new object[0]);
+              Log.Info("IOWarrior.IOWDisplay.IOWLib_IowKitCloseDevice(): called");
             }
           }
           catch (Exception exception)
@@ -1360,7 +1360,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           DisplaySettings._DisplayControlLastAction = DateTime.Now.Ticks;
           if (DoDebug)
           {
-            Log.Info("IOWarrior.IOWDisplay.OnExternalAction(): received DisplayControlAction", new object[0]);
+            Log.Info("IOWarrior.IOWDisplay.OnExternalAction(): received DisplayControlAction");
           }
           DisplayOn();
         }
@@ -1368,7 +1368,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public bool OpenDisplay(AdvancedSettings UseSettings)
       {
-        Log.Info("IOWarrior.IOWDisplay.OpenDisplay() - called", new object[0]);
+        Log.Info("IOWarrior.IOWDisplay.OpenDisplay() - called");
         AdvSettings = UseSettings;
         MiniDisplayHelper.InitEQ(ref EQSettings);
         MiniDisplayHelper.InitDisplayControl(ref DisplaySettings);
@@ -1382,19 +1382,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           IOW_Handle = IOWLib_IowKitOpenDevice();
           if ((IOW_Handle == -1) | (IOW_Handle == 0))
           {
-            Log.Info("IOWarrior.IOWDisplay.OpenDisplay() - IOWarrior Device not found", new object[0]);
+            Log.Info("IOWarrior.IOWDisplay.OpenDisplay() - IOWarrior Device not found");
             _isOpen = false;
           }
           else
           {
-            Log.Info("IOWarrior.IOWDisplay.OpenDisplay() - IOWarrior Device found", new object[0]);
+            Log.Info("IOWarrior.IOWDisplay.OpenDisplay() - IOWarrior Device found");
             IOW_StartDisplay();
             IOW_ClearDisplay();
             IOW_Surface = new Bitmap(Settings.Instance.GraphicWidth, Settings.Instance.GraphicHeight);
             IOW_Graphics = Graphics.FromImage(IOW_Surface);
             _isOpen = true;
             _isClosing = false;
-            Log.Info("IOWarrior.IOWDisplay.OpenDisplay() - Display Opened", new object[0]);
+            Log.Info("IOWarrior.IOWDisplay.OpenDisplay() - Display Opened");
             stopDisplayUpdateThread = false;
             _displayThread = new Thread(new ThreadStart(DisplayUpdate));
             _displayThread.IsBackground = true;
@@ -1403,11 +1403,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             _displayThread.Start();
             if (_displayThread.IsAlive)
             {
-              Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() Thread Started", new object[0]);
+              Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() Thread Started");
             }
             else
             {
-              Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() FAILED TO START", new object[0]);
+              Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() FAILED TO START");
               CloseDisplay();
             }
           }
@@ -1419,13 +1419,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Error(exception);
           _isOpen = false;
         }
-        Log.Info("IOWarrior.IOWDisplay.OpenDisplay() - Completed", new object[0]);
+        Log.Info("IOWarrior.IOWDisplay.OpenDisplay() - Completed");
         return _isOpen;
       }
 
       private void ParseAdvancedSettings()
       {
-        Log.Info("IOWarrior.IOWDisplay.ParseAdvancedSettings(): Called", new object[0]);
+        Log.Info("IOWarrior.IOWDisplay.ParseAdvancedSettings(): Called");
         DoDebug = Settings.Instance.ExtensiveLogging;
         EQSettings.UseEqDisplay = AdvSettings.EqDisplay;
         EQSettings.UseNormalEq = AdvSettings.NormalEQ;
@@ -1499,7 +1499,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Log.Info(
           "IOWarrior.IOWDisplay.ParseAdvancedSettings(): Advanced options -     blank display after: {0} seconds",
           new object[] {DisplaySettings._BlankIdleTimeout/0xf4240L});
-        Log.Info("IOWarrior.IOWDisplay.ParseAdvancedSettings(): Completed", new object[0]);
+        Log.Info("IOWarrior.IOWDisplay.ParseAdvancedSettings(): Completed");
       }
 
       private void RestoreDisplayFromVideoOrIdle()
@@ -1529,7 +1529,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             lock (DWriteMutex)
             {
-              Log.Debug("IOWarrior.IOWDisplay.SendImage() - called", new object[0]);
+              Log.Debug("IOWarrior.IOWDisplay.SendImage() - called");
               if ((_Bitmap.Height == IOW_Surface.Height) & (_Bitmap.Width == IOW_Surface.Width))
               {
                 IOW_Surface = (Bitmap) _Bitmap.Clone();
@@ -1541,7 +1541,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 IOW_Surface = _Bitmap.Clone(new Rectangle(0, 0, width, height), PixelFormat.Format1bppIndexed);
               }
             }
-            Log.Debug("IOWarrior.IOWDisplay.SendImage() - completed", new object[0]);
+            Log.Debug("IOWarrior.IOWDisplay.SendImage() - completed");
           }
         }
       }
@@ -1562,7 +1562,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (DoDebug)
           {
-            Log.Info("IOWarrior.IOWDisplay.SendText(): Suppressing display update! Driver is closing", new object[0]);
+            Log.Info("IOWarrior.IOWDisplay.SendText(): Suppressing display update! Driver is closing");
           }
         }
         else
@@ -1570,7 +1570,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           RectangleF textBounds = GetTextBounds();
           lock (DWriteMutex)
           {
-            Log.Info("IOWarrior.IOWDisplay.SendText() - called", new object[0]);
+            Log.Info("IOWarrior.IOWDisplay.SendText() - called");
             IOW_Graphics = Graphics.FromImage(IOW_Surface);
             IOW_Graphics.SmoothingMode = SmoothingMode.None;
             IOW_Graphics.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
@@ -1591,7 +1591,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             IOW_Graphics.DrawString(_line2.Substring(0, length), font, Brushes.Black, textBounds);
           }
-          Log.Info("IOWarrior.IOWDisplay.SendText() - completed", new object[0]);
+          Log.Info("IOWarrior.IOWDisplay.SendText() - completed");
         }
       }
 

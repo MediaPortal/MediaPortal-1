@@ -66,7 +66,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public iMONLCDg_AdvancedSetupForm()
     {
-      Log.Debug("iMONLCDg.AdvancedSetupForm(): Constructor started", new object[0]);
+      Log.Debug("iMONLCDg.AdvancedSetupForm(): Constructor started");
       InitializeComponent();
       cmbType.SelectedIndex = 0;
       cmbType.DataBindings.Add("SelectedItem", iMONLCDg.AdvancedSettings.Instance, "DisplayType");
@@ -131,12 +131,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       mpLeaveFrontviewActive.DataBindings.Add("Checked", iMONLCDg.AdvancedSettings.Instance, "LeaveFrontviewActive");
       mpForceKeyBoardMode.DataBindings.Add("Checked", iMONLCDg.AdvancedSettings.Instance, "ForceKeyBoardMode");
       cmbType_Changed();
-      Log.Debug("iMONLCDg.AdvancedSetupForm(): Constructor completed", new object[0]);
+      Log.Debug("iMONLCDg.AdvancedSetupForm(): Constructor completed");
     }
 
     private void btnOK_Click(object sender, EventArgs e)
     {
-      Log.Debug("iMONLCDg.AdvancedSetupForm.btnOK_Click(): started", new object[0]);
+      Log.Debug("iMONLCDg.AdvancedSetupForm.btnOK_Click(): started");
       if (mpNormalEQ.Checked)
       {
         iMONLCDg.AdvancedSettings.Instance.NormalEQ = true;
@@ -168,12 +168,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       iMONLCDg.AdvancedSettings.Save();
       Hide();
       Close();
-      Log.Debug("iMONLCDg.AdvancedSetupForm.btnOK_Click(): Completed", new object[0]);
+      Log.Debug("iMONLCDg.AdvancedSetupForm.btnOK_Click(): Completed");
     }
 
     private void btnReset_Click(object sender, EventArgs e)
     {
-      Log.Debug("iMONLCDg.AdvancedSetupForm.btnReset_Click(): started", new object[0]);
+      Log.Debug("iMONLCDg.AdvancedSetupForm.btnReset_Click(): started");
       mpDelayStartup.Checked = false;
       mpEnsureManagerStartup.Checked = false;
       mpForceManagerRestart.Checked = false;
@@ -224,7 +224,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       iMONLCDg.AdvancedSettings.SetDefaults();
       cmbType_Changed();
       Refresh();
-      Log.Debug("iMONLCDg.AdvancedSetupForm.btnReset_Click(): Completed", new object[0]);
+      Log.Debug("iMONLCDg.AdvancedSetupForm.btnReset_Click(): Completed");
     }
 
     private void cmbType_Changed()
@@ -421,7 +421,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           break;
         case "VFD":
-          Log.Debug("iMONLCDg.AdvancedSetupForm.cmbType_changed: Enabling Advanced Setup options for VFD", new object[0]);
+          Log.Debug("iMONLCDg.AdvancedSetupForm.cmbType_changed: Enabling Advanced Setup options for VFD");
           mpBlankDisplayWhenIdle.Enabled = true;
           cmbBlankIdleTime.Enabled = mpBlankDisplayWhenIdle.Checked;
           mpBlankDisplayWithVideo.Enabled = true;

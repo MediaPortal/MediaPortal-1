@@ -17,7 +17,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
 
     public Image()
     {
-      Log.Info("MiniDisplayPlugin.Setting.Image(): Initializing Image control", new object[0]);
+      Log.Info("MiniDisplayPlugin.Setting.Image(): Initializing Image control");
     }
 
     public Image(int x, int y, string file)

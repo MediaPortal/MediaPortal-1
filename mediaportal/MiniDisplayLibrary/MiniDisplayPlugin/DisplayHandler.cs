@@ -55,7 +55,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     {
       if (Settings.Instance.ExtensiveLogging)
       {
-        Log.Info("MiniDisplayPlugin.DisplayHandler.DisplayLines(): Sending lines to display.", new object[0]);
+        Log.Info("MiniDisplayPlugin.DisplayHandler.DisplayLines(): Sending lines to display.");
       }
       try
       {
@@ -85,13 +85,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     {
       if ((this.images.Count == 0) && Settings.Instance.ExtensiveLogging)
       {
-        Log.Info("MiniDisplayPlugin.DisplayHandler.DrawImages(): No images to process", new object[0]);
+        Log.Info("MiniDisplayPlugin.DisplayHandler.DrawImages(): No images to process");
       }
       foreach (Image image in this.Images)
       {
         if (Settings.Instance.ExtensiveLogging)
         {
-          Log.Info("MiniDisplayPlugin.DisplayHandler.DrawImages(): Drawing image to buffer", new object[0]);
+          Log.Info("MiniDisplayPlugin.DisplayHandler.DrawImages(): Drawing image to buffer");
         }
         Bitmap bitmap = image.Bitmap;
         if (bitmap != null)
@@ -243,7 +243,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         }
         catch (Exception exception)
         {
-          Log.Error("MiniDisplayPlugin.DisplayHandler.ProcessG(): error - {0}" + exception.Message, new object[0]);
+          Log.Error("MiniDisplayPlugin.DisplayHandler.ProcessG(): error - {0}" + exception.Message);
         }
         SizeF ef = _graphics.MeasureString(str, font);
         if (ef.Height > this.graphicTextHeight)
@@ -304,7 +304,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           if (Settings.Instance.ExtensiveLogging)
           {
-            Log.Info("MiniDisplayPlugin.DisplayHandler.SendGraphics(): Processing graphics display.", new object[0]);
+            Log.Info("MiniDisplayPlugin.DisplayHandler.SendGraphics(): Processing graphics display.");
           }
           this.DrawImages(graphics);
           if (!this.display.SupportsText || this.forceGraphicText)
@@ -326,8 +326,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     public void Start()
     {
-      Log.Info("MiniDisplayPlugin.DisplayHandler.Start(): Called", new object[0]);
-      Log.Info("MiniDisplayPlugin.DisplayHandler.Start(): Calling driver Setup() function", new object[0]);
+      Log.Info("MiniDisplayPlugin.DisplayHandler.Start(): Called");
+      Log.Info("MiniDisplayPlugin.DisplayHandler.Start(): Calling driver Setup() function");
       this.display.Setup(Settings.Instance.Port, this.heightInChars, this.widthInChars, Settings.Instance.TextComDelay,
                          this.heightInPixels, this.widthInPixels, Settings.Instance.GraphicComDelay,
                          Settings.Instance.BackLightControl, Settings.Instance.Backlight,
@@ -349,18 +349,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         this.widthInChars = Settings.Instance.TextWidth;
       }
-      Log.Info("MiniDisplayPlugin.DisplayHandler.Start(): Calling driver Initialize() function", new object[0]);
+      Log.Info("MiniDisplayPlugin.DisplayHandler.Start(): Calling driver Initialize() function");
       this.display.Initialize();
       this.display.SetCustomCharacters(Settings.Instance.CustomCharacters);
-      Log.Info("MiniDisplayPlugin.DisplayHandler.Start(): Completed", new object[0]);
+      Log.Info("MiniDisplayPlugin.DisplayHandler.Start(): Completed");
     }
 
     public void Stop()
     {
-      Log.Info("MiniDisplay.DisplayHandler.Stop(): Called", new object[0]);
-      Log.Info("MiniDisplay.DisplayHandler.Stop(): Calling driver CleanUp() function", new object[0]);
+      Log.Info("MiniDisplay.DisplayHandler.Stop(): Called");
+      Log.Info("MiniDisplay.DisplayHandler.Stop(): Calling driver CleanUp() function");
       this.display.CleanUp();
-      Log.Info("MiniDisplay.DisplayHandler.Stop(): completed", new object[0]);
+      Log.Info("MiniDisplay.DisplayHandler.Stop(): completed");
     }
 
     public List<Image> Images

@@ -59,7 +59,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public GenericSerial_AdvancedSetupForm()
     {
-      Log.Debug("GenericSerial_AdvancedSetupForm(): Constructor started", new object[0]);
+      Log.Debug("GenericSerial_AdvancedSetupForm(): Constructor started");
       this.InitializeComponent();
       this.cbBaudRate.DataBindings.Add("SelectedItem", GenericSerial.AdvancedSettings.Instance, "BaudRate");
       this.cbParity.DataBindings.Add("SelectedItem", GenericSerial.AdvancedSettings.Instance, "Parity");
@@ -90,21 +90,21 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.cbToggleDTR.DataBindings.Add("Checked", GenericSerial.AdvancedSettings.Instance, "CMD_ToggleDTR");
       this.Refresh();
       this.SetControlState();
-      Log.Debug("GenericSerial_AdvancedSetupForm(): Constructor completed", new object[0]);
+      Log.Debug("GenericSerial_AdvancedSetupForm(): Constructor completed");
     }
 
     private void btnOK_Click(object sender, EventArgs e)
     {
-      Log.Debug("GenericSerial_AdvancedSetupForm.btnOK_Click(): started", new object[0]);
+      Log.Debug("GenericSerial_AdvancedSetupForm.btnOK_Click(): started");
       GenericSerial.AdvancedSettings.Save();
       base.Hide();
       base.Close();
-      Log.Debug("GenericSerial_AdvancedSetupForm.btnOK_Click(): Completed", new object[0]);
+      Log.Debug("GenericSerial_AdvancedSetupForm.btnOK_Click(): Completed");
     }
 
     private void btnReset_Click(object sender, EventArgs e)
     {
-      Log.Debug("GenericSerial_AdvancedSetupForm.btnReset_Click(): started", new object[0]);
+      Log.Debug("GenericSerial_AdvancedSetupForm.btnReset_Click(): started");
       GenericSerial.AdvancedSettings.SetDefaults();
       this.cbBaudRate.SelectedItem = GenericSerial.AdvancedSettings.Instance.BaudRate;
       this.tbCmdDisplayInit.Text = GenericSerial.AdvancedSettings.Instance.CMD_DisplayInit;
@@ -127,7 +127,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.cbToggleDTR.Checked = GenericSerial.AdvancedSettings.Instance.CMD_ToggleDTR;
       this.cbToggleRTS.Checked = GenericSerial.AdvancedSettings.Instance.CMD_ToggleRTS;
       this.Refresh();
-      Log.Debug("GenericSerial_AdvancedSetupForm.btnReset_Click(): Completed", new object[0]);
+      Log.Debug("GenericSerial_AdvancedSetupForm.btnReset_Click(): Completed");
     }
 
     protected override void Dispose(bool disposing)

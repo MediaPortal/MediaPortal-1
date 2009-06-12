@@ -23,7 +23,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public MD8800_AdvancedSetupForm()
     {
-      Log.Debug("MD8800_AdvancedSetupForm(): Constructor started", new object[0]);
+      Log.Debug("MD8800_AdvancedSetupForm(): Constructor started");
       this.InitializeComponent();
       this.mpBlankDisplayWithVideo.DataBindings.Add("Checked", MD8800.AdvancedSettings.Instance, "BlankDisplayWithVideo");
       this.mpEnableDisplayAction.DataBindings.Add("Checked", MD8800.AdvancedSettings.Instance, "EnableDisplayAction");
@@ -33,21 +33,21 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.cmbBlankIdleTime.DataBindings.Add("SelectedIndex", MD8800.AdvancedSettings.Instance, "BlankIdleTime");
       this.Refresh();
       this.SetControlState();
-      Log.Debug("MD8800_AdvancedSetupForm(): Constructor completed", new object[0]);
+      Log.Debug("MD8800_AdvancedSetupForm(): Constructor completed");
     }
 
     private void btnOK_Click(object sender, EventArgs e)
     {
-      Log.Debug("MD8800_AdvancedSetupForm.btnOK_Click(): started", new object[0]);
+      Log.Debug("MD8800_AdvancedSetupForm.btnOK_Click(): started");
       MD8800.AdvancedSettings.Save();
       base.Hide();
       base.Close();
-      Log.Debug("MD8800_AdvancedSetupForm.btnOK_Click(): Completed", new object[0]);
+      Log.Debug("MD8800_AdvancedSetupForm.btnOK_Click(): Completed");
     }
 
     private void btnReset_Click(object sender, EventArgs e)
     {
-      Log.Debug("MD8800_AdvancedSetupForm.btnReset_Click(): started", new object[0]);
+      Log.Debug("MD8800_AdvancedSetupForm.btnReset_Click(): started");
       MD8800.AdvancedSettings.SetDefaults();
       this.mpBlankDisplayWithVideo.Checked = MD8800.AdvancedSettings.Instance.BlankDisplayWithVideo;
       this.mpEnableDisplayAction.Checked = MD8800.AdvancedSettings.Instance.EnableDisplayAction;
@@ -55,7 +55,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.mpBlankDisplayWhenIdle.Checked = MD8800.AdvancedSettings.Instance.BlankDisplayWhenIdle;
       this.cmbBlankIdleTime.SelectedIndex = MD8800.AdvancedSettings.Instance.BlankIdleTime;
       this.Refresh();
-      Log.Debug("MD8800_AdvancedSetupForm.btnReset_Click(): Completed", new object[0]);
+      Log.Debug("MD8800_AdvancedSetupForm.btnReset_Click(): Completed");
     }
 
     protected override void Dispose(bool disposing)

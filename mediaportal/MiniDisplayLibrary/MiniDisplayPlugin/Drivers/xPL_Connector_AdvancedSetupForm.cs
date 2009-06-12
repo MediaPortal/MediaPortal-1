@@ -17,27 +17,27 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public xPL_Connector_AdvancedSetupForm()
     {
-      Log.Debug("xPL_Connector_AdvancedSetupForm(): Constructor started", new object[0]);
+      Log.Debug("xPL_Connector_AdvancedSetupForm(): Constructor started");
       this.InitializeComponent();
       this.Refresh();
-      Log.Debug("xPL_Connector_AdvancedSetupForm(): Constructor completed", new object[0]);
+      Log.Debug("xPL_Connector_AdvancedSetupForm(): Constructor completed");
     }
 
     private void btnOK_Click(object sender, EventArgs e)
     {
-      Log.Debug("xPL_Connector_AdvancedSetupForm.btnOK_Click(): started", new object[0]);
+      Log.Debug("xPL_Connector_AdvancedSetupForm.btnOK_Click(): started");
       xPL_Connector.AdvancedSettings.Save();
       base.Hide();
       base.Close();
-      Log.Debug("xPL_Connector_AdvancedSetupForm.btnOK_Click(): Completed", new object[0]);
+      Log.Debug("xPL_Connector_AdvancedSetupForm.btnOK_Click(): Completed");
     }
 
     private void btnReset_Click(object sender, EventArgs e)
     {
-      Log.Debug("xPL_Connector_AdvancedSetupForm.btnReset_Click(): started", new object[0]);
+      Log.Debug("xPL_Connector_AdvancedSetupForm.btnReset_Click(): started");
       xPL_Connector.AdvancedSettings.SetDefaults();
       this.Refresh();
-      Log.Debug("xPL_Connector_AdvancedSetupForm.btnReset_Click(): Completed", new object[0]);
+      Log.Debug("xPL_Connector_AdvancedSetupForm.btnReset_Click(): Completed");
     }
 
     protected override void Dispose(bool disposing)

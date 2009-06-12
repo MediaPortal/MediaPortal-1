@@ -40,7 +40,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void AdvancedSettings_OnSettingsChanged()
     {
-      Log.Info("xPL_Connector.AdvancedSettings_OnSettingsChanged(): called", new object[0]);
+      Log.Info("xPL_Connector.AdvancedSettings_OnSettingsChanged(): called");
       this.CleanUp();
       this.LoadAdvancedSettings();
       Thread.Sleep(100);
@@ -83,13 +83,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (this._IsDisabled)
       {
-        Log.Info("xPL_Connector.Initialize(): DRIVER DISABLED!", new object[0]);
+        Log.Info("xPL_Connector.Initialize(): DRIVER DISABLED!");
       }
       else
       {
         this._lines[0] = string.Empty;
         this._lines[1] = string.Empty;
-        Log.Info("xPL_Connector.Initialize(): called", new object[0]);
+        Log.Info("xPL_Connector.Initialize(): called");
         this.Listener = new XplListener(this.mVendorID + "-" + this.mDeviceID, 1);
         Log.Info("xPL_Connector.Initialize(): waiting to join xPL network. (Awaiting config = {0})",
                  new object[] {this.Listener.AwaitingConfiguration});
@@ -106,7 +106,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         int num = 0x7530;
         while (!this.Listener.JoinedxPLNetwork)
         {
-          Log.Info("xPL_Connector.Initialize(): waiting to join the xPL network", new object[0]);
+          Log.Info("xPL_Connector.Initialize(): waiting to join the xPL network");
           Thread.Sleep(100);
           num -= 100;
           if (num < 0)
@@ -116,7 +116,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         if (!this.Listener.JoinedxPLNetwork)
         {
-          Log.Info("xPL_Connector.Initialize(): Could NOT join the xPL network", new object[0]);
+          Log.Info("xPL_Connector.Initialize(): Could NOT join the xPL network");
         }
         else
         {
@@ -129,7 +129,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           this.Clear();
         }
         this.mInstanceID = this.Listener.InstanceName;
-        Log.Info("xPL_Connector.Initialize(): completed", new object[0]);
+        Log.Info("xPL_Connector.Initialize(): completed");
       }
     }
 
@@ -138,7 +138,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this._IsConnected = true;
       this._DisplayChanged = false;
       this._StatusChanged = false;
-      Log.Info("xPLConnector_Listener_XplJoinedxPLNetwork: Joined xPL Network", new object[0]);
+      Log.Info("xPLConnector_Listener_XplJoinedxPLNetwork: Joined xPL Network");
       this.UpdateMessage(true);
     }
 
@@ -148,7 +148,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this.DoDebug)
         {
-          Log.Info("xPLConnector_Listener_XplMessageReceived: Received HEARTBEAT", new object[0]);
+          Log.Info("xPLConnector_Listener_XplMessageReceived: Received HEARTBEAT");
         }
         this._IsConnected = true;
       }
@@ -156,7 +156,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this.DoDebug)
         {
-          Log.Info("xPLConnector_Listener_XplMessageReceived: Received CONFIG message", new object[0]);
+          Log.Info("xPLConnector_Listener_XplMessageReceived: Received CONFIG message");
         }
       }
       else if ((e.XplMsg.Source.Vendor.ToLower().Equals(this.mVendorID.ToLower()) &&
@@ -165,7 +165,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this.DoDebug)
         {
-          Log.Info("xPLConnector_Listener_XplMessageReceived: Received ECHO", new object[0]);
+          Log.Info("xPLConnector_Listener_XplMessageReceived: Received ECHO");
         }
       }
       else
@@ -541,7 +541,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void LoadAdvancedSettings()
     {
-      Log.Info("xPL_Connector.LoadAdvancedSettings(): Called", new object[0]);
+      Log.Info("xPL_Connector.LoadAdvancedSettings(): Called");
       AdvancedSettings.Load();
       Log.Info("xPL_Connector.LoadAdvancedSettings(): Extensive Logging: {0}",
                new object[] {Settings.Instance.ExtensiveLogging});
@@ -561,7 +561,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this.DoDebug)
         {
-          Log.Info("xPL_Connector.SetLine(): Unable to display text - driver disabled", new object[0]);
+          Log.Info("xPL_Connector.SetLine(): Unable to display text - driver disabled");
         }
       }
       else
@@ -569,7 +569,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         this.UpdateAdvancedSettings();
         if (this.DoDebug)
         {
-          Log.Info("xPL_Connector.SetLine() Called", new object[0]);
+          Log.Info("xPL_Connector.SetLine() Called");
         }
         if (!this._lines[line].Equals(message))
         {
@@ -589,23 +589,23 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       this.DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
       Log.Info("{0}", new object[] {this.Description});
-      Log.Info("xPL_Connector.Setup(): called", new object[0]);
+      Log.Info("xPL_Connector.Setup(): called");
       this._BlankDisplayOnExit = _blankOnExit;
       this.LoadAdvancedSettings();
       this._Trows = _lines;
       this._Tcols = _cols;
       this._IsConnected = false;
-      Log.Info("xPL_Connector.Setup(): Loading MCE Remote mapping file", new object[0]);
+      Log.Info("xPL_Connector.Setup(): Loading MCE Remote mapping file");
       this.rHandler = new InputHandler("Microsoft MCE");
       if (this.rHandler.IsLoaded)
       {
-        Log.Info("xPL_Connector.Setup(): MCE Remote mapping file loaded!", new object[0]);
+        Log.Info("xPL_Connector.Setup(): MCE Remote mapping file loaded!");
       }
       else
       {
-        Log.Info("xPL_Connector.Setup(): ERROR Could not Load MCE Remote mapping file", new object[0]);
+        Log.Info("xPL_Connector.Setup(): ERROR Could not Load MCE Remote mapping file");
       }
-      Log.Info("xPL_Connector.Setup(): completed", new object[0]);
+      Log.Info("xPL_Connector.Setup(): completed");
     }
 
     private int ThreadMessageCallback(int param1, int param2, object data)
@@ -624,7 +624,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this.DoDebug)
         {
-          Log.Info("xPL_Connector.UpdateAdvancedSettings(): called", new object[0]);
+          Log.Info("xPL_Connector.UpdateAdvancedSettings(): called");
         }
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_xPL_Connector.xml")))
         {
@@ -633,14 +633,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (this.DoDebug)
             {
-              Log.Info("xPL_Connector.UpdateAdvancedSettings(): updating advanced settings", new object[0]);
+              Log.Info("xPL_Connector.UpdateAdvancedSettings(): updating advanced settings");
             }
             this.LoadAdvancedSettings();
           }
         }
         if (this.DoDebug)
         {
-          Log.Info("xPL_Connector.UpdateAdvancedSettings(): completed", new object[0]);
+          Log.Info("xPL_Connector.UpdateAdvancedSettings(): completed");
         }
       }
     }
@@ -662,7 +662,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       else if (this.DoDebug)
       {
-        Log.Info("xPLConnector.UpdateMessage(): FORCING Status update", new object[0]);
+        Log.Info("xPLConnector.UpdateMessage(): FORCING Status update");
       }
       if (this._DisplayChanged || ForceUpdate)
       {
@@ -687,7 +687,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         if (this.DoDebug)
         {
-          Log.Info("xPLConnector.UpdateMessage(): Status update sent", new object[0]);
+          Log.Info("xPLConnector.UpdateMessage(): Status update sent");
         }
       }
     }
@@ -710,7 +710,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (this.DoDebug)
       {
-        Log.Info("XPL_Send_Remote_Confirm_Message(): PREPARING REMOTE.CONFIRM MESSAGE!", new object[0]);
+        Log.Info("XPL_Send_Remote_Confirm_Message(): PREPARING REMOTE.CONFIRM MESSAGE!");
       }
       string strMessage = string.Empty;
       string strTarget = string.Empty;
@@ -742,7 +742,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         this.Listener.SendMessage("xpl-trig", strTarget, "remote.confirm", strMessage);
         if (this.DoDebug)
         {
-          Log.Info("XPL_Send_Remote_Confirm_Message(): SENT REMOTE.CONFIRM MESSAGE!", new object[0]);
+          Log.Info("XPL_Send_Remote_Confirm_Message(): SENT REMOTE.CONFIRM MESSAGE!");
         }
       }
       catch
@@ -920,22 +920,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       private static void Default(AdvancedSettings _settings)
       {
-        Log.Info("xPL_Connector.AdvancedSettings.Default(): called", new object[0]);
+        Log.Info("xPL_Connector.AdvancedSettings.Default(): called");
         _settings.BlankDisplayWithVideo = false;
         _settings.EnableDisplayAction = false;
         _settings.EnableDisplayActionTime = 5;
         _settings.BlankDisplayWhenIdle = false;
         _settings.BlankIdleTime = 30;
-        Log.Info("xPL_Connector.AdvancedSettings.Default(): completed", new object[0]);
+        Log.Info("xPL_Connector.AdvancedSettings.Default(): completed");
       }
 
       public static AdvancedSettings Load()
       {
         AdvancedSettings settings;
-        Log.Info("xPL_Connector.AdvancedSettings.Load(): started", new object[0]);
+        Log.Info("xPL_Connector.AdvancedSettings.Load(): started");
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_xPL_Connector.xml")))
         {
-          Log.Info("xPL_Connector.AdvancedSettings.Load(): Loading settings from XML file", new object[0]);
+          Log.Info("xPL_Connector.AdvancedSettings.Load(): Loading settings from XML file");
           XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
           XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_xPL_Connector.xml"));
           settings = (AdvancedSettings) serializer.Deserialize(xmlReader);
@@ -943,11 +943,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         else
         {
-          Log.Info("xPL_Connector.AdvancedSettings.Load(): Loading settings from defaults", new object[0]);
+          Log.Info("xPL_Connector.AdvancedSettings.Load(): Loading settings from defaults");
           settings = new AdvancedSettings();
           Default(settings);
         }
-        Log.Info("xPL_Connector.AdvancedSettings.Load(): completed", new object[0]);
+        Log.Info("xPL_Connector.AdvancedSettings.Load(): completed");
         return settings;
       }
 
@@ -966,7 +966,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public static void Save(AdvancedSettings ToSave)
       {
-        Log.Info("xPL_Connector.AdvancedSettings.Save(): Saving settings to XML file", new object[0]);
+        Log.Info("xPL_Connector.AdvancedSettings.Save(): Saving settings to XML file");
         XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
         XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_xPL_Connector.xml"),
                                                  Encoding.UTF8);
@@ -974,7 +974,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         writer.Indentation = 2;
         serializer.Serialize((XmlWriter) writer, ToSave);
         writer.Close();
-        Log.Info("xPL_Connector.AdvancedSettings.Save(): completed", new object[0]);
+        Log.Info("xPL_Connector.AdvancedSettings.Save(): completed");
       }
 
       public static void SetDefaults()

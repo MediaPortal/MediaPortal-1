@@ -21,7 +21,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
       catch
       {
         this.Details = null;
-        Log.Info("xPL.structXplSection(constructor): caught exception", new object[0]);
+        Log.Info("xPL.structXplSection(constructor): caught exception");
       }
     }
   }

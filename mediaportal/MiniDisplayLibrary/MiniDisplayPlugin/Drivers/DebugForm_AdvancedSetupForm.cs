@@ -88,7 +88,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void btnOK_Click(object sender, EventArgs e)
     {
-      Log.Debug("DebugForm.AdvancedSetupForm.btnOK_Click() started", new object[0]);
+      Log.Debug("DebugForm.AdvancedSetupForm.btnOK_Click() started");
       if (this.cbNormalEQ.Checked)
       {
         DebugForm.AdvancedSettings.Instance.NormalEQ = true;
@@ -120,7 +120,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       DebugForm.AdvancedSettings.Save();
       base.Hide();
       base.Close();
-      Log.Debug("DebugForm.AdvancedSetupForm.btnOK_Click() Completed", new object[0]);
+      Log.Debug("DebugForm.AdvancedSetupForm.btnOK_Click() Completed");
     }
 
     private void btnReset_Click(object sender, EventArgs e)

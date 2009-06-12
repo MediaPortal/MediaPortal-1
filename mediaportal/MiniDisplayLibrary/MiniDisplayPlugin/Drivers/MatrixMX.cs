@@ -47,7 +47,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void AdvancedSettings_OnSettingsChanged()
     {
-      Log.Info("MatrixMX.AdvancedSettings_OnSettingsChanged(): called", new object[0]);
+      Log.Info("MatrixMX.AdvancedSettings_OnSettingsChanged(): called");
       this.CleanUp();
       this.LoadAdvancedSettings();
       Thread.Sleep(100);
@@ -66,7 +66,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         while (this._EqThread.IsAlive)
         {
-          Log.Info("MatrixMX.Cleanup(): Stoping EQ_Update() Thread", new object[0]);
+          Log.Info("MatrixMX.Cleanup(): Stoping EQ_Update() Thread");
           lock (this.ThreadMutex)
           {
             _stopUpdateEqThread = true;
@@ -158,15 +158,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           if (this.DoDebug)
           {
-            Log.Info("MODisplay.DisplayOff(): DisplayControlAction Timeout expired.", new object[0]);
+            Log.Info("MODisplay.DisplayOff(): DisplayControlAction Timeout expired.");
           }
           this.DisplaySettings._DisplayControlAction = false;
           this.DisplaySettings._DisplayControlLastAction = 0L;
         }
-        Log.Info("MODisplay.DisplayOff(): completed", new object[0]);
+        Log.Info("MODisplay.DisplayOff(): completed");
         lock (this.DWriteMutex)
         {
-          Log.Info("MODisplay.DisplayOff(): Turning display OFF", new object[0]);
+          Log.Info("MODisplay.DisplayOff(): Turning display OFF");
           this.Clear();
           if (this._BackLightControl)
           {
@@ -175,7 +175,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           this._IsDisplayOff = true;
           this.MOD.DisplayOff();
         }
-        Log.Info("MODisplay.DisplayOff(): completed", new object[0]);
+        Log.Info("MODisplay.DisplayOff(): completed");
       }
     }
 
@@ -183,15 +183,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (this._IsDisplayOff)
       {
-        Log.Info("MODisplay.DisplayOn(): called", new object[0]);
+        Log.Info("MODisplay.DisplayOn(): called");
         lock (this.DWriteMutex)
         {
-          Log.Info("MODisplay.DisplayOn(): Turning Display ON", new object[0]);
+          Log.Info("MODisplay.DisplayOn(): Turning Display ON");
           this.MOD.DisplayOn();
           this.MOD.BacklightOn();
         }
         this._IsDisplayOff = false;
-        Log.Info("MODisplay.DisplayOn(): completed", new object[0]);
+        Log.Info("MODisplay.DisplayOn(): completed");
       }
     }
 
@@ -216,7 +216,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (this.DoDebug)
           {
-            Log.Info("MODisplay.EQ_Update(): Checking for Thread termination request", new object[0]);
+            Log.Info("MODisplay.EQ_Update(): Checking for Thread termination request");
           }
           if (_stopUpdateEqThread)
           {
@@ -226,7 +226,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             if (this.DoDebug)
             {
-              Log.Info("MODisplay.EQ_Update(): EQ_Update Thread terminating", new object[0]);
+              Log.Info("MODisplay.EQ_Update(): EQ_Update Thread terminating");
             }
             _stopUpdateEqThread = false;
             return;
@@ -250,7 +250,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               if (this.DoDebug)
               {
-                Log.Info("MODisplay.EQ_Update(): Turning off display while playing video", new object[0]);
+                Log.Info("MODisplay.EQ_Update(): Turning off display while playing video");
               }
               this.DisplayOff();
             }
@@ -301,7 +301,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void LoadAdvancedSettings()
     {
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Called", new object[0]);
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Called");
       AdvancedSettings settings = AdvancedSettings.Load();
       this.IdleMessage = (Settings.Instance.IdleMessage != string.Empty) ? Settings.Instance.IdleMessage : "MediaPortal";
       this.KPSettings.EnableKeyPad = settings.EnableKeypad;
@@ -381,7 +381,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                new object[] {this.DisplaySettings._BlankIdleTimeout/0xf4240L});
       Log.Info("MatrixMX.LoadAdvancedSettings(): Setting - Audio using ASIO: {0}",
                new object[] {this.EQSettings._AudioUseASIO});
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Completed", new object[0]);
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Completed");
       FileInfo info = new FileInfo(Config.GetFile(Config.Dir.Config, "MiniDisplay_MatrixMX.xml"));
       this.SettingsLastModTime = info.LastWriteTime;
       this.LastSettingsCheck = DateTime.Now;
@@ -412,7 +412,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         this.DisplaySettings._DisplayControlLastAction = DateTime.Now.Ticks;
         if (this.DoDebug)
         {
-          Log.Info("MODisplay.OnExternalAction(): received DisplayControlAction", new object[0]);
+          Log.Info("MODisplay.OnExternalAction(): received DisplayControlAction");
         }
         this.DisplayOn();
       }
@@ -500,7 +500,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this.DoDebug)
         {
-          Log.Info("MatrixMX.SetLine(): Unable to display text - driver disabled", new object[0]);
+          Log.Info("MatrixMX.SetLine(): Unable to display text - driver disabled");
         }
       }
       else
@@ -509,13 +509,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
         if (this.DoDebug)
         {
-          Log.Info("MatrixMX.SetLine() Called", new object[0]);
+          Log.Info("MatrixMX.SetLine() Called");
         }
         if (this.EQSettings._EqDataAvailable || this._IsDisplayOff)
         {
           if (this.DoDebug)
           {
-            Log.Info("MatrixMX.SetLine(): Suppressing display update!", new object[0]);
+            Log.Info("MatrixMX.SetLine(): Suppressing display update!");
           }
         }
         else
@@ -527,7 +527,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           this.MOD.SetLine(line, message);
           if (this.DoDebug)
           {
-            Log.Info("MatrixMX.SetLine(): message sent to display", new object[0]);
+            Log.Info("MatrixMX.SetLine(): message sent to display");
           }
         }
         if ((line == 0) && this.MPStatus.MP_Is_Idle)
@@ -543,7 +543,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               if (this.DoDebug)
               {
-                Log.Info("MatrixMX.SetLine(): MP going IDLE", new object[0]);
+                Log.Info("MatrixMX.SetLine(): MP going IDLE");
               }
               this.DisplaySettings._BlankIdleTime = DateTime.Now.Ticks;
             }
@@ -552,7 +552,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               if (this.DoDebug)
               {
-                Log.Info("MatrixMX.SetLine(): Blanking display due to IDLE state", new object[0]);
+                Log.Info("MatrixMX.SetLine(): Blanking display due to IDLE state");
               }
               this.DisplayOff();
             }
@@ -565,7 +565,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (this.DoDebug)
             {
-              Log.Info("MatrixMX.SetLine(): MP no longer IDLE - restoring display", new object[0]);
+              Log.Info("MatrixMX.SetLine(): MP no longer IDLE - restoring display");
             }
             this.DisplayOn();
           }
@@ -580,7 +580,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       this.DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
       Log.Info("{0}", new object[] {this.Description});
-      Log.Info("MatrixMX.Setup(): called", new object[0]);
+      Log.Info("MatrixMX.Setup(): called");
       MiniDisplayHelper.InitEQ(ref this.EQSettings);
       MiniDisplayHelper.InitDisplayControl(ref this.DisplaySettings);
       this.InitKeyPadSettings(ref this.KPSettings);
@@ -598,18 +598,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       else
       {
         this._UseKeypad = false;
-        Log.Info("MatrixMX.Setup(): Keypad support disabled!", new object[0]);
+        Log.Info("MatrixMX.Setup(): Keypad support disabled!");
       }
       this._Trows = _lines;
       if (this._Trows > 2)
       {
-        Log.Info("MatrixMX.Setup() - Invalid Text Lines value", new object[0]);
+        Log.Info("MatrixMX.Setup() - Invalid Text Lines value");
         this._Trows = 2;
       }
       this._Tcols = _cols;
       if (this._Tcols > 20)
       {
-        Log.Info("MatrixMX.Setup() - Invalid Text Columns value", new object[0]);
+        Log.Info("MatrixMX.Setup() - Invalid Text Columns value");
         this._Tcols = 20;
       }
       this._IsOpen = false;
@@ -632,7 +632,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       if (this.EQSettings.UseEqDisplay || this.DisplaySettings.BlankDisplayWithVideo)
       {
-        Log.Info("MatrixMX.Setup(): starting EQ_Update() thread", new object[0]);
+        Log.Info("MatrixMX.Setup(): starting EQ_Update() thread");
         this._EqThread = new Thread(new ThreadStart(this.EQ_Update));
         this._EqThread.IsBackground = true;
         this._EqThread.Priority = ThreadPriority.BelowNormal;
@@ -640,16 +640,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         this._EqThread.Start();
         if (this._EqThread.IsAlive)
         {
-          Log.Info("MatrixMX.Setup(): EQ_Update() Thread Started", new object[0]);
+          Log.Info("MatrixMX.Setup(): EQ_Update() Thread Started");
         }
         else
         {
-          Log.Info("MatrixMX.Setup(): EQ_Update() FAILED TO START", new object[0]);
+          Log.Info("MatrixMX.Setup(): EQ_Update() FAILED TO START");
         }
       }
       AdvancedSettings.OnSettingsChanged +=
         new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
-      Log.Info("MatrixMX.Setup(): completed", new object[0]);
+      Log.Info("MatrixMX.Setup(): completed");
     }
 
     private void UpdateAdvancedSettings()
@@ -658,7 +658,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this.DoDebug)
         {
-          Log.Info("MatrixMX.UpdateAdvancedSettings(): called", new object[0]);
+          Log.Info("MatrixMX.UpdateAdvancedSettings(): called");
         }
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_MatrixMX.xml")))
         {
@@ -667,14 +667,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (this.DoDebug)
             {
-              Log.Info("MatrixMX.UpdateAdvancedSettings(): updating advanced settings", new object[0]);
+              Log.Info("MatrixMX.UpdateAdvancedSettings(): updating advanced settings");
             }
             this.LoadAdvancedSettings();
           }
         }
         if (this.DoDebug)
         {
-          Log.Info("MatrixMX.UpdateAdvancedSettings(): completed", new object[0]);
+          Log.Info("MatrixMX.UpdateAdvancedSettings(): completed");
         }
       }
     }
@@ -741,7 +741,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public static bool CreateDefaultKeyPadMapping()
       {
-        Log.Info("MatrixMX.AdvancedSettings.CreateDefaultKeyPadMapping(): called", new object[0]);
+        Log.Info("MatrixMX.AdvancedSettings.CreateDefaultKeyPadMapping(): called");
         bool flag = false;
         string str = "MatrixMX_Keypad";
         try
@@ -896,7 +896,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           writer.WriteEndDocument();
           writer.Close();
           flag = true;
-          Log.Info("MatrixMX.AdvancedSettings.CreateDefaultKeyPadMapping(): remote mapping file created", new object[0]);
+          Log.Info("MatrixMX.AdvancedSettings.CreateDefaultKeyPadMapping(): remote mapping file created");
         }
         catch
         {
@@ -904,13 +904,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                    new object[0]);
           flag = false;
         }
-        Log.Info("MatrixMX.AdvancedSettings.CreateDefaultKeyPadMapping(): completed", new object[0]);
+        Log.Info("MatrixMX.AdvancedSettings.CreateDefaultKeyPadMapping(): completed");
         return flag;
       }
 
       private static void Default(AdvancedSettings _settings)
       {
-        Log.Info("MatrixMX.AdvancedSettings.Default(): called", new object[0]);
+        Log.Info("MatrixMX.AdvancedSettings.Default(): called");
         _settings.EnableKeypad = false;
         _settings.UseCustomKeypadMap = false;
         _settings.DisableRepeat = false;
@@ -933,16 +933,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         _settings.EQTitleShowTime = 2;
         _settings.BlankDisplayWhenIdle = false;
         _settings.BlankIdleTime = 30;
-        Log.Info("MatrixMX.AdvancedSettings.Default(): completed", new object[0]);
+        Log.Info("MatrixMX.AdvancedSettings.Default(): completed");
       }
 
       public static AdvancedSettings Load()
       {
         AdvancedSettings settings;
-        Log.Info("MatrixMX.AdvancedSettings.Load(): started", new object[0]);
+        Log.Info("MatrixMX.AdvancedSettings.Load(): started");
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_MatrixMX.xml")))
         {
-          Log.Info("MatrixMX.AdvancedSettings.Load(): Loading settings from XML file", new object[0]);
+          Log.Info("MatrixMX.AdvancedSettings.Load(): Loading settings from XML file");
           XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
           XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_MatrixMX.xml"));
           settings = (AdvancedSettings) serializer.Deserialize(xmlReader);
@@ -950,11 +950,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         else
         {
-          Log.Info("MatrixMX.AdvancedSettings.Load(): Loading settings from defaults", new object[0]);
+          Log.Info("MatrixMX.AdvancedSettings.Load(): Loading settings from defaults");
           settings = new AdvancedSettings();
           Default(settings);
         }
-        Log.Info("MatrixMX.AdvancedSettings.Load(): completed", new object[0]);
+        Log.Info("MatrixMX.AdvancedSettings.Load(): completed");
         return settings;
       }
 
@@ -973,7 +973,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public static void Save(AdvancedSettings ToSave)
       {
-        Log.Info("MatrixMX.AdvancedSettings.Save(): Saving settings to XML file", new object[0]);
+        Log.Info("MatrixMX.AdvancedSettings.Save(): Saving settings to XML file");
         XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
         XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_MatrixMX.xml"),
                                                  Encoding.UTF8);
@@ -981,7 +981,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         writer.Indentation = 2;
         serializer.Serialize((XmlWriter) writer, ToSave);
         writer.Close();
-        Log.Info("MatrixMX.AdvancedSettings.Save(): completed", new object[0]);
+        Log.Info("MatrixMX.AdvancedSettings.Save(): completed");
       }
 
       public static void SetDefaults()
@@ -1293,7 +1293,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         bool extensiveLogging = Settings.Instance.ExtensiveLogging;
         if (extensiveLogging)
         {
-          Log.Info("MatrixMX.FireKeypadEvent(): called", new object[0]);
+          Log.Info("MatrixMX.FireKeypadEvent(): called");
         }
         if (!this._inputHandler.MapAction(EventCode))
         {
@@ -1310,7 +1310,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         if (extensiveLogging)
         {
-          Log.Info("MatrixMX.FireKeypadEvent(): completed", new object[0]);
+          Log.Info("MatrixMX.FireKeypadEvent(): completed");
         }
       }
 
@@ -1400,7 +1400,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         catch (Exception)
         {
-          Log.Info("MatrixMX.MODisplay.OpenDisplay(): CAUGHT EXCEPTION while opening display!", new object[0]);
+          Log.Info("MatrixMX.MODisplay.OpenDisplay(): CAUGHT EXCEPTION while opening display!");
           this._isOpen = false;
         }
         return this._isOpen;
@@ -1470,7 +1470,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           if (!File.Exists(Config.GetFile(Config.Dir.CustomInputDefault, "MatrixMX_Keypad.xml")))
           {
-            Log.Info("MatrixMX.Setup(): Creating default MatrixMX_Keypad mapping file", new object[0]);
+            Log.Info("MatrixMX.Setup(): Creating default MatrixMX_Keypad mapping file");
             if (!AdvancedSettings.CreateDefaultKeyPadMapping())
             {
               Log.Info("MatrixMX.MODisplay.SetupKeypad(): ERROR Creating default MatrixMX_Keypad mapping file",
@@ -1496,7 +1496,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         if (flag2)
         {
-          Log.Info("MatrixMX.MODisplay.SetupKeypad(): Loading InputHandler", new object[0]);
+          Log.Info("MatrixMX.MODisplay.SetupKeypad(): Loading InputHandler");
           this._inputHandler = new InputHandler("MatrixMX_Keypad");
           Log.Info("MatrixMX.MODisplay.SetupKeypad(): InputHandler loaded = {0}",
                    new object[] {this._inputHandler.IsLoaded});
@@ -1513,7 +1513,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         else
         {
-          Log.Info("MatrixMX.MODisplay.SetupKeypad(): Keypad support disabled - no keypad mapping file", new object[0]);
+          Log.Info("MatrixMX.MODisplay.SetupKeypad(): Keypad support disabled - no keypad mapping file");
           flag = false;
         }
         if (flag && this._inputHandler.IsLoaded)
@@ -1542,7 +1542,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         if (!this._useCustomKeypadMapping)
         {
           Action action;
-          Log.Info("MODisplay: received KeyPad event", new object[0]);
+          Log.Info("MODisplay: received KeyPad event");
           switch (eventCode)
           {
             case 0x4b:

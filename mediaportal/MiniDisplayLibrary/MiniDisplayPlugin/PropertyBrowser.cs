@@ -27,7 +27,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     protected override void Dispose(bool disposing)
     {
-      Log.Info("PropertyBrowser.Dispose(): called.", new object[0]);
+      Log.Info("PropertyBrowser.Dispose(): called.");
       lock (MiniDisplayHelper.PropertyBrowserMutex)
       {
         MiniDisplayHelper.DisablePropertyBrowser();
@@ -162,7 +162,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.GUIPropertyManager_OnPropertyChanged("#currentmodule", GUIPropertyManager.GetProperty("#currentmodule"));
       if (this.DoDebug)
       {
-        Log.Info("MiniDisplay.PropertyBrowser_Load(): PropertyBrowser loaded.", new object[0]);
+        Log.Info("MiniDisplay.PropertyBrowser_Load(): PropertyBrowser loaded.");
       }
     }
 

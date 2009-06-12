@@ -87,7 +87,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (this.DoDebug)
             {
-              Log.Info("DebugForm.DisplayLines(): MP going IDLE", new object[0]);
+              Log.Info("DebugForm.DisplayLines(): MP going IDLE");
             }
             this.DisplaySettings._BlankIdleTime = DateTime.Now.Ticks;
           }
@@ -96,7 +96,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (this.DoDebug)
             {
-              Log.Info("DebugForm.DisplayLines(): Blanking display due to IDLE state", new object[0]);
+              Log.Info("DebugForm.DisplayLines(): Blanking display due to IDLE state");
             }
             this.DisplayOff();
           }
@@ -109,7 +109,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (this.DoDebug)
           {
-            Log.Info("DebugForm.DisplayLines(): MP no longer IDLE - restoring display", new object[0]);
+            Log.Info("DebugForm.DisplayLines(): MP no longer IDLE - restoring display");
           }
           this.DisplayOn();
         }
@@ -139,7 +139,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           RectangleF bounds = this.graphicDisplay.Bounds;
           if (this.DoDebug)
           {
-            Log.Info("DebugForm.DisplayEQ(): called", new object[0]);
+            Log.Info("DebugForm.DisplayEQ(): called");
           }
           this.EQSettings.Render_MaxValue = (this.EQSettings.UseNormalEq | this.EQSettings.UseStereoEq)
                                               ? ((int) bounds.Height)
@@ -245,20 +245,20 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           if (this.DoDebug)
           {
-            Log.Info("DebugForm.DisplayOff(): DisplayControlAction Timeout expired.", new object[0]);
+            Log.Info("DebugForm.DisplayOff(): DisplayControlAction Timeout expired.");
           }
           this.DisplaySettings._DisplayControlAction = false;
           this.DisplaySettings._DisplayControlLastAction = 0L;
         }
-        Log.Info("DebugForm.DisplayOff(): called", new object[0]);
+        Log.Info("DebugForm.DisplayOff(): called");
         lock (DWriteMutex)
         {
-          Log.Info("DebugForm.DisplayOff(): Turning Display OFF", new object[0]);
+          Log.Info("DebugForm.DisplayOff(): Turning Display OFF");
           this.tGraphics.FillRectangle(Brushes.DarkGreen, new Rectangle(0, 0, this.tBitmap.Width, this.tBitmap.Height));
           this.graphicDisplay.Image = this.tBitmap;
           this._IsDisplayOff = true;
         }
-        Log.Info("DebugForm.DisplayOff(): completed", new object[0]);
+        Log.Info("DebugForm.DisplayOff(): completed");
       }
     }
 
@@ -266,13 +266,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (this._IsDisplayOff)
       {
-        Log.Info("DebugForm.DisplayOn(): called", new object[0]);
+        Log.Info("DebugForm.DisplayOn(): called");
         lock (DWriteMutex)
         {
-          Log.Info("DebugForm.DisplayOn(): Turning Display ON", new object[0]);
+          Log.Info("DebugForm.DisplayOn(): Turning Display ON");
           this._IsDisplayOff = false;
         }
-        Log.Info("DebugForm.DisplayOn(): called", new object[0]);
+        Log.Info("DebugForm.DisplayOn(): called");
       }
     }
 
@@ -280,7 +280,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (this.DoDebug)
       {
-        Log.Info("DebugForm.DisplayUpdate() Starting Display Update Thread", new object[0]);
+        Log.Info("DebugForm.DisplayUpdate() Starting Display Update Thread");
       }
       if (this.DisplaySettings.BlankDisplayWithVideo & this.DisplaySettings.EnableDisplayAction)
       {
@@ -294,7 +294,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (this.DoDebug)
             {
-              Log.Info("DebugForm.DisplayUpdate() Display Update Thread terminating", new object[0]);
+              Log.Info("DebugForm.DisplayUpdate() Display Update Thread terminating");
             }
             if (this.DisplaySettings.BlankDisplayWithVideo & this.DisplaySettings.EnableDisplayAction)
             {
@@ -323,7 +323,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (this.DoDebug)
             {
-              Log.Info("DebugForm.Display_Update(): Turning off display while playing video", new object[0]);
+              Log.Info("DebugForm.Display_Update(): Turning off display while playing video");
             }
             this.DisplayOff();
           }
@@ -341,12 +341,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (this.DoDebug)
           {
-            Log.Info("DebugForm.DisplayUpdate() Sleeping...", new object[0]);
+            Log.Info("DebugForm.DisplayUpdate() Sleeping...");
           }
           Thread.Sleep(250);
           if (this.DoDebug)
           {
-            Log.Info("DebugForm.DisplayUpdate() Waking...", new object[0]);
+            Log.Info("DebugForm.DisplayUpdate() Waking...");
           }
         }
       }
@@ -385,7 +385,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this.DoDebug)
         {
-          Log.Info("DebugForm.DrawImage(): Suppressing display update!", new object[0]);
+          Log.Info("DebugForm.DrawImage(): Suppressing display update!");
         }
       }
       else
@@ -399,14 +399,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               if (Settings.Instance.ExtensiveLogging)
               {
-                Log.Debug("DebugForm.DrawImage():  bitmap null", new object[0]);
+                Log.Debug("DebugForm.DrawImage():  bitmap null");
               }
             }
             else
             {
               if (this.DoDebug)
               {
-                Log.Info("DebugForm.DrawImage():  called", new object[0]);
+                Log.Info("DebugForm.DrawImage():  called");
               }
               BitmapData bitmapdata = bitmap.LockBits(new Rectangle(new Point(0, 0), bitmap.Size),
                                                       ImageLockMode.ReadOnly, bitmap.PixelFormat);
@@ -427,7 +427,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               {
                 if (this.DoDebug)
                 {
-                  Log.Info("DebugForm.DrawImage():  bitmap not changed", new object[0]);
+                  Log.Info("DebugForm.DrawImage():  bitmap not changed");
                 }
               }
               else
@@ -439,7 +439,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 Application.DoEvents();
                 if (this.DoDebug)
                 {
-                  Log.Info("DebugForm.DrawImage():  completed", new object[0]);
+                  Log.Info("DebugForm.DrawImage():  completed");
                 }
               }
             }
@@ -454,12 +454,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this.DoDebug)
         {
-          Log.Info("DebugForm.DrawText(): Suppressing display update!", new object[0]);
+          Log.Info("DebugForm.DrawText(): Suppressing display update!");
         }
       }
       else
       {
-        Log.Info("DebugForm.DrawText() - called", new object[0]);
+        Log.Info("DebugForm.DrawText() - called");
         if (!_message.Equals(this.LastText[_line]))
         {
           this.LastText[_line] = _message;
@@ -487,14 +487,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (Settings.Instance.ExtensiveLogging)
         {
-          Log.Debug("DebugForm.DrawTextImage():  bitmap null", new object[0]);
+          Log.Debug("DebugForm.DrawTextImage():  bitmap null");
         }
       }
       else
       {
         if (this.DoDebug)
         {
-          Log.Info("DebugForm.DrawTextImage():  completed", new object[0]);
+          Log.Info("DebugForm.DrawTextImage():  completed");
         }
         BitmapData bitmapdata = bitmap.LockBits(new Rectangle(new Point(0, 0), bitmap.Size), ImageLockMode.ReadOnly,
                                                 bitmap.PixelFormat);
@@ -515,7 +515,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (this.DoDebug)
           {
-            Log.Info("DebugForm.DrawTextImage():  bitmap not changed", new object[0]);
+            Log.Info("DebugForm.DrawTextImage():  bitmap not changed");
           }
         }
         else
@@ -527,7 +527,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Application.DoEvents();
           if (this.DoDebug)
           {
-            Log.Info("DebugForm.DrawTextImage():  completed", new object[0]);
+            Log.Info("DebugForm.DrawTextImage():  completed");
           }
         }
       }
@@ -568,11 +568,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           this._displayThread.Start();
           if (this._displayThread.IsAlive)
           {
-            Log.Info("DebugForm.Initialize(): DebugForm.Display_Update() Thread Started", new object[0]);
+            Log.Info("DebugForm.Initialize(): DebugForm.Display_Update() Thread Started");
           }
           else
           {
-            Log.Info("DebugForm.Initialize(): DebugForm.Display_Update() FAILED TO START", new object[0]);
+            Log.Info("DebugForm.Initialize(): DebugForm.Display_Update() FAILED TO START");
           }
         }
       }
@@ -612,7 +612,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private void InitializeDriver()
     {
       this.DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
-      Log.Info("DebugForm.InitializeDriver(): started.", new object[0]);
+      Log.Info("DebugForm.InitializeDriver(): started.");
       Log.Info("DebugForm.InitializeDriver(): DebugForm Driver - {0}", new object[] {this.Description});
       Log.Info("DebugForm.InitializeDriver(): Called by \"{0}\".", new object[] {Assembly.GetEntryAssembly().FullName});
       FileInfo info = new FileInfo(Assembly.GetExecutingAssembly().Location);
@@ -678,7 +678,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       Log.Info("DebugForm.InitializeDriver(): Setting - Audio using Mixer: {0}",
                new object[] {this.EQSettings._AudioIsMixing});
       Log.Info("DebugForm.InitializeDriver(): Extensive logging: {0}", new object[] {this.DoDebug});
-      Log.Info("DebugForm.InitializeDriver(): completed.", new object[0]);
+      Log.Info("DebugForm.InitializeDriver(): completed.");
     }
 
     private void LoadAdvancedSettings()
@@ -741,7 +741,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         this.DisplaySettings._DisplayControlLastAction = DateTime.Now.Ticks;
         if (this.DoDebug)
         {
-          Log.Info("DebugForm.OnExternalAction(): received DisplayControlAction", new object[0]);
+          Log.Info("DebugForm.OnExternalAction(): received DisplayControlAction");
         }
         this.DisplayOn();
       }
@@ -773,7 +773,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (base.InvokeRequired)
       {
-        Log.Info("DebugForm.SetLine() - Invoke required", new object[0]);
+        Log.Info("DebugForm.SetLine() - Invoke required");
         base.Invoke(new SetLineDelegate(this.SetLine), new object[] {_line, _message});
       }
       else
@@ -860,7 +860,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           while (this._displayThread.IsAlive)
           {
-            Log.Info("DebugForm.Stop(): Stopping DebugForm.Display_Update() Thread", new object[0]);
+            Log.Info("DebugForm.Stop(): Stopping DebugForm.Display_Update() Thread");
             lock (ThreadMutex)
             {
               _stopDisplayUpdateThread = true;
@@ -955,10 +955,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       public static AdvancedSettings Load()
       {
         AdvancedSettings settings;
-        Log.Debug("DebugForm.AdvancedSettings.Load() started", new object[0]);
+        Log.Debug("DebugForm.AdvancedSettings.Load() started");
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_DebugForm.xml")))
         {
-          Log.Debug("DebugForm.AdvancedSettings.Load() Loading settings from XML file", new object[0]);
+          Log.Debug("DebugForm.AdvancedSettings.Load() Loading settings from XML file");
           XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
           XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_DebugForm.xml"));
           settings = (AdvancedSettings) serializer.Deserialize(xmlReader);
@@ -966,11 +966,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         else
         {
-          Log.Debug("DebugForm.AdvancedSettings.Load() Loading settings from defaults", new object[0]);
+          Log.Debug("DebugForm.AdvancedSettings.Load() Loading settings from defaults");
           settings = new AdvancedSettings();
           Default(settings);
         }
-        Log.Debug("DebugForm.AdvancedSettings.Load() completed", new object[0]);
+        Log.Debug("DebugForm.AdvancedSettings.Load() completed");
         return settings;
       }
 
@@ -989,7 +989,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public static void Save(AdvancedSettings ToSave)
       {
-        Log.Debug("DebugForm.AdvancedSettings.Save() Saving settings to XML file", new object[0]);
+        Log.Debug("DebugForm.AdvancedSettings.Save() Saving settings to XML file");
         XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
         XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_DebugForm.xml"),
                                                  Encoding.UTF8);
@@ -997,7 +997,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         writer.Indentation = 2;
         serializer.Serialize((XmlWriter) writer, ToSave);
         writer.Close();
-        Log.Debug("DebugForm.AdvancedSettings.Save() completed", new object[0]);
+        Log.Debug("DebugForm.AdvancedSettings.Save() completed");
       }
 
       public static void SetDefaults()

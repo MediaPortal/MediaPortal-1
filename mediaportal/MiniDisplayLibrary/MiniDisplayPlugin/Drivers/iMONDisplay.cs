@@ -28,7 +28,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (DoDebug)
       {
-        Log.Info("iMONLCDg.iMONDisplay constructor: called", new object[0]);
+        Log.Info("iMONLCDg.iMONDisplay constructor: called");
       }
       if (_iMONDLL == null)
       {
@@ -41,7 +41,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       if (DoDebug)
       {
-        Log.Info("iMONLCDg.iMONDisplay constructor: completed", new object[0]);
+        Log.Info("iMONLCDg.iMONDisplay constructor: completed");
       }
     }
 
@@ -112,7 +112,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (DoDebug)
       {
-        Log.Info("iMONLCDg.iMONDisplay.CreateImonDLLWrapper(): called", new object[0]);
+        Log.Info("iMONLCDg.iMONDisplay.CreateImonDLLWrapper(): called");
       }
       new FileInfo(Assembly.GetEntryAssembly().Location);
       imonRC_DLLFile = FindImonRCdll();
@@ -124,7 +124,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (DoDebug)
         {
-          Log.Info("iMONLCDg.iMONDisplay.CreateImonDLLWrapper(): FAILED - SG_RC.dll not found", new object[0]);
+          Log.Info("iMONLCDg.iMONDisplay.CreateImonDLLWrapper(): FAILED - SG_RC.dll not found");
         }
         return;
       }
@@ -212,7 +212,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       if (DoDebug)
       {
-        Log.Info("iMONLCDg.iMONDisplay.CreateImonDLLWrapper(): Completed - RC DLL wrapper created.", new object[0]);
+        Log.Info("iMONLCDg.iMONDisplay.CreateImonDLLWrapper(): Completed - RC DLL wrapper created.");
       }
       return;
     }
@@ -223,7 +223,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       string str;
       if (DoDebug)
       {
-        Log.Info("iMONLCDg.iMONDisplay.FindImonRCdll(): called.", new object[0]);
+        Log.Info("iMONLCDg.iMONDisplay.FindImonRCdll(): called.");
       }
       bool flag = false;
       bool flag2 = false;
@@ -570,14 +570,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           VFD_Reserved = VFD_Reserved == 0 ? 0x8888 : 0;
           if (DoDebug)
           {
-            Log.Info("iMONLCDg.iMONDisplay.iMONVFD_Init(): Open failed - retrying...", new object[0]);
+            Log.Info("iMONLCDg.iMONDisplay.iMONVFD_Init(): Open failed - retrying...");
           }
         }
         if (_A_DLL)
         {
           if (DoDebug)
           {
-            Log.Info("iMONLCDg.iMONDisplay.iMONVFD_Init(): Opening Display with Installed Antec DLL", new object[0]);
+            Log.Info("iMONLCDg.iMONDisplay.iMONVFD_Init(): Opening Display with Installed Antec DLL");
           }
           flag = _A_iMONVFD_Init(VFD_Type, VFD_Reserved);
         }
@@ -585,7 +585,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (DoDebug)
           {
-            Log.Info("iMONLCDg.iMONDisplay.iMONVFD_Init(): Opening Display with Installed SoundGraph DLL", new object[0]);
+            Log.Info("iMONLCDg.iMONDisplay.iMONVFD_Init(): Opening Display with Installed SoundGraph DLL");
           }
           flag = _S_iMONVFD_Init(VFD_Type, VFD_Reserved);
         }
@@ -593,7 +593,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (DoDebug)
           {
-            Log.Info("iMONLCDg.iMONDisplay.iMONVFD_Init(): Opening Display with default DLL", new object[0]);
+            Log.Info("iMONLCDg.iMONDisplay.iMONVFD_Init(): Opening Display with default DLL");
           }
           flag = _iMONVFD_Init(VFD_Type, VFD_Reserved);
         }
@@ -612,12 +612,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (DoDebug)
         {
-          Log.Debug("iMONLCDg.iMONDisplay.iMONVFD_Init(): Opening Display with Installed DLL", new object[0]);
+          Log.Debug("iMONLCDg.iMONDisplay.iMONVFD_Init(): Opening Display with Installed DLL");
         }
       }
       else if (DoDebug)
       {
-        Log.Debug("iMONLCDg.iMONDisplay.iMONVFD_Init(): Opening Display with default DLL", new object[0]);
+        Log.Debug("iMONLCDg.iMONDisplay.iMONVFD_Init(): Opening Display with default DLL");
       }
       if (_A_DLL)
       {
@@ -662,7 +662,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (DoDebug)
         {
-          Log.Info("iMONLCDg.iMONDisplay.iMONVFD_SetText(): Calling SetText() from Antec DLL", new object[0]);
+          Log.Info("iMONLCDg.iMONDisplay.iMONVFD_SetText(): Calling SetText() from Antec DLL");
         }
         return _A_iMONVFD_SetText(firstLine, secondLine);
       }
@@ -670,13 +670,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (DoDebug)
         {
-          Log.Info("iMONLCDg.iMONDisplay.iMONVFD_SetText(): Calling SetText() from SoundGraph DLL", new object[0]);
+          Log.Info("iMONLCDg.iMONDisplay.iMONVFD_SetText(): Calling SetText() from SoundGraph DLL");
         }
         return _S_iMONVFD_SetText(firstLine, secondLine);
       }
       if (DoDebug)
       {
-        Log.Info("iMONLCDg.iMONDisplay.iMONVFD_SetText(): Calling SetText() from Default (V3) DLL", new object[0]);
+        Log.Info("iMONLCDg.iMONDisplay.iMONVFD_SetText(): Calling SetText() from Default (V3) DLL");
       }
       return _iMONVFD_SetText(firstLine, secondLine);
     }
@@ -701,12 +701,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         string directoryName;
         if (DoDebug)
         {
-          Log.Info("iMONLCDg.iMONDisplay.Initialize(): called", new object[0]);
+          Log.Info("iMONLCDg.iMONDisplay.Initialize(): called");
         }
         bool flag;
         if (DoDebug)
         {
-          Log.Info("iMONLCDg.iMONDisplay.Initialize(): Attempting to determine DLL source", new object[0]);
+          Log.Info("iMONLCDg.iMONDisplay.Initialize(): Attempting to determine DLL source");
         }
         if (_UseV3DLL | (DLLFullPath == string.Empty))
         {
@@ -714,7 +714,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           _S_DLL = false;
           if (_UseV3DLL && DoDebug)
           {
-            Log.Info("iMONLCDg.iMONDisplay.Initialize(): Advanced options forces V3 DLL", new object[0]);
+            Log.Info("iMONLCDg.iMONDisplay.Initialize(): Advanced options forces V3 DLL");
           }
           if ((DLLFullPath == string.Empty) && DoDebug)
           {
@@ -759,7 +759,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Environment.SetEnvironmentVariable("Path", directoryName);
         if (DoDebug)
         {
-          Log.Info("iMONLCDg.iMONDisplay.Initialize(): Attempting to link SG_VFD DLL", new object[0]);
+          Log.Info("iMONLCDg.iMONDisplay.Initialize(): Attempting to link SG_VFD DLL");
         }
         try
         {
@@ -767,14 +767,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           flag = true;
           if (DoDebug)
           {
-            Log.Info("iMONLCDg.iMONDisplay.Initialize(): DLL linking completed", new object[0]);
+            Log.Info("iMONLCDg.iMONDisplay.Initialize(): DLL linking completed");
           }
         }
         catch
         {
           if (DoDebug)
           {
-            Log.Info("iMONLCDg.iMONDisplay.Initialize(): DLL linking failed", new object[0]);
+            Log.Info("iMONLCDg.iMONDisplay.Initialize(): DLL linking failed");
           }
           flag = false;
         }
@@ -787,7 +787,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Environment.CurrentDirectory = currentDirectory;
         if (DoDebug)
         {
-          Log.Info("iMONLCDg.iMONDisplay.Initialize(): completed", new object[0]);
+          Log.Info("iMONLCDg.iMONDisplay.Initialize(): completed");
         }
         return flag;
       }

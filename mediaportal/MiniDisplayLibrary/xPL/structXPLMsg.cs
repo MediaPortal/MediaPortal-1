@@ -20,7 +20,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
       {
         this.keyName = string.Empty;
         this.Value = string.Empty;
-        Log.Info("xPL.structXplSection(structXPLMsg): caught exception", new object[0]);
+        Log.Info("xPL.structXplSection(structXPLMsg): caught exception");
       }
     }
   }

@@ -135,9 +135,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             Clear();
             if (_UseFans)
             {
-              Log.Info("VLSYS_Mplay.Initialize(): configuring fan support", new object[0]);
+              Log.Info("VLSYS_Mplay.Initialize(): configuring fan support");
               commPort.Write(new byte[] { 0xa4, 0x7d }, 0, 2);
-              Log.Info("VLSYS_Mplay.Initialize(): setting initial fan speed", new object[0]);
+              Log.Info("VLSYS_Mplay.Initialize(): setting initial fan speed");
               SetFanSpeed();
             }
             break;
@@ -151,7 +151,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void AdvancedSettings_OnSettingsChanged()
     {
-      Log.Info("VLSYS_Mplay.AdvancedSettings_OnSettingsChanged(): called", new object[0]);
+      Log.Info("VLSYS_Mplay.AdvancedSettings_OnSettingsChanged(): called");
       LoadAdvancedSettings();
       CleanUp();
       Thread.Sleep(100);
@@ -166,13 +166,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (DoDebug)
       {
-        Log.Info("VLSYS_Mplay.Brightness(): called", new object[0]);
+        Log.Info("VLSYS_Mplay.Brightness(): called");
       }
       if (isDisabled)
       {
         if (DoDebug)
         {
-          Log.Info("VLSYS_Mplay.Brightness(): completed - display disabled", new object[0]);
+          Log.Info("VLSYS_Mplay.Brightness(): completed - display disabled");
         }
       }
       else if (_UseBrightness)
@@ -185,7 +185,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (DoDebug)
           {
-            Log.Info("VLSYS_Mplay.Brightness(): Setting display drightness to 25%", new object[0]);
+            Log.Info("VLSYS_Mplay.Brightness(): Setting display drightness to 25%");
           }
           level = 0x3b;
         }
@@ -193,7 +193,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (DoDebug)
           {
-            Log.Info("VLSYS_Mplay.Brightness(): Setting display drightness to 50%", new object[0]);
+            Log.Info("VLSYS_Mplay.Brightness(): Setting display drightness to 50%");
           }
           level = 0x3a;
         }
@@ -201,7 +201,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (DoDebug)
           {
-            Log.Info("VLSYS_Mplay.Brightness(): Setting display drightness to 75%", new object[0]);
+            Log.Info("VLSYS_Mplay.Brightness(): Setting display drightness to 75%");
           }
           level = 0x39;
         }
@@ -209,7 +209,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (DoDebug)
           {
-            Log.Info("VLSYS_Mplay.Brightness(): Setting display drightness to 100%", new object[0]);
+            Log.Info("VLSYS_Mplay.Brightness(): Setting display drightness to 100%");
           }
           level = 0x38;
         }
@@ -217,17 +217,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         SerialWriteDelay(50);
         if (DoDebug)
         {
-          Log.Info("VLSYS_Mplay.Brightness(): completed", new object[0]);
+          Log.Info("VLSYS_Mplay.Brightness(): completed");
         }
       }
     }
 
     public void CleanUp()
     {
-      Log.Info("VLSYS_Mplay.CleanUp() called", new object[0]);
+      Log.Info("VLSYS_Mplay.CleanUp() called");
       if (isDisabled)
       {
-        Log.Info("VLSYS_Mplay.CleanUp() completed - driver disabled", new object[0]);
+        Log.Info("VLSYS_Mplay.CleanUp() completed - driver disabled");
       }
       else
       {
@@ -239,7 +239,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           while (_EqThread.IsAlive)
           {
-            Log.Info("iMONLCDg.Cleanup(): Stoping EQ_Update() Thread", new object[0]);
+            Log.Info("iMONLCDg.Cleanup(): Stoping EQ_Update() Thread");
             lock (ThreadMutex)
             {
               _stopUpdateEqThread = true;
@@ -254,7 +254,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           byte[] buffer = new byte[3];
           commPort.Write(buffer, 0, 3);
           SerialWriteDelay(500);
-          Log.Info("VLSYS_Mplay.CleanUp() setting display to ACPI mode", new object[0]);
+          Log.Info("VLSYS_Mplay.CleanUp() setting display to ACPI mode");
           commPort.Write(new byte[] {0xae, 0xae}, 0, 2);
           ShutdownFans();
           commPort.Write(new byte[] {0xa4, 0x7e}, 0, 2);
@@ -276,7 +276,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         else if (!MPlay_Model.Equals("MZ5"))
         {
-          Log.Info("VLSYS_Mplay.CleanUp() Doing shutdown for M.Play Blast", new object[0]);
+          Log.Info("VLSYS_Mplay.CleanUp() Doing shutdown for M.Play Blast");
           byte[] buffer8 = new byte[1];
           commPort.Write(buffer8, 0, 1);
           SerialWriteDelay(50);
@@ -290,14 +290,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         _LastCustomCharacterData = 0;
         commPort.Close();
-        Log.Info("VLSYS_Mplay.CleanUp() commPort closed", new object[0]);
+        Log.Info("VLSYS_Mplay.CleanUp() commPort closed");
         commPort.Dispose();
         commPort = null;
         if (_ManageMHC)
         {
           RestartMHC();
         }
-        Log.Info("VLSYS_Mplay.CleanUp() completed", new object[0]);
+        Log.Info("VLSYS_Mplay.CleanUp() completed");
       }
     }
 
@@ -305,7 +305,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (!isDisabled && _EnableDisplay)
       {
-        Log.Info("VLSYS_Mplay.Clear() called", new object[0]);
+        Log.Info("VLSYS_Mplay.Clear() called");
         if (MPlay_Model.Equals("LIS2"))
         {
           string message = new string(' ', cols);
@@ -318,7 +318,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           commPort.Write(new byte[] {160}, 0, 1);
         }
-        Log.Info("VLSYS_Mplay.Clear() completed", new object[0]);
+        Log.Info("VLSYS_Mplay.Clear() completed");
       }
     }
 
@@ -385,20 +385,20 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           if (DoDebug)
           {
-            Log.Info("VLSYS_Mplay.DisplayOff(): DisplayControlAction Timeout expired.", new object[0]);
+            Log.Info("VLSYS_Mplay.DisplayOff(): DisplayControlAction Timeout expired.");
           }
           DisplaySettings._DisplayControlAction = false;
           DisplaySettings._DisplayControlLastAction = 0L;
         }
-        Log.Info("VLSYS_Mplay.DisplayOff(): completed", new object[0]);
+        Log.Info("VLSYS_Mplay.DisplayOff(): completed");
         lock (DWriteMutex)
         {
-          Log.Info("VLSYS_Mplay.DisplayOff(): Turning display OFF", new object[0]);
+          Log.Info("VLSYS_Mplay.DisplayOff(): Turning display OFF");
           Clear();
           Brightness(0);
           _IsDisplayOff = true;
         }
-        Log.Info("VLSYS_Mplay.DisplayOff(): completed", new object[0]);
+        Log.Info("VLSYS_Mplay.DisplayOff(): completed");
       }
     }
 
@@ -406,14 +406,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (_IsDisplayOff)
       {
-        Log.Info("VLSYS_Mplay.DisplayOn(): called", new object[0]);
+        Log.Info("VLSYS_Mplay.DisplayOn(): called");
         lock (DWriteMutex)
         {
-          Log.Info("VLSYS_Mplay.DisplayOn(): Turning Display ON", new object[0]);
+          Log.Info("VLSYS_Mplay.DisplayOn(): Turning Display ON");
           Brightness(_Brightness);
         }
         _IsDisplayOff = false;
-        Log.Info("VLSYS_Mplay.DisplayOn(): completed", new object[0]);
+        Log.Info("VLSYS_Mplay.DisplayOn(): completed");
       }
     }
 
@@ -452,7 +452,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public void Dispose()
     {
-      Log.Info("VLSYS_Mplay.Dispose() called", new object[0]);
+      Log.Info("VLSYS_Mplay.Dispose() called");
       try
       {
         if ((commPort != null) && commPort.IsOpen)
@@ -465,7 +465,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         Log.Error(exception);
       }
-      Log.Info("VLSYS_Mplay.Dispose() completed", new object[0]);
+      Log.Info("VLSYS_Mplay.Dispose() completed");
     }
 
     public void DrawImage(Bitmap bitmap)
@@ -484,7 +484,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (DoDebug)
           {
-            Log.Info("VLSYS_Mplay.VFD_EQ_Update(): Checking for Thread termination request", new object[0]);
+            Log.Info("VLSYS_Mplay.VFD_EQ_Update(): Checking for Thread termination request");
           }
           if (_stopUpdateEqThread)
           {
@@ -494,7 +494,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             if (DoDebug)
             {
-              Log.Info("VLSYS_Mplay.EQ_Update(): EQ_Update Thread terminating", new object[0]);
+              Log.Info("VLSYS_Mplay.EQ_Update(): EQ_Update Thread terminating");
             }
             _stopUpdateEqThread = false;
             return;
@@ -518,7 +518,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               if (DoDebug)
               {
-                Log.Info("VLSYS_Mplay.EQ_Update(): Turning off display while playing video", new object[0]);
+                Log.Info("VLSYS_Mplay.EQ_Update(): Turning off display while playing video");
               }
               DisplayOff();
             }
@@ -673,7 +673,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (DoDebug)
       {
-        Log.Info("VLSYS_Mplay.FireRemoteEvent(): called", new object[0]);
+        Log.Info("VLSYS_Mplay.FireRemoteEvent(): called");
       }
       if (!_inputHandler.MapAction(EventCode))
       {
@@ -693,7 +693,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       _LastRemoteButtonTimestamp = DateTime.Now;
       if (DoDebug)
       {
-        Log.Info("VLSYS_Mplay.FireRemoteEvent(): completed", new object[0]);
+        Log.Info("VLSYS_Mplay.FireRemoteEvent(): completed");
       }
     }
 
@@ -764,14 +764,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public void Initialize()
     {
-      Log.Info("VLSYS_Mplay.Initialize(): called", new object[0]);
+      Log.Info("VLSYS_Mplay.Initialize(): called");
       if (_ManageMHC)
       {
         TerminateMHC();
       }
       if (isDisabled)
       {
-        Log.Info("VLSYS_Mplay.Initialize(): completed - driver disabled", new object[0]);
+        Log.Info("VLSYS_Mplay.Initialize(): completed - driver disabled");
       }
       else
       {
@@ -803,7 +803,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             int num = 0;
             MPlay_Model = string.Empty;
-            Log.Info("VLSYS_Mplay.Initialize(): attempting device detection", new object[0]);
+            Log.Info("VLSYS_Mplay.Initialize(): attempting device detection");
             commPort.DataReceived += new SerialDataReceivedEventHandler(WhenDataReceived);
             while (MPlay_Model == string.Empty && num < 2500)
             {
@@ -836,12 +836,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           
           commPort.DiscardInBuffer();
           commPort.DiscardOutBuffer();
-          Log.Info("VLSYS_Mplay.Initialize(): Enabling serial receive data processing", new object[0]);
+          Log.Info("VLSYS_Mplay.Initialize(): Enabling serial receive data processing");
           _FlushDataBuffers = true;              
           
           if (_UseRemote || (_UseFans && (_Fan1Auto || _Fan2Auto)))
           {
-            Log.Info("VLSYS_Mplay.Initialize(): configuring serial data receive support", new object[0]);
+            Log.Info("VLSYS_Mplay.Initialize(): configuring serial data receive support");
             commPort.DataReceived += new SerialDataReceivedEventHandler(WhenDataReceived);
             _ProcessReceivedData = true;
           }          
@@ -866,7 +866,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         AdvancedSettings.OnSettingsChanged +=
           new AdvancedSettings.OnSettingsChangedHandler(AdvancedSettings_OnSettingsChanged);
         Clear();
-        Log.Info("VLSYS_Mplay.Initialize() completed", new object[0]);
+        Log.Info("VLSYS_Mplay.Initialize() completed");
       }
     }
 
@@ -1182,7 +1182,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         DisplaySettings._DisplayControlLastAction = DateTime.Now.Ticks;
         if (DoDebug)
         {
-          Log.Info("VLSYS_Mplay.OnExternalAction(): received DisplayControlAction", new object[0]);
+          Log.Info("VLSYS_Mplay.OnExternalAction(): received DisplayControlAction");
         }
         DisplayOn();
       }
@@ -1202,7 +1202,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                          };
       if (EQSettings.UseVUmeter)
       {
-        Log.Info("VLSYS_Mplay.RenderEQ(): Rendering VU Meter", new object[0]);
+        Log.Info("VLSYS_Mplay.RenderEQ(): Rendering VU Meter");
         if (_LastCustomCharacterData != 2)
         {
           commPort.Write(new byte[] {0xad}, 0, 1);
@@ -1303,7 +1303,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       else
       {
-        Log.Info("VLSYS_Mplay.RenderEQ(): Rendering VU Meter 2", new object[0]);
+        Log.Info("VLSYS_Mplay.RenderEQ(): Rendering VU Meter 2");
         int num6 = 0;
         int num7 = 0;
         int num8 = EqDataArray[1];
@@ -1434,20 +1434,20 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (_ManageMHC && _RestartMHC)
       {
-        Log.Info("VLSYS_Mplay.RestartMHC(): called", new object[0]);
+        Log.Info("VLSYS_Mplay.RestartMHC(): called");
         Process process = new Process();
         if ((_MHCWorkingDirectory != string.Empty) && (_MHCFileName != string.Empty))
         {
           process.StartInfo.WorkingDirectory = _MHCWorkingDirectory;
           process.StartInfo.FileName = _MHCFileName;
-          Log.Info("VLSYS_Mplay.RestartMHC(): Restarting MHC", new object[0]);
+          Log.Info("VLSYS_Mplay.RestartMHC(): Restarting MHC");
           Process.Start(process.StartInfo);
         }
         else
         {
-          Log.Info("VLSYS_Mplay.RestartMHC(): Cannot restart MHC - Process data not available", new object[0]);
+          Log.Info("VLSYS_Mplay.RestartMHC(): Cannot restart MHC - Process data not available");
         }
-        Log.Info("VLSYS_Mplay.RestartMHC(): Completed", new object[0]);
+        Log.Info("VLSYS_Mplay.RestartMHC(): Completed");
       }
     }
 
@@ -1473,7 +1473,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (_LastCustomCharacterData != 9)
       {
-        Log.Info("VLSYS_Mplay.SendCustomCharactersToDisplay: called", new object[0]);
+        Log.Info("VLSYS_Mplay.SendCustomCharactersToDisplay: called");
         commPort.Write(new byte[] {0xad}, 0, 1);
         for (int i = 0; i < 8; i++)
         {
@@ -1487,7 +1487,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         _LastCustomCharacterData = 9;
         SerialWriteDelay(40);
-        Log.Info("VLSYS_Mplay.SendCustomCharactersToDisplay: completed", new object[0]);
+        Log.Info("VLSYS_Mplay.SendCustomCharactersToDisplay: completed");
       }
     }
 
@@ -1526,7 +1526,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public void SetCustomCharacters(int[][] customCharacters)
     {
-      Log.Info("VLSYS_Mplay.SetCustomCharacters: called", new object[0]);
+      Log.Info("VLSYS_Mplay.SetCustomCharacters: called");
       if (DefaultCustomCharacters == null)
       {
         byte[][] bufferArray = new byte[8][];
@@ -1549,7 +1549,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       _LastCustomCharacterData = -1;
       SendCustomCharactersToDisplay();
-      Log.Info("VLSYS_Mplay.SetCustomCharacters: completed", new object[0]);
+      Log.Info("VLSYS_Mplay.SetCustomCharacters: completed");
     }
 
     private void SetFanSpeed()
@@ -1558,7 +1558,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (DoDebug)
         {
-          Log.Info("VLSYS_Mplay.SetFanSpeed() completed - driver disabled", new object[0]);
+          Log.Info("VLSYS_Mplay.SetFanSpeed() completed - driver disabled");
         }
         return;
       }
@@ -1567,7 +1567,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       byte num2 = FanSpeedByte(_Fan2Speed);
       if (DoDebug)
       {
-        Log.Info("VLSYS_Mplay.SetFanSpeed() called", new object[0]);
+        Log.Info("VLSYS_Mplay.SetFanSpeed() called");
       }
 
       if (_Fan1Auto)
@@ -1604,7 +1604,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       if (DoDebug)
       {
-        Log.Info("VLSYS_Mplay.SetFanSpeed() completed", new object[0]);
+        Log.Info("VLSYS_Mplay.SetFanSpeed() completed");
       }
     }
 
@@ -1614,14 +1614,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (DoDebug)
         {
-          Log.Info("VLSYS_Mplay.SetLine() Called", new object[0]);
+          Log.Info("VLSYS_Mplay.SetLine() Called");
         }
         UpdateAdvancedSettings();
         if (EQSettings._EqDataAvailable || _IsDisplayOff)
         {
           if (DoDebug)
           {
-            Log.Info("VLSYS_Mplay.SetLine(): Suppressing display update!", new object[0]);
+            Log.Info("VLSYS_Mplay.SetLine(): Suppressing display update!");
           }
         }
         else
@@ -1642,7 +1642,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           else
           {
-            Log.Error("VLSYS_Mplay.SetLine: error bad line number" + line, new object[0]);
+            Log.Error("VLSYS_Mplay.SetLine: error bad line number" + line);
             return;
           }
 
@@ -1665,7 +1665,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           if (DoDebug)
           {
-            Log.Info("VLSYS_Mplay.SetLine(): message sent to display", new object[0]);
+            Log.Info("VLSYS_Mplay.SetLine(): message sent to display");
           }
         }
         if ((line == 0) && MPStatus.MP_Is_Idle)
@@ -1681,7 +1681,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               if (DoDebug)
               {
-                Log.Info("VLSYS_Mplay.SetLine(): MP going IDLE", new object[0]);
+                Log.Info("VLSYS_Mplay.SetLine(): MP going IDLE");
               }
               DisplaySettings._BlankIdleTime = DateTime.Now.Ticks;
             }
@@ -1690,7 +1690,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               if (DoDebug)
               {
-                Log.Info("VLSYS_Mplay.SetLine(): Blanking display due to IDLE state", new object[0]);
+                Log.Info("VLSYS_Mplay.SetLine(): Blanking display due to IDLE state");
               }
               DisplayOff();
             }
@@ -1703,7 +1703,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (DoDebug)
             {
-              Log.Info("VLSYS_Mplay.SetLine(): MP no longer IDLE - restoring display", new object[0]);
+              Log.Info("VLSYS_Mplay.SetLine(): MP no longer IDLE - restoring display");
             }
             DisplayOn();
           }
@@ -1711,7 +1711,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         if (DoDebug)
         {
-          Log.Info("VLSYS_Mplay.SetLine() completed", new object[0]);
+          Log.Info("VLSYS_Mplay.SetLine() completed");
         }
         GetTempReading();
       }
@@ -1723,7 +1723,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
       Log.Info("{0}", new object[] {Description});
-      Log.Info("VLSYS_Mplay.Setup(): called", new object[0]);
+      Log.Info("VLSYS_Mplay.Setup(): called");
       MiniDisplayHelper.InitEQ(ref EQSettings);
       MiniDisplayHelper.InitDisplayControl(ref DisplaySettings);
       InitRemoteSettings(ref RemoteSettings);
@@ -1747,10 +1747,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           if (!File.Exists(Config.GetFile(Config.Dir.CustomInputDefault, "VLSYS_Mplay.xml")))
           {
-            Log.Info("VLSYS_Mplay.Setup(): Creating default VLSYS_Mplay mapping file", new object[0]);
+            Log.Info("VLSYS_Mplay.Setup(): Creating default VLSYS_Mplay mapping file");
             if (!AdvancedSettings.CreateDefaultRemoteMapping())
             {
-              Log.Info("VLSYS_Mplay.Setup(): ERROR Creating default VLSYS_Mplay mapping file", new object[0]);
+              Log.Info("VLSYS_Mplay.Setup(): ERROR Creating default VLSYS_Mplay mapping file");
               flag = false;
             }
             else
@@ -1771,7 +1771,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         if (flag)
         {
-          Log.Info("VLSYS_Mplay.Setup(): Loading InputHandler", new object[0]);
+          Log.Info("VLSYS_Mplay.Setup(): Loading InputHandler");
           _inputHandler = new InputHandler("VLSYS_Mplay");
           Log.Info("VLSYS_Mplay.Setup(): InputHandler loaded = {0}", new object[] {_inputHandler.IsLoaded});
           if (_inputHandler.IsLoaded)
@@ -1781,17 +1781,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           else
           {
             _UseRemote = false;
-            Log.Info("VLSYS_Mplay.Setup(): error loading InputHandler - remote support disabled", new object[0]);
+            Log.Info("VLSYS_Mplay.Setup(): error loading InputHandler - remote support disabled");
           }
         }
         else
         {
-          Log.Info("VLSYS_Mplay.Setup(): Remote support disabled - no remote mapping file", new object[0]);
+          Log.Info("VLSYS_Mplay.Setup(): Remote support disabled - no remote mapping file");
           _UseRemote = false;
         }
         if (!_UseRemote || !_inputHandler.IsLoaded)
         {
-          Log.Info("VLSYS_Mplay.Setup(): Error loading remote mapping file - Remote support disabled", new object[0]);
+          Log.Info("VLSYS_Mplay.Setup(): Error loading remote mapping file - Remote support disabled");
           _UseRemote = false;
         }
       }
@@ -1808,14 +1808,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         _EqThread.Start();
         if (_EqThread.IsAlive)
         {
-          Log.Info("VLSYS_Mplay.Setup(): EQ_Update() Thread Started", new object[0]);
+          Log.Info("VLSYS_Mplay.Setup(): EQ_Update() Thread Started");
         }
         else
         {
-          Log.Info("VLSYS_Mplay.Setup(): EQ_Update() FAILED TO START", new object[0]);
+          Log.Info("VLSYS_Mplay.Setup(): EQ_Update() FAILED TO START");
         }
       }
-      Log.Info("VLSYS_Mplay.Setup() completed", new object[0]);
+      Log.Info("VLSYS_Mplay.Setup() completed");
     }
 
     private void ShutdownFans()
@@ -1824,7 +1824,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (DoDebug)
         {
-          Log.Info("VLSYS_Mplay.ShutdownFans() called", new object[0]);
+          Log.Info("VLSYS_Mplay.ShutdownFans() called");
         }
         int num = 0;
         int num2 = 0;
@@ -1870,7 +1870,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         commPort.Write(new byte[] {0xac, (byte) num, (byte) num2}, 0, 3);
         if (DoDebug)
         {
-          Log.Info("VLSYS_Mplay.ShutdownFans() completed", new object[0]);
+          Log.Info("VLSYS_Mplay.ShutdownFans() completed");
         }
       }
     }
@@ -1892,7 +1892,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Info("VLSYS_Mplay.TerminateMHC(): MHC.exe path = \"{0}\"", new object[] {_MHCFileName});
           _RestartMHC = true;
           flag = false;
-          Log.Info("VLSYS_Mplay.TerminateMHC(): Closing M.Play Home Center", new object[0]);
+          Log.Info("VLSYS_Mplay.TerminateMHC(): Closing M.Play Home Center");
           num = 0xdac;
           SendMessage(processesByName[0].Handle, 0x112, 0xf060, 0);
           processesByName[0].Refresh();
@@ -1912,18 +1912,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             if (num < 90)
             {
-              Log.Info("VLSYS_Mplay.TerminateMHC(): Close timeout expired", new object[0]);
+              Log.Info("VLSYS_Mplay.TerminateMHC(): Close timeout expired");
               break;
             }
             SendMessage(processesByName[0].Handle, 0x112, 0xf060, 0);
           }
           if (flag)
           {
-            Log.Info("VLSYS_Mplay.TerminateMHC(): M.Play Home Center has closed!", new object[0]);
+            Log.Info("VLSYS_Mplay.TerminateMHC(): M.Play Home Center has closed!");
           }
           else
           {
-            Log.Info("VLSYS_Mplay.TerminateMHC(): Killing M.Play Home Center", new object[0]);
+            Log.Info("VLSYS_Mplay.TerminateMHC(): Killing M.Play Home Center");
             num = 0x5dc;
             processesByName[0].Dispose();
             processesByName = Process.GetProcessesByName("MHC");
@@ -1945,13 +1945,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 num -= 100;
                 if (num < 90)
                 {
-                  Log.Info("VLSYS_Mplay.TerminateMHC(): kill timeout expired", new object[0]);
+                  Log.Info("VLSYS_Mplay.TerminateMHC(): kill timeout expired");
                   break;
                 }
               }
               if (flag)
               {
-                Log.Info("VLSYS_Mplay.TerminateMHC(): M.Play Home Center has died!", new object[0]);
+                Log.Info("VLSYS_Mplay.TerminateMHC(): M.Play Home Center has died!");
               }
               else
               {
@@ -1961,7 +1961,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               }
             }
           }
-          Log.Info("VLSYS_Mplay.TerminateMHC(): completed", new object[0]);
+          Log.Info("VLSYS_Mplay.TerminateMHC(): completed");
         }
         if (flag)
         {
@@ -2064,7 +2064,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (DoDebug)
         {
-          Log.Info("VLSYS_Mplay.UpdateAdvancedSettings(): called", new object[0]);
+          Log.Info("VLSYS_Mplay.UpdateAdvancedSettings(): called");
         }
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_vlsys_mplay.xml")))
         {
@@ -2073,14 +2073,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (DoDebug)
             {
-              Log.Info("VLSYS_Mplay.UpdateAdvancedSettings(): updating advanced settings", new object[0]);
+              Log.Info("VLSYS_Mplay.UpdateAdvancedSettings(): updating advanced settings");
             }
             LoadAdvancedSettings();
           }
         }
         if (DoDebug)
         {
-          Log.Info("VLSYS_Mplay.UpdateAdvancedSettings(): completed", new object[0]);
+          Log.Info("VLSYS_Mplay.UpdateAdvancedSettings(): completed");
         }
       }
     }
@@ -2126,7 +2126,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (_FlushDataBuffers)
             {
-              Log.Info("VLSYS_Mplay.WhenDataReceived(): flushing data buffers - starting", new object[0]);
+              Log.Info("VLSYS_Mplay.WhenDataReceived(): flushing data buffers - starting");
               while (commPort.BytesToRead > 0)
               {
                 commPort.DiscardInBuffer();
@@ -2136,12 +2136,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 commPort.DiscardOutBuffer();
               }
               _FlushDataBuffers = false;
-              Log.Info("VLSYS_Mplay.WhenDataReceived(): flushing data buffers - finished", new object[0]);
+              Log.Info("VLSYS_Mplay.WhenDataReceived(): flushing data buffers - finished");
               return;
             }            
             if (DoDebug)
             {
-              Log.Info("VLSYS_Mplay.WhenDataReceived(): Got DataReceived event", new object[0]);
+              Log.Info("VLSYS_Mplay.WhenDataReceived(): Got DataReceived event");
             }
             try
             {
@@ -2150,7 +2150,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               {
                 if (DoDebug)
                 {
-                  Log.Info("VLSYS_Mplay: Got DataReceived event with no data", new object[0]);
+                  Log.Info("VLSYS_Mplay: Got DataReceived event with no data");
                 }
                 return;
               }
@@ -2164,7 +2164,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               if (DoDebug)
               {
-                Log.Info("VLSYS_Mplay.WhenDataReceived(): error reading from port - driver disabled", new object[0]);
+                Log.Info("VLSYS_Mplay.WhenDataReceived(): error reading from port - driver disabled");
               }
               isDisabled = true;
               return;
@@ -2196,7 +2196,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             
             if ((commPort.BytesToRead > 0) && DoDebug)
             {
-              Log.Info("VLSYS_Mplay.WhenDataReceived(): new data arrived after notification... leaving for next read cycle", new object[0]);
+              Log.Info("VLSYS_Mplay.WhenDataReceived(): new data arrived after notification... leaving for next read cycle");
             }
             
             if (DoDebug)
@@ -2224,7 +2224,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 {
                   if (DoDebug)
                   {
-                    Log.Info("VLSYS_Mplay.WhenDataReceived(): Remote disabled - ignoring", new object[0]);
+                    Log.Info("VLSYS_Mplay.WhenDataReceived(): Remote disabled - ignoring");
                   }
                 }
                 else
@@ -2340,7 +2340,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             if (DoDebug)
             {
-              Log.Info("VLSYS_Mplay.WhenDataReceived(): completed", new object[0]);
+              Log.Info("VLSYS_Mplay.WhenDataReceived(): completed");
             }
           }
         }
@@ -2360,7 +2360,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       get
       {
-        Log.Info("VLSYS_Mplay.ErrorMessage: called", new object[0]);
+        Log.Info("VLSYS_Mplay.ErrorMessage: called");
         return errorMessage;
       }
     }
@@ -2369,7 +2369,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       get
       {
-        Log.Info("VLSYS_Mplay.IsDisabled: called", new object[0]);
+        Log.Info("VLSYS_Mplay.IsDisabled: called");
         return isDisabled;
       }
     }
@@ -2434,7 +2434,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public static bool CreateDefaultRemoteMapping()
       {
-        Log.Info("VLSYS_Mplay.AdvancedSettings.CreateDefaultRemoteMapping(): called", new object[0]);
+        Log.Info("VLSYS_Mplay.AdvancedSettings.CreateDefaultRemoteMapping(): called");
         bool flag = false;
         string str = "VLSYS_Mplay";
         try
@@ -3426,7 +3426,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           writer.WriteEndDocument();
           writer.Close();
           flag = true;
-          Log.Info("VLSYS_Mplay.AdvancedSettings.CreateDefaultRemoteMapping: remote mapping file created", new object[0]);
+          Log.Info("VLSYS_Mplay.AdvancedSettings.CreateDefaultRemoteMapping: remote mapping file created");
         }
         catch
         {
@@ -3434,7 +3434,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                    new object[0]);
           flag = false;
         }
-        Log.Info("VLSYS_Mplay.AdvancedSettings.CreateDefaultRemoteMapping: completed", new object[0]);
+        Log.Info("VLSYS_Mplay.AdvancedSettings.CreateDefaultRemoteMapping: completed");
         return flag;
       }
 
@@ -3480,10 +3480,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       public static AdvancedSettings Load()
       {
         AdvancedSettings settings;
-        Log.Info("VLSYS_Mplay.AdvancedSettings.Load(): started", new object[0]);
+        Log.Info("VLSYS_Mplay.AdvancedSettings.Load(): started");
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_vlsys_mplay.xml")))
         {
-          Log.Info("VLSYS_Mplay.AdvancedSettings.Load(): Loading settings from XML file", new object[0]);
+          Log.Info("VLSYS_Mplay.AdvancedSettings.Load(): Loading settings from XML file");
           XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
           XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_vlsys_mplay.xml"));
           settings = (AdvancedSettings) serializer.Deserialize(xmlReader);
@@ -3491,11 +3491,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         else
         {
-          Log.Info("VLSYS_Mplay.AdvancedSettings.Load(): Loading settings from defaults", new object[0]);
+          Log.Info("VLSYS_Mplay.AdvancedSettings.Load(): Loading settings from defaults");
           settings = new AdvancedSettings();
           Default(settings);
         }
-        Log.Info("VLSYS_Mplay.AdvancedSettings.Load(): completed", new object[0]);
+        Log.Info("VLSYS_Mplay.AdvancedSettings.Load(): completed");
         return settings;
       }
 
@@ -3514,7 +3514,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public static void Save(AdvancedSettings ToSave)
       {
-        Log.Info("VLSYS_Mplay.AdvancedSettings.Save(): Saving settings to XML file", new object[0]);
+        Log.Info("VLSYS_Mplay.AdvancedSettings.Save(): Saving settings to XML file");
         XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
         XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_vlsys_mplay.xml"),
                                                  Encoding.UTF8);
@@ -3522,7 +3522,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         writer.Indentation = 2;
         serializer.Serialize((XmlWriter) writer, ToSave);
         writer.Close();
-        Log.Info("VLSYS_Mplay.AdvancedSettings.Save(): completed", new object[0]);
+        Log.Info("VLSYS_Mplay.AdvancedSettings.Save(): completed");
       }
 
       public static void SetDefaults()

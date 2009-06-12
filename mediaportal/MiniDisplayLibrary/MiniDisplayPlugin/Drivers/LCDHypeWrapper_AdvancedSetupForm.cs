@@ -41,7 +41,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public LCDHypeWrapper_AdvancedSetupForm()
     {
-      Log.Debug("LCDHypeWrapper_AdvancedSetupForm(): Constructor started", new object[0]);
+      Log.Debug("LCDHypeWrapper_AdvancedSetupForm(): Constructor started");
       this.InitializeComponent();
       this.mpEqDisplay.DataBindings.Add("Checked", LCDHypeWrapper.AdvancedSettings.Instance, "EqDisplay");
       this.mpRestrictEQ.DataBindings.Add("Checked", LCDHypeWrapper.AdvancedSettings.Instance, "RestrictEQ");
@@ -82,12 +82,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.cbVUindicators.DataBindings.Add("Checked", LCDHypeWrapper.AdvancedSettings.Instance, "VUindicators");
       this.Refresh();
       this.SetControlState();
-      Log.Debug("LCDHypeWrapper_AdvancedSetupForm(): Constructor completed", new object[0]);
+      Log.Debug("LCDHypeWrapper_AdvancedSetupForm(): Constructor completed");
     }
 
     private void btnOK_Click(object sender, EventArgs e)
     {
-      Log.Debug("LCDHypeWrapper_AdvancedSetupForm.btnOK_Click(): started", new object[0]);
+      Log.Debug("LCDHypeWrapper_AdvancedSetupForm.btnOK_Click(): started");
       if (this.cbNormalEQ.Checked)
       {
         LCDHypeWrapper.AdvancedSettings.Instance.NormalEQ = true;
@@ -119,12 +119,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       LCDHypeWrapper.AdvancedSettings.Save();
       base.Hide();
       base.Close();
-      Log.Debug("LCDHypeWrapper_AdvancedSetupForm.btnOK_Click(): Completed", new object[0]);
+      Log.Debug("LCDHypeWrapper_AdvancedSetupForm.btnOK_Click(): Completed");
     }
 
     private void btnReset_Click(object sender, EventArgs e)
     {
-      Log.Debug("LCDHypeWrapper_AdvancedSetupForm.btnReset_Click(): started", new object[0]);
+      Log.Debug("LCDHypeWrapper_AdvancedSetupForm.btnReset_Click(): started");
       LCDHypeWrapper.AdvancedSettings.SetDefaults();
       if (LCDHypeWrapper.AdvancedSettings.Instance.NormalEQ)
       {
@@ -157,7 +157,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.mpBlankDisplayWhenIdle.Checked = LCDHypeWrapper.AdvancedSettings.Instance.BlankDisplayWhenIdle;
       this.cmbBlankIdleTime.SelectedIndex = LCDHypeWrapper.AdvancedSettings.Instance.BlankIdleTime;
       this.Refresh();
-      Log.Debug("LCDHypeWrapper_AdvancedSetupForm.btnReset_Click(): Completed", new object[0]);
+      Log.Debug("LCDHypeWrapper_AdvancedSetupForm.btnReset_Click(): Completed");
     }
 
     private void btnTest_Click(object sender, EventArgs e)

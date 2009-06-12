@@ -5015,7 +5015,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             _IconBuffer[i, j - 1] = (byte)row[j];
           }
         }
-        Log.Debug("LoadLargeIconData() - completed", new object[0]);
+        Log.Debug("LoadLargeIconData() - completed");
         CopyBufferToGraphics();
         IconsChanged = false;
       }

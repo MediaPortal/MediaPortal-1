@@ -52,7 +52,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public MatrixMX_AdvancedSetupForm()
     {
-      Log.Debug("MatrixMX_AdvancedSetupForm(): Constructor started", new object[0]);
+      Log.Debug("MatrixMX_AdvancedSetupForm(): Constructor started");
       this.InitializeComponent();
       this.cbEnableKeypad.DataBindings.Add("Checked", MatrixMX.AdvancedSettings.Instance, "EnableKeypad");
       this.cbEnableCustomKeypadMapping.DataBindings.Add("Checked", MatrixMX.AdvancedSettings.Instance,
@@ -95,12 +95,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.cbVUindicators.DataBindings.Add("Checked", MatrixMX.AdvancedSettings.Instance, "VUindicators");
       this.Refresh();
       this.SetControlState();
-      Log.Debug("MatrixMX_AdvancedSetupForm(): Constructor completed", new object[0]);
+      Log.Debug("MatrixMX_AdvancedSetupForm(): Constructor completed");
     }
 
     private void btnOK_Click(object sender, EventArgs e)
     {
-      Log.Debug("MatrixMX_AdvancedSetupForm.btnOK_Click(): started", new object[0]);
+      Log.Debug("MatrixMX_AdvancedSetupForm.btnOK_Click(): started");
       if (this.cbNormalEQ.Checked)
       {
         MatrixMX.AdvancedSettings.Instance.NormalEQ = true;
@@ -132,7 +132,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       MatrixMX.AdvancedSettings.Save();
       base.Hide();
       base.Close();
-      Log.Debug("MatrixMX_AdvancedSetupForm.btnOK_Click(): Completed", new object[0]);
+      Log.Debug("MatrixMX_AdvancedSetupForm.btnOK_Click(): Completed");
     }
 
     private void btnRemoteSetup_Click(object sender, EventArgs e)
@@ -153,7 +153,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void btnReset_Click(object sender, EventArgs e)
     {
-      Log.Debug("MatrixMX_AdvancedSetupForm.btnReset_Click(): started", new object[0]);
+      Log.Debug("MatrixMX_AdvancedSetupForm.btnReset_Click(): started");
       MatrixMX.AdvancedSettings.SetDefaults();
       this.cbEnableKeypad.Checked = MatrixMX.AdvancedSettings.Instance.EnableKeypad;
       this.cbEnableCustomKeypadMapping.Checked = MatrixMX.AdvancedSettings.Instance.UseCustomKeypadMap;
@@ -190,7 +190,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.mpBlankDisplayWhenIdle.Checked = MatrixMX.AdvancedSettings.Instance.BlankDisplayWhenIdle;
       this.cmbBlankIdleTime.SelectedIndex = MatrixMX.AdvancedSettings.Instance.BlankIdleTime;
       this.Refresh();
-      Log.Debug("MatrixMX_AdvancedSetupForm.btnReset_Click(): Completed", new object[0]);
+      Log.Debug("MatrixMX_AdvancedSetupForm.btnReset_Click(): Completed");
     }
 
     private void btnTest_Click(object sender, EventArgs e)

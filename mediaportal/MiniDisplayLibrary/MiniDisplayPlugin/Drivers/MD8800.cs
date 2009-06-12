@@ -44,7 +44,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void AdvancedSettings_OnSettingsChanged()
     {
-      Log.Info("MD8800.AdvancedSettings_OnSettingsChanged(): called", new object[0]);
+      Log.Info("MD8800.AdvancedSettings_OnSettingsChanged(): called");
       this.CleanUp();
       this.LoadAdvancedSettings();
       Thread.Sleep(100);
@@ -63,7 +63,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         while (this._DisplayThread.IsAlive)
         {
-          Log.Info("MD8800.Cleanup(): Stoping Display_Update() Thread", new object[0]);
+          Log.Info("MD8800.Cleanup(): Stoping Display_Update() Thread");
           lock (this.ThreadMutex)
           {
             _stopUpdateEqThread = true;
@@ -107,7 +107,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (this.DoDebug)
           {
-            Log.Info("MD8800.Display_Update(): Checking for Thread termination request", new object[0]);
+            Log.Info("MD8800.Display_Update(): Checking for Thread termination request");
           }
           if (_stopUpdateEqThread)
           {
@@ -117,7 +117,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             if (this.DoDebug)
             {
-              Log.Info("MD8800.Display_Update(): EQ_Update Thread terminating", new object[0]);
+              Log.Info("MD8800.Display_Update(): EQ_Update Thread terminating");
             }
             _stopUpdateEqThread = false;
             return;
@@ -144,7 +144,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             iconBitmap |= 0x100;
             if (this.DoDebug)
             {
-              Log.Info("iMONLCDg.UpdateIcons(): Setting RECORDING icon", new object[0]);
+              Log.Info("iMONLCDg.UpdateIcons(): Setting RECORDING icon");
             }
           }
           else if (MiniDisplayHelper.IsCaptureCardViewing())
@@ -152,7 +152,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             iconBitmap |= 0x20;
             if (this.DoDebug)
             {
-              Log.Info("iMONLCDg.UpdateIcons(): Setting TV icon", new object[0]);
+              Log.Info("iMONLCDg.UpdateIcons(): Setting TV icon");
             }
           }
           if (this.DoDebug)
@@ -178,7 +178,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               iconBitmap |= 0x400;
               if (this.DoDebug)
               {
-                Log.Info("iMONLCDg.UpdateIcons(): Setting STOP icon", new object[0]);
+                Log.Info("iMONLCDg.UpdateIcons(): Setting STOP icon");
               }
             }
           }
@@ -201,7 +201,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             if (this.DoDebug)
             {
-              Log.Info("iMONLCDg.UpdateIcons(): Setting PAUSED icon", new object[0]);
+              Log.Info("iMONLCDg.UpdateIcons(): Setting PAUSED icon");
             }
           }
           if (!this.MPStatus.MediaPlayer_Playing & !MiniDisplayHelper.IsCaptureCardViewing())
@@ -242,20 +242,20 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           if (this.DoDebug)
           {
-            Log.Info("MD8800.DisplayOff(): DisplayControlAction Timeout expired.", new object[0]);
+            Log.Info("MD8800.DisplayOff(): DisplayControlAction Timeout expired.");
           }
           this.DisplaySettings._DisplayControlAction = false;
           this.DisplaySettings._DisplayControlLastAction = 0L;
         }
-        Log.Info("MD8800.DisplayOff(): completed", new object[0]);
+        Log.Info("MD8800.DisplayOff(): completed");
         lock (this.DWriteMutex)
         {
-          Log.Info("MD8800.DisplayOff(): Turning display OFF", new object[0]);
+          Log.Info("MD8800.DisplayOff(): Turning display OFF");
           this.Clear();
           this._IsDisplayOff = true;
           this.MD.DisplayOff();
         }
-        Log.Info("MD8800.DisplayOff(): completed", new object[0]);
+        Log.Info("MD8800.DisplayOff(): completed");
       }
     }
 
@@ -263,14 +263,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (this._IsDisplayOff)
       {
-        Log.Info("MD8800.DisplayOn(): called", new object[0]);
+        Log.Info("MD8800.DisplayOn(): called");
         lock (this.DWriteMutex)
         {
-          Log.Info("MD8800.DisplayOn(): Turning Display ON", new object[0]);
+          Log.Info("MD8800.DisplayOn(): Turning Display ON");
           this.MD.DisplayOn();
         }
         this._IsDisplayOff = false;
-        Log.Info("MD8800.DisplayOn(): completed", new object[0]);
+        Log.Info("MD8800.DisplayOn(): completed");
       }
     }
 
@@ -287,7 +287,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (this._IsDisabled)
       {
-        Log.Info("MD8800.Initialize(): DRIVER DISABLED!", new object[0]);
+        Log.Info("MD8800.Initialize(): DRIVER DISABLED!");
       }
       else
       {
@@ -297,7 +297,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (this.DisplaySettings.BlankDisplayWithVideo)
           {
-            Log.Info("MD8800.Initialize(): starting Display_Update() thread", new object[0]);
+            Log.Info("MD8800.Initialize(): starting Display_Update() thread");
             this._DisplayThread = new Thread(new ThreadStart(this.Display_Update));
             this._DisplayThread.IsBackground = true;
             this._DisplayThread.Priority = ThreadPriority.BelowNormal;
@@ -305,11 +305,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             this._DisplayThread.Start();
             if (this._DisplayThread.IsAlive)
             {
-              Log.Info("MD8800.Initialize(): Display_Update() Thread Started", new object[0]);
+              Log.Info("MD8800.Initialize(): Display_Update() Thread Started");
             }
             else
             {
-              Log.Info("MD8800.Initialize(): Display_Update() FAILED TO START", new object[0]);
+              Log.Info("MD8800.Initialize(): Display_Update() FAILED TO START");
             }
           }
           AdvancedSettings.OnSettingsChanged +=
@@ -321,7 +321,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void LoadAdvancedSettings()
     {
-      Log.Info("MD8800.LoadAdvancedSettings(): Called", new object[0]);
+      Log.Info("MD8800.LoadAdvancedSettings(): Called");
       AdvancedSettings settings = AdvancedSettings.Load();
       this.IdleMessage = (Settings.Instance.IdleMessage != string.Empty) ? Settings.Instance.IdleMessage : "MediaPortal";
       this.DisplaySettings.BlankDisplayWithVideo = settings.BlankDisplayWithVideo;
@@ -354,7 +354,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                new object[] {this.DisplaySettings.BlankDisplayWhenIdle});
       Log.Info("MD8800.LoadAdvancedSettings(): Advanced options -     blank display after: {0} seconds",
                new object[] {this.DisplaySettings._BlankIdleTimeout/0xf4240L});
-      Log.Info("MD8800.LoadAdvancedSettings(): Completed", new object[0]);
+      Log.Info("MD8800.LoadAdvancedSettings(): Completed");
       FileInfo info = new FileInfo(Config.GetFile(Config.Dir.Config, "MiniDisplay_MD8800.xml"));
       this.SettingsLastModTime = info.LastWriteTime;
       this.LastSettingsCheck = DateTime.Now;
@@ -385,7 +385,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         this.DisplaySettings._DisplayControlLastAction = DateTime.Now.Ticks;
         if (this.DoDebug)
         {
-          Log.Info("MD8800.OnExternalAction(): received DisplayControlAction", new object[0]);
+          Log.Info("MD8800.OnExternalAction(): received DisplayControlAction");
         }
         this.DisplayOn();
       }
@@ -419,7 +419,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this.DoDebug)
         {
-          Log.Info("MD8800.SetLine(): Unable to display text - driver disabled", new object[0]);
+          Log.Info("MD8800.SetLine(): Unable to display text - driver disabled");
         }
       }
       else
@@ -427,13 +427,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         this.UpdateAdvancedSettings();
         if (this.DoDebug)
         {
-          Log.Info("MD8800.SetLine() Called", new object[0]);
+          Log.Info("MD8800.SetLine() Called");
         }
         if (this._IsDisplayOff)
         {
           if (this.DoDebug)
           {
-            Log.Info("MD8800.SetLine(): Suppressing display update!", new object[0]);
+            Log.Info("MD8800.SetLine(): Suppressing display update!");
           }
         }
         else
@@ -445,7 +445,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           this.MD.SetLine(line, message);
           if (this.DoDebug)
           {
-            Log.Info("MD8800.SetLine(): message sent to display", new object[0]);
+            Log.Info("MD8800.SetLine(): message sent to display");
           }
         }
         if (line == (this._Trows - 1))
@@ -465,7 +465,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               if (this.DoDebug)
               {
-                Log.Info("MD8800.SetLine(): MP going IDLE", new object[0]);
+                Log.Info("MD8800.SetLine(): MP going IDLE");
               }
               this.DisplaySettings._BlankIdleTime = DateTime.Now.Ticks;
             }
@@ -474,7 +474,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               if (this.DoDebug)
               {
-                Log.Info("MD8800.SetLine(): Blanking display due to IDLE state", new object[0]);
+                Log.Info("MD8800.SetLine(): Blanking display due to IDLE state");
               }
               this.DisplayOff();
             }
@@ -487,7 +487,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (this.DoDebug)
             {
-              Log.Info("MD8800.SetLine(): MP no longer IDLE - restoring display", new object[0]);
+              Log.Info("MD8800.SetLine(): MP no longer IDLE - restoring display");
             }
             this.DisplayOn();
           }
@@ -501,7 +501,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       this.DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
       Log.Info("{0}", new object[] {this.Description});
-      Log.Info("MD8800.Setup(): called", new object[0]);
+      Log.Info("MD8800.Setup(): called");
       MiniDisplayHelper.InitDisplayControl(ref this.DisplaySettings);
       this._BlankDisplayOnExit = _blankOnExit;
       this._UseBackLight = _backLight;
@@ -512,13 +512,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this._Trows = _lines;
       if (this._Trows != 2)
       {
-        Log.Info("MD8800.Setup() - Invalid Text Lines value", new object[0]);
+        Log.Info("MD8800.Setup() - Invalid Text Lines value");
         this._Trows = 2;
       }
       this._Tcols = _cols;
       if (this._Tcols != 0x10)
       {
-        Log.Info("MD8800.Setup() - Invalid Text Columns value", new object[0]);
+        Log.Info("MD8800.Setup() - Invalid Text Columns value");
         this._Tcols = 0x10;
       }
       this._IsOpen = false;
@@ -542,7 +542,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         this._IsDisabled = true;
       }
-      Log.Info("MD8800.Setup(): completed", new object[0]);
+      Log.Info("MD8800.Setup(): completed");
     }
 
     private void ShowVolumeLevel()
@@ -582,7 +582,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this.DoDebug)
         {
-          Log.Info("MD8800.UpdateAdvancedSettings(): called", new object[0]);
+          Log.Info("MD8800.UpdateAdvancedSettings(): called");
         }
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_MD8800.xml")))
         {
@@ -591,14 +591,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (this.DoDebug)
             {
-              Log.Info("MD8800.UpdateAdvancedSettings(): updating advanced settings", new object[0]);
+              Log.Info("MD8800.UpdateAdvancedSettings(): updating advanced settings");
             }
             this.LoadAdvancedSettings();
           }
         }
         if (this.DoDebug)
         {
-          Log.Info("MD8800.UpdateAdvancedSettings(): completed", new object[0]);
+          Log.Info("MD8800.UpdateAdvancedSettings(): completed");
         }
       }
     }
@@ -647,22 +647,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       private static void Default(AdvancedSettings _settings)
       {
-        Log.Info("MD8800.AdvancedSettings.Default(): called", new object[0]);
+        Log.Info("MD8800.AdvancedSettings.Default(): called");
         _settings.BlankDisplayWithVideo = false;
         _settings.EnableDisplayAction = false;
         _settings.EnableDisplayActionTime = 5;
         _settings.BlankDisplayWhenIdle = false;
         _settings.BlankIdleTime = 30;
-        Log.Info("MD8800.AdvancedSettings.Default(): completed", new object[0]);
+        Log.Info("MD8800.AdvancedSettings.Default(): completed");
       }
 
       public static AdvancedSettings Load()
       {
         AdvancedSettings settings;
-        Log.Info("MD8800.AdvancedSettings.Load(): started", new object[0]);
+        Log.Info("MD8800.AdvancedSettings.Load(): started");
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_MD8800.xml")))
         {
-          Log.Info("MD8800.AdvancedSettings.Load(): Loading settings from XML file", new object[0]);
+          Log.Info("MD8800.AdvancedSettings.Load(): Loading settings from XML file");
           XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
           XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_MD8800.xml"));
           settings = (AdvancedSettings) serializer.Deserialize(xmlReader);
@@ -670,11 +670,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         else
         {
-          Log.Info("MD8800.AdvancedSettings.Load(): Loading settings from defaults", new object[0]);
+          Log.Info("MD8800.AdvancedSettings.Load(): Loading settings from defaults");
           settings = new AdvancedSettings();
           Default(settings);
         }
-        Log.Info("MD8800.AdvancedSettings.Load(): completed", new object[0]);
+        Log.Info("MD8800.AdvancedSettings.Load(): completed");
         return settings;
       }
 
@@ -693,7 +693,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public static void Save(AdvancedSettings ToSave)
       {
-        Log.Info("MD8800.AdvancedSettings.Save(): Saving settings to XML file", new object[0]);
+        Log.Info("MD8800.AdvancedSettings.Save(): Saving settings to XML file");
         XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
         XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_MD8800.xml"),
                                                  Encoding.UTF8);
@@ -701,7 +701,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         writer.Indentation = 2;
         serializer.Serialize((XmlWriter) writer, ToSave);
         writer.Close();
-        Log.Info("MD8800.AdvancedSettings.Save(): completed", new object[0]);
+        Log.Info("MD8800.AdvancedSettings.Save(): completed");
       }
 
       public static void SetDefaults()

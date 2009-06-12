@@ -48,7 +48,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void AdvancedSettings_OnSettingsChanged()
     {
-      Log.Info("CFontz.AdvancedSettings_OnSettingsChanged(): called", new object[0]);
+      Log.Info("CFontz.AdvancedSettings_OnSettingsChanged(): called");
       this.CleanUp();
       this.LoadAdvancedSettings();
       Thread.Sleep(100);
@@ -67,7 +67,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         while (this._EqThread.IsAlive)
         {
-          Log.Info("CFontz.Cleanup(): Stoping EQ_Update() Thread", new object[0]);
+          Log.Info("CFontz.Cleanup(): Stoping EQ_Update() Thread");
           lock (this.ThreadMutex)
           {
             _stopUpdateEqThread = true;
@@ -159,15 +159,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           if (this.DoDebug)
           {
-            Log.Info("CFDisplay.DisplayOff(): DisplayControlAction Timeout expired.", new object[0]);
+            Log.Info("CFDisplay.DisplayOff(): DisplayControlAction Timeout expired.");
           }
           this.DisplaySettings._DisplayControlAction = false;
           this.DisplaySettings._DisplayControlLastAction = 0L;
         }
-        Log.Info("CFDisplay.DisplayOff(): completed", new object[0]);
+        Log.Info("CFDisplay.DisplayOff(): completed");
         lock (this.DWriteMutex)
         {
-          Log.Info("CFDisplay.DisplayOff(): Turning display OFF", new object[0]);
+          Log.Info("CFDisplay.DisplayOff(): Turning display OFF");
           this.Clear();
           if (this._BackLightControl)
           {
@@ -176,7 +176,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           this._IsDisplayOff = true;
           this.CFD.DisplayOff();
         }
-        Log.Info("CFDisplay.DisplayOff(): completed", new object[0]);
+        Log.Info("CFDisplay.DisplayOff(): completed");
       }
     }
 
@@ -184,15 +184,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (this._IsDisplayOff)
       {
-        Log.Info("CFDisplay.DisplayOn(): called", new object[0]);
+        Log.Info("CFDisplay.DisplayOn(): called");
         lock (this.DWriteMutex)
         {
-          Log.Info("CFDisplay.DisplayOn(): Turning Display ON", new object[0]);
+          Log.Info("CFDisplay.DisplayOn(): Turning Display ON");
           this.CFD.DisplayOn();
           this.CFD.BacklightOn();
         }
         this._IsDisplayOff = false;
-        Log.Info("CFDisplay.DisplayOn(): completed", new object[0]);
+        Log.Info("CFDisplay.DisplayOn(): completed");
       }
     }
 
@@ -217,7 +217,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (this.DoDebug)
           {
-            Log.Info("CFDisplay.EQ_Update(): Checking for Thread termination request", new object[0]);
+            Log.Info("CFDisplay.EQ_Update(): Checking for Thread termination request");
           }
           if (_stopUpdateEqThread)
           {
@@ -227,7 +227,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             if (this.DoDebug)
             {
-              Log.Info("CFDisplay.EQ_Update(): EQ_Update Thread terminating", new object[0]);
+              Log.Info("CFDisplay.EQ_Update(): EQ_Update Thread terminating");
             }
             _stopUpdateEqThread = false;
             return;
@@ -251,7 +251,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               if (this.DoDebug)
               {
-                Log.Info("CFDisplay.EQ_Update(): Turning off display while playing video", new object[0]);
+                Log.Info("CFDisplay.EQ_Update(): Turning off display while playing video");
               }
               this.DisplayOff();
             }
@@ -302,7 +302,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void LoadAdvancedSettings()
     {
-      Log.Info("CFontz.LoadAdvancedSettings(): Called", new object[0]);
+      Log.Info("CFontz.LoadAdvancedSettings(): Called");
       AdvancedSettings settings = AdvancedSettings.Load();
       this.IdleMessage = (Settings.Instance.IdleMessage != string.Empty) ? Settings.Instance.IdleMessage : "MediaPortal";
       this.KPSettings.EnableKeyPad = settings.EnableKeypad;
@@ -383,7 +383,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                new object[] {this.DisplaySettings._BlankIdleTimeout/0xf4240L});
       Log.Info("CFontz.LoadAdvancedSettings(): Setting - Audio using ASIO: {0}",
                new object[] {this.EQSettings._AudioUseASIO});
-      Log.Info("CFontz.LoadAdvancedSettings(): Completed", new object[0]);
+      Log.Info("CFontz.LoadAdvancedSettings(): Completed");
       FileInfo info = new FileInfo(Config.GetFile(Config.Dir.Config, "MiniDisplay_CFontz.xml"));
       this.SettingsLastModTime = info.LastWriteTime;
       this.LastSettingsCheck = DateTime.Now;
@@ -414,7 +414,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         this.DisplaySettings._DisplayControlLastAction = DateTime.Now.Ticks;
         if (this.DoDebug)
         {
-          Log.Info("CFDisplay.OnExternalAction(): received DisplayControlAction", new object[0]);
+          Log.Info("CFDisplay.OnExternalAction(): received DisplayControlAction");
         }
         this.DisplayOn();
       }
@@ -489,7 +489,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this.DoDebug)
         {
-          Log.Info("CFontz.SetLine(): Unable to display text - driver disabled", new object[0]);
+          Log.Info("CFontz.SetLine(): Unable to display text - driver disabled");
         }
       }
       else
@@ -497,13 +497,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         this.UpdateAdvancedSettings();
         if (this.DoDebug)
         {
-          Log.Info("CFontz.SetLine() Called", new object[0]);
+          Log.Info("CFontz.SetLine() Called");
         }
         if (this.EQSettings._EqDataAvailable || this._IsDisplayOff)
         {
           if (this.DoDebug)
           {
-            Log.Info("CFontz.SetLine(): Suppressing display update!", new object[0]);
+            Log.Info("CFontz.SetLine(): Suppressing display update!");
           }
         }
         else
@@ -515,7 +515,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           this.CFD.SetLine(line, message);
           if (this.DoDebug)
           {
-            Log.Info("CFontz.SetLine(): message sent to display", new object[0]);
+            Log.Info("CFontz.SetLine(): message sent to display");
           }
         }
         MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
@@ -532,7 +532,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               if (this.DoDebug)
               {
-                Log.Info("CFontz.SetLine(): MP going IDLE", new object[0]);
+                Log.Info("CFontz.SetLine(): MP going IDLE");
               }
               this.DisplaySettings._BlankIdleTime = DateTime.Now.Ticks;
             }
@@ -541,7 +541,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               if (this.DoDebug)
               {
-                Log.Info("CFontz.SetLine(): Blanking display due to IDLE state", new object[0]);
+                Log.Info("CFontz.SetLine(): Blanking display due to IDLE state");
               }
               this.DisplayOff();
             }
@@ -554,7 +554,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (this.DoDebug)
             {
-              Log.Info("CFontz.SetLine(): MP no longer IDLE - restoring display", new object[0]);
+              Log.Info("CFontz.SetLine(): MP no longer IDLE - restoring display");
             }
             this.DisplayOn();
           }
@@ -568,7 +568,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       this.DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
       Log.Info("{0}", new object[] {this.Description});
-      Log.Info("CFontz.Setup(): called", new object[0]);
+      Log.Info("CFontz.Setup(): called");
       MiniDisplayHelper.InitEQ(ref this.EQSettings);
       MiniDisplayHelper.InitDisplayControl(ref this.DisplaySettings);
       this.InitKeyPadSettings(ref this.KPSettings);
@@ -586,7 +586,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       else
       {
         this._UseKeypad = false;
-        Log.Info("CFontz.Setup(): Keypad support disabled!", new object[0]);
+        Log.Info("CFontz.Setup(): Keypad support disabled!");
       }
       this._IsOpen = false;
       try
@@ -604,13 +604,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         this._Trows = _lines;
         if (this._Trows > this.CFD.GetRows())
         {
-          Log.Info("CFontz.Setup() - Invalid Text Lines value", new object[0]);
+          Log.Info("CFontz.Setup() - Invalid Text Lines value");
           this._Trows = this.CFD.GetRows();
         }
         this._Tcols = _cols;
         if (this._Tcols > this.CFD.GetColumns())
         {
-          Log.Info("CFontz.Setup() - Invalid Text Columns value", new object[0]);
+          Log.Info("CFontz.Setup() - Invalid Text Columns value");
           this._Tcols = this.CFD.GetColumns();
         }
       }
@@ -620,7 +620,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       if (this.EQSettings.UseEqDisplay || this.DisplaySettings.BlankDisplayWithVideo)
       {
-        Log.Info("CFontz.Setup(): starting EQ_Update() thread", new object[0]);
+        Log.Info("CFontz.Setup(): starting EQ_Update() thread");
         this._EqThread = new Thread(new ThreadStart(this.EQ_Update));
         this._EqThread.IsBackground = true;
         this._EqThread.Priority = ThreadPriority.BelowNormal;
@@ -628,16 +628,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         this._EqThread.Start();
         if (this._EqThread.IsAlive)
         {
-          Log.Info("CFontz.Setup(): EQ_Update() Thread Started", new object[0]);
+          Log.Info("CFontz.Setup(): EQ_Update() Thread Started");
         }
         else
         {
-          Log.Info("CFontz.Setup(): EQ_Update() FAILED TO START", new object[0]);
+          Log.Info("CFontz.Setup(): EQ_Update() FAILED TO START");
         }
       }
       AdvancedSettings.OnSettingsChanged +=
         new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
-      Log.Info("CFontz.Setup(): completed", new object[0]);
+      Log.Info("CFontz.Setup(): completed");
     }
 
     private void UpdateAdvancedSettings()
@@ -646,7 +646,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this.DoDebug)
         {
-          Log.Info("CFontz.UpdateAdvancedSettings(): called", new object[0]);
+          Log.Info("CFontz.UpdateAdvancedSettings(): called");
         }
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_CFontz.xml")))
         {
@@ -655,14 +655,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (this.DoDebug)
             {
-              Log.Info("CFontz.UpdateAdvancedSettings(): updating advanced settings", new object[0]);
+              Log.Info("CFontz.UpdateAdvancedSettings(): updating advanced settings");
             }
             this.LoadAdvancedSettings();
           }
         }
         if (this.DoDebug)
         {
-          Log.Info("CFontz.UpdateAdvancedSettings(): completed", new object[0]);
+          Log.Info("CFontz.UpdateAdvancedSettings(): completed");
         }
       }
     }
@@ -730,7 +730,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public static bool CreateDefaultKeyPadMapping()
       {
-        Log.Info("CFontz.AdvancedSettings.CreateDefaultKeyPadMapping(): called", new object[0]);
+        Log.Info("CFontz.AdvancedSettings.CreateDefaultKeyPadMapping(): called");
         bool flag = false;
         string str = "CFontz_Keypad";
         try
@@ -885,7 +885,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           writer.WriteEndDocument();
           writer.Close();
           flag = true;
-          Log.Info("CFontz.AdvancedSettings.CreateDefaultKeyPadMapping(): remote mapping file created", new object[0]);
+          Log.Info("CFontz.AdvancedSettings.CreateDefaultKeyPadMapping(): remote mapping file created");
         }
         catch
         {
@@ -893,13 +893,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                    new object[0]);
           flag = false;
         }
-        Log.Info("CFontz.AdvancedSettings.CreateDefaultKeyPadMapping(): completed", new object[0]);
+        Log.Info("CFontz.AdvancedSettings.CreateDefaultKeyPadMapping(): completed");
         return flag;
       }
 
       private static void Default(AdvancedSettings _settings)
       {
-        Log.Info("CFontz.AdvancedSettings.Default(): called", new object[0]);
+        Log.Info("CFontz.AdvancedSettings.Default(): called");
         _settings.EnableKeypad = false;
         _settings.UseCustomKeypadMap = false;
         _settings.DisableRepeat = false;
@@ -922,16 +922,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         _settings.EQTitleShowTime = 2;
         _settings.BlankDisplayWhenIdle = false;
         _settings.BlankIdleTime = 30;
-        Log.Info("CFontz.AdvancedSettings.Default(): completed", new object[0]);
+        Log.Info("CFontz.AdvancedSettings.Default(): completed");
       }
 
       public static AdvancedSettings Load()
       {
         AdvancedSettings settings;
-        Log.Info("CFontz.AdvancedSettings.Load(): started", new object[0]);
+        Log.Info("CFontz.AdvancedSettings.Load(): started");
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_CFontz.xml")))
         {
-          Log.Info("CFontz.AdvancedSettings.Load(): Loading settings from XML file", new object[0]);
+          Log.Info("CFontz.AdvancedSettings.Load(): Loading settings from XML file");
           XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
           XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_CFontz.xml"));
           settings = (AdvancedSettings) serializer.Deserialize(xmlReader);
@@ -939,11 +939,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         else
         {
-          Log.Info("CFontz.AdvancedSettings.Load(): Loading settings from defaults", new object[0]);
+          Log.Info("CFontz.AdvancedSettings.Load(): Loading settings from defaults");
           settings = new AdvancedSettings();
           Default(settings);
         }
-        Log.Info("CFontz.AdvancedSettings.Load(): completed", new object[0]);
+        Log.Info("CFontz.AdvancedSettings.Load(): completed");
         return settings;
       }
 
@@ -962,7 +962,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public static void Save(AdvancedSettings ToSave)
       {
-        Log.Info("CFontz.AdvancedSettings.Save(): Saving settings to XML file", new object[0]);
+        Log.Info("CFontz.AdvancedSettings.Save(): Saving settings to XML file");
         XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
         XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_CFontz.xml"),
                                                  Encoding.UTF8);
@@ -970,7 +970,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         writer.Indentation = 2;
         serializer.Serialize((XmlWriter) writer, ToSave);
         writer.Close();
-        Log.Info("CFontz.AdvancedSettings.Save(): completed", new object[0]);
+        Log.Info("CFontz.AdvancedSettings.Save(): completed");
       }
 
       public static void SetDefaults()
@@ -1638,7 +1638,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         bool extensiveLogging = Settings.Instance.ExtensiveLogging;
         if (extensiveLogging)
         {
-          Log.Info("CFontz.FireKeypadEvent(): called", new object[0]);
+          Log.Info("CFontz.FireKeypadEvent(): called");
         }
         if (!this._inputHandler.MapAction(EventCode))
         {
@@ -1655,7 +1655,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         if (extensiveLogging)
         {
-          Log.Info("CFontz.FireKeypadEvent(): completed", new object[0]);
+          Log.Info("CFontz.FireKeypadEvent(): completed");
         }
       }
 
@@ -1907,7 +1907,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           if (!File.Exists(Config.GetFile(Config.Dir.CustomInputDefault, "CFontz_Keypad.xml")))
           {
-            Log.Info("CFontz.Setup(): Creating default CFontz_Keypad mapping file", new object[0]);
+            Log.Info("CFontz.Setup(): Creating default CFontz_Keypad mapping file");
             if (!AdvancedSettings.CreateDefaultKeyPadMapping())
             {
               Log.Info("CFontz.CFDisplay.SetupKeypad(): ERROR Creating default CFontz_Keypad mapping file",
@@ -1933,7 +1933,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         if (flag2)
         {
-          Log.Info("CFontz.CFDisplay.SetupKeypad(): Loading InputHandler", new object[0]);
+          Log.Info("CFontz.CFDisplay.SetupKeypad(): Loading InputHandler");
           this._inputHandler = new InputHandler("CFontz_Keypad");
           Log.Info("CFontz.CFDisplay.SetupKeypad(): InputHandler loaded = {0}",
                    new object[] {this._inputHandler.IsLoaded});
@@ -1950,7 +1950,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         else
         {
-          Log.Info("CFontz.CFDisplay.SetupKeypad(): Keypad support disabled - no keypad mapping file", new object[0]);
+          Log.Info("CFontz.CFDisplay.SetupKeypad(): Keypad support disabled - no keypad mapping file");
           flag = false;
         }
         if (flag && this._inputHandler.IsLoaded)
@@ -1979,7 +1979,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         if (!this._useCustomKeypadMapping)
         {
           Action action;
-          Log.Info("CFDisplay: received KeyPad event", new object[0]);
+          Log.Info("CFDisplay: received KeyPad event");
           switch (eventCode)
           {
             case 0x4b:

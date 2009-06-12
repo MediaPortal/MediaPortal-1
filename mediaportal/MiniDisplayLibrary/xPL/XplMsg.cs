@@ -27,7 +27,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
       }
       catch
       {
-        Log.Info("xPL.XplMsg()[constructor]: caught EXCEPTION", new object[0]);
+        Log.Info("xPL.XplMsg()[constructor]: caught EXCEPTION");
       }
     }
 
@@ -35,7 +35,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
     {
       if (this.DoDebug)
       {
-        Log.Info("xPL.XplMsg([constructor]): called", new object[0]);
+        Log.Info("xPL.XplMsg([constructor]): called");
       }
       try
       {
@@ -50,11 +50,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
       }
       catch
       {
-        Log.Info("xPL.XplMsg([constructor]): caught EXCEPTION", new object[0]);
+        Log.Info("xPL.XplMsg([constructor]): caught EXCEPTION");
       }
       if (this.DoDebug)
       {
-        Log.Info("xPL.XplMsg([constructor]): completed", new object[0]);
+        Log.Info("xPL.XplMsg([constructor]): completed");
       }
     }
 
@@ -64,7 +64,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
       string newKeyValue = string.Empty;
       if (this.DoDebug)
       {
-        Log.Info("xPL.XplMsg.ExtractMsg(): parsing received data", new object[0]);
+        Log.Info("xPL.XplMsg.ExtractMsg(): parsing received data");
       }
       try
       {
@@ -83,13 +83,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
           {
             if (this.DoDebug)
             {
-              Log.Info("xPL.XplMsg.ExtractMsg(): received data is not valid", new object[0]);
+              Log.Info("xPL.XplMsg.ExtractMsg(): received data is not valid");
             }
             this.bValid = false;
           }
           else if (this.DoDebug)
           {
-            Log.Info("xPL.XplMsg.ExtractMsg(): received message data is valid", new object[0]);
+            Log.Info("xPL.XplMsg.ExtractMsg(): received message data is valid");
           }
         }
         else
@@ -103,14 +103,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
             {
               if (this.DoDebug)
               {
-                Log.Info("xPL.XplMsg.ExtractMsg(): message header is not valid", new object[0]);
+                Log.Info("xPL.XplMsg.ExtractMsg(): message header is not valid");
               }
               this.bValid = false;
               return;
             }
             if (this.DoDebug)
             {
-              Log.Info("xPL.XplMsg.ExtractMsg(): message header is valid", new object[0]);
+              Log.Info("xPL.XplMsg.ExtractMsg(): message header is valid");
             }
           }
           str3 = str3.Substring(num2 + 3);
@@ -141,7 +141,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
       {
         if (this.DoDebug)
         {
-          Log.Info("xPL.XplMsg.ExtractMsg(): caught EXCEPTION while parsing received data", new object[0]);
+          Log.Info("xPL.XplMsg.ExtractMsg(): caught EXCEPTION while parsing received data");
         }
         this.bValid = false;
       }
