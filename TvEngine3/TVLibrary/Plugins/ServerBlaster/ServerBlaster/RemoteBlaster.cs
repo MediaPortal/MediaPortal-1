@@ -3,8 +3,6 @@ using System.Runtime.InteropServices;
 using System.IO;
 using System.Windows.Forms;
 using System.Collections;
-using System.Threading;
-
 using TvLibrary.Log; //Logging
 
 namespace TVEngine.Devices
@@ -114,9 +112,9 @@ namespace TVEngine.Devices
         _notifyWindow = new NotifyWindow();
         _notifyWindow.Create();
         _notifyWindow.Class = _deviceClass;
-        _notifyWindow.DeviceArrival += new DeviceEventHandler(OnDeviceArrival);
-        _notifyWindow.DeviceRemoval += new DeviceEventHandler(OnDeviceRemoval);
-        _notifyWindow.SettingsChanged += new SettingsChanged(OnSettingsChanged);
+        _notifyWindow.DeviceArrival += OnDeviceArrival;
+        _notifyWindow.DeviceRemoval += OnDeviceRemoval;
+        _notifyWindow.SettingsChanged += OnSettingsChanged;
         _notifyWindow.RegisterDeviceArrival();
 
         Open();
@@ -141,7 +139,7 @@ namespace TVEngine.Devices
 
       // open a stream from the device and begin an asynchronous read
       _deviceStream = new FileStream(deviceHandle, FileAccess.Read, true, 128, true);
-      _deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, new AsyncCallback(OnReadComplete), null);
+      _deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, OnReadComplete, null);
     }
 
     void OnReadComplete(IAsyncResult asyncResult)
@@ -164,7 +162,7 @@ namespace TVEngine.Devices
         }
 
         // begin another asynchronous read from the device
-        _deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, new AsyncCallback(OnReadComplete), null);
+        _deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, OnReadComplete, null);
       }
       catch (Exception)
       {
@@ -194,9 +192,9 @@ namespace TVEngine.Devices
 
     #region Members
 
-    static Remote _deviceSingleton;
+    static readonly Remote _deviceSingleton;
     int _doubleClickTime = -1;
-    int _doubleClickTick = 0;
+    int _doubleClickTick;
     RemoteButton _doubleClickButton;
 
     #endregion Members
@@ -234,25 +232,26 @@ namespace TVEngine.Devices
       if (debug) Log.Write("Blaster.Send: BlasterPort Done.");
       if (deviceType < 0 || deviceType > 1) throw new ArgumentException("blasterType must be 1, or 0 (0 - MS, 1- SMK)");
       if (debug) Log.Write("Blaster.Send: BlasterType Done.");
-      if (deviceSpeed < 0 || deviceSpeed > 2) throw new ArgumentException("blasterSpeed must be between 0 and 2 (0 - Fast, 2 - Slow)"); else _currentSpeed = deviceSpeed;
+      if (deviceSpeed < 0 || deviceSpeed > 2) throw new ArgumentException("blasterSpeed must be between 0 and 2 (0 - Fast, 2 - Slow)");
+      _currentSpeed = deviceSpeed;
       if (debug) Log.Write("Blaster.Send: BlasterSpeed Done.");
 
 
-      byte[][] packetSpeed = new byte[][]
-			{
+      byte[][] packetSpeed = new[]
+                               {
 				new byte[] { 0x9F, 0x06, 0x01, 0x44 },	// fast
 				new byte[] { 0x9F, 0x06, 0x01, 0x4A },	// medium
 				new byte[] { 0x9F, 0x06, 0x01, 0x50 },	// slow???
 			};
 
-      byte[][] MSpacketPorts = new byte[][] //MS Device
+      byte[][] MSpacketPorts = new[] //MS Device
 			{
 				new byte[] { 0x9F, 0x08, 0x06 },		// 0
 				new byte[] { 0x9F, 0x08, 0x04 },		// 1
 				new byte[] { 0x9F, 0x08, 0x02 },		// 2
 			};
 
-      byte[][] SMKpacketPorts = new byte[][] //SMK Device
+      byte[][] SMKpacketPorts = new[] //SMK Device
 			{
 				new byte[] { 0x9F, 0x08, 0x00 },		// both
 				new byte[] { 0x9F, 0x08, 0x01 },		// 1
@@ -298,7 +297,7 @@ namespace TVEngine.Devices
         _deviceSingleton._deviceStream.Write(packet1, 0, packet1.Length);
         _deviceSingleton._deviceStream.Write(packet2, 0, packet2.Length);
         _deviceSingleton._learnStartTick = Environment.TickCount;
-        _deviceSingleton._deviceStream.BeginRead(_deviceSingleton._deviceBuffer, 0, _deviceSingleton._deviceBuffer.Length, new AsyncCallback(_deviceSingleton.OnReadComplete), learnCallback);
+        _deviceSingleton._deviceStream.BeginRead(_deviceSingleton._deviceBuffer, 0, _deviceSingleton._deviceBuffer.Length, _deviceSingleton.OnReadComplete, learnCallback);
       }
       catch
       {
@@ -318,8 +317,8 @@ namespace TVEngine.Devices
       _notifyWindow = new NotifyWindow();
       _notifyWindow.Create();
       _notifyWindow.Class = _deviceClass;
-      _notifyWindow.DeviceArrival += new DeviceEventHandler(OnDeviceArrival);
-      _notifyWindow.DeviceRemoval += new DeviceEventHandler(OnDeviceRemoval);
+      _notifyWindow.DeviceArrival += OnDeviceArrival;
+      _notifyWindow.DeviceRemoval += OnDeviceRemoval;
       _notifyWindow.RegisterDeviceArrival();
 
       // we need somewhere to store the smaller packets as they arrive
@@ -363,7 +362,7 @@ namespace TVEngine.Devices
         if (_deviceBuffer[0] == 0x9F || (_deviceBuffer[0] & 0x80) != 0x80)
         {
           // ignore garbage - begin another asynchronous read from the device
-          _deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, new AsyncCallback(OnReadComplete), asyncResult.AsyncState);
+          _deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, OnReadComplete, asyncResult.AsyncState);
           return;
         }
 
@@ -380,7 +379,7 @@ namespace TVEngine.Devices
         }
 
         // begin another asynchronous read from the device
-        _deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, new AsyncCallback(OnReadComplete), asyncResult.AsyncState);
+        _deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, OnReadComplete, asyncResult.AsyncState);
       }
       catch (Exception e)
       {
@@ -391,59 +390,6 @@ namespace TVEngine.Devices
     byte[] FinalizePacket()
     {
       return FinalizePacket3();
-    }
-
-    byte[] FinalizePacket1()
-    {
-      int packetLength = 0;
-      int packetOffset = 0;
-
-      foreach (byte[] packetBytes in _packetArray) packetLength += packetBytes.Length;
-
-      byte[] packetFinal = new byte[packetLength];
-
-      foreach (byte[] packetBytes in _packetArray)
-      {
-        foreach (byte packetByte in packetBytes) packetFinal[packetOffset++] = packetByte;
-      }
-
-      Log.Write("Blaster.FinalizePacket: {0} ({1} bytes)", BitConverter.ToString(packetFinal).Replace("-", ""), packetFinal.Length);
-
-      lock (this) _packetArray = new ArrayList();
-
-      return packetFinal;
-    }
-
-    byte[] FinalizePacket2()
-    {
-      int packetLength = 1;
-      int packetOffset = 0;
-
-      foreach (byte[] packetBytes in _packetArray) packetLength += packetBytes.Length;
-
-      packetLength -= _packetArray.Count;
-      packetLength += packetLength / 32;
-
-      byte[] packetFinal = new byte[packetLength];
-
-      foreach (byte[] packetBytes in _packetArray)
-      {
-        for (int byteIndex = 1; byteIndex < packetBytes.Length; byteIndex++)
-        {
-          if (packetOffset == 0 || packetOffset == 31 || packetOffset % 31 == 0)
-          {
-            packetFinal[packetOffset++] = (byte)((packetOffset + 31 <= packetLength) ? 0x9E : 0x9B);
-          }
-
-          packetFinal[packetOffset++] = packetBytes[byteIndex];
-        }
-      }
-
-      Log.Write("Blaster.FinalizePacket: {0}", BitConverter.ToString(packetFinal).Replace("-", ""));
-
-      _packetArray = new ArrayList();
-
-      return packetFinal;
     }
 
     byte[] FinalizePacket3()
@@ -487,10 +433,10 @@ namespace TVEngine.Devices
 
     #region Members
 
-    static Blaster _deviceSingleton;
+    static readonly Blaster _deviceSingleton;
     ArrayList _packetArray;
     int _learnStartTick = 0;
-    static int _currentSpeed = 0;
+    static int _currentSpeed;
 
     #endregion Members
   }
@@ -534,7 +480,7 @@ namespace TVEngine.Devices
       if (DeviceRemoval != null) DeviceRemoval();
     }
 
-    protected string FindDevice(Guid classGuid)
+    protected static string FindDevice(Guid classGuid)
     {
       IntPtr handle = SetupDiGetClassDevs(ref classGuid, 0, 0, 0x12);
       string devicePath = null;
@@ -693,8 +639,8 @@ namespace TVEngine.Devices
 
     #region Events
 
-    public static DeviceEventHandler DeviceArrival = null;
-    public static DeviceEventHandler DeviceRemoval = null;
+    public static DeviceEventHandler DeviceArrival;
+    public static DeviceEventHandler DeviceRemoval;
 
     #endregion Events
 

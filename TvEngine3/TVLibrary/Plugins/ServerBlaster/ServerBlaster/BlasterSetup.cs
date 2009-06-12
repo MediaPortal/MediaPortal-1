@@ -1,17 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using TvControl;
 using TvDatabase;
 using TvLibrary.Log;
 
 namespace SetupTv.Sections
 {
-  public partial class BlasterSetup : SetupTv.SectionSettings
+  public partial class BlasterSetup : SectionSettings
   {
     public BlasterSetup()
     {
@@ -34,10 +27,10 @@ namespace SetupTv.Sections
       setting.Value = comboBox4.SelectedIndex.ToString();
       setting.Persist();
       setting = layer.GetSetting("SrvBlasterLog");
-      setting.Value = Convert.ToString(checkBox1.Checked == true);
+      setting.Value = Convert.ToString(checkBox1.Checked);
       setting.Persist();
       setting = layer.GetSetting("SrvBlasterSendSelect");
-      setting.Value = Convert.ToString(checkSendSelect.Checked == true);
+      setting.Value = Convert.ToString(checkSendSelect.Checked);
       setting.Persist();
 
       base.OnSectionDeActivated();
@@ -49,14 +42,14 @@ namespace SetupTv.Sections
 
       TvBusinessLayer layer = new TvBusinessLayer();
       comboBox1.SelectedIndex = Convert.ToInt16(layer.GetSetting("SrvBlasterType", "0").Value);
-      comboBox2.SelectedIndex = Convert.ToInt16(layer.GetSetting("SrvBlasterSpeed", "0").Value.ToString());
+      comboBox2.SelectedIndex = Convert.ToInt16(layer.GetSetting("SrvBlasterSpeed", "0").Value);
       comboBox3.Items.Clear();
       comboBox4.Items.Clear();
       comboBox3.Items.Add("None");
       comboBox4.Items.Add("None");
       for (int i = 0; i < layer.Cards.Count; ++i)
       {
-        Card card = (Card)layer.Cards[i];
+        Card card = layer.Cards[i];
         comboBox3.Items.Add(card.Name);
         comboBox4.Items.Add(card.Name);
       }
@@ -67,9 +60,34 @@ namespace SetupTv.Sections
       checkSendSelect.Checked = (layer.GetSetting("SrvBlasterSendSelect").Value == "True");
     }
 
-    private void label1_Click(object sender, EventArgs e)
+    void ComboBox1SelectedIndexChanged(object sender, EventArgs e)
     {
-
+    	switch (comboBox1.SelectedIndex)
+      	{
+        	case 0:
+    		case 1:
+    			comboBox2.Visible=true;
+    			comboBox3.Visible=true;
+    			comboBox4.Visible=true;
+    			label2.Visible=true;
+    			label3.Visible=true;
+    			label4.Visible=true;
+    			checkSendSelect.Visible=true;
+    			mpLabel1.Visible=false;
+    			break;
+        	
+        	case 2: // Hauppauge blasting
+    			comboBox2.Visible=false;
+    			comboBox3.Visible=false;
+    			comboBox4.Visible=false;
+    			label2.Visible=false;
+    			label3.Visible=false;
+    			label4.Visible=false;
+    			checkSendSelect.Visible=false;
+    			mpLabel1.Visible=true;
+    			break;  
+        	default: break;
+      	}
     }
   }
 }

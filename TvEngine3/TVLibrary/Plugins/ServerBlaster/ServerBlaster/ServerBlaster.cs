@@ -1,37 +1,43 @@
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
 using System.Threading;
-using System.Windows.Forms;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;
 
 using TvLibrary.Log;
 using TvControl;
-using SetupTv;
 using TvEngine.Events;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations;
 using TVEngine.Devices;
 using TvDatabase;
 
+// Modified to include Hauppauge Blasting
+// Uses code from prior MP versions for HCWIRBlaster
+// ralphy
+
 namespace TvEngine
 {
 
-  public class ServerBlaster : ITvServerPlugin
+  public class ServerBlaster :  AnalogChannel, ITvServerPlugin
   {
 
     #region properties
+		private const string _Author = "joboehl with ralphy mods";
+	    private const string _PluginName = "ServerBlaster";
+
+		private const  string _version     = "1.1.1.0";
+
+		private HCWIRBlaster irblaster;
 
     /// <summary>
     /// returns the name of the plugin
     /// </summary>
-    public string Name
+    public new string Name
     {
       get
       {
-        return "ServerBlaster";
+      	return _PluginName;
       }
     }
     /// <summary>
@@ -41,7 +47,7 @@ namespace TvEngine
     {
       get
       {
-        return "1.0.0.0";
+      	return _version;
       }
     }
     /// <summary>
@@ -51,7 +57,7 @@ namespace TvEngine
     {
       get
       {
-        return "joboehl";
+      	return _Author;
       }
     }
     /// <summary>
@@ -71,16 +77,16 @@ namespace TvEngine
 
     public void Start(IController controller)
     {
-      Log.WriteFile("ServerBlaster.Start: Starting");
+      Log.WriteFile("ServerBlaster.Start Version {0}: Starting", _version);
       ITvServerEvent events = GlobalServiceProvider.Instance.Get<ITvServerEvent>();
-      events.OnTvServerEvent += new TvServerEventHandler(events_OnTvServerEvent);
+      events.OnTvServerEvent += events_OnTvServerEvent;
 
-      Blaster.DeviceArrival += new DeviceEventHandler(OnDeviceArrival);
-      Blaster.DeviceRemoval += new DeviceEventHandler(OnDeviceRemoval);
+      Blaster.DeviceArrival += OnDeviceArrival;
+      Blaster.DeviceRemoval += OnDeviceRemoval;
       LoadRemoteCodes();
 
       Log.WriteFile("plugin: ServerBlaster start sender");
-      Thread thread = new Thread(new ThreadStart(Sender));
+      Thread thread = new Thread(Sender);
       thread.SetApartmentState(ApartmentState.STA);
       thread.IsBackground = true;
       thread.Name = "Remote blaster";
@@ -122,26 +128,28 @@ namespace TvEngine
       if (analogChannel == null) return;
       if (tvEvent.EventType == TvServerEventType.StartZapChannel)
       {
-        Log.WriteFile("ServerBlaster - CardId: {0}, Channel: {1} - Channel:{2}", tvEvent.Card.Id, analogChannel.ChannelNumber, analogChannel.Name);
-        _send = true;
+        Log.WriteFile("ServerBlaster - CardId: {0}, Channel: {1} - Channel:{2} - VideoSource: {3}", 
+      	              tvEvent.Card.Id, analogChannel.ChannelNumber, analogChannel.Name, analogChannel.VideoSource.ToString());
+      	_send = true;
         _channel = analogChannel.ChannelNumber;
         _card = tvEvent.Card.Id;
+        _videoInputType = analogChannel.VideoSource;  // ralphy
         Log.WriteFile("ServerBlaster - Done");
 
       }
     }
 
-    void OnDeviceArrival()
+    static void OnDeviceArrival()
     {
       Log.WriteFile("ServerBlaster.OnDeviceArrival: Device installed");
     }
 
-    void OnDeviceRemoval()
+    static void OnDeviceRemoval()
     {
       Log.WriteFile("ServerBlaster.OnDeviceRemoval: Device removed");
     }
 
-    bool LoadRemoteCodes()
+    void LoadRemoteCodes()
     {
       try
       {
@@ -150,12 +158,23 @@ namespace TvEngine
           BinaryFormatter bf = new BinaryFormatter();
           _packetCollection = bf.Deserialize(fs) as Hashtable;
 
-          foreach (string buttonName in _packetCollection.Keys)
+          if (_packetCollection != null)
           {
-            Log.WriteFile("ServerBlaster.LoadRemoteCodes: Packet '{0}' ({1} bytes)", buttonName, ((byte[])_packetCollection[buttonName]).Length);
+            foreach (string buttonName in _packetCollection.Keys)
+            {
+              Log.WriteFile("ServerBlaster.LoadRemoteCodes: Packet '{0}' ({1} bytes)", buttonName,
+                            ((byte[]) _packetCollection[buttonName]).Length);
+            }
           }
         }
-
+      }
+      catch (Exception e)
+      {
+        Log.WriteFile("ServerBlaster.LoadRemoteCodes: {0}", e.Message);
+      }
+      
+      try
+      {
         TvBusinessLayer layer = new TvBusinessLayer();
         _sendSelect = (layer.GetSetting("SrvBlasterSendSelect", "False").Value == "True");
         _sleepTime = 100; //xmlreader.GetValueAsInt("ServerBlaster", "delay", 100);
@@ -181,12 +200,13 @@ namespace TvEngine
         Log.WriteFile("ServerBlaster.LoadRemoteCodes: {0}", e.Message);
       }
 
-      return false;
+      return;
     }
 
     void Sender()
     {
-      while (_running)
+	  irblaster = new HCWIRBlaster();
+	  while (_running)
       {
         if (_sending || !_send)
         {
@@ -194,16 +214,43 @@ namespace TvEngine
           continue;
         }
         _sending = true;
-        Log.WriteFile("Blaster Sending: {0}, {1}", _channel, _card);
-        Send(_channel, _card);
+        Log.WriteFile("Blaster Sending: Channel:{0}, Card:{1}, VideoInput:{2}", _channel, _card, _videoInputType.ToString() );
+        switch (_deviceType)
+      	{
+        	case 0: Send(_channel, _card); break;
+        	case 1: Send(_channel, _card); break;
+        	case 2: 
+        			Log.WriteFile("ServerBlaster.Send: Case 2");
+        			if( _videoInputType.ToString() == "Tuner")
+    				{
+    					Log.WriteFile("ServerBlaster.Send: Channel {0} not blasted}", _channel );
+    				}
+        			else
+			    	{
+			    		Log.WriteFile("ServerBlaster.Send: Channel {0} blasted}", _channel );
+        				Send(_channel);  // Hauppauge blasting
+        			}
+        			break;
+        	default: Log.WriteFile("ServerBlaster: Invalid _deviceType {0}", _deviceType);break;
+      	}
         _sending = false;
-        _send = false;
-      }
-
+        _send = false; 
+        Log.WriteFile("ServerBlaster:Send Finished");
+	  }
+	  irblaster=null;
     }
 
-
-
+    /// <summary>
+    /// Overload for HCWIRBlasting
+    /// </summary>
+    void Send(int externalChannel)
+    {
+    	irblaster.blast(externalChannel.ToString(), _advandeLogging);
+    }
+    
+    /// <summary>
+    /// Overload for MS or SMK Blasting 
+    /// </summary>
     void Send(int externalChannel, int card)
     {
       if (_blaster1Card == card) _sendPort = 1;
@@ -254,13 +301,14 @@ namespace TvEngine
     int _blaster2Card = 1;
     bool _advandeLogging;
     int _deviceType = 1;
-    int _deviceSpeed = 0;
+    int _deviceSpeed;
     int _channel;
     int _card;
-    bool _send = false;
-    bool _sending = false;
-    bool _running = false;
-
+    bool _send;
+    bool _sending;
+    bool _running;
+    VideoInputType  _videoInputType;
+    
     #endregion Members
 
   }
