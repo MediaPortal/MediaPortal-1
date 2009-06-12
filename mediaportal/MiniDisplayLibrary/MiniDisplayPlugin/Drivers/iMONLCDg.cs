@@ -364,12 +364,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       Log.Debug("iMONLCDg.Dispose(): called");
       //
       // If IRSS (Input Remote Server Suite by and-81) is installed
-      // we need to restart the service to re-register dll handler
+      // we need to restart it in order to re-register dll handler
       //
+      bool irss_found = false;
       const string irss_srv = "InputService";
+      const string irss_app = "IRServer";
+      //
+      // Service part
+      //
       foreach (ServiceController ctrl in ServiceController.GetServices())
       {
-        if (ctrl.ServiceName.ToLower() == irss_srv.ToLower())
+        if (ctrl.ServiceName.ToLower() == irss_srv.ToLower() && ctrl.Status == ServiceControllerStatus.Running)
         {
           Log.Debug("iMONLCDg.Dispose(): Restarting \"" + irss_srv + "\" from IRSS");
           try
@@ -378,12 +383,56 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             ctrl.WaitForStatus(ServiceControllerStatus.Stopped);
             ctrl.Start();
             ctrl.WaitForStatus(ServiceControllerStatus.Running);
-			break;
+            irss_found = true;
+            break;
           }
           catch (Exception ex)
           {
             Log.Error("iMONLCDg.Dispose(): Unable to restart \"" + irss_srv + "\" from IRSS: " + ex.Message);
           }
+        }
+      }
+      //
+      // Application part
+      //
+      if (!irss_found)
+      {
+        Process[] procs = Process.GetProcessesByName(irss_app);
+        foreach (Process proc in procs)
+        {
+          Log.Debug("iMONLCDg.Dispose(): Restarting \"" + irss_app + "\" from IRSS");
+          proc.Kill();
+          proc.WaitForExit(2000);
+
+          RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\IR Server Suite", false);
+
+          if (key == null)
+          {
+            Log.Error("iMONLCDg.Dispose(): IRSS registry keys missing, aborting...");
+            break;
+          }
+          string workdir = (string)key.GetValue("Install_Dir", string.Empty) + "\\Input Service";
+          key.Close();
+
+          Win32Functions.RedrawNotificationArea();
+
+          try
+          {
+            Process proc2 = new Process
+            {
+              StartInfo =
+              {
+                FileName = workdir + "\\" + irss_app + ".exe",
+                WorkingDirectory = workdir
+              }
+            };
+            proc2.Start();
+          }
+          catch (Exception ex)
+          {
+            Log.Error("iMONLCDg.Dispose(): Unable to restart \"" + irss_app + "\" from IRSS: " + ex.Message);
+          }
+          break;
         }
       }
       Log.Debug("iMONLCDg.Dispose(): completed");
@@ -2217,20 +2266,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 Log.Info("iMONLCDg.ForceManagerRestart(): Found " + curBrand + " " + curApp + " Manager process.");
               }
               processesByName[0].Kill();
-              bool flag = false;
-              while (!flag)
-              {
-                Thread.Sleep(100);
-                Log.Debug("iMONLCDg.ForceManagerRestart(): Waiting for " + curBrand + " " + curApp + " Manager to exit", new object[0]);
-                processesByName[0].Dispose();
-                processesByName = Process.GetProcessesByName(curApp);
-                if (processesByName.Length == 0)
-                {
-                  flag = true;
-                }
-              }
+              processesByName[0].WaitForExit(2000);
               Log.Debug("iMONLCDg.ForceManagerRestart(): " + curBrand + " " + curApp + " Manager Stopped");
+
               Win32Functions.RedrawNotificationArea();
+
               process = new Process
                                     {
                                       StartInfo =
