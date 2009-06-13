@@ -448,6 +448,7 @@
     <String id="517">Fatal feil, handlingen er ikke fullført</String>
     <String id="518">Slette denne sangen?</String>
     <String id="519">Undertekst av</String>
+    <String id="527">Sorter etter: Sett</String>
     <String id="528">Album Artist</String>
     <String id="529">Vis: Liste, Store Ikoner</String>
     <String id="530">Foto-disk er satt inn, vil du åpne denne?</String>
@@ -893,6 +894,10 @@
     <String id="1054">(opptak)</String>
     <String id="1055">(tidsskifting)</String>
     <String id="1056">(utilgjengelig)</String>
+    <String id="1057">Opptak Søn-Tor</String>
+    <String id="1058">Opptak Fre-Lør</String>
+    <String id="1059">Søn-Tor</String>
+    <String id="1060">Fre-Lør</String>
     <String id="1061">Minnekort</String>
     <String id="1062">Objekt</String>
     <String id="1064">Bokmerker</String>
@@ -1211,6 +1216,7 @@
     <String id="2610">Polsk</String>
     <String id="2611">Tsjekkisk</String>
     <String id="2612">Ungarsk</String>
+    <String id="2700">Åpne CI meny</String>
     <String id="2997">t</String>
     <String id="2998">min</String>
     <String id="2999">sek</String>
