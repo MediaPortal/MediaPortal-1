@@ -43,13 +43,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     #region variables
 
     private PropertyBrowser browser;
-    private bool ControlScreenSaver;
     private IDisplay display;
     private DisplayHandler handler;
     private DateTime lastAction = DateTime.MinValue;
-    private bool ScreenSaverActive = false;
-    //private bool ScreenSaverActiveAtStart;
-    //private int ScreenSaverTimeOut;
     private Status status;
     private bool stopRequested;
     private Thread t;
@@ -268,7 +264,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     private void DoWork()
     {
-      bool flag = false;
       try
       {
         if (Settings.Instance.ExtensiveLogging)
@@ -291,7 +286,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           if (g_Player.IsDVD)
           {
             this.status = Status.PlayingDVD;
-            flag = true;
           }
           else if (g_Player.IsRadio)
           {
@@ -303,28 +297,20 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
           else if (g_Player.IsTimeShifting)
           {
-            this.status = Status.Timeshifting;
-            flag = true;
+            this.status = Status.Timeshifting;            
           }
           else if (g_Player.IsTVRecording)
           {
-            this.status = Status.PlayingRecording;
-            flag = true;
+            this.status = Status.PlayingRecording;            
           }
           else if (g_Player.IsTV)
           {
-            this.status = Status.PlayingTV;
-            flag = true;
+            this.status = Status.PlayingTV;            
           }
           else if (g_Player.IsVideo)
           {
-            this.status = Status.PlayingVideo;
-            flag = true;
-          }
-          if (this.ControlScreenSaver && flag)
-          {
-            Win32Functions.DisableScreenSaver();
-          }
+            this.status = Status.PlayingVideo;            
+          }          
         }
         else
         {
@@ -332,11 +318,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           if (this.IsTVWindow((int) activeWindow))
           {
             this.status = Status.PlayingTV;
-          }
-          if (this.ControlScreenSaver)
-          {
-            Win32Functions.EnableScreenSaver();
-          }
+          }          
         }
         if ((DateTime.Now - this.lastAction) < new TimeSpan(0, 0, MiniDisplayHelper.GetIdleTimeout()))
         {
@@ -436,8 +418,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     public void Run()
     {
       SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(this.SystemEvents_PowerModeChanged);
-      this.ControlScreenSaver = Settings.Instance.ControlScreenSaver;
-      Log.Info("MiniDisplay.Run(): Control ScreenSaver: {0}", new object[] {this.ControlScreenSaver.ToString()});
       bool extensiveLogging = Settings.Instance.ExtensiveLogging;
       bool flag2 = false;
       if (extensiveLogging)
@@ -528,10 +508,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       if (extensiveLogging)
       {
         Log.Info("MiniDisplay.Run(): Exiting MiniDisplay run loop.", new object[0]);
-      }
-      if (this.ControlScreenSaver & !this.ScreenSaverActive)
-      {
-        Win32Functions.ScreenSaver.SetScreenSaverActive(true);
       }
     }
 
@@ -945,7 +921,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     #endregion
 
     #region Event handling
-
     private void GUIWindowManager_OnNewAction(Action action)
     {
       this.lastAction = DateTime.Now;

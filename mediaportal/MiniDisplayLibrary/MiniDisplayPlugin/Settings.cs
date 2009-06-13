@@ -22,7 +22,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private int m_CharsToScroll = 1;
     private int m_Contrast = 0x7f;
     private bool m_ContrastControl = true;
-    private bool m_ControlScreenSaver;
     private int[][] m_CustomCharacters = new int[0][];
     private bool m_DisableGUISetup;
     private List<IDisplay> m_Drivers;
@@ -378,14 +377,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       get { return this.m_ContrastControl; }
       set { this.m_ContrastControl = value; }
     }
-
-    [XmlAttribute]
-    public bool ControlScreenSaver
-    {
-      get { return this.m_ControlScreenSaver; }
-      set { this.m_ControlScreenSaver = value; }
-    }
-
+    
     [XmlArrayItem("CustomCharacter"), XmlArray]
     public int[][] CustomCharacters
     {

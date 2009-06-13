@@ -44,7 +44,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private MPButton btnTest;
     private MPButton btnTestDisplay;
     private MPCheckBox cbContrast;
-    private MPCheckBox cbControlScreenSaver;
     private MPCheckBox cbDisplayOff;
     private MPCheckBox cbExtensiveLogging;
     private MPCheckBox cbLight;
@@ -125,7 +124,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.mpPrefixChar.DataBindings.Add("Text", Settings.Instance, "PrefixChar");
       this.mpShutdown1.DataBindings.Add("Text", Settings.Instance, "Shutdown1");
       this.mpShutdown2.DataBindings.Add("Text", Settings.Instance, "Shutdown2");
-      this.cbControlScreenSaver.DataBindings.Add("Checked", Settings.Instance, "ControlScreenSaver");
       this.lcd = Settings.Instance.LCDType;
       this.cmbType.SelectedItem = this.lcd;
       if (this.cbDisplayOff.Checked)
@@ -145,7 +143,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         this.btnTest.Enabled = true;
       }
-      Log.Info("MiniDisplay.SetupForm(): constructor completed", new object[0]);
+      Log.Info("MiniDisplay.SetupForm(): constructor completed");
     }
 
     private void btnAdvanced_Click(object sender, EventArgs e)
@@ -244,7 +242,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.btnTest = new MediaPortal.UserInterface.Controls.MPButton();
-      this.cbControlScreenSaver = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupShutdown = new System.Windows.Forms.GroupBox();
       this.label11 = new System.Windows.Forms.Label();
       this.label6 = new System.Windows.Forms.Label();
@@ -351,7 +348,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.btnTest);
-      this.groupBox1.Controls.Add(this.cbControlScreenSaver);
       this.groupBox1.Controls.Add(this.groupShutdown);
       this.groupBox1.Controls.Add(this.cbContrast);
       this.groupBox1.Controls.Add(this.cbDisplayOff);
@@ -388,17 +384,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.btnTest.Text = "Configuration Editor";
       this.btnTest.UseVisualStyleBackColor = true;
       this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
-      // 
-      // cbControlScreenSaver
-      // 
-      this.cbControlScreenSaver.AutoSize = true;
-      this.cbControlScreenSaver.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbControlScreenSaver.Location = new System.Drawing.Point(8, 256);
-      this.cbControlScreenSaver.Name = "cbControlScreenSaver";
-      this.cbControlScreenSaver.Size = new System.Drawing.Size(219, 17);
-      this.cbControlScreenSaver.TabIndex = 82;
-      this.cbControlScreenSaver.Text = "Disable ScreenSaver when playing Video";
-      this.cbControlScreenSaver.UseVisualStyleBackColor = true;
       // 
       // groupShutdown
       // 
@@ -937,12 +922,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     private void SetupForm_Load(object sender, EventArgs e)
     {
-      Log.Info("MiniDisplay.SetupForm.Load(): called", new object[0]);
+      Log.Info("MiniDisplay.SetupForm.Load(): called");
       foreach (FontFamily family in FontFamily.Families)
       {
         this.txtFont.Items.Add(family.Name);
       }
-      Log.Info("MiniDisplay.SetupForm.Load(): completed", new object[0]);
+      Log.Info("MiniDisplay.SetupForm.Load(): completed");
     }
 
     private void tbBrightness_ValueChanged(object sender, EventArgs e)
@@ -972,7 +957,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     private void VerifyLCDType()
     {
-      Log.Info("MiniDisplay.SetupForm.VerifyLCDType(): called", new object[0]);
+      Log.Info("MiniDisplay.SetupForm.VerifyLCDType(): called");
       try
       {
         this.lcd = this.cmbType.SelectedItem as IDisplay;
@@ -989,7 +974,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         Settings.Instance.LCDType = this.lcd;
       }
       catch { }
-      Log.Info("MiniDisplay.SetupForm.Load(): completed", new object[0]);
+      Log.Info("MiniDisplay.SetupForm.Load(): completed");
     }
 
     private void cbDisplayOff_CheckedChanged(object sender, EventArgs e)
