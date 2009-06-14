@@ -1461,12 +1461,11 @@ namespace TvControl
     {
       try
       {
-        if (User.CardId < 0)
+        if (User.CardId < 0 || !IsOwner())
         {
           return false;
         }
-        RemoteControl.HostName = _server;
-        return RemoteControl.Instance.IsMaster && RemoteControl.Instance.CiMenuSupported(User.CardId);
+        return RemoteControl.Instance.CiMenuSupported(User.CardId);
       }
       catch (Exception)
       {
@@ -1483,15 +1482,11 @@ namespace TvControl
     {
       try
       {
-        if (User.CardId < 0)
+        if (User.CardId < 0 || !IsOwner())
         {
           return false;
         }
-        RemoteControl.HostName = _server;
-        if (RemoteControl.Instance.IsMaster) 
-          return RemoteControl.Instance.EnterCiMenu(User.CardId);
-        else
-          return false;
+        return RemoteControl.Instance.EnterCiMenu(User.CardId);
       }
       catch (Exception)
       {
@@ -1509,15 +1504,11 @@ namespace TvControl
     {
       try
       {
-        if (User.CardId < 0)
+        if (User.CardId < 0 || !IsOwner())
         {
           return false;
         }
-        RemoteControl.HostName = _server;
-        if (RemoteControl.Instance.IsMaster)
-          return RemoteControl.Instance.SelectMenu(User.CardId, Choice);
-        else
-          return false;
+        return RemoteControl.Instance.SelectMenu(User.CardId, Choice);
       }
       catch (Exception)
       {
@@ -1533,15 +1524,11 @@ namespace TvControl
     {
       try
       {
-        if (User.CardId < 0)
+         if (User.CardId < 0 || !IsOwner())
         {
           return false;
         }
-        RemoteControl.HostName = _server;
-        if (RemoteControl.Instance.IsMaster)
-          return RemoteControl.Instance.CloseMenu(User.CardId);
-        else
-          return false;
+        return RemoteControl.Instance.CloseMenu(User.CardId);
       }
       catch (Exception)
       {
@@ -1560,15 +1547,11 @@ namespace TvControl
     {
       try
       {
-        if (User.CardId < 0)
+        if (User.CardId < 0 || !IsOwner())
         {
           return false;
         }
-        RemoteControl.HostName = _server;
-        if (RemoteControl.Instance.IsMaster)
-          return RemoteControl.Instance.SendMenuAnswer(User.CardId, Cancel, Answer);
-        else
-          return false;
+        return RemoteControl.Instance.SendMenuAnswer(User.CardId, Cancel, Answer);
       }
       catch (Exception)
       {
@@ -1586,18 +1569,12 @@ namespace TvControl
       TvLibrary.Log.Log.Debug("VC: SetCiMenuHandler");
       try
       {
-        if (User.CardId < 0)
+        if (User.CardId < 0 || !IsOwner())
         {
           return false;
         }
-        RemoteControl.HostName = _server;
-        if (RemoteControl.Instance.IsMaster)
-        {
-          TvLibrary.Log.Log.Debug("VC: SetCiMenuHandler card: {0}, {1}", User.CardId, CallbackHandler);
-          return RemoteControl.Instance.SetCiMenuHandler(User.CardId, CallbackHandler);
-        }
-        else
-          return false;
+        TvLibrary.Log.Log.Debug("VC: SetCiMenuHandler card: {0}, {1}", User.CardId, CallbackHandler);
+        return RemoteControl.Instance.SetCiMenuHandler(User.CardId, CallbackHandler);
       }
       catch (Exception Ex)
       {

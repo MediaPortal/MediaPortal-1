@@ -2062,17 +2062,21 @@ namespace TvPlugin
           // errors and menu options with no choices
         case TvLibrary.Interfaces.CiMenuState.Error:
         case TvLibrary.Interfaces.CiMenuState.NoChoices:
-          if (_dlgOk == null)
+
+          if (_dialogNotify == null)
           {
-            _dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+            //_dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+            _dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
           }
-          if (null != _dlgOk)
+          if (null != _dialogNotify)
           {
-            _dlgOk.Reset();
-            _dlgOk.SetHeading(Menu.Title);
-            _dlgOk.SetLine(1, Menu.Subtitle);
-            _dlgOk.SetLine(2, Menu.BottomText);
-            _dlgOk.DoModal(GUIWindowManager.ActiveWindow);
+            _dialogNotify.Reset();
+            _dialogNotify.ClearAll();
+            _dialogNotify.SetHeading(Menu.Title);
+
+            _dialogNotify.SetText(String.Format("{0}\r\n{1}",Menu.Subtitle, Menu.BottomText));
+            _dialogNotify.TimeOut = 2; // seconds
+            _dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
           }
           break;
 

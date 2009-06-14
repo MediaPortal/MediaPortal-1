@@ -169,6 +169,13 @@ namespace TvControl
     int Cards { get; }
 
     /// <summary>
+    /// Initialized Conditional Access handler
+    /// </summary>
+    /// <param name="cardId">id of the card.</param>
+    /// <returns>true if successful</returns>
+    bool InitConditionalAccess(int cardId);
+
+    /// <summary>
     /// Gets the card Id for a card
     /// </summary>
     /// <param name="cardIndex">Index of the card.</param>

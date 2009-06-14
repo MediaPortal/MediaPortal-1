@@ -82,6 +82,32 @@ namespace TvService
 
     TvCardCollection _localCardCollection;
 
+    /// <summary>
+    /// Initialized Conditional Access handler
+    /// </summary>
+    /// <param name="cardId">id of the card.</param>
+    /// <returns>true if successful</returns>
+    public bool InitConditionalAccess(int cardId)
+    {
+      if (ValidateTvControllerParams(cardId, false))
+      {
+        Log.Debug("InitConditionalAccess: ValidateTvControllerParams failed");
+        return false;
+      }
+      ITVCard unknownCard = _cards[cardId].Card;
+
+      if (unknownCard is TvCardBase)
+      {
+        TvCardBase card = (TvCardBase)unknownCard;
+        if (card.ConditionalAccess == null)
+        {
+          card.BuildGraph();
+        }
+        return true;
+      }
+      return false;
+    }
+
     Dictionary<int, ITvCardHandler> _cards;
     /// 
 
@@ -100,8 +126,9 @@ namespace TvService
     /// </summary>
     event CiMenuCallback IController.OnCiMenu
     {
-      add { 
-        s_ciMenu = value; 
+      add {
+        s_ciMenu = null;
+        s_ciMenu += value;
         Log.Debug("CiMenu: registered client event for callback"); 
       }
       remove { Log.Debug("CiMenu: TODO : event remove."); }

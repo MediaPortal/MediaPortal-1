@@ -79,13 +79,10 @@ namespace TvService
         TvCardDvbBase dvbCard = _card as TvCardDvbBase;
         if (dvbCard != null)
         {
-          if (dvbCard.ConditionalAccess != null)
+          if (dvbCard.HasCA && dvbCard.ConditionalAccess.CiMenu != null && dvbCard.ConditionalAccess.IsCamReady()) // only if cam is ready
           {
             _ciMenu = dvbCard.ConditionalAccess.CiMenu;
-            if (_ciMenu != null && dvbCard.ConditionalAccess.IsCamReady()) // only if cam is ready
-                return true;
-            else
-              return false;
+            return true;
           }
         }
         return false;
