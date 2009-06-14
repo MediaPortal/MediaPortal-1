@@ -43,6 +43,9 @@ namespace TvLibrary.Implementations.DVB
   {
     #region variables
     #region local variables
+
+    private bool _listenCA = false;
+
     /// <summary>
     /// PMT version
     /// </summary>
@@ -81,7 +84,7 @@ namespace TvLibrary.Implementations.DVB
 
     #region events
     private ManualResetEvent _eventPMT; // gets signaled when PMT arrives
-    private ManualResetEvent _eventCA; // gets signaled when CA arrives
+    private ManualResetEvent _eventCA; // gets signaled when CA arrives    
     #endregion
 
     #region graph variables
@@ -99,6 +102,9 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public TvDvbChannel()
     {
+      _listenCA = false;
+      _eventPMT = new ManualResetEvent(false);
+      _eventCA = new ManualResetEvent(false);
       _graphState = GraphState.Created;
       _teletextDecoder = new DVBTeletext();
       _packetHeader = new TSHelperTools.TSHeader();
@@ -125,6 +131,9 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="channel">The corresponding channel</param>
     public TvDvbChannel(IFilterGraph2 graphBuilder, ConditionalAccess ca, MDPlugs mdplugs, IBaseFilter tif, IBaseFilter tsWriter, int subChannelId, IChannel channel)
     {
+      _listenCA = false;
+      _eventPMT = new ManualResetEvent(false);
+      _eventCA = new ManualResetEvent(false);
       _graphState = GraphState.Created;
       _graphBuilder = graphBuilder;
       _conditionalAccess = ca;
@@ -140,7 +149,7 @@ namespace TvLibrary.Implementations.DVB
       _tsFilterInterface = (ITsFilter)_filterTsWriter;
       _tsFilterInterface.AddChannel(ref _subChannelIndex);
 
-      Log.Log.WriteFile("TvDvbChannel ctor new subchIndex:{0}", _subChannelIndex);      
+      Log.Log.WriteFile("TvDvbChannel ctor new subchIndex:{0}", _subChannelIndex);
 
       _parameters = new ScanParameters();
       _subChannelId = subChannelId;
@@ -149,6 +158,19 @@ namespace TvLibrary.Implementations.DVB
       _recordingFileName = "";
       _pmtData = null;
       _pmtLength = 0;
+    }
+
+    ~TvDvbChannel()
+    {
+      if (_eventPMT != null)
+      {
+        _eventPMT.Close();
+      }
+
+      if (_eventCA != null)
+      {
+        _eventCA.Close();
+      }
     }
     #endregion
 
@@ -207,8 +229,6 @@ namespace TvLibrary.Implementations.DVB
       DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
       if (channel != null)
       {
-        _eventPMT = new ManualResetEvent(false);
-        _eventCA = new ManualResetEvent(false);
         if (SetupPmtGrabber(channel.PmtPid, channel.ServiceId))
         {
           DateTime dtNow = DateTime.Now;
@@ -216,21 +236,18 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Debug("WaitForPMT: Waiting for PMT.");
           if (_eventPMT.WaitOne(timeoutPMT, true))
           {
-            _eventPMT.Close();
-            _eventPMT = null;
             TimeSpan ts = DateTime.Now - dtNow;
             Log.Log.Debug("WaitForPMT: Found PMT after {0} seconds.", ts.TotalSeconds);
             DateTime dtNowPMT2CAM = DateTime.Now;
             bool sendPmtToCamDone = false;
             try
             {
-              int retries = 0;
-
-              while (retries < 4 && !sendPmtToCamDone) //lets keep trying to send pmt2cam for max. 4 retries.
+              while (ts.TotalMilliseconds < timeoutPMT && !sendPmtToCamDone) //lets keep trying to send pmt2cam and at the same time obey the timelimit specified in timeoutPMT
               {
+                ts = DateTime.Now - dtNow;
                 bool updatePids;
-                int waitInterval; //ms              
-                sendPmtToCamDone = SendPmtToCam(out updatePids, out waitInterval);
+                int waitInterval; //ms         
+                sendPmtToCamDone = SendPmtToCam(out updatePids, out waitInterval);                
                 if (sendPmtToCamDone)
                 {
                   if (updatePids)
@@ -248,18 +265,20 @@ namespace TvLibrary.Implementations.DVB
                 }
                 else
                 {
-                  retries++;
+                  Log.Log.Debug("WaitForPMT: waiting for SendPmtToCam {0} seconds.", ts.TotalMilliseconds);
                   Thread.Sleep(waitInterval);
-                }
+                }                
               }
 
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
               Log.Log.WriteFile("subch:{0}", ex.Message);
               Log.Log.WriteFile("subch:{0}", ex.Source);
               Log.Log.WriteFile("subch::{0}", ex.StackTrace);
             }
             TimeSpan tsPMT2CAM = DateTime.Now - dtNowPMT2CAM;
+            _listenCA = false;
             if (!sendPmtToCamDone)
             {
               Log.Log.Debug("WaitForPMT: Timed out sending PMT to CAM {0} seconds.", tsPMT2CAM.TotalSeconds);
@@ -276,11 +295,7 @@ namespace TvLibrary.Implementations.DVB
           }
         }
       }
-      if (_eventPMT != null)
-      {
-        _eventPMT.Close();
-        _eventPMT = null;
-      }
+      
       return;
     }
 
@@ -299,12 +314,14 @@ namespace TvLibrary.Implementations.DVB
           FilterState state;
           ((IMediaControl)_graphBuilder).GetState(10, out state);
           graphRunning = (state == FilterState.Running);
-        } catch (InvalidComObjectException)
+        }
+        catch (InvalidComObjectException)
         {
           // RCW error
           // ignore this error as, the graphbuilder is being disposed of in another thread.         
           return false;
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
           Log.Log.Error("GraphRunning error : {0}", e.Message);
         }
@@ -458,7 +475,7 @@ namespace TvLibrary.Implementations.DVB
     {
       Log.Log.WriteFile("tvdvbchannel.OnStopRecording subch={0}, subch index={1}", _subChannelId, _subChannelIndex);
       if (IsRecording)
-      {        
+      {
         if (_tsFilterInterface != null)
         {
           Log.Log.WriteFile("tvdvbchannel.OnStopRecording subch:{0}-{1} tswriter StopRecording...", _subChannelId, _subChannelIndex);
@@ -515,8 +532,8 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.WriteFile("subch:{0}-{1} tswriter StopTimeshifting...", _subChannelId, _subChannelIndex);
         if (_tsFilterInterface != null)
-        {          
-          _tsFilterInterface.TimeShiftStop(_subChannelIndex);              
+        {
+          _tsFilterInterface.TimeShiftStop(_subChannelIndex);
         }
         _graphState = GraphState.Created;
       }
@@ -716,12 +733,13 @@ namespace TvLibrary.Implementations.DVB
       if (_conditionalAccess != null)
         _conditionalAccess.OnRunGraph(serviceId);
 
-      Log.Log.Write("subch:{0} set pmt grabber pmt:{1:X} sid:{2:X}", _subChannelId, pmtPid, serviceId);
+      Log.Log.Write("subch:{0} set pmt grabber pmt:{1:X} sid:{2:X}", _subChannelId, pmtPid, serviceId);      
       _tsFilterInterface.PmtSetCallBack(_subChannelIndex, this);
       _tsFilterInterface.PmtSetPmtPid(_subChannelIndex, pmtPid, serviceId);
       if (_mdplugs != null)
       {
         Log.Log.Write("subch:{0} set ca grabber ", _subChannelId);
+        _listenCA = true;
         _tsFilterInterface.CaSetCallBack(_subChannelIndex, this);
         _tsFilterInterface.CaReset(_subChannelIndex);
 
@@ -819,7 +837,7 @@ namespace TvLibrary.Implementations.DVB
           }
         }
 
-        if(_mdplugs != null)
+        if (_mdplugs != null)
         {
           // MDPlugins Active.. 
           // It's important that the ECM pids are not blocked by the HWPID Filter in the Tuner.
@@ -827,11 +845,11 @@ namespace TvLibrary.Implementations.DVB
 
           // HWPIDS supports max number of 16 filtered pids - Total max of 16.
           // ECM Pids
-          foreach(ECMEMM ecmValue in _channelInfo.caPMT.GetECM())
+          foreach (ECMEMM ecmValue in _channelInfo.caPMT.GetECM())
           {
-            if (ecmValue.Pid != 0 && !hwPids.Contains( (ushort) ecmValue.Pid ) )
+            if (ecmValue.Pid != 0 && !hwPids.Contains((ushort)ecmValue.Pid))
             {
-              hwPids.Add( (ushort)ecmValue.Pid );
+              hwPids.Add((ushort)ecmValue.Pid);
             }
           }
           //EMM Pids
@@ -878,7 +896,8 @@ namespace TvLibrary.Implementations.DVB
         {
           SetTimeShiftPids();
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
@@ -910,7 +929,8 @@ namespace TvLibrary.Implementations.DVB
 
         _tsFilterInterface.TimeShiftPause(_subChannelIndex, 0);
         _dateTimeShiftStarted = DateTime.Now;
-      } catch (Exception e)
+      }
+      catch (Exception e)
       {
         Log.Log.Error("could not set TimeShiftSetPmtPid {0}", e.Message);
       }
@@ -970,22 +990,19 @@ namespace TvLibrary.Implementations.DVB
             if ((!channel.FreeToAir) || (channel.NetworkId == 133 && !channel.Provider.Equals("BetaDigital")))
             {
               DateTime dtNow = DateTime.Now;
-              //_eventCA = new ManualResetEvent(false);
+              foundCA = false;
+              //Log.Log.Info("subch:{0} listen for CA", _listenCA);
               if (!_eventCA.WaitOne(10000, true)) //wait 10 sec for CA to arrive.
-              {
-                _eventCA.Close();
-                _eventCA = null;
+              {              
                 TimeSpan ts = DateTime.Now - dtNow;
                 Log.Log.Info("subch:{0} SendPmt:no CA found after {1} seconds", _subChannelId, ts.TotalSeconds);
                 return false;
               }
               else
               {
-                TimeSpan ts = DateTime.Now - dtNow;
-                Log.Log.Info("subch:{0} SendPmt:CA found after {1}seconds", _subChannelId, ts.TotalSeconds);
                 foundCA = true;
-                _eventCA.Close();
-                _eventCA = null;
+                TimeSpan ts = DateTime.Now - dtNow;
+                Log.Log.Info("subch:{0} SendPmt:CA found after {1} seconds", _subChannelId, ts.TotalSeconds);
               }
             }
           }
@@ -1036,7 +1053,8 @@ namespace TvLibrary.Implementations.DVB
                       Marshal.Copy(catMem, cat, 0, catLength);
                       _channelInfo.DecodeCat(cat, catLength);
                     }
-                  } catch (Exception ex)
+                  }
+                  catch (Exception ex)
                   {
                     Log.Log.Write(ex);
                   }
@@ -1081,7 +1099,8 @@ namespace TvLibrary.Implementations.DVB
               }
             }
           }
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
           Log.Log.Write(ex);
         }
@@ -1090,7 +1109,7 @@ namespace TvLibrary.Implementations.DVB
           Marshal.FreeCoTaskMem(pmtMem);
           Marshal.FreeCoTaskMem(catMem);
         }
-      }
+      }      
       return false;
     }
     #endregion
@@ -1120,12 +1139,11 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public int OnCaReceived()
     {
-      if (_eventCA != null)
+      if (_eventCA != null && _listenCA)
       {
         Log.Log.WriteFile("subch:OnCaReceived()");
         _eventCA.Set();
       }
-
       return 0;
     }
 
