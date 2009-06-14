@@ -129,6 +129,13 @@
     <Compile Include="Sections\CardDvbIP.Designer.cs">
       <DependentUpon>CardDvbIP.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\CIMenu\CiMenuHandler.cs" />
+    <Compile Include="Sections\CIMenu\CI_Menu_Dialog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\CIMenu\CI_Menu_Dialog.designer.cs">
+      <DependentUpon>CI_Menu_Dialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\ImportExport.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -436,6 +443,10 @@
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TVLibrary\TVLibrary.csproj">
+      <Project>{59C2EBC8-0FEA-4B2E-B5D1-476347332331}</Project>
+      <Name>TVLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Sections\RadioEpgGrabber.resx">
@@ -486,6 +497,9 @@
     <EmbeddedResource Include="Sections\ChannelsInRadioGroupControl.resx">
       <DependentUpon>ChannelsInRadioGroupControl.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\CIMenu\CI_Menu_Dialog.resx">
+      <DependentUpon>CI_Menu_Dialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Combinations.resx">
       <DependentUpon>Combinations.cs</DependentUpon>

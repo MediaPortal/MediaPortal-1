@@ -53,6 +53,16 @@ namespace SetupTv.Sections
     {
       _cardNumber = cardNumber;
       InitializeComponent();
+      //insert complete ci menu dialog to tab
+      Card dbCard = Card.Retrieve(_cardNumber);
+      if (dbCard.CAM == true)
+      {
+        this.tabPageCIMenu.Controls.Add(new CI_Menu_Dialog(_cardNumber));
+      }
+      else
+      {
+        this.tabPageCIMenu.Dispose();
+      }
       base.Text = name;
       Init();
     }

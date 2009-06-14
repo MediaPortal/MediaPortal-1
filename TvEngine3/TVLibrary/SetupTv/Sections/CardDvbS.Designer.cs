@@ -107,6 +107,7 @@ namespace SetupTv.Sections
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.checkBoxCreateGroupsSat = new System.Windows.Forms.CheckBox();
       this.button1 = new System.Windows.Forms.Button();
+      this.tabPageCIMenu = new System.Windows.Forms.TabPage();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
       this.buttonUpdate = new System.Windows.Forms.Button();
       this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -227,6 +228,7 @@ namespace SetupTv.Sections
       this.tabControl1.Controls.Add(this.tabPage3);
       this.tabControl1.Controls.Add(this.tabPage2);
       this.tabControl1.Controls.Add(this.tabPage1);
+      this.tabControl1.Controls.Add(this.tabPageCIMenu);
       this.tabControl1.Location = new System.Drawing.Point(3, 3);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
@@ -236,13 +238,13 @@ namespace SetupTv.Sections
       // 
       // tabPage3
       // 
+      this.tabPage3.BackColor = System.Drawing.SystemColors.Control;
       this.tabPage3.Controls.Add(this.groupBox1);
       this.tabPage3.Location = new System.Drawing.Point(4, 22);
       this.tabPage3.Name = "tabPage3";
       this.tabPage3.Size = new System.Drawing.Size(466, 391);
       this.tabPage3.TabIndex = 2;
       this.tabPage3.Text = "LNB Setup";
-      this.tabPage3.UseVisualStyleBackColor = true;
       // 
       // groupBox1
       // 
@@ -619,6 +621,7 @@ namespace SetupTv.Sections
       // 
       // tabPage2
       // 
+      this.tabPage2.BackColor = System.Drawing.SystemColors.Control;
       this.tabPage2.Controls.Add(this.labelTunerLock);
       this.tabPage2.Controls.Add(this.label18);
       this.tabPage2.Controls.Add(this.labelCurrentPosition);
@@ -656,7 +659,6 @@ namespace SetupTv.Sections
       this.tabPage2.Size = new System.Drawing.Size(466, 391);
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "DiSEqC Motor";
-      this.tabPage2.UseVisualStyleBackColor = true;
       this.tabPage2.Click += new System.EventHandler(this.tabPage2_Click);
       // 
       // labelTunerLock
@@ -964,6 +966,7 @@ namespace SetupTv.Sections
       // 
       // tabPage1
       // 
+      this.tabPage1.BackColor = System.Drawing.SystemColors.Control;
       this.tabPage1.Controls.Add(this.checkBoxCreateGroupsSat);
       this.tabPage1.Controls.Add(this.button1);
       this.tabPage1.Controls.Add(this.checkBoxCreateGroups);
@@ -980,7 +983,6 @@ namespace SetupTv.Sections
       this.tabPage1.Size = new System.Drawing.Size(466, 391);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Scanning";
-      this.tabPage1.UseVisualStyleBackColor = true;
       // 
       // checkBoxCreateGroupsSat
       // 
@@ -1004,6 +1006,15 @@ namespace SetupTv.Sections
       this.button1.Text = "Update satellite list";
       this.button1.UseVisualStyleBackColor = true;
       this.button1.Click += new System.EventHandler(this.buttonUpdate_Click);
+      // 
+      // tabPageCIMenu
+      // 
+      this.tabPageCIMenu.BackColor = System.Drawing.SystemColors.Control;
+      this.tabPageCIMenu.Location = new System.Drawing.Point(4, 22);
+      this.tabPageCIMenu.Name = "tabPageCIMenu";
+      this.tabPageCIMenu.Size = new System.Drawing.Size(466, 391);
+      this.tabPageCIMenu.TabIndex = 3;
+      this.tabPageCIMenu.Text = "CI Menu";
       // 
       // timer1
       // 
@@ -1155,5 +1166,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.CheckBox checkEnableDVBS2;
     private System.Windows.Forms.Label labelTunerLock;
     private System.Windows.Forms.Label label18;
+    private System.Windows.Forms.TabPage tabPageCIMenu;
   }
 }
