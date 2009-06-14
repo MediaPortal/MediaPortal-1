@@ -224,21 +224,6 @@ namespace TvLibrary.Implementations.DVB
     const int KSPROPERTY_FIRESAT_LNB_CONTROL = 12;
     #endregion
 
-    /// <summary>
-    /// MMI Tags inside MMI object
-    /// </summary>
-    private enum MMI_TAGS
-    {
-      CLOSE     = 0x9F8800,
-      ENQUIRY   = 0x9F8807,
-      MENU_MORE = 0x9F880A,
-      MENU_LAST = 0x9F8809,
-      LIST_MORE = 0x9F880D,
-      LIST_LAST = 0x9F880C,
-      TEXT_MORE = 0x9F8804,
-      TEXT_LAST = 0x9F8803
-    };
-
     #region CI STATUS bits
     
     /// <summary>
@@ -1267,28 +1252,9 @@ namespace TvLibrary.Implementations.DVB
       }
       /* QuerySupported has been done in GetCAMName already */
       FIRESAT_CA_DATA caData = GET_FIRESAT_CA_DATA(5 /*CA_MMI*/, 0);
-      // MMI Tag
-      caData.uData[0] = 0x9F;
-      caData.uData[1] = 0x88;
-      caData.uData[2] = 0x08; // send enquiry answer
-      if (Cancel == true)
-      {
-        caData.uData[3] = 0; // length field
-        caData.uData[4] = 0; // answ_id "cancel"
-        caData.uLength1 = 5; // set correct length
-      }
-      else
-      {
-        caData.uData[3] = (byte)Answer.Length; // length field
-        caData.uData[4] = 1; // answ_id "answer"
-        char[] answerChars = Answer.ToCharArray();
-        for (int p = 0; p < answerChars.Length; p++)
-        {
-          caData.uData[5 + p] = (byte)answerChars[p]; // answer string
-        }
-        caData.uLength1 = (byte)(5 + (byte)answerChars.Length); // set correct length
-      }
-
+      DVB_MMI.CreateMMIAnswer(Cancel, Answer, ref caData.uData, ref caData.uLength1, ref caData.uLength2);
+      //Log.Log.Debug("FireDTV:Created answer: length:{0},{1}", caData.uLength1, caData.uLength2);
+      //DVB_MMI.DumpBinary(caData.uData,0,caData.uLength1);
       Marshal.StructureToPtr(caData, _ptrDataInstance, true);
       Marshal.StructureToPtr(caData, _ptrDataReturned, true);
       int hr = propertySet.Set(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_HOST2CA, _ptrDataInstance, CA_DATA_SIZE, _ptrDataReturned, CA_DATA_SIZE);
@@ -1304,149 +1270,6 @@ namespace TvLibrary.Implementations.DVB
     #region CiMenuHandlerThread for polling status and handling MMI
 
     /// <summary>
-    /// interpretes parts of an byte[] as status int
-    /// </summary>
-    /// <param name="sourceData"></param>
-    /// <param name="offset"></param>
-    /// <returns></returns>
-    private MMI_TAGS ToMMITag(byte[] sourceData, int offset)
-    {
-      return (MMI_TAGS)(((Int32)sourceData[offset] << 16) | ((Int32)sourceData[offset + 1] << 8) | ((Int32)sourceData[offset + 2]));
-    }
-
-    /// <summary>
-    /// interpretes length() info which can be of different size
-    /// </summary>
-    /// <param name="sourceData">source byte array</param>
-    /// <param name="offset">index to start</param>
-    /// <param name="bytesRead">returns the number of bytes interpreted</param>
-    /// <returns>length of following object</returns>
-    private int GetLength(byte[] sourceData, int offset, out int bytesRead)
-    {
-      byte bLen = sourceData[offset];
-      // if highest bit set, it means there are > 127 bytes
-      if ((bLen & 0x80) == 0)
-      {
-        bytesRead = 1;
-        return bLen;
-      }
-      else
-      {
-        bLen &= 0x7f; // clear 8th bit; remaining 7 bit tell the number of following bytes to interpret (most probably 2)
-        bytesRead = 1 + bLen;
-        Int32 shiftBy;
-        Int32 iLen = 0;
-        for (Int32 p = 0; p < bLen; p++)
-        {
-          shiftBy = (Int32)(bLen - p - 1) * 8; // number of bits to shift up, i.e. 2 bytes -> 1st byte <<8, 2nd byte <<0
-          iLen = iLen | (sourceData[offset + 1 + p] << shiftBy); // shift byte to right position, concat by "or" operation
-        }
-        return iLen;
-      }
-    }
-
-
-    /// <summary>
-    /// Converts bytes to String
-    /// </summary>
-    /// <param name="sourceData">source byte[]</param>
-    /// <param name="offset">starting offset</param>
-    /// <param name="length">length</param>
-    /// <returns>String</returns>
-    private String BytesToString(byte[] sourceData, int offset, int length)
-    {
-      StringBuilder StringEntry = new StringBuilder();
-      for (int l = offset; l < offset + length; l++)
-      {
-        StringEntry.Append((char)sourceData[l]);
-      }
-      return StringEntry.ToString();
-    }
-
-    /// <summary>
-    /// intepretes string for ci menu entries
-    /// </summary>
-    /// <param name="sourceData">source byte array</param>
-    /// <param name="offset">index to start</param>
-    /// <param name="menuEntries">reference to target string list</param>
-    /// <returns>offset for further readings</returns>
-    private int GetCIText(byte[] sourceData, int offset, ref List<String> menuEntries)
-    {
-	    byte     Length; // We assume that text Length is smaller 127
-	    MMI_TAGS Tag;
-
-	    Tag = ToMMITag(sourceData, offset);
-      if ((Tag != MMI_TAGS.TEXT_MORE) && (Tag != MMI_TAGS.TEXT_LAST))
-      {
-        return -1;
-      }
-
-      Length = sourceData[offset+3];
-
-	    // Check if our assumption is TRUE
-	    if(Length > 127)
-		    return -1; // Length is > 127
-
-      if (Length > 0)
-      {
-        // Create string from byte array 
-        String menuEntry = BytesToString(sourceData, offset + 4, Length);
-        //Log.Log.Debug("FireDTV: MMI Parse GetCIText: {0}", menuEntry.ToString());
-        menuEntries.Add(menuEntry.ToString());
-      }
-      else
-      { 
-        // empty String ? add to keep correct index positions
-        menuEntries.Add(""); 
-      }
-	    return (Length +4);
-    }
-
-    /// <summary>
-    /// returns a safe "printable" character or _
-    /// </summary>
-    /// <param name="b">byte code</param>
-    /// <returns>char</returns>
-    private char ToSafeAscii(byte b)
-    {
-      if (b >= 32 && b <= 126)
-      {
-        return (char)b;
-      }
-      return '_';
-    }
-    /// <summary>
-    /// Output binary buffer to log for debugging
-    /// </summary>
-    /// <param name="sourceData"></param>
-    /// <param name="offset"></param>
-    /// <param name="length"></param>
-    private void DumpBinary(byte[] sourceData, int offset, int length)
-    {
-      StringBuilder row = new StringBuilder();
-      StringBuilder rowText = new StringBuilder();
-
-      for (int position = offset; position < offset + length; position++)
-      {
-        if (position == offset || position % 0x10 == 0)
-        {
-          if (row.Length > 0)
-          {
-            Log.Log.WriteFile(String.Format("{0}|{1}", row.ToString().PadRight(55, ' '), rowText.ToString().PadRight(16, ' ')));
-          }
-          rowText.Length = 0;
-          row.Length = 0;
-          row.AppendFormat("{0:X4}|", position);
-        }
-        row.AppendFormat("{0:X2} ", sourceData[position]); // the hex code
-        rowText.Append(ToSafeAscii(sourceData[position])); // the ascii char
-      }
-      if (row.Length > 0)
-      {
-         Log.Log.WriteFile(String.Format("{0}|{1}", row.ToString().PadRight(55, ' '), rowText.ToString().PadRight(16, ' ')));
-      }
-    }
-    /// <summary>
     /// Thread that checks for CI menu 
     /// </summary>
     private void CiMenuHandler()
@@ -1454,8 +1277,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Debug("FireDTV: CI handler thread start polling status");
       int bytesReturned;
       int hr;
-      int nChoices;
-      List<String> Choices;
+      DVB_MMI_Handler MMI = new DVB_MMI_Handler("FireDTV", m_ciMenuCallback);
       DE_CI_STATUS CiStatus;
       
       // Init CiStatus word to 0
@@ -1506,122 +1328,9 @@ namespace TvLibrary.Implementations.DVB
               {
                 // cast ptr back to struct and handle it in c#
                 FIRESAT_CA_DATA caDataReturned = (FIRESAT_CA_DATA)Marshal.PtrToStructure(_ptrDataCiHandler, typeof(FIRESAT_CA_DATA));
-
-                MMI_TAGS uMMITag = ToMMITag(caDataReturned.uData, 0);
+                
                 Int32 caDataLength = caDataReturned.uLength2 << 8 | caDataReturned.uLength1;
-#if DEBUG
-                // dumping binary APDU
-                DumpBinary(caDataReturned.uData, 0, caDataLength);
-#endif
-                // calculate length and offset
-                int countLengthBytes;
-                int mmiLength = GetLength(caDataReturned.uData, 3 /* bytes for mmi_tag */, out countLengthBytes);
-                int mmiOffset = 3 + countLengthBytes; // 3 bytes mmi tag + 1 byte length field ?
-
-                Log.Log.Debug("FireDTV: MMITag:{0}, CaDataLength: {1} ({1:X2}), MMIObjectLength: {2} ({2:X2}), mmiOffset: {3}", uMMITag, caDataLength, mmiLength, mmiOffset);
-
-                int offset = 0; // starting with 0; reading whole struct from start
-                if (uMMITag==MMI_TAGS.CLOSE)
-                {                 
-                    // Close menu
-                    byte nDelay = 0;
-                    byte CloseCmd = caDataReturned.uData[mmiOffset + 0]; 
-                    if (CloseCmd != 0) 
-                    {
-                      nDelay = caDataReturned.uData[mmiOffset + 1]; 
-                    }
-                    if (m_ciMenuCallback != null)
-                    {
-                      Log.Log.Debug("FireDTV: OnCiClose()");
-                      try
-                      {
-                        m_ciMenuCallback.OnCiCloseDisplay(nDelay);
-                      }
-                      catch { }
-                    }
-                    else
-                    {
-                      Log.Log.Debug("FireDTV: OnCiCloseDisplay: cannot do callback!");
-                    }
-                }
-                if (uMMITag==MMI_TAGS.ENQUIRY)
-                {                 
-                    // request input
-                    bool bPasswordMode		= false;
-                    byte answer_text_length = caDataReturned.uData[mmiOffset + 1];
-			              string  strText = "";
-
-                    if ((caDataReturned.uData[mmiOffset + 0] & 0x01) != 0)
-                    {
-                      bPasswordMode = true;
-                    }
-
-                    strText = BytesToString(caDataReturned.uData, mmiOffset + 2, caDataReturned.uLength1 - 2);
-                    if (m_ciMenuCallback != null)
-                    {
-                      Log.Log.Debug("FireDTV: OnCiRequest(bPasswordMode, answer_text_length, strText) {0} {1} {2}", bPasswordMode, answer_text_length, strText );
-                      try
-                      {
-                        m_ciMenuCallback.OnCiRequest(bPasswordMode, answer_text_length, strText);
-                      }
-                      catch { }
-                    }
-                    else
-                    {
-                      Log.Log.Debug("FireDTV: OnCiRequest: cannot do callback!");
-                    }
-                }
-                if (uMMITag == MMI_TAGS.LIST_LAST || uMMITag == MMI_TAGS.MENU_LAST || uMMITag == MMI_TAGS.MENU_MORE || uMMITag == MMI_TAGS.LIST_MORE)
-                {
-                  // step forward; begin with offset+1; stop when 0x9F reached
-                  offset++;
-                  while (caDataReturned.uData[offset] != (byte)0x9F)
-                  {
-                    //Log.Log.Debug("Skip to offset {0} value {1:X2}", offset, caDataReturned.uData[offset]);
-                    offset++;
-                  }
-                  uMMITag = ToMMITag(caDataReturned.uData, offset); // get next MMI tag
-                  Log.Log.Debug("FireDTV: MMI Parse: Got MENU_LAST, skipped to next block on index: {0}; new Tag {1}", offset, uMMITag);
-
-                  nChoices = 0;
-                  Choices = new List<string>();
-                  // Always three line with menu info (DVB Standard)
-                  // Title Text
-                  offset += GetCIText(caDataReturned.uData, offset, ref Choices);
-                  // Subtitle Text
-                  offset += GetCIText(caDataReturned.uData, offset, ref Choices);
-                  // Bottom Text
-                  offset += GetCIText(caDataReturned.uData, offset, ref Choices);
-
-                  // first step through the choices, to get info and count them
-                  int max = 20;
-                  while (max-- > 0)
-                  {
-                    // if the offset gets to mmi object length then end here
-                    if (offset >= mmiLength - 1)
-                      break;
-
-                    offset += GetCIText(caDataReturned.uData, offset, ref Choices);
-                    nChoices++;
-                  }
-                  // when title and choices are ready now, send to client
-                  if (m_ciMenuCallback != null)
-                  {
-                    m_ciMenuCallback.OnCiMenu(Choices[0], Choices[1], Choices[2], nChoices);
-                    for (int c = 3; c < Choices.Count; c++)
-                    {
-                      m_ciMenuCallback.OnCiMenuChoice(c - 3, Choices[c]);
-                    }
-                  }
-                  else
-                  {
-                    Log.Log.Debug("FireDTV: OnCiMenu: cannot do callback!");
-                    for (int c = 0; c < Choices.Count; c++)
-                    {
-                      Log.Log.Debug("FireDTV: {0} : {1}", c, Choices[c]);
-                    }
-                  }
-                }                
+                MMI.HandleMMI(caDataReturned.uData, caDataLength);
               }
             }
           }

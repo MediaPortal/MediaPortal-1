@@ -115,6 +115,7 @@
     <Compile Include="Implementations\DVB\Graphs\MDPlug.cs" />
     <Compile Include="Implementations\DVB\Graphs\SS2\DVBSS2Scanning.cs" />
     <Compile Include="Implementations\DVB\Graphs\TvDvbChannel.cs" />
+    <Compile Include="Implementations\DVB\Structures\DVB_MMI.cs" />
     <Compile Include="Implementations\Helper\DevicesInUse.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\ConditionalAccess.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\DigitalEverywhere\DigitalEveryWhere.cs" />
