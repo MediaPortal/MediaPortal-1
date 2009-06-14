@@ -18,7 +18,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private bool _CharacterDrawMode;
     private string[] AlignmentList = new string[] {"Left", "Centered", "Right"};
     private MPBeveledLine beveledLine1;
-    private MPButton buttonApply;
     private MPButton buttonCancel;
     private MPButton buttonDefault;
     private MPButton buttonDown;
@@ -1210,7 +1209,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.buttonDown = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonUp = new MediaPortal.UserInterface.Controls.MPButton();
       this.beveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
-      this.buttonApply = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonOk = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.headerLabel = new MediaPortal.UserInterface.Controls.MPGradientLabel();
@@ -1360,7 +1358,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // buttonDefault
       // 
       this.buttonDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonDefault.Location = new System.Drawing.Point(268, 442);
+      this.buttonDefault.Location = new System.Drawing.Point(345, 442);
       this.buttonDefault.Name = "buttonDefault";
       this.buttonDefault.Size = new System.Drawing.Size(75, 23);
       this.buttonDefault.TabIndex = 28;
@@ -1412,17 +1410,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.beveledLine1.Name = "beveledLine1";
       this.beveledLine1.Size = new System.Drawing.Size(572, 2);
       this.beveledLine1.TabIndex = 21;
-      // 
-      // buttonApply
-      // 
-      this.buttonApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonApply.Location = new System.Drawing.Point(346, 442);
-      this.buttonApply.Name = "buttonApply";
-      this.buttonApply.Size = new System.Drawing.Size(75, 23);
-      this.buttonApply.TabIndex = 20;
-      this.buttonApply.Text = "Apply";
-      this.buttonApply.UseVisualStyleBackColor = true;
-      this.buttonApply.Click += new System.EventHandler(this.buttonApply_Click);
       // 
       // buttonOk
       // 
@@ -2691,7 +2678,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.Controls.Add(this.buttonDown);
       this.Controls.Add(this.buttonUp);
       this.Controls.Add(this.beveledLine1);
-      this.Controls.Add(this.buttonApply);
       this.Controls.Add(this.buttonOk);
       this.Controls.Add(this.buttonCancel);
       this.Controls.Add(this.headerLabel);
@@ -2736,7 +2722,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void LoadMessages(bool defaults)
     {
       try
-      {
+      {        
         string fileName = "MiniDisplay.xml";
         this.groupBoxStatus.Enabled = false;
         this.groupBoxLine.Enabled = false;
@@ -2753,7 +2739,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           this.buttonUp.Enabled =
             this.buttonDown.Enabled =
             this.buttonNew.Enabled =
-            this.buttonRemove.Enabled = this.buttonDefault.Enabled = this.buttonApply.Enabled = false;
+            this.buttonRemove.Enabled = this.buttonDefault.Enabled = false;
           base.ShowInTaskbar = true;
           base.WindowState = FormWindowState.Minimized;
           new Thread(new ThreadStart(this.CloseThread)).Start();
@@ -2763,7 +2749,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           Log.Info("LOADING {0}", new object[] {fileName});
           document.Load(file);
           Log.Info("Extracting Settings");
-          XmlNode node = document.DocumentElement.SelectSingleNode("/Settings");
+          XmlNode node = document.DocumentElement.SelectSingleNode("//Settings");
           Log.Info("Extracting Messages");
           XmlNodeList list = node.SelectNodes("Message");
           Log.Info("Extracting TranslateFrom");
@@ -3428,7 +3414,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       Log.Info("PROCESSING CHARACTERS COMPLETED");
       writer.WriteEndElement();
       writer.WriteEndDocument();
-      writer.Close();
+      writer.Close();      
       this.changedSettings = false;
       return true;
     }
