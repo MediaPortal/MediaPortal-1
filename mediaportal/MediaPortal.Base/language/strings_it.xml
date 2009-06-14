@@ -894,6 +894,10 @@
     <String id="1054">(rec)</String>
     <String id="1055">(in onda)</String>
     <String id="1056">(non disponibile)</String>
+    <String id="1057">Registra Dom-Gio</String>
+    <String id="1058">Registra Ven-Sab</String>
+    <String id="1059">Dom-Gio</String>
+    <String id="1060">Ven-Sab</String>
     <String id="1061">Rimovibile</String>
     <String id="1062">Oggetto</String>
     <String id="1064">Segnalibri</String>
