@@ -57,8 +57,8 @@ namespace MediaPortal.GUI.Library
       }
       SkinString newString = new SkinString();
       newString.Name = line;
-      newString.Value = "";
-      int key = _skinBoolSettings.Count;
+      newString.Value = line;
+      int key = _skinStringSettings.Count;
       _skinStringSettings[key] = newString;
       return key;
     }

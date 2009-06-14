@@ -1219,17 +1219,24 @@ namespace MediaPortal.GUI.Library
         {
           ret = SKIN_THEME;
         }
+        // skin.string(val1, val2) will check the equality of val1 to val2.
+        // skin.string(val1)       will return true if val1 has a length > 0
         else if (strTest.Substring(0, 12) == "skin.string(")
         {
+          // this condition uses GUIPropertyManager.Parse, which is case sensitive.
+          string strTestKeepCase = strCondition;
+          strTestKeepCase = strTestKeepCase.TrimStart(new char[] { ' ' });
+          strTestKeepCase = strTestKeepCase.TrimEnd(new char[] { ' ' });
+
           int skinOffset;
-          int pos = strTest.IndexOf(",");
+          int pos = strTestKeepCase.IndexOf(",");
           if (pos >= 0)
           {
-            skinOffset = SkinSettings.TranslateSkinString(strTest.Substring(12, pos - 13));
-            int compareString = ConditionalStringParameter(strTest.Substring(pos + 1, strTest.Length - (pos + 2)));
+            skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(12, pos - 12));
+            int compareString = ConditionalStringParameter(strTestKeepCase.Substring(pos + 1, strTestKeepCase.Length - (pos + 2)));
             return AddMultiInfo(new GUIInfo(bNegate ? -SKIN_STRING : SKIN_STRING, skinOffset, compareString));
           }
-          skinOffset = SkinSettings.TranslateSkinString(strTest.Substring(12, strTest.Length - 13));
+          skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(12, strTestKeepCase.Length - 13));
           return AddMultiInfo(new GUIInfo(bNegate ? -SKIN_STRING : SKIN_STRING, skinOffset));
         }
         else if (strTest.Substring(0, 16) == "skin.hassetting(")
@@ -2132,13 +2139,14 @@ namespace MediaPortal.GUI.Library
         case SKIN_STRING:
           if (info.m_data2 != 0)
           {
-            bReturn = SkinSettings.GetSkinString(info.m_data1).Equals(m_stringParameters[info.m_data2]);
+            string value1 = GUIPropertyManager.Parse(SkinSettings.GetSkinString(info.m_data1)).Trim();
+            string value2 = GUIPropertyManager.Parse(m_stringParameters[info.m_data2]).Trim();
+            bReturn = value1.Equals(value2);
           }
           else
           {
-            bReturn = (SkinSettings.GetSkinString(info.m_data1).Length != 0);
+            bReturn = (GUIPropertyManager.Parse(SkinSettings.GetSkinString(info.m_data1)).Length != 0);
           }
-
           break;
         case CONTROL_GROUP_HAS_FOCUS:
           //  GUIWindow win = GUIWindowManager.GetWindow(dwContextWindow);
