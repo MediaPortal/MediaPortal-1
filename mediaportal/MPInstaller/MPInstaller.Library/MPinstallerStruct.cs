@@ -50,7 +50,7 @@ namespace MediaPortal.MPInstaller
     // for testing only 
     //public const string DEFAULT_UPDATE_SITE = "http://testbase001.team-mediaportal.com";
 
-    public static string[] CategoryListing ={ "Audio/Radio", "Automation", "EPG/TV", "Games", "Input", "Others", "PIM", "Skins", "Utilities", "Video/Movies", "Web", "TV Logos" };
+    public static string[] CategoryListing = { "Audio/Radio", "Automation", "EPG/TV", "Games", "Input", "Others", "PIM", "Skins", "Utilities", "Video/Movies", "Web", "TV Logos" };
 
 
     public const string PLUGIN_TYPE = "Plugin";
@@ -93,7 +93,7 @@ namespace MediaPortal.MPInstaller
     public List<ActionInfo> Actions;
     public List<GroupString> SetupGroups;
     public List<GroupStringMapping> SetupGroupsMappig;
-    
+
     public MPinstallerStruct()
     {
       Language = new List<LanguageString>();
@@ -101,7 +101,7 @@ namespace MediaPortal.MPInstaller
       ProjectProperties = new ProjectPropertiesClass();
       SetupGroups = new List<GroupString>();
       SetupGroupsMappig = new List<GroupStringMapping>();
-      
+
     }
 
     private ProjectPropertiesClass projectPropertise;
@@ -338,10 +338,10 @@ namespace MediaPortal.MPInstaller
             writer.WriteElementString("FileName", Path.GetFileName(it.FileName));
             writer.WriteElementString("Type", it.Type);
             writer.WriteElementString("SubType", it.SubType);
-            writer.WriteElementString("Source", RelativePath(fil,it.FileName));
+            writer.WriteElementString("Source", RelativePath(fil, it.FileName));
             writer.WriteElementString("Id", it.ID);
             writer.WriteElementString("Option", it.Option);
-            writer.WriteElementString("Guid",it.GUID );
+            writer.WriteElementString("Guid", it.GUID);
             writer.WriteEndElement();
           }
           writer.WriteEndElement();
@@ -482,7 +482,7 @@ namespace MediaPortal.MPInstaller
         ls.Items.Add("exception: " + ex1); // Probably due to file access error
       }
     }
-    
+
     string RelativePath(string refpath, string file)
     {
       return Path.GetFullPath(file).Replace(Path.GetDirectoryName(refpath) + @"\", "");
@@ -514,7 +514,7 @@ namespace MediaPortal.MPInstaller
         if (node_guid != null)
           str_guid = nodefile.SelectSingleNode("Guid").InnerText;
         this.FileList.Add(new MPIFileList(
-               AbsolutePath(fil,t_path),
+               AbsolutePath(fil, t_path),
                nodefile.SelectSingleNode("Type").InnerText,
                nodefile.SelectSingleNode("SubType").InnerText,
                nodefile.SelectSingleNode("Id").InnerText,
@@ -545,7 +545,7 @@ namespace MediaPortal.MPInstaller
       foreach (XmlNode groupnode in groupmapList)
       {
         SetupGroupsMappig.Add(new GroupStringMapping(groupnode.Attributes["Id"].Value,
-                                        AbsolutePath(fil,groupnode.Attributes["FileName"].Value)));
+                                        AbsolutePath(fil, groupnode.Attributes["FileName"].Value)));
       }
       XmlNode nodeoption = ver.SelectSingleNode("Option");
       this.BuildFileName = nodeoption.SelectSingleNode("BuildFileName").InnerText;
@@ -578,9 +578,9 @@ namespace MediaPortal.MPInstaller
         {
           File.Delete(t);
         }
-        catch (Exception ex)
+        catch
         {
-          MessageBox.Show(ex.Message + "\n" + ex.StackTrace); // Probably file access error
+          // Probably file access error
         }
       }
       XmlNode nodeproperties = ver.SelectSingleNode("Properties");
@@ -683,26 +683,26 @@ namespace MediaPortal.MPInstaller
             break;
 
         }
-        ret += @"\" ;
+        ret += @"\";
       }
 
       if (flst.Type == SKIN_TYPE)
       {
-        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" ;
+        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\";
       }
       if (flst.Type == SKIN_MEDIA_TYPE)
       {
-        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Media" + @"\" ;
+        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Media" + @"\";
       }
 
       if (flst.Type == SKIN_SOUNDS_TYPE)
       {
-        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Sounds" + @"\" ;
+        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Sounds" + @"\";
       }
 
       if (flst.Type == SKIN_ANIMATIONS_TYPE)
       {
-        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Media" + @"\" + "Animations" + @"\" ;
+        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Media" + @"\" + "Animations" + @"\";
       }
 
       if (flst.Type == SKIN_TETRIS_TYPE)
@@ -712,23 +712,23 @@ namespace MediaPortal.MPInstaller
 
       if (flst.Type == TEXT_TYPE)
       {
-        ret = "Release" + @"\" + "Text" + @"\" + flst.SubType + @"\" ;
+        ret = "Release" + @"\" + "Text" + @"\" + flst.SubType + @"\";
       }
 
       if (flst.Type == THUMBS_TYPE)
       {
-        ret = "Release" + @"\" + "Thumbs" + @"\" + flst.SubType + @"\" ;
+        ret = "Release" + @"\" + "Thumbs" + @"\" + flst.SubType + @"\";
       }
       if (flst.Type == OTHER_TYPE)
       {
-        ret = "Release" + @"\" + "Other" + @"\" ;
+        ret = "Release" + @"\" + "Other" + @"\";
       }
 
       if (flst.Type == INTERNAL_TYPE)
       {
         ret = "Internal" + @"\" + flst.SubType + @"\";
       }
-      
+
       if (flst.Type == SKIN_SYSTEMFONT_TYPE)
       {
         ret = "System_Font" + @"\" + flst.SubType + @"\";
@@ -907,7 +907,7 @@ namespace MediaPortal.MPInstaller
       FilePropertiesClass FileProperties = new FilePropertiesClass();
     }
 
-    public MPIFileList(string fn, string ty, string sty, string i,string o)
+    public MPIFileList(string fn, string ty, string sty, string i, string o)
     {
       FileName = fn;
       Type = ty;
@@ -916,7 +916,7 @@ namespace MediaPortal.MPInstaller
       Option = o;
       FilePropertiesClass FileProperties = new FilePropertiesClass();
     }
-    
+
     public MPIFileList(string fn, string ty, string sty, string i, string o, string g)
     {
       FileName = fn;
@@ -1189,19 +1189,19 @@ namespace MediaPortal.MPInstaller
       Name = wname;
       Checked = false;
     }
-    [System.Xml.Serialization.XmlAttribute] 
+    [System.Xml.Serialization.XmlAttribute]
     public string Id
     {
       get { return _id; }
       set { _id = value; }
     }
-    [System.Xml.Serialization.XmlAttribute] 
+    [System.Xml.Serialization.XmlAttribute]
     public string Name
     {
       get { return _name; }
       set { _name = value; }
     }
-    [System.Xml.Serialization.XmlAttribute] 
+    [System.Xml.Serialization.XmlAttribute]
     public bool Checked
     {
       get { return _checked; }
