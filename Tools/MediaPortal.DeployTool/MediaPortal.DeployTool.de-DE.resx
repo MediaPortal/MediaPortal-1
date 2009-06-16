@@ -236,7 +236,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>Bitte wählen Sie den zu installierenden SQL-Server Typ:</value>
   </data>
   <data name="DBMSType_rbMSSQL" xml:space="preserve">
-    <value>Microsoft SQL-Server 2008</value>
+    <value>Microsoft SQL-Server 2005</value>
   </data>
   <data name="DBMSType_rbMySQL" xml:space="preserve">
     <value>MySQL 5</value>

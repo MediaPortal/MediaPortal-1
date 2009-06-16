@@ -236,7 +236,7 @@ Bilgisayarınız TV-Sunucusu gibi çalışacak ve yerel ağ üzerindeki diğer b
     <value>Lütfen kullanmak istediğiniz SQL-Sunucusunu seçiniz:</value>
   </data>
   <data name="DBMSType_rbMSSQL" xml:space="preserve">
-    <value>Microsoft SQL-Server Express</value>
+    <value>Microsoft SQL-Server Express 2005</value>
   </data>
   <data name="DBMSType_rbMySQL" xml:space="preserve">
     <value>MySQL 5</value>

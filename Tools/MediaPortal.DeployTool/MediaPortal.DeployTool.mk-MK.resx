@@ -237,7 +237,7 @@ PC-то ќе се однесува како специјализиран TV-Serv
     <value>Ве молам одберете го SQL-Server-от што сакате да го користите:</value>
   </data>
   <data name="DBMSType_rbMSSQL" xml:space="preserve">
-    <value>Microsoft SQL-Server Express</value>
+    <value>Microsoft SQL-Server Express 2005</value>
   </data>
   <data name="DBMSType_rbMySQL" xml:space="preserve">
     <value>MySQL 5</value>

@@ -236,7 +236,7 @@ De PC is daarmee een dedicated TV-server en verzorgt het TV-signaal voor andere 
     <value>Selecteer de SQL-Server die u wilt gebruiken:</value>
   </data>
   <data name="DBMSType_rbMSSQL" xml:space="preserve">
-    <value>Microsoft SQL-Server Express</value>
+    <value>Microsoft SQL-Server Express 2005</value>
   </data>
   <data name="DBMSType_rbMySQL" xml:space="preserve">
     <value>MySQL 5</value>

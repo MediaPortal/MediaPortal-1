@@ -201,7 +201,7 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
     <value>Please select the SQL-Server you want to use:</value>
   </data>
   <data name="DBMSType_rbMSSQL" xml:space="preserve">
-    <value>Microsoft SQL-Server Express</value>
+    <value>Microsoft SQL-Server Express 2005</value>
   </data>
   <data name="DBMSType_rbMySQL" xml:space="preserve">
     <value>MySQL 5</value>

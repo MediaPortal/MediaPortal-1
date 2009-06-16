@@ -239,7 +239,7 @@ Ten komputerem będzie pełnił tylko rolę serwera oraz będzie dostarczał pro
     <value>Proszę wybrać SQL-Server którego chcesz używać:</value>
   </data>
   <data name="DBMSType_rbMSSQL" xml:space="preserve">
-    <value>Microsoft SQL-Server Express</value>
+    <value>Microsoft SQL-Server Express 2005</value>
   </data>
   <data name="DBMSType_rbMySQL" xml:space="preserve">
     <value>MySQL 5</value>

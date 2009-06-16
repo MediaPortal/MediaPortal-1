@@ -235,7 +235,7 @@ Ce PC sera utilisé comme TV-Server dédié et distribuera la TV aux autres PC d
     <value>Veuillez séléctionner le server SQL que vous voulez utiliser:</value>
   </data>
   <data name="DBMSType_rbMSSQL" xml:space="preserve">
-    <value>Microsoft SQL-Server Express</value>
+    <value>Microsoft SQL-Server Express 2005</value>
   </data>
   <data name="DBMSType_rbMySQL" xml:space="preserve">
     <value>MySQL 5</value>

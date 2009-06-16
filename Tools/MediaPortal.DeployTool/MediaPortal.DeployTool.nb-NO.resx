@@ -237,7 +237,7 @@ PC-en vil da fungere som en TV-Server og gi andre PC-er på ditt nettverk tilgan
     <value>Vennligst velg type SQL-Server du vil bruke:</value>
   </data>
   <data name="DBMSType_rbMSSQL" xml:space="preserve">
-    <value>Microsoft SQL-Server Express</value>
+    <value>Microsoft SQL-Server Express 2005</value>
   </data>
   <data name="DBMSType_rbMySQL" xml:space="preserve">
     <value>MySQL 5</value>

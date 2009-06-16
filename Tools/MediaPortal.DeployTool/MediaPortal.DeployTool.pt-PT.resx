@@ -236,7 +236,7 @@ O PC será utilizado como um servidor de TV dedicado e fornece outros PC's na su
     <value>Por favor seleccione o Servidor SQL que pretende utilizar:</value>
   </data>
   <data name="DBMSType_rbMSSQL" xml:space="preserve">
-    <value>Microsoft SQL-Server Express</value>
+    <value>Microsoft SQL-Server Express 2005</value>
   </data>
   <data name="DBMSType_rbMySQL" xml:space="preserve">
     <value>MySQL 5</value>
