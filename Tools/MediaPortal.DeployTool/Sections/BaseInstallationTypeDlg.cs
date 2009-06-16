@@ -77,7 +77,7 @@ namespace MediaPortal.DeployTool.Sections
         InstallationProperties.Instance.Set("DBMSPassword", "MediaPortal");
         // Default DBMS
         InstallationProperties.Instance.Set("DBMSType", "mysql");
-        InstallationProperties.Instance.Set("DBMSDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\MySQL\\MySQL Server 5.1");
+        InstallationProperties.Instance.Set("DBMSDir", InstallationProperties.Instance["ProgramFiles"] + "\\MySQL\\MySQL Server 5.1");
       }
     }
     #endregion

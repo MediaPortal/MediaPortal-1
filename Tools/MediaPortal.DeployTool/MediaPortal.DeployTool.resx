@@ -499,4 +499,10 @@ Transfer this folder to your HTPC. Start installation by running "MediaPortal.De
   <data name="Install_actionUpgradeInstall" xml:space="preserve">
     <value>Upgrade-&gt;Install</value>
   </data>
+  <data name="DBMSType_lbMSSQL_disabled" xml:space="preserve">
+    <value>(learn here why)</value>
+  </data>
+  <data name="DBMSType_rbMSSQL_disabled" xml:space="preserve">
+    <value>Microsoft SQL-Server Express 2005 is disabled</value>
+  </data>
 </root>

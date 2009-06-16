@@ -15,6 +15,7 @@
     <OldToolsVersion>2.0</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <ApplicationManifest>MediaPortal.DeployTool.exe.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -605,6 +606,7 @@
     <Content Include="Interop.NetFwTypeLib.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="MediaPortal.DeployTool.exe.manifest" />
     <None Include="Resources\MePo_average.png" />
     <None Include="Resources\MePo_smart.png" />
     <None Include="Resources\MePo_tv.png" />

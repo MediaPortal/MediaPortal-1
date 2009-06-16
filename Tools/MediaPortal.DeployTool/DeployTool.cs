@@ -72,6 +72,16 @@ namespace MediaPortal.DeployTool
       InstallationProperties.Instance.Set("MPDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal");
       InstallationProperties.Instance.Set("TVServerDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server");
 
+      string tmpPrg = Environment.GetEnvironmentVariable("ProgramW6432");
+      if (!string.IsNullOrEmpty(tmpPrg))
+      {
+        InstallationProperties.Instance.Set("ProgramFiles", tmpPrg);
+      }
+      else
+      {
+        InstallationProperties.Instance.Set("ProgramFiles", Environment.GetEnvironmentVariable("ProgramFiles"));
+      }
+
       // Paint first screen
       InitializeComponent();
       Localizer.SwitchCulture("en-US");

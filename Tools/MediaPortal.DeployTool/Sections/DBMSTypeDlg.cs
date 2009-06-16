@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 namespace MediaPortal.DeployTool.Sections
 {
@@ -12,15 +13,6 @@ namespace MediaPortal.DeployTool.Sections
 
       bMySQL.Image = Images.Choose_button_on;
       dbmsType = 2;
-
-      OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
-      int ver = (os.OSMajorVersion * 10) + os.OSMinorVersion;
-
-      if (ver >= 70)
-      {
-        bMS.Enabled = false;
-      }
-
       UpdateUI();
     }
 
@@ -31,6 +23,19 @@ namespace MediaPortal.DeployTool.Sections
       rbMSSQL.Text = Localizer.GetBestTranslation("DBMSType_rbMSSQL");
       rbMySQL.Text = Localizer.GetBestTranslation("DBMSType_rbMySQL");
       rbDBAlreadyInstalled.Text = Localizer.GetBestTranslation("DBMSType_rbDBAlreadyInstalled");
+      OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
+      int ver = (os.OSMajorVersion * 10) + os.OSMinorVersion;
+
+      //If it's >= Windows7 then MSSQL2005 is not supported
+      if (ver >= 61)
+      {
+        bMS.Enabled = false;
+        rbMSSQL.Enabled = false;
+        rbMySQL.Text = Localizer.GetBestTranslation("DBMSType_rbMSSQL_disabled");
+        lbMSSQL.Visible = true;
+        lbMSSQL.Enabled = true;
+        lbMSSQL.Text = Localizer.GetBestTranslation("DBMSType_lbMSSQL_disabled");
+      }
     }
     public override DeployDialog GetNextDialog()
     {
@@ -88,6 +93,16 @@ namespace MediaPortal.DeployTool.Sections
       bMySQL.Image = Images.Choose_button_off;
       bExists.Image = Images.Choose_button_on;
       dbmsType = 3;
+    }
+
+    private void lbMSSQL_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+    {
+      try
+      {
+        Process.Start("http://www.team-mediaportal.com/manual/TV-Server/install-SQL-Server-2008");
+      }
+      catch (Exception) { }
+
     }
   }
 }

@@ -41,6 +41,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
     public static string prg = "MySQL" + Utils._arch;
 
     private readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
+    private readonly string _dataDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\MySQL\\MySQL Server 5.1";
 
     private void PrepareMyIni(string iniFile)
     {
@@ -48,7 +49,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       WritePrivateProfileString("mysql", "default-character-set", "utf8", iniFile);
       WritePrivateProfileString("mysqld", "port", "3306", iniFile);
       WritePrivateProfileString("mysqld", "basedir", "\"" + InstallationProperties.Instance["DBMSDir"].Replace('\\', '/') + "/\"", iniFile);
-      WritePrivateProfileString("mysqld", "datadir", "\"" + InstallationProperties.Instance["DBMSDir"].Replace('\\', '/') + "/Data/\"", iniFile);
+      WritePrivateProfileString("mysqld", "datadir", "\"" + _dataDir.Replace('\\', '/') + "/Data\"", iniFile);
       WritePrivateProfileString("mysqld", "default-character-set", "utf8", iniFile);
       WritePrivateProfileString("mysqld", "default-storage-engine", "myisam", iniFile);
       WritePrivateProfileString("mysqld", "sql-mode", "\"STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION\"", iniFile);
@@ -87,8 +88,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
     public bool Install()
     {
       string cmdLine = "/i \"" + _fileName + "\"";
-      cmdLine += " ADDLOCAL=\"Server,ClientPrograms,MySQLCommandLineShell,MysqlCommandLineUtilsFeature,ServerInstanceConfig\"";
       cmdLine += " INSTALLDIR=\"" + InstallationProperties.Instance["DBMSDir"] + "\"";
+      cmdLine += " DATADIR=\"" + _dataDir + "\"";
       cmdLine += " /qn";
       cmdLine += " /L* \"" + Path.GetTempPath() + "\\mysqlinst.log\"";
       Process setup = Process.Start("msiexec.exe", cmdLine);
@@ -123,7 +124,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       PrepareMyIni(inifile);
       const string ServiceName = "MySQL";
       string cmdExe = Environment.SystemDirectory + "\\sc.exe";
-      string cmdParam = "create " + ServiceName + " start= auto DisplayName= " + ServiceName + " binPath= \"" + InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqld-nt.exe --defaults-file=\\\"" + inifile + "\\\" " + ServiceName + "\"";
+      string cmdParam = "create " + ServiceName + " start= auto DisplayName= " + ServiceName + " binPath= \"" + InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqld.exe --defaults-file=\\\"" + inifile + "\\\" " + ServiceName + "\"";
 #if DEBUG
       string ff = "c:\\mysql-srv.bat";
       StreamWriter a = new StreamWriter(ff);

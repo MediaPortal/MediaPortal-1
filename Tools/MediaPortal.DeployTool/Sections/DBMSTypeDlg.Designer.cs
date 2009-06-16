@@ -35,6 +35,7 @@ namespace MediaPortal.DeployTool.Sections
       this.bMS = new System.Windows.Forms.Button();
       this.bMySQL = new System.Windows.Forms.Button();
       this.bExists = new System.Windows.Forms.Button();
+      this.lbMSSQL = new System.Windows.Forms.LinkLabel();
       this.SuspendLayout();
       // 
       // labelSectionHeader
@@ -60,9 +61,9 @@ namespace MediaPortal.DeployTool.Sections
       this.rbMSSQL.ForeColor = System.Drawing.Color.White;
       this.rbMSSQL.Location = new System.Drawing.Point(52, 85);
       this.rbMSSQL.Name = "rbMSSQL";
-      this.rbMSSQL.Size = new System.Drawing.Size(178, 13);
+      this.rbMSSQL.Size = new System.Drawing.Size(274, 13);
       this.rbMSSQL.TabIndex = 23;
-      this.rbMSSQL.Text = "Microsoft SQL-Server Express";
+      this.rbMSSQL.Text = "Microsoft SQL-Server Express 2005 is disabled";
       this.rbMSSQL.Click += new System.EventHandler(this.bMS_Click);
       // 
       // rbMySQL
@@ -136,11 +137,27 @@ namespace MediaPortal.DeployTool.Sections
       this.bExists.UseVisualStyleBackColor = true;
       this.bExists.Click += new System.EventHandler(this.bExists_Click);
       // 
+      // lbMSSQL
+      // 
+      this.lbMSSQL.AutoSize = true;
+      this.lbMSSQL.Enabled = false;
+      this.lbMSSQL.ForeColor = System.Drawing.Color.White;
+      this.lbMSSQL.LinkColor = System.Drawing.Color.White;
+      this.lbMSSQL.Location = new System.Drawing.Point(341, 85);
+      this.lbMSSQL.Name = "lbMSSQL";
+      this.lbMSSQL.Size = new System.Drawing.Size(111, 13);
+      this.lbMSSQL.TabIndex = 29;
+      this.lbMSSQL.TabStop = true;
+      this.lbMSSQL.Text = "( learn why here )";
+      this.lbMSSQL.Visible = false;
+      this.lbMSSQL.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lbMSSQL_LinkClicked);
+      // 
       // DBMSTypeDlg
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_empty;
+      this.Controls.Add(this.lbMSSQL);
       this.Controls.Add(this.bExists);
       this.Controls.Add(this.bMySQL);
       this.Controls.Add(this.bMS);
@@ -159,6 +176,7 @@ namespace MediaPortal.DeployTool.Sections
       this.Controls.SetChildIndex(this.bMS, 0);
       this.Controls.SetChildIndex(this.bMySQL, 0);
       this.Controls.SetChildIndex(this.bExists, 0);
+      this.Controls.SetChildIndex(this.lbMSSQL, 0);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -173,5 +191,6 @@ namespace MediaPortal.DeployTool.Sections
     private System.Windows.Forms.Button bMS;
     private System.Windows.Forms.Button bMySQL;
     private System.Windows.Forms.Button bExists;
+    private System.Windows.Forms.LinkLabel lbMSSQL;
   }
 }
