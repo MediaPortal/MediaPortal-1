@@ -2154,14 +2154,7 @@ namespace MediaPortal.GUI.Pictures
 
     private void DoRotate()
     {
-      int rotation = _backgroundSlide.Rotation;
-      rotation++;
-      if (rotation >= 4)
-      {
-        rotation = 0;
-      }
-
-      PictureDatabase.SetRotation(_backgroundSlide.FilePath, rotation);
+      GUIPictures.DoRotatePicture(_backgroundSlide.FilePath);
 
       InvalidateSlide(_backgroundSlide.FilePath);
 
@@ -2193,8 +2186,6 @@ namespace MediaPortal.GUI.Pictures
       //_slideTime = (int)(DateTime.Now.Ticks / 10000);
       //_frameCounter = 0;
       _transitionMethod = 9;
-
-      DeleteThumb(_backgroundSlide.FilePath);
     }
 
     private void GetOutputRect(float iSourceWidth, float iSourceHeight, float fZoomLevel, out float x, out float y,
@@ -2471,14 +2462,6 @@ namespace MediaPortal.GUI.Pictures
         _autoShuffle = xmlreader.GetValueAsBool("pictures", "autoShuffle", false);
         _autoRepeat = xmlreader.GetValueAsBool("pictures", "autoRepeat", false);
       }
-    }
-
-    private void DeleteThumb(string strSlide)
-    {
-      string strThumb = GUIPictures.GetThumbnail(strSlide);
-      Util.Utils.FileDelete(strThumb);
-      strThumb = GUIPictures.GetLargeThumbnail(strSlide);
-      Util.Utils.FileDelete(strThumb);
     }
 
     private void StartBackgroundMusic(string path)
