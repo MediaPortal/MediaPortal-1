@@ -261,8 +261,7 @@ namespace MediaPortal.GUI.Music
             {
               sql += "where " + whereClause;
             }
-            sql += " group by strAlbum";
-              // We need to group on Artist, to show Albums with same name for different artists
+            sql += " group by strAlbum, strArtist ";  // We need to group on Artist, to show Albums with same name for different artists
             if (orderClause != string.Empty)
             {
               sql += orderClause;
@@ -384,7 +383,7 @@ namespace MediaPortal.GUI.Music
           if (table == "album")
           {
             from = String.Format("* from tracks", GetField(defCurrent.Where));
-            whereClause += " group by strAlbum ";
+            whereClause += " group by strAlbum, strArtist ";
           }
 
           sql = String.Format("select distinct {0} {1} {2}", from, whereClause, orderClause);
