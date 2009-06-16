@@ -1848,7 +1848,7 @@ namespace MediaPortal.Player
           if (stream != 0)
           {
             // When we have a MIDI file, we need to assign the sound banks to the stream
-            if (IsMidiFile(filePath))
+            if (IsMidiFile(filePath) && soundFonts != null)
             {
               BassMidi.BASS_MIDI_StreamSetFonts(stream, soundFonts, soundFonts.Length);
             }
