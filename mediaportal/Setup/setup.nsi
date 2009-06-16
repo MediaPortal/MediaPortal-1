@@ -797,10 +797,13 @@ Section -Post
 
   WriteUninstaller "$MPdir.Base\uninstall-mp.exe"
 
+  ; set rights to programmdata directory
+  !insertmacro SetProgramDataRights
+
+  ; associate file extensions
   ${RegisterExtension} "$MPdir.Base\MPInstaller.exe" ".mpi" "MediaPortal extension package"
   ${RegisterExtension} "$MPdir.Base\MPInstaller.exe" ".mpe1" "MediaPortal extension package"
   ${RegisterExtension} "$MPdir.Base\MPIMaker.exe" ".xmp" "MediaPortal extension project"
-
   ${RefreshShellIcons}
 SectionEnd
 

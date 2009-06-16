@@ -514,6 +514,19 @@
 */
 
 
+
+!macro SetProgramDataRights
+  ${LOG_TEXT} "INFO" "Setting AccessRights to ProgramData dir"
+
+  SetOverwrite on
+  SetOutPath "$PLUGINSDIR"
+  File "${svn_ROOT}\Tools\Script & Batch tools\SetRights\bin\Release\SetRights.exe"
+
+  SetShellVarContext all
+  nsExec::ExecToLog '"$PLUGINSDIR\SetRights.exe" "$APPDATA\Team MediaPortal"'
+!macroend
+
+
 !macro UpdateBackupSections
   ${If} ${FileExists} "$MPdir.Base\*.*"
     !insertmacro EnableSection "${SecBackupInstDir}" "Installation directory"

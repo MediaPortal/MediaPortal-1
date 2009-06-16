@@ -757,7 +757,6 @@ Section -Post
   ${If} ${TVClientIsInstalled}
     WriteRegDWORD HKLM "${REG_UNINSTALL}" "MediaPortalInstallationDir" "$MPdir.Base"
   ${EndIf}
-  
 
   ;${If} $noStartMenuSC != 1
     ;!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
@@ -786,6 +785,9 @@ Section -Post
   WriteRegDWORD HKLM "${REG_UNINSTALL}" NoRepair 1
 
   WriteUninstaller "$INSTDIR\uninstall-tve3.exe"
+
+  ; set rights to programmdata directory
+  !insertmacro SetProgramDataRights
 SectionEnd
 
 #---------------------------------------------------------------------------
