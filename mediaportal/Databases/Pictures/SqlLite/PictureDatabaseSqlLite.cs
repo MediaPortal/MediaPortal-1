@@ -45,6 +45,8 @@ namespace MediaPortal.Picture.Database
   {
     private bool disposed = false;
     private SQLiteClient m_db = null;
+    private bool _useExif = true;
+    private bool _usePicasa = false;
 
     public PictureDatabaseSqlLite()
     {
@@ -86,6 +88,7 @@ namespace MediaPortal.Picture.Database
 
         DatabaseUtility.SetPragmas(m_db);
         CreateTables();
+        InitSettings();
       }
       catch (Exception ex)
       {
@@ -95,6 +98,15 @@ namespace MediaPortal.Picture.Database
       Log.Info("picture database opened");
     }
 
+    private void InitSettings()
+    {
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        _useExif = xmlreader.GetValueAsBool("pictures", "useExif", true);
+        _usePicasa = xmlreader.GetValueAsBool("pictures", "usePicasa", false);
+      }
+    }
+
     [MethodImpl(MethodImplOptions.Synchronized)]
     private bool CreateTables()
     {
@@ -102,10 +114,7 @@ namespace MediaPortal.Picture.Database
       {
         return false;
       }
-      //Changed mbuzina
-      DatabaseUtility.AddTable(m_db, "picture",
-                               "CREATE TABLE picture ( idPicture integer primary key, strFile text, iRotation integer, strDateTaken text)");
-      //End Changed
+      DatabaseUtility.AddTable(m_db, "picture", "CREATE TABLE picture ( idPicture integer primary key, strFile text, iRotation integer, strDateTaken text)");
       return true;
     }
 
@@ -135,6 +144,7 @@ namespace MediaPortal.Picture.Database
           return lPicId;
         }
 
+        // we need the date nevertheless for database view / sorting
         if (!GetExifDetails(strPicture, ref iRotation, ref strDateTaken))
         {
           try
@@ -153,10 +163,14 @@ namespace MediaPortal.Picture.Database
           }
         }
 
-        if (GetPicasaRotation(strPic, ref iRotation))
+        // Save potential performance penalty
+        if (_usePicasa)
         {
-          Log.Debug("PictureDatabaseSqlLite: Changed rotation of image {0} based on picasa file to {1}", strPic,
-                    iRotation);
+          if (GetPicasaRotation(strPic, ref iRotation))
+          {
+            Log.Debug("PictureDatabaseSqlLite: Changed rotation of image {0} based on picasa file to {1}", strPic,
+                      iRotation);
+          }
         }
 
         // Transactions are a special case for SQLite - they speed things up quite a bit
@@ -170,8 +184,7 @@ namespace MediaPortal.Picture.Database
         results = m_db.Execute(strSQL);
         if (results.Rows.Count > 0)
         {
-          Log.Debug("PictureDatabaseSqlLite: Picture {0} has been added to database with orientation {1}", strPic,
-                    iRotation);
+          Log.Debug("PictureDatabaseSqlLite: Added to database - {0}", strPic);
         }
         strSQL = "commit";
         results = m_db.Execute(strSQL);
@@ -211,7 +224,10 @@ namespace MediaPortal.Picture.Database
             DateTime dat;
             DateTime.TryParseExact(picExifDate, "G", Thread.CurrentThread.CurrentCulture, DateTimeStyles.None, out dat);
             strDateTaken = dat.ToString("yyyy-MM-dd HH:mm:ss");
-            iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Hex));
+            if (_useExif)
+            {
+              iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Hex));
+            }
             return true;
           }
         }
@@ -306,7 +322,7 @@ namespace MediaPortal.Picture.Database
       try
       {
         string strPic = strPicture;
-        int iRotation;
+        int iRotation = 0;
         DatabaseUtility.RemoveInvalidChars(ref strPic);
 
         SQLiteResultSet results =
@@ -317,12 +333,8 @@ namespace MediaPortal.Picture.Database
           return iRotation;
         }
 
-        ExifMetadata extractor = new ExifMetadata();
-        ExifMetadata.Metadata metaData = extractor.GetExifMetadata(strPic);
-        iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Hex));
-
         AddPicture(strPicture, iRotation);
-        Log.Debug("PictureDatabaseSqlLite: Added rotation by EXIF value - {0}", iRotation);
+        
         return iRotation;
       }
       catch (Exception ex)
@@ -358,57 +370,6 @@ namespace MediaPortal.Picture.Database
         Open();
       }
     }
-
-    ////Changed mbuzina
-    //public DateTime GetDateTaken(string strPicture)
-    //{
-    //  lock (typeof(PictureDatabase))
-    //  {
-    //    if (m_db == null) return DateTime.MinValue;
-    //    string strSQL = "";
-    //    try
-    //    {
-    //      SQLiteResultSet results;
-    //      string strPic = strPicture;
-    //      string strDateTime;
-    //      DatabaseUtility.RemoveInvalidChars(ref strPic);
-
-    //      strSQL = String.Format("select * from picture where strFile like '{0}'", strPic);
-    //      results = m_db.Execute(strSQL);
-    //      if (results != null && results.Rows.Count > 0)
-    //      {
-    //        strDateTime = DatabaseUtility.Get(results, 0, "strDateTaken");
-    //        if (strDateTime != string.Empty && strDateTime != "")
-    //        {
-    //          DateTime dtDateTime = DateTime.ParseExact(strDateTime, "yyyy-MM-dd HH:mm:ss", new System.Globalization.CultureInfo(""));
-    //          return dtDateTime;
-    //        }
-    //      }
-    //      AddPicture(strPicture, -1);
-    //      using (ExifMetadata extractor = new ExifMetadata())
-    //      {
-    //        ExifMetadata.Metadata metaData = extractor.GetExifMetadata(strPic);
-    //        strDateTime = System.DateTime.Parse(metaData.DatePictureTaken.DisplayValue).ToString("yyyy-MM-dd HH:mm:ss");
-    //      }
-    //      if (strDateTime != string.Empty && strDateTime != "")
-    //      {
-    //        DateTime dtDateTime = DateTime.ParseExact(strDateTime, "yyyy-MM-dd HH:mm:ss", new System.Globalization.CultureInfo(""));
-    //        return dtDateTime;
-    //      }
-    //      else
-    //      {
-    //        return DateTime.MinValue;
-    //      }
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //      Log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-    //      Open();
-    //    }
-    //    return DateTime.MinValue;
-    //  }
-    //}
-    ////End Changed
 
     public int EXIFOrientationToRotation(int orientation)
     {

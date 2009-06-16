@@ -47,6 +47,9 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox autoShuffleCheckBox;
     private MPCheckBox repeatSlideshowCheckBox;
     private MPGroupBox groupBox2;
+    private MPGroupBox groupBoxRotation;
+    private MPCheckBox checkBoxUsePicasa;
+    private MPCheckBox checkBoxUseExif;
     private IContainer components = null;
 
     public Pictures()
@@ -74,6 +77,9 @@ namespace MediaPortal.Configuration.Sections
 
         autoShuffleCheckBox.Checked = xmlreader.GetValueAsBool("pictures", "autoShuffle", false);
         repeatSlideshowCheckBox.Checked = xmlreader.GetValueAsBool("pictures", "autoRepeat", true);
+
+        checkBoxUseExif.Checked = xmlreader.GetValueAsBool("pictures", "useExif", true);
+        checkBoxUsePicasa.Checked = xmlreader.GetValueAsBool("pictures", "usePicasa", false);
       }
     }
 
@@ -88,6 +94,8 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("pictures", "kenburns", radioButtonKenBurns.Checked);
         xmlwriter.SetValueAsBool("pictures", "autoShuffle", autoShuffleCheckBox.Checked);
         xmlwriter.SetValueAsBool("pictures", "autoRepeat", repeatSlideshowCheckBox.Checked);
+        xmlwriter.SetValueAsBool("pictures", "useExif", checkBoxUseExif.Checked);
+        xmlwriter.SetValueAsBool("pictures", "usePicasa", checkBoxUseExif.Checked);
       }
     }
 
@@ -127,16 +135,18 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonKenBurns = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.radioButtonRandom = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.radioButtonXFade = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.groupBoxRotation = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxUseExif = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxUsePicasa = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
+      this.groupBoxRotation.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.kenburnsTextBox);
       this.groupBox1.Controls.Add(this.label3);
       this.groupBox1.Controls.Add(this.transitionTextBox);
@@ -155,10 +165,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // kenburnsTextBox
       // 
-      this.kenburnsTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.kenburnsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.kenburnsTextBox.BorderColor = System.Drawing.Color.Empty;
       this.kenburnsTextBox.Location = new System.Drawing.Point(168, 68);
       this.kenburnsTextBox.Name = "kenburnsTextBox";
       this.kenburnsTextBox.Size = new System.Drawing.Size(288, 20);
@@ -175,10 +184,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // transitionTextBox
       // 
-      this.transitionTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.transitionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.transitionTextBox.BorderColor = System.Drawing.Color.Empty;
       this.transitionTextBox.Location = new System.Drawing.Point(168, 44);
       this.transitionTextBox.Name = "transitionTextBox";
       this.transitionTextBox.Size = new System.Drawing.Size(288, 20);
@@ -186,10 +194,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // durationTextBox
       // 
-      this.durationTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.durationTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.durationTextBox.BorderColor = System.Drawing.Color.Empty;
       this.durationTextBox.Location = new System.Drawing.Point(168, 20);
       this.durationTextBox.Name = "durationTextBox";
       this.durationTextBox.Size = new System.Drawing.Size(288, 20);
@@ -237,10 +244,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.radioButtonKenBurns);
       this.groupBox2.Controls.Add(this.radioButtonRandom);
       this.groupBox2.Controls.Add(this.radioButtonXFade);
@@ -256,7 +261,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.radioButtonKenBurns.AutoSize = true;
       this.radioButtonKenBurns.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.radioButtonKenBurns.Location = new System.Drawing.Point(24, 24);
+      this.radioButtonKenBurns.Location = new System.Drawing.Point(16, 23);
       this.radioButtonKenBurns.Name = "radioButtonKenBurns";
       this.radioButtonKenBurns.Size = new System.Drawing.Size(180, 17);
       this.radioButtonKenBurns.TabIndex = 0;
@@ -267,7 +272,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.radioButtonRandom.AutoSize = true;
       this.radioButtonRandom.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.radioButtonRandom.Location = new System.Drawing.Point(24, 48);
+      this.radioButtonRandom.Location = new System.Drawing.Point(16, 47);
       this.radioButtonRandom.Name = "radioButtonRandom";
       this.radioButtonRandom.Size = new System.Drawing.Size(215, 17);
       this.radioButtonRandom.TabIndex = 1;
@@ -278,15 +283,52 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.radioButtonXFade.AutoSize = true;
       this.radioButtonXFade.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.radioButtonXFade.Location = new System.Drawing.Point(24, 72);
+      this.radioButtonXFade.Location = new System.Drawing.Point(16, 71);
       this.radioButtonXFade.Name = "radioButtonXFade";
       this.radioButtonXFade.Size = new System.Drawing.Size(206, 17);
       this.radioButtonXFade.TabIndex = 2;
       this.radioButtonXFade.Text = "Use X-fade transition between pictures";
       this.radioButtonXFade.UseVisualStyleBackColor = true;
       // 
+      // groupBoxRotation
+      // 
+      this.groupBoxRotation.Controls.Add(this.checkBoxUsePicasa);
+      this.groupBoxRotation.Controls.Add(this.checkBoxUseExif);
+      this.groupBoxRotation.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxRotation.Location = new System.Drawing.Point(0, 278);
+      this.groupBoxRotation.Name = "groupBoxRotation";
+      this.groupBoxRotation.Size = new System.Drawing.Size(472, 78);
+      this.groupBoxRotation.TabIndex = 2;
+      this.groupBoxRotation.TabStop = false;
+      this.groupBoxRotation.Text = "Rotation Settings";
+      // 
+      // checkBoxUseExif
+      // 
+      this.checkBoxUseExif.AutoSize = true;
+      this.checkBoxUseExif.Checked = true;
+      this.checkBoxUseExif.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxUseExif.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxUseExif.Location = new System.Drawing.Point(16, 28);
+      this.checkBoxUseExif.Name = "checkBoxUseExif";
+      this.checkBoxUseExif.Size = new System.Drawing.Size(401, 17);
+      this.checkBoxUseExif.TabIndex = 7;
+      this.checkBoxUseExif.Text = "Use EXIF metadata to determine the rotation (might interfere with buggy viewers)";
+      this.checkBoxUseExif.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxUsePicasa
+      // 
+      this.checkBoxUsePicasa.AutoSize = true;
+      this.checkBoxUsePicasa.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxUsePicasa.Location = new System.Drawing.Point(16, 51);
+      this.checkBoxUsePicasa.Name = "checkBoxUsePicasa";
+      this.checkBoxUsePicasa.Size = new System.Drawing.Size(330, 17);
+      this.checkBoxUsePicasa.TabIndex = 8;
+      this.checkBoxUsePicasa.Text = "Use Google Picasa.ini to determine the rotation (if file is available)";
+      this.checkBoxUsePicasa.UseVisualStyleBackColor = true;
+      // 
       // Pictures
       // 
+      this.Controls.Add(this.groupBoxRotation);
       this.Controls.Add(this.groupBox1);
       this.Controls.Add(this.groupBox2);
       this.Name = "Pictures";
@@ -295,7 +337,10 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.PerformLayout();
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
+      this.groupBoxRotation.ResumeLayout(false);
+      this.groupBoxRotation.PerformLayout();
       this.ResumeLayout(false);
+
     }
 
     #endregion
