@@ -1182,13 +1182,7 @@ namespace TvLibrary.Implementations.DVB
       }
       /* QuerySupported has been done in GetCAMName already */
       FIRESAT_CA_DATA caData = GET_FIRESAT_CA_DATA(5 /*CA_MMI*/, 5);
-      // MMI Tag
-      caData.uData[0] = 0x9F;
-      caData.uData[1] = 0x88;
-      caData.uData[2] = 0x00;
-      caData.uData[3] = 0x01; // length field
-      caData.uData[4] = 0x00; // close_mmi_cmd_id (immediately)
-
+      DVB_MMI.CreateMMIClose(ref caData.uData);
       Marshal.StructureToPtr(caData, _ptrDataInstance, true);
       Marshal.StructureToPtr(caData, _ptrDataReturned, true);
       int hr = propertySet.Set(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_HOST2CA, _ptrDataInstance, CA_DATA_SIZE, _ptrDataReturned, CA_DATA_SIZE);
@@ -1216,12 +1210,7 @@ namespace TvLibrary.Implementations.DVB
       }
       /* QuerySupported has been done in GetCAMName already */
       FIRESAT_CA_DATA caData = GET_FIRESAT_CA_DATA(5 /*CA_MMI*/, 5);
-      // MMI Tag
-      caData.uData[0] = 0x9F;
-      caData.uData[1] = 0x88;
-      caData.uData[2] = 0x0B; // send choice
-      caData.uData[3] = 0x01; // length field
-      caData.uData[4] = choice; // choice
+      DVB_MMI.CreateMMISelect(choice, ref caData.uData);
 
       Marshal.StructureToPtr(caData, _ptrDataInstance, true);
       Marshal.StructureToPtr(caData, _ptrDataReturned, true);

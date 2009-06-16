@@ -22,13 +22,14 @@ using System;
 using System.Text;
 using DirectShowLib;
 using TvLibrary.Interfaces.Analyzer;
+using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.DVB
 {
   /// <summary>
   /// Class to handle the WinTV CI module and interaction with closed source dll.
   /// </summary>
-  public class WinTvCiModule : WinTv_CI_Wrapper
+  public class WinTvCiModule : WinTv_CI_Wrapper, IDisposable, ICiMenuActions
   {
     readonly IBaseFilter _winTvUsbCIFilter;
 
@@ -36,7 +37,8 @@ namespace TvLibrary.Implementations.DVB
     readonly Status_Callback cbOnStatus;
     readonly CamInfo_Callback cbOnCamInfo;
     readonly CloseMMI_Callback cbOnCloseMMI;
-
+    private ICiMenuCallbacks m_ciMenuCallback;
+    private DVB_MMI_Handler MMI;
     #region Constructor
     ///<summary>
     /// WinTV CI control
@@ -49,6 +51,7 @@ namespace TvLibrary.Implementations.DVB
       cbOnStatus = OnStatus;
       cbOnCamInfo = OnCamInfo;
       cbOnCloseMMI = OnMMIClosed;
+      MMI = new DVB_MMI_Handler("WinTvCI", null); // callbacks are set on first access
     }
     #endregion
 
@@ -93,9 +96,23 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="APDU">APDU</param>
     /// <param name="SizeOfAPDU">Size of APDU</param>
     /// <returns></returns>
-    public static Int32 OnAPDU(IBaseFilter pUSBCIFilter, byte[] APDU, Int32 SizeOfAPDU)
+    public Int32 OnAPDU(IBaseFilter pUSBCIFilter, IntPtr APDU, long SizeOfAPDU)
     {
-      Log.Log.Info("WinTvCi OnAPDU: SizeOfAPDU={0}", SizeOfAPDU);
+      Int32 MMI_length = (Int32)SizeOfAPDU;
+      Log.Log.Info("WinTvCi OnAPDU: SizeOfAPDU={0}", MMI_length);
+      byte[] bMMI = DVB_MMI.IntPtrToByteArray(APDU, 0, MMI_length);
+#if DEBUG
+      DVB_MMI.DumpBinary(bMMI, 0, MMI_length);
+#endif
+      try
+      {
+        MMI.HandleMMI(bMMI, MMI_length);
+      }
+      catch (Exception e)
+      {
+        Log.Log.Write("WinTvCI error:");
+        Log.Log.Write(e);
+      }
       return 0;
     }
     /// <summary>
@@ -104,7 +121,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pUSBCIFilter">CI filter</param>
     /// <param name="Status">Status</param>
     /// <returns></returns>
-    public static Int32 OnStatus(IBaseFilter pUSBCIFilter, Int32 Status)
+    public Int32 OnStatus(IBaseFilter pUSBCIFilter, long Status)
     {
       //Log.Log.Info("WinTvCI OnStatus: Status={0}", Status);
       if (Status == 1)
@@ -122,7 +139,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="manufCode">ManufactorCode</param>
     /// <param name="Info">Info</param>
     /// <returns></returns>
-    public static Int32 OnCamInfo(IntPtr Context, byte appType, ushort appManuf, ushort manufCode, StringBuilder Info)
+    public Int32 OnCamInfo(IntPtr Context, byte appType, ushort appManuf, ushort manufCode, StringBuilder Info)
     {
       Log.Log.Info("WinTvCi OnCamInfo: appType={0} appManuf={1} manufCode={2} info={3}", appType, appManuf, manufCode, Info.ToString());
       return 0;
@@ -132,9 +149,13 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="pUSBCIFilter">WinTV CI filter</param>
     /// <returns></returns>
-    public static Int32 OnMMIClosed(IBaseFilter pUSBCIFilter)
+    public Int32 OnMMIClosed(IBaseFilter pUSBCIFilter)
     {
       Log.Log.Info("WinTvCi OnMMIClosed");
+      if (m_ciMenuCallback != null)
+      {
+        m_ciMenuCallback.OnCiCloseDisplay(0);
+      }
       return 0;
     }
     #endregion
@@ -146,8 +167,8 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public Int32 Init()
     {
-      //return WinTVCI_Init(_winTvUsbCIFilter, cbOnStatus, cbOnCamInfo, cbOnAPDU, cbOnCloseMMI);
-      return WinTVCI_Init(_winTvUsbCIFilter, null, null, null, null);
+      return WinTVCI_Init(_winTvUsbCIFilter, cbOnStatus, cbOnCamInfo, cbOnAPDU, cbOnCloseMMI);
+      //return WinTVCI_Init(_winTvUsbCIFilter, null, null, null, null);
     }
 
     /// <summary>
@@ -169,17 +190,17 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public Int32 SendAPDU(byte[] APDU, int apduLength)
     {
-      return WinTVCI_SendPMT(_winTvUsbCIFilter, APDU, apduLength);
+      return WinTVCI_SendAPDU(_winTvUsbCIFilter, APDU, apduLength);
     }
 
     /// <summary>
     /// Opens the MMI
     /// </summary>
     /// <returns></returns>
-    public Int32 OpenMMI()
-    {
-      return WinTVCI_OpenMMI(_winTvUsbCIFilter);
-    }
+    //public Int32 OpenMMI()
+    //{
+    //  return WinTVCI_OpenMMI(_winTvUsbCIFilter);
+    //}
 
     /// <summary>
     /// Enables the tray icon
@@ -197,6 +218,94 @@ namespace TvLibrary.Implementations.DVB
     {
       return WinTVCI_Shutdown(_winTvUsbCIFilter);
     }
+    #endregion
+
+    #region ICiMenuActions Member
+
+    /// <summary>
+    /// Sets the callback handler
+    /// </summary>
+    /// <param name="ciMenuHandler"></param>
+    public bool SetCiMenuHandler(ICiMenuCallbacks ciMenuHandler)
+    {
+      if (ciMenuHandler != null)
+      {
+        m_ciMenuCallback = ciMenuHandler;
+        MMI.SetCiMenuHandler(ciMenuHandler); // pass through to handler
+        return true;
+      }
+      return false;
+    }
+
+
+    /// <summary>
+    /// Enters the CI menu of KNC1 card
+    /// </summary>
+    /// <returns></returns>
+    public bool EnterCIMenu()
+    {
+      int res = WinTVCI_OpenMMI(_winTvUsbCIFilter);
+      Log.Log.Debug("WinTvCi: Enter CI Menu Result:{0:x}", res);
+      return true;
+    }
+
+    /// <summary>
+    /// Closes the CI menu of KNC1 card
+    /// </summary>
+    /// <returns></returns>
+    public bool CloseCIMenu()
+    {
+      Log.Log.Debug("WinTvCi: Close CI Menu");
+      byte[] uData = new byte[5]; // default answer length
+      DVB_MMI.CreateMMIClose(ref uData);
+      SendAPDU(uData, uData.Length); // send to cam
+      return true;
+    }
+
+    /// <summary>
+    /// Selects a CI menu entry
+    /// </summary>
+    /// <param name="choice"></param>
+    /// <returns></returns>
+    public bool SelectMenu(byte choice)
+    {
+      Log.Log.Debug("WinTvCi: Select CI Menu entry {0}", choice);
+      byte[] uData = new byte[5]; // default answer length
+      DVB_MMI.CreateMMISelect(choice, ref uData);
+      SendAPDU(uData, uData.Length); // send to cam
+      return true;
+    }
+
+    /// <summary>
+    /// Sends an answer after CI request
+    /// </summary>
+    /// <param name="Cancel"></param>
+    /// <param name="Answer"></param>
+    /// <returns></returns>
+    public bool SendMenuAnswer(bool Cancel, String Answer)
+    {
+      if (Answer == null) Answer = "";
+      Log.Log.Debug("WinTvCi: Send Menu Answer: {0}, Cancel: {1}", Answer, Cancel);
+      byte[] uData = new byte[1024];
+      byte uLength1 = 0;
+      byte uLength2 = 0;
+      DVB_MMI.CreateMMIAnswer(Cancel, Answer, ref uData, ref uLength1, ref uLength2);
+      SendAPDU(uData, uLength1); // send to cam
+      return true;
+    }
+    #endregion
+
+
+    #region IDisposable Member
+
+    /// <summary>
+    /// Disposing ressources
+    /// </summary>
+    public void Dispose()
+    {
+      Shutdown();
+    }
+
     #endregion
   }
 }

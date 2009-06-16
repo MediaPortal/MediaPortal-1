@@ -119,9 +119,7 @@ namespace SetupTv.Sections
     {
       ReOrder();
       TvBusinessLayer layer = new TvBusinessLayer();
-      Setting s = layer.GetSetting("enableWinTVTray", "no");
-      s.Value = checkBoxWinTVTray.Checked ? "yes" : "no";
-      s.Persist();
+      //WinTV-CI tray icon no longer required as it is now fully native supported
       if (_needRestart)
       {
         bool isAnyUserTS;
@@ -186,7 +184,6 @@ namespace SetupTv.Sections
       _needRestart = false;
       UpdateList();
       TvBusinessLayer layer = new TvBusinessLayer();
-      checkBoxWinTVTray.Checked = (layer.GetSetting("enableWinTVTray", "no").Value == "yes");
     }
 
     void UpdateList()

@@ -168,6 +168,9 @@ namespace TvLibrary.Implementations.DVB
             {
               Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
               _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
+
+              Log.Log.WriteFile("WinTV CI registering CI menu capabilities");
+              _ciMenu = _winTvCiModule; // WinTv CI Menu capabilities 
             }
             _diSEqCMotor = new DiSEqCMotor(_hauppauge);
             return;
@@ -1028,7 +1031,10 @@ namespace TvLibrary.Implementations.DVB
       {
         _digitalEveryWhere.Dispose();
       }
-
+      if (_winTvCiModule != null)
+      {
+        _winTvCiModule.Dispose();
+      }
     }
 
     #endregion

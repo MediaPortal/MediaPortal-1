@@ -719,14 +719,7 @@ namespace TvLibrary.Implementations.DVB
         hr = _capBuilder.RenderStream(null, null, captureFilter, null, _infTeeMain);
         return (hr == 0);
       }
-      //Show the WinTV-CI tray icon if the option is selected.
-      TvBusinessLayer layer = new TvBusinessLayer();
-      bool enableTray = (layer.GetSetting("enableWinTVTray", "no").Value == "yes");
-      if (enableTray)
-      {
-        Log.Log.Info("dvb:  Enable WinTV-CI tray");
-        winTvCiHandler.EnableTrayIcon();
-      }
+      //WinTV-CI tray icon no longer required as it is now fully native supported
       if (tunerOnly)
       {
         //now render [Tuner]->[WinTv USB]

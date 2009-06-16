@@ -159,6 +159,35 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
+    /// Creates a "CloseMMI" data set
+    /// </summary>
+    /// <param name="uData">reference to byte[]</param>
+    public static void CreateMMIClose(ref byte[] uData)
+    {
+      // MMI Tag
+      uData[0] = 0x9F;
+      uData[1] = 0x88;
+      uData[2] = 0x00;
+      uData[3] = 0x01; // length field
+      uData[4] = 0x00; // close_mmi_cmd_id (immediately)
+    }
+
+    /// <summary>
+    /// Creates a "SelectMenuChoice" data set
+    /// </summary>
+    /// <param name="choice">selected index (0 means back)</param>
+    /// <param name="uData">reference to byte[]</param>
+    public static void CreateMMISelect(byte choice, ref byte[] uData)
+    {
+      // MMI Tag
+      uData[0] = 0x9F;
+      uData[1] = 0x88;
+      uData[2] = 0x0B; // send choice
+      uData[3] = 0x01; // length field
+      uData[4] = choice; // choice
+    }
+
+    /// <summary>
     /// Creates an CI Menu Answer package
     /// </summary>
     /// <param name="Cancel">true to cancel</param>
@@ -274,6 +303,19 @@ namespace TvLibrary.Implementations.DVB
     private String m_cardName;
 
     /// <summary>
+    /// Sets the callback handler
+    /// </summary>
+    /// <param name="ciMenuHandler"></param>
+    public bool SetCiMenuHandler(ICiMenuCallbacks ciMenuHandler)
+    {
+      if (ciMenuHandler != null)
+      {
+        m_ciMenuCallback = ciMenuHandler;
+        return true;
+      }
+      return false;
+    }
+    /// <summary>
     /// Constructor for an APDU based MMI parser
     /// </summary>
     /// <param name="CardName">Card type for logging</param>
@@ -319,11 +361,7 @@ namespace TvLibrary.Implementations.DVB
         if (m_ciMenuCallback != null)
         {
           Log.Log.Debug("{0}: OnCiClose()", m_cardName);
-          try
-          {
-            m_ciMenuCallback.OnCiCloseDisplay(nDelay);
-          }
-          catch { }
+          m_ciMenuCallback.OnCiCloseDisplay(nDelay);
         }
         else
         {
@@ -348,11 +386,7 @@ namespace TvLibrary.Implementations.DVB
         if (m_ciMenuCallback != null)
         {
           Log.Log.Debug("{0}: OnCiRequest: bPasswordMode:{1}, answer_text_length:{2}, strText:{3}", m_cardName, bPasswordMode, answer_text_length, strText);
-          try
-          {
-            m_ciMenuCallback.OnCiRequest(bPasswordMode, answer_text_length, strText);
-          }
-          catch { }
+          m_ciMenuCallback.OnCiRequest(bPasswordMode, answer_text_length, strText);
         }
         else
         {
