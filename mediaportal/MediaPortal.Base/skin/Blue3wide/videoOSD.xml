@@ -133,10 +133,8 @@
       <posY>605</posY>
       <width>58</width>
       <height>40</height>
-      <texture>
-        <visible>skin.string(#Play.Current.AudioCodec, MPA2)</visible>
-        <texture>logos\mpa2.png</texture>
-      </texture>
+      <visible>skin.string(#Play.Current.AudioCodec, MPA2)</visible>
+      <texture>logos\mpa2.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <animation effect="fade" time="150">visiblechange</animation>
