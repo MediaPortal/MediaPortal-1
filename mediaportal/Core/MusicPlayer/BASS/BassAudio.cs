@@ -40,6 +40,7 @@ using MediaPortal.Visualization;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Cd;
 using Un4seen.Bass.AddOn.Fx;
+using Un4seen.Bass.AddOn.Midi;
 using Un4seen.Bass.AddOn.Mix;
 using Un4seen.Bass.AddOn.Tags;
 using Un4seen.Bass.AddOn.Vst;
@@ -345,6 +346,10 @@ namespace MediaPortal.Player
     private int cueTrackEndEventHandler;
 
     private TAG_INFO _tagInfo;
+
+    // Midi File support
+    private BASS_MIDI_FONT[] soundFonts = null;
+    private List<int> soundFontHandles = new List<int>();
     #endregion
 
     #region Properties
@@ -1417,6 +1422,32 @@ namespace MediaPortal.Player
         Log.Error(
           @"BASS: No audio decoders were loaded. Confirm decoders are present in \musicplayer\plugins\audio decoders folder.");
       }
+
+      // Look for any SF2 files available in the folder.
+      // SF2 files contain sound fonts needed for midi playback
+      List<BASS_MIDI_FONT> tmpFonts = new List<BASS_MIDI_FONT>();
+      foreach (FileInfo file in decoders)
+      {
+        if (Path.GetExtension(file.Name).ToLower() != ".sf2")
+        {
+          continue;
+        }
+        int font = BassMidi.BASS_MIDI_FontInit(file.FullName);
+        if (font != 0)
+        {
+          BASS_MIDI_FONTINFO fontInfo = new BASS_MIDI_FONTINFO();
+          BassMidi.BASS_MIDI_FontGetInfo(font, fontInfo);
+          Log.Info("BASS: Loading Midi font: {0}", fontInfo.ToString());
+          soundFontHandles.Add(font);
+          BASS_MIDI_FONT soundFont = new BASS_MIDI_FONT(font, -1, 0);
+          tmpFonts.Add(soundFont);
+        }
+      }
+
+      if (tmpFonts.Count > 0)
+      {
+        soundFonts = tmpFonts.ToArray();
+      }
     }
 
     /// <summary>
@@ -1816,6 +1847,12 @@ namespace MediaPortal.Player
 
           if (stream != 0)
           {
+            // When we have a MIDI file, we need to assign the sound banks to the stream
+            if (IsMidiFile(filePath))
+            {
+              BassMidi.BASS_MIDI_StreamSetFonts(stream, soundFonts, soundFonts.Length);
+            }
+
             StreamEventSyncHandles[CurrentStreamIndex] = RegisterPlaybackEvents(stream, CurrentStreamIndex);
 
             if (doFade && _CrossFadeIntervalMS > 0)
@@ -2025,6 +2062,28 @@ namespace MediaPortal.Player
         case ".s3m":
         case ".mtm":
         case ".umx":
+          return true;
+
+        default:
+          return false;
+      }
+    }
+
+    /// <summary>
+    /// Is this a MIDI file?
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <returns></returns>
+    private bool IsMidiFile(string filePath)
+    {
+      string ext = Path.GetExtension(filePath).ToLower();
+
+      switch (ext)
+      {
+        case ".midi":
+        case ".mid":
+        case ".rmi":
+        case ".kar":
           return true;
 
         default:
