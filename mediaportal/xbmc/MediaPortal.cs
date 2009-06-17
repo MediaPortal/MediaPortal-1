@@ -320,7 +320,7 @@ public class MediaPortalApp : D3DApp, IRender
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
 
       string ServicePack = OSInfo.OSInfo.GetOSServicePack();
-      if (string.IsNullOrEmpty(ServicePack))
+      if (!string.IsNullOrEmpty(ServicePack))
       {
         ServicePack = " ( " + ServicePack + " )";
       }

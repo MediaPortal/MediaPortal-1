@@ -135,7 +135,7 @@ namespace MediaPortal.Configuration
         FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
 
         string ServicePack = OSInfo.OSInfo.GetOSServicePack();
-        if (string.IsNullOrEmpty(ServicePack))
+        if (!string.IsNullOrEmpty(ServicePack))
         {
           ServicePack = " ( " + ServicePack + " )";
         }
@@ -261,7 +261,7 @@ namespace MediaPortal.Configuration
       const string MsgBetaServicePack = "You are running a BETA version of Service Pack {0}.\n Please don't do bug reporting with such configuration.";
 
       string ServicePack = OSInfo.OSInfo.GetOSServicePack();
-      if (string.IsNullOrEmpty(ServicePack))
+      if (!string.IsNullOrEmpty(ServicePack))
       {
         ServicePack = " ( " + ServicePack + " )";
       }

@@ -74,31 +74,25 @@ namespace OSInfo
     public static string GetOSProductType()
     {
       OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-      OperatingSystem osInfo = Environment.OSVersion;
-
       osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
+      if (!GetVersionEx(ref osVersionInfo)) return string.Empty;
 
-      if (!GetVersionEx(ref osVersionInfo))
-      {
-        return string.Empty;
-      }
-
-      switch (osInfo.Version.Major)
+      switch (OSMajorVersion)
       {
         case 4:
-          if (osVersionInfo.wProductType == VER_NT_WORKSTATION)
+          if (OSProductType == VER_NT_WORKSTATION)
           {
             // Windows NT 4.0 Workstation
             return " Workstation";
           }
-          if (osVersionInfo.wProductType == VER_NT_SERVER)
+          if (OSProductType == VER_NT_SERVER)
           {
             // Windows NT 4.0 Server
             return " Server";
           }
           return string.Empty;
         case 5:
-          if (osVersionInfo.wProductType == VER_NT_WORKSTATION)
+          if (OSProductType == VER_NT_WORKSTATION)
           {
             if ((osVersionInfo.wSuiteMask & VER_SUITE_PERSONAL) == VER_SUITE_PERSONAL)
             {
@@ -108,9 +102,9 @@ namespace OSInfo
             // Windows XP / Windows 2000 Professional
             return " Professional";
           }
-          if (osVersionInfo.wProductType == VER_NT_SERVER)
+          if (OSProductType == VER_NT_SERVER)
           {
-            if (osInfo.Version.Minor == 0)
+            if (OSMinorVersion == 0)
             {
               if ((osVersionInfo.wSuiteMask & VER_SUITE_DATACENTER) == VER_SUITE_DATACENTER)
               {
@@ -125,7 +119,7 @@ namespace OSInfo
               // Windows 2000 Server
               return " Server";
             }
-            if (osInfo.Version.Minor == 2)
+            if (OSMinorVersion == 2)
             {
               if ((osVersionInfo.wSuiteMask & VER_SUITE_DATACENTER) == VER_SUITE_DATACENTER)
               {
@@ -159,7 +153,6 @@ namespace OSInfo
     {
       OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
       osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
-
       return !GetVersionEx(ref osVersionInfo) ? string.Empty : osVersionInfo.szCSDVersion;
     }
 
@@ -169,7 +162,6 @@ namespace OSInfo
     /// <returns>A string containing the the operating system name.</returns>
     public static string GetOSNameString()
     {
-      OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
       OperatingSystem osInfo = Environment.OSVersion;
       string osName = "UNKNOWN";
 
@@ -177,7 +169,7 @@ namespace OSInfo
       {
         case PlatformID.Win32Windows:
           {
-            switch (osInfo.Version.Minor)
+            switch (OSMinorVersion)
             {
               case 0:
                 {
@@ -200,7 +192,7 @@ namespace OSInfo
 
         case PlatformID.Win32NT:
           {
-            switch (osInfo.Version.Major)
+            switch (OSMajorVersion)
             {
               case 3:
                 {
@@ -214,7 +206,7 @@ namespace OSInfo
                 }
               case 5:
                 {
-                  switch (osInfo.Version.Minor)
+                  switch (OSMinorVersion)
                   {
                     case 0:
                       osName = "Windows 2000";
@@ -223,17 +215,17 @@ namespace OSInfo
                       osName = "Windows XP";
                       break;
                     case 2:
-                      osName = osVersionInfo.wProductType == VER_NT_WORKSTATION ? "Windows Server 2003" : "Windows XP x64";
+                      osName = OSProductType == VER_NT_SERVER ? "Windows Server 2003" : "Windows XP x64";
                       break;
                   }
                   break;
                 }
               case 6:
                 {
-                  switch (osInfo.Version.Minor)
+                  switch (OSMinorVersion)
                   {
                     case 0:
-                      osName = osVersionInfo.wProductType == VER_NT_WORKSTATION ? "Windows Vista" : "Windows 2008";
+                      osName = OSProductType == VER_NT_SERVER ? "Windows 2008" : "Windows Vista";
                       break;
                     case 1:
                       osName = "Windows7";
@@ -255,17 +247,16 @@ namespace OSInfo
     /// <returns>A string containing the the operating system name.</returns>
     public static OSList GetOSName()
     {
-      OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-      int osVer = (osVersionInfo.dwMajorVersion * 10) + osVersionInfo.dwMinorVersion;
+      int osVer = (OSMajorVersion * 10) + OSMinorVersion;
 
       switch (osVer)
       {
         case 51:
           return OSList.WindowsXp;
         case 52:
-          return osVersionInfo.wProductType == VER_NT_SERVER ? OSList.Windows2003 : OSList.WindowsXp64;
+          return OSProductType == VER_NT_SERVER ? OSList.Windows2003 : OSList.WindowsXp64;
         case 60:
-          return osVersionInfo.wProductType == VER_NT_SERVER ? OSList.Windows2008 : OSList.WindowsVista;
+          return OSProductType == VER_NT_SERVER ? OSList.Windows2008 : OSList.WindowsVista;
         case 61:
           return OSList.Windows7;
       }
@@ -283,13 +274,13 @@ namespace OSInfo
       switch (GetOSName())
       {
         case OSList.WindowsXp:
-          if (OSMajorVersion < 2)
+          if (OSServicePackMajor < 2)
           {
             return 0;
           }
           return OSServicePackMinor == 0 ? 1 : 2;
         case OSList.WindowsVista:
-          if (OSMajorVersion < 1)
+          if (OSServicePackMajor < 1)
           {
             return 0;
           }
@@ -368,6 +359,8 @@ namespace OSInfo
       get
       {
         OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
+        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
+        if (!GetVersionEx(ref osVersionInfo)) return -1;
         return osVersionInfo.wServicePackMajor;
       }
     }
@@ -380,7 +373,23 @@ namespace OSInfo
       get
       {
         OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
+        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
+        if (!GetVersionEx(ref osVersionInfo)) return -1;
         return osVersionInfo.wServicePackMinor;
+      }
+    }
+
+    /// <summary>
+    /// Gets the product type of the operating system running on this computer.
+    /// </summary>
+    public static byte OSProductType
+    {
+      get
+      {
+        OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
+        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
+        if (!GetVersionEx(ref osVersionInfo)) return 0x0;
+        return osVersionInfo.wProductType;
       }
     }
     #endregion
