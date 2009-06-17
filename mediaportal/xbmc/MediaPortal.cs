@@ -58,7 +58,6 @@ using MediaPortal.Util;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.Win32;
-using OsDetection;
 using Timer = System.Timers.Timer;
 
 #endregion
@@ -318,33 +317,25 @@ public class MediaPortalApp : D3DApp, IRender
       }
 #endif
       //Log MediaPortal version build and operating system level
-      OSVersionInfo os = new OperatingSystemVersion();
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-      string ServicePack = String.Empty;
-      if (!String.IsNullOrEmpty(os.OSCSDVersion))
-      {
-        ServicePack = " (" + os.OSCSDVersion + ")";
-      }
-      Log.Info("Main: MediaPortal v" + versionInfo.FileVersion + " is starting up on " + os.OSVersionString +
-               ServicePack);
+
+      Log.Info("Main: MediaPortal v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.OSVersion);
 
       // Store OS version for next checks
-      int OsVer = (os.OSMajorVersion * 10) + os.OSMinorVersion;
+      int OsVer = (OSInfo.OSInfo.OSMajorVersion * 10) + OSInfo.OSInfo.OSServicePackMinor;
 
-      //If OS = WIndpwsXP64, WindowsServer2003 or Windows7 then we won't support them
-      bool unsupported = false;
-      switch (OsVer)
+      //If OS = WindowsXP64, WindowsServer2003 or Windows7 then we won't support them
+      switch (OSInfo.OSInfo.GetOSName())
       {
-        case 52:  //WindowsXP 64 and Windows2003
-        case 61:  //Windows 7
-          unsupported = true;
+        case OSInfo.OSInfo.OSList.Windows2000andPrevious:
+        case OSInfo.OSInfo.OSList.WindowsXp64:
+        case OSInfo.OSInfo.OSList.Windows2003:
+        case OSInfo.OSInfo.OSList.Windows2008:
+        case OSInfo.OSInfo.OSList.Windows7:
+          Log.Warn("****************************************");
+          Log.Warn("* WARNING, OS not officially supported *");
+          Log.Warn("****************************************");
           break;
-      }
-      if (unsupported)
-      {
-        Log.Warn("****************************************");
-        Log.Warn("* WARNING, OS not officially supported *");
-        Log.Warn("****************************************");
       }
 
       //Log last install of WindowsUpdate patches
@@ -1914,12 +1905,12 @@ public class MediaPortalApp : D3DApp, IRender
     }
     else
     {
-      GUIGraphicsContext.IsPlaying = false;      
+      GUIGraphicsContext.IsPlaying = false;
       if (m_bPlayingState)
       {
         GUIPropertyManager.RemovePlayerProperties();
         m_bPlayingState = false;
-      }      
+      }
     }
   }
 
