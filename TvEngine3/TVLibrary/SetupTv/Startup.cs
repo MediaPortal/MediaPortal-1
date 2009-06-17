@@ -44,6 +44,7 @@ namespace SetupTv
     Wizard,
     DbCleanup,
     DbConfig,
+    DeployMode
   }
 
   /// <summary>
@@ -103,6 +104,9 @@ namespace SetupTv
     {
       Thread.CurrentThread.Name = "SetupTv";
 
+      string DeploySql = string.Empty;
+      string DeployPwd = string.Empty;
+
       OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
       string ServicePack = "";
@@ -113,7 +117,7 @@ namespace SetupTv
       // Store OS version for next checks
       int OsVer = (os.OSMajorVersion * 10) + os.OSMinorVersion;
 
-      //If OS = WIndpwsXP64, WindowsServer2003 or Windows7 then we won't support them
+      //If OS = WindowsXP64, WindowsServer2003 or Windows7 then we won't support them
       bool unsupported = false;
       switch (OsVer)
       {
@@ -138,15 +142,32 @@ namespace SetupTv
       foreach (string param in arguments)
       {
         if (param == "--delete-db" || param == "-d" || param == @"/d")
+        {
           startupMode = StartupMode.DbCleanup;
+        }
         if (param == "--configure-db" || param == "-c" || param == @"/c")
+        {
           startupMode = StartupMode.DbConfig;
+        }
+        if (param == "--DeployMode")
+        {
+          Log.Debug("---- started in Deploy mode ----");
+          startupMode = StartupMode.DeployMode;
+        }
+        if (param.StartsWith("--DeploySql"))
+        {
+          DeploySql = param.Split(':')[1];
+        }
+        if (param.StartsWith("--DeployPwd"))
+        {
+          DeployPwd = param.Split(':')[1];
+        }
       }
 
       //test connection with database
       Log.Info("---- check connection with database ----");
       SetupDatabaseForm dlg = new SetupDatabaseForm(startupMode);
-      if (startupMode != StartupMode.Normal || !dlg.TestConnection())
+      if ((startupMode != StartupMode.Normal && startupMode != StartupMode.DeployMode) || (!dlg.TestConnection(startupMode, DeploySql, DeployPwd)))
       {
         Log.Info("---- ask user for connection details ----");
         dlg.ShowDialog();
@@ -155,7 +176,7 @@ namespace SetupTv
       }
 
       Log.Info("---- check if database needs to be updated/created ----");
-      int currentSchemaVersion = dlg.GetCurrentShemaVersion();
+      int currentSchemaVersion = dlg.GetCurrentShemaVersion(startupMode);
       if (currentSchemaVersion <= 36) // drop pre-1.0 DBs and handle -1
       {
         // Allow users to cancel DB recreation to backup their old DB
@@ -170,7 +191,11 @@ namespace SetupTv
           return;
         }
         Log.Info("- Database created.");
-        currentSchemaVersion = dlg.GetCurrentShemaVersion();
+        currentSchemaVersion = dlg.GetCurrentShemaVersion(startupMode);
+        if (startupMode == StartupMode.DeployMode)
+        {
+          dlg.SaveGentleConfig();
+        }
       }
 
       Log.Info("---- upgrade database schema ----");
@@ -184,8 +209,12 @@ namespace SetupTv
       if (!ServiceHelper.IsRunning)
       {
         Log.Info("---- tvservice is not running ----");
-        DialogResult result = MessageBox.Show("The Tv service is not running.\rStart it now?", "Mediaportal TV service", MessageBoxButtons.YesNo);
-        if (result != DialogResult.Yes) return;
+        if (startupMode != StartupMode.DeployMode)
+        {
+          DialogResult result = MessageBox.Show("The Tv service is not running.\rStart it now?",
+                                                "Mediaportal TV service", MessageBoxButtons.YesNo);
+          if (result != DialogResult.Yes) return;
+        }
         Log.Info("---- start tvservice----");
         ServiceHelper.Start();
       }
@@ -229,6 +258,12 @@ namespace SetupTv
       // Mantis #0002138: impossible to configure TVGroups 
       TvBusinessLayer layer = new TvBusinessLayer();
       layer.CreateGroup(TvConstants.TvGroupNames.AllChannels);
+
+      // Avoid the visual part of SetupTv if in DeployMode
+      if (startupMode == StartupMode.DeployMode)
+      {
+        return;
+      }
 
       try
       {

@@ -53,7 +53,8 @@ namespace SetupTv
 
     readonly StartupMode _dialogMode = StartupMode.Normal;
     ProviderType _provider = ProviderType.MySql;
-    string _schemaName = "MpTvDb";
+    private const string _schemaNameDefault = "MpTvDb";
+    string _schemaName = _schemaNameDefault;
 
     public SetupDatabaseForm(StartupMode aStartMode)
     {
@@ -125,7 +126,7 @@ namespace SetupTv
         }
 
         string[] parts = connectionString.Split(';');
-        for (int i = 0 ; i < parts.Length ; ++i)
+        for (int i = 0; i < parts.Length; ++i)
         {
           string part = parts[i];
           string[] keyValue = part.Split('=');
@@ -189,11 +190,38 @@ namespace SetupTv
       return "";
     }
 
-    public bool TestConnection()
+    public bool TestConnection(StartupMode ModeType, string SqlType, string Password)
     {
       try
       {
-        LoadConnectionDetailsFromConfig(true);
+        if (ModeType == StartupMode.DeployMode)
+        {
+          switch (SqlType.ToLower())
+          {
+            case "mysql":
+              _provider = ProviderType.MySql;
+              rbMySQL.Checked = true;
+              tbUserID.Text = "root";
+              tbServerHostName.Text = Dns.GetHostName();
+              break;
+            case "sqlserver":
+              _provider = ProviderType.SqlServer;
+              rbSQLServer.Checked = true;
+              tbUserID.Text = "sa";
+              tbServerHostName.Text = Dns.GetHostName() + @"\SQLEXPRESS";
+              break;
+            default:
+              return false;
+          }
+          tbPassword.Text = Password;
+          tbDatabaseName.Text = _schemaNameDefault;
+          _schemaName = tbDatabaseName.Text;
+        }
+        else
+        {
+          LoadConnectionDetailsFromConfig(true);
+        }
+
         if (string.IsNullOrEmpty(tbServerHostName.Text) || string.IsNullOrEmpty(tbPassword.Text))
           return false;
 
@@ -372,7 +400,7 @@ namespace SetupTv
       sql = sql.Replace(@"%TvLibrary%", _schemaName);
       string[] lines = sql.Split('\r');
       sql = "";
-      for (int i = 0 ; i < lines.Length ; ++i)
+      for (int i = 0; i < lines.Length; ++i)
       {
         string line = lines[i].Trim();
         if (line.StartsWith("/*")) continue;
@@ -545,7 +573,7 @@ namespace SetupTv
       return ServerName;
     }
 
-    private void SaveGentleConfig()
+    public void SaveGentleConfig()
     {
       string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, tbDatabaseName.Text, true, 300);
       XmlDocument doc = new XmlDocument();
@@ -560,8 +588,8 @@ namespace SetupTv
       }
 
       XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
-      XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString"); 
-      XmlNode nodeName = nodeKey.Attributes.GetNamedItem("name"); 
+      XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
+      XmlNode nodeName = nodeKey.Attributes.GetNamedItem("name");
       nodeName.InnerText = rbSQLServer.Checked ? "SQLServer" : "MySQL";
       node.InnerText = connectionString;
 
@@ -598,10 +626,13 @@ namespace SetupTv
     /// Gets the current schema version (-1= No database installed)
     /// </summary>
     /// <returns>the current schema version</returns>
-    public int GetCurrentShemaVersion()
+    public int GetCurrentShemaVersion(StartupMode ModeType)
     {
       int currentSchemaVersion = -1;
-      LoadConnectionDetailsFromConfig(false);
+      if (ModeType != StartupMode.DeployMode)
+      {
+        LoadConnectionDetailsFromConfig(false);
+      }
       try
       {
         string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, tbDatabaseName.Text, false, 15);
@@ -686,7 +717,7 @@ namespace SetupTv
       Assembly assm = Assembly.GetExecutingAssembly();
       string[] names = assm.GetManifestResourceNames();
       //Stream stream = null;
-      for (int version = currentSchemaVersion + 1 ; version < 100 ; version++)
+      for (int version = currentSchemaVersion + 1; version < 100; version++)
       {
         if (ResourceExists(names, "SetupTv." + version + "_upgrade_sqlserver_database.sql"))
         {

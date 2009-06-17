@@ -24,7 +24,6 @@
 #endregion
 
 using System;
-using Microsoft.Win32;
 using System.IO;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -59,12 +58,39 @@ namespace MediaPortal.DeployTool.InstallationChecks
       //Rember that /D must be the last one         (chefkoch)
       Process setup = Process.Start(_fileName, String.Format("/S /noClient /DeployMode {0} /D={1}", UpdateMode, targetDir));
 
-      if (setup != null)
+      if (setup == null)
       {
-        setup.WaitForExit();
-        if (setup.ExitCode == 0) return true;
+        return false;
       }
-      return false;
+      setup.WaitForExit();
+      if (setup.ExitCode != 0)
+      {
+        return false;
+      }
+
+      if (InstallationProperties.Instance["DBMSType"] != "DBAlreadyInstalled")
+      {
+        string sql = InstallationProperties.Instance["DBMSType"] == "msSQL2005" ? "sqlserver" : "mysql";
+        string pwd = InstallationProperties.Instance["DBMSPassword"];
+        string procParams = String.Format("--DeployMode --DeploySql:{0} --DeployPwd:{1}", sql, pwd);
+
+#if DEBUG
+        MessageBox.Show("Starting " + targetDir + "\\SetupTv.exe " + procParams);
+#endif
+
+        setup = Process.Start(targetDir + "\\SetupTv.exe", procParams);
+        if (setup == null)
+        {
+          return false;
+        }
+        setup.WaitForExit();
+        if (setup.ExitCode != 0)
+        {
+          return false;
+        }
+      }
+
+      return true;
     }
 
     public bool UnInstall()
