@@ -109,21 +109,20 @@ namespace SetupTv
 
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
 
-      Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.OSVersion + " ----");
+      string ServicePack = OSInfo.OSInfo.GetOSServicePack();
+      if (string.IsNullOrEmpty(ServicePack))
+      {
+        ServicePack = " ( " + ServicePack + " )";
+      }
+      Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSNameString() + ServicePack + " [" + OSInfo.OSInfo.OSVersion + "] ----");
 
       //Check for unsupported operating systems
-      switch (OSInfo.OSInfo.GetOSName())
+      if (OSInfo.OSInfo.GetOSSupported() != 1)
       {
-        case OSInfo.OSInfo.OSList.Windows2000andPrevious:
-        case OSInfo.OSInfo.OSList.WindowsXp64:
-        case OSInfo.OSInfo.OSList.Windows2003:
-        case OSInfo.OSInfo.OSList.Windows2008:
-        case OSInfo.OSInfo.OSList.Windows7:
-          //Used .Info as .Warning is missing
-          Log.Info("****************************************");
-          Log.Info("* WARNING, OS not officially supported *");
-          Log.Info("****************************************");
-          break;
+        //Used .Info as .Warning is missing
+        Log.Info("****************************************");
+        Log.Info("* WARNING, OS not officially supported *");
+        Log.Info("****************************************");
       }
 
       NameValueCollection appSettings = ConfigurationManager.AppSettings;

@@ -263,7 +263,7 @@ namespace OSInfo
         case 51:
           return OSList.WindowsXp;
         case 52:
-          return osVersionInfo.wProductType == VER_NT_SERVER ? OSList.Windows2003 : OSList.WindowsXp;
+          return osVersionInfo.wProductType == VER_NT_SERVER ? OSList.Windows2003 : OSList.WindowsXp64;
         case 60:
           return osVersionInfo.wProductType == VER_NT_SERVER ? OSList.Windows2008 : OSList.WindowsVista;
         case 61:
@@ -312,7 +312,7 @@ namespace OSInfo
     {
       get
       {
-        return Environment.OSVersion.VersionString;
+        return Environment.OSVersion.Version.ToString();
       }
     }
 

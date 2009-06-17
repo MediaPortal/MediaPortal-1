@@ -324,20 +324,26 @@ namespace MediaPortal.DeployTool
     {
       DialogResult res;
 
+      string ServicePack = OSInfo.OSInfo.GetOSServicePack();
+      if (string.IsNullOrEmpty(ServicePack))
+      {
+        ServicePack = " ( " + ServicePack + " )";
+      }
+      string MsgVersion = OSInfo.OSInfo.GetOSNameString() + ServicePack + " [" + OSInfo.OSInfo.OSVersion + "]";
       switch (OSInfo.OSInfo.GetOSSupported())
       {
         case 0:
-          MessageBox.Show(Localizer.GetBestTranslation("OS_Support"), OSInfo.OSInfo.OSVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
+          MessageBox.Show(Localizer.GetBestTranslation("OS_Support"), MsgVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
           Application.Exit();
           break;
         case 2:
-          res = MessageBox.Show(Localizer.GetBestTranslation("OS_Warning"), OSInfo.OSInfo.OSVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+          res = MessageBox.Show(Localizer.GetBestTranslation("OS_Warning"), MsgVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
           if (res == DialogResult.Cancel) Application.Exit();
           break;
       }
       if (OSInfo.OSInfo.OSServicePackMinor != 0)
       {
-        res = MessageBox.Show(Localizer.GetBestTranslation("OS_Beta"), OSInfo.OSInfo.OSVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+        res = MessageBox.Show(Localizer.GetBestTranslation("OS_Beta"), MsgVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
         if (res == DialogResult.Cancel) Application.Exit();
       }
     }

@@ -134,7 +134,20 @@ namespace MediaPortal.Configuration
 
         FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
 
-        Log.Info("Configuration v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.OSVersion);
+        string ServicePack = OSInfo.OSInfo.GetOSServicePack();
+        if (string.IsNullOrEmpty(ServicePack))
+        {
+          ServicePack = " ( " + ServicePack + " )";
+        }
+        Log.Info("Configuration v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSNameString() + ServicePack + " [" + OSInfo.OSInfo.OSVersion + "]");
+
+        //Check for unsupported operating systems
+        if (OSInfo.OSInfo.GetOSSupported() != 1)
+        {
+          Log.Warn("****************************************");
+          Log.Warn("* WARNING, OS not officially supported *");
+          Log.Warn("****************************************");
+        }
 
         // Check for a MediaPortal Instance running and don't allow Configuration to start
         using (ProcessLock mpLock = new ProcessLock(mpMutex))
@@ -247,20 +260,26 @@ namespace MediaPortal.Configuration
       const string MsgNotInstallable = "Your platform is not supported and cannot be used for MediaPortal/TV-Server! \nPlease check our Wiki's requirements page.";
       const string MsgBetaServicePack = "You are running a BETA version of Service Pack {0}.\n Please don't do bug reporting with such configuration.";
 
+      string ServicePack = OSInfo.OSInfo.GetOSServicePack();
+      if (string.IsNullOrEmpty(ServicePack))
+      {
+        ServicePack = " ( " + ServicePack + " )";
+      }
+      string MsgVersion = OSInfo.OSInfo.GetOSNameString() + ServicePack + " [" + OSInfo.OSInfo.OSVersion + "]";
       switch (OSInfo.OSInfo.GetOSSupported())
       {
         case 0:
-          MessageBox.Show(MsgNotInstallable, OSInfo.OSInfo.OSVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
+          MessageBox.Show(MsgNotInstallable, MsgVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
           Application.Exit();
           break;
         case 2:
-          res = MessageBox.Show(MsgNotSupported, OSInfo.OSInfo.OSVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+          res = MessageBox.Show(MsgNotSupported, MsgVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
           if (res == DialogResult.Cancel) Application.Exit();
           break;
       }
       if (OSInfo.OSInfo.OSServicePackMinor != 0)
       {
-        res = MessageBox.Show(MsgBetaServicePack, OSInfo.OSInfo.OSVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+        res = MessageBox.Show(MsgBetaServicePack, MsgVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
         if (res == DialogResult.Cancel) Application.Exit();
       }
     }

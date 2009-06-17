@@ -808,16 +808,12 @@ namespace SetupTv
       const string MsgNotInstallable = "Your platform is not supported and cannot be used for MediaPortal/TV-Server! \nPlease check our Wiki's requirements page.";
       const string MsgBetaServicePack = "You are running a BETA version of Service Pack {0}.\n Please don't do bug reporting with such configuration.";
 
-      // Disable OS if < XP
-      if (OSInfo.OSInfo.GetOSName() == OSInfo.OSInfo.OSList.Windows2000andPrevious)
-      {
-        MessageBox.Show(MsgNotInstallable, OSInfo.OSInfo.OSVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
-        Application.Exit();
-      }
+      string MsgVersion = OSInfo.OSInfo.GetOSNameString() + " ( " + OSInfo.OSInfo.GetOSServicePack() + " ) [" +
+                          OSInfo.OSInfo.OSVersion + "]";
       switch (OSInfo.OSInfo.GetOSSupported())
       {
         case 0:
-          MessageBox.Show(MsgNotInstallable, OSInfo.OSInfo.OSVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
+          MessageBox.Show(MsgNotInstallable, MsgVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
           Application.Exit();
           break;
         case 1:
@@ -825,18 +821,16 @@ namespace SetupTv
             CheckForDvbHotfix();
           break;
         case 2:
-          res = MessageBox.Show(MsgNotSupported, OSInfo.OSInfo.OSVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-          if (res == DialogResult.Cancel)
-            Application.Exit();
+          res = MessageBox.Show(MsgNotSupported, MsgVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+          if (res == DialogResult.Cancel) Application.Exit();
           if (checkDvbFix)
             CheckForDvbHotfix();
           break;
       }
       if (OSInfo.OSInfo.OSServicePackMinor != 0)
       {
-        res = MessageBox.Show(String.Format(MsgBetaServicePack, OSInfo.OSInfo.OSServicePackMajor), OSInfo.OSInfo.OSVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-        if (res == DialogResult.Cancel)
-          Application.Exit();
+        res = MessageBox.Show(MsgBetaServicePack, MsgVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+        if (res == DialogResult.Cancel) Application.Exit();
       }
     }
 
