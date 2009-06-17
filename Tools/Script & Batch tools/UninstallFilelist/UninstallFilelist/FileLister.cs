@@ -106,7 +106,7 @@ namespace UninstallFilelist
 
         //Delete /REBOOTOK "$MPdir.Base\AppStart.exe"
         //Delete /REBOOTOK "$MPdir.Base\AppStart.exe.config"
-        strBuilder.AppendLine(String.Format("Delete /REBOOTOK \"{0}\"", tempString));
+        strBuilder.AppendLine(String.Format("Delete \"{0}\"", tempString));
       }
     }
 

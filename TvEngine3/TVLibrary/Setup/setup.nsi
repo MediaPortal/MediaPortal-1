@@ -556,54 +556,54 @@ ${MementoSectionEnd}
 
   ${LOG_TEXT} "INFO" "remove files..."
   ; Remove TuningParameters
-  RMDir /r /REBOOTOK $INSTDIR\TuningParameters
+  RMDir /r $INSTDIR\TuningParameters
 
   ; Remove Plugins
-  Delete /REBOOTOK $INSTDIR\Plugins\ComSkipLauncher.dll
-  Delete /REBOOTOK $INSTDIR\Plugins\ConflictsManager.dll
-  #Delete /REBOOTOK $INSTDIR\Plugins\PersonalTVGuide.dll
-  Delete /REBOOTOK $INSTDIR\Plugins\PowerScheduler.dll
-  Delete /REBOOTOK $INSTDIR\Plugins\ServerBlaster.dll
-  Delete /REBOOTOK $INSTDIR\Plugins\TvMovie.dll
-  Delete /REBOOTOK $INSTDIR\Plugins\XmlTvImport.dll
-  Delete /REBOOTOK $INSTDIR\Plugins\CI_Menu_Plugin.dll
+  Delete $INSTDIR\Plugins\ComSkipLauncher.dll
+  Delete $INSTDIR\Plugins\ConflictsManager.dll
+  #Delete $INSTDIR\Plugins\PersonalTVGuide.dll
+  Delete $INSTDIR\Plugins\PowerScheduler.dll
+  Delete $INSTDIR\Plugins\ServerBlaster.dll
+  Delete $INSTDIR\Plugins\TvMovie.dll
+  Delete $INSTDIR\Plugins\XmlTvImport.dll
+  Delete $INSTDIR\Plugins\CI_Menu_Plugin.dll
   RMDir "$INSTDIR\Plugins"
 
   ; And finally remove all the files installed
   ; Leave the directory in place, as it might contain user modified files
-  Delete /REBOOTOK $INSTDIR\DirectShowLib.dll
+  Delete $INSTDIR\DirectShowLib.dll
   ; binary used for skystar2 support
-  Delete /REBOOTOK $INSTDIR\dvblib.dll
-  Delete /REBOOTOK $INSTDIR\PluginBase.dll
-  Delete /REBOOTOK $INSTDIR\PowerScheduler.Interfaces.DLL
-  Delete /REBOOTOK $INSTDIR\Blaster.exe
-  Delete /REBOOTOK $INSTDIR\SetupTv.exe
-  Delete /REBOOTOK $INSTDIR\SetupTv.exe.config
-  Delete /REBOOTOK $INSTDIR\TvControl.dll
-  Delete /REBOOTOK $INSTDIR\TVDatabase.dll
-  Delete /REBOOTOK $INSTDIR\Gentle.Common.DLL
-  Delete /REBOOTOK $INSTDIR\Gentle.Framework.DLL
-  Delete /REBOOTOK $INSTDIR\Gentle.Provider.MySQL.dll
-  Delete /REBOOTOK $INSTDIR\Gentle.Provider.SQLServer.dll
-  Delete /REBOOTOK $INSTDIR\log4net.dll
-  Delete /REBOOTOK $INSTDIR\MySql.Data.dll
-  Delete /REBOOTOK $INSTDIR\TvBusinessLayer.dll
-  Delete /REBOOTOK $INSTDIR\TvLibrary.Interfaces.dll
-  Delete /REBOOTOK $INSTDIR\TVLibrary.dll
-  Delete /REBOOTOK $INSTDIR\Germany_Unitymedia_NRW.dvbc
-  Delete /REBOOTOK $INSTDIR\TvService.exe
-  Delete /REBOOTOK $INSTDIR\TvService.exe.config
-  Delete /REBOOTOK $INSTDIR\SetupControls.dll
+  Delete $INSTDIR\dvblib.dll
+  Delete $INSTDIR\PluginBase.dll
+  Delete $INSTDIR\PowerScheduler.Interfaces.DLL
+  Delete $INSTDIR\Blaster.exe
+  Delete $INSTDIR\SetupTv.exe
+  Delete $INSTDIR\SetupTv.exe.config
+  Delete $INSTDIR\TvControl.dll
+  Delete $INSTDIR\TVDatabase.dll
+  Delete $INSTDIR\Gentle.Common.DLL
+  Delete $INSTDIR\Gentle.Framework.DLL
+  Delete $INSTDIR\Gentle.Provider.MySQL.dll
+  Delete $INSTDIR\Gentle.Provider.SQLServer.dll
+  Delete $INSTDIR\log4net.dll
+  Delete $INSTDIR\MySql.Data.dll
+  Delete $INSTDIR\TvBusinessLayer.dll
+  Delete $INSTDIR\TvLibrary.Interfaces.dll
+  Delete $INSTDIR\TVLibrary.dll
+  Delete $INSTDIR\Germany_Unitymedia_NRW.dvbc
+  Delete $INSTDIR\TvService.exe
+  Delete $INSTDIR\TvService.exe.config
+  Delete $INSTDIR\SetupControls.dll
 
   ; 3rd party assemblys
-  Delete /REBOOTOK $INSTDIR\dxerr9.dll
-  Delete /REBOOTOK $INSTDIR\hauppauge.dll
-  Delete /REBOOTOK $INSTDIR\hcwWinTVCI.dll
-  Delete /REBOOTOK $INSTDIR\KNCBDACTRL.dll
-  Delete /REBOOTOK $INSTDIR\StreamingServer.dll
-  Delete /REBOOTOK $INSTDIR\ttBdaDrvApi_Dll.dll
-  Delete /REBOOTOK $INSTDIR\ttdvbacc.dll
-  Delete /REBOOTOK $INSTDIR\Ionic.Zip.dll
+  Delete $INSTDIR\dxerr9.dll
+  Delete $INSTDIR\hauppauge.dll
+  Delete $INSTDIR\hcwWinTVCI.dll
+  Delete $INSTDIR\KNCBDACTRL.dll
+  Delete $INSTDIR\StreamingServer.dll
+  Delete $INSTDIR\ttBdaDrvApi_Dll.dll
+  Delete $INSTDIR\ttdvbacc.dll
+  Delete $INSTDIR\Ionic.Zip.dll
 
   ; remove Start Menu shortcuts
   Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"
@@ -689,21 +689,21 @@ ${MementoSectionEnd}
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\mmaacd.ax"
 
   ; The Plugins
-  Delete /REBOOTOK "$MPdir.Plugins\Process\PowerSchedulerClientPlugin.dll"
-  Delete /REBOOTOK "$MPdir.Plugins\Windows\TvPlugin.dll"
+  Delete "$MPdir.Plugins\Process\PowerSchedulerClientPlugin.dll"
+  Delete "$MPdir.Plugins\Windows\TvPlugin.dll"
 
   ; Common Files
-  Delete /REBOOTOK "$MPdir.Base\PowerScheduler.Interfaces.dll"
-  Delete /REBOOTOK "$MPdir.Base\TvControl.dll"
-  Delete /REBOOTOK "$MPdir.Base\TVDatabase.dll"
-  Delete /REBOOTOK "$MPdir.Base\Gentle.Common.DLL"
-  Delete /REBOOTOK "$MPdir.Base\Gentle.Framework.DLL"
-  Delete /REBOOTOK "$MPdir.Base\Gentle.Provider.MySQL.dll"
-  Delete /REBOOTOK "$MPdir.Base\Gentle.Provider.SQLServer.dll"
-  Delete /REBOOTOK "$MPdir.Base\log4net.dll"
-  Delete /REBOOTOK "$MPdir.Base\MySql.Data.dll"
-  Delete /REBOOTOK "$MPdir.Base\TvBusinessLayer.dll"
-  Delete /REBOOTOK "$MPdir.Base\TvLibrary.Interfaces.dll"
+  Delete "$MPdir.Base\PowerScheduler.Interfaces.dll"
+  Delete "$MPdir.Base\TvControl.dll"
+  Delete "$MPdir.Base\TVDatabase.dll"
+  Delete "$MPdir.Base\Gentle.Common.DLL"
+  Delete "$MPdir.Base\Gentle.Framework.DLL"
+  Delete "$MPdir.Base\Gentle.Provider.MySQL.dll"
+  Delete "$MPdir.Base\Gentle.Provider.SQLServer.dll"
+  Delete "$MPdir.Base\log4net.dll"
+  Delete "$MPdir.Base\MySql.Data.dll"
+  Delete "$MPdir.Base\TvBusinessLayer.dll"
+  Delete "$MPdir.Base\TvLibrary.Interfaces.dll"
 !macroend
 
 ${MementoSectionDone}
@@ -809,8 +809,8 @@ Section Uninstall
   RMDir "$SMPROGRAMS\Team MediaPortal"
 
   ; remove last files and instdir
-  RMDir /REBOOTOK "$INSTDIR\pmt"
-  Delete /REBOOTOK "$INSTDIR\uninstall-tve3.exe"
+  RMDir "$INSTDIR\pmt"
+  Delete "$INSTDIR\uninstall-tve3.exe"
   RMDir "$INSTDIR"
 
 
@@ -818,13 +818,13 @@ Section Uninstall
   ${If} $UnInstallMode == 1
 
     ${LOG_TEXT} "INFO" "Removing User Settings"
-    RMDir /r /REBOOTOK "${COMMON_APPDATA}"
-    RMDir /r /REBOOTOK $INSTDIR
+    RMDir /r "${COMMON_APPDATA}"
+    RMDir /r $INSTDIR
 
-    RMDir /r /REBOOTOK "$LOCALAPPDATA\VirtualStore\ProgramData\Team MediaPortal\MediaPortal TV Server"
-    RMDir /r /REBOOTOK "$LOCALAPPDATA\VirtualStore\Program Files\Team MediaPortal\MediaPortal TV Server"
-    RMDir /REBOOTOK "$LOCALAPPDATA\VirtualStore\ProgramData\Team MediaPortal"
-    RMDir /REBOOTOK "$LOCALAPPDATA\VirtualStore\Program Files\Team MediaPortal"
+    RMDir /r "$LOCALAPPDATA\VirtualStore\ProgramData\Team MediaPortal\MediaPortal TV Server"
+    RMDir /r "$LOCALAPPDATA\VirtualStore\Program Files\Team MediaPortal\MediaPortal TV Server"
+    RMDir "$LOCALAPPDATA\VirtualStore\ProgramData\Team MediaPortal"
+    RMDir "$LOCALAPPDATA\VirtualStore\Program Files\Team MediaPortal"
 
   ${ElseIf} $UnInstallMode == 2
 
@@ -1047,8 +1047,8 @@ Function un.onUninstSuccess
   ${If} ${RebootFlag}
     ${LOG_TEXT} "INFO" "!!! Some files were not able to uninstall. To finish uninstallation completly a REBOOT is needed."
     FileOpen $0 $INSTDIR\rebootflag w
-    Delete /REBOOTOK $INSTDIR\rebootflag ; this will not be deleted until the reboot because it is currently opened
-    RmDir /REBOOTOK $INSTDIR
+    Delete $INSTDIR\rebootflag ; this will not be deleted until the reboot because it is currently opened
+    RmDir $INSTDIR
     FileClose $0
   ${EndIf}
 

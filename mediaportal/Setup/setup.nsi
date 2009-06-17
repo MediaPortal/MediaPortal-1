@@ -592,95 +592,95 @@ SectionEnd
 
 
   ; Remove the Folders
-  RMDir /r /REBOOTOK "$MPdir.BurnerSupport"
-  RMDir /r /REBOOTOK "$MPdir.Cache"
+  RMDir /r "$MPdir.BurnerSupport"
+  RMDir /r "$MPdir.Cache"
 
   ; Config Files
-  Delete /REBOOTOK "$MPdir.Config\CaptureCardDefinitions.xml"
-  Delete /REBOOTOK "$MPdir.Config\eHome Infrared Transceiver List XP.xml"
-  Delete /REBOOTOK "$MPdir.Config\HelpReferences.xml"
-  Delete /REBOOTOK "$MPdir.Config\ISDNCodes.xml"
-  Delete /REBOOTOK "$MPdir.Config\keymap.xml"
-  Delete /REBOOTOK "$MPdir.Config\wikipedia.xml"
-  Delete /REBOOTOK "$MPdir.Config\yac-area-codes.xml"
+  Delete "$MPdir.Config\CaptureCardDefinitions.xml"
+  Delete "$MPdir.Config\eHome Infrared Transceiver List XP.xml"
+  Delete "$MPdir.Config\HelpReferences.xml"
+  Delete "$MPdir.Config\ISDNCodes.xml"
+  Delete "$MPdir.Config\keymap.xml"
+  Delete "$MPdir.Config\wikipedia.xml"
+  Delete "$MPdir.Config\yac-area-codes.xml"
 
-  Delete /REBOOTOK "$MPdir.Config\Installer\cleanup.xml"
+  Delete "$MPdir.Config\Installer\cleanup.xml"
   RMDir "$MPdir.Config\Installer"
-  Delete /REBOOTOK "$MPdir.Config\scripts\MovieInfo\IMDB.csscript"
+  Delete "$MPdir.Config\scripts\MovieInfo\IMDB.csscript"
   RMDir "$MPdir.Config\scripts\MovieInfo"
   RMDir "$MPdir.Config\scripts"
-  ;Delete /REBOOTOK "$MPdir.Base\xmltv\ReadMe.txt"
-  ;Delete /REBOOTOK "$MPdir.Base\xmltv\xmltv.dtd"
+  ;Delete "$MPdir.Base\xmltv\ReadMe.txt"
+  ;Delete "$MPdir.Base\xmltv\xmltv.dtd"
   ;RMDir "$MPdir.Config\xmltv"
 
 
   ; MediaPortal.exe
-  Delete /REBOOTOK "$MPdir.Base\MediaPortal.exe"
-  Delete /REBOOTOK "$MPdir.Base\MediaPortal.exe.config"
+  Delete "$MPdir.Base\MediaPortal.exe"
+  Delete "$MPdir.Base\MediaPortal.exe.config"
   ; Configuration
-  Delete /REBOOTOK "$MPdir.Base\Configuration.exe"
-  Delete /REBOOTOK "$MPdir.Base\Configuration.exe.config"
+  Delete "$MPdir.Base\Configuration.exe"
+  Delete "$MPdir.Base\Configuration.exe.config"
   ; Core
-  Delete /REBOOTOK "$MPdir.Base\Core.dll"
-  Delete /REBOOTOK "$MPdir.Base\DirectShowLib.dll"
-  Delete /REBOOTOK "$MPdir.Base\fontengine.dll"
-  Delete /REBOOTOK "$MPdir.Base\dshowhelper.dll"
-  Delete /REBOOTOK "$MPdir.Base\dxutil.dll"
-  Delete /REBOOTOK "$MPdir.Base\Dxerr9.dll"
-  Delete /REBOOTOK "$MPdir.Base\mpcSubs.dll"
-  Delete /REBOOTOK "$MPdir.Base\MiniDisplayLibrary.dll"
+  Delete "$MPdir.Base\Core.dll"
+  Delete "$MPdir.Base\DirectShowLib.dll"
+  Delete "$MPdir.Base\fontengine.dll"
+  Delete "$MPdir.Base\dshowhelper.dll"
+  Delete "$MPdir.Base\dxutil.dll"
+  Delete "$MPdir.Base\Dxerr9.dll"
+  Delete "$MPdir.Base\mpcSubs.dll"
+  Delete "$MPdir.Base\MiniDisplayLibrary.dll"
   ; Utils
-  Delete /REBOOTOK "$MPdir.Base\Utils.dll"
+  Delete "$MPdir.Base\Utils.dll"
   ; Support
-  Delete /REBOOTOK "$MPdir.Base\MediaPortal.Support.dll"
+  Delete "$MPdir.Base\MediaPortal.Support.dll"
   ; Databases
-  Delete /REBOOTOK "$MPdir.Base\Databases.dll"
+  Delete "$MPdir.Base\Databases.dll"
   ; TvCapture
-  ;Delete /REBOOTOK "$MPdir.Base\TVCapture.dll"
+  ;Delete "$MPdir.Base\TVCapture.dll"
   ; TvGuideScheduler
-  ;Delete /REBOOTOK "$MPdir.Base\TVGuideScheduler.exe"
+  ;Delete "$MPdir.Base\TVGuideScheduler.exe"
   ; TVE2 Skystar2 support
-  ;Delete /REBOOTOK "$MPdir.Base\dvblib.dll"
+  ;Delete "$MPdir.Base\dvblib.dll"
   ; MusicShareWatcher
-  Delete /REBOOTOK "$MPdir.Base\MusicShareWatcher.exe"
-  Delete /REBOOTOK "$MPdir.Base\MusicShareWatcherHelper.dll"
+  Delete "$MPdir.Base\MusicShareWatcher.exe"
+  Delete "$MPdir.Base\MusicShareWatcherHelper.dll"
   ; MPInstaller
-  Delete /REBOOTOK "$MPdir.Base\MPInstaller.exe"
-  Delete /REBOOTOK "$MPdir.Base\MPInstaller.exe.config"
-  Delete /REBOOTOK "$MPdir.Base\MPInstaller.Library.dll"
-  Delete /REBOOTOK "$MPdir.Base\MPIMaker.exe"
+  Delete "$MPdir.Base\MPInstaller.exe"
+  Delete "$MPdir.Base\MPInstaller.exe.config"
+  Delete "$MPdir.Base\MPInstaller.Library.dll"
+  Delete "$MPdir.Base\MPIMaker.exe"
   ; WatchDog
-  Delete /REBOOTOK "$MPdir.Base\WatchDog.exe"
-  Delete /REBOOTOK "$MPdir.Base\DaggerLib.dll"
-  Delete /REBOOTOK "$MPdir.Base\DaggerLib.DSGraphEdit.dll"
-  Delete /REBOOTOK "$MPdir.Base\DirectShowLib-2005.dll"
-  Delete /REBOOTOK "$MPdir.Base\MediaFoundation.dll"
+  Delete "$MPdir.Base\WatchDog.exe"
+  Delete "$MPdir.Base\DaggerLib.dll"
+  Delete "$MPdir.Base\DaggerLib.DSGraphEdit.dll"
+  Delete "$MPdir.Base\DirectShowLib-2005.dll"
+  Delete "$MPdir.Base\MediaFoundation.dll"
   ; WebEPG
-  ;Delete /REBOOTOK "$MPdir.Base\WebEPG.dll"
-  ;Delete /REBOOTOK "$MPdir.Base\WebEPG.exe"
-  ;Delete /REBOOTOK "$MPdir.Base\WebEPG-conf.exe"
+  ;Delete "$MPdir.Base\WebEPG.dll"
+  ;Delete "$MPdir.Base\WebEPG.exe"
+  ;Delete "$MPdir.Base\WebEPG-conf.exe"
   ; Plugins
-  Delete /REBOOTOK "$MPdir.Base\RemotePlugins.dll"
-  Delete /REBOOTOK "$MPdir.Base\HcwHelper.exe"
-  Delete /REBOOTOK "$MPdir.Base\Interop.X10.dll"
-  Delete /REBOOTOK "$MPdir.Plugins\ExternalPlayers\ExternalPlayers.dll"
+  Delete "$MPdir.Base\RemotePlugins.dll"
+  Delete "$MPdir.Base\HcwHelper.exe"
+  Delete "$MPdir.Base\Interop.X10.dll"
+  Delete "$MPdir.Plugins\ExternalPlayers\ExternalPlayers.dll"
   RMDir "$MPdir.Plugins\ExternalPlayers"
-  Delete /REBOOTOK "$MPdir.Plugins\process\ProcessPlugins.dll"
+  Delete "$MPdir.Plugins\process\ProcessPlugins.dll"
   RMDir "$MPdir.Plugins\process"
-  Delete /REBOOTOK "$MPdir.Plugins\subtitle\SubtitlePlugins.dll"
+  Delete "$MPdir.Plugins\subtitle\SubtitlePlugins.dll"
   RMDir "$MPdir.Plugins\subtitle"
-  Delete /REBOOTOK "$MPdir.Plugins\Windows\Dialogs.dll"
-  Delete /REBOOTOK "$MPdir.Plugins\Windows\WindowPlugins.dll"
+  Delete "$MPdir.Plugins\Windows\Dialogs.dll"
+  Delete "$MPdir.Plugins\Windows\WindowPlugins.dll"
   RMDir "$MPdir.Plugins\Windows"
   RMDir "$MPdir.Plugins"
   ; MyBurner plugin dependencies
-  Delete /REBOOTOK "$MPdir.Base\XPBurnComponent.dll"
+  Delete "$MPdir.Base\XPBurnComponent.dll"
   ; Doc
-  Delete /REBOOTOK "$MPdir.Base\Docs\BASS License.txt"
-  Delete /REBOOTOK "$MPdir.Base\Docs\MediaPortal License.rtf"
+  Delete "$MPdir.Base\Docs\BASS License.txt"
+  Delete "$MPdir.Base\Docs\MediaPortal License.rtf"
   RMDir "$MPdir.Base\Docs"
   ; Wizards
-  RMDir /r /REBOOTOK "$MPdir.Base\Wizards"
+  RMDir /r "$MPdir.Base\Wizards"
 !macroend
 
 !ifndef HEISE_BUILD
@@ -710,7 +710,7 @@ ${MementoSectionEnd}
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\Mpeg2DecFilter.ax"
 
   ; remove the tool to adjust the merit
-  Delete /REBOOTOK "$MPdir.Base\SetMerit.exe"
+  Delete "$MPdir.Base\SetMerit.exe"
 !macroend
 !endif
 
@@ -840,7 +840,7 @@ Section Uninstall
   Delete "$DESKTOP\MediaPortal Configuration.lnk"
 
   ; remove last files and instdir
-  Delete /REBOOTOK "$MPdir.Base\uninstall-mp.exe"
+  Delete "$MPdir.Base\uninstall-mp.exe"
   RMDir "$MPdir.Base"
 
 
@@ -856,17 +856,17 @@ Section Uninstall
 
     ${LOG_TEXT} "INFO" "Removing User Settings"
     DeleteRegKey HKLM "${REG_UNINSTALL}"
-    RMDir /r /REBOOTOK "$MPdir.Config"
-    RMDir /r /REBOOTOK "$MPdir.Database"
-    RMDir /r /REBOOTOK "$MPdir.Language"
-    RMDir /r /REBOOTOK "$MPdir.Plugins"
-    RMDir /r /REBOOTOK "$MPdir.Skin"
-    RMDir /r /REBOOTOK "$MPdir.Base"
+    RMDir /r "$MPdir.Config"
+    RMDir /r "$MPdir.Database"
+    RMDir /r "$MPdir.Language"
+    RMDir /r "$MPdir.Plugins"
+    RMDir /r "$MPdir.Skin"
+    RMDir /r "$MPdir.Base"
 
-    RMDir /r /REBOOTOK "$LOCALAPPDATA\VirtualStore\ProgramData\Team MediaPortal\MediaPortal"
-    RMDir /r /REBOOTOK "$LOCALAPPDATA\VirtualStore\Program Files\Team MediaPortal\MediaPortal"
-    RMDir /REBOOTOK "$LOCALAPPDATA\VirtualStore\ProgramData\Team MediaPortal"
-    RMDir /REBOOTOK "$LOCALAPPDATA\VirtualStore\Program Files\Team MediaPortal"
+    RMDir /r "$LOCALAPPDATA\VirtualStore\ProgramData\Team MediaPortal\MediaPortal"
+    RMDir /r "$LOCALAPPDATA\VirtualStore\Program Files\Team MediaPortal\MediaPortal"
+    RMDir "$LOCALAPPDATA\VirtualStore\ProgramData\Team MediaPortal"
+    RMDir "$LOCALAPPDATA\VirtualStore\Program Files\Team MediaPortal"
 
   ${ElseIf} $UnInstallMode == 2
 
@@ -1028,8 +1028,8 @@ Function un.onUninstSuccess
   ${If} ${RebootFlag}
     ${LOG_TEXT} "INFO" "!!! Some files were not able to uninstall. To finish uninstallation completly a REBOOT is needed."
     FileOpen $0 "$MPdir.Base\rebootflag" w
-    Delete /REBOOTOK "$MPdir.Base\rebootflag" ; this will not be deleted until the reboot because it is currently opened
-    RMDir /REBOOTOK "$MPdir.Base"
+    Delete "$MPdir.Base\rebootflag" ; this will not be deleted until the reboot because it is currently opened
+    RMDir "$MPdir.Base"
     FileClose $0
   ${EndIf}
 
