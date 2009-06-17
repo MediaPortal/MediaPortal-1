@@ -2026,13 +2026,17 @@
     <carrier frequency="826000" bandwidth="8"></carrier>
   </country>
   <country name="Italy - Roma" offset="125">
-    <carrier frequency="186000" bandwidth="7"></carrier>
+    <carrier frequency="184500" bandwidth="7"></carrier>
+    <carrier frequency="482000" bandwidth="8"></carrier>
+    <carrier frequency="530000" bandwidth="8"></carrier>
     <carrier frequency="626000" bandwidth="8"></carrier>
+    <carrier frequency="634000" bandwidth="8"></carrier>
     <carrier frequency="698000" bandwidth="8"></carrier>
     <carrier frequency="714000" bandwidth="8"></carrier>
     <carrier frequency="730000" bandwidth="8"></carrier>
     <carrier frequency="762000" bandwidth="8"></carrier>
     <carrier frequency="770000" bandwidth="8"></carrier>
+    <carrier frequency="802000" bandwidth="8"></carrier>
     <carrier frequency="810000" bandwidth="8"></carrier>
   </country>
   <country name="Italy - Sorrento (Faito)" offset="125">
