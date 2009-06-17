@@ -515,15 +515,17 @@
 
 
 
-!macro SetProgramDataRights
-  ${LOG_TEXT} "INFO" "Setting AccessRights to ProgramData dir"
+!macro SetRights
+  ${LOG_TEXT} "INFO" "Setting AccessRights to ProgramData dir and reg keys"
 
   SetOverwrite on
   SetOutPath "$PLUGINSDIR"
   File "${svn_ROOT}\Tools\Script & Batch tools\SetRights\bin\Release\SetRights.exe"
 
   SetShellVarContext all
-  nsExec::ExecToLog '"$PLUGINSDIR\SetRights.exe" "$APPDATA\Team MediaPortal"'
+  nsExec::ExecToLog '"$PLUGINSDIR\SetRights.exe" FOLDER "$APPDATA\Team MediaPortal"'
+  nsExec::ExecToLog '"$PLUGINSDIR\SetRights.exe" HKLM "Software\Team MediaPortal"'
+  nsExec::ExecToLog '"$PLUGINSDIR\SetRights.exe" HKCU "Software\Team MediaPortal"'
 !macroend
 
 

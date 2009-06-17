@@ -797,8 +797,8 @@ Section -Post
 
   WriteUninstaller "$MPdir.Base\uninstall-mp.exe"
 
-  ; set rights to programmdata directory
-  !insertmacro SetProgramDataRights
+  ; set rights to programmdata directory and reg keys
+  !insertmacro SetRights
 
   ; associate file extensions
   ${RegisterExtension} "$MPdir.Base\MPInstaller.exe" ".mpi" "MediaPortal extension package"

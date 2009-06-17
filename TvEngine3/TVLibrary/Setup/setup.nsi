@@ -786,8 +786,8 @@ Section -Post
 
   WriteUninstaller "$INSTDIR\uninstall-tve3.exe"
 
-  ; set rights to programmdata directory
-  !insertmacro SetProgramDataRights
+  ; set rights to programmdata directory and reg keys
+  !insertmacro SetRights
 SectionEnd
 
 #---------------------------------------------------------------------------
