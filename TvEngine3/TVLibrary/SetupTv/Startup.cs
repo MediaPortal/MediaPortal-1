@@ -107,31 +107,23 @@ namespace SetupTv
       string DeploySql = string.Empty;
       string DeployPwd = string.Empty;
 
-      OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-      string ServicePack = "";
-      if (!String.IsNullOrEmpty(os.OSCSDVersion))
-        ServicePack = " (" + os.OSCSDVersion + ")";
-      Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on " + os.OSVersionString + ServicePack + " ----");
 
-      // Store OS version for next checks
-      int OsVer = (os.OSMajorVersion * 10) + os.OSMinorVersion;
+      Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.OSVersion + " ----");
 
-      //If OS = WindowsXP64, WindowsServer2003 or Windows7 then we won't support them
-      bool unsupported = false;
-      switch (OsVer)
+      //Check for unsupported operating systems
+      switch (OSInfo.OSInfo.GetOSName())
       {
-        case 52:  //WindowsXP 64 and Windows2003
-        case 61:  //Windows 7
-          unsupported = true;
+        case OSInfo.OSInfo.OSList.Windows2000andPrevious:
+        case OSInfo.OSInfo.OSList.WindowsXp64:
+        case OSInfo.OSInfo.OSList.Windows2003:
+        case OSInfo.OSInfo.OSList.Windows2008:
+        case OSInfo.OSInfo.OSList.Windows7:
+          //Used .Info as .Warning is missing
+          Log.Info("****************************************");
+          Log.Info("* WARNING, OS not officially supported *");
+          Log.Info("****************************************");
           break;
-      }
-      if (unsupported)
-      {
-        //Used .Info as .Warning is missing
-        Log.Info("****************************************");
-        Log.Info("* WARNING, OS not officially supported *");
-        Log.Info("****************************************");
       }
 
       NameValueCollection appSettings = ConfigurationManager.AppSettings;

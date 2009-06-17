@@ -122,7 +122,6 @@
       <DependentUpon>GroupNameForm.cs</DependentUpon>
     </Compile>
     <Compile Include="HelpSystem.cs" />
-    <Compile Include="OSVersion.cs" />
     <Compile Include="Sections\CardDvbIP.cs">
       <SubType>UserControl</SubType>
     </Compile>

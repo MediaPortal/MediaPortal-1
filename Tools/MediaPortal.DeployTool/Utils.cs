@@ -97,6 +97,7 @@ namespace MediaPortal.DeployTool
   class Utils
   {
     public static readonly string _arch = Check64bit() ? "64" : "32";
+    public static readonly OSInfo.OSInfo.OSList _osver = OSInfo.OSInfo.GetOSName();
 
     #region DialogHelper
     public static void ErrorDlg(string msg)
@@ -225,8 +226,7 @@ namespace MediaPortal.DeployTool
 
     private static string GetUserAgentOsString()
     {
-      OsDetection.OperatingSystemVersion os = new OsDetection.OperatingSystemVersion();
-      return "Windows NT " + os.OSMajorVersion + "." + os.OSMinorVersion;
+      return "Windows NT " + OSInfo.OSInfo.OSMajorVersion + "." + OSInfo.OSInfo.OSMinorVersion;
     }
 
     public static void UninstallNSIS(string RegistryFullPathName)
@@ -322,52 +322,22 @@ namespace MediaPortal.DeployTool
     #region Operation System Version Check
     public static void CheckPrerequisites()
     {
-      OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
       DialogResult res;
 
-      string ServicePack = "";
-      if (!string.IsNullOrEmpty(os.OSCSDVersion))
-        ServicePack = " (" + os.OSCSDVersion + ")";
-      string MsgOsVersion = os.OSVersionString + ServicePack;
-
-      int ver = (os.OSMajorVersion * 10) + os.OSMinorVersion;
-
-      // Disable OS if < XP
-      if (ver < 51)
+      switch (OSInfo.OSInfo.GetOSSupported())
       {
-        MessageBox.Show(Localizer.GetBestTranslation("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
-        Application.Exit();
-      }
-      switch (ver)
-      {
-        case 51:
-          if (os.OSServicePackMajor < 2)
-          {
-            MessageBox.Show(Localizer.GetBestTranslation("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            Application.Exit();
-          }
+        case 0:
+          MessageBox.Show(Localizer.GetBestTranslation("OS_Support"), OSInfo.OSInfo.OSVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
+          Application.Exit();
           break;
-        case 52:
-          if (os.OSProductType == OsDetection.OSProductType.Workstation)
-          {
-            MsgOsVersion = MsgOsVersion + " [64bit]";
-            MessageBox.Show(Localizer.GetBestTranslation("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            Application.Exit();
-          }
-          res = MessageBox.Show(Localizer.GetBestTranslation("OS_Warning"), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+        case 2:
+          res = MessageBox.Show(Localizer.GetBestTranslation("OS_Warning"), OSInfo.OSInfo.OSVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
           if (res == DialogResult.Cancel) Application.Exit();
           break;
-        case 60:
-          if (os.OSProductType != OsDetection.OSProductType.Workstation || os.OSServicePackMajor < 1)
-          {
-            res = MessageBox.Show(Localizer.GetBestTranslation("OS_Warning"), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-            if (res == DialogResult.Cancel) Application.Exit();
-          }
-          break;
       }
-      if (os.OSServicePackBuild != 0)
+      if (OSInfo.OSInfo.OSServicePackMinor != 0)
       {
-        res = MessageBox.Show(Localizer.GetBestTranslation("OS_Beta"), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+        res = MessageBox.Show(Localizer.GetBestTranslation("OS_Beta"), OSInfo.OSInfo.OSVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
         if (res == DialogResult.Cancel) Application.Exit();
       }
     }
@@ -383,9 +353,9 @@ namespace MediaPortal.DeployTool
 
     public static bool Check64bit()
     {
-      OsDetection.OperatingSystemVersion os = new OsDetection.OperatingSystemVersion();
       //IsWow64Process is not supported under Windows2000
-      if ((os.OSMajorVersion * 10) + os.OSMinorVersion == 50) return false;
+      if (_osver == OSInfo.OSInfo.OSList.Windows2000andPrevious) return false;
+
       Process p = Process.GetCurrentProcess();
       IntPtr handle = p.Handle;
       bool isWow64;

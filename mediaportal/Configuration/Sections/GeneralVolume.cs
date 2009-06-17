@@ -30,7 +30,6 @@ using System.Text;
 using System.Windows.Forms;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
-using OsDetection;
 
 #pragma warning disable 108
 
@@ -74,8 +73,7 @@ namespace MediaPortal.Configuration.Sections
       using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         int volumeStyle = reader.GetValueAsInt("volume", "handler", -1);
-        OSVersionInfo os = new OperatingSystemVersion();
-        int ver = (os.OSMajorVersion*10) + os.OSMinorVersion;
+        int ver = (OSInfo.OSInfo.OSMajorVersion * 10) + OSInfo.OSInfo.OSMinorVersion;
         if (volumeStyle == -1)
         {
           if (ver >= 60)
@@ -160,7 +158,7 @@ namespace MediaPortal.Configuration.Sections
 
         if (section != null)
         {
-          bool mixing = (bool) section.GetSetting("mixing");
+          bool mixing = (bool)section.GetSetting("mixing");
           if (mixing)
           {
             _useMasterVolume.Checked = true;
@@ -187,7 +185,7 @@ namespace MediaPortal.Configuration.Sections
     {
       try
       {
-        string valueText = ((TextBox) sender).Text;
+        string valueText = ((TextBox)sender).Text;
 
         int percentIndex = valueText.LastIndexOf('%');
 
@@ -200,7 +198,7 @@ namespace MediaPortal.Configuration.Sections
 
         if (percentIndex != -1)
         {
-          _customLevel = Math.Max(0, Math.Min(65535, (int) (((float) _customLevel*65535)/100)));
+          _customLevel = Math.Max(0, Math.Min(65535, (int)(((float)_customLevel * 65535) / 100)));
           _levelTextbox.Text = _customLevel.ToString();
         }
       }
@@ -222,7 +220,7 @@ namespace MediaPortal.Configuration.Sections
         StringBuilder builder = new StringBuilder();
         ArrayList valueArray = new ArrayList();
 
-        foreach (string token in ((TextBox) sender).Text.Split(new char[] {',', ';', ' '}))
+        foreach (string token in ((TextBox)sender).Text.Split(new char[] { ',', ';', ' ' }))
         {
           if (token == string.Empty)
           {

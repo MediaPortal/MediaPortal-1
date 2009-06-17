@@ -227,7 +227,7 @@
     <Compile Include="MPListView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="OSVersion.cs" />
+    <Compile Include="OSInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="DeployDialog.resx">

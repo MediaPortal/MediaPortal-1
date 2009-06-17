@@ -1,7 +1,6 @@
 using System;
 using MediaPortal.Profile;
 using MediaPortal.ServiceImplementations;
-using OsDetection;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -25,21 +24,20 @@ namespace MediaPortal.Configuration.Sections
       {
         //VMR9 settings
         checkboxMpNonsquare.Checked = xmlreader.GetValueAsBool("general", "nonsquare", true);
-          // http://msdn2.microsoft.com/en-us/library/ms787438(VS.85).aspx
+        // http://msdn2.microsoft.com/en-us/library/ms787438(VS.85).aspx
         checkboxDXEclusive.Checked = xmlreader.GetValueAsBool("general", "exclusivemode", true);
         mpVMR9FilterMethod.Text = xmlreader.GetValueAsString("general", "dx9filteringmode", "Gaussian Quad Filtering");
-          // http://msdn2.microsoft.com/en-us/library/ms788066.aspx
+        // http://msdn2.microsoft.com/en-us/library/ms788066.aspx
         checkBoxVMRWebStreams.Checked = xmlreader.GetValueAsBool("general", "usevrm9forwebstreams", true);
         checkBoxDecimateMask.Checked = xmlreader.GetValueAsBool("general", "dx9decimatemask", false);
-          // http://msdn2.microsoft.com/en-us/library/ms787452(VS.85).aspx
+        // http://msdn2.microsoft.com/en-us/library/ms787452(VS.85).aspx
 
         bool ValueEVR = false;
 
         try
         {
           //EVR - VMR9 selection
-          OSVersionInfo os = new OperatingSystemVersion();
-          int ver = (os.OSMajorVersion*10) + os.OSMinorVersion;
+          int ver = (OSInfo.OSInfo.OSMajorVersion * 10) + OSInfo.OSInfo.OSMinorVersion;
           ValueEVR = ver >= 60 ? true : false;
         }
         catch (Exception ex)

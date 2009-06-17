@@ -83,6 +83,7 @@ namespace SetupTv
     [DllImport("kernel32.dll", SetLastError = true)]
     static extern bool CloseHandle(IntPtr hObject);
 
+    public static OSInfo.OSInfo.OSList _osver = OSInfo.OSInfo.GetOSName();
 
     public delegate void UtilEventHandler(Process proc, bool waitForExit);
 
@@ -162,7 +163,8 @@ namespace SetupTv
           disk.Get();
           diskSize = Int64.Parse(disk["Size"].ToString());
         }
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         return -1;
       }
@@ -365,7 +367,8 @@ namespace SetupTv
             }
           }
         }
-      } catch (Exception)
+      }
+      catch (Exception)
       {
       }
 
@@ -420,7 +423,8 @@ namespace SetupTv
           strPath = "";
           strFileName = strFileNameAndPath;
         }
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         strPath = "";
         strFileName = strFileNameAndPath;
@@ -444,7 +448,8 @@ namespace SetupTv
           }
           CloseHandle(fHandle);
         }
-      } catch (Exception)
+      }
+      catch (Exception)
       {
       }
 
@@ -474,7 +479,8 @@ namespace SetupTv
         int year = (int)ldate;
         DateTime dt = new DateTime(year, month, day, hour, minute, 0, 0);
         return dt;
-      } catch (Exception)
+      }
+      catch (Exception)
       {
       }
       return DateTime.Now;
@@ -498,7 +504,8 @@ namespace SetupTv
         lRet = lRet * 100L + iMin;
         lRet = lRet * 100L + iSec;
         return lRet;
-      } catch (Exception)
+      }
+      catch (Exception)
       {
       }
       return 0;
@@ -551,7 +558,8 @@ namespace SetupTv
           return true;
         File.Delete(strFile);
         return true;
-      } catch (Exception)
+      }
+      catch (Exception)
       {
       }
       return false;
@@ -567,7 +575,8 @@ namespace SetupTv
       {
         Directory.Delete(strDir);
         return true;
-      } catch (Exception)
+      }
+      catch (Exception)
       {
       }
       return false;
@@ -684,9 +693,11 @@ namespace SetupTv
           try
           {
             File.Delete(strFile);
-          } catch (Exception) { }
+          }
+          catch (Exception) { }
         }
-      } catch (Exception) { }
+      }
+      catch (Exception) { }
 
     }
 
@@ -711,7 +722,8 @@ namespace SetupTv
         int min = Int32.Parse(parts[4]);
         int sec = Int32.Parse(parts[5]);
         return new DateTime(year, month, day, hour, min, sec, 0);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
       }
       return DateTime.Now;
@@ -790,61 +802,39 @@ namespace SetupTv
 
     public static void CheckPrerequisites(bool checkDvbFix)
     {
-      OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
       DialogResult res;
 
       const string MsgNotSupported = "Your platform is not supported by MediaPortal Team because it lacks critical hotfixes! \nPlease check our Wiki's requirements page.";
       const string MsgNotInstallable = "Your platform is not supported and cannot be used for MediaPortal/TV-Server! \nPlease check our Wiki's requirements page.";
       const string MsgBetaServicePack = "You are running a BETA version of Service Pack {0}.\n Please don't do bug reporting with such configuration.";
-      string ServicePack = "";
-      if (!string.IsNullOrEmpty(os.OSCSDVersion))
-        ServicePack = " (" + os.OSCSDVersion + ")";
-      string MsgOsVersion = os.OSVersionString + ServicePack;
-
-      int ver = (os.OSMajorVersion * 10) + os.OSMinorVersion;
 
       // Disable OS if < XP
-      if (ver < 51)
+      if (OSInfo.OSInfo.GetOSName() == OSInfo.OSInfo.OSList.Windows2000andPrevious)
       {
-        MessageBox.Show(MsgNotInstallable, MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show(MsgNotInstallable, OSInfo.OSInfo.OSVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
         Application.Exit();
       }
-      switch (ver)
+      switch (OSInfo.OSInfo.GetOSSupported())
       {
-        case 51:
-          if (os.OSServicePackMajor < 2)
-          {
-            MessageBox.Show(MsgNotInstallable, MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            Application.Exit();
-          }
+        case 0:
+          MessageBox.Show(MsgNotInstallable, OSInfo.OSInfo.OSVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
+          Application.Exit();
+          break;
+        case 1:
           if (checkDvbFix)
             CheckForDvbHotfix();
           break;
-        case 52:
-          if (os.OSProductType == OsDetection.OSProductType.Workstation)
-          {
-            MsgOsVersion = MsgOsVersion + " [64bit]";
-            MessageBox.Show(MsgNotInstallable, MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            Application.Exit();
-          }
-          res = MessageBox.Show(MsgNotSupported, MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+        case 2:
+          res = MessageBox.Show(MsgNotSupported, OSInfo.OSInfo.OSVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
           if (res == DialogResult.Cancel)
             Application.Exit();
           if (checkDvbFix)
             CheckForDvbHotfix();
           break;
-        case 60:
-          if (os.OSProductType != OsDetection.OSProductType.Workstation || os.OSServicePackMajor < 1)
-          {
-            res = MessageBox.Show(MsgNotSupported, MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-            if (res == DialogResult.Cancel)
-              Application.Exit();
-          }
-          break;
       }
-      if (os.OSServicePackBuild != 0)
+      if (OSInfo.OSInfo.OSServicePackMinor != 0)
       {
-        res = MessageBox.Show(String.Format(MsgBetaServicePack, os.OSServicePackMajor), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+        res = MessageBox.Show(String.Format(MsgBetaServicePack, OSInfo.OSInfo.OSServicePackMajor), OSInfo.OSInfo.OSVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
         if (res == DialogResult.Cancel)
           Application.Exit();
       }
@@ -884,7 +874,8 @@ namespace SetupTv
           TvLibrary.Log.Log.Info("Util: Psisdecd.dll error - {0}", ErrorMsg);
           if (MessageBox.Show(ErrorMsg, "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK)
             Process.Start(@"http://wiki.team-mediaportal.com/GeneralRequirements");
-        } catch (Exception) { }
+        }
+        catch (Exception) { }
       }
     }
 
@@ -908,7 +899,8 @@ namespace SetupTv
           return aCurrentVersion >= desiredVersion;
         }
         return false;
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         return false;
       }
@@ -951,11 +943,13 @@ namespace SetupTv
                     }
                   }
                 }
-              } catch (Exception) { }
+              }
+              catch (Exception) { }
             }
           }
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         MessageBox.Show(string.Format("Error checking registry for registered Assembly: {0} - {1}", aFilename, ex.Message));
       }
@@ -994,7 +988,8 @@ namespace SetupTv
             }
           }
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         MessageBox.Show(string.Format("Error checking registry for installed components: {0}", ex.Message));
       }

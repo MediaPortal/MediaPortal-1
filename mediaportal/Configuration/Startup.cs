@@ -34,7 +34,6 @@ using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Services;
 using MediaPortal.Util;
-using OsDetection;
 
 namespace MediaPortal.Configuration
 {
@@ -51,7 +50,7 @@ namespace MediaPortal.Configuration
     private StartupMode startupMode = StartupMode.Normal;
     private string sectionsConfiguration = string.Empty;
     private bool _avoidVersionChecking = false;
-    
+
     private const string mpMutex = "{E0151CBA-7F81-41df-9849-F5298A779EB3}";
     private const string configMutex = "{0BFD648F-A59F-482A-961B-337D70968611}";
 
@@ -133,14 +132,9 @@ namespace MediaPortal.Configuration
           Win32API.ActivatePreviousInstance();
         }
 
-        OSVersionInfo os = new OperatingSystemVersion();
         FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-        string ServicePack = "";
-        if (!String.IsNullOrEmpty(os.OSCSDVersion))
-        {
-          ServicePack = " (" + os.OSCSDVersion + ")";
-        }
-        Log.Info("Configuration v" + versionInfo.FileVersion + " is starting up on " + os.OSVersionString + ServicePack);
+
+        Log.Info("Configuration v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.OSVersion);
 
         // Check for a MediaPortal Instance running and don't allow Configuration to start
         using (ProcessLock mpLock = new ProcessLock(mpMutex))
@@ -165,7 +159,7 @@ namespace MediaPortal.Configuration
           }
         }
 
-string MpConfig = Assembly.GetExecutingAssembly().Location;
+        string MpConfig = Assembly.GetExecutingAssembly().Location;
 #if !DEBUG
         // Check TvPlugin version
         string tvPlugin = Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll";
@@ -186,7 +180,7 @@ string MpConfig = Assembly.GetExecutingAssembly().Location;
         }
 #endif
 
-      FileInfo mpFi = new FileInfo(MpConfig);
+        FileInfo mpFi = new FileInfo(MpConfig);
         Log.Info("Assembly creation time: {0} (UTC)", mpFi.LastWriteTimeUtc.ToUniversalTime());
 
         Form applicationForm = null;
@@ -247,71 +241,27 @@ string MpConfig = Assembly.GetExecutingAssembly().Location;
 
     private static void CheckPrerequisites()
     {
-      OSVersionInfo os = new OperatingSystemVersion();
       DialogResult res;
 
-      string MsgNotSupported =
-        "Your platform is not supported by MediaPortal Team because it lacks critical hotfixes! \nPlease check our Wiki's requirements page.";
-      string MsgNotInstallable =
-        "Your platform is not supported and cannot be used for MediaPortal/TV-Server! \nPlease check our Wiki's requirements page.";
-      string MsgBetaServicePack =
-        "You are running a BETA version of Service Pack {0}.\n Please don't do bug reporting with such configuration.";
-      string ServicePack = "";
-      if (!string.IsNullOrEmpty(os.OSCSDVersion))
-      {
-        ServicePack = " (" + os.OSCSDVersion + ")";
-      }
-      string MsgOsVersion = os.OSVersionString + ServicePack;
+      const string MsgNotSupported = "Your platform is not supported by MediaPortal Team because it lacks critical hotfixes! \nPlease check our Wiki's requirements page.";
+      const string MsgNotInstallable = "Your platform is not supported and cannot be used for MediaPortal/TV-Server! \nPlease check our Wiki's requirements page.";
+      const string MsgBetaServicePack = "You are running a BETA version of Service Pack {0}.\n Please don't do bug reporting with such configuration.";
 
-      int ver = (os.OSMajorVersion * 10) + os.OSMinorVersion;
-
-      // Disable OS if < XP
-      if (ver < 51)
+      switch (OSInfo.OSInfo.GetOSSupported())
       {
-        MessageBox.Show(MsgNotInstallable, MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
-        Application.Exit();
-      }
-      switch (ver)
-      {
-        case 51:
-          if (os.OSServicePackMajor < 2)
-          {
-            MessageBox.Show(MsgNotInstallable, MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            Application.Exit();
-          }
-          break;
-        case 52:
-          if (os.OSProductType == OSProductType.Workstation)
-          {
-            MsgOsVersion = MsgOsVersion + " [64bit]";
-            MessageBox.Show(MsgNotInstallable, MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            Application.Exit();
-          }
-          res = MessageBox.Show(MsgNotSupported, MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-          if (res == DialogResult.Cancel)
-          {
-            Application.Exit();
-          }
-          break;
-        case 60:
-          if (os.OSProductType != OSProductType.Workstation || os.OSServicePackMajor < 1)
-          {
-            res = MessageBox.Show(MsgNotSupported, MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-            if (res == DialogResult.Cancel)
-            {
-              Application.Exit();
-            }
-          }
-          break;
-      }
-      if (os.OSServicePackBuild != 0)
-      {
-        res = MessageBox.Show(String.Format(MsgBetaServicePack, os.OSServicePackMajor), MsgOsVersion,
-                              MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-        if (res == DialogResult.Cancel)
-        {
+        case 0:
+          MessageBox.Show(MsgNotInstallable, OSInfo.OSInfo.OSVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
           Application.Exit();
-        }
+          break;
+        case 2:
+          res = MessageBox.Show(MsgNotSupported, OSInfo.OSInfo.OSVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+          if (res == DialogResult.Cancel) Application.Exit();
+          break;
+      }
+      if (OSInfo.OSInfo.OSServicePackMinor != 0)
+      {
+        res = MessageBox.Show(MsgBetaServicePack, OSInfo.OSInfo.OSVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+        if (res == DialogResult.Cancel) Application.Exit();
       }
     }
   }

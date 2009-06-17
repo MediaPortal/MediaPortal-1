@@ -23,11 +23,9 @@ namespace MediaPortal.DeployTool.Sections
       rbMSSQL.Text = Localizer.GetBestTranslation("DBMSType_rbMSSQL");
       rbMySQL.Text = Localizer.GetBestTranslation("DBMSType_rbMySQL");
       rbDBAlreadyInstalled.Text = Localizer.GetBestTranslation("DBMSType_rbDBAlreadyInstalled");
-      OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
-      int ver = (os.OSMajorVersion * 10) + os.OSMinorVersion;
 
-      //If it's >= Windows7 then MSSQL2005 is not supported
-      if (ver >= 61)
+      //MSSQL2005 is not supported on Windows 7
+      if (Utils._osver == OSInfo.OSInfo.OSList.Windows7)
       {
         bMS.Enabled = false;
         rbMSSQL.Enabled = false;

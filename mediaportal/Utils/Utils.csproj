@@ -1,7 +1,7 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -120,7 +120,7 @@
     <Compile Include="Configuration\DirectXCheck.cs" />
     <Compile Include="Configuration\ISettingsPrefetchable.cs" />
     <Compile Include="Configuration\ISettingsProvider.cs" />
-    <Compile Include="Configuration\OSVersion.cs" />
+    <Compile Include="Configuration\OSInfo.cs" />
     <Compile Include="Configuration\PluginIconsAttribute.cs" />
     <Compile Include="Configuration\Settings.cs" />
     <Compile Include="Configuration\XmlSettingsProvider.cs" />

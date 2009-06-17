@@ -117,12 +117,9 @@ namespace TvService
       }
       Thread.CurrentThread.Name = "TVService";
 
-      OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-      string ServicePack = "";
-      if (!String.IsNullOrEmpty(os.OSCSDVersion))
-        ServicePack = " (" + os.OSCSDVersion + ")";
-      Log.WriteFile("TVService v" + versionInfo.FileVersion + " is starting up on " + os.OSVersionString + ServicePack);
+
+      Log.WriteFile("TVService v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.OSVersion);
 
       Application.ThreadException += Application_ThreadException;
       AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
