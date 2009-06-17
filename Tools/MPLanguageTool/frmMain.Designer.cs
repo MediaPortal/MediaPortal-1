@@ -32,10 +32,11 @@ namespace MPLanguageTool
     /// </summary>
     private void InitializeComponent()
     {
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
       this.menuStrip1 = new System.Windows.Forms.MenuStrip();
       this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.openMp1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.openMpIIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.openDeployToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
       this.openTagThatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -51,7 +52,8 @@ namespace MPLanguageTool
       this.statusStrip1 = new System.Windows.Forms.StatusStrip();
       this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
       this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-      this.openMpIIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.cbSections = new System.Windows.Forms.ComboBox();
+      this.label1 = new System.Windows.Forms.Label();
       this.menuStrip1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.gv)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.gv2)).BeginInit();
@@ -91,6 +93,14 @@ namespace MPLanguageTool
       this.openMp1ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
       this.openMp1ToolStripMenuItem.Text = "MediaPortal 1";
       this.openMp1ToolStripMenuItem.Click += new System.EventHandler(this.openMpToolStripMenuItem_Click);
+      // 
+      // openMpIIToolStripMenuItem
+      // 
+      this.openMpIIToolStripMenuItem.Enabled = false;
+      this.openMpIIToolStripMenuItem.Name = "openMpIIToolStripMenuItem";
+      this.openMpIIToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+      this.openMpIIToolStripMenuItem.Text = "MediaPortal II";
+      this.openMpIIToolStripMenuItem.Click += new System.EventHandler(this.openMpIIToolStripMenuItem_Click);
       // 
       // openDeployToolToolStripMenuItem
       // 
@@ -154,16 +164,16 @@ namespace MPLanguageTool
       this.gv.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ID,
             this.Translated});
-      dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
-      dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
-      dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.gv.DefaultCellStyle = dataGridViewCellStyle4;
+      dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
+      dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText;
+      dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.gv.DefaultCellStyle = dataGridViewCellStyle11;
       this.gv.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.gv.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+      this.gv.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnF2;
       this.gv.Location = new System.Drawing.Point(0, 24);
       this.gv.MultiSelect = false;
       this.gv.Name = "gv";
@@ -196,11 +206,10 @@ namespace MPLanguageTool
       this.gv2.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
       this.gv2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.gv2.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.gv2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
       this.gv2.Location = new System.Drawing.Point(0, 24);
       this.gv2.MultiSelect = false;
       this.gv2.Name = "gv2";
-      this.gv2.ReadOnly = true;
+      this.gv2.RowHeadersVisible = false;
       this.gv2.RowTemplate.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
       this.gv2.RowTemplate.Height = 30;
       this.gv2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
@@ -227,19 +236,33 @@ namespace MPLanguageTool
       this.folderBrowserDialog1.RootFolder = System.Environment.SpecialFolder.MyComputer;
       this.folderBrowserDialog1.ShowNewFolderButton = false;
       // 
-      // openMpIIToolStripMenuItem
+      // cbSections
       // 
-      this.openMpIIToolStripMenuItem.Enabled = false;
-      this.openMpIIToolStripMenuItem.Name = "openMpIIToolStripMenuItem";
-      this.openMpIIToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
-      this.openMpIIToolStripMenuItem.Text = "MediaPortal II";
-      this.openMpIIToolStripMenuItem.Click += new System.EventHandler(this.openMpIIToolStripMenuItem_Click);
+      this.cbSections.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbSections.Enabled = false;
+      this.cbSections.FormattingEnabled = true;
+      this.cbSections.Location = new System.Drawing.Point(221, 1);
+      this.cbSections.Name = "cbSections";
+      this.cbSections.Size = new System.Drawing.Size(209, 21);
+      this.cbSections.TabIndex = 4;
+      this.cbSections.SelectedIndexChanged += new System.EventHandler(this.cbSections_SelectedIndexChanged);
+      // 
+      // label1
+      // 
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(169, 6);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(46, 13);
+      this.label1.TabIndex = 5;
+      this.label1.Text = "Section:";
       // 
       // frmMain
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(583, 369);
+      this.Controls.Add(this.label1);
+      this.Controls.Add(this.cbSections);
       this.Controls.Add(this.gv2);
       this.Controls.Add(this.statusStrip1);
       this.Controls.Add(this.gv);
@@ -281,6 +304,8 @@ namespace MPLanguageTool
     private System.Windows.Forms.ToolStripMenuItem openMovingPicturesToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem openTvSeriesToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem openMpIIToolStripMenuItem;
+    private System.Windows.Forms.ComboBox cbSections;
+    private System.Windows.Forms.Label label1;
   }
 }
 

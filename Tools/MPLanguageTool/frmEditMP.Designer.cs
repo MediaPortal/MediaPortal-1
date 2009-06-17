@@ -149,7 +149,7 @@ namespace MPLanguageTool
       // 
       this.splitContainer4.Panel2.Controls.Add(this.textBox1);
       this.splitContainer4.Size = new System.Drawing.Size(543, 185);
-      this.splitContainer4.SplitterDistance = 292;
+      this.splitContainer4.SplitterDistance = 368;
       this.splitContainer4.TabIndex = 1;
       // 
       // edValue
@@ -158,7 +158,7 @@ namespace MPLanguageTool
       this.edValue.Location = new System.Drawing.Point(0, 0);
       this.edValue.Multiline = true;
       this.edValue.Name = "edValue";
-      this.edValue.Size = new System.Drawing.Size(292, 185);
+      this.edValue.Size = new System.Drawing.Size(368, 185);
       this.edValue.TabIndex = 0;
       this.edValue.WordWrap = false;
       // 
@@ -168,7 +168,7 @@ namespace MPLanguageTool
       this.textBox1.Location = new System.Drawing.Point(0, 0);
       this.textBox1.Multiline = true;
       this.textBox1.Name = "textBox1";
-      this.textBox1.Size = new System.Drawing.Size(247, 185);
+      this.textBox1.Size = new System.Drawing.Size(171, 185);
       this.textBox1.TabIndex = 0;
       // 
       // splitContainer3
@@ -205,7 +205,7 @@ namespace MPLanguageTool
       // 
       this.splitContainer5.Panel2.Controls.Add(this.textBox2);
       this.splitContainer5.Size = new System.Drawing.Size(543, 119);
-      this.splitContainer5.SplitterDistance = 292;
+      this.splitContainer5.SplitterDistance = 368;
       this.splitContainer5.TabIndex = 2;
       // 
       // edDefault
@@ -216,7 +216,7 @@ namespace MPLanguageTool
       this.edDefault.Multiline = true;
       this.edDefault.Name = "edDefault";
       this.edDefault.ReadOnly = true;
-      this.edDefault.Size = new System.Drawing.Size(292, 119);
+      this.edDefault.Size = new System.Drawing.Size(368, 119);
       this.edDefault.TabIndex = 1;
       this.edDefault.WordWrap = false;
       // 
@@ -227,7 +227,7 @@ namespace MPLanguageTool
       this.textBox2.Multiline = true;
       this.textBox2.Name = "textBox2";
       this.textBox2.ReadOnly = true;
-      this.textBox2.Size = new System.Drawing.Size(247, 119);
+      this.textBox2.Size = new System.Drawing.Size(171, 119);
       this.textBox2.TabIndex = 0;
       // 
       // btnCancel

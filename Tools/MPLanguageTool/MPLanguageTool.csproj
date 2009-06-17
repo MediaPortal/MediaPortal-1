@@ -36,12 +36,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SelectXmlSection.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SelectXmlSection.Designer.cs">
-      <DependentUpon>SelectXmlSection.cs</DependentUpon>
-    </Compile>
     <Compile Include="frmEditMP.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -63,9 +57,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="SelectXmlSection.resx">
-      <DependentUpon>SelectXmlSection.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="frmEditMP.resx">
       <DependentUpon>frmEditMP.cs</DependentUpon>
       <SubType>Designer</SubType>

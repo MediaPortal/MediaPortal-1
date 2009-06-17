@@ -160,7 +160,7 @@ namespace MPLanguageTool
     }
 
     // Load Translations
-    public static DataTable Load_Traslation(string languageID, DataTable originalTranslation, Dictionary<string, DataRow> originalMapping)
+    public static DataTable Load_Translation(string languageID, DataTable originalTranslation, Dictionary<string, DataRow> originalMapping)
     {
       string xml = BuildFileName(languageID, true);
       DataTable translations = new DataTable();
@@ -267,48 +267,118 @@ namespace MPLanguageTool
       return Sections;
     }
 
+    /// <summary>
+    /// Validates, if we have a valid XML Document
+    /// </summary>
+    /// <param name="languageID"></param>
+    /// <returns></returns>
+    private static bool IsValidDocument(string languageID)
+    {
+      string xml = BuildFileName(languageID, true);
+      if (!File.Exists(xml))
+      {
+        return false;
+      }
+
+      try
+      {
+        XmlDocument doc = new XmlDocument();
+        doc.Load(xml);
+        XmlElement root = doc.DocumentElement;
+        if (root == null)
+        {
+          return false;
+        }
+        return true;
+      }
+      catch (Exception)
+      {
+        return false; 
+      }
+    }
+
     // Save file
     public static void Save(string languageID, string LanguageNAME, DataTable translations)
     {
       string xml = BuildFileName(languageID, true);
-      StreamWriter writer = new StreamWriter(xml, false, Encoding.UTF8);
+      // Don't init the Streamwriter here, as it will clear the file content.
+      // When saving multiple sections language files like MP2 or MPTagThat this causes troubles
+      StreamWriter writer; 
       switch (frmMain.LangType)
       {
         case frmMain.StringsType.MediaPortal_1:
+          writer = new StreamWriter(xml, false, Encoding.UTF8);
           writer.Write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
           writer.Write("<Language name=\"" + LanguageNAME + "\" characters=\"255\">\n");
           writer.Write("  <Section name=\"unmapped\">\n");
           writer.Write("  </Section>\n");
           writer.Write("</Language>\n");
+          writer.Close();
           break;
         case frmMain.StringsType.MpTagThat:
-          writer.Write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-          writer.Write("<!-- MpTagThat translation file -->\n");
-          writer.Write("<Section name=\"main\">");
-          writer.Write("</Section>\n");
+          if (!IsValidDocument(languageID))
+          {
+            writer = new StreamWriter(xml, false, Encoding.UTF8);
+            writer.Write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+            // Write some placeholder comments to have the same amount of lines as in the english referebce file
+            writer.Write("<!--\n");
+            writer.Write("     MPTagThat translation file\n\n");
+            writer.Write("     Note: English is the fallback for any strings not found in other languages\n\n");
+            writer.Write("-->\n");
+            writer.Write("<Language>\n");
+            writer.Write("</Language>\n");
+            writer.Close();
+          }
           break;
         case frmMain.StringsType.MovingPictures:
+          writer = new StreamWriter(xml, false, Encoding.UTF8);
           writer.Write("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n");
           writer.Write("<!-- MP-TV-Series translation file -->\n");
           writer.Write("<!-- " + LanguageNAME + " -->\n");
           writer.Write("<!-- Note: English is the fallback for any strings not found in other languages -->\n");
           writer.Write("  <strings>\n");
           writer.Write("  </strings>\n");
+          writer.Close();
           break;
         case frmMain.StringsType.TvSeries:
+          writer = new StreamWriter(xml, false, Encoding.UTF8);
           writer.Write("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n");
           writer.Write("<!-- Moving Pictures translation file -->\n");
           writer.Write("<!-- " + LanguageNAME + " -->\n");
           writer.Write("<!-- Note: English is the fallback for any strings not found in other languages -->\n");
           writer.Write("  <strings>\n");
           writer.Write("  </strings>\n");
+          writer.Close();
           break;
       }
 
-      writer.Close();
       XmlDocument doc = new XmlDocument();
       doc.Load(xml);
       XmlNode nRoot = doc.SelectSingleNode(MainNodeSelection);
+      if (nRoot == null)
+      {
+        // we have a new node, which got never translated
+        // so let's add it
+        string attrName = string.Empty;
+        switch (frmMain.LangType)
+        {
+          case frmMain.StringsType.MpTagThat:
+            attrName = "name";
+            break;
+        }
+        
+        int startIndex = MainNodeSelection.IndexOf("'") + 1;
+        int endIndex = MainNodeSelection.LastIndexOf("'");
+        string sectionName = MainNodeSelection.Substring(startIndex, endIndex - startIndex);
+        nRoot = doc.CreateElement("Section");
+        XmlAttribute attr = nRoot.OwnerDocument.CreateAttribute(attrName);
+        attr.InnerText = sectionName;
+        nRoot.Attributes.Append(attr);
+        doc.DocumentElement.AppendChild(nRoot);
+      }
+
+      // Clear the Innertext first, so that we sdon't have multiple entries
+      nRoot.InnerText = "";
 
       foreach (DataRow row in translations.Rows)
       {

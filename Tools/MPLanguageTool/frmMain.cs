@@ -32,6 +32,7 @@ namespace MPLanguageTool
     #region Variables
     NameValueCollection defaultTranslations;
     DataTable originalTranslations;
+    Dictionary<string, DataRow> originalMapping;
     CultureInfo culture;
 
     public static string languagePath;
@@ -193,8 +194,6 @@ namespace MPLanguageTool
     #region XML invoke function
     private void InvokeXml()
     {
-      Dictionary<string, DataRow> originalMapping;
-
       string tmpFileName = XmlHandler.BuildFileName(null, false);
 
       folderBrowserDialog1.Description = "Please select a path where [" + tmpFileName + "] can be found:";
@@ -209,19 +208,19 @@ namespace MPLanguageTool
       {
         case StringsType.MpTagThat:
         case StringsType.MediaPortal_II:
-          SelectXmlSection dlgXml = new SelectXmlSection();
-          if (dlgXml.ShowDialog() != DialogResult.OK) return;
-          string secs = dlgXml.GetSelectedSection();
+          FillSectionsCombbo();
+          cbSections.Enabled = true;
+          string secs = (string)cbSections.SelectedItem;
           XmlHandler.InitializeXmlValues(secs);
           break;
+
         default:
           XmlHandler.InitializeXmlValues();
           break;
       }
 
       // check if selected path contains the default translation file
-      originalTranslations = XmlHandler.Load(null, out originalMapping);
-
+      originalTranslations = LoadSection(null);
       // if not show folderbrowserdlg until user cancels or selects a path that contains it 
       while (originalTranslations == null)
       {
@@ -248,9 +247,27 @@ namespace MPLanguageTool
       Text = "MPLanguageTool -- Current language: " + culture.NativeName + " -- File: " + tmpFileName;
       ToolStripText("Loading \"" + tmpFileName + "\"...");
 
+      LoadTranslation();
+    }
+
+    /// <summary>
+    /// Load the section
+    /// </summary>
+    /// <param name="languageID"></param>
+    /// <returns></returns>
+    private DataTable LoadSection(string languageID)
+    {
+      return XmlHandler.Load(languageID, out originalMapping);
+    }
+
+    /// <summary>
+    /// Loads the translation for the selected section
+    /// </summary>
+    private void LoadTranslation()
+    {
       Cursor = Cursors.WaitCursor;
       // Modified
-      DataTable translations = XmlHandler.Load_Traslation(culture.Name, originalTranslations, originalMapping);
+      DataTable translations = XmlHandler.Load_Translation(culture.Name, originalTranslations, originalMapping);
 
       int untranslated = 0;
 
@@ -270,7 +287,33 @@ namespace MPLanguageTool
 
       ToolStripText(untranslated);
       saveToolStripMenuItem.Enabled = true;
-      Cursor = Cursors.Default;
+      Cursor = Cursors.Default;      
+    }
+
+
+    /// <summary>
+    /// Fill the Sections Combo Box with the sections read from the language file
+    /// </summary>
+    private void FillSectionsCombbo()
+    {
+      string strSection = string.Empty;
+      string strAttrib = string.Empty;
+
+      switch (LangType)
+      {
+        case StringsType.MpTagThat:
+        case StringsType.MediaPortal_II:
+          strAttrib = "name";
+          strSection = "/Language/Section";
+          break;
+      }
+
+      List<string> Sections = XmlHandler.ListSections(strSection, strAttrib);
+      foreach (string str in Sections)
+      {
+        cbSections.Items.Add(str);
+      }
+      cbSections.SelectedItem = cbSections.Items[0];
     }
     #endregion
 
@@ -310,7 +353,8 @@ namespace MPLanguageTool
           break;
       }
 
-      MessageBox.Show("Your translations have been saved.", "MPLanguageTool -- Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+      ToolStripText("Your translations have been saved.");
+      //MessageBox.Show("Your translations have been saved.", "MPLanguageTool -- Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     private void quitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -354,6 +398,28 @@ namespace MPLanguageTool
       openTagThatToolStripMenuItem.Enabled = false;
       openMovingPicturesToolStripMenuItem.Enabled = false;
       openTvSeriesToolStripMenuItem.Enabled = false;
+    }
+
+    /// <summary>
+    /// A selection has been made in the combo box. Load the section
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void cbSections_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      // The event gets fired, when we fill the combo and we don't have a culture yet.
+      if (culture == null)
+      {
+        return;
+      }
+
+      // Save previous section
+      saveToolStripMenuItem_Click(null, new EventArgs());
+
+      string secs = (string)cbSections.SelectedItem;
+      XmlHandler.InitializeXmlValues(secs);
+      originalTranslations = LoadSection(null);
+      LoadTranslation();
     }
     #endregion
 
