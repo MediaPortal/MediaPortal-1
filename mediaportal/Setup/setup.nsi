@@ -695,7 +695,7 @@ ${MementoSection} "MPC-HC audio/video decoders" SecGabest
   
   ; adjust the merit of this directshow filter
   SetOutPath "$MPdir.Base"
-  File "Resources\SetMerit.exe"
+  File "${svn_ROOT}\Tools\Script & Batch tools\SetMerit\bin\Release\SetMerit.exe"
 
   ${LOG_TEXT} "INFO" "set merit for MPA"
   nsExec::ExecToLog '"$MPdir.Base\SetMerit.exe" {3D446B6F-71DE-4437-BE15-8CE47174340F} 00600000'
