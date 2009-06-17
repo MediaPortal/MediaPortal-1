@@ -24,7 +24,13 @@ namespace SetRights
     /// <param name="folderName">FolderName</param>
     public static void GrantFullControlFolder(string folderName)
     {
-      if (!System.IO.Directory.Exists(folderName)) return;
+      if (!System.IO.Directory.Exists(folderName))
+      {
+        Console.WriteLine("Directory not found: {0}", folderName);
+        return;
+      }
+
+      Console.WriteLine("Granting full control to: {0}", folderName);
       try
       {
         // Create a SecurityIdentifier object for "everyone".
@@ -41,6 +47,8 @@ namespace SetRights
             AccessControlType.Allow);
         security.AddAccessRule(newRule);
         System.IO.Directory.SetAccessControl(folderName, security);
+
+        Console.WriteLine("Success");
       }
       catch (Exception ex)
       {
