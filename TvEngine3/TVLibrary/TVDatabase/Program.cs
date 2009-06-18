@@ -69,7 +69,7 @@ namespace TvDatabase
     /// construct objects from retrieved rows. 
     /// </summary> 
     public Program(int idProgram, int idChannel, DateTime startTime, DateTime endTime, string title, string description,
-                   string genre, bool notify, DateTime originalAirDate, string seriesNum, string episodeNum,
+                   string genre, bool notify, DateTime originalAirDate, string seriesNum, string episodeNum, string episodeName, string episodePart,
                    int starRating, string classification, int parentalRating)
     {
       this.idProgram = idProgram;
@@ -83,6 +83,8 @@ namespace TvDatabase
       this.originalAirDate = originalAirDate;
       this.seriesNum = seriesNum;
       this.episodeNum = episodeNum;
+      this.episodeName = episodeName;
+      this.episodePart = episodePart;
       this.starRating = starRating;
       this.classification = classification;
       this.parentalRating = parentalRating;
