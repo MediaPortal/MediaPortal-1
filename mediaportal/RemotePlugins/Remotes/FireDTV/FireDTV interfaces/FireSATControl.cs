@@ -61,26 +61,22 @@ namespace MediaPortal.InputDevices.FireDTV
     {
       try
       {
-        // First try in MediaPortal's base directory
-        string fullDllPath = Config.GetFile(Config.Dir.Base, "FiresatApi.dll");
+        string prgPath = Environment.GetEnvironmentVariable("ProgramW6432");
+        if (string.IsNullOrEmpty(prgPath))
+        {
+          prgPath = Environment.GetEnvironmentVariable("ProgramFiles");
+        }
+
+        // Look for Digital Everywhere's software which uses a hardcoded path
+        string fullDllPath = Path.Combine(prgPath, @"FireDTV\Tools\FiresatApi.dll");
         if (File.Exists(fullDllPath))
         {
-          Log.Info("FireDTV: Using FiresatApi.dll located in MediaPortal's base dir {0}", fullDllPath);
+          Log.Info("FireDTV: Using FiresatApi.dll located in FireDTV's install path {0}", fullDllPath);
         }
         else
         {
-          // Look for Digital Everywhere's software which uses a hardcoded path
-          fullDllPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
-                                     @"FireDTV\Tools\FiresatApi.dll");
-          if (File.Exists(fullDllPath))
-          {
-            Log.Info("FireDTV: Using FiresatApi.dll located in FireDTV's install path {0}", fullDllPath);
-          }
-          else
-          {
-            Log.Error("FireDTV: FiresatApi.dll could not be found on your system!");
-            return;
-          }
+          Log.Error("FireDTV: FiresatApi.dll could not be found on your system!");
+          return;
         }
 
         try
@@ -132,7 +128,7 @@ namespace MediaPortal.InputDevices.FireDTV
         try
         {
           uint returnCode = FireDTVAPI.FS_Initialize();
-          if ((FireDTVConstants.FireDTVStatusCodes) returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
+          if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
           {
             throw new FireDTVInitializationException("Initilization Failure (" + returnCode.ToString() + ")");
           }
@@ -153,10 +149,10 @@ namespace MediaPortal.InputDevices.FireDTV
     internal uint OpenWDMDevice(int deviceIndex)
     {
       uint DeviceHandle;
-      uint returnCode = FireDTVAPI.FS_OpenWDMDeviceHandle((uint) deviceIndex, out DeviceHandle);
-      if ((FireDTVConstants.FireDTVStatusCodes) returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
+      uint returnCode = FireDTVAPI.FS_OpenWDMDeviceHandle((uint)deviceIndex, out DeviceHandle);
+      if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
       {
-        throw new FireDTVDeviceOpenException((FireDTVConstants.FireDTVStatusCodes) returnCode, "Open WDM Device Error!");
+        throw new FireDTVDeviceOpenException((FireDTVConstants.FireDTVStatusCodes)returnCode, "Open WDM Device Error!");
       }
       return DeviceHandle;
     }
@@ -164,10 +160,10 @@ namespace MediaPortal.InputDevices.FireDTV
     internal uint OpenBDADevice(int deviceIndex)
     {
       uint DeviceHandle;
-      uint returnCode = FireDTVAPI.FS_OpenBDADeviceHandle((uint) deviceIndex, out DeviceHandle);
-      if ((FireDTVConstants.FireDTVStatusCodes) returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
+      uint returnCode = FireDTVAPI.FS_OpenBDADeviceHandle((uint)deviceIndex, out DeviceHandle);
+      if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
       {
-        throw new FireDTVDeviceOpenException((FireDTVConstants.FireDTVStatusCodes) returnCode, "Open BDA Device Error!");
+        throw new FireDTVDeviceOpenException((FireDTVConstants.FireDTVStatusCodes)returnCode, "Open BDA Device Error!");
       }
       return DeviceHandle;
     }
@@ -177,9 +173,9 @@ namespace MediaPortal.InputDevices.FireDTV
       try
       {
         uint returnCode = FireDTVAPI.FS_CloseDeviceHandle(currentSourceFilter.Handle);
-        if ((FireDTVConstants.FireDTVStatusCodes) returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
+        if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
         {
-          throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes) returnCode, "Device Close Failure");
+          throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode, "Device Close Failure");
         }
       }
       catch (Exception)
@@ -193,11 +189,11 @@ namespace MediaPortal.InputDevices.FireDTV
       {
         uint WDMCount;
         uint returnCode = FireDTVAPI.FS_GetNumberOfWDMDevices(out WDMCount);
-        if ((FireDTVConstants.FireDTVStatusCodes) returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
+        if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
         {
-          throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes) returnCode, "Unable to WDM Driver Count");
+          throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode, "Unable to WDM Driver Count");
         }
-        return (int) WDMCount;
+        return (int)WDMCount;
       }
       catch (Exception ex)
       {
@@ -212,11 +208,11 @@ namespace MediaPortal.InputDevices.FireDTV
       {
         uint BDACount;
         uint returnCode = FireDTVAPI.FS_GetNumberOfBDADevices(out BDACount);
-        if ((FireDTVConstants.FireDTVStatusCodes) returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
+        if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
         {
-          throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes) returnCode, "Unable to BDA Driver Count");
+          throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode, "Unable to BDA Driver Count");
         }
-        return (int) BDACount;
+        return (int)BDACount;
       }
       catch (Exception ex)
       {
@@ -234,9 +230,9 @@ namespace MediaPortal.InputDevices.FireDTV
       if (NotificationsRegistered)
       {
         uint returnCode = FireDTVAPI.FS_UnregisterNotifications(widowHandle);
-        if ((FireDTVConstants.FireDTVStatusCodes) returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
+        if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
         {
-          throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes) returnCode,
+          throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode,
                                      "Unable to unRegister Notifiations");
         }
         NotificationsRegistered = false;
@@ -250,10 +246,10 @@ namespace MediaPortal.InputDevices.FireDTV
       {
         try
         {
-          uint returnCode = FireDTVAPI.FS_RegisterGeneralNotifications((int) WindowsHandle);
-          if ((FireDTVConstants.FireDTVStatusCodes) returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
+          uint returnCode = FireDTVAPI.FS_RegisterGeneralNotifications((int)WindowsHandle);
+          if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
           {
-            throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes) returnCode,
+            throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode,
                                        "Unable to Register General Notifiations");
           }
           NotificationsRegistered = true;
@@ -272,7 +268,7 @@ namespace MediaPortal.InputDevices.FireDTV
 
     private bool LibrayInitialized = false;
     private bool NotificationsRegistered = false;
-    private IntPtr _windowHandle = (IntPtr) 0;
+    private IntPtr _windowHandle = (IntPtr)0;
     private SourceFilterCollection _sourceFilterCollection = new SourceFilterCollection();
 
     #endregion
@@ -297,9 +293,9 @@ namespace MediaPortal.InputDevices.FireDTV
     {
       get
       {
-        if (_windowHandle == (IntPtr) 0)
+        if (_windowHandle == (IntPtr)0)
         {
-          return (IntPtr) FireDTVAPI.GetActiveWindow();
+          return (IntPtr)FireDTVAPI.GetActiveWindow();
         }
         else
         {
