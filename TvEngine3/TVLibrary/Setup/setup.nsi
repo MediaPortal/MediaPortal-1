@@ -101,11 +101,11 @@
 !if ${VER_BUILD} == 0       # it's an official release
   ;!define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}"
   ;this is for display purposes
-  !define VERSION "1.1.0 ALPHA"
+  !define VERSION "1.1.0 Alpha"
 !else                       # it's a svn release
   ;!define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION} SVN build ${VER_BUILD} for TESTING ONLY"
   ;this is for display purposes
-  !define VERSION "1.1.0 ALPHA! SVN build ${VER_BUILD} for TESTING ONLY"
+  !define VERSION "1.1.0 Alpha SVN build ${VER_BUILD} for TESTING ONLY"
 !endif
 !endif
 
