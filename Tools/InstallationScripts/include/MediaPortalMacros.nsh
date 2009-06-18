@@ -525,7 +525,7 @@
   SetShellVarContext all
   nsExec::ExecToLog '"$PLUGINSDIR\SetRights.exe" FOLDER "$APPDATA\Team MediaPortal"'
   nsExec::ExecToLog '"$PLUGINSDIR\SetRights.exe" HKLM "Software\Team MediaPortal"'
-  nsExec::ExecToLog '"$PLUGINSDIR\SetRights.exe" HKCU "Software\Team MediaPortal"'
+  ;nsExec::ExecToLog '"$PLUGINSDIR\SetRights.exe" HKCU "Software\Team MediaPortal"'
 !macroend
 
 
