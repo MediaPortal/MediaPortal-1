@@ -39,6 +39,7 @@ namespace OSInfo
     private const int VER_SUITE_SINGLEUSERTS = 256;
     private const int VER_SUITE_PERSONAL = 512;
     private const int VER_SUITE_BLADE = 1024;
+    private const int VER_SUITE_WH_SERVER = 32768;
     #endregion
 
     #region Operating System enum
@@ -139,6 +140,47 @@ namespace OSInfo
               // Windows Server 2003 Standard Edition
               return " Standard Edition";
             }
+          }
+          break;
+        case 6:
+          if (OSProductType == VER_NT_WORKSTATION)
+          {
+            if (OSMinorVersion == 0)
+            {
+              if ((osVersionInfo.wSuiteMask & VER_SUITE_PERSONAL) == VER_SUITE_PERSONAL)
+              {
+                // Windows Vista Home Basic / Home Premium
+                return " Home Basic/Premium";
+              }
+              // Windows Vista Business / Enterprise
+              return " Business/Enterprise";
+            }
+            if (OSMinorVersion == 1)
+            {
+              return "Windows 7";
+            }
+          }
+          if (OSProductType == VER_NT_SERVER)
+          {
+            if (OSMinorVersion == 0)
+            {
+              if ((osVersionInfo.wSuiteMask & VER_SUITE_DATACENTER) == VER_SUITE_DATACENTER)
+              {
+                // Windows 2008 Datacenter Server
+                return " Datacenter Server";
+              }
+              if ((osVersionInfo.wSuiteMask & VER_SUITE_ENTERPRISE) == VER_SUITE_ENTERPRISE)
+              {
+                // Windows 2008 Advanced Server
+                return " Advanced Server";
+              }
+              // Windows 2008 Server
+              return " Server";
+            }
+          }
+          if (OSProductType == VER_SUITE_WH_SERVER)
+          {
+            return " Home Server";
           }
           break;
       }
