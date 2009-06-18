@@ -223,24 +223,6 @@ public class MediaPortalApp : D3DApp, IRender
     Log.BackupLogFiles();
     if (!Config.DirsFileUpdateDetected)
     {
-      try
-      {
-        using (RegistryKey hklm = Registry.LocalMachine)
-        {
-          SetREGSZRegKey(hklm, @"SOFTWARE\Team MediaPortal\MediaPortal", "ApplicationDir",
-                         Config.GetFolder(Config.Dir.Base));
-          SetREGSZRegKey(hklm, @"SOFTWARE\Team MediaPortal\MediaPortal", "ConfigDir",
-                         Config.GetFolder(Config.Dir.Config));
-        }
-      }
-      catch (SecurityException)
-      {
-        Log.Error("Not enough permissions to set registry keys for SVN installer");
-      }
-      catch (UnauthorizedAccessException)
-      {
-        Log.Error("No write permissions to set registry keys for SVN installer");
-      }
       //check if mediaportal has been configured
       FileInfo fi = new FileInfo(Config.GetFile(Config.Dir.Config, "mediaportal.xml"));
       if ((!File.Exists(Config.GetFile(Config.Dir.Config, "mediaportal.xml"))) || (fi.Length < 10000))
