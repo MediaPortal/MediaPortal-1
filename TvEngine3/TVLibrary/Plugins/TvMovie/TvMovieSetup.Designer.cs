@@ -97,6 +97,9 @@ namespace SetupTv.Sections
       this.listView2 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.fileDialogDb = new System.Windows.Forms.OpenFileDialog();
+      this.numericUpDownActorCount = new System.Windows.Forms.NumericUpDown();
+      this.checkBoxShowLive = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxShowRepeat = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControlTvMovie.SuspendLayout();
       this.tabPageSettings.SuspendLayout();
       this.groupBoxEnableTvMovie.SuspendLayout();
@@ -107,6 +110,7 @@ namespace SetupTv.Sections
       this.tabPageMapChannels.SuspendLayout();
       this.groupBoxMapping.SuspendLayout();
       this.panelTimeSpan.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownActorCount)).BeginInit();
       this.SuspendLayout();
       // 
       // openFileDialog
@@ -373,6 +377,9 @@ namespace SetupTv.Sections
       // 
       this.groupBoxDescriptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxDescriptions.Controls.Add(this.checkBoxShowRepeat);
+      this.groupBoxDescriptions.Controls.Add(this.checkBoxShowLive);
+      this.groupBoxDescriptions.Controls.Add(this.numericUpDownActorCount);
       this.groupBoxDescriptions.Controls.Add(this.checkBoxLimitActors);
       this.groupBoxDescriptions.Controls.Add(this.checkBoxShowRatings);
       this.groupBoxDescriptions.Controls.Add(this.checkBoxAdditionalInfo);
@@ -382,7 +389,7 @@ namespace SetupTv.Sections
       this.groupBoxDescriptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxDescriptions.Location = new System.Drawing.Point(16, 8);
       this.groupBoxDescriptions.Name = "groupBoxDescriptions";
-      this.groupBoxDescriptions.Size = new System.Drawing.Size(424, 130);
+      this.groupBoxDescriptions.Size = new System.Drawing.Size(424, 180);
       this.groupBoxDescriptions.TabIndex = 5;
       this.groupBoxDescriptions.TabStop = false;
       this.groupBoxDescriptions.Text = "Descriptions";
@@ -395,9 +402,9 @@ namespace SetupTv.Sections
       this.checkBoxLimitActors.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxLimitActors.Location = new System.Drawing.Point(31, 63);
       this.checkBoxLimitActors.Name = "checkBoxLimitActors";
-      this.checkBoxLimitActors.Size = new System.Drawing.Size(187, 17);
+      this.checkBoxLimitActors.Size = new System.Drawing.Size(181, 17);
       this.checkBoxLimitActors.TabIndex = 4;
-      this.checkBoxLimitActors.Text = "Limit actors - show a maximum of 5";
+      this.checkBoxLimitActors.Text = "Limit actors - show a maximum of ";
       this.checkBoxLimitActors.UseVisualStyleBackColor = true;
       // 
       // checkBoxShowRatings
@@ -416,6 +423,8 @@ namespace SetupTv.Sections
       // checkBoxAdditionalInfo
       // 
       this.checkBoxAdditionalInfo.AutoSize = true;
+      this.checkBoxAdditionalInfo.Checked = true;
+      this.checkBoxAdditionalInfo.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxAdditionalInfo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxAdditionalInfo.Location = new System.Drawing.Point(16, 40);
       this.checkBoxAdditionalInfo.Name = "checkBoxAdditionalInfo";
@@ -430,16 +439,14 @@ namespace SetupTv.Sections
       this.checkBoxShowAudioFormat.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxShowAudioFormat.Location = new System.Drawing.Point(16, 106);
       this.checkBoxShowAudioFormat.Name = "checkBoxShowAudioFormat";
-      this.checkBoxShowAudioFormat.Size = new System.Drawing.Size(171, 17);
+      this.checkBoxShowAudioFormat.Size = new System.Drawing.Size(117, 17);
       this.checkBoxShowAudioFormat.TabIndex = 2;
-      this.checkBoxShowAudioFormat.Text = "Show audio format (if available)";
+      this.checkBoxShowAudioFormat.Text = "Show audio formats";
       this.checkBoxShowAudioFormat.UseVisualStyleBackColor = true;
       // 
       // checkBoxUseShortDesc
       // 
       this.checkBoxUseShortDesc.AutoSize = true;
-      this.checkBoxUseShortDesc.Checked = true;
-      this.checkBoxUseShortDesc.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxUseShortDesc.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxUseShortDesc.Location = new System.Drawing.Point(16, 20);
       this.checkBoxUseShortDesc.Name = "checkBoxUseShortDesc";
@@ -631,6 +638,53 @@ namespace SetupTv.Sections
       this.fileDialogDb.RestoreDirectory = true;
       this.fileDialogDb.Title = "Please enter the path to TV movie\'s database";
       // 
+      // numericUpDownActorCount
+      // 
+      this.numericUpDownActorCount.Location = new System.Drawing.Point(218, 63);
+      this.numericUpDownActorCount.Maximum = new decimal(new int[] {
+            99,
+            0,
+            0,
+            0});
+      this.numericUpDownActorCount.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericUpDownActorCount.Name = "numericUpDownActorCount";
+      this.numericUpDownActorCount.Size = new System.Drawing.Size(37, 20);
+      this.numericUpDownActorCount.TabIndex = 6;
+      this.numericUpDownActorCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownActorCount.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+      // 
+      // checkBoxShowLive
+      // 
+      this.checkBoxShowLive.AutoSize = true;
+      this.checkBoxShowLive.Checked = true;
+      this.checkBoxShowLive.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxShowLive.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxShowLive.Location = new System.Drawing.Point(16, 129);
+      this.checkBoxShowLive.Name = "checkBoxShowLive";
+      this.checkBoxShowLive.Size = new System.Drawing.Size(175, 17);
+      this.checkBoxShowLive.TabIndex = 7;
+      this.checkBoxShowLive.Text = "Append \"(LIVE)\" to program title";
+      this.checkBoxShowLive.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxShowRepeat
+      // 
+      this.checkBoxShowRepeat.AutoSize = true;
+      this.checkBoxShowRepeat.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxShowRepeat.Location = new System.Drawing.Point(16, 152);
+      this.checkBoxShowRepeat.Name = "checkBoxShowRepeat";
+      this.checkBoxShowRepeat.Size = new System.Drawing.Size(178, 17);
+      this.checkBoxShowRepeat.TabIndex = 8;
+      this.checkBoxShowRepeat.Text = "Append \"(Wdh.)\" to program title";
+      this.checkBoxShowRepeat.UseVisualStyleBackColor = true;
+      // 
       // TvMovieSetup
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -656,6 +710,7 @@ namespace SetupTv.Sections
       this.groupBoxMapping.PerformLayout();
       this.panelTimeSpan.ResumeLayout(false);
       this.panelTimeSpan.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownActorCount)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -705,5 +760,8 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label lbDbPath;
     private System.Windows.Forms.Button buttonBrowse;
     private System.Windows.Forms.OpenFileDialog fileDialogDb;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowRepeat;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowLive;
+    private System.Windows.Forms.NumericUpDown numericUpDownActorCount;
   }
 }

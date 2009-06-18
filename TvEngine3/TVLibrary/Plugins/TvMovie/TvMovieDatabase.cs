@@ -37,6 +37,7 @@ using TvLibrary.Log;
 namespace TvEngine
 {
   #region TVMChannel struct
+
   public struct TVMChannel
   {
     private string fID;
@@ -86,11 +87,13 @@ namespace TvEngine
       get { return fZeichen; }
     }
   }
+
   #endregion
 
   class TvMovieDatabase
   {
     #region Members
+
     private OleDbConnection _databaseConnection = null;
     private bool _canceled = false;
     private List<TVMChannel> _tvmEpgChannels;
@@ -98,24 +101,30 @@ namespace TvEngine
     private List<Channel> _channelList = null;
     private int _programsCounter = 0;
     private bool _useShortProgramDesc = false;
-    private bool _extendDescription = false;
-    private bool _showRatings = false;
+    private bool _extendDescription = true;
+    private bool _showRatings = true;
     private bool _showAudioFormat = false;
-    private bool _slowImport = false;
+    private bool _slowImport = true;
     private int _actorCount = 5;
+    private bool _showLive = true;
+    private bool _showRepeat = false;
 
     private static string _xmlFile;
     private static TvBusinessLayer _tvbLayer;
+
     #endregion
 
     #region Events
+
     public delegate void ProgramsChanged(int value, int maximum, string text);
     //public event ProgramsChanged OnProgramsChanged;
     public delegate void StationsChanged(int value, int maximum, string text);
     public event StationsChanged OnStationsChanged;
+
     #endregion
 
     #region Mapping struct
+
     private struct Mapping
     {
       private string _mpChannel;
@@ -134,6 +143,7 @@ namespace TvEngine
       }
 
       #region struct properties
+
       public string Channel
       {
         get { return _mpChannel; }
@@ -178,11 +188,14 @@ namespace TvEngine
 
         return new TimeSpan(hours, minutes, 0);
       }
+
       #endregion
     }
+
     #endregion
 
     #region Properties
+
     public List<TVMChannel> Stations
     {
       get { return _tvmEpgChannels; }
@@ -489,13 +502,14 @@ namespace TvEngine
     #region Private functions
     private void LoadMemberSettings()
     {
-      _useShortProgramDesc = TvBLayer.GetSetting("TvMovieShortProgramDesc", "true").Value == "true";
-      _extendDescription = TvBLayer.GetSetting("TvMovieExtendDescription", "false").Value == "true";
-      _showRatings = TvBLayer.GetSetting("TvMovieShowRatings", "false").Value == "true";
+      _useShortProgramDesc = TvBLayer.GetSetting("TvMovieShortProgramDesc", "false").Value == "true";
+      _extendDescription = TvBLayer.GetSetting("TvMovieExtendDescription", "true").Value == "true";
+      _showRatings = TvBLayer.GetSetting("TvMovieShowRatings", "true").Value == "true";
       _showAudioFormat = TvBLayer.GetSetting("TvMovieShowAudioFormat", "false").Value == "true";
-      _slowImport = TvBLayer.GetSetting("TvMovieSlowImport", "false").Value == "true";
+      _slowImport = TvBLayer.GetSetting("TvMovieSlowImport", "true").Value == "true";
       _actorCount = Convert.ToInt32(TvBLayer.GetSetting("TvMovieLimitActors", "5").Value);
-
+      _showLive = TvBLayer.GetSetting("TvMovieShowLive", "true").Value == "true";
+      _showRepeat = TvBLayer.GetSetting("TvMovieShowRepeating", "false").Value == "true";
       _xmlFile = String.Format(@"{0}\TVMovieMapping.xml", Log.GetPathName());
     }
 
@@ -615,12 +629,15 @@ namespace TvEngine
       }
 
       string title = Sendung;
-      if (!_useShortProgramDesc)
-      {
-        // indicate live programs
+      // indicate live programs
+      if (_showLive)
+      {        
         if (live)
           title += " (LIVE)";
-        // indicate repeatings
+      }
+      // indicate repeatings
+      if (_showRepeat)
+      {        
         if (repeating)
           title += " (Wdh.)";
       }
@@ -648,6 +665,7 @@ namespace TvEngine
         director = Regie;
         actors = Darsteller;
         duration = Dauer;
+        origin = Herstellungsland;
         //int repeat = Convert.ToInt16(guideEntry["Wiederholung"]);         // strRepeat ==> Wiederholung "Repeat" / "unknown"      
       }
 
@@ -660,32 +678,14 @@ namespace TvEngine
       short EPGStarRating = -1;
       switch (starRating)
       {
-        case 0:
-          EPGStarRating = 2; break;
-        case 1:
-          EPGStarRating = 4; break;
-        case 2:
-          EPGStarRating = 6; break;
-        case 3:
-          EPGStarRating = 8; break;
-        case 4:
-          EPGStarRating = 10; break;
-        case 5:
-          EPGStarRating = 8; break;
-        case 6:
-          EPGStarRating = 10; break;
-        default:
-          EPGStarRating = -1; break;
-      }
-
-      if (_showAudioFormat)
-      {
-        audioFormat = BuildAudioDescription(Convert.ToBoolean(Audiodescription),
-                                            Convert.ToBoolean(DolbyDigital),
-                                            Convert.ToBoolean(DolbySuround),
-                                            Convert.ToBoolean(Dolby),
-                                            Convert.ToBoolean(Stereo),
-                                            Convert.ToBoolean(Zweikanalton));
+        case 0: EPGStarRating = 2; break;
+        case 1: EPGStarRating = 4; break;
+        case 2: EPGStarRating = 6; break;
+        case 3: EPGStarRating = 8; break;
+        case 4: EPGStarRating = 10; break;
+        case 5: EPGStarRating = 8; break;
+        case 6: EPGStarRating = 10; break;
+        default: EPGStarRating = -1; break;
       }
 
       foreach (Mapping channelMap in channelNames)
@@ -717,10 +717,7 @@ namespace TvEngine
             }
           }
 
-          if (String.IsNullOrEmpty(audioFormat))
-            description = description.Replace("<br>", "\n");
-          else
-            description = /*"Ton: " + */audioFormat + "\n" + description.Replace("<br>", "\n");
+          description = description.Replace("<br>", "\n");
 
           if (_extendDescription)
           {
@@ -737,7 +734,7 @@ namespace TvEngine
             if (!String.IsNullOrEmpty(date))
             {
               if (!String.IsNullOrEmpty(origin))
-                sb.AppendFormat("{0} {1}\n", origin, date);
+                sb.AppendFormat("Aus: {0} {1}\n", origin, date);
               else
                 sb.AppendFormat("Jahr: {0}\n", date);
             }
@@ -774,6 +771,19 @@ namespace TvEngine
             if (_showRatings)
               if (shortCritic.Length > 1)
                 description = shortCritic + "\n" + description;
+          }
+
+          if (_showAudioFormat)
+          {
+            audioFormat = BuildAudioDescription(Convert.ToBoolean(Audiodescription),
+                                                Convert.ToBoolean(DolbyDigital),
+                                                Convert.ToBoolean(DolbySuround),
+                                                Convert.ToBoolean(Dolby),
+                                                Convert.ToBoolean(Stereo),
+                                                Convert.ToBoolean(Zweikanalton));
+
+            if (!String.IsNullOrEmpty(audioFormat))
+              description += "Ton: " + audioFormat;
           }
 
           Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre, false, OnAirDate, String.Empty, String.Empty, episode, String.Empty, EPGStarRating, classification, Convert.ToInt32(classification));
@@ -875,7 +885,11 @@ namespace TvEngine
       if (dualAudio)
         sb.AppendLine("Mehrkanal-Ton");
 
-      return sb.ToString();
+      string result = sb.ToString().Replace(Environment.NewLine, ",");
+      // Remove trailing comma
+      if (result.EndsWith(","))
+        result = result.Remove(result.Length - 1);
+      return result;
     }
 
     /// <summary>

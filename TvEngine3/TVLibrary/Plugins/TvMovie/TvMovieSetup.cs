@@ -137,7 +137,7 @@ namespace SetupTv.Sections
         setting.Value = "false";
       setting.Persist();
 
-      setting = layer.GetSetting("TvMovieExtendDescription", "false");
+      setting = layer.GetSetting("TvMovieExtendDescription", "true");
       if (checkBoxAdditionalInfo.Checked)
         setting.Value = "true";
       else
@@ -158,7 +158,7 @@ namespace SetupTv.Sections
         setting.Value = "false";
       setting.Persist();
 
-      setting = layer.GetSetting("TvMovieShowRatings", "false");
+      setting = layer.GetSetting("TvMovieShowRatings", "true");
       if (checkBoxShowRatings.Checked)
         setting.Value = "true";
       else
@@ -167,9 +167,23 @@ namespace SetupTv.Sections
 
       setting = layer.GetSetting("TvMovieLimitActors", "5");
       if (checkBoxLimitActors.Checked)
-        setting.Value = "5";
+        setting.Value = numericUpDownActorCount.Value.ToString();
       else
         setting.Value = "0";
+      setting.Persist();
+
+      setting = layer.GetSetting("TvMovieShowLive", "true");
+      if (checkBoxShowLive.Checked)
+        setting.Value = "true";
+      else
+        setting.Value = "false";
+      setting.Persist();
+
+      setting = layer.GetSetting("TvMovieShowRepeating", "false");
+      if (checkBoxShowRepeat.Checked)
+        setting.Value = "true";
+      else
+        setting.Value = "false";
       setting.Persist();
 
       setting = layer.GetSetting("TvMovieRestPeriod", "24");
@@ -188,12 +202,15 @@ namespace SetupTv.Sections
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       checkBoxEnableImport.Checked = layer.GetSetting("TvMovieEnabled", "false").Value == "true";
-      checkBoxUseShortDesc.Checked = layer.GetSetting("TvMovieShortProgramDesc", "true").Value == "true";
-      checkBoxAdditionalInfo.Checked = layer.GetSetting("TvMovieExtendDescription", "false").Value == "true";
-      checkBoxShowRatings.Checked = layer.GetSetting("TvMovieShowRatings", "false").Value == "true";
+      checkBoxUseShortDesc.Checked = layer.GetSetting("TvMovieShortProgramDesc", "false").Value == "true";
+      checkBoxAdditionalInfo.Checked = layer.GetSetting("TvMovieExtendDescription", "true").Value == "true";
+      checkBoxShowRatings.Checked = layer.GetSetting("TvMovieShowRatings", "true").Value == "true";
       checkBoxShowAudioFormat.Checked = layer.GetSetting("TvMovieShowAudioFormat", "false").Value == "true";
-      checkBoxSlowImport.Checked = layer.GetSetting("TvMovieSlowImport", "false").Value == "true";
+      checkBoxSlowImport.Checked = layer.GetSetting("TvMovieSlowImport", "true").Value == "true";
       checkBoxLimitActors.Checked = Convert.ToInt32(layer.GetSetting("TvMovieLimitActors", "5").Value) > 0;
+      numericUpDownActorCount.Value = Convert.ToDecimal(layer.GetSetting("TvMovieLimitActors", "5").Value);
+      checkBoxShowLive.Checked = layer.GetSetting("TvMovieShowLive", "true").Value == "true";
+      checkBoxShowRepeat.Checked = layer.GetSetting("TvMovieShowRepeating", "false").Value == "true";
       SetRestPeriod(layer.GetSetting("TvMovieRestPeriod", "24").Value);
     }
 
