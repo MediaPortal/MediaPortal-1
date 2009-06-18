@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="MPRepository"
+                   namespace="MPRepository.Users">
+
+  <class name="MPUser">
+    <id name="Id" unsaved-value="0">
+      <generator class="identity" />
+    </id>
+    <property name="Handle" unique="true" />
+    <property name="Name" />
+    <property name="EMail" />
+    <property name="LastLogin" />
+    <set name="Permissions" table ="MPUser_Permissions">
+      <key column="MPUser" />
+      <many-to-many class="MPUserPermission" />
+    </set>
+  </class>
+</hibernate-mapping>
