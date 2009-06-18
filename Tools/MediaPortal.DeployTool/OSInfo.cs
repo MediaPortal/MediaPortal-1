@@ -285,9 +285,10 @@ namespace OSInfo
             return 0;
           }
           return OSServicePackMinor == 0 ? 1 : 2;
+        case OSList.Windows7:
+          return OSBuildVersion >= 7301 ? 1 : 2;
         case OSList.Windows2003:
         case OSList.Windows2008:
-        case OSList.Windows7:
           return 2;
         default:
           return 0;
