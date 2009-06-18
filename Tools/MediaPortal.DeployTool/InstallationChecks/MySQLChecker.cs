@@ -38,9 +38,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
     [DllImport("kernel32")]
     private static extern long WritePrivateProfileString(string section, string key, string val, string filePath);
 
-    public static string prg = "MySQL" + _arch;
-
     private static readonly string _arch = Utils.Check64bit() ? "64" : "32";
+    private static readonly string prg = "MySQL" + _arch;
     private readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
     private readonly string _dataDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\MySQL\\MySQL Server 5.1";
 
@@ -82,6 +81,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool Download()
     {
+      MessageBox.Show(String.Format("{0}: arch:{1}  _filename:{2} prg={3}", GetDisplayName(), _arch, _fileName, prg));
+    
       DialogResult result = Utils.RetryDownloadFile(_fileName, prg);
       return (result == DialogResult.OK);
     }

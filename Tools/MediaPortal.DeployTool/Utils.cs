@@ -365,9 +365,6 @@ namespace MediaPortal.DeployTool
       IntPtr handle = p.Handle;
       bool isWow64;
       bool success = IsWow64Process(handle, out isWow64);
-
-      MessageBox.Show(String.Format("Windows API return {0} (True=64bit, False=32bit", isWow64));
-
       if (!success)
       {
         throw new System.ComponentModel.Win32Exception();
