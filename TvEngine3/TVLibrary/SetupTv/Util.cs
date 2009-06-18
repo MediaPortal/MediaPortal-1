@@ -990,5 +990,22 @@ namespace SetupTv
       return AppFound;
     }
 
+    private static string _applicationDirectory;
+    /// <summary>
+    /// Holds the Path, which contains the Application.exe.
+    /// This is not the same like StartupPath (WorkingDirectory).
+    /// </summary>
+    public static string ApplicationDirectory
+    {
+      get
+      {
+        if (String.IsNullOrEmpty(_applicationDirectory))
+        {
+          _applicationDirectory = Directory.GetParent(Application.ExecutablePath).FullName;
+        }
+
+        return _applicationDirectory;
+      }
+    }
   }
 }

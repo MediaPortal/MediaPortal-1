@@ -65,7 +65,7 @@ namespace SetupTv.Sections
     {
       mpComboBoxService.Items.Clear();
       mpComboBoxService.Items.Add("SAP Announcements");
-      string[] files = Directory.GetFiles(@"TuningParameters\iptv", "*.m3u");
+      string[] files = Directory.GetFiles(Utils.ApplicationDirectory + @"\TuningParameters\iptv", "*.m3u");
       foreach (string f in files)
       {
         mpComboBoxService.Items.Add(Path.GetFileNameWithoutExtension(f));
@@ -173,8 +173,8 @@ namespace SetupTv.Sections
         else
         {
           IPlayListIO playlistIO =
-            PlayListFactory.CreateIO(@"TuningParameters\iptv\" + mpComboBoxService.SelectedItem + ".m3u");
-          playlistIO.Load(playlist, @"TuningParameters\iptv\" + mpComboBoxService.SelectedItem + ".m3u");
+            PlayListFactory.CreateIO(Utils.ApplicationDirectory + @"\TuningParameters\iptv\" + mpComboBoxService.SelectedItem + ".m3u");
+          playlistIO.Load(playlist, Utils.ApplicationDirectory + @"\TuningParameters\iptv\" + mpComboBoxService.SelectedItem + ".m3u");
         }
         if (playlist.Count == 0) return;
 

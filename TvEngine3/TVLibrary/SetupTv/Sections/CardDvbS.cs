@@ -246,7 +246,7 @@ namespace SetupTv.Sections
         Log.Info("DVBS: Also using DVB-S2 transponder scanning information");
         string transpondername = Path.GetFileNameWithoutExtension(tsfilename).ToLowerInvariant();
         //@"\Tuningparameters\"
-        tsfilename = @"Tuningparameters\" + transpondername + "-S2.ini";
+        tsfilename = Utils.ApplicationDirectory + @"\Tuningparameters\" + transpondername + "-S2.ini";
         if (!File.Exists(tsfilename))
         {
           Log.Info("DVBS: {0} transponder scanning file not present!", tsfilename);
@@ -417,7 +417,7 @@ namespace SetupTv.Sections
     {
       List<SatteliteContext> satellites = new List<SatteliteContext>();
       XmlDocument doc = new XmlDocument();
-      doc.Load(Directory.GetCurrentDirectory() + @"\Tuningparameters\satellites.xml");
+      doc.Load(Utils.ApplicationDirectory + @"\Tuningparameters\satellites.xml");
       XmlNodeList nodes = doc.SelectNodes("/satellites/satellite");
       if (nodes != null)
         foreach (XmlNode node in nodes)
@@ -426,12 +426,12 @@ namespace SetupTv.Sections
           ts.SatteliteName = node.Attributes.GetNamedItem("name").Value;
           ts.Url = node.Attributes.GetNamedItem("url").Value;
           string name = Utils.FilterFileName(ts.SatteliteName);
-          ts.FileName = Directory.GetCurrentDirectory() + @"\Tuningparameters\" + name + ".ini";
+          ts.FileName = Utils.ApplicationDirectory + @"\Tuningparameters\" + name + ".ini";
           satellites.Add(ts);
         }
 
       /*
-      string[] files = System.IO.Directory.GetFiles(System.IO.Directory.GetCurrentDirectory() + @"\Tuningparameters", "*.tpl");
+      string[] files = System.IO.Directory.GetFiles(Utils.ApplicationDirectory + @"\Tuningparameters", "*.tpl");
 
       foreach (string file in files)
       {

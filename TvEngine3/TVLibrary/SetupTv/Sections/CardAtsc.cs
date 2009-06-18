@@ -107,7 +107,7 @@ namespace SetupTv.Sections
       mpComboBoxFrequencies.Items.Clear();
       try
       {
-        string[] files = System.IO.Directory.GetFiles("TuningParameters");
+        string[] files = System.IO.Directory.GetFiles(Utils.ApplicationDirectory + @"\TuningParameters");
         for (int i = 0; i < files.Length; ++i)
         {
           string ext = System.IO.Path.GetExtension(files[i]).ToLowerInvariant();
@@ -172,7 +172,7 @@ namespace SetupTv.Sections
           MessageBox.Show(this, "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
           return;
         }
-        LoadList(String.Format(@"Tuningparameters\{0}.qam", mpComboBoxFrequencies.SelectedItem));
+        LoadList(String.Format(@"{0}\Tuningparameters\{1}.qam", Utils.ApplicationDirectory, mpComboBoxFrequencies.SelectedItem));
         Thread scanThread = new Thread(DoScan);
         scanThread.Name = "ATSC scan thread";
         scanThread.Start();
