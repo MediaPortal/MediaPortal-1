@@ -288,7 +288,7 @@ namespace MediaPortal.DeployTool
 
         if (_IsInstalled == 1)
         {
-          result.state = version == GetPackageVersion('c') ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
+          result.state = version == GetPackageVersion('d') ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
         }
         else
         {
