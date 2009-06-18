@@ -73,7 +73,7 @@
       <posY>605</posY>
       <width>58</width>
       <height>40</height>
-      <visible>skin.string(#Play.Current.AudioCodec, AAC LC)</visible>
+      <visible>skin.string(#Play.Current.AudioCodec, AAC)|skin.string(#Play.Current.AudioCodec, AAC LC)</visible>
       <texture>logos\aac.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -208,7 +208,7 @@
       <posY>632</posY>
       <width>58</width>
       <height>40</height>
-      <visible>skin.string(#Play.Current.VideoCodec, DIVX)</visible>
+      <visible>skin.string(#Play.Current.VideoCodec, DIVX)|skin.string(#Play.Current.VideoCodec, DIVX 3)|skin.string(#Play.Current.VideoCodec, DIVX 4)|skin.string(#Play.Current.VideoCodec, DIVX 5)|skin.string(#Play.Current.VideoCodec, DIVX 6)</visible>
       <texture>logos\divx.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
