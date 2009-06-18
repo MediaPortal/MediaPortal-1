@@ -148,9 +148,9 @@ namespace MediaPortal.Hardware
 
         foreach (string deviceId in _eHomeTransceivers)
         {
-          if ((deviceInterfaceDetailData.DevicePath.IndexOf(deviceId) != -1) || // eHome Infrared Transceiver List XP
-              (deviceInterfaceDetailData.DevicePath.StartsWith(@"\\?\hid#irdevice&col01#2")))
-            // Microsoft/Philips 2005 (Vista)
+          if ((deviceInterfaceDetailData.DevicePath.IndexOf(deviceId) != -1) ||
+              (deviceInterfaceDetailData.DevicePath.StartsWith(@"\\?\hid#irdevice&col01#2")) ||      // eHome Infrared Transceiver List XP
+              (deviceInterfaceDetailData.DevicePath.StartsWith(@"\\?\hid#irdevicev2&col01#2")))      // Microsoft/Philips 2005 (Vista)
           {
             SetupDiDestroyDeviceInfoList(handle);
             devicePath = deviceInterfaceDetailData.DevicePath;

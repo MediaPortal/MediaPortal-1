@@ -104,9 +104,22 @@ namespace MediaPortal.Hardware
     {
       try
       {
-        if (_deviceStream.EndRead(asyncResult) == 13 && _deviceBuffer[1] == 1)
+        int valEndRead;
+        int devBufIndex;
+        if (OSInfo.OSInfo.GetOSName() == OSInfo.OSInfo.OSList.Windows7)
         {
-          if (_deviceBuffer[5] == (int) _doubleClickButton &&
+          valEndRead = 25;
+          devBufIndex = 9;
+        }
+        else
+        {
+          valEndRead = 13;
+          devBufIndex = 5;
+        }
+
+        if (_deviceStream.EndRead(asyncResult) == valEndRead && _deviceBuffer[1] == 1)
+        {
+          if (_deviceBuffer[devBufIndex] == (int)_doubleClickButton &&
               Environment.TickCount - _doubleClickTick <= _doubleClickTime)
           {
             if (DoubleClick != null)
@@ -116,7 +129,7 @@ namespace MediaPortal.Hardware
           }
           else
           {
-            _doubleClickButton = (RemoteButton) _deviceBuffer[5];
+            _doubleClickButton = (RemoteButton)_deviceBuffer[devBufIndex];
             _doubleClickTick = Environment.TickCount;
 
             if (Click != null)
