@@ -103,7 +103,7 @@
       <posY>605</posY>
       <width>58</width>
       <height>40</height>
-      <visible>skin.string(#Play.Current.AudioCodec, AC3)</visible>
+      <visible>skin.string(#Play.Current.AudioCodec, AC3)|skin.string(#Play.Current.AudioCodec, AC-3)</visible>
       <texture>logos\ac3.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
