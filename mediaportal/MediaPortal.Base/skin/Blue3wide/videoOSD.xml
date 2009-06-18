@@ -58,21 +58,6 @@
       <posY>605</posY>
       <width>58</width>
       <height>40</height>
-      <visible>skin.string(#Play.Current.AudioCodec, AAC)</visible>
-      <texture>logos\aac.png</texture>
-      <keepaspectratio>yes</keepaspectratio>
-      <centered>yes</centered>
-      <animation effect="fade" time="150">visiblechange</animation>
-      <animation effect="fade" time="150">windowopen</animation>
-    </control>
-    <control>
-      <description>AAC LC</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>80</posX>
-      <posY>605</posY>
-      <width>58</width>
-      <height>40</height>
       <visible>skin.string(#Play.Current.AudioCodec, AAC)|skin.string(#Play.Current.AudioCodec, AAC LC)</visible>
       <texture>logos\aac.png</texture>
       <keepaspectratio>yes</keepaspectratio>
