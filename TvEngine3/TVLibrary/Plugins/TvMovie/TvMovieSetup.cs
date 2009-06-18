@@ -121,7 +121,7 @@ namespace SetupTv.Sections
     {
       TvBusinessLayer layer = new TvBusinessLayer();
 
-      TvMovieDatabase.DatabasePath = tbDbPath.Text;
+      TvMovie.DatabasePath = tbDbPath.Text;
 
       Setting setting = layer.GetSetting("TvMovieEnabled", "false");
       if (checkBoxEnableImport.Checked)
@@ -216,7 +216,7 @@ namespace SetupTv.Sections
           imageListTvmStations.Images.Clear();
           treeViewTvMStations.ItemHeight = localInstall ? 24 : 16;
 
-          string GifBasePath = TvMovieDatabase.TVMovieProgramPath + @"Gifs\";
+          string GifBasePath = TvMovie.TVMovieProgramPath + @"Gifs\";
 
           for (int i = 0; i < database.Stations.Count; i++)
           {
@@ -611,9 +611,9 @@ namespace SetupTv.Sections
 
       if (checkBoxEnableImport.Checked)
       {
-        rbLocal.Enabled = rbLocal.Checked = !string.IsNullOrEmpty(TvMovieDatabase.TVMovieProgramPath);
+        rbLocal.Enabled = rbLocal.Checked = !string.IsNullOrEmpty(TvMovie.TVMovieProgramPath);
         rbManual.Checked = !rbLocal.Checked;
-        tbDbPath.Text = TvMovieDatabase.DatabasePath;
+        tbDbPath.Text = TvMovie.DatabasePath;
 
         try
         {
@@ -708,7 +708,7 @@ namespace SetupTv.Sections
       fileDialogDb.InitialDirectory = tbDbPath.Text;
       if (fileDialogDb.ShowDialog(this) == DialogResult.OK)
       {
-        TvMovieDatabase.DatabasePath = tbDbPath.Text = fileDialogDb.FileName;
+        TvMovie.DatabasePath = tbDbPath.Text = fileDialogDb.FileName;
         checkBoxEnableImport_CheckedChanged(sender, null);
       }
     }

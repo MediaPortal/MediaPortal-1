@@ -24,25 +24,174 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Threading;
 using System.Timers;
-using System.IO;
+using Microsoft.Win32;
 using TvControl;
 using TvDatabase;
-using TvLibrary.Log;
-using TvLibrary.Interfaces;
 using TvEngine.PowerScheduler.Interfaces;
+using TvLibrary.Interfaces;
+using TvLibrary.Log;
 
 namespace TvEngine
 {
   public class TvMovie : ITvServerPlugin, ITvServerPluginStartedAll
   {
     #region Members
+
     private TvMovieDatabase _database;
     private System.Timers.Timer _stateTimer;
     private bool _isImporting = false;
     private const long _timerIntervall = 1800000;
+
     #endregion
+
+    #region Static properties
+
+    /// <summary>
+    /// Retrieves the location of TVDaten.mdb - prefers manual configured path, does fallback to registry.
+    /// </summary>
+    public static string TVMovieProgramPath
+    {
+      get
+      {
+        string path = string.Empty;
+        string mpPath = string.Empty;
+        try
+        {
+          using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\Gemeinsames"))
+            if (rkey != null)
+              path = string.Format("{0}", rkey.GetValue("ProgrammPath"));
+
+          mpPath = TvMovieDatabase.TvBLayer.GetSetting("TvMovieInstallPath", path).Value;
+        }
+        catch (Exception ex)
+        {
+          Log.Info("TVMovie: Error getting TV Movie install dir (ProgrammPath) from registry {0}", ex.Message);
+        }
+
+        if (File.Exists(mpPath))
+          return mpPath;
+
+        return path;
+      }
+    }
+
+    public static string DatabasePath
+    {
+      get
+      {
+        string path = string.Empty;
+        string mpPath = string.Empty;
+
+        try
+        {
+          mpPath = TvMovieDatabase.TvBLayer.GetSetting("TvMoviedatabasepath", path).Value;
+          if (File.Exists(mpPath))
+            return mpPath;
+        }
+        catch (Exception exdb)
+        {
+          Log.Info("TVMovie: Error getting TV Movie DB dir (DBDatei) from database {0}", exdb.Message);
+        }
+        try
+        {
+          using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\Gemeinsames"))
+            if (rkey != null)
+              path = string.Format("{0}", rkey.GetValue("DBDatei"));
+        }
+        catch (Exception ex)
+        {
+          Log.Info("TVMovie: Error getting TV Movie DB dir (DBDatei) from registry {0}", ex.Message);
+        }
+        return path;
+      }
+      set
+      {
+        string registryPath = string.Empty;
+        string newParamPath = value;
+
+        try
+        {
+          try
+          {
+            using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\Gemeinsames"))
+              if (rkey != null)
+                registryPath = string.Format("{0}", rkey.GetValue("DBDatei"));
+          }
+          catch (Exception exr)
+          {
+            Log.Info("TVMovie: A registry lookup failed when setting TV Movie DB dir (DBDatei) - : {0}", exr.Message);
+          }
+
+          // passed path is invalid try using the registry path
+          if (!File.Exists(newParamPath))
+            newParamPath = registryPath;
+
+          Setting setting = TvMovieDatabase.TvBLayer.GetSetting("TvMoviedatabasepath", string.Empty);
+          string mpDbPath = setting.Value; // TvBLayer.GetSetting("TvMoviedatabasepath", string.Empty).Value;          
+
+          if (string.IsNullOrEmpty(newParamPath))
+          {
+            // use configured path
+            if (!string.IsNullOrEmpty(mpDbPath)) // do not check File.Exists because it might temporarily unavailable
+              return;
+            else
+              setting.Value = string.Empty;
+          }
+          else
+            setting.Value = newParamPath;
+
+          setting.Persist();
+          Log.Info("TVMovie: Set TV Movie DB dir to {0}", setting.Value);
+        }
+        catch (Exception ex)
+        {
+          Log.Info("TVMovie: Error setting TV Movie DB dir (DBDatei) - {0}", ex.Message);
+        }
+      }
+    }
+
+    #endregion
+
+    #region Powerscheduler handling
+
+    private void SetStandbyAllowed(bool allowed)
+    {
+      if (GlobalServiceProvider.Instance.IsRegistered<IEpgHandler>())
+      {
+        GlobalServiceProvider.Instance.Get<IEpgHandler>().SetStandbyAllowed(this, allowed, 1800);
+        if (!allowed)
+          Log.Debug("TVMovie: Telling PowerScheduler standby is allowed: {0}, timeout is 30 minutes", allowed);
+      }
+    }
+
+    private void RegisterForEPGSchedule()
+    {
+      // Register with the EPGScheduleDue event so we are informed when
+      // the EPG wakeup schedule is due.
+      if (GlobalServiceProvider.Instance.IsRegistered<IEpgHandler>())
+      {
+        IEpgHandler handler = GlobalServiceProvider.Instance.Get<IEpgHandler>();
+        if (handler != null)
+        {
+          handler.EPGScheduleDue += new EPGScheduleHandler(EPGScheduleDue);
+          Log.Debug("TVMovie: registered with PowerScheduler EPG handler");
+          return;
+        }
+      }
+      Log.Debug("TVMovie: NOT registered with PowerScheduler EPG handler");
+    }
+
+    private void EPGScheduleDue()
+    {
+      SpawnImportThread();
+    }
+
+    #endregion
+
+    #region Import methods
 
     private void ImportThread()
     {      
@@ -69,10 +218,10 @@ namespace TvEngine
             SetStandbyAllowed(false);
 
             long updateDuration = _database.LaunchTVMUpdater(true);
-            if (updateDuration < 600)
+            if (updateDuration < 1200)
             {
-              // Updating a least a few programs would take more than 15 seconds
-              if (updateDuration > 15)
+              // Updating a least a few programs should take more than 20 seconds
+              if (updateDuration > 20)
                 _database.Import();
               else
                 Log.Info("TVMovie: Import skipped because there was no new data.");
@@ -98,38 +247,6 @@ namespace TvEngine
     {
       //TODO: check stateinfo
       SpawnImportThread();
-    }
-
-    private void RegisterForEPGSchedule()
-    {
-      // Register with the EPGScheduleDue event so we are informed when
-      // the EPG wakeup schedule is due.
-      if (GlobalServiceProvider.Instance.IsRegistered<IEpgHandler>())
-      {
-        IEpgHandler handler = GlobalServiceProvider.Instance.Get<IEpgHandler>();
-        if (handler != null)
-        {
-          handler.EPGScheduleDue += new EPGScheduleHandler(EPGScheduleDue);
-          Log.Debug("TVMovie: registered with PowerScheduler EPG handler");
-          return;
-        }
-      }
-      Log.Debug("TVMovie: NOT registered with PowerScheduler EPG handler");
-    }
-
-    private void EPGScheduleDue()
-    {
-      SpawnImportThread();
-    }
-
-    private void SetStandbyAllowed(bool allowed)
-    {
-      if (GlobalServiceProvider.Instance.IsRegistered<IEpgHandler>())
-      {
-        GlobalServiceProvider.Instance.Get<IEpgHandler>().SetStandbyAllowed(this, allowed, 1800);
-        if (!allowed)
-          Log.Debug("TVMovie: Telling PowerScheduler standby is allowed: {0}, timeout is 30 minutes", allowed);
-      }
     }
 
     private void SpawnImportThread()
@@ -186,6 +303,8 @@ namespace TvEngine
       }
     }
 
+    #endregion
+
     #region ITvServerPlugin Members
 
     public string Name
@@ -195,7 +314,7 @@ namespace TvEngine
 
     public string Version
     {
-      get { return "1.0.0.0"; }
+      get { return "1.0.3.0"; }
     }
 
     public string Author
