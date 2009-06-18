@@ -29,7 +29,7 @@ namespace MediaPortal.DeployTool.Sections
       {
         bMS.Enabled = false;
         rbMSSQL.Enabled = false;
-        rbMySQL.Text = Localizer.GetBestTranslation("DBMSType_rbMSSQL_disabled");
+        rbMSSQL.Text = Localizer.GetBestTranslation("DBMSType_rbMSSQL_disabled");
         lbMSSQL.Visible = true;
         lbMSSQL.Enabled = true;
         lbMSSQL.Text = Localizer.GetBestTranslation("DBMSType_lbMSSQL_disabled");
