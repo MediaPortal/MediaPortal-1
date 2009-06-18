@@ -94,19 +94,19 @@ void LogDebug(const char *fmt, ...)
 
 const AMOVIESETUP_MEDIATYPE acceptAudioPinTypes =
 {
-  &MEDIATYPE_Audio,                  // major type
+  &MEDIATYPE_Audio,             // major type
   &MEDIASUBTYPE_MPEG1Audio      // minor type
 };
 const AMOVIESETUP_MEDIATYPE acceptVideoPinTypes =
 {
-  &MEDIATYPE_Video,                  // major type
-  &MEDIASUBTYPE_MPEG2_VIDEO      // minor type
+  &MEDIATYPE_Video,             // major type
+  &MEDIASUBTYPE_MPEG2_VIDEO     // minor type
 };
 
 const AMOVIESETUP_MEDIATYPE acceptSubtitlePinTypes =
 {
-  &MEDIATYPE_Stream,           // major type
-  &MEDIASUBTYPE_MPEG2_TRANSPORT      // minor type
+  &MEDIATYPE_Stream,            // major type
+  &MEDIASUBTYPE_MPEG2_TRANSPORT // minor type
 };
 
 const AMOVIESETUP_PIN audioVideoPin[] =
@@ -158,7 +158,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
   TCHAR filename[1024];
   GetLogFile(filename);
   ::DeleteFile(filename);
-  LogDebug("-------------- v1.0.5 ----------------");
+  LogDebug("-------------- v1.0.6 ----------------");
 
   m_fileReader=NULL;
   m_fileDuration=NULL;

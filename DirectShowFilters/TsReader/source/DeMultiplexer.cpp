@@ -138,7 +138,7 @@ void CDeMultiplexer::GetH264Media(CMediaType *pmt)
   pmt->InitMediaType();
   pmt->SetType      (& MEDIATYPE_Video);
   pmt->SetSubtype   (& H264_SubType);
-  pmt->SetFormatType(&FORMAT_VideoInfo);
+  pmt->SetFormatType(&FORMAT_MPEG2Video);
   pmt->SetSampleSize(1);
   pmt->SetTemporalCompression(TRUE);
   pmt->SetVariableSize();
