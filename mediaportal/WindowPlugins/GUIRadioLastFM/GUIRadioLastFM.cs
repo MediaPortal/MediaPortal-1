@@ -172,19 +172,21 @@ namespace MediaPortal.GUI.RADIOLASTFM
           ThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, AudioscrobblerBase.CurrentPlayingSong.Artist);
         }
         // repopulate the facade after maybe exiting the plugin
-        if (facadeRadioPlaylist != null)
-        {
-          facadeRadioPlaylist.Clear();
-          foreach (Song listTrack in _radioTrackList)
-          {
-            GUIGraphicsContext.form.Invoke(new ThreadFacadeAddItem(AddItemToFacadeControl), new object[] { listTrack });
-          }
-        }
+        //if (facadeRadioPlaylist != null)
+        //{
+        //  facadeRadioPlaylist.Clear();
+        //  foreach (Song listTrack in _radioTrackList)
+        //  {
+        //    GUIGraphicsContext.form.Invoke(new ThreadFacadeAddItem(AddItemToFacadeControl), new object[] { listTrack });
+        //  }
+        //}
         SetThumbnails(ThumbFileName);
         _scrobbleUsers = MusicDatabase.Instance.GetAllScrobbleUsers();
         // Do proper first time initialisation
-        LastFMStation.LoadSettings(!LastFMStation.IsInit || LastFMStation.AccountUser != AudioscrobblerBase.Username);
-        //}
+        if (!LastFMStation.IsInit || LastFMStation.AccountUser != AudioscrobblerBase.Username)
+          LastFMStation.LoadSettings(true);
+        else
+          OnRadioSettingsSuccess();
       }
       catch (Exception ex)
       {

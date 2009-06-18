@@ -618,7 +618,14 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private void OnAsyncRequestError(String urlCommand, Exception errorReason)
     {
-      Log.Warn("StreamControl: Async request for {0} unsuccessful: {1}", urlCommand, errorReason.Message);
+      try
+      {
+        Log.Warn("StreamControl: Async request for {0} unsuccessful: {1}", urlCommand, errorReason.Message);
+      }
+      finally
+      {
+        httpcommand.workerError -= new AsyncGetRequest.AsyncGetRequestError(OnAsyncRequestError);
+      }
     }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
@@ -679,8 +686,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
         Log.Error("StreamControl: SendCommandRequest: Parsing response failed {0}", e.Message);
         return;
       }
-
-      return;
+      finally
+      {
+        httpcommand.workerFinished -= new AsyncGetRequest.AsyncGetRequestCompleted(OnParseAsyncResponse);
+      }
     }
 
     # endregion
