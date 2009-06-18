@@ -38,8 +38,9 @@ namespace MediaPortal.DeployTool.InstallationChecks
     [DllImport("kernel32")]
     private static extern long WritePrivateProfileString(string section, string key, string val, string filePath);
 
-    public static string prg = "MySQL" + Utils._arch;
+    public static string prg = "MySQL" + _arch;
 
+    private static readonly string _arch = Utils.Check64bit() ? "64" : "32";
     private readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
     private readonly string _dataDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\MySQL\\MySQL Server 5.1";
 

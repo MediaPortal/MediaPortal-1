@@ -38,8 +38,9 @@ namespace MediaPortal.DeployTool.InstallationChecks
     [DllImport("kernel32")]
     private static extern long WritePrivateProfileString(string section, string key, string val, string filePath);
 
-    public static string prg = "MSSQLExpress" + Utils._arch;
+    public static string prg = "MSSQLExpress" + _arch;
 
+    private static readonly string _arch = Utils.Check64bit() ? "64" : "32";
     private readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.LocalizeDownloadFile(Utils.GetDownloadString(prg, "FILE"), Utils.GetDownloadString(prg, "TYPE"), prg);
 
     private static void PrepareTemplateINI(string iniFile)

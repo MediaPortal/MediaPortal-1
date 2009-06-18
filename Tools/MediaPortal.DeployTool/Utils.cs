@@ -96,7 +96,6 @@ namespace MediaPortal.DeployTool
 
   class Utils
   {
-    public static readonly string _arch = Check64bit() ? "64" : "32";
     public static readonly OSInfo.OSInfo.OSList _osver = OSInfo.OSInfo.GetOSName();
 
     #region DialogHelper
@@ -366,6 +365,9 @@ namespace MediaPortal.DeployTool
       IntPtr handle = p.Handle;
       bool isWow64;
       bool success = IsWow64Process(handle, out isWow64);
+
+      MessageBox.Show(String.Format("Windows API return {0} (True=64bit, False=32bit", isWow64));
+
       if (!success)
       {
         throw new System.ComponentModel.Win32Exception();
