@@ -65,10 +65,14 @@ namespace SetupTv.Sections
     {
       mpComboBoxService.Items.Clear();
       mpComboBoxService.Items.Add("SAP Announcements");
-      string[] files = Directory.GetFiles(Utils.ApplicationDirectory + @"\TuningParameters\iptv", "*.m3u");
-      foreach (string f in files)
+      String tuningFolder = Utils.ApplicationDirectory + @"\TuningParameters\iptv";
+      if (Directory.Exists(tuningFolder))
       {
-        mpComboBoxService.Items.Add(Path.GetFileNameWithoutExtension(f));
+        string[] files = Directory.GetFiles(tuningFolder, "*.m3u");
+        foreach (string f in files)
+        {
+          mpComboBoxService.Items.Add(Path.GetFileNameWithoutExtension(f));
+        }
       }
       mpComboBoxService.SelectedIndex = 0;
     }
