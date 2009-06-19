@@ -258,38 +258,6 @@ namespace TvPlugin
 
     protected void Initialize()
     {
-      Log.Debug("StartImportXML: Initialize");
-      _tvGuideFileName = "xmltv";
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        _tvGuideFileName = xmlreader.GetValueAsString("xmltv", "folder", "xmltv");
-        _tvGuideFileName = Utils.RemoveTrailingSlash(_tvGuideFileName);
-        _useColorsForGenres = xmlreader.GetValueAsBool("xmltv", "colors", false);
-      }
-
-      // Create a new FileSystemWatcher and set its properties.
-      try
-      {
-        Directory.CreateDirectory(_tvGuideFileName);
-      }
-      catch (Exception)
-      {
-      }
-      if (_tvGuideFileWatcher == null)
-      {
-        _tvGuideFileWatcher = new FileSystemWatcher();
-        _tvGuideFileWatcher.Path = _tvGuideFileName;
-        _tvGuideFileWatcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName |
-                                           NotifyFilters.DirectoryName;
-        _tvGuideFileWatcher.Filter = "*.xml";
-        // Add event handlers.
-        _tvGuideFileWatcher.Changed += new FileSystemEventHandler(OnChanged);
-        _tvGuideFileWatcher.Created += new FileSystemEventHandler(OnChanged);
-        _tvGuideFileWatcher.Renamed += new RenamedEventHandler(OnRenamed);
-        _tvGuideFileWatcher.EnableRaisingEvents = true;
-      }
-
-      _tvGuideFileName += @"\tvguide.xml";
     }
 
 
@@ -755,7 +723,7 @@ namespace TvPlugin
                 _cursorX -= _channelCount;
                 _channelOffset += _channelCount;
               }
-              CheckNewTVGuide();
+              //CheckNewTVGuide();
 
               GUISpinControl cntlDay = GetControl((int)Controls.SPINCONTROL_DAY) as GUISpinControl;
               if (cntlDay != null)
@@ -1045,28 +1013,6 @@ namespace TvPlugin
     #endregion
 
     #region private members
-
-    protected void CheckNewTVGuide()
-    {
-      bool shouldImportTvGuide = false;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        string strTmp = String.Empty;
-        strTmp = xmlreader.GetValueAsString("tvguide", "date", String.Empty);
-        if (File.Exists(_tvGuideFileName))
-        {
-          string strFileTime = File.GetLastWriteTime(_tvGuideFileName).ToString();
-          if (strTmp != strFileTime)
-          {
-            shouldImportTvGuide = true;
-          }
-        }
-      }
-      if (shouldImportTvGuide)
-      {
-        StartImportXML();
-      }
-    }
 
     private void Update(bool selectCurrentShow)
     {
@@ -2969,145 +2915,6 @@ namespace TvPlugin
       }
     }
 
-    private void Import()
-    {
-      ///@
-      /*
-      GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-      if (dlgProgress != null)
-      {
-        dlgProgress.SetHeading(606);
-        dlgProgress.SetLine(1, String.Empty);
-        dlgProgress.SetLine(2, String.Empty);
-        dlgProgress.StartModal(GetID);
-        dlgProgress.Progress();
-      }
-
-      XMLTVImport import = new XMLTVImport();
-      import.ShowProgress += new MediaPortal.TV.Database.XMLTVImport.ShowProgressHandler(import_ShowProgress);
-      bool bSucceeded = import.Import(_tvGuideFileName, true);
-      if (dlgProgress != null)
-        dlgProgress.Close();
-
-      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-      if (pDlgOK != null)
-      {
-        int iChannels = import.ImportStats.Channels;
-        int iPrograms = import.ImportStats.Programs;
-        string strChannels = GUILocalizeStrings.Get(627) + iChannels.ToString();
-        string strPrograms = GUILocalizeStrings.Get(628) + iPrograms.ToString();
-        pDlgOK.SetHeading(606);
-        pDlgOK.SetLine(1, strChannels + " " + strPrograms);
-        pDlgOK.SetLine(2, import.ImportStats.StartTime.ToShortDateString() + " - " + import.ImportStats.EndTime.ToShortDateString());
-        if (!bSucceeded)
-        {
-          pDlgOK.SetLine(1, 608);
-          pDlgOK.SetLine(2, import.ErrorMessage);
-        }
-        else
-        {
-          pDlgOK.SetHeading(606);
-          pDlgOK.SetLine(1, 609);
-        }
-        pDlgOK.DoModal(GetID);
-      }
-      _channelOffset = 0;
-      _singleChannelView = false;
-      _channelOffset = 0;
-      _cursorY = 0;
-      _cursorX = 0;
-      Update(false);
-      SetFocus();
-       */
-    }
-
-    // Define the event handlers.
-    private static void OnChanged(object source, FileSystemEventArgs e)
-    {
-      if (String.Compare(e.Name, "tvguide.xml", true) == 0)
-      {
-        StartImportXML();
-      }
-    }
-
-    private static void OnRenamed(object source, RenamedEventArgs e)
-    {
-      if (String.Compare(e.Name, "tvguide.xml", true) == 0)
-      {
-        StartImportXML();
-      }
-    }
-
-    protected static void StartImportXML()
-    {
-      ///@
-      /*
-      Thread.Sleep(500); // give time to the external prog to close file handle
-      try
-      {
-        //check if file can be opened for reading....
-        Encoding fileEncoding = Encoding.Default;
-        FileStream streamIn = File.Open(_tvGuideFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-        StreamReader fileIn = new StreamReader(streamIn, fileEncoding, true);
-        fileIn.Close();
-        streamIn.Close();
-      }
-      catch (Exception)
-      {
-        Log.Debug("StartImportXML - Exception " + _tvGuideFileName);
-        return;
-      }
-      _tvGuideFileWatcher.EnableRaisingEvents = false;
-      //Thread workerThread = new Thread(new ThreadStart(ThreadFunctionImportTVGuide));
-      if (!_workerThreadRunning)
-      {
-        _workerThreadRunning = true;
-        Thread workerThread = new Thread(new ThreadStart(ThreadFunctionImportTVGuide));
-        workerThread.Priority = ThreadPriority.Lowest;
-        workerThread.Start();
-      }*/
-    }
-
-    private static void ThreadFunctionImportTVGuide()
-    {
-      ///@
-      /*
-      Log.Debug(@"detected new tvguide ->import new tvguide");
-      Thread.Sleep(500);
-      try
-      {
-        XMLTVImport import = new XMLTVImport(10);  // add 10 msec dely to the background thread
-        import.Import(_tvGuideFileName, false);
-      }
-      catch (Exception)
-      {
-      }
-
-      try
-      {
-        //
-        // Make sure the file exists before we try to do any processing, thus if the file doesn't
-        // exist we we'll save ourselves from getting a file not found exception.
-        //
-        if (File.Exists(_tvGuideFileName))
-        {
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-          {
-            string strFileTime = System.IO.File.GetLastWriteTime(_tvGuideFileName).ToString();
-            xmlreader.SetValue("tvguide", "date", strFileTime);
-          }
-        }
-
-      }
-      catch (Exception)
-      {
-      }
-      _tvGuideFileWatcher.EnableRaisingEvents = true;
-      _workerThreadRunning = false;
-      Log.Debug(@"import done");
-       */
-    }
-
     private void ShowContextMenu()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
@@ -3156,12 +2963,6 @@ namespace TvPlugin
             break;
           case 971: //group
             OnSelectGroup();
-            break;
-
-          case 937: //import tvguide
-            Import();
-            Update(false);
-            SetFocus();
             break;
 
           case 938: // view channel
