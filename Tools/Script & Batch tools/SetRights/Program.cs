@@ -78,7 +78,7 @@ namespace SetRights
             everyoneSid,
             FileSystemRights.FullControl,                                       // full control so no arm if new files are created
             InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, // all subfolders and files
-            PropagationFlags.NoPropagateInherit,
+            PropagationFlags.InheritOnly,
             AccessControlType.Allow);
         security.AddAccessRule(newRule);
         System.IO.Directory.SetAccessControl(folderName, security);
@@ -142,7 +142,7 @@ namespace SetRights
             everyoneSid,
             RegistryRights.FullControl,  // modify is enough for reading/writing/deleting
             InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, // all subfolders and files
-            PropagationFlags.NoPropagateInherit,
+            PropagationFlags.InheritOnly,
             AccessControlType.Allow);
         security.AddAccessRule(newRule);
         rKey.SetAccessControl(security);
