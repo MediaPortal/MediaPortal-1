@@ -68,9 +68,12 @@ namespace TvLibrary.Implementations.DVB
 
     protected override void RemoveStreamSourceFilter()
     {
-      _graphBuilder.RemoveFilter(_filterStreamSource);
-      Release.ComObject("Elecard NWSource-Plus", _filterStreamSource);
-      _filterStreamSource = null;
+      if (_filterStreamSource != null)
+      {
+        _graphBuilder.RemoveFilter(_filterStreamSource);
+        Release.ComObject("Elecard NWSource-Plus", _filterStreamSource);
+        _filterStreamSource = null;
+      }
     }
 
     protected override void RunGraph(int subChannel, string url)
