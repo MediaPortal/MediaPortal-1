@@ -81,8 +81,6 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool Download()
     {
-      MessageBox.Show(String.Format("{0}: arch:{1}  _filename:{2} prg={3}", GetDisplayName(), _arch, _fileName, prg));
-    
       DialogResult result = Utils.RetryDownloadFile(_fileName, prg);
       return (result == DialogResult.OK);
     }
