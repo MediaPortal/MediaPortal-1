@@ -69,7 +69,10 @@ namespace SetupTv
         }
         catch (Exception ex)
         {
-          Log.Error("ServiceHelper: Could not check whether the tvservice is running. Please check your network as well. \nError: {0}", ex.ToString());
+          if (!(ex is System.Runtime.Remoting.RemotingException || ex is System.Net.Sockets.SocketException))
+          {
+            Log.Error("ServiceHelper: Could not check whether the tvservice is running. Please check your network as well. \nError: {0}", ex.ToString());
+          }
 
           try
           {
