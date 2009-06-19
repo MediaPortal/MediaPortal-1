@@ -198,8 +198,12 @@ namespace TvLibrary.Implementations.DVB
     public override void StopGraph()
     {
       base.StopGraph();
-      RemoveStreamSourceFilter();
-      AddStreamSourceFilter(_defaultUrl);
+      //FIXME: this logic should be checked (removing and adding filters in stopgraph?) (morpheus_xx)
+      if (_graphState != GraphState.Idle)
+      {
+        RemoveStreamSourceFilter();
+        AddStreamSourceFilter(_defaultUrl);
+      }
     }
 
     public override string ToString()

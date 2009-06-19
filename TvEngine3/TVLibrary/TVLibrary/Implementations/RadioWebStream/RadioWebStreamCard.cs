@@ -325,9 +325,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     {
       get
       {
-        ITvSubChannel[] channels = new ITvSubChannel[1];
-        channels[0] = null;
-        return channels;
+        return new ITvSubChannel[0];
       }
     }
 
