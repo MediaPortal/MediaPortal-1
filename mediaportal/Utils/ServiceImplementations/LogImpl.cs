@@ -25,6 +25,7 @@
 
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading;
 using MediaPortal.Configuration;
 using MediaPortal.Profile;
@@ -170,8 +171,8 @@ namespace MediaPortal.ServiceImplementations
 
     public void Write(Exception ex)
     {
-      WriteFile(LogType.Log, true, "Exception   :{0}", ex.ToString());
-      WriteFile(LogType.Log, true, "Exception   :{0}", ex.Message);
+      WriteFile(LogType.Log, true, "Exception   :{0}", SafeString(ex.ToString()));
+      WriteFile(LogType.Log, true, "Exception   :{0}", SafeString(ex.Message));
       WriteFile(LogType.Log, true, "  site      :{0}", ex.TargetSite);
       WriteFile(LogType.Log, true, "  source    :{0}", ex.Source);
       WriteFile(LogType.Log, true, "  stacktrace:{0}", ex.StackTrace);
@@ -238,7 +239,15 @@ namespace MediaPortal.ServiceImplementations
     {
       Write(ex);
     }
-
+    /// <summary>
+    /// Replaces a password inside the string by stars
+    /// </summary>
+    /// <param name="Logtext">String to replace</param>
+    /// <returns>String without password</returns>
+    public String SafeString(String Logtext)
+    {
+      return new Regex(@"Password=[^;]*;", RegexOptions.IgnoreCase).Replace(Logtext, "Password=***;");
+    }
     /// <summary>
     /// Write a string to the logfile.
     /// </summary>
