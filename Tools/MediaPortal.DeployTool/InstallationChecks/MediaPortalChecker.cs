@@ -127,7 +127,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
           if (MpPath != null && File.Exists(MpPath))
           {
-            result.state = MpVer == Utils.GetPackageVersion('c') ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
+            result.state = MpVer == Utils.GetPackageVersion('d') ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
           }
         }
       }

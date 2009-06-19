@@ -88,16 +88,18 @@ namespace MediaPortal.DeployTool.Sections
         bUpdate.Enabled = true;
       }
 
+      string VerDisplay = Utils.GetPackageVersion('d');
+
       if (!String.IsNullOrEmpty(MpBuild))
       {
-        labelSectionHeader.Text = MpBuild != "0" ? String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader_SVN"), MpVer, MpBuild) : String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader"), MpVer);
+        labelSectionHeader.Text = MpBuild != "0" ? String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader_SVN"), VerDisplay, MpBuild) : String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader"), VerDisplay);
       }
       else
       {
-        labelSectionHeader.Text = Tv3Build != "0" ? String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader_SVN"), Tv3Ver, Tv3Build) : String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader"), Tv3Ver);
+        labelSectionHeader.Text = Tv3Build != "0" ? String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader_SVN"), VerDisplay, Tv3Build) : String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader"), VerDisplay);
       }
 
-      rbUpdate.Text = String.Format(Localizer.GetBestTranslation("Upgrade_yes"), Utils.GetPackageVersion('c'));
+      rbUpdate.Text = String.Format(Localizer.GetBestTranslation("Upgrade_yes"), VerDisplay);
       rbFresh.Text = Localizer.GetBestTranslation("Upgrade_no");
       labelNote.Text = Localizer.GetBestTranslation("Upgrade_note");
     }

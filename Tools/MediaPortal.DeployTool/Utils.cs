@@ -285,6 +285,10 @@ namespace MediaPortal.DeployTool
         string version = (string)key.GetValue("DisplayVersion", null);
         key.Close();
 
+#if DEBUG
+        MessageBox.Show("Registry version = <" + version + ">, DeployTool display version = <" + GetPackageVersion('d') + ">, IsInstalled=" + _IsInstalled);
+#endif
+
         if (_IsInstalled == 1)
         {
           result.state = version == GetPackageVersion('d') ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
