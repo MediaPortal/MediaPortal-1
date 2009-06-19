@@ -3790,7 +3790,7 @@ namespace TvPlugin
       catch (Exception ex)
       {
         Log.Error("TVHome: Error in Reload");
-        Log.Write(ex); 
+        Log.Error(ex); 
         //TVHome.Connected = false;
       }
     }
