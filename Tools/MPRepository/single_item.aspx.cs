@@ -176,7 +176,8 @@ namespace MPRepository.Web
       }
 
       // TODO: Persist target filename somewhere
-      ViewState["TargetFilename"] = targetFilename;
+      ViewState["TargetFileName"] = System.IO.Path.GetFileName(fileUpload.PostedFile.FileName);
+      ViewState["TargetFileLocation"] = targetFilename;
 
       MPRSession session = MPRController.StartSession();
       MPItem item = MPRController.RetrieveById<MPItem>(session, (Int64)itemDetailsView.SelectedValue);
@@ -223,7 +224,8 @@ namespace MPRepository.Web
 
     protected void versionDataSource_Inserted(object sender, ObjectDataSourceStatusEventArgs e)
     {
-      string filename = (string)ViewState["TargetFilename"];
+      string filename = (string)ViewState["TargetFileName"];
+      string location = (string)ViewState["TargetFileLocation"];
 
 
       MPRSession session = MPRController.StartSession();
@@ -232,14 +234,15 @@ namespace MPRepository.Web
       // Add the new file to the Repository
       MPFile mpfile = new MPFile();
       mpfile.ItemVersion = version;
-      mpfile.Filename = System.IO.Path.GetFileName(filename);
-      mpfile.Location = filename;
+      mpfile.Filename = filename;
+      mpfile.Location = location;
       version.Files.Add(mpfile);
 
       MPRController.Save<MPItemVersion>(session, version);
       MPRController.EndSession(session, true);
 
-      ViewState.Remove("TargetFilename");
+      ViewState.Remove("TargetFileName");
+      ViewState.Remove("TargetFileLocation");
 
     }
 

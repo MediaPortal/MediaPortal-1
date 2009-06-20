@@ -46,7 +46,7 @@ namespace MPRepository.Controller
 
     public enum Direction
     {
-      Ascending,
+      Ascending = 0,
       Descending
     }
 

@@ -89,7 +89,6 @@ namespace MPRepository.Web
       else // not PostBack - initial page setup
       {
         // Load user from session
-        userLabel.Text = user.Name;
         authorTextBox.Text = user.Handle;
 
         // Fill development status according to ENum

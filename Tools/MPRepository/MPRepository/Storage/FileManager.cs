@@ -36,14 +36,27 @@ namespace MPRepository.Storage
   /// </summary>
   public static class FileManager
   {
+
+
     public static string GetSaveLocation(String filename)
     {
       // TODO: Generate directory structure from filename with hashing and random
       // TODO: Check that filename doesn't already exists there, if it does, rehash
 
-      string tmpDir = ConfigurationManager.AppSettings.Get("TempDirectory");
+      //string tmpDir = ConfigurationManager.AppSettings.Get("TempDirectory");
+      string filesBaseDir = ConfigurationManager.AppSettings.Get("FilesBaseDir");
+      uint fileDirectories = 1;
+      UInt32.TryParse(ConfigurationManager.AppSettings.Get("NumOfDirectoriesForFiles"), out fileDirectories);
 
-      return tmpDir + @"\" + filename;
+      ulong subdir = ((ulong) filename.GetHashCode()) % fileDirectories;
+
+      string targetDir = filesBaseDir + System.IO.Path.DirectorySeparatorChar + subdir.ToString();
+      if (!System.IO.Directory.Exists(targetDir))
+      {
+        System.IO.Directory.CreateDirectory(targetDir);
+      }
+
+      return targetDir + System.IO.Path.DirectorySeparatorChar + filename + "." + DateTime.Now.ToString("yyyyddmmHHmm");
 
     }
 

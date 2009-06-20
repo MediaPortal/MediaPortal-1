@@ -2,17 +2,14 @@
 
 <asp:Content ID="createItemContent" runat="server" ContentPlaceHolderID="MPRContentHolder1" >
 
-    <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true">
-      <Services>
-        <asp:ServiceReference path="UIHelper.asmx" />
-      </Services>
-    </asp:ScriptManager>
+  <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true">
+    <Services>
+      <asp:ServiceReference path="UIHelper.asmx" />
+    </Services>
+  </asp:ScriptManager>
 
-    <asp:UpdatePanel ID="createItemUpdatePanel" runat="server">
-      <ContentTemplate>
-
-    <div>
-      <h4>Item created by <asp:Label ID="userLabel" runat="server" /></h4>
+  <asp:UpdatePanel ID="createItemUpdatePanel" runat="server">
+    <ContentTemplate>
 
       <asp:Label ID="uploadStatusLabel" runat="server" />
       
@@ -44,11 +41,12 @@
       <tr><td></td></tr>
       <tr><td><asp:Button ID="submitButton" runat="server" Text="Submit File" /></td></tr>
       </table>   
-    
-    </div>
-    
-      </ContentTemplate>
-    </asp:UpdatePanel>
+  
+    </ContentTemplate>
+    <Triggers>
+      <asp:PostBackTrigger ControlID="submitButton" />
+    </Triggers>
+  </asp:UpdatePanel>
     
     
 </asp:Content>

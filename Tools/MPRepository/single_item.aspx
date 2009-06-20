@@ -111,9 +111,9 @@
         oninserted="versionDataSource_Inserted" >
           <SelectParameters>
             <asp:Parameter DefaultValue="Item" Name="key" Type="String" />
-            <asp:QueryStringParameter DefaultValue="" Name="value" QueryStringField="itemid" Type="Int64" />
+            <asp:QueryStringParameter DefaultValue="0" Name="value" QueryStringField="itemid" Type="Int64" />
             <asp:Parameter DefaultValue="UpdateDate" Name="sortKey" Type="String" />
-            <asp:Parameter DefaultValue="Descending" Name="direction" Type="Object" />
+            <asp:Parameter DefaultValue="1" Name="direction" Type="Int32" />
           </SelectParameters>
       </asp:ObjectDataSource>
 
@@ -140,7 +140,7 @@
         DeleteMethod="Delete" OldValuesParameterFormatString="original_{0}" >
           <SelectParameters>
             <asp:Parameter DefaultValue="ItemVersion" Name="key" Type="String" />
-            <asp:ControlParameter ControlID="versionDetailsView" DefaultValue="" Name="value" PropertyName="DataItem.Id" Type="Int64" />
+            <asp:ControlParameter ControlID="versionDetailsView" DefaultValue="0" Name="value" PropertyName="DataItem.Id" Type="Int64" />
           </SelectParameters>
       </asp:ObjectDataSource>
           
