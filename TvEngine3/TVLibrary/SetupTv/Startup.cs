@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Windows.Forms;
 using System.Collections.Specialized;
 using System.Configuration;
@@ -147,7 +148,7 @@ namespace SetupTv
         }
         if (param.StartsWith("--DeploySql"))
         {
-          DeploySql = param.Split(':')[1];
+          DeploySql = param.Split(':')[1].ToLower();
         }
         if (param.StartsWith("--DeployPwd"))
         {
@@ -158,12 +159,40 @@ namespace SetupTv
       //test connection with database
       Log.Info("---- check connection with database ----");
       SetupDatabaseForm dlg = new SetupDatabaseForm(startupMode);
-      if ((startupMode != StartupMode.Normal && startupMode != StartupMode.DeployMode) || (!dlg.TestConnection(startupMode, DeploySql, DeployPwd)))
+
+      if (startupMode == StartupMode.DeployMode)
+      {
+        if (DeploySql == "mysql")
+        {
+          dlg.provider = SetupDatabaseForm.ProviderType.MySql;
+          dlg.rbMySQL.Checked = true;
+          dlg.tbUserID.Text = "root";
+          dlg.tbServerHostName.Text = Dns.GetHostName();
+          dlg.tbServiceDependency.Text = @"MySQL5";
+        }
+        else
+        {
+          dlg.provider = SetupDatabaseForm.ProviderType.SqlServer;
+          dlg.rbSQLServer.Checked = true;
+          dlg.tbUserID.Text = "sa";
+          dlg.tbServerHostName.Text = Dns.GetHostName() + @"\SQLEXPRESS";
+          dlg.tbServiceDependency.Text = @"SQLBrowser";
+        }
+        dlg.tbPassword.Text = DeployPwd;
+        dlg.tbDatabaseName.Text = dlg.schemaNameDefault;
+        dlg.schemaName = dlg.schemaNameDefault;
+      }
+      if ((startupMode != StartupMode.Normal && startupMode != StartupMode.DeployMode) || (!dlg.TestConnection(startupMode)))
       {
         Log.Info("---- ask user for connection details ----");
         dlg.ShowDialog();
 
         return; // close the application without restart here.
+      }
+      dlg.CheckServiceName();
+      if (startupMode == StartupMode.DeployMode)
+      {
+        dlg.SaveGentleConfig();
       }
 
       Log.Info("---- check if database needs to be updated/created ----");
@@ -183,10 +212,6 @@ namespace SetupTv
         }
         Log.Info("- Database created.");
         currentSchemaVersion = dlg.GetCurrentShemaVersion(startupMode);
-        if (startupMode == StartupMode.DeployMode)
-        {
-          dlg.SaveGentleConfig();
-        }
       }
 
       Log.Info("---- upgrade database schema ----");
@@ -222,7 +247,7 @@ namespace SetupTv
         try
         {
           RemoteControl.Clear();
-          RemoteControl.HostName = "localhost";
+          RemoteControl.HostName = Dns.GetHostName();
           cards = RemoteControl.Instance.Cards;
         }
         catch (Exception ex)

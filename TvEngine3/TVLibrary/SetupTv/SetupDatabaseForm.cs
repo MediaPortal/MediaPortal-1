@@ -45,16 +45,16 @@ namespace SetupTv
 {
   public partial class SetupDatabaseForm : SetupControls.MPForm
   {
-    enum ProviderType
+    public enum ProviderType
     {
       SqlServer,
       MySql,
     }
 
     readonly StartupMode _dialogMode = StartupMode.Normal;
-    ProviderType _provider = ProviderType.MySql;
-    private const string _schemaNameDefault = "MpTvDb";
-    string _schemaName = _schemaNameDefault;
+    private ProviderType _provider = ProviderType.MySql;
+    private static string _schemaNameDefault = "MpTvDb";
+    private static string _schemaName = _schemaNameDefault;
 
     public SetupDatabaseForm(StartupMode aStartMode)
     {
@@ -69,6 +69,24 @@ namespace SetupTv
       // A user might want to save a "wrong" database name so TV-Server creates a new DB.
       if (aStartMode == StartupMode.DbConfig)
         btnSave.Enabled = true;
+    }
+
+    public string schemaName
+    {
+      get { return _schemaName; }
+      set { _schemaName = value; }
+    }
+
+    public string schemaNameDefault
+    {
+      get { return _schemaNameDefault; }
+      set { _schemaNameDefault = value; }
+    }
+
+    public ProviderType provider
+    {
+      get { return _provider; }
+      set { _provider = value; }
     }
 
     private void SetupDatabaseForm_Load(object sender, EventArgs e)
@@ -114,11 +132,11 @@ namespace SetupTv
         switch (serverType)
         {
           case "mysql":
-            _provider = ProviderType.MySql;
+            provider = ProviderType.MySql;
             rbMySQL.Checked = true;
             break;
           case "sqlserver":
-            _provider = ProviderType.SqlServer;
+            provider = ProviderType.SqlServer;
             rbSQLServer.Checked = true;
             break;
           default:
@@ -139,7 +157,7 @@ namespace SetupTv
           if (keyValue[0].ToLowerInvariant() == "initial catalog" || keyValue[0].ToLowerInvariant() == "database")
           {
             tbDatabaseName.Text = keyValue[1];
-            _schemaName = tbDatabaseName.Text;
+            schemaName = tbDatabaseName.Text;
           }
 
           if (keyValue[0].ToLowerInvariant() == "data source" || keyValue[0].ToLowerInvariant() == "server")
@@ -148,7 +166,7 @@ namespace SetupTv
             {
               if (lookupMachineName)
               {
-                switch (_provider)
+                switch (provider)
                 {
                   case ProviderType.SqlServer:
                     tbServerHostName.Text = keyValue[1] = Dns.GetHostName() + @"\SQLEXPRESS";
@@ -174,8 +192,8 @@ namespace SetupTv
 
     private string ComposeConnectionString(string server, string userid, string password, string database, bool pooling, int timeout)
     {
-      _schemaName = database;
-      switch (_provider)
+      schemaName = database;
+      switch (provider)
       {
         case ProviderType.SqlServer:
           if (database == "") database = "master";
@@ -190,34 +208,11 @@ namespace SetupTv
       return "";
     }
 
-    public bool TestConnection(StartupMode ModeType, string SqlType, string Password)
+    public bool TestConnection(StartupMode ModeType)
     {
       try
       {
-        if (ModeType == StartupMode.DeployMode)
-        {
-          switch (SqlType.ToLower())
-          {
-            case "mysql":
-              _provider = ProviderType.MySql;
-              rbMySQL.Checked = true;
-              tbUserID.Text = "root";
-              tbServerHostName.Text = Dns.GetHostName();
-              break;
-            case "sqlserver":
-              _provider = ProviderType.SqlServer;
-              rbSQLServer.Checked = true;
-              tbUserID.Text = "sa";
-              tbServerHostName.Text = Dns.GetHostName() + @"\SQLEXPRESS";
-              break;
-            default:
-              return false;
-          }
-          tbPassword.Text = Password;
-          tbDatabaseName.Text = _schemaNameDefault;
-          _schemaName = tbDatabaseName.Text;
-        }
-        else
+        if (ModeType != StartupMode.DeployMode)
         {
           LoadConnectionDetailsFromConfig(true);
         }
@@ -227,7 +222,7 @@ namespace SetupTv
 
         string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", false, 15);
 
-        switch (_provider)
+        switch (provider)
         {
           case ProviderType.SqlServer:
             using (SqlConnection connect = new SqlConnection(connectionString))
@@ -269,7 +264,7 @@ namespace SetupTv
       {
         Assembly assm = Assembly.GetExecutingAssembly();
         Stream stream = null;
-        switch (_provider)
+        switch (provider)
         {
           case ProviderType.SqlServer:
             stream = assm.GetManifestResourceStream("SetupTv." + prefix + "_sqlserver_database.sql");
@@ -279,14 +274,14 @@ namespace SetupTv
             break;
         }
 
-        _schemaName = tbDatabaseName.Text;
+        schemaName = tbDatabaseName.Text;
         string[] CommandScript = null;
         string sql = string.Empty;
         if (stream != null)
           using (StreamReader reader = new StreamReader(stream))
             sql = reader.ReadToEnd();
 
-        switch (_provider)
+        switch (provider)
         {
           case ProviderType.SqlServer:
             CommandScript = CleanMsSqlStatement(sql);
@@ -299,7 +294,7 @@ namespace SetupTv
 
         // As the connection string sets the DB schema name we need to compose it after cleaning the statement.
         string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", true, 300);
-        switch (_provider)
+        switch (provider)
         {
           case ProviderType.SqlServer:
             using (SqlConnection connect = new SqlConnection(connectionString))
@@ -384,7 +379,7 @@ namespace SetupTv
     {
       string currentDir = Directory.GetCurrentDirectory();
       currentDir += @"\";
-      sql = sql.Replace(@"%TvLibrary%", _schemaName);
+      sql = sql.Replace(@"%TvLibrary%", schemaName);
       sql = sql.Replace(@"C:\Program Files\Microsoft SQL Server\MSSQL\data\", currentDir);
       sql = sql.Replace("GO\r\n", "!");
       sql = sql.Replace("\r\n", " ");
@@ -397,7 +392,7 @@ namespace SetupTv
       sql = sql.Replace("\r\n", "\r");
       sql = sql.Replace("\t", " ");
       sql = sql.Replace('"', '`'); // allow usage of ANSI quoted identifiers
-      sql = sql.Replace(@"%TvLibrary%", _schemaName);
+      sql = sql.Replace(@"%TvLibrary%", schemaName);
       string[] lines = sql.Split('\r');
       sql = "";
       for (int i = 0; i < lines.Length; ++i)
@@ -465,7 +460,7 @@ namespace SetupTv
 
     private bool AttemptMySqlTestConnect(string aTestDb)
     {
-      _provider = ProviderType.MySql;
+      provider = ProviderType.MySql;
       string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, aTestDb, false, 5);
 
       try
@@ -501,7 +496,7 @@ namespace SetupTv
 
     private bool AttemptMsSqlTestConnect(string aTestDb)
     {
-      _provider = ProviderType.SqlServer;
+      provider = ProviderType.SqlServer;
       string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, aTestDb, false, 5);
 
       try
@@ -636,7 +631,7 @@ namespace SetupTv
       try
       {
         string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, tbDatabaseName.Text, false, 15);
-        switch (_provider)
+        switch (provider)
         {
           case ProviderType.SqlServer:
             {
@@ -744,7 +739,7 @@ namespace SetupTv
       return false;
     }
 
-    private void CheckServiceName()
+    public void CheckServiceName()
     {
       // only query service names of local machine
       if (!IsDatabaseOnLocalMachine(ParseServerHostName(tbServerHostName.Text)))
