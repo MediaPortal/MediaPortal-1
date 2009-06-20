@@ -33,14 +33,6 @@ namespace TvLibrary.Implementations.Analog.Components
   internal class Encoder
   {
     #region constants
-    //KSCATEGORY_ENCODER
-    private static readonly Guid AMKSEncoder = new Guid("19689BF6-C384-48fd-AD51-90E58C79F70B");
-    //STATIC_KSCATEGORY_MULTIPLEXER
-    private static readonly Guid AMKSMultiplexer = new Guid("7A5DE1D3-01A1-452c-B481-4FA2B96271E8");
-    private static readonly Guid AudioCompressorCategory = new Guid(0x33d9a761, 0x90c8, 0x11d0, 0xbd, 0x43, 0x0, 0xa0, 0xc9, 0x11, 0xce, 0x86);
-    private static readonly Guid VideoCompressorCategory = new Guid(0x33d9a760, 0x90c8, 0x11d0, 0xbd, 0x43, 0x0, 0xa0, 0xc9, 0x11, 0xce, 0x86);
-    private static readonly Guid LegacyAmFilterCategory = new Guid(0x083863F1, 0x70DE, 0x11d0, 0xBD, 0x40, 0x00, 0xA0, 0xC9, 0x11, 0xCE, 0x86);
-    private static readonly Guid AMKSMultiplexerSW = new Guid("236C9559-ADCE-4736-BF72-BAB34E392196");
     private static readonly Guid MediaSubtype_Plextor = new Guid(0x30355844, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
     #endregion
 
@@ -986,10 +978,10 @@ namespace TvLibrary.Implementations.Analog.Components
       //get a list of all multiplexers available on this system
       try
       {
-        devicesHW = DsDevice.GetDevicesOfCat(AMKSMultiplexer);
+        devicesHW = DsDevice.GetDevicesOfCat(FilterCategory.WDMStreamingMultiplexerDevices);
         devicesHW = DeviceSorter.Sort(devicesHW, _tuner.TunerName, _tvAudio.TvAudioName, _crossbar.CrossBarName, _capture.VideoCaptureName, _capture.AudioCaptureName, _videoEncoderDevice, _audioEncoderDevice, _multiplexerDevice);
         // also add the SoftWare Multiplexers in case no compatible HardWare multiplexer is found (NVTV cards)
-        devicesSW = _tuner.IsNvidiaCard() ? DsDevice.GetDevicesOfCat(AMKSMultiplexerSW)
+        devicesSW = _tuner.IsNvidiaCard() ? DsDevice.GetDevicesOfCat(FilterCategory.MediaMultiplexerCategory)
                       : new DsDevice[0];
 
         devices = new DsDevice[devicesHW.Length + devicesSW.Length];
@@ -1106,7 +1098,7 @@ namespace TvLibrary.Implementations.Analog.Components
       // first get all encoder filters available on this system
       try
       {
-        devices = DsDevice.GetDevicesOfCat(AMKSEncoder);
+        devices = DsDevice.GetDevicesOfCat(FilterCategory.WDMStreamingEncoderDevices);
         devices = DeviceSorter.Sort(devices, _tuner.TunerName, _tvAudio.TvAudioName, _crossbar.CrossBarName, _capture.VideoCaptureName, _capture.AudioCaptureName, _videoEncoderDevice, _audioEncoderDevice, _multiplexerDevice);
       } catch (Exception)
       {
@@ -1440,9 +1432,9 @@ namespace TvLibrary.Implementations.Analog.Components
     private bool AddAudioCompressor(IFilterGraph2 _graphBuilder)
     {
       Log.Log.WriteFile("analog: AddAudioCompressor {0}", FilterGraphTools.LogPinInfo(_pinAnalogAudio));
-      DsDevice[] devices1 = DsDevice.GetDevicesOfCat(AudioCompressorCategory);
-      DsDevice[] devices2 = DsDevice.GetDevicesOfCat(LegacyAmFilterCategory);
-      string[] audioEncoders = new string[] { "InterVideo Audio Encoder", "Ulead MPEG Audio Encoder", "MainConcept MPEG Audio Encoder", "MainConcept Demo MPEG Audio Encoder", "CyberLink Audio Encoder", "CyberLink Audio Encoder(Twinhan)", "Pinnacle MPEG Layer-2 Audio Encoder", "MainConcept (Hauppauge) MPEG Audio Encoder", "NVIDIA Audio Encoder" };
+      DsDevice[] devices1 = DsDevice.GetDevicesOfCat(FilterCategory.AudioCompressorCategory);
+      DsDevice[] devices2 = DsDevice.GetDevicesOfCat(FilterCategory.LegacyAmFilterCategory);
+      string[] audioEncoders = new[] { "InterVideo Audio Encoder", "Ulead MPEG Audio Encoder", "MainConcept MPEG Audio Encoder", "MainConcept Demo MPEG Audio Encoder", "CyberLink Audio Encoder", "CyberLink Audio Encoder(Twinhan)", "Pinnacle MPEG Layer-2 Audio Encoder", "MainConcept (Hauppauge) MPEG Audio Encoder", "NVIDIA Audio Encoder" };
       DsDevice[] audioDevices = new DsDevice[audioEncoders.Length];
       for (int x = 0; x < audioEncoders.Length; ++x)
       {
@@ -1537,9 +1529,9 @@ namespace TvLibrary.Implementations.Analog.Components
     private bool AddVideoCompressor(IFilterGraph2 _graphBuilder)
     {
       Log.Log.WriteFile("analog: AddVideoCompressor");
-      DsDevice[] devices1 = DsDevice.GetDevicesOfCat(VideoCompressorCategory);
-      DsDevice[] devices2 = DsDevice.GetDevicesOfCat(LegacyAmFilterCategory);
-      string[] videoEncoders = new string[] { "InterVideo Video Encoder", "Ulead MPEG Encoder", "MainConcept MPEG Video Encoder", "MainConcept Demo MPEG Video Encoder", "CyberLink MPEG Video Encoder", "CyberLink MPEG Video Encoder(Twinhan)", "MainConcept (Hauppauge) MPEG Video Encoder", "nanocosmos MPEG Video Encoder", "Pinnacle MPEG 2 Encoder" };
+      DsDevice[] devices1 = DsDevice.GetDevicesOfCat(FilterCategory.VideoCompressorCategory);
+      DsDevice[] devices2 = DsDevice.GetDevicesOfCat(FilterCategory.LegacyAmFilterCategory);
+      string[] videoEncoders = new[] { "InterVideo Video Encoder", "Ulead MPEG Encoder", "MainConcept MPEG Video Encoder", "MainConcept Demo MPEG Video Encoder", "CyberLink MPEG Video Encoder", "CyberLink MPEG Video Encoder(Twinhan)", "MainConcept (Hauppauge) MPEG Video Encoder", "nanocosmos MPEG Video Encoder", "Pinnacle MPEG 2 Encoder" };
       DsDevice[] videoDevices = new DsDevice[videoEncoders.Length];
       for (int x = 0; x < videoEncoders.Length; ++x)
       {
