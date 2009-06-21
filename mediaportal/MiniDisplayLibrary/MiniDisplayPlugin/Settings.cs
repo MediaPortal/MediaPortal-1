@@ -328,23 +328,32 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     public static void Save()
     {
-      XmlSerializer serializer = new XmlSerializer(typeof(Settings));
-      XmlDocument xmldoc = new XmlDocument();
-      xmldoc.Load(Config.GetFile(Config.Dir.Config, "MiniDisplay.xml"));
-      XmlNode node = xmldoc.SelectSingleNode("//Settings");
-      Settings settings = (Settings)serializer.Deserialize(new XmlNodeReader(node));
-      m_Instance.Messages = settings.Messages;
-      m_Instance.TranslateFrom = settings.TranslateFrom;
-      m_Instance.TranslateTo = settings.TranslateTo;
-      m_Instance.CustomCharacters = settings.CustomCharacters;
-      
-      XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay.xml"), Encoding.UTF8);
-      writer.Formatting = Formatting.Indented;
-      writer.Indentation = 2;
-      writer.IndentChar = ' ';
-      writer.WriteStartDocument(true);
-      serializer.Serialize((XmlWriter) writer, m_Instance);
-      writer.Close();
+      try
+      {
+        XmlSerializer serializer = new XmlSerializer(typeof(Settings));
+        if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay.xml")))
+        {
+          XmlDocument xmldoc = new XmlDocument();
+          xmldoc.Load(Config.GetFile(Config.Dir.Config, "MiniDisplay.xml"));
+          XmlNode node = xmldoc.SelectSingleNode("//Settings");
+          Settings settings = (Settings)serializer.Deserialize(new XmlNodeReader(node));
+          m_Instance.Messages = settings.Messages;
+          m_Instance.TranslateFrom = settings.TranslateFrom;
+          m_Instance.TranslateTo = settings.TranslateTo;
+          m_Instance.CustomCharacters = settings.CustomCharacters;
+        }
+        XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay.xml"), Encoding.UTF8);
+        writer.Formatting = Formatting.Indented;
+        writer.Indentation = 2;
+        writer.IndentChar = ' ';
+        writer.WriteStartDocument(true);
+        serializer.Serialize((XmlWriter)writer, m_Instance);
+        writer.Close();
+      }
+      catch(Exception ex)
+      {
+        Log.Error("MiniDisplay.Settings.Save() exception: {0}", ex.Message);
+      }
     }
 
     [XmlAttribute]
