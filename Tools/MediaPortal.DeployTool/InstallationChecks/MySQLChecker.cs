@@ -56,11 +56,11 @@ namespace MediaPortal.DeployTool.InstallationChecks
       WritePrivateProfileString("mysqld", "max_connections", "100", iniFile);
       WritePrivateProfileString("mysqld", "query_cache_size", "32M", iniFile);
       WritePrivateProfileString("mysqld", "table_cache", "64", iniFile);
-      WritePrivateProfileString("mysqld", "tmp_table", "18M", iniFile);
+      WritePrivateProfileString("mysqld", "tmp_table_size", "18M", iniFile);
       WritePrivateProfileString("mysqld", "thread_cache_size", "4", iniFile);
       WritePrivateProfileString("mysqld", "thread_concurrency", "4", iniFile);
-      WritePrivateProfileString("mysqld", "myisam_max_sort_file_size", "100G", iniFile);
-      WritePrivateProfileString("mysqld", "myisam_max_extra_sort_file_size", "100G", iniFile);
+      WritePrivateProfileString("mysqld", "myisam_max_sort_file_size", "100M", iniFile);
+      WritePrivateProfileString("mysqld", "myisam_max_extra_sort_file_size", "100M", iniFile);
       WritePrivateProfileString("mysqld", "myisam_sort_buffer_size", "64M", iniFile);
       WritePrivateProfileString("mysqld", "key_buffer_size", "16M", iniFile);
       WritePrivateProfileString("mysqld", "read_buffer_size", "2M", iniFile);
