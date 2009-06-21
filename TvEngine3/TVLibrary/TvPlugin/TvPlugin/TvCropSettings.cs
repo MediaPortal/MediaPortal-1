@@ -173,19 +173,20 @@ namespace TvPlugin
             }
             else if (iControl == (int) Controls.CONTROL_CROP_TOP)
             {
-              _cropSettings.Top = Int32.Parse(message.Label);
+              // do not use message.Label, because it's empty for "page up/down", causing exceptions
+              _cropSettings.Top = (GetControl(iControl) as GUISpinControl).Value;
             }
             else if (iControl == (int) Controls.CONTROL_CROP_BOTTOM)
             {
-              _cropSettings.Bottom = Int32.Parse(message.Label);
+              _cropSettings.Bottom = (GetControl(iControl) as GUISpinControl).Value;
             }
             else if (iControl == (int) Controls.CONTROL_CROP_LEFT)
             {
-              _cropSettings.Left = Int32.Parse(message.Label);
+              _cropSettings.Left = (GetControl(iControl) as GUISpinControl).Value;
             }
             else if (iControl == (int) Controls.CONTROL_CROP_RIGHT)
             {
-              _cropSettings.Right = Int32.Parse(message.Label);
+              _cropSettings.Right = (GetControl(iControl) as GUISpinControl).Value;
             }
 
             // ativate & save settings for the current capture card
