@@ -105,6 +105,12 @@ namespace SetupTv
     {
       Thread.CurrentThread.Name = "SetupTv";
 
+      // set working dir from application.exe
+      string applicationPath = Application.ExecutablePath;
+      applicationPath = System.IO.Path.GetFullPath(applicationPath);
+      applicationPath = System.IO.Path.GetDirectoryName(applicationPath);
+      System.IO.Directory.SetCurrentDirectory(applicationPath);
+
       string DeploySql = string.Empty;
       string DeployPwd = string.Empty;
 

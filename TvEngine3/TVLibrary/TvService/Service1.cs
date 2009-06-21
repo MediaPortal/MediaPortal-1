@@ -64,10 +64,12 @@ namespace TvService
     /// </summary>
     public Service1()
     {
+      // set working dir from application.exe
       string applicationPath = Application.ExecutablePath;
       applicationPath = System.IO.Path.GetFullPath(applicationPath);
       applicationPath = System.IO.Path.GetDirectoryName(applicationPath);
       System.IO.Directory.SetCurrentDirectory(applicationPath);
+
       _powerEventHandlers = new List<PowerEventHandler>();
       GlobalServiceProvider.Instance.Add<IPowerEventHandler>(this);
       AddPowerEventHandler(OnPowerEventHandler);
