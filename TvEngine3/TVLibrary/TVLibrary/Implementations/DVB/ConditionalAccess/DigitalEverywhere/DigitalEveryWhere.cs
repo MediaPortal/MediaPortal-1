@@ -232,14 +232,23 @@ namespace TvLibrary.Implementations.DVB
     [Flags]
     public enum DE_CI_STATUS
     {
+      /// CI_ERR_MSG_AVAILABLE
       CI_ERR_MSG_AVAILABLE  = 0x01,
+      /// CI_MODULE_INIT_READY
       CI_MODULE_INIT_READY  = 0x02,
+      /// CI_MODULE_ERROR
       CI_MODULE_ERROR       = 0x04,
+      /// CI_MODULE_IS_DVB
       CI_MODULE_IS_DVB      = 0x08,
+      /// CI_MODULE_PRESENT
       CI_MODULE_PRESENT     = 0x10,
+      /// CI_APP_INFO_AVAILABLE
       CI_APP_INFO_AVAILABLE = 0x20,
+      /// CI_DATE_TIME_REQEST
       CI_DATE_TIME_REQEST   = 0x40,
+      /// CI_PMT_REPLY
       CI_PMT_REPLY          = 0x80,
+      /// CI_MMI_REQUEST
       CI_MMI_REQUEST        = 0x100
     }
 #pragma warning restore 169

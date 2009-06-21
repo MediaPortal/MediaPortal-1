@@ -38,13 +38,21 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public enum MMI_TAGS
     {
-      CLOSE = 0x9F8800,
-      ENQUIRY = 0x9F8807,
+      /// Close menu
+      CLOSE     = 0x9F8800,
+      /// Enquiry from CAM
+      ENQUIRY   = 0x9F8807, 
+      /// More menu entries
       MENU_MORE = 0x9F880A,
+      /// Last menu entry
       MENU_LAST = 0x9F8809,
+      /// More list items
       LIST_MORE = 0x9F880D,
+      /// Last list item
       LIST_LAST = 0x9F880C,
+      /// More text
       TEXT_MORE = 0x9F8804,
+      /// Last text
       TEXT_LAST = 0x9F8803
     };
 

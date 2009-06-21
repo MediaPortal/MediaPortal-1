@@ -25,12 +25,40 @@ using System.Text;
 
 namespace TvLibrary.Interfaces
 {
+  /// <summary>
+  /// Interface for CI menu actions;
+  /// Each DVB card has to support these for CI menu access
+  /// </summary>
   public interface ICiMenuActions
   {
+    /// <summary>
+    /// Set CI menu callback handler
+    /// </summary>
+    /// <param name="ciMenuHandler">callback handler</param>
+    /// <returns>true</returns>
     bool SetCiMenuHandler(ICiMenuCallbacks ciMenuHandler);
+    /// <summary>
+    /// Enter CI menu
+    /// </summary>
+    /// <returns>true is successful</returns>
     bool EnterCIMenu();
+    /// <summary>
+    /// Closes CI menu
+    /// </summary>
+    /// <returns>true is successful</returns>
     bool CloseCIMenu();
+    /// <summary>
+    /// Selects a menu choice
+    /// </summary>
+    /// <param name="choice">choice (0 means back)</param>
+    /// <returns>true if successful</returns>
     bool SelectMenu(byte choice);
+    /// <summary>
+    /// Send a menu answer after CAM inquiry
+    /// </summary>
+    /// <param name="Cancel">true to cancel</param>
+    /// <param name="Answer">answer string</param>
+    /// <returns>true if successful</returns>
     bool SendMenuAnswer(bool Cancel, string Answer);
   }
 }

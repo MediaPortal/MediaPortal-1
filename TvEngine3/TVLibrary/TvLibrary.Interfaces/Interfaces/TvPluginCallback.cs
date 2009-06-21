@@ -31,7 +31,7 @@ namespace TvLibrary.Interfaces
   /// <summary>
   /// Delegate defines the method call from the server to the client
   /// </summary>
-  /// <param name="menu">Pass a CiMenu object</param>
+  /// <param name="Menu">Pass a CiMenu object</param>
   public delegate void CiMenuCallback(CiMenu Menu);
 
   /// <summary>
@@ -66,7 +66,13 @@ namespace TvLibrary.Interfaces
   {
     private Int32   m_Index;
     private String  m_Message;
+    /// <summary>
+    /// Index of menu entry
+    /// </summary>
     public  int     Index   { get { return m_Index; } }
+    /// <summary>
+    /// Message of menu entry
+    /// </summary>
     public  String  Message { get { return m_Message; } }
 
     /// <summary>
@@ -79,6 +85,10 @@ namespace TvLibrary.Interfaces
       m_Index   = Index;
       m_Message = Message;
     }
+    /// <summary>
+    /// Formatted choice text
+    /// </summary>
+    /// <returns></returns>
     public override string ToString()
     {
       return String.Format("{0}) {1}", m_Index, m_Message);
@@ -238,6 +248,7 @@ namespace TvLibrary.Interfaces
     /// </summary>
     /// <param name="sRequest">Request messages</param>
     /// <param name="nAnswerLength">Expected max. answer length</param>
+    /// <param name="bPassword">Show as password input</param>
     public void Request(string sRequest, int nAnswerLength, bool bPassword)
     {
       _requestText  = sRequest;

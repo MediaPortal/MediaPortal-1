@@ -122,7 +122,6 @@ namespace TvPlugin
     private GUIDialogNotify _dialogNotify = null;
     private GUIDialogMenuBottomRight _dialogBottomMenu = null;
     private GUIDialogYesNo _dlgYesNo = null;
-    private GUIDialogOK _dlgOk = null;
     // Message box
     private bool _dialogYesNoVisible = false;
     private bool _notifyDialogVisible = false;

@@ -289,7 +289,7 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion  
     /// <summary>
-    /// Initializes a new instance of the <see cref="KNC"/> class.
+    /// Initializes a new instance of the <see cref="KNCAPI"/> class.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
     /// <param name="DeviceIndex">The KNC1 card hardware index (0 based)</param>

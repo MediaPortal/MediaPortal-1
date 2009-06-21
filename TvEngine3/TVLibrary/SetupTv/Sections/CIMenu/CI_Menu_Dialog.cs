@@ -29,7 +29,9 @@ using System.Windows.Forms;
 
 namespace SetupTv.Sections
 {
-  [CLSCompliant(false)]
+  /// <summary>
+  /// CI Menu Section for DVB cards
+  /// </summary>
   public partial class CI_Menu_Dialog : SetupTv.SectionSettings
   {
     CiMenuHandler ciMenuHandler;
@@ -38,10 +40,17 @@ namespace SetupTv.Sections
     int cardNumber = 0;
     bool InitSuccess = false;
 
+    /// <summary>
+    /// CTOR
+    /// </summary>
+    /// <param name="p_cardNumber">card number</param>
     public CI_Menu_Dialog(int p_cardNumber) : this()
     {
       cardNumber = p_cardNumber;
     }
+    /// <summary>
+    /// CTOR
+    /// </summary>
     public CI_Menu_Dialog()
     {
       InitializeComponent();
@@ -66,6 +75,10 @@ namespace SetupTv.Sections
       Choices.Items.Clear();
     }
 
+    /// <summary>
+    /// Checks if CA is ready, tries to init it if not
+    /// </summary>
+    /// <returns>true if ready</returns>
     private bool IsCAReady()
     {
       if (InitSuccess) return true;

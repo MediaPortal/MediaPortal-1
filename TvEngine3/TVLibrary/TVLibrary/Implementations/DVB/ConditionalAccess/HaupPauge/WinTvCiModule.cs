@@ -194,15 +194,6 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Opens the MMI
-    /// </summary>
-    /// <returns></returns>
-    //public Int32 OpenMMI()
-    //{
-    //  return WinTVCI_OpenMMI(_winTvUsbCIFilter);
-    //}
-
-    /// <summary>
     /// Enables the tray icon
     /// </summary>
     /// <returns></returns>

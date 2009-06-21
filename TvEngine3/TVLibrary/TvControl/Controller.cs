@@ -1041,7 +1041,8 @@ namespace TvControl
     /// <summary>
     /// Selects a ci menu option
     /// </summary>
-    /// <param name="cardId"></param>
+    /// <param name="cardId">card</param>
+    /// <param name="choice">choice</param>
     /// <returns>true if successful</returns>
     bool SelectMenu(int cardId, byte choice);
 

@@ -28,64 +28,64 @@ namespace TvLibrary.Interfaces
   /// </summary>
   public enum CiMenuState
   {
+    /// menu is closed
     Closed    = 0,
-    Opened    = 1,
-    Ready     = 2,
-    Request   = 3,
+    /// opened
+    Opened = 1,
+    /// ready
+    Ready = 2,
+    /// request
+    Request = 3,
+    /// no choices
     NoChoices = 4,
-    Error     = 5
+    /// error
+    Error = 5
   }
-
-  /////<summary>
-  ///// The tswriter ci menu callback
-  /////</summary>
-  //[ComVisible(true), ComImport,
-  // Guid("8B633992-AD34-4a34-9C3F-B8DD69B2295C"),
-  //InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  ////InterfaceType(ComInterfaceType.InterfaceIsIUnknown)
-  //public interface ICiMenuCallbacks
-  //{
-  //  [PreserveSig]
-  //  int OnCiMenu(
-  //    [MarshalAs(UnmanagedType.LPStr)] string lpszTitle, 
-  //    [MarshalAs(UnmanagedType.LPStr)] string lpszSubTitle, 
-  //    [MarshalAs(UnmanagedType.LPStr)] string lpszBottom, 
-  //    int nNumChoices);
-
-  //  [PreserveSig]
-  //  int OnCiMenuChoice(
-  //    int nChoice,
-  //    [MarshalAs(UnmanagedType.LPStr)] string lpszText);
-
-  //  [PreserveSig]
-  //  int OnCiCloseDisplay(
-  //    int nDelay);
-
-  //  [PreserveSig]
-  //  int OnCiRequest (
-  //    bool bBlind,
-  //    uint nAnswerLength,
-  //    [MarshalAs(UnmanagedType.LPStr)] string lpszText);
-  //};
 
   /// <summary>
   /// Interface for all DVB cards to support CI menu
   /// </summary>
   public interface ICiMenuCallbacks
   {
+    /// <summary>
+    /// Callback on opening menu
+    /// </summary>
+    /// <param name="lpszTitle">Title</param>
+    /// <param name="lpszSubTitle">Subtitle</param>
+    /// <param name="lpszBottom">Bottom text</param>
+    /// <param name="nNumChoices">number of choices</param>
+    /// <returns></returns>
     int OnCiMenu(
       string  lpszTitle,
       string  lpszSubTitle,
       string  lpszBottom,
       int     nNumChoices);
 
+    /// <summary>
+    /// Callback for each menu entry
+    /// </summary>
+    /// <param name="nChoice">choice number</param>
+    /// <param name="lpszText">choice text</param>
+    /// <returns></returns>
     int OnCiMenuChoice(
       int     nChoice,
       string  lpszText);
 
+    /// <summary>
+    /// Callback on closing display
+    /// </summary>
+    /// <param name="nDelay">delay in seconds</param>
+    /// <returns></returns>
     int OnCiCloseDisplay(
       int     nDelay);
 
+    /// <summary>
+    /// Callback on requesting user input (PIN,...)
+    /// </summary>
+    /// <param name="bBlind">true if password</param>
+    /// <param name="nAnswerLength">expected (max) answer length</param>
+    /// <param name="lpszText">request text</param>
+    /// <returns></returns>
     int OnCiRequest(
       bool    bBlind,
       uint    nAnswerLength,
