@@ -49,20 +49,32 @@ namespace OSInfo
     public enum OSList
     {
       ///<summary>
-      /// Windows2000 and previous
+      /// Windows 95/98, NT4.0, 2000
       ///</summary>
       Windows2000andPrevious,
       ///<summary>
-      /// Clients
+      /// Windows XP x86
       ///</summary>
       WindowsXp,
+      ///<summary>
+      /// Windows XP x64
+      ///</summary>
       WindowsXp64,
+      ///<summary>
+      /// Windows Vista
+      ///</summary>
       WindowsVista,
+      ///<summary>
+      /// Windows 7
+      ///</summary>
       Windows7,
       ///<summary>
-      /// Servers
+      /// Windows 2003 Server
       ///</summary>
       Windows2003,
+      ///<summary>
+      /// Windows 2008 Server
+      ///</summary>
       Windows2008
     }
     #endregion
@@ -174,13 +186,13 @@ namespace OSInfo
                 // Windows 2008 Advanced Server
                 return " Advanced Server";
               }
+              if ((osVersionInfo.wSuiteMask & VER_SUITE_WH_SERVER) == VER_SUITE_WH_SERVER)
+              {
+                return " Home Server";
+              }
               // Windows 2008 Server
               return " Server";
             }
-          }
-          if (OSProductType == VER_SUITE_WH_SERVER)
-          {
-            return " Home Server";
           }
           break;
       }
