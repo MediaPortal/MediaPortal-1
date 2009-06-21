@@ -75,7 +75,7 @@ namespace MediaPortal.Player
         int.TryParse(_mI.Get(StreamKind.Video, 0, "Width"), out _width);
         int.TryParse(_mI.Get(StreamKind.Video, 0, "Height"), out _height);
         _aspectRatio = _mI.Get(StreamKind.Video, 0, "AspectRatio/String") == "4/3" ? "fullscreen" : "widescreen";
-        _videoCodec = _mI.Get(StreamKind.Video, 0, "Codec/String").ToUpper();
+        _videoCodec = _mI.Get(StreamKind.Video, 0, "Codec").ToUpper();
         _scanType = _mI.Get(StreamKind.Video, 0, "ScanType").ToLower();
         _isInterlaced = _scanType.Contains("interlaced");
 

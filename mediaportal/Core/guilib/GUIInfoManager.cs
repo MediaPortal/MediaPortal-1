@@ -332,7 +332,9 @@ namespace MediaPortal.GUI.Library
     public const int SKIN_HAS_THEME_END = 599; // allow for max 100 themes
 
     public const int SKIN_BOOL = 600;
-    public const int SKIN_STRING = 601;
+    public const int STRING_EQUALS = 601;
+    public const int STRING_STARTS = 602;
+    public const int STRING_CONTAINS = 603;
 
     public const int XLINK_KAI_USERNAME = 701;
     public const int SKIN_THEME = 702;
@@ -1213,15 +1215,15 @@ namespace MediaPortal.GUI.Library
           ret = VISUALISATION_ENABLED;
         }
       }
-      else if (strCategory == "skin")
+      else if (strCategory == "skin" || strCategory == "string")
       {
         if (strTest == "skin.currenttheme")
         {
           ret = SKIN_THEME;
         }
-        // skin.string(val1, val2) will check the equality of val1 to val2.
-        // skin.string(val1)       will return true if val1 has a length > 0
-        else if (strTest.Substring(0, 12) == "skin.string(")
+        // string.equals(val1, val2) will check the equality of val1 to val2.
+        // string.equals(val1)       will return true if val1 has a length > 0
+        else if (strTest.Substring(0, 14) == "string.equals(")
         {
           // this condition uses GUIPropertyManager.Parse, which is case sensitive.
           string strTestKeepCase = strCondition;
@@ -1232,12 +1234,48 @@ namespace MediaPortal.GUI.Library
           int pos = strTestKeepCase.IndexOf(",");
           if (pos >= 0)
           {
-            skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(12, pos - 12));
+            skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(14, pos - 14));
             int compareString = ConditionalStringParameter(strTestKeepCase.Substring(pos + 1, strTestKeepCase.Length - (pos + 2)));
-            return AddMultiInfo(new GUIInfo(bNegate ? -SKIN_STRING : SKIN_STRING, skinOffset, compareString));
+            return AddMultiInfo(new GUIInfo(bNegate ? -STRING_EQUALS : STRING_EQUALS, skinOffset, compareString));
           }
-          skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(12, strTestKeepCase.Length - 13));
-          return AddMultiInfo(new GUIInfo(bNegate ? -SKIN_STRING : SKIN_STRING, skinOffset));
+          skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(14, strTestKeepCase.Length - 15));
+          return AddMultiInfo(new GUIInfo(bNegate ? -STRING_EQUALS : STRING_EQUALS, skinOffset));
+        }
+        else if (strTest.Substring(0, 16) == "string.contains(")
+        {
+          // this condition uses GUIPropertyManager.Parse, which is case sensitive.
+          string strTestKeepCase = strCondition;
+          strTestKeepCase = strTestKeepCase.TrimStart(new char[] { ' ' });
+          strTestKeepCase = strTestKeepCase.TrimEnd(new char[] { ' ' });
+
+          int skinOffset;
+          int pos = strTestKeepCase.IndexOf(",");
+          if (pos >= 0)
+          {
+            skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(16, pos - 16));
+            int compareString = ConditionalStringParameter(strTestKeepCase.Substring(pos + 1, strTestKeepCase.Length - (pos + 2)));
+            return AddMultiInfo(new GUIInfo(bNegate ? -STRING_CONTAINS : STRING_CONTAINS, skinOffset, compareString));
+          }
+          skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(16, strTestKeepCase.Length - 17));
+          return AddMultiInfo(new GUIInfo(bNegate ? -STRING_CONTAINS : STRING_CONTAINS, skinOffset));
+        }
+        else if (strTest.Substring(0, 14) == "string.starts(")
+        {
+          // this condition uses GUIPropertyManager.Parse, which is case sensitive.
+          string strTestKeepCase = strCondition;
+          strTestKeepCase = strTestKeepCase.TrimStart(new char[] { ' ' });
+          strTestKeepCase = strTestKeepCase.TrimEnd(new char[] { ' ' });
+
+          int skinOffset;
+          int pos = strTestKeepCase.IndexOf(",");
+          if (pos >= 0)
+          {
+            skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(14, pos - 14));
+            int compareString = ConditionalStringParameter(strTestKeepCase.Substring(pos + 1, strTestKeepCase.Length - (pos + 2)));
+            return AddMultiInfo(new GUIInfo(bNegate ? -STRING_STARTS : STRING_STARTS, skinOffset, compareString));
+          }
+          skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(14, strTestKeepCase.Length - 15));
+          return AddMultiInfo(new GUIInfo(bNegate ? -STRING_STARTS : STRING_STARTS, skinOffset));
         }
         else if (strTest.Substring(0, 16) == "skin.hassetting(")
         {
@@ -2136,12 +2174,36 @@ namespace MediaPortal.GUI.Library
         case SKIN_BOOL:
           bReturn = SkinSettings.GetSkinBool(info.m_data1);
           break;
-        case SKIN_STRING:
+        case STRING_EQUALS:
           if (info.m_data2 != 0)
           {
-            string value1 = GUIPropertyManager.Parse(SkinSettings.GetSkinString(info.m_data1)).Trim();
-            string value2 = GUIPropertyManager.Parse(m_stringParameters[info.m_data2]).Trim();
+            string value1 = GUIPropertyManager.Parse(SkinSettings.GetSkinString(info.m_data1)).Trim().ToLowerInvariant();
+            string value2 = GUIPropertyManager.Parse(m_stringParameters[info.m_data2]).Trim().ToLowerInvariant();
             bReturn = value1.Equals(value2);
+          }
+          else
+          {
+            bReturn = (GUIPropertyManager.Parse(SkinSettings.GetSkinString(info.m_data1)).Length != 0);
+          }
+          break;
+        case STRING_STARTS:
+          if (info.m_data2 != 0)
+          {
+            string value1 = GUIPropertyManager.Parse(SkinSettings.GetSkinString(info.m_data1)).Trim().ToLowerInvariant();
+            string value2 = GUIPropertyManager.Parse(m_stringParameters[info.m_data2]).Trim().ToLowerInvariant();
+            bReturn = value1.StartsWith(value2);
+          }
+          else
+          {
+            bReturn = (GUIPropertyManager.Parse(SkinSettings.GetSkinString(info.m_data1)).Length != 0);
+          }
+          break;
+        case STRING_CONTAINS:
+          if (info.m_data2 != 0)
+          {
+            string value1 = GUIPropertyManager.Parse(SkinSettings.GetSkinString(info.m_data1)).Trim().ToLowerInvariant();
+            string value2 = GUIPropertyManager.Parse(m_stringParameters[info.m_data2]).Trim().ToLowerInvariant();
+            bReturn = value1.Contains(value2);
           }
           else
           {

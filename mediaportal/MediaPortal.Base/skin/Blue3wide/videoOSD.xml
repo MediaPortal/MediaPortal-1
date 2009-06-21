@@ -58,7 +58,7 @@
       <posY>605</posY>
       <width>58</width>
       <height>40</height>
-      <visible>skin.string(#Play.Current.AudioCodec, AAC)|skin.string(#Play.Current.AudioCodec, AAC LC)</visible>
+      <visible>string.contains(#Play.Current.AudioCodec, AAC)</visible>
       <texture>logos\aac.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -73,7 +73,7 @@
       <posY>605</posY>
       <width>58</width>
       <height>40</height>
-      <visible>skin.string(#Play.Current.AudioCodec, MPEG-1 AUDIO LAYER 3)</visible>
+      <visible>string.contains(#Play.Current.AudioCodec, MPEG-1 AUDIO LAYER 3)</visible>
       <texture>logos\mp3.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -88,7 +88,7 @@
       <posY>605</posY>
       <width>58</width>
       <height>40</height>
-      <visible>skin.string(#Play.Current.AudioCodec, AC3)|skin.string(#Play.Current.AudioCodec, AC-3)</visible>
+      <visible>string.contains(#Play.Current.AudioCodec, AC3)|string.contains(#Play.Current.AudioCodec, AC-3)</visible>
       <texture>logos\ac3.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -103,7 +103,7 @@
       <posY>605</posY>
       <width>58</width>
       <height>40</height>
-      <visible>skin.string(#Play.Current.AudioCodec, DTS)</visible>
+      <visible>string.contains(#Play.Current.AudioCodec, DTS)</visible>
       <texture>logos\dts.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -118,7 +118,7 @@
       <posY>605</posY>
       <width>58</width>
       <height>40</height>
-      <visible>skin.string(#Play.Current.AudioCodec, MPA2)</visible>
+      <visible>string.contains(#Play.Current.AudioCodec, MPA2)</visible>
       <texture>logos\mpa2.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -133,7 +133,7 @@
       <posY>605</posY>
       <width>58</width>
       <height>40</height>
-      <visible>skin.string(#Play.Current.AudioCodec, WMA)</visible>
+      <visible>string.contains(#Play.Current.AudioCodec, WMA)</visible>
       <texture>logos\wma.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -148,7 +148,7 @@
       <posY>605</posY>
       <width>58</width>
       <height>40</height>
-      <visible>skin.string(#Play.Current.AudioCodec, PCM)</visible>
+      <visible>string.contains(#Play.Current.AudioCodec, PCM)</visible>
       <texture>logos\pcm.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -163,7 +163,7 @@
       <posY>632</posY>
       <width>58</width>
       <height>40</height>
-      <visible>skin.string(#Play.Current.VideoCodec, OGG)</visible>
+      <visible>string.contains(#Play.Current.VideoCodec, OGG)</visible>
       <texture>logos\ogg.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -178,7 +178,7 @@
       <posY>632</posY>
       <width>58</width>
       <height>40</height>
-      <visible>skin.string(#Play.Current.VideoCodec, FLAC)</visible>
+      <visible>string.contains(#Play.Current.VideoCodec, FLAC)</visible>
       <texture>logos\flac.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -193,7 +193,7 @@
       <posY>632</posY>
       <width>58</width>
       <height>40</height>
-      <visible>skin.string(#Play.Current.VideoCodec, DIVX)|skin.string(#Play.Current.VideoCodec, DIVX 3)|skin.string(#Play.Current.VideoCodec, DIVX 4)|skin.string(#Play.Current.VideoCodec, DIVX 5)|skin.string(#Play.Current.VideoCodec, DIVX 6)</visible>
+      <visible>string.contains(#Play.Current.VideoCodec, DX50)</visible>
       <texture>logos\divx.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -208,7 +208,7 @@
       <posY>632</posY>
       <width>58</width>
       <height>40</height>
-      <visible>skin.string(#Play.Current.VideoCodec, XVID)</visible>
+      <visible>string.contains(#Play.Current.VideoCodec, XVID)</visible>
       <texture>logos\xvid.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -223,7 +223,7 @@
       <posY>632</posY>
       <width>58</width>
       <height>40</height>
-      <visible>skin.string(#Play.Current.VideoCodec, AVC)</visible>
+      <visible>string.contains(#Play.Current.VideoCodec, AVC)</visible>
       <texture>logos\h264.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -238,7 +238,7 @@
       <posY>632</posY>
       <width>58</width>
       <height>40</height>
-      <visible>skin.string(#Play.Current.VideoCodec, FMP4)</visible>
+      <visible>string.contains(#Play.Current.VideoCodec, FMP4)</visible>
       <texture>logos\mp4v.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -253,7 +253,7 @@
       <posY>632</posY>
       <width>58</width>
       <height>40</height>
-      <visible>skin.string(#Play.Current.VideoCodec, MPEG-1V)</visible>
+      <visible>string.contains(#Play.Current.VideoCodec, MPEG-1V)</visible>
       <texture>logos\mp1v.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -268,7 +268,7 @@
       <posY>632</posY>
       <width>58</width>
       <height>40</height>
-      <visible>skin.string(#Play.Current.VideoCodec, MPEG2-V)</visible>
+      <visible>string.contains(#Play.Current.VideoCodec, MPEG-2V)</visible>
       <texture>logos\mp2v.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -283,7 +283,7 @@
       <posY>632</posY>
       <width>58</width>
       <height>40</height>
-      <visible>skin.string(#Play.Current.VideoCodec, WMV)</visible>
+      <visible>string.contains(#Play.Current.VideoCodec, WMV)</visible>
       <texture>logos\wmv.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -298,7 +298,7 @@
       <posY>659</posY>
       <width>58</width>
       <height>40</height>
-      <visible>skin.string(#Play.Current.HasSubtitles, True)</visible>
+      <visible>string.contains(#Play.Current.HasSubtitles, True)</visible>
       <texture>logos\subtitles.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
