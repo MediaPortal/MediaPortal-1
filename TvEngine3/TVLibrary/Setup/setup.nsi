@@ -565,7 +565,6 @@ ${MementoSectionEnd}
   Delete $INSTDIR\Plugins\ServerBlaster.dll
   Delete $INSTDIR\Plugins\TvMovie.dll
   Delete $INSTDIR\Plugins\XmlTvImport.dll
-  Delete $INSTDIR\Plugins\CI_Menu_Plugin.dll
   RMDir "$INSTDIR\Plugins"
 
   ; And finally remove all the files installed
