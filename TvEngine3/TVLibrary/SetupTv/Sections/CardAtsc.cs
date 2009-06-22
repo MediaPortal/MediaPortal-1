@@ -107,7 +107,7 @@ namespace SetupTv.Sections
       mpComboBoxFrequencies.Items.Clear();
       try
       {
-        string[] files = System.IO.Directory.GetFiles(Utils.ApplicationDirectory + @"\TuningParameters");
+        string[] files = System.IO.Directory.GetFiles(String.Format(@"{0}\TuningParameters", Utils.ApplicationDirectory));
         for (int i = 0; i < files.Length; ++i)
         {
           string ext = System.IO.Path.GetExtension(files[i]).ToLowerInvariant();
