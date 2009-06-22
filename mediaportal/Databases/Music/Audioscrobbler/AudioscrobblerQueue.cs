@@ -274,11 +274,12 @@ namespace MediaPortal.Music.Database
         //l[0]=<secs>
         //b[0]=<album>
         //n[0]=<tracknumber>
+        //m[0}=<mb-trackid>    
 
         string trackNr = track.TrackNr > 0 ? Convert.ToString(track.TrackNr) : String.Empty;
 
         sb.AppendFormat(
-          "&a[{0}]={1}&t[{0}]={2}&i[{0}]={3}&o[{0}]={4}&r[{0}]={5}&l[{0}]={6}&b[{0}]={7}&n[{0}]={8}",
+          "&a[{0}]={1}&t[{0}]={2}&i[{0}]={3}&o[{0}]={4}&r[{0}]={5}&l[{0}]={6}&b[{0}]={7}&n[{0}]={8}&m[{0}]={9}",
           i, // number of queued items = 0
           AudioscrobblerBase.getValidURLLastFMString(AudioscrobblerBase.UndoArtistPrefix(track.Artist)), // artist = 1
           HttpUtility.UrlEncode(track.Title), // track = 2
@@ -287,7 +288,8 @@ namespace MediaPortal.Music.Database
           track.Rating, // rating = 5
           track.Duration.ToString(), // secs = 6
           AudioscrobblerBase.getValidURLLastFMString(track.Album), // album = 7
-          trackNr  // tracknumber = 8
+          trackNr,  // tracknumber = 8
+          String.Empty // The MusicBrainz Track ID, or empty if not known.
           );
       }
 

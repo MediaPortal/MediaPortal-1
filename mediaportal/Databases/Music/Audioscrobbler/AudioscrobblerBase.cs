@@ -127,7 +127,8 @@ namespace MediaPortal.Music.Database
     private const string CLIENT_LANGUAGE = "de";
     private const string SCROBBLER_URL = "http://post.audioscrobbler.com";
     private const string RADIO_SCROBBLER_URL = "http://ws.audioscrobbler.com/";
-    private const string PROTOCOL_VERSION = "1.2";
+    private const string PROTOCOL_VERSION = "1.2.1";
+    private const string APP_API_KEY = "7d97dee3440eec8b90c9cf5970eef5ca";
 
     #endregion
 
@@ -551,7 +552,8 @@ namespace MediaPortal.Music.Database
                    + "&v=" + CLIENT_VERSION
                    + "&u=" + HttpUtility.UrlEncode(username)
                    + "&t=" + authTime
-                   + "&a=" + tmpAuth;
+                   + "&a=" + tmpAuth
+                   + "&api_key=" + APP_API_KEY;
 
       try
       {
@@ -1338,16 +1340,18 @@ namespace MediaPortal.Music.Database
         {
           logmessage = "FAILED";
         }
-        if (_useDebugLog)
-        {
-          Log.Debug("AudioscrobblerBase: {0}", logmessage);
-        }
-        if (logmessage == "FAILED: Plugin bug: Not all request variables are set")
+
+        if (logmessage.StartsWith("FAILED: Plugin bug: Not all request variables are set"))
         {
           Log.Info(
             "AudioscrobblerBase: A server error may have occured / if you receive this often a proxy may truncate your request - {0}",
             "read: http://www.last.fm/forum/24/_/74505/1#f808273");
         }
+        else
+        {
+          Log.Warn("AudioscrobblerBase: {0}", logmessage);
+        }
+
         TriggerSafeModeEvent();
         return true;
       }
