@@ -229,20 +229,24 @@ namespace MediaPortal.Configuration.Sections
         //
         // Make sure the skin actually exists before setting it as the current skin
         //
-        foreach (ListViewItem item in listViewAvailableSkins.Items)
+        for (int i = 0; i < listViewAvailableSkins.Items.Count; i++)
         {
-          if (item.SubItems[0].Text.Equals(currentSkin))
+          string checkString = listViewAvailableSkins.Items[i].SubItems[0].Text;
+          if (checkString.Equals(currentSkin, StringComparison.InvariantCultureIgnoreCase))
           {
-            item.Selected = true;
-            Log.Info("Skin selected: {0} (screenWidth={1}, screenHeight={2}, screenRatio={3})", item.Text, screenWidth,
+            listViewAvailableSkins.Items[i].Selected = true;
+            
+            Log.Info("Skin selected: {0} (screenWidth={1}, screenHeight={2}, screenRatio={3})", checkString, screenWidth,
                      screenHeight, screenRatio);
             break;
           }
         }
-        if (listViewAvailableSkins.SelectedItems.Count == 0)
-        {
-          MessageBox.Show(String.Format("The selected skin {0} does not exist!", currentSkin), "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
-        }
+
+        //if (listViewAvailableSkins.SelectedIndices.Count == 0)
+        //{
+        //  //MessageBox.Show(String.Format("The selected skin {0} does not exist!", currentSkin), "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
+        //  Log.Debug("GeneralSkin: Current skin {0} not selected.", currentSkin);
+        //}
       }
     }
 
