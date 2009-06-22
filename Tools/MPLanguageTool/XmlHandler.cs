@@ -33,6 +33,7 @@ namespace MPLanguageTool
     private static string SingleNodeSelection = string.Empty;
     private static string Field = string.Empty;
     private static string Prefix = string.Empty;
+    private static string TextAttribute = string.Empty;  // if the Text is not in Innertext, but in an attribute (MPII does it that way)
 
     public static string BuildFileName(string languageID, bool ReturnFullPath)
     {
@@ -45,6 +46,7 @@ namespace MPLanguageTool
           LangDefaultID = "en-US";
           break;
         case frmMain.StringsType.MediaPortal_1:
+        case frmMain.StringsType.MediaPortal_II:
         case frmMain.StringsType.MpTagThat:
           LangPrefix = "strings_";
           break;
@@ -86,8 +88,14 @@ namespace MPLanguageTool
     {
       switch (frmMain.LangType)
       {
-        case frmMain.StringsType.MpTagThat:
         case frmMain.StringsType.MediaPortal_II:
+          MainNodeSelection = "/Language/Section[@Name='" + Section + "']";
+          SingleNodeSelection = "String";
+          Field = "Name";
+          TextAttribute = "Text";
+          break;
+
+        case frmMain.StringsType.MpTagThat:
           MainNodeSelection = "/Language/Section[@name='" + Section + "']";
           SingleNodeSelection = "String";
           Field = "id";
@@ -137,14 +145,22 @@ namespace MPLanguageTool
             string prefixValue = "";
             string node_id = keyNode.Attributes[Field].Value;
 
-            if (keyNode.Attributes.Count == 2)
+            // MPII has always 2 attributes
+            if (keyNode.Attributes.Count == 2 && frmMain.LangType != frmMain.StringsType.MediaPortal_II)
             {
               prefixValue = keyNode.Attributes[Prefix].Value;
             }
 
             DataRow row = translations.NewRow();
             row[0] = node_id;
-            row[1] = keyNode.InnerText;
+            if (frmMain.LangType == frmMain.StringsType.MediaPortal_II)
+            {
+              row[1] = keyNode.Attributes[TextAttribute].Value;
+            }
+            else
+            {
+              row[1] = keyNode.InnerText;
+            }
             row[2] = "";
             row[3] = prefixValue;
             row[4] = "";
@@ -203,14 +219,22 @@ namespace MPLanguageTool
             string prefixValue = "";
             string node_id = keyNode.Attributes[Field].Value;
 
-            if (keyNode.Attributes.Count == 2)
+            // MPII has always 2 attributes
+            if (keyNode.Attributes.Count == 2 && frmMain.LangType != frmMain.StringsType.MediaPortal_II)
             {
               prefixValue = keyNode.Attributes[Prefix].Value;
             }
 
             DataRow row = translations.NewRow();
             row[0] = node_id;
-            row[1] = keyNode.InnerText;
+            if (frmMain.LangType == frmMain.StringsType.MediaPortal_II)
+            {
+              row[1] = keyNode.Attributes[TextAttribute].Value;
+            }
+            else
+            {
+              row[1] = keyNode.InnerText;
+            }
             row[2] = "";
             row[3] = prefixValue;
             row[4] = "";
@@ -315,6 +339,18 @@ namespace MPLanguageTool
           writer.Write("</Language>\n");
           writer.Close();
           break;
+        case frmMain.StringsType.MediaPortal_II:
+          if (!IsValidDocument(languageID))
+          {
+            writer = new StreamWriter(xml, false, Encoding.UTF8);
+            writer.Write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+            writer.Write("<!-- MediaPortal II translation file -->\n");
+            writer.Write("<!-- Note: English is the fallback for any strings not found in other languages -->\n");
+            writer.Write("<Language>\n");
+            writer.Write("</Language>\n");
+            writer.Close();
+          }
+          break;
         case frmMain.StringsType.MpTagThat:
           if (!IsValidDocument(languageID))
           {
@@ -362,6 +398,10 @@ namespace MPLanguageTool
         string attrName = string.Empty;
         switch (frmMain.LangType)
         {
+          case frmMain.StringsType.MediaPortal_II:
+            attrName = "Name";
+            break;
+
           case frmMain.StringsType.MpTagThat:
             attrName = "name";
             break;
@@ -394,11 +434,20 @@ namespace MPLanguageTool
           attr = nValue.OwnerDocument.CreateAttribute(Prefix);
           attr.InnerText = row["PrefixTranslated"].ToString();
         }
-        nValue.Attributes.Append(attr);
 
         if (!String.IsNullOrEmpty(row["Translated"].ToString()))
         {
-          nValue.InnerText = row["Translated"].ToString();
+          // MPII does have the translation in an attribute and not inner text
+          if (frmMain.LangType == frmMain.StringsType.MediaPortal_II)
+          {
+            attr = nValue.OwnerDocument.CreateAttribute(TextAttribute);
+            attr.InnerText = row["Translated"].ToString();
+          }
+          else
+          {
+            nValue.InnerText = row["Translated"].ToString();
+          }
+          nValue.Attributes.Append(attr);
           nRoot.AppendChild(nValue);
         }
 

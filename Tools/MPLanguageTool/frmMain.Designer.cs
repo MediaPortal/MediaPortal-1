@@ -32,7 +32,7 @@ namespace MPLanguageTool
     /// </summary>
     private void InitializeComponent()
     {
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
       this.menuStrip1 = new System.Windows.Forms.MenuStrip();
       this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.openMp1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -96,7 +96,6 @@ namespace MPLanguageTool
       // 
       // openMpIIToolStripMenuItem
       // 
-      this.openMpIIToolStripMenuItem.Enabled = false;
       this.openMpIIToolStripMenuItem.Name = "openMpIIToolStripMenuItem";
       this.openMpIIToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
       this.openMpIIToolStripMenuItem.Text = "MediaPortal II";
@@ -164,14 +163,14 @@ namespace MPLanguageTool
       this.gv.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ID,
             this.Translated});
-      dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
-      dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText;
-      dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.gv.DefaultCellStyle = dataGridViewCellStyle11;
+      dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+      dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+      dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.gv.DefaultCellStyle = dataGridViewCellStyle1;
       this.gv.Dock = System.Windows.Forms.DockStyle.Fill;
       this.gv.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnF2;
       this.gv.Location = new System.Drawing.Point(0, 24);

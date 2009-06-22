@@ -204,6 +204,17 @@ namespace MPLanguageTool
         return;
       languagePath = folderBrowserDialog1.SelectedPath;
 
+      // check if selected path contains the default translation file
+      // if not show folderbrowserdlg until user cancels or selects a path that contains it 
+      while (!System.IO.File.Exists(System.IO.Path.Combine(languagePath,tmpFileName)))
+      {
+        MessageBox.Show("The file [" + tmpFileName + "] could not be found.\nThe LanguageTool does not work without it.",
+           "MPLanguageTool -- Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        if (folderBrowserDialog1.ShowDialog() == DialogResult.Cancel)
+          return;
+        languagePath = folderBrowserDialog1.SelectedPath;
+      }
+
       switch (LangType)
       {
         case StringsType.MpTagThat:
@@ -219,12 +230,12 @@ namespace MPLanguageTool
           break;
       }
 
-      // check if selected path contains the default translation file
+      // check if selected path contains a valid default translation file
       originalTranslations = LoadSection(null);
-      // if not show folderbrowserdlg until user cancels or selects a path that contains it 
+      // if not show folderbrowserdlg until user cancels or selects a path with a valid one
       while (originalTranslations == null)
       {
-        MessageBox.Show("The file [" + tmpFileName + "] could not be found.\nThe LanguageTool does not work without it.",
+        MessageBox.Show("The file [" + tmpFileName + "] is invalid.\nPlease select a correct working one.",
           "MPLanguageTool -- Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         if (folderBrowserDialog1.ShowDialog() == DialogResult.Cancel)
           return;
@@ -301,8 +312,11 @@ namespace MPLanguageTool
 
       switch (LangType)
       {
-        case StringsType.MpTagThat:
         case StringsType.MediaPortal_II:
+          strAttrib = "Name";
+          strSection = "/Language/Section";
+          break;
+        case StringsType.MpTagThat:
           strAttrib = "name";
           strSection = "/Language/Section";
           break;
