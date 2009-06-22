@@ -8,7 +8,7 @@ http://forum.team-mediaportal.com/development-mp-1-0-tv-server-1-0-216/attention
 - NO LEADING ZEROES in the schema version
 
 So for the next extension the two files should be named:
-  42_upgrade_sqlserver_database.sql
-  42_upgrade_mysql_database.sql
+  46_upgrade_sqlserver_database.sql
+  46_upgrade_mysql_database.sql
   
 You can use "xx_upgrade_sqlserver_database.sql" and "xx_upgrade_mysql_database.sql" as a starting point
