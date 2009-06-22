@@ -811,12 +811,12 @@ namespace DirectShowLib
     new int GetEventHandle([Out] out IntPtr hEvent); // HEVENT
 
     [PreserveSig]
-    new int GetEvent(
-      [Out] out EventCode lEventCode,
-      [Out] out int lParam1,
-      [Out] out int lParam2,
-      [In] int msTimeout
-      );
+    int GetEvent(
+     [Out] out EventCode lEventCode,
+     [Out] out int lParam1,
+     [Out] out int lParam2,
+     [In] int msTimeout
+     );
 
     [PreserveSig]
     new int WaitForCompletion(
@@ -831,11 +831,11 @@ namespace DirectShowLib
     new int RestoreDefaultHandling([In] EventCode lEvCode);
 
     [PreserveSig]
-    new int FreeEventParams(
-      [In] EventCode lEvCode,
-      [In] int lParam1,
-      [In] int lParam2
-      );
+    int FreeEventParams(
+     [In] EventCode lEvCode,
+     [In] int lParam1,
+     [In] int lParam2
+     );
 
     #endregion
 

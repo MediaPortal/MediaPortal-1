@@ -114,11 +114,11 @@ namespace TvPlugin
     private long _currentStartTime = 0;
     private long _currentEndTime = 0;
     private Program _currentProgram = null;
-    private static string _tvGuideFileName;
-    private static FileSystemWatcher _tvGuideFileWatcher = null;
+    //private static string _tvGuideFileName;
+    //private static FileSystemWatcher _tvGuideFileWatcher = null;
     private bool _needUpdate = false;
     private DateTime m_dtStartTime = DateTime.Now;
-    private bool _useColorsForGenres = false;
+    //private bool _useColorsForGenres = false;
     private ArrayList _colorList = new ArrayList();
     private bool _singleChannelView = false;
     private int _programOffset = 0;
