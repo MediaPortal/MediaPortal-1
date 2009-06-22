@@ -2413,6 +2413,10 @@ namespace TvPlugin
           {
             ShowControl(GetID, (int) Control.REC_LOGO);
           }
+          else
+          {
+            HideControl(GetID, (int)Control.REC_LOGO);
+          }
         }
         else
         {
