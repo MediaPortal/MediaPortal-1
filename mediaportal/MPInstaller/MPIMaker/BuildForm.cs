@@ -102,10 +102,9 @@ namespace MediaPortal.MPInstaller
           pk.LoadFromFile(textBox1.Text);
           temp_mpih.Add(pk);
           temp_mpih.FileName = tempfile;
-          temp_mpih.SaveToFile();
-          listBox1.Items.Add("Config file created !");
+          //temp_mpih.SaveToFile();
+          //listBox1.Items.Add("Config file created !");
           listBox1.Refresh();
-          listBox1.Update();
         }
       }
       else

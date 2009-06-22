@@ -396,7 +396,7 @@ namespace MediaPortal.MPInstaller
           ZipFile zip = new ZipFile(file);
           foreach (ZipEntry entry in zip)
           {
-            if (entry.FileName == "instaler.xmp")
+            if ((entry.FileName == "installer.xmp") || (entry.FileName == "instaler.xmp"))
             {
               string tpf = Path.GetFullPath(Environment.GetEnvironmentVariable("TEMP")) + @"\" + "instaler.xmp";
               isValid = true;

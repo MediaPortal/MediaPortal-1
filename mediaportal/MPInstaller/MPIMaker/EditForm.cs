@@ -34,7 +34,7 @@ namespace MediaPortal.MPInstaller
   public partial class EditForm : MPInstallerForm
   {
     private MPinstallerStruct _struct = new MPinstallerStruct();
-    private string proiect_file_name = "Untitled";
+    private string project_file_name = "Untitled";
     private bool _loading = false;
     private ScriptEditorForm scriptEditor = new ScriptEditorForm();
     public int sortColumn;
@@ -47,9 +47,9 @@ namespace MediaPortal.MPInstaller
 
     public EditForm(string fil)
     {
-      proiect_file_name = fil;
+      project_file_name = fil;
       InitializeComponent();
-      proiectt_textBox6.Items.AddRange(MPinstallerStruct.CategoryListing);
+      project_textBox6.Items.AddRange(MPinstallerStruct.CategoryListing);
 
       OpenProjectFile(fil);
     }
@@ -65,17 +65,17 @@ namespace MediaPortal.MPInstaller
       saveFileDialog1.DefaultExt = "*.xmp";
       _struct.AddFileList(bossview);
       _struct.Script = scriptEditor.textBox_code.Text;
-      if (Path.GetFileName(proiect_file_name) == "Untitled" || String.IsNullOrEmpty(proiect_file_name.Trim()))
+      if (Path.GetFileName(project_file_name) == "Untitled" || String.IsNullOrEmpty(project_file_name.Trim()))
       {
         if (saveFileDialog1.ShowDialog(this) == DialogResult.OK)
         {
-          proiect_file_name = saveFileDialog1.FileName;
-          _struct.SaveToFile(proiect_file_name);
+          project_file_name = saveFileDialog1.FileName;
+          _struct.SaveToFile(project_file_name);
         }
       }
       else
       {
-        _struct.SaveToFile(proiect_file_name);
+        _struct.SaveToFile(project_file_name);
       }
     }
 
@@ -309,7 +309,7 @@ namespace MediaPortal.MPInstaller
     private void OpenProjectFile(string projectFile)
     {
       _struct.LoadFromFile(projectFile);
-      _struct.ProiectFileName = projectFile;
+      _struct.ProjectFileName = projectFile;
       loadProperties();
       this.Text = projectFile;
       for (int i = 0; i < _struct.FileList.Count; i++)
@@ -317,11 +317,11 @@ namespace MediaPortal.MPInstaller
         addrow((MPIFileList) _struct.FileList[i]);
       }
       scriptEditor.textBox_code.Text = _struct.Script;
-      openFileDialog1.InitialDirectory = Path.GetDirectoryName(_struct.ProiectFileName);
-      folderBrowserDialog1.SelectedPath = Path.GetDirectoryName(_struct.ProiectFileName);
+      openFileDialog1.InitialDirectory = Path.GetDirectoryName(_struct.ProjectFileName);
+      folderBrowserDialog1.SelectedPath = Path.GetDirectoryName(_struct.ProjectFileName);
     }
 
-    private void openProiectToolStripMenuItem_Click(object sender, EventArgs e)
+    private void openProjectToolStripMenuItem_Click(object sender, EventArgs e)
     {
       openFileDialog1.Filter = "Project files (*.xmp)|*.xmp|All files (*.*)|*.*";
       openFileDialog1.FileName = "";
@@ -330,21 +330,21 @@ namespace MediaPortal.MPInstaller
       {
         bossview.Items.Clear();
 
-        proiect_file_name = openFileDialog1.FileName;
-        OpenProjectFile(proiect_file_name);
+        project_file_name = openFileDialog1.FileName;
+        OpenProjectFile(project_file_name);
       }
     }
 
     private void loadProperties()
     {
       _loading = true;
-      proiectt_textBox1.Text = _struct.Name;
-      proiectt_textBox2.Text = _struct.Author;
-      proiectt_textBox3.Text = _struct.UpdateURL;
-      proiectt_textBox4.Text = _struct.Version;
-      proiectt_textBox5.Text = _struct.Description;
-      proiectt_textBox6.Text = _struct.Group;
-      proiectt_comboBox1.Text = _struct.Release;
+      project_textBox1.Text = _struct.Name;
+      project_textBox2.Text = _struct.Author;
+      project_textBox3.Text = _struct.UpdateURL;
+      project_textBox4.Text = _struct.Version;
+      project_textBox5.Text = _struct.Description;
+      project_textBox6.Text = _struct.Group;
+      project_comboBox1.Text = _struct.Release;
       pictureBox1.Image = _struct.Logo;
       _loading = false;
     }
@@ -410,31 +410,31 @@ namespace MediaPortal.MPInstaller
     }
 
 
-    private void saveProiectAsToolStripMenuItem_Click(object sender, EventArgs e)
+    private void saveProjectAsToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      if (proiectt_textBox1.Text.Length == 0)
+      if (project_textBox1.Text.Length == 0)
       {
         MessageBox.Show("Name is mandatory !", "Stop");
-        proiectt_textBox1.Focus();
+        project_textBox1.Focus();
         return;
       }
       saveFileDialog1.Filter = "Project files (*.xmp)|*.xmp|All files (*.*)|*.*";
       saveFileDialog1.DefaultExt = "*.xmp";
       if (saveFileDialog1.ShowDialog(this) == DialogResult.OK)
       {
-        proiect_file_name = saveFileDialog1.FileName;
-        _struct.ProiectFileName = proiect_file_name;
+        project_file_name = saveFileDialog1.FileName;
+        _struct.ProjectFileName = project_file_name;
         _struct.AddFileList(bossview);
         _struct.Script = scriptEditor.textBox_code.Text;
-        _struct.SaveToFile(proiect_file_name);
-        this.Text = proiect_file_name;
+        _struct.SaveToFile(project_file_name);
+        this.Text = project_file_name;
       }
     }
 
     private void Form1_Load(object sender, EventArgs e)
     {
       tabControl1.Controls.Clear();
-      tabControl1.Controls.Add(tabPage_Proiect);
+      tabControl1.Controls.Add(tabPage_Project);
       tabControl1.Controls.Add(tabPage_Advanced);
       propertyGrid1.SelectedObject = _struct.ProjectProperties;
       textt_comboBox1.Items.Clear();
@@ -514,7 +514,7 @@ namespace MediaPortal.MPInstaller
           tabControl1.Controls.Add(tabPage_Other);
           othert_comboBox1.Text = bossview.SelectedItems[0].SubItems[2].Text;
         }
-        tabControl1.Controls.Add(tabPage_Proiect);
+        tabControl1.Controls.Add(tabPage_Project);
         tabControl1.Controls.Add(tabPage_Advanced);
         propertyGrid1.SelectedObject = _struct.ProjectProperties;
         propertyGrid2.SelectedObject = fpc.Parse(bossview.SelectedItems[0].SubItems[5].Text);
@@ -524,7 +524,7 @@ namespace MediaPortal.MPInstaller
       else
       {
         tabControl1.Controls.Clear();
-        tabControl1.Controls.Add(tabPage_Proiect);
+        tabControl1.Controls.Add(tabPage_Project);
         tabControl1.Controls.Add(tabPage_Advanced);
       }
       bossview.Focus();
@@ -614,17 +614,17 @@ namespace MediaPortal.MPInstaller
       }
     }
 
-    private void proiectt_textBox1_TextChanged(object sender, EventArgs e)
+    private void project_textBox1_TextChanged(object sender, EventArgs e)
     {
       if (!_loading)
       {
-        _struct.Name = proiectt_textBox1.Text;
-        _struct.Author = proiectt_textBox2.Text;
-        _struct.UpdateURL = proiectt_textBox3.Text;
-        _struct.Version = proiectt_textBox4.Text;
-        _struct.Description = proiectt_textBox5.Text;
-        _struct.Group = proiectt_textBox6.Text;
-        _struct.Release = proiectt_comboBox1.Text;
+        _struct.Name = project_textBox1.Text;
+        _struct.Author = project_textBox2.Text;
+        _struct.UpdateURL = project_textBox3.Text;
+        _struct.Version = project_textBox4.Text;
+        _struct.Description = project_textBox5.Text;
+        _struct.Group = project_textBox6.Text;
+        _struct.Release = project_comboBox1.Text;
       }
     }
 
@@ -806,22 +806,22 @@ namespace MediaPortal.MPInstaller
 
     private bool IsGoodToSave()
     {
-      if (proiectt_textBox1.Text.Length == 0)
+      if (project_textBox1.Text.Length == 0)
       {
         MessageBox.Show("Name is mandatory !", "Stop");
-        proiectt_textBox1.Focus();
+        project_textBox1.Focus();
         return false;
       }
-      if (proiectt_textBox6.Text.Length == 0)
+      if (project_textBox6.Text.Length == 0)
       {
         MessageBox.Show("Group is mandatory !", "Stop");
-        proiectt_textBox6.Focus();
+        project_textBox6.Focus();
         return false;
       }
-      if (proiectt_comboBox1.Text.Length == 0)
+      if (project_comboBox1.Text.Length == 0)
       {
         MessageBox.Show("Release is mandatory !", "Stop");
-        proiectt_comboBox1.Focus();
+        project_comboBox1.Focus();
         return false;
       }
       return true;

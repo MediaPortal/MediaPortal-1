@@ -42,7 +42,7 @@ using MediaPortal.MPInstaller;
 namespace MediaPortal.MPInstaller
 {
   /// <summary>
-  ///  Base mpi entity class informations stored in instaler.xmp
+  ///  Base mpi entity class informations stored in installer.xmp
   /// </summary>
   public class MPinstallerStruct
   {
@@ -50,7 +50,7 @@ namespace MediaPortal.MPInstaller
     // for testing only 
     //public const string DEFAULT_UPDATE_SITE = "http://testbase001.team-mediaportal.com";
 
-    public static string[] CategoryListing = { "Audio/Radio", "Automation", "EPG/TV", "Games", "Input", "Others", "PIM", "Skins", "Utilities", "Video/Movies", "Web", "TV Logos" };
+    public static string[] CategoryListing ={ "Audio/Radio", "Automation", "EPG/TV", "Games", "Input", "Others", "PIM", "Skins", "Utilities", "Video/Movies", "Web", "TV Logos" };
 
 
     public const string PLUGIN_TYPE = "Plugin";
@@ -76,7 +76,7 @@ namespace MediaPortal.MPInstaller
     public const string INTERNAL_PLUGIN_SUBTYPE = "Plugin";
 
     string _builFileName = string.Empty;
-    string _proiectFileName = string.Empty;
+    string _projectFileName = string.Empty;
     string _author = string.Empty;
     string _update = DEFAULT_UPDATE_SITE;
     string _name = string.Empty;
@@ -93,7 +93,7 @@ namespace MediaPortal.MPInstaller
     public List<ActionInfo> Actions;
     public List<GroupString> SetupGroups;
     public List<GroupStringMapping> SetupGroupsMappig;
-
+    
     public MPinstallerStruct()
     {
       Language = new List<LanguageString>();
@@ -101,7 +101,7 @@ namespace MediaPortal.MPInstaller
       ProjectProperties = new ProjectPropertiesClass();
       SetupGroups = new List<GroupString>();
       SetupGroupsMappig = new List<GroupStringMapping>();
-
+      
     }
 
     private ProjectPropertiesClass projectPropertise;
@@ -176,10 +176,10 @@ namespace MediaPortal.MPInstaller
       get { return _builFileName; }
       set { _builFileName = value; }
     }
-    public string ProiectFileName
+    public string ProjectFileName
     {
-      get { return _proiectFileName; }
-      set { _proiectFileName = value; }
+      get { return _projectFileName; }
+      set { _projectFileName = value; }
     }
 
     public void AddFileList(ListView lst)
@@ -288,7 +288,7 @@ namespace MediaPortal.MPInstaller
       SetupGroupsMappig.Clear();
       ProjectProperties.Clear();
       BuildFileName = string.Empty;
-      ProiectFileName = string.Empty;
+      ProjectFileName = string.Empty;
       Author = string.Empty;
       Name = string.Empty;
       Version = string.Empty;
@@ -304,7 +304,7 @@ namespace MediaPortal.MPInstaller
       Stream myStream;
       if ((myStream = File.Open(fil, FileMode.Create, FileAccess.Write, FileShare.None)) != null)
       {
-        this.ProiectFileName = fil;
+        this.ProjectFileName = fil;
         // Code to write the stream goes here.
         XmlDocument doc = new XmlDocument();
         XmlWriter writer = null;
@@ -318,7 +318,7 @@ namespace MediaPortal.MPInstaller
           settings.OmitXmlDeclaration = true;
           // Create the XmlWriter object and write some content.
           writer = XmlWriter.Create(myStream, settings);
-          writer.WriteStartElement("MPinstaler");
+          writer.WriteStartElement("MPInstaller");
           writer.WriteElementString("ver", "1.00.000");
           writer.WriteStartElement("FileList");
           for (int i = 0; i < this.FileList.Count; i++)
@@ -338,10 +338,10 @@ namespace MediaPortal.MPInstaller
             writer.WriteElementString("FileName", Path.GetFileName(it.FileName));
             writer.WriteElementString("Type", it.Type);
             writer.WriteElementString("SubType", it.SubType);
-            writer.WriteElementString("Source", RelativePath(fil, it.FileName));
+            writer.WriteElementString("Source", RelativePath(fil,it.FileName));
             writer.WriteElementString("Id", it.ID);
             writer.WriteElementString("Option", it.Option);
-            writer.WriteElementString("Guid", it.GUID);
+            writer.WriteElementString("Guid",it.GUID );
             writer.WriteEndElement();
           }
           writer.WriteEndElement();
@@ -385,8 +385,8 @@ namespace MediaPortal.MPInstaller
           writer.WriteEndElement();
           writer.WriteStartElement("Option");
           writer.WriteElementString("BuildFileName", this.BuildFileName);
-          writer.WriteElementString("ProiectFileName", Path.GetFullPath(this.ProiectFileName));
-          writer.WriteElementString("ProiectName", this.Name);
+          writer.WriteElementString("ProjectFileName", Path.GetFullPath(this.ProjectFileName));
+          writer.WriteElementString("ProjectName", this.Name);
           writer.WriteElementString("Author", this.Author);
           writer.WriteElementString("UpdateURL", this.UpdateURL);
           writer.WriteElementString("Version", this.Version);
@@ -451,12 +451,12 @@ namespace MediaPortal.MPInstaller
           pb.Maximum = FileList.Count;
           ls.Items.Add("Build file :" + _builFileName);
 
-          if (File.Exists(ProiectFileName))
+          if (File.Exists(ProjectFileName))
           {
-            sr = new StreamReader(Path.GetFullPath(ProiectFileName));
-            zip.AddFileStream("instaler.xmp", "", sr.BaseStream);
+            sr = new StreamReader(Path.GetFullPath(ProjectFileName));
+            zip.AddFileStream("installer.xmp", "", sr.BaseStream);
           }
-          else ls.Items.Add("Error : Proiect file not found !");
+          else ls.Items.Add("Error : Project file not found !");
 
           foreach (MPIFileList file in FileList)
           {
@@ -482,7 +482,7 @@ namespace MediaPortal.MPInstaller
         ls.Items.Add("exception: " + ex1); // Probably due to file access error
       }
     }
-
+    
     string RelativePath(string refpath, string file)
     {
       return Path.GetFullPath(file).Replace(Path.GetDirectoryName(refpath) + @"\", "");
@@ -504,7 +504,11 @@ namespace MediaPortal.MPInstaller
       FileList.Clear();
       Language.Clear();
       ProjectProperties.Clear();
-      XmlNode ver = doc.DocumentElement.SelectSingleNode("/MPinstaler");
+      XmlNode ver = doc.DocumentElement.SelectSingleNode("/MPInstaller");
+      if (ver == null)
+      {
+        ver = doc.DocumentElement.SelectSingleNode("/MPinstaler"); // old style
+      }
       XmlNodeList fileList = ver.SelectNodes("FileList/File");
       foreach (XmlNode nodefile in fileList)
       {
@@ -514,7 +518,7 @@ namespace MediaPortal.MPInstaller
         if (node_guid != null)
           str_guid = nodefile.SelectSingleNode("Guid").InnerText;
         this.FileList.Add(new MPIFileList(
-               AbsolutePath(fil, t_path),
+               AbsolutePath(fil,t_path),
                nodefile.SelectSingleNode("Type").InnerText,
                nodefile.SelectSingleNode("SubType").InnerText,
                nodefile.SelectSingleNode("Id").InnerText,
@@ -545,11 +549,16 @@ namespace MediaPortal.MPInstaller
       foreach (XmlNode groupnode in groupmapList)
       {
         SetupGroupsMappig.Add(new GroupStringMapping(groupnode.Attributes["Id"].Value,
-                                        AbsolutePath(fil, groupnode.Attributes["FileName"].Value)));
+                                        AbsolutePath(fil,groupnode.Attributes["FileName"].Value)));
       }
       XmlNode nodeoption = ver.SelectSingleNode("Option");
       this.BuildFileName = nodeoption.SelectSingleNode("BuildFileName").InnerText;
-      this.Name = nodeoption.SelectSingleNode("ProiectName").InnerText;
+      XmlNode node = nodeoption.SelectSingleNode("ProjectName");
+      if (node == null)
+      {
+        node = nodeoption.SelectSingleNode("ProiectName"); // old style
+      }
+      this.Name = node.InnerText;
       this.Author = nodeoption.SelectSingleNode("Author").InnerText;
       this.UpdateURL = nodeoption.SelectSingleNode("UpdateURL").InnerText;
       this.Version = nodeoption.SelectSingleNode("Version").InnerText;
@@ -568,19 +577,9 @@ namespace MediaPortal.MPInstaller
       XmlNode node_logo = nodeoption.SelectSingleNode("Logo");
       if (node_logo != null)
       {
-        byte[] buffer = Convert.FromBase64String(node_logo.InnerText);
-        string t = Path.GetTempFileName();
-        FileStream fs = new FileStream(t, FileMode.Create);
-        fs.Write(buffer, 0, buffer.Length);
-        fs.Close();
-        this.Logo = Image.FromFile(t, true);
-        try
+        using (MemoryStream logoStream = new MemoryStream(Convert.FromBase64String(node_logo.InnerText)))
         {
-          File.Delete(t);
-        }
-        catch
-        {
-          // Probably file access error
+          this.Logo = Image.FromStream(logoStream, true);
         }
       }
       XmlNode nodeproperties = ver.SelectSingleNode("Properties");
@@ -683,26 +682,26 @@ namespace MediaPortal.MPInstaller
             break;
 
         }
-        ret += @"\";
+        ret += @"\" ;
       }
 
       if (flst.Type == SKIN_TYPE)
       {
-        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\";
+        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" ;
       }
       if (flst.Type == SKIN_MEDIA_TYPE)
       {
-        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Media" + @"\";
+        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Media" + @"\" ;
       }
 
       if (flst.Type == SKIN_SOUNDS_TYPE)
       {
-        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Sounds" + @"\";
+        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Sounds" + @"\" ;
       }
 
       if (flst.Type == SKIN_ANIMATIONS_TYPE)
       {
-        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Media" + @"\" + "Animations" + @"\";
+        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Media" + @"\" + "Animations" + @"\" ;
       }
 
       if (flst.Type == SKIN_TETRIS_TYPE)
@@ -712,23 +711,23 @@ namespace MediaPortal.MPInstaller
 
       if (flst.Type == TEXT_TYPE)
       {
-        ret = "Release" + @"\" + "Text" + @"\" + flst.SubType + @"\";
+        ret = "Release" + @"\" + "Text" + @"\" + flst.SubType + @"\" ;
       }
 
       if (flst.Type == THUMBS_TYPE)
       {
-        ret = "Release" + @"\" + "Thumbs" + @"\" + flst.SubType + @"\";
+        ret = "Release" + @"\" + "Thumbs" + @"\" + flst.SubType + @"\" ;
       }
       if (flst.Type == OTHER_TYPE)
       {
-        ret = "Release" + @"\" + "Other" + @"\";
+        ret = "Release" + @"\" + "Other" + @"\" ;
       }
 
       if (flst.Type == INTERNAL_TYPE)
       {
         ret = "Internal" + @"\" + flst.SubType + @"\";
       }
-
+      
       if (flst.Type == SKIN_SYSTEMFONT_TYPE)
       {
         ret = "System_Font" + @"\" + flst.SubType + @"\";
@@ -907,7 +906,7 @@ namespace MediaPortal.MPInstaller
       FilePropertiesClass FileProperties = new FilePropertiesClass();
     }
 
-    public MPIFileList(string fn, string ty, string sty, string i, string o)
+    public MPIFileList(string fn, string ty, string sty, string i,string o)
     {
       FileName = fn;
       Type = ty;
@@ -916,7 +915,7 @@ namespace MediaPortal.MPInstaller
       Option = o;
       FilePropertiesClass FileProperties = new FilePropertiesClass();
     }
-
+    
     public MPIFileList(string fn, string ty, string sty, string i, string o, string g)
     {
       FileName = fn;
@@ -1189,19 +1188,19 @@ namespace MediaPortal.MPInstaller
       Name = wname;
       Checked = false;
     }
-    [System.Xml.Serialization.XmlAttribute]
+    [System.Xml.Serialization.XmlAttribute] 
     public string Id
     {
       get { return _id; }
       set { _id = value; }
     }
-    [System.Xml.Serialization.XmlAttribute]
+    [System.Xml.Serialization.XmlAttribute] 
     public string Name
     {
       get { return _name; }
       set { _name = value; }
     }
-    [System.Xml.Serialization.XmlAttribute]
+    [System.Xml.Serialization.XmlAttribute] 
     public bool Checked
     {
       get { return _checked; }

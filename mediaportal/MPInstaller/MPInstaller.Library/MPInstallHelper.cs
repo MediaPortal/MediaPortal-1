@@ -169,7 +169,7 @@ namespace MediaPortal.MPInstaller
           settings.OmitXmlDeclaration = true;
           // Create the XmlWriter object and write some content.
           writer = XmlWriter.Create(myStream, settings);
-          writer.WriteStartElement("MPinstalerS");
+          writer.WriteStartElement("MPInstallerS");
           writer.WriteElementString("ver", "1.00.000");
           writer.WriteStartElement("ExtensionList");
           for (int i = 0; i < this.Items.Count; i++)
@@ -255,7 +255,11 @@ namespace MediaPortal.MPInstaller
         {
           doc.Load(FileName);
           Items.Clear();
-          XmlNode ver = doc.DocumentElement.SelectSingleNode("/MPinstalerS");
+          XmlNode ver = doc.DocumentElement.SelectSingleNode("/MPInstallerS");
+          if (ver == null)
+          {
+            ver = doc.DocumentElement.SelectSingleNode("/MPinstalerS"); // old style
+          }
           XmlNodeList fileList = ver.SelectNodes("ExtensionList/Extension");
           foreach (XmlNode nodefile in fileList)
           {

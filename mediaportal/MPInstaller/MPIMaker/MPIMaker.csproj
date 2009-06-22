@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{ED0D40F0-7ACC-4FDE-93E9-65B5D37BE6E0}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -54,6 +54,10 @@
     <Reference Include="CSScriptLibrary, Version=1.9.0.0, Culture=neutral, PublicKeyToken=70fcc3d18c749033">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\MediaPortal.Base\CSScriptLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.Zip, Version=1.7.2.18, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\MediaPortal.Base\Ionic.Zip.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

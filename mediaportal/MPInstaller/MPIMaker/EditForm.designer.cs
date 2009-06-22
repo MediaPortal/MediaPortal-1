@@ -35,9 +35,9 @@ namespace MediaPortal.MPInstaller
           this.menuStrip1 = new System.Windows.Forms.MenuStrip();
           this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-          this.openProiectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+          this.openProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.sToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-          this.saveProiectAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+          this.saveProjectAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.buildToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
           this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -98,20 +98,20 @@ namespace MediaPortal.MPInstaller
           this.button_browse = new System.Windows.Forms.Button();
           this.label11 = new System.Windows.Forms.Label();
           this.pictureBox1 = new System.Windows.Forms.PictureBox();
-          this.tabPage_Proiect = new System.Windows.Forms.TabPage();
+          this.tabPage_Project = new System.Windows.Forms.TabPage();
           this.label12 = new System.Windows.Forms.Label();
-          this.proiectt_comboBox1 = new System.Windows.Forms.ComboBox();
-          this.proiectt_textBox6 = new System.Windows.Forms.ComboBox();
+          this.project_comboBox1 = new System.Windows.Forms.ComboBox();
+          this.project_textBox6 = new System.Windows.Forms.ComboBox();
           this.label10 = new System.Windows.Forms.Label();
           this.label9 = new System.Windows.Forms.Label();
-          this.proiectt_textBox5 = new System.Windows.Forms.TextBox();
-          this.proiectt_textBox4 = new System.Windows.Forms.TextBox();
+          this.project_textBox5 = new System.Windows.Forms.TextBox();
+          this.project_textBox4 = new System.Windows.Forms.TextBox();
           this.label5 = new System.Windows.Forms.Label();
-          this.proiectt_textBox3 = new System.Windows.Forms.TextBox();
+          this.project_textBox3 = new System.Windows.Forms.TextBox();
           this.label4 = new System.Windows.Forms.Label();
-          this.proiectt_textBox2 = new System.Windows.Forms.TextBox();
+          this.project_textBox2 = new System.Windows.Forms.TextBox();
           this.label3 = new System.Windows.Forms.Label();
-          this.proiectt_textBox1 = new System.Windows.Forms.TextBox();
+          this.project_textBox1 = new System.Windows.Forms.TextBox();
           this.label2 = new System.Windows.Forms.Label();
           this.tabPage_Thumbs = new System.Windows.Forms.TabPage();
           this.thumbs_pictureBox = new System.Windows.Forms.PictureBox();
@@ -135,7 +135,7 @@ namespace MediaPortal.MPInstaller
           this.tabPage_Text.SuspendLayout();
           this.tabPage_Advanced.SuspendLayout();
           ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-          this.tabPage_Proiect.SuspendLayout();
+          this.tabPage_Project.SuspendLayout();
           this.tabPage_Thumbs.SuspendLayout();
           ((System.ComponentModel.ISupportInitialize)(this.thumbs_pictureBox)).BeginInit();
           this.tabPage_Other.SuspendLayout();
@@ -160,9 +160,9 @@ namespace MediaPortal.MPInstaller
           // 
           this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem,
-            this.openProiectToolStripMenuItem,
+            this.openProjectToolStripMenuItem,
             this.sToolStripMenuItem,
-            this.saveProiectAsToolStripMenuItem,
+            this.saveProjectAsToolStripMenuItem,
             this.buildToolStripMenuItem,
             this.toolStripSeparator1,
             this.optionsToolStripMenuItem,
@@ -180,13 +180,13 @@ namespace MediaPortal.MPInstaller
           this.newToolStripMenuItem.Text = "New Project";
           this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
           // 
-          // openProiectToolStripMenuItem
+          // openProjectToolStripMenuItem
           // 
-          this.openProiectToolStripMenuItem.Image = global::MPIMaker.Properties.Resources.openButton_Image;
-          this.openProiectToolStripMenuItem.Name = "openProiectToolStripMenuItem";
-          this.openProiectToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
-          this.openProiectToolStripMenuItem.Text = "Open Project ..";
-          this.openProiectToolStripMenuItem.Click += new System.EventHandler(this.openProiectToolStripMenuItem_Click);
+          this.openProjectToolStripMenuItem.Image = global::MPIMaker.Properties.Resources.openButton_Image;
+          this.openProjectToolStripMenuItem.Name = "openProjectToolStripMenuItem";
+          this.openProjectToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+          this.openProjectToolStripMenuItem.Text = "Open Project ..";
+          this.openProjectToolStripMenuItem.Click += new System.EventHandler(this.openProjectToolStripMenuItem_Click);
           // 
           // sToolStripMenuItem
           // 
@@ -196,12 +196,12 @@ namespace MediaPortal.MPInstaller
           this.sToolStripMenuItem.Text = "Save Project";
           this.sToolStripMenuItem.Click += new System.EventHandler(this.sToolStripMenuItem_Click);
           // 
-          // saveProiectAsToolStripMenuItem
+          // saveProjectAsToolStripMenuItem
           // 
-          this.saveProiectAsToolStripMenuItem.Name = "saveProiectAsToolStripMenuItem";
-          this.saveProiectAsToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
-          this.saveProiectAsToolStripMenuItem.Text = "Save Project As..";
-          this.saveProiectAsToolStripMenuItem.Click += new System.EventHandler(this.saveProiectAsToolStripMenuItem_Click);
+          this.saveProjectAsToolStripMenuItem.Name = "saveProjectAsToolStripMenuItem";
+          this.saveProjectAsToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+          this.saveProjectAsToolStripMenuItem.Text = "Save Project As..";
+          this.saveProjectAsToolStripMenuItem.Click += new System.EventHandler(this.saveProjectAsToolStripMenuItem_Click);
           // 
           // buildToolStripMenuItem
           // 
@@ -600,7 +600,7 @@ namespace MediaPortal.MPInstaller
           this.tabControl1.Controls.Add(this.tabPage_Skin);
           this.tabControl1.Controls.Add(this.tabPage_Text);
           this.tabControl1.Controls.Add(this.tabPage_Advanced);
-          this.tabControl1.Controls.Add(this.tabPage_Proiect);
+          this.tabControl1.Controls.Add(this.tabPage_Project);
           this.tabControl1.Controls.Add(this.tabPage_Thumbs);
           this.tabControl1.Controls.Add(this.tabPage_Other);
           this.tabControl1.Location = new System.Drawing.Point(12, 240);
@@ -707,28 +707,28 @@ namespace MediaPortal.MPInstaller
           this.pictureBox1.TabStop = false;
           this.pictureBox1.LoadCompleted += new System.ComponentModel.AsyncCompletedEventHandler(this.pictureBox1_LoadCompleted);
           // 
-          // tabPage_Proiect
+          // tabPage_Project
           // 
-          this.tabPage_Proiect.Controls.Add(this.label12);
-          this.tabPage_Proiect.Controls.Add(this.proiectt_comboBox1);
-          this.tabPage_Proiect.Controls.Add(this.proiectt_textBox6);
-          this.tabPage_Proiect.Controls.Add(this.label10);
-          this.tabPage_Proiect.Controls.Add(this.label9);
-          this.tabPage_Proiect.Controls.Add(this.proiectt_textBox5);
-          this.tabPage_Proiect.Controls.Add(this.proiectt_textBox4);
-          this.tabPage_Proiect.Controls.Add(this.label5);
-          this.tabPage_Proiect.Controls.Add(this.proiectt_textBox3);
-          this.tabPage_Proiect.Controls.Add(this.label4);
-          this.tabPage_Proiect.Controls.Add(this.proiectt_textBox2);
-          this.tabPage_Proiect.Controls.Add(this.label3);
-          this.tabPage_Proiect.Controls.Add(this.proiectt_textBox1);
-          this.tabPage_Proiect.Controls.Add(this.label2);
-          this.tabPage_Proiect.Location = new System.Drawing.Point(4, 22);
-          this.tabPage_Proiect.Name = "tabPage_Proiect";
-          this.tabPage_Proiect.Size = new System.Drawing.Size(658, 153);
-          this.tabPage_Proiect.TabIndex = 4;
-          this.tabPage_Proiect.Text = "Proiect Properties";
-          this.tabPage_Proiect.UseVisualStyleBackColor = true;
+          this.tabPage_Project.Controls.Add(this.label12);
+          this.tabPage_Project.Controls.Add(this.project_comboBox1);
+          this.tabPage_Project.Controls.Add(this.project_textBox6);
+          this.tabPage_Project.Controls.Add(this.label10);
+          this.tabPage_Project.Controls.Add(this.label9);
+          this.tabPage_Project.Controls.Add(this.project_textBox5);
+          this.tabPage_Project.Controls.Add(this.project_textBox4);
+          this.tabPage_Project.Controls.Add(this.label5);
+          this.tabPage_Project.Controls.Add(this.project_textBox3);
+          this.tabPage_Project.Controls.Add(this.label4);
+          this.tabPage_Project.Controls.Add(this.project_textBox2);
+          this.tabPage_Project.Controls.Add(this.label3);
+          this.tabPage_Project.Controls.Add(this.project_textBox1);
+          this.tabPage_Project.Controls.Add(this.label2);
+          this.tabPage_Project.Location = new System.Drawing.Point(4, 22);
+          this.tabPage_Project.Name = "tabPage_Project";
+          this.tabPage_Project.Size = new System.Drawing.Size(658, 153);
+          this.tabPage_Project.TabIndex = 4;
+          this.tabPage_Project.Text = "Project Properties";
+          this.tabPage_Project.UseVisualStyleBackColor = true;
           // 
           // label12
           // 
@@ -739,25 +739,25 @@ namespace MediaPortal.MPInstaller
           this.label12.TabIndex = 13;
           this.label12.Text = "Release :";
           // 
-          // proiectt_comboBox1
+          // project_comboBox1
           // 
-          this.proiectt_comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-          this.proiectt_comboBox1.FormattingEnabled = true;
-          this.proiectt_comboBox1.Items.AddRange(new object[] {
+          this.project_comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+          this.project_comboBox1.FormattingEnabled = true;
+          this.project_comboBox1.Items.AddRange(new object[] {
             "Stable ",
             "Beta",
             "Test",
             "Update"});
-          this.proiectt_comboBox1.Location = new System.Drawing.Point(94, 111);
-          this.proiectt_comboBox1.Name = "proiectt_comboBox1";
-          this.proiectt_comboBox1.Size = new System.Drawing.Size(124, 21);
-          this.proiectt_comboBox1.TabIndex = 12;
-          this.proiectt_comboBox1.SelectedIndexChanged += new System.EventHandler(this.proiectt_textBox1_TextChanged);
+          this.project_comboBox1.Location = new System.Drawing.Point(94, 111);
+          this.project_comboBox1.Name = "project_comboBox1";
+          this.project_comboBox1.Size = new System.Drawing.Size(124, 21);
+          this.project_comboBox1.TabIndex = 12;
+          this.project_comboBox1.SelectedIndexChanged += new System.EventHandler(this.project_textBox1_TextChanged);
           // 
-          // proiectt_textBox6
+          // project_textBox6
           // 
-          this.proiectt_textBox6.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-          this.proiectt_textBox6.Items.AddRange(new object[] {
+          this.project_textBox6.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+          this.project_textBox6.Items.AddRange(new object[] {
             "Audio/Radio",
             "Automation",
             "EPG/TV",
@@ -770,12 +770,12 @@ namespace MediaPortal.MPInstaller
             "Video/Movies",
             "Web",
             "TV Logos"});
-          this.proiectt_textBox6.Location = new System.Drawing.Point(224, 85);
-          this.proiectt_textBox6.Name = "proiectt_textBox6";
-          this.proiectt_textBox6.Size = new System.Drawing.Size(168, 21);
-          this.proiectt_textBox6.TabIndex = 11;
-          this.proiectt_textBox6.SelectedIndexChanged += new System.EventHandler(this.proiectt_textBox1_TextChanged);
-          this.proiectt_textBox6.TextChanged += new System.EventHandler(this.proiectt_textBox1_TextChanged);
+          this.project_textBox6.Location = new System.Drawing.Point(224, 85);
+          this.project_textBox6.Name = "project_textBox6";
+          this.project_textBox6.Size = new System.Drawing.Size(168, 21);
+          this.project_textBox6.TabIndex = 11;
+          this.project_textBox6.SelectedIndexChanged += new System.EventHandler(this.project_textBox1_TextChanged);
+          this.project_textBox6.TextChanged += new System.EventHandler(this.project_textBox1_TextChanged);
           // 
           // label10
           // 
@@ -795,25 +795,25 @@ namespace MediaPortal.MPInstaller
           this.label9.TabIndex = 9;
           this.label9.Text = "Description :";
           // 
-          // proiectt_textBox5
+          // project_textBox5
           // 
-          this.proiectt_textBox5.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+          this.project_textBox5.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                       | System.Windows.Forms.AnchorStyles.Left)
                       | System.Windows.Forms.AnchorStyles.Right)));
-          this.proiectt_textBox5.Location = new System.Drawing.Point(398, 33);
-          this.proiectt_textBox5.Multiline = true;
-          this.proiectt_textBox5.Name = "proiectt_textBox5";
-          this.proiectt_textBox5.Size = new System.Drawing.Size(257, 99);
-          this.proiectt_textBox5.TabIndex = 8;
-          this.proiectt_textBox5.TextChanged += new System.EventHandler(this.proiectt_textBox1_TextChanged);
+          this.project_textBox5.Location = new System.Drawing.Point(398, 33);
+          this.project_textBox5.Multiline = true;
+          this.project_textBox5.Name = "project_textBox5";
+          this.project_textBox5.Size = new System.Drawing.Size(257, 99);
+          this.project_textBox5.TabIndex = 8;
+          this.project_textBox5.TextChanged += new System.EventHandler(this.project_textBox1_TextChanged);
           // 
-          // proiectt_textBox4
+          // project_textBox4
           // 
-          this.proiectt_textBox4.Location = new System.Drawing.Point(94, 85);
-          this.proiectt_textBox4.Name = "proiectt_textBox4";
-          this.proiectt_textBox4.Size = new System.Drawing.Size(76, 20);
-          this.proiectt_textBox4.TabIndex = 7;
-          this.proiectt_textBox4.TextChanged += new System.EventHandler(this.proiectt_textBox1_TextChanged);
+          this.project_textBox4.Location = new System.Drawing.Point(94, 85);
+          this.project_textBox4.Name = "project_textBox4";
+          this.project_textBox4.Size = new System.Drawing.Size(76, 20);
+          this.project_textBox4.TabIndex = 7;
+          this.project_textBox4.TextChanged += new System.EventHandler(this.project_textBox1_TextChanged);
           // 
           // label5
           // 
@@ -824,13 +824,13 @@ namespace MediaPortal.MPInstaller
           this.label5.TabIndex = 6;
           this.label5.Text = "Version :";
           // 
-          // proiectt_textBox3
+          // project_textBox3
           // 
-          this.proiectt_textBox3.Location = new System.Drawing.Point(94, 59);
-          this.proiectt_textBox3.Name = "proiectt_textBox3";
-          this.proiectt_textBox3.Size = new System.Drawing.Size(298, 20);
-          this.proiectt_textBox3.TabIndex = 5;
-          this.proiectt_textBox3.TextChanged += new System.EventHandler(this.proiectt_textBox1_TextChanged);
+          this.project_textBox3.Location = new System.Drawing.Point(94, 59);
+          this.project_textBox3.Name = "project_textBox3";
+          this.project_textBox3.Size = new System.Drawing.Size(298, 20);
+          this.project_textBox3.TabIndex = 5;
+          this.project_textBox3.TextChanged += new System.EventHandler(this.project_textBox1_TextChanged);
           // 
           // label4
           // 
@@ -841,13 +841,13 @@ namespace MediaPortal.MPInstaller
           this.label4.TabIndex = 4;
           this.label4.Text = "Update URL :";
           // 
-          // proiectt_textBox2
+          // project_textBox2
           // 
-          this.proiectt_textBox2.Location = new System.Drawing.Point(94, 33);
-          this.proiectt_textBox2.Name = "proiectt_textBox2";
-          this.proiectt_textBox2.Size = new System.Drawing.Size(298, 20);
-          this.proiectt_textBox2.TabIndex = 3;
-          this.proiectt_textBox2.TextChanged += new System.EventHandler(this.proiectt_textBox1_TextChanged);
+          this.project_textBox2.Location = new System.Drawing.Point(94, 33);
+          this.project_textBox2.Name = "project_textBox2";
+          this.project_textBox2.Size = new System.Drawing.Size(298, 20);
+          this.project_textBox2.TabIndex = 3;
+          this.project_textBox2.TextChanged += new System.EventHandler(this.project_textBox1_TextChanged);
           // 
           // label3
           // 
@@ -858,13 +858,13 @@ namespace MediaPortal.MPInstaller
           this.label3.TabIndex = 2;
           this.label3.Text = "Author :";
           // 
-          // proiectt_textBox1
+          // project_textBox1
           // 
-          this.proiectt_textBox1.Location = new System.Drawing.Point(94, 7);
-          this.proiectt_textBox1.Name = "proiectt_textBox1";
-          this.proiectt_textBox1.Size = new System.Drawing.Size(298, 20);
-          this.proiectt_textBox1.TabIndex = 1;
-          this.proiectt_textBox1.TextChanged += new System.EventHandler(this.proiectt_textBox1_TextChanged);
+          this.project_textBox1.Location = new System.Drawing.Point(94, 7);
+          this.project_textBox1.Name = "project_textBox1";
+          this.project_textBox1.Size = new System.Drawing.Size(298, 20);
+          this.project_textBox1.TabIndex = 1;
+          this.project_textBox1.TextChanged += new System.EventHandler(this.project_textBox1_TextChanged);
           // 
           // label2
           // 
@@ -1005,7 +1005,7 @@ namespace MediaPortal.MPInstaller
           this.openToolStripButton.Name = "openToolStripButton";
           this.openToolStripButton.Size = new System.Drawing.Size(23, 22);
           this.openToolStripButton.Text = "&Open";
-          this.openToolStripButton.Click += new System.EventHandler(this.openProiectToolStripMenuItem_Click);
+          this.openToolStripButton.Click += new System.EventHandler(this.openProjectToolStripMenuItem_Click);
           // 
           // saveToolStripButton
           // 
@@ -1078,8 +1078,8 @@ namespace MediaPortal.MPInstaller
           this.tabPage_Advanced.ResumeLayout(false);
           this.tabPage_Advanced.PerformLayout();
           ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-          this.tabPage_Proiect.ResumeLayout(false);
-          this.tabPage_Proiect.PerformLayout();
+          this.tabPage_Project.ResumeLayout(false);
+          this.tabPage_Project.PerformLayout();
           this.tabPage_Thumbs.ResumeLayout(false);
           this.tabPage_Thumbs.PerformLayout();
           ((System.ComponentModel.ISupportInitialize)(this.thumbs_pictureBox)).EndInit();
@@ -1115,9 +1115,9 @@ namespace MediaPortal.MPInstaller
         private System.Windows.Forms.ToolStripMenuItem skinToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem componentToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mediaToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openProiectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openProjectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveProiectAsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveProjectAsToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
@@ -1133,7 +1133,7 @@ namespace MediaPortal.MPInstaller
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage_Text;
         private System.Windows.Forms.TabPage tabPage_Advanced;
-        private System.Windows.Forms.TabPage tabPage_Proiect;
+        private System.Windows.Forms.TabPage tabPage_Project;
         private System.Windows.Forms.ColumnHeader columnHeader6;
         private System.Windows.Forms.ToolStripMenuItem textToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem otherToolStripMenuItem;
@@ -1141,14 +1141,14 @@ namespace MediaPortal.MPInstaller
         private System.Windows.Forms.ToolStripMenuItem textToolStripMenuItem1;
         private System.Windows.Forms.ComboBox textt_comboBox1;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox proiectt_textBox1;
+        private System.Windows.Forms.TextBox project_textBox1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox proiectt_textBox2;
+        private System.Windows.Forms.TextBox project_textBox2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox proiectt_textBox3;
+        private System.Windows.Forms.TextBox project_textBox3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox proiectt_textBox4;
+        private System.Windows.Forms.TextBox project_textBox4;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ComboBox skint_comboBox1;
         private System.Windows.Forms.TabPage tabPage_Thumbs;
@@ -1158,8 +1158,8 @@ namespace MediaPortal.MPInstaller
         private System.Windows.Forms.ComboBox othert_comboBox1;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.TextBox proiectt_textBox5;
-      private System.Windows.Forms.ComboBox proiectt_textBox6;
+        private System.Windows.Forms.TextBox project_textBox5;
+      private System.Windows.Forms.ComboBox project_textBox6;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button button_browse;
@@ -1182,7 +1182,7 @@ namespace MediaPortal.MPInstaller
       private System.Windows.Forms.ToolStripMenuItem directoryAutomatedDiscoverTypeToolStripMenuItem;
       private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
       private System.Windows.Forms.Label label12;
-      private System.Windows.Forms.ComboBox proiectt_comboBox1;
+      private System.Windows.Forms.ComboBox project_comboBox1;
       private System.Windows.Forms.Button button2;
       private System.Windows.Forms.Button button1;
       private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
