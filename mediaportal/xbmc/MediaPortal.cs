@@ -1467,17 +1467,17 @@ public class MediaPortalApp : D3DApp, IRender
         string section;
         switch (GUIWindowManager.ActiveWindow)
         {
-          case 2:
+          case (int)GUIWindow.Window.WINDOW_PICTURES:
             {
               section = "pictures";
               break;
             }
-          case 5:
+          case (int)GUIWindow.Window.WINDOW_MUSIC:
             {
               section = "music";
               break;
             }
-          case 6:
+          case (int)GUIWindow.Window.WINDOW_VIDEOS:
             {
               section = "movies";
               break;
