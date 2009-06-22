@@ -1463,6 +1463,46 @@ public class MediaPortalApp : D3DApp, IRender
         {
           currentmoduleid = "0";
         }
+
+        string section;
+        switch (GUIWindowManager.ActiveWindow)
+        {
+          case 2:
+            {
+              section = "pictures";
+              break;
+            }
+          case 5:
+            {
+              section = "music";
+              break;
+            }
+          case 6:
+            {
+              section = "movies";
+              break;
+            }
+          default:
+            {
+              section = "";
+              break;
+            }
+        }
+
+        bool rememberLastFolder = xmlreader.GetValueAsBool(section, "rememberlastfolder", false);
+        string lastFolder = xmlreader.GetValueAsString(section, "lastfolder", "");
+
+        VirtualDirectory VDir = new VirtualDirectory();
+        VDir.LoadSettings(section);
+        int pincode = 0;
+        bool lastFolderPinProtected = VDir.IsProtectedShare(lastFolder, out pincode);
+        if (rememberLastFolder && lastFolderPinProtected)
+        {
+          lastFolder = "root";
+          xmlreader.SetValue(section, "lastfolder", lastFolder);
+          Log.Debug("Main: reverting to root folder, pin protected folder was open, SaveLastFolder {0}", lastFolder);
+        }
+
         xmlreader.SetValue("general", "lastactivemodule", currentmoduleid);
         xmlreader.SetValueAsBool("general", "lastactivemodulefullscreen", currentmodulefullscreen);
         Log.Debug("Main: SaveLastActiveModule - module {0}", currentmoduleid);
