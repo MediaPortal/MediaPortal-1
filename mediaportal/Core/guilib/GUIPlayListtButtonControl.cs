@@ -347,7 +347,7 @@ namespace MediaPortal.GUI.Library
       _NavigateRight = NavigateRight;
 
       string skinFolderPath = String.Format(@"{0}\media\", GUIGraphicsContext.Skin);
-      ImgUpButtonDisabled = CreateDisableButtonImage(skinFolderPath, TextureMoveUpFileName, WindowId, WindowId + 10002,
+      ImgUpButtonDisabled = GetDisabledButtonImage(skinFolderPath, TextureMoveUpFileName, WindowId, WindowId + 10002,
                                                      UpBtnXOffset, UpBtnYOffset, UpBtnWidth, UpBtnHeight);
 
       if (ImgUpButtonDisabled != null)
@@ -356,7 +356,7 @@ namespace MediaPortal.GUI.Library
         ImgUpButtonDisabled.BringIntoView();
       }
 
-      ImgDownButtonDisabled = CreateDisableButtonImage(skinFolderPath, TextureMoveDownFileName, WindowId,
+      ImgDownButtonDisabled = GetDisabledButtonImage(skinFolderPath, TextureMoveDownFileName, WindowId,
                                                        WindowId + 10005, DownBtnXOffset, DownBtnYOffset, DownBtnWidth,
                                                        DownBtnHeight);
 
@@ -366,7 +366,7 @@ namespace MediaPortal.GUI.Library
         ImgDownButtonDisabled.BringIntoView();
       }
 
-      ImgDeleteButtonDisabled = CreateDisableButtonImage(skinFolderPath, TextureDeleteFileName, WindowId,
+      ImgDeleteButtonDisabled = GetDisabledButtonImage(skinFolderPath, TextureDeleteFileName, WindowId,
                                                          WindowId + 10008, DeleteBtnXOffset, DeleteBtnYOffset,
                                                          DeleteBtnWidth, DeleteBtnHeight);
 
@@ -876,7 +876,7 @@ namespace MediaPortal.GUI.Library
     /// <param name="width"></param>
     /// <param name="height"></param>
     /// <returns>GUIImage</returns>
-    private GUIAnimation CreateDisableButtonImage(string skinFolderImagePath, string origImageFileName, int parentId,
+    private GUIAnimation GetDisabledButtonImage(string skinFolderImagePath, string origImageFileName, int parentId,
                                                   int id, int xOffset, int yOffset, int width, int height)
     {
       string imagePath = Path.Combine(skinFolderImagePath, origImageFileName);
@@ -893,50 +893,16 @@ namespace MediaPortal.GUI.Library
       string fullImagePath = Path.Combine(skinFolderImagePath, dimmedImgFileName);
       GUIAnimation guiImg = null;
 
-      // If the dimmed image already exists, use it to create the GUIImage
+      // Fix mantis-0002290: GUIPlayListButtonControl creates own images and save to skin media folder 
       if (File.Exists(fullImagePath))
       {
         guiImg = LoadAnimationControl(parentId, id, xOffset, yOffset, width, height, dimmedImgFileName);
       }
-
       else
       {
-        Bitmap origImg = new Bitmap(imagePath);
-        Bitmap newImg = new Bitmap(origImg);
-
-        if (origImg == null || newImg == null)
-        {
-          return null;
-        }
-
-        for (int y = 0; y < origImg.Height; y++)
-        {
-          for (int x = 0; x < origImg.Width; x++)
-          {
-            Color c = origImg.GetPixel(x, y);
-
-            byte alpha = c.A;
-
-            if (alpha > 50)
-            {
-              alpha = (byte) ((float) alpha*.5f);
-            }
-
-            newImg.SetPixel(x, y, Color.FromArgb(alpha, c.R, c.G, c.B));
-          }
-        }
-
-        newImg.Save(fullImagePath, ImageFormat.Png);
-        origImg.Dispose();
-
-        if (File.Exists(fullImagePath))
-        {
-          guiImg = LoadAnimationControl(parentId, id, xOffset, yOffset, width, height, dimmedImgFileName);
-        }
-
-        newImg.Dispose();
+        Log.Warn("!!! Skin is missing image: {0}, using original one: {1}", dimmedImgFileName, origImageFileName);
+        guiImg = LoadAnimationControl(parentId, id, xOffset, yOffset, width, height, imagePath);
       }
-
       return guiImg;
     }
 
