@@ -22,7 +22,7 @@
       <texture>Menusmal_background.png</texture>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
-    </control>    
+    </control>
      <control>
       <description>background top</description>
       <type>image</type>
@@ -54,11 +54,11 @@
       <posY>600</posY>
       <width>121</width>
       <height>64</height>
-      <texture>MPosdlogo.png</texture>
+      <texture>-</texture>
       <visible>!Control.HasFocus(997)+!Control.HasFocus(998)+!Control.HasFocus(220)+!Control.HasFocus(218)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
-    </control>  
+    </control>
      <control>
       <description>Stripe</description>
       <type>image</type>
@@ -181,7 +181,7 @@
       <font>font11</font>
       <align>center</align>
       <textcolor>white</textcolor>
-      <visible>Control.HasFocus(220)</visible>
+      <visible>Control.HasFocus(998)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
     <control>
