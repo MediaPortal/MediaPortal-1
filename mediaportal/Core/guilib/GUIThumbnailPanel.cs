@@ -698,7 +698,6 @@ namespace MediaPortal.GUI.Library
       Viewport view = new Viewport();
       float fx = (float)_positionX;
       float fy = (float)_positionY;
-      GUIGraphicsContext.Correct(ref fx, ref fy);
 
       if (fx <= 0)
       {
@@ -2148,7 +2147,6 @@ namespace MediaPortal.GUI.Library
       float fMaxWidth = _itemWidth - (_itemWidth / 10.0f);
       float fPosCX = fPosX;
       float fPosCY = fPosY;
-      GUIGraphicsContext.Correct(ref fPosCX, ref fPosCY);
       if (fPosCX < 0)
       {
         fPosCX = 0.0f;

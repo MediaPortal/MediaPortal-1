@@ -213,9 +213,8 @@ namespace MediaPortal.GUI.Library
         Viewport oldviewport = GUIGraphicsContext.DX9Device.Viewport;
         if (GUIGraphicsContext.graphics != null)
         {
-          GUIGraphicsContext.graphics.SetClip(new Rectangle(_positionX + GUIGraphicsContext.OffsetX,
-                                                            _positionY + GUIGraphicsContext.OffsetY, _width,
-                                                            _itemsPerPage * _itemHeight));
+          GUIGraphicsContext.graphics.SetClip(new Rectangle(_positionX, _positionY, 
+                                                            _width, _itemsPerPage * _itemHeight));
         }
         else
         {
@@ -231,8 +230,8 @@ namespace MediaPortal.GUI.Library
           }
 
           Viewport newviewport = new Viewport();
-          newviewport.X = _positionX + GUIGraphicsContext.OffsetX;
-          newviewport.Y = _positionY + GUIGraphicsContext.OffsetY;
+          newviewport.X = _positionX;
+          newviewport.Y = _positionY;
           newviewport.Width = _width;
           newviewport.Height = _height;
           newviewport.MinZ = 0.0f;

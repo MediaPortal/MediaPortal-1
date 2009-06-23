@@ -714,10 +714,6 @@ namespace MediaPortal.GUI.Library
       int y2 = _yPositionTextBox + _heightTextBox;
 
       //GUIGraphicsContext.ScalePosToScreenResolution(ref x2, ref y2);   <-- Remarked because it seems to be done twice and lead to a distortion of the textbox in fullscreen (resolution depeding)
-      x1 += GUIGraphicsContext.OffsetX;
-      x2 += GUIGraphicsContext.OffsetX;
-      y1 += GUIGraphicsContext.OffsetY;
-      y2 += GUIGraphicsContext.OffsetY;
 
       _image.SetPosition(x1, y1);
       _image.Width = (x2 - x1);

@@ -750,6 +750,10 @@ namespace MediaPortal.Dialogs
     {
       lock (this)
       {
+        GUIGraphicsContext.SetScalingResolution(0, 0, false);
+        TransformMatrix transform = new TransformMatrix();
+        GUIGraphicsContext.SetWindowTransform(transform);
+
         // render the parent window
         RenderKeyboardLatin(timePassed);
       }
@@ -1556,8 +1560,6 @@ namespace MediaPortal.Dialogs
       float textHeight = 0;
       float positionX = (x + z)/2.0f;
       float positionY = (y + w)/2.0f;
-      positionX -= GUIGraphicsContext.OffsetX;
-      positionY -= GUIGraphicsContext.OffsetY;
       if (key.name.Length > 1 && Char.IsUpper(key.name[1]))
       {
         _font12.GetTextExtent(name, ref textWidth, ref textHeight);
@@ -1581,10 +1583,6 @@ namespace MediaPortal.Dialogs
       GUIGraphicsContext.ScalePosToScreenResolution(ref x1, ref y1);
       GUIGraphicsContext.ScalePosToScreenResolution(ref x2, ref y2);
 
-      x1 += GUIGraphicsContext.OffsetX;
-      x2 += GUIGraphicsContext.OffsetX;
-      y1 += GUIGraphicsContext.OffsetY;
-      y2 += GUIGraphicsContext.OffsetY;
       /*
             Rectangle[] rect = new Rectangle[1];
             rect[0].X=x1;
@@ -1603,8 +1601,6 @@ namespace MediaPortal.Dialogs
     protected void DrawText(int x, int y)
     {
       GUIGraphicsContext.ScalePosToScreenResolution(ref x, ref y);
-      x += GUIGraphicsContext.OffsetX;
-      y += GUIGraphicsContext.OffsetY;
       string textLine = _textEntered;
       if (_password)
       {
@@ -1793,8 +1789,6 @@ namespace MediaPortal.Dialogs
       int x1 = (int) (64*SkinRatio);
       int y1 = 250;
       GUIGraphicsContext.ScalePosToScreenResolution(ref x1, ref y1);
-      x1 += GUIGraphicsContext.OffsetX;
-      y1 += GUIGraphicsContext.OffsetY;
       // Draw each row
       float fY = y1;
       ArrayList keyBoard = (ArrayList) _keyboardList[(int) _currentKeyboard];

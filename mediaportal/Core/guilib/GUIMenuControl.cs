@@ -1389,15 +1389,15 @@ namespace MediaPortal.GUI.Library
       _oldViewport = GUIGraphicsContext.DX9Device.Viewport;
       if (!_horizontal)
       {
-        _newViewport.X = _positionX + GUIGraphicsContext.OffsetX;
-        _newViewport.Y = _positionY + _buttonOffset + GUIGraphicsContext.OffsetY;
+        _newViewport.X = _positionX;
+        _newViewport.Y = _positionY + _buttonOffset;
         _newViewport.Width = Width;
         _newViewport.Height = Height - 2*_buttonOffset;
       }
       else
       {
-        _newViewport.X = _positionX + _buttonOffset + GUIGraphicsContext.OffsetX;
-        _newViewport.Y = _positionY + GUIGraphicsContext.OffsetY;
+        _newViewport.X = _positionX + _buttonOffset;
+        _newViewport.Y = _positionY;
         _newViewport.Width = Width - 2*_buttonOffset;
         _newViewport.Height = Height;
       }

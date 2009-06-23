@@ -1594,6 +1594,9 @@ public class MediaPortalApp : D3DApp, IRender
       splashScreen.SetInformation("Initialize texture manager...");
     }
     GUITextureManager.Init();
+
+    GUIGraphicsContext.Load();
+
     if (splashScreen != null)
     {
       splashScreen.SetInformation("Loading fonts...");
@@ -1652,6 +1655,7 @@ public class MediaPortalApp : D3DApp, IRender
         GUIWindowManager.OnResize();
       }
     }
+
     Log.Info("Main: Initializing windowmanager");
     GUIWindowManager.PreInit();
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
@@ -1721,12 +1725,12 @@ public class MediaPortalApp : D3DApp, IRender
       {
         m_strSkin = GUIGraphicsContext.Skin;
       }
+      GUIGraphicsContext.Load();
       GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
       GUIFontManager.InitializeDeviceObjects();
       if (GUIGraphicsContext.DX9Device != null)
       {
         GUIWindowManager.OnResize();
-        GUIGraphicsContext.Load();
         GUIWindowManager.PreInit();
         GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
         GUIWindowManager.OnDeviceRestored();

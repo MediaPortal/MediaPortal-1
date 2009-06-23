@@ -138,14 +138,14 @@ namespace MediaPortal.GUI.Library
         {
           if (Focus)
           {
+            x = base.XPosition;
+            y = base.YPosition;
             int xoff = 5;
             int yoff = 5;
             int w = 10;
             int h = 10;
             GUIGraphicsContext.ScalePosToScreenResolution(ref xoff, ref yoff);
             GUIGraphicsContext.ScalePosToScreenResolution(ref w, ref h);
-            xoff += GUIGraphicsContext.OffsetX;
-            yoff += GUIGraphicsContext.OffsetY;
             _imageFocusRectangle.SetPosition((int) x - xoff, (int) y - yoff);
             _imageFocusRectangle.Width = base.Width + w;
             _imageFocusRectangle.Height = base.Height + h;

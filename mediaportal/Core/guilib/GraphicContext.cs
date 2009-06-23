@@ -66,6 +66,8 @@ namespace MediaPortal.GUI.Library
     private static List<TransformMatrix> _groupTransforms = new List<TransformMatrix>();
     private static TransformMatrix _guiTransform = new TransformMatrix();
     private static TransformMatrix _finalTransform = new TransformMatrix();
+    private static TransformMatrix _finalTransformCalibrated = new TransformMatrix();
+    private static int _bypassUICalibration = 0;
     //enum containing current state of mediaportal
     public enum State
     {
@@ -612,6 +614,17 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Get the transformation matrix that corrects for UI Calibration translation
+    /// </summary>
+    /// <returns>The correction transform</returns>
+    public static TransformMatrix GetOffsetCorrectionTransform()
+    {
+      TransformMatrix correctionMattrix = TransformMatrix.CreateTranslation(OffsetX, OffsetY, 0);
+
+      return correctionMattrix;
+    }
+
+    /// <summary>
     /// Apply screen offset correct 
     /// </summary>
     /// <param name="fx">X correction.</param>
@@ -766,7 +779,7 @@ namespace MediaPortal.GUI.Library
       x = (int)Math.Round(((float)x) * fPercentX);
       y = (int)Math.Round(((float)y) * fPercentY);
     }
-    
+
     public static void BlackImageRendered()
     {
       if (OnBlackImageRendered != null)
@@ -1557,9 +1570,30 @@ namespace MediaPortal.GUI.Library
     public static TransformMatrix ControlTransform
     {
       get { return _finalTransform; }
-      set { _finalTransform = value; }
+      set 
+      {
+        _finalTransform = value;
+        _finalTransformCalibrated = GetOffsetCorrectionTransform().multiply(_finalTransform);
+      }
     }
 
+    /// <summary>
+    /// Enable/Disable bypassing of UI Calibration transforms
+    /// </summary>
+    /// <remarks>Calls have to be paired and can be nested.</remarks>
+    /// <param name="bypass">true to enable bypassing</param>
+    public static void BypassUICalibration(bool bypass)
+    {
+      if (bypass)
+        _bypassUICalibration++;
+      else
+      {
+        _bypassUICalibration--;
+        if (_bypassUICalibration < 0)
+          _bypassUICalibration = 0;
+      }
+    }
+    
     public static void SetScalingResolution( /*RESOLUTION res,*/ int posX, int posY, bool needsScaling)
     {
       //m_windowResolution = res;
@@ -1612,36 +1646,45 @@ namespace MediaPortal.GUI.Library
     public static void UpdateFinalTransform(TransformMatrix matrix)
     {
       _finalTransform = matrix;
+      _finalTransformCalibrated = GetOffsetCorrectionTransform().multiply(matrix);
+    }
+
+    public static TransformMatrix GetFinalTransform()
+    {
+      if (_bypassUICalibration > 0)
+        return _finalTransform;
+      else
+        return _finalTransformCalibrated;
     }
 
     public static float[,] GetFinalMatrix()
     {
-      return _finalTransform.Matrix;
+      return GetFinalTransform().Matrix;
     }
 
     public static float ScaleFinalXCoord(float x, float y)
     {
-      return _finalTransform.TransformXCoord(x, y, 0);
+      return GetFinalTransform().TransformXCoord(x, y, 0);
     }
 
     public static float ScaleFinalYCoord(float x, float y)
     {
-      return _finalTransform.TransformYCoord(x, y, 0);
+      return GetFinalTransform().TransformYCoord(x, y, 0);
     }
 
     public static float ScaleFinalZCoord(float x, float y)
     {
-      return _finalTransform.TransformZCoord(x, y, 0);
+      return GetFinalTransform().TransformZCoord(x, y, 0);
     }
 
     public static void ScaleFinalCoords(ref float x, ref float y, ref float z)
     {
-      _finalTransform.TransformPosition(ref x, ref y, ref z);
+      GetFinalTransform().TransformPosition(ref x, ref y, ref z);
     }
 
     public static uint MergeAlpha(uint color)
     {
-      uint alpha = _finalTransform.TransformAlpha((color >> 24) & 0xff);
+      uint alpha = GetFinalTransform().TransformAlpha((color >> 24) & 0xff);
       return ((alpha << 24) & 0xff000000) | (color & 0xffffff);
     }
 
@@ -1651,6 +1694,7 @@ namespace MediaPortal.GUI.Library
 
       _groupTransforms.Clear();
       _groupTransforms.Add(_guiTransform.multiply(matrix));
+      _bypassUICalibration = 0;
       UpdateFinalTransform(_groupTransforms[0]);
     }
 

@@ -913,12 +913,6 @@ namespace MediaPortal.GUI.Library
       m_iRenderWidth = (int)Math.Round(nw);
       m_iRenderHeight = (int)Math.Round(nh);
 
-      // reposition if calibration of the UI has been done
-      if (CalibrationEnabled)
-      {
-        GUIGraphicsContext.Correct(ref x, ref y);
-      }
-
       // if necessary then center the image 
       // in the controls rectangle
       if (_centerImage)
@@ -926,7 +920,6 @@ namespace MediaPortal.GUI.Library
         x += ((((float)_width) - nw) / 2.0f);
         y += ((((float)_height) - nh) / 2.0f);
       }
-
 
       // Calculate source Texture
       int iSourceX = 0;
@@ -974,32 +967,32 @@ namespace MediaPortal.GUI.Library
       }
 
       // check and compensate image
-      if (x < GUIGraphicsContext.OffsetX)
+      if (x < 0)
       {
         // calc percentage offset
-        iSourceX -= (int)((float)_textureWidth * ((x - GUIGraphicsContext.OffsetX) / nw));
-        iSourceWidth += (int)((float)_textureWidth * ((x - GUIGraphicsContext.OffsetX) / nw));
+        iSourceX -= (int)((float)_textureWidth * (x / nw));
+        iSourceWidth += (int)((float)_textureWidth * (x / nw));
 
         nw += x;
-        nw -= GUIGraphicsContext.OffsetX;
-        x = GUIGraphicsContext.OffsetX;
+        x = 0;
       }
-      if (y < GUIGraphicsContext.OffsetY)
+      if (y < 0)
       {
-        iSourceY -= (int)((float)_textureHeight * ((y - GUIGraphicsContext.OffsetY) / nh));
-        iSourceHeight += (int)((float)_textureHeight * ((y - GUIGraphicsContext.OffsetY) / nh));
+        iSourceY -= (int)((float)_textureHeight * (y / nh));
+        iSourceHeight += (int)((float)_textureHeight * (y / nh));
 
         nh += y;
-        nh -= GUIGraphicsContext.OffsetY;
-        y = GUIGraphicsContext.OffsetY;
+        y = 0;
       }
-      if (x > GUIGraphicsContext.Width)
+      int outWidth = GUIGraphicsContext.Width - GUIGraphicsContext.OffsetX;
+      int outHeight = GUIGraphicsContext.Height - GUIGraphicsContext.OffsetY;
+      if (x > outWidth)
       {
-        x = GUIGraphicsContext.Width;
+        x = outWidth;
       }
-      if (y > GUIGraphicsContext.Height)
+      if (y > outHeight)
       {
-        y = GUIGraphicsContext.Height;
+        y = outHeight;
       }
 
       if (nw < 0)
@@ -1010,15 +1003,15 @@ namespace MediaPortal.GUI.Library
       {
         nh = 0;
       }
-      if (x + nw > GUIGraphicsContext.Width)
+      if (x + nw > outWidth)
       {
-        iSourceWidth = (int)((float)_textureWidth * (((float)GUIGraphicsContext.Width - x) / nw));
-        nw = GUIGraphicsContext.Width - x;
+        iSourceWidth = (int)((float)_textureWidth * (((float)outWidth - x) / nw));
+        nw = outWidth - x;
       }
-      if (y + nh > GUIGraphicsContext.Height)
+      if (y + nh > outHeight)
       {
-        iSourceHeight = (int)((float)_textureHeight * (((float)GUIGraphicsContext.Height - y) / nh));
-        nh = GUIGraphicsContext.Height - y;
+        iSourceHeight = (int)((float)_textureHeight * (((float)outHeight - y) / nh));
+        nh = outHeight - y;
       }
 
       // copy all coordinates to the vertex buffer
@@ -1202,118 +1195,25 @@ namespace MediaPortal.GUI.Library
           Calculate();
         }
 
-        //get the current frame
-        if (_packedTextureNo >= 0)
+
+        try
         {
-          uint color = (uint)_diffuseColor;
-          if (Dimmed)
+          if (!CalibrationEnabled)
           {
-            color = (uint)(_diffuseColor & DimColor);
+            GUIGraphicsContext.BypassUICalibration(true);
           }
-          color = GUIGraphicsContext.MergeAlpha(color);
-          float[,] matrix = GUIGraphicsContext.GetFinalMatrix();
-
-          FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)color, matrix);
-
-          if ((_flipX || _flipY) && _diffuseFileName.Length > 0)
+          //get the current frame
+          if (_packedTextureNo >= 0)
           {
-            if (_packedDiffuseTextureNo < 0)
-            {
-              if (GUITextureManager.GetPackedTexture(_diffuseFileName, out _diffusetexUoff, out _diffusetexVoff,
-                                                     out _diffusetexUmax, out _diffusetexVmax, out _diffuseTexWidth,
-                                                     out _diffuseTexHeight, out _diffuseTexture,
-                                                     out _packedDiffuseTextureNo))
-              {
-              }
-            }
-            if (_packedDiffuseTextureNo >= 0)
-            {
-              float fx, fy, nw, nh, uoff, voff, umax, vmax, uoff1, voff1, umax1, vmax1;
-              fx = _fx;
-              fy = _fy;
-              nw = _nw;
-              nh = _nh;
-              uoff = _diffusetexUoff;
-              voff = _diffusetexVoff;
-              umax = _diffusetexUmax + _diffusetexUoff;
-              vmax = _diffusetexVmax + _diffusetexVoff;
-              uoff1 = _uoff;
-              voff1 = _voff;
-              umax1 = _umax + _uoff;
-              vmax1 = _vmax + _voff;
-
-              if (_flipX)
-              {
-                fx += nw;
-                uoff1 = _umax + _uoff;
-                umax1 = _uoff;
-
-                uoff = _diffusetexUmax + _diffusetexUoff;
-                umax = _diffusetexUoff;
-              }
-              if (_flipY)
-              {
-                fy += nh;
-                //uoff1 = _umax + _uoff;
-                //umax1 = _uoff;
-
-                voff1 = _vmax + _voff;
-                vmax1 = _voff;
-
-                voff = _diffusetexVmax + _diffusetexVoff;
-                vmax = _diffusetexVoff;
-              }
-
-
-              //FontEngineDrawTexture(_packedTextureNo, fx, fy, nw, nh, _uoff, _voff, _umax, _vmax, (int)color, m00, m01, m02, m10, m11, m12);
-              //FontEngineDrawTexture(_packedDiffuseTextureNo, fx, fy, nw, nh, uoff, voff, umax, vmax, (int)color, m00, m01, m02, m10, m11, m12);
-              float[,] m = GUIGraphicsContext.GetFinalMatrix();
-              FontEngineDrawTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, (int)color, m
-                                     , _packedDiffuseTextureNo, uoff, voff, umax, vmax);
-            }
-          }
-
-          base.Render(timePassed);
-          return;
-        }
-        else if (_listTextures != null)
-        {
-          if (_listTextures.Length > 0)
-          {
-            Animate();
-            CachedTexture.Frame frame = _listTextures[_currentFrameNumber];
-            if (frame == null)
-            {
-              Cleanup();
-              AllocResources();
-              if (_listTextures == null || _listTextures.Length < 1)
-              {
-                base.Render(timePassed);
-                return;
-              }
-              frame = _listTextures[_currentFrameNumber];
-              if (frame == null)
-              {
-                base.Render(timePassed);
-                return;
-              }
-            }
-            if (frame.Image == null)
-            {
-              Cleanup();
-              AllocResources();
-              base.Render(timePassed);
-              return;
-            }
-
             uint color = (uint)_diffuseColor;
             if (Dimmed)
             {
               color = (uint)(_diffuseColor & DimColor);
             }
             color = GUIGraphicsContext.MergeAlpha(color);
-            frame.Draw(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)color);
+            float[,] matrix = GUIGraphicsContext.GetFinalMatrix();
 
+            FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)color, matrix);
 
             if ((_flipX || _flipY) && _diffuseFileName.Length > 0)
             {
@@ -1360,19 +1260,127 @@ namespace MediaPortal.GUI.Library
                   voff1 = _vmax + _voff;
                   vmax1 = _voff;
 
-
                   voff = _diffusetexVmax + _diffusetexVoff;
                   vmax = _diffusetexVoff;
                 }
-                float[,] matrix = GUIGraphicsContext.GetFinalMatrix();
 
-                FontEngineDrawTexture2(frame.TextureNumber, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, (int)color,
-                                       matrix,
-                                       _packedDiffuseTextureNo, uoff, voff, umax, vmax);
+
+                //FontEngineDrawTexture(_packedTextureNo, fx, fy, nw, nh, _uoff, _voff, _umax, _vmax, (int)color, m00, m01, m02, m10, m11, m12);
+                //FontEngineDrawTexture(_packedDiffuseTextureNo, fx, fy, nw, nh, uoff, voff, umax, vmax, (int)color, m00, m01, m02, m10, m11, m12);
+                float[,] m = GUIGraphicsContext.GetFinalMatrix();
+                FontEngineDrawTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, (int)color, m
+                                       , _packedDiffuseTextureNo, uoff, voff, umax, vmax);
               }
             }
-            frame = null;
+
             base.Render(timePassed);
+            return;
+          }
+          else if (_listTextures != null)
+          {
+            if (_listTextures.Length > 0)
+            {
+              Animate();
+              CachedTexture.Frame frame = _listTextures[_currentFrameNumber];
+              if (frame == null)
+              {
+                Cleanup();
+                AllocResources();
+                if (_listTextures == null || _listTextures.Length < 1)
+                {
+                  base.Render(timePassed);
+                  return;
+                }
+                frame = _listTextures[_currentFrameNumber];
+                if (frame == null)
+                {
+                  base.Render(timePassed);
+                  return;
+                }
+              }
+              if (frame.Image == null)
+              {
+                Cleanup();
+                AllocResources();
+                base.Render(timePassed);
+                return;
+              }
+
+              uint color = (uint)_diffuseColor;
+              if (Dimmed)
+              {
+                color = (uint)(_diffuseColor & DimColor);
+              }
+              color = GUIGraphicsContext.MergeAlpha(color);
+              frame.Draw(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)color);
+
+
+              if ((_flipX || _flipY) && _diffuseFileName.Length > 0)
+              {
+                if (_packedDiffuseTextureNo < 0)
+                {
+                  if (GUITextureManager.GetPackedTexture(_diffuseFileName, out _diffusetexUoff, out _diffusetexVoff,
+                                                         out _diffusetexUmax, out _diffusetexVmax, out _diffuseTexWidth,
+                                                         out _diffuseTexHeight, out _diffuseTexture,
+                                                         out _packedDiffuseTextureNo))
+                  {
+                  }
+                }
+                if (_packedDiffuseTextureNo >= 0)
+                {
+                  float fx, fy, nw, nh, uoff, voff, umax, vmax, uoff1, voff1, umax1, vmax1;
+                  fx = _fx;
+                  fy = _fy;
+                  nw = _nw;
+                  nh = _nh;
+                  uoff = _diffusetexUoff;
+                  voff = _diffusetexVoff;
+                  umax = _diffusetexUmax + _diffusetexUoff;
+                  vmax = _diffusetexVmax + _diffusetexVoff;
+                  uoff1 = _uoff;
+                  voff1 = _voff;
+                  umax1 = _umax + _uoff;
+                  vmax1 = _vmax + _voff;
+
+                  if (_flipX)
+                  {
+                    fx += nw;
+                    uoff1 = _umax + _uoff;
+                    umax1 = _uoff;
+
+                    uoff = _diffusetexUmax + _diffusetexUoff;
+                    umax = _diffusetexUoff;
+                  }
+                  if (_flipY)
+                  {
+                    fy += nh;
+                    //uoff1 = _umax + _uoff;
+                    //umax1 = _uoff;
+
+                    voff1 = _vmax + _voff;
+                    vmax1 = _voff;
+
+
+                    voff = _diffusetexVmax + _diffusetexVoff;
+                    vmax = _diffusetexVoff;
+                  }
+                  float[,] matrix = GUIGraphicsContext.GetFinalMatrix();
+
+                  FontEngineDrawTexture2(frame.TextureNumber, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, (int)color,
+                                         matrix,
+                                         _packedDiffuseTextureNo, uoff, voff, umax, vmax);
+                }
+              }
+              frame = null;
+              base.Render(timePassed);
+            }
+          }
+        }
+        finally
+        {
+          if (!CalibrationEnabled)
+          {
+            GUIGraphicsContext.BypassUICalibration(false);
           }
         }
       }

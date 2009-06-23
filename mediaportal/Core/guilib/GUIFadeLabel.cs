@@ -399,8 +399,6 @@ namespace MediaPortal.GUI.Library
 
       float fPosCX = fPosX;
       float fPosCY = fPosY;
-      // Apply the screen calibration
-      GUIGraphicsContext.Correct(ref fPosCX, ref fPosCY);
       if (fPosCX < 0)
       {
         fPosCX = 0.0f;

@@ -747,7 +747,6 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
-      GUIGraphicsContext.Correct(ref xpos, ref ypos);
       if (GUIGraphicsContext.graphics != null)
       {
         GUIGraphicsContext.graphics.TextRenderingHint = TextRenderingHint.AntiAlias;

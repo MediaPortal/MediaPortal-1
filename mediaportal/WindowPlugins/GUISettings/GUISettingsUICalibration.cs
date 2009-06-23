@@ -25,6 +25,8 @@
 
 using System;
 using MediaPortal.GUI.Library;
+using MediaPortal.Dialogs;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.Settings
 {
@@ -46,6 +48,7 @@ namespace MediaPortal.GUI.Settings
     private bool m_bModeLocked; // Latches on mode change to limit toggle speed.
     private int m_iLogWidth; // Notional (logical) screen width
     private int m_iLogHeight; // Notional (logical) screen height
+    private float m_orgZoomVertical;
 
     // Ensure m_iLogWidth/Height are in range.
     // Returns true if either are clamped.
@@ -430,6 +433,21 @@ namespace MediaPortal.GUI.Settings
             GUIWindowManager.OnResize();
             GUIWindowManager.PreInit();
             GUIGraphicsContext.Save();
+            if (m_orgZoomVertical != GUIGraphicsContext.ZoomVertical) // only vertical zoom affects font sizes
+            {
+              GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+              if (dlgNotify != null)
+              {
+                dlgNotify.Reset();
+                dlgNotify.ClearAll();
+                dlgNotify.SetHeading(213); // UI Calibration
+                dlgNotify.SetText(GUILocalizeStrings.Get(2650)); // Reloading fonts, please wait...
+                dlgNotify.TimeOut = 1;
+                dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+              }
+              GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, GUIGraphicsContext.Skin, "fonts.xml"));
+              GUIFontManager.InitializeDeviceObjects();
+            }
           }
           break;
 
@@ -443,6 +461,7 @@ namespace MediaPortal.GUI.Settings
             m_iCountR = 0;
             m_iMode = 0;
             m_bModeLocked = true;
+            m_orgZoomVertical = GUIGraphicsContext.ZoomVertical;
             m_iLogWidth = (int) Math.Round((float) GUIGraphicsContext.Width*(float) GUIGraphicsContext.ZoomHorizontal);
             m_iLogHeight = (int) Math.Round((float) GUIGraphicsContext.Height*(float) GUIGraphicsContext.ZoomVertical);
             ClampLogicalScreenSize();

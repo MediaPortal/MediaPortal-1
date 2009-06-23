@@ -180,7 +180,7 @@ namespace MediaPortal.GUI.Library
             int iHeight = Int32.Parse(nodeHeight.InnerText);
 
             // height is based on 720x576
-            float fPercent = ((float) GUIGraphicsContext.Height)/576.0f;
+            float fPercent = (((float) GUIGraphicsContext.Height) * GUIGraphicsContext.ZoomVertical)/576.0f;
             fPercent *= iHeight;
             iHeight = (int) fPercent;
             FontStyle style = new FontStyle();
@@ -355,7 +355,7 @@ namespace MediaPortal.GUI.Library
       draw.viewport = GUIGraphicsContext.DX9Device.Viewport;
       if (maxWidth >= 0)
       {
-        draw.viewport.Width = ((int) xpos) + maxWidth - draw.viewport.X;
+        draw.viewport.Width = ((int)GUIGraphicsContext.GetFinalTransform().TransformXCoord(xpos + maxWidth, 0, 0)) - draw.viewport.X;
       }
       _listDrawText.Add(draw);
       _d3dxSpriteUsed = true;
@@ -487,20 +487,20 @@ namespace MediaPortal.GUI.Library
         foreach (FontManagerDrawText draw in _listDrawText)
         {
           finalm.M11 = draw.matrix[0, 0];
-          finalm.M12 = draw.matrix[0, 1];
-          finalm.M13 = draw.matrix[0, 2];
-          finalm.M14 = draw.matrix[0, 3];
-          finalm.M21 = draw.matrix[1, 0];
+          finalm.M21 = draw.matrix[0, 1];
+          finalm.M31 = draw.matrix[0, 2];
+          finalm.M41 = draw.matrix[0, 3];
+          finalm.M12 = draw.matrix[1, 0];
           finalm.M22 = draw.matrix[1, 1];
-          finalm.M23 = draw.matrix[1, 2];
-          finalm.M24 = draw.matrix[1, 3];
-          finalm.M31 = draw.matrix[2, 0];
-          finalm.M32 = draw.matrix[2, 1];
+          finalm.M32 = draw.matrix[1, 2];
+          finalm.M42 = draw.matrix[1, 3];
+          finalm.M13 = draw.matrix[2, 0];
+          finalm.M23 = draw.matrix[2, 1];
           finalm.M33 = draw.matrix[2, 2];
-          finalm.M34 = draw.matrix[2, 3];
-          finalm.M41 = 0;
-          finalm.M42 = 0;
-          finalm.M43 = 0;
+          finalm.M43 = draw.matrix[2, 3];
+          finalm.M14 = 0;
+          finalm.M24 = 0;
+          finalm.M34 = 0;
           finalm.M44 = 1.0f;
           _d3dxSprite.Transform = finalm;
           GUIGraphicsContext.DX9Device.Viewport = draw.viewport;
@@ -508,14 +508,14 @@ namespace MediaPortal.GUI.Library
           float hfactor = ((float) orgView.Height)/(float) draw.viewport.Height;
           float xoffset = (float) (orgView.X - draw.viewport.X);
           float yoffset = (float) (orgView.Y - draw.viewport.Y);
-          projm.M11 = (orgProj.M11 + orgProj.M14*xoffset)*wfactor;
-          projm.M21 = (orgProj.M21 + orgProj.M24*xoffset)*wfactor;
-          projm.M31 = (orgProj.M31 + orgProj.M34*xoffset)*wfactor;
-          projm.M41 = (orgProj.M41 + orgProj.M44*xoffset)*wfactor;
-          projm.M12 = (orgProj.M12 + orgProj.M14*yoffset)*hfactor;
-          projm.M22 = (orgProj.M22 + orgProj.M24*yoffset)*hfactor;
-          projm.M32 = (orgProj.M32 + orgProj.M34*yoffset)*hfactor;
-          projm.M42 = (orgProj.M42 + orgProj.M44*yoffset)*hfactor;
+          projm.M11 = (orgProj.M11 + orgProj.M14 * xoffset) * wfactor;
+          projm.M21 = (orgProj.M21 + orgProj.M24 * xoffset) * wfactor;
+          projm.M31 = (orgProj.M31 + orgProj.M34 * xoffset) * wfactor;
+          projm.M41 = (orgProj.M41 + orgProj.M44 * xoffset) * wfactor;
+          projm.M12 = (orgProj.M12 + orgProj.M14 * yoffset) * hfactor;
+          projm.M22 = (orgProj.M22 + orgProj.M24 * yoffset) * hfactor;
+          projm.M32 = (orgProj.M32 + orgProj.M34 * yoffset) * hfactor;
+          projm.M42 = (orgProj.M42 + orgProj.M44 * yoffset) * hfactor;
           GUIGraphicsContext.DX9Device.Transform.View = projm;
           if (GUIGraphicsContext.IsDirectX9ExUsed())
           {

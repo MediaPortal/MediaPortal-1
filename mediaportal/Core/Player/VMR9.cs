@@ -1012,6 +1012,8 @@ namespace MediaPortal.Player
       float nw = GUIGraphicsContext.VideoWindow.Width;
       float nh = GUIGraphicsContext.VideoWindow.Height;
 
+      GUIGraphicsContext.Correct(ref x, ref y);
+
       //sanity checks
       if (nw > GUIGraphicsContext.OverScanWidth)
       {

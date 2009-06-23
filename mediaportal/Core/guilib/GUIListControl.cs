@@ -1000,7 +1000,6 @@ namespace MediaPortal.GUI.Library
 
       float fPosCX = fPosX;
       float fPosCY = fPosY;
-      GUIGraphicsContext.Correct(ref fPosCX, ref fPosCY);
 
       if (fPosCX < 0)
       {

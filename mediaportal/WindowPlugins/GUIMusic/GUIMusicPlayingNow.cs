@@ -2150,8 +2150,10 @@ namespace MediaPortal.GUI.Music
         //int height = ImgCoverArt.Height;
 
         Size vizSize = new Size(width, height);
-        Point vizLoc = new Point((int) ImgCoverArt.Location.X + GUIGraphicsContext.OffsetX,
-                                 (int) ImgCoverArt.Location.Y + GUIGraphicsContext.OffsetY);
+        float vizX = (float)ImgCoverArt.Location.X;
+        float vizY = (float)ImgCoverArt.Location.Y;
+        GUIGraphicsContext.Correct(ref vizX, ref vizY);
+        Point vizLoc = new Point((int) vizX, (int) vizY);
         vizWindow.Size = vizSize;
         vizWindow.Location = vizLoc;
         vizWindow.Visible = true;
