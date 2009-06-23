@@ -51,7 +51,7 @@ namespace TvLibrary.Implementations.DVB
       cbOnStatus = OnStatus;
       cbOnCamInfo = OnCamInfo;
       cbOnCloseMMI = OnMMIClosed;
-      MMI = new DVB_MMI_Handler("WinTvCI", null); // callbacks are set on first access
+      MMI = new DVB_MMI_Handler("WinTvCI"); // callbacks are set on first access
     }
     #endregion
 
@@ -222,7 +222,7 @@ namespace TvLibrary.Implementations.DVB
       if (ciMenuHandler != null)
       {
         m_ciMenuCallback = ciMenuHandler;
-        MMI.SetCiMenuHandler(ciMenuHandler); // pass through to handler
+        MMI.SetCiMenuHandler(ref m_ciMenuCallback); // pass through to handler
         return true;
       }
       return false;

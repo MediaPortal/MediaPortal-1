@@ -314,7 +314,7 @@ namespace TvLibrary.Implementations.DVB
     /// Sets the callback handler
     /// </summary>
     /// <param name="ciMenuHandler"></param>
-    public bool SetCiMenuHandler(ICiMenuCallbacks ciMenuHandler)
+    public bool SetCiMenuHandler(ref ICiMenuCallbacks ciMenuHandler)
     {
       if (ciMenuHandler != null)
       {
@@ -327,11 +327,19 @@ namespace TvLibrary.Implementations.DVB
     /// Constructor for an APDU based MMI parser
     /// </summary>
     /// <param name="CardName">Card type for logging</param>
-    /// <param name="CiMenuCallbacks">Callbacks</param>
-    public DVB_MMI_Handler(String CardName, ICiMenuCallbacks CiMenuCallbacks)
+    /// <param name="CiMenuCallbacks">refrence to Callbacks</param>
+    public DVB_MMI_Handler(String CardName, ref ICiMenuCallbacks CiMenuCallbacks)
     {
       m_ciMenuCallback = CiMenuCallbacks;
       m_cardName = CardName;
+    }
+    /// <summary>
+    /// Constructor for an APDU based MMI parser
+    /// </summary>
+    /// <param name="CardName">Card type for logging</param>
+    public DVB_MMI_Handler(String CardName)
+    {
+
     }
 
     /// <summary>

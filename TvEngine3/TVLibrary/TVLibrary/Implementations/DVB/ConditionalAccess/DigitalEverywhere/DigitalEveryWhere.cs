@@ -1275,7 +1275,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Debug("FireDTV: CI handler thread start polling status");
       int bytesReturned;
       int hr;
-      DVB_MMI_Handler MMI = new DVB_MMI_Handler("FireDTV", m_ciMenuCallback);
+      DVB_MMI_Handler MMI = new DVB_MMI_Handler("FireDTV", ref m_ciMenuCallback);
       DE_CI_STATUS CiStatus;
       
       // Init CiStatus word to 0
