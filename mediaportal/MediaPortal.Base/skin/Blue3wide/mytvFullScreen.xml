@@ -23,6 +23,20 @@
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
+    <control>
+      <description>TV Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1130</posX>
+      <posY>635</posY>
+      <width>70</width>
+      <height>70</height>
+      <texture>#TV.View.thumb</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <visible>player.rewinding|Control.IsVisible(10)|player.forwarding|player.paused+!window.isosdvisible</visible>
+      <animation effect="fade" time="150">windowopen</animation>
+    </control>
     <!--  will be removed later if no issues occur
  <control>
       <description>skip steps</description>
@@ -56,9 +70,9 @@
       <description>TV Progress Bar</description>
       <type>tvprogress</type>
       <id>100</id>
-      <posX>176</posX>
-      <posY>37</posY>
-      <width>712</width>
+     <posX>383</posX>
+      <posY>647</posY>
+      <width>612</width>
       <height>25</height>
       <toptexture>osd_progress_indicator.png</toptexture>
       <TextureOffsetY>24</TextureOffsetY>

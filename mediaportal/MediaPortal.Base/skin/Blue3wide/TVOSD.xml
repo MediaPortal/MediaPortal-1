@@ -6,29 +6,59 @@
   <define>#play.progressbar.percentage:#TV.View.Percentage</define>
   <define>#play.progressbar.currentplaytime:#TV.View.start</define>
   <define>#play.progressbar.currentremaining:#TV.View.stop</define>
-  <define>#play.osd.background:osd_bg_bottom.png</define>
+
   <controls>
     <import>common.play.osd.xml</import>
     <control>
       <description>TV Logo</description>
       <type>image</type>
-      <posX>71</posX>
-      <posY>435</posY>
-      <width>88</width>
-      <height>62</height>
+      <id>103</id>
+      <posX>1125</posX>
+      <posY>600</posY>
+      <width>80</width>
+      <height>80</height>
       <texture>#TV.View.thumb</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
+      <visible>!Control.IsVisible(989)</visible>
+      <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
+      <animation effect="fade" time="150">windowopen</animation>
+    </control>
+     <control>
+      <description>TV Logo</description>
+      <type>image</type>
+      <id>102</id>
+      <posX>1125</posX>
+      <posY>600</posY>
+      <width>80</width>
+      <height>80</height>
+      <texture>#TV.View.thumb</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <visible>Control.IsVisible(989)</visible>
+      <animation effect="slide" start="0,0" end="0,-100" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="150">visiblechange</animation>
       <animation effect="fade" time="150">windowopen</animation>
+    </control>
+    <control>
+      <description>progress bar background</description>
+      <type>image</type>
+      <posX>400</posX>
+      <posY>646</posY>
+      <width>621</width>
+      <height>25</height>
+      <texture>osd_progress_background.png</texture>
+      <visible>window.isosdvisible|player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
     </control>
     <control>
       <description>TV Progress Bar</description>
       <type>tvprogress</type>
       <id>101</id>
-      <posX>176</posX>
-      <posY>37</posY>
-      <width>712</width>
+      <posX>383</posX>
+      <posY>647</posY>
+      <width>612</width>
       <height>25</height>
       <toptexture>osd_progress_indicator.png</toptexture>
       <TextureOffsetY>24</TextureOffsetY>
@@ -55,63 +85,106 @@
       <description>rec logo</description>
       <type>image</type>
       <id>39</id>
-      <posX>90</posX>
-      <posY>647</posY>
+      <posX>1035</posX>
+      <posY>603</posY>
       <texture>rec.png</texture>
       <animation effect="fade" time="150">visiblechange</animation>
       <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>Channel Name</description>
-      <type>textbox</type>
+      <type>label</type>
       <width>551</width>
       <height>37</height>
-      <posX>195</posX>
-      <posY>425</posY>
-      <align>left</align>
+      <posX>1200</posX>
+      <posY>530</posY>
+      <align>right</align>
       <font>font13</font>
       <label>#TV.View.channel</label>
       <textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="150">visiblechange</animation>
+     <visible>!Control.IsVisible(989)</visible>
+      <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
+      <description>Channel Name</description>
+      <type>label</type>
+      <width>551</width>
+      <height>37</height>
+      <posX>1200</posX>
+      <posY>530</posY>
+      <align>right</align>
+      <font>font13</font>
+      <label>#TV.View.channel</label>
+      <textcolor>FFFFFFFF</textcolor>
+       <visible>Control.IsVisible(989)</visible>
+      <animation effect="slide" start="0,0" end="0,-100" time="400" reversible="false">visible</animation>
+      <animation effect="fade" time="150">windowopen</animation>
+    </control>
+     <control>
       <description>On tv NOW</description>
-      <id>36</id>
-      <type>textbox</type>
+      <id>89</id>
+      <type>label</type>
       <width>515</width>
       <height>37</height>
-      <posX>195</posX>
-      <posY>460</posY>
-      <align>left</align>
-      <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      <animation effect="fade" time="150">visiblechange</animation>
+      <posX>335</posX>
+      <posY>525</posY>
+      <font>font14</font>
+      <label>#TV.View.title</label>
+      <textcolor>white</textcolor>
+      <visible>!Control.IsVisible(989)</visible>
+      <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
+      <animation effect="fade" time="150">windowopen</animation>
+    </control>
+     <control>
+      <description>On tv NOW</description>
+      <id>97</id>
+      <type>label</type>
+      <width>515</width>
+      <height>37</height>
+      <posX>335</posX>
+      <posY>525</posY>
+      <font>font14</font>
+      <label>#TV.View.title</label>
+      <textcolor>white</textcolor>
+      <visible>Control.IsVisible(989)</visible>
+      <animation effect="slide" start="0,0" end="0,-100" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>Plot</description>
       <type>textboxscrollup</type>
-      <id>38</id>
-      <posX>195</posX>
-      <posY>500</posY>
-      <width>515</width>
-      <height>135</height>
-      <align>left</align>
-      <label>#TV.View.description</label>
+      <posX>334</posX>
+      <posY>570</posY>
+      <width>715</width>
+      <height>65</height>
+       <label>#TV.View.description</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="150">visiblechange</animation>
+       <visible>!Control.IsVisible(989)</visible>
+      <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="150">windowopen</animation>
+    </control>
+     <control>
+      <description>Plot</description>
+      <type>textboxscrollup</type>
+      <posX>334</posX>
+      <posY>470</posY>
+      <width>715</width>
+      <height>162</height>
+       <label>#TV.View.description</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>Control.IsVisible(989)</visible>
+      <animation effect="fade" time="800" delay="250" reversible="false">visible</animation>
+      <animation effect="fade" time="10" delay="0" reversible="false">hidden</animation>
     </control>
     <control>
       <description>On tv NEXT</description>
       <id>37</id>
       <type>textbox</type>
-      <width>515</width>
-      <height>37</height>
-      <posX>195</posX>
-      <posY>647</posY>
+      <posX>330</posX>
+      <posY>675</posY>
       <align>left</align>
       <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
@@ -208,6 +281,33 @@
       <visible>no</visible>
       <animation effect="fade" time="150">visiblechange</animation>
       <animation effect="fade" time="150">windowopen</animation>
+    </control>
+    <control>
+      <description>Current Time Info</description>
+      <type>label</type>
+      <posX>1130</posX>
+      <posY>567</posY>
+      <label>#time</label>
+      <centered>yes</centered>
+      <font>font14</font>
+      <textcolor>white</textcolor>
+      <visible>!Control.IsVisible(989)</visible>
+      <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+     <control>
+      <description>Current Time Info</description>
+      <type>label</type>
+      <posX>1130</posX>
+      <posY>567</posY>
+      <label>#time</label>
+      <centered>yes</centered>
+      <font>font14</font>
+      <textcolor>white</textcolor>
+      <visible>Control.IsVisible(989)</visible>
+          <animation effect="slide" start="0,0" end="0,-100" time="400" reversible="false">visible</animation>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
     </control>
   </controls>
 </window>

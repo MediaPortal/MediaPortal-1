@@ -2,20 +2,20 @@
 <window>
   <controls>
     <control>
-      <description>row 1 label</description>
+      <description>row 1 label subtitle</description>
       <type>label</type>
       <id>10</id>
-      <posX>1155</posX>
-      <posY>50</posY>
+      <posX>335</posX>
+      <posY>675</posY>
       <label>-</label>
-      <align>center</align>
+      <align>left</align>
       <font>font14</font>
-      <textcolor>black</textcolor>
+      <textcolor>white</textcolor>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
     <control>
-      <description>row 2 label</description>
+      <description>row 2 label Language</description>
       <type>label</type>
       <id>11</id>
       <posX>1091</posX>
@@ -23,12 +23,12 @@
       <label>-</label>
       <align>left</align>
       <font>font13</font>
-      <textcolor>black</textcolor>
+      <textcolor>white</textcolor>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
     <control>
-      <description>row 3 label</description>
+      <description>row 3 label aspectratio</description>
       <type>label</type>
       <id>12</id>
       <posX>1091</posX>
@@ -36,7 +36,7 @@
       <label>-</label>
       <align>left</align>
       <font>font13</font>
-      <textcolor>black</textcolor>
+      <textcolor>white</textcolor>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
