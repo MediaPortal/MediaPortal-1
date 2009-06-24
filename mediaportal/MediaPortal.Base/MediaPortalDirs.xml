@@ -1,30 +1,36 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!-- 
    This file stores information about the various Directories used in MediaPortal.
-   You may change only the information between the <Path>%ProgramData%\Team MediaPortal\MediaPortal\ and </Path> elements.
+   You may change only the information between the <Path> and </Path> elements.
    
    ATTENTION: Never change anything in the <Dir> element as this may cause MediaPortal to fail.
    If you don't know what that means at all, leave the default settings. 
 
    Don't change this file itself.
-   copy it to MyDocuments and modify it there.
+   copy it to "MyDocuments\Team Mediaportal" and modify it there.
    If you made an error, the original copy in the MediaPortal Installation Path is used.
 
-   Valid Values for the <Path>%ProgramData%\Team MediaPortal\MediaPortal\ element are:
-   <Path>%ProgramData%\Team MediaPortal\MediaPortal\</Path>
+   Valid Values for the <Path> element are:
+   <Path></Path>
    =============
    This indicates that only the MediaPortal Install Path will be used.
-   result is: C:\Program Files\
+   result is: C:\Program Files\Team Mediaportal
 
-   <Path>%ProgramData%\Team MediaPortal\MediaPortal\log\</Path>
+   <Path>Log\</Path>
    =================
    This indicates that the given Path information should be prefixed with the MediaPortal Install Path.
-   result is: C:\Program Files\log\
+   result is: C:\Program Files\Team Mediaportal\log\
 
-   <Path>%ProgramData%\Team MediaPortal\MediaPortal\C:\Temp\log\</Path>
+   <Path>C:\Temp\log\</Path>
    =========================
    This indicates that the given Path is an absolute Path and should be used as is.
    result is: C:\Temp\log\
+   
+   <Path>%ProgramData%\Team MediaPortal\MediaPortal\Log\</Path>
+   ============================================================
+   This indicates that the CommonApplicationData should be substited.
+   result is on Vista / Windows 7: C:\ProgramData\Team MediaPortal\MediaPortal\log\
+   and on XP: c:\documents and settings\all users\Application Data\Team MediaPortal\MediaPortal\log\
 -->
 <Config>
   <!-- The Path were all the Config files are located (mediaportal.xml, etc.) -->
