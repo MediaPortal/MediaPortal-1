@@ -684,7 +684,7 @@ SectionEnd
 !macroend
 
 !ifndef HEISE_BUILD
-${MementoSection} "MPC-HC audio/video decoders" SecGabest
+${MementoSection} "-MPC-HC audio/video decoders" SecGabest
   ${LOG_TEXT} "DEBUG" "MementoSection SecGabest"
   ${LOG_TEXT} "INFO" "Installing MPC-HC audio/video decoders..."
 
