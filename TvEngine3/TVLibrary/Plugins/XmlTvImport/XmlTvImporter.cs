@@ -193,6 +193,7 @@ namespace TvEngine
             Uri uri = new Uri(_remoteURL);
             string filename = uri.GetComponents(UriComponents.Path, UriFormat.SafeUnescaped);
             filename = filename.ToLower().Trim();
+
             bool isZip = (filename.IndexOf(".zip") > -1);
             bool isTvGuide = (filename.IndexOf("tvguide.xml") > -1);
 
@@ -213,7 +214,7 @@ namespace TvEngine
             
             bool waitingForFileAccess = true;
             int retries = 0;
-
+            bool fileWritten = false;
             //in case the destination file is locked by another process, retry each 30 secs, but max 5 min. before giving up
             while (waitingForFileAccess && retries < 10)
             {
@@ -224,18 +225,13 @@ namespace TvEngine
               try
               {
                 //IOUtil.CheckFileAccessRights(path, FileMode.Open, FileAccess.Write, FileShare.Write);
-                using (FileStream fs = new FileStream(path, FileMode.Create))
+                if (!fileWritten)
                 {
-                  fs.Write(e.Result, 0, e.Result.Length);
-                  fs.Close();
-                  waitingForFileAccess = false;
-
-                  if (isZip)
+                  using (FileStream fs = new FileStream(path, FileMode.Create))
                   {
-                    string newLoc = layer.GetSetting("xmlTv", "").Value + @"\";
-                    Log.Info("extracting zip file {0} to location {1}", path, newLoc);
-                    ZipFile zip = new ZipFile(path);
-                    zip.ExtractAll(newLoc);
+                    fs.Write(e.Result, 0, e.Result.Length);
+                    fs.Close();
+                    fileWritten = true;
                   }
                 }
               }
@@ -245,10 +241,30 @@ namespace TvEngine
                 retries++;
                 Thread.Sleep(30000); //wait 30 sec. before retrying.
               }
+
+              if (isZip)
+              {
+                try
+                {
+                  string newLoc = layer.GetSetting("xmlTv", "").Value + @"\";
+                  Log.Info("extracting zip file {0} to location {1}", path, newLoc);
+                  ZipFile zip = new ZipFile(path);
+                  zip.ExtractAll(newLoc, true);
+                }
+                catch (Exception ex2)
+                {
+                  Log.Info("file is locked, retrying in 30secs. [" + ex2.Message + "]");
+                  retries++;
+                  Thread.Sleep(30000); //wait 30 sec. before retrying.
+                }
+              }
+              
+              waitingForFileAccess = false;
+
             }
 
             if (waitingForFileAccess)
-            {
+            {              
               info = "Trouble writing to file.";
             }
 
