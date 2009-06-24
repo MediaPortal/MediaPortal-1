@@ -1216,6 +1216,7 @@
     <String id="2610">Polsk</String>
     <String id="2611">Tsjekkisk</String>
     <String id="2612">Ungarsk</String>
+    <String id="2650">Laster fonter på nytt, venligst vent...</String>
     <String id="2700">Åpne CI meny</String>
     <String id="2997">t</String>
     <String id="2998">min</String>
@@ -1774,6 +1775,7 @@
     <String id="102014">Bildeinfo</String>
     <String id="102015">Minimeny</String>
     <String id="102016">Notis</String>
+    <String id="102018">CI meny</String>
     <String id="102600" prefix="Mitt ">Vær</String>
     <String id="102700" prefix="Mine ">Nyheter</String>
     <String id="102900">Skjermsparer</String>
