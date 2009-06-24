@@ -1,64 +1,43 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <controls>
-    <control>
-      <description>background botton</description>
-      <type>image</type>
-      <posX>247</posX>
-      <posY>560</posY>
-      <width>1005</width>
-      <height>161</height>
-      <texture>OSD_Back_botton.png</texture>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
-    </control>
-     <control>
-      <description>background menuesmal</description>
-      <type>image</type>
-      <posX>20</posX>
-      <posY>500</posY>
-      <width>223</width>
-      <height>219</height>
-      <texture>Menusmal_background.png</texture>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
-    </control>
      <control>
       <description>background top</description>
       <type>image</type>
       <id>989</id>
-      <posX>247</posX>
-      <posY>500</posY>
-      <width>1005</width>
-      <height>177</height>
+      <posX>37</posX>
+      <posY>502</posY>
+      <width>1204</width>
+      <height>172</height>
       <texture>OSD_Back_top.png</texture>
       <visible>Control.HasFocus(999)</visible>
 	  <animation effect="slide" start="0,0" end="0,-100" time="400" reversible="false">visible</animation>
+      <animation effect="fade" time="250">windowopen</animation>
     </control>
      <control>
       <description>background top</description>
       <type>image</type>
-      <posX>247</posX>
-      <posY>500</posY>
-      <width>1005</width>
-      <height>177</height>
+      <posX>37</posX>
+      <posY>502</posY>
+      <width>1204</width>
+      <height>172</height>
       <texture>OSD_Back_top.png</texture>
       <visible>!Control.HasFocus(999)</visible>
       <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
-	  <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="250">windowopen</animation>
     </control>
      <control>
-      <description>MPosdlogo</description>
+      <description>background botton</description>
       <type>image</type>
-      <posX>65</posX>
-      <posY>600</posY>
-      <width>121</width>
-      <height>64</height>
-      <texture>-</texture>
-      <visible>!Control.HasFocus(997)+!Control.HasFocus(998)+!Control.HasFocus(220)+!Control.HasFocus(218)</visible>
+      <posX>37</posX>
+      <posY>563</posY>
+      <width>1204</width>
+      <height>157</height>
+      <texture>OSD_Back_botton.png</texture>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
+    
      <control>
       <description>Stripe</description>
       <type>image</type>
@@ -120,7 +99,7 @@
       <description>Menue button</description>
       <type>button</type>
       <id>997</id>
-      <posX>180</posX>
+      <posX>210</posX>
       <posY>518</posY>
       <width>45</width>
       <height>45</height>
@@ -136,7 +115,7 @@
       <description>label MainMenu</description>
       <type>label</type>
       <id>1</id>
-      <posX>130</posX>
+      <posX>160</posX>
       <posY>580</posY>
       <label>Main Menu</label>
       <font>font11</font>
@@ -149,7 +128,7 @@
       <description>label SubtitleMenu</description>
       <type>label</type>
       <id>1</id>
-      <posX>130</posX>
+      <posX>160</posX>
       <posY>580</posY>
       <label>Subtitle</label>
       <font>font11</font>
@@ -162,7 +141,7 @@
       <description>label VideopostionMenu</description>
       <type>label</type>
       <id>1</id>
-      <posX>130</posX>
+      <posX>160</posX>
       <posY>580</posY>
       <label>Videoposition</label>
       <font>font11</font>
@@ -175,7 +154,7 @@
       <description>label MuteMenu</description>
       <type>label</type>
       <id>1</id>
-      <posX>130</posX>
+      <posX>160</posX>
       <posY>580</posY>
       <label>Mute</label>
       <font>font11</font>
@@ -188,7 +167,7 @@
       <description>Mute button</description>
       <type>button</type>
       <id>998</id>
-      <posX>132</posX>
+      <posX>162</posX>
       <posY>518</posY>
       <width>45</width>
       <height>45</height>
@@ -204,7 +183,7 @@
         <description>Video Position Menu</description>
         <type>togglebutton</type>
         <id>220</id>
-        <posX>85</posX>
+        <posX>115</posX>
         <posY>518</posY>
         <width>45</width>
         <height>45</height>
@@ -223,7 +202,7 @@
       <description>Subtitles Menu</description>
       <type>togglebutton</type>
       <id>218</id>
-      <posX>36</posX>
+      <posX>66</posX>
       <posY>518</posY>
       <width>45</width>
       <height>45</height>
@@ -257,7 +236,7 @@
       <description>SubTitle Delay label</description>
       <type>label</type>
       <id>850</id>
-      <posX>40</posX>
+      <posX>70</posX>
       <posY>639</posY>
       <label>303</label>
       <font>font10</font>
@@ -270,7 +249,7 @@
       <description>SubTitle Delay Slider</description>
       <type>slider</type>
       <id>800</id>
-      <posX>40</posX>
+      <posX>70</posX>
       <posY>615</posY>
       <spintype>float</spintype>
       <textureSliderBar>osd_slider_bg.png</textureSliderBar>
@@ -288,7 +267,7 @@
       <description>SubTitles On/Off Checkbox</description>
       <type>checkmark</type>
       <id>801</id>
-      <posX>40</posX>
+      <posX>70</posX>
       <posY>590</posY>
       <label>305</label>
       <MarkWidth>20</MarkWidth>
@@ -307,7 +286,7 @@
       <description>Sub Titles List Control</description>
       <type>listcontrol</type>
       <id>802</id>
-      <posX>40</posX>
+      <posX>70</posX>
       <posY>668</posY>
       <width>180</width>
       <height>90</height>
@@ -617,7 +596,7 @@
       <description>Video Position label</description>
       <type>label</type>
       <id>750</id>
-      <posX>40</posX>
+      <posX>70</posX>
       <posY>639</posY>
       <label>Video Position</label>
       <font>font10</font>
@@ -630,7 +609,7 @@
       <description>Video Position Slider</description>
       <type>slider</type>
       <id>700</id>
-      <posX>40</posX>
+      <posX>70</posX>
       <posY>615</posY>
       <spintype>int</spintype>
       <textureSliderBar>osd_slider_bg.png</textureSliderBar>
@@ -840,6 +819,19 @@
       <spinPosY>600</spinPosY>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+     <control>
+      <description>MPosdlogo</description>
+      <type>image</type>
+      <posX>100</posX>
+      <posY>440</posY>
+      <width>121</width>
+      <height>64</height>
+      <texture>MPosdlogo.png</texture>
+      <visible>Control.HasFocus(999)</visible>
+      <animation effect="fade" time="2250" reversible="false">visible</animation>
+      <animation effect="fade" time="250" reversible="false">visible</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
   </controls>

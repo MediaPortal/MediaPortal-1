@@ -101,10 +101,10 @@
     </control>
     <control>
       <description>Plot</description>
-      <type>textboxscrollup</type>
+     <type>label</type>
       <posX>334</posX>
       <posY>570</posY>
-      <width>715</width>
+      <width>650</width>
       <height>65</height>
       <label>#Play.Current.Plot</label>
       <font>font13</font>
@@ -127,7 +127,7 @@
       <animation effect="fade" time="800" delay="250" reversible="false">visible</animation>
       <animation effect="fade" time="10" delay="0" reversible="false">hidden</animation>
     </control>
-   
+
     <control>
       <description>AAC</description>
       <type>image</type>
@@ -159,7 +159,7 @@
       <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="150">windowopen</animation>
     </control>
-   
+
      <control>
       <description>MP3</description>
       <type>image</type>
@@ -191,7 +191,7 @@
       <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="150">windowopen</animation>
     </control>
-    
+
      <control>
       <description>AC3</description>
       <type>image</type>
@@ -223,7 +223,7 @@
       <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="150">windowopen</animation>
     </control>
-    
+
      <control>
       <description>DTS</description>
       <type>image</type>
@@ -255,7 +255,7 @@
       <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="150">windowopen</animation>
     </control>
-   
+
      <control>
       <description>MP2A</description>
       <type>image</type>
@@ -287,7 +287,7 @@
       <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="150">windowopen</animation>
     </control>
-    
+
      <control>
       <description>WMA</description>
       <type>image</type>
@@ -319,7 +319,7 @@
       <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="150">windowopen</animation>
     </control>
-    
+
      <control>
       <description>PCM</description>
       <type>image</type>
@@ -351,7 +351,7 @@
       <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="150">windowopen</animation>
     </control>
-    
+
      <control>
       <description>OGG</description>
       <type>image</type>
@@ -383,7 +383,7 @@
       <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="150">windowopen</animation>
     </control>
-    
+
      <control>
       <description>FLAC</description>
       <type>image</type>
@@ -415,7 +415,7 @@
       <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="150">windowopen</animation>
     </control>
-   
+
      <control>
       <description>DivX</description>
       <type>image</type>
@@ -447,7 +447,7 @@
       <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="150">windowopen</animation>
     </control>
-    
+
      <control>
       <description>XVID</description>
       <type>image</type>
@@ -479,7 +479,7 @@
       <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="150">windowopen</animation>
     </control>
-    
+
      <control>
       <description>H264</description>
       <type>image</type>
@@ -511,7 +511,7 @@
       <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="150">windowopen</animation>
     </control>
-    
+
      <control>
       <description>Generic MPEG4</description>
       <type>image</type>
@@ -543,7 +543,7 @@
       <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="150">windowopen</animation>
     </control>
-    
+
     <control>
       <description>MP1V</description>
       <type>image</type>
@@ -575,7 +575,7 @@
       <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="150">windowopen</animation>
     </control>
-    
+
      <control>
       <description>MP2V</description>
       <type>image</type>
@@ -607,7 +607,7 @@
       <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="150">windowopen</animation>
     </control>
-   
+
      <control>
       <description>WMV</description>
       <type>image</type>
@@ -639,7 +639,7 @@
       <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="150">windowopen</animation>
     </control>
-    
+
      <control>
       <description>Subtitles</description>
       <type>image</type>

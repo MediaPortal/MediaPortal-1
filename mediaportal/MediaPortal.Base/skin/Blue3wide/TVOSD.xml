@@ -43,9 +43,9 @@
     <control>
       <description>progress bar background</description>
       <type>image</type>
-      <posX>400</posX>
+      <posX>270</posX>
       <posY>646</posY>
-      <width>621</width>
+      <width>831</width>
       <height>25</height>
       <texture>osd_progress_background.png</texture>
       <visible>window.isosdvisible|player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
@@ -56,9 +56,9 @@
       <description>TV Progress Bar</description>
       <type>tvprogress</type>
       <id>101</id>
-      <posX>383</posX>
+      <posX>255</posX>
       <posY>647</posY>
-      <width>612</width>
+      <width>822</width>
       <height>25</height>
       <toptexture>osd_progress_indicator.png</toptexture>
       <TextureOffsetY>24</TextureOffsetY>
@@ -153,10 +153,10 @@
     </control>
     <control>
       <description>Plot</description>
-      <type>textboxscrollup</type>
+      <type>label</type>
       <posX>334</posX>
       <posY>570</posY>
-      <width>715</width>
+      <width>650</width>
       <height>65</height>
        <label>#TV.View.description</label>
       <font>font13</font>
@@ -183,9 +183,9 @@
       <description>On tv NEXT</description>
       <id>37</id>
       <type>textbox</type>
-      <posX>330</posX>
-      <posY>675</posY>
-      <align>left</align>
+      <posX>550</posX>
+      <posY>673</posY>
+      <align>center</align>
       <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="150">visiblechange</animation>

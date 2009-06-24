@@ -57,9 +57,9 @@
     <control>
       <description>progress bar background</description>
       <type>image</type>
-      <posX>400</posX>
+      <posX>270</posX>
       <posY>646</posY>
-      <width>621</width>
+      <width>831</width>
       <height>25</height>
       <texture>osd_progress_background.png</texture>
       <visible>window.isosdvisible|player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
@@ -70,9 +70,9 @@
       <description>progress bar</description>
       <type>progress</type>
       <id>1</id>
-      <posX>393</posX>
+      <posX>265</posX>
       <posY>647</posY>
-      <width>612</width>
+      <width>822</width>
       <height>25</height>
       <label>#play.progressbar.percentage</label>
       <visible>window.isosdvisible|player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
@@ -82,8 +82,8 @@
     <control>
       <description>Start Time Info</description>
       <type>label</type>
-      <posX>360</posX>
-      <posY>659</posY>
+      <posX>305</posX>
+      <posY>691</posY>
       <label>#play.progressbar.currentplaytime</label>
       <align>center</align>
       <font>font12</font>
@@ -96,7 +96,7 @@
       <description>End Time Info</description>
       <type>label</type>
       <posX>1065</posX>
-      <posY>659</posY>
+      <posY>691</posY>
       <label>#play.progressbar.currentremaining</label>
       <align>center</align>
       <font>font12</font>
@@ -109,10 +109,10 @@
     <control>
       <description>pause image</description>
       <type>image</type>
-      <posX>336</posX>
+      <posX>630</posX>
       <posY>680</posY>
       <width>111</width>
-      <height>26</height>
+      <height>20</height>
       <visible>player.paused+!Control.IsVisible(10)</visible>
       <texture>video-pause.png</texture>
       <colorkey>0</colorkey>
@@ -122,10 +122,10 @@
     <control>
       <description>2x image</description>
       <type>image</type>
-      <posX>336</posX>
+      <posX>630</posX>
       <posY>680</posY>
       <width>111</width>
-      <height>26</height>
+      <height>20</height>
       <visible>player.forwarding2x+!Control.IsVisible(10)</visible>
       <texture>video+2x.png</texture>
       <colorkey>0</colorkey>
@@ -135,10 +135,10 @@
     <control>
       <description>4x image</description>
       <type>image</type>
-      <posX>336</posX>
+      <posX>630</posX>
       <posY>680</posY>
       <width>111</width>
-      <height>26</height>
+      <height>20</height>
       <visible>player.forwarding4x+!Control.IsVisible(10)</visible>
       <texture>video+4x.png</texture>
       <colorkey>0</colorkey>
@@ -148,10 +148,10 @@
     <control>
       <description>8x image</description>
       <type>image</type>
-      <posX>336</posX>
+      <posX>630</posX>
       <posY>680</posY>
       <width>111</width>
-      <height>26</height>
+      <height>20</height>
       <visible>player.forwarding8x+!Control.IsVisible(10)</visible>
       <texture>video+8x.png</texture>
       <colorkey>0</colorkey>
@@ -161,10 +161,10 @@
     <control>
       <description>16x image</description>
       <type>image</type>
-      <posX>336</posX>
+       <posX>630</posX>
       <posY>680</posY>
       <width>111</width>
-      <height>26</height>
+      <height>20</height>
       <visible>player.forwarding16x+!Control.IsVisible(10)</visible>
       <texture>video+16x.png</texture>
       <colorkey>0</colorkey>
@@ -174,10 +174,10 @@
     <control>
       <description>32x image</description>
       <type>image</type>
-      <posX>336</posX>
+      <posX>630</posX>
       <posY>680</posY>
       <width>111</width>
-      <height>26</height>
+      <height>20</height>
       <visible>player.forwarding32x+!Control.IsVisible(10)</visible>
       <texture>video+32x.png</texture>
       <colorkey>0</colorkey>
@@ -188,10 +188,10 @@
       <description>- 2x image</description>
       <type>image</type>
       <id>23</id>
-      <posX>336</posX>
+      <posX>630</posX>
       <posY>680</posY>
       <width>111</width>
-      <height>26</height>
+      <height>20</height>
       <visible>player.rewinding2x+!Control.IsVisible(10)</visible>
       <texture>video-2x.png</texture>
       <colorkey>0</colorkey>
@@ -202,10 +202,10 @@
       <description>- 4x image</description>
       <type>image</type>
       <id>24</id>
-      <posX>336</posX>
+      <posX>630</posX>
       <posY>680</posY>
       <width>111</width>
-      <height>26</height>
+      <height>20</height>
       <visible>player.rewinding4x+!Control.IsVisible(10)</visible>
       <texture>video-4x.png</texture>
       <colorkey>0</colorkey>
@@ -216,10 +216,10 @@
       <description>- 8x image</description>
       <type>image</type>
       <id>25</id>
-      <posX>336</posX>
+      <posX>630</posX>
       <posY>680</posY>
       <width>111</width>
-      <height>26</height>
+      <height>20</height>
       <visible>player.rewinding8x+!Control.IsVisible(10)</visible>
       <texture>video-8x.png</texture>
       <colorkey>0</colorkey>
@@ -230,10 +230,10 @@
       <description>- 16x image</description>
       <type>image</type>
       <id>26</id>
-      <posX>336</posX>
+      <posX>630</posX>
       <posY>680</posY>
       <width>111</width>
-      <height>26</height>
+      <height>20</height>
       <visible>player.rewinding16x+!Control.IsVisible(10)</visible>
       <texture>video-16x.png</texture>
       <colorkey>0</colorkey>
@@ -244,10 +244,10 @@
       <description>- 32x image</description>
       <type>image</type>
       <id>27</id>
-      <posX>336</posX>
+      <posX>630</posX>
       <posY>680</posY>
       <width>111</width>
-      <height>26</height>
+      <height>20</height>
       <visible>player.rewinding32x+!Control.IsVisible(10)</visible>
       <texture>video-32x.png</texture>
       <colorkey>0</colorkey>
