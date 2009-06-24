@@ -734,17 +734,17 @@ namespace MediaPortal.Plugins.Process
         // Only detect singleseat/multiseat once
         if (!_refreshSettings)
         {
-          stringSetting = reader.GetValueAsString("tvservice", "hostname", String.Empty);
-          if (stringSetting == String.Empty)
-          {
-            Log.Error("This setup is not using the tvservice! PowerScheduler client plugin will not be started!");
-            return false;
-          }
           setting = _settings.GetSetting("SingleSeat");
-          if (IsLocal(stringSetting))
+          stringSetting = reader.GetValueAsString("tvservice", "hostname", String.Empty);
+          if (stringSetting != String.Empty && IsLocal(stringSetting))
           {
             Log.Info("PowerScheduler: detected a singleseat setup - delegating suspend/hibernate requests to tvserver");
             setting.Set<bool>(true);
+          }
+          else if (stringSetting == String.Empty)
+          {
+            Log.Info("Detected client-only setup - using local methods to suspend/hibernate system");
+            setting.Set<bool>(false);
           }
           else
           {
