@@ -49,11 +49,11 @@
   </Dir>
   <!-- The Path were the skins are located -->
   <Dir id = "Skin">
-    <Path>Skin\</Path>
+    <Path>%ProgramData%\Team MediaPortal\MediaPortal\Skin\</Path>
   </Dir>
     <!-- The Path were the Language files are located -->
   <Dir id = "Language">
-    <Path>Language\</Path>
+    <Path>%ProgramData%\Team MediaPortal\MediaPortal\Language\</Path>
   </Dir>
   <!-- The Path for the databases -->
   <Dir id = "Database">
