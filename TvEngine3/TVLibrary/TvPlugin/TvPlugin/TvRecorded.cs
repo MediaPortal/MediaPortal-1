@@ -618,8 +618,12 @@ namespace TvPlugin
       {
         dlg.AddLocalizedString(830); //Reset watched status
       }
+      if (!rec.Title.Equals("manual", StringComparison.CurrentCultureIgnoreCase))
+      {
+        dlg.AddLocalizedString(1041); //Upcoming episodes      
+      }
       dlg.AddLocalizedString(1048); //Settings
-
+      
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel == -1)
       {
@@ -641,6 +645,10 @@ namespace TvPlugin
         case 1048: // Settings
           TvRecordedInfo.CurrentProgram = rec;
           GUIWindowManager.ActivateWindow((int)Window.WINDOW_TV_RECORDED_INFO);
+          break;
+
+        case 1041:
+          ShowUpcomingEpisodes(rec);
           break;
 
         case 830: // Reset watched status
@@ -726,6 +734,21 @@ namespace TvPlugin
         return true;
       }
       return g_Player.ShowFullScreenWindowVideoDefault();
+    }
+
+    private static void ShowUpcomingEpisodes(Recording rec)
+    {
+      try
+      {
+        Program ParamProg = new Program(rec.IdChannel, rec.StartTime, rec.EndTime, rec.Title, rec.Description, rec.Genre, false, DateTime.MinValue, String.Empty, String.Empty, String.Empty, String.Empty, 0, String.Empty, 0);
+        TVProgramInfo.CurrentProgram = ParamProg;
+        GUIWindowManager.ActivateWindow((int)Window.WINDOW_TV_PROGRAM_INFO);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("TvRecorded: Error in ShowUpcomingEpisodes - {0}", ex.ToString());
+      }
+ 
     }
 
     private void ShowViews()
