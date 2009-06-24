@@ -73,7 +73,7 @@ namespace SetupTv.Sections
       try
       {
         XmlDocument doc = new XmlDocument();
-        doc.Load(String.Format(@"{0}\TuningParameters\dvbt.xml", Utils.ApplicationDirectory));
+        doc.Load(String.Format(@"{0}\TuningParameters\dvbt.xml", Log.GetPathName()));
         XmlNodeList list = doc.SelectNodes("/dvbt/country");
         if (list != null)
           foreach (XmlNode node in list)
@@ -181,7 +181,7 @@ namespace SetupTv.Sections
 
         Dictionary<int, int> frequencies = new Dictionary<int, int>();
         XmlDocument doc = new XmlDocument();
-        doc.Load(String.Format(@"{0}\TuningParameters\dvbt.xml", Utils.ApplicationDirectory));
+        doc.Load(String.Format(@"{0}\TuningParameters\dvbt.xml", Log.GetPathName()));
         XmlNodeList countryList = doc.SelectNodes("/dvbt/country");
         if (countryList != null)
           foreach (XmlNode nodeCountry in countryList)

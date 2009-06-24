@@ -412,7 +412,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   #---------------------------- File Copy ----------------------
   ; Tuning Parameter Directory
-  SetOutPath $INSTDIR\TuningParameters
+  SetOutPath "${COMMON_APPDATA}\TuningParameters"
   File /r /x .svn "${TVSERVER.BASE}\TuningParameters\*"
 
   ; The Plugin Directory
@@ -555,7 +555,7 @@ ${MementoSectionEnd}
 
   ${LOG_TEXT} "INFO" "remove files..."
   ; Remove TuningParameters
-  RMDir /r $INSTDIR\TuningParameters
+  RMDir /r "${COMMON_APPDATA}\TuningParameters"
 
   ; Remove Plugins
   Delete $INSTDIR\Plugins\ComSkipLauncher.dll
