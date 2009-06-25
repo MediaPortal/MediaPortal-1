@@ -126,41 +126,6 @@
   <data name="WatchTV_off" xml:space="preserve">
     <value>Não - Não pretendo usar o MediaPortal para ver TV.</value>
   </data>
-  <data name="WatchHDTv_labelSectionHeader" xml:space="preserve">
-    <value>Pretende ver HDTV através do MediaPortal?</value>
-  </data>
-  <data name="WatchHDTv_yes" xml:space="preserve">
-    <value>Sim - Pretendo usar o MediaPortal para ver conteúdos HD.</value>
-  </data>
-  <data name="WatchHDTv_no" xml:space="preserve">
-    <value>Não - Não pretendo usar o MediaPortal para ver conteúdos HD.</value>
-  </data>
-  <data name="WatchHDTv_maybe" xml:space="preserve">
-    <value>Não sei o que são conteúdos HD.</value>
-  </data>
-  <data name="TvEngineType_labelSectionHeader" xml:space="preserve">
-    <value>Que TV-Engine pretende usar?</value>
-  </data>
-  <data name="TvEngineType_rbTvBuildIn" xml:space="preserve">
-    <value>Plugin de TV fornecido do MediaPortal 1.0.</value>
-  </data>
-  <data name="TvEngineType_rbTvEngine" xml:space="preserve">
-    <value>Servidor de TV 1.0 do MediaPortal.</value>
-  </data>
-  <data name="TvEngineType_labelTvEngine" xml:space="preserve">
-    <value>Diferenças entre TV-Server (Servidor de TV) 1.0 e inbuild TV-PLugin (Plugin de TV fornecido) do Media Portal 1.0:
-+ suporte completo para legendas em DVB
-+ suporte para HD-TV (dvb-s2 / h.264)  e audio ACC (Noruega, Nova Zelândia, Austrália)
-+ suporte para sintonizadores híbridos (placas de tv que partilham um sintonizador para DVB ou analógico)
-+ detecta automaticamente qualquer placa de TV (analógica, DVB-C, -S, -S2, -T, ATSC)
-+ suporte ATSC QAM (Tv por Cabo)
-+ permite gravar no formato de ficheiro .mpg ou .ts
-+ ATSC/DVB permite sintonizar vários canais no mesmo Transponder/mux com uma placa
-+ fornece TV para múltiplos clientes na sua LAN
-- requer MySQÇ ou MS-SQL (será instalado automaticamente se não estiver presente no seu sistema)
-
-O TV-Server (servidor de TV) substituirá completamente o Plugin de TV (inbuild TV-Plugin) fornecido e será integrado na Interface do Utilizador do MediaPortal</value>
-  </data>
   <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
     <value>Todas as aplicações necessárias serão instaladas nas suas directorias padrão e com as suas definições padrão.</value>
   </data>

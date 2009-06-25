@@ -126,41 +126,6 @@
   <data name="WatchTV_off" xml:space="preserve">
     <value>Nu-Nu voi utiliza MediaPortal să mă uit la TV</value>
   </data>
-  <data name="WatchHDTv_labelSectionHeader" xml:space="preserve">
-    <value>Doriți să vedeți HDTV cu MediaPortal?</value>
-  </data>
-  <data name="WatchHDTv_yes" xml:space="preserve">
-    <value>Da-Voi utiliza Mediaportal să văd conținut HD</value>
-  </data>
-  <data name="WatchHDTv_no" xml:space="preserve">
-    <value>Nu-Nu voi utiliza Mediaportal să văd conținut HD</value>
-  </data>
-  <data name="WatchHDTv_maybe" xml:space="preserve">
-    <value>Nu știu ce înseamna HD</value>
-  </data>
-  <data name="TvEngineType_labelSectionHeader" xml:space="preserve">
-    <value>Care TV-Engine doriți să utilizați?</value>
-  </data>
-  <data name="TvEngineType_rbTvBuildIn" xml:space="preserve">
-    <value>TV Plugin-ul integrat în MediaPortal 1.0</value>
-  </data>
-  <data name="TvEngineType_rbTvEngine" xml:space="preserve">
-    <value>MediaPortal TV-Server 1.0</value>
-  </data>
-  <data name="TvEngineType_labelTvEngine" xml:space="preserve">
-    <value>Diferențe intre TV-Server și TV Plugin-ul integrat în MediaPortal 1.0:
-+suportă complet subtitrările DVB
-+suportă HD-TV(dvb/s2/h.264) și AAC audio(Norway, New Zealand, Australia)
-+suportă plăci TV hybride (plăci Tv care au mai multe tunere DVB sau analogice integrate)
-+detectează automat oricare placă TV (analogica, DVB-C, -S, -S2, -T, ATSC)
-+suportă ATSC QAM (TV prin cablu)
-+puteți inregistra în formatele .mpg sau .ts
-+ATSC/DVB vă permite să sintonizați mai multe canale pe același transponder cu o unica placă TV
-+furnizează semnal TV la clienți multiplii într-o rețea LAN
--necesită MySQL sau MS-SQL (vor fi instalate automat dacă nu sunt prezente pe sistemul dumneavoastră)
-
-TV Server-ul inlocuiește complet TV Plugin-ul integrat și la rândul lui se integrează perfect în Interfața MediaPortal</value>
-  </data>
   <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
     <value>Toate programele necesare vor fi instalate in locația lor de default și cu setările de default</value>
   </data>

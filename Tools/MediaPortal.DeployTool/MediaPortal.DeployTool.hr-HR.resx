@@ -126,41 +126,6 @@
   <data name="WatchTV_off" xml:space="preserve">
     <value>Ne - Ne želim gledati televiziju u MediaPortalu.</value>
   </data>
-  <data name="WatchHDTv_labelSectionHeader" xml:space="preserve">
-    <value>Želiš li gledati HDTV u MediaPortalu ?</value>
-  </data>
-  <data name="WatchHDTv_yes" xml:space="preserve">
-    <value>Da - Želim gledati HDTV u MediaPortalu.</value>
-  </data>
-  <data name="WatchHDTv_no" xml:space="preserve">
-    <value>Ne - Ne želim gledati HDTV u MediaPortalu.</value>
-  </data>
-  <data name="WatchHDTv_maybe" xml:space="preserve">
-    <value>Ne znam što je to HD sadržaj.</value>
-  </data>
-  <data name="TvEngineType_labelSectionHeader" xml:space="preserve">
-    <value>Koji TV-Engine želiš koristiti ?</value>
-  </data>
-  <data name="TvEngineType_rbTvBuildIn" xml:space="preserve">
-    <value>Ugrađeni TV-Plugin u MediaPortalu 1.0.</value>
-  </data>
-  <data name="TvEngineType_rbTvEngine" xml:space="preserve">
-    <value>MediaPortal TV-Server 1.0</value>
-  </data>
-  <data name="TvEngineType_labelTvEngine" xml:space="preserve">
-    <value>Razlike između TV-Servera 1.0 i ugrađenog TV-Plugina u MediaPortalu 1.0:
-+puna podrška za DVB titlove
-+podrška za HD-TV (dvb-s2 / h.264) i AAC audio
-+podrška hibridnih tv tjunera (kartice koje dijele tjuner za DVB i analogni prijem)
-+automatska detekcija svih TV kartica (analognih, DVB-S, -S, -S2. -T, ATSC)
-+podrška za ATSC QAM (kablovska televizija)
-+snimanje u .mpg ili .ts formatu
-+ATSC/DVB podrška gledanja više kanala sa istog transpondera istovremeno na jednoj kartici
-+gledanje televizije na više klijenata u LAN mreži
--potreban MySQL ili MS-SQL (instaliran automatski ako nije prisutan)
-
-TV-Server potpuno zamjenjuje ugrađeni TV-Plugin i integrira se u MediaPortal.</value>
-  </data>
   <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
     <value>Sve potrebne aplikacije biti će instalirane u njihove defaultne lokacije sa defaultnim postavkama.</value>
   </data>

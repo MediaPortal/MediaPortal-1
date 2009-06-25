@@ -126,41 +126,6 @@
   <data name="WatchTV_off" xml:space="preserve">
     <value>Nej, jag vill inte använda MediaPortal för att titta på TV.</value>
   </data>
-  <data name="WatchHDTv_labelSectionHeader" xml:space="preserve">
-    <value>Kommer du titta på HD material med MediaPortal ? </value>
-  </data>
-  <data name="WatchHDTv_yes" xml:space="preserve">
-    <value>Ja, jag kommer att använda MediaPortal för att titta på HD material.</value>
-  </data>
-  <data name="WatchHDTv_no" xml:space="preserve">
-    <value>Nej, jag kommer inte använda MediaPortal för att titta på HD material.</value>
-  </data>
-  <data name="WatchHDTv_maybe" xml:space="preserve">
-    <value>Jag vet inte vad som är HD material.</value>
-  </data>
-  <data name="TvEngineType_labelSectionHeader" xml:space="preserve">
-    <value>Vilken TV-motor vill du använda ?</value>
-  </data>
-  <data name="TvEngineType_rbTvBuildIn" xml:space="preserve">
-    <value>Inbyggda TV-motorn i  MediaPortal 1.0.</value>
-  </data>
-  <data name="TvEngineType_rbTvEngine" xml:space="preserve">
-    <value>MediaPortal TV-Server 1.0</value>
-  </data>
-  <data name="TvEngineType_labelTvEngine" xml:space="preserve">
-    <value>Skillnad mellan TV-Server 1.0 och den inbyggda TV-motorn i MediaPortal 1.0
-+ fullt DVB-undertext stöd.
-+ stöd för HD-TV (dvb-s2 / h.264) och AAC ljud (Norge, Nya Zeeland, Australien)
-+ stöd för TV-kort av hybrid typ (TV-kort som delar samma tuner för DVB och analog signal)
-+ detekterar automatiskt anslutna TV-kort (analog, dvb-c, -s, -s2, -t, atsc)
-+ stöd för ATSC QAM (kabel TV)
-+ stöd för inspelning i mpg eller ts filformat.
-+ ATSC/DVB tillåter att spela in/titta på flera kanaler ifrån samma transponder/mux med ett TV-kort.
-+ möjlighet att sända ut TV till flera klienter över LAN.
-- kräver MySQL eller MS-SQL (vilket kommer att installeras automatiskt om det ej redan finns installerat)
-
-TV-Servern kommer att helt ersätta den inbyggda TV-motorn, och helt sömlöst vara integrerad i MediaPortals användargänssnitt.</value>
-  </data>
   <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
     <value>Alla applikationer kommer att installeras på dess standardplatser och med dess standardinställningar.</value>
   </data>

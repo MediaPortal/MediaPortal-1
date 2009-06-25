@@ -126,42 +126,6 @@
   <data name="WatchTV_off" xml:space="preserve">
     <value>Hayır - MediaPortal kullanarak televizyon izlemek istemiyorum.</value>
   </data>
-  <data name="WatchHDTv_labelSectionHeader" xml:space="preserve">
-    <value>MediaPortal ile HD yayınları izlemek istiyor musunuz ?</value>
-  </data>
-  <data name="WatchHDTv_yes" xml:space="preserve">
-    <value>Evet - MediaPortal kullanarak HD yayınları izlemek istiyorum.</value>
-  </data>
-  <data name="WatchHDTv_no" xml:space="preserve">
-    <value>Hayır - MediaPortal kullanarak HD yayın izlemek istemiyorum.</value>
-  </data>
-  <data name="WatchHDTv_maybe" xml:space="preserve">
-    <value>HD yayının ne olduğunu bilmiyorum.</value>
-  </data>
-  <data name="TvEngineType_labelSectionHeader" xml:space="preserve">
-    <value>Hangi televizyon-motorunu kullanmak istiyorsunuz ?</value>
-  </data>
-  <data name="TvEngineType_rbTvBuildIn" xml:space="preserve">
-    <value>MediaPortal 1.0'a ait dahili televizyon eklentisi</value>
-  </data>
-  <data name="TvEngineType_rbTvEngine" xml:space="preserve">
-    <value>MediaPortal TV-Sunucu 1.0</value>
-  </data>
-  <data name="TvEngineType_labelTvEngine" xml:space="preserve">
-    <value>MediaPortal TV-Sunucu 1.0 ile MediaPortal 1.0'a ait dahili televizyon sunucusu arasındaki farklar:
-+DVB yayınlar için altyazı desteği
-+HD yayınlar (dvb-s2 / h.264) ve AAC ses (Norveç, Yeni Zelanda, Avustralya) desteği
-+Hibrit tuner desteği (DVB ve analog tuneri bir arada olan kartlar için)
-+Herhangi bir TV kartını otomatik olarak algılama (analog, DVB-C, -S, -S2, -T, ATSC)
-+ATSC QAM (Kablo TV) desteği
-+.mpg veya .ts formatında kayıt edebilme
-+Tek kart ile ATSC/DVB üzerinde tek transponderden farklı kanalları izleyebilme özelliği
-+Yerel ağ (LAN) üzerinde çoklu kullanıcılara televizyon sağlama özelliği
--MySQL veya MS-SQL gereksinimi (sisteminizde yoksa otomatik olarak yüklenecektir)
-
-TV-Sunucusu dahili televizyon eklentisi ile tamamen yer değiştirecek ve MediaPortal Kullanıcı
-Arayüzüne entegre olacaktır.</value>
-  </data>
   <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
     <value>Tüm gerekli uygulamalar varsayılan yerlere ve varsayılan ayarlarla kurulacaktır.</value>
   </data>

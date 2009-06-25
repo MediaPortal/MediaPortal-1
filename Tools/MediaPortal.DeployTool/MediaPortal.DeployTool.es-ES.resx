@@ -126,39 +126,6 @@
   <data name="WatchTV_off" xml:space="preserve">
     <value>No, no usaré MediaPortal para ver la TV.</value>
   </data>
-  <data name="WatchHDTv_labelSectionHeader" xml:space="preserve">
-    <value>¿Quieres ver HDTV con MediaPortal?</value>
-  </data>
-  <data name="WatchHDTv_yes" xml:space="preserve">
-    <value>Sí, usaré MediaPortal para ver contenido en HD.</value>
-  </data>
-  <data name="WatchHDTv_no" xml:space="preserve">
-    <value>No, no usaré MediaPortal para ver contenido en HD.</value>
-  </data>
-  <data name="WatchHDTv_maybe" xml:space="preserve">
-    <value>No se lo que es el formato HD.</value>
-  </data>
-  <data name="TvEngineType_labelSectionHeader" xml:space="preserve">
-    <value>¿Qué motor de TV quieres usar?</value>
-  </data>
-  <data name="TvEngineType_rbTvBuildIn" xml:space="preserve">
-    <value>Plugin de TV integrado en MediaPortal 1.0.</value>
-  </data>
-  <data name="TvEngineType_rbTvEngine" xml:space="preserve">
-    <value>MediaPortal TV-Server 1.0</value>
-  </data>
-  <data name="TvEngineType_labelTvEngine" xml:space="preserve">
-    <value>Diferencias entre usar TV-Server 1.0 y el Plugin de TV integrado en MediaPortal 1.0:
-+ Soporte de DVB-Subtítulos
-+ Soporte para HDTV (DVB-S2 / H.264) y AAC audio (Noruega,Nueva Zelanda, Australia)
-+ Soporte para sintonizadoras híbridas (tarjetas que soportan Analógico y Digital)
-+ Soporte para detectar automáticamente tarjetas (Analógicas. DVB-C, -S, -S2, -T)
-+ Soporte para sintonizadoras de Cable
-+ Permite grabar en formato .mpg y .ts
-+ ATSC/DVB permiten sintonizar múltiples canales en el mismo transpondedor con una tarjeta
-+ Proporciona TV a más de un cliente en tu red
-- Requiere MySQL o MS-SQL (se instalará automaticamente si no esta presente)</value>
-  </data>
   <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
     <value>Todas la aplicaciones requeridas serán instaladas en su destino por defecto  y con sus valores por defecto.</value>
   </data>

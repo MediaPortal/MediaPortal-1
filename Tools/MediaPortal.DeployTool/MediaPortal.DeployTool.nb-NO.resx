@@ -126,42 +126,6 @@
   <data name="WatchTV_off" xml:space="preserve">
     <value>Nei, Jeg skal ikke bruke MediaPortal for å se på TV.</value>
   </data>
-  <data name="WatchHDTv_labelSectionHeader" xml:space="preserve">
-    <value>Vil du se HDTV med MediaPortal ?</value>
-  </data>
-  <data name="WatchHDTv_yes" xml:space="preserve">
-    <value>Ja, Jeg skal bruke MediaPortal  til å se HD.</value>
-  </data>
-  <data name="WatchHDTv_no" xml:space="preserve">
-    <value>Nei, Jeg skal ikke bruke MediaPortal til å se HD.</value>
-  </data>
-  <data name="WatchHDTv_maybe" xml:space="preserve">
-    <value>Jeg vet ikke hva HD er.</value>
-  </data>
-  <data name="TvEngineType_labelSectionHeader" xml:space="preserve">
-    <value>Hvilken TV-motor vil du bruke ?</value>
-  </data>
-  <data name="TvEngineType_rbTvBuildIn" xml:space="preserve">
-    <value>Innebygde TV-motoren i MediaPortal 1.0.</value>
-  </data>
-  <data name="TvEngineType_rbTvEngine" xml:space="preserve">
-    <value>MediaPortal TV-Server 1.0.</value>
-  </data>
-  <data name="TvEngineType_labelTvEngine" xml:space="preserve">
-    <value>Forskjellen mellom TV-Server og den innebygde TV-motoren I MediaPortal 1.0:
-+ full dvb-undertekst support
-+ support for HD-TV (dvb-s2 / h.264) og AAC lyd (Norge, New Zealand, Australia)
-+ hybrid tv-kort support (kort som har tuner for både DVB og analog)
-+ automatisk detektering av alle TV-kort (analog, dvb-c, -s, -s2, -t, atsc)
-+ ATSC QAM (Kabel-TV) support
-+ gir mulighet for opptak I både mpg og ts fil format
-+ atsc/dvb gir mulighet for flervalg av kanaler på samme transponder/mux med et TV-kort
-+ gir mulighet for flere tv klienter på nettverket
-- trenger MySQL or MS-SQL (vil bli automatisk installert hvis den ikke finnes fra før)
-
-TV-Serveren erstatter den innebygde TV-motoren fullstendig og integreres fullt ut med
-MediaPortal bruker grensesnitt.</value>
-  </data>
   <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
     <value>Alle programmer som trengs vil bli installert til vanlige plasser med vanlige innstillinger.</value>
   </data>

@@ -126,41 +126,6 @@
   <data name="WatchTV_off" xml:space="preserve">
     <value>Nee, ik wil geen TV kijken via MediaPortal.</value>
   </data>
-  <data name="WatchHDTv_labelSectionHeader" xml:space="preserve">
-    <value>Wilt u HDTV kijken met MediaPortal?</value>
-  </data>
-  <data name="WatchHDTv_yes" xml:space="preserve">
-    <value>Ja, ik wil HDTV kijken via MediaPortal.</value>
-  </data>
-  <data name="WatchHDTv_no" xml:space="preserve">
-    <value>Nee, ik wil geen HDTV kijken via MediaPortal.</value>
-  </data>
-  <data name="WatchHDTv_maybe" xml:space="preserve">
-    <value>Ik weet niet wat HD-materiaal is.</value>
-  </data>
-  <data name="TvEngineType_labelSectionHeader" xml:space="preserve">
-    <value>Welke TV-engine wilt u gebruiken?</value>
-  </data>
-  <data name="TvEngineType_rbTvBuildIn" xml:space="preserve">
-    <value>Ingebouwde TV-plugin van MediaPortal 1.0.1</value>
-  </data>
-  <data name="TvEngineType_rbTvEngine" xml:space="preserve">
-    <value>MediaPortal TV-Server 1.0.1</value>
-  </data>
-  <data name="TvEngineType_labelTvEngine" xml:space="preserve">
-    <value>Verschillen tussen TV-Server 1.0.1 en ingebouwde TV-plugin van MediaPortal 1.0.1:
-+ volledige ondersteuning van DVB-ondertiteling
-+ ondersteuning voor HDTV (DVB-S2/h.264) en AAC audio (Noorwegen, Nw Zeeland, Australië)
-+ ondersteuning voor hybride tuners (DVB en analoog)
-+ automatische herkenning van alle TV-kaarten (analoog, DVB-C/S/S2/T, ATSC)
-+ ondersteuning van ATSC QAM (kabel-TV)
-+ opnemen in .mpg en .ts formaat
-+ ATSC/DVB ondersteunt tuning van meerdere kanalen binnen één transponder/mux van een kaart
-+ biedt TV voor meerdere cliënts in uw netwerk
-- vereist MySQL of MS-SQL (wordt geïnstalleerd indien nog niet aanwezig op uw systeem)
-
-TV-Server vervangt de ingebouwde TV-plugin volledig en wordt naadloos geïntegreerd in de interface van MediaPortal.</value>
-  </data>
   <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
     <value>Alle benodigde programma's worden in hun standaard locaties en met standaardinstellingen geïnstalleerd. </value>
   </data>

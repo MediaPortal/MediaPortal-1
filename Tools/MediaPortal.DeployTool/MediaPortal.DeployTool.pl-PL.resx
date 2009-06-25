@@ -126,41 +126,6 @@
   <data name="WatchTV_off" xml:space="preserve">
     <value>Nie - nie chcę używać MediaPortal do oglądania telewizji.</value>
   </data>
-  <data name="WatchHDTv_labelSectionHeader" xml:space="preserve">
-    <value>Czy chcesz oglądać telewizję HDTV używając MediaPortal?</value>
-  </data>
-  <data name="WatchHDTv_yes" xml:space="preserve">
-    <value>Tak - będę używał MediaPortal do oglądania programów HD.</value>
-  </data>
-  <data name="WatchHDTv_no" xml:space="preserve">
-    <value>Nie - nie będę używał MediaPortal do oglądania programów HD.</value>
-  </data>
-  <data name="WatchHDTv_maybe" xml:space="preserve">
-    <value>Nie wiem, czym są programy HD.</value>
-  </data>
-  <data name="TvEngineType_labelSectionHeader" xml:space="preserve">
-    <value>Którą TV-Engine chcesz używać?</value>
-  </data>
-  <data name="TvEngineType_rbTvBuildIn" xml:space="preserve">
-    <value>Wbudowany TV-Plugin dla MediaPortal 1.0.</value>
-  </data>
-  <data name="TvEngineType_rbTvEngine" xml:space="preserve">
-    <value>MediaPortal TV-Server 1.0</value>
-  </data>
-  <data name="TvEngineType_labelTvEngine" xml:space="preserve">
-    <value>Różnice między TV-Server 1.0 oraz zainstalowanym TV-Plugin razem z MediaPortal 1.0:
-+ pełne wsparcie DVB-subtitle
-+ wsparcie HD-TV (dvb-s2 / h.264) oraz AAC audio (Norwegia, Nowa  Zelandia, Australia)
-+ wsparcie hybrid tuner (karty z funkcją DVB oraz analogową)
-+ automatyczne rozpoznawanie kart telewizyjnych  (analogowe, DVB-C, -S, -S2, -T, ATSC)
-+ wsparcie ATSC QAM (telewizja kablowa)
-+ pozwala na zapis plików .mpg lub .ts
-+ ATSC/DVB pozwala na oglądanie/zapisywanie wielu kanałów znajdujących się na tym samym transponderze/mux.
-+ pozwala na przesłanie telewizji do wielu klientów
-- wymaga zainstalowania MySQL albo MS-SQL (zostaje zainstalowany automatycznie jeśli nie został zainstalowany wcześniej)
-
-TV-Server zastępuje całkowicie TV-Plugin i integruje się całkowicie w MediaPortal. </value>
-  </data>
   <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
     <value>Wszystkie konieczne podprogramy będą zainstalowane w standardowych folderach ze standardowymi ustawieniami.</value>
   </data>
@@ -207,7 +172,7 @@ również programy telewizyjne.</value>
   <data name="CustomInstallation_labelMaster" xml:space="preserve">
     <value>Ta opcja zainstaluje tylko MediaPortal TV-Server na Twoim komputerze.
 Ten komputerem będzie pełnił tylko rolę serwera oraz będzie dostarczał programy telewizyjne innym komputerom w Twojej sieci komputerowej (baza danych musi być zainstalowana na tym komputerze)</value>
-  </data>  
+  </data>
   <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
     <value>Szukaj</value>
   </data>

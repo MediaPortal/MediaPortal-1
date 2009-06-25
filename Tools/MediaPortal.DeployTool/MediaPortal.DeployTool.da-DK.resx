@@ -126,42 +126,6 @@
   <data name="WatchTV_off" xml:space="preserve">
     <value>Nej, jeg vil ikke bruge MediaPortal til at se TV.</value>
   </data>
-  <data name="WatchHDTv_labelSectionHeader" xml:space="preserve">
-    <value>Vil du se HDTV med MediaPortal?</value>
-  </data>
-  <data name="WatchHDTv_yes" xml:space="preserve">
-    <value>Ja, jeg vil bruge MediaPortal til at se HD indhold.</value>
-  </data>
-  <data name="WatchHDTv_no" xml:space="preserve">
-    <value>Nej, jeg vil ikke bruge MediaPortal til at se HD indhold.</value>
-  </data>
-  <data name="WatchHDTv_maybe" xml:space="preserve">
-    <value>Jeg ved ikke hvad HDTV er.</value>
-  </data>
-  <data name="TvEngineType_labelSectionHeader" xml:space="preserve">
-    <value>Hvilken TV-Engine vil du benytte?</value>
-  </data>
-  <data name="TvEngineType_rbTvBuildIn" xml:space="preserve">
-    <value>Den indbyggede i MediaPortal 1.0</value>
-  </data>
-  <data name="TvEngineType_rbTvEngine" xml:space="preserve">
-    <value>MediaPortal TV-Server 1.0</value>
-  </data>
-  <data name="TvEngineType_labelTvEngine" xml:space="preserve">
-    <value>Forskelle på TV-Server 1.0 i forhold til den indbyggede TV-Engine i MediaPortal 1.0:
-+ fuld understøttelse af DVB undertekster
-+ understøtter HD-TV (DVB-S2 / H.264) og AAC audio (Norge, New Zealand, Australien)
-+ hybrid tunere understøttes (tv-kort der deler en tuner mellem analog og DVB)
-+ automatisk detektion af TV-kort (analog, dvb-t, -c, -s, -s2, atsc)
-+ ATSC QAM understøttes
-+ optagelser i mpg eller ts filformater
-+ for dvb understøttes samtidig tuning af flere kanaler på samme frekvens med et tv-kort
-+ det er muligt at levere TV til flere klienter i netværket
-- kræver MySQL eller MS-SQL (vil automatisk blive installeret, hvis det ikke findes)
-
-TV-Server erstatter fuldstændigt den inbyggede TV-Engine, og bliver en fuldt integreret del af  
-MediaPortals brugerflade.</value>
-  </data>
   <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
     <value>Alle nødvendige applikationer vil blive installeret i standard foldere med standard indstillinger.</value>
   </data>

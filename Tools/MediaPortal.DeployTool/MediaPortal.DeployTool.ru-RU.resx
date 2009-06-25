@@ -126,41 +126,6 @@
   <data name="WatchTV_off" xml:space="preserve">
     <value>Нет, я не буду использовать  MediaPortal для просмотра ТВ-программ</value>
   </data>
-  <data name="WatchHDTv_labelSectionHeader" xml:space="preserve">
-    <value>Вы будете использовать  MediaPortal для просмотра HDTV ТВ-программ?</value>
-  </data>
-  <data name="WatchHDTv_yes" xml:space="preserve">
-    <value>Да, я буду использовать  MediaPortal для просмотра HDTV ТВ-программ.</value>
-  </data>
-  <data name="WatchHDTv_no" xml:space="preserve">
-    <value>Нет, я не буду использовать  MediaPortal для просмотра HDTV ТВ-программ.</value>
-  </data>
-  <data name="WatchHDTv_maybe" xml:space="preserve">
-    <value>Я не знаю что такое HDTV.</value>
-  </data>
-  <data name="TvEngineType_labelSectionHeader" xml:space="preserve">
-    <value>Какую реализацию TV-Engine Вы хотите использовать?</value>
-  </data>
-  <data name="TvEngineType_rbTvBuildIn" xml:space="preserve">
-    <value>Встроенный плагин MediaPortal 1.0.</value>
-  </data>
-  <data name="TvEngineType_rbTvEngine" xml:space="preserve">
-    <value>MediaPortal TV-Server 1.0</value>
-  </data>
-  <data name="TvEngineType_labelTvEngine" xml:space="preserve">
-    <value>Отличие TV-Server 1.0 от встроенного плагина TV-Plugin для MediaPortal 1.0:
-+полная поддержка DVB-субтитров
-+поддержка для HD-TV (dvb-s2 / h.264) и AAC звука (Швеция, Новая. Зеландия,Австралия)
-+поддержка гибридных тюнеров (используют тюнер для приема цифрового или аналогового вещания)
-+автоматическое определение ТВ-тюнеров (аналоговые,DVB-C, -S, -S2, -T, ATSC)
-+поддержка ATSC QAM (Кабельное ТВ) 
-+запись в форматах .mpg или .ts
-+для карт ATSC/DVB  возможен прием нескольких программ с одного трансподера
-+предоставляет возможность просмотра ТВ нескольким клиентам по сети
--требует установки MySQL или MS-SQL (будет установлен автоматически если нужно)
-
- TV-Server полностью заменяет встроенный плагин и органично вписывается в оболочку MediaPortal.</value>
-  </data>
   <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
     <value>Все выбранные приложения будут установлены с настройками по-умолчанию. </value>
   </data>

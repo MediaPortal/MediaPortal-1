@@ -126,42 +126,6 @@
   <data name="WatchTV_off" xml:space="preserve">
     <value>Не - нема да го користам MediaPortal за гледање TV.</value>
   </data>
-  <data name="WatchHDTv_labelSectionHeader" xml:space="preserve">
-    <value>Дали сакате да гледате HDTV со MediaPortal?</value>
-  </data>
-  <data name="WatchHDTv_yes" xml:space="preserve">
-    <value>Да - ќе го користам MediaPortal за гледање содржини во HD.</value>
-  </data>
-  <data name="WatchHDTv_no" xml:space="preserve">
-    <value>Не - нема да го користам MediaPortal за гледање содржини во HD.</value>
-  </data>
-  <data name="WatchHDTv_maybe" xml:space="preserve">
-    <value>Не знам што се тоа содржини во HD.</value>
-  </data>
-  <data name="TvEngineType_labelSectionHeader" xml:space="preserve">
-    <value>Кој TV-Engine сакате да го користите?</value>
-  </data>
-  <data name="TvEngineType_rbTvBuildIn" xml:space="preserve">
-    <value>Вграден TV-Приклучок од MediaPortal 1.0.</value>
-  </data>
-  <data name="TvEngineType_rbTvEngine" xml:space="preserve">
-    <value>MediaPortal TV-Server 1.0</value>
-  </data>
-  <data name="TvEngineType_labelTvEngine" xml:space="preserve">
-    <value>Разлики помеѓу TV-Server 1.0 и вграден TV-Plugin во MediaPortal 1.0:
-+ целосна поддршка за DVB-титли
-+ поддршка за HD-TV (dvb-s2 / h.264) и AAC аудио (Norway, New Zealand, Australia)
-+ поддршка за хибридни тјунери (картички кои делат тјунер за DVB или аналогно)
-+ автоматски препознава било која TV-картичка (аналогна, DVB-C, -S, -S2, -T, ATSC)
-+ поддршка за ATSC QAM (КабловскаTV)
-+ дозволува снимање во .mpg или .ts формати на датотека
-+ ATSC/DVB дозволува тјунирање на повеќе канали со истиот transponder/mux со една картичка
-+ обезбедува TV на повеќе клиенти во Вашата LAN
-- бара MySQL или MS-SQL (ќе биде инсталиран автоматски ако не е присутен на Вашиот систем)
-
-TV-Server-от комплетно го заменува вградениот TV-Plugin и хомогено се интегрира во
-корисничкиот интерфејс на MediaPortal.</value>
-  </data>
   <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
     <value>Сите барани апликации ќе бидат инсталирани во нивните зададени локации и со зададени подесувања.</value>
   </data>

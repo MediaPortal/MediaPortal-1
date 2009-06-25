@@ -126,41 +126,6 @@
   <data name="WatchTV_off" xml:space="preserve">
     <value>Non - Je ne vais pas utiliser MediaPortal pour regarder la TV</value>
   </data>
-  <data name="WatchHDTv_labelSectionHeader" xml:space="preserve">
-    <value>Allez-vous regarder des programmes TV HD avec MediaPortal ?</value>
-  </data>
-  <data name="WatchHDTv_yes" xml:space="preserve">
-    <value>Oui - Je vais utiliser MediaPortal pour regarder de la TV HD</value>
-  </data>
-  <data name="WatchHDTv_no" xml:space="preserve">
-    <value>Non - Je ne vais pas utiliser MediaPortal pour regarder de la TV HD</value>
-  </data>
-  <data name="WatchHDTv_maybe" xml:space="preserve">
-    <value>Je ne sais pas ce qu'est la TV HD</value>
-  </data>
-  <data name="TvEngineType_labelSectionHeader" xml:space="preserve">
-    <value>Quel moteur TV voulez-vous utiliser ?</value>
-  </data>
-  <data name="TvEngineType_rbTvBuildIn" xml:space="preserve">
-    <value>TV-Plugin integré de MediaPortal 1.0</value>
-  </data>
-  <data name="TvEngineType_rbTvEngine" xml:space="preserve">
-    <value>MediaPortal TV-Server 1.0</value>
-  </data>
-  <data name="TvEngineType_labelTvEngine" xml:space="preserve">
-    <value>Différences entre le TV-Server 1.0 et le TV-Plugin integré à Mediaportal 1.0:
-+ Support complet des sous-titres DVB (TNT)
-+ Support de la TV HD (dvb-s2 / h.264) et de l'AAC audio (Norvège, Nouvelle Zélande, Australie)
-+ Support de tuners hybrides (cartes qui partagent un tuner pour le DVB et l'analogique)
-+ Détecte automatiquement les cartes TV (analogique, DVB-C, -S, -S2, -T, ATSC)
-+ Support de l'ATSC QAM (TV numérique sur câble, USA)
-+ Permet d'enregistrer au format .mpg ou .ts
-+ ATSC/DVB permet le tuning de plusieurs canaux sur le même transponder/mux sur une carte
-+ Offre la TV a de multiples clients sur votre réseau LAN
-- Requiert MySQL ou MS-SQL (sera installé automatiquement si pas présent sur votre système)
-
-Le TV-Server remplace complétement le TV-Plugin et s'intégre de façon transparente à l'interface utilisateur de MediaPortal.</value>
-  </data>
   <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
     <value>Toutes les applications requises seront installées à leur emplacement par défaut avec leurs paramètres par défaut</value>
   </data>
