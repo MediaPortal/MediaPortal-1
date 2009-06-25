@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <Language name="German" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="Meine ">Anwendungen</String>
@@ -688,9 +688,9 @@
     <String id="810">Karte</String>
     <String id="820">Noch nicht gesehene Aufnahme löschen?</String>
     <String id="830">Als ungesehen markieren</String>
-	  <String id="831">Wechseldatenträger auswerfen</String>
-		<String id="832">Wechseldatenträger konnte nicht entfernt werden: </String>
-		<String id="833">Wechseldatenträger kann jetzt entfernt werden</String>
+    <String id="831">Wechseldatenträger auswerfen</String>
+    <String id="832">Wechseldatenträger konnte nicht entfernt werden: </String>
+    <String id="833">Wechseldatenträger kann jetzt entfernt werden</String>
     <String id="850" prefix="Mein ">Alarm</String>
     <String id="851">Wiedergabeliste</String>
     <String id="852">Alarm aktiv</String>
@@ -1216,7 +1216,8 @@
     <String id="2610">Polnisch</String>
     <String id="2611">Tschechisch</String>
     <String id="2612">Ungarisch</String>
-    <String id="2700">CI Menü öffnen</String>
+    <String id="2650">Lade Schriftarten, bitte warten...</String>
+    <String id="2700">CI-Menü öffnen</String>
     <String id="2997">Std</String>
     <String id="2998">Min</String>
     <String id="2999">Sek</String>
@@ -1777,6 +1778,7 @@
     <String id="102014">Bildinformationen</String>
     <String id="102015">Mini Menü</String>
     <String id="102016">Benachrichtigung</String>
+    <String id="102018">CI-Menü</String>
     <String id="102600" prefix="Mein ">Wetter</String>
     <String id="102700" prefix="Meine ">Nachrichten</String>
     <String id="102900">Bildschirm-Schoner</String>
