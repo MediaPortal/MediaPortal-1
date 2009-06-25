@@ -44,11 +44,11 @@
      <control>
       <description>Current Time Info</description>
       <type>label</type>
-      <posX>1130</posX>
+      <posX>1105</posX>
       <posY>567</posY>
       <label>#time</label>
       <centered>yes</centered>
-      <font>font14</font>
+      <font>font13</font>
       <textcolor>white</textcolor>
       <visible>!Control.IsVisible(989)</visible>
       <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
@@ -57,11 +57,11 @@
      <control>
       <description>Current Time Info</description>
       <type>label</type>
-      <posX>1130</posX>
+      <posX>1105</posX>
       <posY>567</posY>
       <label>#time</label>
       <centered>yes</centered>
-      <font>font14</font>
+      <font>font13</font>
       <textcolor>white</textcolor>
       <visible>Control.IsVisible(989)</visible>
           <animation effect="slide" start="0,0" end="0,-100" time="400" reversible="false">visible</animation>
@@ -101,7 +101,7 @@
     </control>
     <control>
       <description>Plot</description>
-     <type>label</type>
+      <type>textboxscrollup</type>
       <posX>334</posX>
       <posY>570</posY>
       <width>650</width>

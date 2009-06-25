@@ -123,7 +123,7 @@
     </control>
      <control>
       <description>On tv NOW</description>
-      <id>89</id>
+      <id>36</id>
       <type>label</type>
       <width>515</width>
       <height>37</height>
@@ -153,7 +153,7 @@
     </control>
     <control>
       <description>Plot</description>
-      <type>label</type>
+      <type>textboxscrollup</type>
       <posX>334</posX>
       <posY>570</posY>
       <width>650</width>
@@ -183,10 +183,11 @@
       <description>On tv NEXT</description>
       <id>37</id>
       <type>textbox</type>
-      <posX>550</posX>
+      <posX>420</posX>
       <posY>673</posY>
-      <align>center</align>
-      <font>font13</font>
+       <width>500</width>
+       <height>24</height>
+      <font>font12</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="150">visiblechange</animation>
       <animation effect="fade" time="150">windowopen</animation>
@@ -285,11 +286,10 @@
     <control>
       <description>Current Time Info</description>
       <type>label</type>
-      <posX>1130</posX>
+      <posX>1105</posX>
       <posY>567</posY>
       <label>#time</label>
-      <centered>yes</centered>
-      <font>font14</font>
+      <font>font13</font>
       <textcolor>white</textcolor>
       <visible>!Control.IsVisible(989)</visible>
       <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
@@ -298,11 +298,10 @@
      <control>
       <description>Current Time Info</description>
       <type>label</type>
-      <posX>1130</posX>
+      <posX>1105</posX>
       <posY>567</posY>
       <label>#time</label>
-      <centered>yes</centered>
-      <font>font14</font>
+      <font>font13</font>
       <textcolor>white</textcolor>
       <visible>Control.IsVisible(989)</visible>
           <animation effect="slide" start="0,0" end="0,-100" time="400" reversible="false">visible</animation>

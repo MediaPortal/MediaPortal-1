@@ -44,10 +44,9 @@
      <control>
       <description>Current Time Info</description>
       <type>label</type>
-      <posX>1130</posX>
-      <posY>595</posY>
+      <posX>1105</posX>
+      <posY>597</posY>
       <label>#time</label>
-      <centered>yes</centered>
       <font>font14</font>
       <textcolor>white</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
