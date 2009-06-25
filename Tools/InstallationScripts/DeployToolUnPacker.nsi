@@ -58,9 +58,10 @@ Name "MediaPortal Unpacker"
 #---------------------------------------------------------------------------
 # UNPACKER script
 #---------------------------------------------------------------------------
-!define NAME    "MediaPortal"
-!define COMPANY "Team MediaPortal"
-!define URL     "www.team-mediaportal.com"
+!define PRODUCT_NAME          "MediaPortal"
+!define PRODUCT_PUBLISHER     "Team MediaPortal"
+!define PRODUCT_WEB_SITE      "www.team-mediaportal.com"
+
 !define VER_MAJOR       1
 !define VER_MINOR       0
 !define VER_REVISION    3
