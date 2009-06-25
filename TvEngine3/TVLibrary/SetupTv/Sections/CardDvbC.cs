@@ -331,6 +331,7 @@ namespace SetupTv.Sections
           MessageBox.Show(this, "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
           return;
         }
+        mpButtonSaveList.Enabled = false;
         LoadList(String.Format(@"{0}\Tuningparameters\{1}.dvbc", Log.GetPathName(), mpComboBoxCountry.SelectedItem));
         Thread scanThread = new Thread(DoScan);
         scanThread.Name = "DVB-C scan thread";
@@ -541,7 +542,7 @@ namespace SetupTv.Sections
       RemoteControl.Instance.EpgGrabberEnabled = false;
       mpButton1.Enabled = false;
       _channelCount = 0;
-      mpButtonSaveList.Enabled = (_channelCount != 0);
+      mpButtonSaveList.Enabled = false;
       DVBCChannel tuneChannel = new DVBCChannel();
       tuneChannel.Frequency = Int32.Parse(textBoxFreq.Text);
       tuneChannel.ModulationType = (ModulationType)mpComboBoxMod.SelectedIndex;
