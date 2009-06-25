@@ -33,6 +33,7 @@ namespace SetupTv.Sections
       this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxSymbolRate = new System.Windows.Forms.TextBox();
       this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpButtonSaveList = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButton1 = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpComboBoxMod = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.Modulation = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -75,6 +76,7 @@ namespace SetupTv.Sections
       this.tabPageScan.Controls.Add(this.mpLabel5);
       this.tabPageScan.Controls.Add(this.textBoxSymbolRate);
       this.tabPageScan.Controls.Add(this.mpLabel4);
+      this.tabPageScan.Controls.Add(this.mpButtonSaveList);
       this.tabPageScan.Controls.Add(this.mpButton1);
       this.tabPageScan.Controls.Add(this.mpComboBoxMod);
       this.tabPageScan.Controls.Add(this.Modulation);
@@ -113,7 +115,7 @@ namespace SetupTv.Sections
       this.textBoxSymbolRate.Location = new System.Drawing.Point(108, 115);
       this.textBoxSymbolRate.Name = "textBoxSymbolRate";
       this.textBoxSymbolRate.Size = new System.Drawing.Size(158, 20);
-      this.textBoxSymbolRate.TabIndex = 98;
+      this.textBoxSymbolRate.TabIndex = 4;
       this.textBoxSymbolRate.Text = "6875";
       // 
       // mpLabel4
@@ -125,12 +127,22 @@ namespace SetupTv.Sections
       this.mpLabel4.TabIndex = 97;
       this.mpLabel4.Text = "Symbol rate:";
       // 
+      // mpButtonSaveList
+      // 
+      this.mpButtonSaveList.Location = new System.Drawing.Point(373, 113);
+      this.mpButtonSaveList.Name = "mpButtonSaveList";
+      this.mpButtonSaveList.Size = new System.Drawing.Size(63, 23);
+      this.mpButtonSaveList.TabIndex = 6;
+      this.mpButtonSaveList.Text = "Save list";
+      this.mpButtonSaveList.UseVisualStyleBackColor = true;
+      this.mpButtonSaveList.Click += new System.EventHandler(this.mpButtonSaveList_Click);
+      // 
       // mpButton1
       // 
       this.mpButton1.Location = new System.Drawing.Point(284, 113);
       this.mpButton1.Name = "mpButton1";
-      this.mpButton1.Size = new System.Drawing.Size(100, 23);
-      this.mpButton1.TabIndex = 96;
+      this.mpButton1.Size = new System.Drawing.Size(83, 23);
+      this.mpButton1.TabIndex = 5;
       this.mpButton1.Text = "Manual scan";
       this.mpButton1.UseVisualStyleBackColor = true;
       this.mpButton1.Click += new System.EventHandler(this.mpButton1_Click);
@@ -177,7 +189,7 @@ namespace SetupTv.Sections
       this.mpComboBoxMod.Location = new System.Drawing.Point(108, 88);
       this.mpComboBoxMod.Name = "mpComboBoxMod";
       this.mpComboBoxMod.Size = new System.Drawing.Size(158, 21);
-      this.mpComboBoxMod.TabIndex = 95;
+      this.mpComboBoxMod.TabIndex = 3;
       // 
       // Modulation
       // 
@@ -193,7 +205,7 @@ namespace SetupTv.Sections
       this.textBoxFreq.Location = new System.Drawing.Point(108, 60);
       this.textBoxFreq.Name = "textBoxFreq";
       this.textBoxFreq.Size = new System.Drawing.Size(158, 20);
-      this.textBoxFreq.TabIndex = 93;
+      this.textBoxFreq.TabIndex = 2;
       this.textBoxFreq.Text = "163000";
       // 
       // mpLabel2
@@ -212,7 +224,7 @@ namespace SetupTv.Sections
       this.checkBoxCreateGroups.Location = new System.Drawing.Point(13, 376);
       this.checkBoxCreateGroups.Name = "checkBoxCreateGroups";
       this.checkBoxCreateGroups.Size = new System.Drawing.Size(175, 17);
-      this.checkBoxCreateGroups.TabIndex = 91;
+      this.checkBoxCreateGroups.TabIndex = 7;
       this.checkBoxCreateGroups.Text = "Create groups for each provider";
       this.checkBoxCreateGroups.UseVisualStyleBackColor = true;
       // 
@@ -294,7 +306,7 @@ namespace SetupTv.Sections
       this.mpButtonScanTv.Location = new System.Drawing.Point(284, 8);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
       this.mpButtonScanTv.Size = new System.Drawing.Size(152, 23);
-      this.mpButtonScanTv.TabIndex = 81;
+      this.mpButtonScanTv.TabIndex = 1;
       this.mpButtonScanTv.Text = "Scan predefined provider";
       this.mpButtonScanTv.UseVisualStyleBackColor = true;
       this.mpButtonScanTv.Click += new System.EventHandler(this.mpButtonScanTv_Click_1);
@@ -315,7 +327,7 @@ namespace SetupTv.Sections
       this.mpComboBoxCountry.Location = new System.Drawing.Point(84, 10);
       this.mpComboBoxCountry.Name = "mpComboBoxCountry";
       this.mpComboBoxCountry.Size = new System.Drawing.Size(182, 21);
-      this.mpComboBoxCountry.TabIndex = 80;
+      this.mpComboBoxCountry.TabIndex = 0;
       // 
       // mpBeveledLine1
       // 
@@ -377,6 +389,7 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxCountry;
     private MediaPortal.UserInterface.Controls.MPBeveledLine mpBeveledLine1;
     private System.Windows.Forms.TabPage tabPageCIMenu;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonSaveList;
 
   }
 }
