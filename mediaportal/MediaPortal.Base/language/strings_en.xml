@@ -1348,6 +1348,8 @@
     <String id="6037">Stacked movie</String>
     <String id="6038">Please select disk to play.</String>
     <String id="6039">AAC Audio Codec</String>
+    <String id="6040">Yesterday</String>
+    <String id="6041">Two days ago</String>
     <String id="8000" prefix="My ">Mail</String>
     <String id="8001">Check Mailbox</String>
     <String id="8002">Auto-check off</String>

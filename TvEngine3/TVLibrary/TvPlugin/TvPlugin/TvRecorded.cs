@@ -1177,9 +1177,14 @@ namespace TvPlugin
           Recording rec = (Recording)item1.TVTag;
           // item1.Label = rec.Title;
           TimeSpan ts = rec.EndTime - rec.StartTime;
-          string strTime = string.Format("{0} {1} ({2})", Utils.GetShortDayString(rec.StartTime),
-                                         rec.StartTime.ToShortTimeString(),
-                                         Utils.SecondsToHMString((int)ts.TotalSeconds));
+
+          string strTime = String.Format("{0} ({1})",
+                            Utils.GetNamedDate(rec.StartTime),
+                            Utils.SecondsToHMString((int)ts.TotalSeconds));
+
+          //string strTime = string.Format("{0} {1} ({2})", Utils.GetShortDayString(rec.StartTime),
+          //                               rec.StartTime.ToShortTimeString(),
+          //                               Utils.SecondsToHMString((int)ts.TotalSeconds));
           item1.Label2 = strTime;
           if (_currentViewMethod != GUIFacadeControl.ViewMode.List)
           {

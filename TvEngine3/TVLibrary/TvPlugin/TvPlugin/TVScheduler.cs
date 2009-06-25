@@ -634,23 +634,6 @@ namespace TvPlugin
       btnSortBy.IsAscending = m_bSortAscending;
     }
 
-    private string GetDate(Schedule schedule)
-    {
-      DateTime now = DateTime.Now;
-      if (schedule.StartTime.Date == now.Date)
-      {
-        return String.Format("{0} {1}", GUILocalizeStrings.Get(6030), schedule.StartTime.ToString("HH:mm"));
-      }
-      if (schedule.StartTime.Date == now.Date.AddDays(1))
-      {
-        return String.Format("{0} {1}", GUILocalizeStrings.Get(6031), schedule.StartTime.ToString("HH:mm"));
-      }
-
-      return String.Format("{0} {1}",
-                           schedule.StartTime.ToShortDateString(),
-                           schedule.StartTime.ToString("HH:mm"));
-    }
-
     private void SetLabels()
     {
       WeekEndTool weekEndTool = Setting.GetWeekEndTool();
@@ -750,7 +733,7 @@ namespace TvPlugin
         }
         else
         {
-          item.Label2 = GetDate(rec);
+          item.Label2 = Utils.GetNamedDate(rec.StartTime);
         }
       }
     }

@@ -799,6 +799,29 @@ namespace MediaPortal.Util
       return strHMS;
     }
 
+    public static string GetNamedDate(DateTime aDateTime)
+    {
+      DateTime now = DateTime.Now;
+      if (aDateTime.Date == now.Date) // Today
+      {
+        return String.Format("{0} {1}", GUILocalizeStrings.Get(6030), aDateTime.ToString("HH:mm"));
+      }
+      else if (aDateTime.Date == now.Date.AddDays(1)) // Tomorrow
+      {
+        return String.Format("{0} {1}", GUILocalizeStrings.Get(6031), aDateTime.ToString("HH:mm"));
+      }
+      else if (aDateTime.Date.AddDays(1) == now.Date) // Yesterday
+      {
+        return String.Format("{0} {1}", GUILocalizeStrings.Get(6040), aDateTime.ToString("HH:mm"));
+      }
+      else if (aDateTime.Date.AddDays(2) == now.Date) // Two days ago
+      {
+        return String.Format("{0} {1}", GUILocalizeStrings.Get(6041), aDateTime.ToString("HH:mm"));
+      }
+
+      return String.Format("{0} {1}", aDateTime.ToShortDateString(), aDateTime.ToString("HH:mm"));
+    }
+
     public static string GetShortDayString(DateTime dt)
     {
       try
