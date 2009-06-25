@@ -157,7 +157,7 @@
     <value>Клиент MediaPortal</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
-    <value>Будет установлен только MediaPortal 1.0. Для просмотра ТВ программ он будет поключаться к выделенному серверу  TV-Server в локальной сети. </value>
+    <value>Будет установлен только MediaPortal. Для просмотра ТВ программ он будет поключаться к выделенному серверу  TV-Server в локальной сети. </value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
     <value>Локальная установка</value>

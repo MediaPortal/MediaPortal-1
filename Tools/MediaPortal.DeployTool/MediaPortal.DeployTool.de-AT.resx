@@ -157,7 +157,7 @@
     <value>MediaPortal Client (zur Verbindung mit einem TV-Server)</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
-    <value>Es wird nur MediaPortal 1.0 installiert. Zum Fernsehen verbindet sich MediaPortal mit einem TV-Server in Ihrem Netzwerk.</value>
+    <value>Es wird nur MediaPortal installiert. Zum Fernsehen verbindet sich MediaPortal mit einem TV-Server in Ihrem Netzwerk.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
     <value>MediaPortal "Einzelplatz"-Installation (alles auf einem Rechner)</value>

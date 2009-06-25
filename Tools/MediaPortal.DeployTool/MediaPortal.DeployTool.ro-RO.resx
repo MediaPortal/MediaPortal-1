@@ -157,13 +157,13 @@
     <value>MediaPortal client</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
-    <value>Aceasta va instala numai MediaPortal 1.0. Pentru a vedea TV-ul se va conecta la un Tv Server dedicat intr-o rețea LAN</value>
+    <value>Aceasta va instala numai MediaPortal. Pentru a vedea TV-ul se va conecta la un Tv Server dedicat intr-o rețea LAN</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
     <value>Instalare Singleseat</value>
   </data>
   <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
-    <value>Aceasta este setarea corectă dacă Plăcile TV sunt instalate pe același PC cu care doriți sa utilizați MediaPortal și să vedeți TV-ul cu Mediaportal 1.0. </value>
+    <value>Aceasta este setarea corectă dacă Plăcile TV sunt instalate pe același PC cu care doriți sa utilizați MediaPortal și să vedeți TV-ul cu Mediaportal. </value>
   </data>
   <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
     <value>TV-Server Dedicat (master)</value>

@@ -157,7 +157,7 @@
     <value>MediaPortal Klient</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
-    <value>Detta kommer endast installera MediaPortal 1.0. För att titta på TV, kommer den att koppla upp 
+    <value>Detta kommer endast installera MediaPortal. För att titta på TV, kommer den att koppla upp 
 sig mot en TV-Server i ditt lokala nätverk.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
@@ -165,7 +165,7 @@ sig mot en TV-Server i ditt lokala nätverk.</value>
   </data>
   <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
     <value>Detta är den rätta valet om du har TV-korten installerade på samma dator 
-som du vill använda MediaPortal för att titta på TV med MediaPortal 1.0.</value>
+som du vill använda MediaPortal för att titta på TV med MediaPortal.</value>
   </data>
   <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
     <value>Dedicerad TV-Server (master)</value>

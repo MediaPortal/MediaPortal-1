@@ -157,14 +157,13 @@
     <value>Klient MediaPortal</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
-    <value>Ta opcja zainstaluje tylko MediaPortal 1.0. Aby oglądać telewizję nastąpi połączenie z TV-Server poprzez LAN.</value>
+    <value>Ta opcja zainstaluje tylko MediaPortal. Aby oglądać telewizję nastąpi połączenie z TV-Server poprzez LAN.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
     <value>Instalacja jednostanowiskowa</value>
   </data>
   <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
-    <value>To jest właściwa instalacja jeśli masz zamontowane karty telewizyjne na tym komputerze i chcesz na nim oglądać
-również programy telewizyjne.</value>
+    <value>To jest właściwa instalacja jeśli masz zamontowane karty telewizyjne na tym komputerze i chcesz na nim oglądać również programy telewizyjne.</value>
   </data>
   <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
     <value>Obecny TV-Server (master)</value>

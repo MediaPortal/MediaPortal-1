@@ -157,7 +157,7 @@
     <value>MediaPortal клијент</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
-    <value>Овим ћете инсталирати само MediaPortal 1.0. Да би гледали тв MediaPortal ће се прикључити на ТВ-сервер који се налази на вашој мрежи.</value>
+    <value>Овим ћете инсталирати само MediaPortal. Да би гледали тв MediaPortal ће се прикључити на ТВ-сервер који се налази на вашој мрежи.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
     <value>Инсталација за само један рачунар</value>

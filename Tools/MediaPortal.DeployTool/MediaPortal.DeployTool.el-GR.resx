@@ -157,7 +157,7 @@
     <value>ΜediaPortal client</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
-    <value>Με αυτό θα εγκατασταθεί μόνον το MediaPortal 1.0. Για να παρακολουθήσετε τηλεόραση θα συνδεθεί σε έναν διακομιστή τηλεόρασης (TV-Server) στο δίκτυό σας.</value>
+    <value>Με αυτό θα εγκατασταθεί μόνον το MediaPortal. Για να παρακολουθήσετε τηλεόραση θα συνδεθεί σε έναν διακομιστή τηλεόρασης (TV-Server) στο δίκτυό σας.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
     <value>Εγκατάσταση για έναν υπολογιστή (Singleseat)</value>

@@ -157,14 +157,14 @@
     <value>MediaPortal client</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
-    <value>Hiermee installeert u alleen MediaPortal 1.0.1. Om TV te kijken moet er verbinding gemaakt worden met een TV-Server in uw netwerk.</value>
+    <value>Hiermee installeert u alleen MediaPortal. Om TV te kijken moet er verbinding gemaakt worden met een TV-Server in uw netwerk.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
     <value>Installatie op 1 PC (Single seat)</value>
   </data>
   <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
     <value>Dit is de juiste setup als uw TV-kaarten in dezelfde PC geïnstalleerd zijn waarop u MediaPortal 
-wilt gebruiken en TV wilt kijken met MediaPortal 1.0.1.</value>
+wilt gebruiken en TV wilt kijken met MediaPortal.</value>
   </data>
   <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
     <value>Dedicated TV-Server (master)</value>

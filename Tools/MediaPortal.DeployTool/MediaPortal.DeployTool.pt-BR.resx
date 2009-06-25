@@ -157,14 +157,14 @@
     <value>Cliente MediaPortal</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
-    <value>Somente será instalado o MediaPortal 1.0. Para assistir TV será necessária a conexão com um servidor de TV dedicado em sua rede local.</value>
+    <value>Somente será instalado o MediaPortal. Para assistir TV será necessária a conexão com um servidor de TV dedicado em sua rede local.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
     <value>Instalação Posição Única</value>
   </data>
   <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
     <value>Está é a melhor opção se as placas de TV estão instaladas no mesmo PC que você deseja 
-utilizar o MediaPortal e assistir TV utilizando o MediaPortal 1.0</value>
+utilizar o MediaPortal e assistir TV utilizando o MediaPortal.</value>
   </data>
   <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
     <value>Servidor de TV dedicado (principal)</value>

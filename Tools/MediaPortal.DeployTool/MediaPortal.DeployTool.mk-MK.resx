@@ -157,14 +157,14 @@
     <value>MediaPortal client</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
-    <value>Ќе се инсталира само MediaPortal 1.0. За гледање TV тој ќе се конектира на специјализиран TV-Server на Вашата LAN.</value>
+    <value>Ќе се инсталира само MediaPortal. За гледање TV тој ќе се конектира на специјализиран TV-Server на Вашата LAN.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
     <value>Singleseat Installation</value>
   </data>
   <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
     <value>Ова е вистинскиот setup за Вас ако TV-картичката е инсталирана на истиот PC
-каде што сакате да го користите MediaPortal и да гледате TV на MediaPortal 1.0.</value>
+каде што сакате да го користите MediaPortal и да гледате TV на MediaPortal.</value>
   </data>
   <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
     <value>Специјализиран TV-Server (master)</value>

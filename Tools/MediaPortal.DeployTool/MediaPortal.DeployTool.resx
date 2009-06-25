@@ -157,14 +157,14 @@
     <value>MediaPortal client</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
-    <value>This will only install MediaPortal 1.0. To watch TV it will connect to a dedicated TV-Server in your local area network.</value>
+    <value>This will only install MediaPortal. To watch TV it will connect to a dedicated TV-Server in your local area network.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
     <value>Singleseat Installation</value>
   </data>
   <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
     <value>This is the right setup for you if the TV-Cards are installed in the same PC as you want
-to use MediaPortal and watch TV on MediaPortal 1.0.</value>
+to use MediaPortal and watch TV on MediaPortal.</value>
   </data>
   <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
     <value>Dedicated TV-Server (master)</value>

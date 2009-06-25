@@ -157,7 +157,7 @@
     <value>MediaPortal klijent</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
-    <value>Instalirati će se samo MediaPortal 1.0. Za gledanje televizije potrebno se spojiti na TV-Server u LAN mreži.</value>
+    <value>Instalirati će se samo MediaPortal. Za gledanje televizije potrebno se spojiti na TV-Server u LAN mreži.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
     <value>Instalacija na jedno računalo.</value>

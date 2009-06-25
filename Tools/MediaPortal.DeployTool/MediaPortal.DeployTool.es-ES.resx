@@ -157,14 +157,14 @@
     <value>Cliente de MediaPortal</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
-    <value>Esto sólo instalará MediaPortal 1.0. Para ver la TV se conectará a un TV-Server  (servidor) dedicado de tu red.</value>
+    <value>Esto sólo instalará MediaPortal. Para ver la TV se conectará a un TV-Server  (servidor) dedicado de tu red.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
     <value>Instalación completa en un puesto (singleseat)</value>
   </data>
   <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
     <value>Esta es la configuración adecuada si las tarjetas de TV están instaladas en el mismo 
-PC en el que está instalado MediaPortal y en el que vas a ver TV con MediaPortal 1.0.</value>
+PC en el que está instalado MediaPortal y en el que vas a ver TV con MediaPortal.</value>
   </data>
   <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
     <value>Servidor dedicado de TV -Server (maestro)</value>

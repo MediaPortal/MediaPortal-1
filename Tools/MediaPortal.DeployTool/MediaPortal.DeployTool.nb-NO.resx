@@ -157,14 +157,14 @@
     <value>MediaPortal Klient</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
-    <value>Denne vil bare installere MediaPortal 1.0. for å kunne se på TV, den vil koble til en dedikert TV-Server på ditt nettverk.</value>
+    <value>Denne vil bare installere MediaPortal. for å kunne se på TV, den vil koble til en dedikert TV-Server på ditt nettverk.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
     <value>Singleseat Installajon</value>
   </data>
   <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
     <value>Dette oppsettet er korrekt for deg som har TV-Kort installert på same PC som du ønsker å bruke MediaPortal
- til å se på TV med MediaPortal 1.0.</value>
+ til å se på TV med MediaPortal.</value>
   </data>
   <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
     <value>Dedikert TV-Server (hoved)</value>
