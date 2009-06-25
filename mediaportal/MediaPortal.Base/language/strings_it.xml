@@ -1348,6 +1348,8 @@
     <String id="6037">Film raggruppato</String>
     <String id="6038">Selezionare il disco da riprodurre.</String>
     <String id="6039">Codec Audio LATM AAC</String>
+    <String id="6040">Ieri</String>
+    <String id="6041">Due giorni fa</String>
     <String id="8000" prefix="Le mie ">Email</String>
     <String id="8001">Controlla la Posta</String>
     <String id="8002">Contr. autom. disattivo</String>
