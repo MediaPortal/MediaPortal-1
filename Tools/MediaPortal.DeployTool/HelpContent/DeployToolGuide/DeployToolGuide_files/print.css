@@ -2,10 +2,10 @@ TD {
 	BACKGROUND-COLOR: #ffffff
 }
 HTML {
-	FONT-SIZE: 12pt; BACKGROUND: #ffffff; FONT-FAMILY: Times, serif
+	FONT-FAMILY: Times, serif; BACKGROUND: #ffffff; FONT-SIZE: 12pt
 }
 BODY {
-	BACKGROUND: #ffffff; MARGIN: 1.5cm
+	MARGIN: 1.5cm; BACKGROUND: #ffffff
 }
 A {
 	COLOR: black; TEXT-DECORATION: none
@@ -28,11 +28,11 @@ A:hover {
 PRE {
 	FONT-SIZE: 10pt
 }
-A.interwiki:unknown {
-	content: attr(title) ":"
+A.interwiki:before {
+	CONTENT: attr(title) ":"
 }
-A.badinterwiki:unknown {
-	content: attr(title) ":"
+A.badinterwiki:before {
+	CONTENT: attr(title) ":"
 }
 A.interwiki IMG {
 	DISPLAY: none
@@ -41,7 +41,7 @@ A.badinterwiki IMG {
 	DISPLAY: none
 }
 .footnotes DIV {
-	BORDER-TOP: gray 1pt solid; BACKGROUND: #ffffff; WIDTH: 5em
+	WIDTH: 5em; BACKGROUND: #ffffff; BORDER-TOP: gray 1pt solid
 }
 #header {
 	DISPLAY: none; BACKGROUND: #ffffff
