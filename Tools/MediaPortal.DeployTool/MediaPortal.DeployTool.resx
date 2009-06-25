@@ -157,7 +157,7 @@
     <value>MediaPortal client</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
-    <value>This will only install MediaPortal 1.0. To watch TV it will connect to an dedicated TV-Server on your LAN.</value>
+    <value>This will only install MediaPortal 1.0. To watch TV it will connect to a dedicated TV-Server in your local area network.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
     <value>Singleseat Installation</value>
@@ -171,7 +171,7 @@ to use MediaPortal and watch TV on MediaPortal 1.0.</value>
   </data>
   <data name="CustomInstallation_labelMaster" xml:space="preserve">
     <value>This will only install the MediaPortal TV-Server on this PC.
-The PC will then act as dedicated TV-Server and provide other PC's in your LAN with TV. (database installation required)</value>
+The PC will then act as a dedicated TV-Server and provide other PC's in your LAN with TV. (database installation required)</value>
   </data>
   <data name="MainWindow_browseButton" xml:space="preserve">
     <value>Browse</value>
@@ -324,7 +324,7 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
   </data>
   <data name="ManualDownload_errFileNotFound" xml:space="preserve">
     <value>File {0} still does not exist. Please browse your disk
-(filename should be closed to the proposed one)</value>
+(the filename should be similar to the proposed one).</value>
   </data>
   <data name="ManualDownload_labelDesc" xml:space="preserve">
     <value>Hit "continue" when you finished downloading the requested file.</value>
@@ -440,7 +440,7 @@ to perform the installation later ?
     <value>Press the "download" button to perform the download of all needed components</value>
   </data>
   <data name="OS_Support" xml:space="preserve">
-    <value>Sorry your OS is not currently supported by MediaPortal !</value>
+    <value>Sorry, your OS is currently not supported by MediaPortal!</value>
   </data>
   <data name="OS_Warning" xml:space="preserve">
     <value>Your OS is unsupported because Microsoft did not release several required hotfixes for it.
@@ -449,13 +449,13 @@ Continue at your own risk!</value>
   <data name="DownloadSettings_failed" xml:space="preserve">
     <value>Download of settings file failed.
 Please review your Internet Explorer configuration and try once again.
-Corrupted config file, if found, will now be deleted.</value>
+A corrupted config file, if found, will now be deleted.</value>
   </data>
   <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
     <value>Configure Windows Firewall to allow external access to MediaPortal</value>
   </data>
   <data name="OS_Beta" xml:space="preserve">
-    <value>Beta version of SP detected, your system is not supported...
+    <value>Beta version of a service pack detected, your system is not supported...
 Continue at your own risk!</value>
   </data>
   <data name="Finished_labelHeading3_download" xml:space="preserve">
@@ -466,13 +466,13 @@ Transfer this folder to your HTPC. Start installation by running "MediaPortal.De
     <value>Skipped</value>
   </data>
   <data name="Exit_Installation" xml:space="preserve">
-    <value>Do you really want to abort the MediaPortal installation?</value>
+    <value>Do you really want to abort the installation of MediaPortal?</value>
   </data>
   <data name="DownloadOnly_CurrentSettings" xml:space="preserve">
     <value>Current download settings: lang={0}, arch={1}</value>
   </data>
   <data name="DownloadSettings_labelSectionHeader" xml:space="preserve">
-    <value>Please select settings for downloads:</value>
+    <value>Please select the download settings:</value>
   </data>
   <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
     <value>No Internet connection found! To continue the installation an active connection is required.</value>
