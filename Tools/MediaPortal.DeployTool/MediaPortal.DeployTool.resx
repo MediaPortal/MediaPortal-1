@@ -163,8 +163,7 @@
     <value>Singleseat Installation</value>
   </data>
   <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
-    <value>This is the right setup for you if the TV-Cards are installed in the same PC as you want
-to use MediaPortal and watch TV on MediaPortal.</value>
+    <value>This is the right setup for you if the TV-Cards are installed in the same PC as you want to use MediaPortal and watch TV on MediaPortal.</value>
   </data>
   <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
     <value>Dedicated TV-Server (master)</value>
