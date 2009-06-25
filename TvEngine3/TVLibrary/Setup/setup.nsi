@@ -416,38 +416,36 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File /r /x .svn "${TVSERVER.BASE}\TuningParameters\*"
 
   ; The Plugin Directory
-  SetOutPath $INSTDIR\Plugins
-  File ..\Plugins\ComSkipLauncher\bin\${BUILD_TYPE}\ComSkipLauncher.dll
-  File ..\Plugins\ConflictsManager\bin\${BUILD_TYPE}\ConflictsManager.dll
-  # removed it because it is not working like it should
-  #File ..\Plugins\PersonalTVGuide\bin\${BUILD_TYPE}\PersonalTVGuide.dll
-  File ..\Plugins\PowerScheduler\bin\${BUILD_TYPE}\PowerScheduler.dll
-  File ..\Plugins\ServerBlaster\ServerBlaster\bin\${BUILD_TYPE}\ServerBlaster.dll
-  File ..\Plugins\TvMovie\bin\${BUILD_TYPE}\TvMovie.dll
-  File ..\Plugins\XmlTvImport\bin\${BUILD_TYPE}\XmlTvImport.dll
+  SetOutPath "$INSTDIR\Plugins"
+  File "${svn_TVServer}\Plugins\ComSkipLauncher\bin\${BUILD_TYPE}\ComSkipLauncher.dll"
+  File "${svn_TVServer}\Plugins\ConflictsManager\bin\${BUILD_TYPE}\ConflictsManager.dll"
+  File "${svn_TVServer}\Plugins\PowerScheduler\bin\${BUILD_TYPE}\PowerScheduler.dll"
+  File "${svn_TVServer}\Plugins\ServerBlaster\ServerBlaster\bin\${BUILD_TYPE}\ServerBlaster.dll"
+  File "${svn_TVServer}\Plugins\TvMovie\bin\${BUILD_TYPE}\TvMovie.dll"
+  File "${svn_TVServer}\Plugins\XmlTvImport\bin\${BUILD_TYPE}\XmlTvImport.dll"
 
   ; Rest of Files
-  SetOutPath $INSTDIR
-  File ..\DirectShowLib\bin\${BUILD_TYPE}\DirectShowLib.dll
-  File ..\Plugins\PluginBase\bin\${BUILD_TYPE}\PluginBase.dll
-  File ..\Plugins\PowerScheduler\PowerScheduler.Interfaces\bin\${BUILD_TYPE}\PowerScheduler.Interfaces.dll
-  File "..\Plugins\ServerBlaster\ServerBlaster (Learn)\bin\${BUILD_TYPE}\Blaster.exe"
-  File ..\SetupTv\bin\${BUILD_TYPE}\SetupTv.exe
-  File ..\SetupTv\bin\${BUILD_TYPE}\SetupTv.exe.config
-  File ..\TvControl\bin\${BUILD_TYPE}\TvControl.dll
-  File ..\TVDatabase\bin\${BUILD_TYPE}\TVDatabase.dll
-  File ..\TVDatabase\references\Gentle.Common.DLL
-  File ..\TVDatabase\references\Gentle.Framework.DLL
-  File ..\TVDatabase\references\Gentle.Provider.MySQL.dll
-  File ..\TVDatabase\references\Gentle.Provider.SQLServer.dll
-  File ..\TVDatabase\references\log4net.dll
-  File ..\TVDatabase\references\MySql.Data.dll
-  File ..\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\TvBusinessLayer.dll
-  File ..\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll
-  File ..\TVLibrary\bin\${BUILD_TYPE}\TVLibrary.dll
-  File ..\TvService\bin\${BUILD_TYPE}\TvService.exe
-  File ..\TvService\bin\${BUILD_TYPE}\TvService.exe.config
-  File ..\SetupControls\bin\${BUILD_TYPE}\SetupControls.dll
+  SetOutPath "$INSTDIR"
+  File "${svn_TVServer}\DirectShowLib\bin\${BUILD_TYPE}\DirectShowLib.dll"
+  File "${svn_TVServer}\Plugins\PluginBase\bin\${BUILD_TYPE}\PluginBase.dll"
+  File "${svn_TVServer}\Plugins\PowerScheduler\PowerScheduler.Interfaces\bin\${BUILD_TYPE}\PowerScheduler.Interfaces.dll"
+  File "${svn_TVServer}\Plugins\ServerBlaster\ServerBlaster (Learn)\bin\${BUILD_TYPE}\Blaster.exe"
+  File "${svn_TVServer}\SetupTv\bin\${BUILD_TYPE}\SetupTv.exe"
+  File "${svn_TVServer}\SetupTv\bin\${BUILD_TYPE}\SetupTv.exe.config"
+  File "${svn_TVServer}\TvControl\bin\${BUILD_TYPE}\TvControl.dll"
+  File "${svn_TVServer}\TVDatabase\bin\${BUILD_TYPE}\TVDatabase.dll"
+  File "${svn_TVServer}\TVDatabase\references\Gentle.Common.DLL"
+  File "${svn_TVServer}\TVDatabase\references\Gentle.Framework.DLL"
+  File "${svn_TVServer}\TVDatabase\references\Gentle.Provider.MySQL.dll"
+  File "${svn_TVServer}\TVDatabase\references\Gentle.Provider.SQLServer.dll"
+  File "${svn_TVServer}\TVDatabase\references\log4net.dll"
+  File "${svn_TVServer}\TVDatabase\references\MySql.Data.dll"
+  File "${svn_TVServer}\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\TvBusinessLayer.dll"
+  File "${svn_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
+  File "${svn_TVServer}\TVLibrary\bin\${BUILD_TYPE}\TVLibrary.dll"
+  File "${svn_TVServer}\TvService\bin\${BUILD_TYPE}\TvService.exe"
+  File "${svn_TVServer}\TvService\bin\${BUILD_TYPE}\TvService.exe.config"
+  File "${svn_TVServer}\SetupControls\bin\${BUILD_TYPE}\SetupControls.dll"
 
   ; 3rd party assemblys
   File "${TVSERVER.BASE}\hauppauge.dll"
@@ -465,7 +463,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ; Common App Data Files
   SetOutPath "${COMMON_APPDATA}"
-  File "..\TvService\Gentle.config"
+  File "${svn_TVServer}\TvService\Gentle.config"
   File "${TVSERVER.BASE}\HelpReferences.xml"
 
   #---------------------------------------------------------------------------
@@ -558,55 +556,53 @@ ${MementoSectionEnd}
   RMDir /r "${COMMON_APPDATA}\TuningParameters"
 
   ; Remove Plugins
-  Delete $INSTDIR\Plugins\ComSkipLauncher.dll
-  Delete $INSTDIR\Plugins\ConflictsManager.dll
-  #Delete $INSTDIR\Plugins\PersonalTVGuide.dll
-  Delete $INSTDIR\Plugins\PowerScheduler.dll
-  Delete $INSTDIR\Plugins\ServerBlaster.dll
-  Delete $INSTDIR\Plugins\TvMovie.dll
-  Delete $INSTDIR\Plugins\XmlTvImport.dll
+  Delete "$INSTDIR\Plugins\ComSkipLauncher.dll"
+  Delete "$INSTDIR\Plugins\ConflictsManager.dll"
+  Delete "$INSTDIR\Plugins\PowerScheduler.dll"
+  Delete "$INSTDIR\Plugins\ServerBlaster.dll"
+  Delete "$INSTDIR\Plugins\TvMovie.dll"
+  Delete "$INSTDIR\Plugins\XmlTvImport.dll"
   RMDir "$INSTDIR\Plugins"
 
   ; And finally remove all the files installed
   ; Leave the directory in place, as it might contain user modified files
-  Delete $INSTDIR\DirectShowLib.dll
+  Delete "$INSTDIR\DirectShowLib.dll"
   ; binary used for skystar2 support
-  Delete $INSTDIR\dvblib.dll
-  Delete $INSTDIR\PluginBase.dll
-  Delete $INSTDIR\PowerScheduler.Interfaces.DLL
-  Delete $INSTDIR\Blaster.exe
-  Delete $INSTDIR\SetupTv.exe
-  Delete $INSTDIR\SetupTv.exe.config
-  Delete $INSTDIR\TvControl.dll
-  Delete $INSTDIR\TVDatabase.dll
-  Delete $INSTDIR\Gentle.Common.DLL
-  Delete $INSTDIR\Gentle.Framework.DLL
-  Delete $INSTDIR\Gentle.Provider.MySQL.dll
-  Delete $INSTDIR\Gentle.Provider.SQLServer.dll
-  Delete $INSTDIR\log4net.dll
-  Delete $INSTDIR\MySql.Data.dll
-  Delete $INSTDIR\TvBusinessLayer.dll
-  Delete $INSTDIR\TvLibrary.Interfaces.dll
-  Delete $INSTDIR\TVLibrary.dll
-  Delete $INSTDIR\Germany_Unitymedia_NRW.dvbc
-  Delete $INSTDIR\TvService.exe
-  Delete $INSTDIR\TvService.exe.config
-  Delete $INSTDIR\SetupControls.dll
+  Delete "$INSTDIR\dvblib.dll"
+  Delete "$INSTDIR\PluginBase.dll"
+  Delete "$INSTDIR\PowerScheduler.Interfaces.DLL"
+  Delete "$INSTDIR\Blaster.exe"
+  Delete "$INSTDIR\SetupTv.exe"
+  Delete "$INSTDIR\SetupTv.exe.config"
+  Delete "$INSTDIR\TvControl.dll"
+  Delete "$INSTDIR\TVDatabase.dll"
+  Delete "$INSTDIR\Gentle.Common.DLL"
+  Delete "$INSTDIR\Gentle.Framework.DLL"
+  Delete "$INSTDIR\Gentle.Provider.MySQL.dll"
+  Delete "$INSTDIR\Gentle.Provider.SQLServer.dll"
+  Delete "$INSTDIR\log4net.dll"
+  Delete "$INSTDIR\MySql.Data.dll"
+  Delete "$INSTDIR\TvBusinessLayer.dll"
+  Delete "$INSTDIR\TvLibrary.Interfaces.dll"
+  Delete "$INSTDIR\TVLibrary.dll"
+  Delete "$INSTDIR\Germany_Unitymedia_NRW.dvbc"
+  Delete "$INSTDIR\TvService.exe"
+  Delete "$INSTDIR\TvService.exe.config"
+  Delete "$INSTDIR\SetupControls.dll"
 
   ; 3rd party assemblys
-  Delete $INSTDIR\dxerr9.dll
-  Delete $INSTDIR\hauppauge.dll
-  Delete $INSTDIR\hcwWinTVCI.dll
-  Delete $INSTDIR\KNCBDACTRL.dll
-  Delete $INSTDIR\StreamingServer.dll
-  Delete $INSTDIR\ttBdaDrvApi_Dll.dll
-  Delete $INSTDIR\ttdvbacc.dll
-  Delete $INSTDIR\Ionic.Zip.dll
+  Delete "$INSTDIR\dxerr9.dll"
+  Delete "$INSTDIR\hauppauge.dll"
+  Delete "$INSTDIR\hcwWinTVCI.dll"
+  Delete "$INSTDIR\KNCBDACTRL.dll"
+  Delete "$INSTDIR\StreamingServer.dll"
+  Delete "$INSTDIR\ttBdaDrvApi_Dll.dll"
+  Delete "$INSTDIR\ttdvbacc.dll"
+  Delete "$INSTDIR\Ionic.Zip.dll"
 
   ; remove Start Menu shortcuts
   Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"
   Delete "${STARTMENU_GROUP}\TV-Server Log-Files.lnk"
-  # [OBSOLETE] Delete "${STARTMENU_GROUP}\MCE Blaster Learn.lnk"
   ; remove Desktop shortcuts
   Delete "$DESKTOP\TV-Server Configuration.lnk"
 !macroend
@@ -628,27 +624,22 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   #---------------------------- File Copy ----------------------
   ; Common Files
   SetOutPath "$MPdir.Base"
-  ;File ..\Plugins\PowerScheduler\PowerScheduler.Interfaces\bin\${BUILD_TYPE}\PowerScheduler.Interfaces.dll
-  ;File ..\TvControl\bin\${BUILD_TYPE}\TvControl.dll
-  ;File ..\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll
-  File ..\TVDatabase\bin\${BUILD_TYPE}\TVDatabase.dll
-  File ..\TVDatabase\references\Gentle.Common.DLL
-  File ..\TVDatabase\references\Gentle.Framework.DLL
-  File ..\TVDatabase\references\Gentle.Provider.MySQL.dll
-  File ..\TVDatabase\references\Gentle.Provider.SQLServer.dll
-  File ..\TVDatabase\references\log4net.dll
-  File ..\TVDatabase\references\MySql.Data.dll
-  File ..\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\TvBusinessLayer.dll
+  File "${svn_TVServer}\TVDatabase\bin\${BUILD_TYPE}\TVDatabase.dll"
+  File "${svn_TVServer}\TVDatabase\references\Gentle.Common.DLL"
+  File "${svn_TVServer}\TVDatabase\references\Gentle.Framework.DLL"
+  File "${svn_TVServer}\TVDatabase\references\Gentle.Provider.MySQL.dll"
+  File "${svn_TVServer}\TVDatabase\references\Gentle.Provider.SQLServer.dll"
+  File "${svn_TVServer}\TVDatabase\references\log4net.dll"
+  File "${svn_TVServer}\TVDatabase\references\MySql.Data.dll"
+  File "${svn_TVServer}\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\TvBusinessLayer.dll"
   
   ;Gentle.Config
   SetOutPath "$MPdir.Config"
-  File ..\TvPlugin\TvPlugin\Gentle.config
+  File "${svn_TVServer}\TvPlugin\TvPlugin\Gentle.config"
 
   ; The Plugins
-  SetOutPath "$MPdir.Plugins\Process"
-  ;File ..\Plugins\PowerScheduler\ClientPlugin\bin\${BUILD_TYPE}\PowerSchedulerClientPlugin.dll
   SetOutPath "$MPdir.Plugins\Windows"
-  File ..\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvPlugin.dll
+  File "${svn_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvPlugin.dll"
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION       for TVClient
@@ -687,13 +678,9 @@ ${MementoSectionEnd}
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\mmaacd.ax"
 
   ; The Plugins
-  ;Delete "$MPdir.Plugins\Process\PowerSchedulerClientPlugin.dll"
   Delete "$MPdir.Plugins\Windows\TvPlugin.dll"
 
   ; Common Files
-  ;Delete "$MPdir.Base\PowerScheduler.Interfaces.dll"
-  ;Delete "$MPdir.Base\TvControl.dll"
-  ;Delete "$MPdir.Base\TvLibrary.Interfaces.dll"
   Delete "$MPdir.Base\TVDatabase.dll"
   Delete "$MPdir.Base\Gentle.Common.DLL"
   Delete "$MPdir.Base\Gentle.Framework.DLL"

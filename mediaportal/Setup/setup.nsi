@@ -414,10 +414,6 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\MusicPlayer\*"
   SetOutPath "$MPdir.Base\Profiles"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Profiles\*"
-  ;SetOutPath "$MPdir.Base\Tuningparameters"
-  ;File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Tuningparameters\*"
-  ;SetOutPath "$MPdir.Base\WebEPG"
-  ;File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\WebEPG\*"
   SetOutPath "$MPdir.Base\Wizards"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Wizards\*"
 
@@ -448,7 +444,6 @@ Section "MediaPortal core files (required)" SecCore
 
   ; Config Files
   SetOutPath "$MPdir.Config"
-  ;File /nonfatal "${MEDIAPORTAL.BASE}\CaptureCardDefinitions.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\eHome Infrared Transceiver List XP.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\HelpReferences.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\ISDNCodes.xml"
@@ -460,81 +455,65 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal "${MEDIAPORTAL.BASE}\Installer\cleanup.xml"
   SetOutPath "$MPdir.Config\scripts\MovieInfo"
   File /nonfatal "${MEDIAPORTAL.BASE}\scripts\MovieInfo\IMDB.csscript"
-  ;SetOutPath "$MPdir.Config\xmltv"
-  ;File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\xmltv\*"
-  
 
 
   SetOutPath "$MPdir.Base"
   SetOverwrite on
   ; MediaPortal.exe
-  File "..\xbmc\bin\${BUILD_TYPE}\MediaPortal.exe"
-  File "..\xbmc\bin\${BUILD_TYPE}\MediaPortal.exe.config"
+  File "${svn_MP}\xbmc\bin\${BUILD_TYPE}\MediaPortal.exe"
+  File "${svn_MP}\xbmc\bin\${BUILD_TYPE}\MediaPortal.exe.config"
   ; Configuration
-  File "..\Configuration\bin\${BUILD_TYPE}\Configuration.exe"
-  File "..\Configuration\bin\${BUILD_TYPE}\Configuration.exe.config"
+  File "${svn_MP}\Configuration\bin\${BUILD_TYPE}\Configuration.exe"
+  File "${svn_MP}\Configuration\bin\${BUILD_TYPE}\Configuration.exe.config"
   ; Core
-  File "..\core\bin\${BUILD_TYPE}\Core.dll"
-  File "..\core\bin\${BUILD_TYPE}\DirectShowLib.dll"
-  File "..\core.cpp\fontEngine\bin\${BUILD_TYPE}\fontengine.dll"
-  File "..\core.cpp\DirectShowHelper\bin\${BUILD_TYPE}\dshowhelper.dll"
-  File "..\core.cpp\DxUtil\bin\${BUILD_TYPE}\dxutil.dll"
-  File "..\core.cpp\mpc-hc_subs\bin\${BUILD_TYPE}\mpcSubs.dll"
+  File "${svn_MP}\core\bin\${BUILD_TYPE}\Core.dll"
+  File "${svn_MP}\core\bin\${BUILD_TYPE}\DirectShowLib.dll"
+  File "${svn_MP}\core.cpp\fontEngine\bin\${BUILD_TYPE}\fontengine.dll"
+  File "${svn_MP}\core.cpp\DirectShowHelper\bin\${BUILD_TYPE}\dshowhelper.dll"
+  File "${svn_MP}\core.cpp\DxUtil\bin\${BUILD_TYPE}\dxutil.dll"
+  File "${svn_MP}\core.cpp\mpc-hc_subs\bin\${BUILD_TYPE}\mpcSubs.dll"
   File "${svn_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\Dxerr9.dll"
-  File "..\MiniDisplayLibrary\bin\${BUILD_TYPE}\MiniDisplayLibrary.dll"
+  File "${svn_MP}\MiniDisplayLibrary\bin\${BUILD_TYPE}\MiniDisplayLibrary.dll"
   ; Utils
-  File "..\Utils\bin\${BUILD_TYPE}\Utils.dll"
+  File "${svn_MP}\Utils\bin\${BUILD_TYPE}\Utils.dll"
   ; Support
-  File "..\MediaPortal.Support\bin\${BUILD_TYPE}\MediaPortal.Support.dll"
+  File "${svn_MP}\MediaPortal.Support\bin\${BUILD_TYPE}\MediaPortal.Support.dll"
   ; Databases
-  File "..\databases\bin\${BUILD_TYPE}\Databases.dll"
-  ; TvCapture
-  ;File "..\tvcapture\bin\${BUILD_TYPE}\TVCapture.dll"
-  ; TvGuideScheduler
-  ;File "..\TVGuideScheduler\bin\${BUILD_TYPE}\TVGuideScheduler.exe"
-  ; TVE2 Skystar2 support
-  ;File "${svn_TvEngine2}\Filters\dvblib\bin\${BUILD_TYPE}\dvblib.dll"
+  File "${svn_MP}\databases\bin\${BUILD_TYPE}\Databases.dll"
   ; MusicShareWatcher
-  File "..\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\${BUILD_TYPE}\MusicShareWatcher.exe"
-  File "..\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\${BUILD_TYPE}\MusicShareWatcherHelper.dll"
+  File "${svn_MP}\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\${BUILD_TYPE}\MusicShareWatcher.exe"
+  File "${svn_MP}\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\${BUILD_TYPE}\MusicShareWatcherHelper.dll"
   ; MPInstaller
-  File "..\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.exe"
-  File "..\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.exe.config"
-  File "..\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.Library.dll"
-  File "..\MPInstaller\MPIMaker\bin\${BUILD_TYPE}\MPIMaker.exe"
+  File "${svn_MP}\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.exe"
+  File "${svn_MP}\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.exe.config"
+  File "${svn_MP}\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.Library.dll"
+  File "${svn_MP}\MPInstaller\MPIMaker\bin\${BUILD_TYPE}\MPIMaker.exe"
   ; WatchDog
-  File "..\WatchDog\bin\${BUILD_TYPE}\WatchDog.exe"
-  File "..\WatchDog\bin\${BUILD_TYPE}\DaggerLib.dll"
-  File "..\WatchDog\bin\${BUILD_TYPE}\DaggerLib.DSGraphEdit.dll"
-  File "..\WatchDog\bin\${BUILD_TYPE}\DirectShowLib-2005.dll"
-  File "..\WatchDog\bin\${BUILD_TYPE}\MediaFoundation.dll"
-  ; WebEPG
-  ;File "..\WebEPG\WebEPG\bin\${BUILD_TYPE}\WebEPG.dll"
-  ;File /oname=WebEPG.exe "..\WebEPG\WebEPG-xmltv\bin\${BUILD_TYPE}\WebEPG-xmltv.exe"
-  ;File "..\WebEPG\WebEPG-conf\bin\${BUILD_TYPE}\WebEPG-conf.exe"
+  File "${svn_MP}\WatchDog\bin\${BUILD_TYPE}\WatchDog.exe"
+  File "${svn_MP}\WatchDog\bin\${BUILD_TYPE}\DaggerLib.dll"
+  File "${svn_MP}\WatchDog\bin\${BUILD_TYPE}\DaggerLib.DSGraphEdit.dll"
+  File "${svn_MP}\WatchDog\bin\${BUILD_TYPE}\DirectShowLib-2005.dll"
+  File "${svn_MP}\WatchDog\bin\${BUILD_TYPE}\MediaFoundation.dll"
   ; Plugins
-  File "..\RemotePlugins\bin\${BUILD_TYPE}\RemotePlugins.dll"
-  File "..\RemotePlugins\Remotes\HcwRemote\HCWHelper\bin\${BUILD_TYPE}\HcwHelper.exe"
-  File "..\RemotePlugins\Remotes\X10Remote\Interop.X10.dll"
+  File "${svn_MP}\RemotePlugins\bin\${BUILD_TYPE}\RemotePlugins.dll"
+  File "${svn_MP}\RemotePlugins\Remotes\HcwRemote\HCWHelper\bin\${BUILD_TYPE}\HcwHelper.exe"
+  File "${svn_MP}\RemotePlugins\Remotes\X10Remote\Interop.X10.dll"
   SetOutPath "$MPdir.Plugins\ExternalPlayers"
-  File "..\ExternalPlayers\bin\${BUILD_TYPE}\ExternalPlayers.dll"
+  File "${svn_MP}\ExternalPlayers\bin\${BUILD_TYPE}\ExternalPlayers.dll"
   SetOutPath "$MPdir.Plugins\process"
-  File "..\ProcessPlugins\bin\${BUILD_TYPE}\ProcessPlugins.dll"
+  File "${svn_MP}\ProcessPlugins\bin\${BUILD_TYPE}\ProcessPlugins.dll"
   SetOutPath "$MPdir.Plugins\subtitle"
-  File "..\SubtitlePlugins\bin\${BUILD_TYPE}\SubtitlePlugins.dll"
+  File "${svn_MP}\SubtitlePlugins\bin\${BUILD_TYPE}\SubtitlePlugins.dll"
   SetOutPath "$MPdir.Plugins\Windows"
-  File "..\Dialogs\bin\${BUILD_TYPE}\Dialogs.dll"
-  File "..\WindowPlugins\bin\${BUILD_TYPE}\WindowPlugins.dll"
+  File "${svn_MP}\Dialogs\bin\${BUILD_TYPE}\Dialogs.dll"
+  File "${svn_MP}\WindowPlugins\bin\${BUILD_TYPE}\WindowPlugins.dll"
   ; MyBurner plugin dependencies
   SetOutPath "$MPdir.Base"
-  File "..\XPImapiBurner\bin\${BUILD_TYPE}\XPBurnComponent.dll"
+  File "${svn_MP}\XPImapiBurner\bin\${BUILD_TYPE}\XPBurnComponent.dll"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
-  File "..\Docs\BASS License.txt"
-  File "..\Docs\MediaPortal License.rtf"
-  ; Wizards
-  ;SetOutPath "$MPdir.Base\Wizards"
-  ;File "..\Configuration\Wizards\*.*"
+  File "${svn_MP}\Docs\BASS License.txt"
+  File "${svn_MP}\Docs\MediaPortal License.rtf"
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION
@@ -545,8 +524,6 @@ Section "MediaPortal core files (required)" SecCore
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\bin\Release\cdxareader.ax"                             "$MPdir.Base\cdxareader.ax"       "$MPdir.Base"
   ##### MAYBE used by VideoEditor
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\bin\Release\CLDump.ax"                                 "$MPdir.Base\CLDump.ax"           "$MPdir.Base"
-  ; used for scanning in tve2
-  ;!insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_TvEngine2}\Filters\MPSA\bin\${BUILD_TYPE}\MPSA.ax"                        "$MPdir.Base\MPSA.ax"             "$MPdir.Base"
   ;filter for analog tv and videoeditor
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\bin\Release\PDMpgMux.ax"                               "$MPdir.Base\PDMpgMux.ax"         "$MPdir.Base"
   ; used for shoutcast
@@ -575,8 +552,6 @@ SectionEnd
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\cdxareader.ax"
   ##### MAYBE used by VideoEditor
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\CLDump.ax"
-  ; used for scanning in tve2
-  ;!insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MPSA.ax"
   ;filter for analog tv and videoeditor
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\PDMpgMux.ax"
   ; used for shoutcast
@@ -610,9 +585,6 @@ SectionEnd
   Delete "$MPdir.Config\scripts\MovieInfo\IMDB.csscript"
   RMDir "$MPdir.Config\scripts\MovieInfo"
   RMDir "$MPdir.Config\scripts"
-  ;Delete "$MPdir.Base\xmltv\ReadMe.txt"
-  ;Delete "$MPdir.Base\xmltv\xmltv.dtd"
-  ;RMDir "$MPdir.Config\xmltv"
 
 
   ; MediaPortal.exe
@@ -636,12 +608,6 @@ SectionEnd
   Delete "$MPdir.Base\MediaPortal.Support.dll"
   ; Databases
   Delete "$MPdir.Base\Databases.dll"
-  ; TvCapture
-  ;Delete "$MPdir.Base\TVCapture.dll"
-  ; TvGuideScheduler
-  ;Delete "$MPdir.Base\TVGuideScheduler.exe"
-  ; TVE2 Skystar2 support
-  ;Delete "$MPdir.Base\dvblib.dll"
   ; MusicShareWatcher
   Delete "$MPdir.Base\MusicShareWatcher.exe"
   Delete "$MPdir.Base\MusicShareWatcherHelper.dll"
@@ -656,10 +622,6 @@ SectionEnd
   Delete "$MPdir.Base\DaggerLib.DSGraphEdit.dll"
   Delete "$MPdir.Base\DirectShowLib-2005.dll"
   Delete "$MPdir.Base\MediaFoundation.dll"
-  ; WebEPG
-  ;Delete "$MPdir.Base\WebEPG.dll"
-  ;Delete "$MPdir.Base\WebEPG.exe"
-  ;Delete "$MPdir.Base\WebEPG-conf.exe"
   ; Plugins
   Delete "$MPdir.Base\RemotePlugins.dll"
   Delete "$MPdir.Base\HcwHelper.exe"
