@@ -628,8 +628,9 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   #---------------------------- File Copy ----------------------
   ; Common Files
   SetOutPath "$MPdir.Base"
-  File ..\Plugins\PowerScheduler\PowerScheduler.Interfaces\bin\${BUILD_TYPE}\PowerScheduler.Interfaces.dll
-  File ..\TvControl\bin\${BUILD_TYPE}\TvControl.dll
+  ;File ..\Plugins\PowerScheduler\PowerScheduler.Interfaces\bin\${BUILD_TYPE}\PowerScheduler.Interfaces.dll
+  ;File ..\TvControl\bin\${BUILD_TYPE}\TvControl.dll
+  ;File ..\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll
   File ..\TVDatabase\bin\${BUILD_TYPE}\TVDatabase.dll
   File ..\TVDatabase\references\Gentle.Common.DLL
   File ..\TVDatabase\references\Gentle.Framework.DLL
@@ -638,7 +639,6 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File ..\TVDatabase\references\log4net.dll
   File ..\TVDatabase\references\MySql.Data.dll
   File ..\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\TvBusinessLayer.dll
-  File ..\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll
   
   ;Gentle.Config
   SetOutPath "$MPdir.Config"
@@ -646,7 +646,7 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
 
   ; The Plugins
   SetOutPath "$MPdir.Plugins\Process"
-  File ..\Plugins\PowerScheduler\ClientPlugin\bin\${BUILD_TYPE}\PowerSchedulerClientPlugin.dll
+  ;File ..\Plugins\PowerScheduler\ClientPlugin\bin\${BUILD_TYPE}\PowerSchedulerClientPlugin.dll
   SetOutPath "$MPdir.Plugins\Windows"
   File ..\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvPlugin.dll
 
@@ -687,12 +687,13 @@ ${MementoSectionEnd}
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\mmaacd.ax"
 
   ; The Plugins
-  Delete "$MPdir.Plugins\Process\PowerSchedulerClientPlugin.dll"
+  ;Delete "$MPdir.Plugins\Process\PowerSchedulerClientPlugin.dll"
   Delete "$MPdir.Plugins\Windows\TvPlugin.dll"
 
   ; Common Files
-  Delete "$MPdir.Base\PowerScheduler.Interfaces.dll"
-  Delete "$MPdir.Base\TvControl.dll"
+  ;Delete "$MPdir.Base\PowerScheduler.Interfaces.dll"
+  ;Delete "$MPdir.Base\TvControl.dll"
+  ;Delete "$MPdir.Base\TvLibrary.Interfaces.dll"
   Delete "$MPdir.Base\TVDatabase.dll"
   Delete "$MPdir.Base\Gentle.Common.DLL"
   Delete "$MPdir.Base\Gentle.Framework.DLL"
@@ -701,7 +702,6 @@ ${MementoSectionEnd}
   Delete "$MPdir.Base\log4net.dll"
   Delete "$MPdir.Base\MySql.Data.dll"
   Delete "$MPdir.Base\TvBusinessLayer.dll"
-  Delete "$MPdir.Base\TvLibrary.Interfaces.dll"
 !macroend
 
 ${MementoSectionDone}

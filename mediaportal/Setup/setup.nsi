@@ -273,6 +273,7 @@ ShowUninstDetails show
 !ifndef HEISE_BUILD
   !insertmacro "${MacroName}" "SecGabest"
 !endif
+  !insertmacro "${MacroName}" "SecPowerScheduler"
 !macroend
 
 !macro ShutdownRunningMediaPortalApplications
@@ -684,7 +685,7 @@ SectionEnd
 !macroend
 
 !ifndef HEISE_BUILD
-${MementoSection} "-MPC-HC audio/video decoders" SecGabest
+Section "-MPC-HC audio/video decoders" SecGabest
   ${LOG_TEXT} "DEBUG" "MementoSection SecGabest"
   ${LOG_TEXT} "INFO" "Installing MPC-HC audio/video decoders..."
 
@@ -701,7 +702,7 @@ ${MementoSection} "-MPC-HC audio/video decoders" SecGabest
   nsExec::ExecToLog '"$MPdir.Base\SetMerit.exe" {3D446B6F-71DE-4437-BE15-8CE47174340F} 00600000'
   ${LOG_TEXT} "INFO" "set merit for MPV"
   nsExec::ExecToLog '"$MPdir.Base\SetMerit.exe" {39F498AF-1A09-4275-B193-673B0BA3D478} 00600000'
-${MementoSectionEnd}
+SectionEnd
 !macro Remove_${SecGabest}
   ${LOG_TEXT} "DEBUG" "MACRO Remove_${SecGabest}"
   ${LOG_TEXT} "INFO" "Uninstalling MPC-HC audio/video decoders..."
@@ -713,6 +714,27 @@ ${MementoSectionEnd}
   Delete "$MPdir.Base\SetMerit.exe"
 !macroend
 !endif
+
+Section "-Powerscheduler Client plugin" SecPowerScheduler
+  ${LOG_TEXT} "INFO" "Installing Powerscheduler client plugin..."
+
+  SetOutPath "$MPdir.Base"
+  File "${svn_TVServer}\Plugins\PowerScheduler\PowerScheduler.Interfaces\bin\${BUILD_TYPE}\PowerScheduler.Interfaces.dll"
+  File "${svn_TVServer}\TvControl\bin\${BUILD_TYPE}\TvControl.dll"
+  File "${svn_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
+
+  SetOutPath "$MPdir.Plugins\Process"
+  File "${svn_TVServer}\Plugins\PowerScheduler\ClientPlugin\bin\${BUILD_TYPE}\PowerSchedulerClientPlugin.dll"
+SectionEnd
+!macro Remove_${SecPowerScheduler}
+  ${LOG_TEXT} "INFO" "Uninstalling Powerscheduler client plugin..."
+
+  Delete "$MPdir.Base\PowerScheduler.Interfaces.dll"
+  Delete "$MPdir.Base\TvControl.dll"
+  Delete "$MPdir.Base\TvLibrary.Interfaces.dll"
+
+  Delete "$MPdir.Plugins\Process\PowerSchedulerClientPlugin.dll"
+!macroend
 
 SectionGroup /e "Backup" SecBackup
   ${MementoUnselectedSection} "Installation directory" SecBackupInstDir
