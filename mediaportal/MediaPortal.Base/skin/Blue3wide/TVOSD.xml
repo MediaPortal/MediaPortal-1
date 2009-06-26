@@ -124,7 +124,7 @@
      <control>
       <description>On tv NOW</description>
       <id>36</id>
-      <type>label</type>
+      <type>textbox</type>
       <width>515</width>
       <height>37</height>
       <posX>335</posX>
