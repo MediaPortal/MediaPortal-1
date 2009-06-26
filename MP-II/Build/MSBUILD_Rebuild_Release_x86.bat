@@ -1,1 +1,0 @@
-@"%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" ..\Source\MP-II-Client-VS2008.sln /target:Rebuild  /property:Configuration=Release;Platform=x86 >> build.log
