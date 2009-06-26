@@ -95,12 +95,12 @@ RequestExecutionLevel admin
 ShowInstDetails show
 AutoCloseWindow true
 VIProductVersion "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}"
-VIAddVersionKey ProductName       "${NAME}"
+VIAddVersionKey ProductName       "${PRODUCT_NAME}"
 VIAddVersionKey ProductVersion    "${VERSION}"
 VIAddVersionKey CompanyName       "${COMPANY}"
 VIAddVersionKey CompanyWebsite    "${URL}"
 VIAddVersionKey FileVersion       "${VERSION}"
-VIAddVersionKey FileDescription   "${NAME} installation ${VERSION}"
+VIAddVersionKey FileDescription   "${PRODUCT_NAME} installation ${VERSION}"
 VIAddVersionKey LegalCopyright    "Copyright © 2005-2009 ${COMPANY}"
 
 ;if we want to make it fully silent we can uncomment this
