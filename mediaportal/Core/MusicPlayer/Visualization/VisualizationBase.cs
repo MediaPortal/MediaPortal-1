@@ -151,6 +151,11 @@ namespace MediaPortal.Visualization
       return false;
     }
 
+    public virtual bool IsWmpVis()
+    {
+      return false;
+    }
+
     public virtual bool Initialize()
     {
       return false;

@@ -111,8 +111,8 @@ namespace MediaPortal.Visualization
         rect.bottom = VisualizationWindow.Height;
 
         OutputContextType outputType = VisualizationWindow.OutputContextType;
-        result = WMPInterop.InitWMPEngine(VizPluginInfo.CLSID, VizPluginInfo.PresetIndex, outputType, IntPtr.Zero,
-                                          VisualizationWindow.CompatibleDC, ref rect);
+        result = WMPInterop.InitWMPEngine(VizPluginInfo.CLSID, VizPluginInfo.PresetIndex, OutputContextType.WindowHandle, IntPtr.Zero,
+                                          VisualizationWindow.Handle, ref rect);
         _Initialized = result;
         Log.Info("  Visualization Manager: WMP visualization initialization {0}", (result ? "succeeded." : "failed!"));
       }
@@ -165,6 +165,11 @@ namespace MediaPortal.Visualization
       return result;
     }
 
+    public override bool IsWmpVis()
+    {
+      return true;
+    }
+
     public override bool Close()
     {
       try
@@ -183,7 +188,7 @@ namespace MediaPortal.Visualization
 
     public override bool WindowSizeChanged(Size newSize)
     {
-      bool result = SetOutputContext(VisualizationWindow.OutputContextType);
+      bool result = SetOutputContext(OutputContextType.WindowHandle);
       return result;
     }
 
@@ -196,7 +201,7 @@ namespace MediaPortal.Visualization
         return false;
       }
 
-      bool result = SetOutputContext(VisualizationWindow.OutputContextType);
+      bool result = SetOutputContext(OutputContextType.WindowHandle);
       return result;
     }
 
@@ -213,7 +218,7 @@ namespace MediaPortal.Visualization
         return false;
       }
 
-      bool result = WMPInterop.SetOutputWMP(outputType, VisualizationWindow.CompatibleDC);
+      bool result = WMPInterop.SetOutputWMP(outputType, VisualizationWindow.Handle);
       return result;
     }
 

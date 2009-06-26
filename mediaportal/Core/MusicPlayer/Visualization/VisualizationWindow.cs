@@ -1573,7 +1573,7 @@ namespace MediaPortal.Visualization
 
       try
       {
-        if (_EnableStatusOverlays)
+        if (_EnableStatusOverlays && !Viz.IsWmpVis())
         {
           // Make sure we're using the original defaults...
           TrackInfoImageWidth = DefaultTrackInfoImageWidth;
@@ -2009,7 +2009,7 @@ namespace MediaPortal.Visualization
 
       try
       {
-        if (_EnableStatusOverlays || !FullScreen)
+        if ((_EnableStatusOverlays || !FullScreen) && !Viz.IsWmpVis())
         {
           if (DialogWindowIsActive)
           {
