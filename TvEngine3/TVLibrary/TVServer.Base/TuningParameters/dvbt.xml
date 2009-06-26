@@ -100,6 +100,13 @@
     <carrier frequency="226500" bandwidth="7"></carrier>
     <carrier frequency="585500" bandwidth="7"></carrier>
   </country>
+  <country name="Australia - QLD - Mackay" offset="125">
+    <carrier frequency="205500" bandwidth="7"></carrier>
+    <carrier frequency="212500" bandwidth="7"></carrier>
+    <carrier frequency="536500" bandwidth="7"></carrier>
+    <carrier frequency="557375" bandwidth="7"></carrier>
+    <carrier frequency="578500" bandwidth="7"></carrier>
+  </country>
   <country name="Australia - QLD - Townsville" offset="125">
     <carrier frequency="550500" bandwidth="7"></carrier>
     <carrier frequency="585500" bandwidth="7"></carrier>
