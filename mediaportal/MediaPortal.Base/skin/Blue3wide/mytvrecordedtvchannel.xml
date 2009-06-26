@@ -1,0 +1,191 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>606</id>
+  <defaultcontrol>3</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <import>common.time.xml</import>
+    <control>
+      <type>image</type>
+      <description>BG</description>
+      <width>1280</width>
+      <height>720</height>
+      <id>1</id>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>106</posX>
+      <posY>12</posY>
+      <texture>television_logo.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>136</posX>
+      <posY>500</posY>
+      <width>286</width>
+      <height>197</height>
+      <texture>-</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>label</type>
+      <description>My Recorded TV Text Label</description>
+      <id>1</id>
+      <posX>444</posX>
+      <posY>85</posY>
+      <label>652</label>
+      <font>font16</font>
+      <align>right</align>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Number of Files Label</description>
+      <id>12</id>
+      <posX>462</posX>
+      <posY>512</posY>
+      <label>#itemcount</label>
+      <visible>false</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>Selected item Label</description>
+      <id>1</id>
+      <posX>1208</posX>
+      <posY>85</posY>
+      <width>622</width>
+      <label>#selecteditem</label>
+      <font>font14</font>
+      <align>right</align>
+      <disabledcolor>ff808080</disabledcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <id>24</id>
+      <posX>71</posX>
+      <posY>121</posY>
+      <layout>StackLayout</layout>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <!--      <control>
+        <type>button</type>
+        <description>View-As button</description>
+        <id>2</id>
+        <onleft>2</onleft>
+        <onright>50</onright>
+        <onup>17</onup>
+        <ondown>3</ondown>
+        <label>100</label>
+      </control> -->
+      <control>
+        <type>sortbutton</type>
+        <id>3</id>
+        <onleft>3</onleft>
+        <onright>50</onright>
+        <onup>3</onup>
+        <ondown>5</ondown>
+        <font>font13</font>
+        <label>620</label>
+      </control>
+      <control>
+        <type>button</type>
+        <description>All,Genre,Channel button</description>
+        <id>5</id>
+        <onleft>5</onleft>
+        <onright>50</onright>
+        <onup>3</onup>
+        <ondown>6</ondown>
+        <label>457</label>
+      </control>
+      <control>
+        <type>button</type>
+        <description>cleanup button</description>
+        <id>6</id>
+        <onleft>6</onleft>
+        <onright>50</onright>
+        <onup>5</onup>
+        <ondown>7</ondown>
+        <label>624</label>
+      </control>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <id>0</id>
+      <posX>455</posX>
+      <posY>116</posY>
+      <width>778</width>
+      <height>583</height>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <mpe>
+        <layout>Grid</layout>
+        <spring>no</spring>
+        <spacing>0</spacing>
+        <padding>
+          <top>0</top>
+          <right>0</right>
+          <bottom>0</bottom>
+          <left>0</left>
+        </padding>
+      </mpe>
+
+      <control>
+        <type>fadelabel</type>
+        <description>Current program title</description>
+        <id>13</id>
+        <posX>1422</posX>
+        <posY>750</posY>
+        <label>#TV.RecordedTV.Title</label>
+        <disabledcolor>808080</disabledcolor>
+        <textcolor>00b2d4f5</textcolor>
+      </control>
+      <control>
+        <type>label</type>
+        <description>Current program time</description>
+        <id>14</id>
+        <posX>75</posX>
+        <posY>280</posY>
+        <label>#TV.RecordedTV.Time</label>
+        <textcolor>ffb2d4f5</textcolor>
+        <visible>false</visible>
+      </control>
+      <control>
+        <type>textboxscrollup</type>
+        <description>Description1</description>
+        <id>15</id>
+        <posX>75</posX>
+        <posY>300</posY>
+        <width>255</width>
+        <height>388</height>
+        <colordiffuse>ffffffff</colordiffuse>
+        <font>font11</font>
+        <label>#TV.RecordedTV.Description</label>
+        <textcolor>ffb2d4f5</textcolor>
+      </control>
+      <!--          <control>
+            <type>label</type>
+            <description>genre</description>
+            <id>17</id>
+            <posX>404</posX>
+            <posY>460</posY>
+            <label>#TV.RecordedTV.Genre</label>
+            <align>right</align>
+            <textcolor>ffb2d4f5</textcolor>
+         </control> -->
+    </control>
+    <import>common.facade.recordings.xml</import>
+  </controls>
+</window>

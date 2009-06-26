@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>800</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:14001</define>
+  <define>#header.image:-</define>
+  <define>#header.hover:-</define>
+  <controls>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+  <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>50</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>0</buttonY>
+      <buttonwidth>60</buttonwidth>
+      <buttonheight>576</buttonheight>
+      <textureFocus>Action_focus.png</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>320</width>
+      <height>720</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <posX>15</posX>
+        <posY>63</posY>
+        <width>263</width>
+        <height>473</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="450" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+      <description>group element</description>
+      <type>group</type>
+      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="slide" time="450" end="-300,0" reversible="false">hidden</animation>
+      <posX>40</posX>
+      <posY>97</posY>
+      <layout>StackLayout</layout>
+      <visible>!Control.HasFocus(50)</visible>
+      <control>
+        <description>View-As</description>
+        <type>button</type>
+        <id>2</id>
+        <label>100</label>
+        <onright>50</onright>
+        <onup>17</onup>
+      </control>
+      <control>
+        <description>Sort</description>
+        <type>sortbutton</type>
+        <id>3</id>
+        <onright>50</onright>
+      </control>
+	  
+      <control>
+        <description>Views</description>
+        <type>button</type>
+        <id>6</id>
+        <label>14002</label>
+        <onright>50</onright>
+      </control>
+
+      </control>
+    </control>
+    <import>common.facade.music.xml</import>
+  </controls>
+</window>

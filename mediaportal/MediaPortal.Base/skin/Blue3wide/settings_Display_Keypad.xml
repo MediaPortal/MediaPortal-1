@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>9005</id>
+  <defaultcontrol>60</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:109005</define>
+  <define>#header.image:settings_logo.png</define>
+  <define>#header.hover:hover_settings.png</define>
+  <!-- cheat a little, we don't use two of the items in the imported file to blank their labels -->
+  <define>#itemcount:-</define>
+  <define>#selecteditem:-</define>
+  <controls>
+    <import>common.window.xml</import>
+    <control>
+      <description>buttons</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="-300,0">WindowClose</animation>
+      <posX>497</posX>
+      <posY>206</posY>
+      <layout>StackLayout</layout>
+      <control>
+        <description>NO KEYPAD OPTIONS</description>
+        <type>label</type>
+        <id>50</id>
+        <width>300</width>
+        <label>9140</label>
+        <onup>17</onup>
+      </control>
+      <control>
+        <description>Enable Keypad</description>
+        <type>togglebutton</type>
+        <id>60</id>
+        <width>300</width>
+        <label>9141</label>
+      </control>
+      <control>
+        <description>Custom Mapping</description>
+        <type>togglebutton</type>
+        <id>61</id>
+        <width>300</width>
+        <label>9142</label>
+      </control>
+      <control>
+        <description>KeyPad Mapping</description>
+        <type>button</type>
+        <id>62</id>
+        <width>300</width>
+        <label>9143</label>
+      </control>
+    </control>
+  </controls>
+</window>

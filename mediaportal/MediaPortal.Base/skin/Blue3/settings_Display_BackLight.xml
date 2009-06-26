@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>9001</id>
+  <defaultcontrol>65</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:109001</define>
+  <define>#header.image:settings_logo.png</define>
+  <define>#header.hover:hover_settings.png</define>
+  <!-- cheat a little, we don't use two of the items in the imported file to blank their labels -->
+  <define>#itemcount:-</define>
+  <define>#selecteditem:-</define>
+  <controls>
+    <import>common.window.xml</import>
+    <control>
+      <description>buttons</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="-300,0">WindowClose</animation>
+      <posX>280</posX>
+      <posY>165</posY>
+      <layout>StackLayout</layout>
+      <control>
+        <description>Red</description>
+        <type>selectbutton</type>
+        <id>65</id>
+        <width>197</width>
+        <label>9112</label>
+        <onup>17</onup>
+      </control>
+      <control>
+        <description>Green</description>
+        <type>selectbutton</type>
+        <id>66</id>
+        <width>197</width>
+        <label>9113</label>
+      </control>
+      <control>
+        <description>Blue</description>
+        <type>selectbutton</type>
+        <id>67</id>
+        <width>197</width>
+        <label>9114</label>
+      </control>
+      <control>
+        <description>Invert Display</description>
+        <type>togglebutton</type>
+        <id>68</id>
+        <width>197</width>
+        <label>9115</label>
+        <ondown>99</ondown>
+      </control>
+    </control>
+  </controls>
+</window>
