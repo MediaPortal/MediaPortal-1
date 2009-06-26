@@ -1,0 +1,215 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{59C2EBC8-0FEA-4B2E-B5D1-476347332331}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TVLibrary</RootNamespace>
+    <AssemblyName>TVLibrary</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>bin\Debug\TVLibrary.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>bin\Release\TVLibrary.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>bin\Debug\TVLibrary.XML</DocumentationFile>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>bin\Release\TVLibrary.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Gentle.Common, Version=1.2.9.1285, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\TVDatabase\references\Gentle.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Gentle.Framework, Version=1.2.9.1286, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\TVDatabase\references\Gentle.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Gentle.Provider.SQLServer, Version=1.2.9.1289, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\TVDatabase\references\Gentle.Provider.SQLServer.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DeviceSorter.cs" />
+    <Compile Include="Implementations\Analog\Components\Capture.cs" />
+    <Compile Include="Implementations\Analog\Components\TeletextComponent.cs" />
+    <Compile Include="Implementations\Analog\Components\Crossbar.cs" />
+    <Compile Include="Implementations\Analog\Components\Encoder.cs" />
+    <Compile Include="Implementations\Analog\Components\Tuner.cs" />
+    <Compile Include="Implementations\Analog\Components\TvAudio.cs" />
+    <Compile Include="Implementations\Analog\QualityControl\Hauppauge.cs" />
+    <Compile Include="Implementations\Analog\Graphs\Analog\AnalogSubChannel.cs" />
+    <Compile Include="Implementations\Analog\Graphs\HDPVR\HDPVRChannel.cs" />
+    <Compile Include="Implementations\Analog\QualityControl\CodecAPIControl.cs" />
+    <Compile Include="Implementations\Analog\QualityControl\BaseControl.cs" />
+    <Compile Include="Implementations\Analog\QualityControl\EncoderAPIControl.cs" />
+    <Compile Include="Implementations\Analog\QualityControl\QualityControlFactory.cs" />
+    <Compile Include="Implementations\Analog\QualityControl\VideoEncoderControl.cs" />
+    <Compile Include="Implementations\Analog\Graphs\Analog\TvCardAnalog.cs" />
+    <Compile Include="Implementations\Analog\Graphs\HDPVR\TVCardHDPVR.cs" />
+    <Compile Include="Implementations\BaseSubChannel.cs" />
+    <Compile Include="Implementations\DVB\ConditionalAccess\ConditionalAccessContext.cs" />
+    <Compile Include="Implementations\DVB\ConditionalAccess\ConexantBDA.cs" />
+    <Compile Include="Implementations\DVB\ConditionalAccess\GenericATSC.cs" />
+    <Compile Include="Implementations\DVB\ConditionalAccess\GenericBDAS.cs" />
+    <Compile Include="Implementations\DVB\ConditionalAccess\HaupPauge\Hauppauge.cs" />
+    <Compile Include="Implementations\DVB\ConditionalAccess\HaupPauge\WinTvCiModule.cs" />
+    <Compile Include="Implementations\DVB\ConditionalAccess\KNC\KNCAPI.cs" />
+    <Compile Include="Implementations\DVB\ConditionalAccess\KNC\KNCDeviceLookup.cs" />
+    <Compile Include="Implementations\DVB\ConditionalAccess\OnAirATSC.cs" />
+    <Compile Include="Implementations\DVB\ConditionalAccess\TechnoTrend\TechnoTrendAPI.cs" />
+    <Compile Include="Implementations\DVB\ConditionalAccess\ViXSATSC.cs" />
+    <Compile Include="Implementations\DVB\DisEqC\DiSEqCMotor.cs" />
+    <Compile Include="Implementations\DVB\DisEqC\IDiSEqCController.cs" />
+    <Compile Include="Implementations\DVB\Graphs\DvbBaseScanning.cs" />
+    <Compile Include="Implementations\DVB\Graphs\DVBIP\DVBIPScanning.cs" />
+    <Compile Include="Implementations\DVB\Graphs\DVBIP\TvCardDVBIP.cs" />
+    <Compile Include="Implementations\DVB\Graphs\DVBIP\TvCardDVBIPBuiltIn.cs" />
+    <Compile Include="Implementations\DVB\Graphs\DVBIP\TvCardDVBIPElecard.cs" />
+    <Compile Include="Implementations\DVB\Graphs\MDPlug.cs" />
+    <Compile Include="Implementations\DVB\Graphs\SS2\DVBSS2Scanning.cs" />
+    <Compile Include="Implementations\DVB\Graphs\TvDvbChannel.cs" />
+    <Compile Include="Implementations\DVB\Structures\DVB_MMI.cs" />
+    <Compile Include="Implementations\Helper\DevicesInUse.cs" />
+    <Compile Include="Implementations\DVB\ConditionalAccess\ConditionalAccess.cs" />
+    <Compile Include="Implementations\DVB\ConditionalAccess\DigitalEverywhere\DigitalEveryWhere.cs" />
+    <Compile Include="Implementations\DVB\ConditionalAccess\TwinHan\Twinhan.cs" />
+    <Compile Include="Implementations\Analog\Graphs\Analog\AnalogScanning.cs" />
+    <Compile Include="Implementations\DVB\Graphs\ATSC\ATSCScanning.cs" />
+    <Compile Include="Implementations\DVB\Graphs\ATSC\TvCardATSC.cs" />
+    <Compile Include="Implementations\DVB\Graphs\DVBC\DVBCScanning.cs" />
+    <Compile Include="Implementations\DVB\Graphs\DVBC\TvCardDVBC.cs" />
+    <Compile Include="Implementations\DVB\Graphs\DVBS\DVBSScanning.cs" />
+    <Compile Include="Implementations\DVB\Graphs\DVBS\TvCardDVBS.cs" />
+    <Compile Include="Implementations\DVB\Graphs\SS2\DVBSkyStar2Helper.cs" />
+    <Compile Include="Implementations\DVB\Graphs\SS2\TvCardDvbSS2.cs" />
+    <Compile Include="Implementations\DVB\Structures\CaPmt.cs" />
+    <Compile Include="Implementations\DVB\Structures\ChannelInfo.cs" />
+    <Compile Include="Implementations\DVB\Graphs\DVBT\DVBTScanning.cs" />
+    <Compile Include="Implementations\DVB\Graphs\DVBT\TvCardDVBT.cs" />
+    <Compile Include="Implementations\DVB\Graphs\TvCardDvbBase.cs" />
+    <Compile Include="Implementations\DVB\Graphs\Iso6937ToUnicode.cs" />
+    <Compile Include="Implementations\DVB\Structures\PidInfo.cs" />
+    <Compile Include="Implementations\DVB\Structures\TSHelperTools.cs" />
+    <Compile Include="Implementations\Helper\FileAccess.cs" />
+    <Compile Include="Implementations\Helper\FilterGraphTools.cs" />
+    <Compile Include="Implementations\Helper\GraphState.cs" />
+    <Compile Include="Implementations\Helper\HResult.cs" />
+    <Compile Include="Implementations\Helper\Release.cs" />
+    <Compile Include="Implementations\Helper\SidHelper.cs" />
+    <Compile Include="Implementations\Hybrid\HybridCardGroup.cs" />
+    <Compile Include="Implementations\Hybrid\HybridCard.cs" />
+    <Compile Include="Implementations\RadioWebStream\RadioWebStreamCard.cs" />
+    <Compile Include="Implementations\TvCardBase.cs" />
+    <Compile Include="Implementations\TvCardCollection.cs" />
+    <Compile Include="Interfaces\Analyzer\ITsCaGrabber.cs" />
+    <Compile Include="Interfaces\Analyzer\IMPRecord.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\Analyzer\IStreamAnalyzer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\Analyzer\ITsChannel.cs" />
+    <Compile Include="Interfaces\Analyzer\ITsChannelLinkageScanner.cs" />
+    <Compile Include="Interfaces\Analyzer\ITsFilter.cs" />
+    <Compile Include="Interfaces\Analyzer\ITsChannelScan.cs" />
+    <Compile Include="Interfaces\Analyzer\ITsEpgScanner.cs" />
+    <Compile Include="Interfaces\Analyzer\ITsPmtGrabber.cs" />
+    <Compile Include="Interfaces\Analyzer\ITsRecorder.cs" />
+    <Compile Include="Interfaces\Analyzer\ITsTeletextGrabber.cs" />
+    <Compile Include="Interfaces\Analyzer\ItsTimeshift.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\Analyzer\ITsVideoAnalyzer.cs" />
+    <Compile Include="Interfaces\Analyzer\IVideoAudioObserver.cs" />
+    <Compile Include="Interfaces\Analyzer\IWinTvUsbCI.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Streaming\RtspStream.cs" />
+    <Compile Include="Streaming\RtspStreaming.cs" />
+    <Compile Include="Teletext\Implementations\DVBTeletext.cs" />
+    <Compile Include="Teletext\Implementations\FastTextDecoder.cs" />
+    <Compile Include="Teletext\Implementations\Hamming.cs" />
+    <Compile Include="Teletext\Implementations\OddParity.cs" />
+    <Compile Include="Teletext\Implementations\TeletextPage.cs" />
+    <Compile Include="Teletext\Implementations\TeletextDecoder.cs" />
+    <Compile Include="Teletext\Implementations\TeletextPageCache.cs" />
+    <Compile Include="Teletext\Implementations\TeletextPageRenderer.cs" />
+    <Compile Include="Teletext\Implementations\ToptextDecoder.cs" />
+    <Compile Include="TimeShiftingEPGGrabber.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DirectShowLib\DirectShowLib.csproj">
+      <Project>{0D1BA455-CE59-4133-8EAA-1A1E82F8AA12}</Project>
+      <Name>DirectShowLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj">
+      <Project>{58C35C9D-F18D-40F2-8024-24E50D01E9C5}</Project>
+      <Name>TvBusinessLayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TVDatabase\TVDatabase.csproj">
+      <Project>{0FD8DEAE-37A4-49CC-A7BE-E86E0E0D85BD}</Project>
+      <Name>TVDatabase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
+      <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
+      <Name>TvLibrary.Interfaces</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Implementations\Analog\Components\Encoding\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
