@@ -1,0 +1,675 @@
+A.nonexistent {
+	COLOR: gray
+}
+A.badinterwiki {
+	COLOR: gray
+}
+A.www:before {
+	MARGIN: 0px 0.2em; CONTENT: url(../img/moin-www.png)
+}
+A.http:before {
+	MARGIN: 0px 0.2em; CONTENT: url(../img/moin-www.png)
+}
+A.https:before {
+	MARGIN: 0px 0.2em; CONTENT: url(../img/moin-www.png)
+}
+A.file:before {
+	MARGIN: 0px 0.2em; CONTENT: url(../img/moin-ftp.png)
+}
+A.ftp:before {
+	MARGIN: 0px 0.2em; CONTENT: url(../img/moin-ftp.png)
+}
+A.nntp:before {
+	MARGIN: 0px 0.2em; CONTENT: url(../img/moin-news.png)
+}
+A.news:before {
+	MARGIN: 0px 0.2em; CONTENT: url(../img/moin-news.png)
+}
+A.telnet:before {
+	MARGIN: 0px 0.2em; CONTENT: url(../img/moin-telnet.png)
+}
+A.irc:before {
+	MARGIN: 0px 0.2em; CONTENT: url(../img/moin-telnet.png)
+}
+A.mailto:before {
+	MARGIN: 0px 0.2em; CONTENT: url(../img/moin-email.png)
+}
+A.attachment:before {
+	MARGIN: 0px 0.2em; CONTENT: url(../img/moin-attach.png)
+}
+A.badinterwiki:before {
+	MARGIN: 0px 0.2em; CONTENT: url(../img/moin-inter.png)
+}
+A.interwiki:before {
+	MARGIN: 0px 0.2em; CONTENT: url(../img/moin-inter.png)
+}
+* HTML A.www {
+	PADDING-LEFT: 14px; BACKGROUND: url(../img/moin-www.png) no-repeat left center
+}
+* HTML A.http {
+	PADDING-LEFT: 14px; BACKGROUND: url(../img/moin-www.png) no-repeat left center
+}
+* HTML A.https {
+	PADDING-LEFT: 14px; BACKGROUND: url(../img/moin-www.png) no-repeat left center
+}
+* HTML A.file {
+	PADDING-LEFT: 14px; BACKGROUND: url(../img/moin-ftp.png) no-repeat left center
+}
+* HTML A.ftp {
+	PADDING-LEFT: 14px; BACKGROUND: url(../img/moin-ftp.png) no-repeat left center
+}
+* HTML A.nntp {
+	PADDING-LEFT: 14px; BACKGROUND: url(../img/moin-news.png) no-repeat left center
+}
+* HTML A.news {
+	PADDING-LEFT: 14px; BACKGROUND: url(../img/moin-news.png) no-repeat left center
+}
+* HTML A.telnet {
+	PADDING-LEFT: 14px; BACKGROUND: url(../img/moin-telnet.png) no-repeat left center
+}
+* HTML A.irc {
+	PADDING-LEFT: 14px; BACKGROUND: url(../img/moin-telnet.png) no-repeat left center
+}
+* HTML A.mailto {
+	PADDING-LEFT: 14px; BACKGROUND: url(../img/moin-email.png) no-repeat left center
+}
+* HTML A.attachment {
+	PADDING-LEFT: 14px; BACKGROUND: url(../img/moin-attach.png) no-repeat left center
+}
+* HTML A.badinterwiki {
+	PADDING-LEFT: 14px; BACKGROUND: url(../img/moin-inter.png) no-repeat left center
+}
+* HTML A.interwiki {
+	PADDING-LEFT: 14px; BACKGROUND: url(../img/moin-inter.png) no-repeat left center
+}
+LI P {
+	MARGIN: 0.25em 0px
+}
+LI.gap {
+	MARGIN-TOP: 0.5em
+}
+DT {
+	MARGIN-TOP: 0.5em; FONT-WEIGHT: bold
+}
+DD {
+	MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px
+}
+DD P {
+	MARGIN: 0.25em 0px
+}
+IMG {
+	BORDER-BOTTOM: 0px; BORDER-LEFT: 0px; BORDER-TOP: 0px; BORDER-RIGHT: 0px
+}
+IMG.drawing {
+	BORDER-BOTTOM: 0px; BORDER-LEFT: 0px; BORDER-TOP: 0px; BORDER-RIGHT: 0px
+}
+PRE {
+	BORDER-BOTTOM: #aebdcc 1pt solid; BORDER-LEFT: #aebdcc 1pt solid; PADDING-BOTTOM: 5pt; BACKGROUND-COLOR: #f3f5f7; PADDING-LEFT: 5pt; PADDING-RIGHT: 5pt; FONT-FAMILY: courier, monospace; WORD-WRAP: break-word; WHITE-SPACE: pre-wrap; BORDER-TOP: #aebdcc 1pt solid; BORDER-RIGHT: #aebdcc 1pt solid; PADDING-TOP: 5pt
+}
+PRE.comment {
+	BORDER-BOTTOM: 0px; BORDER-LEFT: 0px; PADDING-BOTTOM: 0px; BACKGROUND-COLOR: #cccccc; MARGIN: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; COLOR: red; BORDER-TOP: 0px; BORDER-RIGHT: 0px; PADDING-TOP: 0px
+}
+TD {
+	BORDER-BOTTOM: #adb9cc 1pt solid; BORDER-LEFT: #adb9cc 1pt solid; BORDER-TOP: #adb9cc 1pt solid; BORDER-RIGHT: #adb9cc 1pt solid
+}
+TD.home {
+	BORDER-BOTTOM: 0pt; BORDER-LEFT: 0pt; BORDER-TOP: 0pt; BORDER-RIGHT: 0pt
+}
+TR.home {
+	BORDER-BOTTOM: 0pt; BORDER-LEFT: 0pt; BORDER-TOP: 0pt; BORDER-RIGHT: 0pt
+}
+PRE.comment:before {
+	CONTENT: url(../img/attention.png)
+}
+#pagebottom {
+	CLEAR: both
+}
+HR {
+	BORDER-BOTTOM: 0px; BORDER-LEFT: 0px; BACKGROUND-COLOR: #9c9c9c; HEIGHT: 1pt; BORDER-TOP: 0px; BORDER-RIGHT: 0px
+}
+.hr1 {
+	HEIGHT: 2pt
+}
+.hr2 {
+	HEIGHT: 3pt
+}
+.hr3 {
+	HEIGHT: 4pt
+}
+.hr4 {
+	HEIGHT: 5pt
+}
+.hr5 {
+	HEIGHT: 6pt
+}
+.hr6 {
+	HEIGHT: 7pt
+}
+.u {
+	TEXT-DECORATION: underline
+}
+.strike {
+	TEXT-DECORATION: line-through
+}
+.warning {
+	COLOR: red
+}
+.error {
+	COLOR: red
+}
+STRONG.highlight {
+	PADDING-BOTTOM: 1pt; BACKGROUND-COLOR: #cce0ff; PADDING-LEFT: 1pt; PADDING-RIGHT: 1pt; PADDING-TOP: 1pt
+}
+.rcrss {
+	MARGIN: 0px; FLOAT: right
+}
+[dir='rtl'].recentchanges .rcrss {
+	FLOAT: left
+}
+.recentchanges TABLE {
+	CLEAR: both
+}
+.recentchanges TD {
+	BORDER-BOTTOM: #e6eaf0 1pt solid; BORDER-LEFT: medium none; BACKGROUND: #f2f4f7; VERTICAL-ALIGN: top; BORDER-TOP: medium none; BORDER-RIGHT: medium none
+}
+.rcdaybreak TD {
+	BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; BACKGROUND: #b8c5d9; BORDER-TOP: medium none; BORDER-RIGHT: medium none
+}
+.rcdaybreak TD A {
+	FONT-SIZE: 0.88em
+}
+.rcicon1 {
+	TEXT-ALIGN: center
+}
+.rcicon2 {
+	TEXT-ALIGN: center
+}
+.rcpagelink {
+	WIDTH: 33%
+}
+.rctime {
+	WHITE-SPACE: nowrap; FONT-SIZE: 0.88em
+}
+.rceditor {
+	WHITE-SPACE: nowrap; FONT-SIZE: 0.88em
+}
+.rccomment {
+	WIDTH: 50%; COLOR: gray; FONT-SIZE: 0.88em
+}
+.userpref TABLE {
+	BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; BORDER-TOP: medium none; BORDER-RIGHT: medium none
+}
+.userpref TD {
+	BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; BORDER-TOP: medium none; BORDER-RIGHT: medium none
+}
+DIV.codearea {
+	BORDER-BOTTOM: #aebdcc 1pt solid; BORDER-LEFT: #aebdcc 1pt solid; PADDING-BOTTOM: 0px; BACKGROUND-COLOR: #f3f5f7; MARGIN: 0.5em 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; COLOR: black; BORDER-TOP: #aebdcc 1pt solid; BORDER-RIGHT: #aebdcc 1pt solid; PADDING-TOP: 0px
+}
+DIV.codearea PRE {
+	BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; PADDING-BOTTOM: 10pt; MARGIN: 0px; PADDING-LEFT: 10pt; PADDING-RIGHT: 10pt; BORDER-TOP: medium none; BORDER-RIGHT: medium none; PADDING-TOP: 10pt
+}
+A.codenumbers {
+	MARGIN: 0px 10pt; COLOR: gray; FONT-SIZE: 0.85em
+}
+DIV.codearea PRE SPAN.LineNumber {
+	COLOR: gray
+}
+DIV.codearea PRE SPAN.ID {
+	COLOR: #000000
+}
+DIV.codearea PRE SPAN.Operator {
+	COLOR: #0000c0
+}
+DIV.codearea PRE SPAN.Char {
+	COLOR: #004080
+}
+DIV.codearea PRE SPAN.Comment {
+	COLOR: #008000
+}
+DIV.codearea PRE SPAN.Number {
+	COLOR: #0080c0
+}
+DIV.codearea PRE SPAN.String {
+	COLOR: #004080
+}
+DIV.codearea PRE SPAN.SPChar {
+	COLOR: #0000c0
+}
+DIV.codearea PRE SPAN.ResWord {
+	COLOR: #a00000
+}
+DIV.codearea PRE SPAN.ConsWord {
+	COLOR: #008080; FONT-WEIGHT: bold
+}
+DIV.codearea PRE SPAN.Error {
+	BORDER-BOTTOM: #ff0000 1.5pt solid; BORDER-LEFT: #ff0000 1.5pt solid; COLOR: #ff8080; BORDER-TOP: #ff0000 1.5pt solid; BORDER-RIGHT: #ff0000 1.5pt solid
+}
+DIV.codearea PRE SPAN.ResWord2 {
+	COLOR: #0080ff; FONT-WEIGHT: bold
+}
+DIV.codearea PRE SPAN.Special {
+	COLOR: #0000ff
+}
+DIV.codearea PRE SPAN.Preprc {
+	COLOR: #803999
+}
+.searchresults DT {
+	MARGIN-TOP: 1em; FONT-WEIGHT: normal
+}
+.searchresults DD {
+	FONT-SIZE: 0.85em
+}
+A.cal-emptyday {
+	TEXT-ALIGN: center; COLOR: #777777
+}
+A.cal-usedday {
+	TEXT-ALIGN: center; COLOR: #000000; FONT-WEIGHT: bold
+}
+TD.cal-workday {
+	TEXT-ALIGN: center; BACKGROUND-COLOR: #ddddff
+}
+TD.cal-weekend {
+	TEXT-ALIGN: center; BACKGROUND-COLOR: #ffdddd
+}
+TD.cal-today {
+	BORDER-BOTTOM: 2pt solid; TEXT-ALIGN: center; BORDER-LEFT: 2pt solid; BACKGROUND-COLOR: #ccffcc; BORDER-TOP: 2pt solid; BORDER-RIGHT: 2pt solid
+}
+TD.cal-invalidday {
+	BACKGROUND-COLOR: #cccccc
+}
+A.cal-link {
+	COLOR: #000000; TEXT-DECORATION: none
+}
+TH.cal-header {
+	TEXT-ALIGN: center; BACKGROUND-COLOR: #ddbbff
+}
+TABLE.tip {
+	BORDER-BOTTOM: 1px solid; BORDER-LEFT: 1px solid; BACKGROUND-COLOR: #ff8888; COLOR: black; FONT-SIZE: small; BORDER-TOP: 1px solid; FONT-WEIGHT: normal; BORDER-RIGHT: 1px solid
+}
+TH.tip {
+	TEXT-ALIGN: center; BACKGROUND-COLOR: #ff4444; FONT-WEIGHT: bold
+}
+TD.tip {
+	TEXT-ALIGN: left
+}
+*[dir='rtl'] TD.tip {
+	TEXT-ALIGN: right
+}
+FORM {
+	PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; PADDING-TOP: 0px
+}
+BODY {
+	MARGIN: 0px; BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_bg_top.png) #41566e repeat-x; HEIGHT: 100%; FONT-SIZE: 12px
+}
+A:link {
+	COLOR: #ab290f; FONT-WEIGHT: normal; TEXT-DECORATION: none
+}
+A:visited {
+	COLOR: #ab290f; FONT-WEIGHT: normal; TEXT-DECORATION: none
+}
+A:hover {
+	COLOR: #c00; FONT-WEIGHT: normal; TEXT-DECORATION: underline
+}
+P {
+	TEXT-ALIGN: left; MARGIN-TOP: 0px; MARGIN-BOTTOM: 5px
+}
+DIV {
+	LINE-HEIGHT: 140%; FONT-FAMILY: Lucida Grande, Verdana, Helvetica, Arial, sans-serif; COLOR: #666
+}
+P {
+	LINE-HEIGHT: 140%; FONT-FAMILY: Lucida Grande, Verdana, Helvetica, Arial, sans-serif; COLOR: #666
+}
+TD {
+	LINE-HEIGHT: 140%; FONT-FAMILY: Lucida Grande, Verdana, Helvetica, Arial, sans-serif; COLOR: #666
+}
+TH {
+	LINE-HEIGHT: 140%; FONT-FAMILY: Lucida Grande, Verdana, Helvetica, Arial, sans-serif; COLOR: #666
+}
+TABLE {
+	LINE-HEIGHT: 140%; FONT-FAMILY: Lucida Grande, Verdana, Helvetica, Arial, sans-serif; COLOR: #666
+}
+FIELDSET {
+	BORDER-BOTTOM: #d2d8de 1px solid; BORDER-LEFT: #d2d8de 1px solid; BORDER-TOP: #d2d8de 1px solid; BORDER-RIGHT: #d2d8de 1px solid
+}
+#wrapper DIV {
+	TEXT-ALIGN: left
+}
+#wrapper P {
+	TEXT-ALIGN: left
+}
+#wrapper TABLE {
+	TEXT-ALIGN: left
+}
+#wrapper TD {
+	TEXT-ALIGN: left
+}
+#wrapper TH {
+	TEXT-ALIGN: left
+}
+SPAN.pathway {
+	PADDING-LEFT: 10px; COLOR: #394048
+}
+DIV.componentheading {
+	PADDING-LEFT: 0px
+}
+A.readon {
+	LINE-HEIGHT: 14px; MARGIN-TOP: 10px; PADDING-RIGHT: 10px; HEIGHT: 16px
+}
+H1 {
+	TEXT-ALIGN: left; PADDING-BOTTOM: 0px; PADDING-LEFT: 0px; WIDTH: 100%; PADDING-RIGHT: 0px; FONT-FAMILY: Helvetica , Arial, sans-serif; COLOR: #666; FONT-SIZE: 18px; FONT-WEIGHT: bold; PADDING-TOP: 0px
+}
+H2 {
+	FONT-FAMILY: Helvetica, Arial, sans-serif; COLOR: #2b3036; FONT-SIZE: 14px; FONT-WEIGHT: bold
+}
+.contentheading {
+	FONT-FAMILY: Helvetica, Arial, sans-serif; COLOR: #2b3036; FONT-SIZE: 14px; FONT-WEIGHT: bold
+}
+H3 {
+	MARGIN: 0px
+}
+.componentheading {
+	BORDER-BOTTOM: #d2d8de 1px solid; TEXT-TRANSFORM: uppercase; MARGIN: 0px 0px 10px 10px; FONT-FAMILY: Arial, Helvetica, sans-serif; COLOR: #ab290f; FONT-SIZE: 12px; FONT-WEIGHT: bold
+}
+#mainbody H3 {
+	BORDER-BOTTOM: #d2d8de 1px solid; TEXT-TRANSFORM: uppercase; MARGIN: 0px 0px 10px 10px; FONT-FAMILY: Arial, Helvetica, sans-serif; COLOR: #ab290f; FONT-SIZE: 12px; FONT-WEIGHT: bold
+}
+#mainbody H3 {
+	PADDING-BOTTOM: 0px; LINE-HEIGHT: 140%; TEXT-INDENT: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; HEIGHT: 140%; PADDING-TOP: 0px
+}
+TABLE.blog TD.contentheading {
+	
+}
+TABLE.contenttoc {
+	BORDER-BOTTOM: #ccc 1px solid; BORDER-LEFT: #ccc 1px solid; PADDING-BOTTOM: 5px; MARGIN: 5px; PADDING-LEFT: 5px; PADDING-RIGHT: 5px; BORDER-TOP: #ccc 1px solid; BORDER-RIGHT: #ccc 1px solid; PADDING-TOP: 5px
+}
+TABLE.contenttoc TD {
+	PADDING-BOTTOM: 0px; PADDING-LEFT: 5px; PADDING-RIGHT: 5px; PADDING-TOP: 0px
+}
+TD.buttonheading {
+	
+}
+TD.sectiontableheader {
+	PADDING-BOTTOM: 4px; PADDING-LEFT: 4px; PADDING-RIGHT: 4px; BACKGROUND: #efefef; COLOR: #333; FONT-WEIGHT: bold; BORDER-RIGHT: #fff 1px solid; PADDING-TOP: 4px
+}
+TR.sectiontableentry1 TD {
+	PADDING-BOTTOM: 4px; PADDING-LEFT: 4px; PADDING-RIGHT: 4px; PADDING-TOP: 4px
+}
+TR.sectiontableentry2 TD {
+	PADDING-BOTTOM: 4px; PADDING-LEFT: 4px; PADDING-RIGHT: 4px; PADDING-TOP: 4px
+}
+TD.sectiontableentry1 {
+	PADDING-BOTTOM: 3px; PADDING-LEFT: 3px; PADDING-RIGHT: 3px; PADDING-TOP: 3px
+}
+TD.sectiontableentry2 {
+	PADDING-BOTTOM: 3px; PADDING-LEFT: 3px; PADDING-RIGHT: 3px; PADDING-TOP: 3px
+}
+TABLE.contentpaneopen {
+	WIDTH: 100%
+}
+TABLE.contentpane {
+	WIDTH: 100%
+}
+DIV.moduletable H3 {
+	BORDER-BOTTOM: #f00 0px solid; BORDER-LEFT: #f00 0px solid; LINE-HEIGHT: 29px; TEXT-TRANSFORM: uppercase; TEXT-INDENT: 8px; FONT-FAMILY: Arial, Helvetica, sans-serif; MARGIN-BOTTOM: 5px; HEIGHT: 29px; COLOR: #57616e; MARGIN-LEFT: -8px; FONT-SIZE: 11px; BORDER-TOP: #f00 0px solid; FONT-WEIGHT: bold; MARGIN-RIGHT: -7px; BORDER-RIGHT: #f00 0px solid
+}
+#leftnav DIV.moduletable H3 {
+	BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_moduletitle.png) repeat-x 0px 0px
+}
+#leftnav DIV.moduletable {
+	BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_module_bg.png) no-repeat 0px 28px
+}
+#leftnav UL {
+	PADDING-LEFT: 0px; MARGIN-LEFT: 12px
+}
+#leftnav LI {
+	MARGIN-BOTTOM: 5px
+}
+DIV.moduletable {
+	PADDING-BOTTOM: 15px; PADDING-LEFT: 8px; PADDING-RIGHT: 8px
+}
+.small {
+	TEXT-ALIGN: left; COLOR: #999; FONT-SIZE: 10px; FONT-WEIGHT: normal
+}
+.modifydate {
+	TEXT-ALIGN: left; HEIGHT: 20px; COLOR: #999; FONT-SIZE: 10px; VERTICAL-ALIGN: bottom; FONT-WEIGHT: normal
+}
+.createdate {
+	PADDING-BOTTOM: 5px; HEIGHT: 20px; COLOR: #999; FONT-SIZE: 10px; VERTICAL-ALIGN: top; FONT-WEIGHT: normal; PADDING-TOP: 0px
+}
+.clr {
+	CLEAR: both
+}
+#page_bg {
+	PADDING-BOTTOM: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; MARGIN-BOTTOM: 1px; HEIGHT: 100%; PADDING-TOP: 0px
+}
+DIV.mosimage {
+	MARGIN: 5px
+}
+DIV.mosimage_caption {
+	COLOR: #666; FONT-SIZE: 10px
+}
+TABLE.adminform TEXTAREA {
+	WIDTH: 540px; HEIGHT: 400px; COLOR: #000099; FONT-SIZE: 1em
+}
+DIV.search INPUT {
+	BORDER-BOTTOM: #ccc 1px solid; BORDER-LEFT: #ccc 1px solid; MARGIN: 15px 0px 10px; WIDTH: 145px; BORDER-TOP: #ccc 1px solid; BORDER-RIGHT: #ccc 1px solid
+}
+DIV#wrapper {
+	MIN-WIDTH: 950px; MAX-WIDTH: 950px; HEIGHT: 100%; MARGIN-LEFT: auto; MARGIN-RIGHT: auto
+}
+DIV#top {
+	BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_header_m.png) repeat-x 0px 0px
+}
+DIV#top DIV {
+	BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_header_l.png) no-repeat 0px 0px
+}
+DIV#top DIV DIV {
+	POSITION: relative; BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_header_r.png) no-repeat 100% 0px; HEIGHT: 98px
+}
+SPAN#logo {
+	Z-INDEX: 90; POSITION: absolute; WIDTH: 100px; DISPLAY: block; BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_logo_trans.png) no-repeat 0px 0px; HEIGHT: 70px; TOP: 10px; LEFT: 35px
+}
+SPAN#logo_header {
+	Z-INDEX: 90; POSITION: absolute; WIDTH: 700px; BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_logo_header.png) no-repeat 0px 0px; HEIGHT: 70px; TOP: 25px; LEFT: 35px
+}
+SPAN#joomla {
+	Z-INDEX: 99; POSITION: absolute; WIDTH: 151px; BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_joomla_trans.png) no-repeat 0px 0px; HEIGHT: 140px; TOP: 21px; RIGHT: 14px
+}
+DIV#middle {
+	BORDER-BOTTOM: 0px; BORDER-LEFT: 0px; BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_shadow_r2.png) #fff repeat-y 100% 0px; BORDER-TOP: 0px; BORDER-RIGHT: 0px
+}
+DIV#middle_2 {
+	BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_shadow_r1.png) no-repeat 100% 0px
+}
+DIV#middle_3 {
+	BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_shadow_l2.png) repeat-y 0px 0px
+}
+DIV#middle_4 {
+	PADDING-BOTTOM: 0px; PADDING-LEFT: 19px; PADDING-RIGHT: 19px; BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_shadow_l1.png) no-repeat 0px 0px; PADDING-TOP: 0px
+}
+DIV#bottom {
+	BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_shadow_b.png) repeat-x 0px 0px
+}
+DIV#bottom DIV {
+	BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_shadow_bl.png) no-repeat 0px 0px
+}
+DIV#bottom DIV DIV {
+	TEXT-ALIGN: center; BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_shadow_br.png) no-repeat 100% 0px; HEIGHT: 44px; COLOR: #a2a7a9; FONT-SIZE: 10px; PADDING-TOP: 5px
+}
+DIV#navigation {
+	BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_buttonbar.png) repeat-x 0px 0px; HEIGHT: 28px
+}
+DIV#centernav {
+	TEXT-ALIGN: center; MARGIN: 0px auto; DISPLAY: table !important
+}
+SPAN#topnav {
+	PADDING-BOTTOM: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; DISPLAY: table-cell !important; WHITE-SPACE: nowrap; PADDING-TOP: 0px
+}
+#topnav UL#mainlevel {
+	BORDER-LEFT: #959a9e 1px solid; PADDING-BOTTOM: 0px; LIST-STYLE-TYPE: none; MARGIN: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; FLOAT: left; LIST-STYLE-IMAGE: none; BORDER-RIGHT: #ecf4fa 1px solid; PADDING-TOP: 0px
+}
+#topnav #mainlevel LI {
+	PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; FLOAT: left; BORDER-RIGHT: #959a9e 1px solid; PADDING-TOP: 0px
+}
+#topnav #mainlevel A:link {
+	BORDER-BOTTOM: 0px; BORDER-LEFT: 0px; PADDING-BOTTOM: 0px; LINE-HEIGHT: 28px; TEXT-TRANSFORM: uppercase; PADDING-LEFT: 30px; PADDING-RIGHT: 30px; DISPLAY: block; FONT-FAMILY: Arial, Helvetica, sans-serif; BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_button_off.png) no-repeat 0px 0px; FLOAT: left; HEIGHT: 28px; COLOR: #2b3036; FONT-SIZE: 11px; BORDER-TOP: 0px; FONT-WEIGHT: bold; BORDER-RIGHT: 0px; TEXT-DECORATION: none; PADDING-TOP: 0px
+}
+#topnav #mainlevel A:visited {
+	BORDER-BOTTOM: 0px; BORDER-LEFT: 0px; PADDING-BOTTOM: 0px; LINE-HEIGHT: 28px; TEXT-TRANSFORM: uppercase; PADDING-LEFT: 30px; PADDING-RIGHT: 30px; DISPLAY: block; FONT-FAMILY: Arial, Helvetica, sans-serif; BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_button_off.png) no-repeat 0px 0px; FLOAT: left; HEIGHT: 28px; COLOR: #2b3036; FONT-SIZE: 11px; BORDER-TOP: 0px; FONT-WEIGHT: bold; BORDER-RIGHT: 0px; TEXT-DECORATION: none; PADDING-TOP: 0px
+}
+#mainlevel LI.red_active_menu {
+	BORDER-RIGHT: #721901 1px solid
+}
+#mainlevel LI.red_active_menu A:link {
+	PADDING-BOTTOM: 0px; LINE-HEIGHT: 28px; PADDING-LEFT: 30px; PADDING-RIGHT: 30px; BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_button_on.png) no-repeat 0px 0px; FLOAT: left; HEIGHT: 28px; COLOR: #eef0f2; PADDING-TOP: 0px
+}
+#mainlevel LI.red_active_menu A:visited {
+	PADDING-BOTTOM: 0px; LINE-HEIGHT: 28px; PADDING-LEFT: 30px; PADDING-RIGHT: 30px; BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_button_on.png) no-repeat 0px 0px; FLOAT: left; HEIGHT: 28px; COLOR: #eef0f2; PADDING-TOP: 0px
+}
+#topnav #mainlevel A:hover {
+	COLOR: #ab290f
+}
+#mainlevel LI.red_active_menu A:hover {
+	COLOR: #fff
+}
+#showcase {
+	PADDING-BOTTOM: 1px; MARGIN: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_showcase_bg.png) #47505a repeat-x 0px 0px; PADDING-TOP: 1px
+}
+#showcase .moduletable {
+	PADDING-BOTTOM: 5px; MARGIN: 0px; PADDING-LEFT: 10px; PADDING-RIGHT: 10px; PADDING-TOP: 5px
+}
+#showcase TD {
+	COLOR: #d8dbde
+}
+#showcase DIV {
+	COLOR: #d8dbde
+}
+#showcase P {
+	COLOR: #d8dbde
+}
+#showcase SPAN {
+	COLOR: #d8dbde
+}
+#showcase .contentheading {
+	FONT-FAMILY: Arial, Helvetica Nueue, Helvetica, sans-serif; FONT-SIZE: 16px; FONT-WEIGHT: bold
+}
+#user1 {
+	WIDTH: 50%
+}
+#user2 {
+	WIDTH: 50%
+}
+TABLE.contentarea {
+	BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_body_right.png) repeat-y 100% 0px
+}
+#leftnav {
+	BORDER-BOTTOM: #ff0 0px solid; BORDER-LEFT: #ff0 0px solid; WIDTH: 180px; BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_column_left.png) repeat-y 0px 0px; BORDER-TOP: #ff0 0px solid; BORDER-RIGHT: #ff0 0px solid
+}
+#leftborder {
+	BORDER-LEFT: #d3d8de 1px solid
+}
+#lefttop {
+	BORDER-BOTTOM: #00f 0px solid; BORDER-LEFT: #00f 0px solid; BORDER-TOP: #00f 0px solid; BORDER-RIGHT: #00f 0px solid
+}
+DIV#mainbody {
+	BORDER-BOTTOM: #0ff 0px solid; BORDER-LEFT: #0ff 0px solid; PADDING-BOTTOM: 15px; PADDING-LEFT: 15px; PADDING-RIGHT: 15px; BORDER-TOP: #0ff 0px solid; BORDER-RIGHT: #0ff 0px solid; PADDING-TOP: 15px
+}
+#rightnav {
+	BORDER-BOTTOM: #00f 0px solid; BORDER-LEFT: #00f 0px solid; WIDTH: 180px; BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_column_right.png) repeat-y 100% 0px; BORDER-TOP: #00f 0px solid; BORDER-RIGHT: #00f 0px solid
+}
+#righttop {
+	BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_bodytop_r.png) no-repeat 0px 0px; HEIGHT: 29px
+}
+#rightbody {
+	BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_rightnav_bg.png) repeat-x 0px 0px
+}
+#pathway {
+	BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_bodytop.png) repeat-x 0px 0px; HEIGHT: 22px; PADDING-TOP: 5px
+}
+A.mainlevel:link {
+	WIDTH: 162px; DISPLAY: block; BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_menu.png) no-repeat 100% 0px; HEIGHT: 21px
+}
+A.mainlevel:visited {
+	WIDTH: 162px; DISPLAY: block; BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/omt_menu.png) no-repeat 100% 0px; HEIGHT: 21px
+}
+A.mainlevel:hover {
+	BACKGROUND-POSITION: 100% -21px; TEXT-DECORATION: none
+}
+DIV#footer {
+	LINE-HEIGHT: 28px; MARGIN-TOP: 10px; TEXT-INDENT: 20px; WIDTH: 766px; BACKGROUND: #e6eef8; HEIGHT: 28px
+}
+DIV#footer TABLE {
+	MARGIN-TOP: 4px
+}
+DIV#footer TABLE TD {
+	TEXT-ALIGN: center
+}
+DIV#footer A {
+	PADDING-BOTTOM: 0px; PADDING-LEFT: 10px; PADDING-RIGHT: 10px; PADDING-TOP: 0px
+}
+DIV#topmodule {
+	POSITION: relative; MARGIN-TOP: 20px; MARGIN-BOTTOM: 20px; HEIGHT: 80px; OVERFLOW: hidden
+}
+DIV#quote {
+	TEXT-ALIGN: left; WIDTH: 505px !important; FLOAT: right; MARGIN-RIGHT: 10px; PADDING-TOP: 10px
+}
+DIV#quote TD {
+	TEXT-ALIGN: left
+}
+TABLE.menublock {
+	MARGIN: 0px 15px
+}
+TD.summary {
+	PADDING-BOTTOM: 5px; PADDING-LEFT: 10px; PADDING-RIGHT: 5px; BACKGROUND: #eef3f9; PADDING-TOP: 5px
+}
+TD.latestnews {
+	PADDING-BOTTOM: 1px; PADDING-LEFT: 1px; PADDING-RIGHT: 1px; BACKGROUND: #eef3f9; PADDING-TOP: 1px
+}
+DIV.menuborder {
+	BORDER-BOTTOM: #e0e3e6 1px solid
+}
+.menuborder UL {
+	PADDING-BOTTOM: 0px; LIST-STYLE-TYPE: none; MARGIN: 0px; PADDING-LEFT: 0px; WIDTH: 234px; PADDING-RIGHT: 0px; LIST-STYLE-IMAGE: none; PADDING-TOP: 0px
+}
+.menuborder LI {
+	PADDING-BOTTOM: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; BACKGROUND: none transparent scroll repeat 0% 0%; PADDING-TOP: 0px
+}
+.menuborder A {
+	LINE-HEIGHT: 28px; TEXT-TRANSFORM: uppercase; TEXT-INDENT: 10px; WIDTH: 234px; DISPLAY: block; FONT-FAMILY: Arial, Helvetica, sans-serif; BACKGROUND: url(http://www.team-mediaportal.com/templates/jw_onemorething/images/in_menu_bg_grey.gif) no-repeat 0px -28px; HEIGHT: 28px; COLOR: #475865; FONT-SIZE: 10px; FONT-WEIGHT: normal; TEXT-DECORATION: none
+}
+.menuborder A:hover {
+	BACKGROUND-POSITION: 0px 0px; TEXT-DECORATION: none
+}
+.menuborder DIV.sectionmenu A:hover {
+	BACKGROUND-POSITION: 0px 0px; TEXT-DECORATION: none
+}
+TABLE.blog SPAN.article_seperator {
+	DISPLAY: block; HEIGHT: 20px
+}
+TABLE.nopad {
+	PADDING-BOTTOM: 0px; MARGIN: 0px 0px 15px; PADDING-LEFT: 0px; WIDTH: 100%; PADDING-RIGHT: 0px; BORDER-COLLAPSE: collapse; PADDING-TOP: 0px
+}
+TABLE.nopad TD.middle_pad {
+	WIDTH: 20px
+}
+BODY.contentpane {
+	BACKGROUND: #fff
+}
+A.contentpagetitle:link {
+	FONT-FAMILY: Arial, Helvetica Nueue, Helvetica, sans-serif; COLOR: #333333; FONT-SIZE: 16px; FONT-WEIGHT: bold
+}
+A.contentpagetitle:visited {
+	FONT-FAMILY: Arial, Helvetica Nueue, Helvetica, sans-serif; COLOR: #333333; FONT-SIZE: 16px; FONT-WEIGHT: bold
+}
+A.contentpagetitle:hover {
+	FONT-FAMILY: Arial, Helvetica Nueue, Helvetica, sans-serif; COLOR: #ab290f; FONT-SIZE: 16px; FONT-WEIGHT: bold
+}
+DIV#adsense {
+	TEXT-ALIGN: center; PADDING-TOP: 15px; align: center
+}
+SPAN#search2 {
+	POSITION: absolute; MARGIN-LEFT: 760px; TOP: 40px
+}
+HR {
+	MARGIN-TOP: 0px; WIDTH: 100%; BACKGROUND: #ccc; HEIGHT: 1px; OVERFLOW: hidden
+}

@@ -1,0 +1,480 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="WatchTV_labelSectionHeader" xml:space="preserve">
+    <value>Θα παρακολουθείτε τηλεόραση με το MediaPortal ?</value>
+  </data>
+  <data name="WatchTV_on" xml:space="preserve">
+    <value>Nαι - Θα παρακολουθώ τηλεόραση με το MediaPortal.</value>
+  </data>
+  <data name="WatchTV_off" xml:space="preserve">
+    <value>Όχι - Δεν θα παρακολουθώ τηλεόραση με το MediaPortal.</value>
+  </data>
+  <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
+    <value>Όλες οι αναγκαίες εφαρμογές θα εγκατασταθούν στις προεπιλεγμένες τοποθεσίες με τις προεπιλεγμένες ρυθμίσεις.</value>
+  </data>
+  <data name="BaseInstallationNoTvEngine_labelAdvancedDesc" xml:space="preserve">
+    <value>Η Εγκατάσταση για προχωρημένους σας επιτρέπει να ορίσετε τοποθεσίες εγκατάστασης και άλλες ρυθμίσεις.</value>
+  </data>
+  <data name="BaseInstallation_labelAdvancedCaption" xml:space="preserve">
+    <value>Εγκατάσταση για προχωρημένους</value>
+  </data>
+  <data name="BaseInstallation_labelAdvancedDesc" xml:space="preserve">
+    <value>Η εγκατάσταση για προχωρημένους σας επιτρέπει να δημιουργήσετε Server/Client εγκαταστάσεις και να ορίσετε τοποθεσίες εγκατάστασης και άλλες ρυθμίσεις.</value>
+  </data>
+  <data name="BaseInstallation_labelOneClickCaption" xml:space="preserve">
+    <value>Εγκατάσταση με ένα κλικ</value>
+  </data>
+  <data name="BaseInstallation_labelOneClickDesc" xml:space="preserve">
+    <value>Όλες οι απαιτούμενες εφαρμογές θα εγκατασταθούν στις προεπιλεγμένες τοποθεσίες με τις προεπιλεγμένες ρυθμίσεις. Ο κωδικός (password) για την βάση δεδομένων είναι "MediaPortal" </value>
+  </data>
+  <data name="BaseInstallation_rbAdvanced" xml:space="preserve">
+    <value>Εγκατάσταση για προχωρημένους</value>
+  </data>
+  <data name="BaseInstallation_rbOneClick" xml:space="preserve">
+    <value>Εγκατάσταση με ένα κλικ</value>
+  </data>
+  <data name="CustomInstallation_labelSectionHeader" xml:space="preserve">
+    <value>Επιλέξτε ποιόν τύπο εγκατάστασης θέλετε:</value>
+  </data>
+  <data name="CustomInstallation_rbClient" xml:space="preserve">
+    <value>ΜediaPortal client</value>
+  </data>
+  <data name="CustomInstallation_labelClient" xml:space="preserve">
+    <value>Με αυτό θα εγκατασταθεί μόνον το MediaPortal. Για να παρακολουθήσετε τηλεόραση θα συνδεθεί σε έναν διακομιστή τηλεόρασης (TV-Server) στο δίκτυό σας.</value>
+  </data>
+  <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
+    <value>Εγκατάσταση για έναν υπολογιστή (Singleseat)</value>
+  </data>
+  <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
+    <value>Αυτός είναι ο τύπος εγκατάστασης για αυτούς που έχουν τις κάρτες τηλεόρασης εγκατεστημένες στον υπολογιστή που θα βλέπουν τηλεόραση και στον οποίο θα χρησιμοποιηθεί το MediaPortal</value>
+  </data>
+  <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
+    <value>Αποκλειστικός Διακομιστής Τηλεόρασης (Κύριος)</value>
+  </data>
+  <data name="CustomInstallation_labelMaster" xml:space="preserve">
+    <value>Με αυτό θα εγκατασταθεί ο διακομιστής τηλεόρασης (TV-Server) σε αυτόν τον υπολογιστή.
+Έτσι αυτός ο υπολογιστής θα λειτουργεί ως αφοσιωμένος διακομιστής  και θα διαμοιράζει τηλεοπτικές μεταδόσεις σε άλλους υπολογιστές στο δίκτυό σας.(υποχρεωτική εγκατάσταση βάσης δεδομένων)</value>
+  </data>
+  <data name="MainWindow_browseButton" xml:space="preserve">
+    <value>Περιήγηση</value>
+  </data>
+  <data name="DBMSSettings_checkBoxFirewall" xml:space="preserve">
+    <value>Ρύθμιση του τείχους προστασίας των Windows να επιτρέπεται εξωτερική πρόσβαση στον διακομιστή της βάσης δεδομένων</value>
+  </data>
+  <data name="DBMSSettings_errInvalidInstallationPath" xml:space="preserve">
+    <value>Πρέπει να δώσετε ένα έγκυρο path εγκατάστασης για τον SQL-Server.</value>
+  </data>
+  <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
+    <value>Πρέπει να δώσετε έναν κωδικό (password) διαχειριστήSQL-Server.</value>
+  </data>
+  <data name="DBMSSettings_labelHeading" xml:space="preserve">
+    <value>Πρέπει να ορίσετε τις απαιτούμενες επιλογές για την εγκατάσταση του SQL-Server.</value>
+  </data>
+  <data name="DBMSSettings_labelInstDir" xml:space="preserve">
+    <value>Φάκελος εγκατάστασης</value>
+  </data>
+  <data name="DBMSSettings_labelPassword" xml:space="preserve">
+    <value>Κωδικός διαχειριστή για τον SQL-Server</value>
+  </data>
+  <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
+    <value>Επιλέξτε φάκελο εγκατάστασης για τον SQL-Server</value>
+  </data>
+  <data name="DBMSType_labelHeading" xml:space="preserve">
+    <value>Επιλέξατε τον SQL-Server που θέλετε να χρησιμοποιήσετε:</value>
+  </data>
+  <data name="DBMSType_rbMSSQL" xml:space="preserve">
+    <value>Microsoft SQL-Server Express 2005</value>
+  </data>
+  <data name="DBMSType_rbMySQL" xml:space="preserve">
+    <value>MySQL 5</value>
+  </data>
+  <data name="DBMSType_rbDBAlreadyInstalled" xml:space="preserve">
+    <value>Yπάρχει ήδη SQL διακομιστής και θα χρησιμοποιηθεί για τον διακομιστή τηλεόρασης</value>
+  </data>
+  <data name="Finished_labelHeading1" xml:space="preserve">
+    <value>Συγχαρητήρια !</value>
+  </data>
+  <data name="Finished_labelHeading2_install" xml:space="preserve">
+    <value>H εγκατάσταση του MediaPortal ολοκληρώθηκε επιτυχώς</value>
+  </data>
+  <data name="Finished_labelHeading3_install" xml:space="preserve">
+    <value>Παρκάτω θα βρείτε χρήσιμους συνδέσμους που θα σας βοηθήσουν να αρχίσετε με το MediaPortal</value>
+  </data>
+  <data name="Finished_linkForum" xml:space="preserve">
+    <value>Φόρουμ MediaPortal</value>
+  </data>
+  <data name="Finished_linkHomepage" xml:space="preserve">
+    <value>Aρχική σελίδα  του MediaPortal</value>
+  </data>
+  <data name="Finished_linkWiki" xml:space="preserve">
+    <value>MediaPortal Wiki</value>
+  </data>
+  <data name="HTTPDownload_buttonCancel" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <data name="HTTPDownload_errDownloadFailed" xml:space="preserve">
+    <value>Υπήρξε σφάλμα στο κατέβασμα του αρχείου</value>
+  </data>
+  <data name="HTTPDownload_labelSourceURL" xml:space="preserve">
+    <value>Διεύθυνση URL:</value>
+  </data>
+  <data name="HTTPDownload_labelTargetFile" xml:space="preserve">
+    <value>Στόχος:</value>
+  </data>
+  <data name="HTTPDownload_msgCanceledByUser" xml:space="preserve">
+    <value>Διεκόπη από τον χρήστη</value>
+  </data>
+  <data name="HTTPDownload_Title" xml:space="preserve">
+    <value>Μεταφόρτωση αρχείου...</value>
+  </data>
+  <data name="Install_actionDownloadInstall" xml:space="preserve">
+    <value>Μεταφόρτωση&gt;εγκατάσταση</value>
+  </data>
+  <data name="Install_actionInstall" xml:space="preserve">
+    <value>Εγκατάσταση</value>
+  </data>
+  <data name="Install_actionNothing" xml:space="preserve">
+    <value>&lt;καμία επιλογή&gt;</value>
+  </data>
+  <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
+    <value>Απεγκατάσταση προηγούμενου-&gt;Μεταφόρτωση-&gt;Εγκατάσταση</value>
+  </data>
+  <data name="Install_actionUninstallInstall" xml:space="preserve">
+    <value>Επεγκατάσταση προηγούμενου-&gt;Εγκατάσταση</value>
+  </data>
+  <data name="Install_buttonInstall" xml:space="preserve">
+    <value>Εγκατάσταση</value>
+  </data>
+  <data name="Install_colAction" xml:space="preserve">
+    <value>Επιλογή</value>
+  </data>
+  <data name="Install_colApplication" xml:space="preserve">
+    <value>Εφαρμογή</value>
+  </data>
+  <data name="Install_colState" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="Install_errAppsMissing" xml:space="preserve">
+    <value>Δεν έχουν εγκατασταθεί όλες οι απαιτούμενες εφαρμογές.</value>
+  </data>
+  <data name="Install_errDownloadFailed" xml:space="preserve">
+    <value>Η μεταφόρτωση της εφαρμογής απέτυχε [{0}]</value>
+  </data>
+  <data name="Install_errInstallFailed" xml:space="preserve">
+    <value>Η εγκατάσταση της εφαρμογής απέτυχε [{0}]</value>
+  </data>
+  <data name="Install_labelHeadingInstall" xml:space="preserve">
+    <value>Πατήστε το κουμπί "Εγκατάσταση" για να γίνουν όλες οι απαραίτητες αλλαγές για την εγκατάσταση</value>
+  </data>
+  <data name="Install_msgDownloading" xml:space="preserve">
+    <value>Φόρτωση...</value>
+  </data>
+  <data name="Install_msgInstalling" xml:space="preserve">
+    <value>Εγκατάσταση...</value>
+  </data>
+  <data name="Install_msgUninstalling" xml:space="preserve">
+    <value>Απεγκατάσταση...</value>
+  </data>
+  <data name="Install_stateInstalled" xml:space="preserve">
+    <value>Εγκατεστημένο</value>
+  </data>
+  <data name="Install_stateNotInstalled" xml:space="preserve">
+    <value>Μη εγκατεστημένο</value>
+  </data>
+  <data name="Install_stateVersionMismatch" xml:space="preserve">
+    <value>Άλλη έκδοση ήδη εγκατεστημένη</value>
+  </data>
+  <data name="MainWindow_AppName" xml:space="preserve">
+    <value>Εφαρμογή Εγκατάστασης MediaPortal </value>
+  </data>
+  <data name="MainWindow_backButton" xml:space="preserve">
+    <value>Προηγούμενο</value>
+  </data>
+  <data name="MainWindow_buttonClose" xml:space="preserve">
+    <value>Έξοδος</value>
+  </data>
+  <data name="MainWindow_labelAppHeading" xml:space="preserve">
+    <value>Αυτή η εφαρμογή θα σας καθοδηγήσει στην εγκατάσταση του MediaPortal  και των απαιτούμενων εφαρμογών.</value>
+  </data>
+  <data name="MainWindow_nextButton" xml:space="preserve">
+    <value>Επόμενο</value>
+  </data>
+  <data name="ManualDownload_buttonContinue" xml:space="preserve">
+    <value>Συνέχεια</value>
+  </data>
+  <data name="ManualDownload_errFileNotFound" xml:space="preserve">
+    <value>Αρχείο {0} δεν υπάρχει. Παρακαλούμε ελέγξτε στον δίσκο σας.
+{το όνομα του αρχείου θα πρέπει να αντιστοιχεί στο προτεινόμενο)</value>
+  </data>
+  <data name="ManualDownload_labelDesc" xml:space="preserve">
+    <value>Πατήστε "Συνέχεια" όταν ολοκληρωθεί η φόρτωση του ζητούμενου αρχείου.</value>
+  </data>
+  <data name="ManualDownload_labelHeading" xml:space="preserve">
+    <value>Πρέπει να μεταφορτώσετε χειροκίνητα το ακόλουθο αρχείο:</value>
+  </data>
+  <data name="ManualDownload_linkDir" xml:space="preserve">
+    <value>Άνοιγμα καταλόγου:</value>
+  </data>
+  <data name="ManualDownload_linkURL" xml:space="preserve">
+    <value>Σύνδεσμος μεταφόρτωσης</value>
+  </data>
+  <data name="ManualDownload_Title" xml:space="preserve">
+    <value>Χειροκίνητη μεταφόρτωση</value>
+  </data>
+  <data name="MPSettings_errInvalidPath" xml:space="preserve">
+    <value>Πρέπει να ορίσετε μία  έγκυρη τοποθεσία εγκατάστασης για το MediaPortal.</value>
+  </data>
+  <data name="MPSettings_labelHeading" xml:space="preserve">
+    <value>Παρακαλούμε ορίστε τις απαραίτητες επιλογές για την εγκατάσταση του MediaPortal :</value>
+  </data>
+  <data name="MPSettings_labelInstDir" xml:space="preserve">
+    <value>Φάκελος εγκατάστασης του MediaPortal :</value>
+  </data>
+  <data name="MPSettings_msgSelectDir" xml:space="preserve">
+    <value>Επιλέξατε τον φάκελο εγκατάστασης του MediaPortal </value>
+  </data>
+  <data name="TvServerSettings_checkBoxFirewall" xml:space="preserve">
+    <value>Ρύθμιση του τείχους προστασίας των Windows για να επιτρέπεται η εξωτερική πρόσβαση στον διακομιστή τηλεόρασης</value>
+  </data>
+  <data name="TvServerSettings_errInvalidPath" xml:space="preserve">
+    <value>Πρέπει να θέσετε μια έγκυρη τοποθεσία εγκατάστασης του διακομιστή τηλεόρασης (TV-Server).</value>
+  </data>
+  <data name="TvServerSettings_labelHeading" xml:space="preserve">
+    <value>Παρακαλούμε ορίστε τις απαραίτητες επιλογές για την εγκατάσταση του διακομιστή τηλεόρασης (TV-Server):</value>
+  </data>
+  <data name="TvServerSettings_labelInstDir" xml:space="preserve">
+    <value>Φάκελος εγκατάστασης του διακομιστή τηλεόρασης (TV-Server)</value>
+  </data>
+  <data name="TvServerSettings_msgSelectDir" xml:space="preserve">
+    <value>Επιλογή φακέλου εγκατάστασης του διακομιστή τηλεόρασης (TV-Server).</value>
+  </data>
+  <data name="Welcome_labelHeading1" xml:space="preserve">
+    <value>Ευχαριστούμε που επιλέξατε το MediaPortal.. Το ΔΩΡΕΑΝ  OpenSource MediaCenter!</value>
+  </data>
+  <data name="Welcome_labelHeading2" xml:space="preserve">
+    <value>Αυτή η εφαρμογεί θα σας καθοδηγήσει στη διαδικασία εγκατάστασης</value>
+  </data>
+  <data name="Welcome_labelHeading3" xml:space="preserve">
+    <value>Επιλέξτε τη γλώσσα πριν τη συνέχεια</value>
+  </data>
+  <data name="Finished_labelEbay" xml:space="preserve">
+    <value>Το ΜediaPortal είναι ΔΩΡΕΑΝ - αν το αγοράσατε στο ebay σας έπιασαν κορόιδο!</value>
+  </data>
+  <data name="Install_actionConfigure" xml:space="preserve">
+    <value>Ρυθμίσεις</value>
+  </data>
+  <data name="Install_actionRemove" xml:space="preserve">
+    <value>Αφαίρεση</value>
+  </data>
+  <data name="Install_errConfigureFailed" xml:space="preserve">
+    <value>Ρύθμιση απέτυχε</value>
+  </data>
+  <data name="Install_errRemoveFailed" xml:space="preserve">
+    <value>Απεγκατάσταση απέτυχε</value>
+  </data>
+  <data name="Install_msgConfiguring" xml:space="preserve">
+    <value>Ρύθμιση...</value>
+  </data>
+  <data name="Install_stateConfigured" xml:space="preserve">
+    <value>Ρυθμίστηκε</value>
+  </data>
+  <data name="Install_stateNotConfigured" xml:space="preserve">
+    <value>Δεν ρυθμίστηκε</value>
+  </data>
+  <data name="Install_stateRemoved" xml:space="preserve">
+    <value>Αφαιρέθηκε</value>
+  </data>
+  <data name="Install_stateUninstall" xml:space="preserve">
+    <value>Απεγκατάσταση</value>
+  </data>
+  <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
+    <value>Σύνδεση με το Internet απαιτείται για την εγκατάσταση.
+
+Θέλετε να αρχίσετε με τη εγκατάσταση τώρα ή
+θέλετε να μεταφορτώσετε τα απαιτούμενα αρχεία
+για να πραγματοποιήσετε την εγκατάσταση αργότερα?
+(σε περίπτωση αργής σύνδεσης)</value>
+  </data>
+  <data name="DownloadOnly_no" xml:space="preserve">
+    <value>Μόνο μεταφόρτωση απαιτούμενων αρχείων</value>
+  </data>
+  <data name="DownloadOnly_yes" xml:space="preserve">
+    <value>Έναρξη εγκατάστασης τώρα</value>
+  </data>
+  <data name="Install_buttonDownload" xml:space="preserve">
+    <value>Μεταφόρτωση</value>
+  </data>
+  <data name="Install_stateDownloaded" xml:space="preserve">
+    <value>Μεταφορτώθηκε</value>
+  </data>
+  <data name="Install_actionDownload" xml:space="preserve">
+    <value>Μεταφόρτωση</value>
+  </data>
+  <data name="Install_stateNotDownloaded" xml:space="preserve">
+    <value>Δεν μεταφορτώθηκε</value>
+  </data>
+  <data name="Finished_labelHeading2_download" xml:space="preserve">
+    <value>Όλα τα αρχεία του MediaPortal μεταφορτώθηκαν επιτυχώς</value>
+  </data>
+  <data name="Install_labelHeadingDownload" xml:space="preserve">
+    <value>Πατήστε το κουμπί "μεταφόρτωση" για να μεταφορτώσετε τα απαιτούμενα αρχεία</value>
+  </data>
+  <data name="OS_Support" xml:space="preserve">
+    <value>Λυπούμαστε το λειτουργικό σας δεν υποστηρίζεται από το MediaPortal !</value>
+  </data>
+  <data name="OS_Warning" xml:space="preserve">
+    <value>To λειτουργικό σας δεν υποστηρίζεται γιατί η Microsoft δεν εξέδωσε τα απαιτούμενα hotfixes.
+Συνεχίστε με δική σας ευθύνη!</value>
+  </data>
+  <data name="DownloadSettings_failed" xml:space="preserve">
+    <value>H μεταφόρτωση του αρχείου ρυθμίσεων απέτυχε.
+Παρακαλούμε ελέγξτε τις ρυθμίσεις του Internet Explorer και ξαναπροσπαθήστε.
+To κατεστραμμένο αρχείο ρυθμίσεων , αν βρεθεί, θα διαγραφεί.</value>
+  </data>
+  <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
+    <value>Ρύθμιση του τείχους προστασίας των Windows για να επιτραπεί η εξωτερική σύνδεση με το MediaPortal.</value>
+  </data>
+  <data name="OS_Beta" xml:space="preserve">
+    <value>Έκδοση Beta λειτουργικού ανιχνεύθηκε, το σύστημάσας δεν υποστηρίζεται...
+Συνεχίστε με δική σας ευθύνη!</value>
+  </data>
+  <data name="Finished_labelHeading3_download" xml:space="preserve">
+    <value>Αυτή η εφαρμογή θα κλείσει και θα ανοίξει ο φάκελος "MediaPortal Installation".
+Μεταφέρετε αυτόν τον φάκελο στο HTPC σας. Αρχίστε την εγκατάσταση με το αρχείο "ΜediaPortal.DeployTool.exe".</value>
+  </data>
+  <data name="Install_stateSkipped" xml:space="preserve">
+    <value>Δεν έγινε</value>
+  </data>
+  <data name="Exit_Installation" xml:space="preserve">
+    <value>Θέλετε να εγκαταλείψετε την εγκατάσταση του MediaPortal?</value>
+  </data>
+  <data name="DownloadOnly_CurrentSettings" xml:space="preserve">
+    <value>Τρέχουσες ρυθμίσεις: lang={0}, arch={1}</value>
+  </data>
+  <data name="DownloadSettings_labelSectionHeader" xml:space="preserve">
+    <value>Επιλέξατε ρυθμίσεις μεταφόρτωσης:</value>
+  </data>
+  <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
+    <value>Δεν βρέθηκε σύνδεση με το Internet. Για  να συνεχιστεί η εγκατάσταση απαιτείται μια ενεργή σύνδεση.</value>
+  </data>
+  <data name="DiskSpace_Error" xml:space="preserve">
+    <value>Δεν υπάρχει αρκετός χώρος στον σκληρό δίσκο που επελέγη! Για την εγκατάσταση του MediaPortal χρειάζεστε το λιγότερο {0} ΜΒ ελεύθερου χώρου. </value>
+  </data>
+</root>
