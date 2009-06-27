@@ -59,14 +59,23 @@ namespace SetupTv.Sections
 
       ciMenuHandler = new CiMenuHandler();
       ciMenuHandler.SetCaller(this);
-      
-      // attach local eventhandler to server event
-      RemoteControl.RegisterCiMenuCallbacks(ciMenuHandler);
     }
 
     private void CI_Menu_Dialog_Load(object sender, EventArgs e)
     {
       SetButtonState();
+    }
+
+    public override void OnSectionActivated()
+    {
+      // attach local eventhandler to server event
+      RemoteControl.RegisterCiMenuCallbacks(ciMenuHandler);
+    }
+
+    public override void OnSectionDeActivated()
+    {
+      // remove local eventhandler from server event
+      RemoteControl.UnRegisterCiMenuCallbacks(ciMenuHandler);
     }
 
     private void InitMenu()

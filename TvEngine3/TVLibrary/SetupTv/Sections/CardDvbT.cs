@@ -39,6 +39,8 @@ namespace SetupTv.Sections
     bool _isScanning;
     bool _stopScanning;
 
+    CI_Menu_Dialog ciMenuDialog; // ci menu dialog object
+
     public CardDvbT()
       : this("Analog")
     {
@@ -57,7 +59,8 @@ namespace SetupTv.Sections
       Card dbCard = Card.Retrieve(_cardNumber);
       if (dbCard.CAM == true)
       {
-        this.tabPageCIMenu.Controls.Add(new CI_Menu_Dialog(_cardNumber));
+        ciMenuDialog = new CI_Menu_Dialog(_cardNumber);
+        this.tabPageCIMenu.Controls.Add(ciMenuDialog);
       }
       else
       {
@@ -110,6 +113,10 @@ namespace SetupTv.Sections
 
       checkBoxCreateGroups.Checked = (layer.GetSetting("dvbt" + _cardNumber + "creategroups", "false").Value == "true");
 
+      if (ciMenuDialog != null)
+      {
+        ciMenuDialog.OnSectionActivated();
+      }
     }
 
 
@@ -124,6 +131,11 @@ namespace SetupTv.Sections
       setting = layer.GetSetting("dvbt" + _cardNumber + "creategroups", "false");
       setting.Value = checkBoxCreateGroups.Checked ? "true" : "false";
       setting.Persist();
+      
+      if (ciMenuDialog != null)
+      {
+        ciMenuDialog.OnSectionDeActivated();
+      }
     }
 
 

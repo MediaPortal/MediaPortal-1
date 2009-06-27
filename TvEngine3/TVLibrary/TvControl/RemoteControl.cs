@@ -38,7 +38,7 @@ namespace TvControl
   public class RemoteControl
   {
     private static IController _tvControl;
-    private static string _hostName = "localhost";
+    private static string _hostName = System.Net.Dns.GetHostName();
     private static TcpChannel CallbackChannel; // callback channel
     // Reverted mantis #1409: private static uint _timeOut = 45000; // specified in ms (currently all remoting calls are aborted if processing takes more than 45 sec)
 
@@ -87,8 +87,17 @@ namespace TvControl
 
       // Assign the callback from the server to here
       _tvControl.OnCiMenu += new CiMenuCallback(sink.FireCiMenuCallback);
-    }    
-    
+    }
+
+    /// <summary>
+    /// Unregisters Ci Menu Callbackhandler in TvPlugin when it's no longer required
+    /// </summary>
+    public static void UnRegisterCiMenuCallbacks(CiMenuCallbackSink sink)
+    {
+      // Assign the callback from the server to here
+      _tvControl.OnCiMenu -= new CiMenuCallback(sink.FireCiMenuCallback);
+    }       
+
     /// <summary>
     /// Gets or sets the name the hostname of the master tv-server.
     /// </summary>

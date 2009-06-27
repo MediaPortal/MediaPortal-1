@@ -68,7 +68,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_graphState != GraphState.Idle)
         {
-          throw new TvException("Graph alreayd build");
+          throw new TvException("Graph already build");
         }
         Log.Log.WriteFile("dvbc:BuildGraph");
 

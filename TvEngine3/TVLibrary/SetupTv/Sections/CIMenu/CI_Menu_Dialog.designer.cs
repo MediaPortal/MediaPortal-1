@@ -145,9 +145,9 @@
           this.lblComment.AutoSize = true;
           this.lblComment.Location = new System.Drawing.Point(3, 289);
           this.lblComment.Name = "lblComment";
-          this.lblComment.Size = new System.Drawing.Size(328, 13);
+          this.lblComment.Size = new System.Drawing.Size(313, 13);
           this.lblComment.TabIndex = 8;
-          this.lblComment.Text = "*) currently supporting FireDTV, KNC1 and TechnoTrend DVB cards";
+          this.lblComment.Text = "*) for a list of supported DVB cards refer to Team MediaPortal wiki";
           // 
           // CI_Menu_Dialog
           // 

@@ -126,12 +126,17 @@ namespace TvService
     /// </summary>
     event CiMenuCallback IController.OnCiMenu
     {
-      add {
+      add 
+      {
         s_ciMenu = null;
         s_ciMenu += value;
         Log.Debug("CiMenu: registered client event for callback"); 
       }
-      remove { Log.Debug("CiMenu: TODO : event remove."); }
+      remove 
+      {
+        s_ciMenu -= value;
+        Log.Debug("CiMenu: unregistered client callback."); 
+      }
     }
     #endregion
 
@@ -3695,6 +3700,11 @@ namespace TvService
     /// <returns>0</returns>
     public int OnCiMenuChoice(int nChoice, string lpszText)
     {
+      if (curMenu == null)
+      {
+        Log.Debug("Error in OnCiMenuChoice: menu choice sent before menu started");
+        return 0;
+      }
       curMenu.AddEntry(nChoice+1, lpszText); // choices for display +1 
       if (nChoice + 1 == curMenu.NumChoices)
       {
@@ -3711,6 +3721,11 @@ namespace TvService
     /// <returns>0</returns>
     public int OnCiCloseDisplay(int nDelay)
     {
+      // sometimes first a "Close" is sent, even no others callbacks were done before 
+      if (curMenu == null)
+      {
+        curMenu = new CiMenu(String.Empty, String.Empty, String.Empty, CiMenuState.Closed);
+      }
       curMenu.State = CiMenuState.Closed;
       CheckForCallback();
       return 0;
@@ -3725,6 +3740,11 @@ namespace TvService
     /// <returns>0</returns>
     public int OnCiRequest(bool bBlind, uint nAnswerLength, string lpszText)
     {
+      if (curMenu == null)
+      {
+        curMenu = new CiMenu(String.Empty, String.Empty, String.Empty, CiMenuState.Request);
+      }
+      curMenu.State = CiMenuState.Request;
       curMenu.Request(lpszText, (int)nAnswerLength, bBlind);
       CheckForCallback();
       return 0;

@@ -122,6 +122,9 @@ namespace SetupTv.Sections
     User _user;
     bool dvbs2;
     int _count;
+
+    CI_Menu_Dialog ciMenuDialog; // ci menu dialog object
+
     #endregion
 
     #region ctors
@@ -144,7 +147,8 @@ namespace SetupTv.Sections
       Card dbCard = Card.Retrieve(_cardNumber);
       if (dbCard.CAM == true)
       {
-        this.tabPageCIMenu.Controls.Add(new CI_Menu_Dialog(_cardNumber));
+        ciMenuDialog = new CI_Menu_Dialog(_cardNumber);
+        this.tabPageCIMenu.Controls.Add(ciMenuDialog);
       }
       else
       {
@@ -594,6 +598,10 @@ namespace SetupTv.Sections
       timer1.Enabled = false;
       SaveSettings();
       base.OnSectionDeActivated();
+      if (ciMenuDialog != null)
+      {
+        ciMenuDialog.OnSectionDeActivated();
+      }
     }
 
     public override void SaveSettings()
@@ -711,6 +719,11 @@ namespace SetupTv.Sections
       labelCurrentPosition.Text = "";
       tabControl1_SelectedIndexChanged(null, null);
       _user = new User();
+
+      if (ciMenuDialog != null)
+      {
+        ciMenuDialog.OnSectionActivated();
+      }
     }
 
     private void mpButtonScanTv_Click(object sender, EventArgs e)
