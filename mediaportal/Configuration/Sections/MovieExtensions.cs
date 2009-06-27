@@ -42,7 +42,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      base.LoadSettings("movies", ".avi,.mpg,.ogm,.mpeg,.mkv,.wmv,.ifo,.qt,.rm,.mov,.sbe,.dvr-ms,.ts,.dat,.mp4,.divx");
+      base.LoadSettings("movies", ".avi,.mpg,.ogm,.mpeg,.mkv,.wmv,.ifo,.qt,.rm,.mov,.sbe,.dvr-ms,.ts,.dat,.mp4,.divx,.iso");
     }
 
     public override void SaveSettings()
