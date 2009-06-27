@@ -6,6 +6,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.AccessControl;
 using System.Security.Cryptography;
 using System.ServiceProcess;
 using System.Text;
@@ -397,6 +398,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       //
       if (!irss_found)
       {
+        string workdir = string.Empty;
         Process[] procs = Process.GetProcessesByName(irss_app);
         foreach (Process proc in procs)
         {
@@ -404,15 +406,37 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           proc.Kill();
           proc.WaitForExit(2000);
 
-          RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\IR Server Suite", false);
-
-          if (key == null)
+          UIntPtr res = UIntPtr.Zero;
+          int OsVer = (OSInfo.OSInfo.OSMajorVersion * 10) + OSInfo.OSInfo.OSServicePackMinor;
+          int options = Convert.ToInt32(RegistryRights.ReadKey);
+          if (OsVer >= 52)
+          {
+            options = options | Convert.ToInt32(Reg.RegWow64Options.KEY_WOW64_64KEY);
+          }
+          UIntPtr rKey = new UIntPtr(Convert.ToUInt32(Reg.RegistryRoot.HKLM));
+          int lastError;
+          int retval = Reg.RegOpenKeyEx(rKey, "SOFTWARE\\IR Server Suite", 0, options, out res);
+          if (retval == 0)
+          {
+            uint tKey;
+            uint lKey = 100;
+            StringBuilder sKey = new StringBuilder((int)lKey);
+            retval = Reg.RegQueryValueEx(res, "Install_Dir", 0, out tKey, sKey, ref lKey);
+            if (retval == 0)
+            {
+              workdir = sKey + "\\Input Service";
+            }
+            else
+            {
+              lastError = Marshal.GetLastWin32Error();
+              Log.Debug("RegQueryValueEx retval=<{0}>, lastError=<{1}>", retval, lastError);
+            }
+          }
+          else
           {
             Log.Error("iMONLCDg.Dispose(): IRSS registry keys missing, aborting...");
             break;
           }
-          string workdir = (string)key.GetValue("Install_Dir", string.Empty) + "\\Input Service";
-          key.Close();
 
           Win32Functions.RedrawNotificationArea();
 

@@ -122,6 +122,7 @@
     <Compile Include="Configuration\ISettingsProvider.cs" />
     <Compile Include="Configuration\OSInfo.cs" />
     <Compile Include="Configuration\PluginIconsAttribute.cs" />
+    <Compile Include="Configuration\Registry.cs" />
     <Compile Include="Configuration\Settings.cs" />
     <Compile Include="Configuration\XmlSettingsProvider.cs" />
     <Compile Include="Localisation\LocalisationProvider.cs" />

@@ -3321,25 +3321,6 @@ namespace MediaPortal
     #region Windows API calls
 
     [SuppressUnmanagedCodeSecurity] // We won't use this maliciously
-    [DllImport("advapi32.dll", CharSet = CharSet.Unicode, EntryPoint = "RegOpenKeyEx", SetLastError = true)]
-    public static extern int RegOpenKeyEx(
-        UIntPtr hKey,
-        string subKey,
-        uint options,
-        int sam,
-        out UIntPtr phkResult);
-
-    [SuppressUnmanagedCodeSecurity] // We won't use this maliciously
-    [DllImport("advapi32.dll", CharSet = CharSet.Unicode, EntryPoint = "RegQueryValueExW", SetLastError = true)]
-    public static extern int RegQueryValueEx(
-        UIntPtr hKey,
-        string lpValueName,
-        int lpReserved,
-        out uint lpType,
-        System.Text.StringBuilder lpData,
-        ref uint lpcbData);
-
-    [SuppressUnmanagedCodeSecurity] // We won't use this maliciously
     [DllImport("User32.dll", CharSet = CharSet.Auto)]
     public static extern void DisableProcessWindowsGhosting();
 

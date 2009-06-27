@@ -26,7 +26,6 @@
 #region usings
 
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.Drawing;
@@ -325,20 +324,20 @@ public class MediaPortalApp : D3DApp, IRender
       //Store OS version for next checks
       int OsVer = (OSInfo.OSInfo.OSMajorVersion * 10) + OSInfo.OSInfo.OSServicePackMinor;
 
-      int options = Convert.ToInt32(RegistryRights.ReadKey);
+      int options = Convert.ToInt32(Reg.RegistryRights.ReadKey);
       if (OsVer >= 52)
       {
-        options = options | Convert.ToInt32(RegWow64Options.KEY_WOW64_64KEY);
+        options = options | Convert.ToInt32(Reg.RegWow64Options.KEY_WOW64_64KEY);
       }
-      UIntPtr rKey = new UIntPtr(Convert.ToUInt32(RegistryRoot.HKLM));
+      UIntPtr rKey = new UIntPtr(Convert.ToUInt32(Reg.RegistryRoot.HKLM));
       int lastError = 0;
-      int retval = NativeMethods.RegOpenKeyEx(rKey, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsUpdate\\Auto Update\\Results\\Install", 0, options, out res);
+      int retval = Reg.RegOpenKeyEx(rKey, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsUpdate\\Auto Update\\Results\\Install", 0, options, out res);
       if (retval == 0)
       {
         uint tKey;
         uint lKey = 100;
         System.Text.StringBuilder sKey = new System.Text.StringBuilder((int)lKey);
-        retval = NativeMethods.RegQueryValueEx(res, "LastSuccessTime", 0, out tKey, sKey, ref lKey);
+        retval = Reg.RegQueryValueEx(res, "LastSuccessTime", 0, out tKey, sKey, ref lKey);
         if (retval == 0)
         {
           LastSuccessTime = sKey.ToString();
@@ -3797,27 +3796,4 @@ public class MediaPortalApp : D3DApp, IRender
       Log.Info("No write permissions to enable/disable the S3 standby trick");
     }
   }
-
-  [Flags]
-  public enum RegWow64Options : int
-  {
-    None = 0,
-    KEY_WOW64_64KEY = 0x100,
-    KEY_WOW64_32KEY = 0x200
-  }
-
-  [Flags]
-  public enum RegistryRights : int
-  {
-    ReadKey = 131097,
-    WriteKey = 131078
-  }
-
-  [Flags]
-  public enum RegistryRoot : uint
-  {
-    HKCU = 0x80000001,
-    HKLM = 0x80000002
-  }
-
 }
