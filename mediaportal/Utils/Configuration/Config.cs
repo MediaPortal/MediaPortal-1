@@ -338,10 +338,10 @@ private Config()
       Set(Dir.CustomInputDevice, Path.Combine(commonAppData, @"InputDeviceMappings\"));
       Set(Dir.CustomInputDefault, Path.Combine(baseDir, @"InputDeviceMappings\defaults\"));
       Set(Dir.Database, Path.Combine(commonAppData, @"database\"));
-      Set(Dir.Language, Path.Combine(baseDir, @"language\"));
+      Set(Dir.Language, Path.Combine(commonAppData, @"language\"));
       Set(Dir.Log, Path.Combine(commonAppData, @"log\"));
       Set(Dir.Plugins, Path.Combine(baseDir, @"plugins\"));
-      Set(Dir.Skin, Path.Combine(baseDir, @"skin\"));
+      Set(Dir.Skin, Path.Combine(commonAppData, @"skin\"));
       Set(Dir.Thumbs, Path.Combine(commonAppData, @"thumbs\"));
       Set(Dir.Weather, Path.Combine(baseDir, @"weather\"));
       Set(Dir.BurnerSupport, Path.Combine(baseDir, @"Burner\"));
