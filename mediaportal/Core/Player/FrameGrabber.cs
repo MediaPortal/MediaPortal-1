@@ -44,7 +44,7 @@ namespace MediaPortal
     private Surface rgbSurface = null; // surface used to hold frame grabs
     private bool grabSucceeded = false; // indicates success/failure of framegrabs
     private bool grabSample = false; // flag to indicate that a frame must be grabbed
-    private object grabNotifier = new object(); // Wait/Notify object for waiting for the grab to complete
+    private readonly object grabNotifier = new object(); // Wait/Notify object for waiting for the grab to complete
 
     private static FrameGrabber instance = null;
 
@@ -85,7 +85,7 @@ namespace MediaPortal
           if (grabSucceeded)
           {
             GraphicsStream stream = SurfaceLoader.SaveToStream(ImageFileFormat.Bmp, rgbSurface);
-            Bitmap b = new Bitmap(Bitmap.FromStream(stream));
+            Bitmap b = new Bitmap(Image.FromStream(stream));
 
             // IMPORTANT: Closes and disposes the stream
             // If this is not done we get a memory leak!
@@ -93,11 +93,8 @@ namespace MediaPortal
             stream.Dispose();
             return b;
           }
-          else
-          {
-            Log.Debug("FrameGrabber: Frame grab failed");
-            return null;
-          }
+          Log.Debug("FrameGrabber: Frame grab failed");
+          return null;
         }
       }
       catch (Exception e) // Can occur for example if the video device is lost
@@ -163,7 +160,7 @@ namespace MediaPortal
         {
           // copy the YUV video surface to our managed ARGB surface
           // Log.Debug("Calling VideoSurfaceToRGBSurface");
-          VideoSurfaceToRGBSurface(new IntPtr(pSurface), (IntPtr) rgbSurface.UnmanagedComPointer);
+          VideoSurfaceToRGBSurface(new IntPtr(pSurface), (IntPtr)rgbSurface.UnmanagedComPointer);
           lock (grabNotifier)
           {
             grabSample = false;
@@ -172,12 +169,15 @@ namespace MediaPortal
           }
         }
       }
-        // The loss of the D3DX device or similar can cause exceptions, catch any such
-        // exception and report failure to GetCurrentImage
+      // The loss of the D3DX device or similar can cause exceptions, catch any such
+      // exception and report failure to GetCurrentImage
       catch (Exception e)
       {
-        rgbSurface.Dispose(); // get rid of rgbSurface just to make sure
-        rgbSurface = null;
+        if (rgbSurface != null)
+        {
+          rgbSurface.Dispose(); // get rid of rgbSurface just to make sure
+          rgbSurface = null;
+        }
         lock (grabNotifier)
         {
           grabSucceeded = false;
