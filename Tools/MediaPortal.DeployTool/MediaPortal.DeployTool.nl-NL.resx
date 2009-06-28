@@ -201,7 +201,7 @@ De PC is daarmee een dedicated TV-server en verzorgt het TV-signaal voor andere 
     <value>Selecteer de SQL-Server die u wilt gebruiken:</value>
   </data>
   <data name="DBMSType_rbMSSQL" xml:space="preserve">
-    <value>Microsoft SQL-Server Express 2005</value>
+    <value>Microsoft SQL-Server Express 2008</value>
   </data>
   <data name="DBMSType_rbMySQL" xml:space="preserve">
     <value>MySQL 5</value>
@@ -321,7 +321,8 @@ De PC is daarmee een dedicated TV-server en verzorgt het TV-signaal voor andere 
     <value>Doorgaan</value>
   </data>
   <data name="ManualDownload_errFileNotFound" xml:space="preserve">
-    <value>Bestand niet gevonden</value>
+    <value>Bestand {0} niet gevonden. Doorzoek uw schijf
+(De bestandsnaam moet ongeveer gelijk zijn aan de voorgestelde naam)</value>
   </data>
   <data name="ManualDownload_labelDesc" xml:space="preserve">
     <value>Klik op "Doorgaan" als u klaar bent met downloaden van het benodigde bestand</value>
@@ -333,7 +334,7 @@ De PC is daarmee een dedicated TV-server en verzorgt het TV-signaal voor andere 
     <value>Open map</value>
   </data>
   <data name="ManualDownload_linkURL" xml:space="preserve">
-    <value>Link</value>
+    <value>Download link</value>
   </data>
   <data name="ManualDownload_Title" xml:space="preserve">
     <value>Handmatige download</value>
@@ -366,7 +367,7 @@ De PC is daarmee een dedicated TV-server en verzorgt het TV-signaal voor andere 
     <value>Selecteer de installatiemap voor TV-Server</value>
   </data>
   <data name="Welcome_labelHeading1" xml:space="preserve">
-    <value>Dank u voor het kiezen voor MediaPortal... </value>
+    <value>Dank u voor het kiezen voor MediaPortal... Het GRATIS "Open Source" MediaCenter!</value>
   </data>
   <data name="Welcome_labelHeading2" xml:space="preserve">
     <value>Dit programma helpt u bij het installatieproces</value>
@@ -393,7 +394,7 @@ De PC is daarmee een dedicated TV-server en verzorgt het TV-signaal voor andere 
     <value>Configureren</value>
   </data>
   <data name="Install_stateConfigured" xml:space="preserve">
-    <value>Klaar</value>
+    <value>Gereed</value>
   </data>
   <data name="Install_stateNotConfigured" xml:space="preserve">
     <value>Niet ingesteld</value>
@@ -495,5 +496,11 @@ Verplaats dit bestand naar uw HTPC en start de installatie met "MediaPortal.Depl
   </data>
   <data name="Install_actionUpgradeInstall" xml:space="preserve">
     <value>Upgrade-&gt;Installeren</value>
+  </data>
+  <data name="DBMSType_lbMSSQL_disabled" xml:space="preserve">
+    <value>(leer hier waarom)</value>
+  </data>
+  <data name="DBMSType_rbMSSQL_disabled" xml:space="preserve">
+    <value>Microsoft SQL-Server Express 2005 is uitgeschakeld</value>
   </data>
 </root>
