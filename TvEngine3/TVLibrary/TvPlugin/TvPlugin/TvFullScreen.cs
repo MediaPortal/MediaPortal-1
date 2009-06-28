@@ -215,7 +215,7 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _useVMR9Zap = xmlreader.GetValueAsBool("general", "useVMR9ZapOSD", false);
         _notifyTVTimeout = xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 10);
@@ -235,7 +235,7 @@ namespace TvPlugin
 
     private void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         //_isMsnChatPopup = (xmlreader.GetValueAsInt("MSNmessenger", "popupwindow", 0) == 1);       // msn related can be removed
         _timeOsdOnscreen = 1000*xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 5);
@@ -3025,7 +3025,7 @@ namespace TvPlugin
       Log.Debug("TVFullscreen: Start autozap mode");
       _autoZapMode = true;
       _autoZapTimer.Elapsed += new ElapsedEventHandler(_autoZapTimer_Elapsed);
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _autoZapTimer.Interval = xmlreader.GetValueAsInt("capture", "autoZapTimer", 10000);
       }

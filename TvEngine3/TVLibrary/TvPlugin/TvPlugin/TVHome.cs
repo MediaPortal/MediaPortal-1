@@ -992,7 +992,7 @@ namespace TvPlugin
         return;
       }
       settingsLoaded = true;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         m_navigator.LoadSettings(xmlreader);
         _autoTurnOnTv = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
@@ -1039,7 +1039,7 @@ namespace TvPlugin
     {
       if (m_navigator != null)
       {
-        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlwriter = new MPSettings())
         {
           m_navigator.SaveSettings(xmlwriter);
         }
@@ -1827,7 +1827,7 @@ namespace TvPlugin
         else
           // current channel seems to be non-tv (radio ?), get latest known tv channel from xml config and use this instead
         {
-          Settings xmlreader = new Settings("MediaPortal.xml");
+          Settings xmlreader = new MPSettings();
           string currentchannelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
           Channel currentChannel = Navigator.GetChannel(currentchannelName);
           ViewChannelAndCheck(currentChannel);
@@ -3647,7 +3647,7 @@ namespace TvPlugin
       Log.Debug("ChannelNavigator: ctor()");
       string IpAddress;
 
-      using (Settings xmlreader = new Settings("MediaPortal.xml"))
+      using (Settings xmlreader = new MPSettings())
       {
         IpAddress = xmlreader.GetValueAsString("tvservice", "hostname", "");
         if (string.IsNullOrEmpty(IpAddress) || IpAddress == "localhost")
@@ -3735,7 +3735,7 @@ namespace TvPlugin
         bool hideAllChannelsGroup = false;
         using (
           Settings xmlreader =
-            new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            new MPSettings())
         {
           hideAllChannelsGroup = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
         }
