@@ -207,7 +207,7 @@ namespace MediaPortal.TVGuideScheduler
     private void GetSettings()
     {
       string grabberOutput = null;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         grabberOutput = xmlreader.GetValueAsString("xmltv", "folder", "xmltv");
         m_intGuidedays = xmlreader.GetValueAsInt("xmltv", "daystokeep", 7);

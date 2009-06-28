@@ -133,7 +133,7 @@ namespace MediaPortal.TV.Database
       TVDatabase.SupressEvents = true;
       bool bUseTimeZone = false;
       int iTimeZoneCorrection = 0;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         bUseTimeZone = xmlreader.GetValueAsBool("xmltv", "usetimezone", true);
         int hours = xmlreader.GetValueAsInt("xmltv", "timezonecorrectionhours", 0);

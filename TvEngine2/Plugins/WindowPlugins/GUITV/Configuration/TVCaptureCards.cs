@@ -501,7 +501,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
 
             string filename = String.Format(Config.GetFile(Config.Dir.Database, "card_{0}.xml"), cd.FriendlyName);
             // save settings for get the filename in mp.xml
-            using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            using (Settings xmlwriter = new MPSettings())
             {
               xmlwriter.SetValue("dvb_ts_cards", "filename", filename);
             }

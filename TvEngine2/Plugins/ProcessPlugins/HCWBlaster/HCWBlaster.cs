@@ -96,7 +96,7 @@ namespace MediaPortal.HCWBlaster
 
     private void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _ExLogging = xmlreader.GetValueAsBool("HCWBlaster", "ExtendedLogging", false);
       }

@@ -45,7 +45,7 @@ namespace MediaPortal.TV.Recording
     public VMR9OSD()
     {
       ReadSkinFile();
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         int alpha = xmlreader.GetValueAsInt("vmr9OSDSkin", "alphaValue", 10);
         if (alpha > 0)

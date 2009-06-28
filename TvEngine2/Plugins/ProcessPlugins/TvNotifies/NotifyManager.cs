@@ -47,7 +47,7 @@ namespace MediaPortal.TvNotifies
     {
       _notifiesList = new List<TVNotify>();
       TVDatabase.OnNotifiesChanged += new TVDatabase.OnChangedHandler(OnNotifiesChanged);
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _preNotifyConfig = xmlreader.GetValueAsInt("movieplayer", "notifyTVBefore", 300);
       }

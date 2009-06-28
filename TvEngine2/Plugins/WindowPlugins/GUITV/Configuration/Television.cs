@@ -623,7 +623,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
       {
         return;
       }
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         cbAllowNormal.Checked = xmlreader.GetValueAsBool("mytve2", "allowarnormal", true);
         cbAllowOriginal.Checked = xmlreader.GetValueAsBool("mytve2", "allowaroriginal", true);
@@ -744,7 +744,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
       {
         return;
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         if (cbDeinterlace.SelectedIndex >= 0)
         {

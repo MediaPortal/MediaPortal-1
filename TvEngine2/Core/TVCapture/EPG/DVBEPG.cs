@@ -97,7 +97,7 @@ namespace MediaPortal.TV.Recording
       //
       m_cardType = card;
       m_networkType = networkType;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         m_languagesToGrab = xmlreader.GetValueAsString("epg-grabbing", "grabLanguages", "");
       }

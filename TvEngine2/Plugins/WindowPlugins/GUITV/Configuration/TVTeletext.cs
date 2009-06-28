@@ -223,7 +223,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
       }
 
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         cbHiddenMode.Checked = xmlreader.GetValueAsBool("mytve2", "teletextHidden", false);
         cbTransparentMode.Checked = xmlreader.GetValueAsBool("mytve2", "teletextTransparent", false);
@@ -239,7 +239,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
       {
         return;
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("mytve2", "teletextHidden", cbHiddenMode.Checked);
         xmlwriter.SetValueAsBool("mytve2", "teletextTransparent", cbTransparentMode.Checked);

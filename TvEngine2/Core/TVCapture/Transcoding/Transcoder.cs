@@ -140,7 +140,7 @@ namespace MediaPortal.TV.Recording
       double FPS;
       bool deleteOriginal, AutoDeleteOriginal, AutoCompress;
       Size ScreenSize = new Size(0, 0);
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         bitRate = xmlreader.GetValueAsInt("compression", "bitrate", 3);
         FPS = xmlreader.GetValueAsInt("compression", "fps", 2);

@@ -150,7 +150,7 @@ namespace MediaPortal.TV.Recording
 
       GUIWindowManager.OnNewAction += _actionHandler;
       Recorder.Start();
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         string strDefault = xmlreader.GetValueAsString("myradio", "default", "");
         if (strDefault != "")

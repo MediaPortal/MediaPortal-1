@@ -67,7 +67,7 @@ namespace MediaPortal.MPExTuneCmd
 
     private void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         s_TuneCmd = xmlreader.GetValueAsString("MPExTuneCmd", "commandloc", "C:\\dtvcon\\dtvcmd.exe");
         s_TuneParam = xmlreader.GetValueAsString("MPExTuneCmd", "commanddelim", "");

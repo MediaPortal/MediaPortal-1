@@ -105,7 +105,7 @@ namespace ProcessPlugins.DiskSpace
     private bool OutOfDiskSpace(string drive)
     {
       ulong minimiumFreeDiskSpace = 0;
-      using (Settings xmlReader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlReader = new MPSettings())
       {
         string quotaText = xmlReader.GetValueAsString("freediskspace", drive[0].ToString(), "51200");
         minimiumFreeDiskSpace = (ulong) Int32.Parse(quotaText);

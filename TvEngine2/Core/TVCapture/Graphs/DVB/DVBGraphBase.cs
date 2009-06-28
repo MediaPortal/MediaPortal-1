@@ -733,7 +733,7 @@ namespace MediaPortal.TV.Recording
         return false;
       }
       _isGraphRunning = true;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         string strValue = xmlreader.GetValueAsString("mytve2", "defaultar", "Normal");
         GUIGraphicsContext.ARType = Util.Utils.GetAspectRatio(strValue);
@@ -1397,7 +1397,7 @@ namespace MediaPortal.TV.Recording
       string strAudioRenderer = "";
       int intFilters = 0;
       string strFilters = "";
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         int intCount = 0;
         while (xmlreader.GetValueAsString("mytve2", "filter" + intCount.ToString(), "undefined") != "undefined")
@@ -1490,7 +1490,7 @@ namespace MediaPortal.TV.Recording
       try
       {
         int iTimeShiftBuffer = 30;
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           iTimeShiftBuffer = xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30);
           if (iTimeShiftBuffer < 5)

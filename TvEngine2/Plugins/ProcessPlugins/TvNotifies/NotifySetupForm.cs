@@ -43,7 +43,7 @@ namespace MediaPortal.TvNotifies
 
     private void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         textBoxPreNotify.Text = Convert.ToString(xmlreader.GetValueAsInt("movieplayer", "notifyTVBefore", 300));
         textBoxNotifyTimeoutVal.Text = Convert.ToString(xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 15));
@@ -53,7 +53,7 @@ namespace MediaPortal.TvNotifies
 
     private void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("movieplayer", "notifyTVBefore", textBoxPreNotify.Text);
         xmlwriter.SetValue("movieplayer", "notifyTVTimeout", textBoxNotifyTimeoutVal.Text);

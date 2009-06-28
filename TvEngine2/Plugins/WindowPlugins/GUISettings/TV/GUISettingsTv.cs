@@ -99,7 +99,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnVideoCodec()
     {
       string strVideoCodec;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         strVideoCodec = xmlreader.GetValueAsString("mytve2", "videocodec", "");
       }
@@ -145,7 +145,7 @@ namespace WindowPlugins.GUISettings.TV
       {
         return;
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("mytve2", "videocodec", availableVideoFilters[dlg.SelectedLabel]);
       }
@@ -154,7 +154,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnAudioCodec()
     {
       string strAudioCodec;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         strAudioCodec = xmlreader.GetValueAsString("mytve2", "audiocodec", "");
       }
@@ -200,7 +200,7 @@ namespace WindowPlugins.GUISettings.TV
       {
         return;
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("mytve2", "audiocodec", availableAudioFilters[dlg.SelectedLabel]);
       }
@@ -209,7 +209,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnAspectRatio()
     {
       Geometry.Type aspectRatio;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         string aspectRatioText = xmlreader.GetValueAsString("mytve2", "defaultar", "Normal");
         aspectRatio = Utils.GetAspectRatio(aspectRatioText);
@@ -243,7 +243,7 @@ namespace WindowPlugins.GUISettings.TV
 
       aspectRatio = Utils.GetAspectRatioByLangID(dlg.SelectedId);
 
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         string aspectRatioText = Utils.GetAspectRatio(aspectRatio);
         xmlwriter.SetValue("mytve2", "defaultar", aspectRatioText);
@@ -254,7 +254,7 @@ namespace WindowPlugins.GUISettings.TV
     {
       string[] deinterlaceModes = { "None", "Bob", "Weave", "Best" };
       int deInterlaceMode;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         deInterlaceMode = xmlreader.GetValueAsInt("mytve2", "deinterlace", 3);
       }
@@ -273,7 +273,7 @@ namespace WindowPlugins.GUISettings.TV
         {
           return;
         }
-        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlwriter = new MPSettings())
         {
           xmlwriter.SetValue("mytve2", "deinterlace", dlg.SelectedLabel);
         }
@@ -283,7 +283,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnAutoTurnOnTv()
     {
       bool autoTurnOn;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         autoTurnOn = xmlreader.GetValueAsBool("mytve2", "autoturnontv", false);
       }
@@ -300,7 +300,7 @@ namespace WindowPlugins.GUISettings.TV
         {
           return;
         }
-        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlwriter = new MPSettings())
         {
           xmlwriter.SetValueAsBool("mytve2", "autoturnontv", (dlg.SelectedLabel == 0));
         }
@@ -310,7 +310,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnAudioRenderer()
     {
       string strAudioRenderer;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         strAudioRenderer = xmlreader.GetValueAsString("mytve2", "audiorenderer", "Default DirectSound Device");
       }
@@ -338,7 +338,7 @@ namespace WindowPlugins.GUISettings.TV
       {
         return;
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("mytve2", "audiorenderer", availableAudioFilters[dlg.SelectedLabel]);
       }

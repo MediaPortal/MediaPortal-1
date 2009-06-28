@@ -47,7 +47,7 @@ namespace MediaPortal.TV.Database
 
     private PrePostRecord()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _preRecordInterval = xmlreader.GetValueAsInt("capture", "prerecord", 5);
         _postRecordInterval = xmlreader.GetValueAsInt("capture", "postrecord", 5);

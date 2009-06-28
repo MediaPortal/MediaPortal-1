@@ -826,7 +826,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
       {
         TunerCountry tunerCountry = cbCountry.SelectedItem as TunerCountry;
         _card.DefaultCountryCode = tunerCountry.Id;
-        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlwriter = new MPSettings())
         {
           xmlwriter.SetValue("capture", "countryname", tunerCountry.Country);
           xmlwriter.SetValue("capture", "country", tunerCountry.Id.ToString());
@@ -855,7 +855,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
           isCableInput = true;
         }
         _card.IsCableInput = isCableInput;
-        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlwriter = new MPSettings())
         {
           xmlwriter.SetValue("capture", "radiotuner", cbInput.Text);
         }
@@ -1020,7 +1020,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
 
     public override void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         cbInput.SelectedItem = xmlreader.GetValueAsString("capture", "radiotuner", "Antenna");
         string countryName = xmlreader.GetValueAsString("capture", "countryname", "The Netherlands");
@@ -1038,7 +1038,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
 
     public override void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("capture", "radiotuner", cbInput.Text);
         if (cbCountry.Text.Length > 0)

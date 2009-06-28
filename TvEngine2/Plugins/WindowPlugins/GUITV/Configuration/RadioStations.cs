@@ -597,7 +597,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
           strDefaultStation = radioStation.Name;
         }
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("myradio", "default", strDefaultStation);
       }
@@ -608,7 +608,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
       stationsListView.Items.Clear();
       string defaultStation = string.Empty;
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         defaultStation = xmlreader.GetValueAsString("myradio", "default", "");
       }

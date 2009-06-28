@@ -186,7 +186,7 @@ namespace MediaPortal.TV.Recording
     public DVBGraphSkyStar2(TVCaptureDevice pCard)
       : base(pCard)
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _cardType = xmlreader.GetValueAsString("DVBSS2", "cardtype", "");
       }

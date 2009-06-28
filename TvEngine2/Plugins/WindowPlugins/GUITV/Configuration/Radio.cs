@@ -168,7 +168,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
 
     public override void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         folderNameTextBox.Text = xmlreader.GetValueAsString("radiotve2", "folder", "");
       }
@@ -176,7 +176,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
 
     public override void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("radiotve2", "folder", folderNameTextBox.Text);
       }

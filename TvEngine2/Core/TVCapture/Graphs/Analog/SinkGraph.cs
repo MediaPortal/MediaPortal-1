@@ -762,7 +762,7 @@ namespace MediaPortal.TV.Recording
       SetFrameRateAndSize();
       _mpeg2DemuxHelper.StartViewing(GUIGraphicsContext.ActiveForm, _vmr9);
       DirectShowUtil.EnableDeInterlace(_graphBuilderInterface);
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         string strValue = xmlreader.GetValueAsString("mytve2", "defaultar", "Normal");
         GUIGraphicsContext.ARType = Util.Utils.GetAspectRatio(strValue);
@@ -930,7 +930,7 @@ namespace MediaPortal.TV.Recording
       string strAudioRenderer = "";
       int intFilters = 0;
       string strFilters = "";
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         int intCount = 0;
         while (xmlreader.GetValueAsString("mytve2", "filter" + intCount.ToString(), "undefined") != "undefined")

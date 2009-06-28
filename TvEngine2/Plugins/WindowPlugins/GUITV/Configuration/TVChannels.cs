@@ -761,7 +761,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
       if (_itemsModified)
       {
         int countryCode = 31;
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           countryCode = xmlreader.GetValueAsInt("capture", "country", 31);
         }
@@ -1054,7 +1054,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
 
     private void buttonImportFromTvGuide_Click(object sender, EventArgs e)
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         string strTVGuideFile = xmlreader.GetValueAsString("xmltv", "folder", "xmltv");
         strTVGuideFile = RemoveTrailingSlash(strTVGuideFile);

@@ -159,7 +159,7 @@ namespace MediaPortal.TV.Recording
       _state = State.Initializing;
       _commandProcessor = processor;
       RecorderProperties.Init();
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         automaticbacktoback = xmlreader.GetValueAsBool("mytve2", "automaticbacktoback", false);
         if (_commandProcessor != null)

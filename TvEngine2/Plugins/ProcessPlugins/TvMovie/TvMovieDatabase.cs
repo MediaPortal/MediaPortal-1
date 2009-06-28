@@ -168,7 +168,7 @@ namespace ProcessPlugins.TvMovie
           }
         }
 
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           mpPath = xmlreader.GetValueAsString("tvmovie", "databasepath", path);
         }
@@ -200,12 +200,12 @@ namespace ProcessPlugins.TvMovie
         }
 
         string mpPath = string.Empty;
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           mpPath = xmlreader.GetValueAsString("tvmovie", "databasepath", string.Empty);
         }
 
-        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlwriter = new MPSettings())
         {
           if (newPath == path)
           {
@@ -267,7 +267,7 @@ namespace ProcessPlugins.TvMovie
 
     public TvMovieDatabase()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _useShortProgramDesc = xmlreader.GetValueAsBool("tvmovie", "shortprogramdesc", false);
         _extendDescription = xmlreader.GetValueAsBool("tvmovie", "extenddescription", false);
@@ -749,7 +749,7 @@ namespace ProcessPlugins.TvMovie
     {
       get
       {
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           if (Convert.ToInt64(xmlreader.GetValueAsString("tvmovie", "lastupdate", "0")) == LastUpdate)
           {
@@ -767,7 +767,7 @@ namespace ProcessPlugins.TvMovie
       {
         long lastUpdate = 0;
 
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           if (xmlreader.GetValueAsBool("tvmovie", "usedatabasedate", true))
           {
@@ -891,7 +891,7 @@ namespace ProcessPlugins.TvMovie
 
       if (!_canceled)
       {
-        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlwriter = new MPSettings())
         {
           xmlwriter.SetValue("tvmovie", "lastupdate", LastUpdate);
         }

@@ -63,7 +63,7 @@ namespace MediaPortal.Player
 
         int iTunerCountry = 31;
         string strTunerType = "Antenna";
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           m_bInternal = xmlreader.GetValueAsBool("radiotve2", "internal", true);
           strPlayerFile = xmlreader.GetValueAsString("radiotve2", "player", "");

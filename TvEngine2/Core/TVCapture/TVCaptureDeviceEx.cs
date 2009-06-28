@@ -195,7 +195,7 @@ namespace MediaPortal.TV.Recording
       string tunerInput = "Antenna";
 
 
-      using (Settings xmlReader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlReader = new MPSettings())
       {
         tunerInput = xmlReader.GetValueAsString("capture", "tuner", "Antenna");
         countryCode = xmlReader.GetValueAsInt("capture", "country", 31);
@@ -1054,7 +1054,7 @@ namespace MediaPortal.TV.Recording
       _recordedTvObject.End = Util.Utils.datetolong(DateTime.Now);
       TVDatabase.AddRecordedTV(_recordedTvObject);
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         bool addMovieToDatabase = xmlreader.GetValueAsBool("capture", "addrecordingstomoviedatabase", true);
         if (addMovieToDatabase)
@@ -1784,7 +1784,7 @@ namespace MediaPortal.TV.Recording
 
         timeProgStart = currentRunningProgram.StartTime;
 
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           if (isMovie)
           {

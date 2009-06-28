@@ -864,7 +864,7 @@ namespace DShowNET.Helper
         }
 
         int iTimeShiftBuffer = 30;
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           iTimeShiftBuffer = xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30);
           if (iTimeShiftBuffer < 5)

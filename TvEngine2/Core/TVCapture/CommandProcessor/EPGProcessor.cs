@@ -42,7 +42,7 @@ namespace MediaPortal.TV.Recording
     public EPGProcessor()
     {
       TVDatabase.GetChannels(ref _tvChannelsList);
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _autoGrabEpg = xmlreader.GetValueAsBool("xmltv", "epgdvb", true);
       }

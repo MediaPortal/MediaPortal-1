@@ -52,7 +52,7 @@ namespace MediaPortal.ProcessPlugins.WebEPG
     private void LoadSettings()
     {
       // load settings
-      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
+      using (Settings reader = new MPSettings())
       {
         int hours, minutes;
         hours = reader.GetValueAsInt("webepggrabber", "hours", 0);
@@ -82,7 +82,7 @@ namespace MediaPortal.ProcessPlugins.WebEPG
     private void SaveSettings()
     {
       // save settings
-      using (Settings writer = new Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
+      using (Settings writer = new MPSettings())
       {
         int hours, minutes;
         hours = Int32.Parse(hoursTextBox.Text);

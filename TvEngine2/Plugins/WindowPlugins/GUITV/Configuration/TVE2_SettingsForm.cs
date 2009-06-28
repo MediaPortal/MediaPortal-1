@@ -145,7 +145,7 @@ namespace MediaPortal.Configuration.TVE2
       InitializeComponent();
       // Stop MCE services
       string strLanguage;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
 

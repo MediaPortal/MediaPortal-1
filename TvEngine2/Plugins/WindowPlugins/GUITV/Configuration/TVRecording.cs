@@ -729,7 +729,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
 
     public override void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         startTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("capture", "prerecord", 5));
         endTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("capture", "postrecord", 5));
@@ -758,7 +758,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
 
     public override void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("capture", "prerecord", startTextBox.Text);
         xmlwriter.SetValue("capture", "postrecord", endTextBox.Text);
@@ -841,7 +841,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
           }
         }
         labelQuota.Text = Util.Utils.GetSize((long) quota);
-        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlwriter = new MPSettings())
         {
           long longQuota = (long) quota;
           longQuota /= 1024; // kbyte
@@ -850,7 +850,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
       }
       else
       {
-        using (Settings xmlReader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlReader = new MPSettings())
         {
           string quotaText = xmlReader.GetValueAsString("freediskspace", drive[0].ToString(), "51200");
           float quota = (float) Int32.Parse(quotaText);

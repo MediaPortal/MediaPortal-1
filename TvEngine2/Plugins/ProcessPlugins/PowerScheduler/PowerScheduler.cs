@@ -155,7 +155,7 @@ namespace MediaPortal.PowerScheduler
 
     private void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _shutDownInterval = xmlreader.GetValueAsInt("powerscheduler", "shutdowninterval", 0);
         _shutDownMode = xmlreader.GetValueAsString("powerscheduler", "shutdownmode", "Suspend").ToLower();

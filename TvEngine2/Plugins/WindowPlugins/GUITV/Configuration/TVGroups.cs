@@ -474,7 +474,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
 
     public override void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         cbHideAllChannels.Checked = xmlreader.GetValueAsBool("mytve2", "hideAllChannelsGroup", false);
       }
@@ -483,7 +483,7 @@ namespace MediaPortal.Configuration.TVE2.Sections
 
     public override void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("mytve2", "hideAllChannelsGroup", cbHideAllChannels.Checked);
       }
