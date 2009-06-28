@@ -117,21 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="WatchTV_labelSectionHeader" xml:space="preserve">
-    <value>Möchten Sie mit MediaPortal fernsehen?</value>
-  </data>
-  <data name="WatchTV_on" xml:space="preserve">
-    <value>Ja, ich möchte mit MediaPortal fernsehen.</value>
-  </data>
-  <data name="WatchTV_off" xml:space="preserve">
-    <value>Nein, ich möchte MediaPortal nicht zum Fernsehen verwenden.</value>
-  </data>
-  <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
-    <value>Alle benötigten Anwendungen werden in ihre Standardverzeichnisse mit den Standardeinstellungen installiert.</value>
-  </data>
-  <data name="BaseInstallationNoTvEngine_labelAdvancedDesc" xml:space="preserve">
-    <value>Die benutzerdefinierte Installation erlaubt das Festlegen der Installationsverzeichnisse und sonstige Einstellungen.</value>
-  </data>
   <data name="BaseInstallation_labelAdvancedCaption" xml:space="preserve">
     <value>Benutzerdefinierte Installation</value>
   </data>
@@ -150,30 +135,33 @@
   <data name="BaseInstallation_rbOneClick" xml:space="preserve">
     <value>1-Klick Installation durchführen</value>
   </data>
-  <data name="CustomInstallation_labelSectionHeader" xml:space="preserve">
-    <value>Bitte wählen Sie die gewünschte Konfiguration aus</value>
+  <data name="BaseInstallationNoTvEngine_labelAdvancedDesc" xml:space="preserve">
+    <value>Die benutzerdefinierte Installation erlaubt das Festlegen der Installationsverzeichnisse und sonstige Einstellungen.</value>
   </data>
-  <data name="CustomInstallation_rbClient" xml:space="preserve">
-    <value>MediaPortal Client (zur Verbindung mit einem TV-Server)</value>
+  <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
+    <value>Alle benötigten Anwendungen werden in ihre Standardverzeichnisse mit den Standardeinstellungen installiert.</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
     <value>Es wird nur MediaPortal installiert. Zum Fernsehen verbindet sich MediaPortal mit einem TV-Server in Ihrem Netzwerk.</value>
-  </data>
-  <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
-    <value>MediaPortal "Einzelplatz"-Installation (alles auf einem Rechner)</value>
-  </data>
-  <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
-    <value>Diese Auswahl ist die richtige, wenn Sie MediaPortal und den TV-Server auf einem PC installieren wollen.</value>
-  </data>
-  <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
-    <value>MediaPortal dedizierter TV-Server (Master Server mit SQL Server, ohne MediaPortal)</value>
   </data>
   <data name="CustomInstallation_labelMaster" xml:space="preserve">
     <value>Es wird nur der MediaPortal TV-Server installiert. 
 Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
   </data>
-  <data name="MainWindow_browseButton" xml:space="preserve">
-    <value>Durchsuchen</value>
+  <data name="CustomInstallation_labelSectionHeader" xml:space="preserve">
+    <value>Bitte wählen Sie die gewünschte Konfiguration aus</value>
+  </data>
+  <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
+    <value>Diese Auswahl ist die richtige, wenn Sie MediaPortal und den TV-Server auf einem PC installieren wollen.</value>
+  </data>
+  <data name="CustomInstallation_rbClient" xml:space="preserve">
+    <value>MediaPortal Client (zur Verbindung mit einem TV-Server)</value>
+  </data>
+  <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
+    <value>MediaPortal "Einzelplatz"-Installation (alles auf einem Rechner)</value>
+  </data>
+  <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
+    <value>MediaPortal dedizierter TV-Server (Master Server mit SQL Server, ohne MediaPortal)</value>
   </data>
   <data name="DBMSSettings_checkBoxFirewall" xml:space="preserve">
     <value>Windows Firewall für externen Zugriff auf Datenbankserver konfigurieren.</value>
@@ -199,20 +187,66 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
   <data name="DBMSType_labelHeading" xml:space="preserve">
     <value>Bitte wählen Sie den zu installierenden SQL-Server Typ:</value>
   </data>
-  <data name="DBMSType_rbMSSQL" xml:space="preserve">
-    <value>Microsoft SQL-Server 2005</value>
-  </data>
-  <data name="DBMSType_rbMySQL" xml:space="preserve">
-    <value>MySQL 5</value>
+  <data name="DBMSType_lbMSSQL_disabled" xml:space="preserve">
+    <value>(Weitere Informationen anzeigen)</value>
   </data>
   <data name="DBMSType_rbDBAlreadyInstalled" xml:space="preserve">
     <value>Es ist bereits ein SQL Server vorhanden und dieser soll verwendet werden.</value>
   </data>
+  <data name="DBMSType_rbMSSQL" xml:space="preserve">
+    <value>Microsoft SQL-Server 2005</value>
+  </data>
+  <data name="DBMSType_rbMSSQL_disabled" xml:space="preserve">
+    <value>Microsoft SQL Server Express 2005 ist deaktiviert</value>
+  </data>
+  <data name="DBMSType_rbMySQL" xml:space="preserve">
+    <value>MySQL 5</value>
+  </data>
+  <data name="DiskSpace_Error" xml:space="preserve">
+    <value>Auf dem angegebenen Laufwerk ist nicht ausreichend Speicherplatz vorhanden! Zur Installation von MediaPortal werden {0} MB Speicherplatz benötigt.</value>
+  </data>
+  <data name="DownloadOnly_CurrentSettings" xml:space="preserve">
+    <value>Aktuelle Download Einstellungen: Sprache={0}, System={1}</value>
+  </data>
+  <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
+    <value>Für die Installation wird eine Internetverbindung benötigt.
+Möchten Sie die Installations-Schritte jetzt durchführen oder lediglich die benötigten Dateien herunterladen, um die eigentliche Installation später vorzunehmen?</value>
+  </data>
+  <data name="DownloadOnly_no" xml:space="preserve">
+    <value>Nur Downloads durchführen</value>
+  </data>
+  <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
+    <value>Keine Internetverbindung gefunden! Zum Fortführen der Installation wird eine Internetverbindung benötigt.</value>
+  </data>
+  <data name="DownloadOnly_yes" xml:space="preserve">
+    <value>Installation beginnen</value>
+  </data>
+  <data name="DownloadSettings_failed" xml:space="preserve">
+    <value>Die benötigten Einstellungen konnten nicht geladen werden.
+Bitte überprüfen sie die Verbindungs-Optionen des Internet Explorers.
+Einstellungsdatei ist beschädigt und wird gelöscht, falls vorhanden.</value>
+  </data>
+  <data name="DownloadSettings_labelSectionHeader" xml:space="preserve">
+    <value>Bitte wählen sie die Einstellungen für den Download:</value>
+  </data>
+  <data name="Exit_Installation" xml:space="preserve">
+    <value>Installation wirklich abbrechen?</value>
+  </data>
+  <data name="Finished_labelEbay" xml:space="preserve">
+    <value>MediaPortal ist freie, kostenlose GPL-Software!</value>
+  </data>
   <data name="Finished_labelHeading1" xml:space="preserve">
     <value>Herzlichen Glückwunsch !</value>
   </data>
+  <data name="Finished_labelHeading2_download" xml:space="preserve">
+    <value>Die benötigten Komponenten wurden erfolgreich heruntergeladen.</value>
+  </data>
   <data name="Finished_labelHeading2_install" xml:space="preserve">
     <value>Die Installation von MediaPortal war erfolgreich.</value>
+  </data>
+  <data name="Finished_labelHeading3_download" xml:space="preserve">
+    <value>Diese Anwendung wird jetzt beendet und das Verzeichnis "MediaPortal Installation" wird geöffnet.
+Kopieren Sie dieses Verzeichnis auf Ihren HTPC. Starten Sie "MediaPortal.DeployTool.exe" um die Installation durchzuführen.</value>
   </data>
   <data name="Finished_labelHeading3_install" xml:space="preserve">
     <value>Hier finden Sie weiterführende Links, die Sie beim Einstieg in MediaPortal unterstützen.</value>
@@ -244,6 +278,12 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
   <data name="HTTPDownload_Title" xml:space="preserve">
     <value>Datei wird heruntergeladen...</value>
   </data>
+  <data name="Install_actionConfigure" xml:space="preserve">
+    <value>Einrichten</value>
+  </data>
+  <data name="Install_actionDownload" xml:space="preserve">
+    <value>Herunterladen</value>
+  </data>
   <data name="Install_actionDownloadInstall" xml:space="preserve">
     <value>Herunterladen-&gt;Installieren</value>
   </data>
@@ -253,11 +293,20 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
   <data name="Install_actionNothing" xml:space="preserve">
     <value>&lt;Keine Aktion&gt;</value>
   </data>
+  <data name="Install_actionRemove" xml:space="preserve">
+    <value>Entfernen</value>
+  </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
     <value>Vorherige Version deinstallieren-&gt;Herunterladen-&gt;Installieren</value>
   </data>
   <data name="Install_actionUninstallInstall" xml:space="preserve">
     <value>Vorherige Version deinstallieren-&gt;Installieren</value>
+  </data>
+  <data name="Install_actionUpgradeInstall" xml:space="preserve">
+    <value>Aktualisierung-&gt;Installation</value>
+  </data>
+  <data name="Install_buttonDownload" xml:space="preserve">
+    <value>Herunterladen</value>
   </data>
   <data name="Install_buttonInstall" xml:space="preserve">
     <value>Installieren</value>
@@ -274,14 +323,26 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
   <data name="Install_errAppsMissing" xml:space="preserve">
     <value>Es wurden noch nicht alle benötigten Anwendungen installiert.</value>
   </data>
+  <data name="Install_errConfigureFailed" xml:space="preserve">
+    <value>Einrichtung fehlgeschlagen</value>
+  </data>
   <data name="Install_errDownloadFailed" xml:space="preserve">
     <value>Es ist ein Fehler beim Herunterladen der Anwendung [{0}] aufgetreten</value>
   </data>
   <data name="Install_errInstallFailed" xml:space="preserve">
     <value>Es ist ein Fehler bei der Installation der Anwendung [{0}] aufgetreten</value>
   </data>
+  <data name="Install_errRemoveFailed" xml:space="preserve">
+    <value>Deinstallation fehlgeschlagen</value>
+  </data>
+  <data name="Install_labelHeadingDownload" xml:space="preserve">
+    <value>Klicken Sie "Herunterladen", um den Internet-Download der nötigen Dateien jetzt zu starten.</value>
+  </data>
   <data name="Install_labelHeadingInstall" xml:space="preserve">
     <value>Klicken Sie "Installieren", um alle für die gewählte Konfiguration notwendigen Applikationen zu installieren.</value>
+  </data>
+  <data name="Install_msgConfiguring" xml:space="preserve">
+    <value>Richte ein..</value>
   </data>
   <data name="Install_msgDownloading" xml:space="preserve">
     <value>Download läuft...</value>
@@ -292,11 +353,32 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
   <data name="Install_msgUninstalling" xml:space="preserve">
     <value>Deinstalliere...</value>
   </data>
+  <data name="Install_stateConfigured" xml:space="preserve">
+    <value>Eingerichtet</value>
+  </data>
+  <data name="Install_stateDownloaded" xml:space="preserve">
+    <value>Heruntergeladen</value>
+  </data>
   <data name="Install_stateInstalled" xml:space="preserve">
     <value>Installiert</value>
   </data>
+  <data name="Install_stateNotConfigured" xml:space="preserve">
+    <value>Nicht angepasst</value>
+  </data>
+  <data name="Install_stateNotDownloaded" xml:space="preserve">
+    <value>Nicht heruntergeladen</value>
+  </data>
   <data name="Install_stateNotInstalled" xml:space="preserve">
     <value>Nicht installiert</value>
+  </data>
+  <data name="Install_stateRemoved" xml:space="preserve">
+    <value>Entfernt</value>
+  </data>
+  <data name="Install_stateSkipped" xml:space="preserve">
+    <value>Übersprungen</value>
+  </data>
+  <data name="Install_stateUninstall" xml:space="preserve">
+    <value>Entfernen</value>
   </data>
   <data name="Install_stateVersionMismatch" xml:space="preserve">
     <value>Eine andere Version ist bereits installiert</value>
@@ -306,6 +388,9 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
   </data>
   <data name="MainWindow_backButton" xml:space="preserve">
     <value>Zurück</value>
+  </data>
+  <data name="MainWindow_browseButton" xml:space="preserve">
+    <value>Durchsuchen</value>
   </data>
   <data name="MainWindow_buttonClose" xml:space="preserve">
     <value>Beenden</value>
@@ -337,6 +422,9 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
   <data name="ManualDownload_Title" xml:space="preserve">
     <value>Manueller Download</value>
   </data>
+  <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
+    <value>Windows Firewall für externen Zugriff auf den MediaPortal konfigurieren.</value>
+  </data>
   <data name="MPSettings_errInvalidPath" xml:space="preserve">
     <value>Sie müssen einen gültigen Installationspfad für die MediaPortal Installation eintragen</value>
   </data>
@@ -348,6 +436,17 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
   </data>
   <data name="MPSettings_msgSelectDir" xml:space="preserve">
     <value>Wählen Sie das Installationsverzeichnis für die MediaPortal Installation.</value>
+  </data>
+  <data name="OS_Beta" xml:space="preserve">
+    <value>Beta Version des SP gefunden, Ihr Betriebsystem wird nicht unterstützt...
+Fortsetzung erfolgt auf eigenes Risiko!</value>
+  </data>
+  <data name="OS_Support" xml:space="preserve">
+    <value>Ihr Betriebssystem wird leider nicht von MediaPortal unterstützt.</value>
+  </data>
+  <data name="OS_Warning" xml:space="preserve">
+    <value>Ihr Betriebsystem wird leider nicht unterstützt. Mirosoft stellt für Ihr System nicht alle benötigten Hotfixe bereit.
+Fortsetzung erfolgt auf eigenes Risiko.</value>
   </data>
   <data name="TvServerSettings_checkBoxFirewall" xml:space="preserve">
     <value>Windows Firewall für externen Zugriff auf den TV-Server konfigurieren</value>
@@ -364,114 +463,6 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
   <data name="TvServerSettings_msgSelectDir" xml:space="preserve">
     <value>Wählen Sie das Verzeichnis für die TV-Server Installation.</value>
   </data>
-  <data name="Welcome_labelHeading1" xml:space="preserve">
-    <value>Vielen Dank, dass Sie sich für MediaPortal entschieden haben!</value>
-  </data>
-  <data name="Welcome_labelHeading2" xml:space="preserve">
-    <value>Diese Anwendung wird Sie durch den Installationsvorgang begleiten.</value>
-  </data>
-  <data name="Welcome_labelHeading3" xml:space="preserve">
-    <value>Bitte wählen Sie Ihre Sprache:</value>
-  </data>
-  <data name="Finished_labelEbay" xml:space="preserve">
-    <value>MediaPortal ist freie, kostenlose GPL-Software!</value>
-  </data>
-  <data name="Install_actionConfigure" xml:space="preserve">
-    <value>Einrichten</value>
-  </data>
-  <data name="Install_actionRemove" xml:space="preserve">
-    <value>Entfernen</value>
-  </data>
-  <data name="Install_errConfigureFailed" xml:space="preserve">
-    <value>Einrichtung fehlgeschlagen</value>
-  </data>
-  <data name="Install_errRemoveFailed" xml:space="preserve">
-    <value>Deinstallation fehlgeschlagen</value>
-  </data>
-  <data name="Install_msgConfiguring" xml:space="preserve">
-    <value>Richte ein..</value>
-  </data>
-  <data name="Install_stateConfigured" xml:space="preserve">
-    <value>Eingerichtet</value>
-  </data>
-  <data name="Install_stateNotConfigured" xml:space="preserve">
-    <value>Nicht angepasst</value>
-  </data>
-  <data name="Install_stateRemoved" xml:space="preserve">
-    <value>Entfernt</value>
-  </data>
-  <data name="Install_stateUninstall" xml:space="preserve">
-    <value>Entfernen</value>
-  </data>
-  <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
-    <value>Für die Installation wird eine Internetverbindung benötigt.
-Möchten Sie die Installations-Schritte jetzt durchführen oder lediglich die benötigten Dateien herunterladen, um die eigentliche Installation später vorzunehmen?</value>
-  </data>
-  <data name="DownloadOnly_no" xml:space="preserve">
-    <value>Nur Downloads durchführen</value>
-  </data>
-  <data name="DownloadOnly_yes" xml:space="preserve">
-    <value>Installation beginnen</value>
-  </data>
-  <data name="Install_buttonDownload" xml:space="preserve">
-    <value>Herunterladen</value>
-  </data>
-  <data name="Install_stateDownloaded" xml:space="preserve">
-    <value>Heruntergeladen</value>
-  </data>
-  <data name="Install_actionDownload" xml:space="preserve">
-    <value>Herunterladen</value>
-  </data>
-  <data name="Install_stateNotDownloaded" xml:space="preserve">
-    <value>Nicht heruntergeladen</value>
-  </data>
-  <data name="Finished_labelHeading2_download" xml:space="preserve">
-    <value>Die benötigten Komponenten wurden erfolgreich heruntergeladen.</value>
-  </data>
-  <data name="Install_labelHeadingDownload" xml:space="preserve">
-    <value>Klicken Sie "Herunterladen", um den Internet-Download der nötigen Dateien jetzt zu starten.</value>
-  </data>
-  <data name="OS_Support" xml:space="preserve">
-    <value>Ihr Betriebssystem wird leider nicht von MediaPortal unterstützt.</value>
-  </data>
-  <data name="OS_Warning" xml:space="preserve">
-    <value>Ihr Betriebsystem wird leider nicht unterstützt. Mirosoft stellt für Ihr System nicht alle benötigten Hotfixe bereit.
-Fortsetzung erfolgt auf eigenes Risiko.</value>
-  </data>
-  <data name="DownloadSettings_failed" xml:space="preserve">
-    <value>Die benötigten Einstellungen konnten nicht geladen werden.
-Bitte überprüfen sie die Verbindungs-Optionen des Internet Explorers.
-Einstellungsdatei ist beschädigt und wird gelöscht, falls vorhanden.</value>
-  </data>
-  <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
-    <value>Windows Firewall für externen Zugriff auf den MediaPortal konfigurieren.</value>
-  </data>
-  <data name="OS_Beta" xml:space="preserve">
-    <value>Beta Version des SP gefunden, Ihr Betriebsystem wird nicht unterstützt...
-Fortsetzung erfolgt auf eigenes Risiko!</value>
-  </data>
-  <data name="Finished_labelHeading3_download" xml:space="preserve">
-    <value>Diese Anwendung wird jetzt beendet und das Verzeichnis "MediaPortal Installation" wird geöffnet.
-Kopieren Sie dieses Verzeichnis auf Ihren HTPC. Starten Sie "MediaPortal.DeployTool.exe" um die Installation durchzuführen.</value>
-  </data>
-  <data name="Install_stateSkipped" xml:space="preserve">
-    <value>Übersprungen</value>
-  </data>
-  <data name="Exit_Installation" xml:space="preserve">
-    <value>Installation wirklich abbrechen?</value>
-  </data>
-  <data name="DownloadOnly_CurrentSettings" xml:space="preserve">
-    <value>Aktuelle Download Einstellungen: Sprache={0}, System={1}</value>
-  </data>
-  <data name="DownloadSettings_labelSectionHeader" xml:space="preserve">
-    <value>Bitte wählen sie die Einstellungen für den Download:</value>
-  </data>
-  <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
-    <value>Keine Internetverbindung gefunden! Zum Fortführen der Installation wird eine Internetverbindung benötigt.</value>
-  </data>
-  <data name="DiskSpace_Error" xml:space="preserve">
-    <value>Auf dem angegebenen Laufwerk ist nicht ausreichend Speicherplatz vorhanden! Zur Installation von MediaPortal werden {0} MB Speicherplatz benötigt.</value>
-  </data>
   <data name="Upgrade_labelSectionHeader" xml:space="preserve">
     <value>MediaPortal {0} ist installiert.</value>
   </data>
@@ -481,14 +472,29 @@ Kopieren Sie dieses Verzeichnis auf Ihren HTPC. Starten Sie "MediaPortal.DeployT
   <data name="Upgrade_no" xml:space="preserve">
     <value>Neuinstallation</value>
   </data>
-  <data name="Upgrade_yes" xml:space="preserve">
-    <value>Bestehende Installation auf Version {0} aktualisieren</value>
-  </data>
   <data name="Upgrade_note" xml:space="preserve">
     <value>Achtung: Eine Aktualisierung basierend auf der Installation
 einer SVN Version ist nicht möglich.</value>
   </data>
-  <data name="Install_actionUpgradeInstall" xml:space="preserve">
-    <value>Aktualisierung-&gt;Installation</value>
+  <data name="Upgrade_yes" xml:space="preserve">
+    <value>Bestehende Installation auf Version {0} aktualisieren</value>
+  </data>
+  <data name="WatchTV_labelSectionHeader" xml:space="preserve">
+    <value>Möchten Sie mit MediaPortal fernsehen?</value>
+  </data>
+  <data name="WatchTV_off" xml:space="preserve">
+    <value>Nein, ich möchte MediaPortal nicht zum Fernsehen verwenden.</value>
+  </data>
+  <data name="WatchTV_on" xml:space="preserve">
+    <value>Ja, ich möchte mit MediaPortal fernsehen.</value>
+  </data>
+  <data name="Welcome_labelHeading1" xml:space="preserve">
+    <value>Vielen Dank, dass Sie sich für MediaPortal entschieden haben!</value>
+  </data>
+  <data name="Welcome_labelHeading2" xml:space="preserve">
+    <value>Diese Anwendung wird Sie durch den Installationsvorgang begleiten.</value>
+  </data>
+  <data name="Welcome_labelHeading3" xml:space="preserve">
+    <value>Bitte wählen Sie Ihre Sprache:</value>
   </data>
 </root>
