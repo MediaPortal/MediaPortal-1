@@ -254,7 +254,7 @@ namespace WatchDog
       }
       setStatus("Launching MediaPortal...");
       // Set the loglevel to "debug"
-      using (Settings xmlreader = new Settings(Application.StartupPath + "\\MediaPortal.xml", false))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _lastMPLogLevel = xmlreader.GetValueAsInt("general", "loglevel", 1);
         xmlreader.SetValue("general", "loglevel", 3);
@@ -309,7 +309,7 @@ namespace WatchDog
       if (_processMP.HasExited)
       {
         // Reset the loglevel to "debug"
-        using (Settings xmlreader = new Settings(Application.StartupPath + "\\MediaPortal.xml", false))
+        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           xmlreader.SetValue("general", "loglevel", _lastMPLogLevel);
         }
