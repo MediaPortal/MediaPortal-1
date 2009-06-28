@@ -341,7 +341,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
 
        // skipCheckBox.Checked = xmlreader.GetValueAsBool("picturedatabase", "scanskipexisting", false);
@@ -384,7 +384,7 @@ namespace MediaPortal.Configuration.Sections
         return;
       }
 
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         // Database
         //xmlwriter.SetValueAsBool("picturedatabase", "scanskipexisting", skipCheckBox.Checked);

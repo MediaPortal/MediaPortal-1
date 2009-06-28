@@ -161,7 +161,7 @@ namespace MediaPortal.GUI.Settings
 
     private void LoadSettings()
     {
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         m_iSpeedHorizontal = xmlreader.GetValueAsInt("general", "ScrollSpeedRight", 1);
         m_iSpeedVertical = xmlreader.GetValueAsInt("general", "ScrollSpeedDown", 4);
@@ -170,7 +170,7 @@ namespace MediaPortal.GUI.Settings
 
     private void SaveSettings()
     {
-      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
         xmlwriter.SetValue("general", "ScrollSpeedRight", m_iSpeedHorizontal.ToString());
         xmlwriter.SetValue("general", "ScrollSpeedDown", m_iSpeedVertical.ToString());

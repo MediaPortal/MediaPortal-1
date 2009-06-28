@@ -67,7 +67,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         fileNameTextBox.Text = xmlreader.GetValueAsString("dvdplayer", "path", @"");
         parametersTextBox.Text = xmlreader.GetValueAsString("dvdplayer", "arguments", "");
@@ -108,7 +108,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("dvdplayer", "path", fileNameTextBox.Text);
         xmlwriter.SetValue("dvdplayer", "arguments", parametersTextBox.Text);

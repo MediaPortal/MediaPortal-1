@@ -294,7 +294,7 @@ namespace MediaPortal.Configuration.Sections
 
     protected void LoadSettings(string section, string defaultExt)
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         Extensions = xmlreader.GetValueAsString(section, "extensions", defaultExt);
       }
@@ -302,7 +302,7 @@ namespace MediaPortal.Configuration.Sections
 
     protected void SaveSettings(string section)
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue(section, "extensions", Extensions);
       }

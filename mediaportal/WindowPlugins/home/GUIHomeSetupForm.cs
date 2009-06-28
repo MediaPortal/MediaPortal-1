@@ -46,7 +46,7 @@ namespace MediaPortal.GUI.Home
 
     private void LoadSettings()
     {
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         chkboxFixScrollbar.Checked = xmlreader.GetValueAsBool("home", "scrollfixed", false);
         chkBoxUseMyPlugins.Checked = xmlreader.GetValueAsBool("home", "usemyplugins", true);
@@ -73,7 +73,7 @@ namespace MediaPortal.GUI.Home
 
     private void SaveSettings()
     {
-      using (Profile.Settings xmlWriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlWriter = new Profile.MPSettings())
       {
         xmlWriter.SetValueAsBool("home", "scrollfixed", chkboxFixScrollbar.Checked);
         xmlWriter.SetValueAsBool("home", "usemyplugins", chkBoxUseMyPlugins.Checked);
@@ -86,7 +86,7 @@ namespace MediaPortal.GUI.Home
 
     private void SaveMenuSorting()
     {
-      using (Profile.Settings xmlWriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlWriter = new Profile.MPSettings())
       {
         foreach (TreeNode node in tvMenu.Nodes)
         {
@@ -268,7 +268,7 @@ namespace MediaPortal.GUI.Home
         return;
       }
 
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         TreeNode tnMyPlugIns = null;
         bool useMyPlugins = xmlreader.GetValueAsBool("home", "usemyplugins", true);
@@ -574,7 +574,7 @@ namespace MediaPortal.GUI.Home
 
       if (_name != string.Empty)
       {
-        using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings xmlreader = new Profile.MPSettings())
         {
           _index = xmlreader.GetValueAsInt("pluginSorting", _name, Int32.MaxValue);
         }

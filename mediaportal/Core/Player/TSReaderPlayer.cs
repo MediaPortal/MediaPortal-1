@@ -267,7 +267,7 @@ namespace MediaPortal.Player
                                           ref string strH264VideoCodec, ref string strAudioRenderer,
                                           ref bool enableDVBBitmapSubtitles, ref bool enableDVBTtxtSubtitles, ref int relaxTsReader)
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         // FlipGer: load infos for custom filters
         int intCount = 0;
@@ -300,7 +300,7 @@ namespace MediaPortal.Player
                                               ref string strH264VideoCodec, ref string strAudioRenderer,
                                               ref bool enableDVBBitmapSubtitles, ref bool enableDVBTtxtSubtitles, ref int relaxTsReader)
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         // FlipGer: load infos for custom filters
         int intCount = 0;

@@ -304,7 +304,7 @@ namespace MediaPortal.Player
           return false;
         }
 
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           _defaultAudioLanguage = xmlreader.GetValueAsString("dvdplayer", "audiolanguage", "english");
           _defaultSubtitleLanguage = xmlreader.GetValueAsString("dvdplayer", "subtitlelanguage", "english");
@@ -571,7 +571,7 @@ namespace MediaPortal.Player
       string aspectRatioMode = "";
       string displayMode = "";
       bool useAC3Filter = false;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         dvdNavigator = xmlreader.GetValueAsString("dvdplayer", "navigator", "DVD Navigator");
         aspectRatioMode = xmlreader.GetValueAsString("dvdplayer", "armode", "").ToLower();
@@ -1663,7 +1663,7 @@ namespace MediaPortal.Player
         m_geometry.ScreenWidth = nw;
         m_geometry.ScreenHeight = nh;
         m_geometry.ARType = GUIGraphicsContext.ARType;
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           bool bUseAR = xmlreader.GetValueAsBool("dvdplayer", "pixelratiocorrection", false);
           if (bUseAR)
@@ -2151,7 +2151,7 @@ namespace MediaPortal.Player
       string strAudiorenderer = "";
       int intFilters = 0; // FlipGer: count custom filters
       string strFilters = ""; // FlipGer: collect custom filters
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         // FlipGer: load infos for custom filters
         int intCount = 0;

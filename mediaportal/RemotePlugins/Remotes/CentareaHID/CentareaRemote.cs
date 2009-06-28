@@ -76,7 +76,7 @@ namespace MediaPortal.InputDevices
     public void Init()
     {
       bool RemoteConfigured = false;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         RemoteConfigured = xmlreader.GetValueAsBool("remote", "Centarea", false);
         _verboseLogging = xmlreader.GetValueAsBool("remote", "CentareaVerbose", false);

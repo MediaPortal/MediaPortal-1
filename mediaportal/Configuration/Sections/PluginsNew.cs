@@ -398,7 +398,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         foreach (ItemTag itemTag in loadedPlugins)
         {
@@ -440,7 +440,7 @@ namespace MediaPortal.Configuration.Sections
       LoadAll();
       string dllsToLoad = "";
       string dllsToSkip = "";
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         foreach (ListViewItem item in listViewPlugins.Items)
         {

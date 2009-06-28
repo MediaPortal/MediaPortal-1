@@ -378,7 +378,7 @@ namespace MediaPortal.FoobarPlugin
     /// </summary>
     private void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         textBoxFoobarExtensions.Text = xmlreader.GetValueAsString("foobarplugin", "enabledextensions",
                                                                   ".cda,.mp3,.mid,.wav,.mpc,.aac,.shn,.wma,.ac3,.ogg");
@@ -419,7 +419,7 @@ namespace MediaPortal.FoobarPlugin
     /// </summary>
     private void SaveSettings()
     {
-      using (Settings xmlWriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlWriter = new MPSettings())
       {
         xmlWriter.SetValue("foobarplugin", "port", textBoxPortNumber.Text);
         xmlWriter.SetValue("foobarplugin", "host", textBoxHostname.Text);

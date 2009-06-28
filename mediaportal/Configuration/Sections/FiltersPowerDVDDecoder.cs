@@ -899,7 +899,7 @@ namespace MediaPortal.Configuration.Sections
             regUIUseHVA = 0;
           }
           subkey.SetValue("UIUseHVA", regUIUseHVA);
-          using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          using (Settings xmlwriter = new MPSettings())
           {
             xmlwriter.SetValue("videocodec", "cyberlink", regUIUseHVA);
           }

@@ -97,7 +97,7 @@ namespace MediaPortal.GUI.Music
     protected override void LoadSettings()
     {
       base.LoadSettings();
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         string strDefault = xmlreader.GetValueAsString("music", "default", string.Empty);
 
@@ -413,7 +413,7 @@ namespace MediaPortal.GUI.Music
       }
       _showArtist = string.Empty;
 
-      using (Profile.Settings settings = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings settings = new Profile.MPSettings())
       {
         playlistPlayer.RepeatPlaylist = settings.GetValueAsBool("musicfiles", "repeat", true);
       }

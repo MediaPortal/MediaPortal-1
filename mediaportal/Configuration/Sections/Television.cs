@@ -617,7 +617,7 @@ namespace MediaPortal.Configuration.Sections
         return;
       }
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         cbAllowNormal.Checked = xmlreader.GetValueAsBool("mytv", "allowarnormal", true);
         cbAllowOriginal.Checked = xmlreader.GetValueAsBool("mytv", "allowaroriginal", true);
@@ -780,7 +780,7 @@ namespace MediaPortal.Configuration.Sections
       {
         return;
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         if (cbDeinterlace.SelectedIndex >= 0)
         {

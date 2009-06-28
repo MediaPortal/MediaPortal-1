@@ -48,7 +48,7 @@ namespace MediaPortal.Util
 
     public static void CheckInstalledVersions()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
       {
         fUseDvbSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
       }

@@ -30,7 +30,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         nudDelay.Value = xmlreader.GetValueAsInt("general", "startup delay", 0);
         //cbWaitForTvService.Checked = xmlreader.GetValueAsBool("general", "wait for tvserver", false);
@@ -58,7 +58,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         xmlreader.SetValue("general", "startup delay", nudDelay.Value);
         xmlreader.SetValueAsBool("general", "wait for tvserver", cbWaitForTvService.Checked);

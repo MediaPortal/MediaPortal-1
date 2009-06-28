@@ -173,7 +173,7 @@ namespace MediaPortal.GUI.Video
 
       LoadSettings();
       bool result = Load(GUIGraphicsContext.Skin + @"\myVideo.xml");
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         VideoState.StartWindow = xmlreader.GetValueAsInt("movies", "startWindow", GetID);
         VideoState.View = xmlreader.GetValueAsString("movies", "startview", "369");
@@ -186,7 +186,7 @@ namespace MediaPortal.GUI.Video
     protected override void LoadSettings()
     {
       base.LoadSettings();
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         _isFuzzyMatching = xmlreader.GetValueAsBool("movies", "fuzzyMatching", false);
         _scanSkipExisting = xmlreader.GetValueAsBool("moviedatabase", "scanskipexisting", false);
@@ -429,7 +429,7 @@ namespace MediaPortal.GUI.Video
         }
       }
 
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         if (xmlreader.GetValueAsBool("movies", "rememberlastfolder", false))
         {

@@ -242,7 +242,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         // Player Settings
         audioPlayerComboBox.SelectedItem = xmlreader.GetValueAsString("audioplayer", "player", "BASS engine");
@@ -484,7 +484,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         // Player Settings
         xmlwriter.SetValue("audioplayer", "player", audioPlayerComboBox.Text);

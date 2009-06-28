@@ -222,7 +222,7 @@ namespace WindowPlugins.GUI.Extensions
 
       queue = queue.Load(MpiFileList.QUEUE_LISTING);
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
       {
         //currentRadioFolder = xmlreader.GetValueAsString("radio", "folder", string.Empty);
 
@@ -257,7 +257,7 @@ namespace WindowPlugins.GUI.Extensions
     void SaveSettings()
     {
       queue.Save(MpiFileList.QUEUE_LISTING);
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.MPSettings())
       {
         switch (currentView)
         {

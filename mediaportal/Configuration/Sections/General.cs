@@ -172,7 +172,7 @@ namespace MediaPortal.Configuration.Sections
         }
       }
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         // Load general settings
         for (int index = 0; index < sectionEntries.Length; index++)
@@ -201,7 +201,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         // Save Debug Level
         xmlwriter.SetValue("general", "loglevel", cbDebug.SelectedIndex);

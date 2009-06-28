@@ -107,7 +107,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnVideoCodec()
     {
       string strVideoCodec = "";
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
       }
@@ -153,7 +153,7 @@ namespace WindowPlugins.GUISettings.TV
       {
         return;
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("mytv", "videocodec", (string)availableVideoFilters[dlg.SelectedLabel]);
       }
@@ -162,7 +162,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnH264VideoCodec()
     {
       string strH264VideoCodec = "";
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         strH264VideoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
       }
@@ -190,7 +190,7 @@ namespace WindowPlugins.GUISettings.TV
       {
         return;
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("mytv", "h264videocodec", (string)availableH264VideoFilters[dlg.SelectedLabel]);
       }
@@ -199,7 +199,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnAudioCodec()
     {
       string strAudioCodec = "";
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
       }
@@ -245,7 +245,7 @@ namespace WindowPlugins.GUISettings.TV
       {
         return;
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("mytv", "audiocodec", (string)availableAudioFilters[dlg.SelectedLabel]);
       }
@@ -254,7 +254,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnAACAudioCodec()
     {
       string strAACAudioCodec = "";
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         strAACAudioCodec = xmlreader.GetValueAsString("mytv", "aacaudiocodec", "");
       }
@@ -282,7 +282,7 @@ namespace WindowPlugins.GUISettings.TV
       {
         return;
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("mytv", "aacaudiocodec", (string)availableAACAudioFilters[dlg.SelectedLabel]);
       }
@@ -291,7 +291,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnAspectRatio()
     {
       Geometry.Type aspectRatio = Geometry.Type.Normal;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         string aspectRatioText = xmlreader.GetValueAsString("mytv", "defaultar", "Normal");
         aspectRatio = Utils.GetAspectRatio(aspectRatioText);
@@ -325,7 +325,7 @@ namespace WindowPlugins.GUISettings.TV
 
       aspectRatio = Utils.GetAspectRatioByLangID(dlg.SelectedId);
 
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         string aspectRatioText = Utils.GetAspectRatio(aspectRatio);
         xmlwriter.SetValue("mytv", "defaultar", aspectRatioText);
@@ -336,7 +336,7 @@ namespace WindowPlugins.GUISettings.TV
     {
       string[] deinterlaceModes = { "None", "Bob", "Weave", "Best" };
       int deInterlaceMode = 1;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         deInterlaceMode = xmlreader.GetValueAsInt("mytv", "deinterlace", 3);
       }
@@ -355,7 +355,7 @@ namespace WindowPlugins.GUISettings.TV
         {
           return;
         }
-        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlwriter = new MPSettings())
         {
           xmlwriter.SetValue("mytv", "deinterlace", dlg.SelectedLabel);
         }
@@ -365,7 +365,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnAutoTurnOnTv()
     {
       bool autoTurnOn = false;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         autoTurnOn = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
       }
@@ -382,7 +382,7 @@ namespace WindowPlugins.GUISettings.TV
         {
           return;
         }
-        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlwriter = new MPSettings())
         {
           xmlwriter.SetValueAsBool("mytv", "autoturnontv", (dlg.SelectedLabel == 0));
         }
@@ -392,7 +392,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnAudioRenderer()
     {
       string strAudioRenderer = "";
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
       }
@@ -420,7 +420,7 @@ namespace WindowPlugins.GUISettings.TV
       {
         return;
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("mytv", "audiorenderer", (string)availableAudioFilters[dlg.SelectedLabel]);
       }

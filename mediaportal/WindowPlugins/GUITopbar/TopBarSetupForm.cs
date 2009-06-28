@@ -208,7 +208,7 @@ namespace MediaPortal.Topbar
 
     private void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         textTimeOut.Text = xmlreader.GetValueAsString("TopBar", "autohidetimeout", "3");
 
@@ -234,7 +234,7 @@ namespace MediaPortal.Topbar
 
     private void SaveSettings()
     {
-      using (Settings xmlWriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlWriter = new MPSettings())
       {
         xmlWriter.SetValue("TopBar", "autohidetimeout", textTimeOut.Text);
 

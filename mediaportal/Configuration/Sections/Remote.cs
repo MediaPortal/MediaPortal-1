@@ -217,7 +217,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         #region MCE
 
@@ -301,7 +301,7 @@ namespace MediaPortal.Configuration.Sections
           checkBoxHcwEnabled.Enabled = false;
           groupBoxHcwSettings.Enabled = false;
           groupBoxHcwRepeatDelay.Enabled = false;
-          using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          using (Settings xmlwriter = new MPSettings())
           {
             xmlwriter.SetValueAsBool("remote", "HCW", false);
           }
@@ -467,7 +467,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         #region MCE
 
@@ -2140,7 +2140,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void linkLabelDownloadX10_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
+      Settings xmlreader = new MPSettings();
       string language = xmlreader.GetValueAsString("skin", "language", "");
       if (language == "English")
       {

@@ -41,7 +41,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private void LoadSettings()
     {
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         checkBoxUseTrayIcon.Checked = xmlreader.GetValueAsBool("audioscrobbler", "showtrayicon", true);
         checkBoxShowBallonTips.Checked = xmlreader.GetValueAsBool("audioscrobbler", "showballontips", true);
@@ -56,7 +56,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private void SaveSettings()
     {
-      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
         xmlwriter.SetValueAsBool("audioscrobbler", "showtrayicon", checkBoxUseTrayIcon.Checked);
         xmlwriter.SetValueAsBool("audioscrobbler", "showballontips", checkBoxShowBallonTips.Checked);

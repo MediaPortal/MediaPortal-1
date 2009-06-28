@@ -77,7 +77,7 @@ namespace MediaPortal
       string SkinFilePath = string.Empty;
 
       // try to find the splashscreen.xml ín the curent skin folder
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         m_strSkin = xmlreader.GetValueAsString("skin", "name", "Blue3");
         SkinFilePath = Config.GetFile(Config.Dir.Skin, m_strSkin + "\\splashscreen.xml");
@@ -141,7 +141,7 @@ namespace MediaPortal
       string m_strSkin;
       string SkinReferenceFilePath = string.Empty;
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         m_strSkin = xmlreader.GetValueAsString("skin", "name", "Blue3");
         SkinReferenceFilePath = Config.GetFile(Config.Dir.Skin, m_strSkin + "\\references.xml");
@@ -175,7 +175,7 @@ namespace MediaPortal
 
     private void FullScreenSplashScreen_Load(object sender, EventArgs e)
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         if ((D3DApp._screenNumberOverride != -1) ||
             xmlreader.GetValueAsBool("screenselector", "usescreenselector", false))

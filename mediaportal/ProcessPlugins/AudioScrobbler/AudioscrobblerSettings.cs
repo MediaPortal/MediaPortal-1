@@ -65,7 +65,7 @@ namespace MediaPortal.AudioScrobbler
         string tmppass = "";
         groupBoxProfile.Visible = false;
 
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           tmpuser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
           checkBoxEnableNowPlaying.Checked = xmlreader.GetValueAsBool("audioscrobbler", "EnableNowPlaying", true);
@@ -222,7 +222,7 @@ namespace MediaPortal.AudioScrobbler
 
       if (comboBoxUserName.Text != string.Empty)
       {
-        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlwriter = new MPSettings())
         {
           xmlwriter.SetValue("audioscrobbler", "user", comboBoxUserName.Text);
           xmlwriter.SetValueAsBool("audioscrobbler", "EnableNowPlaying", checkBoxEnableNowPlaying.Checked);
@@ -458,7 +458,7 @@ namespace MediaPortal.AudioScrobbler
     private void comboBoxUserName_SelectedIndexChanged(object sender, EventArgs e)
     {
       _currentUser = comboBoxUserName.Text;
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("audioscrobbler", "user", _currentUser);
       }

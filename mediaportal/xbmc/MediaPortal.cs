@@ -244,7 +244,7 @@ public class MediaPortalApp : D3DApp, IRender
       bool watchdogEnabled = true;
       bool restartOnError = false;
       int restartDelay = 10;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         string MPThreadPriority = xmlreader.GetValueAsString("general", "ThreadPriority", "Normal");
         if (MPThreadPriority == "AboveNormal")
@@ -708,7 +708,7 @@ public class MediaPortalApp : D3DApp, IRender
     int clientSizeY = 576;
     int screenNumber = 0;
     // check to load plugins
-    using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+    using (Settings xmlreader = new MPSettings())
     {
       useScreenSaver = xmlreader.GetValueAsBool("general", "IdleTimer", true);
       timeScreenSaver = xmlreader.GetValueAsInt("general", "IdleTimeValue", 300);
@@ -754,7 +754,7 @@ public class MediaPortalApp : D3DApp, IRender
     GUIGraphicsContext.RenderGUI = this;
     try
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         if (_strSkinOverride.Length > 0)
         {
@@ -924,7 +924,7 @@ public class MediaPortalApp : D3DApp, IRender
             OnResumeAutomatic();
 
             bool useS3Hack;
-            using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            using (Settings xmlreader = new MPSettings())
             {
               useS3Hack = xmlreader.GetValueAsBool("debug", "useS3Hack", false);
               if (useS3Hack)
@@ -1203,7 +1203,7 @@ public class MediaPortalApp : D3DApp, IRender
 
       EXECUTION_STATE oldState = EXECUTION_STATE.ES_CONTINUOUS;
       bool turnMonitorOn;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         turnMonitorOn = xmlreader.GetValueAsBool("general", "turnmonitoronafterresume", false);
         if (turnMonitorOn)
@@ -1383,7 +1383,7 @@ public class MediaPortalApp : D3DApp, IRender
     tMouseClickTimer.Enabled = false;
     tMouseClickTimer.Elapsed += new ElapsedEventHandler(tMouseClickTimer_Elapsed);
     tMouseClickTimer.SynchronizingObject = this;
-    using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+    using (Settings xmlreader = new MPSettings())
     {
       _dateFormat = xmlreader.GetValueAsString("home", "dateformat", "<Day> <Month> <DD>");
     }
@@ -1444,7 +1444,7 @@ public class MediaPortalApp : D3DApp, IRender
     Log.Debug("Main: SaveLastActiveModule - enabled {0}", showLastActiveModule);
     if (showLastActiveModule)
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         string currentmoduleid = GUIPropertyManager.GetProperty("#currentmoduleid");
         bool currentmodulefullscreen = (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
@@ -1623,7 +1623,7 @@ public class MediaPortalApp : D3DApp, IRender
       splashScreen.SetInformation("Initializing skin...");
     }
     Log.Info("Main: Resizing windowmanager");
-    using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+    using (Settings xmlreader = new MPSettings())
     {
       _useLongDateFormat = xmlreader.GetValueAsBool("home", "LongTimeFormat", false);
       _startWithBasicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
@@ -3620,7 +3620,7 @@ public class MediaPortalApp : D3DApp, IRender
     g_Player.Factory = new PlayerFactory();
     playlistPlayer.Init();
     // Only load the USBUIRT device if it has been enabled in the configuration
-    using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+    using (Settings xmlreader = new MPSettings())
     {
       bool inputEnabled = xmlreader.GetValueAsBool("USBUIRT", "internal", false);
       bool outputEnabled = xmlreader.GetValueAsBool("USBUIRT", "external", false);
@@ -3728,7 +3728,7 @@ public class MediaPortalApp : D3DApp, IRender
     catch (Exception)
     {
     }
-    using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+    using (Settings xmlreader = new MPSettings())
     {
       m_iDateLayout = xmlreader.GetValueAsInt("home", "datelayout", 0);
     }
@@ -3770,7 +3770,7 @@ public class MediaPortalApp : D3DApp, IRender
         }
         //Check the general.enables3trick configuration option and create/delete the USBBIOSx
         //value accordingly
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           bool enableS3Trick = xmlreader.GetValueAsBool("general", "enables3trick", true);
           if (enableS3Trick)

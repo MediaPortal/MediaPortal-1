@@ -439,7 +439,7 @@ namespace MediaPortal.GUI.Library
         return true;
       }
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         // from the assembly name check the reference to plugin name
         // if available check to see if the plugin is enabled
@@ -452,7 +452,7 @@ namespace MediaPortal.GUI.Library
 
     public static bool IsWindowPlugInEnabled(string strType)
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         return xmlreader.GetValueAsBool("pluginswindows", strType, true);
       }
@@ -460,7 +460,7 @@ namespace MediaPortal.GUI.Library
 
     public static bool IsPluginNameEnabled(string strPluginName)
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         return xmlreader.GetValueAsBool("plugins", strPluginName, true);
       }
@@ -470,7 +470,7 @@ namespace MediaPortal.GUI.Library
     // Don't know the reason why, but some code might rely on that and don't want to break it before release.
     public static bool IsPluginNameEnabled2(string strPluginName)
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         return xmlreader.GetValueAsBool("plugins", strPluginName, false);
       }
@@ -478,7 +478,7 @@ namespace MediaPortal.GUI.Library
 
     public static bool PluginEntryExists(string strPluginName)
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         return (xmlreader.GetValueAsString("plugins", strPluginName, string.Empty) != string.Empty);
       }

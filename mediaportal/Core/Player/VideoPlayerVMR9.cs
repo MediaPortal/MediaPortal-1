@@ -86,7 +86,7 @@ namespace MediaPortal.Player
         string strFilters = ""; // FlipGer: collect custom filters
         bool wmvAudio;
         bool autoloadSubtitles;
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           bAutoDecoderSettings = xmlreader.GetValueAsBool("movieplayer", "autodecodersettings", false);
           strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");

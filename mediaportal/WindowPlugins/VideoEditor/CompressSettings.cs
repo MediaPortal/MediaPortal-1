@@ -152,7 +152,7 @@ namespace WindowPlugins.VideoEditor
 
     private void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         settings.audioQuality = xmlreader.GetValueAsInt("VideoEditor", "audioQuality", 192);
         settings.videoQuality = xmlreader.GetValueAsInt("VideoEditor", "videoQuality", 2200);
@@ -237,7 +237,7 @@ namespace WindowPlugins.VideoEditor
 
     private void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("VideoEditor", "audioQuality", settings.audioQuality);
         xmlwriter.SetValue("VideoEditor", "videoQuality", settings.videoQuality);

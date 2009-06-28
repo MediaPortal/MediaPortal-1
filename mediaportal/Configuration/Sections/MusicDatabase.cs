@@ -144,7 +144,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         buildThumbsCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "extractthumbs", false);
         checkBoxCreateArtist.Checked = xmlreader.GetValueAsBool("musicfiles", "createartistthumbs", false);
@@ -170,7 +170,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("musicfiles", "extractthumbs", buildThumbsCheckBox.Checked);
         xmlwriter.SetValueAsBool("musicfiles", "createartistthumbs", checkBoxCreateArtist.Checked);
@@ -600,7 +600,7 @@ namespace MediaPortal.Configuration.Sections
       setting.ExcludeHiddenFiles = false;
 
       int appel = m_dbs.MusicDatabaseReorg(shares, setting);
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         checkBoxUpdateSinceLastImport.Text = String.Format("Only update new / changed files after {0}",
                                                            xmlreader.GetValueAsString("musicfiles", "lastImport",

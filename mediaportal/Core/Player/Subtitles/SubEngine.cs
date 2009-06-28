@@ -64,7 +64,7 @@ namespace MediaPortal.Player.Subtitles
     {
       if (engine == null)
       {
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           string engineType = xmlreader.GetValueAsString("subtitles", "engine", "DirectVobSub");
           if (engineType.Equals("MPC-HC"))

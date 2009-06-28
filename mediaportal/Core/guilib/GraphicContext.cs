@@ -220,7 +220,7 @@ namespace MediaPortal.GUI.Library
           }
           else
           {
-            using (Settings xmlReader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            using (Settings xmlReader = new MPSettings())
             {       
               MaxFPS = xmlReader.GetValueAsInt("screen", "GuiRenderFps", 50);
             }
@@ -492,7 +492,7 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      using (Settings xmlReader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlReader = new MPSettings())
       {
         m_iMaxFPS = xmlReader.GetValueAsInt("screen", "GuiRenderFps", 50);
         SyncFrameTime();

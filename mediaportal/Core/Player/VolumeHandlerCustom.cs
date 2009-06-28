@@ -36,7 +36,7 @@ namespace MediaPortal.Player
 
     public VolumeHandlerCustom()
     {
-      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings reader = new MPSettings())
       {
         string text = reader.GetValueAsString("volume", "table",
                                               "0, 4095, 8191, 1638, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055, 49151, 53247, 57343, 61439, 65535");

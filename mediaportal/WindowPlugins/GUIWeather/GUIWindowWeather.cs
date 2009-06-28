@@ -214,7 +214,7 @@ namespace MediaPortal.GUI.Weather
     private void LoadSettings()
     {
       _listLocations.Clear();
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         _locationCode = xmlreader.GetValueAsString("weather", "location", string.Empty);
         _temperatureFarenheit = xmlreader.GetValueAsString("weather", "temperature", "C");
@@ -301,7 +301,7 @@ namespace MediaPortal.GUI.Weather
 
     private void SaveSettings()
     {
-      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
         xmlwriter.SetValue("weather", "location", _locationCode);
         xmlwriter.SetValue("weather", "temperature", _temperatureFarenheit);

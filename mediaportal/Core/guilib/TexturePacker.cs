@@ -246,7 +246,7 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         // Intended for developers that rebuild mp often.
         if (xmlreader.GetValueAsBool("debug", "should_never_remove_packed_skin", false))
@@ -303,7 +303,7 @@ namespace MediaPortal.GUI.Library
       Log.Debug("Cache Folder: {0}", GUIGraphicsContext.SkinCacheFolder);
       string packedXml = string.Format(@"{0}\packedgfx2.bxml", GUIGraphicsContext.SkinCacheFolder);
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         if (xmlreader.GetValueAsBool("debug", "skincaching", true) && File.Exists(packedXml))
         {
@@ -339,7 +339,7 @@ namespace MediaPortal.GUI.Library
 
       _packedTextures = new List<PackedTexture>();
       List<string> files = new List<string>();
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         if (xmlreader.GetValueAsBool("debug", "packSkinGfx", true))
         {

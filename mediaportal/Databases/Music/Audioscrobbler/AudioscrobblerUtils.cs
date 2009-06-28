@@ -838,7 +838,7 @@ namespace MediaPortal.Music.Database
 
     private void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _defaultUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
         _decodeUtf8 = xmlreader.GetValueAsBool("audioscrobbler", "decodeutf8", false);

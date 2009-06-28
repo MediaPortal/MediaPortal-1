@@ -99,7 +99,7 @@ namespace MediaPortal.GUI.GUIBurner
 
     private void LoadSettings()
     {
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         textBoxTempPath.Text = xmlreader.GetValueAsString("burner", "temp_folder",
                                                           Path.GetDirectoryName(Path.GetTempPath()));
@@ -141,7 +141,7 @@ namespace MediaPortal.GUI.GUIBurner
 
     private void SaveSettings()
     {
-      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
         xmlwriter.SetValue("burner", "temp_folder", textBoxTempPath.Text);
         xmlwriter.SetValue("burner", "dvdburnexe_folder", textBoxDVDBurnExePath.Text);

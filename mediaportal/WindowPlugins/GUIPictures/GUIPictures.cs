@@ -321,7 +321,7 @@ namespace MediaPortal.GUI.Pictures
 
     private void LoadSettings()
     {
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         _autocreateLargeThumbs = !xmlreader.GetValueAsBool("thumbnails", "picturenolargethumbondemand", false);
         isFileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
@@ -972,7 +972,7 @@ namespace MediaPortal.GUI.Pictures
           mapSettings.ViewAs = (int)share.DefaultView;
         }
       }
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         if (xmlreader.GetValueAsBool("pictures", "rememberlastfolder", false))
         {

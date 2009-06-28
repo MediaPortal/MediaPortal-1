@@ -159,7 +159,7 @@ namespace MediaPortal.Player
         string strAudioRenderer = "";
         int intFilters = 0; // FlipGer: count custom filters
         string strFilters = ""; // FlipGer: collect custom filters
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           // FlipGer: load infos for custom filters
           int intCount = 0;

@@ -219,7 +219,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       httpcommand.workerError += new AsyncGetRequest.AsyncGetRequestError(OnAsyncRequestError);
 
       _currentUser = AudioscrobblerBase.Username;
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         _discoveryMode = xmlreader.GetValueAsBool("audioscrobbler", "discoveryenabled", false);
       }
@@ -349,7 +349,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         _discoveryMode = value;
         // TODO: add proper multi-user setting...
-        using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings xmlwriter = new Profile.MPSettings())
         {
           xmlwriter.SetValueAsBool("audioscrobbler", "discoveryenabled", _discoveryMode);
         }

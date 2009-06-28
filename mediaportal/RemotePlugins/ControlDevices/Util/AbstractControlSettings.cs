@@ -32,7 +32,6 @@ namespace MediaPortal.ControlDevices
   public abstract class AbstractControlSettings : IControlSettings
   {
     private static string CONFIG_SECTION = "controldevice";
-    private static string CONFIG_FILE = "MediaPortal.xml";
     protected IControlPlugin _plugin;
     protected string _prefix;
     protected bool _enabled;
@@ -103,7 +102,7 @@ namespace MediaPortal.ControlDevices
 
     protected void SetValueAsBool(string name, bool val)
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, CONFIG_FILE)))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool(CONFIG_SECTION, _prefix + "_" + name, val);
       }
@@ -111,7 +110,7 @@ namespace MediaPortal.ControlDevices
 
     protected void SetValue(string name, object val)
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, CONFIG_FILE)))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue(CONFIG_SECTION, _prefix + "_" + name, val);
       }
@@ -120,7 +119,7 @@ namespace MediaPortal.ControlDevices
 
     protected object GetValue(string name)
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, CONFIG_FILE)))
+      using (Settings xmlreader = new MPSettings())
       {
         return xmlreader.GetValue(CONFIG_SECTION, _prefix + "_" + name);
       }
@@ -128,7 +127,7 @@ namespace MediaPortal.ControlDevices
 
     protected bool GetValueAsBool(string name, bool def)
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, CONFIG_FILE)))
+      using (Settings xmlreader = new MPSettings())
       {
         return xmlreader.GetValueAsBool(CONFIG_SECTION, _prefix + "_" + name, def);
       }

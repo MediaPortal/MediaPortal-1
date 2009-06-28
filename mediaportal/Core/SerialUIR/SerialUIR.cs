@@ -249,7 +249,7 @@ namespace MediaPortal.SerialIR
     {
       try
       {
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           recInternalCommands = xmlreader.GetValueAsString("SerialUIR", "internal", "false") == "true";
           commport = xmlreader.GetValueAsString("SerialUIR", "commport", "COM1:");

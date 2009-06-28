@@ -171,7 +171,7 @@ namespace MediaPortal.Configuration
       {
         advancedMode = value;
         // Save the last state
-        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlwriter = new MPSettings())
         {
           xmlwriter.SetValueAsBool("general", "AdvancedConfigMode", advancedMode);
         }
@@ -214,7 +214,7 @@ namespace MediaPortal.Configuration
         splashScreen.SetInformation("Loading language...");
       }
       string strLanguage;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
         hintShowCount = xmlreader.GetValueAsInt("general", "ConfigModeHintCount", 0);
@@ -1154,7 +1154,7 @@ namespace MediaPortal.Configuration
           break;
       }
 
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("general", "ConfigModeHintCount", aHintShowCount);
       }
@@ -1186,7 +1186,7 @@ namespace MediaPortal.Configuration
     {
       int MaximumShares = 250;
       //Do we have 1 or more music,picture,video shares?
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         string playlistFolder = xmlreader.GetValueAsString("music", "playlists", "");
         if (playlistFolder == string.Empty)

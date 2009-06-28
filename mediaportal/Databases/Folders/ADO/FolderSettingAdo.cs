@@ -43,7 +43,7 @@ namespace Databases.Folders.SqlServer
     public FolderSettingAdo()
     {
       string connectionString;
-      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings reader = new MPSettings())
       {
         connectionString = reader.GetValueAsString("database", "connectionstring",
                                                    SqlServerUtility.DefaultConnectionString);

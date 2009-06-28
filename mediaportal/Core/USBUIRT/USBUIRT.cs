@@ -512,7 +512,7 @@ namespace MediaPortal.IR
 
     private void Initialize()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
       {
         ReceiveEnabled = xmlreader.GetValueAsBool("USBUIRT", "internal", false);
         TransmitEnabled = xmlreader.GetValueAsBool("USBUIRT", "external", false);

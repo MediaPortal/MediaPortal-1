@@ -326,7 +326,7 @@ namespace MediaPortal.Player
       CultureInfo ci = null;
       bool showSubtitles = true;
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         try
         {
@@ -358,7 +358,7 @@ namespace MediaPortal.Player
     private void SelectAudioLanguage()
     {
       CultureInfo ci = null;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         try
         {

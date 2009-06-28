@@ -566,7 +566,7 @@ namespace MediaPortal.Configuration.Sections
 
     protected void LoadSettings(string section, string defaultSharePath)
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         string defaultShare = xmlreader.GetValueAsString(section, "default", "");
         RememberLastFolder = xmlreader.GetValueAsBool(section, "rememberlastfolder", false);
@@ -650,7 +650,7 @@ namespace MediaPortal.Configuration.Sections
         AddStaticShares(DriveType.DVD, "DVD");
       }
 
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         string defaultShare = string.Empty;
 

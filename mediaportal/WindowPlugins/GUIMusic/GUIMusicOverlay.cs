@@ -91,7 +91,7 @@ namespace MediaPortal.GUI.Music
       GetID = (int) Window.WINDOW_MUSIC_OVERLAY;
       playlistPlayer = PlayListPlayer.SingletonPlayer;
       _useBassEngine = BassMusicPlayer.IsDefaultMusicPlayer;
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         _settingVisEnabled = xmlreader.GetValueAsBool("musicfiles", "doVisualisation", false) && _useBassEngine;
         _visualisationEnabled = _settingVisEnabled;

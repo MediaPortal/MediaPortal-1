@@ -108,7 +108,7 @@ namespace GUIRSSFeed
       string tempText;
       for (int i = 0; i < 100; i++)
       {
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           tempText = xmlreader.GetValueAsString("rss", "siteName" + i, "");
           if (tempText == (string) listBox.Items[iItem])
@@ -143,7 +143,7 @@ namespace GUIRSSFeed
       string tempText;
       for (int i = 0; i < 100; i++)
       {
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           tempText = xmlreader.GetValueAsString("rss", "siteName" + i, "");
           if (tempText == (string) listBox.Items[iItem])
@@ -158,7 +158,7 @@ namespace GUIRSSFeed
       string strURLTag = String.Format("siteURL{0}", ID);
       string strDescriptionTag = String.Format("siteDescription{0}", ID);
       string strEncodingTag = String.Format("siteEncoding{0}", ID);
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("rss", strNameTag, "");
         xmlwriter.SetValue("rss", strURLTag, "");
@@ -194,7 +194,7 @@ namespace GUIRSSFeed
     /// </summary>
     public void PopulateFields()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         for (int i = 0; i < 100; i++)
         {
@@ -224,7 +224,7 @@ namespace GUIRSSFeed
 
     private void button3_Click(object sender, EventArgs e)
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("rss", "iRefreshTime", textRefreshInterval.Text);
 

@@ -35,6 +35,7 @@ using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player.DSP;
+using MediaPortal.Profile;
 using MediaPortal.TagReader;
 using MediaPortal.Visualization;
 using Un4seen.Bass;
@@ -47,7 +48,6 @@ using Un4seen.Bass.AddOn.Vst;
 using Un4seen.Bass.AddOn.WaDsp;
 using Un4seen.Bass.Misc;
 using Un4seen.BassAsio;
-using Settings=MediaPortal.Profile.Settings;
 using Timer=System.Timers.Timer;
 
 namespace MediaPortal.Player
@@ -110,7 +110,7 @@ namespace MediaPortal.Player
       {
         if (!SettingsLoaded)
         {
-          using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          using (Profile.Settings xmlreader = new Profile.MPSettings())
           {
             string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "BASS engine");
             _IsDefaultMusicPlayer = String.Compare(strAudioPlayer, "BASS engine", true) == 0;
@@ -1075,7 +1075,7 @@ namespace MediaPortal.Player
     /// </summary>
     private void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         _SoundDevice = xmlreader.GetValueAsString("audioplayer", "sounddevice", "Default Sound Device");
         int vizType = xmlreader.GetValueAsInt("musicvisualization", "vizType", (int) VisualizationInfo.PluginType.None);

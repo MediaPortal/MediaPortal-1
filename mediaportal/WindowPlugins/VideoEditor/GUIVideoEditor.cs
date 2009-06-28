@@ -106,7 +106,7 @@ namespace WindowPlugins.VideoEditor
       base.OnPageLoad();
       try
       {
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           currentFolder = xmlreader.GetValueAsString("VideoEditor", "lastUsedFolder", "");
         }
@@ -148,7 +148,7 @@ namespace WindowPlugins.VideoEditor
     protected override void OnPageDestroy(int new_windowId)
     {
       g_Player.Release();
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("VideoEditor", "lastUsedFolder", currentFolder);
       }
@@ -494,7 +494,7 @@ namespace WindowPlugins.VideoEditor
     public void CheckHasMencoder()
     {
       string mencoderPath = "";
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         mencoderPath = xmlreader.GetValueAsString("VideoEditor", "mencoder", "");
       }
@@ -659,7 +659,7 @@ namespace WindowPlugins.VideoEditor
 
     private void LoadShares()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         //ShowTrailerButton = xmlreader.GetValueAsBool("plugins", "My Trailers", true);
         // fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);

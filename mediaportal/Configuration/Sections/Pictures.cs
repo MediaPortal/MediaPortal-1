@@ -66,7 +66,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         durationTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("pictures", "speed", 3));
         transitionTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("pictures", "transition", 15));
@@ -85,7 +85,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("pictures", "speed", durationTextBox.Text);
         xmlwriter.SetValue("pictures", "transition", transitionTextBox.Text);

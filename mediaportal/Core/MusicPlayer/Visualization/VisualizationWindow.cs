@@ -760,7 +760,7 @@ namespace MediaPortal.Visualization
 
       try
       {
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           _EnableStatusOverlays = xmlreader.GetValueAsBool("musicvisualization", "enableStatusOverlays", false);
           ShowTrackOverlay = xmlreader.GetValueAsBool("musicvisualization", "showTrackInfo", true);

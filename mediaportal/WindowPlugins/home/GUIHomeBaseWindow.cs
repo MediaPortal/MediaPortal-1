@@ -84,7 +84,7 @@ namespace MediaPortal.GUI.Home
 
     protected virtual void LoadSettings()
     {
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         _fixedScroll = xmlreader.GetValueAsBool("home", "scrollfixed", true); // fix scrollbar in the middle of menu
         _useMyPlugins = xmlreader.GetValueAsBool("home", "usemyplugins", true); // use previous menu handling
@@ -416,7 +416,7 @@ namespace MediaPortal.GUI.Home
           break;
 
         case GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD:
-          using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"))
+          using (Profile.Settings xmlreader = new Profile.MPSettings()
             )
           {
             if (!xmlreader.GetValueAsBool("general", "hidewrongpin", false))

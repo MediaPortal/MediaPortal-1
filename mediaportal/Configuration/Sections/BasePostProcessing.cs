@@ -275,7 +275,7 @@ namespace MediaPortal.Configuration.Sections
       cLBDSFilter.DisplayMember = "Name";
       lBDSFilter.DisplayMember = "Name";
       lBDSFilter.FormattingEnabled = true;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         int intCount = 0;
         while (xmlreader.GetValueAsString(section, "filter" + intCount.ToString(), "undefined") != "undefined")
@@ -324,7 +324,7 @@ namespace MediaPortal.Configuration.Sections
     protected void SaveSettings(string section)
     {
       DsDevice tmpDevice = null;
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         for (int i = 0; i < cLBDSFilter.Items.Count; i++)
         {

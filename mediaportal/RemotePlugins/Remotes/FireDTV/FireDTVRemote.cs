@@ -95,7 +95,7 @@ namespace MediaPortal.InputDevices
       try
       {
         // first read the configuration, to determine the initialisation is needed
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           _enabled = ((xmlreader.GetValueAsBool("remote", "FireDTV", false)));
           _name = xmlreader.GetValueAsString("remote", "FireDTVDeviceName", string.Empty);

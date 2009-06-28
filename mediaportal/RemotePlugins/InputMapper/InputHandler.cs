@@ -182,7 +182,7 @@ namespace MediaPortal.InputDevices
     /// <param name="deviceXmlName">Input device name</param>
     public InputHandler(string deviceXmlName)
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _basicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
       }

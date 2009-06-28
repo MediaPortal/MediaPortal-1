@@ -556,7 +556,7 @@ namespace MediaPortal.Configuration.Sections
             regDxVA = 0;
           }
           subkey.SetValue("DXVA", regDxVA);
-          using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          using (Settings xmlwriter = new MPSettings())
           {
             xmlwriter.SetValue("videocodec", "intervideo", regDxVA);
           }

@@ -319,7 +319,7 @@ namespace MediaPortal
       showCursorWhenFullscreen = false;
       bool debugChangeDeviceHack = false;
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         useExclusiveDirectXMode = xmlreader.GetValueAsBool("general", "exclusivemode", true);
         useEnhancedVideoRenderer = xmlreader.GetValueAsBool("general", "useEVRenderer", false);
@@ -412,7 +412,7 @@ namespace MediaPortal
         }
         oldBounds = Bounds;
 
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           startFullscreen = _fullscreenOverride || xmlreader.GetValueAsBool("general", "startfullscreen", false);
           if (_windowedOverride)
@@ -1891,7 +1891,7 @@ namespace MediaPortal
       Cursor.Show();
       Invalidate(true);
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         xmlreader.Clear();
       }
@@ -2027,7 +2027,7 @@ namespace MediaPortal
       bool showLastActiveModule = false;
       int lastActiveModule = -1;
       bool lastActiveModuleFullscreen = false;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         showLastActiveModule = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
         lastActiveModule = xmlreader.GetValueAsInt("general", "lastactivemodule", -1);
@@ -2185,7 +2185,7 @@ namespace MediaPortal
         this.MinimizeBox = true;
         this.Menu = menuStripMain;
         Rectangle newBounds = new Rectangle(oldBounds.X, oldBounds.Y, oldBounds.Width, oldBounds.Height);
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           bool autosize = xmlreader.GetValueAsBool("general", "autosize", true);
           if (autosize && !GUIGraphicsContext.Fullscreen)
@@ -2683,7 +2683,7 @@ namespace MediaPortal
       {
         SwitchFullScreenOrWindowed(true);
       }
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         xmlreader.Clear();
       }
@@ -2697,7 +2697,7 @@ namespace MediaPortal
       {
         SwitchFullScreenOrWindowed(true);
       }
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         xmlreader.Clear();
       }
@@ -2711,7 +2711,7 @@ namespace MediaPortal
       {
         SwitchFullScreenOrWindowed(true);
       }
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         xmlreader.Clear();
       }
@@ -2725,7 +2725,7 @@ namespace MediaPortal
       {
         SwitchFullScreenOrWindowed(true);
       }
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         xmlreader.Clear();
       }
@@ -2739,7 +2739,7 @@ namespace MediaPortal
       {
         SwitchFullScreenOrWindowed(true);
       }
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         xmlreader.Clear();
       }

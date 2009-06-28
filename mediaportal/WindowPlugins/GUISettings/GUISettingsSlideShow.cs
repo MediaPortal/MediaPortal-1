@@ -222,7 +222,7 @@ namespace MediaPortal.GUI.Settings
 
     private void OnLoopSlideShows()
     {
-      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
         xmlwriter.SetValueAsBool("pictures", "autoRepeat", cmLoopSlideShows.Selected);
       }
@@ -230,7 +230,7 @@ namespace MediaPortal.GUI.Settings
 
     private void OnShuffleSlideShows()
     {
-      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
         xmlwriter.SetValueAsBool("pictures", "autoShuffle", cmShuffleSlideShows.Selected);
       }
@@ -240,7 +240,7 @@ namespace MediaPortal.GUI.Settings
 
     private void LoadSettings()
     {
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         m_iSpeed = xmlreader.GetValueAsInt("pictures", "speed", 3);
         m_iTransistion = xmlreader.GetValueAsInt("pictures", "transition", 20);
@@ -257,7 +257,7 @@ namespace MediaPortal.GUI.Settings
 
     private void SaveSettings()
     {
-      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
         xmlwriter.SetValue("pictures", "speed", m_iSpeed.ToString());
         xmlwriter.SetValue("pictures", "transition", m_iTransistion.ToString());

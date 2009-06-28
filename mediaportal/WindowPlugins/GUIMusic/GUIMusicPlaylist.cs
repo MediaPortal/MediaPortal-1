@@ -190,7 +190,7 @@ namespace MediaPortal.GUI.Music
       mdb = MusicDatabase.Instance;
       m_strDirectory = Directory.GetCurrentDirectory();
 
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         _enableScrobbling = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
         _currentScrobbleUser = xmlreader.GetValueAsString("audioscrobbler", "user", "Username");
@@ -361,7 +361,7 @@ namespace MediaPortal.GUI.Music
         GUIControl.FocusControl(GetID, btnViewAs.GetID);
       }
 
-      using (Profile.Settings settings = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings settings = new Profile.MPSettings())
       {
         playlistPlayer.RepeatPlaylist = settings.GetValueAsBool("musicfiles", "repeat", true);
       }
@@ -377,7 +377,7 @@ namespace MediaPortal.GUI.Music
     protected override void OnPageDestroy(int newWindowId)
     {
       m_iItemSelected = facadeView.SelectedListItemIndex;
-      using (Profile.Settings settings = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings settings = new Profile.MPSettings())
       {
         settings.SetValueAsBool("musicfiles", "repeat", playlistPlayer.RepeatPlaylist);
       }
@@ -1016,7 +1016,7 @@ namespace MediaPortal.GUI.Music
       {
         string strPath = Path.GetFileNameWithoutExtension(strNewFileName);
         string strPlayListPath = string.Empty;
-        using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings xmlreader = new Profile.MPSettings())
         {
           strPlayListPath = xmlreader.GetValueAsString("music", "playlists", string.Empty);
           strPlayListPath = Util.Utils.RemoveTrailingSlash(strPlayListPath);

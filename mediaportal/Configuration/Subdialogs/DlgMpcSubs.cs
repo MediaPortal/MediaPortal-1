@@ -255,7 +255,7 @@ namespace MediaPortal.Configuration
     private void okButton_Click(object sender, EventArgs e)
     {
       this.DialogResult = DialogResult.OK;
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("subtitles", "subPicsBufferAhead", subPicsAheadUpDown.Value);
         xmlwriter.SetValue("subtitles", "textureSize", textureComboBox.SelectedItem);
@@ -273,7 +273,7 @@ namespace MediaPortal.Configuration
 
     private void MpcHcSubsForm_Load(object sender, EventArgs e)
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         int subPicsBufferAhead = xmlreader.GetValueAsInt("subtitles", "subPicsBufferAhead", 3);
         subPicsAheadUpDown.Value = subPicsBufferAhead;

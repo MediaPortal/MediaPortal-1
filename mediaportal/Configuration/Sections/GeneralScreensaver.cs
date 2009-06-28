@@ -23,7 +23,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         checkBoxEnableScreensaver.Checked = xmlreader.GetValueAsBool("general", "IdleTimer", true);
         numericUpDownDelay.Value = xmlreader.GetValueAsInt("general", "IdleTimeValue", 300);
@@ -33,7 +33,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         xmlreader.SetValueAsBool("general", "IdleTimer", checkBoxEnableScreensaver.Checked);
         xmlreader.SetValue("general", "IdleTimeValue", numericUpDownDelay.Value);

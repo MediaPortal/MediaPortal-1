@@ -563,7 +563,7 @@ namespace MediaPortal.Audioscrobbler
       g_Player.PlayBackEnded += new g_Player.EndedHandler(OnPlayBackEnded);
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(OnPlayBackStopped);
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         currentUser = xmlreader.GetValueAsString("audioscrobbler", "user", String.Empty);
         _announceNowPlaying = xmlreader.GetValueAsBool("audioscrobbler", "EnableNowPlaying", true);

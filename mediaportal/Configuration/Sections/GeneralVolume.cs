@@ -70,7 +70,7 @@ namespace MediaPortal.Configuration.Sections
       // default default
       _useClassicHandler.Checked = true;
 
-      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings reader = new MPSettings())
       {
         int volumeStyle = reader.GetValueAsInt("volume", "handler", -1);
         int ver = (OSInfo.OSInfo.OSMajorVersion * 10) + OSInfo.OSInfo.OSMinorVersion;
@@ -117,7 +117,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (Settings writer = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings writer = new MPSettings())
       {
         if (_useClassicHandler.Checked)
         {

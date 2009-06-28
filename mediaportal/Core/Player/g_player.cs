@@ -185,7 +185,7 @@ namespace MediaPortal.Player
       string speedTableDVD = string.Empty;
       string disableCD = string.Empty;
       string disableDVD = string.Empty;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         speedTableCD = xmlreader.GetValueAsString("cdspeed", "drivespeedCD", string.Empty);
         disableCD = xmlreader.GetValueAsString("cdspeed", "disableCD", string.Empty);
@@ -254,7 +254,7 @@ namespace MediaPortal.Player
     public static ArrayList LoadSettings()
     {
       ArrayList StepArray = new ArrayList();
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         string strFromXml = xmlreader.GetValueAsString("movieplayer", "skipsteps",
                                                        "15,30,60,180,300,600,900,1800,3600,7200");
@@ -888,7 +888,7 @@ namespace MediaPortal.Player
         }
         _isInitialized = true;
         int iUseVMR9 = 0;
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           iUseVMR9 = xmlreader.GetValueAsInt("dvdplayer", "vmr9", 0);
         }
@@ -942,7 +942,7 @@ namespace MediaPortal.Player
       {
         _mediaInfo = null;
         string strAudioPlayer = string.Empty;
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
         }
@@ -1071,7 +1071,7 @@ namespace MediaPortal.Player
         }
 
         //int iUseVMR9inMYMovies = 0;
-        //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
         //{
         //  iUseVMR9inMYMovies = xmlreader.GetValueAsInt("movieplayer", "vmr9", 1);
         //}
@@ -1284,7 +1284,7 @@ namespace MediaPortal.Player
           string extension = Path.GetExtension(strFile).ToLower();
           if (!Util.Utils.IsRTSP(strFile) && extension != ".ts") // do not play recorded tv with external player
           {
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
             {
               bool bInternal, bInternalDVD;
               bInternal = xmlreader.GetValueAsBool("movieplayer", "internal", true);
@@ -2521,7 +2521,7 @@ namespace MediaPortal.Player
 
         if (_loadAutoComSkipSetting)
         {
-          using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          using (Settings xmlreader = new MPSettings())
           {
             _autoComSkip = xmlreader.GetValueAsBool("comskip", "automaticskip", false);
           }

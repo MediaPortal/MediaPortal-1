@@ -203,7 +203,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         checkBoxUsePrefix.Checked = xmlreader.GetValueAsBool("general", "myprefix", true);
         checkBoxlangRTL.Checked = xmlreader.GetValueAsBool("general", "rtllang", false);
@@ -253,7 +253,7 @@ namespace MediaPortal.Configuration.Sections
     public override void SaveSettings()
     {
 
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         string prevSkin = xmlwriter.GetValueAsString("skin", "name", "Blue3wide");
         string selectedSkin = prevSkin;

@@ -48,7 +48,7 @@ namespace MediaPortal.Util
 
     private static void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         PreviewColumns = xmlreader.GetValueAsInt("thumbnails", "tvthumbcols", 2);
         PreviewRows = xmlreader.GetValueAsInt("thumbnails", "tvthumbrows", 2);

@@ -154,7 +154,7 @@ namespace MediaPortal.Util
 
     static Utils()
     {
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         m_bHideExtensions = xmlreader.GetValueAsBool("general", "hideextensions", true);
         string artistNamePrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
@@ -633,7 +633,7 @@ namespace MediaPortal.Util
               if (!File.Exists(strThumb))
               {
                 bool createVideoThumbs = false;
-                using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+                using (Profile.Settings xmlreader = new Profile.MPSettings())
                 {
                   createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
                 }
@@ -1470,7 +1470,7 @@ namespace MediaPortal.Util
 
     public static bool PlayDVD()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
       {
         string strPath = xmlreader.GetValueAsString("dvdplayer", "path", "");
         string strParams = xmlreader.GetValueAsString("dvdplayer", "arguments", "");
@@ -1537,7 +1537,7 @@ namespace MediaPortal.Util
           strFile.IndexOf("record2.") > 0 || strFile.IndexOf("record3.") > 0 ||
           strFile.IndexOf("record4.") > 0 || strFile.IndexOf("record5.") > 0) return false;
 
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
         {
           //using external player checking is now g_player side 
           //bool bInternal = xmlreader.GetValueAsBool("movieplayer", "internal", true);
@@ -2392,7 +2392,7 @@ namespace MediaPortal.Util
           // when launched by configuration exe this might be the case
           if (string.IsNullOrEmpty(currentSkin))
           {
-            using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            using (Profile.Settings xmlreader = new Profile.MPSettings())
             {
               currentSkin = Config.Dir.Config + @"\skin\" + xmlreader.GetValueAsString("skin", "name", "Blue3");
             }

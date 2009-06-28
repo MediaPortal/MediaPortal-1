@@ -265,7 +265,7 @@ namespace MediaPortal.Video.Database
     private void LoadSettings()
     {
       // getting available databases and limits
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         int iNumber = xmlreader.GetValueAsInt("moviedatabase", "number", 0);
 

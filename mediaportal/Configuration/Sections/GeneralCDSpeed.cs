@@ -334,7 +334,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings reader = new MPSettings())
       {
         ckEnableCDSpeed.Checked = reader.GetValueAsBool("cdspeed", "enabled", false);
         _speedTableCD = reader.GetValueAsString("cdspeed", "drivespeedCD", string.Empty);
@@ -439,7 +439,7 @@ namespace MediaPortal.Configuration.Sections
       catch (Exception)
       {
       }
-      using (Settings writer = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings writer = new MPSettings())
       {
         writer.SetValueAsBool("cdspeed", "enabled", ckEnableCDSpeed.Checked);
         writer.SetValue("cdspeed", "drivespeedCD", builderCD.ToString());

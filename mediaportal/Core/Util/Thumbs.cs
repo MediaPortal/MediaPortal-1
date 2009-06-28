@@ -113,7 +113,7 @@ namespace MediaPortal.Util
     {
       try
       {
-        using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings xmlreader = new Profile.MPSettings())
         {
           int configQuality = xmlreader.GetValueAsInt("thumbnails", "quality", 2);
           switch (configQuality)

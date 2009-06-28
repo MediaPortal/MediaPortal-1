@@ -60,7 +60,7 @@ namespace MediaPortal.MusicShareWatcher
 
     public void Start()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _monitor = xmlreader.GetValueAsBool("musicfiles", "monitorShares", false);
       }

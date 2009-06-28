@@ -310,7 +310,7 @@ namespace MediaPortal.Player
 
     private void LoadStreamingSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _bufferTime = xmlreader.GetValueAsInt("general", "streamingbuffer", 5000);
       }

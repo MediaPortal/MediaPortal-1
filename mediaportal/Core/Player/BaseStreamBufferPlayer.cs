@@ -175,7 +175,7 @@ namespace MediaPortal.Player
       _minBackingFiles = 6;
       _maxBackingFiles = 8;
       int iTimeShiftBuffer = 30;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         iTimeShiftBuffer = xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30);
         if (iTimeShiftBuffer < 5)
@@ -1265,7 +1265,7 @@ namespace MediaPortal.Player
         string strAudiorenderer = "";
         int intFilters = 0; // FlipGer: count custom filters
         string strFilters = ""; // FlipGer: collect custom filters
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           _CodecSupportsFastSeeking = xmlreader.GetValueAsBool("debug", "CodecSupportsFastSeeking", false);
           Log.Debug("BaseStreamBufferPlayer: Codec supports fast seeking = {0}", _CodecSupportsFastSeeking);

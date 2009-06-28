@@ -35,7 +35,7 @@ namespace WindowPlugins.VideoEditor
 
     public bool CheckHasMencoder()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         mencoderPath = xmlreader.GetValueAsString("VideoEditor", "mencoder", "");
       }

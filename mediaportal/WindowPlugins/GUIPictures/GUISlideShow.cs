@@ -2452,7 +2452,7 @@ namespace MediaPortal.GUI.Pictures
 
     private void LoadSettings()
     {
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         _speed = xmlreader.GetValueAsInt("pictures", "speed", 3);
         _slideShowTransistionFrames = xmlreader.GetValueAsInt("pictures", "transition", 20);
@@ -2472,7 +2472,7 @@ namespace MediaPortal.GUI.Pictures
       }
 
       // Load Music related settings here, as the Loadsetting for pictures is called too late for the Backgroundmusic task
-      using (Profile.Settings reader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings reader = new Profile.MPSettings())
       {
         _musicFileExtensions = reader.GetValueAsString("music", "extensions", ".mp3,.pls,.wpl").Split(',');
         _autoShuffleMusic = reader.GetValueAsBool("musicfiles", "autoshuffle", false);

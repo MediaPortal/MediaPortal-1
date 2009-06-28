@@ -23,7 +23,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         checkBoxEnableWatchdog.Checked = xmlreader.GetValueAsBool("general", "watchdogEnabled", false);
         checkBoxAutoRestart.Checked = xmlreader.GetValueAsBool("general", "restartOnError", true);
@@ -33,7 +33,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         xmlreader.SetValueAsBool("general", "watchdogEnabled", checkBoxEnableWatchdog.Checked);
         xmlreader.SetValueAsBool("general", "restartOnError", checkBoxAutoRestart.Checked);

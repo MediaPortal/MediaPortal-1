@@ -292,7 +292,7 @@ namespace MediaPortal.Configuration.Sections
     {
       try
       {
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           foreach (DataRow row in ds.Tables[0].Rows)
           {
@@ -339,7 +339,7 @@ namespace MediaPortal.Configuration.Sections
       LoadAll();
       try
       {
-        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlwriter = new MPSettings())
         {
           foreach (DataRow row in ds.Tables[0].Rows)
           {

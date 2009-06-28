@@ -176,7 +176,7 @@ namespace MediaPortal.GUI.Library
 
     protected void LoadSetting()
     {
-      using (Settings xmlreader = new Settings("MediaPortal.xml"))
+      using (Settings xmlreader = new MPSettings())
       {
         string section = "Menu" + this.ParentID.ToString();
         int focus = xmlreader.GetValueAsInt(section, "focus", 3);
@@ -225,7 +225,7 @@ namespace MediaPortal.GUI.Library
 
     protected void SaveSetting()
     {
-      using (Settings xmlwriter = new Settings("MediaPortal.xml"))
+      using (Settings xmlwriter = new MPSettings())
       {
         string section = "Menu" + this.ParentID.ToString();
         xmlwriter.SetValue(section, "focus", FocusedButton.ToString());

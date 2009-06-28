@@ -65,7 +65,7 @@ namespace MediaPortal.GUI.Home
       menuMain.ButtonInfos.Clear();
       ArrayList plugins = PluginManager.SetupForms;
 
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         foreach (ISetupForm setup in plugins)
         {

@@ -166,7 +166,7 @@ namespace MediaPortal.GUI.Music
       _virtualDirectory.AddDrives();
       _virtualDirectory.SetExtensions(Util.Utils.AudioExtensions);
 
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
         MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);
@@ -205,7 +205,7 @@ namespace MediaPortal.GUI.Music
     protected override void LoadSettings()
     {
       base.LoadSettings();
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         _useFileMenu = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         _fileMenuPinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
@@ -362,7 +362,7 @@ namespace MediaPortal.GUI.Music
       LoadFolderSettings(currentFolder);
       LoadDirectory(currentFolder);
 
-      using (Profile.Settings settings = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings settings = new Profile.MPSettings())
       {
         playlistPlayer.RepeatPlaylist = settings.GetValueAsBool("musicfiles", "repeat", true);
       }
@@ -1272,7 +1272,7 @@ namespace MediaPortal.GUI.Music
           currentView = (View) share.DefaultView;
         }
       }
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         if (xmlreader.GetValueAsBool("music", "rememberlastfolder", false))
         {

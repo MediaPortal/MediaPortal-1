@@ -110,7 +110,7 @@ namespace MediaPortal.InputDevices
     public void Init()
     {
       _exit = false;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _controlEnabled = xmlreader.GetValueAsBool("remote", "HCW", false);
         _allowExternal = xmlreader.GetValueAsBool("remote", "HCWAllowExternal", false);
@@ -207,7 +207,7 @@ namespace MediaPortal.InputDevices
 
         if (!_exit)
         {
-          using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          using (Settings xmlreader = new MPSettings())
           {
             _controlEnabled = xmlreader.GetValueAsBool("remote", "HCW", false);
           }

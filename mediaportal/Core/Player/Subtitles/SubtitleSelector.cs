@@ -120,7 +120,7 @@ namespace MediaPortal.Player.Subtitles
       }
 
       // load preferences
-      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings reader = new MPSettings())
       {
         preferedLanguages = new List<string>();
         string languages = reader.GetValueAsString("tvservice", "preferredsublanguages", "");

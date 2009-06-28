@@ -327,7 +327,7 @@ namespace MediaPortal.MusicShareWatcher
     // Retrieve the Music Shares that should be monitored
     private int LoadShares()
     {
-      Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
+      Settings xmlreader = new MPSettings();
       
       for (int i = 0; i < VirtualDirectory.MaxSharesCount; i++)
       {

@@ -131,7 +131,7 @@ namespace MediaPortal.InputDevices
     public void Init()
     {
       bool _controlEnabled = false;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _controlEnabled = xmlreader.GetValueAsBool("remote", "DirectInput", false);
       }
@@ -635,7 +635,7 @@ namespace MediaPortal.InputDevices
 
     public void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _active = xmlreader.GetValueAsBool("remote", "DirectInput", false);
         string strGUID = xmlreader.GetValueAsString("remote", "DirectInputDeviceGUID", "");
@@ -651,7 +651,7 @@ namespace MediaPortal.InputDevices
 
     public void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("remote", "DirectInput", _active);
         xmlwriter.SetValue("remote", "DirectInputDeviceGUID", SelectedDeviceGUID);

@@ -79,7 +79,7 @@ namespace MediaPortal.InputDevices
 
     public void Init()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _controlEnabled = xmlreader.GetValueAsBool("remote", "X10", false);
         _x10Medion = xmlreader.GetValueAsBool("remote", "X10Medion", false);

@@ -64,7 +64,7 @@ namespace MediaPortal.Util
     public void LoadSettings(string section)
     {
       Clear();
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         string strDefault = xmlreader.GetValueAsString(section, "default", string.Empty);
         for (int i = 0; i < MaximumShares; i++)
@@ -1998,7 +1998,7 @@ namespace MediaPortal.Util
         sharesVideos.Add(VidShare);
       }
 
-      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
         if (addMusic)
         {
@@ -2031,7 +2031,7 @@ namespace MediaPortal.Util
 
     static void SaveShare(IList sharesList, string mediaType)
     {
-      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
         for (int index = 0; index < MaximumShares; index++)
         {

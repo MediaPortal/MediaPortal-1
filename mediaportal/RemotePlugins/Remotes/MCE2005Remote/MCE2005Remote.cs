@@ -66,7 +66,7 @@ namespace MediaPortal.InputDevices
     /// </summary>
     private void Init()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         controlEnabled = xmlreader.GetValueAsBool("remote", "MCE", true);
         logVerbose = xmlreader.GetValueAsBool("remote", "MCEVerboseLog", false);

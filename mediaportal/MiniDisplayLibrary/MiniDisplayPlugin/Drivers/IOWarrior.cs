@@ -1375,7 +1375,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         ParseAdvancedSettings();
         try
         {
-          using (Profile.Settings settings = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          using (Profile.Settings settings = new Profile.MPSettings())
           {
             _AudioUseASIO = settings.GetValueAsBool("audioplayer", "asio", false);
           }

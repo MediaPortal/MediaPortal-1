@@ -79,7 +79,7 @@ namespace MediaPortal.GUI.Library
     public static bool Load(string language)
     {
       bool isPrefixEnabled = true;
-      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings reader = new MPSettings())
       {
         isPrefixEnabled = reader.GetValueAsBool("general", "myprefix", true);
       }

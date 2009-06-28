@@ -202,7 +202,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\MyRadioLastFM.xml");
 
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         _configShowTrayIcon = xmlreader.GetValueAsBool("audioscrobbler", "showtrayicon", false);
         _configShowBallonTips = xmlreader.GetValueAsBool("audioscrobbler", "showballontips", false);

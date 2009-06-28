@@ -117,7 +117,7 @@ namespace MediaPortal.Core.Transcoding
         //add mpeg2 audio/video codecs
         string strVideoCodec = "";
         string strAudioCodec = "";
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
         {
           strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "MPC - MPEG-2 Video Decoder (Gabest)");
           strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "MPC - MPA Decoder Filter");

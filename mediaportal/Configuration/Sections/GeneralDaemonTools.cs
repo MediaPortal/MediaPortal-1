@@ -98,7 +98,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         checkBoxDaemonTools.Checked = xmlreader.GetValueAsBool("daemon", "enabled", false);
         textBoxDaemonTools.Text = xmlreader.GetValueAsString("daemon", "path", "");
@@ -150,7 +150,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("daemon", "enabled", checkBoxDaemonTools.Checked);
         xmlwriter.SetValue("daemon", "path", textBoxDaemonTools.Text);

@@ -188,7 +188,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 
     private void LoadSettings()
     {
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         bool useMicrosoft = xmlreader.GetValueAsBool("remote", "MCE", true);
         bool useHCW = xmlreader.GetValueAsBool("remote", "HCW", false);
@@ -222,7 +222,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 
     private void OnNextPage()
     {
-      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
         xmlwriter.SetValueAsBool("remote", "MCE", cmMicrosoftMCE.Selected);
         xmlwriter.SetValueAsBool("remote", "HCW", cmHauppauge.Selected);

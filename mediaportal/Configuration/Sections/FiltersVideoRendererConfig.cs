@@ -20,7 +20,7 @@ namespace MediaPortal.Configuration.Sections
     public override void LoadSettings()
     {
       base.LoadSettings();
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         //VMR9 settings
         checkboxMpNonsquare.Checked = xmlreader.GetValueAsBool("general", "nonsquare", true);
@@ -56,7 +56,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("general", "nonsquare", checkboxMpNonsquare.Checked);
         xmlwriter.SetValueAsBool("general", "exclusivemode", checkboxDXEclusive.Checked);

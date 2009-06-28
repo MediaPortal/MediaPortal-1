@@ -101,7 +101,7 @@ namespace MediaPortal.Configuration.Sections
     public override void LoadSettings()
     {
       comboBox1.Items.Clear();
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         checkBoxShowSort.Checked = xmlreader.GetValueAsBool("musicfiles", "showSortButton", true);
 
@@ -172,7 +172,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("musicfiles", "showSortButton", checkBoxShowSort.Checked);
         for (int i = 0; i < sortModes.Length; ++i)

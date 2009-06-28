@@ -149,7 +149,7 @@ namespace MediaPortal.GUI.Music
     {
       playlistPlayer = PlayListPlayer.SingletonPlayer;
 
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         string playNowJumpTo = xmlreader.GetValueAsString("musicmisc", "playnowjumpto", "none");
 
@@ -200,7 +200,7 @@ namespace MediaPortal.GUI.Music
 
     protected virtual void LoadSettings()
     {
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         _createMissingFolderThumbCache = xmlreader.GetValueAsBool("thumbnails", "musicfolderondemand", true);
         _createMissingFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "createMissingFolderThumbs", false);
@@ -308,7 +308,7 @@ namespace MediaPortal.GUI.Music
 
     protected virtual void SaveSettings()
     {
-      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
         xmlwriter.SetValue(SerializeName, "view", (int) currentView);
         xmlwriter.SetValue(SerializeName, "viewroot", (int) currentViewRoot);
@@ -740,7 +740,7 @@ namespace MediaPortal.GUI.Music
       SaveSettings();
 
       // Save view
-      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
         xmlwriter.SetValue("music", "startWindow", MusicState.StartWindow.ToString());
         xmlwriter.SetValue("music", "startview", MusicState.View);

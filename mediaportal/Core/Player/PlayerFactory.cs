@@ -167,7 +167,7 @@ namespace MediaPortal.Player
 
       foreach (IExternalPlayer player in _externalPlayerList)
       {
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           bool enabled = xmlreader.GetValueAsBool("plugins", player.PlayerName, false);
           player.Enabled = enabled;
@@ -230,7 +230,7 @@ namespace MediaPortal.Player
         }
 
         // Get settings only once
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
           int streamPlayer = xmlreader.GetValueAsInt("audioscrobbler", "streamplayertype", 0);

@@ -254,7 +254,7 @@ namespace MediaPortal.InputDevices
 
     private void LoadRemotes()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         XmlNodeList listRemotes = doc.DocumentElement.SelectNodes("/mappings/remote");
 
@@ -354,7 +354,7 @@ namespace MediaPortal.InputDevices
           Log.Info("MAP: Error accessing directory \"InputDeviceMappings\\custom\"");
         }
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("remote", "remotenumberindex" + m_sRemoteClass, mpRemotenumber.SelectedIndex);
       }

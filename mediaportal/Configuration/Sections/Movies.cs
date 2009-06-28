@@ -153,7 +153,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         cbAllowNormal.Checked = xmlreader.GetValueAsBool("movies", "allowarnormal", true);
         cbAllowOriginal.Checked = xmlreader.GetValueAsBool("movies", "allowaroriginal", true);
@@ -277,7 +277,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("movies", "repeat", repeatPlaylistCheckBox.Checked);
         xmlwriter.SetValue("movies", "playlists", folderNameTextBox.Text);

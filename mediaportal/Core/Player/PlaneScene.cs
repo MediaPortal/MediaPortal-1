@@ -892,10 +892,22 @@ namespace MediaPortal.Player
       {
         if (_blackImage != null)
         {
-          _blackImage.SetPosition((int)_destinationRect.X, (int)_destinationRect.Y);
-          _blackImage.Width = (int)_destinationRect.Width;
-          _blackImage.Height = (int)_destinationRect.Height;
-
+          //_blackImage.SetPosition((int)_destinationRect.X, (int)_destinationRect.Y);
+          //_blackImage.Width = (int)_destinationRect.Width;
+          //_blackImage.Height = (int)_destinationRect.Height;
+          if (GUIGraphicsContext.IsFullScreenVideo)
+          {
+            _blackImage.SetPosition(0,0);
+            _blackImage.Width = _geometry.ScreenWidth;
+            _blackImage.Height = _geometry.ScreenHeight;
+          }
+          else
+          {
+            _blackImage.SetPosition(GUIGraphicsContext.VideoWindow.X, GUIGraphicsContext.VideoWindow.Y);
+            _blackImage.Width = GUIGraphicsContext.VideoWindow.Width;
+            _blackImage.Height = GUIGraphicsContext.VideoWindow.Height;
+          }
+          Log.Debug("RenderBlack: x:{0}, y:{1}, w:{2}, h:{3}", _blackImage.XPosition, _blackImage.YPosition, _blackImage.Width, _blackImage.Height);
           if (!GUIGraphicsContext.RenderBlackImage)
           {
             return;

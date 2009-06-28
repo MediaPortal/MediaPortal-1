@@ -130,7 +130,7 @@ namespace MediaPortal.GUI.Video
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\videoFullScreen.xml");
       GetID = (int) Window.WINDOW_FULLSCREEN_VIDEO;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
       {
         _immediateSeekIsRelative = xmlreader.GetValueAsBool("movieplayer", "immediateskipstepsisrelative", true);
         _immediateSeekValue = xmlreader.GetValueAsInt("movieplayer", "immediateskipstepsize", 10);
@@ -152,7 +152,7 @@ namespace MediaPortal.GUI.Video
         key = "mytv";
       }
 
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         m_iMaxTimeOSDOnscreen = 1000*xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 5);
         _notifyTVTimeout = xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 10);

@@ -368,7 +368,7 @@ namespace MediaPortal.Player
 
     private static void NotifyRefreshRateChanged(string msg, bool waitForFullScreen)
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         bool notify = xmlreader.GetValueAsBool("general", "notify_on_refreshrate", false);
 
@@ -410,7 +410,7 @@ namespace MediaPortal.Player
         NumberFormatInfo provider = new NumberFormatInfo();
         provider.NumberDecimalSeparator = ".";
 
-        Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
+        Settings xmlreader = new MPSettings();
 
         for (int i = 1; i < 100; i++)
         {
@@ -604,7 +604,7 @@ namespace MediaPortal.Player
       bool deviceReset = false;
       bool force_refresh_rate = false;
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         enabled = xmlreader.GetValueAsBool("general", "autochangerefreshrate", false);
 
@@ -672,7 +672,7 @@ namespace MediaPortal.Player
       double defaultFPS = 0;
       bool deviceReset = false;
       bool force_refresh_rate = false;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         enabled = xmlreader.GetValueAsBool("general", "autochangerefreshrate", false);
         if (!enabled)
@@ -741,7 +741,7 @@ namespace MediaPortal.Player
       provider.NumberDecimalSeparator = ".";
       bool deviceReset = false;
       bool force_refresh_rate = false;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         enabled = xmlreader.GetValueAsBool("general", "autochangerefreshrate", false);
 

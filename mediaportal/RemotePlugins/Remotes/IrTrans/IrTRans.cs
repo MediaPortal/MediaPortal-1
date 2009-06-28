@@ -104,7 +104,7 @@ namespace MediaPortal.InputDevices
     /// <param name="hwnd"></param>
     public void Init(IntPtr hwnd)
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         irTransEnabled = xmlreader.GetValueAsBool("remote", "IRTrans", false);
         remoteModel = xmlreader.GetValueAsString("remote", "IRTransRemoteModel", "mediacenter");

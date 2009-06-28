@@ -63,7 +63,7 @@ namespace MediaPortal.ServiceImplementations
         Directory.CreateDirectory(logDir);
       }
       //BackupLogFiles();
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _minLevel =
           (Level) Enum.Parse(typeof (Level), xmlreader.GetValueAsString("general", "loglevel", "3"));

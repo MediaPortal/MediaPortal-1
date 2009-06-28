@@ -93,7 +93,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         chkEnableDynamicRR.Checked = xmlreader.GetValueAsBool("general", "autochangerefreshrate", false);
         chkNotifyOnRR.Checked = xmlreader.GetValueAsBool("general", "notify_on_refreshrate", false);
@@ -152,7 +152,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {      
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("general", "autochangerefreshrate", chkEnableDynamicRR.Checked);
         xmlwriter.SetValueAsBool("general", "notify_on_refreshrate", chkNotifyOnRR.Checked);
@@ -170,7 +170,7 @@ namespace MediaPortal.Configuration.Sections
         */
 
         //delete all refreshrate entries, then re-add them.
-        Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
+        Settings xmlreader = new MPSettings();
         for (int i = 1; i < 100; i++)
         {          
           string name = xmlreader.GetValueAsString("general", "refreshrate0" + Convert.ToString(i) + "_name", "");
@@ -453,7 +453,7 @@ namespace MediaPortal.Configuration.Sections
    
     private void InsertDefaultValues()
     {
-      Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
+      Settings xmlreader = new MPSettings();
       //first time mp config is run, no refreshrate settings available, create the default ones.
       string[] p = new String[4];
       p[0] = "CINEMA";

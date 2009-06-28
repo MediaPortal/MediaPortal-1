@@ -92,7 +92,7 @@ namespace MediaPortal.Configuration.Sections
     public override void LoadSettings()
     {
       //Load parameters from XML File
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         mpTextBoxHostname.Text = xmlreader.GetValueAsString("tvservice", "hostname", "");
         mpCheckBoxPrefAC3.Checked = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
@@ -248,7 +248,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         string prefLangs = "";
         xmlwriter.SetValue("tvservice", "hostname", mpTextBoxHostname.Text);

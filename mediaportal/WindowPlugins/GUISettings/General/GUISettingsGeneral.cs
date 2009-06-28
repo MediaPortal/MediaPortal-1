@@ -138,7 +138,7 @@ namespace WindowPlugins.GUISettings
 
     private void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("general", "startfullscreen", btnFullscreen.Selected);
         xmlwriter.SetValueAsBool("general", "IdleTimer", btnScreenSaver.Selected);
@@ -149,7 +149,7 @@ namespace WindowPlugins.GUISettings
 
     private void SetFullScreen()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         bool fullscreen = xmlreader.GetValueAsBool("general", "startfullscreen", false);
         btnFullscreen.Selected = fullscreen;
@@ -158,7 +158,7 @@ namespace WindowPlugins.GUISettings
 
     private void SetScreenSaver()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         bool screensaver = xmlreader.GetValueAsBool("general", "IdleTimer", false);
         btnScreenSaver.Selected = screensaver;
@@ -169,7 +169,7 @@ namespace WindowPlugins.GUISettings
     {
       GUIControl.ClearControl(GetID, btnLanguage.GetID);
       string currentLanguage = string.Empty;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         currentLanguage = xmlreader.GetValueAsString("skin", "language", "English");
       }
@@ -194,7 +194,7 @@ namespace WindowPlugins.GUISettings
     {
       List<string> installedSkins = new List<string>();
       string currentSkin = "";
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         currentSkin = xmlreader.GetValueAsString("skin", "name", "Blue3wide");
       }
@@ -284,7 +284,7 @@ namespace WindowPlugins.GUISettings
 
       // Apply the selected buttons again, since they are cleared when we reload
       RestoreButtons();
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         xmlreader.SetValue("general", "skinobsoletecount", 0);
         bool autosize = xmlreader.GetValueAsBool("general", "autosize", true);

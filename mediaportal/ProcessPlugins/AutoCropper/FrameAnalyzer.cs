@@ -82,7 +82,7 @@ namespace ProcessPlugins.AutoCropper
       {
         Log.Debug("AutoCropper: Loading settings");
       }
-      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings reader = new MPSettings())
       {
         verboseLog = reader.GetValueAsBool(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmVerboseLog,
                                            false);

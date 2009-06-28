@@ -448,7 +448,7 @@ namespace MediaPortal.Music.Database
       // Get the values from the Setting Object, which we received from the Config
       bool _updateSinceLastImport = false;
       bool _excludeHiddenFiles = false;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _updateSinceLastImport = xmlreader.GetValueAsBool("musicfiles", "updateSinceLastImport", false);
         _excludeHiddenFiles = xmlreader.GetValueAsBool("musicfiles", "excludeHiddenFiles", false);
@@ -579,7 +579,7 @@ namespace MediaPortal.Music.Database
           fileCount, ts.Hours, ts.Minutes, ts.Seconds, trackPerSecSummary);
 
         // Save the time of the reorg, to be able to skip the files not updated / added the next time
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           xmlreader.SetValue("musicfiles", "lastImport",
                              startTime.ToString("yyyy-M-d H:m:s", CultureInfo.InvariantCulture));
@@ -620,7 +620,7 @@ namespace MediaPortal.Music.Database
       bool fileMenuEnabled = false;
       string fileMenuPinCode = string.Empty;
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
 

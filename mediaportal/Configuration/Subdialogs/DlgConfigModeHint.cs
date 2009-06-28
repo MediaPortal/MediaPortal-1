@@ -19,7 +19,7 @@ namespace MediaPortal.Configuration
         this.DialogResult = DialogResult.OK;
       }
 
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("general", "AdvancedConfigMode", radioButtonAdvanced.Checked);
       }

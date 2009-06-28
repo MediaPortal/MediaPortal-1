@@ -883,7 +883,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
            File.Exists(Config.GetFolder(Config.Dir.Base) + @"\TvLibrary.Interfaces.dll")) &&
           File.Exists(Config.GetFolder(Config.Dir.Plugins) + @"\Windows\TvPlugin.dll"))
       {
-        using (Profile.Settings settings = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings settings = new Profile.MPSettings())
         {
           if (settings.GetValueAsString("tvservice", "hostname", "") != string.Empty)
           {

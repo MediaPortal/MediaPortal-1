@@ -436,7 +436,7 @@ namespace MediaPortal.Player
               hr.Set(mixer.SetMixingPrefs(dwPrefs));
               Log.Debug("VMR9: Enabled YUV mixing - " + hr.ToDXString());
 
-              using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+              using (Settings xmlreader = new MPSettings())
               {
                 //Enable nonsquaremixing
                 if (xmlreader.GetValueAsBool("general", "nonsquare", true))
@@ -619,7 +619,7 @@ namespace MediaPortal.Player
       }
       Log.Debug("VMR9: SetDeinterlacePrefs()");
       int DeInterlaceMode = 3;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         DeInterlaceMode = xmlreader.GetValueAsInt("mytv", "deinterlace", 3);
         //None = 0

@@ -93,7 +93,7 @@ namespace MediaPortal.Configuration.Sections
       ArrayList StepArray = new ArrayList();
       string regValue;
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         try
         {
@@ -144,7 +144,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         if (labelError.Text != string.Empty)
         {

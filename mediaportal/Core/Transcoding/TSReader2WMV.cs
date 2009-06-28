@@ -128,7 +128,7 @@ namespace MediaPortal.Core.Transcoding
         string strH264VideoCodec = "";
         string strAudioCodec = "";
         string strAACAudioCodec = "";
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
         {
           strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
           strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");

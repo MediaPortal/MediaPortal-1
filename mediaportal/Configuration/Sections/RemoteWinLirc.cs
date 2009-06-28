@@ -81,7 +81,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         inputCheckBox.Checked = xmlreader.GetValueAsBool("WINLIRC", "enabled", false);
         pathToWinlircTextBox.Text = xmlreader.GetValueAsString("WINLIRC", "winlircpath", "");
@@ -97,7 +97,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("WINLIRC", "enabled", inputCheckBox.Checked);
         xmlwriter.SetValue("WINLIRC", "winlircpath", pathToWinlircTextBox.Text);

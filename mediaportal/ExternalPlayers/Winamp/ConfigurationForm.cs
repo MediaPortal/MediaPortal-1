@@ -154,7 +154,7 @@ namespace MediaPortal.WinampPlayer
     private void LoadSettings()
     {
       extensionBox.Text = String.Empty;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         m_enabledExt = xmlreader.GetValueAsString("winampplugin", "enabledextensions", "");
         m_enabledExt.Replace(":", ","); // in case it was using the old plugin code where the separator was ":"
@@ -167,7 +167,7 @@ namespace MediaPortal.WinampPlayer
 
     private void SaveSettings()
     {
-      using (Settings xmlWriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlWriter = new MPSettings())
       {
         xmlWriter.SetValue("winampplugin", "enabledextensions", extensionBox.Text);
       }

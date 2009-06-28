@@ -80,7 +80,7 @@ namespace WindowPlugins.GUISettings
       Log.Info("GUISkipSteps: {0}", "Load settings");
       string regValue = string.Empty;
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         try
         {
@@ -120,7 +120,7 @@ namespace WindowPlugins.GUISettings
     {
       Log.Info("GUISkipSteps: {0}", "Save settings");
 
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("movieplayer", "skipsteps", labelCurrent.Label);
       }

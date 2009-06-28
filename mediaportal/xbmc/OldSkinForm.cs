@@ -150,7 +150,7 @@ namespace MediaPortal
     private void bClose_Click(object sender, EventArgs e)
     {
       _nagCount++;
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("general", "dontshowskinversion", checkBoxIgnoreMsg.Checked);
         xmlwriter.SetValue("general", "skinobsoletecount", _nagCount);
@@ -160,7 +160,7 @@ namespace MediaPortal
 
     public bool CheckSkinVersion(string skin)
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         bool ignoreErrors = false;
         ignoreErrors = xmlreader.GetValueAsBool("general", "dontshowskinversion", false);

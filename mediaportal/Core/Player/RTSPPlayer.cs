@@ -198,7 +198,7 @@ namespace MediaPortal.Player
         int intFilters = 0; // FlipGer: count custom filters
         string strFilters = ""; // FlipGer: collect custom filters
         string postProcessingFilterSection = "mytv";
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           if (_mediaType == g_Player.MediaType.Video)
           {

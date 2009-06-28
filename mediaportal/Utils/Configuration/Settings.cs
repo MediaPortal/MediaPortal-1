@@ -30,6 +30,20 @@ using System.IO;
 
 namespace MediaPortal.Profile
 {
+  /// <summary>
+  /// MPSettings allows to read and write MediaPortal.xml configuration file
+  /// (wrapper class to unify path handling)
+  /// </summary>
+  public class MPSettings : Settings
+  {
+    public MPSettings()
+      : base(Configuration.Config.GetFile(Configuration.Config.Dir.Config, "MediaPortal.xml"))
+    {}
+  }
+
+  /// <summary>
+  /// Settings allows to read and write any xml configuration file
+  /// </summary>
   public class Settings : IDisposable
   {
     public Settings(string fileName)

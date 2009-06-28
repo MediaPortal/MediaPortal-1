@@ -117,7 +117,7 @@ namespace MediaPortal
         int screennumber = 0;
         bool ShouldUseNormalSplashScreen = false;
 
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           useFullScreenSplash = xmlreader.GetValueAsBool("general", "usefullscreensplash", true);
           startFullScreen = xmlreader.GetValueAsBool("general", "startfullscreen", true);

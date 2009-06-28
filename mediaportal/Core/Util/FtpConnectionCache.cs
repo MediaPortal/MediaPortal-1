@@ -62,7 +62,7 @@ namespace MediaPortal.Util
 
       public FtpConnection()
       {
-       // using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+       // using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
       }
 
       /// <summary>

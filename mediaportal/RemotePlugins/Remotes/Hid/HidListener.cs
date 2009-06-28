@@ -52,7 +52,7 @@ namespace MediaPortal.InputDevices
 
     private void Init()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         controlEnabled = xmlreader.GetValueAsBool("remote", "HID", false);
         controlEnabledGlobally = xmlreader.GetValueAsBool("remote", "HIDGlobal", false);

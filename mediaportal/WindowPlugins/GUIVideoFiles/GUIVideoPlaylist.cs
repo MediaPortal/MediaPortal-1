@@ -159,7 +159,7 @@ namespace MediaPortal.GUI.Video
       }
 
 
-      using (Profile.Settings settings = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings settings = new Profile.MPSettings())
       {
         playlistPlayer.RepeatPlaylist = settings.GetValueAsBool("movies", "repeat", true);
       }
@@ -173,7 +173,7 @@ namespace MediaPortal.GUI.Video
     protected override void OnPageDestroy(int newWindowId)
     {
       currentSelectedItem = facadeView.SelectedListItemIndex;
-      using (Profile.Settings settings = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings settings = new Profile.MPSettings())
       {
         settings.SetValueAsBool("movies", "repeat", playlistPlayer.RepeatPlaylist);
       }
@@ -616,7 +616,7 @@ namespace MediaPortal.GUI.Video
       if (GetKeyboard(ref playlistFileName))
       {
         string playListPath = string.Empty;
-        using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings xmlreader = new Profile.MPSettings())
         {
           playListPath = xmlreader.GetValueAsString("movies", "playlists", string.Empty);
           playListPath = Util.Utils.RemoveTrailingSlash(playListPath);

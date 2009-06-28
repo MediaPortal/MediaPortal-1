@@ -164,7 +164,7 @@ namespace MediaPortal.Configuration.Sections
       {
         return;
       }
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         autoDecoderSettings.Checked = xmlreader.GetValueAsBool("movieplayer", "autodecodersettings", false);
         enableAudioDualMonoModes.Checked = xmlreader.GetValueAsBool("movieplayer", "audiodualmono", false);
@@ -299,7 +299,7 @@ namespace MediaPortal.Configuration.Sections
       {
         return;
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("movieplayer", "autodecodersettings", autoDecoderSettings.Checked);
         xmlwriter.SetValueAsBool("movieplayer", "audiodualmono", enableAudioDualMonoModes.Checked);

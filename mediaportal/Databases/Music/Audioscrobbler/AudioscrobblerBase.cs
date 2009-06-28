@@ -206,7 +206,7 @@ namespace MediaPortal.Music.Database
 
     private static void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         username = xmlreader.GetValueAsString("audioscrobbler", "user", String.Empty);
         _recordToProfile = xmlreader.GetValueAsBool("audioscrobbler", "submitradiotracks", true);
@@ -423,7 +423,7 @@ namespace MediaPortal.Music.Database
         }
         username = scrobbleUser_;
         password = tmpPass;
-        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlwriter = new MPSettings())
         {
           xmlwriter.SetValue("audioscrobbler", "user", username);
         }

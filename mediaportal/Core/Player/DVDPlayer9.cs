@@ -64,7 +64,7 @@ namespace MediaPortal.Player
       int codecValue = 0;
       string codecType = "";
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         dvdDNavigator = xmlreader.GetValueAsString("dvdplayer", "navigator", "DVD Navigator");
 
@@ -332,7 +332,7 @@ namespace MediaPortal.Player
         return;
       }
       int hr;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         int codecValue = 0;
         string codecType = "";

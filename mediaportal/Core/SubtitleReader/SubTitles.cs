@@ -140,7 +140,7 @@ namespace MediaPortal.Subtitle
 
     public void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         string strTmp = "";
         _fontName = xmlreader.GetValueAsString("subtitles", "fontface", "Arial");

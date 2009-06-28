@@ -1525,7 +1525,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _isFuzzyMatching = xmlreader.GetValueAsBool("movies", "fuzzyMatching", true);
 
@@ -1572,7 +1572,7 @@ namespace MediaPortal.Configuration.Sections
         return;
       }
 
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("movies", "fuzzyMatching", _isFuzzyMatching);
         // Database

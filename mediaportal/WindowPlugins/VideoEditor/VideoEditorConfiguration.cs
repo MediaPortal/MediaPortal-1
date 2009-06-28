@@ -71,7 +71,7 @@ namespace WindowPlugins.VideoEditor
 
     private void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("VideoEditor", "mencoder", mencoderPath.Text);
       }
@@ -79,7 +79,7 @@ namespace WindowPlugins.VideoEditor
 
     private void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         mencoderPath.Text = xmlreader.GetValueAsString("VideoEditor", "mencoder", String.Empty);
       }

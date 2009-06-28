@@ -223,7 +223,7 @@ namespace MediaPortal.Configuration.Sections
       }
 
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         cbHiddenMode.Checked = xmlreader.GetValueAsBool("mytv", "teletextHidden", false);
         cbTransparentMode.Checked = xmlreader.GetValueAsBool("mytv", "teletextTransparent", false);
@@ -239,7 +239,7 @@ namespace MediaPortal.Configuration.Sections
       {
         return;
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("mytv", "teletextHidden", cbHiddenMode.Checked);
         xmlwriter.SetValueAsBool("mytv", "teletextTransparent", cbTransparentMode.Checked);

@@ -175,7 +175,7 @@ namespace MediaPortal.GUI.GUIBurner
 
     private void LoadSettings()
     {
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         fastFormat = xmlreader.GetValueAsBool("burner", "fastformat", true);
         tmpFolder = xmlreader.GetValueAsString("burner", "temp_folder", Path.GetTempPath());

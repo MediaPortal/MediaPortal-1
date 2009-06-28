@@ -130,7 +130,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnVideoCodec()
     {
       string strVideoCodec = "";
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
       }
@@ -175,7 +175,7 @@ namespace WindowPlugins.GUISettings.TV
       {
         return;
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("movieplayer", "mpeg2videocodec", (string) availableVideoFilters[dlg.SelectedLabel]);
       }
@@ -184,7 +184,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnH264VideoCodec()
     {
       string strH264VideoCodec = "";
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         strH264VideoCodec = xmlreader.GetValueAsString("movieplayer", "h264videocodec", "");
       }
@@ -212,7 +212,7 @@ namespace WindowPlugins.GUISettings.TV
       {
         return;
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("movieplayer", "h264videocodec", (string) availableH264VideoFilters[dlg.SelectedLabel]);
       }
@@ -221,7 +221,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnAudioCodec()
     {
       string strAudioCodec = "";
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         strAudioCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
       }
@@ -266,7 +266,7 @@ namespace WindowPlugins.GUISettings.TV
       {
         return;
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("movieplayer", "mpeg2audiocodec", (string) availableAudioFilters[dlg.SelectedLabel]);
       }
@@ -275,7 +275,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnAspectRatio()
     {
       Geometry.Type aspectRatio = Geometry.Type.Normal;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         string aspectRatioText = xmlreader.GetValueAsString("movieplayer", "defaultar", "Normal");
         aspectRatio = Utils.GetAspectRatio(aspectRatioText);
@@ -309,7 +309,7 @@ namespace WindowPlugins.GUISettings.TV
 
       aspectRatio = Utils.GetAspectRatioByLangID(dlg.SelectedId);
 
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         string aspectRatioText = Utils.GetAspectRatio(aspectRatio);
         xmlwriter.SetValue("movieplayer", "defaultar", aspectRatioText);
@@ -319,7 +319,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnAudioRenderer()
     {
       string strAudioRenderer = "";
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         strAudioRenderer = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
       }
@@ -347,7 +347,7 @@ namespace WindowPlugins.GUISettings.TV
       {
         return;
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("movieplayer", "audiorenderer", (string) availableAudioFilters[dlg.SelectedLabel]);
       }
@@ -356,7 +356,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnAACAudioCodec()
     {
       string strAACAudioCodec = "";
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         strAACAudioCodec = xmlreader.GetValueAsString("movieplayer", "aacaudiocodec", "");
       }
@@ -385,7 +385,7 @@ namespace WindowPlugins.GUISettings.TV
       {
         return;
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("movieplayer", "aacaudiocodec", (string) availableAACAudioFilters[dlg.SelectedLabel]);
       }
@@ -393,7 +393,7 @@ namespace WindowPlugins.GUISettings.TV
 
     private void OnSubtitleOnOff()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("subtitles", "enabled", btnEnableSubtitles.Selected);
       }
@@ -402,7 +402,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnSubtitle()
     {
       string defaultSubtitleLanguage = "";
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         defaultSubtitleLanguage = xmlreader.GetValueAsString("subtitles", "language", "English");
       }
@@ -435,7 +435,7 @@ namespace WindowPlugins.GUISettings.TV
         {
           return;
         }
-        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlwriter = new MPSettings())
         {
           CultureInfo info = (CultureInfo) cultures[dlg.SelectedLabel];
           xmlwriter.SetValue("subtitles", "language", info.EnglishName);
@@ -446,7 +446,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnAudioLanguage()
     {
       string defaultAudioLanguage = "";
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         defaultAudioLanguage = xmlreader.GetValueAsString("movieplayer", "audiolanguage", "English");
       }
@@ -479,7 +479,7 @@ namespace WindowPlugins.GUISettings.TV
         {
           return;
         }
-        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlwriter = new MPSettings())
         {
           CultureInfo info = (CultureInfo) cultures[dlg.SelectedLabel];
           xmlwriter.SetValue("movieplayer", "audiolanguage", info.EnglishName);
@@ -494,7 +494,7 @@ namespace WindowPlugins.GUISettings.TV
         return;
       }
       settingsLoaded = true;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         subtitleSettings = xmlreader.GetValueAsBool("subtitles", "enabled", false);
         btnEnableSubtitles.Selected = subtitleSettings;

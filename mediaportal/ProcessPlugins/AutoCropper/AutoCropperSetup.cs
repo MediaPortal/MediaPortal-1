@@ -761,7 +761,7 @@ namespace ProcessPlugins.AutoCropper
 
     public void LoadSettings()
     {
-      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings reader = new MPSettings())
       {
         this.enableAutoCropper.Checked = reader.GetValueAsBool(autoCropSectionName, enableAutoCropSetting, false);
         this.enableAutoMode.Checked = reader.GetValueAsBool(autoCropSectionName, enableAutoModeSetting, false);
@@ -791,7 +791,7 @@ namespace ProcessPlugins.AutoCropper
 
     public void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool(autoCropSectionName, enableAutoCropSetting, enableAutoCropper.Checked);
         xmlwriter.SetValueAsBool(autoCropSectionName, enableManualModeSetting, enableManualMode.Checked);

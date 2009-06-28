@@ -386,7 +386,7 @@ namespace MediaPortal.Player
     {
       int iStage = 1;
       string audioDevice;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         audioDevice = xmlreader.GetValueAsString("audioplayer", "sounddevice", "Default DirectSound Device");
       }

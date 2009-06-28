@@ -230,7 +230,7 @@ namespace MediaPortal.GUI.Music
 
     private void LoadSettings()
     {
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         string VizName = "None";
         bool ShowViz = false;

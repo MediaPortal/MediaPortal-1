@@ -100,7 +100,7 @@ namespace MediaPortal.InputDevices
     {
       Log.Info("Initialising WinLirc...");
       //load settings
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         m_bEnabled = xmlreader.GetValueAsString("WINLIRC", "enabled", "false") == "true";
         if (m_bEnabled == false)

@@ -100,7 +100,7 @@ namespace MediaPortal.Picture.Database
 
     private void InitSettings()
     {
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         _useExif = xmlreader.GetValueAsBool("pictures", "useExif", true);
         _usePicasa = xmlreader.GetValueAsBool("pictures", "usePicasa", false);

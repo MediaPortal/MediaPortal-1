@@ -107,7 +107,7 @@ namespace MediaPortal.GUI.Video
 
     protected virtual void LoadSettings()
     {
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         int defaultView = (int) View.List;
         int defaultSort = (int) VideoSort.SortMethod.Name;
@@ -189,7 +189,7 @@ namespace MediaPortal.GUI.Video
 
     protected virtual void SaveSettings()
     {
-      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
         xmlwriter.SetValue(SerializeName, "view", (int) currentView);
         xmlwriter.SetValue(SerializeName, "viewroot", (int) currentViewRoot);
@@ -587,7 +587,7 @@ namespace MediaPortal.GUI.Video
       SaveSettings();
 
       // Save view
-      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
         xmlwriter.SetValue("movies", "startWindow", VideoState.StartWindow.ToString());
         xmlwriter.SetValue("movies", "startview", VideoState.View);

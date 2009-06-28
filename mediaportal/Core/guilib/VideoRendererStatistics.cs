@@ -54,7 +54,7 @@ namespace MediaPortal.GUI.Library
       {
         if (_noSignalTimeOut == -1)
         {
-          using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          using (Settings xmlreader = new MPSettings())
           {
             _noSignalTimeOut = xmlreader.GetValueAsInt("debug", "nosignaltimeout", 5);
           }

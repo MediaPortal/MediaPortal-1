@@ -330,7 +330,7 @@ namespace MediaPortal.Localisation
 
         // Some chinese might prefer to use an english OS but still have all chars for media, etc
         bool useChineseHack = false;
-        using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings reader = new MPSettings())
         {
           useChineseHack = reader.GetValueAsBool("debug", "useExtendedCharsWithStandardCulture", false);
           if (useChineseHack)

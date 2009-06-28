@@ -527,7 +527,7 @@ namespace MediaPortal.Configuration.Sections
             {
               checkBoxDxVA.Checked = true;
             }
-            using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            using (Settings xmlwriter = new MPSettings())
             {
               xmlwriter.SetValue("videocodec", "nvidia", regValue);
             }

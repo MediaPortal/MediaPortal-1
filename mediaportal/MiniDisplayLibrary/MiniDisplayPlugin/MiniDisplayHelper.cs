@@ -266,7 +266,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       EQSettings._EQ_Restrict_FPS = 10;
       EQSettings._EqUpdateDelay = 0;
       EQSettings._DelayEQTime = 0;
-      using (Profile.Settings settings = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings settings = new Profile.MPSettings())
       {
         EQSettings._AudioIsMixing = settings.GetValueAsBool("audioplayer", "mixing", false);
         EQSettings._AudioUseASIO = settings.GetValueAsBool("audioplayer", "asio", false);
@@ -277,7 +277,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     {
       lock (StatusMutex)
       {
-        using (Profile.Settings settings = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings settings = new Profile.MPSettings())
         {
           CurrentStatus._AudioIsMixing = settings.GetValueAsBool("audioplayer", "mixing", false);
           CurrentStatus._AudioUseASIO = settings.GetValueAsBool("audioplayer", "asio", false);
@@ -1060,7 +1060,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         return false;
       }
       bool enabled = false;
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         enabled = xmlreader.GetValueAsBool("plugins", "MiniDisplay", false);
       }

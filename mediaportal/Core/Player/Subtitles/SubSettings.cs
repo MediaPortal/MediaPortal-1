@@ -59,7 +59,7 @@ namespace MediaPortal.Player.Subtitles
 
     public void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         defStyle = new SubtitleStyle();
         defStyle.Load(xmlreader);

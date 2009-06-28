@@ -131,7 +131,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnDVDNavigator()
     {
       string strDVDNavigator = "";
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         strDVDNavigator = xmlreader.GetValueAsString("dvdplayer", "navigator", "DVD Navigator");
       }
@@ -160,7 +160,7 @@ namespace WindowPlugins.GUISettings.TV
       {
         return;
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("dvdplayer", "navigator", (string) availableDVDNavigators[dlg.SelectedLabel]);
       }
@@ -169,7 +169,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnVideoCodec()
     {
       string strVideoCodec = "";
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         strVideoCodec = xmlreader.GetValueAsString("dvdplayer", "videocodec", "");
       }
@@ -215,7 +215,7 @@ namespace WindowPlugins.GUISettings.TV
       {
         return;
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("dvdplayer", "videocodec", (string) availableVideoFilters[dlg.SelectedLabel]);
       }
@@ -224,7 +224,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnAudioCodec()
     {
       string strAudioCodec = "";
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         strAudioCodec = xmlreader.GetValueAsString("dvdplayer", "audiocodec", "");
       }
@@ -270,7 +270,7 @@ namespace WindowPlugins.GUISettings.TV
       {
         return;
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("dvdplayer", "audiocodec", (string) availableAudioFilters[dlg.SelectedLabel]);
       }
@@ -279,7 +279,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnAspectRatio()
     {
       Geometry.Type aspectRatio = Geometry.Type.Normal;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         string aspectRatioText = xmlreader.GetValueAsString("dvdplayer", "defaultar", "Normal");
         aspectRatio = Utils.GetAspectRatio(aspectRatioText);
@@ -307,7 +307,7 @@ namespace WindowPlugins.GUISettings.TV
         return;
       }
       aspectRatio = Utils.GetAspectRatioByLangID(dlg.SelectedId);
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         string aspectRatioText = Utils.GetAspectRatio(aspectRatio);
         xmlwriter.SetValue("dvdplayer", "defaultar", aspectRatioText);
@@ -317,7 +317,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnAudioRenderer()
     {
       string strAudioRenderer = "";
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         strAudioRenderer = xmlreader.GetValueAsString("dvdplayer", "audiorenderer", "Default DirectSound Device");
       }
@@ -345,7 +345,7 @@ namespace WindowPlugins.GUISettings.TV
       {
         return;
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("dvdplayer", "audiorenderer", (string) availableAudioFilters[dlg.SelectedLabel]);
       }
@@ -354,7 +354,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnSubtitle()
     {
       string defaultSubtitleLanguage = "";
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         defaultSubtitleLanguage = xmlreader.GetValueAsString("dvdplayer", "subtitlelanguage", "English");
       }
@@ -387,7 +387,7 @@ namespace WindowPlugins.GUISettings.TV
         {
           return;
         }
-        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlwriter = new MPSettings())
         {
           CultureInfo info = (CultureInfo) cultures[dlg.SelectedLabel];
           xmlwriter.SetValue("dvdplayer", "subtitlelanguage", info.EnglishName);
@@ -398,7 +398,7 @@ namespace WindowPlugins.GUISettings.TV
     private void OnAudioLanguage()
     {
       string defaultAudioLanguage = "";
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         defaultAudioLanguage = xmlreader.GetValueAsString("dvdplayer", "audiolanguage", "English");
       }
@@ -431,7 +431,7 @@ namespace WindowPlugins.GUISettings.TV
         {
           return;
         }
-        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlwriter = new MPSettings())
         {
           CultureInfo info = (CultureInfo) cultures[dlg.SelectedLabel];
           xmlwriter.SetValue("dvdplayer", "audiolanguage", info.EnglishName);
@@ -441,7 +441,7 @@ namespace WindowPlugins.GUISettings.TV
 
     private void OnDXVA()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("dvdplayer", "turnoffdxva", btnDXVA.Selected);
       }
@@ -449,7 +449,7 @@ namespace WindowPlugins.GUISettings.TV
 
     private void OnSubtitleOnOff()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("dvdplayer", "showsubtitles", btnEnableSubtitles.Selected);
       }
@@ -462,7 +462,7 @@ namespace WindowPlugins.GUISettings.TV
         return;
       }
       settingsLoaded = true;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         subtitleSettings = xmlreader.GetValueAsBool("dvdplayer", "showsubtitles", false);
         btnEnableSubtitles.Selected = subtitleSettings;

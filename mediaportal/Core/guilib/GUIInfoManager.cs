@@ -2219,7 +2219,7 @@ namespace MediaPortal.GUI.Library
 
           break;
         case PLUGIN_IS_ENABLED:
-          using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          using (Settings xmlreader = new MPSettings())
           {
             bReturn = xmlreader.GetValueAsBool("plugins", info.m_stringData, false);
           }

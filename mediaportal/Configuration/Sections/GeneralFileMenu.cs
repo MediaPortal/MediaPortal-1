@@ -75,7 +75,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         chbEnabled.Checked = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         textPinCodeBox.Text = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", ""));
@@ -85,7 +85,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("filemenu", "enabled", chbEnabled.Checked);
         xmlwriter.SetValue("filemenu", "pincode", Util.Utils.EncryptPin(textPinCodeBox.Text));

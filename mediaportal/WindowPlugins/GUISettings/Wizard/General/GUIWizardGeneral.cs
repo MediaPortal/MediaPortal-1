@@ -125,7 +125,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 
     private void LoadSettings()
     {
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         OnInternetAccess(xmlreader.GetValueAsBool("general", "internetaccess", true));
         OnUsageType(true);
@@ -136,7 +136,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 
     private void OnNextPage()
     {
-      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
         xmlwriter.SetValueAsBool("general", "internetaccess", cmInternetYes.Selected);
 

@@ -164,7 +164,7 @@ namespace MediaPortal.GUI.Library
     private void LoadSettings()
     {
       // Some users have english systems but use RTL text.. System.Globalization.CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _useRTLLang = xmlreader.GetValueAsBool("general", "rtllang", false);
       }

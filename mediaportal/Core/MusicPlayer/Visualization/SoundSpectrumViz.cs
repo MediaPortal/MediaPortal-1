@@ -147,9 +147,7 @@ namespace MediaPortal.Visualization
       Log.Info("Visualization Manager: Creating {0} callback...", vizPluginInfo.Name);
       SoundSpectrumInterop.SSCallback = new SoundSpectrumInterop.SSCallbackDelegate(SSCallbackFunc);
       SSVisualizationName = vizPluginInfo.Name;
-      using (
-        Settings xmlreader =
-          new Settings(Configuration.Config.GetFile(Configuration.Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _autoHideMouse = xmlreader.GetValueAsBool("general", "autohidemouse", true);
       }

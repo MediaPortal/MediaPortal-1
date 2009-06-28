@@ -1598,7 +1598,7 @@ namespace MediaPortal.Player
         string strAudiorenderer = "";
         int intFilters = 0; // FlipGer: count custom filters
         string strFilters = ""; // FlipGer: collect custom filters
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           _CodecSupportsFastSeeking = xmlreader.GetValueAsBool("debug", "CodecSupportsFastSeeking", true);
           Log.Debug("BaseTSReaderPlayer: Codec supports fast seeking = {0}", _CodecSupportsFastSeeking);
