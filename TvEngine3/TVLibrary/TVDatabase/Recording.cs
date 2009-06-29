@@ -32,6 +32,7 @@ namespace TvDatabase
     [TableColumn("idServer", NotNull = true), ForeignKey("Server", "idServer")] private int idServer;
     // stores the last position - to make resume possible
     [TableColumn("stopTime", NotNull = true)] private int stopTime;
+    [TableColumn("episodeName", NotNull = true)] private string episodeName;
 
     #endregion
 
@@ -41,7 +42,7 @@ namespace TvDatabase
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
     /// </summary> 
     public Recording(int idChannel, DateTime startTime, DateTime endTime, string title, string description, string genre,
-                     string fileName, int keepUntil, DateTime keepUntilDate, int timesWatched, int idServer)
+                     string fileName, int keepUntil, DateTime keepUntilDate, int timesWatched, int idServer, string episodeName)
     {
       isChanged = true;
       this.idChannel = idChannel;
@@ -56,6 +57,7 @@ namespace TvDatabase
       this.timesWatched = timesWatched;
       this.idServer = idServer;
       stopTime = 0;
+      this.episodeName = episodeName;
     }
 
     /// <summary> 
@@ -64,7 +66,7 @@ namespace TvDatabase
     /// </summary> 
     public Recording(int idRecording, int idChannel, DateTime startTime, DateTime endTime, string title,
                      string description, string genre, string fileName, int keepUntil, DateTime keepUntilDate,
-                     int timesWatched, int idServer, int stopTime)
+                     int timesWatched, int idServer, int stopTime, string episodeName)
     {
       this.idRecording = idRecording;
       this.idChannel = idChannel;
@@ -79,6 +81,7 @@ namespace TvDatabase
       this.timesWatched = timesWatched;
       this.idServer = idServer;
       this.stopTime = stopTime;
+      this.episodeName = episodeName;
     }
 
     #endregion
@@ -262,6 +265,19 @@ namespace TvDatabase
       {
         isChanged |= stopTime != value;
         stopTime = value;
+      }
+    }
+
+    /// <summary>
+    /// Property relating to database column episodeName
+    /// </summary>
+    public string EpisodeName
+    {
+      get { return episodeName; }
+      set
+      {
+        isChanged |= episodeName != value;
+        episodeName = value;
       }
     }
 
