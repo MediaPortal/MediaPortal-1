@@ -57,6 +57,7 @@ namespace TvService
     #endregion
 
     #region variables
+
     EpisodeManagement _episodeManagement;
     IController _controller;
     readonly TVController _tvController;
@@ -65,10 +66,13 @@ namespace TvService
     DateTime _scheduleCheckTimer;
     List<RecordingDetail> _recordingsInProgressList;
     User _user;
-    readonly bool _createTagInfoXML;
+    bool _createTagInfoXML;
+    bool _preventDuplicateEpisodes;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Constructor
     /// </summary>
@@ -79,10 +83,13 @@ namespace TvService
       _tvController = controller;
       TvBusinessLayer layer = new TvBusinessLayer();
       _createTagInfoXML = (layer.GetSetting("createtaginfoxml", "yes").Value == "yes");
+      _preventDuplicateEpisodes = (layer.GetSetting("PreventDuplicates", "no").Value == "yes");
     }
+
     #endregion
 
     #region public members
+
     /// <summary>
     /// Resets the scheduler timer. This causes the scheduler to immediatly check
     /// if any schedule should be recorded
@@ -126,9 +133,11 @@ namespace TvService
       HandleSleepMode();
 
     }
+
     #endregion
 
     #region private members
+
     /// <summary>
     /// Timer callback which gets fired every 30 seconds
     /// The method will check if a schedule should be started to record
@@ -242,40 +251,45 @@ namespace TvService
           string ToRecordEpisode = CleanEpisodeTitle(newRecording.Program.EpisodeName);
           try
           {
-            // EPG needs to have episode information to distinguish between repeatings and new broadcasts
-            if (ToRecordEpisode.Equals(String.Empty))
+            // Allow user to turn this on or off in case of unreliable EPG
+            if (_preventDuplicateEpisodes)
             {
-              // Check the type so we aren't logging too verbose on single runs
-              if (schedule.ScheduleType != (int)ScheduleRecordingType.Once)
+              Log.Debug("Scheduler: Check recordings for schedule {0}...", ToRecordTitle);
+              // EPG needs to have episode information to distinguish between repeatings and new broadcasts
+              if (ToRecordEpisode.Equals(String.Empty))
               {
-                Log.Info("Scheduler: No epsisode title found for schedule {0} - omitting repeating check.", newRecording.Program.Title);
-              }
-            }
-            else
-            {
-              for (int i = 0; i < pastRecordings.Count; i++)
-              {
-                // Checking the record "title" itself to avoid unnecessary checks.
-                // Furthermore some EPG sources could misuse the episode field for other, non-unique information
-                if (CleanEpisodeTitle(pastRecordings[i].Title).Equals(ToRecordTitle, StringComparison.CurrentCultureIgnoreCase))
+                // Check the type so we aren't logging too verbose on single runs
+                if (schedule.ScheduleType != (int)ScheduleRecordingType.Once)
                 {
-                  Log.Info("Scheduler: Found recordings of schedule {0} - checking episodes...", ToRecordTitle);
-                  // The schedule which is about to be recorded is already found on our disk
-                  if (CleanEpisodeTitle(pastRecordings[i].EpisodeName).Equals(ToRecordEpisode, StringComparison.CurrentCultureIgnoreCase))
+                  Log.Info("Scheduler: No epsisode title found for schedule {0} - omitting repeating check.", newRecording.Program.Title);
+                }
+              }
+              else
+              {
+                for (int i = 0; i < pastRecordings.Count; i++)
+                {
+                  // Checking the record "title" itself to avoid unnecessary checks.
+                  // Furthermore some EPG sources could misuse the episode field for other, non-unique information
+                  if (CleanEpisodeTitle(pastRecordings[i].Title).Equals(ToRecordTitle, StringComparison.CurrentCultureIgnoreCase))
                   {
-                    // How to handle "interrupted" recordings?
-                    // E.g. Windows reboot because of update installation: Previously the tvservice restarted to record the episode 
-                    // and simply took care of creating a unique filename.
-                    // Now we need to check whether Recording's and Scheduling's Starttime are identical. If they are we expect that
-                    // the recording process should be resume because of previous failures.
-                    if (pastRecordings[i].StartTime != newRecording.Program.StartTime)
+                    Log.Debug("Scheduler: Found recordings of schedule {0} - checking episodes...", ToRecordTitle);
+                    // The schedule which is about to be recorded is already found on our disk
+                    if (CleanEpisodeTitle(pastRecordings[i].EpisodeName).Equals(ToRecordEpisode, StringComparison.CurrentCultureIgnoreCase))
                     {
-                      NewRecordingNeeded = false;
-                      Log.Info("Scheduler: Schedule {0} ({1}) has already been recorded - aborting...", ToRecordTitle, ToRecordEpisode);
-                    }
-                    else
-                    {
-                      Log.Info("Scheduler: Schedule {0} ({1}) had already been started - expect previous failure and try to resume...", ToRecordTitle, ToRecordEpisode);
+                      // How to handle "interrupted" recordings?
+                      // E.g. Windows reboot because of update installation: Previously the tvservice restarted to record the episode 
+                      // and simply took care of creating a unique filename.
+                      // Now we need to check whether Recording's and Scheduling's Starttime are identical. If they are we expect that
+                      // the recording process should be resume because of previous failures.
+                      if (pastRecordings[i].StartTime != newRecording.Program.StartTime)
+                      {
+                        NewRecordingNeeded = false;
+                        Log.Info("Scheduler: Schedule {0} ({1}) has already been recorded - aborting...", ToRecordTitle, ToRecordEpisode);
+                      }
+                      else
+                      {
+                        Log.Info("Scheduler: Schedule {0} ({1}) had already been started - expect previous failure and try to resume...", ToRecordTitle, ToRecordEpisode);
+                      }
                     }
                   }
                 }

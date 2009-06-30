@@ -185,9 +185,10 @@ namespace SetupTv.Sections
             numericUpDownPostRec.Value = 5;
             TvBusinessLayer layer = new TvBusinessLayer();
             checkBoxAutoDelete.Checked = (layer.GetSetting("autodeletewatchedrecordings", "no").Value == "yes");
+            checkBoxPreventDupes.Checked = (layer.GetSetting("PreventDuplicates", "no").Value == "yes");
             comboBoxFirstWorkingDay.SelectedIndex = Convert.ToInt32(layer.GetSetting("FirstWorkingDay", "0").Value); //default is Monday=0       
 
-            checkBoxCreateTagInfoXML.Checked = true; // (layer.GetSetting("createtaginfoxml", "yes").Value == "yes");
+            //checkBoxCreateTagInfoXML.Checked = true; // (layer.GetSetting("createtaginfoxml", "yes").Value == "yes");
             checkboxSchedulerPriority.Checked = (layer.GetSetting("scheduleroverlivetv", "yes").Value == "yes");
             formatString[0] = "";
             formatString[1] = "";
@@ -239,12 +240,16 @@ namespace SetupTv.Sections
             setting.Value = comboBoxFirstWorkingDay.SelectedIndex.ToString();
             setting.Persist();
 
-            setting = layer.GetSetting("createtaginfoxml", "yes");
-            setting.Value = checkBoxCreateTagInfoXML.Checked ? "yes" : "no";
-            setting.Persist();
+            //setting = layer.GetSetting("createtaginfoxml", "yes");
+            //setting.Value = checkBoxCreateTagInfoXML.Checked ? "yes" : "no";
+            //setting.Persist();
 
             setting = layer.GetSetting("scheduleroverlivetv", "yes");
             setting.Value = checkboxSchedulerPriority.Checked ? "yes" : "no";
+            setting.Persist();
+
+            setting = layer.GetSetting("PreventDuplicates", "no");
+            setting.Value = checkBoxPreventDupes.Checked ? "yes" : "no";
             setting.Persist();
 
             UpdateDriveInfo(true);

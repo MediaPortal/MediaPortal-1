@@ -35,7 +35,6 @@ namespace SetupTv.Sections
       this.comboBoxFirstWorkingDay = new System.Windows.Forms.ComboBox();
       this.numericUpDownPostRec = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownPreRec = new System.Windows.Forms.NumericUpDown();
-      this.checkBoxCreateTagInfoXML = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkboxSchedulerPriority = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxAutoDelete = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label4 = new System.Windows.Forms.Label();
@@ -93,6 +92,9 @@ namespace SetupTv.Sections
       this.lblRecFolders = new System.Windows.Forms.Label();
       this.cbRecPaths = new System.Windows.Forms.ComboBox();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+      this.groupBoxGap = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBoxScheduler = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxPreventDupes = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControl1.SuspendLayout();
       this.tpSettings.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -106,6 +108,8 @@ namespace SetupTv.Sections
       this.groupBoxRecordSettings.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.tpRecordImport.SuspendLayout();
+      this.groupBoxGap.SuspendLayout();
+      this.groupBoxScheduler.SuspendLayout();
       this.SuspendLayout();
       // 
       // tabControl1
@@ -141,17 +145,9 @@ namespace SetupTv.Sections
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox1.Controls.Add(this.comboBoxFirstWorkingDay);
-      this.groupBox1.Controls.Add(this.numericUpDownPostRec);
-      this.groupBox1.Controls.Add(this.numericUpDownPreRec);
-      this.groupBox1.Controls.Add(this.checkBoxCreateTagInfoXML);
-      this.groupBox1.Controls.Add(this.checkboxSchedulerPriority);
+      this.groupBox1.Controls.Add(this.groupBoxScheduler);
+      this.groupBox1.Controls.Add(this.groupBoxGap);
       this.groupBox1.Controls.Add(this.checkBoxAutoDelete);
-      this.groupBox1.Controls.Add(this.label4);
-      this.groupBox1.Controls.Add(this.label3);
-      this.groupBox1.Controls.Add(this.label12);
-      this.groupBox1.Controls.Add(this.label2);
-      this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Location = new System.Drawing.Point(6, 3);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(445, 365);
@@ -165,16 +161,16 @@ namespace SetupTv.Sections
       this.comboBoxFirstWorkingDay.Items.AddRange(new object[] {
             "Monday",
             "Sunday"});
-      this.comboBoxFirstWorkingDay.Location = new System.Drawing.Point(125, 191);
+      this.comboBoxFirstWorkingDay.Location = new System.Drawing.Point(93, 22);
       this.comboBoxFirstWorkingDay.Name = "comboBoxFirstWorkingDay";
       this.comboBoxFirstWorkingDay.Size = new System.Drawing.Size(67, 21);
       this.comboBoxFirstWorkingDay.TabIndex = 12;
       // 
       // numericUpDownPostRec
       // 
-      this.numericUpDownPostRec.Location = new System.Drawing.Point(109, 55);
+      this.numericUpDownPostRec.Location = new System.Drawing.Point(94, 54);
       this.numericUpDownPostRec.Name = "numericUpDownPostRec";
-      this.numericUpDownPostRec.Size = new System.Drawing.Size(58, 20);
+      this.numericUpDownPostRec.Size = new System.Drawing.Size(66, 20);
       this.numericUpDownPostRec.TabIndex = 11;
       this.numericUpDownPostRec.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownPostRec.Value = new decimal(new int[] {
@@ -185,9 +181,9 @@ namespace SetupTv.Sections
       // 
       // numericUpDownPreRec
       // 
-      this.numericUpDownPreRec.Location = new System.Drawing.Point(109, 25);
+      this.numericUpDownPreRec.Location = new System.Drawing.Point(94, 24);
       this.numericUpDownPreRec.Name = "numericUpDownPreRec";
-      this.numericUpDownPreRec.Size = new System.Drawing.Size(58, 20);
+      this.numericUpDownPreRec.Size = new System.Drawing.Size(66, 20);
       this.numericUpDownPreRec.TabIndex = 10;
       this.numericUpDownPreRec.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownPreRec.Value = new decimal(new int[] {
@@ -196,27 +192,13 @@ namespace SetupTv.Sections
             0,
             0});
       // 
-      // checkBoxCreateTagInfoXML
-      // 
-      this.checkBoxCreateTagInfoXML.AutoSize = true;
-      this.checkBoxCreateTagInfoXML.Checked = true;
-      this.checkBoxCreateTagInfoXML.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxCreateTagInfoXML.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxCreateTagInfoXML.Location = new System.Drawing.Point(31, 129);
-      this.checkBoxCreateTagInfoXML.Name = "checkBoxCreateTagInfoXML";
-      this.checkBoxCreateTagInfoXML.Size = new System.Drawing.Size(299, 17);
-      this.checkBoxCreateTagInfoXML.TabIndex = 9;
-      this.checkBoxCreateTagInfoXML.Text = "Automatically create a xml file containing Matroska tag info";
-      this.checkBoxCreateTagInfoXML.UseVisualStyleBackColor = true;
-      this.checkBoxCreateTagInfoXML.Visible = false;
-      // 
       // checkboxSchedulerPriority
       // 
       this.checkboxSchedulerPriority.AutoSize = true;
       this.checkboxSchedulerPriority.Checked = true;
       this.checkboxSchedulerPriority.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkboxSchedulerPriority.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkboxSchedulerPriority.Location = new System.Drawing.Point(30, 93);
+      this.checkboxSchedulerPriority.Location = new System.Drawing.Point(15, 58);
       this.checkboxSchedulerPriority.Name = "checkboxSchedulerPriority";
       this.checkboxSchedulerPriority.Size = new System.Drawing.Size(342, 17);
       this.checkboxSchedulerPriority.TabIndex = 8;
@@ -227,7 +209,7 @@ namespace SetupTv.Sections
       // 
       this.checkBoxAutoDelete.AutoSize = true;
       this.checkBoxAutoDelete.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxAutoDelete.Location = new System.Drawing.Point(30, 152);
+      this.checkBoxAutoDelete.Location = new System.Drawing.Point(30, 314);
       this.checkBoxAutoDelete.Name = "checkBoxAutoDelete";
       this.checkBoxAutoDelete.Size = new System.Drawing.Size(252, 17);
       this.checkBoxAutoDelete.TabIndex = 6;
@@ -238,7 +220,7 @@ namespace SetupTv.Sections
       // label4
       // 
       this.label4.AutoSize = true;
-      this.label4.Location = new System.Drawing.Point(173, 57);
+      this.label4.Location = new System.Drawing.Point(166, 56);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(145, 13);
       this.label4.TabIndex = 5;
@@ -247,7 +229,7 @@ namespace SetupTv.Sections
       // label3
       // 
       this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(173, 27);
+      this.label3.Location = new System.Drawing.Point(166, 26);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(151, 13);
       this.label3.TabIndex = 4;
@@ -256,16 +238,16 @@ namespace SetupTv.Sections
       // label12
       // 
       this.label12.AutoSize = true;
-      this.label12.Location = new System.Drawing.Point(27, 194);
+      this.label12.Location = new System.Drawing.Point(12, 25);
       this.label12.Name = "label12";
-      this.label12.Size = new System.Drawing.Size(92, 13);
+      this.label12.Size = new System.Drawing.Size(75, 13);
       this.label12.TabIndex = 1;
-      this.label12.Text = "First working day: ";
+      this.label12.Text = "First workday: ";
       // 
       // label2
       // 
       this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(27, 57);
+      this.label2.Location = new System.Drawing.Point(12, 56);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(76, 13);
       this.label2.TabIndex = 1;
@@ -274,7 +256,7 @@ namespace SetupTv.Sections
       // label1
       // 
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(27, 27);
+      this.label1.Location = new System.Drawing.Point(12, 26);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(76, 13);
       this.label1.TabIndex = 0;
@@ -828,6 +810,49 @@ namespace SetupTv.Sections
       // 
       this.openFileDialog1.FileName = "openFileDialog1";
       // 
+      // groupBoxGap
+      // 
+      this.groupBoxGap.Controls.Add(this.label1);
+      this.groupBoxGap.Controls.Add(this.label2);
+      this.groupBoxGap.Controls.Add(this.numericUpDownPostRec);
+      this.groupBoxGap.Controls.Add(this.label3);
+      this.groupBoxGap.Controls.Add(this.numericUpDownPreRec);
+      this.groupBoxGap.Controls.Add(this.label4);
+      this.groupBoxGap.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxGap.Location = new System.Drawing.Point(15, 19);
+      this.groupBoxGap.Name = "groupBoxGap";
+      this.groupBoxGap.Size = new System.Drawing.Size(412, 84);
+      this.groupBoxGap.TabIndex = 13;
+      this.groupBoxGap.TabStop = false;
+      this.groupBoxGap.Text = "Pre- and post recording";
+      // 
+      // groupBoxScheduler
+      // 
+      this.groupBoxScheduler.Controls.Add(this.checkBoxPreventDupes);
+      this.groupBoxScheduler.Controls.Add(this.comboBoxFirstWorkingDay);
+      this.groupBoxScheduler.Controls.Add(this.label12);
+      this.groupBoxScheduler.Controls.Add(this.checkboxSchedulerPriority);
+      this.groupBoxScheduler.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxScheduler.Location = new System.Drawing.Point(15, 112);
+      this.groupBoxScheduler.Name = "groupBoxScheduler";
+      this.groupBoxScheduler.Size = new System.Drawing.Size(412, 134);
+      this.groupBoxScheduler.TabIndex = 14;
+      this.groupBoxScheduler.TabStop = false;
+      this.groupBoxScheduler.Text = "Scheduler";
+      // 
+      // checkBoxPreventDupes
+      // 
+      this.checkBoxPreventDupes.Checked = true;
+      this.checkBoxPreventDupes.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxPreventDupes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxPreventDupes.Location = new System.Drawing.Point(15, 90);
+      this.checkBoxPreventDupes.Name = "checkBoxPreventDupes";
+      this.checkBoxPreventDupes.Size = new System.Drawing.Size(342, 33);
+      this.checkBoxPreventDupes.TabIndex = 13;
+      this.checkBoxPreventDupes.Text = "Check episode title of already recorded programs to prevent duplicate recording o" +
+          "f repeated broadcasts";
+      this.checkBoxPreventDupes.UseVisualStyleBackColor = true;
+      // 
       // TvRecording
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -854,6 +879,10 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.tpRecordImport.ResumeLayout(false);
       this.tpRecordImport.PerformLayout();
+      this.groupBoxGap.ResumeLayout(false);
+      this.groupBoxGap.PerformLayout();
+      this.groupBoxScheduler.ResumeLayout(false);
+      this.groupBoxScheduler.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -906,7 +935,6 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel5;
     private MediaPortal.UserInterface.Controls.MPNumericTextBox mpNumericTextBoxDiskQuota;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkboxSchedulerPriority;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxCreateTagInfoXML;
     private System.Windows.Forms.NumericUpDown numericUpDownPostRec;
     private System.Windows.Forms.NumericUpDown numericUpDownPreRec;
     private System.Windows.Forms.CheckBox enableDiskQuota;
@@ -924,5 +952,8 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label12;
     private System.Windows.Forms.Button buttonSameTimeshiftFolder;
     private System.Windows.Forms.Button buttonSameRecFolder;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxScheduler;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxGap;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxPreventDupes;
   }
 }
