@@ -63,18 +63,17 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
       try
       {
-        string dvd = null;
-        for (int i = 0; i <= 10; ++i)
+        System.IO.DriveInfo[] drives = System.IO.DriveInfo.GetDrives();
+        foreach (System.IO.DriveInfo drive in drives)
         {
-          dvd = String.Format("{0}:", (char)('D' + i));
-          if (Util.Utils.IsDVD(dvd))
+          if (drive.DriveType == System.IO.DriveType.CDRom)
           {
-            this.comboBoxDrive.Items.Add(dvd);
+            this.comboBoxDrive.Items.Add(String.Format("{0}", drive.RootDirectory)[0]+":");
           }
-        }
+        }        
       }
       catch (Exception)
-      {}
+      { }
     }
 
 
