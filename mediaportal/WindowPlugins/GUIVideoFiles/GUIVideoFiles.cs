@@ -1047,7 +1047,7 @@ namespace MediaPortal.GUI.Video
         {
           AddFileToDatabase(strFile);
         }
-        movieDetails.SearchString = strMovie;
+        movieDetails.SearchString = Path.GetFileNameWithoutExtension(strMovie);
         movieDetails.File = Path.GetFileName(strFile);
         if (movieDetails.File == string.Empty)
         {
@@ -2769,7 +2769,7 @@ namespace MediaPortal.GUI.Video
       }
       else
       {
-        movieName = fetcher.Movie.Title;
+        movieName = fetcher.MovieName;
         if (GetKeyboard(ref movieName))
         {
           if (movieName == string.Empty)
