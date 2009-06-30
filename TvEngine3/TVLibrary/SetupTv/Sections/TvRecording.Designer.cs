@@ -32,16 +32,19 @@ namespace SetupTv.Sections
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tpSettings = new System.Windows.Forms.TabPage();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.groupBoxScheduler = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxPreventDupes = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.comboBoxFirstWorkingDay = new System.Windows.Forms.ComboBox();
-      this.numericUpDownPostRec = new System.Windows.Forms.NumericUpDown();
-      this.numericUpDownPreRec = new System.Windows.Forms.NumericUpDown();
-      this.checkboxSchedulerPriority = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxAutoDelete = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.label4 = new System.Windows.Forms.Label();
-      this.label3 = new System.Windows.Forms.Label();
       this.label12 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
+      this.checkboxSchedulerPriority = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.groupBoxGap = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label1 = new System.Windows.Forms.Label();
+      this.label2 = new System.Windows.Forms.Label();
+      this.numericUpDownPostRec = new System.Windows.Forms.NumericUpDown();
+      this.label3 = new System.Windows.Forms.Label();
+      this.numericUpDownPreRec = new System.Windows.Forms.NumericUpDown();
+      this.label4 = new System.Windows.Forms.Label();
+      this.checkBoxAutoDelete = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tpCustom = new System.Windows.Forms.TabPage();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.label15 = new System.Windows.Forms.Label();
@@ -92,12 +95,11 @@ namespace SetupTv.Sections
       this.lblRecFolders = new System.Windows.Forms.Label();
       this.cbRecPaths = new System.Windows.Forms.ComboBox();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-      this.groupBoxGap = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.groupBoxScheduler = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.checkBoxPreventDupes = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControl1.SuspendLayout();
       this.tpSettings.SuspendLayout();
       this.groupBox1.SuspendLayout();
+      this.groupBoxScheduler.SuspendLayout();
+      this.groupBoxGap.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPostRec)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreRec)).BeginInit();
       this.tpCustom.SuspendLayout();
@@ -108,8 +110,6 @@ namespace SetupTv.Sections
       this.groupBoxRecordSettings.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.tpRecordImport.SuspendLayout();
-      this.groupBoxGap.SuspendLayout();
-      this.groupBoxScheduler.SuspendLayout();
       this.SuspendLayout();
       // 
       // tabControl1
@@ -154,6 +154,33 @@ namespace SetupTv.Sections
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       // 
+      // groupBoxScheduler
+      // 
+      this.groupBoxScheduler.Controls.Add(this.checkBoxPreventDupes);
+      this.groupBoxScheduler.Controls.Add(this.comboBoxFirstWorkingDay);
+      this.groupBoxScheduler.Controls.Add(this.label12);
+      this.groupBoxScheduler.Controls.Add(this.checkboxSchedulerPriority);
+      this.groupBoxScheduler.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxScheduler.Location = new System.Drawing.Point(15, 112);
+      this.groupBoxScheduler.Name = "groupBoxScheduler";
+      this.groupBoxScheduler.Size = new System.Drawing.Size(412, 134);
+      this.groupBoxScheduler.TabIndex = 14;
+      this.groupBoxScheduler.TabStop = false;
+      this.groupBoxScheduler.Text = "Scheduler";
+      // 
+      // checkBoxPreventDupes
+      // 
+      this.checkBoxPreventDupes.Checked = true;
+      this.checkBoxPreventDupes.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxPreventDupes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxPreventDupes.Location = new System.Drawing.Point(15, 90);
+      this.checkBoxPreventDupes.Name = "checkBoxPreventDupes";
+      this.checkBoxPreventDupes.Size = new System.Drawing.Size(342, 33);
+      this.checkBoxPreventDupes.TabIndex = 13;
+      this.checkBoxPreventDupes.Text = "Check episode title of already recorded programs to prevent duplicate recording o" +
+          "f repeated broadcasts";
+      this.checkBoxPreventDupes.UseVisualStyleBackColor = true;
+      // 
       // comboBoxFirstWorkingDay
       // 
       this.comboBoxFirstWorkingDay.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -166,31 +193,14 @@ namespace SetupTv.Sections
       this.comboBoxFirstWorkingDay.Size = new System.Drawing.Size(67, 21);
       this.comboBoxFirstWorkingDay.TabIndex = 12;
       // 
-      // numericUpDownPostRec
+      // label12
       // 
-      this.numericUpDownPostRec.Location = new System.Drawing.Point(94, 54);
-      this.numericUpDownPostRec.Name = "numericUpDownPostRec";
-      this.numericUpDownPostRec.Size = new System.Drawing.Size(66, 20);
-      this.numericUpDownPostRec.TabIndex = 11;
-      this.numericUpDownPostRec.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownPostRec.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-      // 
-      // numericUpDownPreRec
-      // 
-      this.numericUpDownPreRec.Location = new System.Drawing.Point(94, 24);
-      this.numericUpDownPreRec.Name = "numericUpDownPreRec";
-      this.numericUpDownPreRec.Size = new System.Drawing.Size(66, 20);
-      this.numericUpDownPreRec.TabIndex = 10;
-      this.numericUpDownPreRec.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownPreRec.Value = new decimal(new int[] {
-            7,
-            0,
-            0,
-            0});
+      this.label12.AutoSize = true;
+      this.label12.Location = new System.Drawing.Point(12, 25);
+      this.label12.Name = "label12";
+      this.label12.Size = new System.Drawing.Size(75, 13);
+      this.label12.TabIndex = 1;
+      this.label12.Text = "First workday: ";
       // 
       // checkboxSchedulerPriority
       // 
@@ -205,6 +215,84 @@ namespace SetupTv.Sections
       this.checkboxSchedulerPriority.Text = "Allow server to stop LiveTV to record when no free card is available";
       this.checkboxSchedulerPriority.UseVisualStyleBackColor = true;
       // 
+      // groupBoxGap
+      // 
+      this.groupBoxGap.Controls.Add(this.label1);
+      this.groupBoxGap.Controls.Add(this.label2);
+      this.groupBoxGap.Controls.Add(this.numericUpDownPostRec);
+      this.groupBoxGap.Controls.Add(this.label3);
+      this.groupBoxGap.Controls.Add(this.numericUpDownPreRec);
+      this.groupBoxGap.Controls.Add(this.label4);
+      this.groupBoxGap.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxGap.Location = new System.Drawing.Point(15, 19);
+      this.groupBoxGap.Name = "groupBoxGap";
+      this.groupBoxGap.Size = new System.Drawing.Size(412, 84);
+      this.groupBoxGap.TabIndex = 13;
+      this.groupBoxGap.TabStop = false;
+      this.groupBoxGap.Text = "Pre- and post recording";
+      // 
+      // label1
+      // 
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(12, 26);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(76, 13);
+      this.label1.TabIndex = 0;
+      this.label1.Text = "Start recording";
+      // 
+      // label2
+      // 
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(12, 56);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(76, 13);
+      this.label2.TabIndex = 1;
+      this.label2.Text = "Stop recording";
+      // 
+      // numericUpDownPostRec
+      // 
+      this.numericUpDownPostRec.Location = new System.Drawing.Point(94, 54);
+      this.numericUpDownPostRec.Name = "numericUpDownPostRec";
+      this.numericUpDownPostRec.Size = new System.Drawing.Size(66, 20);
+      this.numericUpDownPostRec.TabIndex = 11;
+      this.numericUpDownPostRec.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownPostRec.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+      // 
+      // label3
+      // 
+      this.label3.AutoSize = true;
+      this.label3.Location = new System.Drawing.Point(166, 26);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(151, 13);
+      this.label3.TabIndex = 4;
+      this.label3.Text = "minute(s) before program starts";
+      // 
+      // numericUpDownPreRec
+      // 
+      this.numericUpDownPreRec.Location = new System.Drawing.Point(94, 24);
+      this.numericUpDownPreRec.Name = "numericUpDownPreRec";
+      this.numericUpDownPreRec.Size = new System.Drawing.Size(66, 20);
+      this.numericUpDownPreRec.TabIndex = 10;
+      this.numericUpDownPreRec.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownPreRec.Value = new decimal(new int[] {
+            7,
+            0,
+            0,
+            0});
+      // 
+      // label4
+      // 
+      this.label4.AutoSize = true;
+      this.label4.Location = new System.Drawing.Point(166, 56);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(145, 13);
+      this.label4.TabIndex = 5;
+      this.label4.Text = "minute(s) afters program ends";
+      // 
       // checkBoxAutoDelete
       // 
       this.checkBoxAutoDelete.AutoSize = true;
@@ -216,51 +304,6 @@ namespace SetupTv.Sections
       this.checkBoxAutoDelete.Text = "Automatically delete a recording after watching it";
       this.checkBoxAutoDelete.UseVisualStyleBackColor = true;
       this.checkBoxAutoDelete.Visible = false;
-      // 
-      // label4
-      // 
-      this.label4.AutoSize = true;
-      this.label4.Location = new System.Drawing.Point(166, 56);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(145, 13);
-      this.label4.TabIndex = 5;
-      this.label4.Text = "minute(s) afters program ends";
-      // 
-      // label3
-      // 
-      this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(166, 26);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(151, 13);
-      this.label3.TabIndex = 4;
-      this.label3.Text = "minute(s) before program starts";
-      // 
-      // label12
-      // 
-      this.label12.AutoSize = true;
-      this.label12.Location = new System.Drawing.Point(12, 25);
-      this.label12.Name = "label12";
-      this.label12.Size = new System.Drawing.Size(75, 13);
-      this.label12.TabIndex = 1;
-      this.label12.Text = "First workday: ";
-      // 
-      // label2
-      // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(12, 56);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(76, 13);
-      this.label2.TabIndex = 1;
-      this.label2.Text = "Stop recording";
-      // 
-      // label1
-      // 
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(12, 26);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(76, 13);
-      this.label1.TabIndex = 0;
-      this.label1.Text = "Start recording";
       // 
       // tpCustom
       // 
@@ -810,49 +853,6 @@ namespace SetupTv.Sections
       // 
       this.openFileDialog1.FileName = "openFileDialog1";
       // 
-      // groupBoxGap
-      // 
-      this.groupBoxGap.Controls.Add(this.label1);
-      this.groupBoxGap.Controls.Add(this.label2);
-      this.groupBoxGap.Controls.Add(this.numericUpDownPostRec);
-      this.groupBoxGap.Controls.Add(this.label3);
-      this.groupBoxGap.Controls.Add(this.numericUpDownPreRec);
-      this.groupBoxGap.Controls.Add(this.label4);
-      this.groupBoxGap.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxGap.Location = new System.Drawing.Point(15, 19);
-      this.groupBoxGap.Name = "groupBoxGap";
-      this.groupBoxGap.Size = new System.Drawing.Size(412, 84);
-      this.groupBoxGap.TabIndex = 13;
-      this.groupBoxGap.TabStop = false;
-      this.groupBoxGap.Text = "Pre- and post recording";
-      // 
-      // groupBoxScheduler
-      // 
-      this.groupBoxScheduler.Controls.Add(this.checkBoxPreventDupes);
-      this.groupBoxScheduler.Controls.Add(this.comboBoxFirstWorkingDay);
-      this.groupBoxScheduler.Controls.Add(this.label12);
-      this.groupBoxScheduler.Controls.Add(this.checkboxSchedulerPriority);
-      this.groupBoxScheduler.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxScheduler.Location = new System.Drawing.Point(15, 112);
-      this.groupBoxScheduler.Name = "groupBoxScheduler";
-      this.groupBoxScheduler.Size = new System.Drawing.Size(412, 134);
-      this.groupBoxScheduler.TabIndex = 14;
-      this.groupBoxScheduler.TabStop = false;
-      this.groupBoxScheduler.Text = "Scheduler";
-      // 
-      // checkBoxPreventDupes
-      // 
-      this.checkBoxPreventDupes.Checked = true;
-      this.checkBoxPreventDupes.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxPreventDupes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxPreventDupes.Location = new System.Drawing.Point(15, 90);
-      this.checkBoxPreventDupes.Name = "checkBoxPreventDupes";
-      this.checkBoxPreventDupes.Size = new System.Drawing.Size(342, 33);
-      this.checkBoxPreventDupes.TabIndex = 13;
-      this.checkBoxPreventDupes.Text = "Check episode title of already recorded programs to prevent duplicate recording o" +
-          "f repeated broadcasts";
-      this.checkBoxPreventDupes.UseVisualStyleBackColor = true;
-      // 
       // TvRecording
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -864,6 +864,10 @@ namespace SetupTv.Sections
       this.tpSettings.ResumeLayout(false);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
+      this.groupBoxScheduler.ResumeLayout(false);
+      this.groupBoxScheduler.PerformLayout();
+      this.groupBoxGap.ResumeLayout(false);
+      this.groupBoxGap.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPostRec)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreRec)).EndInit();
       this.tpCustom.ResumeLayout(false);
@@ -879,10 +883,6 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.tpRecordImport.ResumeLayout(false);
       this.tpRecordImport.PerformLayout();
-      this.groupBoxGap.ResumeLayout(false);
-      this.groupBoxGap.PerformLayout();
-      this.groupBoxScheduler.ResumeLayout(false);
-      this.groupBoxScheduler.PerformLayout();
       this.ResumeLayout(false);
 
     }
