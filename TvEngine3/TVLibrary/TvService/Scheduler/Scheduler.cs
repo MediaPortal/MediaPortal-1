@@ -37,10 +37,10 @@ namespace TvService
   /// </summary>
   public class Scheduler
   {
-
     #region const
     const int ScheduleInterval = 15;
     #endregion
+
     #region imports
     [FlagsAttribute]
     public enum EXECUTION_STATE : uint
@@ -176,9 +176,9 @@ namespace TvService
     {
       try
       {
-        string CleanedEpisode = aEpisodeTitle.Replace("(LIVE)", String.Empty);
-        CleanedEpisode = aEpisodeTitle.Replace("(Wdh.)", String.Empty);
-        return CleanedEpisode;
+        string CleanedEpisode = aEpisodeTitle.Replace(" (LIVE)", String.Empty);
+        CleanedEpisode = aEpisodeTitle.Replace(" (Wdh.)", String.Empty);
+        return CleanedEpisode.Trim();
       }
       catch (Exception ex)
       {
@@ -225,8 +225,8 @@ namespace TvService
         if (IsRecordingSchedule(schedule.IdSchedule, out card))
           continue;
 
-        DateTime now = DateTime.Now;
         //check if this series is canceled
+        DateTime now = DateTime.Now;        
         if (schedule.IsSerieIsCanceled(new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0)))
           continue;
 
@@ -400,7 +400,7 @@ namespace TvService
             currentTime <= schedule.EndTime.AddMinutes(schedule.PostRecordInterval))
         {
           newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), schedule.EndTime, schedule.Series);
-          Log.Debug("Recording {0}  added in _recordingsInProgressList, isSerie={1}", schedule.ProgramName, schedule.Series);
+          //Log.Debug("Scheduler: Recording {0} added to _recordingsInProgressList, isSerie={1}", schedule.ProgramName, schedule.Series);
           return true;
         }
         return false;
@@ -556,7 +556,7 @@ namespace TvService
       _user.CardId = -1;
       _user.SubChannel = -1;
       _user.IsAdmin = true;
-      Log.Write("Scheduler : time to record {0} {1}-{2} {3}", RecDetail.Channel, DateTime.Now, RecDetail.EndTime, RecDetail.Schedule.ProgramName);
+      Log.Write("Scheduler: Time to record {0} {1}-{2} {3}", RecDetail.Channel, DateTime.Now, RecDetail.EndTime, RecDetail.Schedule.ProgramName);
       TvResult result;
       //get list of all cards we can use todo the recording
       ICardAllocation allocation = CardAllocationFactory.Create(false);
@@ -569,7 +569,6 @@ namespace TvService
       //first try to start recording using the recommended card
       if (RecDetail.Schedule.RecommendedCard > 0)
       {
-
         foreach (CardDetail card in freeCards)
         {
           User byUser;
@@ -624,6 +623,7 @@ namespace TvService
           }
         }
       }
+
       if (cardInfo == null)
       {
         Log.Write("Scheduler : all cards busy, check if any card is already tuned to channel:{0}", RecDetail.Channel.Name);
@@ -678,7 +678,6 @@ namespace TvService
         {
           return;
         }
-
 
         if (_controller.SupportsSubChannels(cardInfo.Card.IdCard) == false)
         {
