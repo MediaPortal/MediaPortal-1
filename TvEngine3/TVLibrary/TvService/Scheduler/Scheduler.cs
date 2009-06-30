@@ -284,7 +284,7 @@ namespace TvService
               // Furthermore some EPG sources could misuse the episode field for other, non-unique information
               if (CleanEpisodeTitle(pastRecordings[i].Title).Equals(ToRecordTitle, StringComparison.CurrentCultureIgnoreCase))
               {
-                Log.Debug("Scheduler: Found recordings of schedule {0} - checking episodes...", ToRecordTitle);
+                //Log.Debug("Scheduler: Found recordings of schedule {0} - checking episodes...", ToRecordTitle);
                 // The schedule which is about to be recorded is already found on our disk
                 if (CleanEpisodeTitle(pastRecordings[i].EpisodeName).Equals(ToRecordEpisode, StringComparison.CurrentCultureIgnoreCase))
                 {
@@ -293,7 +293,7 @@ namespace TvService
                   // and simply took care of creating a unique filename.
                   // Now we need to check whether Recording's and Scheduling's Starttime are identical. If they are we expect that
                   // the recording process should be resume because of previous failures.
-                  if (pastRecordings[i].StartTime != newRecording.Program.StartTime)
+                  if (pastRecordings[i].StartTime.Date != newRecording.Program.StartTime.Date)
                   {
                     // Check whether the file itself does really exist
                     // There could be faulty drivers 
@@ -305,12 +305,32 @@ namespace TvService
                       if (fi.Length > 4096)
                       {
                         NewRecordingNeeded = false;
-                        Log.Info("Scheduler: Schedule {0} ({1}) has already been recorded - aborting...", ToRecordTitle, ToRecordEpisode);
+
+                        // Handle schedules so TV Service won't try to re-schedule them every 15 seconds
+                        if ((ScheduleRecordingType)newRecording.Schedule.ScheduleType == ScheduleRecordingType.Once)
+                        {
+                          // even for Once type , the schedule can initially be a serie
+                          if (newRecording.IsSerie)
+                          {
+                            _episodeManagement.OnScheduleEnded(newRecording.FileName, newRecording.Schedule, newRecording.Program);
+                          }
+                          _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.ScheduleDeleted, new VirtualCard(_user), _user, newRecording.Schedule, null));
+                          // now we can safely delete it
+                          newRecording.Schedule.Delete();
+                        }
+                        else
+                        {
+                          CanceledSchedule canceled = new CanceledSchedule(newRecording.Schedule.IdSchedule, newRecording.Program.StartTime);
+                          canceled.Persist();
+                          _episodeManagement.OnScheduleEnded(newRecording.FileName, newRecording.Schedule, newRecording.Program);
+                        }
+
+                        Log.Info("Scheduler: Schedule {0}-{1} ({2}) has already been recorded ({3}) - aborting...", newRecording.Program.StartTime.ToString(), ToRecordTitle, ToRecordEpisode, pastRecordings[i].StartTime.ToString());
                       }
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                      Log.Error("Scheduler: Schedule {0} ({1}) has already been recorded but the file is invalid! Going to record again...", ToRecordTitle, ToRecordEpisode);
+                      Log.Error("Scheduler: Schedule {0} ({1}) has already been recorded but the file is invalid ({2})! Going to record again...", ToRecordTitle, ToRecordEpisode, ex.Message);
                     }
                   }
                   else
