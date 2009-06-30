@@ -99,6 +99,12 @@ namespace TvPlugin
   /// </summary>
   public class TVProgramInfo : GUIWindow
   {
+    #region Invoke delegates
+
+    protected delegate void UpdateCurrentItem(ScheduleInfo aInfo);
+
+    #endregion
+
     #region Variables
 
     [SkinControl(17)]    protected GUILabelControl lblProgramGenre = null;
@@ -353,6 +359,7 @@ namespace TvPlugin
       {
         if (item != null && item.MusicTag != null)
         {
+          //CacheManager.ClearQueryResultsByType(typeof(Program));
           Program lstProg = item.MusicTag as Program;
           if (lstProg != null)
           {
@@ -364,7 +371,7 @@ namespace TvPlugin
                                                        lstProg.StartTime,
                                                        lstProg.EndTime
                                                        );
-            UpdateProgramDescription(refEpisode);
+            GUIGraphicsContext.form.Invoke(new UpdateCurrentItem(UpdateProgramDescription), new object[] { refEpisode });
           }
         }
         else
@@ -462,10 +469,11 @@ namespace TvPlugin
       lstUpcomingEpsiodes.Clear();
       TvBusinessLayer layer = new TvBusinessLayer();
       DateTime dtDay = DateTime.Now;
-      IList<Program> episodes = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(14), CurrentProgram.Title, null);
+      IList<Program> episodes = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(28), CurrentProgram.Title, null);
 
-      foreach (Program episode in episodes)
+      for (int i = 0; i < episodes.Count; i++)
       {
+        Program episode = episodes[i];
         GUIListItem item = new GUIListItem();
         item.Label = episode.Title;
         item.OnItemSelected += item_OnItemSelected;
