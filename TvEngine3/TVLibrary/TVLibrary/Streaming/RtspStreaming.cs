@@ -36,6 +36,9 @@ namespace TvLibrary.Streaming
     private static extern void StreamSetup(string ipAdress);
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
+    private static extern int StreamSetupEx(string ipAdress);
+
+    [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
     private static extern void StreamRun();
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
@@ -68,12 +71,17 @@ namespace TvLibrary.Streaming
     /// <param name="hostName">ipadress to use for streaming.</param>
     public RtspStreaming(string hostName)
     {
+      int result;
       try
       {
         IPHostEntry local = Dns.GetHostByName(hostName);
         foreach (IPAddress ipaddress in local.AddressList)
         {
-          StreamSetup(ipaddress.ToString());
+          result=StreamSetupEx(ipaddress.ToString());
+          if (result == 1)
+          {
+            throw new Exception("Error initializing streaming server");
+          }
           break;
         }
         _initialized = true;
