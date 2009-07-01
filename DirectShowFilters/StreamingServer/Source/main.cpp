@@ -22,6 +22,7 @@ UsageEnvironment* m_env;
 RTSPServer*			m_rtspServer;
 
 void StreamSetup(char* ipAdress);
+int  StreamSetupEx(char* ipAdress);
 void StreamRun();
 void announceStream(RTSPServer* rtspServer, ServerMediaSession* sms,char * streamName, char * inputFileName); // fwd
 void StreamAddTimeShiftFile(char* streamName, char* fileName,bool isProgramStream);
@@ -86,6 +87,15 @@ void StreamGetClientDetail(int clientNr, char** ipAdres, char** streamName, int*
 //**************************************************************************************
 void StreamSetup(char* ipAdress)
 {
+  if (StreamSetupEx(ipAdress) == 1)
+  {
+    Log("Exiting process after error");
+    exit(1);
+  }
+}
+//**************************************************************************************
+int StreamSetupEx(char* ipAdress)
+{
   TCHAR folder[MAX_PATH];
   TCHAR fileName[MAX_PATH];
   ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
@@ -104,10 +114,10 @@ void StreamSetup(char* ipAdress)
   if (m_rtspServer == NULL) 
   {
     Log("Stream server:Failed to create RTSP server: %s",m_env->getResultMsg());
-    exit(1);
+    return 1;
   }
+  return 0; // ok
 }
-
 //**************************************************************************************
 void StreamRun()
 {

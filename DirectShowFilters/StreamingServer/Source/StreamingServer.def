@@ -9,3 +9,4 @@ StreamRemove		@5
 StreamAdd3gpFile @6
 StreamGetClientCount @7
 StreamGetClientDetail @8
+StreamSetupEx		@9
