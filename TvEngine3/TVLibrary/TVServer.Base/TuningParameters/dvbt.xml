@@ -2985,33 +2985,42 @@
     <carrier frequency="858000" bandwidth="8"></carrier>
   </country>
   <country name="Spain - Cataluna - Barcelona">
-	<carrier frequency="570000" bandwidth="8"></carrier>
-    <carrier frequency="818000" bandwidth="8"></carrier>
+    <carrier frequency="514000" bandwidth="8"></carrier>
+    <carrier frequency="570000" bandwidth="8"></carrier>
+    <carrier frequency="650000" bandwidth="8"></carrier>
+    <carrier frequency="690000" bandwidth="8"></carrier>
     <carrier frequency="794000" bandwidth="8"></carrier>
+    <carrier frequency="818000" bandwidth="8"></carrier>
     <carrier frequency="834000" bandwidth="8"></carrier>
     <carrier frequency="842000" bandwidth="8"></carrier>
     <carrier frequency="850000" bandwidth="8"></carrier>
     <carrier frequency="858000" bandwidth="8"></carrier>
   </country>
   <country name="Spain - Cataluna - Girona">
-    <carrier frequency="818000" bandwidth="8"></carrier>
+    <carrier frequency="594000" bandwidth="8"></carrier>
+    <carrier frequency="618000" bandwidth="8"></carrier>
     <carrier frequency="786000" bandwidth="8"></carrier>
+    <carrier frequency="818000" bandwidth="8"></carrier>
     <carrier frequency="834000" bandwidth="8"></carrier>
     <carrier frequency="842000" bandwidth="8"></carrier>
     <carrier frequency="850000" bandwidth="8"></carrier>
     <carrier frequency="858000" bandwidth="8"></carrier>
   </country>
   <country name="Spain - Cataluna - Lleida">
-    <carrier frequency="818000" bandwidth="8"></carrier>
+    <carrier frequency="706000" bandwidth="8"></carrier>
+    <carrier frequency="730000" bandwidth="8"></carrier>
     <carrier frequency="770000" bandwidth="8"></carrier>
+    <carrier frequency="818000" bandwidth="8"></carrier>
     <carrier frequency="834000" bandwidth="8"></carrier>
     <carrier frequency="842000" bandwidth="8"></carrier>
     <carrier frequency="850000" bandwidth="8"></carrier>
     <carrier frequency="858000" bandwidth="8"></carrier>
   </country>
   <country name="Spain - Cataluna - Tarragona">
-    <carrier frequency="818000" bandwidth="8"></carrier>
+    <carrier frequency="714000" bandwidth="8"></carrier>
+    <carrier frequency="738000" bandwidth="8"></carrier>
     <carrier frequency="778000" bandwidth="8"></carrier>
+    <carrier frequency="818000" bandwidth="8"></carrier>
     <carrier frequency="834000" bandwidth="8"></carrier>
     <carrier frequency="842000" bandwidth="8"></carrier>
     <carrier frequency="850000" bandwidth="8"></carrier>
