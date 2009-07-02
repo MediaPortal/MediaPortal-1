@@ -377,7 +377,7 @@ namespace MediaPortal.Util
     {
       if (strPath == null) return false;
       if (IsLastFMStream(strPath)) return false;
-      if (strPath.ToLower().IndexOf("rtsp:") >= 0) return true;
+      if (strPath.ToLower().StartsWith("rtsp:")) return true;
       if (strPath.ToLower().StartsWith("mms:")
         && strPath.ToLower().EndsWith(".ymvp")) return true;
       try
@@ -387,14 +387,15 @@ namespace MediaPortal.Util
         if (IsPlayList(strPath))
           return false;
         string extensionFile = Path.GetExtension(strPath).ToLower();
-        if (extensionFile.ToLower().Equals(".tv"))
-          return true;
-        if (extensionFile.ToLower().Equals(".ts"))
-          return true;
-        if (extensionFile.ToLower().Equals(".sbe"))
-          return true;
-        if (extensionFile.ToLower().Equals(".dvr-ms"))
-          return true;
+        switch (extensionFile)
+        {
+          case ".tv":
+          case ".ts":
+          case ".sbe":
+          case ".dvr-ms":
+          case ".tsbuffer":
+            return true;
+        }
         if (VirtualDirectory.IsImageFile(extensionFile.ToLower()))
           return true;
         foreach (string extension in m_VideoExtensions)
