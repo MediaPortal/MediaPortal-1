@@ -185,7 +185,8 @@
       <posX>424</posX>
       <posY>146</posY>
       <width>175</width>
-      <height>175</height>      
+      <height>175</height>
+      <keepaspectratio>yes</keepaspectratio>
       <texture>-</texture>
       <colorkey>FFFF00FF</colorkey>
       <colordiffuse>White:#20</colordiffuse>
@@ -303,6 +304,7 @@
     <control>
       <description>day 0 icon</description>
       <type>image</type>
+      <keepaspectratio>yes</keepaspectratio>
       <id>35</id>
       <posX>355</posX>
       <posY>506</posY>
@@ -355,6 +357,7 @@
     <control>
       <description>day 1 icon</description>
       <type>image</type>
+      <keepaspectratio>yes</keepaspectratio>
       <id>45</id>
       <posX>533</posX>
       <posY>506</posY>
@@ -407,6 +410,7 @@
     <control>
       <description>day 2 icon</description>
       <type>image</type>
+      <keepaspectratio>yes</keepaspectratio>
       <id>55</id>
       <posX>711</posX>
       <posY>506</posY>
@@ -459,6 +463,7 @@
     <control>
       <description>day 3 icon</description>
       <type>image</type>
+      <keepaspectratio>yes</keepaspectratio>
       <id>65</id>
       <posX>888</posX>
       <posY>506</posY>
@@ -511,6 +516,7 @@
     <control>
       <description>day 4 icon</description>
       <type>image</type>
+      <keepaspectratio>yes</keepaspectratio>
       <id>75</id>
       <posX>1066</posX>
       <posY>506</posY>
@@ -538,6 +544,7 @@
     <control>
       <description>Sunclock image</description>
       <type>image</type>
+      <keepaspectratio>yes</keepaspectratio>
       <id>1200</id>
       <label>-</label>
       <posY>250</posY>
