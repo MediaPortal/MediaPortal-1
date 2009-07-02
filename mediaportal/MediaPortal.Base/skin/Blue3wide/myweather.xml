@@ -182,8 +182,10 @@
       <description>current weather icon</description>
       <type>image</type>
       <id>21</id>
-      <posX>444</posX>
-      <posY>162</posY>
+      <posX>424</posX>
+      <posY>146</posY>
+      <width>175</width>
+      <height>175</height>      
       <texture>-</texture>
       <colorkey>FFFF00FF</colorkey>
       <colordiffuse>White:#20</colordiffuse>
@@ -304,6 +306,8 @@
       <id>35</id>
       <posX>355</posX>
       <posY>506</posY>
+      <width>128</width>
+      <height>128</height>
       <texture>-</texture>
       <colorkey>FFFF00FF</colorkey>
       <colordiffuse>White:#20</colordiffuse>
@@ -354,6 +358,8 @@
       <id>45</id>
       <posX>533</posX>
       <posY>506</posY>
+      <width>128</width>
+      <height>128</height>      
       <texture>-</texture>
       <colorkey>FFFF00FF</colorkey>
       <colordiffuse>White:#20</colordiffuse>
@@ -404,6 +410,8 @@
       <id>55</id>
       <posX>711</posX>
       <posY>506</posY>
+      <width>128</width>
+      <height>128</height>
       <texture>-</texture>
       <colorkey>FFFF00FF</colorkey>
       <colordiffuse>White:#20</colordiffuse>
@@ -454,6 +462,8 @@
       <id>65</id>
       <posX>888</posX>
       <posY>506</posY>
+      <width>128</width>
+      <height>128</height>     
       <texture>-</texture>
       <colorkey>FFFF00FF</colorkey>
       <colordiffuse>White:#20</colordiffuse>
@@ -504,6 +514,8 @@
       <id>75</id>
       <posX>1066</posX>
       <posY>506</posY>
+      <width>128</width>
+      <height>128</height>     
       <texture>-</texture>
       <colorkey>FFFF00FF</colorkey>
       <colordiffuse>White:#20</colordiffuse>

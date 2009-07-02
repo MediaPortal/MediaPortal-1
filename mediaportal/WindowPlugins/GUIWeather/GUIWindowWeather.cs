@@ -29,6 +29,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Xml;
 using MediaPortal.Configuration;
@@ -173,7 +174,7 @@ namespace MediaPortal.GUI.Weather
     private string _urlHumidity = string.Empty;
     private string _urlPreciptation = string.Empty;
     private string _urlViewImage = string.Empty;
-    private DateTime _refreshTimer = DateTime.Now.AddHours(-1); //for autorefresh
+    private DateTime _lastRefreshTime = DateTime.Now.AddHours(-1); //for autorefresh
     private int _dayNum = -2;
     private string _selectedDayName = "All";
 
@@ -181,7 +182,7 @@ namespace MediaPortal.GUI.Weather
     private Geochron _geochronGenerator;
     private float _lastTimeSunClockRendered;
     private bool _skipConnectionTest = false;
-    private bool _workerCompleted = false;
+    private bool _workerActive = false;
     private object _downloadLock = null;
 
     private ImageView _imageView = ImageView.Satellite;
@@ -242,7 +243,7 @@ namespace MediaPortal.GUI.Weather
         }
 
         _refreshIntercal = xmlreader.GetValueAsInt("weather", "refresh", 60);
-        _refreshTimer = DateTime.Now.AddMinutes(-(_refreshIntercal + 1));
+        _lastRefreshTime = DateTime.Now.AddMinutes(-(_refreshIntercal + 1));
         _skipConnectionTest = xmlreader.GetValueAsBool("weather", "skipconnectiontest", false);
         Log.Info("GUIWindowWeather: SkipConnectionTest: {0}", _skipConnectionTest);
 
@@ -311,22 +312,33 @@ namespace MediaPortal.GUI.Weather
 
     #endregion
 
+    #region Properties
+        
+    public bool IsRefreshing 
+    {
+      get { return _workerActive; }
+      [MethodImpl(MethodImplOptions.Synchronized)]
+      private set
+      {
+        _workerActive = value;
+      }
+    }
+
+    #endregion
+
     #region Overrides
 
     public override void Process()
     {
-      TimeSpan ts = DateTime.Now - _refreshTimer;
-      if (ts.TotalMinutes >= _refreshIntercal && _locationCode != string.Empty)
+      TimeSpan ts = DateTime.Now - _lastRefreshTime;
+      if (ts.TotalMinutes >= _refreshIntercal && _locationCode != string.Empty && !IsRefreshing)
       {
         Log.Debug("GUIWindowWeather: autoupdating data");
-        _refreshTimer = DateTime.Now;
         _selectedDayName = "All";
         _dayNum = -2;
 
         //refresh clicked so do a complete update (not an autoUpdate)
         BackgroundUpdate(true);
-
-        _refreshTimer = DateTime.Now;
       }
       base.Process();
     }
@@ -402,8 +414,8 @@ namespace MediaPortal.GUI.Weather
 
       // Init Daylight clock _geochronGenerator
       _geochronGenerator = new Geochron(GUIGraphicsContext.Skin + @"\Media");
-      TimeSpan ts = DateTime.Now - _refreshTimer;
-      if (ts.TotalMinutes >= _refreshIntercal && _locationCode != string.Empty)
+      TimeSpan ts = DateTime.Now - _lastRefreshTime;
+      if (ts.TotalMinutes >= _refreshIntercal && _locationCode != string.Empty && !IsRefreshing)
       {
         BackgroundUpdate(false);
       }
@@ -532,8 +544,10 @@ namespace MediaPortal.GUI.Weather
           _urlHumidity = loc.UrlHumidity;
           _urlPreciptation = loc.UrlPrecip;
 
-          UpdateDetailImages();
-
+          if (_currentMode == Mode.DetailImages)
+          {
+            UpdateDetailImages();
+          }
           _dayNum = -2;
           _selectedDayName = "All";
 
@@ -781,8 +795,8 @@ namespace MediaPortal.GUI.Weather
         }
         img.SetFileName(_urlViewImage);
         //reallocate & load then new image
-        img.FreeResources();
-        img.AllocResources();
+        //img.FreeResources();
+        //img.AllocResources();
       }
     }
 
@@ -928,15 +942,14 @@ namespace MediaPortal.GUI.Weather
             //Remove(_forecast[i].m_pImage.GetID);
             GUIImage image = (GUIImage) GetControl((int) Controls.CONTROL_IMAGED0IMG + (i*10));
             image.ColourDiffuse = 0xffffffff;
-            image.SetFileName(_forecast[i].iconImageNameLow);
-            //				_forecast[i].m_pImage = new GUIImage(GetID, (int)Controls.CONTROL_IMAGED0IMG+(i*10), posX, posY, 64, 64, _forecast[i].iconImageNameLow, 0);
-            //			cntl=(GUIControl)_forecast[i].m_pImage;
-            //		Add(ref cntl);
+            if (GUIGraphicsContext.SkinSize.Height >= 720)
+              image.SetFileName(_forecast[i].iconImageNameHigh);
+            else
+              image.SetFileName(_forecast[i].iconImageNameLow);
           }
           catch (NullReferenceException)
           {
-            Log.Warn("GUIWindowWeather: Error assigning controls for day {0}/{1} - your skin might be outdated!", i,
-                     NUM_DAYS);
+            Log.Warn("GUIWindowWeather: Error assigning controls for day {0}/{1} - your skin might be outdated!", i, NUM_DAYS);
           }
         }
       }
@@ -1031,7 +1044,7 @@ namespace MediaPortal.GUI.Weather
             RefreshNewMode();
           }
 
-          _refreshTimer = DateTime.Now;
+          _lastRefreshTime = DateTime.Now;
           _dayNum = -2;
         }
       }
@@ -1091,24 +1104,20 @@ namespace MediaPortal.GUI.Weather
       Thread updateThread = new Thread(new ParameterizedThreadStart(DownloadWorker));
       updateThread.IsBackground = true;
       updateThread.Name = "Weather updater";
-
+      IsRefreshing = true;
       updateThread.Start(isAuto);
 
-      while (_workerCompleted == false)
+      while (IsRefreshing)
       {
         GUIWindowManager.Process();
       }
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     private void DownloadWorker(object data)
     {
-      _workerCompleted = false;
-
-      _refreshTimer = DateTime.Now;
       RefreshMe((bool) data); //do an autoUpdate refresh
-      _refreshTimer = DateTime.Now;
-
-      _workerCompleted = true;
+      IsRefreshing = false;
     }
 
     #endregion
