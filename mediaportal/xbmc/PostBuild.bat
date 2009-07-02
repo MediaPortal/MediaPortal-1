@@ -70,6 +70,12 @@ REM xcopy /y %1\WindowPlugins\GUIBurner\XPBurnComponent.dll .
 REM Copy all new files from base
 xcopy %1\MediaPortal.Base\*.* . /E /R /Y /D
 
+REM Language
+xcopy %1\MediaPortal.Base\Language\*.* %allusersprofile%\"Team MediaPortal\MediaPortal\Language\" /E /Y /D
+
+REM Skins
+xcopy %1\MediaPortal.Base\Skin\*.* %allusersprofile%\"Team MediaPortal\MediaPortal\Skin\" /E /Y /D
+
 REM Copy all dll files from cpp solution
 xcopy %1\Core.cpp\DirectShowHelper\bin\%2\dshowhelper.dll .
 xcopy %1\Core.cpp\DXUtil\bin\%2\dxutil.dll .
