@@ -1361,21 +1361,11 @@ public class MediaPortalApp : D3DApp, IRender
   /// </summary>
   protected override void OnStartup()
   {
-    //Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
     // set window form styles
     // these styles enable double buffering, which results in no flickering
     Log.Info("Main: Starting up");
-    // set process priority
     _mouseTimeOutTimer = DateTime.Now;
-    //System.Threading.Thread.CurrentThread.Priority=System.Threading.ThreadPriority.BelowNormal;
-    if (splashScreen != null)
-    {
-      splashScreen.SetInformation("Starting recorder...");
-    }
-    if (splashScreen != null)
-    {
-      splashScreen.SetInformation("Starting plugins...");
-    }
+    UpdateSplashScreenMessage("Starting plugins...");
     PluginManager.Load();
     PluginManager.Start();
     tMouseClickTimer = new Timer(SystemInformation.DoubleClickTime);
@@ -1576,52 +1566,41 @@ public class MediaPortalApp : D3DApp, IRender
     GUIWindowManager.Clear();
     GUIWaitCursor.Dispose();
     GUITextureManager.Dispose();
-    if (splashScreen != null)
-    {
-      splashScreen.SetInformation("Loading keymap.xml...");
-    }
+    UpdateSplashScreenMessage("Loading keymap.xml...");
     ActionTranslator.Load();
-    if (splashScreen != null)
-    {
-      splashScreen.SetInformation("Loading strings...");
-    }
+    UpdateSplashScreenMessage("Loading strings...");
     GUIGraphicsContext.Skin = m_strSkin;
     GUIGraphicsContext.ActiveForm = Handle;
-    GUILocalizeStrings.Load(m_strLanguage); //Config.GetFile(Config.Dir.Language, m_strLanguage, "strings.xml"));
-    if (splashScreen != null)
+    try
     {
-      splashScreen.SetInformation("Initialize texture manager...");
+      GUILocalizeStrings.Load(m_strLanguage); //Config.GetFile(Config.Dir.Language, m_strLanguage, "strings.xml"));
     }
-    GUITextureManager.Init();
-
+    catch (Exception exl)
+    {
+      MessageBox.Show(String.Format("Failed to load your language! Aborting startup...\n\n{0}\nstack:{1}", exl.Message, exl.StackTrace), "Critical error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+      Close();
+    }    
+    UpdateSplashScreenMessage("Caching graphics...");
+    try
+    {
+      GUITextureManager.Init();
+    }
+    catch (Exception exs)
+    {
+      MessageBox.Show(String.Format("Failed to load your skin! Aborting startup...\n\n{0}", exs.Message), "Critical error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+      Close();
+    }
     GUIGraphicsContext.Load();
-
-    if (splashScreen != null)
-    {
-      splashScreen.SetInformation("Loading fonts...");
-    }
+    UpdateSplashScreenMessage("Loading fonts...");
     GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
-    if (splashScreen != null)
-    {
-      splashScreen.SetInformation("Initializing fonts...");
-    }
+    UpdateSplashScreenMessage(String.Format("Loading skin ({0})...", m_strSkin));
     GUIFontManager.InitializeDeviceObjects();
-    if (splashScreen != null)
-    {
-      splashScreen.SetInformation("Loading skin...");
-    }
     Log.Info("Main: Loading {0} skin", m_strSkin);
     GUIWindowManager.Initialize();
-    if (splashScreen != null)
-    {
-      splashScreen.SetInformation("Loading window plugins...");
-    }
+    UpdateSplashScreenMessage("Loading window plugins...");
     PluginManager.LoadWindowPlugins();
     Log.Info("Main: Loading windowmanager");
-    if (splashScreen != null)
-    {
-      splashScreen.SetInformation("Initializing skin...");
-    }
+    UpdateSplashScreenMessage("Initializing window manager");
     Log.Info("Main: Resizing windowmanager");
     using (Settings xmlreader = new MPSettings())
     {
@@ -1692,6 +1671,26 @@ public class MediaPortalApp : D3DApp, IRender
 
     new GUILayerRenderer();
     WorkingSet.Minimize();
+  }
+
+  /// <summary>
+  /// Updates the splashscreen to display the given string. 
+  /// This method checks whether the splashscreen exists.
+  /// </summary>
+  /// <param name="aSplashLine"></param>
+  private void UpdateSplashScreenMessage(string aSplashLine)
+  {
+    try
+    {
+      if (splashScreen != null)
+      {
+        splashScreen.SetInformation(aSplashLine);
+      }
+    }
+    catch (Exception ex)
+    {
+      Log.Error("Main: Could not update splashscreen - {0}", ex.Message);
+    }
   }
 
   protected override void OnDeviceLost(object sender, EventArgs e)

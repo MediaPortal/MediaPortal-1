@@ -35,9 +35,9 @@ using System.Xml;
 using DShowNET.Helper;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
-using Filter=Microsoft.DirectX.Direct3D.Filter;
-using Font=Microsoft.DirectX.Direct3D.Font;
-using Matrix=Microsoft.DirectX.Matrix;
+using Filter = Microsoft.DirectX.Direct3D.Filter;
+using Font = Microsoft.DirectX.Direct3D.Font;
+using Matrix = Microsoft.DirectX.Matrix;
 
 namespace MediaPortal.GUI.Library
 {
@@ -180,9 +180,9 @@ namespace MediaPortal.GUI.Library
             int iHeight = Int32.Parse(nodeHeight.InnerText);
 
             // height is based on 720x576
-            float fPercent = (((float) GUIGraphicsContext.Height) * GUIGraphicsContext.ZoomVertical)/576.0f;
+            float fPercent = (((float)GUIGraphicsContext.Height) * GUIGraphicsContext.ZoomVertical) / 576.0f;
             fPercent *= iHeight;
-            iHeight = (int) fPercent;
+            iHeight = (int)fPercent;
             FontStyle style = new FontStyle();
             style = FontStyle.Regular;
             if (bold)
@@ -351,7 +351,7 @@ namespace MediaPortal.GUI.Library
       draw.ypos = ypos;
       draw.color = color.ToArgb();
       draw.text = text;
-      draw.matrix = (float[,]) GUIGraphicsContext.GetFinalMatrix().Clone();
+      draw.matrix = (float[,])GUIGraphicsContext.GetFinalMatrix().Clone();
       draw.viewport = GUIGraphicsContext.DX9Device.Viewport;
       if (maxWidth >= 0)
       {
@@ -383,8 +383,8 @@ namespace MediaPortal.GUI.Library
         float textwidth = 0, textheight = 0;
 
         MeasureText(draw.text, ref textwidth, ref textheight, fontSize);
-        size.Width = (int) textwidth;
-        size.Height = (int) textheight;
+        size.Width = (int)textwidth;
+        size.Height = (int)textheight;
 
         try
         {
@@ -398,7 +398,7 @@ namespace MediaPortal.GUI.Library
                 g.SmoothingMode = SmoothingMode.AntiAlias;
                 g.TextRenderingHint = TextRenderingHint.AntiAlias;
                 g.TextContrast = 0;
-                g.DrawString(draw.text, CachedSystemFont(fontSize), Brushes.White, new Point((int) 0, (int) 0),
+                g.DrawString(draw.text, CachedSystemFont(fontSize), Brushes.White, new Point((int)0, (int)0),
                              StringFormat.GenericTypographic);
 
                 bitmap.Save(imageStream, ImageFormat.Bmp);
@@ -414,7 +414,7 @@ namespace MediaPortal.GUI.Library
                 try
                 {
                   texture = TextureLoader.FromStream(GUIGraphicsContext.DX9Device,
-                                                     imageStream, (int) imageStream.Length,
+                                                     imageStream, (int)imageStream.Length,
                                                      0, 0,
                                                      1,
                                                      0,
@@ -443,8 +443,8 @@ namespace MediaPortal.GUI.Library
         }
 
         MeasureText(draw.text, ref textwidth, ref textheight, fontSize);
-        size.Width = (int) textwidth;
-        size.Height = (int) textheight;
+        size.Width = (int)textwidth;
+        size.Height = (int)textheight;
 
         FontTexture newTexture;
         newTexture.text = draw.text;
@@ -460,7 +460,7 @@ namespace MediaPortal.GUI.Library
 
       _d3dxSprite.Draw(_listFontTextures[cacheSlot].texture, new Rectangle(0, 0, size.Width, size.Height),
                        Vector3.Empty,
-                       new Vector3((int) draw.xpos, (int) draw.ypos, 0), draw.color);
+                       new Vector3((int)draw.xpos, (int)draw.ypos, 0), draw.color);
     }
 
     public static void Present()
@@ -504,10 +504,10 @@ namespace MediaPortal.GUI.Library
           finalm.M44 = 1.0f;
           _d3dxSprite.Transform = finalm;
           GUIGraphicsContext.DX9Device.Viewport = draw.viewport;
-          float wfactor = ((float) orgView.Width)/(float) draw.viewport.Width;
-          float hfactor = ((float) orgView.Height)/(float) draw.viewport.Height;
-          float xoffset = (float) (orgView.X - draw.viewport.X);
-          float yoffset = (float) (orgView.Y - draw.viewport.Y);
+          float wfactor = ((float)orgView.Width) / (float)draw.viewport.Width;
+          float hfactor = ((float)orgView.Height) / (float)draw.viewport.Height;
+          float xoffset = (float)(orgView.X - draw.viewport.X);
+          float yoffset = (float)(orgView.Y - draw.viewport.Y);
           projm.M11 = (orgProj.M11 + orgProj.M14 * xoffset) * wfactor;
           projm.M21 = (orgProj.M21 + orgProj.M24 * xoffset) * wfactor;
           projm.M31 = (orgProj.M31 + orgProj.M34 * xoffset) * wfactor;
@@ -523,8 +523,8 @@ namespace MediaPortal.GUI.Library
           }
           else
           {
-            draw.fnt.DrawText(_d3dxSprite, draw.text, new Rectangle((int) draw.xpos,
-                                                                    (int) draw.ypos, 0, 0), DrawTextFormat.NoClip,
+            draw.fnt.DrawText(_d3dxSprite, draw.text, new Rectangle((int)draw.xpos,
+                                                                    (int)draw.ypos, 0, 0), DrawTextFormat.NoClip,
                               draw.color);
           }
 
@@ -592,13 +592,13 @@ namespace MediaPortal.GUI.Library
       Log.Debug("  fonts.InitializeDeviceObjects()");
       IntPtr upDevice = DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
-        unsafe
-        {
-          FontEngineSetDevice(upDevice.ToPointer());
-        }
-        foreach (GUIFont font in _listFonts)
-        {
-          font.InitializeDeviceObjects();
+      unsafe
+      {
+        FontEngineSetDevice(upDevice.ToPointer());
+      }
+      foreach (GUIFont font in _listFonts)
+      {
+        font.InitializeDeviceObjects();
       }
     }
   }
