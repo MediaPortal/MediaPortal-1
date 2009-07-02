@@ -285,6 +285,18 @@ namespace MediaPortal.GUI.Music
         }
         _switchRemovableDrives = xmlreader.GetValueAsBool("music", "SwitchRemovableDrives", true);
       }
+
+      if (currentFolder.Length > 0)
+      {
+        VirtualDirectory VDir = new VirtualDirectory();
+        VDir.LoadSettings("music");
+        int pincode = 0;
+        bool FolderPinProtected = VDir.IsProtectedShare(currentFolder, out pincode);
+        if (FolderPinProtected)
+        {
+          currentFolder = string.Empty;
+        }
+      }
     }
 
     #endregion

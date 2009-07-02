@@ -235,6 +235,18 @@ namespace MediaPortal.GUI.Video
 
       if (_currentFolder.Length > 0)
       {
+        VirtualDirectory VDir = new VirtualDirectory();
+        VDir.LoadSettings("movies");
+        int pincode = 0;
+        bool FolderPinProtected = VDir.IsProtectedShare(_currentFolder, out pincode);
+        if (FolderPinProtected)
+        {
+          _currentFolder = string.Empty;
+        }
+      }
+    
+      if (_currentFolder.Length > 0)
+      {
         DirectoryInfo dirInfo = new DirectoryInfo(_currentFolder);
 
         while (dirInfo.Parent != null)

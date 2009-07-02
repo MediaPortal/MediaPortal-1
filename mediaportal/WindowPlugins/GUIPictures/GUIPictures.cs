@@ -401,6 +401,18 @@ namespace MediaPortal.GUI.Pictures
         _switchRemovableDrives = xmlreader.GetValueAsBool("pictures", "SwitchRemovableDrives", true);
         //_hideExtensions = xmlreader.GetValueAsBool("general", "hideextensions", true);
       }
+
+      if (currentFolder.Length > 0)
+      {
+        VirtualDirectory VDir = new VirtualDirectory();
+        VDir.LoadSettings("pictures");
+        int pincode = 0;
+        bool FolderPinProtected = VDir.IsProtectedShare(currentFolder, out pincode);
+        if (FolderPinProtected)
+        {
+          currentFolder = string.Empty;
+        }
+      }
     }
 
     private void SaveSettings()
