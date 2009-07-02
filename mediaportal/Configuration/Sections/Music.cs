@@ -752,6 +752,10 @@ namespace MediaPortal.Configuration.Sections
       this.playlistFolderTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabPageNowPlaying = new System.Windows.Forms.TabPage();
+      this.groupBoxVUMeter = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.radioButtonVULed = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.radioButtonVUAnalog = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.radioButtonVUNone = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.groupBoxDynamicContent = new System.Windows.Forms.GroupBox();
       this.groupBoxEnqueueAdd = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.radioButtonAddFile = new MediaPortal.UserInterface.Controls.MPRadioButton();
@@ -771,10 +775,6 @@ namespace MediaPortal.Configuration.Sections
       this.labelAutoPlay = new MediaPortal.UserInterface.Controls.MPLabel();
       this.autoPlayComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.groupBoxVUMeter = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.radioButtonVUNone = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.radioButtonVUAnalog = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.radioButtonVULed = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.MusicSettingsTabCtl.SuspendLayout();
       this.PlayerTabPg.SuspendLayout();
       this.PlaybackSettingsGrpBox.SuspendLayout();
@@ -787,13 +787,13 @@ namespace MediaPortal.Configuration.Sections
       this.PlaylistTabPg.SuspendLayout();
       this.groupBox1.SuspendLayout();
       this.tabPageNowPlaying.SuspendLayout();
+      this.groupBoxVUMeter.SuspendLayout();
       this.groupBoxDynamicContent.SuspendLayout();
       this.groupBoxEnqueueAdd.SuspendLayout();
       this.groupBoxVizOptions.SuspendLayout();
       this.MiscTabPg.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();
-      this.groupBoxVUMeter.SuspendLayout();
       this.SuspendLayout();
       // 
       // MusicSettingsTabCtl
@@ -1235,9 +1235,9 @@ namespace MediaPortal.Configuration.Sections
       this.ResumePlaylistChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.ResumePlaylistChkBox.Location = new System.Drawing.Point(91, 130);
       this.ResumePlaylistChkBox.Name = "ResumePlaylistChkBox";
-      this.ResumePlaylistChkBox.Size = new System.Drawing.Size(246, 17);
+      this.ResumePlaylistChkBox.Size = new System.Drawing.Size(229, 17);
       this.ResumePlaylistChkBox.TabIndex = 5;
-      this.ResumePlaylistChkBox.Text = "Resume last playlist when re-entering My Music";
+      this.ResumePlaylistChkBox.Text = "Load default playlist on MediaPortal startup ";
       this.ResumePlaylistChkBox.UseVisualStyleBackColor = true;
       // 
       // SavePlaylistOnExitChkBox
@@ -1246,9 +1246,9 @@ namespace MediaPortal.Configuration.Sections
       this.SavePlaylistOnExitChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.SavePlaylistOnExitChkBox.Location = new System.Drawing.Point(91, 107);
       this.SavePlaylistOnExitChkBox.Name = "SavePlaylistOnExitChkBox";
-      this.SavePlaylistOnExitChkBox.Size = new System.Drawing.Size(294, 17);
+      this.SavePlaylistOnExitChkBox.Size = new System.Drawing.Size(293, 17);
       this.SavePlaylistOnExitChkBox.TabIndex = 5;
-      this.SavePlaylistOnExitChkBox.Text = "Save playlist and position when leaving for another plugin";
+      this.SavePlaylistOnExitChkBox.Text = "Save current playlist as default when leaving MediaPortal";
       this.SavePlaylistOnExitChkBox.UseVisualStyleBackColor = true;
       // 
       // repeatPlaylistCheckBox
@@ -1304,6 +1304,54 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageNowPlaying.TabIndex = 5;
       this.tabPageNowPlaying.Text = "Now playing";
       this.tabPageNowPlaying.UseVisualStyleBackColor = true;
+      // 
+      // groupBoxVUMeter
+      // 
+      this.groupBoxVUMeter.Controls.Add(this.radioButtonVULed);
+      this.groupBoxVUMeter.Controls.Add(this.radioButtonVUAnalog);
+      this.groupBoxVUMeter.Controls.Add(this.radioButtonVUNone);
+      this.groupBoxVUMeter.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxVUMeter.Location = new System.Drawing.Point(16, 250);
+      this.groupBoxVUMeter.Name = "groupBoxVUMeter";
+      this.groupBoxVUMeter.Size = new System.Drawing.Size(432, 100);
+      this.groupBoxVUMeter.TabIndex = 5;
+      this.groupBoxVUMeter.TabStop = false;
+      this.groupBoxVUMeter.Text = "VUMeter (BASS player only)";
+      // 
+      // radioButtonVULed
+      // 
+      this.radioButtonVULed.AutoSize = true;
+      this.radioButtonVULed.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.radioButtonVULed.Location = new System.Drawing.Point(91, 70);
+      this.radioButtonVULed.Name = "radioButtonVULed";
+      this.radioButtonVULed.Size = new System.Drawing.Size(45, 17);
+      this.radioButtonVULed.TabIndex = 2;
+      this.radioButtonVULed.Text = "LED";
+      this.radioButtonVULed.UseVisualStyleBackColor = true;
+      // 
+      // radioButtonVUAnalog
+      // 
+      this.radioButtonVUAnalog.AutoSize = true;
+      this.radioButtonVUAnalog.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.radioButtonVUAnalog.Location = new System.Drawing.Point(91, 47);
+      this.radioButtonVUAnalog.Name = "radioButtonVUAnalog";
+      this.radioButtonVUAnalog.Size = new System.Drawing.Size(57, 17);
+      this.radioButtonVUAnalog.TabIndex = 1;
+      this.radioButtonVUAnalog.Text = "Analog";
+      this.radioButtonVUAnalog.UseVisualStyleBackColor = true;
+      // 
+      // radioButtonVUNone
+      // 
+      this.radioButtonVUNone.AutoSize = true;
+      this.radioButtonVUNone.Checked = true;
+      this.radioButtonVUNone.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.radioButtonVUNone.Location = new System.Drawing.Point(91, 24);
+      this.radioButtonVUNone.Name = "radioButtonVUNone";
+      this.radioButtonVUNone.Size = new System.Drawing.Size(50, 17);
+      this.radioButtonVUNone.TabIndex = 0;
+      this.radioButtonVUNone.TabStop = true;
+      this.radioButtonVUNone.Text = "None";
+      this.radioButtonVUNone.UseVisualStyleBackColor = true;
       // 
       // groupBoxDynamicContent
       // 
@@ -1514,54 +1562,6 @@ namespace MediaPortal.Configuration.Sections
       this.label4.Size = new System.Drawing.Size(100, 23);
       this.label4.TabIndex = 0;
       // 
-      // groupBoxVUMeter
-      // 
-      this.groupBoxVUMeter.Controls.Add(this.radioButtonVULed);
-      this.groupBoxVUMeter.Controls.Add(this.radioButtonVUAnalog);
-      this.groupBoxVUMeter.Controls.Add(this.radioButtonVUNone);
-      this.groupBoxVUMeter.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxVUMeter.Location = new System.Drawing.Point(16, 250);
-      this.groupBoxVUMeter.Name = "groupBoxVUMeter";
-      this.groupBoxVUMeter.Size = new System.Drawing.Size(432, 100);
-      this.groupBoxVUMeter.TabIndex = 5;
-      this.groupBoxVUMeter.TabStop = false;
-      this.groupBoxVUMeter.Text = "VUMeter (BASS player only)";
-      // 
-      // radioButtonVUNone
-      // 
-      this.radioButtonVUNone.AutoSize = true;
-      this.radioButtonVUNone.Checked = true;
-      this.radioButtonVUNone.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.radioButtonVUNone.Location = new System.Drawing.Point(91, 24);
-      this.radioButtonVUNone.Name = "radioButtonVUNone";
-      this.radioButtonVUNone.Size = new System.Drawing.Size(50, 17);
-      this.radioButtonVUNone.TabIndex = 0;
-      this.radioButtonVUNone.TabStop = true;
-      this.radioButtonVUNone.Text = "None";
-      this.radioButtonVUNone.UseVisualStyleBackColor = true;
-      // 
-      // radioButtonVUAnalog
-      // 
-      this.radioButtonVUAnalog.AutoSize = true;
-      this.radioButtonVUAnalog.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.radioButtonVUAnalog.Location = new System.Drawing.Point(91, 47);
-      this.radioButtonVUAnalog.Name = "radioButtonVUAnalog";
-      this.radioButtonVUAnalog.Size = new System.Drawing.Size(57, 17);
-      this.radioButtonVUAnalog.TabIndex = 1;
-      this.radioButtonVUAnalog.Text = "Analog";
-      this.radioButtonVUAnalog.UseVisualStyleBackColor = true;
-      // 
-      // radioButtonVULed
-      // 
-      this.radioButtonVULed.AutoSize = true;
-      this.radioButtonVULed.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.radioButtonVULed.Location = new System.Drawing.Point(91, 70);
-      this.radioButtonVULed.Name = "radioButtonVULed";
-      this.radioButtonVULed.Size = new System.Drawing.Size(45, 17);
-      this.radioButtonVULed.TabIndex = 2;
-      this.radioButtonVULed.Text = "LED";
-      this.radioButtonVULed.UseVisualStyleBackColor = true;
-      // 
       // Music
       // 
       this.Controls.Add(this.MusicSettingsTabCtl);
@@ -1583,6 +1583,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.tabPageNowPlaying.ResumeLayout(false);
+      this.groupBoxVUMeter.ResumeLayout(false);
+      this.groupBoxVUMeter.PerformLayout();
       this.groupBoxDynamicContent.ResumeLayout(false);
       this.groupBoxDynamicContent.PerformLayout();
       this.groupBoxEnqueueAdd.ResumeLayout(false);
@@ -1594,8 +1596,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.PerformLayout();
       this.mpGroupBox2.ResumeLayout(false);
       this.mpGroupBox2.PerformLayout();
-      this.groupBoxVUMeter.ResumeLayout(false);
-      this.groupBoxVUMeter.PerformLayout();
       this.ResumeLayout(false);
 
     }

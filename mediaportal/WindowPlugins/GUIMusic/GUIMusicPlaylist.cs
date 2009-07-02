@@ -109,6 +109,7 @@ namespace MediaPortal.GUI.Music
     private int m_iItemSelected = -1;
     private int m_iLastControl = 0;
     private int m_nTempPlayListWindow = 0;
+    private string _playlistFolder = string.Empty;
     private string m_strTempPlayListDirectory = string.Empty;
     private string m_strCurrentFile = string.Empty;
     private string _currentScrobbleUser = string.Empty;
@@ -123,9 +124,13 @@ namespace MediaPortal.GUI.Music
     private bool _enableScrobbling = false;
     private bool _useSimilarRandom = true;
     private bool _rememberStartTrack = true;
+    private bool _savePlaylistOnExit = false;
+    private bool _resumePlaylistOnEnter = false;
+    private bool _autoShuffleOnLoad = false;
     private List<string> _scrobbleUsers = new List<string>(1);
     private AudioscrobblerUtils ascrobbler = null;
     private ScrobblerUtilsRequest _lastRequest;
+    private string _defaultPlaylist = "default.m3u";
 
     #endregion
 
@@ -150,6 +155,46 @@ namespace MediaPortal.GUI.Music
 
       _virtualDirectory.AddDrives();
       _virtualDirectory.SetExtensions(Util.Utils.AudioExtensions);
+
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
+      {
+        _playlistFolder = xmlreader.GetValueAsString("music", "playlists", "");
+        _savePlaylistOnExit = xmlreader.GetValueAsBool("musicfiles", "savePlaylistOnExit", false);
+        _resumePlaylistOnEnter = xmlreader.GetValueAsBool("musicfiles", "resumePlaylistOnMusicEnter", false);
+        _autoShuffleOnLoad = xmlreader.GetValueAsBool("musicfiles", "autoshuffle", false);
+      }
+
+      if (_resumePlaylistOnEnter)
+      {
+        Log.Info("Playlist: Loading default playlist {0}", _defaultPlaylist);
+        LoadPlayList(Path.Combine(_playlistFolder,_defaultPlaylist), false);
+      }
+
+    }
+
+    ~GUIMusicPlayList()
+    {
+      // Save the default Playlist
+      if (_savePlaylistOnExit)
+      {
+        Log.Info("Playlist: Saving default playlist {0}", _defaultPlaylist);
+        IPlayListIO saver = new PlayListM3uIO();
+        PlayList playlist = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+        PlayList playlistTmp = new PlayList();
+        // Sort out Playlist Items residing on a CD, as they are gonna most likely to change
+        foreach (PlayListItem item in playlist)
+        {
+          if (Path.GetExtension(item.FileName) != ".cda")
+          {
+            playlistTmp.Add(item);
+          }
+        }
+
+        if (playlistTmp.Count > 0)
+        {
+          saver.Save(playlistTmp, Path.Combine(_playlistFolder, _defaultPlaylist));
+        }
+      }
     }
 
     private void LoadScrobbleUserSettings()

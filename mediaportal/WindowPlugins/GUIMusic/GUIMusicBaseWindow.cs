@@ -147,6 +147,11 @@ namespace MediaPortal.GUI.Music
 
     public GUIMusicBaseWindow()
     {
+      if (m_database == null)
+      {
+        m_database = MusicDatabase.Instance;
+      }
+
       playlistPlayer = PlayListPlayer.SingletonPlayer;
 
       using (Profile.Settings xmlreader = new Profile.MPSettings())
@@ -193,7 +198,6 @@ namespace MediaPortal.GUI.Music
 
       UsingInternalMusicPlayer = BassMusicPlayer.IsDefaultMusicPlayer;
     }
-
     #endregion
 
     #region Serialisation
@@ -750,12 +754,23 @@ namespace MediaPortal.GUI.Music
 
     protected void LoadPlayList(string strPlayList)
     {
+      LoadPlayList(strPlayList, true);
+    }
+
+    protected void LoadPlayList(string strPlayList, bool startPlayback)
+    {
       IPlayListIO loader = PlayListFactory.CreateIO(strPlayList);
       if (loader == null)
       {
         return;
       }
       PlayList playlist = new PlayList();
+
+      if (!File.Exists(strPlayList))
+      {
+        Log.Info("Playlist: Skipping non-existing Playlist file: {0}", strPlayList);
+        return;
+      }
 
       if (!loader.Load(playlist, strPlayList))
       {
@@ -774,7 +789,7 @@ namespace MediaPortal.GUI.Music
       }
 
       playlistPlayer.CurrentPlaylistName = Path.GetFileNameWithoutExtension(strPlayList);
-      if (playlist.Count == 1)
+      if (playlist.Count == 1 && startPlayback)
       {
         Log.Info("GUIMusic:Play: play single playlist item - {0}", playlist[0].FileName);
         // Default to type Music, when a playlist has been selected from My Music
@@ -794,11 +809,18 @@ namespace MediaPortal.GUI.Music
         MusicTag tag = new MusicTag();
         tag = song.ToMusicTag();
         playListItem.MusicTag = tag;
-        playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playListItem);
+        if (File.Exists(playListItem.FileName))
+        {
+          playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playListItem);
+        }
+        else
+        {
+          Log.Info("Playlist: File {0} no longer exists. Skipping item.", playListItem.FileName);
+        }
       }
 
       // if we got a playlist
-      if (playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Count > 0)
+      if (playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Count > 0 && startPlayback)
       {
         // then get 1st song
         playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
