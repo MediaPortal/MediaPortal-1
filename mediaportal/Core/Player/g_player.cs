@@ -1199,7 +1199,7 @@ namespace MediaPortal.Player
           GUIWindowManager.SendMessage(msgTv);
         }
         */
-        if (Util.Utils.IsVideo(strFile)) //video, tv, rtsp
+        if (Util.Utils.IsVideo(strFile) || Util.Utils.IsLiveTv(strFile)) //video, tv, rtsp
         {
           // refreshrate change done here.
           RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);

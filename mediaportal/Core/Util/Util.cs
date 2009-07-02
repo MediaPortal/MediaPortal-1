@@ -393,7 +393,6 @@ namespace MediaPortal.Util
           case ".ts":
           case ".sbe":
           case ".dvr-ms":
-          case ".tsbuffer":
             return true;
         }
         if (VirtualDirectory.IsImageFile(extensionFile.ToLower()))
