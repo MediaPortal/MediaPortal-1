@@ -428,7 +428,7 @@ namespace TvLibrary.Implementations.DVB
       bool isLocked = false;
       DateTime timeStart = DateTime.Now;
       TimeSpan ts = timeStart - timeStart;
-      while (!isLocked && ts.TotalSeconds < 2)
+      while (!isLocked && ts.TotalSeconds < _parameters.TimeOutTune)
       {
         for (int i = 0; i < _tunerStatistics.Count; i++)
         {
