@@ -414,7 +414,7 @@ namespace MediaPortal.GUI.Library
             {
               continue;
             }
-            files[i] = files[i].ToLower();
+            files[i] = files[i].ToLowerInvariant();
             if (files[i] != string.Empty)
             {
               // Ignore files not needed for MP
