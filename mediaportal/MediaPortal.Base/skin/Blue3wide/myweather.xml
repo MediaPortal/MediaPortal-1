@@ -50,11 +50,12 @@
     <control>
       <description>TWC Logo</description>
       <type>image</type>
+      <keepaspectratio>yes</keepaspectratio>
       <id>101</id>
-      <posX>71</posX>
-      <posY>510</posY>
-      <width>152</width>
-      <height>80</height>
+      <posX>142</posX>
+      <posY>531</posY>
+      <width>86</width>
+      <height>64</height>
       <texture>weather\logos\TWClogo_64px.png</texture>
     </control>
     <control>
@@ -544,7 +545,7 @@
     <control>
       <description>Sunclock image</description>
       <type>image</type>
-      <keepaspectratio>yes</keepaspectratio>
+      <keepaspectratio>no</keepaspectratio>
       <id>1200</id>
       <label>-</label>
       <posY>250</posY>

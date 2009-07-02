@@ -148,6 +148,8 @@ namespace MediaPortal.GUI.Weather
     private const string PARTNER_ID = "1004124588"; //weather.com partner id
     private const string PARTNER_KEY = "079f24145f208494"; //weather.com partner key
 
+    private delegate void ThreadUpdateImage(string aImagePath);
+
     private string _locationCode = "UKXX0085";
     private ArrayList _listLocations = new ArrayList();
     private string _temperatureFarenheit = "C";
@@ -499,8 +501,7 @@ namespace MediaPortal.GUI.Weather
           break;
         case Mode.DetailImages:
           _currentMode = Mode.GeoClock;
-          _lastTimeSunClockRendered = 0;
-          updateSunClock();
+          _lastTimeSunClockRendered = 0;          
           break;
         case Mode.GeoClock:
           _currentMode = Mode.Weather;
@@ -762,6 +763,7 @@ namespace MediaPortal.GUI.Weather
           UpdateDetailImages();
           break;
         case Mode.GeoClock:
+          updateSunClock();
           SetGeoClockControls();
           break;
       }
@@ -769,34 +771,36 @@ namespace MediaPortal.GUI.Weather
 
     private void UpdateDetailImages()
     {
-      GUIImage img = GetControl((int) Controls.CONTROL_IMAGE_SAT) as GUIImage;
+      switch (_imageView)
+      {
+        case ImageView.Satellite:
+          _urlViewImage = _urlSatellite;
+          break;
+        case ImageView.Temperature:
+          _urlViewImage = _urlTemperature;
+          break;
+        case ImageView.UVIndex:
+          _urlViewImage = _urlUvIndex;
+          break;
+        case ImageView.Winds:
+          _urlViewImage = _urlWinds;
+          break;
+        case ImageView.Humidity:
+          _urlViewImage = _urlHumidity;
+          break;
+        case ImageView.Precipitation:
+          _urlViewImage = _urlPreciptation;
+          break;
+      }
+      DetailImageUpdate(_urlViewImage);
+    }
+
+    private void updateDetailImage(string aLocalFile)
+    {
+      GUIImage img = GetControl((int)Controls.CONTROL_IMAGE_SAT) as GUIImage;
       if (img != null)
       {
-        switch (_imageView)
-        {
-          case ImageView.Satellite:
-            _urlViewImage = _urlSatellite;
-            break;
-          case ImageView.Temperature:
-            _urlViewImage = _urlTemperature;
-            break;
-          case ImageView.UVIndex:
-            _urlViewImage = _urlUvIndex;
-            break;
-          case ImageView.Winds:
-            _urlViewImage = _urlWinds;
-            break;
-          case ImageView.Humidity:
-            _urlViewImage = _urlHumidity;
-            break;
-          case ImageView.Precipitation:
-            _urlViewImage = _urlPreciptation;
-            break;
-        }
-        img.SetFileName(_urlViewImage);
-        //reallocate & load then new image
-        //img.FreeResources();
-        //img.AllocResources();
+        img.SetFileName(aLocalFile);
       }
     }
 
@@ -1097,8 +1101,8 @@ namespace MediaPortal.GUI.Weather
 
     #endregion
 
-    #region Background updater
-
+    #region Background updaters
+    
     private void BackgroundUpdate(bool isAuto)
     {
       Thread updateThread = new Thread(new ParameterizedThreadStart(DownloadWorker));
@@ -1118,6 +1122,27 @@ namespace MediaPortal.GUI.Weather
     {
       RefreshMe((bool) data); //do an autoUpdate refresh
       IsRefreshing = false;
+    }
+
+    private void DetailImageUpdate(string aUrlImage)
+    {
+      Thread imageThread = new Thread(new ParameterizedThreadStart(ImageWorker));
+      imageThread.IsBackground = true;
+      imageThread.Name = "Weather Image updater";
+      imageThread.Start(aUrlImage);
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    private void ImageWorker(object data)
+    {
+      lock (_downloadLock)
+      {
+        using (WaitCursor cursor = new WaitCursor())
+        {
+          //GUIGraphicsContext.form.Invoke(new ThreadUpdateImage(updateDetailImage), new object[] { (string)data });
+          updateDetailImage((string)data);
+        }
+      }
     }
 
     #endregion

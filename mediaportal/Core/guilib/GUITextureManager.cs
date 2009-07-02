@@ -250,17 +250,23 @@ namespace MediaPortal.GUI.Library
               frameDelay[num2] = 0;
             }
 
-            int num1 = 20736;
-            PropertyItem item1 = theImage.GetPropertyItem(num1);
-            if (item1 != null)
+            // Getting Frame duration of an animated Gif image            
+            try
             {
-              byte[] buffer1 = item1.Value;
-              for (int num2 = 0; (num2 < newCache.Frames); ++num2)
+              int num1 = 20736;
+              PropertyItem item1 = theImage.GetPropertyItem(num1);
+              if (item1 != null)
               {
-                frameDelay[num2] = (((buffer1[(num2 * 4)] + (256 * buffer1[((num2 * 4) + 1)])) +
-                                     (65536 * buffer1[((num2 * 4) + 2)])) + (16777216 * buffer1[((num2 * 4) + 3)]));
+                byte[] buffer1 = item1.Value;
+                for (int num2 = 0; (num2 < newCache.Frames); ++num2)
+                {
+                  frameDelay[num2] = (((buffer1[(num2 * 4)] + (256 * buffer1[((num2 * 4) + 1)])) +
+                                       (65536 * buffer1[((num2 * 4) + 2)])) + (16777216 * buffer1[((num2 * 4) + 3)]));
+                }
               }
             }
+            catch (Exception) { }
+
             for (int i = 0; i < newCache.Frames; ++i)
             {
               theImage.SelectActiveFrame(oDimension, i);

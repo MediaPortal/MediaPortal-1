@@ -1655,7 +1655,7 @@ namespace MediaPortal.GUI.Music
         }
 
         UpdateNextTrackInfo();
-        GUITextureManager.CleanupThumbs();
+        // GUITextureManager.CleanupThumbs();
 
         _trackChanged = false;
       }
