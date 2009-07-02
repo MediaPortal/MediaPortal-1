@@ -448,6 +448,7 @@
     <String id="517">Error fatal - acción no completada</String>
     <String id="518">¿Borrar esta canción?</String>
     <String id="519">Quitar subtítulos</String>
+    <String id="527">Ordenar por: Visto</String>
     <String id="528">Artistas</String>
     <String id="529">Ver: Lista de iconos grandes</String>
     <String id="530">Disco de fotos insertado, ¿quieres abrirlo?</String>
@@ -893,6 +894,10 @@
     <String id="1054">(grabando)</String>
     <String id="1055">(timeshifting)</String>
     <String id="1056">(no disponible)</String>
+    <String id="1057">Grabar Dom-Jue</String>
+    <String id="1058">Grabar Vie-Sab</String>
+    <String id="1059">Dom-Jue</String>
+    <String id="1060">Vie-Sab</String>
     <String id="1061">Extraíble</String>
     <String id="1062">Objeto</String>
     <String id="1064">Marcadores</String>
@@ -977,6 +982,8 @@
     <String id="1515">Timeshift detenido por el\rservidor de TV</String>
     <String id="1516">Timeshift detenido por una\rrazón desconocida</String>
     <String id="1517">Timeshift detenido por\rotro usuario</String>
+    <String id="1518">No es posible crear gráfica</String>
+    <String id="1519">No hay instalado software de codificación soportado</String>
     <String id="1950" prefix="Mi ">Estado</String>
     <String id="1951">Disco duro</String>
     <String id="1952">Ventilador</String>
@@ -1209,6 +1216,8 @@
     <String id="2610">Polaco</String>
     <String id="2611">Checo</String>
     <String id="2612">Húngaro</String>
+    <String id="2650">Recargando fuentes - por favor espere...</String>
+    <String id="2700">Abrir menú CI</String>
     <String id="2997">h</String>
     <String id="2998">min</String>
     <String id="2999">seg</String>
@@ -1218,13 +1227,13 @@
     <String id="3003">Minuto</String>
     <String id="3004">Minutos</String>
     <String id="3005">Hora hace</String>
-    <String id="3006">Horas hace</String>
-    <String id="3007">Minuto hace</String>
-    <String id="3008">Minutos hace</String>
+    <String id="3006">Hace horas</String>
+    <String id="3007">Hace 1 Minuto</String>
+    <String id="3008">Hace minutos</String>
     <String id="3009">Empieza en</String>
-    <String id="3010">Minutos faltan</String>
-    <String id="3011">Hora falta</String>
-    <String id="3012">Horas faltan</String>
+    <String id="3010">Minutos que faltan</String>
+    <String id="3011">Falta 1 hora</String>
+    <String id="3012">Horas que faltan</String>
     <String id="3013">Empezando ahora</String>
     <String id="3014">Día</String>
     <String id="3015">Días</String>
@@ -1263,13 +1272,13 @@
     <String id="4521">Mostrar información del artista/álbum</String>
     <String id="4522">Capturando: {0}...</String>
     <String id="4540">Reproduciendo</String>
-    <String id="4541">Se reproducirá a continuación:</String>
+    <String id="4541">A continuación:</String>
     <String id="4542">Ninguna lista de reproducción cargada</String>
     <String id="4543">Información de pista no disponible</String>
     <String id="4550">Cue</String>
     <String id="4551">Reproducir siguiente</String>
     <String id="4552">Reproducir ahora</String>
-    <String id="4553">Mostrar lista</String>
+    <String id="4553">Mostrar lista de reproducción</String>
     <String id="4554">Buscar info CD</String>
     <String id="4555">Lista de reproducción actual</String>
     <String id="4557">Añadir todo a la lista de reproducción</String>
@@ -1296,8 +1305,8 @@
     <String id="5920">Películas de esta semana</String>
     <String id="5921">Próximas Películas</String>
     <String id="5922">DVDs más vendidos</String>
-    <String id="5923">DVD nuevo esta semana</String>
-    <String id="5924">DVD nuevo la próxima semana</String>
+    <String id="5923">Nuevo en DVD esta semana</String>
+    <String id="5924">Nuevo en DVD la próxima semana</String>
     <String id="5925">Pre-órdenes de DVD</String>
     <String id="6000">Codec de Vídeo MPEG-2</String>
     <String id="6001">Codec de audio</String>
@@ -1339,6 +1348,8 @@
     <String id="6037">Película unida</String>
     <String id="6038">Por favor, seleccione un disco para reproducir.</String>
     <String id="6039">Codec de Audio LATM AAC</String>
+    <String id="6040">Ayer</String>
+    <String id="6041">Hace dos días</String>
     <String id="8000" prefix="Mi ">Correo</String>
     <String id="8001">Comprobar buzón de entrada</String>
     <String id="8002">Autocomprobar desactivado</String>
@@ -1572,7 +1583,7 @@
     <String id="33002">Scrobble: Vecinos</String>
     <String id="33003">Scrobble: Tag</String>
     <String id="33004">Scrobble: Recientes</String>
-    <String id="33005">Cuenta:</String>
+    <String id="33005">Cuenta: </String>
     <String id="33006">Scrobble: Amigos</String>
     <String id="33007">Scrobble: Off-line</String>
     <String id="33008">¡No hay listas de reproducción activas</String>
@@ -1731,6 +1742,8 @@
     <String id="100707">Guía Electrónica -&gt; Asignación de canales</String>
     <String id="100708">Configuración del intervalo de búsqueda</String>
     <String id="100709">Configuración del servidor de TV</String>
+    <String id="100746">Tipo de búsqueda de TV</String>
+    <String id="100747">Búsqueda de TV</String>
     <String id="100748">Información del programa</String>
     <String id="100749">TV/Sin señal</String>
     <String id="100750">Recetas</String>
@@ -1765,6 +1778,7 @@
     <String id="102014">Información de la foto</String>
     <String id="102015">Mini menú</String>
     <String id="102016">Notificación</String>
+    <String id="102018">Menú CI</String>
     <String id="102600" prefix="Mi ">Tiempo</String>
     <String id="102700" prefix="Mis ">Noticias</String>
     <String id="102900">Protector de pantalla</String>
@@ -1795,6 +1809,9 @@
     <String id="109004">MiniDisplay - Configuración - Ecualizador</String>
     <String id="109005">MiniDisplay - Configuración - Teclado</String>
     <String id="109006">MiniDisplay - Configuración - Control remoto</String>
+    <String id="109811" prefix="Mis">Mis Series de TV</String>
+    <String id="190478" prefix="Mis">Letras</String>
+    <String id="196742">MovingPictures</String>
     <String id="200000">Seleccione su EPG. Tenga en cuenta que si su país</String>
     <String id="200001">no está en la lista, necesitará hacerlo manualmente</String>
     <String id="200002">Ahora puede ordenar los canales de la Guía Electrónica</String>
@@ -1857,9 +1874,9 @@
     <String id="200063">Mezclar ambos</String>
     <String id="200064">Conectado al servidor de TV</String>
     <String id="200065">Algunos puertos parecen estar bloqueados</String>
-    <String id="200066">Incapaz de conectar al servidor de TV</String>
+    <String id="200066">No es posible conectar al servidor de TV</String>
     <String id="200067">Conectado a la base de datos</String>
-    <String id="200068">Incapaz de conectar a la base de datos</String>
+    <String id="200068">No es posible conectar a la base de datos</String>
     <String id="200069">Todos los puertos IP parecen estar bien</String>
     <String id="200070">Por favor, compruebe el firewall</String>
     <String id="200071">¿Borrar esta carpeta y todas sus subcarpetas?</String>
