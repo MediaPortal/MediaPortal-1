@@ -10,7 +10,7 @@
 ; 448QAM , 512QAM, 640QAM, 64QAM , 768QAM, 80QAM, 896QAM, 8VSB , 96QAM , AMPLITUDE, 
 ; FREQUENCY, BPSK , OQPSK , QPSK 
 ; 
-; following lines are valid for Provider: Ziggo area Hoogeveen (7900) The Netherlands
+; following lines are valid for Provider: Ziggo area Hoogeveen & Zwolle (Network ID:7900 and Test Network ID:7979) The Netherlands
 586000,64QAM,6875000 
 361000,64QAM,6875000 
 353000,64QAM,6875000 

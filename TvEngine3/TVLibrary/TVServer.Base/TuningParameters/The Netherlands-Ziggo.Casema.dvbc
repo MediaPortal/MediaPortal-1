@@ -10,7 +10,7 @@
 ; 448QAM   , 512QAM, 640QAM, 64QAM , 768QAM, 80QAM, 896QAM, 8VSB  , 96QAM , AMPLITUDE,
 ; FREQUENCY, BPSK  , OQPSK , QPSK
 ;
-; following lines are valid for Provider: Ziggo former area Casema (5555) The Netherlands
+; following lines are valid for Provider: Ziggo former area Casema (Network ID:5555) The Netherlands
 300000,64QAM,6875000
 340000,64QAM,6875000
 348000,64QAM,6875000
@@ -37,3 +37,5 @@
 284000,64QAM,6875000
 162000,64QAM,6875000
 170000,64QAM,6875000
+826000,64QAM,6875000
+834000,64QAM,6875000

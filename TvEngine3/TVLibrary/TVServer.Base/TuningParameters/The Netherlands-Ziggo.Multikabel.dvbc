@@ -10,7 +10,7 @@
 ; 448QAM , 512QAM, 640QAM, 64QAM , 768QAM, 80QAM, 896QAM, 8VSB , 96QAM , AMPLITUDE,
 ; FREQUENCY, BPSK , OQPSK , QPSK
 ;
-; following lines are valid for Provider: Ziggo former area Multikabel (8888) The Netherlands
+; following lines are valid for Provider: Ziggo former area Multikabel (Network ID:8888) The Netherlands
 404000,64QAM,6875000
 412000,64QAM,6875000
 420000,64QAM,6875000

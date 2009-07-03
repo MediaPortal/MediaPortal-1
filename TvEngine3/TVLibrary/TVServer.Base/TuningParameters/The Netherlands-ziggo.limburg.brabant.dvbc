@@ -10,9 +10,7 @@
 ; 448QAM , 512QAM, 640QAM, 64QAM , 768QAM, 80QAM, 896QAM, 8VSB , 96QAM , AMPLITUDE, 
 ; FREQUENCY, BPSK , OQPSK , QPSK 
 ; 
-; following lines are valid for Provider: Ziggo area Brabant Limburg (1111) The Netherlands
-
-
+; following lines are valid for Provider: Ziggo area Brabant & Limburg (Network ID:1111 and Test Network ID: 2006) The Netherlands
 420000,64QAM,6875000 
 364000,64QAM,6875000 
 372000,64QAM,6875000 
@@ -37,6 +35,7 @@
 690750,64QAM,6875000
 498750,64QAM,6875000
 452000,64QAM,6875000
+802750,64QAM,6875000
 436000,64QAM,6875000
 444000,64QAM,6875000
 618750,64QAM,6875000
