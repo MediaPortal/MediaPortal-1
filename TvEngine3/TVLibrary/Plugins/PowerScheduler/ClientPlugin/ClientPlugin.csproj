@@ -104,4 +104,8 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="PowerScheduler.gif" />
+    <EmbeddedResource Include="PowerScheduler_disabled.gif" />
+  </ItemGroup>
 </Project>

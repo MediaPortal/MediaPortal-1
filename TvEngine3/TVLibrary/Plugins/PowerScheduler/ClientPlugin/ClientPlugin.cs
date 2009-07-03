@@ -26,12 +26,14 @@
 #region Usings
 
 using System.Windows.Forms;
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 
 #endregion
 
 namespace MediaPortal.Plugins.Process
 {
+  [PluginIcons("MediaPortal.Plugins.Process.PowerScheduler.gif", "MediaPortal.Plugins.Process.PowerScheduler_disabled.gif")]
   public class PowerSchedulerClientPlugin : IPlugin, ISetupForm, IPluginReceiver
   {
     #region Variables
