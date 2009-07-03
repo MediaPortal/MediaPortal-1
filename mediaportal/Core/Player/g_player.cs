@@ -495,9 +495,9 @@ namespace MediaPortal.Player
       if (PlayBackEnded != null)
       {
         //yes, then raise event 
-        Log.Info("g_Player.OnEnded()");
-        RefreshRateChanger.AdaptRefreshRate();
+        Log.Info("g_Player.OnEnded()");        
         PlayBackEnded(_currentMedia, _currentFilePlaying);
+        RefreshRateChanger.AdaptRefreshRate();
         _mediaInfo = null;
       }      
     }
@@ -559,9 +559,7 @@ namespace MediaPortal.Player
 
     [MethodImpl(MethodImplOptions.Synchronized)]
     private static void doStop(bool keepTimeShifting, bool keepExclusiveModeOn)
-    {
-      RefreshRateChanger.ResetRefreshRateState();
-
+    {      
       if (driveSpeedReduced)
       {
         // Set the CD/DVD Speed back to Max Speed

@@ -582,6 +582,7 @@ namespace MediaPortal.Player
       _refreshrateChangePending = false;
       _refreshrateChangeFullscreenVideo = false;
       _refreshrateChangeExecutionTime = DateTime.MinValue;
+      _refreshrateChangeCurrentRR = 0;
     }
 
     public static void SetRefreshRateBasedOnFPS(double fps, string strFile, MediaType type)
@@ -659,7 +660,7 @@ namespace MediaPortal.Player
     // defaults the refreshrate
     public static void AdaptRefreshRate()
     {
-      if (_refreshrateChangePending)
+      if (_refreshrateChangePending || _refreshrateChangeCurrentRR == 0)
       {
         return;
       }
@@ -715,7 +716,7 @@ namespace MediaPortal.Player
       }
 
       SetRefreshRateBasedOnFPS(defaultFPS, "", MediaType.Unknown);
-     
+      ResetRefreshRateState();
     }
 
     // change screen refresh rate based on media framerate
