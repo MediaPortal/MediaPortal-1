@@ -46,15 +46,15 @@
     <String id="111">Кратенки</String>
     <String id="112">ПАУЗИРАНО</String>
     <String id="113" prefix="Мои ">Датотеки : Извор</String>
-    <String id="114" prefix="Мои ">Датотеки : Одредиште</String>
+    <String id="114" prefix="Мои ">Датотеки : Дестинација</String>
     <String id="115">Копирај</String>
     <String id="116">Премести</String>
     <String id="117">Избриши</String>
     <String id="118">Преименувај</String>
     <String id="119">Нов фолдер</String>
-    <String id="120">Потврдете датотечно копирање</String>
-    <String id="121">Потврдете датотечно преместување</String>
-    <String id="122">Потврдете датотечно бришење</String>
+    <String id="120">Потврдете копирање</String>
+    <String id="121">Потврдете преместување</String>
+    <String id="122">Потврдете бришење</String>
     <String id="123">Да ги копирам датотекиве?</String>
     <String id="124">Да ги преместам датотекиве?</String>
     <String id="125">Да ги избришам датотекиве?</String>
@@ -100,7 +100,7 @@
     <String id="165">Дискот е присутен</String>
     <String id="166">Навлака: </String>
     <String id="167">FTP сервер:</String>
-    <String id="168">Синхронирачко време: </String>
+    <String id="168">Синхронизирачко време: </String>
     <String id="169">Резолуција: </String>
     <String id="170">Албум: </String>
     <String id="171">Изведувач: </String>
@@ -121,7 +121,7 @@
     <String id="186">OK</String>
     <String id="187">Не се пронајдени албуми!</String>
     <String id="188">Одбери сé</String>
-    <String id="189">Барам инфо за медиите,</String>
+    <String id="189">Барам инфо за медиите.</String>
     <String id="190">Зачувај</String>
     <String id="191">Измешај</String>
     <String id="192">Исчистено</String>
@@ -182,7 +182,7 @@
     <String id="248">Јазик</String>
     <String id="249">Музика</String>
     <String id="250">Визуелизација</String>
-    <String id="251">Одбери фолдер за одредиште</String>
+    <String id="251">Одбери фолдер за дестинација</String>
     <String id="252">Излез на сите звучници</String>
     <String id="253">Број на канали</String>
     <String id="254">DD стерео поминувања</String>
@@ -210,7 +210,7 @@
     <String id="276">-ПАЗЕТЕ! - За најдобар квалитет, кога го смалувате видеото да го собери, оставете на 0.0 </String>
     <String id="277">Поместете ја линијата за промена на позиција на преводот</String>
     <String id="278">-Важно!- за најдобар квалитет, променете го правоаголникот да биде правилен квадрат</String>
-    <String id="279">Не можам да вчитам подесувања</String>
+    <String id="279">Не можам да вчитам поставки</String>
     <String id="280">користам зададени повлекувања</String>
     <String id="281">Молам, проверете ги .xml датотеките</String>
     <String id="282">пронајдени %i ставки</String>
@@ -295,7 +295,7 @@
     <String id="361">R. SlideShow</String>
     <String id="362">Ниво на избледување не Чуварот на Екранот (%)</String>
     <String id="363">Подреди по: Датотека</String>
-    <String id="364">DD/DTS Многуканалски премин</String>
+    <String id="364">DD/DTS Многуканален премин</String>
     <String id="365">Подреди по: Име</String>
     <String id="366">Подреди по: Година</String>
     <String id="367">Подреди по: Рејтинг</String>
@@ -313,7 +313,7 @@
     <String id="379">Попладне</String>
     <String id="380">Дождови</String>
     <String id="381">Малку</String>
-    <String id="382">Расштркано</String>
+    <String id="382">Раштркано</String>
     <String id="383">Ветер</String>
     <String id="384">Силно</String>
     <String id="385">Мирно</String>
@@ -448,6 +448,7 @@
     <String id="517">Кобна грешка - дејството не е довршено</String>
     <String id="518">Да ја избришам песнава?</String>
     <String id="519">Преводи исклучени</String>
+    <String id="527">Сортирај по: Гледано</String>
     <String id="528">Изведувачи на албумот</String>
     <String id="529">Распоред: Список големи икони</String>
     <String id="530">Ставен е фотодиск - да го отворам?</String>
@@ -502,7 +503,7 @@
     <String id="605" prefix="Моја ">ТВ</String>
     <String id="606">Вчитувам нов ТВ Водич</String>
     <String id="607">Вчитај</String>
-    <String id="608">Неуспешен увоз na ТВ Водичот</String>
+    <String id="608">Неуспешен увоз на ТВ Водичот</String>
     <String id="609">Успешен увоз на ТВ Водичот</String>
     <String id="610">Не снимај</String>
     <String id="611">Сними еднаш</String>
@@ -813,7 +814,7 @@
     <String id="974">Почетно мени</String>
     <String id="975">Претходно поглавие</String>
     <String id="976">Следно поглавие</String>
-    <String id="977">Нема слоободна картичка на располагање</String>
+    <String id="977">Нема слободна картичка на располагање</String>
     <String id="978">на која може да се гледа овој канал</String>
     <String id="979">Пушти снимка од почеток</String>
     <String id="980">Пушти снимка од точката во живо</String>
@@ -893,6 +894,10 @@
     <String id="1054">(се снима)</String>
     <String id="1055">(временско поместување)</String>
     <String id="1056">(нерасположиво)</String>
+    <String id="1057">Снимај Нед-Чет</String>
+    <String id="1058">Снимај Пет-Саб</String>
+    <String id="1059">Нед-Чет</String>
+    <String id="1060">Пет-Саб</String>
     <String id="1061">Пренослив</String>
     <String id="1062">Објект</String>
     <String id="1064">Белешки</String>
@@ -940,7 +945,7 @@
     <String id="1192">Користи VMR9 за Web Streams</String>
     <String id="1193">Овозможи GUI звучни ефекти</String>
     <String id="1194">Започни со Basic Home</String>
-    <String id="1195">Овозможи GUI контрола на глучвче</String>
+    <String id="1195">Овозможи GUI контрола на глувче</String>
     <String id="1196">Овозможи титлови</String>
     <String id="1197">Исклучи DXVA</String>
     <String id="1198">DVD навигатор</String>
@@ -1211,6 +1216,8 @@
     <String id="2610">Полски</String>
     <String id="2611">Чешки</String>
     <String id="2612">Унгарски</String>
+    <String id="2650">Превчитувам фонтови - молам почекајте...</String>
+    <String id="2700">Отвори CI мени</String>
     <String id="2997">ч</String>
     <String id="2998">мин</String>
     <String id="2999">сек</String>
@@ -1341,6 +1348,8 @@
     <String id="6037">Stacked movie</String>
     <String id="6038">Ве молам одберете диск за одигрување.</String>
     <String id="6039">LATM AAC аудио кодек</String>
+    <String id="6040">Вчера</String>
+    <String id="6041">Завчера</String>
     <String id="8000" prefix="Моја ">Пошта</String>
     <String id="8001">Провери пошт. сандаче</String>
     <String id="8002">Исклучи авто-проверка</String>
@@ -1723,9 +1732,9 @@
     <String id="100635">Волшебник/EPG</String>
     <String id="100636">Волшебник/Општо</String>
     <String id="100699">Волшебник/Завршено</String>
-    <String id="100700">ТВ Поставки</String>
-    <String id="100701">ТВ Поставки за снимање</String>
-    <String id="100702">ТВ Подредени канали</String>
+    <String id="100700">Поставки за ТВ</String>
+    <String id="100701">Поставки за снимање ТВ</String>
+    <String id="100702">Подредени канали на ТВ</String>
     <String id="100703">Поставки за филм</String>
     <String id="100704">DVD поставки</String>
     <String id="100705">Поставки за навлака</String>
@@ -1733,6 +1742,8 @@
     <String id="100707">EPG -&gt; Мапирање на канали</String>
     <String id="100708">Поставки на чекори за скок</String>
     <String id="100709">Поставки на ТВ сервер</String>
+    <String id="100746">Тип на пребарување ТВ</String>
+    <String id="100747">Пребарување на ТВ</String>
     <String id="100748">Информации за програма</String>
     <String id="100749">ТВ/Нема сигнал</String>
     <String id="100750">Рецепти</String>
@@ -1767,6 +1778,7 @@
     <String id="102014">Инфо за слика</String>
     <String id="102015">Мало мени</String>
     <String id="102016">Известување</String>
+    <String id="102018">CI мени</String>
     <String id="102600" prefix="Мое ">Време</String>
     <String id="102700" prefix="Мои ">Вести</String>
     <String id="102900">Чувар на екранот</String>
@@ -1797,6 +1809,9 @@
     <String id="109004">MiniDisplay - Setup - Equalizer</String>
     <String id="109005">MiniDisplay - Setup - KeyPad</String>
     <String id="109006">MiniDisplay - Setup - Далечинси управувач</String>
+    <String id="109811" prefix="Мои">ТВ-Серии</String>
+    <String id="190478" prefix="Мои">Текстови од песни</String>
+    <String id="196742">Подвижни слики</String>
     <String id="200000">Молам изберете грабнувач на EPG. Ако Вашата земја</String>
     <String id="200001">не е на списокот, ќе треба рачно да обезбедите EPG</String>
     <String id="200002">Сега можете да ги мапирате EPG каналите во Вашите ТВ канали</String>
