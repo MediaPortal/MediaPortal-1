@@ -1,6 +1,14 @@
 REM %1 = Solution Directory
 REM %2 = $(ConfigurationName) Debug/Release
 
+
+REM Identify configuration path for <=XP or >=Vista
+if exist %ProgramData%\nul (
+	set ConfigPath="%ProgramData%" 
+) else (
+	set ConfigPath="%AllUsersProfile%\Application Data"
+)
+
 REM Check for Microsoft Antispyware .BAT bug
 if exist .\kernel32.dll exit 1
 
@@ -71,10 +79,10 @@ REM Copy all new files from base
 xcopy %1\MediaPortal.Base\*.* . /E /R /Y /D
 
 REM Language
-xcopy %1\MediaPortal.Base\Language\*.* %allusersprofile%\"Team MediaPortal\MediaPortal\Language\" /E /Y /D
+xcopy %1\MediaPortal.Base\Language\*.* %ConfigPath%\"Team MediaPortal\MediaPortal\Language\" /E /Y /D
 
 REM Skins
-xcopy %1\MediaPortal.Base\Skin\*.* %allusersprofile%\"Team MediaPortal\MediaPortal\Skin\" /E /Y /D
+xcopy %1\MediaPortal.Base\Skin\*.* %ConfigPath%\"Team MediaPortal\MediaPortal\Skin\" /E /Y /D
 
 REM Copy all dll files from cpp solution
 xcopy %1\Core.cpp\DirectShowHelper\bin\%2\dshowhelper.dll .
