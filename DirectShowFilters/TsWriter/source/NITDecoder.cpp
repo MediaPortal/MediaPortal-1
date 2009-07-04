@@ -514,14 +514,15 @@ void CNITDecoder::DVB_GetCableDelivSys(byte* b, int maxLen)
 				return;
 			}
 			NITCableDescriptor cableNIT;
-			cableNIT.Frequency = (10000000* ((b[2]>>4)&0xf));
-			cableNIT.Frequency+= (1000000*  ((b[2]&0xf)));
-			cableNIT.Frequency+= (100000*   ((b[3]>>4)&0xf));
-			cableNIT.Frequency+= (10000*    ((b[3]&0xf)));
-			cableNIT.Frequency+= (1000*     ((b[4]>>4)&0xf));
-			cableNIT.Frequency+= (100*      ((b[4]&0xf)));
-			cableNIT.Frequency+= ( 10*      ((b[5]>>4)&0xf));
-			cableNIT.Frequency+= (b[5]&0xf);
+			// morpheus_xx: ScanNIT returns frequency and symbolrate * 10
+			cableNIT.Frequency = (1000000* ((b[2]>>4)&0xf));
+			cableNIT.Frequency+= (100000*  ((b[2]&0xf)));
+			cableNIT.Frequency+= (10000*   ((b[3]>>4)&0xf));
+			cableNIT.Frequency+= (1000*    ((b[3]&0xf)));
+			cableNIT.Frequency+= (100*     ((b[4]>>4)&0xf));
+			cableNIT.Frequency+= (10*      ((b[4]&0xf)));
+			cableNIT.Frequency+= ( 1*      ((b[5]>>4)&0xf));
+			//cableNIT.Frequency+= (b[5]&0xf);
 			//
 			cableNIT.FECOuter = (b[7] & 0xF);
 			// fec-outer
@@ -555,13 +556,14 @@ void CNITDecoder::DVB_GetCableDelivSys(byte* b, int maxLen)
 				default: cableNIT.Modulation=BDA_MOD_NOT_SET; break;
 			}
 			
-			cableNIT.Symbolrate = (1000000* ((b[9]>>4)&0xf));
-			cableNIT.Symbolrate+= (100000*  ((b[9]&0xf)));
-			cableNIT.Symbolrate+= (10000*   ((b[10]>>4)&0xf));
-			cableNIT.Symbolrate+= (1000*    ((b[10]&0xf)));
-			cableNIT.Symbolrate+= (100*     ((b[11]>>4)&0xf));
-			cableNIT.Symbolrate+= (10*      ((b[11]&0xf)));
-			cableNIT.Symbolrate+= (         ((b[12]>>4)&0xf));
+			// morpheus_xx: ScanNIT returns frequency and symbolrate * 10
+			cableNIT.Symbolrate = (100000* ((b[9]>>4)&0xf));
+			cableNIT.Symbolrate+= (10000*  ((b[9]&0xf)));
+			cableNIT.Symbolrate+= (1000*   ((b[10]>>4)&0xf));
+			cableNIT.Symbolrate+= (100*    ((b[10]&0xf)));
+			cableNIT.Symbolrate+= (10*     ((b[11]>>4)&0xf));
+			cableNIT.Symbolrate+= (1*      ((b[11]&0xf)));
+			//cableNIT.Symbolrate+= (         ((b[12]>>4)&0xf));
 			
 			
 
