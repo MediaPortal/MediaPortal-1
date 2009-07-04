@@ -33,6 +33,8 @@ using TvLibrary.Log;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces;
 using DirectShowLib.BDA;
+using System.Xml.Serialization;
+using MediaPortal.UserInterface.Controls;
 
 namespace SetupTv.Sections
 {
@@ -51,6 +53,13 @@ namespace SetupTv.Sections
         Satelite = null;
         FileName = "";
         SatteliteName = "";
+      }
+      public String DisplayName
+      {
+        get
+        {
+          return System.IO.Path.GetFileNameWithoutExtension(FileName);
+        }
       }
       public override string ToString()
       {
@@ -72,7 +81,8 @@ namespace SetupTv.Sections
       #endregion
     }
 
-    class Transponder : IComparable<Transponder>
+    [Serializable]
+    public class Transponder : IComparable<Transponder>
     {
       public int CarrierFrequency; // frequency
       public Polarisation Polarisation;  // polarisation 0=hori, 1=vert
@@ -108,8 +118,7 @@ namespace SetupTv.Sections
     #region variables
 
     readonly int _cardNumber;
-    readonly List<Transponder> _transponders = new List<Transponder>();
-    private int _channelCount;
+    List<Transponder> _transponders = new List<Transponder>();
 
     int _tvChannelsNew;
     int _radioChannelsNew;
@@ -120,8 +129,6 @@ namespace SetupTv.Sections
     bool _enableEvents;
     bool _ignoreCheckBoxCreateGroupsClickEvent;
     User _user;
-    bool dvbs2;
-    int _count;
 
     CI_Menu_Dialog ciMenuDialog; // ci menu dialog object
 
@@ -160,6 +167,10 @@ namespace SetupTv.Sections
     #endregion
 
     #region helper methods
+    /// <summary>
+    /// Downloads new transponderlist and merges both S and S2 into one XML 
+    /// </summary>
+    /// <param name="context"></param>
     void DownloadTransponder(SatteliteContext context)
     {
       if (context.Url == null)
@@ -176,19 +187,15 @@ namespace SetupTv.Sections
       {
         string[,] contextDownload = new string[2, 2];
 
+        List<Transponder> transponders = new List<Transponder>();
         contextDownload[0, 0] = context.FileName;
-        contextDownload[1, 0] = context.FileName.Replace(".ini", "-S2.ini");
+//        contextDownload[1, 0] = context.FileName.Replace(".ini", "-S2.ini");
         contextDownload[0, 1] = context.Url;
         contextDownload[1, 1] = context.Url.Replace(".ini", "-S2.ini");
 
         for (int row = 0; row <= 1; row++)
         {
-          string satFile = contextDownload[row, 0];
           string satUrl = contextDownload[row, 1];
-          if (File.Exists(satFile))
-          {
-            File.Delete(satFile);
-          }
           item.Text = itemLine + " connecting...";
           Application.DoEvents();
           HttpWebRequest request = (HttpWebRequest)WebRequest.Create(satUrl);
@@ -203,22 +210,156 @@ namespace SetupTv.Sections
             Application.DoEvents();
             using (Stream resStream = response.GetResponseStream())
             {
+              String line;
               using (TextReader tin = new StreamReader(resStream))
               {
-                using (TextWriter tout = File.CreateText(satFile))
+                #region Parse and fill transponder list
+                do
                 {
-                  while (true)
+                  line = tin.ReadLine();
+                  if (line != null)
                   {
-                    string line = tin.ReadLine();
-                    if (line == null)
-                      break;
-                    tout.WriteLine(line);
+                    line = line.Trim();
+                    if (line.Length > 0)
+                    {
+                      if (line.StartsWith(";"))
+                        continue;
+                      if (line.Contains("S2"))
+                        continue;
+                      try
+                      {
+                        String[] tpdata = line.Split(new char[] { ',' });
+                        if (tpdata.Length >= 3)
+                        {
+                          if (tpdata[0].IndexOf("=") >= 0)
+                          {
+                            tpdata[0] = tpdata[0].Substring(tpdata[0].IndexOf("=") + 1);
+                          }
+                          Transponder transponder = new Transponder();
+                          transponder.CarrierFrequency = Int32.Parse(tpdata[0]) * 1000;
+                          switch (tpdata[1].ToLowerInvariant())
+                          {
+                            case "v":
+                              transponder.Polarisation = Polarisation.LinearV;
+                              break;
+                            case "h":
+                              transponder.Polarisation = Polarisation.LinearH;
+                              break;
+                            case "r":
+                              transponder.Polarisation = Polarisation.CircularR;
+                              break;
+                            case "l":
+                              transponder.Polarisation = Polarisation.CircularL;
+                              break;
+                            default:
+                              transponder.Polarisation = Polarisation.LinearH;
+                              break;
+                          }
+                          transponder.SymbolRate = Int32.Parse(tpdata[2]);
+                          for (int idx = 3; idx < tpdata.Length; ++idx)
+                          {
+                            string fieldValue = tpdata[idx].ToLowerInvariant();
+                            if (fieldValue == "8psk")
+                              transponder.Modulation = ModulationType.Mod8Psk;
+                            if (fieldValue == "qpsk")
+                              transponder.Modulation = ModulationType.ModQpsk;
+                            if (fieldValue == "16apsk")
+                              transponder.Modulation = ModulationType.Mod16Apsk;
+                            if (fieldValue == "32apsk")
+                              transponder.Modulation = ModulationType.Mod32Apsk;
+
+                            if (fieldValue == "12")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_2;
+                            if (fieldValue == "23")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_3;
+                            if (fieldValue == "34")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate3_4;
+                            if (fieldValue == "35")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate3_5;
+                            if (fieldValue == "45")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate4_5;
+                            if (fieldValue == "511")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_11;
+                            if (fieldValue == "56")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_6;
+                            if (fieldValue == "78")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate7_8;
+                            if (fieldValue == "14")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_4;
+                            if (fieldValue == "13")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_3;
+                            if (fieldValue == "25")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_5;
+                            if (fieldValue == "67")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate6_7;
+                            if (fieldValue == "89")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate8_9;
+                            if (fieldValue == "910")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate9_10;
+
+                            if (fieldValue == "1/2")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_2;
+                            if (fieldValue == "2/3")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_3;
+                            if (fieldValue == "3/4")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate3_4;
+                            if (fieldValue == "3/5")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate3_5;
+                            if (fieldValue == "4/5")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate4_5;
+                            if (fieldValue == "5/11")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_11;
+                            if (fieldValue == "5/6")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_6;
+                            if (fieldValue == "7/8")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate7_8;
+                            if (fieldValue == "1/4")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_4;
+                            if (fieldValue == "1/3")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_3;
+                            if (fieldValue == "2/5")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_5;
+                            if (fieldValue == "6/7")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate6_7;
+                            if (fieldValue == "8/9")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate8_9;
+                            if (fieldValue == "9/10")
+                              transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate9_10;
+
+                            if (fieldValue == "off")
+                              transponder.Pilot = Pilot.Off;
+                            if (fieldValue == "on")
+                              transponder.Pilot = Pilot.On;
+
+                            if (fieldValue == "0.20")
+                              transponder.Rolloff = RollOff.Twenty;
+                            if (fieldValue == "0.25")
+                              transponder.Rolloff = RollOff.TwentyFive;
+                            if (fieldValue == "0.35")
+                              transponder.Rolloff = RollOff.ThirtyFive;
+                          }
+                          transponders.Add(transponder);
+                        }
+                      }
+                      catch { } // ignore parsing errors in single line (i.e. 19,2 Astra reading fails due split & parse)
+                    }
                   }
                 }
+                while (line != null);
+                #endregion
               }
             }
           }
+        } // for
+        String newPath = String.Format(@"{0}\TuningParameters\dvbs\{1}.xml", Log.GetPathName(), Path.GetFileNameWithoutExtension(context.FileName));
+        if (File.Exists(newPath))
+        {
+          File.Delete(newPath);
         }
+        System.IO.TextWriter parFileXML = System.IO.File.CreateText(newPath);
+        XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Transponder>));
+        xmlSerializer.Serialize(parFileXML, transponders);
+        parFileXML.Close();
         item.Text = itemLine + " done";
       }
       catch (WebException WebEx)
@@ -237,191 +378,44 @@ namespace SetupTv.Sections
       Application.DoEvents();
     }
 
-    void ReadTransponders(SatteliteContext context)
-    {
-      //set filename of transpoder file
-      string tsfilename = context.FileName;
-      string line;
-      string[] tpdata;
-      // load transponder list and start scan
-      // first check if we are to look for the dvbs2 scanning file with the -S2 extension
-      if (dvbs2)
-      {
-        Log.Info("DVBS: Also using DVB-S2 transponder scanning information");
-        string transpondername = Path.GetFileNameWithoutExtension(tsfilename).ToLowerInvariant();
-        //@"\Tuningparameters\"
-        tsfilename = String.Format(@"{0}\TuningParameters\{1}-S2.ini", Log.GetPathName(), transpondername);
-        if (!File.Exists(tsfilename))
-        {
-          Log.Info("DVBS: {0} transponder scanning file not present!", tsfilename);
-          return;
-        }
-      }
-      TextReader tin = File.OpenText(tsfilename);
-      do
-      {
-        line = tin.ReadLine();
-        if (line != null)
-        {
-          line = line.Trim();
-          if (line.Length > 0)
-          {
-            if (line.StartsWith(";"))
-              continue;
-            if (line.Contains("S2"))
-              continue;
-            tpdata = line.Split(new char[] { ',' });
-            if (tpdata.Length >= 3)
-            {
-              if (tpdata[0].IndexOf("=") >= 0)
-              {
-                tpdata[0] = tpdata[0].Substring(tpdata[0].IndexOf("=") + 1);
-              }
-              try
-              {
-                Transponder transponder = new Transponder();
-                transponder.CarrierFrequency = Int32.Parse(tpdata[0]) * 1000;
-                switch (tpdata[1].ToLowerInvariant())
-                {
-                  case "v":
-                    transponder.Polarisation = Polarisation.LinearV;
-                    break;
-                  case "h":
-                    transponder.Polarisation = Polarisation.LinearH;
-                    break;
-                  case "r":
-                    transponder.Polarisation = Polarisation.CircularR;
-                    break;
-                  case "l":
-                    transponder.Polarisation = Polarisation.CircularL;
-                    break;
-                  default:
-                    transponder.Polarisation = Polarisation.LinearH;
-                    break;
-                }
-                transponder.SymbolRate = Int32.Parse(tpdata[2]);
-                for (int idx = 3; idx < tpdata.Length; ++idx)
-                {
-                  string fieldValue = tpdata[idx].ToLowerInvariant();
-                  if (fieldValue == "8psk")
-                    transponder.Modulation = ModulationType.Mod8Psk;
-                  if (fieldValue == "qpsk")
-                    transponder.Modulation = ModulationType.ModQpsk;
-                  if (fieldValue == "16apsk")
-                    transponder.Modulation = ModulationType.Mod16Apsk;
-                  if (fieldValue == "32apsk")
-                    transponder.Modulation = ModulationType.Mod32Apsk;
-
-                  if (fieldValue == "12")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_2;
-                  if (fieldValue == "23")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_3;
-                  if (fieldValue == "34")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate3_4;
-                  if (fieldValue == "35")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate3_5;
-                  if (fieldValue == "45")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate4_5;
-                  if (fieldValue == "511")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_11;
-                  if (fieldValue == "56")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_6;
-                  if (fieldValue == "78")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate7_8;
-                  if (fieldValue == "14")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_4;
-                  if (fieldValue == "13")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_3;
-                  if (fieldValue == "25")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_5;
-                  if (fieldValue == "67")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate6_7;
-                  if (fieldValue == "89")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate8_9;
-                  if (fieldValue == "910")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate9_10;
-
-                  if (fieldValue == "1/2")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_2;
-                  if (fieldValue == "2/3")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_3;
-                  if (fieldValue == "3/4")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate3_4;
-                  if (fieldValue == "3/5")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate3_5;
-                  if (fieldValue == "4/5")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate4_5;
-                  if (fieldValue == "5/11")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_11;
-                  if (fieldValue == "5/6")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_6;
-                  if (fieldValue == "7/8")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate7_8;
-                  if (fieldValue == "1/4")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_4;
-                  if (fieldValue == "1/3")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_3;
-                  if (fieldValue == "2/5")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_5;
-                  if (fieldValue == "6/7")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate6_7;
-                  if (fieldValue == "8/9")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate8_9;
-                  if (fieldValue == "9/10")
-                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate9_10;
-
-                  if (fieldValue == "off")
-                    transponder.Pilot = Pilot.Off;
-                  if (fieldValue == "on")
-                    transponder.Pilot = Pilot.On;
-
-                  if (fieldValue == "0.20")
-                    transponder.Rolloff = RollOff.Twenty;
-                  if (fieldValue == "0.25")
-                    transponder.Rolloff = RollOff.TwentyFive;
-                  if (fieldValue == "0.35")
-                    transponder.Rolloff = RollOff.ThirtyFive;
-                }
-                _transponders.Add(transponder);
-                _count += 1;
-              }
-              catch { }
-            }
-          }
-        }
-      }
-      while (!(line == null));
-      tin.Close();
-      dvbs2 = false;
-    }
-
+    /// <summary>
+    /// Loads new xml transponder list
+    /// </summary>
+    /// <param name="FileName"></param>
     void LoadTransponders(SatteliteContext context)
     {
-      if (!File.Exists(context.FileName))
+      String fileName = context.FileName;
+      if (!File.Exists(fileName))
       {
         DownloadTransponder(context);
       }
-      _count = 0;
+
+      // clear before refilling
       _transponders.Clear();
-      _channelCount = 0;
-      // Read normal transponder file
-      ReadTransponders(context);
-      // Read DVB-S2 transponder file if required and check if available
-      if (checkEnableDVBS2.Checked)
+      try
       {
-        dvbs2 = true;
-        Log.Debug("DVBS: reading -S2 transponder file now");
-        ReadTransponders(context);
+        XmlReader parFileXML = XmlReader.Create(fileName);
+        XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Transponder>));
+        _transponders = (List<Transponder>)xmlSerializer.Deserialize(parFileXML);
+        parFileXML.Close();
+        _transponders.Sort();
       }
-      _channelCount = _count;
-      _transponders.Sort();
+      catch (Exception ex)
+      {
+        Log.Error("Error loading tuningdetails: {0}", ex.ToString());
+        MessageBox.Show("Transponder list could not be loaded, check error.log for details.");
+      }
     }
 
+    /// <summary>
+    /// Loads all known satellites from xml file
+    /// </summary>
+    /// <returns></returns>
     static List<SatteliteContext> LoadSattelites()
     {
       List<SatteliteContext> satellites = new List<SatteliteContext>();
       XmlDocument doc = new XmlDocument();
-      doc.Load(String.Format(@"{0}\TuningParameters\satellites.xml", Log.GetPathName()));
+      doc.Load(String.Format(@"{0}\TuningParameters\dvbs\satellites.xml", Log.GetPathName()));
       XmlNodeList nodes = doc.SelectNodes("/satellites/satellite");
       if (nodes != null)
         foreach (XmlNode node in nodes)
@@ -430,24 +424,10 @@ namespace SetupTv.Sections
           ts.SatteliteName = node.Attributes.GetNamedItem("name").Value;
           ts.Url = node.Attributes.GetNamedItem("url").Value;
           string name = Utils.FilterFileName(ts.SatteliteName);
-          ts.FileName = String.Format(@"{0}\TuningParameters\{1}.ini", Log.GetPathName(), name);
+          ts.FileName = String.Format(@"{0}\TuningParameters\dvbs\{1}.xml", Log.GetPathName(), name);
           satellites.Add(ts);
         }
 
-      /*
-      string[] files = System.IO.Directory.GetFiles(Log.GetPathName() + @"\Tuningparameters", "*.tpl");
-
-      foreach (string file in files)
-      {
-        string fileName = System.IO.Path.GetFileName(file);
-        SatteliteContext ts = LoadSatteliteName(fileName);
-        if (ts != null)
-        {
-          satellites.Add(ts);
-        }
-      }*/
-
-      //satellites.Sort();
       IList<Satellite> dbSats = Satellite.ListAll();
       foreach (SatteliteContext ts in satellites)
       {
@@ -485,87 +465,51 @@ namespace SetupTv.Sections
     void Init()
     {
       _enableEvents = false;
-      mpTransponder1.Items.Clear();
-      mpTransponder2.Items.Clear();
-      mpTransponder3.Items.Clear();
-      mpTransponder4.Items.Clear();
-      List<SatteliteContext> satellites = LoadSattelites();
-      foreach (SatteliteContext ts in satellites)
-      {
-        mpTransponder1.Items.Add(ts);
-        mpTransponder2.Items.Add(ts);
-        mpTransponder3.Items.Add(ts);
-        mpTransponder4.Items.Add(ts);
-      }
-      if (mpTransponder1.Items.Count > 0)
-        mpTransponder1.SelectedIndex = 0;
-      if (mpTransponder2.Items.Count > 0)
-        mpTransponder2.SelectedIndex = 0;
-      if (mpTransponder3.Items.Count > 0)
-        mpTransponder3.SelectedIndex = 0;
-      if (mpTransponder4.Items.Count > 0)
-        mpTransponder4.SelectedIndex = 0;
-
-      mpDisEqc1.Items.Clear();
-      mpDisEqc1.Items.Add(DisEqcType.None);
-      mpDisEqc1.Items.Add(DisEqcType.SimpleA);
-      mpDisEqc1.Items.Add(DisEqcType.SimpleB);
-      mpDisEqc1.Items.Add(DisEqcType.Level1AA);
-      mpDisEqc1.Items.Add(DisEqcType.Level1AB);
-      mpDisEqc1.Items.Add(DisEqcType.Level1BA);
-      mpDisEqc1.Items.Add(DisEqcType.Level1BB);
-      mpDisEqc1.SelectedIndex = 0;
-
-      mpDisEqc2.Items.Clear();
-      mpDisEqc2.Items.Add(DisEqcType.None);
-      mpDisEqc2.Items.Add(DisEqcType.SimpleA);
-      mpDisEqc2.Items.Add(DisEqcType.SimpleB);
-      mpDisEqc2.Items.Add(DisEqcType.Level1AA);
-      mpDisEqc2.Items.Add(DisEqcType.Level1AB);
-      mpDisEqc2.Items.Add(DisEqcType.Level1BA);
-      mpDisEqc2.Items.Add(DisEqcType.Level1BB);
-      mpDisEqc2.SelectedIndex = 0;
-
-      mpDisEqc3.Items.Clear();
-      mpDisEqc3.Items.Add(DisEqcType.None);
-      mpDisEqc3.Items.Add(DisEqcType.SimpleA);
-      mpDisEqc3.Items.Add(DisEqcType.SimpleB);
-      mpDisEqc3.Items.Add(DisEqcType.Level1AA);
-      mpDisEqc3.Items.Add(DisEqcType.Level1AB);
-      mpDisEqc3.Items.Add(DisEqcType.Level1BA);
-      mpDisEqc3.Items.Add(DisEqcType.Level1BB);
-      mpDisEqc3.SelectedIndex = 0;
-
-      mpDisEqc4.Items.Clear();
-      mpDisEqc4.Items.Add(DisEqcType.None);
-      mpDisEqc4.Items.Add(DisEqcType.SimpleA);
-      mpDisEqc4.Items.Add(DisEqcType.SimpleB);
-      mpDisEqc4.Items.Add(DisEqcType.Level1AA);
-      mpDisEqc4.Items.Add(DisEqcType.Level1AB);
-      mpDisEqc4.Items.Add(DisEqcType.Level1BA);
-      mpDisEqc4.Items.Add(DisEqcType.Level1BB);
-      mpDisEqc4.SelectedIndex = 0;
-
+    
       TvBusinessLayer layer = new TvBusinessLayer();
-      mpTransponder1.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber + "SatteliteContext1", "0").Value);
-      mpTransponder2.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber + "SatteliteContext2", "0").Value);
-      mpTransponder3.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber + "SatteliteContext3", "0").Value);
-      mpTransponder4.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber + "SatteliteContext4", "0").Value);
+      int idx = 0;
 
-      mpDisEqc1.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber + "DisEqc1", "0").Value);
-      mpDisEqc2.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber + "DisEqc2", "0").Value);
-      mpDisEqc3.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber + "DisEqc3", "0").Value);
-      mpDisEqc4.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber + "DisEqc4", "0").Value);
+      //List<SimpleFileName> satellites = fileFilters.AllFiles;
+      List<SatteliteContext> satellites = LoadSattelites();
+      MPComboBox[] mpTrans = new MPComboBox[] { mpTransponder1, mpTransponder2, mpTransponder3, mpTransponder4 };
+      MPComboBox[] mpDisEqc = new MPComboBox[] { mpDisEqc1, mpDisEqc2, mpDisEqc3, mpDisEqc4 };
+      MPComboBox[] mpBands = new MPComboBox[] { mpBand1, mpBand2, mpBand3, mpBand4 };
+      MPCheckBox[] mpLNBs = new MPCheckBox[] { mpLNB1, mpLNB2, mpLNB3, mpLNB4 };
+      MPComboBox curBox;
+      MPCheckBox curCheck;
+      for(int ctlIndex= 0; ctlIndex<4; ctlIndex++)
+      {
+        idx=ctlIndex+1;
+        curBox = mpTrans[ctlIndex];
+        curBox.Items.Clear();
+        foreach (SatteliteContext ts in satellites)
+        {
+          curBox.Items.Add(ts);
+        }
+        if (curBox.Items.Count > 0)
+        {
+          curBox.SelectedIndex = Int32.Parse(layer.GetSetting(String.Format("dvbs{0}SatteliteContext{1}", _cardNumber, idx), "0").Value);
+        }
 
-      mpBand1.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber + "band1", "0").Value);
-      mpBand2.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber + "band2", "0").Value);
-      mpBand3.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber + "band3", "0").Value);
-      mpBand4.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber + "band4", "0").Value);
+        curBox = mpDisEqc[ctlIndex];
+        curBox.Items.Clear();
+        curBox.Items.Add(DisEqcType.None);
+        curBox.Items.Add(DisEqcType.SimpleA);
+        curBox.Items.Add(DisEqcType.SimpleB);
+        curBox.Items.Add(DisEqcType.Level1AA);
+        curBox.Items.Add(DisEqcType.Level1AB);
+        curBox.Items.Add(DisEqcType.Level1BA);
+        curBox.Items.Add(DisEqcType.Level1BB);
+        curBox.SelectedIndex = Int32.Parse(layer.GetSetting(String.Format("dvbs{0}DisEqc{1}", _cardNumber, idx), "0").Value);
 
-      mpLNB1.Checked = (layer.GetSetting("dvbs" + _cardNumber + "LNB1", "false").Value == "true");
-      mpLNB2.Checked = (layer.GetSetting("dvbs" + _cardNumber + "LNB2", "false").Value == "true");
-      mpLNB3.Checked = (layer.GetSetting("dvbs" + _cardNumber + "LNB3", "false").Value == "true");
-      mpLNB4.Checked = (layer.GetSetting("dvbs" + _cardNumber + "LNB4", "false").Value == "true");
+        curBox = mpBands[ctlIndex];
+        curBox.SelectedIndex = Int32.Parse(layer.GetSetting(String.Format("dvbs{0}band{1}", _cardNumber, idx), "0").Value);
+
+        curCheck = mpLNBs[ctlIndex];
+        curCheck.Checked = (layer.GetSetting(String.Format("dvbs{0}LNB{1}", _cardNumber, idx), "0").Value == "true");
+
+      }
+
       mpLNB1_CheckedChanged(null, null);
       mpLNB2_CheckedChanged(null, null);
       mpLNB3_CheckedChanged(null, null);
@@ -750,6 +694,7 @@ namespace SetupTv.Sections
           MessageBox.Show(this, "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
           return;
         }
+
         Thread scanThread = new Thread(DoScan);
         scanThread.Name = "DVB-S scan thread";
         scanThread.Start();
@@ -852,7 +797,7 @@ namespace SetupTv.Sections
     void Scan(int LNB, BandType bandType, DisEqcType disEqc, SatteliteContext context)
     {
       LoadTransponders(context);
-      if (_channelCount == 0)
+      if (_transponders.Count == 0)
         return;
 
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -874,16 +819,24 @@ namespace SetupTv.Sections
 
       User user = new User();
       user.CardId = _cardNumber;
-      for (int index = 0; index < _channelCount; ++index)
+      int scanIndex = 0; // count of really scanned TPs (S2 skipped)
+      for (int index = 0; index < _transponders.Count; ++index)
       {
         if (_stopScanning)
           return;
-        float percent = ((float)(index)) / _channelCount;
+        float percent = ((float)(index)) / _transponders.Count;
         percent *= 100f;
         if (percent > 100f)
           percent = 100f;
         progressBar1.Value = (int)percent;
 
+        // if S2 transponder and not enabled skip it
+        if (_transponders[index].Pilot != Pilot.NotSet && _transponders[index].Rolloff != RollOff.NotSet && !checkEnableDVBS2.Checked)
+        {
+          continue;
+        }
+        
+        scanIndex++;
         DVBSChannel tuneChannel = new DVBSChannel();
         tuneChannel.Frequency = _transponders[index].CarrierFrequency;
         tuneChannel.Polarisation = _transponders[index].Polarisation;
@@ -893,16 +846,9 @@ namespace SetupTv.Sections
         tuneChannel.ModulationType = _transponders[index].Modulation;
         tuneChannel.InnerFecRate = _transponders[index].InnerFecRate;
         //Grab the Pilot & Roll-off settings
-        if (checkEnableDVBS2.Checked)
-        {
-          tuneChannel.Pilot = _transponders[index].Pilot;
-          tuneChannel.Rolloff = _transponders[index].Rolloff;
-        }
-        if (!checkEnableDVBS2.Checked)
-        {
-          tuneChannel.Pilot = Pilot.NotSet;
-          tuneChannel.Rolloff = RollOff.NotSet;
-        }
+        tuneChannel.Pilot = _transponders[index].Pilot;
+        tuneChannel.Rolloff = _transponders[index].Rolloff;
+
         if (bandType == BandType.Circular)
         {
           if (tuneChannel.Polarisation == Polarisation.LinearH)
@@ -915,7 +861,7 @@ namespace SetupTv.Sections
         ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
         item.EnsureVisible();
 
-        if (index == 0)
+        if (scanIndex == 1) // first scanned
         {
           RemoteControl.Instance.Tune(ref user, tuneChannel, -1);
         }
@@ -929,12 +875,12 @@ namespace SetupTv.Sections
         {
           if (RemoteControl.Instance.TunerLocked(_cardNumber) == false)
           {
-            line = String.Format("lnb:{0} {1}tp- {2} {3} {4}:No signal", LNB, 1 + index, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate);
+            line = String.Format("lnb:{0} {1}tp- {2} {3} {4}:No signal", LNB, scanIndex, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate);
             item.Text = line;
             item.ForeColor = Color.Red;
             continue;
           }
-          line = String.Format("lnb:{0} {1}tp- {2} {3} {4}:Nothing found", LNB, 1 + index, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate);
+          line = String.Format("lnb:{0} {1}tp- {2} {3} {4}:Nothing found", LNB, scanIndex, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate);
           item.Text = line;
           item.ForeColor = Color.Red;
           continue;

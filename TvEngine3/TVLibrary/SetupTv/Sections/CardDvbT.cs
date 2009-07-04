@@ -30,6 +30,7 @@ using TvControl;
 using TvLibrary.Log;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces;
+using System.Xml.Serialization;
 
 namespace SetupTv.Sections
 {
@@ -38,6 +39,10 @@ namespace SetupTv.Sections
     readonly int _cardNumber;
     bool _isScanning;
     bool _stopScanning;
+    
+    FileFilters fileFilters;
+
+    List<DVBTTuning> _dvbtChannels;
 
     CI_Menu_Dialog ciMenuDialog; // ci menu dialog object
 
@@ -75,23 +80,18 @@ namespace SetupTv.Sections
       mpComboBoxCountry.Items.Clear();
       try
       {
-        XmlDocument doc = new XmlDocument();
-        doc.Load(String.Format(@"{0}\TuningParameters\dvbt.xml", Log.GetPathName()));
-        XmlNodeList list = doc.SelectNodes("/dvbt/country");
-        if (list != null)
-          foreach (XmlNode node in list)
-          {
-            XmlNode attribute = node.Attributes.GetNamedItem("name");
-            mpComboBoxCountry.Items.Add(attribute.Value);
-          }
-        mpComboBoxCountry.SelectedIndex = 0;
+        fileFilters = new FileFilters("DVBT", ref mpComboBoxCountry, ref mpComboBoxRegion);
       }
       catch (Exception)
       {
-        MessageBox.Show(@"Unable to open TuningParameters\dvbt.xml");
+        MessageBox.Show(@"Unable to open TuningParameters\dvbt\*.xml");
         return;
       }
     }
+
+
+
+
 
     void UpdateStatus()
     {
@@ -138,7 +138,6 @@ namespace SetupTv.Sections
       }
     }
 
-
     private void mpButtonScanTv_Click(object sender, EventArgs e)
     {
       if (_isScanning == false)
@@ -162,6 +161,13 @@ namespace SetupTv.Sections
           MessageBox.Show(this, "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning another part of a hybrid card.");
           return;
         }
+
+        CustomFileName tuningFile=(CustomFileName)mpComboBoxRegion.SelectedItem;
+        _dvbtChannels= (List<DVBTTuning>)fileFilters.LoadList(tuningFile.FileName, typeof(List<DVBTTuning>));
+        if (_dvbtChannels == null)
+        {
+          return;
+        }
         Thread scanThread = new Thread(DoScan);
         scanThread.Name = "DVB-T scan thread";
         scanThread.Start();
@@ -177,7 +183,7 @@ namespace SetupTv.Sections
       int radioChannelsNew = 0;
       int tvChannelsUpdated = 0;
       int radioChannelsUpdated = 0;
-      int frequencyOffset = 0;
+      //int frequencyOffset = 0;
 
       string buttonText = mpButtonScanTv.Text;
       User user = new User();
@@ -191,66 +197,71 @@ namespace SetupTv.Sections
         RemoteControl.Instance.EpgGrabberEnabled = false;
         listViewStatus.Items.Clear();
 
-        Dictionary<int, int> frequencies = new Dictionary<int, int>();
-        XmlDocument doc = new XmlDocument();
-        doc.Load(String.Format(@"{0}\TuningParameters\dvbt.xml", Log.GetPathName()));
-        XmlNodeList countryList = doc.SelectNodes("/dvbt/country");
-        if (countryList != null)
-          foreach (XmlNode nodeCountry in countryList)
-          {
-            XmlNode nodeName = nodeCountry.Attributes.GetNamedItem("name");
-            if (nodeName.Value != mpComboBoxCountry.SelectedItem.ToString())
-              continue;
-            XmlNode nodeOffset = nodeCountry.Attributes.GetNamedItem("offset");
-            if (nodeOffset != null)
-            {
-              if (nodeOffset.Value != null)
-              {
-                if (Int32.TryParse(nodeOffset.Value, out frequencyOffset) == false)
-                {
-                  frequencyOffset = 0;
-                }
-              }
-            }
-            XmlNodeList nodeFrequencyList = nodeCountry.SelectNodes("carrier");
-            if (nodeFrequencyList != null)
-              foreach (XmlNode nodeFrequency in nodeFrequencyList)
-              {
-                string frequencyText = nodeFrequency.Attributes.GetNamedItem("frequency").Value;
-                string bandwidthText = "8";
-                if (nodeFrequency.Attributes.GetNamedItem("bandwidth") != null)
-                {
-                  bandwidthText = nodeFrequency.Attributes.GetNamedItem("bandwidth").Value;
-                }
-                int frequency = Int32.Parse(frequencyText);
-                int bandWidth = Int32.Parse(bandwidthText);
-                frequencies.Add(frequency, bandWidth);
-              }
-          }
-        if (frequencies.Count == 0)
+        //Dictionary<int, int> frequencies = new Dictionary<int, int>();
+        //XmlDocument doc = new XmlDocument();
+        //doc.Load(String.Format(@"{0}\TuningParameters\dvbt.xml", Log.GetPathName()));
+        //XmlNodeList countryList = doc.SelectNodes("/dvbt/country");
+        //if (countryList != null)
+        //  foreach (XmlNode nodeCountry in countryList)
+        //  {
+        //    XmlNode nodeName = nodeCountry.Attributes.GetNamedItem("name");
+        //    if (nodeName.Value != mpComboBoxCountry.SelectedItem.ToString())
+        //      continue;
+        //    XmlNode nodeOffset = nodeCountry.Attributes.GetNamedItem("offset");
+        //    if (nodeOffset != null)
+        //    {
+        //      if (nodeOffset.Value != null)
+        //      {
+        //        if (Int32.TryParse(nodeOffset.Value, out frequencyOffset) == false)
+        //        {
+        //          frequencyOffset = 0;
+        //        }
+        //      }
+        //    }
+        //    XmlNodeList nodeFrequencyList = nodeCountry.SelectNodes("carrier");
+        //    if (nodeFrequencyList != null)
+        //      foreach (XmlNode nodeFrequency in nodeFrequencyList)
+        //      {
+        //        string frequencyText = nodeFrequency.Attributes.GetNamedItem("frequency").Value;
+        //        string bandwidthText = "8";
+        //        if (nodeFrequency.Attributes.GetNamedItem("bandwidth") != null)
+        //        {
+        //          bandwidthText = nodeFrequency.Attributes.GetNamedItem("bandwidth").Value;
+        //        }
+        //        int frequency = Int32.Parse(frequencyText);
+        //        int bandWidth = Int32.Parse(bandwidthText);
+        //        frequencies.Add(frequency, bandWidth);
+        //      }
+        //  }
+        //if (frequencies.Count == 0)
+        //  return;
+
+        if (_dvbtChannels.Count == 0)
           return;
 
         mpComboBoxCountry.Enabled = false;
         TvBusinessLayer layer = new TvBusinessLayer();
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
 
-        int index = -1;
-        Dictionary<int, int>.Enumerator enumerator = frequencies.GetEnumerator();
-        while (enumerator.MoveNext())
+        //int index = -1;
+        //Dictionary<int, int>.Enumerator enumerator = frequencies.GetEnumerator();
+        //while (enumerator.MoveNext())
+        //{
+        for (int index = 0; index < _dvbtChannels.Count; ++index)
         {
           if (_stopScanning)
             return;
-          index++;
-          float percent = ((float)(index)) / frequencies.Count;
+
+          float percent = ((float)(index)) / _dvbtChannels.Count;
           percent *= 100f;
           if (percent > 100f)
             percent = 100f;
           progressBar1.Value = (int)percent;
 
-          KeyValuePair<int, int> values = enumerator.Current;
-          DVBTChannel tuneChannel = new DVBTChannel();
-          tuneChannel.Frequency = values.Key;
-          tuneChannel.BandWidth = values.Value;
+          DVBTTuning curTuning = _dvbtChannels[index];
+          DVBTChannel tuneChannel = new DVBTChannel(curTuning);
+          //tuneChannel.Frequency = values.Key;
+          //tuneChannel.BandWidth = values.Value;
 
           string line = String.Format("{0}tp- {1} {2}MHz ", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
           ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
@@ -263,16 +274,16 @@ namespace SetupTv.Sections
           if (channels == null || channels.Length == 0)
           {
             /// try frequency - offset
-            tuneChannel.Frequency = values.Key - frequencyOffset;
-            tuneChannel.BandWidth = values.Value;
+            tuneChannel.Frequency = curTuning.Frequency - curTuning.Offset;
+            tuneChannel.BandWidth = curTuning.BandWidth;
             line = String.Format("{0}tp- {1} {2}MHz ", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
             item.Text = line;
             channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
             if (channels == null || channels.Length == 0)
             {
               /// try frequency + offset
-              tuneChannel.Frequency = values.Key + frequencyOffset;
-              tuneChannel.BandWidth = values.Value;
+              tuneChannel.Frequency = curTuning.Frequency + curTuning.Offset;
+              tuneChannel.BandWidth = curTuning.BandWidth;
               line = String.Format("{0}tp- {1} {2}MHz ", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
               item.Text = line;
               channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);

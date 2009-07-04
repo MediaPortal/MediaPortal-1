@@ -25,12 +25,46 @@ using TvLibrary.Interfaces;
 namespace TvLibrary.Channels
 {
   /// <summary>
+  /// Tuning part of DVB-C required for scanning
+  /// </summary>
+  [Serializable]
+  public struct DVBCTuning
+  {
+    public DVBCTuning(long p_Frequency, ModulationType p_ModulationType, int p_SymbolRate)
+    {
+      Frequency = p_Frequency;
+      ModulationType = p_ModulationType;
+      SymbolRate = p_SymbolRate;
+    }
+    public long Frequency;
+    public ModulationType ModulationType;
+    public int SymbolRate;
+    public override string ToString()
+    {
+      return String.Format("freq:{0} mod:{1} symbolrate:{2}", Frequency, ModulationType, SymbolRate);
+    }
+  }
+  /// <summary>
   /// class holding all tuning details for DVBC
   /// </summary>
   [Serializable]
   public class DVBCChannel : DVBBaseChannel
   {
     #region variables
+
+    public DVBCTuning TuningInfo
+    {
+      get
+      {
+        return new DVBCTuning(Frequency, ModulationType, SymbolRate);
+      }
+      set
+      {
+        Frequency = value.Frequency;
+        ModulationType = value.ModulationType;
+        SymbolRate = value.SymbolRate;
+      }
+    }
 
     private ModulationType _modulation;
     private int _symbolRate;
@@ -44,6 +78,11 @@ namespace TvLibrary.Channels
     {
       ModulationType = ModulationType.Mod64Qam;
       SymbolRate = 6875;
+    }
+
+    public DVBCChannel(DVBCTuning tuning)
+    {
+      TuningInfo = tuning;
     }
 
     #region properties

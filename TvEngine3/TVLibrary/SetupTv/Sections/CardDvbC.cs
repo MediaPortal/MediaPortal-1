@@ -29,23 +29,21 @@ using TvLibrary.Log;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces;
 using DirectShowLib.BDA;
+using System.Xml.Serialization;
+using System.Collections.Generic;
+using System.Xml;
 
 namespace SetupTv.Sections
 {
   public partial class CardDvbC : SectionSettings
   {
-    struct DVBCList
-    {
-      public int frequency;		 // frequency
-      public ModulationType modulation;	 // modulation
-      public int symbolrate;	 // symbol rate
-    }
-
     readonly int _cardNumber;
-    readonly DVBCList[] _dvbcChannels = new DVBCList[1000];
-    int _channelCount;
+
+    private List<DVBCTuning> _dvbcChannels = new List<DVBCTuning>();
     bool _isScanning;
     bool _stopScanning;
+
+    FileFilters fileFilters;
 
     CI_Menu_Dialog ciMenuDialog; // ci menu dialog object
 
@@ -85,44 +83,10 @@ namespace SetupTv.Sections
     {
       try
       {
-        String mod;
-        System.IO.TextWriter parFile = System.IO.File.CreateText(fileName);
-        parFile.WriteLine("; DVB-C Tuning parameters");
-        parFile.WriteLine("; Scanned on {0}", DateTime.Now);
-        for (int c = 0; c < _channelCount; c++)
-        {
-          switch (_dvbcChannels[c].modulation)
-          {
-            case ModulationType.Mod1024Qam: mod = "1024QAM"; break;
-            case ModulationType.Mod112Qam: mod = "112QAM"; break;
-            case ModulationType.Mod128Qam: mod = "128QAM"; break;
-            case ModulationType.Mod160Qam: mod = "160QAM"; break;
-            case ModulationType.Mod16Qam: mod = "16QAM"; break;
-            case ModulationType.Mod16Vsb: mod = "16VSB"; break;
-            case ModulationType.Mod192Qam: mod = "192QAM"; break;
-            case ModulationType.Mod224Qam: mod = "224QAM"; break;
-            case ModulationType.Mod256Qam: mod = "256QAM"; break;
-            case ModulationType.Mod320Qam: mod = "320QAM"; break;
-            case ModulationType.Mod384Qam: mod = "384QAM"; break;
-            case ModulationType.Mod448Qam: mod = "448QAM"; break;
-            case ModulationType.Mod512Qam: mod = "512QAM"; break;
-            case ModulationType.Mod640Qam: mod = "640QAM"; break;
-            case ModulationType.Mod64Qam: mod = "64QAM"; break;
-            case ModulationType.Mod768Qam: mod = "768QAM"; break;
-            case ModulationType.Mod80Qam: mod = "80QAM"; break;
-            case ModulationType.Mod896Qam: mod = "896QAM"; break;
-            case ModulationType.Mod8Vsb: mod = "8VSB"; break;
-            case ModulationType.Mod96Qam: mod = "96QAM"; break;
-            case ModulationType.ModAnalogAmplitude: mod = "AMPLITUDE"; break;
-            case ModulationType.ModAnalogFrequency: mod = "FREQUENCY"; break;
-            case ModulationType.ModBpsk: mod = "BPSK"; break;
-            case ModulationType.ModOqpsk: mod = "OQPSK"; break;
-            case ModulationType.ModQpsk: mod = "QPSK"; break;
-            default: continue;
-          }
-          parFile.WriteLine("{0},{1},{2}", _dvbcChannels[c].frequency, mod, _dvbcChannels[c].symbolrate * 1000);
-        }
-        parFile.Close();
+        System.IO.TextWriter parFileXML = System.IO.File.CreateText(fileName+"_xml");
+        XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<DVBCTuning>));
+        xmlSerializer.Serialize(parFileXML, _dvbcChannels);
+        parFileXML.Close();
       }
       catch (Exception ex)
       {
@@ -131,123 +95,24 @@ namespace SetupTv.Sections
       }
     }
 
+    /// <summary>
+    /// Load existing list from xml file 
+    /// </summary>
+    /// <param name="fileName">Path for input filen</param>
     void LoadList(string fileName)
     {
-
-      _channelCount = 0;
-      string line;
-      string[] tpdata;
-      System.IO.TextReader tin = System.IO.File.OpenText(fileName);
-      do
+      try
       {
-        line = tin.ReadLine();
-        if (line != null)
-        {
-          if (line.Length > 0)
-          {
-            if (line.StartsWith(";"))
-              continue;
-            tpdata = line.Split(new char[] { ',' });
-            if (tpdata.Length != 3)
-              tpdata = line.Split(new char[] { ';' });
-            if (tpdata.Length == 3)
-            {
-              try
-              {
-                _dvbcChannels[_channelCount].frequency = Int32.Parse(tpdata[0]);
-                string mod = tpdata[1].ToUpper();
-                switch (mod)
-                {
-                  case "1024QAM":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.Mod1024Qam;
-                    break;
-                  case "112QAM":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.Mod112Qam;
-                    break;
-                  case "128QAM":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.Mod128Qam;
-                    break;
-                  case "160QAM":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.Mod160Qam;
-                    break;
-                  case "16QAM":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.Mod16Qam;
-                    break;
-                  case "16VSB":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.Mod16Vsb;
-                    break;
-                  case "192QAM":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.Mod192Qam;
-                    break;
-                  case "224QAM":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.Mod224Qam;
-                    break;
-                  case "256QAM":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.Mod256Qam;
-                    break;
-                  case "320QAM":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.Mod320Qam;
-                    break;
-                  case "384QAM":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.Mod384Qam;
-                    break;
-                  case "448QAM":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.Mod448Qam;
-                    break;
-                  case "512QAM":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.Mod512Qam;
-                    break;
-                  case "640QAM":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.Mod640Qam;
-                    break;
-                  case "64QAM":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.Mod64Qam;
-                    break;
-                  case "768QAM":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.Mod768Qam;
-                    break;
-                  case "80QAM":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.Mod80Qam;
-                    break;
-                  case "896QAM":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.Mod896Qam;
-                    break;
-                  case "8VSB":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.Mod8Vsb;
-                    break;
-                  case "96QAM":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.Mod96Qam;
-                    break;
-                  case "AMPLITUDE":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.ModAnalogAmplitude;
-                    break;
-                  case "FREQUENCY":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.ModAnalogFrequency;
-                    break;
-                  case "BPSK":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.ModBpsk;
-                    break;
-                  case "OQPSK":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.ModOqpsk;
-                    break;
-                  case "QPSK":
-                    _dvbcChannels[_channelCount].modulation = ModulationType.ModQpsk;
-                    break;
-                  default:
-                    _dvbcChannels[_channelCount].modulation = ModulationType.ModNotSet;
-                    break;
-                }
-                _dvbcChannels[_channelCount].symbolrate = Int32.Parse(tpdata[2]) / 1000;
-                _channelCount += 1;
-              }
-              catch
-              {
-              }
-            }
-          }
-        }
-      } while (!(line == null));
-      tin.Close();
+        XmlReader parFileXML = XmlReader.Create(fileName);
+        XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<DVBCTuning>));
+        _dvbcChannels = (List<DVBCTuning>)xmlSerializer.Deserialize(parFileXML);
+        parFileXML.Close();
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Error loading tuningdetails: {0}", ex.ToString());
+        MessageBox.Show("Transponder list could not be loaded, check error.log for details.");
+      }
     }
 
     void Init()
@@ -255,20 +120,11 @@ namespace SetupTv.Sections
       mpComboBoxCountry.Items.Clear();
       try
       {
-        string[] files = System.IO.Directory.GetFiles(String.Format(@"{0}\TuningParameters", Log.GetPathName()));
-        for (int i = 0; i < files.Length; ++i)
-        {
-          string ext = System.IO.Path.GetExtension(files[i]).ToLowerInvariant();
-          if (ext != ".dvbc")
-            continue;
-          string fileName = System.IO.Path.GetFileNameWithoutExtension(files[i]);
-          mpComboBoxCountry.Items.Add(fileName);
-        }
-        mpComboBoxCountry.SelectedIndex = 0;
-        mpButtonSaveList.Enabled = (_channelCount != 0);
+        fileFilters = new FileFilters("DVBC", ref mpComboBoxCountry, ref mpComboBoxRegion);
       }
       catch (Exception)
       {
+        MessageBox.Show(@"Unable to open TuningParameters\dvbc\*.xml");
         return;
       }
     }
@@ -309,7 +165,7 @@ namespace SetupTv.Sections
       setting = layer.GetSetting("dvbc" + _cardNumber + "creategroups", "false");
       setting.Value = checkBoxCreateGroups.Checked ? "true" : "false";
       setting.Persist();
-      //DatabaseManager.Instance.SaveChanges();
+
       if (ciMenuDialog != null)
       {
         ciMenuDialog.OnSectionDeActivated();
@@ -342,7 +198,12 @@ namespace SetupTv.Sections
           return;
         }
         mpButtonSaveList.Enabled = false;
-        LoadList(String.Format(@"{0}\Tuningparameters\{1}.dvbc", Log.GetPathName(), mpComboBoxCountry.SelectedItem));
+        CustomFileName tuningFile = (CustomFileName)mpComboBoxRegion.SelectedItem;
+        _dvbcChannels = (List<DVBCTuning>)fileFilters.LoadList(tuningFile.FileName, typeof(List<DVBCTuning>));
+        if (_dvbcChannels == null)
+        {
+          return;
+        }
         Thread scanThread = new Thread(DoScan);
         scanThread.Name = "DVB-C scan thread";
         scanThread.Start();
@@ -353,12 +214,19 @@ namespace SetupTv.Sections
         _stopScanning = true;
       }
     }
+    
+    class suminfo
+    {
+      public int newChannel = 0;
+      public int updChannel = 0;
+      public int newChannelSum = 0;
+      public int updChannelSum = 0;
+    }
+
     void DoScan()
     {
-      int tvChannelsNew = 0;
-      int radioChannelsNew = 0;
-      int tvChannelsUpdated = 0;
-      int radioChannelsUpdated = 0;
+      suminfo tv = new suminfo();
+      suminfo radio = new suminfo();
 
       string buttonText = mpButtonScanTv.Text;
       User user = new User();
@@ -369,7 +237,7 @@ namespace SetupTv.Sections
         _stopScanning = false;
         mpButtonScanTv.Text = "Cancel...";
         RemoteControl.Instance.EpgGrabberEnabled = false;
-        if (_channelCount == 0)
+        if (_dvbcChannels.Count == 0)
           return;
 
         mpComboBoxCountry.Enabled = false;
@@ -378,22 +246,19 @@ namespace SetupTv.Sections
         TvBusinessLayer layer = new TvBusinessLayer();
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
 
-        for (int index = 0; index < _channelCount; ++index)
+        for (int index = 0; index < _dvbcChannels.Count; ++index)
         {
           if (_stopScanning)
             return;
-          float percent = ((float)(index)) / _channelCount;
+          float percent = ((float)(index)) / _dvbcChannels.Count;
           percent *= 100f;
           if (percent > 100f)
             percent = 100f;
           progressBar1.Value = (int)percent;
 
 
-          DVBCChannel tuneChannel = new DVBCChannel();
-          tuneChannel.Frequency = _dvbcChannels[index].frequency;
-          tuneChannel.ModulationType = _dvbcChannels[index].modulation;
-          tuneChannel.SymbolRate = _dvbcChannels[index].symbolrate;
-          string line = String.Format("{0}tp- {1} {2} {3}", 1 + index, tuneChannel.Frequency, tuneChannel.ModulationType, tuneChannel.SymbolRate);
+          DVBCChannel tuneChannel = new DVBCChannel(_dvbcChannels[index]); // new DVBCChannel();
+          string line = String.Format("{0}tp- {1}", 1 + index, tuneChannel.TuningInfo.ToString());
           ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
 
@@ -420,8 +285,10 @@ namespace SetupTv.Sections
             continue;
           }
 
-          int newChannels = 0;
-          int updatedChannels = 0;
+          radio.newChannel = 0;
+          radio.updChannel = 0;
+          tv.newChannel = 0;
+          tv.updChannel = 0;
           for (int i = 0; i < channels.Length; ++i)
           {
             Channel dbChannel;
@@ -483,36 +350,33 @@ namespace SetupTv.Sections
             {
               if (exists)
               {
-                tvChannelsUpdated++;
-                updatedChannels++;
+                tv.updChannel++;
               }
               else
               {
-                tvChannelsNew++;
-                newChannels++;
+                tv.newChannel++;
               }
             }
             if (channel.IsRadio)
             {
               if (exists)
               {
-                radioChannelsUpdated++;
-                updatedChannels++;
+                radio.updChannel++;
               }
               else
               {
-                radioChannelsNew++;
-                newChannels++;
+                radio.newChannel++;
               }
             }
             layer.MapChannelToCard(card, dbChannel, false);
-            line = String.Format("{0}tp- {1} {2} {3}:New:{4} Updated:{5}", 1 + index, tuneChannel.Frequency, tuneChannel.ModulationType, tuneChannel.SymbolRate, newChannels, updatedChannels);
+            line = String.Format("{0}tp- {1} {2} {3}:New TV/Radio:{4}/{5} Updated TV/Radio:{6}/{7}", 1 + index, tuneChannel.Frequency, tuneChannel.ModulationType, tuneChannel.SymbolRate, tv.newChannel, radio.newChannel, tv.updChannel, radio.updChannel);
             item.Text = line;
           }
+          tv.updChannelSum += tv.updChannel;
+          tv.newChannelSum += tv.newChannel;
+          radio.updChannelSum += radio.updChannel;
+          radio.newChannelSum += radio.newChannel;
         }
-
-        //DatabaseManager.Instance.SaveChanges();
-
       }
       catch (Exception ex)
       {
@@ -527,10 +391,9 @@ namespace SetupTv.Sections
         mpButton1.Enabled = true;
         mpButtonScanTv.Text = buttonText;
         _isScanning = false;
-        _channelCount = 0;
       }
-      listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radioChannelsNew, radioChannelsUpdated)));
-      listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", tvChannelsNew, tvChannelsUpdated)));
+      listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radio.newChannelSum, radio.updChannelSum)));
+      listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", tv.newChannelSum, tv.updChannelSum)));
       ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
       lastItem.EnsureVisible();
     }
@@ -551,7 +414,7 @@ namespace SetupTv.Sections
       }
       RemoteControl.Instance.EpgGrabberEnabled = false;
       mpButton1.Enabled = false;
-      _channelCount = 0;
+      _dvbcChannels.Clear();
       mpButtonSaveList.Enabled = false;
       DVBCChannel tuneChannel = new DVBCChannel();
       tuneChannel.Frequency = Int32.Parse(textBoxFreq.Text);
@@ -569,32 +432,27 @@ namespace SetupTv.Sections
         for (int i = 0; i < channels.Length; ++i)
         {
           DVBCChannel ch = (DVBCChannel)channels[i];
-          _dvbcChannels[i] = new DVBCList();
-          _dvbcChannels[i].frequency = (int)ch.Frequency / 10;
-          _dvbcChannels[i].modulation = ch.ModulationType;
-          _dvbcChannels[i].symbolrate = ch.SymbolRate / 10;
-          line = String.Format("{0}) {1} freq:{2} mod:{3} symbolrate:{4}", i, ch.Name, _dvbcChannels[i].frequency, _dvbcChannels[i].modulation, _dvbcChannels[i].symbolrate);
-          item = listViewStatus.Items.Add(new ListViewItem(line));
+          _dvbcChannels.Add(ch.TuningInfo);
+          item = listViewStatus.Items.Add(new ListViewItem(ch.TuningInfo.ToString()));
           item.EnsureVisible();
         }
-        _channelCount = channels.Length;
       }
 
-      ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Scan done, found {0} transponders...", _channelCount)));
+      ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Scan done, found {0} transponders...", _dvbcChannels.Count)));
       lastItem.EnsureVisible();
       mpButton1.Enabled = true;
 
       RemoteControl.Instance.EpgGrabberEnabled = true;
-      if (_channelCount != 0)
+      if (_dvbcChannels.Count != 0)
       {
-        if (DialogResult.Yes == MessageBox.Show(String.Format("Found {0} transponders. Would you like to scan those?", _channelCount), "Manual scan results", MessageBoxButtons.YesNo))
+        if (DialogResult.Yes == MessageBox.Show(String.Format("Found {0} transponders. Would you like to scan those?", _dvbcChannels.Count), "Manual scan results", MessageBoxButtons.YesNo))
         {
           Thread scanThread = new Thread(DoScan);
           scanThread.Name = "DVB-C scan thread";
           scanThread.Start();
         }
       }
-      mpButtonSaveList.Enabled = (_channelCount != 0);
+      mpButtonSaveList.Enabled = (_dvbcChannels.Count != 0);
     }
 
     private void CardDvbC_Load(object sender, EventArgs e)
@@ -604,7 +462,7 @@ namespace SetupTv.Sections
 
     private void mpButtonSaveList_Click(object sender, EventArgs e)
     {
-      if (_channelCount != 0)
+      if (_dvbcChannels.Count != 0)
       {
         String filePath=String.Format(@"{0}\TuningParameters\{1}_Manual_Scan.dvbc", Log.GetPathName(), DateTime.Now.ToString("yyyy-MM-dd"));
         SaveList(filePath);

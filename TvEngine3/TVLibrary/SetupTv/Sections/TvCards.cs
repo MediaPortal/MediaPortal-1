@@ -38,6 +38,10 @@ namespace SetupTv.Sections
     private readonly Dictionary<string, CardType> cardTypes = new Dictionary<string, CardType>();
     private TabPage usbWINTV_tabpage;
 
+    public delegate void ChangedEventHandler(object sender, EventArgs e);
+
+    public event ChangedEventHandler TvCardsChanged;
+
     #region CardInfo class
     public class CardInfo
     {
@@ -120,27 +124,14 @@ namespace SetupTv.Sections
       ReOrder();
       TvBusinessLayer layer = new TvBusinessLayer();
       //WinTV-CI tray icon no longer required as it is now fully native supported
+      //IPTV
+      Setting s = layer.GetSetting("iptvCardCount", "1");
+      s.Value = iptvUpDown.Value.ToString();
+      s.Persist();
       if (_needRestart)
       {
-        bool isAnyUserTS;
-        bool isRec;
-        bool isUserTS;
-        bool isRecOrTS = RemoteControl.Instance.IsAnyCardRecordingOrTimeshifting(new User(), out isUserTS, out isAnyUserTS, out isRec);
-
-        if (!isAnyUserTS && !isRec && !isRecOrTS && !isUserTS)
-        {
-          NotifyForm dlgNotify = new NotifyForm("Restart TvService...", "This can take some time\n\nPlease be patient...");
-          dlgNotify.Show();
-          dlgNotify.WaitForDisplay();
-
-          RemoteControl.Instance.Restart();
-
-          dlgNotify.Close();
-        }
-        else
-        {
-          MessageBox.Show(this, "In order to apply new settings - please restart tvservice manually when done timeshifting / recording.");
-        }
+        _needRestart = false;
+        OnChanged(this, EventArgs.Empty);
       }
       base.OnSectionDeActivated();
     }
@@ -184,6 +175,9 @@ namespace SetupTv.Sections
       _needRestart = false;
       UpdateList();
       TvBusinessLayer layer = new TvBusinessLayer();
+      //IPTV
+      iptvUpDown.Value = Convert.ToDecimal(layer.GetSetting("iptvCardCount", "1").Value);
+      _needRestart = false;
     }
 
     void UpdateList()
@@ -527,5 +521,20 @@ namespace SetupTv.Sections
       System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(Url);
       System.Diagnostics.Process.Start(sInfo);
     }
+
+    //Pass on the information for the plugin that was changed
+    protected virtual void OnChanged(object sender, EventArgs e)
+    {
+      if (TvCardsChanged != null)
+      {
+        TvCardsChanged(sender, e);
+      }
+    }
+
+    private void iptvUpDown_ValueChanged(object sender, EventArgs e)
+    {
+      _needRestart = true;
+    }
+
   }
 }

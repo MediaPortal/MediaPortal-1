@@ -28,21 +28,31 @@ using TvLibrary.Log;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces;
 using DirectShowLib.BDA;
+using System.Collections.Generic;
 
 namespace SetupTv.Sections
 {
   public partial class CardAtsc : SectionSettings
   {
-    struct ATSCList
+    [Serializable]
+    public class ATSCTuning
     {
       public int frequency;		 // frequency
+      public ATSCTuning()
+      {
+      }
+      public ATSCTuning(int f)
+      {
+        frequency = f;
+      }
     }
 
     readonly int _cardNumber;
-    readonly ATSCList[] _atscChannels = new ATSCList[1000];
-    int _channelCount;
+    List<ATSCTuning> _atscChannels = new List<ATSCTuning>();
     bool _isScanning;
     bool _stopScanning;
+
+    FileFilters fileFilters;
 
 
     public CardAtsc()
@@ -63,43 +73,9 @@ namespace SetupTv.Sections
       Init();
     }
 
-    void LoadList(string fileName)
-    {
-      _channelCount = 0;
-      string line;
-      string[] tpdata;
-      System.IO.TextReader tin = System.IO.File.OpenText(fileName);
-      do
-      {
-        line = tin.ReadLine();
-        if (line != null)
-        {
-          if (line.Length > 0)
-          {
-            if (line.StartsWith(";"))
-              continue;
-            tpdata = line.Split(new char[] { ',' });
-            if (tpdata.Length != 1)
-              tpdata = line.Split(new char[] { ';' });
-            if (tpdata.Length == 1)
-            {
-              try
-              {
-                _atscChannels[_channelCount].frequency = Int32.Parse(tpdata[0]);
-                _channelCount += 1;
-              }
-              catch
-              {
-              }
-            }
-          }
-        }
-      } while (!(line == null));
-      tin.Close();
-    }
-
     void Init()
     {
+
       if (checkBoxQAM.Enabled != true || checkBoxQAM.Checked == false)
       {
         mpComboBoxFrequencies.Enabled = false;
@@ -107,19 +83,14 @@ namespace SetupTv.Sections
       mpComboBoxFrequencies.Items.Clear();
       try
       {
-        string[] files = System.IO.Directory.GetFiles(String.Format(@"{0}\TuningParameters", Log.GetPathName()));
-        for (int i = 0; i < files.Length; ++i)
-        {
-          string ext = System.IO.Path.GetExtension(files[i]).ToLowerInvariant();
-          if (ext != ".qam")
-            continue;
-          string fileName = System.IO.Path.GetFileNameWithoutExtension(files[i]);
-          mpComboBoxFrequencies.Items.Add(fileName);
-        }
-        mpComboBoxFrequencies.SelectedIndex = 0;
+        fileFilters = new FileFilters("ATSC");
+        mpComboBoxFrequencies.DataSource = fileFilters.AllFiles;
+        mpComboBoxFrequencies.ValueMember = "FileName";
+        mpComboBoxFrequencies.DisplayMember = "DisplayName";
       }
       catch (Exception)
       {
+        MessageBox.Show(@"Unable to open TuningParameters\atsc\*.xml");
         return;
       }
     }
@@ -172,7 +143,12 @@ namespace SetupTv.Sections
           MessageBox.Show(this, "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
           return;
         }
-        LoadList(String.Format(@"{0}\Tuningparameters\{1}.qam", Log.GetPathName(), mpComboBoxFrequencies.SelectedItem));
+        SimpleFileName tuningFile = (SimpleFileName)mpComboBoxFrequencies.SelectedItem;
+        _atscChannels = (List<ATSCTuning>)fileFilters.LoadList(tuningFile.FileName, typeof(List<ATSCTuning>));
+        if (_atscChannels == null)
+        {
+          return;
+        }
         Thread scanThread = new Thread(DoScan);
         scanThread.Name = "ATSC scan thread";
         scanThread.Start();
@@ -197,7 +173,7 @@ namespace SetupTv.Sections
         _stopScanning = false;
         mpButtonScanTv.Text = "Cancel...";
         RemoteControl.Instance.EpgGrabberEnabled = false;
-        if (_channelCount == 0)
+        if (_atscChannels.Count == 0)
           return;
         mpComboBoxFrequencies.Enabled = false;
         listViewStatus.Items.Clear();
@@ -211,7 +187,7 @@ namespace SetupTv.Sections
         if (checkBoxQAM.Checked)
         {
           minchan = 0;
-          maxchan = _channelCount;
+          maxchan = _atscChannels.Count;
         }
         for (int index = minchan; index < maxchan; ++index)
         {

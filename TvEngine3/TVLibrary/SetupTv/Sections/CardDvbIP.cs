@@ -65,7 +65,7 @@ namespace SetupTv.Sections
     {
       mpComboBoxService.Items.Clear();
       mpComboBoxService.Items.Add("SAP Announcements");
-      String tuningFolder = String.Format(@"{0}\TuningParameters\iptv", Log.GetPathName());
+      String tuningFolder = String.Format(@"{0}\TuningParameters\dvbip", Log.GetPathName());
       if (Directory.Exists(tuningFolder))
       {
         string[] files = Directory.GetFiles(tuningFolder, "*.m3u");
@@ -177,8 +177,8 @@ namespace SetupTv.Sections
         else
         {
           IPlayListIO playlistIO =
-            PlayListFactory.CreateIO(String.Format(@"{0}\TuningParameters\iptv\{1}.m3u", Log.GetPathName(), mpComboBoxService.SelectedItem));
-          playlistIO.Load(playlist, String.Format(@"{0}\TuningParameters\iptv\{1}.m3u", Log.GetPathName(), mpComboBoxService.SelectedItem));
+            PlayListFactory.CreateIO(String.Format(@"{0}\TuningParameters\dvbip\{1}.m3u", Log.GetPathName(), mpComboBoxService.SelectedItem));
+          playlistIO.Load(playlist, String.Format(@"{0}\TuningParameters\dvbip\{1}.m3u", Log.GetPathName(), mpComboBoxService.SelectedItem));
         }
         if (playlist.Count == 0) return;
 
@@ -188,6 +188,7 @@ namespace SetupTv.Sections
 
         int index = -1;
         IEnumerator<PlayListItem> enumerator = playlist.GetEnumerator();
+        String lastComment = "";
         while (enumerator.MoveNext())
         {
           if (_stopScanning) return;
@@ -199,6 +200,7 @@ namespace SetupTv.Sections
 
           string url = enumerator.Current.FileName.Substring(enumerator.Current.FileName.LastIndexOf('\\') + 1);
           string name = enumerator.Current.Description;
+
           DVBIPChannel tuneChannel = new DVBIPChannel();
           tuneChannel.Url = url;
           tuneChannel.Name = name;

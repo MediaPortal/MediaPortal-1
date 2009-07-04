@@ -24,6 +24,26 @@ using TvLibrary.Interfaces;
 namespace TvLibrary.Channels
 {
   /// <summary>
+  /// Tuning part of DVB-T required for scanning
+  /// </summary>
+  [Serializable]
+  public struct DVBTTuning
+  {
+    public DVBTTuning(long p_Frequency, int p_BandWidth, int p_Offset)
+    {
+      Frequency = p_Frequency;
+      BandWidth = p_BandWidth;
+      Offset = p_Offset;
+    }
+    public long Frequency;
+    public int BandWidth;
+    public int Offset;
+    public override string ToString()
+    {
+      return String.Format("freq:{0}/{2} bandwidth:{1}", Frequency, BandWidth, Offset);
+    }
+  }
+  /// <summary>
   /// class holding all tuning details for DVBT
   /// </summary>
   [Serializable]
@@ -32,6 +52,7 @@ namespace TvLibrary.Channels
     #region variables
 
     private int _bandWidth;
+    private int _offset;
 
     #endregion
 
@@ -41,6 +62,32 @@ namespace TvLibrary.Channels
     public DVBTChannel()
     {
       BandWidth = 8;
+    }
+    public DVBTChannel(DVBTTuning tuning)
+    {
+      TuningInfo = tuning;
+    }
+
+    public DVBTTuning TuningInfo
+    {
+      get
+      {
+        return new DVBTTuning(Frequency, BandWidth, Offset);
+      }
+      set
+      {
+        Frequency = value.Frequency;
+        BandWidth = value.BandWidth;
+        Offset = value.Offset;
+      }
+    }
+    /// <summary>
+    /// gets/sets the bandwidth for this channel
+    /// </summary>
+    public int Offset
+    {
+      get { return _offset; }
+      set { _offset = value; }
     }
 
     /// <summary>

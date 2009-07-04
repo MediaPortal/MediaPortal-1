@@ -53,6 +53,8 @@ namespace SetupTv.Sections
       this.mpComboBoxCountry = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpBeveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
       this.tabPageCIMenu = new System.Windows.Forms.TabPage();
+      this.mpComboBoxRegion = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel6 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabControl1.SuspendLayout();
       this.tabPageScan.SuspendLayout();
       this.SuspendLayout();
@@ -91,7 +93,9 @@ namespace SetupTv.Sections
       this.tabPageScan.Controls.Add(this.progressBar1);
       this.tabPageScan.Controls.Add(this.mpLabel3);
       this.tabPageScan.Controls.Add(this.mpButtonScanTv);
+      this.tabPageScan.Controls.Add(this.mpLabel6);
       this.tabPageScan.Controls.Add(this.mpLabel1);
+      this.tabPageScan.Controls.Add(this.mpComboBoxRegion);
       this.tabPageScan.Controls.Add(this.mpComboBoxCountry);
       this.tabPageScan.Controls.Add(this.mpBeveledLine1);
       this.tabPageScan.Location = new System.Drawing.Point(4, 22);
@@ -104,7 +108,7 @@ namespace SetupTv.Sections
       // mpLabel5
       // 
       this.mpLabel5.AutoSize = true;
-      this.mpLabel5.Location = new System.Drawing.Point(281, 63);
+      this.mpLabel5.Location = new System.Drawing.Point(164, 90);
       this.mpLabel5.Name = "mpLabel5";
       this.mpLabel5.Size = new System.Drawing.Size(27, 13);
       this.mpLabel5.TabIndex = 99;
@@ -112,16 +116,17 @@ namespace SetupTv.Sections
       // 
       // textBoxSymbolRate
       // 
-      this.textBoxSymbolRate.Location = new System.Drawing.Point(108, 115);
+      this.textBoxSymbolRate.Location = new System.Drawing.Point(108, 110);
+      this.textBoxSymbolRate.MaxLength = 4;
       this.textBoxSymbolRate.Name = "textBoxSymbolRate";
-      this.textBoxSymbolRate.Size = new System.Drawing.Size(158, 20);
+      this.textBoxSymbolRate.Size = new System.Drawing.Size(50, 20);
       this.textBoxSymbolRate.TabIndex = 4;
       this.textBoxSymbolRate.Text = "6875";
       // 
       // mpLabel4
       // 
       this.mpLabel4.AutoSize = true;
-      this.mpLabel4.Location = new System.Drawing.Point(18, 118);
+      this.mpLabel4.Location = new System.Drawing.Point(18, 113);
       this.mpLabel4.Name = "mpLabel4";
       this.mpLabel4.Size = new System.Drawing.Size(65, 13);
       this.mpLabel4.TabIndex = 97;
@@ -129,9 +134,9 @@ namespace SetupTv.Sections
       // 
       // mpButtonSaveList
       // 
-      this.mpButtonSaveList.Location = new System.Drawing.Point(373, 113);
+      this.mpButtonSaveList.Location = new System.Drawing.Point(342, 108);
       this.mpButtonSaveList.Name = "mpButtonSaveList";
-      this.mpButtonSaveList.Size = new System.Drawing.Size(63, 23);
+      this.mpButtonSaveList.Size = new System.Drawing.Size(103, 23);
       this.mpButtonSaveList.TabIndex = 6;
       this.mpButtonSaveList.Text = "Save list";
       this.mpButtonSaveList.UseVisualStyleBackColor = true;
@@ -139,9 +144,9 @@ namespace SetupTv.Sections
       // 
       // mpButton1
       // 
-      this.mpButton1.Location = new System.Drawing.Point(284, 113);
+      this.mpButton1.Location = new System.Drawing.Point(342, 85);
       this.mpButton1.Name = "mpButton1";
-      this.mpButton1.Size = new System.Drawing.Size(83, 23);
+      this.mpButton1.Size = new System.Drawing.Size(103, 23);
       this.mpButton1.TabIndex = 5;
       this.mpButton1.Text = "Manual scan";
       this.mpButton1.UseVisualStyleBackColor = true;
@@ -186,15 +191,15 @@ namespace SetupTv.Sections
             "Qpsk2 ",
             "8psk2 ",
             "DirectTV  "});
-      this.mpComboBoxMod.Location = new System.Drawing.Point(108, 88);
+      this.mpComboBoxMod.Location = new System.Drawing.Point(240, 109);
       this.mpComboBoxMod.Name = "mpComboBoxMod";
-      this.mpComboBoxMod.Size = new System.Drawing.Size(158, 21);
+      this.mpComboBoxMod.Size = new System.Drawing.Size(92, 21);
       this.mpComboBoxMod.TabIndex = 3;
       // 
       // Modulation
       // 
       this.Modulation.AutoSize = true;
-      this.Modulation.Location = new System.Drawing.Point(18, 91);
+      this.Modulation.Location = new System.Drawing.Point(164, 113);
       this.Modulation.Name = "Modulation";
       this.Modulation.Size = new System.Drawing.Size(62, 13);
       this.Modulation.TabIndex = 94;
@@ -202,16 +207,17 @@ namespace SetupTv.Sections
       // 
       // textBoxFreq
       // 
-      this.textBoxFreq.Location = new System.Drawing.Point(108, 60);
+      this.textBoxFreq.Location = new System.Drawing.Point(108, 87);
+      this.textBoxFreq.MaxLength = 7;
       this.textBoxFreq.Name = "textBoxFreq";
-      this.textBoxFreq.Size = new System.Drawing.Size(158, 20);
+      this.textBoxFreq.Size = new System.Drawing.Size(50, 20);
       this.textBoxFreq.TabIndex = 2;
       this.textBoxFreq.Text = "163000";
       // 
       // mpLabel2
       // 
       this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(18, 63);
+      this.mpLabel2.Location = new System.Drawing.Point(18, 90);
       this.mpLabel2.Name = "mpLabel2";
       this.mpLabel2.Size = new System.Drawing.Size(60, 13);
       this.mpLabel2.TabIndex = 92;
@@ -303,11 +309,11 @@ namespace SetupTv.Sections
       // 
       // mpButtonScanTv
       // 
-      this.mpButtonScanTv.Location = new System.Drawing.Point(284, 8);
+      this.mpButtonScanTv.Location = new System.Drawing.Point(342, 35);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
-      this.mpButtonScanTv.Size = new System.Drawing.Size(152, 23);
+      this.mpButtonScanTv.Size = new System.Drawing.Size(107, 23);
       this.mpButtonScanTv.TabIndex = 1;
-      this.mpButtonScanTv.Text = "Scan predefined provider";
+      this.mpButtonScanTv.Text = "Scan for channels";
       this.mpButtonScanTv.UseVisualStyleBackColor = true;
       this.mpButtonScanTv.Click += new System.EventHandler(this.mpButtonScanTv_Click_1);
       // 
@@ -324,18 +330,18 @@ namespace SetupTv.Sections
       // 
       this.mpComboBoxCountry.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxCountry.FormattingEnabled = true;
-      this.mpComboBoxCountry.Location = new System.Drawing.Point(84, 10);
+      this.mpComboBoxCountry.Location = new System.Drawing.Point(108, 10);
       this.mpComboBoxCountry.Name = "mpComboBoxCountry";
-      this.mpComboBoxCountry.Size = new System.Drawing.Size(182, 21);
+      this.mpComboBoxCountry.Size = new System.Drawing.Size(224, 21);
       this.mpComboBoxCountry.TabIndex = 0;
       // 
       // mpBeveledLine1
       // 
       this.mpBeveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpBeveledLine1.Location = new System.Drawing.Point(13, -5);
+      this.mpBeveledLine1.Location = new System.Drawing.Point(13, 72);
       this.mpBeveledLine1.Name = "mpBeveledLine1";
-      this.mpBeveledLine1.Size = new System.Drawing.Size(516, 154);
+      this.mpBeveledLine1.Size = new System.Drawing.Size(516, 77);
       this.mpBeveledLine1.TabIndex = 82;
       // 
       // tabPageCIMenu
@@ -347,6 +353,24 @@ namespace SetupTv.Sections
       this.tabPageCIMenu.Size = new System.Drawing.Size(548, 402);
       this.tabPageCIMenu.TabIndex = 1;
       this.tabPageCIMenu.Text = "CI Menu";
+      // 
+      // mpComboBoxRegion
+      // 
+      this.mpComboBoxRegion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBoxRegion.FormattingEnabled = true;
+      this.mpComboBoxRegion.Location = new System.Drawing.Point(108, 37);
+      this.mpComboBoxRegion.Name = "mpComboBoxRegion";
+      this.mpComboBoxRegion.Size = new System.Drawing.Size(224, 21);
+      this.mpComboBoxRegion.TabIndex = 0;
+      // 
+      // mpLabel6
+      // 
+      this.mpLabel6.AutoSize = true;
+      this.mpLabel6.Location = new System.Drawing.Point(18, 40);
+      this.mpLabel6.Name = "mpLabel6";
+      this.mpLabel6.Size = new System.Drawing.Size(88, 13);
+      this.mpLabel6.TabIndex = 83;
+      this.mpLabel6.Text = "Region/Provider:";
       // 
       // CardDvbC
       // 
@@ -390,6 +414,8 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPBeveledLine mpBeveledLine1;
     private System.Windows.Forms.TabPage tabPageCIMenu;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonSaveList;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel6;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxRegion;
 
   }
 }

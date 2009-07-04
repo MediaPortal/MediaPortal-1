@@ -51,6 +51,10 @@ namespace SetupTv.Sections
       this.tabPage2 = new System.Windows.Forms.TabPage();
       this.treeView1 = new System.Windows.Forms.TreeView();
       this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.grpIPTV = new System.Windows.Forms.GroupBox();
+      this.label26 = new System.Windows.Forms.Label();
+      this.iptvUpDown = new System.Windows.Forms.NumericUpDown();
+      this.label25 = new System.Windows.Forms.Label();
       this.linkLabelHybridCard = new System.Windows.Forms.LinkLabel();
       this.labelHybridCard = new System.Windows.Forms.Label();
       this.labelCardPriority = new System.Windows.Forms.Label();
@@ -83,6 +87,8 @@ namespace SetupTv.Sections
       this.contextMenuStrip1.SuspendLayout();
       this.tabPage2.SuspendLayout();
       this.tabPage1.SuspendLayout();
+      this.grpIPTV.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.iptvUpDown)).BeginInit();
       this.tabPage3.SuspendLayout();
       this.groupBox2.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -233,7 +239,7 @@ namespace SetupTv.Sections
       this.tabPage2.Location = new System.Drawing.Point(4, 22);
       this.tabPage2.Name = "tabPage2";
       this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage2.Size = new System.Drawing.Size(457, 374);
+      this.tabPage2.Size = new System.Drawing.Size(457, 378);
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "Hybrid cards";
       this.tabPage2.UseVisualStyleBackColor = true;
@@ -254,6 +260,7 @@ namespace SetupTv.Sections
       // 
       // tabPage1
       // 
+      this.tabPage1.Controls.Add(this.grpIPTV);
       this.tabPage1.Controls.Add(this.linkLabelHybridCard);
       this.tabPage1.Controls.Add(this.labelHybridCard);
       this.tabPage1.Controls.Add(this.labelCardPriority);
@@ -265,17 +272,63 @@ namespace SetupTv.Sections
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(457, 374);
+      this.tabPage1.Size = new System.Drawing.Size(460, 384);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Cards";
       this.tabPage1.UseVisualStyleBackColor = true;
+      // 
+      // grpIPTV
+      // 
+      this.grpIPTV.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.grpIPTV.Controls.Add(this.label26);
+      this.grpIPTV.Controls.Add(this.iptvUpDown);
+      this.grpIPTV.Controls.Add(this.label25);
+      this.grpIPTV.Location = new System.Drawing.Point(6, 6);
+      this.grpIPTV.Name = "grpIPTV";
+      this.grpIPTV.Size = new System.Drawing.Size(437, 73);
+      this.grpIPTV.TabIndex = 83;
+      this.grpIPTV.TabStop = false;
+      this.grpIPTV.Text = "DVB-IP (IPTV) Cards";
+      // 
+      // label26
+      // 
+      this.label26.Location = new System.Drawing.Point(6, 16);
+      this.label26.Name = "label26";
+      this.label26.Size = new System.Drawing.Size(425, 28);
+      this.label26.TabIndex = 2;
+      this.label26.Text = "If you have enough bandwidth, you can select number of independent IPTV cards,\r\nt" +
+          "hat will be created. You can then watch different channels on different computer" +
+          "s";
+      // 
+      // iptvUpDown
+      // 
+      this.iptvUpDown.Location = new System.Drawing.Point(124, 47);
+      this.iptvUpDown.Name = "iptvUpDown";
+      this.iptvUpDown.Size = new System.Drawing.Size(47, 20);
+      this.iptvUpDown.TabIndex = 1;
+      this.iptvUpDown.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.iptvUpDown.ValueChanged += new System.EventHandler(this.iptvUpDown_ValueChanged);
+      // 
+      // label25
+      // 
+      this.label25.AutoSize = true;
+      this.label25.Location = new System.Drawing.Point(6, 49);
+      this.label25.Name = "label25";
+      this.label25.Size = new System.Drawing.Size(112, 13);
+      this.label25.TabIndex = 0;
+      this.label25.Text = "Number of IPTV cards";
       // 
       // linkLabelHybridCard
       // 
       this.linkLabelHybridCard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.linkLabelHybridCard.AutoSize = true;
       this.linkLabelHybridCard.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-      this.linkLabelHybridCard.Location = new System.Drawing.Point(238, 322);
+      this.linkLabelHybridCard.Location = new System.Drawing.Point(254, 314);
       this.linkLabelHybridCard.Name = "linkLabelHybridCard";
       this.linkLabelHybridCard.Size = new System.Drawing.Size(65, 13);
       this.linkLabelHybridCard.TabIndex = 6;
@@ -288,7 +341,7 @@ namespace SetupTv.Sections
       this.labelHybridCard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.labelHybridCard.AutoSize = true;
       this.labelHybridCard.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-      this.labelHybridCard.Location = new System.Drawing.Point(6, 322);
+      this.labelHybridCard.Location = new System.Drawing.Point(3, 314);
       this.labelHybridCard.Name = "labelHybridCard";
       this.labelHybridCard.Size = new System.Drawing.Size(252, 13);
       this.labelHybridCard.TabIndex = 5;
@@ -298,7 +351,7 @@ namespace SetupTv.Sections
       // 
       this.labelCardPriority.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.labelCardPriority.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelCardPriority.Location = new System.Drawing.Point(6, 303);
+      this.labelCardPriority.Location = new System.Drawing.Point(3, 300);
       this.labelCardPriority.Name = "labelCardPriority";
       this.labelCardPriority.Size = new System.Drawing.Size(256, 13);
       this.labelCardPriority.TabIndex = 4;
@@ -308,7 +361,7 @@ namespace SetupTv.Sections
       // 
       this.buttonRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonRemove.Enabled = false;
-      this.buttonRemove.Location = new System.Drawing.Point(371, 345);
+      this.buttonRemove.Location = new System.Drawing.Point(371, 336);
       this.buttonRemove.Name = "buttonRemove";
       this.buttonRemove.Size = new System.Drawing.Size(75, 23);
       this.buttonRemove.TabIndex = 3;
@@ -336,9 +389,9 @@ namespace SetupTv.Sections
       this.mpListView1.ContextMenuStrip = this.contextMenuStrip2;
       this.mpListView1.FullRowSelect = true;
       this.mpListView1.LargeImageList = this.imageList1;
-      this.mpListView1.Location = new System.Drawing.Point(9, 11);
+      this.mpListView1.Location = new System.Drawing.Point(6, 85);
       this.mpListView1.Name = "mpListView1";
-      this.mpListView1.Size = new System.Drawing.Size(437, 282);
+      this.mpListView1.Size = new System.Drawing.Size(440, 211);
       this.mpListView1.SmallImageList = this.imageList1;
       this.mpListView1.TabIndex = 0;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
@@ -388,7 +441,7 @@ namespace SetupTv.Sections
       // 
       this.buttonEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonEdit.Enabled = false;
-      this.buttonEdit.Location = new System.Drawing.Point(290, 345);
+      this.buttonEdit.Location = new System.Drawing.Point(290, 336);
       this.buttonEdit.Name = "buttonEdit";
       this.buttonEdit.Size = new System.Drawing.Size(75, 23);
       this.buttonEdit.TabIndex = 2;
@@ -399,7 +452,7 @@ namespace SetupTv.Sections
       // buttonUp
       // 
       this.buttonUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonUp.Location = new System.Drawing.Point(9, 345);
+      this.buttonUp.Location = new System.Drawing.Point(6, 336);
       this.buttonUp.Name = "buttonUp";
       this.buttonUp.Size = new System.Drawing.Size(75, 23);
       this.buttonUp.TabIndex = 2;
@@ -410,7 +463,7 @@ namespace SetupTv.Sections
       // buttonDown
       // 
       this.buttonDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonDown.Location = new System.Drawing.Point(90, 345);
+      this.buttonDown.Location = new System.Drawing.Point(87, 336);
       this.buttonDown.Name = "buttonDown";
       this.buttonDown.Size = new System.Drawing.Size(75, 23);
       this.buttonDown.TabIndex = 1;
@@ -426,7 +479,7 @@ namespace SetupTv.Sections
       this.tabPage3.Location = new System.Drawing.Point(4, 22);
       this.tabPage3.Name = "tabPage3";
       this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage3.Size = new System.Drawing.Size(457, 374);
+      this.tabPage3.Size = new System.Drawing.Size(457, 378);
       this.tabPage3.TabIndex = 2;
       this.tabPage3.Text = "WinTV-CI";
       this.tabPage3.UseVisualStyleBackColor = true;
@@ -553,7 +606,7 @@ namespace SetupTv.Sections
       this.tabControl1.Location = new System.Drawing.Point(3, 3);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(465, 400);
+      this.tabControl1.Size = new System.Drawing.Size(468, 410);
       this.tabControl1.TabIndex = 3;
       this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
@@ -563,12 +616,15 @@ namespace SetupTv.Sections
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControl1);
       this.Name = "TvCards";
-      this.Size = new System.Drawing.Size(474, 412);
+      this.Size = new System.Drawing.Size(474, 416);
       this.contextMenuStrip2.ResumeLayout(false);
       this.contextMenuStrip1.ResumeLayout(false);
       this.tabPage2.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
       this.tabPage1.PerformLayout();
+      this.grpIPTV.ResumeLayout(false);
+      this.grpIPTV.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.iptvUpDown)).EndInit();
       this.tabPage3.ResumeLayout(false);
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
@@ -628,5 +684,9 @@ namespace SetupTv.Sections
     private System.Windows.Forms.LinkLabel linkLabelHybridCard;
     private System.Windows.Forms.Label labelHybridCard;
     private System.Windows.Forms.ColumnHeader colCAM;
+    private System.Windows.Forms.GroupBox grpIPTV;
+    private System.Windows.Forms.Label label26;
+    private System.Windows.Forms.NumericUpDown iptvUpDown;
+    private System.Windows.Forms.Label label25;
   }
 }
