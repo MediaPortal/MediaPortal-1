@@ -83,7 +83,7 @@ namespace SetupTv.Sections
     {
       try
       {
-        System.IO.TextWriter parFileXML = System.IO.File.CreateText(fileName+"_xml");
+        System.IO.TextWriter parFileXML = System.IO.File.CreateText(fileName);
         XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<DVBCTuning>));
         xmlSerializer.Serialize(parFileXML, _dvbcChannels);
         parFileXML.Close();
@@ -464,7 +464,7 @@ namespace SetupTv.Sections
     {
       if (_dvbcChannels.Count != 0)
       {
-        String filePath=String.Format(@"{0}\TuningParameters\{1}_Manual_Scan.dvbc", Log.GetPathName(), DateTime.Now.ToString("yyyy-MM-dd"));
+        String filePath = String.Format(@"{0}\TuningParameters\dvbc\Manual_Scans.{1}.xml", Log.GetPathName(), DateTime.Now.ToString("yyyy-MM-dd"));
         SaveList(filePath);
         Init(); // refresh list
       }

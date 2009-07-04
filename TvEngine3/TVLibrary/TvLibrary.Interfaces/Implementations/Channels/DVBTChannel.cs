@@ -29,15 +29,34 @@ namespace TvLibrary.Channels
   [Serializable]
   public struct DVBTTuning
   {
+    /// <summary>
+    /// CTOR
+    /// </summary>
+    /// <param name="p_Frequency">Frequency</param>
+    /// <param name="p_BandWidth">BandWidth</param>
+    /// <param name="p_Offset">Offset</param>
     public DVBTTuning(long p_Frequency, int p_BandWidth, int p_Offset)
     {
       Frequency = p_Frequency;
       BandWidth = p_BandWidth;
       Offset = p_Offset;
     }
+    /// <summary>
+    /// Frequency
+    /// </summary>
     public long Frequency;
+    /// <summary>
+    /// BandWidth
+    /// </summary>
     public int BandWidth;
+    /// <summary>
+    /// Offset
+    /// </summary>
     public int Offset;
+    /// <summary>
+    /// ToString
+    /// </summary>
+    /// <returns></returns>
     public override string ToString()
     {
       return String.Format("freq:{0}/{2} bandwidth:{1}", Frequency, BandWidth, Offset);
@@ -63,11 +82,18 @@ namespace TvLibrary.Channels
     {
       BandWidth = 8;
     }
+        /// <summary>
+    /// Initializes a new instance of the <see cref="DVBTChannel"/> class.
+    /// </summary>
+    /// <param name="tuning">Tuning detail</param>
     public DVBTChannel(DVBTTuning tuning)
     {
       TuningInfo = tuning;
     }
 
+    /// <summary>
+    /// returns basic tuning info for current channel
+    /// </summary>
     public DVBTTuning TuningInfo
     {
       get

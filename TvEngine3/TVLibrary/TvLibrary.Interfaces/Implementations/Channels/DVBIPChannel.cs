@@ -23,6 +23,9 @@ using System;
 
 namespace TvLibrary.Channels
 {
+  /// <summary>
+  /// class holding all tuning details for DVBIP
+  /// </summary>
   [Serializable]
   public class DVBIPChannel : DVBBaseChannel
   {
@@ -31,7 +34,9 @@ namespace TvLibrary.Channels
     string _url;
 
     #endregion
-
+    /// <summary>
+    /// URL of channel
+    /// </summary>
     public string Url
     {
       get
@@ -43,12 +48,19 @@ namespace TvLibrary.Channels
         _url = value;
       }
     }
-
+    /// <summary>
+    /// ToString
+    /// </summary>
+    /// <returns></returns>
     public override string ToString()
     {
       return String.Format("DVBIP:{0} Url:{1}", base.ToString(), Url);
     }
-
+    /// <summary>
+    /// Comparision of channels
+    /// </summary>
+    /// <param name="obj">other channel to compare</param>
+    /// <returns>true if equal</returns>
     public override bool Equals(object obj)
     {
       if ((obj as DVBIPChannel) == null) return false;
@@ -58,7 +70,10 @@ namespace TvLibrary.Channels
 
       return true;
     }
-
+    /// <summary>
+    /// returns hashcode
+    /// </summary>
+    /// <returns></returns>
     public override int GetHashCode()
     {
       return base.GetHashCode() ^ _url.GetHashCode();

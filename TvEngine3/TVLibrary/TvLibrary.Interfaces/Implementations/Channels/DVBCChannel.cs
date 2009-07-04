@@ -30,15 +30,34 @@ namespace TvLibrary.Channels
   [Serializable]
   public struct DVBCTuning
   {
+    /// <summary>
+    /// CTOR
+    /// </summary>
+    /// <param name="p_Frequency">Frequency</param>
+    /// <param name="p_ModulationType">ModulationType</param>
+    /// <param name="p_SymbolRate">SymbolRate</param>
     public DVBCTuning(long p_Frequency, ModulationType p_ModulationType, int p_SymbolRate)
     {
       Frequency = p_Frequency;
       ModulationType = p_ModulationType;
       SymbolRate = p_SymbolRate;
     }
+    /// <summary>
+    /// Frequency
+    /// </summary>
     public long Frequency;
+    /// <summary>
+    /// ModulationType
+    /// </summary>
     public ModulationType ModulationType;
+    /// <summary>
+    /// SymbolRate
+    /// </summary>
     public int SymbolRate;
+    /// <summary>
+    /// ToString
+    /// </summary>
+    /// <returns></returns>
     public override string ToString()
     {
       return String.Format("freq:{0} mod:{1} symbolrate:{2}", Frequency, ModulationType, SymbolRate);
@@ -52,6 +71,9 @@ namespace TvLibrary.Channels
   {
     #region variables
 
+    /// <summary>
+    /// returns basic tuning info for current channel
+    /// </summary>
     public DVBCTuning TuningInfo
     {
       get
@@ -80,6 +102,10 @@ namespace TvLibrary.Channels
       SymbolRate = 6875;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVBCChannel"/> class.
+    /// </summary>
+    /// <param name="tuning">Tuning detail</param>
     public DVBCChannel(DVBCTuning tuning)
     {
       TuningInfo = tuning;

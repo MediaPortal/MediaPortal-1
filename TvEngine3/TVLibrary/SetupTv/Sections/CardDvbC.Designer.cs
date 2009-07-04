@@ -49,12 +49,12 @@ namespace SetupTv.Sections
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
       this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpButtonScanTv = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpLabel6 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpComboBoxRegion = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpComboBoxCountry = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpBeveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
       this.tabPageCIMenu = new System.Windows.Forms.TabPage();
-      this.mpComboBoxRegion = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpLabel6 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabControl1.SuspendLayout();
       this.tabPageScan.SuspendLayout();
       this.SuspendLayout();
@@ -137,7 +137,7 @@ namespace SetupTv.Sections
       this.mpButtonSaveList.Location = new System.Drawing.Point(342, 108);
       this.mpButtonSaveList.Name = "mpButtonSaveList";
       this.mpButtonSaveList.Size = new System.Drawing.Size(103, 23);
-      this.mpButtonSaveList.TabIndex = 6;
+      this.mpButtonSaveList.TabIndex = 7;
       this.mpButtonSaveList.Text = "Save list";
       this.mpButtonSaveList.UseVisualStyleBackColor = true;
       this.mpButtonSaveList.Click += new System.EventHandler(this.mpButtonSaveList_Click);
@@ -147,7 +147,7 @@ namespace SetupTv.Sections
       this.mpButton1.Location = new System.Drawing.Point(342, 85);
       this.mpButton1.Name = "mpButton1";
       this.mpButton1.Size = new System.Drawing.Size(103, 23);
-      this.mpButton1.TabIndex = 5;
+      this.mpButton1.TabIndex = 6;
       this.mpButton1.Text = "Manual scan";
       this.mpButton1.UseVisualStyleBackColor = true;
       this.mpButton1.Click += new System.EventHandler(this.mpButton1_Click);
@@ -194,7 +194,7 @@ namespace SetupTv.Sections
       this.mpComboBoxMod.Location = new System.Drawing.Point(240, 109);
       this.mpComboBoxMod.Name = "mpComboBoxMod";
       this.mpComboBoxMod.Size = new System.Drawing.Size(92, 21);
-      this.mpComboBoxMod.TabIndex = 3;
+      this.mpComboBoxMod.TabIndex = 5;
       // 
       // Modulation
       // 
@@ -208,10 +208,10 @@ namespace SetupTv.Sections
       // textBoxFreq
       // 
       this.textBoxFreq.Location = new System.Drawing.Point(108, 87);
-      this.textBoxFreq.MaxLength = 7;
+      this.textBoxFreq.MaxLength = 6;
       this.textBoxFreq.Name = "textBoxFreq";
       this.textBoxFreq.Size = new System.Drawing.Size(50, 20);
-      this.textBoxFreq.TabIndex = 2;
+      this.textBoxFreq.TabIndex = 3;
       this.textBoxFreq.Text = "163000";
       // 
       // mpLabel2
@@ -230,7 +230,7 @@ namespace SetupTv.Sections
       this.checkBoxCreateGroups.Location = new System.Drawing.Point(13, 376);
       this.checkBoxCreateGroups.Name = "checkBoxCreateGroups";
       this.checkBoxCreateGroups.Size = new System.Drawing.Size(175, 17);
-      this.checkBoxCreateGroups.TabIndex = 7;
+      this.checkBoxCreateGroups.TabIndex = 8;
       this.checkBoxCreateGroups.Text = "Create groups for each provider";
       this.checkBoxCreateGroups.UseVisualStyleBackColor = true;
       // 
@@ -312,10 +312,19 @@ namespace SetupTv.Sections
       this.mpButtonScanTv.Location = new System.Drawing.Point(342, 35);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
       this.mpButtonScanTv.Size = new System.Drawing.Size(107, 23);
-      this.mpButtonScanTv.TabIndex = 1;
+      this.mpButtonScanTv.TabIndex = 2;
       this.mpButtonScanTv.Text = "Scan for channels";
       this.mpButtonScanTv.UseVisualStyleBackColor = true;
       this.mpButtonScanTv.Click += new System.EventHandler(this.mpButtonScanTv_Click_1);
+      // 
+      // mpLabel6
+      // 
+      this.mpLabel6.AutoSize = true;
+      this.mpLabel6.Location = new System.Drawing.Point(18, 40);
+      this.mpLabel6.Name = "mpLabel6";
+      this.mpLabel6.Size = new System.Drawing.Size(88, 13);
+      this.mpLabel6.TabIndex = 83;
+      this.mpLabel6.Text = "Region/Provider:";
       // 
       // mpLabel1
       // 
@@ -325,6 +334,15 @@ namespace SetupTv.Sections
       this.mpLabel1.Size = new System.Drawing.Size(46, 13);
       this.mpLabel1.TabIndex = 83;
       this.mpLabel1.Text = "Country:";
+      // 
+      // mpComboBoxRegion
+      // 
+      this.mpComboBoxRegion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBoxRegion.FormattingEnabled = true;
+      this.mpComboBoxRegion.Location = new System.Drawing.Point(108, 37);
+      this.mpComboBoxRegion.Name = "mpComboBoxRegion";
+      this.mpComboBoxRegion.Size = new System.Drawing.Size(224, 21);
+      this.mpComboBoxRegion.TabIndex = 1;
       // 
       // mpComboBoxCountry
       // 
@@ -353,24 +371,6 @@ namespace SetupTv.Sections
       this.tabPageCIMenu.Size = new System.Drawing.Size(548, 402);
       this.tabPageCIMenu.TabIndex = 1;
       this.tabPageCIMenu.Text = "CI Menu";
-      // 
-      // mpComboBoxRegion
-      // 
-      this.mpComboBoxRegion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboBoxRegion.FormattingEnabled = true;
-      this.mpComboBoxRegion.Location = new System.Drawing.Point(108, 37);
-      this.mpComboBoxRegion.Name = "mpComboBoxRegion";
-      this.mpComboBoxRegion.Size = new System.Drawing.Size(224, 21);
-      this.mpComboBoxRegion.TabIndex = 0;
-      // 
-      // mpLabel6
-      // 
-      this.mpLabel6.AutoSize = true;
-      this.mpLabel6.Location = new System.Drawing.Point(18, 40);
-      this.mpLabel6.Name = "mpLabel6";
-      this.mpLabel6.Size = new System.Drawing.Size(88, 13);
-      this.mpLabel6.TabIndex = 83;
-      this.mpLabel6.Text = "Region/Provider:";
       // 
       // CardDvbC
       // 

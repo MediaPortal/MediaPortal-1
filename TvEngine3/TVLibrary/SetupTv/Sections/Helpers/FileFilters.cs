@@ -54,7 +54,7 @@ namespace SetupTv.Sections
     /// Returns the "region" name of file
     /// </summary>
     /// <returns>String</returns>
-    public String ToString()
+    public override String ToString()
     {
       return System.IO.Path.GetFileNameWithoutExtension(m_fileName).Replace(m_filter + ".", "");
     }
@@ -88,7 +88,7 @@ namespace SetupTv.Sections
     /// Returns the "region" name of file
     /// </summary>
     /// <returns>String</returns>
-    public String ToString()
+    public override String ToString()
     {
       return DisplayName;
     }

@@ -188,7 +188,7 @@ namespace SetupTv.Sections
 
         int index = -1;
         IEnumerator<PlayListItem> enumerator = playlist.GetEnumerator();
-        String lastComment = "";
+
         while (enumerator.MoveNext())
         {
           if (_stopScanning) return;
