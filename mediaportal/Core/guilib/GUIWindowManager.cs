@@ -131,6 +131,7 @@ namespace MediaPortal.GUI.Library
     private static bool _isSwitchingToNewWindow = false;
     private static string _currentWindowName = string.Empty;
     private static int _nextWindowIndex = -1;
+    private static bool _startWithBasicHome = false;
     private static Object thisLock = new Object(); // used in Route functions
 
     #endregion
@@ -527,6 +528,10 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void Initialize()
     {
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
+      {
+        _startWithBasicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
+      }
       //no active window yet
       _activeWindowIndex = -1;
       _activeWindowId = -1;
@@ -908,8 +913,11 @@ namespace MediaPortal.GUI.Library
         // Exit if there is no previous window
         if (_listHistory.Count == 0)
         {
-          // if _listhistorycount gets corrupted, go home
-          _listHistory.Add((int)GUIWindow.Window.WINDOW_HOME);
+          // if _listhistorycount gets corrupted, go home          
+          if (_startWithBasicHome)
+            _listHistory.Add((int)GUIWindow.Window.WINDOW_SECOND_HOME);
+          else
+            _listHistory.Add((int)GUIWindow.Window.WINDOW_HOME);
         }
 
         if (OnPostRenderAction != null)
