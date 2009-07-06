@@ -1,0 +1,88 @@
+<CodeStyleSettings>
+  <CSharp>
+    <FormatSettings>
+      <MODIFIERS_ORDER IsNull="False">
+        <Item>public</Item>
+        <Item>protected</Item>
+        <Item>internal</Item>
+        <Item>private</Item>
+        <Item>new</Item>
+        <Item>abstract</Item>
+        <Item>virtual</Item>
+        <Item>override</Item>
+        <Item>sealed</Item>
+        <Item>static</Item>
+        <Item>readonly</Item>
+        <Item>extern</Item>
+        <Item>unsafe</Item>
+        <Item>volatile</Item>
+      </MODIFIERS_ORDER>
+      <SPACE_AROUND_MULTIPLICATIVE_OP>True</SPACE_AROUND_MULTIPLICATIVE_OP>
+    </FormatSettings>
+    <UsingsSettings />
+    <Naming2>
+      <ExceptionName IsNull="False">
+      </ExceptionName>
+      <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="TypesAndNamespaces" />
+      <PredefinedRule Inspect="True" Prefix="I" Suffix="" Style="AaBb" ElementKind="Interfaces" />
+      <PredefinedRule Inspect="True" Prefix="T" Suffix="" Style="AaBb" ElementKind="TypeParameters" />
+      <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="MethodPropertyEvent" />
+      <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="aaBb" ElementKind="Locals" />
+      <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="aaBb" ElementKind="LocalConstants" />
+      <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="aaBb" ElementKind="Parameters" />
+      <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="PublicFields" />
+      <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="Constants" />
+      <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="StaticReadonly" />
+      <PredefinedRule Inspect="True" Prefix="_" Suffix="" Style="aaBb" ElementKind="NotPublicStaticFields" />
+      <PredefinedRule Inspect="True" Prefix="_" Suffix="" Style="aaBb" ElementKind="NotPublicInstanceFields" />
+      <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="EnumMember" />
+      <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="Other" />
+    </Naming2>
+  </CSharp>
+  <VB>
+    <FormatSettings />
+    <ImportsSettings />
+    <Naming2 />
+  </VB>
+  <FileHeader Region="Copyright (C) 2005-2009 Team MediaPortal"><![CDATA[Copyright (C) 2005-2009 Team MediaPortal
+http://www.team-mediaportal.com
+
+This Program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+
+This Program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with GNU Make; see the file COPYING.  If not, write to
+the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+http://www.gnu.org/copyleft/gpl.html]]></FileHeader>
+  <GenerateMemberBody />
+  <Naming2>
+    <ExceptionName IsNull="False">
+    </ExceptionName>
+    <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="aaBb" ElementKind="Locals" />
+    <PredefinedRule Inspect="True" Prefix="_" Suffix="" Style="aaBb" ElementKind="NotPublicInstanceFields" />
+    <PredefinedRule Inspect="True" Prefix="_" Suffix="" Style="aaBb" ElementKind="NotPublicStaticFields" />
+    <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="aaBb" ElementKind="Parameters" />
+    <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="EnumMember" />
+    <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="TypesAndNamespaces" />
+    <PredefinedRule Inspect="True" Prefix="I" Suffix="" Style="AaBb" ElementKind="Interfaces" />
+    <PredefinedRule Inspect="True" Prefix="T" Suffix="" Style="AaBb" ElementKind="TypeParameters" />
+    <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="MethodPropertyEvent" />
+    <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="aaBb" ElementKind="LocalConstants" />
+    <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="PublicFields" />
+    <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AA_BB" ElementKind="Constants" />
+    <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="StaticReadonly" />
+    <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="Other" />
+    <Abbreviation Text="MP" />
+    <Abbreviation Text="XP" />
+    <Abbreviation Text="MCE" />
+    <Abbreviation Text="SVN" />
+    <Abbreviation Text="ID" />
+  </Naming2>
+</CodeStyleSettings>
