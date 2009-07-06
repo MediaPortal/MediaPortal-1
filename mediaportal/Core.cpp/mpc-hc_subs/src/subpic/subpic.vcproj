@@ -273,10 +273,6 @@
 				>
 			</File>
 			<File
-				RelativePath="DX7SubPic.cpp"
-				>
-			</File>
-			<File
 				RelativePath="DX9SubPic.cpp"
 				>
 			</File>
@@ -331,10 +327,6 @@
 			>
 			<File
 				RelativePath=".\CoordGeom.h"
-				>
-			</File>
-			<File
-				RelativePath="DX7SubPic.h"
 				>
 			</File>
 			<File
