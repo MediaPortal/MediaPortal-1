@@ -310,7 +310,7 @@ namespace MediaPortal.Configuration.Sections
 
         toolTip.SetToolTip(hScrollBarHcwButtonRelease, string.Format("{0} msec.", hScrollBarHcwButtonRelease.Value));
         toolTip.SetToolTip(hScrollBarHcwRepeatFilter, hScrollBarHcwRepeatFilter.Value.ToString());
-        Type repeatSpeed = typeof (hcwRepeatSpeed);
+        Type repeatSpeed = typeof(hcwRepeatSpeed);
         toolTip.SetToolTip(hScrollBarHcwRepeatSpeed, Enum.GetName(repeatSpeed, 2 - hScrollBarHcwRepeatSpeed.Value));
         toolTip.SetToolTip(checkBoxHcwKeepControl,
                            "If checked, MediaPortal keeps control of the remote. Only applications launched by\nMediaPortal can steal focus (external Players, MyPrograms, ...).");
@@ -418,7 +418,7 @@ namespace MediaPortal.Configuration.Sections
         // Fill combobox with list of availabe FireDTV recievers
         try
         {
-          fireDTV = new FireDTVControl((IntPtr) 0);
+          fireDTV = new FireDTVControl((IntPtr)0);
           if (fireDTV.OpenDrivers())
           {
             comboBoxFireDTVReceiver.DataSource = fireDTV.SourceFilters;
@@ -577,8 +577,7 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      System.ComponentModel.ComponentResourceManager resources =
-        new System.ComponentModel.ComponentResourceManager(typeof (Remote));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Remote));
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
       this.tabControlRemotes = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageMce = new MediaPortal.UserInterface.Controls.MPTabPage();
@@ -678,18 +677,18 @@ namespace MediaPortal.Configuration.Sections
       this.mpButton1 = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabControlRemotes.SuspendLayout();
       this.tabPageMce.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxMceVista)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxMCE2004)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMceVista)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMCE2004)).BeginInit();
       this.groupBoxMceGeneral.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxMce2005)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMce2005)).BeginInit();
       this.tabPageHid.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBox2)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
       this.groupBoxHidGeneral.SuspendLayout();
       this.tabPageCentarea.SuspendLayout();
       this.groupBoxCentareaOptions.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxCentarea)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCentarea)).BeginInit();
       this.tabPageFireDtv.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBox3)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
       this.groupBoxFireDTVRecieiverSettings.SuspendLayout();
       this.groupBoxFireDTVReceiverGeneral.SuspendLayout();
       this.tabPageX10.SuspendLayout();
@@ -713,11 +712,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabControlRemotes
       // 
-      this.tabControlRemotes.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControlRemotes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControlRemotes.Controls.Add(this.tabPageMce);
       this.tabControlRemotes.Controls.Add(this.tabPageHid);
       this.tabControlRemotes.Controls.Add(this.tabPageCentarea);
@@ -746,7 +743,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // pictureBoxMceVista
       // 
-      this.pictureBoxMceVista.Image = ((System.Drawing.Image) (resources.GetObject("pictureBoxMceVista.Image")));
+      this.pictureBoxMceVista.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxMceVista.Image")));
       this.pictureBoxMceVista.Location = new System.Drawing.Point(268, 149);
       this.pictureBoxMceVista.Name = "pictureBoxMceVista";
       this.pictureBoxMceVista.Size = new System.Drawing.Size(122, 222);
@@ -766,10 +763,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxMceGeneral
       // 
-      this.groupBoxMceGeneral.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxMceGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxMceGeneral.Controls.Add(this.checkBoxMceExtendedLogging);
       this.groupBoxMceGeneral.Controls.Add(this.checkBoxMceEnabled);
       this.groupBoxMceGeneral.Controls.Add(this.buttonMceMapping);
@@ -805,9 +800,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonMceMapping
       // 
-      this.buttonMceMapping.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonMceMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonMceMapping.Enabled = false;
       this.buttonMceMapping.Location = new System.Drawing.Point(351, 21);
       this.buttonMceMapping.Name = "buttonMceMapping";
@@ -851,10 +844,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxHidGeneral
       // 
-      this.groupBoxHidGeneral.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxHidGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxHidGeneral.Controls.Add(this.checkBoxHidGlobal);
       this.groupBoxHidGeneral.Controls.Add(this.checkBoxHidExtendedLogging);
       this.groupBoxHidGeneral.Controls.Add(this.buttonHidMapping);
@@ -890,9 +881,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonHidMapping
       // 
-      this.buttonHidMapping.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonHidMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonHidMapping.Location = new System.Drawing.Point(351, 21);
       this.buttonHidMapping.Name = "buttonHidMapping";
       this.buttonHidMapping.Size = new System.Drawing.Size(72, 22);
@@ -927,10 +916,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxCentareaOptions
       // 
-      this.groupBoxCentareaOptions.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxCentareaOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxCentareaOptions.Controls.Add(this.checkBoxMapJoystick);
       this.groupBoxCentareaOptions.Controls.Add(this.checkBoxCentareaReMapMouseButton);
       this.groupBoxCentareaOptions.Controls.Add(this.checkBoxCentareaVerbose);
@@ -992,9 +979,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonCentareaMapping
       // 
-      this.buttonCentareaMapping.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonCentareaMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonCentareaMapping.Enabled = false;
       this.buttonCentareaMapping.Location = new System.Drawing.Point(351, 21);
       this.buttonCentareaMapping.Name = "buttonCentareaMapping";
@@ -1038,10 +1023,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxFireDTVRecieiverSettings
       // 
-      this.groupBoxFireDTVRecieiverSettings.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxFireDTVRecieiverSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxFireDTVRecieiverSettings.Controls.Add(this.labelFireDTVModel);
       this.groupBoxFireDTVRecieiverSettings.Controls.Add(this.comboBoxFireDTVReceiver);
       this.groupBoxFireDTVRecieiverSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -1074,10 +1057,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxFireDTVReceiverGeneral
       // 
-      this.groupBoxFireDTVReceiverGeneral.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxFireDTVReceiverGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxFireDTVReceiverGeneral.Controls.Add(this.checkBoxFireDTVExtendedLogging);
       this.groupBoxFireDTVReceiverGeneral.Controls.Add(this.buttonFireDTVMapping);
       this.groupBoxFireDTVReceiverGeneral.Controls.Add(this.checkBoxFireDTVEnabled);
@@ -1101,9 +1082,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonFireDTVMapping
       // 
-      this.buttonFireDTVMapping.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonFireDTVMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonFireDTVMapping.Location = new System.Drawing.Point(351, 21);
       this.buttonFireDTVMapping.Name = "buttonFireDTVMapping";
       this.buttonFireDTVMapping.Size = new System.Drawing.Size(72, 22);
@@ -1139,10 +1118,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxX10Status
       // 
-      this.groupBoxX10Status.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxX10Status.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxX10Status.Controls.Add(this.labelX10DriverInfo);
       this.groupBoxX10Status.Controls.Add(this.linkLabelDownloadX10);
       this.groupBoxX10Status.Controls.Add(this.labelX10Status);
@@ -1161,9 +1138,7 @@ namespace MediaPortal.Configuration.Sections
       this.labelX10DriverInfo.Name = "labelX10DriverInfo";
       this.labelX10DriverInfo.Size = new System.Drawing.Size(392, 13);
       this.labelX10DriverInfo.TabIndex = 0;
-      this.labelX10DriverInfo.Text =
-        "You have to use the driver below, or your remote might not work with MediaPortal." +
-        "";
+      this.labelX10DriverInfo.Text = "You have to use the driver below, or your remote might not work with MediaPortal.";
       // 
       // linkLabelDownloadX10
       // 
@@ -1174,8 +1149,7 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabelDownloadX10.TabIndex = 1;
       this.linkLabelDownloadX10.TabStop = true;
       this.linkLabelDownloadX10.Text = "Click here to download the X10 remote driver.";
-      this.linkLabelDownloadX10.LinkClicked +=
-        new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelDownloadX10_LinkClicked);
+      this.linkLabelDownloadX10.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelDownloadX10_LinkClicked);
       // 
       // labelX10Status
       // 
@@ -1189,10 +1163,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxX10General
       // 
-      this.groupBoxX10General.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxX10General.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxX10General.Controls.Add(this.buttonX10LearnMapping);
       this.groupBoxX10General.Controls.Add(this.radioButtonX10Firefly);
       this.groupBoxX10General.Controls.Add(this.radioButtonX10Other);
@@ -1208,9 +1180,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonX10LearnMapping
       // 
-      this.buttonX10LearnMapping.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonX10LearnMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonX10LearnMapping.Location = new System.Drawing.Point(351, 21);
       this.buttonX10LearnMapping.Name = "buttonX10LearnMapping";
       this.buttonX10LearnMapping.Size = new System.Drawing.Size(72, 22);
@@ -1277,10 +1247,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxX10Settings
       // 
-      this.groupBoxX10Settings.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxX10Settings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxX10Settings.Controls.Add(this.LabelChannelNumber);
       this.groupBoxX10Settings.Controls.Add(this.TextBoxChannelNumber);
       this.groupBoxX10Settings.Controls.Add(this.checkBoxX10ChannelControl);
@@ -1321,8 +1289,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxX10ChannelControl.TabIndex = 1;
       this.checkBoxX10ChannelControl.Text = "Use RF channel control";
       this.checkBoxX10ChannelControl.UseVisualStyleBackColor = true;
-      this.checkBoxX10ChannelControl.CheckedChanged +=
-        new System.EventHandler(this.checkBoxX10ChannelControl_CheckedChanged);
+      this.checkBoxX10ChannelControl.CheckedChanged += new System.EventHandler(this.checkBoxX10ChannelControl_CheckedChanged);
       // 
       // checkBoxX10ExtendedLogging
       // 
@@ -1337,9 +1304,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonX10Defaults
       // 
-      this.buttonX10Defaults.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonX10Defaults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonX10Defaults.Location = new System.Drawing.Point(351, 22);
       this.buttonX10Defaults.Name = "buttonX10Defaults";
       this.buttonX10Defaults.Size = new System.Drawing.Size(72, 22);
@@ -1363,10 +1328,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxHcwRepeatDelay
       // 
-      this.groupBoxHcwRepeatDelay.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxHcwRepeatDelay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxHcwRepeatDelay.Controls.Add(this.hScrollBarHcwRepeatSpeed);
       this.groupBoxHcwRepeatDelay.Controls.Add(this.labelHcwFast);
       this.groupBoxHcwRepeatDelay.Controls.Add(this.labelHcwRepeatSpeed);
@@ -1389,10 +1352,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // hScrollBarHcwRepeatSpeed
       // 
-      this.hScrollBarHcwRepeatSpeed.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.hScrollBarHcwRepeatSpeed.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.hScrollBarHcwRepeatSpeed.LargeChange = 1;
       this.hScrollBarHcwRepeatSpeed.Location = new System.Drawing.Point(152, 80);
       this.hScrollBarHcwRepeatSpeed.Maximum = 2;
@@ -1405,9 +1366,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelHcwFast
       // 
-      this.labelHcwFast.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelHcwFast.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.labelHcwFast.AutoSize = true;
       this.labelHcwFast.Location = new System.Drawing.Point(368, 82);
       this.labelHcwFast.Name = "labelHcwFast";
@@ -1436,10 +1395,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // hScrollBarHcwRepeatFilter
       // 
-      this.hScrollBarHcwRepeatFilter.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.hScrollBarHcwRepeatFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.hScrollBarHcwRepeatFilter.LargeChange = 2;
       this.hScrollBarHcwRepeatFilter.Location = new System.Drawing.Point(152, 52);
       this.hScrollBarHcwRepeatFilter.Maximum = 11;
@@ -1452,9 +1409,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelHcwMax
       // 
-      this.labelHcwMax.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelHcwMax.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.labelHcwMax.AutoSize = true;
       this.labelHcwMax.Location = new System.Drawing.Point(368, 54);
       this.labelHcwMax.Name = "labelHcwMax";
@@ -1483,10 +1438,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // hScrollBarHcwButtonRelease
       // 
-      this.hScrollBarHcwButtonRelease.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.hScrollBarHcwButtonRelease.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.hScrollBarHcwButtonRelease.Location = new System.Drawing.Point(152, 25);
       this.hScrollBarHcwButtonRelease.Maximum = 1009;
       this.hScrollBarHcwButtonRelease.Minimum = 20;
@@ -1494,14 +1447,11 @@ namespace MediaPortal.Configuration.Sections
       this.hScrollBarHcwButtonRelease.Size = new System.Drawing.Size(213, 17);
       this.hScrollBarHcwButtonRelease.TabIndex = 2;
       this.hScrollBarHcwButtonRelease.Value = 500;
-      this.hScrollBarHcwButtonRelease.ValueChanged +=
-        new System.EventHandler(this.hScrollBarHcwButtonRelease_ValueChanged);
+      this.hScrollBarHcwButtonRelease.ValueChanged += new System.EventHandler(this.hScrollBarHcwButtonRelease_ValueChanged);
       // 
       // labelHcw1000msec
       // 
-      this.labelHcw1000msec.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelHcw1000msec.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.labelHcw1000msec.AutoSize = true;
       this.labelHcw1000msec.Location = new System.Drawing.Point(368, 27);
       this.labelHcw1000msec.Name = "labelHcw1000msec";
@@ -1530,10 +1480,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxHcwGeneral
       // 
-      this.groupBoxHcwGeneral.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxHcwGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxHcwGeneral.Controls.Add(this.HCWLearn);
       this.groupBoxHcwGeneral.Controls.Add(this.buttonHcwDefaults);
       this.groupBoxHcwGeneral.Controls.Add(this.checkBoxHcwEnabled);
@@ -1556,9 +1504,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonHcwDefaults
       // 
-      this.buttonHcwDefaults.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonHcwDefaults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonHcwDefaults.Location = new System.Drawing.Point(273, 21);
       this.buttonHcwDefaults.Name = "buttonHcwDefaults";
       this.buttonHcwDefaults.Size = new System.Drawing.Size(72, 22);
@@ -1581,10 +1527,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxHcwStatus
       // 
-      this.groupBoxHcwStatus.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxHcwStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxHcwStatus.Controls.Add(this.linkLabelHcwDownload);
       this.groupBoxHcwStatus.Controls.Add(this.labelHcwDriverStatus);
       this.groupBoxHcwStatus.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -1600,21 +1544,18 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabelHcwDownload.AutoSize = true;
       this.linkLabelHcwDownload.Location = new System.Drawing.Point(12, 54);
       this.linkLabelHcwDownload.Name = "linkLabelHcwDownload";
-      this.linkLabelHcwDownload.Size = new System.Drawing.Size(152, 13);
+      this.linkLabelHcwDownload.Size = new System.Drawing.Size(275, 13);
       this.linkLabelHcwDownload.TabIndex = 2;
       this.linkLabelHcwDownload.TabStop = true;
-      this.linkLabelHcwDownload.Text = "Click here for the latest drivers.";
+      this.linkLabelHcwDownload.Text = "Click here for the latest \"IR.exe\" driver (inside WinTV cd)";
       this.linkLabelHcwDownload.Visible = false;
-      this.linkLabelHcwDownload.LinkClicked +=
-        new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelHcwDownload_LinkClicked);
+      this.linkLabelHcwDownload.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelHcwDownload_LinkClicked);
       // 
       // labelHcwDriverStatus
       // 
-      this.labelHcwDriverStatus.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelHcwDriverStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.labelHcwDriverStatus.ForeColor = System.Drawing.SystemColors.ControlText;
       this.labelHcwDriverStatus.Location = new System.Drawing.Point(12, 24);
       this.labelHcwDriverStatus.Name = "labelHcwDriverStatus";
@@ -1624,10 +1565,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxHcwSettings
       // 
-      this.groupBoxHcwSettings.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxHcwSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxHcwSettings.Controls.Add(this.checkBoxHcwFilterDoubleKlicks);
       this.groupBoxHcwSettings.Controls.Add(this.checkBoxHcwAllowExternal);
       this.groupBoxHcwSettings.Controls.Add(this.checkBoxHcwKeepControl);
@@ -1661,8 +1600,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxHcwAllowExternal.TabIndex = 0;
       this.checkBoxHcwAllowExternal.Text = "External processes may use the remote control";
       this.checkBoxHcwAllowExternal.UseVisualStyleBackColor = true;
-      this.checkBoxHcwAllowExternal.CheckedChanged +=
-        new System.EventHandler(this.checkBoxHcwAllowExternal_CheckedChanged);
+      this.checkBoxHcwAllowExternal.CheckedChanged += new System.EventHandler(this.checkBoxHcwAllowExternal_CheckedChanged);
       // 
       // checkBoxHcwKeepControl
       // 
@@ -1722,8 +1660,7 @@ namespace MediaPortal.Configuration.Sections
       this.IRTransLink.TabIndex = 10;
       this.IRTransLink.TabStop = true;
       this.IRTransLink.Text = "IRTrans Information";
-      this.IRTransLink.LinkClicked +=
-        new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.IRTransLink_LinkClicked);
+      this.IRTransLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.IRTransLink_LinkClicked);
       // 
       // mpLabel1
       // 
@@ -1774,9 +1711,8 @@ namespace MediaPortal.Configuration.Sections
       this.labelIrTransNoteModel.Name = "labelIrTransNoteModel";
       this.labelIrTransNoteModel.Size = new System.Drawing.Size(292, 44);
       this.labelIrTransNoteModel.TabIndex = 8;
-      this.labelIrTransNoteModel.Text =
-        "This must be exactly the name of the remote as found in the *.rem file of IRTrans" +
-        ", for example \"mediacenter\", when using the MCE remote.";
+      this.labelIrTransNoteModel.Text = "This must be exactly the name of the remote as found in the *.rem file of IRTrans" +
+          ", for example \"mediacenter\", when using the MCE remote.";
       // 
       // textBoxRemoteModel
       // 
@@ -1817,10 +1753,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxIrTransGeneral
       // 
-      this.groupBoxIrTransGeneral.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxIrTransGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxIrTransGeneral.Controls.Add(this.checkBoxIrTransExtendedLogging);
       this.groupBoxIrTransGeneral.Controls.Add(this.checkBoxIrTransEnabled);
       this.groupBoxIrTransGeneral.Controls.Add(this.buttonIrTransMapping);
@@ -1856,9 +1790,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonIrTransMapping
       // 
-      this.buttonIrTransMapping.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonIrTransMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonIrTransMapping.Location = new System.Drawing.Point(351, 21);
       this.buttonIrTransMapping.Name = "buttonIrTransMapping";
       this.buttonIrTransMapping.Size = new System.Drawing.Size(72, 22);
@@ -1891,9 +1823,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpButton1
       // 
-      this.mpButton1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButton1.Location = new System.Drawing.Point(351, 21);
       this.mpButton1.Name = "mpButton1";
       this.mpButton1.Size = new System.Drawing.Size(72, 22);
@@ -1908,21 +1838,21 @@ namespace MediaPortal.Configuration.Sections
       this.Size = new System.Drawing.Size(472, 408);
       this.tabControlRemotes.ResumeLayout(false);
       this.tabPageMce.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxMceVista)).EndInit();
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxMCE2004)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMceVista)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMCE2004)).EndInit();
       this.groupBoxMceGeneral.ResumeLayout(false);
       this.groupBoxMceGeneral.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxMce2005)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMce2005)).EndInit();
       this.tabPageHid.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBox2)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
       this.groupBoxHidGeneral.ResumeLayout(false);
       this.groupBoxHidGeneral.PerformLayout();
       this.tabPageCentarea.ResumeLayout(false);
       this.groupBoxCentareaOptions.ResumeLayout(false);
       this.groupBoxCentareaOptions.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxCentarea)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCentarea)).EndInit();
       this.tabPageFireDtv.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBox3)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
       this.groupBoxFireDTVRecieiverSettings.ResumeLayout(false);
       this.groupBoxFireDTVRecieiverSettings.PerformLayout();
       this.groupBoxFireDTVReceiverGeneral.ResumeLayout(false);
@@ -1951,6 +1881,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxIrTransGeneral.ResumeLayout(false);
       this.groupBoxIrTransGeneral.PerformLayout();
       this.ResumeLayout(false);
+
     }
 
     #endregion
@@ -1993,7 +1924,7 @@ namespace MediaPortal.Configuration.Sections
         rid1[0].usUsage = 0x88;
         rid1[0].dwFlags = 0;
         rid1[0].hwndTarget = hwnd;
-        bool Success = RegisterRawInputDevices(rid1, (uint) rid1.Length, (uint) Marshal.SizeOf(rid1[0]));
+        bool Success = RegisterRawInputDevices(rid1, (uint)rid1.Length, (uint)Marshal.SizeOf(rid1[0]));
         if (Success)
         {
           return true;
@@ -2003,7 +1934,7 @@ namespace MediaPortal.Configuration.Sections
         rid1[0].usUsage = 0x01;
         rid1[0].dwFlags = 0;
         rid1[0].hwndTarget = hwnd;
-        Success = RegisterRawInputDevices(rid1, (uint) rid1.Length, (uint) Marshal.SizeOf(rid1[0]));
+        Success = RegisterRawInputDevices(rid1, (uint)rid1.Length, (uint)Marshal.SizeOf(rid1[0]));
         if (Success)
         {
           return true;
@@ -2072,13 +2003,13 @@ namespace MediaPortal.Configuration.Sections
 
     private void hScrollBarHcwRepeatSpeed_ValueChanged(object sender, EventArgs e)
     {
-      Type repeatSpeed = typeof (hcwRepeatSpeed);
+      Type repeatSpeed = typeof(hcwRepeatSpeed);
       toolTip.SetToolTip(hScrollBarHcwRepeatSpeed, Enum.GetName(repeatSpeed, 2 - hScrollBarHcwRepeatSpeed.Value));
     }
 
     private void linkLabelHcwDownload_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      Process.Start("http://www.team-mediaportal.com/component/option,com_remository/Itemid,35/func,select/id,28/");
+      Process.Start("http://www.hauppauge.co.uk/site/support/downloadcounter.php/");
     }
 
     private void HCWLearn_Click(object sender, EventArgs e)
