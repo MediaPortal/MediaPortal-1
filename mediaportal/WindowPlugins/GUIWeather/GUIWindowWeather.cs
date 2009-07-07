@@ -1079,9 +1079,7 @@ namespace MediaPortal.GUI.Weather
       //we'll convert the speed later depending on what thats set to
       c_units = (c_units == 'F') ? 's' : 'm';
 
-      string url =
-        String.Format("http://xoap.weather.com/weather/local/{0}?cc=*&dayf=5&link=xoap∏=xoap&par={1}&key={2}&unit={3}",
-                      _locationCode, PARTNER_ID, PARTNER_KEY, c_units);
+      string url = String.Format("http://xoap.weather.com/weather/local/{0}?cc=*&dayf=5&link=xoap&prod=xoap&par={1}&key={2}&unit={3}", _locationCode, PARTNER_ID, PARTNER_KEY, c_units);
 
       using (WebClient client = new WebClient())
       {
