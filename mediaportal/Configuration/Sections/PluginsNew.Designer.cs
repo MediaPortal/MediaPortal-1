@@ -199,8 +199,7 @@ namespace MediaPortal.Configuration.Sections
       // listViewPlugins
       // 
       this.listViewPlugins.Activation = System.Windows.Forms.ItemActivation.OneClick;
-      this.listViewPlugins.AllowDrop = true;
-      this.listViewPlugins.AllowRowReorder = true;
+      this.listViewPlugins.AllowRowReorder = false;
       this.listViewPlugins.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
