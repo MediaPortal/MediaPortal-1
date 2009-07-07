@@ -50,6 +50,8 @@ namespace MediaPortal.Configuration.Sections
     private MPGroupBox groupBoxRotation;
     private MPCheckBox checkBoxUsePicasa;
     private MPCheckBox checkBoxUseExif;
+    private MPGroupBox groupBoxViewSettings;
+    private MPCheckBox checkBoxGroupDays;
     private IContainer components = null;
 
     public Pictures()
@@ -80,6 +82,8 @@ namespace MediaPortal.Configuration.Sections
 
         checkBoxUseExif.Checked = xmlreader.GetValueAsBool("pictures", "useExif", true);
         checkBoxUsePicasa.Checked = xmlreader.GetValueAsBool("pictures", "usePicasa", false);
+
+        checkBoxGroupDays.Checked = xmlreader.GetValueAsBool("pictures", "useDayGrouping", false);
       }
     }
 
@@ -96,6 +100,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("pictures", "autoRepeat", repeatSlideshowCheckBox.Checked);
         xmlwriter.SetValueAsBool("pictures", "useExif", checkBoxUseExif.Checked);
         xmlwriter.SetValueAsBool("pictures", "usePicasa", checkBoxUseExif.Checked);
+        xmlwriter.SetValueAsBool("pictures", "useDayGrouping", checkBoxGroupDays.Checked);
       }
     }
 
@@ -136,11 +141,14 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonRandom = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.radioButtonXFade = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.groupBoxRotation = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.checkBoxUseExif = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxUsePicasa = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxUseExif = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.groupBoxViewSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxGroupDays = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBoxRotation.SuspendLayout();
+      this.groupBoxViewSettings.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
@@ -156,7 +164,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.repeatSlideshowCheckBox);
       this.groupBox1.Controls.Add(this.autoShuffleCheckBox);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox1.Location = new System.Drawing.Point(0, 112);
+      this.groupBox1.Location = new System.Drawing.Point(0, 97);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 160);
       this.groupBox1.TabIndex = 1;
@@ -252,7 +260,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(0, 0);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(472, 104);
+      this.groupBox2.Size = new System.Drawing.Size(472, 91);
       this.groupBox2.TabIndex = 0;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Slideshow Transitions";
@@ -272,7 +280,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.radioButtonRandom.AutoSize = true;
       this.radioButtonRandom.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.radioButtonRandom.Location = new System.Drawing.Point(16, 47);
+      this.radioButtonRandom.Location = new System.Drawing.Point(16, 44);
       this.radioButtonRandom.Name = "radioButtonRandom";
       this.radioButtonRandom.Size = new System.Drawing.Size(215, 17);
       this.radioButtonRandom.TabIndex = 1;
@@ -283,7 +291,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.radioButtonXFade.AutoSize = true;
       this.radioButtonXFade.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.radioButtonXFade.Location = new System.Drawing.Point(16, 71);
+      this.radioButtonXFade.Location = new System.Drawing.Point(16, 65);
       this.radioButtonXFade.Name = "radioButtonXFade";
       this.radioButtonXFade.Size = new System.Drawing.Size(206, 17);
       this.radioButtonXFade.TabIndex = 2;
@@ -295,12 +303,23 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxRotation.Controls.Add(this.checkBoxUsePicasa);
       this.groupBoxRotation.Controls.Add(this.checkBoxUseExif);
       this.groupBoxRotation.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxRotation.Location = new System.Drawing.Point(0, 278);
+      this.groupBoxRotation.Location = new System.Drawing.Point(0, 263);
       this.groupBoxRotation.Name = "groupBoxRotation";
       this.groupBoxRotation.Size = new System.Drawing.Size(472, 78);
       this.groupBoxRotation.TabIndex = 2;
       this.groupBoxRotation.TabStop = false;
       this.groupBoxRotation.Text = "Rotation Settings";
+      // 
+      // checkBoxUsePicasa
+      // 
+      this.checkBoxUsePicasa.AutoSize = true;
+      this.checkBoxUsePicasa.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxUsePicasa.Location = new System.Drawing.Point(16, 47);
+      this.checkBoxUsePicasa.Name = "checkBoxUsePicasa";
+      this.checkBoxUsePicasa.Size = new System.Drawing.Size(330, 17);
+      this.checkBoxUsePicasa.TabIndex = 8;
+      this.checkBoxUsePicasa.Text = "Use Google Picasa.ini to determine the rotation (if file is available)";
+      this.checkBoxUsePicasa.UseVisualStyleBackColor = true;
       // 
       // checkBoxUseExif
       // 
@@ -308,26 +327,38 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxUseExif.Checked = true;
       this.checkBoxUseExif.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxUseExif.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxUseExif.Location = new System.Drawing.Point(16, 28);
+      this.checkBoxUseExif.Location = new System.Drawing.Point(16, 24);
       this.checkBoxUseExif.Name = "checkBoxUseExif";
       this.checkBoxUseExif.Size = new System.Drawing.Size(401, 17);
       this.checkBoxUseExif.TabIndex = 7;
       this.checkBoxUseExif.Text = "Use EXIF metadata to determine the rotation (might interfere with buggy viewers)";
       this.checkBoxUseExif.UseVisualStyleBackColor = true;
       // 
-      // checkBoxUsePicasa
+      // groupBoxViewSettings
       // 
-      this.checkBoxUsePicasa.AutoSize = true;
-      this.checkBoxUsePicasa.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxUsePicasa.Location = new System.Drawing.Point(16, 51);
-      this.checkBoxUsePicasa.Name = "checkBoxUsePicasa";
-      this.checkBoxUsePicasa.Size = new System.Drawing.Size(330, 17);
-      this.checkBoxUsePicasa.TabIndex = 8;
-      this.checkBoxUsePicasa.Text = "Use Google Picasa.ini to determine the rotation (if file is available)";
-      this.checkBoxUsePicasa.UseVisualStyleBackColor = true;
+      this.groupBoxViewSettings.Controls.Add(this.checkBoxGroupDays);
+      this.groupBoxViewSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxViewSettings.Location = new System.Drawing.Point(0, 347);
+      this.groupBoxViewSettings.Name = "groupBoxViewSettings";
+      this.groupBoxViewSettings.Size = new System.Drawing.Size(472, 52);
+      this.groupBoxViewSettings.TabIndex = 3;
+      this.groupBoxViewSettings.TabStop = false;
+      this.groupBoxViewSettings.Text = "View Settings";
+      // 
+      // checkBoxGroupDays
+      // 
+      this.checkBoxGroupDays.AutoSize = true;
+      this.checkBoxGroupDays.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxGroupDays.Location = new System.Drawing.Point(19, 24);
+      this.checkBoxGroupDays.Name = "checkBoxGroupDays";
+      this.checkBoxGroupDays.Size = new System.Drawing.Size(379, 17);
+      this.checkBoxGroupDays.TabIndex = 7;
+      this.checkBoxGroupDays.Text = "Create a group for each day in date view (instead of showing the full month)";
+      this.checkBoxGroupDays.UseVisualStyleBackColor = true;
       // 
       // Pictures
       // 
+      this.Controls.Add(this.groupBoxViewSettings);
       this.Controls.Add(this.groupBoxRotation);
       this.Controls.Add(this.groupBox1);
       this.Controls.Add(this.groupBox2);
@@ -339,6 +370,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.PerformLayout();
       this.groupBoxRotation.ResumeLayout(false);
       this.groupBoxRotation.PerformLayout();
+      this.groupBoxViewSettings.ResumeLayout(false);
+      this.groupBoxViewSettings.PerformLayout();
       this.ResumeLayout(false);
 
     }

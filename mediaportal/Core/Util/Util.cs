@@ -799,6 +799,52 @@ namespace MediaPortal.Util
       return strHMS;
     }
 
+
+    public static string GetNamedMonth(string aTwoLetterMonth)
+    {
+      string readableMonth = "";
+      switch (aTwoLetterMonth)
+      {
+        case "01":
+          readableMonth = GUILocalizeStrings.Get(21); //January
+          break;
+        case "02":
+          readableMonth = GUILocalizeStrings.Get(22); //February
+          break;
+        case "03":
+          readableMonth = GUILocalizeStrings.Get(23); //March
+          break;
+        case "04":
+          readableMonth = GUILocalizeStrings.Get(24); //April
+          break;
+        case "05":
+          readableMonth = GUILocalizeStrings.Get(25); //May
+          break;
+        case "06":
+          readableMonth = GUILocalizeStrings.Get(26); //June
+          break;
+        case "07":
+          readableMonth = GUILocalizeStrings.Get(27); //July
+          break;
+        case "08":
+          readableMonth = GUILocalizeStrings.Get(28); //August
+          break;
+        case "09":
+          readableMonth = GUILocalizeStrings.Get(29); //September
+          break;
+        case "10":
+          readableMonth = GUILocalizeStrings.Get(30); //October          
+          break;
+        case "11":
+          readableMonth = GUILocalizeStrings.Get(31); //November
+          break;
+        case "12":
+          readableMonth = GUILocalizeStrings.Get(32); //December
+          break;
+      }
+      return readableMonth;
+    }
+
     public static string GetNamedDate(DateTime aDateTime)
     {
       DateTime now = DateTime.Now;
