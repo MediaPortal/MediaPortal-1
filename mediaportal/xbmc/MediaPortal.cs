@@ -1600,7 +1600,7 @@ public class MediaPortalApp : D3DApp, IRender
     UpdateSplashScreenMessage("Loading window plugins...");
     PluginManager.LoadWindowPlugins();
     Log.Info("Main: Loading windowmanager");
-    UpdateSplashScreenMessage("Initializing window manager");
+    UpdateSplashScreenMessage("Initializing window manager...");
     Log.Info("Main: Resizing windowmanager");
     using (Settings xmlreader = new MPSettings())
     {
