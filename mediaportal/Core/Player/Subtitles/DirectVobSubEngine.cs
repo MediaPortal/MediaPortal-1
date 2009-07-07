@@ -166,27 +166,6 @@ namespace MediaPortal.Player.Subtitles
       if (index >= intNames.Count)
         return ret;
       string streamName = intNames[index];
-      // remove prefix, which is added by Haali Media Splitter
-      streamName = Regex.Replace(streamName, @"^S: ", "");
-      // Check if returned string contains both language and trackname info
-      // For example Haali Media Splitter returns mkv streams as: "trackname [language]",
-      // where "trackname" is stream's "trackname" property muxed in the mkv.
-      Regex regex = new Regex(@"\[.+\]");
-      Match result = regex.Match(streamName);
-      if (result.Success)
-      {
-        //Cut off and translate the language part
-        string language = Util.Utils.TranslateLanguageString(streamName.Substring(result.Index + 1, result.Length - 2));
-        //Get the trackname part by removing the language part from the string.
-        streamName = regex.Replace(streamName, "").Trim();
-        //Put things back together
-        //streamName = language +(streamName == string.Empty ? "" : " [" + streamName + "]");
-        //if you do the above the subtitle preference for mkv embedded subtitles are not matched to the configuration settings.
-        if (language.Length > 0)//&& streamName.Length <= 0)
-        {
-          streamName = language;
-        }
-      }
       return streamName;
     }
 

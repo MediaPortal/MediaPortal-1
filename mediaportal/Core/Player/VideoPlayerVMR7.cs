@@ -341,12 +341,11 @@ namespace MediaPortal.Player
       }
       for (int i = 0; i < SubtitleStreams; i++)
       {
-        // Unfortunately we use localized stream names...
-        string localizedCIName = Util.Utils.TranslateLanguageString(ci.EnglishName);
-        if (localizedCIName.Equals(SubtitleLanguage(i), StringComparison.OrdinalIgnoreCase) ||
-            ci.TwoLetterISOLanguageName.Equals(SubtitleLanguage(i), StringComparison.OrdinalIgnoreCase) ||
-            ci.ThreeLetterISOLanguageName.Equals(SubtitleLanguage(i), StringComparison.OrdinalIgnoreCase) ||
-            ci.ThreeLetterWindowsLanguageName.Equals(SubtitleLanguage(i), StringComparison.OrdinalIgnoreCase))
+        string subtitleLanguage = SubtitleLanguage(i);
+        if (ci.EnglishName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+            ci.TwoLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+            ci.ThreeLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+            ci.ThreeLetterWindowsLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase))
         {
           CurrentSubtitleStream = i;
           break;
@@ -1217,22 +1216,6 @@ namespace MediaPortal.Player
       get
       {
         return SubEngine.GetInstance().GetCount();
-
-      /*
-        // embedded subtitles
-        int subsStreamCount = FStreams.GetStreamCount(StreamType.Subtitle);
-        if (subsStreamCount > 0)
-        {
-          return subsStreamCount;
-        }
-        // vobsub subtitles
-        int ret = 0;
-        if (this.vobSub != null)
-        {
-          vobSub.get_LanguageCount(out ret);
-        }
-        return ret;
-      */
       }
     }
 
@@ -1244,56 +1227,10 @@ namespace MediaPortal.Player
       get
       {
         return SubEngine.GetInstance().Current;
-
-        /*
-        // embedded subtitles
-        int subsStreamCount = FStreams.GetStreamCount(StreamType.Subtitle);
-        if (subsStreamCount > 0)
-        {
-          for (int i = 0; i < subsStreamCount; i++)
-          {
-            if (FStreams.GetStreamInfos(StreamType.Subtitle, i).Current)
-            {
-              return i;
-            }
-          }
-          return 0;
-        }
-        // vobsub subtitles
-        int ret = 0;
-        if (vobSub != null)
-        {
-          vobSub.get_SelectedLanguage(out ret);
-        }
-        return ret;
-        */
       }
       set
       {
         SubEngine.GetInstance().Current = value;
-        /*
-        // embedded subtitles
-        int subsStreamCount = FStreams.GetStreamCount(StreamType.Subtitle);
-        if (subsStreamCount > 0)
-        {
-          for (int i = 0; i < FStreams.GetStreamCount(StreamType.Subtitle); i++)
-          {
-            FStreams.SetCurrentValue(StreamType.Subtitle, i, false);
-          }
-          FStreams.SetCurrentValue(StreamType.Subtitle, value, true);
-          EnableStream(FStreams.GetStreamInfos(StreamType.Subtitle, value).Id, 0,
-                       FStreams.GetStreamInfos(StreamType.Subtitle, value).Filter);
-          EnableStream(FStreams.GetStreamInfos(StreamType.Subtitle, value).Id, AMStreamSelectEnableFlags.Enable,
-                       FStreams.GetStreamInfos(StreamType.Subtitle, value).Filter);
-          return;
-        }
-        // vobsub subtitles
-        if (vobSub != null)
-        {
-          vobSub.put_SelectedLanguage(value);
-          return;
-        }
-        */
       }
     }
 
@@ -1302,51 +1239,20 @@ namespace MediaPortal.Player
     /// </summary>
     public override string SubtitleLanguage(int iStream)
     {
-      string ret = SubEngine.GetInstance().GetLanguage(iStream);
-      return (ret == null ? Strings.Unknown : ret);
+      string streamName = SubEngine.GetInstance().GetLanguage(iStream);
+      if (streamName == null)
+      {
+        return Strings.Unknown;
+      }
+      // Sometimes underline engine returns Haali mkv streams as: "S: trackname [language]"
+      Regex regex = new Regex(@"\[([^\]]+)\]");
+      Match result = regex.Match(streamName);
+      if (result.Success)
+      {
+        streamName = result.Groups[1].Value;
+      }
 
-      /*
-      // embedded subtitles
-      if (FStreams.GetStreamCount(StreamType.Subtitle) > 0)
-      {
-        string streamName = FStreams.GetStreamInfos(StreamType.Subtitle, iStream).Name;
-        // remove prefix, which is added by Haali Media Splitter
-        streamName = Regex.Replace(streamName, @"^S: ", "");
-        // Check if returned string contains both language and trackname info
-        // For example Haali Media Splitter returns mkv streams as: "trackname [language]",
-        // where "trackname" is stream's "trackname" property muxed in the mkv.
-        Regex regex = new Regex(@"\[.+\]");
-        Match result = regex.Match(streamName);
-        if (result.Success)
-        {
-          //Cut off and translate the language part
-          string language = Util.Utils.TranslateLanguageString(streamName.Substring(result.Index + 1, result.Length - 2));
-          //Get the trackname part by removing the language part from the string.
-          streamName = regex.Replace(streamName, "").Trim();
-          //Put things back together
-          //streamName = language +(streamName == string.Empty ? "" : " [" + streamName + "]");
-          //if you do the above the subtitle preference for mkv embedded subtitles are not matched to the configuration settings.
-          if (language.Length > 0 )//&& streamName.Length <= 0)
-          {
-            streamName = language;
-          }
-        }
-        return streamName;
-      }
-      // vobsub subtitles
-      string ret = Strings.Unknown;
-      if (vobSub != null)
-      {
-        IntPtr curNamePtr;
-        vobSub.get_LanguageName(iStream, out curNamePtr);
-        if (curNamePtr != IntPtr.Zero)
-        {
-          ret = Marshal.PtrToStringUni(curNamePtr);
-          Marshal.FreeCoTaskMem(curNamePtr);
-        }
-      }
-      return ret;
-       */
+      return streamName;
     }
 
     public override bool EnableSubtitle
@@ -1354,56 +1260,10 @@ namespace MediaPortal.Player
       get
       {
         return SubEngine.GetInstance().Enable;
-        /*
-        bool ret = false;
-        if (this.vobSub != null)
-        {
-          int hr = vobSub.get_HideSubtitles(out ret);
-          if (hr == 0)
-          {
-            ret = !ret;
-          }
-        }
-        else
-        {
-          return !FStreams.GetStreamInfos(StreamType.Subtitle_hidden, 0).Current;
-        }
-        return ret;
-        */
       }
       set
       {
         SubEngine.GetInstance().Enable = value;
-/*
-        if (this.vobSub != null)
-        {
-          bool hide = !value;
-          int hr = vobSub.put_HideSubtitles(hide);
-        }
-        else
-        {
-          int CurrentSub = CurrentSubtitleStream;
-          if (CurrentSub >= 0 && FStreams.GetStreamCount(StreamType.Subtitle) >= 1)
-          {
-            FStreams.SetCurrentValue(StreamType.Subtitle_hidden, 0, !value);
-            for (int i = 0; i < FStreams.GetStreamCount(StreamType.Subtitle_hidden); i++)
-            {
-              EnableStream(FStreams.GetStreamInfos(StreamType.Subtitle_hidden, i).Id,
-                           (value) ? 0 : AMStreamSelectEnableFlags.Enable,
-                           FStreams.GetStreamInfos(StreamType.Subtitle_hidden, i).Filter);
-            }
-            EnableStream(FStreams.GetStreamInfos(StreamType.Subtitle, CurrentSub).Id,
-                         (value) ? AMStreamSelectEnableFlags.Enable : 0,
-                         FStreams.GetStreamInfos(StreamType.Subtitle, CurrentSub).Filter);
-            if (FStreams.GetStreamCount(StreamType.Subtitle_shown) > 0)
-            {
-              EnableStream(FStreams.GetStreamInfos(StreamType.Subtitle_shown, 0).Id,
-                           (value) ? AMStreamSelectEnableFlags.Enable : 0,
-                           FStreams.GetStreamInfos(StreamType.Subtitle_shown, 0).Filter);
-            }
-          }
-        }
- */
       }
     }
 
