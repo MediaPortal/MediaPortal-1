@@ -260,8 +260,11 @@ namespace TvService
     {
       try
       {
+        // Is the card enabled ?
         if (_cardHandler.DataBaseCard.Enabled == false)
+        {
           return TvResult.CardIsDisabled;
+        }
 
         lock (this)
         {
@@ -270,6 +273,18 @@ namespace TvService
             RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
             if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
               return TvResult.CardIsDisabled;
+
+            // Let's verify if hard disk drive has enough free space.
+            string DriveLetter = String.Format("{0}:", fileName[0]);
+            ulong FreeDiskSpace = Utils.GetFreeDiskSpace(DriveLetter);
+            TvBusinessLayer layer = new TvBusinessLayer();
+            UInt32 MaximumFileSize = UInt32.Parse(layer.GetSetting("timeshiftMaxFileSize", "256").Value); // in MB
+            ulong DiskSpaceNeeded = Convert.ToUInt64(MaximumFileSize);
+            DiskSpaceNeeded *= 1000000; // Convert to bytes for the bad commercial disk size (1 MB = 1000 KB)
+            if (FreeDiskSpace < DiskSpaceNeeded) // TimeShifter need at least this free disk space otherwise, it will not start.
+            {
+              return TvResult.NoFreeDiskSpace;
+            }
 
             Log.Write("card: StartTimeShifting {0} {1} ", _cardHandler.DataBaseCard.IdCard, fileName);
 

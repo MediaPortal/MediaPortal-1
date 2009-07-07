@@ -116,7 +116,11 @@ namespace TvControl
     /// <summary>
     /// Operation failed since we can't find a suitable software encoder
     /// </summary>
-    SWEncoderMissing
+    SWEncoderMissing,
+    /// <summary>
+    /// Operation failed since there is no free disk space
+    /// </summary>
+    NoFreeDiskSpace
   }
 
   /// <summary>

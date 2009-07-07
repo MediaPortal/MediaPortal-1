@@ -157,6 +157,9 @@ namespace SetupTv.Sections
             case TvResult.SWEncoderMissing:
               MessageBox.Show(this, "No suppported software encoder installed");
               break;
+            case TvResult.NoFreeDiskSpace:
+              MessageBox.Show(this, "No free disk space");
+              break;
           }
         }
         else
