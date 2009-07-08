@@ -984,6 +984,7 @@
     <String id="1517">Buffer TV fermato da un\raltro utente</String>
     <String id="1518">Impossible creare il graph</String>
     <String id="1519">Nessun encoder software supportato è installato</String>
+    <String id="1520">Spazio libero insufficiente</String>
     <String id="1950" prefix="Il mio ">Stato</String>
     <String id="1951">Hard Disk</String>
     <String id="1952">Ventola</String>
