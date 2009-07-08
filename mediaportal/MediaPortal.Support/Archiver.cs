@@ -36,18 +36,32 @@ namespace MediaPortal.Support
 
     public void AddFile(string file, string zipfile)
     {
+      AddFile(file, zipfile, true);
+    }
+
+    public void AddFile(string file, string zipfile, bool keepDirectoryStructure)
+    {
       zip.CompressionLevel = CompressionLevel.BEST_COMPRESSION;
-      zip.AddFile(file);
+      if (keepDirectoryStructure)
+        zip.AddFile(file);
+      else
+        zip.AddFile(file, "");
       zip.Save(zipfile);
     }
 
     public void AddDirectory(string directory, string zipfile)
     {
-      string[] filesInDir = Directory.GetFiles(directory);
-      foreach (string file in filesInDir)
-      {
-        AddFile(file, zipfile);
-      }
+      AddDirectory(directory, zipfile, true);
+    }
+
+    public void AddDirectory(string directory, string zipfile, bool keepDirectoryStructure)
+    {
+      zip.CompressionLevel = CompressionLevel.BEST_COMPRESSION;
+      if (keepDirectoryStructure)
+        zip.AddDirectory(directory);
+      else
+        zip.AddDirectory(directory, "");
+      zip.Save(zipfile);
     }
 
    public void Dispose()

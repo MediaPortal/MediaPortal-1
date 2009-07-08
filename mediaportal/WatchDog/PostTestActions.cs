@@ -132,17 +132,20 @@ namespace WatchDog
       }
 
       CreateHTMLIndexFile();
-
+      
       base.setAction("Creating ZIP Archive with gathered information...");
       try
       {
+        // Get config file also to help debugging
+        File.Copy(Config.GetFolder(Config.Dir.Config) + @"\\MediaPortal.xml", _tmpDir + @"\\MediaPortal.xml", true);
+
         if (File.Exists(_zipFile))
         {
           File.Delete(_zipFile);
         }
         using (Archiver archiver = new Archiver())
         {
-          archiver.AddDirectory(_tmpDir, _zipFile);
+          archiver.AddDirectory(_tmpDir, _zipFile, false);
         }
         Directory.Delete(_tmpDir, true);
       }
