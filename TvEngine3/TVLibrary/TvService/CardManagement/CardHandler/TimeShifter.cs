@@ -280,7 +280,7 @@ namespace TvService
             TvBusinessLayer layer = new TvBusinessLayer();
             UInt32 MaximumFileSize = UInt32.Parse(layer.GetSetting("timeshiftMaxFileSize", "256").Value); // in MB
             ulong DiskSpaceNeeded = Convert.ToUInt64(MaximumFileSize);
-            DiskSpaceNeeded *= 1000000; // Convert to bytes for the bad commercial disk size (1 MB = 1000 KB)
+            DiskSpaceNeeded *= 1000000 * 2; // Convert to bytes; 2 times of timeshiftMaxFileSize
             if (FreeDiskSpace < DiskSpaceNeeded) // TimeShifter need at least this free disk space otherwise, it will not start.
             {
               return TvResult.NoFreeDiskSpace;
