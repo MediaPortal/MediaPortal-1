@@ -2938,6 +2938,9 @@ namespace TvPlugin
         case TvResult.SWEncoderMissing:
           errorMessage += "\r" + GUILocalizeStrings.Get(1519) + "\r";
           break;
+        case TvResult.NoFreeDiskSpace:
+          errorMessage += "\r" + GUILocalizeStrings.Get(1520) + "\r";
+          break;
         default:
           // this error can also happen if we have no connection to the server.
           if (!Connected || !RemoteControl.IsConnected)
