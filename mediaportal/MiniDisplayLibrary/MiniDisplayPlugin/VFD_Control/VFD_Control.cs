@@ -275,6 +275,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
       {
         clearLines();
       }
+      else if (_VendorID == 0x051c && _ProductID == 0x0005)
+      {
+        // Shuttle PF27 is handled in driver
+      }
       else
       {
         if (Process.GetProcessesByName("ehshell").Length > 0)
@@ -629,6 +633,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
       {
         Log.Error(ex);
       }
+    }
+
+    /// <summary>
+    /// Sends an HID output report to VFD device.
+    /// </summary>
+    /// <param name="reportBuffer">contains the report ID and report data.</param>
+    /// <returns>True on success. False on failure.</returns>
+    public bool WriteHidOutputReport(byte[] reportBuffer)
+    {
+      Hid.OutputReport outputReport = new Hid.OutputReport();
+      return outputReport.Write(reportBuffer, _HIDHandle);
     }
 
     /// <summary>

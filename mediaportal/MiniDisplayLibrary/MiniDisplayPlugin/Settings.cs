@@ -294,6 +294,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       list.Add(new ScaleoEV());
       if (this.ExtensiveLogging)
       {
+        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading ShuttlePF27...");
+      }
+      list.Add(new ShuttlePF27());
+      if (this.ExtensiveLogging)
+      {
         Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading Debug Display...");
       }
       list.Add(new DebugForm());

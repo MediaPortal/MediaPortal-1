@@ -99,6 +99,7 @@
     <Compile Include="MiniDisplayPlugin\ByteArray.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="MiniDisplayPlugin\Drivers\ShuttlePF27.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\DM140GINK.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\FicSpectra.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\MediaPad.cs" />
