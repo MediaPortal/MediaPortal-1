@@ -984,6 +984,7 @@
     <String id="1517">Timeshifting stopped by\ranother user</String>
     <String id="1518">Unable to create graph</String>
     <String id="1519">No supported software encoder installed</String>
+    <String id="1520">Not enough free disk space</String>
     <String id="1950" prefix="My ">Status</String>
     <String id="1951">Harddisk</String>
     <String id="1952">Fan</String>

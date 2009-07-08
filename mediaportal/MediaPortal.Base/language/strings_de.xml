@@ -984,6 +984,7 @@
     <String id="1517">TV wurde von anderem Benutzer gestoppt</String>
     <String id="1518">Graph konnte nicht erstellt</String>
     <String id="1519">Kein unterstützter Software-Encoder installiert</String>
+    <String id="1520">Nicht genügend Festplattenspeicher</String>
     <String id="1950" prefix="Mein ">Status</String>
     <String id="1951">Festplatte</String>
     <String id="1952">Lüfter</String>
