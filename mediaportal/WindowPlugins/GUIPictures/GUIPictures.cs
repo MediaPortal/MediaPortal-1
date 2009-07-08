@@ -1753,7 +1753,7 @@ namespace MediaPortal.GUI.Pictures
         {
           GUIListItem item = new GUIListItem(year);
           item.Label = year;
-          Log.Info("Load Year: " + year);
+          //Log.Debug("Load Year: " + year);
           item.Path = year;
           item.IsFolder = true;
           Util.Utils.SetDefaultIcons(item);
@@ -1853,7 +1853,6 @@ namespace MediaPortal.GUI.Pictures
           }
         }
       }
-
       else
       {
         if (strNewDirectory.Length == 7)
