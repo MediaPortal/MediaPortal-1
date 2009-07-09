@@ -29,23 +29,27 @@
 #include "entercriticalsection.h"
 #include "DN_EIT_Helper.h"
 #include "..\..\shared\dvbutil.h"
+#include "FreesatHuffmanTables.h"
 
 extern void LogDebug(const char *fmt, ...) ;
 
 #define S_FINISHED (S_OK+1)
+#define PID_FREESAT_EPG 0xBBA
+#define PID_FREESAT2_EPG 0xBBB
+
 CEpgDecoder::CEpgDecoder()
 {
   ResetEPG();
-	m_bParseEPG=false;
-	m_bEpgDone=false;
+  m_bParseEPG=false;
+  m_bEpgDone=false;
   m_bSorted=FALSE;
-	m_epgTimeout=time(NULL);
+  m_epgTimeout=time(NULL);
 }
 CEpgDecoder::~CEpgDecoder()
 {
 }
 
-HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len)
+HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len,int PID)
 {
 	CEnterCriticalSection lock (m_critSection);
 	try
@@ -158,7 +162,7 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len)
 					if (descriptor_tag ==0x4d)
 					{
 						//					LogDebug("epg:     short event descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
-						DecodeShortEventDescriptor( &buf[start+off],epgEvent);
+						DecodeShortEventDescriptor(&buf[start+off],epgEvent,PID);
 					}
 					else if (descriptor_tag ==0x54)
 					{
@@ -407,7 +411,7 @@ HRESULT CEpgDecoder::DecodePremierePrivateEPG(byte* buf,int len)
 					if (descriptor_tag ==0x4d)
 					{
 						//					LogDebug("epg:     short event descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
-						DecodeShortEventDescriptor( &buf[start+off],epgEvent);
+						DecodeShortEventDescriptor( &buf[start+off],epgEvent,0);
 					}
 					else if (descriptor_tag ==0x54)
 					{
@@ -686,7 +690,7 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 	}	
 }
 
-void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent)
+void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int PID)
 {
 	try
 	{
@@ -735,9 +739,17 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent)
 				LogDebug("*** DecodeShortEventDescriptor: check1: %d %d",event_len,descriptor_len);
 				return;
 			}
-			CAutoString buffer(event_len+10);
-			getString468A(&buf[6],event_len,buffer.GetBuffer());
-			eventText=buffer.GetBuffer();
+
+			if(buf[6]==0x1f && (PID==PID_FREESAT_EPG || PID==PID_FREESAT2_EPG))
+			{
+				eventText=FreesatHuffmanToString(&buf[6],event_len);
+			}
+			else
+			{
+				CAutoString buffer(event_len+10);
+				getString468A(&buf[6],event_len,buffer.GetBuffer());
+				eventText=buffer.GetBuffer();
+			}
 			//		LogDebug("  event:%s",eventText.c_str());
 		}
 		else if (event_len<0)
@@ -769,9 +781,18 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent)
 				LogDebug("*** DecodeShortEventDescriptor: check2: %d %d",event_len,descriptor_len);
 				return;
 			}
-			CAutoString buffer (text_len+10);
-			getString468A(&buf[off+1],text_len,buffer.GetBuffer());
-			eventDescription=buffer.GetBuffer();
+			// Check if huffman encoded.
+			if(buf[off+1]==0x1f && (PID==PID_FREESAT_EPG || PID==PID_FREESAT2_EPG))
+			{
+				eventDescription=FreesatHuffmanToString(&buf[off+1],text_len);
+			}
+			else
+			{
+				CAutoString buffer (text_len+10);
+			  getString468A(&buf[off+1],text_len,buffer.GetBuffer());
+				eventDescription=buffer.GetBuffer();
+			}
+
 			//		LogDebug("  text:%s",eventDescription.c_str() );
 		}
 		else if (text_len<0)
@@ -994,6 +1015,92 @@ void CEpgDecoder::DecodeContentDescription(byte* buf,EPGEvent& epgEvent)
 	}	
 }
 
+string CEpgDecoder::FreesatHuffmanToString(BYTE *src, int size)
+{
+  string uncompressed;
+  int j,k;
+  unsigned char *data;
+  int uncompressed_size = 0x102;
+  int u;
+  int bit;
+  short offset;
+  unsigned short *base;
+  unsigned char *next_node;
+  unsigned char node;
+  unsigned char prevc;
+  unsigned char nextc;
+
+  if (src[1] == 1 || src[1] == 2) 
+  {
+    if (src[1] == 1) 
+    {
+      data = raw_huffman_data1;
+    }
+    else 
+    {
+      data = raw_huffman_data2;
+    }
+    src += 2;
+    j = 0;
+    u = 0;
+    prevc = START;
+    do
+    {
+      offset = bitrev16(((unsigned short *)data)[prevc]);
+      base = (unsigned short *)&data[offset];
+      node = 0;
+      do
+      {
+        bit = (src[j>>3] >> (7-(j&7))) & 1;
+        j++;
+        next_node = (unsigned char *)&base[node];
+        node = next_node[bit];
+      }
+      while ((next_node[bit] & 0x80) == 0);
+      nextc = next_node[bit] ^ 0x80;
+      if (nextc == 0x1b)
+      {
+        do
+        {
+          nextc = 0;
+          for (k=0; k<8; k++)
+          {
+            bit = (src[j>>3] >> (7-(j&7))) & 1;
+            nextc = (nextc <<1) | bit;
+            j++;
+          }
+          if (u >= uncompressed_size)
+          {
+            return 0;
+          }
+          uncompressed.append(1,nextc);
+        }
+        while (nextc & 0x80);
+      }
+      else
+      {
+        if (u >= uncompressed_size)
+        {
+          LogDebug("need realloc, uncompressed_size=%d", uncompressed_size);
+          return uncompressed;
+        }
+        uncompressed.append(1,nextc);
+      }
+      prevc = nextc;
+    }
+    while(nextc != STOP);
+    prevc = nextc;
+    uncompressed.append(1,'\0');
+    return uncompressed;
+  }
+  else
+  {
+    LogDebug("bad huffman table, %d, only support for 1, 2", src[0]);
+    return uncompressed;
+  }
+  return uncompressed;
+}
+
 void CEpgDecoder::ResetEPG()
 {
 	CEnterCriticalSection lock (m_critSection);
@@ -1009,7 +1116,7 @@ void CEpgDecoder::ResetEPG()
 	m_mapEPG.clear();
 	//m_bParseEPG=false;
 	m_bEpgDone=false;
-  m_bSorted=false;
+    m_bSorted=false;
 	m_epgTimeout=time(NULL);
 }
 

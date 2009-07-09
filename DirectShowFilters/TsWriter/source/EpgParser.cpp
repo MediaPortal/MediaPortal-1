@@ -34,6 +34,9 @@ CEpgParser::CEpgParser(void)
 	AddSectionDecoder(PID_DISH_EPG);
 	AddSectionDecoder(PID_BEV_EPG);
 	//}
+	//Freesat EPG
+	AddSectionDecoder(PID_FREESAT_EPG);
+	AddSectionDecoder(PID_FREESAT2_EPG);
 	// Premiere DIREKT Portal
 	AddSectionDecoder(PID_EPG_PREMIERE_DIREKT);
 	// Premiere SPORT Portal
@@ -137,10 +140,12 @@ bool CEpgParser::IsSectionWanted(int pid,int table_id)
 	switch (pid)
 	{
 		case PID_EPG:
+		case PID_FREESAT_EPG:
+		case PID_FREESAT2_EPG:	
 			return (table_id>=0x4e && table_id<=0x6f);
 		case PID_DISH_EPG:
 			return (table_id>=0x80 && table_id<=0xfe);
-		case  PID_BEV_EPG:
+		case PID_BEV_EPG:
 			return (table_id>=0x80 && table_id<=0xfe);
 		case PID_EPG_PREMIERE_DIREKT:
 			return (table_id==0xa0);
@@ -163,7 +168,7 @@ void CEpgParser::OnNewSection(int pid,int tableId,CSection& section)
 			if (pid==PID_EPG_PREMIERE_DIREKT || pid==PID_EPG_PREMIERE_SPORT)
 				m_epgDecoder.DecodePremierePrivateEPG(section.Data, section.section_length);
 			else
-				m_epgDecoder.DecodeEPG(section.Data, section.section_length);
+				m_epgDecoder.DecodeEPG(section.Data, section.section_length,pid);
 		}
 	}
 	catch(...)

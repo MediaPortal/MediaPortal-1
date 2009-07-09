@@ -95,14 +95,14 @@ public:
 	void	GetEPGEvent( ULONG channel,  ULONG event,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** strgenre  ,int* starRating, char** classification, unsigned int* eventid   );
 	void    GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language, char** eventText, char** eventDescription,unsigned int* parentalRating  );
 	void	AbortGrabbing();
-	HRESULT	DecodeEPG(byte* pbData,int len);
+	HRESULT	DecodeEPG(byte* pbData,int len,int PID);
 	HRESULT	DecodePremierePrivateEPG(byte* pbData,int len);
-
+	string FreesatHuffmanToString(BYTE *src, int size);
 private:
 	bool GetChannelByindex(ULONG channel, EPGChannel& epgChannel);
 	void DecodeCombinedStarRating_MPAARatingDescriptor(byte* data,EPGEvent &epgEvent);
 	void DecodeParentalRatingDescriptor(byte* buf,EPGEvent& event);
-	void DecodeShortEventDescriptor(byte* buf,EPGEvent& event);
+	void DecodeShortEventDescriptor(byte* buf,EPGEvent& event,int PID);
 	void DecodeContentDescription(byte* buf,EPGEvent& event);
 	void DecodeExtendedEvent(byte* buf, EPGEvent& event);
 	void DecodeDishShortDescription(byte* data, EPGEvent& epgEvent, int tnum);

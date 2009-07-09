@@ -33,6 +33,8 @@ using namespace std;
 #define PID_BEV_EPG		0x441 // Bev 9-day EPG
 #define PID_EPG_PREMIERE_DIREKT	0x0b11 
 #define PID_EPG_PREMIERE_SPORT	0x0b12
+#define PID_FREESAT_EPG 0xBBA
+#define PID_FREESAT2_EPG 0xBBB
 
 class CEpgParser :  public ISectionCallback
 {
