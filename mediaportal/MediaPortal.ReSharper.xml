@@ -77,12 +77,13 @@ http://www.gnu.org/copyleft/gpl.html]]></FileHeader>
     <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="aaBb" ElementKind="LocalConstants" />
     <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="PublicFields" />
     <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AA_BB" ElementKind="Constants" />
-    <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="StaticReadonly" />
+    <PredefinedRule Inspect="True" Prefix="_" Suffix="" Style="aaBb" ElementKind="StaticReadonly" />
     <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="Other" />
     <Abbreviation Text="MP" />
     <Abbreviation Text="XP" />
     <Abbreviation Text="MCE" />
     <Abbreviation Text="SVN" />
     <Abbreviation Text="ID" />
+    <Abbreviation Text="GUI" />
   </Naming2>
 </CodeStyleSettings>
