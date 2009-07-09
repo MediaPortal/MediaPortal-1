@@ -141,26 +141,16 @@ namespace MediaPortal.Topbar
 
     public override bool DoesPostRender()
     {
-      if (!m_bEnabled) return false;
-      //if (GUIGraphicsContext.IsFullScreenVideo) return false;
-      if (GUIGraphicsContext.DisableTopBar) return false;
-      if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_WEBBROWSER) return false;
-      if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MOVIE_CALIBRATION) return false;
-      if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_UI_CALIBRATION) return false;
-			// XXX OS: if we are in DVD menu display we disable the topbar because it can interfere with the DVD navigation menu
-			if (MediaPortal.Player.g_Player.IsDVDMenu) return false;
-			// XXX OS: picture slideshow should have a topbar... i still have no idea why they disabled it in all these screens
-			//if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW) return false;
-			return true;
-
-			// XXX OS: commented out the supression of the topbar on the home screen
-			//if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_HOME && useTopBarSub == true) return true;
-			//			
-			//if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_HOME)
-      //{
-      //  return true;
-      //}
-      //return false;
+      if (!m_bEnabled || 
+        GUIGraphicsContext.DisableTopBar ||
+        GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_WEBBROWSER ||
+        GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MOVIE_CALIBRATION ||
+        GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_UI_CALIBRATION ||
+        MediaPortal.Player.g_Player.IsDVDMenu) // Enabling top bar while in DVD menu could cause issues with the navigation
+      {
+        return false;
+      }
+      return true;
     }
 
     public override void PostRender(float timePassed, int iLayer)
