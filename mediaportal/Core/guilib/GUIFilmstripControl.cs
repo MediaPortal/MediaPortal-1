@@ -2974,7 +2974,6 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
-      item.ID = _listItems.Count + 1;
       _listItems.Add(item);
       int iItemsPerPage = _columns;
       int iPages = _listItems.Count/iItemsPerPage;
