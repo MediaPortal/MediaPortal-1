@@ -1160,6 +1160,25 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.WriteFile("subch:{0} OnPMTReceived() {1}", _subChannelId, GraphRunning());
         _eventPMT.Set();
+        
+        // PMT callback is done on each new PMT version
+        bool updatePids;
+        int waitInterval;
+        if (SendPmtToCam(out updatePids, out waitInterval))
+        {
+          if (updatePids)
+          {
+            if (_channelInfo != null)
+            {
+              SetMpegPidMapping(_channelInfo);
+              if (_mdplugs != null)
+                _mdplugs.SetChannel(_subChannelId, _currentChannel, _channelInfo);
+            }
+            Log.Log.Info("subch:{0} stop tif", _subChannelId);
+            if (_filterTIF != null)
+              _filterTIF.Stop();
+          }
+        }
       }
       return 0;
     }
