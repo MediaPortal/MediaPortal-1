@@ -93,7 +93,6 @@ void CPmtGrabber::OnNewSection(CSection& section)
 		if (section.section_length<0 || section.section_length>=MAX_SECTION_LENGTH) return;
 
 		long serviceId = section.table_id_extension;
-		LogDebug("service_id=%d",serviceId);
     if (m_iPmtVersion<0)
 		  LogDebug("pmtgrabber: got pmt %x sid:%x",GetPid(), serviceId);
 
@@ -102,21 +101,23 @@ void CPmtGrabber::OnNewSection(CSection& section)
 			LogDebug("pmtgrabber: serviceid mismatch %d != %d",serviceId,m_iServiceId);
 			return;
 		}
-		LogDebug("pmtgrabber: got pmt version:%d %d", section.version_number,m_iPmtVersion);
-		m_iPmtVersion=section.version_number;
+
 		m_iPmtLength=section.section_length;
 
 		memcpy(m_pmtData,section.Data,m_iPmtLength);
 		if (memcmp(m_pmtData,m_pmtPrevData,m_iPmtLength)!=0)
 		{
 			memcpy(m_pmtPrevData,m_pmtData,m_iPmtLength);
-			if (m_pCallback!=NULL)
+      // do a callback each time the version number changes. this also allows switching for "regional channels"
+			if (m_pCallback!=NULL && m_iPmtVersion != section.version_number)
 			{
-				LogDebug("pmtgrabber: do calback");
+        LogDebug("pmtgrabber: got new pmt version:%d %d, service_id:", section.version_number, m_iPmtVersion, serviceId);
+				LogDebug("pmtgrabber: do callback");
 				m_pCallback->OnPMTReceived();
 			}
-			m_pCallback=NULL;
+			//m_pCallback=NULL;
 		}
+ 		m_iPmtVersion=section.version_number;
 	}
 	catch(...)
 	{
