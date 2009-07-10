@@ -89,6 +89,7 @@ namespace MediaPortal.GUI.Video
     private int m_iActiveMenu = 0;
     private int m_iActiveMenuButtonID = 0;
     private int m_iCurrentBookmark = 0;
+    private int m_subtitleDelay = 50;
     private bool m_bNeedRefresh = false;
     private PlayListPlayer playlistPlayer;
 
@@ -477,7 +478,7 @@ namespace MediaPortal.GUI.Video
               if (m_bSubMenuOn)
               {
                 // set the controls values
-                //SetSliderValue(-10.0f, 10.0f, g_application.m_pPlayer.GetSubTitleDelay(), Controls.OSD_SUBTITLE_DELAY);
+                SetSliderValue(0.0f, 100.0f, m_subtitleDelay, (int)Controls.OSD_SUBTITLE_DELAY);
                 SetCheckmarkValue(g_Player.EnableSubtitle, (int) Controls.OSD_SUBTITLE_ONOFF);
                 // show the controls on this sub menu
                 ShowControl(GetID, (int) Controls.OSD_SUBTITLE_DELAY);
@@ -902,6 +903,29 @@ namespace MediaPortal.GUI.Video
               OnMessage(msg); // retrieve the selected list item
               g_Player.CurrentSubtitleStream = msg.Param1; // set the current subtitle
               PopulateSubTitles();
+            }
+          }
+          break;
+        case (int)Controls.OSD_SUBTITLE_DELAY:
+          {
+            GUISliderControl pControl = (GUISliderControl)GetControl(iControlID);
+            if (null != pControl)
+            {
+              if (pControl.Percentage < m_subtitleDelay)
+              {
+                if (g_Player.EnableSubtitle)
+                {
+                  MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayMinus();
+                }
+              }
+              else
+              {
+                if (g_Player.EnableSubtitle)
+                {
+                  MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayPlus();
+                }
+              }
+              m_subtitleDelay = pControl.Percentage;
             }
           }
           break;
