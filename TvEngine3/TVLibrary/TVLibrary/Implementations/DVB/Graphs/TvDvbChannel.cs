@@ -765,6 +765,7 @@ namespace TvLibrary.Implementations.DVB
         hwPids.Add(0x1);//CAT
         hwPids.Add(0x10);//NIT
         hwPids.Add(0x11);//SDT
+        hwPids.Add(0x12);//EPG
 
         Log.Log.WriteFile("subch:{0}  pid:{1:X} pcr", _subChannelId, info.pcr_pid);
         Log.Log.WriteFile("subch:{0}  pid:{1:X} pmt", _subChannelId, info.network_pmt_PID);
