@@ -89,7 +89,7 @@ namespace MediaPortal.GUI.Video
     private int m_iActiveMenu = 0;
     private int m_iActiveMenuButtonID = 0;
     private int m_iCurrentBookmark = 0;
-    private int m_subtitleDelay = 50;
+    private int m_subtitleDelay = 0;
     private bool m_bNeedRefresh = false;
     private PlayListPlayer playlistPlayer;
 
@@ -102,7 +102,7 @@ namespace MediaPortal.GUI.Video
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\videoOSD.xml");
-      GetID = (int) Window.WINDOW_OSD;
+      GetID = (int) Window.WINDOW_OSD;      
       return bResult;
     }
 
@@ -478,7 +478,11 @@ namespace MediaPortal.GUI.Video
               if (m_bSubMenuOn)
               {
                 // set the controls values
-                SetSliderValue(0.0f, 100.0f, m_subtitleDelay, (int)Controls.OSD_SUBTITLE_DELAY);
+                GUISliderControl pControl = (GUISliderControl)GetControl((int)Controls.OSD_SUBTITLE_DELAY);
+                pControl.SpinType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT;
+                pControl.FloatInterval = 1;
+                pControl.SetRange(-10, 10);
+                SetSliderValue(-10, 10, m_subtitleDelay, (int)Controls.OSD_SUBTITLE_DELAY);
                 SetCheckmarkValue(g_Player.EnableSubtitle, (int) Controls.OSD_SUBTITLE_ONOFF);
                 // show the controls on this sub menu
                 ShowControl(GetID, (int) Controls.OSD_SUBTITLE_DELAY);
@@ -909,23 +913,17 @@ namespace MediaPortal.GUI.Video
         case (int)Controls.OSD_SUBTITLE_DELAY:
           {
             GUISliderControl pControl = (GUISliderControl)GetControl(iControlID);
-            if (null != pControl)
+            if (null != pControl && g_Player.EnableSubtitle)
             {
-              if (pControl.Percentage < m_subtitleDelay)
+              if (pControl.FloatValue < m_subtitleDelay)
               {
-                if (g_Player.EnableSubtitle)
-                {
-                  MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayMinus();
-                }
+                MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayMinus();
               }
               else
               {
-                if (g_Player.EnableSubtitle)
-                {
-                  MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayPlus();
-                }
+                MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayPlus();
               }
-              m_subtitleDelay = pControl.Percentage;
+              m_subtitleDelay = (int)pControl.FloatValue;
             }
           }
           break;

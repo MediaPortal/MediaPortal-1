@@ -252,6 +252,7 @@
       <posX>70</posX>
       <posY>615</posY>
       <spintype>float</spintype>
+      <showrange>yes</showrange>
       <textureSliderBar>osd_slider_bg.png</textureSliderBar>
       <textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
       <textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
@@ -612,6 +613,7 @@
       <posX>70</posX>
       <posY>615</posY>
       <spintype>int</spintype>
+      <showrange>no</showrange>
       <textureSliderBar>osd_slider_bg.png</textureSliderBar>
       <textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
       <textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
