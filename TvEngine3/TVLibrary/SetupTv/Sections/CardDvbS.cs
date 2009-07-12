@@ -418,6 +418,7 @@ namespace SetupTv.Sections
       doc.Load(String.Format(@"{0}\TuningParameters\dvbs\satellites.xml", Log.GetPathName()));
       XmlNodeList nodes = doc.SelectNodes("/satellites/satellite");
       if (nodes != null)
+      {
         foreach (XmlNode node in nodes)
         {
           SatteliteContext ts = new SatteliteContext();
@@ -427,7 +428,19 @@ namespace SetupTv.Sections
           ts.FileName = String.Format(@"{0}\TuningParameters\dvbs\{1}.xml", Log.GetPathName(), name);
           satellites.Add(ts);
         }
-
+      }
+      String[] files = System.IO.Directory.GetFiles(String.Format(@"{0}\TuningParameters\dvbs\", Log.GetPathName()), "*.xml");
+      foreach (String file in files)
+      {
+        if (Path.GetFileName(file).StartsWith("Manual_Scans"))
+        {
+          SatteliteContext ts = new SatteliteContext();
+          ts.SatteliteName = Path.GetFileNameWithoutExtension(file);
+          ts.Url = "";
+          ts.FileName = file;
+          satellites.Add(ts);
+        }
+      }
       IList<Satellite> dbSats = Satellite.ListAll();
       foreach (SatteliteContext ts in satellites)
       {
@@ -469,6 +482,18 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       int idx = 0;
 
+      mpComboBoxPolarisation.Items.Add(Polarisation.LinearH);
+      mpComboBoxPolarisation.Items.Add(Polarisation.LinearV);
+      mpComboBoxPolarisation.Items.Add(Polarisation.CircularL);
+      mpComboBoxPolarisation.Items.Add(Polarisation.CircularR);
+      mpComboBoxPolarisation.Items.Add(Polarisation.Max);
+      mpComboBoxPolarisation.Items.Add(Polarisation.NotDefined);
+      mpComboBoxPolarisation.Items.Add(Polarisation.NotSet);
+      mpComboBoxPolarisation.SelectedIndex = 0;
+      mpComboBoxMod.SelectedIndex = 0;
+      mpButtonSaveList.Enabled = (_transponders.Count != 0);
+
+
       //List<SimpleFileName> satellites = fileFilters.AllFiles;
       List<SatteliteContext> satellites = LoadSattelites();
       MPComboBox[] mpTrans = new MPComboBox[] { mpTransponder1, mpTransponder2, mpTransponder3, mpTransponder4 };
@@ -488,7 +513,11 @@ namespace SetupTv.Sections
         }
         if (curBox.Items.Count > 0)
         {
-          curBox.SelectedIndex = Int32.Parse(layer.GetSetting(String.Format("dvbs{0}SatteliteContext{1}", _cardNumber, idx), "0").Value);
+          int selIdx = Int32.Parse(layer.GetSetting(String.Format("dvbs{0}SatteliteContext{1}", _cardNumber, idx), "0").Value);
+          if (selIdx < curBox.Items.Count)
+          {
+            curBox.SelectedIndex = selIdx;
+          }
         }
 
         curBox = mpDisEqc[ctlIndex];
@@ -535,6 +564,10 @@ namespace SetupTv.Sections
 
       _enableEvents = true;
       mpLNB1_CheckedChanged(null, null);
+
+      chkManualScan.Checked = false;
+      grpManualScan.Enabled = false;
+      chkManualScan.Enabled = true;
     }
 
     public override void OnSectionDeActivated()
@@ -831,7 +864,7 @@ namespace SetupTv.Sections
         progressBar1.Value = (int)percent;
 
         // if S2 transponder and not enabled skip it
-        if (_transponders[index].Pilot != Pilot.NotSet && _transponders[index].Rolloff != RollOff.NotSet && !checkEnableDVBS2.Checked)
+        if (_transponders[index].Rolloff != RollOff.NotSet && !checkEnableDVBS2.Checked)
         {
           continue;
         }
@@ -1504,6 +1537,140 @@ namespace SetupTv.Sections
         checkBoxCreateGroupsSat.Checked = false;
       }
       _ignoreCheckBoxCreateGroupsClickEvent = false;
+    }
+
+    private void mpButtonManualScan_Click(object sender, EventArgs e)
+    {
+      mpButtonSaveList.Enabled = (_transponders.Count != 0);
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+      if (card.Enabled == false)
+      {
+        MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
+        return;
+      }
+      if (!RemoteControl.Instance.CardPresent(card.IdCard))
+      {
+        MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
+        return;
+      }
+      RemoteControl.Instance.EpgGrabberEnabled = false;
+      _transponders.Clear();
+      mpButtonSaveList.Enabled = false;
+      DVBSChannel tuneChannel = GetManualTuning();
+
+      listViewStatus.Items.Clear();
+      string line = String.Format("Scan freq:{0} {1} symbolrate:{2} ...", tuneChannel.Frequency, tuneChannel.ModulationType, tuneChannel.SymbolRate);
+      ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
+      item.EnsureVisible();
+      Application.DoEvents();
+      IChannel[] channels = RemoteControl.Instance.ScanNIT(_cardNumber, tuneChannel);
+      if (channels != null)
+      {
+        for (int i = 0; i < channels.Length; ++i)
+        {
+          Transponder t = ToTransonder(channels[i]);
+
+          _transponders.Add(t);
+          item = listViewStatus.Items.Add(new ListViewItem(t.ToString()));
+          item.EnsureVisible();
+        }
+      }
+
+      ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Scan done, found {0} transponders...", _transponders.Count)));
+      lastItem.EnsureVisible();
+
+      RemoteControl.Instance.EpgGrabberEnabled = true;
+      if (_transponders.Count != 0)
+      {
+        if (DialogResult.Yes == MessageBox.Show(String.Format("Found {0} transponders. Would you like to scan those?", _transponders.Count), "Manual scan results", MessageBoxButtons.YesNo))
+        {
+          String newFile=SaveManualScanList();
+          int index = 0;
+          foreach (object oTs in mpTransponder1.Items)
+          {
+            SatteliteContext sc = (SatteliteContext)oTs;
+            if (sc.SatteliteName ==newFile)
+            {
+              mpTransponder1.SelectedItem = index;
+              break;
+            }
+            index++;
+          }
+          StartScanThread();
+        }
+      }
+      mpButtonSaveList.Enabled = (_transponders.Count != 0);
+    }
+    /// <summary>
+    /// Sets correct button state 
+    /// </summary>
+    private void SetButtonState()
+    {
+      mpButtonScanSingleTP.Enabled = !_isScanning;
+      mpButtonScanNIT.Enabled = !_isScanning;
+      mpButtonSaveList.Enabled = (_transponders.Count != 0) && !_isScanning;
+    }
+
+    private void StartScanThread()
+    {
+      Thread scanThread = new Thread(DoScan);
+      scanThread.Name = "DVB-S scan thread";
+      scanThread.Start();
+    }
+
+    private static Transponder ToTransonder(IChannel channel)
+    {
+      DVBSChannel ch = (DVBSChannel)channel;
+      Transponder t = new Transponder();
+      t.CarrierFrequency = Convert.ToInt32(ch.Frequency);
+      t.InnerFecRate = ch.InnerFecRate;
+      t.Modulation = ch.ModulationType;
+      t.Pilot = ch.Pilot;
+      t.Rolloff = ch.Rolloff;
+      t.SymbolRate = ch.SymbolRate;
+      t.Polarisation = ch.Polarisation;
+      return t;
+    }
+
+    private DVBSChannel GetManualTuning()
+    {
+      DVBSChannel tuneChannel = new DVBSChannel();
+      tuneChannel.Frequency = Int32.Parse(textBoxFreq.Text);
+      tuneChannel.ModulationType = (ModulationType)mpComboBoxMod.SelectedIndex;
+      tuneChannel.SymbolRate = Int32.Parse(textBoxSymbolRate.Text);
+      tuneChannel.Polarisation = (Polarisation)mpComboBoxPolarisation.SelectedItem;
+      return tuneChannel;
+    }
+
+    private void mpButtonSaveList_Click(object sender, EventArgs e)
+    {
+      SaveManualScanList();
+    }
+
+    private String SaveManualScanList()
+    {
+      _transponders.Sort();
+      String filePath = String.Format(@"{0}\TuningParameters\dvbs\Manual_Scans.{1}.xml", Log.GetPathName(), DateTime.Now.ToString("yyyy-MM-dd"));
+      System.IO.TextWriter parFileXML = System.IO.File.CreateText(filePath);
+      XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Transponder>));
+      xmlSerializer.Serialize(parFileXML, _transponders);
+      parFileXML.Close();
+      Init();
+      return Path.GetFileNameWithoutExtension(filePath);
+    }
+
+    private void mpButtonScanSingleTP_Click(object sender, EventArgs e)
+    {
+      DVBSChannel tuneChannel = GetManualTuning();
+      Transponder t = ToTransonder(tuneChannel);
+      _transponders.Add(t);
+      StartScanThread();
+    }
+
+    private void chkManualScan_CheckedChanged(object sender, EventArgs e)
+    {
+      grpManualScan.Enabled = chkManualScan.Checked;
     }
   }
 }

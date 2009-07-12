@@ -105,6 +105,14 @@ namespace SetupTv.Sections
       this.buttonMoveWest = new System.Windows.Forms.Button();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.textBoxSymbolRate = new System.Windows.Forms.TextBox();
+      this.mpLabel8 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpComboBoxPolarisation = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpComboBoxMod = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel7 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.Modulation = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxFreq = new System.Windows.Forms.TextBox();
+      this.mpLabel9 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBoxCreateGroupsSat = new System.Windows.Forms.CheckBox();
       this.button1 = new System.Windows.Forms.Button();
       this.tabPageCIMenu = new System.Windows.Forms.TabPage();
@@ -114,36 +122,46 @@ namespace SetupTv.Sections
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+      this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.mpButtonScanSingleTP = new MediaPortal.UserInterface.Controls.MPButton();
+      this.groupBox3 = new System.Windows.Forms.GroupBox();
+      this.mpButtonSaveList = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonScanNIT = new MediaPortal.UserInterface.Controls.MPButton();
+      this.grpManualScan = new System.Windows.Forms.GroupBox();
+      this.chkManualScan = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControl1.SuspendLayout();
       this.tabPage3.SuspendLayout();
       this.groupBox1.SuspendLayout();
       this.tabPage2.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.tabPage1.SuspendLayout();
+      this.groupBox2.SuspendLayout();
+      this.groupBox3.SuspendLayout();
+      this.grpManualScan.SuspendLayout();
       this.SuspendLayout();
       // 
       // progressBarQuality
       // 
       this.progressBarQuality.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.progressBarQuality.Location = new System.Drawing.Point(105, 63);
+      this.progressBarQuality.Location = new System.Drawing.Point(105, 160);
       this.progressBarQuality.Name = "progressBarQuality";
-      this.progressBarQuality.Size = new System.Drawing.Size(309, 10);
+      this.progressBarQuality.Size = new System.Drawing.Size(354, 10);
       this.progressBarQuality.TabIndex = 59;
       // 
       // progressBarLevel
       // 
       this.progressBarLevel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.progressBarLevel.Location = new System.Drawing.Point(105, 40);
+      this.progressBarLevel.Location = new System.Drawing.Point(105, 140);
       this.progressBarLevel.Name = "progressBarLevel";
-      this.progressBarLevel.Size = new System.Drawing.Size(309, 10);
+      this.progressBarLevel.Size = new System.Drawing.Size(354, 13);
       this.progressBarLevel.TabIndex = 58;
       // 
       // label2
       // 
       this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(15, 60);
+      this.label2.Location = new System.Drawing.Point(15, 157);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(72, 13);
       this.label2.TabIndex = 57;
@@ -152,7 +170,7 @@ namespace SetupTv.Sections
       // label1
       // 
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(15, 37);
+      this.label1.Location = new System.Drawing.Point(15, 137);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(64, 13);
       this.label1.TabIndex = 56;
@@ -162,15 +180,15 @@ namespace SetupTv.Sections
       // 
       this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.progressBar1.Location = new System.Drawing.Point(18, 87);
+      this.progressBar1.Location = new System.Drawing.Point(19, 179);
       this.progressBar1.Name = "progressBar1";
-      this.progressBar1.Size = new System.Drawing.Size(396, 10);
+      this.progressBar1.Size = new System.Drawing.Size(441, 10);
       this.progressBar1.TabIndex = 55;
       // 
       // mpButtonScanTv
       // 
       this.mpButtonScanTv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonScanTv.Location = new System.Drawing.Point(307, 359);
+      this.mpButtonScanTv.Location = new System.Drawing.Point(347, 357);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
       this.mpButtonScanTv.Size = new System.Drawing.Size(107, 23);
       this.mpButtonScanTv.TabIndex = 1;
@@ -196,9 +214,9 @@ namespace SetupTv.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewStatus.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
-      this.listViewStatus.Location = new System.Drawing.Point(18, 112);
+      this.listViewStatus.Location = new System.Drawing.Point(18, 200);
       this.listViewStatus.Name = "listViewStatus";
-      this.listViewStatus.Size = new System.Drawing.Size(396, 224);
+      this.listViewStatus.Size = new System.Drawing.Size(441, 136);
       this.listViewStatus.TabIndex = 67;
       this.listViewStatus.UseCompatibleStateImageBehavior = false;
       this.listViewStatus.View = System.Windows.Forms.View.Details;
@@ -967,6 +985,8 @@ namespace SetupTv.Sections
       // tabPage1
       // 
       this.tabPage1.BackColor = System.Drawing.SystemColors.Control;
+      this.tabPage1.Controls.Add(this.chkManualScan);
+      this.tabPage1.Controls.Add(this.grpManualScan);
       this.tabPage1.Controls.Add(this.checkBoxCreateGroupsSat);
       this.tabPage1.Controls.Add(this.button1);
       this.tabPage1.Controls.Add(this.checkBoxCreateGroups);
@@ -984,6 +1004,113 @@ namespace SetupTv.Sections
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Scanning";
       // 
+      // textBoxSymbolRate
+      // 
+      this.textBoxSymbolRate.Location = new System.Drawing.Point(80, 36);
+      this.textBoxSymbolRate.MaxLength = 6;
+      this.textBoxSymbolRate.Name = "textBoxSymbolRate";
+      this.textBoxSymbolRate.Size = new System.Drawing.Size(69, 20);
+      this.textBoxSymbolRate.TabIndex = 101;
+      this.textBoxSymbolRate.Text = "22000";
+      // 
+      // mpLabel8
+      // 
+      this.mpLabel8.AutoSize = true;
+      this.mpLabel8.Location = new System.Drawing.Point(10, 39);
+      this.mpLabel8.Name = "mpLabel8";
+      this.mpLabel8.Size = new System.Drawing.Size(65, 13);
+      this.mpLabel8.TabIndex = 108;
+      this.mpLabel8.Text = "Symbol rate:";
+      // 
+      // mpComboBoxPolarisation
+      // 
+      this.mpComboBoxPolarisation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBoxPolarisation.FormattingEnabled = true;
+      this.mpComboBoxPolarisation.Location = new System.Drawing.Point(80, 62);
+      this.mpComboBoxPolarisation.Name = "mpComboBoxPolarisation";
+      this.mpComboBoxPolarisation.Size = new System.Drawing.Size(92, 21);
+      this.mpComboBoxPolarisation.TabIndex = 102;
+      // 
+      // mpComboBoxMod
+      // 
+      this.mpComboBoxMod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBoxMod.FormattingEnabled = true;
+      this.mpComboBoxMod.Items.AddRange(new object[] {
+            "Not Defined ",
+            "16 QAM ",
+            "32 QAM",
+            "64 QAM",
+            "80 QAM",
+            "96 QAM",
+            "112 QAM",
+            "128 QAM",
+            "160 QAM",
+            "192 QAM",
+            "224 QAM",
+            "256 QAM",
+            "320 QAM",
+            "384 QAM",
+            "448 QAM",
+            "512 QAM",
+            "640 QAM",
+            "768 QAM",
+            "896 QAM",
+            "1024 QAM",
+            "Qpsk",
+            "Bpsk",
+            "Oqpsk ",
+            "8Vsb ",
+            "16Vsb ",
+            "AnalogAmplitude ",
+            "AnalogFrequency ",
+            "8psk ",
+            "Rf ",
+            "16Apsk ",
+            "32Apsk",
+            "Qpsk2 ",
+            "8psk2 ",
+            "DirectTV  "});
+      this.mpComboBoxMod.Location = new System.Drawing.Point(80, 85);
+      this.mpComboBoxMod.Name = "mpComboBoxMod";
+      this.mpComboBoxMod.Size = new System.Drawing.Size(92, 21);
+      this.mpComboBoxMod.TabIndex = 102;
+      // 
+      // mpLabel7
+      // 
+      this.mpLabel7.AutoSize = true;
+      this.mpLabel7.Location = new System.Drawing.Point(9, 65);
+      this.mpLabel7.Name = "mpLabel7";
+      this.mpLabel7.Size = new System.Drawing.Size(64, 13);
+      this.mpLabel7.TabIndex = 107;
+      this.mpLabel7.Text = "Polarisation:";
+      // 
+      // Modulation
+      // 
+      this.Modulation.AutoSize = true;
+      this.Modulation.Location = new System.Drawing.Point(10, 88);
+      this.Modulation.Name = "Modulation";
+      this.Modulation.Size = new System.Drawing.Size(62, 13);
+      this.Modulation.TabIndex = 107;
+      this.Modulation.Text = "Modulation:";
+      // 
+      // textBoxFreq
+      // 
+      this.textBoxFreq.Location = new System.Drawing.Point(80, 13);
+      this.textBoxFreq.MaxLength = 8;
+      this.textBoxFreq.Name = "textBoxFreq";
+      this.textBoxFreq.Size = new System.Drawing.Size(69, 20);
+      this.textBoxFreq.TabIndex = 100;
+      this.textBoxFreq.Text = "10744000";
+      // 
+      // mpLabel9
+      // 
+      this.mpLabel9.AutoSize = true;
+      this.mpLabel9.Location = new System.Drawing.Point(9, 16);
+      this.mpLabel9.Name = "mpLabel9";
+      this.mpLabel9.Size = new System.Drawing.Size(60, 13);
+      this.mpLabel9.TabIndex = 106;
+      this.mpLabel9.Text = "Frequency:";
+      // 
       // checkBoxCreateGroupsSat
       // 
       this.checkBoxCreateGroupsSat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -999,7 +1126,7 @@ namespace SetupTv.Sections
       // button1
       // 
       this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.button1.Location = new System.Drawing.Point(188, 359);
+      this.button1.Location = new System.Drawing.Point(228, 357);
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(113, 23);
       this.button1.TabIndex = 68;
@@ -1057,6 +1184,88 @@ namespace SetupTv.Sections
       this.mpLabel1.TabIndex = 66;
       this.mpLabel1.Text = "DiSEqC:";
       // 
+      // groupBox2
+      // 
+      this.groupBox2.Controls.Add(this.mpButtonScanSingleTP);
+      this.groupBox2.Enabled = false;
+      this.groupBox2.Location = new System.Drawing.Point(200, 16);
+      this.groupBox2.Name = "groupBox2";
+      this.groupBox2.Size = new System.Drawing.Size(113, 78);
+      this.groupBox2.TabIndex = 110;
+      this.groupBox2.TabStop = false;
+      this.groupBox2.Text = "Single Transponder";
+      // 
+      // mpButtonScanSingleTP
+      // 
+      this.mpButtonScanSingleTP.Location = new System.Drawing.Point(25, 16);
+      this.mpButtonScanSingleTP.Name = "mpButtonScanSingleTP";
+      this.mpButtonScanSingleTP.Size = new System.Drawing.Size(67, 23);
+      this.mpButtonScanSingleTP.TabIndex = 7;
+      this.mpButtonScanSingleTP.Text = "Scan";
+      this.mpButtonScanSingleTP.UseVisualStyleBackColor = true;
+      this.mpButtonScanSingleTP.Click += new System.EventHandler(this.mpButtonScanSingleTP_Click);
+      // 
+      // groupBox3
+      // 
+      this.groupBox3.Controls.Add(this.mpButtonSaveList);
+      this.groupBox3.Controls.Add(this.mpButtonScanNIT);
+      this.groupBox3.Location = new System.Drawing.Point(319, 16);
+      this.groupBox3.Name = "groupBox3";
+      this.groupBox3.Size = new System.Drawing.Size(129, 78);
+      this.groupBox3.TabIndex = 109;
+      this.groupBox3.TabStop = false;
+      this.groupBox3.Text = "Transponder List (NIT)";
+      // 
+      // mpButtonSaveList
+      // 
+      this.mpButtonSaveList.Location = new System.Drawing.Point(20, 45);
+      this.mpButtonSaveList.Name = "mpButtonSaveList";
+      this.mpButtonSaveList.Size = new System.Drawing.Size(69, 23);
+      this.mpButtonSaveList.TabIndex = 7;
+      this.mpButtonSaveList.Text = "Save";
+      this.mpButtonSaveList.UseVisualStyleBackColor = true;
+      this.mpButtonSaveList.Click += new System.EventHandler(this.mpButtonSaveList_Click);
+      // 
+      // mpButtonScanNIT
+      // 
+      this.mpButtonScanNIT.Location = new System.Drawing.Point(20, 16);
+      this.mpButtonScanNIT.Name = "mpButtonScanNIT";
+      this.mpButtonScanNIT.Size = new System.Drawing.Size(69, 23);
+      this.mpButtonScanNIT.TabIndex = 6;
+      this.mpButtonScanNIT.Text = "Scan";
+      this.mpButtonScanNIT.UseVisualStyleBackColor = true;
+      this.mpButtonScanNIT.Click += new System.EventHandler(this.mpButtonManualScan_Click);
+      // 
+      // grpManualScan
+      // 
+      this.grpManualScan.Controls.Add(this.mpLabel9);
+      this.grpManualScan.Controls.Add(this.groupBox3);
+      this.grpManualScan.Controls.Add(this.groupBox2);
+      this.grpManualScan.Controls.Add(this.textBoxFreq);
+      this.grpManualScan.Controls.Add(this.Modulation);
+      this.grpManualScan.Controls.Add(this.textBoxSymbolRate);
+      this.grpManualScan.Controls.Add(this.mpLabel7);
+      this.grpManualScan.Controls.Add(this.mpLabel8);
+      this.grpManualScan.Controls.Add(this.mpComboBoxMod);
+      this.grpManualScan.Controls.Add(this.mpComboBoxPolarisation);
+      this.grpManualScan.Location = new System.Drawing.Point(6, 19);
+      this.grpManualScan.Name = "grpManualScan";
+      this.grpManualScan.Size = new System.Drawing.Size(453, 107);
+      this.grpManualScan.TabIndex = 111;
+      this.grpManualScan.TabStop = false;
+      // 
+      // chkManualScan
+      // 
+      this.chkManualScan.AutoSize = true;
+      this.chkManualScan.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.chkManualScan.Location = new System.Drawing.Point(6, 0);
+      this.chkManualScan.Name = "chkManualScan";
+      this.chkManualScan.Size = new System.Drawing.Size(107, 17);
+      this.chkManualScan.TabIndex = 111;
+      this.chkManualScan.Text = "Manual Scanning";
+      this.chkManualScan.UseVisualStyleBackColor = true;
+      this.chkManualScan.CheckedChanged += new System.EventHandler(this.chkManualScan_CheckedChanged);
+      // 
       // CardDvbS
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1075,6 +1284,10 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.tabPage1.ResumeLayout(false);
       this.tabPage1.PerformLayout();
+      this.groupBox2.ResumeLayout(false);
+      this.groupBox3.ResumeLayout(false);
+      this.grpManualScan.ResumeLayout(false);
+      this.grpManualScan.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -1167,5 +1380,20 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label labelTunerLock;
     private System.Windows.Forms.Label label18;
     private System.Windows.Forms.TabPage tabPageCIMenu;
+    private System.Windows.Forms.TextBox textBoxSymbolRate;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel8;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxMod;
+    private MediaPortal.UserInterface.Controls.MPLabel Modulation;
+    private System.Windows.Forms.TextBox textBoxFreq;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel9;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxPolarisation;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel7;
+    private System.Windows.Forms.GroupBox groupBox2;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonScanSingleTP;
+    private System.Windows.Forms.GroupBox groupBox3;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonSaveList;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonScanNIT;
+    private System.Windows.Forms.GroupBox grpManualScan;
+    private MediaPortal.UserInterface.Controls.MPCheckBox chkManualScan;
   }
 }

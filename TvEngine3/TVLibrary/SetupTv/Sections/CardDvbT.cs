@@ -87,11 +87,28 @@ namespace SetupTv.Sections
         MessageBox.Show(@"Unable to open TuningParameters\dvbt\*.xml");
         return;
       }
+      _dvbtChannels = new List<DVBTTuning>();
+      SetButtonState();
     }
-
-
-
-
+    /// <summary>
+    /// Saves a new list with found transponders
+    /// </summary>
+    /// <param name="fileName">Path for output filename</param>
+    void SaveList(string fileName)
+    {
+      try
+      {
+        System.IO.TextWriter parFileXML = System.IO.File.CreateText(fileName);
+        XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<DVBTTuning>));
+        xmlSerializer.Serialize(parFileXML, _dvbtChannels);
+        parFileXML.Close();
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Error saving tuningdetails: {0}", ex.ToString());
+        MessageBox.Show("Transponder list could not be saved, check error.log for details.");
+      }
+    }
 
     void UpdateStatus()
     {
@@ -168,9 +185,7 @@ namespace SetupTv.Sections
         {
           return;
         }
-        Thread scanThread = new Thread(DoScan);
-        scanThread.Name = "DVB-T scan thread";
-        scanThread.Start();
+        StartScanThread();
       }
       else
       {
@@ -197,49 +212,10 @@ namespace SetupTv.Sections
         RemoteControl.Instance.EpgGrabberEnabled = false;
         listViewStatus.Items.Clear();
 
-        //Dictionary<int, int> frequencies = new Dictionary<int, int>();
-        //XmlDocument doc = new XmlDocument();
-        //doc.Load(String.Format(@"{0}\TuningParameters\dvbt.xml", Log.GetPathName()));
-        //XmlNodeList countryList = doc.SelectNodes("/dvbt/country");
-        //if (countryList != null)
-        //  foreach (XmlNode nodeCountry in countryList)
-        //  {
-        //    XmlNode nodeName = nodeCountry.Attributes.GetNamedItem("name");
-        //    if (nodeName.Value != mpComboBoxCountry.SelectedItem.ToString())
-        //      continue;
-        //    XmlNode nodeOffset = nodeCountry.Attributes.GetNamedItem("offset");
-        //    if (nodeOffset != null)
-        //    {
-        //      if (nodeOffset.Value != null)
-        //      {
-        //        if (Int32.TryParse(nodeOffset.Value, out frequencyOffset) == false)
-        //        {
-        //          frequencyOffset = 0;
-        //        }
-        //      }
-        //    }
-        //    XmlNodeList nodeFrequencyList = nodeCountry.SelectNodes("carrier");
-        //    if (nodeFrequencyList != null)
-        //      foreach (XmlNode nodeFrequency in nodeFrequencyList)
-        //      {
-        //        string frequencyText = nodeFrequency.Attributes.GetNamedItem("frequency").Value;
-        //        string bandwidthText = "8";
-        //        if (nodeFrequency.Attributes.GetNamedItem("bandwidth") != null)
-        //        {
-        //          bandwidthText = nodeFrequency.Attributes.GetNamedItem("bandwidth").Value;
-        //        }
-        //        int frequency = Int32.Parse(frequencyText);
-        //        int bandWidth = Int32.Parse(bandwidthText);
-        //        frequencies.Add(frequency, bandWidth);
-        //      }
-        //  }
-        //if (frequencies.Count == 0)
-        //  return;
-
         if (_dvbtChannels.Count == 0)
           return;
 
-        mpComboBoxCountry.Enabled = false;
+        SetButtonState();
         TvBusinessLayer layer = new TvBusinessLayer();
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
 
@@ -408,9 +384,9 @@ namespace SetupTv.Sections
         RemoteControl.Instance.StopCard(user);
         RemoteControl.Instance.EpgGrabberEnabled = true;
         progressBar1.Value = 100;
-        mpComboBoxCountry.Enabled = true;
         mpButtonScanTv.Text = buttonText;
         _isScanning = false;
+        SetButtonState();
       }
       listViewStatus.Items.Add(new ListViewItem("Scan done..."));
       listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radioChannelsNew, radioChannelsUpdated)));
@@ -421,6 +397,109 @@ namespace SetupTv.Sections
     private void CardDvbT_Load(object sender, EventArgs e)
     {
 
+    }
+
+    private void mpButtonManualScan_Click(object sender, EventArgs e)
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+      if (card.Enabled == false)
+      {
+        MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
+        return;
+      }
+      if (!RemoteControl.Instance.CardPresent(card.IdCard))
+      {
+        MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
+        return;
+      }
+      RemoteControl.Instance.EpgGrabberEnabled = false;
+
+      if (_dvbtChannels == null)
+      {
+        _dvbtChannels = new List<DVBTTuning>();
+      }
+      else
+      {
+        _dvbtChannels.Clear();
+      }
+      mpButtonSaveList.Enabled = false;
+      DVBTChannel tuneChannel = GetManualTuning();
+
+      listViewStatus.Items.Clear();
+      string line = String.Format("Scan freq:{0} bandwidth:{1} ...", tuneChannel.Frequency, tuneChannel.BandWidth);
+      ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
+      item.EnsureVisible();
+      Application.DoEvents();
+      IChannel[] channels = RemoteControl.Instance.ScanNIT(_cardNumber, tuneChannel);
+      if (channels != null)
+      {
+        for (int i = 0; i < channels.Length; ++i)
+        {
+          DVBTChannel ch = (DVBTChannel)channels[i];
+          _dvbtChannels.Add(ch.TuningInfo);
+          item = listViewStatus.Items.Add(new ListViewItem(ch.TuningInfo.ToString()));
+          item.EnsureVisible();
+        }
+      }
+
+      ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Scan done, found {0} transponders...", _dvbtChannels.Count)));
+      lastItem.EnsureVisible();
+
+      RemoteControl.Instance.EpgGrabberEnabled = true;
+      if (_dvbtChannels.Count != 0)
+      {
+        if (DialogResult.Yes == MessageBox.Show(String.Format("Found {0} transponders. Would you like to scan those?", _dvbtChannels.Count), "Manual scan results", MessageBoxButtons.YesNo))
+        {
+          StartScanThread();
+        }
+      }
+      SetButtonState();
+    }
+
+    /// <summary>
+    /// Sets correct button state 
+    /// </summary>
+    private void SetButtonState()
+    {
+      mpButtonScanSingleTP.Enabled = !_isScanning;
+      mpComboBoxCountry.Enabled = !_isScanning;
+      mpComboBoxRegion.Enabled = !_isScanning;
+      mpButtonScanNIT.Enabled = !_isScanning;
+      mpButtonSaveList.Enabled = (_dvbtChannels.Count != 0) && !_isScanning;
+    }
+
+    private void StartScanThread()
+    {
+      Thread scanThread = new Thread(DoScan);
+      scanThread.Name = "DVB-T scan thread";
+      scanThread.Start();
+    }
+
+    private DVBTChannel GetManualTuning()
+    {
+      DVBTChannel tuneChannel = new DVBTChannel();
+      tuneChannel.Frequency = Int32.Parse(textBoxFreq.Text);
+      tuneChannel.BandWidth = Int32.Parse(textBoxBandWidth.Text);
+      return tuneChannel;
+    }
+
+    private void mpButtonScanSingleTP_Click(object sender, EventArgs e)
+    {
+      DVBTChannel tuneChannel = GetManualTuning();
+      _dvbtChannels.Clear();
+      _dvbtChannels.Add(tuneChannel.TuningInfo);
+      StartScanThread();
+    }
+
+    private void mpButtonSaveList_Click(object sender, EventArgs e)
+    {
+      if (_dvbtChannels.Count != 0)
+      {
+        String filePath = String.Format(@"{0}\TuningParameters\dvbt\Manual_Scans.{1}.xml", Log.GetPathName(), DateTime.Now.ToString("yyyy-MM-dd"));
+        SaveList(filePath);
+        Init(); // refresh list
+      }
     }
   }
 }

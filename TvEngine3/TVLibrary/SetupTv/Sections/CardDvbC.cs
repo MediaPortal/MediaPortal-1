@@ -127,6 +127,7 @@ namespace SetupTv.Sections
         MessageBox.Show(@"Unable to open TuningParameters\dvbc\*.xml");
         return;
       }
+      SetButtonState();
     }
 
     void UpdateStatus()
@@ -197,22 +198,27 @@ namespace SetupTv.Sections
           MessageBox.Show(this, "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
           return;
         }
-        mpButtonSaveList.Enabled = false;
+        SetButtonState();
         CustomFileName tuningFile = (CustomFileName)mpComboBoxRegion.SelectedItem;
         _dvbcChannels = (List<DVBCTuning>)fileFilters.LoadList(tuningFile.FileName, typeof(List<DVBCTuning>));
         if (_dvbcChannels == null)
         {
           return;
         }
-        Thread scanThread = new Thread(DoScan);
-        scanThread.Name = "DVB-C scan thread";
-        scanThread.Start();
+        StartScanThread();
         listViewStatus.Items.Clear();
       }
       else
       {
         _stopScanning = true;
       }
+    }
+
+    private void StartScanThread()
+    {
+      Thread scanThread = new Thread(DoScan);
+      scanThread.Name = "DVB-C scan thread";
+      scanThread.Start();
     }
     
     class suminfo
@@ -223,6 +229,9 @@ namespace SetupTv.Sections
       public int updChannelSum = 0;
     }
 
+    /// <summary>
+    /// Scan Thread
+    /// </summary>
     void DoScan()
     {
       suminfo tv = new suminfo();
@@ -240,9 +249,7 @@ namespace SetupTv.Sections
         if (_dvbcChannels.Count == 0)
           return;
 
-        mpComboBoxCountry.Enabled = false;
-        mpButton1.Enabled = false;
-
+        SetButtonState();
         TvBusinessLayer layer = new TvBusinessLayer();
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
 
@@ -387,10 +394,9 @@ namespace SetupTv.Sections
         RemoteControl.Instance.StopCard(user);
         RemoteControl.Instance.EpgGrabberEnabled = true;
         progressBar1.Value = 100;
-        mpComboBoxCountry.Enabled = true;
-        mpButton1.Enabled = true;
         mpButtonScanTv.Text = buttonText;
         _isScanning = false;
+        SetButtonState();
       }
       listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radio.newChannelSum, radio.updChannelSum)));
       listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", tv.newChannelSum, tv.updChannelSum)));
@@ -398,7 +404,7 @@ namespace SetupTv.Sections
       lastItem.EnsureVisible();
     }
 
-    private void mpButton1_Click(object sender, EventArgs e)
+    private void mpButtonScanTv_Click(object sender, EventArgs e)
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
@@ -413,13 +419,9 @@ namespace SetupTv.Sections
         return;
       }
       RemoteControl.Instance.EpgGrabberEnabled = false;
-      mpButton1.Enabled = false;
+      SetButtonState();
       _dvbcChannels.Clear();
-      mpButtonSaveList.Enabled = false;
-      DVBCChannel tuneChannel = new DVBCChannel();
-      tuneChannel.Frequency = Int32.Parse(textBoxFreq.Text);
-      tuneChannel.ModulationType = (ModulationType)mpComboBoxMod.SelectedIndex;
-      tuneChannel.SymbolRate = Int32.Parse(textBoxSymbolRate.Text);
+      DVBCChannel tuneChannel = GetManualTuning();
 
       listViewStatus.Items.Clear();
       string line = String.Format("Scan freq:{0} {1} symbolrate:{2} ...", tuneChannel.Frequency, tuneChannel.ModulationType, tuneChannel.SymbolRate);
@@ -440,26 +442,53 @@ namespace SetupTv.Sections
 
       ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Scan done, found {0} transponders...", _dvbcChannels.Count)));
       lastItem.EnsureVisible();
-      mpButton1.Enabled = true;
+      mpButtonScanNIT.Enabled = true;
 
       RemoteControl.Instance.EpgGrabberEnabled = true;
       if (_dvbcChannels.Count != 0)
       {
         if (DialogResult.Yes == MessageBox.Show(String.Format("Found {0} transponders. Would you like to scan those?", _dvbcChannels.Count), "Manual scan results", MessageBoxButtons.YesNo))
         {
-          Thread scanThread = new Thread(DoScan);
-          scanThread.Name = "DVB-C scan thread";
-          scanThread.Start();
+          StartScanThread();
         }
       }
-      mpButtonSaveList.Enabled = (_dvbcChannels.Count != 0);
+      SetButtonState();
+    }
+
+    /// <summary>
+    /// Sets correct button state 
+    /// </summary>
+    private void SetButtonState()
+    {
+      mpButtonScanSingleTP.Enabled = !_isScanning;
+      mpComboBoxCountry.Enabled = !_isScanning;
+      mpComboBoxRegion.Enabled = !_isScanning;
+      mpButtonScanNIT.Enabled = !_isScanning;
+      mpButtonSaveList.Enabled = (_dvbcChannels.Count != 0) && !_isScanning;
+    }
+
+    /// <summary>
+    /// Get Tunining details from manual scan section
+    /// </summary>
+    /// <returns></returns>
+    private DVBCChannel GetManualTuning()
+    {
+      DVBCChannel tuneChannel = new DVBCChannel();
+      tuneChannel.Frequency = Int32.Parse(textBoxFreq.Text);
+      tuneChannel.ModulationType = (ModulationType)mpComboBoxMod.SelectedIndex;
+      tuneChannel.SymbolRate = Int32.Parse(textBoxSymbolRate.Text);
+      return tuneChannel;
     }
 
     private void CardDvbC_Load(object sender, EventArgs e)
     {
 
     }
-
+    /// <summary>
+    /// Saves current transponder list
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void mpButtonSaveList_Click(object sender, EventArgs e)
     {
       if (_dvbcChannels.Count != 0)
@@ -468,6 +497,18 @@ namespace SetupTv.Sections
         SaveList(filePath);
         Init(); // refresh list
       }
+    }
+    /// <summary>
+    /// Scans a manual entered transponder for channels
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void mpButtonScanSingleTP_Click(object sender, EventArgs e)
+    {
+      DVBCChannel tuneChannel = GetManualTuning();
+      _dvbcChannels.Clear();
+      _dvbcChannels.Add(tuneChannel.TuningInfo);
+      StartScanThread();
     }
 
   }
