@@ -51,19 +51,24 @@ namespace MediaPortal.Player.Subtitles
       set;
     }
 
+    int DelayInterval
+    {
+      get;
+    }
+
     void DelayPlus();
     void DelayMinus();
 
   }
 
   public class SubEngine
-  {
+  {    
     private static ISubEngine engine;
 
     public static ISubEngine GetInstance()
     {
       if (engine == null)
-      {
+      {        
         using (Settings xmlreader = new MPSettings())
         {
           string engineType = xmlreader.GetValueAsString("subtitles", "engine", "DirectVobSub");
@@ -154,6 +159,14 @@ namespace MediaPortal.Player.Subtitles
         }
         set
         {
+        }
+      }
+
+      public int DelayInterval
+      {
+        get
+        {
+          return 0;
         }
       }
 

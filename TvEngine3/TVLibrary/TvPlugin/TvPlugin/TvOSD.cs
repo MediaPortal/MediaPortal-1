@@ -118,6 +118,8 @@ namespace TvPlugin
     private Program previousProgram = null;
     private bool _immediateSeekIsRelative = true;
     private int _immediateSeekValue = 10;
+    private int m_subtitleDelay = 0;
+    private int m_delayInterval = 0;
 
     private IList listTvChannels;
 
@@ -382,6 +384,9 @@ namespace TvPlugin
             {
               ShowControl(GetID, i);
             }
+            m_delayInterval = MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayInterval;
+            if (m_delayInterval > 0)
+              m_subtitleDelay = MediaPortal.Player.Subtitles.SubEngine.GetInstance().Delay / m_delayInterval;            
             return true;
           }
 
@@ -635,8 +640,11 @@ namespace TvPlugin
               if (isSubMenuVisible)
               {
                 // set the controls values
-                //SetSliderValue(-10.0f, 10.0f, g_application.m_pPlayer.GetSubTitleDelay(), Controls.OSD_SUBTITLE_DELAY);
-                SetCheckmarkValue(g_Player.EnableSubtitle, (int)Controls.OSD_SUBTITLE_ONOFF);
+                GUISliderControl pControl = (GUISliderControl)GetControl((int)Controls.OSD_SUBTITLE_DELAY);
+                pControl.SpinType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT;
+                pControl.FloatInterval = 1;
+                pControl.SetRange(-10, 10);
+                SetSliderValue(-10, 10, m_subtitleDelay, (int)Controls.OSD_SUBTITLE_DELAY); SetCheckmarkValue(g_Player.EnableSubtitle, (int)Controls.OSD_SUBTITLE_ONOFF);
                 // show the controls on this sub menu
                 ShowControl(GetID, (int)Controls.OSD_SUBTITLE_DELAY);
                 ShowControl(GetID, (int)Controls.OSD_SUBTITLE_DELAY_LABEL);
@@ -1091,18 +1099,7 @@ namespace TvPlugin
                   m_iCurrentBookmark=0;									// reset current bookmark
                   PopulateBookmarks();									// refresh our list control
                 }
-                break;
-
-                case Controls.OSD_SUBTITLE_DELAY:
-                {
-                  GUISliderControl pControl=(GUISliderControl)GetControl(iControlID);
-                  if (pControl)
-                  {
-                    // Set the subtitle delay
-                    g_application.m_pPlayer.SetSubTittleDelay(pControl.GetFloatValue());
-                  }
-                }
-                break;
+                break;                
       */
         case (int)Controls.OSD_SUBTITLE_ONOFF:
           {
@@ -1119,6 +1116,24 @@ namespace TvPlugin
               OnMessage(msg); // retrieve the selected list item
               g_Player.CurrentSubtitleStream = msg.Param1; // set the current subtitle
               PopulateSubTitles();
+            }
+          }
+          break;
+
+        case (int)Controls.OSD_SUBTITLE_DELAY:
+          {
+            GUISliderControl pControl = (GUISliderControl)GetControl(iControlID);
+            if (null != pControl && g_Player.EnableSubtitle)
+            {
+              if (pControl.FloatValue < m_subtitleDelay)
+              {
+                MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayMinus();
+              }
+              else
+              {
+                MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayPlus();
+              }
+              m_subtitleDelay = (int)pControl.FloatValue;
             }
           }
           break;

@@ -92,6 +92,7 @@ namespace MediaPortal.GUI.Video
     private int m_subtitleDelay = 0;
     private bool m_bNeedRefresh = false;
     private PlayListPlayer playlistPlayer;
+    private int m_delayInterval = 0;
 
     public GUIVideoOSD()
     {
@@ -102,7 +103,7 @@ namespace MediaPortal.GUI.Video
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\videoOSD.xml");
-      GetID = (int) Window.WINDOW_OSD;      
+      GetID = (int)Window.WINDOW_OSD;                  
       return bResult;
     }
 
@@ -291,7 +292,10 @@ namespace MediaPortal.GUI.Video
             else
             {
               ToggleButton((int) Controls.OSD_PLAY, false); // make sure play button is up (so it shows the play symbol)
-            }
+            }            
+            m_delayInterval = MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayInterval;
+            if (m_delayInterval > 0)
+              m_subtitleDelay = MediaPortal.Player.Subtitles.SubEngine.GetInstance().Delay / m_delayInterval;
             return true;
           }
         case GUIMessage.MessageType.GUI_MSG_SETFOCUS:

@@ -156,6 +156,14 @@ namespace MediaPortal.Player.Subtitles
       }
     }
 
+    public int DelayInterval
+    {
+      get 
+      {
+        return delayInterval;
+      }
+    }
+
     public int Delay
     {
       get
