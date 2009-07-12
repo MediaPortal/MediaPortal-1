@@ -35,6 +35,8 @@ namespace MediaPortal.Dialogs
     private int m_iSelectedFile = -1;
     private int m_iFrames = -1;
     private int m_iNumberOfFiles = 0;
+    private int m_MaxNumberOfCDs = 0;
+    private const int m_indexStackItemOffset = 100;
 
     public GUIDialogFileStacking()
     {
@@ -59,31 +61,39 @@ namespace MediaPortal.Dialogs
             // enable the CD's
             for (int i = 1; i <= m_iNumberOfFiles; ++i)
             {
-              GUIControl pControl = GetControl(i + 100);
-              EnableControl(GetID, i + 100);
-              ShowControl(GetID, i + 100);
-              if (i < m_iNumberOfFiles)
+              GUIControl pControl = GetControl(i + m_indexStackItemOffset);
+              if (pControl != null)
               {
-                pControl.NavigateRight = i + 1 + 100;
+                m_MaxNumberOfCDs = i;
+                EnableControl(GetID, i + m_indexStackItemOffset);
+                ShowControl(GetID, i + m_indexStackItemOffset);
+                if (i < m_iNumberOfFiles)
+                {
+                  pControl.NavigateRight = i + 1 + m_indexStackItemOffset;
+                }
+                else
+                {
+                  pControl.NavigateRight = 101;
+                }
               }
-              else
+              else 
               {
-                pControl.NavigateRight = 101;
+                Log.Error("Missing control ID ({0}) in dialogFileStacking.xml", i + m_indexStackItemOffset);
               }
             }
 
             // disable CD's we dont use
             for (int i = m_iNumberOfFiles + 1; i <= 40; ++i)
             {
-              HideControl(GetID, i + 100);
-              DisableControl(GetID, i + 100);
+              HideControl(GetID, i + m_indexStackItemOffset);
+              DisableControl(GetID, i + m_indexStackItemOffset);
             }
           }
           return true;
 
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           {
-            m_iSelectedFile = message.SenderControlId - 100;
+            m_iSelectedFile = message.SenderControlId - m_indexStackItemOffset;
             PageDestroy();
           }
           break;
@@ -97,15 +107,30 @@ namespace MediaPortal.Dialogs
     {
       if (m_iFrames <= 25)
       {
+        // Dialog heading
+        GUIControl pDialog = GetControl(1);
+        int distance = 32; // some safe value if skinner has used incorrect control IDs
+        if (pDialog != null)
+        {
+          GUIControl pControl = GetControl(m_indexStackItemOffset + 1);
+          distance = pDialog.Width / m_MaxNumberOfCDs;
+          
+          // do not allow "loose stacking", i.e. less than half overlayed items
+          if (distance > pControl.Width / 2)
+          {
+            distance = pControl.Width / 2;
+          }
+        }
+
         // slide in...
         int dwScreenWidth = GUIGraphicsContext.Width;
-        for (int i = 1; i <= m_iNumberOfFiles; ++i)
+        for (int i = 1; i <= m_MaxNumberOfCDs; ++i)
         {
-          GUIControl pControl = GetControl(i + 100);
+          GUIControl pControl = GetControl(i + m_indexStackItemOffset);
           if (null != pControl)
           {
-            int dwEndPos = dwScreenWidth/2 - ((m_iNumberOfFiles - i)*32);
-            int dwStartPos = dwScreenWidth/2 + 140;
+            int dwEndPos = dwScreenWidth / 2 - ((m_MaxNumberOfCDs - i) * distance) + pDialog.Width / 2 - (int)((float)pControl.Width / 1.5);
+            int dwStartPos = dwScreenWidth / 2 + pDialog.Width / 2 - pControl.Width;
             float fStep = dwStartPos - dwEndPos;
             fStep /= 25.0f;
             fStep *= m_iFrames;
@@ -138,6 +163,7 @@ namespace MediaPortal.Dialogs
       SetControlLabel(GetID, 2, GUILocalizeStrings.Get(6038));
       SetControlLabel(GetID, 3, string.Empty);
       SetControlLabel(GetID, 4, string.Empty);
+      SetControlLabel(GetID, 5, string.Empty);
       m_iNumberOfFiles = iFiles;
     }
   }
