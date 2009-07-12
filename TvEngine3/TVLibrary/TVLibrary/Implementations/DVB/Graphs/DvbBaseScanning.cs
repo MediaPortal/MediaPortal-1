@@ -214,7 +214,7 @@ namespace TvLibrary.Implementations.DVB
                     out networkId, out transportId, out serviceId, out majorChannel, out minorChannel,
                     out frequency, out lcn, out freeCAMode, out serviceType, out modulation, out providerName, out serviceName,
                     out pmtPid, out hasVideo, out hasAudio);
-              bool isValid = ((networkId != 0 || transportId != 0 || serviceId != 0) && pmtPid != 0);
+              bool isValid = ((networkId != 0 || transportId != 0 || serviceId != 0) && pmtPid > -1);
               string name = DvbTextConverter.Convert(serviceName, "");
               Log.Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} type:{9:X}", i, networkId, transportId, serviceId, pmtPid, name, serviceType);
               ServiceType eServiceType = (ServiceType)serviceType;
@@ -226,7 +226,7 @@ namespace TvLibrary.Implementations.DVB
                 //It seems with ATSC QAM the major & minor channel is not found or is not necessary (TBD)
                 //isValid = (majorChannel != 0 && minorChannel != 0);
                 //So we currently determine if a valid channel is found if the pmt pid is not null.
-                isValid = (pmtPid != -1);
+                isValid = (pmtPid > -1);
                 //This is not ideal we need to look into raw ATSC transport streams
               }
               if (isValid)
@@ -375,18 +375,28 @@ namespace TvLibrary.Implementations.DVB
           _analyzer.GetNITCount(out count);
           for (int i = 0; i < count; ++i)
           {
-            int freq, pol, mod, symbolrate, bandwidth, innerfec, chType;
+            int freq, pol, mod, symbolrate, bandwidth, innerfec, rollOff, chType;
             IntPtr ptrName;
-            _analyzer.GetNITChannel((short)i, out chType, out freq, out pol, out mod, out symbolrate, out bandwidth, out innerfec, out ptrName);
+            _analyzer.GetNITChannel((short)i, out chType, out freq, out pol, out mod, out symbolrate, out bandwidth, out innerfec, out rollOff, out ptrName);
             string name = DvbTextConverter.Convert(ptrName, "");
             if (chType == 0)
             {
               DVBSChannel ch = new DVBSChannel();
               ch.Name = name;
               ch.Frequency = freq;
-              ch.ModulationType = (ModulationType)mod;
+              Log.Log.Debug("{0},{1},{2},{3}", freq, mod, pol, symbolrate);
+              switch (mod)
+              {
+                default:
+                case 0: ch.ModulationType = ModulationType.ModNotSet; break;
+                //case 1: ch.ModulationType = ModulationType.ModQpsk; break;
+                case 2: ch.ModulationType = ModulationType.Mod8Psk; break;
+                case 3: ch.ModulationType = ModulationType.Mod16Qam; break;
+              }              
               ch.SymbolRate = symbolrate;
               ch.InnerFecRate = (BinaryConvolutionCodeRate)innerfec;
+              ch.Polarisation = (Polarisation)pol;
+              ch.Rolloff = (RollOff)rollOff;
               channelsFound.Add(ch);
             }
             else if (chType == 1)

@@ -158,9 +158,10 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="bandwidth">The bandwith</param>
     /// <param name="fecInner">The fec inner</param>
     /// <param name="networkName">The network names</param>
+    /// <param name="rollOff">rolloff (S2 specific)</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetNITChannel(int channel, out int chType, out int frequency, out int polarisation, out int modulation, out int symbolrate, out int bandwidth, out int fecInner, out IntPtr networkName);
+    int GetNITChannel(int channel, out int chType, out int frequency, out int polarisation, out int modulation, out int symbolrate, out int bandwidth, out int fecInner, out int rollOff, out IntPtr networkName);
 
   }
 }
