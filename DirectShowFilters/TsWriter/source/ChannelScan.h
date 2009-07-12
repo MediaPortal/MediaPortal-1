@@ -59,7 +59,7 @@ DECLARE_INTERFACE_(ITSChannelScan, IUnknown)
 	STDMETHOD(ScanNIT)(THIS_)PURE;
 	STDMETHOD(StopNIT)(THIS_)PURE;
 	STDMETHOD(GetNITCount)(THIS_ int* transponderCount)PURE;
-	STDMETHOD(GetNITChannel)(THIS_ int channel,int* type,int* frequency,int *polarisation, int* modulation, int* symbolrate, int* bandwidth, int* fecInner, char** networkName)PURE;
+	STDMETHOD(GetNITChannel)(THIS_ int channel,int* type,int* frequency,int *polarisation, int* modulation, int* symbolrate, int* bandwidth, int* fecInner, int* rollOff, char** networkName)PURE;
 
 };
 
@@ -98,7 +98,7 @@ public:
 	STDMETHODIMP ScanNIT();
 	STDMETHODIMP StopNIT();
 	STDMETHODIMP GetNITCount(int* transponderCount);
-	STDMETHODIMP GetNITChannel(int channel,int* type, int* frequency,int *polarisation, int* modulation, int* symbolrate, int* bandwidth, int* fecInner, char** networkName);
+	STDMETHODIMP GetNITChannel(int channel,int* type, int* frequency,int *polarisation, int* modulation, int* symbolrate, int* bandwidth, int* fecInner, int* rollOff, char** networkName);
 
 	void OnTsPacket(byte* tsPacket);
 private:

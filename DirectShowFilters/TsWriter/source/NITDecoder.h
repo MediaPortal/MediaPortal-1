@@ -42,6 +42,8 @@ typedef  struct stNITSatDescriptor
 	int Modulation;
 	int Symbolrate;
 	int FECInner;
+  int RollOff;
+  int isS2;
 	string NetworkName;
 }NITSatDescriptor;
 //

@@ -28,6 +28,8 @@
 #include "FileWriter.h"
 #include <atlbase.h>
 
+extern void LogDebug(const char *fmt, ...) ;
+
 FileWriter::FileWriter() :
 	m_hFile(INVALID_HANDLE_VALUE),
 	m_pFileName(0),
@@ -217,7 +219,11 @@ HRESULT FileWriter::Write(PBYTE pbData, ULONG lDataLength)
 	if (FAILED(hr))
 		return hr;
 	if (written < (ULONG)lDataLength)
+  {
+    USES_CONVERSION; // for logging WCHAR 
+    LogDebug("!!!!!    Error writing to file %s: written %d of expected %d bytes",W2A(m_pFileName), written, lDataLength);
 		return S_FALSE;
+  }
 
 	return S_OK;
 }

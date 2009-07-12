@@ -311,15 +311,35 @@ void CNITDecoder::DVB_GetSatDelivSys(byte* b,int maxLen)
 				LogDebug("DVB_GetSatDelivSys() desclen:%d", descriptor_length);
 				return;
 			}
+/*
+    Syntax  Number of bits Identifier 
+    satellite_delivery_system_descriptor(){    
+       descriptor_tag             8 uimsbf  0
+       descriptor_length          8 uimsbf  1
+       frequency                  32 bslbf  2..5
+       orbital_position           16 bslbf  6..7
+       west_east_flag             1 bslbf   8
+       polarization               2 bslbf   8
+          If  (modulation_system == "1") {    
+              roll off            2 bslbf   8
+          } else {    
+              "00"                2 bslbf   8 
+          }    
+       modulation_system          1 bslbf   8
+       modulation_type            2 bslbf   8
+       symbol_rate                28 bslbf  9..12 
+       FEC_inner                  4 bslbf   12
+    }    
+*/
 			NITSatDescriptor satteliteNIT;
-			satteliteNIT.Frequency = (10000000* ((b[2]>>4)&0xf));
-			satteliteNIT.Frequency+= (1000000*  ((b[2]&0xf)));
-			satteliteNIT.Frequency+= (100000*   ((b[3]>>4)&0xf));
-			satteliteNIT.Frequency+= (10000*    ((b[3]&0xf)));
-			satteliteNIT.Frequency+= (1000*     ((b[4]>>4)&0xf));
-			satteliteNIT.Frequency+= (100*      ((b[4]&0xf)));
-			satteliteNIT.Frequency+= ( 10*      ((b[5]>>4)&0xf));
-			satteliteNIT.Frequency+= (b[5]&0xf);
+			satteliteNIT.Frequency = (100000000* ((b[2]>>4)&0xf));
+			satteliteNIT.Frequency+= (10000000*  ((b[2]&0xf)));
+			satteliteNIT.Frequency+= (1000000*   ((b[3]>>4)&0xf));
+			satteliteNIT.Frequency+= (100000*    ((b[3]&0xf)));
+			satteliteNIT.Frequency+= (10000*     ((b[4]>>4)&0xf));
+			satteliteNIT.Frequency+= (1000*      ((b[4]&0xf)));
+			satteliteNIT.Frequency+= (100*       ((b[5]>>4)&0xf));
+			satteliteNIT.Frequency+= (10*         b[5]&0xf);
 
 			satteliteNIT.OrbitalPosition+= (1000*     ((b[6]>>4)&0xf));
 			satteliteNIT.OrbitalPosition+= (100*      ((b[6]&0xf)));
@@ -327,23 +347,78 @@ void CNITDecoder::DVB_GetSatDelivSys(byte* b,int maxLen)
 			satteliteNIT.OrbitalPosition+= (b[7]&0xf);
 
 			satteliteNIT.WestEastFlag = (b[8] & 0x80)>>7;
-			satteliteNIT.Polarisation = (b[8]& 0x60)>>5;
-			if(satteliteNIT.Polarisation>1)
-				satteliteNIT.Polarisation-=2;
-			// polarisation
-			// 0 - horizontal/left (linear/circluar)
-			// 1 - vertical/right (linear/circluar)
-			satteliteNIT.Modulation = (b[8] & 0x1F);
-			satteliteNIT.Symbolrate = (1000000* ((b[9]>>4)&0xf));
-			satteliteNIT.Symbolrate+= (100000*  ((b[9]&0xf)));
-			satteliteNIT.Symbolrate+= (10000*   ((b[10]>>4)&0xf));
-			satteliteNIT.Symbolrate+= (1000*    ((b[10]&0xf)));
-			satteliteNIT.Symbolrate+= (100*     ((b[11]>>4)&0xf));
-			satteliteNIT.Symbolrate+= (10*      ((b[11]&0xf)));
-			satteliteNIT.Symbolrate+= (         ((b[12]>>4)&0xf));
-			satteliteNIT.FECInner = (b[12] & 0xF);
-			
+			int Polarisation = (b[8] & 0x60)>>5;
+			switch(Polarisation)
+			{
+        default:
+			  case 0: satteliteNIT.Polarisation = BDA_POLARISATION_LINEAR_H;break;
+        case 1: satteliteNIT.Polarisation = BDA_POLARISATION_LINEAR_V; break;
+        case 2: satteliteNIT.Polarisation = BDA_POLARISATION_CIRCULAR_L; break;
+        case 3: satteliteNIT.Polarisation = BDA_POLARISATION_CIRCULAR_R; break;
+      }
+			/*
+			Polarization Description
+			00 linear - horizontal
+			01 linear - vertical
+			10 circular - left
+			11 circular - right
+			*/
+      satteliteNIT.isS2 = (b[8] & 0x4) >> 2; // bit 2
+      if (satteliteNIT.isS2)
+      {
+        int rollOff = (b[8] & 0x18) >>3; // bit 4..3
+        /*
+        00  alpha = 0,35 
+        01  alpha = 0,25 
+        10  alpha = 0,20 
+        */
+        switch(rollOff)
+        {
+          case 0: satteliteNIT.RollOff =BDA_ROLL_OFF_35;
+          case 1: satteliteNIT.RollOff =BDA_ROLL_OFF_25;
+          case 2: satteliteNIT.RollOff =BDA_ROLL_OFF_20;
+        }
+      }
+      else
+      {
+        satteliteNIT.RollOff=BDA_ROLL_OFF_NOT_SET;
+      }
+			satteliteNIT.Modulation = (b[8] & 0x3); // bit 1..0
+			satteliteNIT.Symbolrate = (100000* ((b[9]>>4)&0xf));
+			satteliteNIT.Symbolrate+= (10000*  ((b[9]&0xf)));
+			satteliteNIT.Symbolrate+= (1000*   ((b[10]>>4)&0xf));
+			satteliteNIT.Symbolrate+= (100*    ((b[10]&0xf)));
+			satteliteNIT.Symbolrate+= (10*     ((b[11]>>4)&0xf));
+			satteliteNIT.Symbolrate+= (1*      ((b[11]&0xf)));
+			//satteliteNIT.Symbolrate+= (         ((b[12]>>4)&0xf));
 
+			/*
+			Table 25: Inner FEC scheme
+			FEC_inner 			Description
+			0000 not defined
+			0001 1/2 conv. code rate
+			0010 2/3 conv. code rate
+			0011 3/4 conv. code rate
+			0100 5/6 conv. code rate
+			0101 7/8 conv. code rate
+			1111 No conv. coding
+			0110 to 1110 reserved for future use
+			*/
+			int fec=(b[12] & 0xF);
+			switch(fec)
+			{
+        default:
+			  case 0: satteliteNIT.FECInner = BDA_BCC_RATE_NOT_DEFINED; break;
+			  case 1: satteliteNIT.FECInner = BDA_BCC_RATE_1_2; break;
+			  case 2: satteliteNIT.FECInner = BDA_BCC_RATE_2_3; break;
+			  case 3: satteliteNIT.FECInner = BDA_BCC_RATE_3_4; break;
+			  case 4: satteliteNIT.FECInner = BDA_BCC_RATE_5_6; break;
+			  case 5: satteliteNIT.FECInner = BDA_BCC_RATE_7_8; break;
+        case 6: satteliteNIT.FECInner = BDA_BCC_RATE_8_9; break;
+        case 7: satteliteNIT.FECInner = BDA_BCC_RATE_3_5; break;
+        case 8: satteliteNIT.FECInner = BDA_BCC_RATE_4_5; break;
+        case 9: satteliteNIT.FECInner = BDA_BCC_RATE_9_10; break;
+			}
 			
 			bool alreadyAdded=false;
 			for (int i=0; i < m_nit.satteliteNIT.size();++i)
@@ -351,8 +426,8 @@ void CNITDecoder::DVB_GetSatDelivSys(byte* b,int maxLen)
 				NITSatDescriptor& nit=m_nit.satteliteNIT[i];
 				if (nit.Frequency==satteliteNIT.Frequency)
 				{
-					LogDebug("Sat nit: frequency:%d Symbolrate:%d Polarisation:%d", 
-						satteliteNIT.Frequency,satteliteNIT.Symbolrate,satteliteNIT.Polarisation);
+          LogDebug("Sat nit: frequency:%d Symbolrate:%d Polarisation:%d FEC:%d S2:%d RollOff:%d", 
+            satteliteNIT.Frequency,satteliteNIT.Symbolrate,satteliteNIT.Polarisation, satteliteNIT.FECInner, satteliteNIT.isS2, satteliteNIT.RollOff);
 					alreadyAdded=true;
 					break;
 				}

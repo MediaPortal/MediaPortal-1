@@ -203,7 +203,7 @@ STDMETHODIMP CChannelScan::GetNITCount(int* transponderCount)
   return 0;
 }
 
-STDMETHODIMP CChannelScan::GetNITChannel(int channel,int* type,int* frequency,int *polarisation, int* modulation, int* symbolrate, int* bandwidth, int* fecInner, char** networkName)
+STDMETHODIMP CChannelScan::GetNITChannel(int channel,int* type,int* frequency,int *polarisation, int* modulation, int* symbolrate, int* bandwidth, int* fecInner, int* rollOff, char** networkName)
 {
 	static char sNetworkName[128];
 	strcpy(sNetworkName,"");
@@ -214,6 +214,7 @@ STDMETHODIMP CChannelScan::GetNITChannel(int channel,int* type,int* frequency,in
   *bandwidth=0;
   *fecInner=0;
   *type=-1;
+  *rollOff = BDA_ROLL_OFF_NOT_SET;
 	*networkName=sNetworkName;
 
   if (m_nit.m_nit.satteliteNIT.size()>0)
@@ -225,6 +226,7 @@ STDMETHODIMP CChannelScan::GetNITChannel(int channel,int* type,int* frequency,in
     *modulation=des.Modulation;
     *symbolrate=des.Symbolrate;
     *fecInner=des.FECInner;
+    *rollOff=des.RollOff;
     strcpy(sNetworkName,des.NetworkName.c_str());
 	  *networkName=sNetworkName;
     *type=0;
