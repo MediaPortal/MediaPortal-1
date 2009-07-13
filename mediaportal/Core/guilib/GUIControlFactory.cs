@@ -468,6 +468,18 @@ namespace MediaPortal.GUI.Library
                                                  ref bool allowHiddenFocus)
     {
       condition = GUIInfoManager.TranslateString(element.InnerText);
+
+      // allowhiddenfocus (defaults to false)
+      XmlNode nodeAttribute = element.Attributes.GetNamedItem("allowhiddenfocus");
+      if (nodeAttribute != null)
+      {
+          string allow = nodeAttribute.Value;
+          if (String.Compare(allow, "true") == 0)
+          {
+              allowHiddenFocus = true;
+          }
+      }
+
       return (condition != 0);
     }
 

@@ -446,7 +446,7 @@ namespace MediaPortal.GUI.Library
           case GUIMessage.MessageType.GUI_MSG_SETFOCUS:
 
             // if control is disabled then move 2 the next control
-            if (Disabled || !IsVisible || !CanFocus())
+            if (Disabled || !CanFocus())
             {
               int controlId = 0;
 
