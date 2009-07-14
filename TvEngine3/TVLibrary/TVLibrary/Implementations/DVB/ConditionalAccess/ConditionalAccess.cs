@@ -61,6 +61,7 @@ namespace TvLibrary.Implementations.DVB
     readonly OnAirATSC _isonairatsc;
     readonly ViXSATSC _isvixsatsc;
     readonly ConexantBDA _conexant;
+    readonly GenPixBDA _genpix;
 
     private ICiMenuActions _ciMenu;
     /// <summary>
@@ -202,6 +203,21 @@ namespace TvLibrary.Implementations.DVB
           _conexant = null;
           _winTvCiModule = null;
 
+          Log.Log.WriteFile("Check for GenPix BDA based card");
+          _genpix = new GenPixBDA(tunerFilter);
+          if (_genpix.IsGenPix)
+          {
+            Log.Log.WriteFile("GenPix BDA card detected");
+            Log.Log.WriteFile("Check for Hauppauge WinTV CI");
+            if (winTvUsbCiFilter != null)
+            {
+              Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
+              _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
+            }
+            return;
+          }
+          _genpix = null;
+          _winTvCiModule = null;
 
           Log.Log.WriteFile("Check for Generic DVB-S card");
           _genericbdas = new GenericBDAS(tunerFilter);
@@ -668,7 +684,13 @@ namespace TvLibrary.Implementations.DVB
           _conexant.SendDiseqCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
-      } catch (Exception ex)
+        if (_genpix != null)
+        {
+          _genpix.SendDiseqCommand(parameters, channel);
+          System.Threading.Thread.Sleep(100);
+        }
+      }
+      catch (Exception ex)
       {
         Log.Log.Write(ex);
       }

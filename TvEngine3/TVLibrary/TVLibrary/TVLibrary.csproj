@@ -98,6 +98,7 @@
     <Compile Include="Implementations\DVB\ConditionalAccess\ConexantBDA.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\GenericATSC.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\GenericBDAS.cs" />
+    <Compile Include="Implementations\DVB\ConditionalAccess\GenPixBDA.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\HaupPauge\Hauppauge.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\HaupPauge\WinTvCiModule.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\KNC\KNCAPI.cs" />
