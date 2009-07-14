@@ -50,28 +50,22 @@ namespace MediaPortal.GUI.Video
 
     protected override void OnPageLoad()
     {
+      string driveLetter = null;
       GUIWindowManager.ShowPreviousWindow();
-      string dvd = null;
-      for (int i = 0; i <= 26; ++i)
+      
+      System.IO.DriveInfo[] drives = System.IO.DriveInfo.GetDrives();
+      foreach (System.IO.DriveInfo drive in drives)
       {
-        dvd = String.Format("{0}:", (char)('A' + i));
-        if (Util.Utils.IsDVD(dvd) && System.IO.Directory.Exists(dvd + @"\"))
+        driveLetter = String.Format("{0}", drive.RootDirectory);
+        if (drive.DriveType == System.IO.DriveType.CDRom && Util.Utils.IsDVD(driveLetter) && System.IO.Directory.Exists(driveLetter))
         {
-          if (g_Player.CurrentFile.StartsWith(dvd) && g_Player.Playing)
+          if (g_Player.CurrentFile.StartsWith(driveLetter) && g_Player.Playing)
             return;          
           break;          
         }
       }      
-      MediaPortal.Ripper.AutoPlay.ExamineCD(dvd, true);
-    }
-    
-    public override void Render(float timePassed)
-    {
-    }
-
-    public override void Process()
-    {
-    }
+      MediaPortal.Ripper.AutoPlay.ExamineCD(driveLetter, true);
+    }    
 
     #region ISetupForm Members
 
@@ -92,7 +86,7 @@ namespace MediaPortal.GUI.Video
 
     public bool DefaultEnabled()
     {
-      return false;
+      return true;
     }
 
     public int GetWindowId()
