@@ -57,7 +57,7 @@ namespace MediaPortal.GUI.Video
       foreach (System.IO.DriveInfo drive in drives)
       {
         driveLetter = String.Format("{0}", drive.RootDirectory);
-        if (drive.DriveType == System.IO.DriveType.CDRom && Util.Utils.IsDVD(driveLetter) && System.IO.Directory.Exists(driveLetter))
+        if (drive.DriveType == System.IO.DriveType.CDRom && System.IO.Directory.Exists(driveLetter))
         {
           if (g_Player.CurrentFile.StartsWith(driveLetter) && g_Player.Playing)
             return;          
