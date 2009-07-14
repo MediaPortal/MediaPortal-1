@@ -29,12 +29,10 @@ namespace TvLibrary.Implementations.DVB
   class ViXSATSC
   {
     #region constants
-
     readonly Guid guidViXSTunerExtention = new Guid(0x02779308, 0x77d8, 0x4914, 0x9f, 0x15, 0x7f, 0xa6, 0xe1, 0x55, 0x84, 0xc7);
     #endregion
 
     #region variables
-
     private readonly bool _isViXSATSC;
     readonly IntPtr _tempValue = IntPtr.Zero; //Marshal.AllocCoTaskMem(1024);
     readonly IKsPropertySet _propertySet;
@@ -68,7 +66,7 @@ namespace TvLibrary.Implementations.DVB
       IPin pin = DsFindPin.ByName(tunerFilter, "MPEG2 Transport");
       if (pin != null)
       {
-        _propertySet = tunerFilter as IKsPropertySet;
+        _propertySet = tunerFilter as IKsPropertySet; ////pin as IKsPropertySet;
         if (_propertySet != null)
         {
           KSPropertySupport supported;
@@ -79,10 +77,11 @@ namespace TvLibrary.Implementations.DVB
             _isViXSATSC = true;
           }
           else
-            Log.Log.Info("ViXS ATSC: property not supported");
+          {
+            Log.Log.Debug("ViXS ATSC: card NOT found!");
+            _isViXSATSC = false;
+          }
         }
-        else
-          Log.Log.Info("ViXS ATSC: could not find tuner filter!");
       }
       else
         Log.Log.Info("ViXS ATSC: could not find MPEG2 Transport pin!");

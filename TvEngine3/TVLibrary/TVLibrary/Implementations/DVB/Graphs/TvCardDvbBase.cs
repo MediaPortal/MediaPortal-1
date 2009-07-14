@@ -36,6 +36,51 @@ using TvDatabase;
 
 namespace TvLibrary.Implementations.DVB
 {
+  #region enums;
+  enum BdaDigitalModulator
+  {
+    MODULATION_TYPE = 0,
+    INNER_FEC_TYPE,
+    INNER_FEC_RATE,
+    OUTER_FEC_TYPE,
+    OUTER_FEC_RATE,
+    SYMBOL_RATE,
+    SPECTRAL_INVERSION,
+    GUARD_INTERVAL,
+    TRANSMISSION_MODE
+  };
+
+  enum BdaTunerExtension
+  {
+    KSPROPERTY_BDA_DISEQC = 0,
+    KSPROPERTY_BDA_SCAN_FREQ,
+    KSPROPERTY_BDA_CHANNEL_CHANGE,
+    KSPROPERTY_BDA_EFFECTIVE_FREQ,
+    KSPROPERTY_BDA_PILOT = 0x20,
+    KSPROPERTY_BDA_ROLL_OFF = 0x21
+  };
+
+  enum DisEqcVersion
+  {
+    DISEQC_VER_1X = 1,
+    DISEQC_VER_2X,
+  };
+
+  enum RxMode
+  {
+    RXMODE_INTERROGATION = 1, // Expecting multiple devices attached
+    RXMODE_QUICKREPLY,      // Expecting 1 rx (rx is suspended after 1st rx received)
+    RXMODE_NOREPLY,         // Expecting to receive no Rx message(s)
+    RXMODE_DEFAULT = 0        // use current register setting
+  };
+
+  enum BurstModulationType
+  {
+    TONE_BURST_UNMODULATED = 0,
+    TONE_BURST_MODULATED
+  };
+  #endregion;
+
   /// <summary>
   /// base class for DVB cards
   /// </summary>
