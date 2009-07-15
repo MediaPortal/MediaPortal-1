@@ -52,11 +52,11 @@ STDMETHODIMP CPmtGrabber::SetPmtPid( int pmtPid, long serviceId)
 		CEnterCriticalSection enter(m_section);
 		LogDebug("pmtgrabber: grab pmt:%x sid:%x", pmtPid,serviceId);
 		CSectionDecoder::Reset();
-		CSectionDecoder::SetPid(pmtPid);
-		m_iPmtVersion=-1;
-		m_iServiceId=serviceId;
-		memset(m_pmtPrevData,0,sizeof(m_pmtPrevData));
-	}
+    	CSectionDecoder::SetPid(pmtPid);
+    	m_iPmtVersion=-1;
+    	m_iServiceId=serviceId;
+    	memset(m_pmtPrevData,0,sizeof(m_pmtPrevData));
+  }
 	catch(...)
 	{
 		LogDebug("CPmtGrabber::SetPmtPid exception");
@@ -111,11 +111,10 @@ void CPmtGrabber::OnNewSection(CSection& section)
       // do a callback each time the version number changes. this also allows switching for "regional channels"
 			if (m_pCallback!=NULL && m_iPmtVersion != section.version_number)
 			{
-        LogDebug("pmtgrabber: got new pmt version:%d %d, service_id:", section.version_number, m_iPmtVersion, serviceId);
+        LogDebug("pmtgrabber: got new pmt version:%d %d, service_id:%d", section.version_number, m_iPmtVersion, serviceId);
 				LogDebug("pmtgrabber: do callback");
 				m_pCallback->OnPMTReceived();
 			}
-			//m_pCallback=NULL;
 		}
  		m_iPmtVersion=section.version_number;
 	}
