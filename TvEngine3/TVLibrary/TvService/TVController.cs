@@ -134,7 +134,7 @@ namespace TvService
       }
       remove 
       {
-        s_ciMenu -= value;
+        s_ciMenu = null;
         Log.Debug("CiMenu: unregistered client callback."); 
       }
     }
@@ -3669,8 +3669,16 @@ namespace TvService
       if (curMenu != null)
       {
         if (curMenu.State == CiMenuState.Ready || curMenu.State == CiMenuState.NoChoices || curMenu.State == CiMenuState.Request)
-          s_ciMenu(curMenu); // pass to eventhandlers
-
+        {
+          if (s_ciMenu != null)
+          {
+            s_ciMenu(curMenu); // pass to eventhandlers
+          }
+          else
+          {
+            Log.Debug("CI menu received but no listeners available");
+          }
+        }
       }
     }
     /// <summary>
