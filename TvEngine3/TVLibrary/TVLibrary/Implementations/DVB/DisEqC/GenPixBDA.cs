@@ -32,8 +32,7 @@ namespace TvLibrary.Implementations.DVB
   public class GenPixBDA
   {
     #region constants
-    //Used to extend the feature of the BDA
-    //{0B5221EB-F4C4-4976-B959-EF74427464D9}
+    //Guid used to extend the feature of the BDA driver - {0B5221EB-F4C4-4976-B959-EF74427464D9}
     readonly Guid BdaTunerExtentionProperties = new Guid(0x0B5221EB, 0xF4C4, 0x4976, 0xB9, 0x59, 0xEF, 0x74, 0x42, 0x74, 0x64, 0xD9);
     #endregion
 
@@ -42,6 +41,14 @@ namespace TvLibrary.Implementations.DVB
     readonly IntPtr _ptrDiseqc = IntPtr.Zero;
     readonly IntPtr _ptrTempInstance = Marshal.AllocCoTaskMem(1024);
     readonly IKsPropertySet _propertySet;
+    #endregion
+
+    #region enums
+    enum enSimpleToneBurst
+    {
+      SEC_MINI_A,
+      SEC_MINI_B
+    }
     #endregion
 
     /// <summary>
@@ -54,14 +61,11 @@ namespace TvLibrary.Implementations.DVB
       FilterInfo tInfo;
       tunerFilter.QueryFilterInfo(out tInfo);
       Log.Log.Debug("GenPix tuner filter name: {0}", tInfo.achName);
-
       //check the pin name
-      //IPin pin = DsFindPin.ByDirection(tunerFilter, PinDirection.Input, 0);
       IPin pin = DsFindPin.ByDirection(tunerFilter, PinDirection.Output, 0);
       PinInfo pInfo;
       pin.QueryPinInfo(out pInfo);
       Log.Log.Debug("GenPix tuner filter pin name: {0}", pInfo.name);
-      
       if (pin != null)
       {
         _propertySet = pin as IKsPropertySet;
@@ -69,16 +73,19 @@ namespace TvLibrary.Implementations.DVB
         {
           KSPropertySupport supported;
           _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, out supported);
+          //Log.Log.Debug("GenPix: Supported???: {0}", supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
-            Log.Log.Info("GenPix BDA: DVB-S card found!");
+            Log.Log.Debug("GenPix BDA: DVB-S card found!");
             _isGenPix = true;
             _ptrDiseqc = Marshal.AllocCoTaskMem(1024);
           }
           else
           {
-            Log.Log.Info("GenPix BDA: DVB-S card NOT found!");
+            Log.Log.Debug("GenPix BDA: DVB-S card NOT found!");
             _isGenPix = false;
+            Marshal.FreeCoTaskMem(_ptrDiseqc);
+            Marshal.FreeCoTaskMem(_ptrTempInstance);
           }
         }
       }
@@ -109,16 +116,18 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_isGenPix == false)
         return;
-
       //get previous diseqc message - debug purposes only.
       Log.Log.Info("GenPix: get diseqc");
       int length;
-      int hrget = _propertySet.Get(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrTempInstance, 32, _ptrDiseqc, 4, out length);
+      int hrget = _propertySet.Get(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrTempInstance, 188, _ptrDiseqc, 188, out length);
+      if (hrget != 0)
+      {
+        Log.Log.Info("GenPix: IKSPropertySet.Get returned: 0x{0:X} - {1}", hrget, HResult.GetDXErrorDescription(hrget));
+      }
       string str = "";
-      for (int i = 0; i < 4; ++i)
+      for (int i = 0; i < length; ++i)
         str += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDiseqc, i));
-      Log.Log.WriteFile("GenPix: get diseqc returned: {0} {1}", str, length);
-
+      Log.Log.Debug("GenPix: get diseqc returned: {0} len: {1}", str, length);
       //get tunning parameters for DiSEqC message
       //bit 0	(1)	: 0=low band, 1 = hi band
       //bit 1 (2) : 0=vertical, 1 = horizontal
@@ -138,20 +147,23 @@ namespace TvLibrary.Implementations.DVB
       cmd |= (byte)((antennaNr - 1) << 2);
       ulong diseqc = 0xE0103800;//currently committed switches only. i.e. ports 1-4
       diseqc += cmd;
-
-      Log.Log.Info("GenPix: Write diseqc command");
+      //write the diseqc command to memory
+      Log.Log.Debug("GenPix: Write diseqc command");
       Marshal.WriteByte(_ptrDiseqc, 0, (byte)((diseqc >> 24) & 0xff));//framing byte
       Marshal.WriteByte(_ptrDiseqc, 1, (byte)((diseqc >> 16) & 0xff));//address byte
       Marshal.WriteByte(_ptrDiseqc, 2, (byte)((diseqc >> 8) & 0xff));//command byte
       Marshal.WriteByte(_ptrDiseqc, 3, (byte)(diseqc & 0xff));//data byte (port group 0)
-      
+      //check the command
       string txt = "";
       for (int i = 0; i < 4; ++i)
         txt += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDiseqc, i));
       Log.Log.Debug("GenPix: SendDiseq: {0}", txt);
-
-      int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrTempInstance, 32, _ptrDiseqc, 4);
-      Log.Log.Info("GenPix: SendDiseqCommand returned:{0:X}", hr);
+      //set it to the tuner pin
+      int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrTempInstance, 188, _ptrDiseqc, 4);
+      if (hr != 0)
+      {
+        Log.Log.Info("GenPix: SendDiseqCommand returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorDescription(hr));
+      }
     }
   }
 }
