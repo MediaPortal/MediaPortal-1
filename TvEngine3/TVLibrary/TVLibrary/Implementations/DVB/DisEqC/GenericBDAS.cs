@@ -19,12 +19,6 @@
  *
  */
 
-/*
- * I have only tested this with Terratec Cinergy DVB-S 1200.
- * However, it should work with other Philips SAA-7146 based cards as well.
- * Use this at your own risk!!
- * /Digi
- */
 using System;
 using DirectShowLib;
 using DirectShowLib.BDA;
@@ -32,18 +26,15 @@ using TvLibrary.Channels;
 
 namespace TvLibrary.Implementations.DVB
 {
-
   class GenericBDAS
   {
     #region variables
-
     private readonly IKsPropertySet _propertySet;
     protected IBDA_Topology _TunerDevice;
     protected bool _isGenericBDAS;
     #endregion
 
     #region constants
-
     readonly Guid guidBdaDigitalDemodulator = new Guid(0xef30f379, 0x985b, 0x4d10, 0xb6, 0x40, 0xa7, 0x9d, 0x5e, 0x4, 0xe1, 0xe0);
     #endregion
 
@@ -63,16 +54,22 @@ namespace TvLibrary.Implementations.DVB
         {
           KSPropertySupport supported;
           _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
-          //Log.Log.Info("GenericBDAS: QuerySupported: {0}", supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
-            //Log.Log.Info("GenericBDAS: DiSEqC capable card found!");
+            Log.Log.Debug("GenericBDAS: DiSEqC capable card found!");
             _isGenericBDAS = true;
           }
         }
       }
+      else
+        Log.Log.Info("GenericBDAS: tuner pin not found!");
     }
 
+    /// <summary>
+    /// Sends the diseq command.
+    /// </summary>
+    /// <param name="channel">The channel.</param>
+    /// <param name="parameters">The channels scanning parameters.</param>
     public void SendDiseqCommand(ScanParameters parameters, DVBSChannel channel)
     {
       switch (channel.DisEqc)
@@ -163,7 +160,7 @@ namespace TvLibrary.Implementations.DVB
       }
       Log.Log.Info("GenericBDAS:  GetControlNode Failed!");
       return false;
-    } //end SendDiSEqCCommand
+    }
 
     /// <summary>
     /// gets the diseqc reply
@@ -205,7 +202,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Info("GenericBDAS:  GetControlNode Failed!");
       pulRange = 0;
       return false;
-    }//end ReadDiSEqCCommand
+    }
 
     /// <summary>
     /// Determines whether [is cam present].
@@ -218,6 +215,12 @@ namespace TvLibrary.Implementations.DVB
       return false;
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this instance is a Generic BDA-S based card.
+    /// </summary>
+    /// <value>
+    /// 	<c>true</c> if this instance is; otherwise, <c>false</c>.
+    /// </value>
     public bool IsGenericBDAS
     {
       get

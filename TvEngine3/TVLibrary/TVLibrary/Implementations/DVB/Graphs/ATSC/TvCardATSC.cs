@@ -211,8 +211,6 @@ namespace TvLibrary.Implementations.DVB
           _tuneRequest.put_MinorChannel(atscChannel.MinorChannel);
           _tuneRequest.put_Channel(atscChannel.MajorChannel);
           _tuneRequest.put_Locator(locator);
-          //ViXS ATSC QAM check
-          _conditionalAccess.CheckVIXSQAM(atscChannel);
           //QAM set paramters...
           _conditionalAccess.CheckATSCQAM(atscChannel);
           ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest,true);
@@ -221,18 +219,18 @@ namespace TvLibrary.Implementations.DVB
         {
           ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest,false);
         }
-        //ViXS QAM set is done here...
-        _conditionalAccess.CheckViXSATSCQAM(atscChannel);
         try
         {
           RunGraph(ch.SubChannelId);
-        } catch (TvExceptionNoSignal)
+        }
+        catch (TvExceptionNoSignal)
         {
           FreeSubChannel(ch.SubChannelId);
           throw;
         }
         return ch;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Log.Write(ex);
         throw;

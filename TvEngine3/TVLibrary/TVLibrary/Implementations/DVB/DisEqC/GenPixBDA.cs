@@ -39,15 +39,15 @@ namespace TvLibrary.Implementations.DVB
     #region variables
     readonly bool _isGenPix;
     readonly IntPtr _ptrDiseqc = IntPtr.Zero;
-    readonly IntPtr _ptrTempInstance = Marshal.AllocCoTaskMem(1024);
+    readonly IntPtr _ptrTempInstance = IntPtr.Zero;
     readonly IKsPropertySet _propertySet;
     #endregion
 
     #region enums
     enum enSimpleToneBurst
     {
-      SEC_MINI_A,
-      SEC_MINI_B
+      SEC_MINI_A = 0x00,
+      SEC_MINI_B = 0x01
     }
     #endregion
 
@@ -73,19 +73,18 @@ namespace TvLibrary.Implementations.DVB
         {
           KSPropertySupport supported;
           _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, out supported);
-          //Log.Log.Debug("GenPix: Supported???: {0}", supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
             Log.Log.Debug("GenPix BDA: DVB-S card found!");
             _isGenPix = true;
             _ptrDiseqc = Marshal.AllocCoTaskMem(1024);
+            _ptrTempInstance = Marshal.AllocCoTaskMem(1024);
           }
           else
           {
             Log.Log.Debug("GenPix BDA: DVB-S card NOT found!");
             _isGenPix = false;
-            Marshal.FreeCoTaskMem(_ptrDiseqc);
-            Marshal.FreeCoTaskMem(_ptrTempInstance);
+            Dispose();
           }
         }
       }
@@ -164,6 +163,15 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.Info("GenPix: SendDiseqCommand returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorDescription(hr));
       }
+    }
+
+    /// <summary>
+    /// Disposes COM task memory resources
+    /// </summary>
+    public void Dispose()
+    {
+      Marshal.FreeCoTaskMem(_ptrDiseqc);
+      Marshal.FreeCoTaskMem(_ptrTempInstance);
     }
   }
 }

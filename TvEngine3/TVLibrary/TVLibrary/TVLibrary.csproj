@@ -103,7 +103,6 @@
     <Compile Include="Implementations\DVB\ConditionalAccess\HaupPauge\WinTvCiModule.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\KNC\KNCAPI.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\KNC\KNCDeviceLookup.cs" />
-    <Compile Include="Implementations\DVB\QAM\OnAirATSC.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\TechnoTrend\TechnoTrendAPI.cs" />
     <Compile Include="Implementations\DVB\QAM\ViXSATSC.cs" />
     <Compile Include="Implementations\DVB\DisEqC\DiSEqCMotor.cs" />

@@ -32,12 +32,10 @@ namespace TvLibrary.Implementations.DVB
   public class ConexantBDA : IDiSEqCController
   {
     #region constants
-
     readonly Guid BdaTunerExtentionProperties = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0xd9, 0xeb, 0x71, 0x6f, 0x6e, 0xc9);
     #endregion
 
     #region variables
-
     readonly bool _isConexant;
     readonly IntPtr _ptrDiseqc = IntPtr.Zero;
     readonly IKsPropertySet _propertySet;
@@ -59,19 +57,27 @@ namespace TvLibrary.Implementations.DVB
           _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, out supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
-            Log.Log.Info("Conexant BDA: DVB-S card found!");
+            Log.Log.Debug("Conexant BDA: DVB-S card found!");
             _isConexant = true;
             _ptrDiseqc = Marshal.AllocCoTaskMem(1024);
           }
+          else
+          {
+            Log.Log.Debug("Conexant BDA: DVB-S card NOT found!");
+            _isConexant = false;
+            Dispose();
+          }
         }
       }
+      else
+        Log.Log.Info("Conexant BDA: tuner pin not found!");
     }
 
     /// <summary>
-    /// Gets a value indicating whether this instance is a conexant based card.
+    /// Gets a value indicating whether this instance is a Conexant based card.
     /// </summary>
     /// <value>
-    /// 	<c>true</c> if this instance is conexant; otherwise, <c>false</c>.
+    /// 	<c>true</c> if this instance is Conexant; otherwise, <c>false</c>.
     /// </value>
     public bool IsConexant
     {
@@ -90,32 +96,17 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_isConexant == false)
         return;
+
       int antennaNr = BandTypeConverter.GetAntennaNr(channel);
-      //hack - bypass diseqc settings for single LNB implementations
       if (antennaNr == 0)
         return;
-      //end of hack
-
-      //get previous diseqc message - debug purposes only.
-      /*Log.Log.Info("Conexant: Get diseqc");
-      int length;
-      int hrget = _propertySet.Get(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _tempInstance, 188, _tempValue, 188, out length);
-      string str = "";
-      for (int i = 0; i < 4; ++i)
-        str += String.Format("0x{0:X} ", Marshal.ReadByte(_tempValue, i));
-      for (int i = 160; i < 188; i = (i + 4))
-        str += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDiseqc, i));
-      Log.Log.WriteFile("Conexant: getdiseqc: {0}", str);*/
 
       //clear the message params before writing in order to avoid corruption of the diseqc message.
       for (int i = 0; i < 188; ++i)
       {
         Marshal.WriteByte(_ptrDiseqc, i, 0x00);
       }
-
       bool hiBand = BandTypeConverter.IsHiBand(channel, parameters);
-
-
       //bit 0	(1)	: 0=low band, 1 = hi band
       //bit 1 (2) : 0=vertical, 1 = horizontal
       //bit 3 (4) : 0=satellite position A, 1=satellite position B
@@ -135,7 +126,7 @@ namespace TvLibrary.Implementations.DVB
       const int len = 188;
       ulong diseqc = 0xE0103800;//currently committed switches only. i.e. ports 1-4
       diseqc += cmd;
-
+      //write the diseqc command to memory
       Marshal.WriteByte(_ptrDiseqc, 0, (byte)((diseqc >> 24) & 0xff));//framing byte
       Marshal.WriteByte(_ptrDiseqc, 1, (byte)((diseqc >> 16) & 0xff));//address byte
       Marshal.WriteByte(_ptrDiseqc, 2, (byte)((diseqc >> 8) & 0xff));//command byte
@@ -155,19 +146,22 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteByte(_ptrDiseqc, 180, (int)RxMode.RXMODE_NOREPLY);//default
       Marshal.WriteByte(_ptrDiseqc, 184, 1);//last_message TRUE */
 
+      //check the command
       string txt = "";
       for (int i = 0; i < 4; ++i)
         txt += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDiseqc, i));
       for (int i = 160; i < 188; i = (i + 4))
         txt += String.Format("0x{0:X} ", Marshal.ReadInt32(_ptrDiseqc, i));
-      Log.Log.WriteFile("Conexant: SendDiseq: {0}", txt);
+      Log.Log.Debug("Conexant BDA: SendDiseqCommand: {0}", txt);
 
       int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc, len, _ptrDiseqc, len);
-      Log.Log.Info("Conexant: setdiseqc returned:{0:X}", hr);
+      if (hr != 0)
+      {
+        Log.Log.Info("Conexant BDA: SendDiseqCommand returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorDescription(hr));
+      }
     }
 
     #region IDiSEqCController Members
-
     /// <summary>
     /// Sends the DiSEqC command.
     /// </summary>
@@ -178,6 +172,7 @@ namespace TvLibrary.Implementations.DVB
       const int len = 188;
       for (int i = 0; i < diSEqC.Length; ++i)
         Marshal.WriteByte(_ptrDiseqc, i, diSEqC[i]);
+
       Marshal.WriteInt32(_ptrDiseqc, 160, diSEqC.Length);//send_message_length
       Marshal.WriteInt32(_ptrDiseqc, 164, 0);//receive_message_length
       Marshal.WriteInt32(_ptrDiseqc, 168, 3);//amplitude_attenuation
@@ -186,8 +181,19 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteByte(_ptrDiseqc, 180, (int)RxMode.RXMODE_NOREPLY);
       Marshal.WriteByte(_ptrDiseqc, 184, 1);//last_message TRUE
 
+      //check the command
+      string txt = "";
+      for (int i = 0; i < diSEqC.Length; ++i)
+        txt += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDiseqc, i));
+      for (int i = 160; i < 188; i = (i + 4))
+        txt += String.Format("0x{0:X} ", Marshal.ReadInt32(_ptrDiseqc, i));
+      Log.Log.Debug("Conexant BDA: SendDiseqCCommand: {0}", txt);
+
       int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc, len, _ptrDiseqc, len);
-      Log.Log.Info("conexant: setdiseqc returned:{0:X}", hr);
+      if (hr != 0)
+      {
+        Log.Log.Info("Conexant BDA: SendDiseqCCommand returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorDescription(hr));
+      }
       return (hr == 0);
     }
 
@@ -202,5 +208,13 @@ namespace TvLibrary.Implementations.DVB
       return false;
     }
     #endregion
+
+    /// <summary>
+    /// Disposes COM task memory resources
+    /// </summary>
+    public void Dispose()
+    {
+      Marshal.FreeCoTaskMem(_ptrDiseqc);
+    }
   }
 }

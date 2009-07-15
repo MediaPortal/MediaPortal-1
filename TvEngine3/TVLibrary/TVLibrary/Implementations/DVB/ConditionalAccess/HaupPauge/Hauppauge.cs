@@ -42,8 +42,8 @@ namespace TvLibrary.Implementations.DVB
     #region variables
     readonly bool _isHauppauge;
     readonly IntPtr _ptrDiseqc = IntPtr.Zero;
-    readonly IntPtr _tempValue = Marshal.AllocCoTaskMem(1024);
-    readonly IntPtr _tempInstance = Marshal.AllocCoTaskMem(1024);
+    readonly IntPtr _tempValue = IntPtr.Zero;
+    readonly IntPtr _tempInstance = IntPtr.Zero;
     readonly IKsPropertySet _propertySet;
     #endregion
 
@@ -63,15 +63,17 @@ namespace TvLibrary.Implementations.DVB
           _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, out supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
-            Log.Log.Info("Hauppauge: DVB-S card found!");
+            Log.Log.Debug("Hauppauge: DVB-S card found!");
             _isHauppauge = true;
             _ptrDiseqc = Marshal.AllocCoTaskMem(1024);
+            _tempValue = Marshal.AllocCoTaskMem(1024);
+            _tempInstance = Marshal.AllocCoTaskMem(1024);
           }
           else
           {
             Log.Log.Debug("Hauppauge: DVB-S card NOT found!");
             _isHauppauge = false;
-            Marshal.FreeCoTaskMem(_ptrDiseqc);
+            Dispose();
           }
         }
       }
@@ -105,7 +107,6 @@ namespace TvLibrary.Implementations.DVB
       int antennaNr = BandTypeConverter.GetAntennaNr(channel);
       if (antennaNr == 0)
         return;
-
       //clear the message params before writing in order to avoid corruption of the diseqc message.
       for (int i = 0; i < 188; ++i)
       {
@@ -127,7 +128,7 @@ namespace TvLibrary.Implementations.DVB
       cmd |= (byte)((isHorizontal) ? 2 : 0);
       cmd |= (byte)((antennaNr - 1) << 2);
 
-      const int len = 188;
+      const int len = 188; //hauppauge diseqc message length
       ulong diseqc = 0xE0103800;//currently committed switches only. i.e. ports 1-4
       diseqc += cmd;
 
@@ -155,10 +156,12 @@ namespace TvLibrary.Implementations.DVB
         txt += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDiseqc, i));
       for (int i = 160; i < 188; i = (i + 4))
         txt += String.Format("0x{0:X} ", Marshal.ReadInt32(_ptrDiseqc, i));
-      Log.Log.WriteFile("Hauppauge: SendDiseq: {0}", txt);
-
+      Log.Log.Debug("Hauppauge: SendDiseq: {0}", txt);
       int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc, len, _ptrDiseqc, len);
-      Log.Log.Info("Hauppauge: setdiseqc returned:{0:X}", hr);
+      if (hr != 0)
+      {
+        Log.Log.Info("Hauppauge: SendDiseq returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorDescription(hr));
+      }
     }
 
     #region IDiSEqCController Members
@@ -206,23 +209,38 @@ namespace TvLibrary.Implementations.DVB
       int hr;
       KSPropertySupport supported;
       _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, out supported);
-
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
       {
-        Log.Log.Info("Hauppauge: Set Pilot: {0}", channel.Pilot);
+        Log.Log.Debug("Hauppauge: Set Pilot: {0}", channel.Pilot);
         Marshal.WriteInt32(_tempValue, (Int32)channel.Pilot);
         hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, _tempInstance, 32, _tempValue, 4);
-        Log.Log.Info("Hauppauge:  returned:{0:X}", hr);
+        if (hr != 0)
+        {
+          Log.Log.Info("Hauppauge: Set Pilot returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorDescription(hr));
+        }
       }
       //Set the Roll-off
       _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, out supported);
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
       {
-        Log.Log.Info("Hauppauge: Set Roll-Off: {0}", channel.Rolloff);
+        Log.Log.Debug("Hauppauge: Set Roll-Off: {0}", channel.Rolloff);
         Marshal.WriteInt32(_tempValue, (Int32)channel.Rolloff);
         hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, _tempInstance, 32, _tempValue, 4);
-        Log.Log.Info("Hauppauge:   returned:{0:X}", hr);
+        if (hr != 0)
+        {
+          Log.Log.Info("Hauppauge: Set Roll-Off returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorDescription(hr));
+        }
       }
+    }
+
+    /// <summary>
+    /// Disposes COM task memory resources
+    /// </summary>
+    public void Dispose()
+    {
+      Marshal.FreeCoTaskMem(_ptrDiseqc);
+      Marshal.FreeCoTaskMem(_tempInstance);
+      Marshal.FreeCoTaskMem(_tempValue);
     }
   }
 }

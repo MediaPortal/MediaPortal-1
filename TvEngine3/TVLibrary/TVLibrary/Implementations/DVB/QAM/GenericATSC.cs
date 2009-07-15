@@ -37,8 +37,8 @@ namespace TvLibrary.Implementations.DVB
 
     #region variables
     readonly bool _isGenericATSC;
-    readonly IntPtr _tempValue = Marshal.AllocCoTaskMem(1024);
-    readonly IntPtr _tempInstance = Marshal.AllocCoTaskMem(1024);
+    readonly IntPtr _tempValue = IntPtr.Zero;
+    readonly IntPtr _tempInstance = IntPtr.Zero;
     readonly IKsPropertySet _propertySet;
     #endregion
 
@@ -56,18 +56,18 @@ namespace TvLibrary.Implementations.DVB
         {
           KSPropertySupport supported;
           _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
-          //Log.Log.Info("GenericATSC: QuerySupported: {0}", supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
-            //Log.Log.Info("GenericATSC: QAM capable card found!");
+            Log.Log.Debug("GenericATSC: QAM capable card found!");
             _isGenericATSC = true;
+            _tempValue = Marshal.AllocCoTaskMem(1024);
+            _tempInstance = Marshal.AllocCoTaskMem(1024);
           }
           else
           {
             Log.Log.Debug("GenericATSC: DVB-S card NOT found!");
             _isGenericATSC = false;
-            Marshal.FreeCoTaskMem(_tempValue);
-            Marshal.FreeCoTaskMem(_tempInstance);
+            Dispose();
           }
         }
       }
@@ -89,6 +89,12 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Determines whether [is cam present].
+    /// </summary>
+    /// <returns>
+    /// 	<c>true</c> if [is cam present]; otherwise, <c>false</c>.
+    /// </returns>
     public bool IsCamPresent()
     {
       return false;
@@ -110,7 +116,7 @@ namespace TvLibrary.Implementations.DVB
         int hr = _propertySet.Set(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4);
         if (hr != 0)
         {
-          Log.Log.Info("GenericATSC: Set returned: {0}", HResult.GetDXErrorString(hr));
+          Log.Log.Info("GenericATSC: Set returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorString(hr));
         }
       }
       //Below is for debug only...
@@ -123,6 +129,15 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Info("GenericATSC: Get   returned:{0:X} len:{1} value:{2}", hr, length, Marshal.ReadInt32(_tempValue));
       }
       */
+    }
+
+    /// <summary>
+    /// Disposes COM task memory resources
+    /// </summary>
+    public void Dispose()
+    {
+      Marshal.FreeCoTaskMem(_tempValue);
+      Marshal.FreeCoTaskMem(_tempInstance);
     }
   }
 }

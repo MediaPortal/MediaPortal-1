@@ -37,20 +37,15 @@ namespace TvLibrary.Implementations.DVB
   public class ConditionalAccess: IDisposable
   {
     #region variables
-
     readonly bool _useCam;
-
     /// <summary>
     /// CA decryption limit, 0 for disable CA
     /// </summary>
     readonly int _decryptLimit;
     readonly CamType _CamType = CamType.Default;
-
     readonly DigitalEverywhere _digitalEveryWhere;
-    //readonly TechnoTrend _technoTrend;
     readonly TechnoTrendAPI _technoTrend;
     readonly Twinhan _twinhan;
-    //readonly KNC _knc;
     readonly KNCAPI _knc;
     readonly Hauppauge _hauppauge;
     readonly DiSEqCMotor _diSEqCMotor;
@@ -58,7 +53,6 @@ namespace TvLibrary.Implementations.DVB
     readonly GenericBDAS _genericbdas;
     readonly WinTvCiModule _winTvCiModule;
     readonly GenericATSC _isgenericatsc;
-    readonly OnAirATSC _isonairatsc;
     readonly ViXSATSC _isvixsatsc;
     readonly ConexantBDA _conexant;
     readonly GenPixBDA _genpix;
@@ -258,15 +252,6 @@ namespace TvLibrary.Implementations.DVB
           }
           _isvixsatsc = null;
 
-          Log.Log.WriteFile("Check for OnAir ATSC QAM card");
-          _isonairatsc = new OnAirATSC(tunerFilter);
-          if (_isonairatsc.IsOnAirATSC)
-          {
-            Log.Log.WriteFile("OnAir ATSC QAM card detected");
-            return;
-          }
-          _isonairatsc = null;
-
           Log.Log.WriteFile("Check for Generic ATSC QAM card");
           _isgenericatsc = new GenericATSC(tunerFilter);
           if (_isgenericatsc.IsGenericATSC)
@@ -421,7 +406,8 @@ namespace TvLibrary.Implementations.DVB
         {
           _knc.ResetCI();
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
@@ -796,8 +782,6 @@ namespace TvLibrary.Implementations.DVB
           if (channel.ModulationType != ModulationType.ModNotSet)
           {
             //Set the alternative Hauppauge Modulation type
-            //It seems DVB-S2 QPSK is STILL not working!
-            //Test for i-loop
             if (channel.ModulationType == ModulationType.ModQpsk)
             {
               if (channel.InnerFecRate == BinaryConvolutionCodeRate.Rate9_10)
@@ -822,37 +806,6 @@ namespace TvLibrary.Implementations.DVB
             _hauppauge.SetDVBS2PilotRolloff(channel);
           }
           return channel;
-
-          //Work-around until new driver released...
-          /*if (channel.ModulationType != ModulationType.ModNotSet)
-          {
-            //Set the alternative Hauppauge Modulation type
-            if (channel.ModulationType == ModulationType.ModQpsk)
-            {
-              if (channel.InnerFecRate == BinaryConvolutionCodeRate.Rate9_10)
-              {
-                channel.ModulationType = ModulationType.Mod32Qam;
-              }
-              if (channel.InnerFecRate == BinaryConvolutionCodeRate.Rate8_9)
-              {
-                channel.ModulationType = ModulationType.Mod16Qam;
-              }
-              else
-                channel.ModulationType = ModulationType.ModBpsk;
-            }
-            if (channel.ModulationType == ModulationType.Mod8psk)
-            {
-              if (channel.InnerFecRate == BinaryConvolutionCodeRate.Rate9_10)
-              {
-                channel.ModulationType = ModulationType.Mod80Qam;
-              }
-              if (channel.InnerFecRate == BinaryConvolutionCodeRate.Rate8_9)
-              {
-                channel.ModulationType = ModulationType.Mod64Qam;
-              }
-            }
-          }
-          return channel;*/
         }
         if (_technoTrend != null)
         {
@@ -969,35 +922,14 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Info("Setting Generic ATSC modulation to {0}", channel.ModulationType);
             _isgenericatsc.SetXPATSCQam(channel);
           }
-          if (_isonairatsc != null)
-          {
-            Log.Log.Info("Setting OnAir ATSC modulation to {0}", channel.ModulationType);
-            _isonairatsc.SetOnAirQam(channel);
-          }
-        }
-      } catch (Exception ex)
-      {
-        Log.Log.Write(ex);
-      }
-      return channel;
-    }
-
-    /// <summary>
-    /// sets the QAM modulation for ViXS specific ATSC cards.
-    /// </summary>
-    public ATSCChannel CheckViXSATSCQAM(ATSCChannel channel)
-    {
-      try
-      {
-        if (channel.ModulationType == ModulationType.Mod64Qam || channel.ModulationType == ModulationType.Mod256Qam)
-        {
           if (_isvixsatsc != null)
           {
             Log.Log.Info("Setting ViXS ATSC BDA modulation to {0}", channel.ModulationType);
             _isvixsatsc.SetViXSQam(channel);
           }
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
@@ -1015,7 +947,8 @@ namespace TvLibrary.Implementations.DVB
         {
           _isvixsatsc.GetViXSQam(channel);
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
@@ -1053,12 +986,31 @@ namespace TvLibrary.Implementations.DVB
       {
         _digitalEveryWhere.Dispose();
       }
+      if (_hauppauge != null)
+      {
+        _hauppauge.Dispose();
+      }
+      if (_conexant != null)
+      {
+        _conexant.Dispose();
+      }
+      if (_isgenericatsc != null)
+      {
+        _isgenericatsc.Dispose();
+      }
+      if (_isvixsatsc != null)
+      {
+        _isvixsatsc.Dispose();
+      }
+      if (_genpix != null)
+      {
+        _genpix.Dispose();
+      }
       if (_winTvCiModule != null)
       {
         _winTvCiModule.Dispose();
       }
     }
-
     #endregion
   }
 }
