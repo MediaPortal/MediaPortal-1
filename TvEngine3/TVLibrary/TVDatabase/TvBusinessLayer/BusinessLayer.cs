@@ -207,6 +207,26 @@ namespace TvDatabase
         map.Persist();
       }
     }
+
+    public void AddChannelToGroup(Channel channel, ChannelGroup group)
+    {
+      bool found = false;
+      IList<GroupMap> groupMaps = group.ReferringGroupMap();
+      foreach (GroupMap map in groupMaps)
+      {
+        if (map.IdChannel == channel.IdChannel)
+        {
+          found = true;
+          break;
+        }
+      }
+      if (!found)
+      {
+        GroupMap map = new GroupMap(group.IdGroup, channel.IdChannel, channel.SortOrder);
+        map.Persist();
+      }
+    }
+
     /// <summary>
     /// Add a radio channel to radio group by name
     /// </summary>

@@ -287,6 +287,61 @@ namespace TvDatabase
       }
     }
 
+    /// <summary>
+    /// Gets the names of the groups where the channel is currently assigned to
+    /// </summary>
+    public IList<string> GroupNames
+    {
+      get
+      {
+        List<string> groupNames = new List<string>();
+
+        if (this.IsTv)
+        {
+          SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(GroupMap));
+          sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
+
+          SqlStatement stmt = sb.GetStatement(true);
+
+          IList<GroupMap> groupMaps = ObjectFactory.GetCollection<GroupMap>(stmt.Execute());
+
+          foreach (GroupMap groupMap in groupMaps)
+          {
+            sb = new SqlBuilder(StatementType.Select, typeof(ChannelGroup));
+            sb.AddConstraint(Operator.Equals, "idGroup", groupMap.IdGroup);
+
+            stmt = sb.GetStatement();
+
+            ChannelGroup channelGroup = ObjectFactory.GetInstance<ChannelGroup>(stmt.Execute());
+
+            groupNames.Add(channelGroup.GroupName);
+          }
+        }
+        else if (this.IsRadio)
+        {
+          SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(RadioGroupMap));
+          sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
+
+          SqlStatement stmt = sb.GetStatement(true);
+
+          IList<RadioGroupMap> groupMaps = ObjectFactory.GetCollection<RadioGroupMap>(stmt.Execute());
+
+          foreach (RadioGroupMap groupMap in groupMaps)
+          {
+            sb = new SqlBuilder(StatementType.Select, typeof(RadioChannelGroup));
+            sb.AddConstraint(Operator.Equals, "idGroup", groupMap.IdGroup);
+
+            stmt = sb.GetStatement();
+
+            RadioChannelGroup channelGroup = ObjectFactory.GetInstance<RadioChannelGroup>(stmt.Execute());
+
+            groupNames.Add(channelGroup.GroupName);
+          }
+        }
+
+        return groupNames;
+      }
+    }
     #endregion
 
     #region Storage and Retrieval
@@ -729,5 +784,7 @@ namespace TvDatabase
       }
       return false;
     }
+
+    
   }
 }

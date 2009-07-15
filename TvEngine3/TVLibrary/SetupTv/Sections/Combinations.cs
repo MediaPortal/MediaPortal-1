@@ -60,7 +60,7 @@ namespace SetupTv.Sections
 
     bool _redrawTab1;
     public TvCombinations()
-      : this("Combinations")
+      : this("TV Combinations")
     {
     }
 

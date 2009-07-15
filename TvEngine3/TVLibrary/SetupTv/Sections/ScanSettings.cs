@@ -197,31 +197,38 @@ namespace SetupTv.Sections
         return;
       }
 
-      switch (mpComboBoxPrio.SelectedIndex)
+      try
       {
-        case 0:
-          process.PriorityClass = System.Diagnostics.ProcessPriorityClass.RealTime;
-          break;
-        case 1:
-          process.PriorityClass = System.Diagnostics.ProcessPriorityClass.High;
-          break;
-        case 2:
-          process.PriorityClass = System.Diagnostics.ProcessPriorityClass.AboveNormal;
-          break;
-        case 3:
-          process.PriorityClass = System.Diagnostics.ProcessPriorityClass.Normal;
-          break;
-        case 4:
-          process.PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
-          break;
-        case 5:
-          process.PriorityClass = System.Diagnostics.ProcessPriorityClass.Idle;
-          break;
-        default:
-          process.PriorityClass = System.Diagnostics.ProcessPriorityClass.Normal;
-          break;
+        switch (mpComboBoxPrio.SelectedIndex)
+        {
+          case 0:
+            process.PriorityClass = System.Diagnostics.ProcessPriorityClass.RealTime;
+            break;
+          case 1:
+            process.PriorityClass = System.Diagnostics.ProcessPriorityClass.High;
+            break;
+          case 2:
+            process.PriorityClass = System.Diagnostics.ProcessPriorityClass.AboveNormal;
+            break;
+          case 3:
+            process.PriorityClass = System.Diagnostics.ProcessPriorityClass.Normal;
+            break;
+          case 4:
+            process.PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
+            break;
+          case 5:
+            process.PriorityClass = System.Diagnostics.ProcessPriorityClass.Idle;
+            break;
+          default:
+            process.PriorityClass = System.Diagnostics.ProcessPriorityClass.Normal;
+            break;
+        }
       }
-
+      catch (Exception exp)
+      {
+        Log.Write(string.Format("Could not set priority on tvservice. Error on setting process.PriorityClass: {0}", exp.Message));
+        return;
+      }
     }
 
     private static string EvalTemplate(string template, NameValueCollection values)

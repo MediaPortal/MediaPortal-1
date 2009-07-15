@@ -105,6 +105,8 @@ namespace SetupTv
     {
       Thread.CurrentThread.Name = "SetupTv";
 
+	  Application.SetCompatibleTextRenderingDefault(false);
+
       // set working dir from application.exe
       string applicationPath = Application.ExecutablePath;
       applicationPath = System.IO.Path.GetFullPath(applicationPath);

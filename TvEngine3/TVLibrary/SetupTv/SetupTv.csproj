@@ -121,6 +121,12 @@
     <Compile Include="Dialogs\GroupNameForm.designer.cs">
       <DependentUpon>GroupNameForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\GroupSelectionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\GroupSelectionForm.designer.cs">
+      <DependentUpon>GroupSelectionForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="HelpSystem.cs" />
     <Compile Include="Sections\CardDvbIP.cs">
       <SubType>UserControl</SubType>
@@ -233,10 +239,6 @@
       <SubType>Designer</SubType>
       <DependentUpon>TVChannels.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\TvGroups.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>TvGroups.cs</DependentUpon>
-    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -317,12 +319,6 @@
     <Compile Include="Sections\RadioCombinations.Designer.cs">
       <DependentUpon>RadioCombinations.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\RadioGroups.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\RadioGroups.Designer.cs">
-      <DependentUpon>RadioGroups.cs</DependentUpon>
-    </Compile>
     <Compile Include="Sections\player.cs" />
     <Compile Include="Sections\Plugins.cs">
       <SubType>UserControl</SubType>
@@ -401,12 +397,6 @@
     </Compile>
     <Compile Include="Sections\TVChannels.Designer.cs">
       <DependentUpon>TVChannels.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\TvGroups.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\TvGroups.Designer.cs">
-      <DependentUpon>TvGroups.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\TvSchedules.cs">
       <SubType>UserControl</SubType>
@@ -493,6 +483,10 @@
       <DependentUpon>GroupNameForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\GroupSelectionForm.resx">
+      <DependentUpon>GroupSelectionForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="NotifyForm.resx">
       <DependentUpon>NotifyForm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -529,10 +523,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\RadioCombinations.resx">
       <DependentUpon>RadioCombinations.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\RadioGroups.resx">
-      <DependentUpon>RadioGroups.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Plugins.resx">
@@ -573,11 +563,13 @@
     <Content Include="images\animation.SatDish.gif" />
     <Content Include="images\icon.card.gif" />
     <Content Include="images\icon.computer.gif" />
+    <None Include="images\icon.down.png" />
     <Content Include="images\icon.mpConfig.ico" />
     <Content Include="images\icon.radio_fta.png" />
     <Content Include="images\icon.radio_scrambled.png" />
     <Content Include="images\icon.tv_fta.png" />
     <Content Include="images\icon.tv_scrambled.png" />
+    <None Include="images\icon.up.png" />
     <Content Include="images\icon.user.ico" />
     <Content Include="images\logo.MePo.png" />
     <Content Include="images\logo.MSSQL.gif" />

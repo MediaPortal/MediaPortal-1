@@ -139,14 +139,12 @@ namespace SetupTv
         AddChildSection(tvChannels, new TvCombinations());
         AddChildSection(tvChannels, new TvChannelMapping());
         AddChildSection(tvChannels, new TvEpgGrabber());
-        AddChildSection(tvChannels, new TvGroups());
 
         RadioChannels radioChannels = new RadioChannels();
         AddSection(radioChannels);
         AddChildSection(radioChannels, new RadioCombinations("Radio Combinations"));
         AddChildSection(radioChannels, new RadioChannelMapping());
         AddChildSection(radioChannels, new RadioEpgGrabber());
-        AddChildSection(radioChannels, new RadioGroups());
 
         AddSection(new ImportExport());
         AddSection(new ScanSettings());        
