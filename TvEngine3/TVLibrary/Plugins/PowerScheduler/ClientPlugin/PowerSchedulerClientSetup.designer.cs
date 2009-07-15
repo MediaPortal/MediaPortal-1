@@ -226,6 +226,7 @@ namespace MediaPortal.Plugins.Process
       // cancelButton
       // 
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.cancelButton.Location = new System.Drawing.Point(336, 196);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.Size = new System.Drawing.Size(75, 23);
@@ -247,12 +248,16 @@ namespace MediaPortal.Plugins.Process
       // 
       // PowerSchedulerClientSetup
       // 
+      this.AcceptButton = this.okButton;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.CancelButton = this.cancelButton;
       this.ClientSize = new System.Drawing.Size(441, 231);
       this.Controls.Add(this.cancelButton);
       this.Controls.Add(this.okButton);
       this.Controls.Add(this.tabControl1);
       this.Name = "PowerSchedulerClientSetup";
+      this.ShowInTaskbar = false;
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "PowerSchedulerClientSetup";
       this.tabPage2.ResumeLayout(false);
       this.groupBox2.ResumeLayout(false);
