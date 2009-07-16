@@ -368,29 +368,29 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // we need to restart it in order to re-register dll handler
       //
       bool irss_found = false;
-      const string irss_srv = "InputService";
-      const string irss_app = "IRServer";
+      const string irss_app = "IR Server";
       //
       // Service part
       //
       foreach (ServiceController ctrl in ServiceController.GetServices())
       {
-        if (ctrl.ServiceName.ToLower() == irss_srv.ToLower() && ctrl.Status == ServiceControllerStatus.Running)
+        if (ctrl.DisplayName.ToLower() != irss_app.ToLower() || ctrl.Status != ServiceControllerStatus.Running)
         {
-          Log.Debug("iMONLCDg.Dispose(): Restarting \"" + irss_srv + "\" from IRSS");
-          try
-          {
-            ctrl.Stop();
-            ctrl.WaitForStatus(ServiceControllerStatus.Stopped);
-            ctrl.Start();
-            ctrl.WaitForStatus(ServiceControllerStatus.Running);
-            irss_found = true;
-            break;
-          }
-          catch (Exception ex)
-          {
-            Log.Error("iMONLCDg.Dispose(): Unable to restart \"" + irss_srv + "\" from IRSS: " + ex.Message);
-          }
+          continue;
+        }
+        Log.Debug("iMONLCDg.Dispose(): Restarting \"" + irss_app + "\" (service) from IRSS");
+        try
+        {
+          ctrl.Stop();
+          ctrl.WaitForStatus(ServiceControllerStatus.Stopped);
+          ctrl.Start();
+          ctrl.WaitForStatus(ServiceControllerStatus.Running);
+          irss_found = true;
+          break;
+        }
+        catch (Exception ex)
+        {
+          Log.Error("iMONLCDg.Dispose(): Unable to restart \"" + irss_app + "\" (service) from IRSS: " + ex.Message);
         }
       }
       //
@@ -402,7 +402,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Process[] procs = Process.GetProcessesByName(irss_app);
         foreach (Process proc in procs)
         {
-          Log.Debug("iMONLCDg.Dispose(): Restarting \"" + irss_app + "\" from IRSS");
+          Log.Debug("iMONLCDg.Dispose(): Restarting \"" + irss_app + "\" (application) from IRSS");
           proc.Kill();
           proc.WaitForExit(2000);
 
@@ -424,7 +424,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             retval = Reg.RegQueryValueEx(res, "Install_Dir", 0, out tKey, sKey, ref lKey);
             if (retval == 0)
             {
-              workdir = sKey + "\\Input Service";
+              workdir = sKey + "\\IR Server";
             }
             else
             {
@@ -454,7 +454,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           catch (Exception ex)
           {
-            Log.Error("iMONLCDg.Dispose(): Unable to restart \"" + irss_app + "\" from IRSS: " + ex.Message);
+            Log.Error("iMONLCDg.Dispose(): Unable to restart \"" + irss_app + "\" (application) from IRSS: " + ex.Message);
           }
           break;
         }
