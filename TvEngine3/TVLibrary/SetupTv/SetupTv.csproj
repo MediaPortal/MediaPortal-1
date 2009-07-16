@@ -567,6 +567,9 @@
     <Content Include="images\icon.mpConfig.ico" />
     <Content Include="images\icon.radio_fta.png" />
     <Content Include="images\icon.radio_scrambled.png" />
+    <None Include="images\icon.sort.none.png" />
+    <None Include="images\icon.sort.asc.png" />
+    <None Include="images\icon.sort.dsc.png" />
     <Content Include="images\icon.tv_fta.png" />
     <Content Include="images\icon.tv_scrambled.png" />
     <None Include="images\icon.up.png" />

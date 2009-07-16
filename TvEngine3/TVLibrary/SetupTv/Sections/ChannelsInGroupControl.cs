@@ -30,13 +30,23 @@ namespace SetupTv.Sections
 {
   public partial class ChannelsInGroupControl : UserControl
   {
-    ChannelGroup _channelGroup;
+    private readonly MPListViewStringColumnSorter lvwColumnSorter;
+    private static bool _userConfirmedAutoReorder = false;
+    private SortOrder _lastSortOrder = SortOrder.None;
+
+    private ChannelGroup _channelGroup; 
+
     public ChannelsInGroupControl()
     {
       InitializeComponent();
 
+      lvwColumnSorter = new MPListViewStringColumnSorter();
+      listView1.ListViewItemSorter = lvwColumnSorter;
+      lvwColumnSorter.Order = SortOrder.None;
+
       listView1.IsChannelListView = true;
     }
+
     public ChannelGroup Group
     {
       get
@@ -63,32 +73,50 @@ namespace SetupTv.Sections
     {
       try
       {
-        Cursor.Current = Cursors.WaitCursor;
-
         Application.DoEvents();
+
+        Cursor.Current = Cursors.WaitCursor;
 
         UpdateMenuAndTabs();
 
         listView1.Items.Clear();
+
         if (Group != null)
         {
           SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(GroupMap));
+
           sb.AddConstraint(Operator.Equals, "idGroup", Group.IdGroup);
           sb.AddOrderByField(true, "sortOrder");
+
           SqlStatement stmt = sb.GetStatement(true);
+
           IList<GroupMap> maps = ObjectFactory.GetCollection<GroupMap>(stmt.Execute());
 
           foreach (GroupMap map in maps)
           {
             Channel channel = map.ReferencedChannel();
             if (channel.IsTv == false)
+            {
               continue;
+            }
+
             int imageIndex = 1;
+
             if (channel.FreeToAir == false)
+            {
               imageIndex = 2;
+            }
+
             ListViewItem item = listView1.Items.Add(channel.DisplayName, imageIndex);
+
             item.Checked = channel.VisibleInGuide;
             item.Tag = map;
+
+            IList<TuningDetail> details = channel.ReferringTuningDetail();
+            if (details.Count > 0)
+            {
+              item.SubItems.Add(details[0].ChannelNumber.ToString());
+            }
           }
         }
       }
@@ -395,6 +423,90 @@ namespace SetupTv.Sections
       }
       dlg.Close();
       ReOrder();
+    }
+
+    private void listView1_ColumnClick(object sender, ColumnClickEventArgs e)
+    {
+      if (sender != null)
+      {
+        if (!_userConfirmedAutoReorder)
+        {
+          if (MessageBox.Show("The current channel order will be overwritten after the sorting operation. Continue?", "Re-order channels?", MessageBoxButtons.YesNo)
+            == DialogResult.No)
+          {
+            return;
+          }
+          else
+          {
+            _userConfirmedAutoReorder = true;
+          }
+        }
+      }
+
+      MPButton buttonSort = null;
+      MPButton buttonOther = null;
+      switch (e.Column)
+      {
+        case 0:
+          lvwColumnSorter.OrderType = MPListViewStringColumnSorter.OrderTypes.AsString;
+          buttonSort = mpButtonOrderByName;
+          buttonOther = mpButtonOrderByNumber;
+          break;
+        case 1:
+          lvwColumnSorter.OrderType = MPListViewStringColumnSorter.OrderTypes.AsValue;
+          buttonSort = mpButtonOrderByNumber;
+          buttonOther = mpButtonOrderByName;
+          break;
+      }
+
+      if (e.Column == lvwColumnSorter.SortColumn)
+      {
+        // Reverse the current sort direction for this column.
+        lvwColumnSorter.Order = _lastSortOrder == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+      }
+      else
+      {
+        // Set the column number that is to be sorted; default to ascending.
+        lvwColumnSorter.SortColumn = e.Column;
+        lvwColumnSorter.Order = SortOrder.Ascending;
+      }
+
+      _lastSortOrder = lvwColumnSorter.Order;
+
+      // Perform the sort with these new sort options.
+      listView1.Sort();
+      ReOrder();
+
+      if (buttonSort != null)
+      {
+        switch (lvwColumnSorter.Order)
+        {
+          case SortOrder.Ascending:
+            buttonSort.Image = global::SetupTv.Properties.Resources.icon_sort_asc;
+            break;
+          case SortOrder.Descending:
+            buttonSort.Image = global::SetupTv.Properties.Resources.icon_sort_dsc;
+            break;
+          case SortOrder.None:
+            buttonSort.Image = global::SetupTv.Properties.Resources.icon_sort_none;
+            break;
+        }
+      }
+
+      buttonOther.Image = global::SetupTv.Properties.Resources.icon_sort_none;
+
+      //Reset the SortOrder again. Otherwise manual re-order won't be possible anymore
+      lvwColumnSorter.Order = SortOrder.None;
+    }
+
+    private void mpButtonOrderByName_Click(object sender, EventArgs e)
+    {
+      this.listView1_ColumnClick(null, new ColumnClickEventArgs(0));
+    }
+
+    private void mpButtonOrderByNumber_Click(object sender, EventArgs e)
+    {
+      this.listView1_ColumnClick(null, new ColumnClickEventArgs(1));
     }
   }
 }

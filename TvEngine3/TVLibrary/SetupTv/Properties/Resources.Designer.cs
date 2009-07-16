@@ -102,6 +102,27 @@ namespace SetupTv.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap icon_sort_asc {
+            get {
+                object obj = ResourceManager.GetObject("icon_sort_asc", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap icon_sort_dsc {
+            get {
+                object obj = ResourceManager.GetObject("icon_sort_dsc", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap icon_sort_none {
+            get {
+                object obj = ResourceManager.GetObject("icon_sort_none", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap icon_tv_fta {
             get {
                 object obj = ResourceManager.GetObject("icon_tv_fta", resourceCulture);
