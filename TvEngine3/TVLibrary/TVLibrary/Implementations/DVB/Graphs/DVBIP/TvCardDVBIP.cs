@@ -33,12 +33,24 @@ namespace TvLibrary.Implementations.DVB
   [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
   class MpTsAnalyzer { }
 
+  /// <summary>
+  /// Constructor if TvCardDVBIP
+  /// </summary>
   public abstract class TvCardDVBIP : TvCardDvbBase, ITVCard
   {
+    /// Stream source filter
     protected IBaseFilter _filterStreamSource;
+    /// default url
     protected string _defaultUrl;
-    protected int _sequence;
+    /// sequence
+    protected int _sequence; 
 
+    /// <summary>
+    /// Contstructor
+    /// </summary>
+    /// <param name="epgEvents"></param>
+    /// <param name="device"></param>
+    /// <param name="sequence"></param>
     public TvCardDVBIP(IEpgEvents epgEvents, DsDevice device, int sequence) : base(epgEvents, device)
     {
       _cardType = CardType.DvbIP;
@@ -51,6 +63,9 @@ namespace TvLibrary.Implementations.DVB
 
     #region graphbuilding
 
+    /// <summary>
+    /// Build graph
+    /// </summary>
     public override void BuildGraph()
     {
       try
@@ -83,23 +98,42 @@ namespace TvLibrary.Implementations.DVB
         throw ex;
       }
     }
-
+    /// <summary>
+    /// AddStreamSourceFilter
+    /// </summary>
+    /// <param name="url">url</param>
     protected abstract void AddStreamSourceFilter(string url);
 
+    /// <summary>
+    /// RemoveStreamSourceFilter
+    /// </summary>
     protected abstract void RemoveStreamSourceFilter();
 
+    /// <summary>
+    /// RunGraph
+    /// </summary>
+    /// <param name="subChannel">subchannel</param>
+    /// <param name="url">url</param>
     protected abstract void RunGraph(int subChannel, string url);
 
     #endregion
 
     #region Implementation of ITVCard
 
+    /// <summary>
+    /// Checks if channel can be tuned by IPTV
+    /// </summary>
+    /// <param name="channel">channel</param>
+    /// <returns>true if DVBIPChannel</returns>
     public bool CanTune(IChannel channel)
     {
       if ((channel as DVBIPChannel) == null) return false;
       return true;
     }
 
+    /// <summary>
+    /// ScanningInterface
+    /// </summary>
     public ITVScanning ScanningInterface
     {
       get
@@ -109,6 +143,12 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Tune to channel
+    /// </summary>
+    /// <param name="subChannelId"></param>
+    /// <param name="channel"></param>
+    /// <returns></returns>
     public ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
       Log.Log.WriteFile("dvbip:  Tune:{0}", channel);
@@ -185,6 +225,9 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
+    /// <summary>
+    /// Dispose resources
+    /// </summary>
     public override void Dispose()
     {
       base.Dispose();
@@ -195,6 +238,9 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Stops graph
+    /// </summary>
     public override void StopGraph()
     {
       base.StopGraph();
@@ -206,11 +252,18 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// ToString
+    /// </summary>
+    /// <returns></returns>
     public override string ToString()
     {
       return _name;
     }
 
+    /// <summary>
+    /// UpdateSignalQuality
+    /// </summary>
     protected override void UpdateSignalQuality()
     {
       if (GraphRunning() == false)
@@ -251,6 +304,9 @@ namespace TvLibrary.Implementations.DVB
       _signalQuality = 100;
     }
 
+    /// <summary>
+    /// return the DevicePath
+    /// </summary>
     public override string DevicePath
     {
       get

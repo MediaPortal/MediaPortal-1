@@ -796,23 +796,40 @@ namespace TvLibrary.Implementations.DVB
 
     #region public method
 
+    /// <summary>
+    /// returns channel being decoded
+    /// </summary>
+    /// <returns></returns>
     public IChannel GetDecodingChannel()
     {
       return _decodingChannel;
     }
 
+    /// <summary>
+    /// returns if given channel is decoding
+    /// </summary>
+    /// <param name="channel"></param>
+    /// <returns></returns>
     public bool IsDecodingChannel(IChannel channel)
     {
       return _decodingChannel != null
         && _decodingChannel.Name == channel.Name;
     }
 
+    /// <summary>
+    /// returns if given channel is decoding
+    /// </summary>
+    /// <param name="channelName"></param>
+    /// <returns></returns>
     public bool IsDecodingChannel(string channelName)
     {
         return _decodingChannel != null
           && _decodingChannel.Name == channelName;
     }
 
+    /// <summary>
+    /// IncrementDecodingCounter
+    /// </summary>
     public void IncrementDecodingCounter()
     {
       if (_decodingChannel != null)
@@ -821,7 +838,10 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Info("mdplug: usage counter for channel '{0}' is {1}", _decodingChannel.Name, _decodingCounter);
       }
     }
-
+    /// <summary>
+    /// FreeDecodingChannel
+    /// </summary>
+    /// <param name="forceFree"></param>
     public void FreeDecodingChannel(bool forceFree)
     {
       if (_decodingChannel != null)

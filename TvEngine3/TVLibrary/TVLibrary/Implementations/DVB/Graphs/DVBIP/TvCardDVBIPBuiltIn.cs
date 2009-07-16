@@ -26,6 +26,9 @@ using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.DVB
 {
+  /// <summary>
+  /// DVB IP class
+  /// </summary>
   public class TvCardDVBIPBuiltIn : TvCardDVBIP
   {
 
@@ -37,11 +40,21 @@ namespace TvLibrary.Implementations.DVB
     {
     }
 
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="epgEvents"></param>
+    /// <param name="device"></param>
+    /// <param name="sequence"></param>
     public TvCardDVBIPBuiltIn(IEpgEvents epgEvents, DsDevice device, int sequence) : base(epgEvents, device, sequence)
     {
       _defaultUrl = "udp://@0.0.0.0:1234";
     }
 
+    /// <summary>
+    /// AddStreamSourceFilter
+    /// </summary>
+    /// <param name="url"></param>
     protected override void AddStreamSourceFilter(string url)
     {
       Log.Log.WriteFile("dvbip:Add MediaPortal IPTV Source Filter");
@@ -67,6 +80,9 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// RemoveStreamSourceFilter
+    /// </summary>
     protected override void RemoveStreamSourceFilter()
     {
       if (_filterStreamSource != null)
@@ -77,6 +93,11 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// RunGraph
+    /// </summary>
+    /// <param name="subChannel"></param>
+    /// <param name="url"></param>
     protected override void RunGraph(int subChannel, string url)
     {
       int hr;

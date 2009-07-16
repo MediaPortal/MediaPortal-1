@@ -26,10 +26,16 @@ using TvLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.DVB
 {
+  /// <summary>
+  /// Class for DVBIP scanning
+  /// </summary>
   public class DVBIPScanning : DvbBaseScanning, ITVScanning
   {
     TvCardDVBIP _card;
-
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="card"></param>
     public DVBIPScanning(TvCardDVBIP card) : base(card)
     {
       _card = card;
@@ -37,6 +43,9 @@ namespace TvLibrary.Implementations.DVB
 
     #region Implementation of ITVScanning
 
+    /// <summary>
+    /// returns tv card
+    /// </summary>
     public ITVCard TvCard
     {
       get { return _card; }
@@ -44,21 +53,37 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
+    /// <summary>
+    /// returns analyzer filter
+    /// </summary>
+    /// <returns></returns>
     protected override ITsChannelScan GetAnalyzer()
     {
       return _card.StreamAnalyzer;
     }
 
+    /// <summary>
+    /// SetHwPids
+    /// </summary>
+    /// <param name="pids"></param>
     protected override void  SetHwPids(System.Collections.Generic.List<ushort> pids)
     {
       _card.SendHwPids(pids);
     }
 
+    /// <summary>
+    /// ResetSignalUpdate
+    /// </summary>
     protected override void ResetSignalUpdate()
     {
       _card.ResetSignalUpdate();
     }
 
+    /// <summary>
+    /// CreateNewChannel
+    /// </summary>
+    /// <param name="info"></param>
+    /// <returns></returns>
     protected override IChannel CreateNewChannel(ChannelInfo info)
     {
       DVBIPChannel tunningChannel = (DVBIPChannel) _card.CurrentChannel;

@@ -26,6 +26,9 @@ using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.DVB
 {
+  /// <summary>
+  /// DVB IP class based on Elecard
+  /// </summary>
   public class TvCardDVBIPElecard : TvCardDVBIP
   {
     /// <summary>
@@ -36,11 +39,21 @@ namespace TvLibrary.Implementations.DVB
     {
     }
 
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="epgEvents"></param>
+    /// <param name="device"></param>
+    /// <param name="sequence"></param>
     public TvCardDVBIPElecard(IEpgEvents epgEvents, DsDevice device, int sequence) : base(epgEvents, device, sequence)
     {
       _defaultUrl = "elecard://0.0.0.0:1234:t=m2t/udp";
     }
 
+    /// <summary>
+    /// AddStreamSourceFilter
+    /// </summary>
+    /// <param name="url"></param>
     protected override void AddStreamSourceFilter(string url)
     {
       Log.Log.WriteFile("dvbip:Add NWSource-Plus");
@@ -66,6 +79,9 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// RemoveStreamSourceFilter
+    /// </summary>
     protected override void RemoveStreamSourceFilter()
     {
       if (_filterStreamSource != null)
@@ -76,6 +92,11 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// RunGraph
+    /// </summary>
+    /// <param name="subChannel"></param>
+    /// <param name="url"></param>
     protected override void RunGraph(int subChannel, string url)
     {
       int hr;

@@ -166,6 +166,9 @@ namespace TvLibrary.Implementations.DVB
       _pmtLength = 0;
     }
 
+    /// <summary>
+    /// Destructor
+    /// </summary>
     ~TvDvbChannel()
     {
       if (_eventPMT != null)
