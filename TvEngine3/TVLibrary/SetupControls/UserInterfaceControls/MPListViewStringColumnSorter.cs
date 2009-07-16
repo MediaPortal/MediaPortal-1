@@ -28,18 +28,32 @@ namespace MediaPortal.UserInterface.Controls
           break;
         case OrderTypes.AsValue:
           string line1 = SortColumn == 0 ? listviewX.Text : listviewX.SubItems[SortColumn].Text;
-
           string line2 = SortColumn == 0 ? listviewY.Text : listviewY.SubItems[SortColumn].Text;
+
+          //not sure for what these % are good but it should be catched when its not in......
           int pos1 = line1.IndexOf("%");
-          line1 = line1.Substring(0, pos1);
+          if (pos1 >= 0)
+          {
+            line1 = line1.Substring(0, pos1);
+          }
+
           int pos2 = line2.IndexOf("%");
-          line2 = line2.Substring(0, pos2);
-          float value1 = float.Parse(line1);
-          float value2 = float.Parse(line2);
+          if (pos2 >= 0)
+          {
+            line2 = line2.Substring(0, pos2);
+          }
+
+          float value1 = 0;
+          float value2 = 0;
+
+          float.TryParse(line1, out value1);
+          float.TryParse(line2, out value2);
+
           if (value1 < value2)
             compareResult = -1;
           else
             compareResult = value1 > value2 ? 1 : 0;
+
           break;
       }
       // Calculate correct return value based on object comparison
