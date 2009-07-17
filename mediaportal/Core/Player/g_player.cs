@@ -1304,7 +1304,7 @@ namespace MediaPortal.Player
               }
             }
           }
-          if (extension == ".ifo" || extension == ".vob" || isImageFile)
+          if (extension == ".ifo" || isImageFile)
           {            
             _player = new DVDPlayer9();
             _player = CachePreviousPlayer(_player);
