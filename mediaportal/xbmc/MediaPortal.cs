@@ -2284,20 +2284,62 @@ public class MediaPortalApp : D3DApp, IRender
           return;
 
         //reboot pc
+        case Action.ActionType.ACTION_POWER_OFF:
+        case Action.ActionType.ACTION_SUSPEND:
+        case Action.ActionType.ACTION_HIBERNATE:
         case Action.ActionType.ACTION_REBOOT:
           {
             //reboot
             Log.Info("Main: Reboot requested");
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO, 0, 0, 0, 0, 0, 0);
-            msg.Param1 = 630;
+            switch (action.wID)
+            {
+              case Action.ActionType.ACTION_REBOOT:
+                msg.Param1 = 630;
+                break;
+
+              case Action.ActionType.ACTION_POWER_OFF:
+                msg.Param1 = 1600;
+                break;
+
+              case Action.ActionType.ACTION_SUSPEND:
+                msg.Param1 = 1601;
+                break;
+
+              case Action.ActionType.ACTION_HIBERNATE:
+                msg.Param1 = 1602;
+                break;
+            }
             msg.Param2 = 0;
             msg.Param3 = 0;
             GUIWindowManager.SendMessage(msg);
             if (msg.Param1 == 1)
             {
-              useRestartOptions = true;
-              restartOptions = RestartOptions.Reboot;
-              GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
+              switch (action.wID)
+              {
+                case Action.ActionType.ACTION_REBOOT:
+                  restartOptions = RestartOptions.Reboot;
+                  useRestartOptions = true;
+                  GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
+                  break;
+
+                case Action.ActionType.ACTION_POWER_OFF:
+                  restartOptions = RestartOptions.PowerOff;
+                  useRestartOptions = true;
+                  GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
+                  base._shuttingDown = true;
+                  break;
+
+                case Action.ActionType.ACTION_SUSPEND:
+                  restartOptions = RestartOptions.Suspend;
+                  Utils.SuspendSystem(false);
+                  break;
+
+                case Action.ActionType.ACTION_HIBERNATE:
+                  restartOptions = RestartOptions.Hibernate;
+                  Utils.HibernateSystem(false);
+                  break;
+              }
             }
           }
           return;

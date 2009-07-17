@@ -176,6 +176,9 @@ namespace MediaPortal.GUI.Library
       ACTION_TOGGLE_SMS_INPUT = 121, // Toggle SMS / alpha keyboard
       ACTION_AUTOZAP = 122, // Start autozapping in TV mode
       ACTION_MPRESTORE = 123,
+      ACTION_POWER_OFF = 991, // direct action rather than through ACTION_SHUTDOWN dialog menu
+      ACTION_SUSPEND = 992, // direct action rather than through ACTION_SHUTDOWN dialog menu
+      ACTION_HIBERNATE = 993, // direct action rather than through ACTION_SHUTDOWN dialog menu
       ACTION_MOUSE_MOVE = 2000,
       ACTION_MOUSE_CLICK = 2001,
       ACTION_MOUSE_DOUBLECLICK = 2002,
