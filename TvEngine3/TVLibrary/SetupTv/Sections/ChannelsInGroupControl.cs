@@ -31,6 +31,7 @@ namespace SetupTv.Sections
   public partial class ChannelsInGroupControl : UserControl
   {
     private readonly MPListViewStringColumnSorter lvwColumnSorter;
+
     private static bool _userConfirmedAutoReorder = false;
     private SortOrder _lastSortOrder = SortOrder.None;
 
@@ -41,9 +42,8 @@ namespace SetupTv.Sections
       InitializeComponent();
 
       lvwColumnSorter = new MPListViewStringColumnSorter();
-      listView1.ListViewItemSorter = lvwColumnSorter;
       lvwColumnSorter.Order = SortOrder.None;
-
+      listView1.ListViewItemSorter = lvwColumnSorter;
       listView1.IsChannelListView = true;
     }
 
@@ -115,7 +115,7 @@ namespace SetupTv.Sections
             IList<TuningDetail> details = channel.ReferringTuningDetail();
             if (details.Count > 0)
             {
-              item.SubItems.Add(details[0].ChannelNumber.ToString());
+              item.SubItems.Add(details[0].ChannelNumber.ToString().PadLeft(3, '0'));
             }
           }
         }
@@ -148,7 +148,7 @@ namespace SetupTv.Sections
       }
     }
 
-    void ReOrder()
+    private void ReOrder()
     {
       for (int i = 0; i < listView1.Items.Count; ++i)
       {
@@ -448,17 +448,15 @@ namespace SetupTv.Sections
       switch (e.Column)
       {
         case 0:
-          lvwColumnSorter.OrderType = MPListViewStringColumnSorter.OrderTypes.AsString;
           buttonSort = mpButtonOrderByName;
           buttonOther = mpButtonOrderByNumber;
           break;
         case 1:
-          lvwColumnSorter.OrderType = MPListViewStringColumnSorter.OrderTypes.AsValue;
           buttonSort = mpButtonOrderByNumber;
           buttonOther = mpButtonOrderByName;
           break;
       }
-
+      
       if (e.Column == lvwColumnSorter.SortColumn)
       {
         // Reverse the current sort direction for this column.
