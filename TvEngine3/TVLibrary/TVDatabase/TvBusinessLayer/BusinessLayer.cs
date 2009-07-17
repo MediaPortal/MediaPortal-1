@@ -1634,23 +1634,17 @@ namespace TvDatabase
 
     public IList<Program> GetPrograms(DateTime startTime, DateTime endTime)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
-
-      string sub1 = String.Format("(EndTime > '{0}' and EndTime < '{1}')",
-                                  startTime.ToString(GetDateTimeString(), mmddFormat),
-                                  endTime.ToString(GetDateTimeString(), mmddFormat));
-      string sub2 = String.Format("(StartTime >= '{0}' and StartTime <= '{1}')",
-                                  startTime.ToString(GetDateTimeString(), mmddFormat),
-                                  endTime.ToString(GetDateTimeString(), mmddFormat));
-      string sub3 = String.Format("(StartTime <= '{0}' and EndTime >= '{1}')",
-                                  startTime.ToString(GetDateTimeString(), mmddFormat),
-                                  endTime.ToString(GetDateTimeString(), mmddFormat));
-
-      sb.AddConstraint(string.Format(" ({0} or {1} or {2}) ", sub1, sub2, sub3));
-      sb.AddOrderByField(true, "starttime");
-      SqlStatement stmt = sb.GetStatement(true);
-      return ObjectFactory.GetCollection<Program>(stmt.Execute());
+      string StartTimeString = startTime.ToString(GetDateTimeString(), mmddFormat);
+      string EndTimeString = endTime.ToString(GetDateTimeString(), mmddFormat);
+      StringBuilder SqlSelectCommand = new StringBuilder();
+      SqlSelectCommand.Append("select p.* from Program p inner join Channel c on c.idChannel = p.idChannel ");
+      SqlSelectCommand.AppendFormat(
+        "where ((EndTime > '{0}' and EndTime < '{1}') or (StartTime >= '{0}' and StartTime <= '{1}') or (StartTime <= '{0}' and EndTime >= '{1}')) and c.visibleInGuide = 1 order by startTime",
+        StartTimeString, EndTimeString
+      );
+      SqlStatement ManualJoinSQL = new SqlStatement(StatementType.Select, new SqlCommand(), SqlSelectCommand.ToString(), typeof(Program));
+      return ObjectFactory.GetCollection<Program>(ManualJoinSQL.Execute());
     }
 
     public DateTime GetNewestProgramForChannel(int idChannel)
@@ -1690,24 +1684,17 @@ namespace TvDatabase
 
     public IList<Program> GetProgramsByTitle(DateTime startTime, DateTime endTime, string title)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
-
-      string sub1 = String.Format("(EndTime > '{0}' and EndTime < '{1}')",
-                                  startTime.ToString(GetDateTimeString(), mmddFormat),
-                                  endTime.ToString(GetDateTimeString(), mmddFormat));
-      string sub2 = String.Format("(StartTime >= '{0}' and StartTime <= '{1}')",
-                                  startTime.ToString(GetDateTimeString(), mmddFormat),
-                                  endTime.ToString(GetDateTimeString(), mmddFormat));
-      string sub3 = String.Format("(StartTime <= '{0}' and EndTime >= '{1}')",
-                                  startTime.ToString(GetDateTimeString(), mmddFormat),
-                                  endTime.ToString(GetDateTimeString(), mmddFormat));
-
-      sb.AddConstraint(string.Format(" ({0} or {1} or {2}) ", sub1, sub2, sub3));
-      sb.AddConstraint(Operator.Like, "title", "%" + title + "%");
-      sb.AddOrderByField(true, "starttime");
-      SqlStatement stmt = sb.GetStatement(true);
-      return ObjectFactory.GetCollection<Program>(stmt.Execute());
+      string StartTimeString = startTime.ToString(GetDateTimeString(), mmddFormat);
+      string EndTimeString = endTime.ToString(GetDateTimeString(), mmddFormat);
+      StringBuilder SqlSelectCommand = new StringBuilder();
+      SqlSelectCommand.Append("select p.* from Program p inner join Channel c on c.idChannel = p.idChannel ");
+      SqlSelectCommand.AppendFormat(
+        "where ((EndTime > '{0}' and EndTime < '{1}') or (StartTime >= '{0}' and StartTime <= '{1}') or (StartTime <= '{0}' and EndTime >= '{1}')) and title like '%{2}%' and c.visibleInGuide = 1 order by startTime",
+        StartTimeString, EndTimeString, title
+      );
+      SqlStatement ManualJoinSQL = new SqlStatement(StatementType.Select, new SqlCommand(), SqlSelectCommand.ToString(), typeof(Program));
+      return ObjectFactory.GetCollection<Program>(ManualJoinSQL.Execute());
     }
 
     public IList<Program> SearchMinimalPrograms(DateTime startTime, DateTime endTime, string programName,
@@ -1769,71 +1756,54 @@ namespace TvDatabase
       return genres;
     }
 
-    public IList<Program> SearchProgramsPerGenre(string currentGenre, string currentSearchCriteria)
+    public IList<Program> SearchProgramsPerGenre(string currentGenre, string searchCriteria)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
-
-      if (currentSearchCriteria.Length == 0)
+      IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
+      StringBuilder SqlSelectCommand = new StringBuilder();
+      SqlSelectCommand.Append("select p.* from Program p inner join Channel c on c.idChannel = p.idChannel ");
+      SqlSelectCommand.AppendFormat("where endTime > '{0}'", DateTime.Now.ToString(GetDateTimeString(), mmddFormat));
+      if (currentGenre.Length > 0)
       {
-        sb.AddConstraint(Operator.Like, "genre", "%" + currentGenre + "%");
-        sb.AddOrderByField("title");
-        sb.AddOrderByField("starttime");
+        SqlSelectCommand.AppendFormat("and genre like '{0}%' ", currentGenre);
       }
-      else
+      if (searchCriteria.Length > 0)
       {
-        sb.AddConstraint(Operator.Like, "genre", "%" + currentGenre + "%");
-        sb.AddConstraint(Operator.Like, "title", String.Format("{0}%", currentSearchCriteria));
-        sb.AddOrderByField("title");
-        sb.AddOrderByField("starttime");
+        SqlSelectCommand.AppendFormat("and title like '%{0}%' ", searchCriteria);
       }
-
-      SqlStatement stmt = sb.GetStatement(true);
-      return ObjectFactory.GetCollection<Program>(stmt.Execute());
+      SqlSelectCommand.Append("and c.visibleInGuide = 1 order by title, startTime");
+      SqlStatement ManualJoinSQL = new SqlStatement(StatementType.Select, new SqlCommand(), SqlSelectCommand.ToString(), typeof(Program));
+      return ObjectFactory.GetCollection<Program>(ManualJoinSQL.Execute());
     }
 
     public IList<Program> SearchPrograms(string searchCriteria)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
+      StringBuilder SqlSelectCommand = new StringBuilder();
+      SqlSelectCommand.Append("select p.* from Program p inner join Channel c on c.idChannel = p.idChannel ");
+      SqlSelectCommand.AppendFormat("where endTime > '{0}'", DateTime.Now.ToString(GetDateTimeString(), mmddFormat));
       if (searchCriteria.Length > 0)
       {
-        sb.AddConstraint(String.Format("endTime > '{0}'", DateTime.Now.ToString(GetDateTimeString(), mmddFormat)));
-        sb.AddConstraint(Operator.Like, "title", String.Format("{0}%", searchCriteria));
-        sb.AddOrderByField("title");
-        sb.AddOrderByField("starttime");
+        SqlSelectCommand.AppendFormat("and title like '%{0}%' ", searchCriteria);
       }
-      else
-      {
-        sb.AddConstraint(String.Format("endTime > '{0}'", DateTime.Now.ToString(GetDateTimeString(), mmddFormat)));
-        sb.AddOrderByField("title");
-        sb.AddOrderByField("starttime");
+      SqlSelectCommand.Append("and c.visibleInGuide = 1 order by title, startTime");
+      SqlStatement ManualJoinSQL = new SqlStatement(StatementType.Select, new SqlCommand(), SqlSelectCommand.ToString(), typeof(Program));
+      return ObjectFactory.GetCollection<Program>(ManualJoinSQL.Execute());
       }
-
-      SqlStatement stmt = sb.GetStatement(true);
-      return ObjectFactory.GetCollection<Program>(stmt.Execute());
-    }
 
     public IList<Program> SearchProgramsByDescription(string searchCriteria)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
+      StringBuilder SqlSelectCommand = new StringBuilder();
+      SqlSelectCommand.Append("select p.* from Program p inner join Channel c on c.idChannel = p.idChannel ");
+      SqlSelectCommand.AppendFormat("where endTime > '{0}'", DateTime.Now.ToString(GetDateTimeString(), mmddFormat));
       if (searchCriteria.Length > 0)
       {
-        sb.AddConstraint(String.Format("endTime > '{0}'", DateTime.Now.ToString(GetDateTimeString(), mmddFormat)));
-        sb.AddConstraint(Operator.Like, "description", String.Format("{0}%", searchCriteria));
-        sb.AddOrderByField("description");
-        sb.AddOrderByField("starttime");
+        SqlSelectCommand.AppendFormat("and description like '%{0}%' ", searchCriteria);
       }
-      else
-      {
-        sb.AddConstraint(String.Format("endTime > '{0}'", DateTime.Now.ToString(GetDateTimeString(), mmddFormat)));
-        sb.AddOrderByField("description");
-        sb.AddOrderByField("starttime");
+      SqlSelectCommand.Append("and c.visibleInGuide = 1 order by description, startTime");
+      SqlStatement ManualJoinSQL = new SqlStatement(StatementType.Select, new SqlCommand(), SqlSelectCommand.ToString(), typeof(Program));
+      return ObjectFactory.GetCollection<Program>(ManualJoinSQL.Execute());
       }
-
-      SqlStatement stmt = sb.GetStatement(true);
-      return ObjectFactory.GetCollection<Program>(stmt.Execute());
-    }
 
     private static string BuildCommandTextMiniGuide(string aProvider, ICollection<Channel> aEpgChannelList)
     {
