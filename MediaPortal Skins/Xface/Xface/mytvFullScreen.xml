@@ -3,6 +3,7 @@
   <id>602</id>
   <defaultcontrol>13</defaultcontrol>
   <allowoverlay>no</allowoverlay>
+  <disabletopbar>true</disabletopbar>
   <define>#percentage:#TV.View.Percentage</define>
   <define>#currentplaytime:#TV.View.start</define>
   <define>#currentremaining:#TV.View.stop</define>

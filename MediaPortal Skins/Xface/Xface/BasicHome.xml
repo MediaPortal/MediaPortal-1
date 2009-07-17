@@ -3,7 +3,7 @@
 	<id>35</id>
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
-	<disabletopbar>yes</disabletopbar>
+	<disabletopbar>true</disabletopbar>
 	<controls>
 		<control>
 			<description>BG</description>

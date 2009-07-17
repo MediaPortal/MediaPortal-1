@@ -3,6 +3,7 @@
   <id>3009</id>
   <defaultcontrol>35</defaultcontrol>
   <allowoverlay>no</allowoverlay>
+  <disabletopbar>true</disabletopbar>
   <controls>
     <control>
       <description>background image</description>

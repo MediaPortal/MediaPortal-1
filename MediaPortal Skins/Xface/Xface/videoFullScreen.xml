@@ -3,6 +3,7 @@
   <id>2005</id>
   <defaultcontrol>13</defaultcontrol>
   <allowoverlay>no</allowoverlay>
+  <disabletopbar>true</disabletopbar>
   <controls>
     <control>
       <description>bar image</description>
