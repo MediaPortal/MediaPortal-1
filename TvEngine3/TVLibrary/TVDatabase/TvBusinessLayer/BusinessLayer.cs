@@ -1643,7 +1643,8 @@ namespace TvDatabase
         "where ((EndTime > '{0}' and EndTime < '{1}') or (StartTime >= '{0}' and StartTime <= '{1}') or (StartTime <= '{0}' and EndTime >= '{1}')) and c.visibleInGuide = 1 order by startTime",
         StartTimeString, EndTimeString
       );
-      SqlStatement ManualJoinSQL = new SqlStatement(StatementType.Select, new SqlCommand(), SqlSelectCommand.ToString(), typeof(Program));
+      SqlStatement stmt = new SqlBuilder(StatementType.Select, typeof(Program)).GetStatement(true);
+      SqlStatement ManualJoinSQL = new SqlStatement(StatementType.Select, stmt.Command, SqlSelectCommand.ToString(), typeof(Program));
       return ObjectFactory.GetCollection<Program>(ManualJoinSQL.Execute());
     }
 
@@ -1693,7 +1694,8 @@ namespace TvDatabase
         "where ((EndTime > '{0}' and EndTime < '{1}') or (StartTime >= '{0}' and StartTime <= '{1}') or (StartTime <= '{0}' and EndTime >= '{1}')) and title like '%{2}%' and c.visibleInGuide = 1 order by startTime",
         StartTimeString, EndTimeString, title
       );
-      SqlStatement ManualJoinSQL = new SqlStatement(StatementType.Select, new SqlCommand(), SqlSelectCommand.ToString(), typeof(Program));
+      SqlStatement stmt = new SqlBuilder(StatementType.Select, typeof(Program)).GetStatement(true);
+      SqlStatement ManualJoinSQL = new SqlStatement(StatementType.Select, stmt.Command, SqlSelectCommand.ToString(), typeof(Program));
       return ObjectFactory.GetCollection<Program>(ManualJoinSQL.Execute());
     }
 
@@ -1771,7 +1773,8 @@ namespace TvDatabase
         SqlSelectCommand.AppendFormat("and title like '%{0}%' ", searchCriteria);
       }
       SqlSelectCommand.Append("and c.visibleInGuide = 1 order by title, startTime");
-      SqlStatement ManualJoinSQL = new SqlStatement(StatementType.Select, new SqlCommand(), SqlSelectCommand.ToString(), typeof(Program));
+      SqlStatement stmt = new SqlBuilder(StatementType.Select, typeof(Program)).GetStatement(true);
+      SqlStatement ManualJoinSQL = new SqlStatement(StatementType.Select, stmt.Command, SqlSelectCommand.ToString(), typeof(Program));
       return ObjectFactory.GetCollection<Program>(ManualJoinSQL.Execute());
     }
 
@@ -1786,9 +1789,10 @@ namespace TvDatabase
         SqlSelectCommand.AppendFormat("and title like '%{0}%' ", searchCriteria);
       }
       SqlSelectCommand.Append("and c.visibleInGuide = 1 order by title, startTime");
-      SqlStatement ManualJoinSQL = new SqlStatement(StatementType.Select, new SqlCommand(), SqlSelectCommand.ToString(), typeof(Program));
+      SqlStatement stmt = new SqlBuilder(StatementType.Select, typeof(Program)).GetStatement(true);
+      SqlStatement ManualJoinSQL = new SqlStatement(StatementType.Select, stmt.Command, SqlSelectCommand.ToString(), typeof(Program));
       return ObjectFactory.GetCollection<Program>(ManualJoinSQL.Execute());
-      }
+    }
 
     public IList<Program> SearchProgramsByDescription(string searchCriteria)
     {
@@ -1801,9 +1805,10 @@ namespace TvDatabase
         SqlSelectCommand.AppendFormat("and description like '%{0}%' ", searchCriteria);
       }
       SqlSelectCommand.Append("and c.visibleInGuide = 1 order by description, startTime");
-      SqlStatement ManualJoinSQL = new SqlStatement(StatementType.Select, new SqlCommand(), SqlSelectCommand.ToString(), typeof(Program));
+      SqlStatement stmt = new SqlBuilder(StatementType.Select, typeof(Program)).GetStatement(true);
+      SqlStatement ManualJoinSQL = new SqlStatement(StatementType.Select, stmt.Command, SqlSelectCommand.ToString(), typeof(Program));
       return ObjectFactory.GetCollection<Program>(ManualJoinSQL.Execute());
-      }
+    }
 
     private static string BuildCommandTextMiniGuide(string aProvider, ICollection<Channel> aEpgChannelList)
     {
