@@ -212,7 +212,6 @@ namespace SetupTv.Sections
           bool atsc = false;
           bool dvbip = false;
           bool webstream = false;
-          bool fmRadio = false;
           bool notmapped = true;
           if (ch.IsRadio == false)
             continue;
@@ -220,11 +219,6 @@ namespace SetupTv.Sections
           if (ch.IsWebstream())
           {
             webstream = true;
-            notmapped = false;
-          }
-          if (ch.IsFMRadio())
-          {
-            fmRadio = true;
             notmapped = false;
           }
           if (notmapped)
@@ -308,12 +302,6 @@ namespace SetupTv.Sections
             if (builder.Length > 0)
               builder.Append(",");
             builder.Append("Webstream");
-          }
-          if (fmRadio)
-          {
-            if (builder.Length > 0)
-              builder.Append(",");
-            builder.Append("FM Radio");
           }
           int imageIndex = 3;
           if (ch.FreeToAir == false)

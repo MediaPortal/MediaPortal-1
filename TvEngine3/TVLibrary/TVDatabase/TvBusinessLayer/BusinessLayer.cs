@@ -1228,54 +1228,6 @@ namespace TvDatabase
       return detail;
     }
 
-    public TuningDetail AddFMRadioTuningDetails(Channel channel, int frequency)
-    {
-      string channelName = channel.Name;
-      long channelFrequency = frequency;
-      const int channelNumber = 0;
-      const int country = 31;
-      bool isRadio = channel.IsRadio;
-      bool isTv = channel.IsTv;
-      const int tunerSource = 0;
-      const int videoInputType = 0;
-      const int audioInputType = 0;
-      const bool isVCRSignal = false;
-      const int symbolRate = 0;
-      const int modulation = 0;
-      const int polarisation = 0;
-      const int switchFrequency = 0;
-      const int diseqc = 0;
-      const int bandwidth = 8;
-      const bool freeToAir = true;
-      const int pcrPid = -1;
-      const int pmtPid = -1;
-      const int networkId = -1;
-      const int serviceId = -1;
-      const int transportId = -1;
-      const int minorChannel = -1;
-      const int majorChannel = -1;
-      const string provider = "";
-      const int channelType = 6;
-      const int videoPid = -1;
-      const int audioPid = -1;
-      const int band = 0;
-      const int satIndex = -1;
-      const int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
-      const int pilot = (int)Pilot.NotSet;
-      const int rollOff = (int)RollOff.NotSet;
-      const string url = "";
-      const int bitrate = 0;
-      TuningDetail detail = new TuningDetail(channel.IdChannel, channelName, provider,
-                                             channelType, channelNumber, (int)channelFrequency, country, isRadio, isTv,
-                                             networkId, transportId, serviceId, pmtPid, freeToAir,
-                                             modulation, polarisation, symbolRate, diseqc, switchFrequency,
-                                             bandwidth, majorChannel, minorChannel, pcrPid, videoInputType,
-                                             audioInputType, isVCRSignal, tunerSource, videoPid, audioPid, band, satIndex,
-                                             innerFecRate, pilot, rollOff, url, bitrate);
-      detail.Persist();
-      return detail;
-    }
-
     #endregion
 
     #region linkage map

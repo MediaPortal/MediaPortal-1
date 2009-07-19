@@ -40,7 +40,6 @@ namespace SetupTv.Sections
     bool _newChannel;
     bool _isTv = true;
     bool _webstream;
-    bool _fmRadio;
     Channel _channel;
     public FormEditChannel()
     {
@@ -384,13 +383,6 @@ namespace SetupTv.Sections
           layer.AddWebStreamTuningDetails(_channel, edStreamURL.Text, (int)nudStreamBitrate.Value);
         }
 
-        //FM Radio
-        if (edFMFreq.Text != "")
-        {
-          _channel.GrabEpg = false;
-          _channel.Persist();
-          layer.AddFMRadioTuningDetails(_channel, (int)GetFrequency(edFMFreq.Text, "3"));
-        }
         DialogResult = DialogResult.OK;
         Close();
         return;
@@ -551,13 +543,6 @@ namespace SetupTv.Sections
           detail.Bitrate = (int)nudStreamBitrate.Value;
           detail.Persist();
         }
-        //FM Radio
-        if (detail.ChannelType == 6)
-        {
-          _fmRadio = true;
-          detail.Frequency = (int)GetFrequency(edFMFreq.Text, "3");
-          detail.Persist();
-        }
       }
       DialogResult = DialogResult.OK;
       Close();
@@ -566,7 +551,7 @@ namespace SetupTv.Sections
     private void FormEditChannel_Load(object sender, EventArgs e)
     {
       if (_isTv)
-        tabControl1.Controls.Remove(tabFMRadio);
+        tabControl1.Controls.Remove(tabSHOUTcast);
       _newChannel = false;
       if (_channel == null)
       {
@@ -611,7 +596,6 @@ namespace SetupTv.Sections
         _atsc = true;
         _dvbip = true;
         _webstream = true;
-        _fmRadio = true;
         textBoxChannel.Text = "";
         textBoxProgram.Text = "";
         textboxFreq.Text = "";
@@ -693,8 +677,8 @@ namespace SetupTv.Sections
             textBoxSwitch.Text = detail.SwitchingFrequency.ToString();
             textBoxDVBSChannel.Text = detail.ChannelNumber.ToString();
             textBoxDVBSPmt.Text = detail.PmtPid.ToString();
-            textBoxDVBSProvider.Text = detail.Provider ;
-            checkBoxDVBSfta.Checked = detail.FreeToAir ;
+            textBoxDVBSProvider.Text = detail.Provider;
+            checkBoxDVBSfta.Checked = detail.FreeToAir;
             switch ((Polarisation)detail.Polarisation)
             {
               case Polarisation.LinearH:
@@ -751,34 +735,28 @@ namespace SetupTv.Sections
             textBoxPmt.Text = detail.PmtPid.ToString();
           }
 
-        //DVB-IP Tab
-        if (detail.ChannelType == 7 || _newChannel)
-        {
-          _dvbip = true;
-          textBoxDVBIPChannel.Text = detail.ChannelNumber.ToString();
-          textBoxDVBIPUrl.Text = detail.Url;
-          textBoxDVBIPNetworkId.Text = detail.NetworkId.ToString();
-          textBoxDVBIPTransportId.Text = detail.TransportId.ToString();
-          textBoxDVBIPServiceId.Text = detail.ServiceId.ToString();
-          textBoxDVBIPPmtPid.Text = detail.PmtPid.ToString();
-          textBoxDVBIPProvider.Text = detail.Provider;
-          checkBoxDVBIPfta.Checked = detail.FreeToAir;
-        }
-
-        //Webstream Tab
-        if (detail.ChannelType == 5 || _newChannel)
-        {
-          _webstream = true;
-          edStreamURL.Text = detail.Url;
-          nudStreamBitrate.Value = detail.Bitrate;
-        }
-
-          //FM Radio
-          if (detail.ChannelType == 6 || _newChannel)
+          //DVB-IP Tab
+          if (detail.ChannelType == 7 || _newChannel)
           {
-            _fmRadio = true;
-            edFMFreq.Text = SetFrequency(detail.Frequency, "3");
+            _dvbip = true;
+            textBoxDVBIPChannel.Text = detail.ChannelNumber.ToString();
+            textBoxDVBIPUrl.Text = detail.Url;
+            textBoxDVBIPNetworkId.Text = detail.NetworkId.ToString();
+            textBoxDVBIPTransportId.Text = detail.TransportId.ToString();
+            textBoxDVBIPServiceId.Text = detail.ServiceId.ToString();
+            textBoxDVBIPPmtPid.Text = detail.PmtPid.ToString();
+            textBoxDVBIPProvider.Text = detail.Provider;
+            checkBoxDVBIPfta.Checked = detail.FreeToAir;
           }
+
+          //Webstream Tab
+          if (detail.ChannelType == 5 || _newChannel)
+          {
+            _webstream = true;
+            edStreamURL.Text = detail.Url;
+            nudStreamBitrate.Value = detail.Bitrate;
+          }
+
         }
     }
 
@@ -835,13 +813,6 @@ namespace SetupTv.Sections
             MessageBox.Show(this, "No Webstream details available for this channel");
           }
           break;
-        case 8:
-          if (_fmRadio == false)
-          {
-            tabControl1.SelectedIndex = 0;
-            MessageBox.Show(this, "No FM Radio details available for this channel");
-          }
-          break;
       }
     }
 
@@ -881,26 +852,6 @@ namespace SetupTv.Sections
       textBoxName.Text = dlg.Station.name;
       edStreamURL.Text = dlg.Station.url;
       nudStreamBitrate.Value = dlg.Station.bitrate;
-    }
-
-    private void edFMFreq_KeyPress(object sender, KeyPressEventArgs e)
-    {
-      //
-      // Make sure we only type one comma or dot
-      //
-      if (e.KeyChar == '.' || e.KeyChar == ',')
-      {
-        if (edFMFreq.Text.IndexOfAny(new char[] { ',', '.' }) >= 0)
-        {
-          e.Handled = true;
-          return;
-        }
-      }
-
-      if (char.IsNumber(e.KeyChar) == false && (e.KeyChar != 8 && e.KeyChar != '.' && e.KeyChar != ','))
-      {
-        e.Handled = true;
-      }
     }
 
     private void mpButtonCancel_Click(object sender, EventArgs e)

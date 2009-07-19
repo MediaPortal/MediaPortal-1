@@ -126,8 +126,6 @@ namespace SetupTv.Sections
           continue;
         if (ch.IsWebstream())
           continue;
-        if (ch.IsFMRadio())
-          continue;
         int imageIndex = 3;
         if (ch.FreeToAir == false)
           imageIndex = 0;

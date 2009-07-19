@@ -768,23 +768,6 @@ namespace TvDatabase
       return false;
     }
 
-    public bool IsFMRadio()
-    {
-      IList<TuningDetail> details = ReferringTuningDetail();
-      if (details == null)
-      {
-        return false;
-      }
-      foreach (TuningDetail detail in details)
-      {
-        if (detail.ChannelType == 6)
-        {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    
+   
   }
 }

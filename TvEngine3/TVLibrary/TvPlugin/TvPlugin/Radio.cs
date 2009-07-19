@@ -1104,7 +1104,7 @@ namespace TvPlugin
           g_Player.Stop();
         }
       }
-      if (channel.IsFMRadio() || channel.IsWebstream())
+      if (channel.IsWebstream())
       {
         g_Player.PlayAudioStream(GetPlayPath(channel));
       }

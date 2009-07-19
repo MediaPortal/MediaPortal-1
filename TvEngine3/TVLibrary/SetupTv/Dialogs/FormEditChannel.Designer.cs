@@ -163,9 +163,6 @@ namespace SetupTv.Sections
       this.label45 = new System.Windows.Forms.Label();
       this.nudStreamBitrate = new System.Windows.Forms.NumericUpDown();
       this.label44 = new System.Windows.Forms.Label();
-      this.tabFMRadio = new System.Windows.Forms.TabPage();
-      this.edFMFreq = new System.Windows.Forms.TextBox();
-      this.label42 = new System.Windows.Forms.Label();
       this.mpButtonCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -179,7 +176,6 @@ namespace SetupTv.Sections
       this.tabPage7.SuspendLayout();
       this.tabSHOUTcast.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.nudStreamBitrate)).BeginInit();
-      this.tabFMRadio.SuspendLayout();
       this.SuspendLayout();
       // 
       // mpButtonOk
@@ -202,7 +198,6 @@ namespace SetupTv.Sections
       this.tabControl1.Controls.Add(this.tabPage6);
       this.tabControl1.Controls.Add(this.tabPage7);
       this.tabControl1.Controls.Add(this.tabSHOUTcast);
-      this.tabControl1.Controls.Add(this.tabFMRadio);
       this.tabControl1.Location = new System.Drawing.Point(12, 12);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
@@ -1615,35 +1610,6 @@ namespace SetupTv.Sections
       this.label44.TabIndex = 4;
       this.label44.Text = "Bitrate:";
       // 
-      // tabFMRadio
-      // 
-      this.tabFMRadio.Controls.Add(this.edFMFreq);
-      this.tabFMRadio.Controls.Add(this.label42);
-      this.tabFMRadio.Location = new System.Drawing.Point(4, 22);
-      this.tabFMRadio.Name = "tabFMRadio";
-      this.tabFMRadio.Padding = new System.Windows.Forms.Padding(3);
-      this.tabFMRadio.Size = new System.Drawing.Size(432, 299);
-      this.tabFMRadio.TabIndex = 7;
-      this.tabFMRadio.Text = "FM Radio";
-      this.tabFMRadio.UseVisualStyleBackColor = true;
-      // 
-      // edFMFreq
-      // 
-      this.edFMFreq.Location = new System.Drawing.Point(69, 17);
-      this.edFMFreq.Name = "edFMFreq";
-      this.edFMFreq.Size = new System.Drawing.Size(86, 20);
-      this.edFMFreq.TabIndex = 7;
-      this.edFMFreq.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.edFMFreq_KeyPress);
-      // 
-      // label42
-      // 
-      this.label42.AutoSize = true;
-      this.label42.Location = new System.Drawing.Point(9, 20);
-      this.label42.Name = "label42";
-      this.label42.Size = new System.Drawing.Size(60, 13);
-      this.label42.TabIndex = 8;
-      this.label42.Text = "Frequency:";
-      // 
       // mpButtonCancel
       // 
       this.mpButtonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
@@ -1694,8 +1660,6 @@ namespace SetupTv.Sections
       this.tabSHOUTcast.ResumeLayout(false);
       this.tabSHOUTcast.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.nudStreamBitrate)).EndInit();
-      this.tabFMRadio.ResumeLayout(false);
-      this.tabFMRadio.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -1791,9 +1755,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label45;
     private System.Windows.Forms.NumericUpDown nudStreamBitrate;
     private System.Windows.Forms.Label label44;
-    private System.Windows.Forms.TabPage tabFMRadio;
-    private System.Windows.Forms.TextBox edFMFreq;
-    private System.Windows.Forms.Label label42;
     private System.Windows.Forms.TextBox textBoxDVBTChannel;
     private System.Windows.Forms.Label channelDVBT;
     private System.Windows.Forms.TextBox textBoxDVBSChannel;
