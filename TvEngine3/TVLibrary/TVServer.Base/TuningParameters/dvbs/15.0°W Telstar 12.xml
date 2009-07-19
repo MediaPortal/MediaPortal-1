@@ -514,9 +514,9 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>12159000</CarrierFrequency>
+    <CarrierFrequency>12157000</CarrierFrequency>
     <Polarisation>LinearH</Polarisation>
-    <SymbolRate>7777</SymbolRate>
+    <SymbolRate>11784</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate2_3</InnerFecRate>
     <Pilot>NotSet</Pilot>

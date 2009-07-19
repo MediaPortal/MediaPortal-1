@@ -183,13 +183,13 @@ namespace SetupTv.Sections
       ListViewItem item = listViewStatus.Items.Add(new ListViewItem(itemLine));
       item.EnsureVisible();
       Application.DoEvents();
+
+      List<Transponder> transponders = new List<Transponder>();
       try
       {
         string[,] contextDownload = new string[2, 2];
-
-        List<Transponder> transponders = new List<Transponder>();
         contextDownload[0, 0] = context.FileName;
-//        contextDownload[1, 0] = context.FileName.Replace(".ini", "-S2.ini");
+        //        contextDownload[1, 0] = context.FileName.Replace(".ini", "-S2.ini");
         contextDownload[0, 1] = context.Url;
         contextDownload[1, 1] = context.Url.Replace(".ini", "-S2.ini");
 
@@ -351,16 +351,6 @@ namespace SetupTv.Sections
             }
           }
         } // for
-        String newPath = String.Format(@"{0}\TuningParameters\dvbs\{1}.xml", Log.GetPathName(), Path.GetFileNameWithoutExtension(context.FileName));
-        if (File.Exists(newPath))
-        {
-          File.Delete(newPath);
-        }
-        System.IO.TextWriter parFileXML = System.IO.File.CreateText(newPath);
-        XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Transponder>));
-        xmlSerializer.Serialize(parFileXML, transponders);
-        parFileXML.Close();
-        item.Text = itemLine + " done";
       }
       catch (WebException WebEx)
       {
@@ -374,6 +364,22 @@ namespace SetupTv.Sections
       catch (Exception)
       {
         item.Text = itemLine + " failed";
+      }
+      finally
+      {
+        String newPath = String.Format(@"{0}\TuningParameters\dvbs\{1}.xml", Log.GetPathName(), Path.GetFileNameWithoutExtension(context.FileName));
+        if (File.Exists(newPath))
+        {
+          File.Delete(newPath);
+        }
+        if (transponders.Count > 0)
+        {
+          System.IO.TextWriter parFileXML = System.IO.File.CreateText(newPath);
+          XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Transponder>));
+          xmlSerializer.Serialize(parFileXML, transponders);
+          parFileXML.Close();
+        }
+        item.Text = itemLine + " done";
       }
       Application.DoEvents();
     }

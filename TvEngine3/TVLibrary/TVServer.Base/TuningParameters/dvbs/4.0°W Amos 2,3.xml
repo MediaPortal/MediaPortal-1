@@ -416,15 +416,6 @@
   </Transponder>
   <Transponder>
     <CarrierFrequency>11630000</CarrierFrequency>
-    <Polarisation>LinearH</Polarisation>
-    <SymbolRate>2963</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate5_6</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>11630000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
     <SymbolRate>3000</SymbolRate>
     <Modulation>ModNotSet</Modulation>

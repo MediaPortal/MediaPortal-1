@@ -410,7 +410,7 @@
     <Polarisation>LinearV</Polarisation>
     <SymbolRate>8145</SymbolRate>
     <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate2_3</InnerFecRate>
+    <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>NotSet</Pilot>
     <Rolloff>NotSet</Rolloff>
   </Transponder>

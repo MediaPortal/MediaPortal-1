@@ -244,9 +244,9 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>11079000</CarrierFrequency>
+    <CarrierFrequency>11078000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
-    <SymbolRate>4224</SymbolRate>
+    <SymbolRate>6666</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate7_8</InnerFecRate>
     <Pilot>NotSet</Pilot>
@@ -262,9 +262,9 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>11085000</CarrierFrequency>
+    <CarrierFrequency>11087000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
-    <SymbolRate>4224</SymbolRate>
+    <SymbolRate>6666</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate7_8</InnerFecRate>
     <Pilot>NotSet</Pilot>
@@ -280,18 +280,9 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>11091000</CarrierFrequency>
+    <CarrierFrequency>11098000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
-    <SymbolRate>4224</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate7_8</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>11097000</CarrierFrequency>
-    <Polarisation>LinearV</Polarisation>
-    <SymbolRate>4224</SymbolRate>
+    <SymbolRate>6666</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate7_8</InnerFecRate>
     <Pilot>NotSet</Pilot>
@@ -307,18 +298,9 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>11102000</CarrierFrequency>
+    <CarrierFrequency>11106000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
-    <SymbolRate>4224</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate7_8</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>11108000</CarrierFrequency>
-    <Polarisation>LinearV</Polarisation>
-    <SymbolRate>4224</SymbolRate>
+    <SymbolRate>6666</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate7_8</InnerFecRate>
     <Pilot>NotSet</Pilot>
