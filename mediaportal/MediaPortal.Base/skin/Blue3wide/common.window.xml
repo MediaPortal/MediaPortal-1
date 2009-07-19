@@ -36,10 +36,11 @@
       <type>label</type>
       <id>1</id>
       <posX>462</posX>
-      <posY>662</posY>
+      <posY>682</posY>
       <label>#itemcount</label>
       <align>left</align>
       <textcolor>White</textcolor>
+      <font>font10</font>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -49,11 +50,11 @@
       <description>Selected item Label</description>
       <type>fadelabel</type>
       <id>1</id>
-      <posX>1173</posX>
-      <posY>87</posY>
+      <posX>1244</posX>
+      <posY>67</posY>
       <width>711</width>
       <label>#selecteditem</label>
-      <font>font14</font>
+      <font>font13</font>
       <align>right</align>
       <textcolor>White</textcolor>
     </control>
@@ -64,8 +65,8 @@
       <id>1</id>
       <posX>136</posX>
       <posY>500</posY>
-      <width>286</width>
-      <height>197</height>
+      <width>252</width>
+      <height>227</height>
       <texture>#header.hover</texture>
       <visible>!videoplayer.usingoverlays</visible>
       <animation effect="slide" time="250" end="-300,0">hidden</animation>

@@ -60,7 +60,7 @@
         <type>button</type>
         <id>28</id>
         <label>6004</label>
-        <ondown>31</ondown>
+        <ondown>30</ondown>
       </control>
       <control>
         <description>Automatically turn TV on</description>

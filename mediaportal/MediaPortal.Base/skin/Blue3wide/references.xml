@@ -342,31 +342,31 @@
     <description>default thumbnail panel</description>
     <type>thumbnailpanel</type>
     <id>11</id>
-    <posX>142</posX>
-    <posY>121</posY>
-    <width>1173</width>
-    <height>588</height>
-    <spinWidth>46</spinWidth>
-    <spinHeight>33</spinHeight>
-    <spinPosX>1057</spinPosX>
-    <spinPosY>662</spinPosY>
+    <posX>88</posX>
+    <posY>110</posY>
+    <width>1179</width>
+    <height>592</height>
+    <spinWidth>40</spinWidth>
+    <spinHeight>30</spinHeight>
+    <spinPosX>1107</spinPosX>
+    <spinPosY>682</spinPosY>
     <spinAlign>Right</spinAlign>
     <spinColor>ffffffff</spinColor>
     <textureUp>page_up_nofocus.png</textureUp>
     <textureDown>page_down_nofocus.png</textureDown>
     <textureUpFocus>page_up_focus.png</textureUpFocus>
     <textureDownFocus>page_down_focus.png</textureDownFocus>
-    <itemWidth>155</itemWidth>
-    <itemHeight>160</itemHeight>
-    <textureWidth>132</textureWidth>
-    <textureHeight>132</textureHeight>
-    <thumbWidth>123</thumbWidth>
-    <thumbHeight>125</thumbHeight>
+    <itemWidth>145</itemWidth>
+    <itemHeight>145</itemHeight>
+    <textureWidth>112</textureWidth>
+    <textureHeight>112</textureHeight>
+    <thumbWidth>103</thumbWidth>
+    <thumbHeight>105</thumbHeight>
     <thumbPosX>4</thumbPosX>
     <thumbPosY>2</thumbPosY>
     <imageFolder>icon_empty_nofocus.png</imageFolder>
     <imageFolderFocus>icon_empty_focus.png</imageFolderFocus>
-    <font>font11</font>
+    <font>font10</font>
     <selectedColor>ffffffff</selectedColor>
     <textcolor>ffffffff</textcolor>
     <colordiffuse>ffffffff</colordiffuse>
@@ -472,7 +472,7 @@
     <textcolor>white</textcolor>
     <scrollStartDelaySec>3</scrollStartDelaySec>
     <spaceBetweenItems>2</spaceBetweenItems>
-  </control>  
+  </control>
   <control>
     <description>default textarea</description>
     <type>textbox</type>

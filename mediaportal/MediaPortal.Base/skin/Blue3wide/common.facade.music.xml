@@ -57,7 +57,7 @@
           <type>thumbnailpanel</type>
           <id>50</id>
           <posX>88</posX>
-          <posY>131</posY>
+          <posY>105</posY>
           <width>1173</width>
           <height>588</height>
           <scrollOffset>0</scrollOffset>
@@ -66,15 +66,15 @@
           <textureWidthBig>155</textureWidthBig>
           <textureHeightBig>150</textureHeightBig>
           <itemWidthBig>191</itemWidthBig>
-          <itemHeightBig>177</itemHeightBig>
+          <itemHeightBig>185</itemHeightBig>
           <thumbWidthBig>144</thumbWidthBig>
           <thumbHeightBig>144</thumbHeightBig>
           <thumbPosXBig>5</thumbPosXBig>
           <thumbPosYBig>3</thumbPosYBig>
           <thumbZoom>no</thumbZoom>
           <enableFocusZoom>no</enableFocusZoom>
-          <zoomXPixels>50</zoomXPixels>
-          <zoomYPixels>50</zoomYPixels>
+          <zoomXPixels>20</zoomXPixels>
+          <zoomYPixels>20</zoomYPixels>
           <hideUnfocusTexture>no</hideUnfocusTexture>
           <renderFocusText>no</renderFocusText>
           <renderUnfocusText>yes</renderUnfocusText>

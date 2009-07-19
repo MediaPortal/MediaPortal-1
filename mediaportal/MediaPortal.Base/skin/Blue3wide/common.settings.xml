@@ -35,8 +35,8 @@
       <id>1</id>
       <posX>136</posX>
       <posY>500</posY>
-      <width>286</width>
-      <height>197</height>
+      <width>252</width>
+      <height>227</height>
       <texture>#header.hover</texture>
       <visible>!videoplayer.usingoverlays</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
