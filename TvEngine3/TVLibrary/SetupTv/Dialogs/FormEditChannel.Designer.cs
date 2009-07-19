@@ -141,17 +141,9 @@ namespace SetupTv.Sections
       this.label22 = new System.Windows.Forms.Label();
       this.label23 = new System.Windows.Forms.Label();
       this.label24 = new System.Windows.Forms.Label();
-      this.tabSHOUTcast = new System.Windows.Forms.TabPage();
-      this.btnSearchSHOUTcast = new System.Windows.Forms.Button();
-      this.edStreamURL = new System.Windows.Forms.TextBox();
-      this.label45 = new System.Windows.Forms.Label();
-      this.nudStreamBitrate = new System.Windows.Forms.NumericUpDown();
-      this.label44 = new System.Windows.Forms.Label();
-      this.tabFMRadio = new System.Windows.Forms.TabPage();
-      this.edFMFreq = new System.Windows.Forms.TextBox();
-      this.label42 = new System.Windows.Forms.Label();
-      this.mpButtonCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabPage7 = new System.Windows.Forms.TabPage();
+      this.textBoxDVBIPUrl = new System.Windows.Forms.TextBox();
+      this.label53 = new System.Windows.Forms.Label();
       this.checkBoxDVBIPfta = new System.Windows.Forms.CheckBox();
       this.labelDVBIPProvider = new System.Windows.Forms.Label();
       this.textBoxDVBIPProvider = new System.Windows.Forms.TextBox();
@@ -165,8 +157,16 @@ namespace SetupTv.Sections
       this.label55 = new System.Windows.Forms.Label();
       this.label56 = new System.Windows.Forms.Label();
       this.label57 = new System.Windows.Forms.Label();
-      this.label53 = new System.Windows.Forms.Label();
-      this.textBoxDVBIPUrl = new System.Windows.Forms.TextBox();
+      this.tabSHOUTcast = new System.Windows.Forms.TabPage();
+      this.btnSearchSHOUTcast = new System.Windows.Forms.Button();
+      this.edStreamURL = new System.Windows.Forms.TextBox();
+      this.label45 = new System.Windows.Forms.Label();
+      this.nudStreamBitrate = new System.Windows.Forms.NumericUpDown();
+      this.label44 = new System.Windows.Forms.Label();
+      this.tabFMRadio = new System.Windows.Forms.TabPage();
+      this.edFMFreq = new System.Windows.Forms.TextBox();
+      this.label42 = new System.Windows.Forms.Label();
+      this.mpButtonCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -176,10 +176,10 @@ namespace SetupTv.Sections
       this.tabPage4.SuspendLayout();
       this.tabPage5.SuspendLayout();
       this.tabPage6.SuspendLayout();
+      this.tabPage7.SuspendLayout();
       this.tabSHOUTcast.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.nudStreamBitrate)).BeginInit();
       this.tabFMRadio.SuspendLayout();
-      this.tabPage7.SuspendLayout();
       this.SuspendLayout();
       // 
       // mpButtonOk
@@ -1400,108 +1400,6 @@ namespace SetupTv.Sections
       this.label24.TabIndex = 19;
       this.label24.Text = "Channel:";
       // 
-      // tabSHOUTcast
-      // 
-      this.tabSHOUTcast.Controls.Add(this.btnSearchSHOUTcast);
-      this.tabSHOUTcast.Controls.Add(this.edStreamURL);
-      this.tabSHOUTcast.Controls.Add(this.label45);
-      this.tabSHOUTcast.Controls.Add(this.nudStreamBitrate);
-      this.tabSHOUTcast.Controls.Add(this.label44);
-      this.tabSHOUTcast.Location = new System.Drawing.Point(4, 22);
-      this.tabSHOUTcast.Name = "tabSHOUTcast";
-      this.tabSHOUTcast.Padding = new System.Windows.Forms.Padding(3);
-      this.tabSHOUTcast.Size = new System.Drawing.Size(432, 299);
-      this.tabSHOUTcast.TabIndex = 6;
-      this.tabSHOUTcast.Text = "Web-Stream";
-      this.tabSHOUTcast.UseVisualStyleBackColor = true;
-      // 
-      // btnSearchSHOUTcast
-      // 
-      this.btnSearchSHOUTcast.Location = new System.Drawing.Point(23, 76);
-      this.btnSearchSHOUTcast.Name = "btnSearchSHOUTcast";
-      this.btnSearchSHOUTcast.Size = new System.Drawing.Size(124, 23);
-      this.btnSearchSHOUTcast.TabIndex = 4;
-      this.btnSearchSHOUTcast.Text = "Search SHOUTcast";
-      this.btnSearchSHOUTcast.UseVisualStyleBackColor = true;
-      this.btnSearchSHOUTcast.Click += new System.EventHandler(this.btnSearchSHOUTcast_Click);
-      // 
-      // edStreamURL
-      // 
-      this.edStreamURL.Location = new System.Drawing.Point(63, 14);
-      this.edStreamURL.Name = "edStreamURL";
-      this.edStreamURL.Size = new System.Drawing.Size(335, 20);
-      this.edStreamURL.TabIndex = 1;
-      // 
-      // label45
-      // 
-      this.label45.AutoSize = true;
-      this.label45.Location = new System.Drawing.Point(20, 17);
-      this.label45.Name = "label45";
-      this.label45.Size = new System.Drawing.Size(32, 13);
-      this.label45.TabIndex = 6;
-      this.label45.Text = "URL:";
-      // 
-      // nudStreamBitrate
-      // 
-      this.nudStreamBitrate.Location = new System.Drawing.Point(63, 40);
-      this.nudStreamBitrate.Maximum = new decimal(new int[] {
-            999,
-            0,
-            0,
-            0});
-      this.nudStreamBitrate.Name = "nudStreamBitrate";
-      this.nudStreamBitrate.Size = new System.Drawing.Size(53, 20);
-      this.nudStreamBitrate.TabIndex = 2;
-      // 
-      // label44
-      // 
-      this.label44.AutoSize = true;
-      this.label44.Location = new System.Drawing.Point(20, 43);
-      this.label44.Name = "label44";
-      this.label44.Size = new System.Drawing.Size(40, 13);
-      this.label44.TabIndex = 4;
-      this.label44.Text = "Bitrate:";
-      // 
-      // tabFMRadio
-      // 
-      this.tabFMRadio.Controls.Add(this.edFMFreq);
-      this.tabFMRadio.Controls.Add(this.label42);
-      this.tabFMRadio.Location = new System.Drawing.Point(4, 22);
-      this.tabFMRadio.Name = "tabFMRadio";
-      this.tabFMRadio.Padding = new System.Windows.Forms.Padding(3);
-      this.tabFMRadio.Size = new System.Drawing.Size(432, 299);
-      this.tabFMRadio.TabIndex = 7;
-      this.tabFMRadio.Text = "FM Radio";
-      this.tabFMRadio.UseVisualStyleBackColor = true;
-      // 
-      // edFMFreq
-      // 
-      this.edFMFreq.Location = new System.Drawing.Point(69, 17);
-      this.edFMFreq.Name = "edFMFreq";
-      this.edFMFreq.Size = new System.Drawing.Size(86, 20);
-      this.edFMFreq.TabIndex = 7;
-      this.edFMFreq.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.edFMFreq_KeyPress);
-      // 
-      // label42
-      // 
-      this.label42.AutoSize = true;
-      this.label42.Location = new System.Drawing.Point(9, 20);
-      this.label42.Name = "label42";
-      this.label42.Size = new System.Drawing.Size(60, 13);
-      this.label42.TabIndex = 8;
-      this.label42.Text = "Frequency:";
-      // 
-      // mpButtonCancel
-      // 
-      this.mpButtonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.mpButtonCancel.Location = new System.Drawing.Point(377, 343);
-      this.mpButtonCancel.Name = "mpButtonCancel";
-      this.mpButtonCancel.Size = new System.Drawing.Size(75, 23);
-      this.mpButtonCancel.TabIndex = 50;
-      this.mpButtonCancel.Text = "Cancel";
-      this.mpButtonCancel.UseVisualStyleBackColor = true;
-      this.mpButtonCancel.Click += new System.EventHandler(this.mpButtonCancel_Click);
-      // 
       // tabPage7
       // 
       this.tabPage7.Controls.Add(this.textBoxDVBIPUrl);
@@ -1525,6 +1423,22 @@ namespace SetupTv.Sections
       this.tabPage7.TabIndex = 8;
       this.tabPage7.Text = "DVB-IP";
       this.tabPage7.UseVisualStyleBackColor = true;
+      // 
+      // textBoxDVBIPUrl
+      // 
+      this.textBoxDVBIPUrl.Location = new System.Drawing.Point(95, 170);
+      this.textBoxDVBIPUrl.Name = "textBoxDVBIPUrl";
+      this.textBoxDVBIPUrl.Size = new System.Drawing.Size(321, 20);
+      this.textBoxDVBIPUrl.TabIndex = 96;
+      // 
+      // label53
+      // 
+      this.label53.AutoSize = true;
+      this.label53.Location = new System.Drawing.Point(17, 175);
+      this.label53.Name = "label53";
+      this.label53.Size = new System.Drawing.Size(32, 13);
+      this.label53.TabIndex = 95;
+      this.label53.Text = "URL:";
       // 
       // checkBoxDVBIPfta
       // 
@@ -1638,21 +1552,108 @@ namespace SetupTv.Sections
       this.label57.TabIndex = 85;
       this.label57.Text = "Channel:";
       // 
-      // label53
+      // tabSHOUTcast
       // 
-      this.label53.AutoSize = true;
-      this.label53.Location = new System.Drawing.Point(17, 175);
-      this.label53.Name = "label53";
-      this.label53.Size = new System.Drawing.Size(32, 13);
-      this.label53.TabIndex = 95;
-      this.label53.Text = "URL:";
+      this.tabSHOUTcast.Controls.Add(this.btnSearchSHOUTcast);
+      this.tabSHOUTcast.Controls.Add(this.edStreamURL);
+      this.tabSHOUTcast.Controls.Add(this.label45);
+      this.tabSHOUTcast.Controls.Add(this.nudStreamBitrate);
+      this.tabSHOUTcast.Controls.Add(this.label44);
+      this.tabSHOUTcast.Location = new System.Drawing.Point(4, 22);
+      this.tabSHOUTcast.Name = "tabSHOUTcast";
+      this.tabSHOUTcast.Padding = new System.Windows.Forms.Padding(3);
+      this.tabSHOUTcast.Size = new System.Drawing.Size(432, 299);
+      this.tabSHOUTcast.TabIndex = 6;
+      this.tabSHOUTcast.Text = "Web-Stream";
+      this.tabSHOUTcast.UseVisualStyleBackColor = true;
       // 
-      // textBoxDVBIPUrl
+      // btnSearchSHOUTcast
       // 
-      this.textBoxDVBIPUrl.Location = new System.Drawing.Point(95, 170);
-      this.textBoxDVBIPUrl.Name = "textBoxDVBIPUrl";
-      this.textBoxDVBIPUrl.Size = new System.Drawing.Size(321, 20);
-      this.textBoxDVBIPUrl.TabIndex = 96;
+      this.btnSearchSHOUTcast.Location = new System.Drawing.Point(23, 76);
+      this.btnSearchSHOUTcast.Name = "btnSearchSHOUTcast";
+      this.btnSearchSHOUTcast.Size = new System.Drawing.Size(124, 23);
+      this.btnSearchSHOUTcast.TabIndex = 4;
+      this.btnSearchSHOUTcast.Text = "Search SHOUTcast";
+      this.btnSearchSHOUTcast.UseVisualStyleBackColor = true;
+      this.btnSearchSHOUTcast.Visible = false;
+      this.btnSearchSHOUTcast.Click += new System.EventHandler(this.btnSearchSHOUTcast_Click);
+      // 
+      // edStreamURL
+      // 
+      this.edStreamURL.Location = new System.Drawing.Point(63, 14);
+      this.edStreamURL.Name = "edStreamURL";
+      this.edStreamURL.Size = new System.Drawing.Size(335, 20);
+      this.edStreamURL.TabIndex = 1;
+      // 
+      // label45
+      // 
+      this.label45.AutoSize = true;
+      this.label45.Location = new System.Drawing.Point(20, 17);
+      this.label45.Name = "label45";
+      this.label45.Size = new System.Drawing.Size(32, 13);
+      this.label45.TabIndex = 6;
+      this.label45.Text = "URL:";
+      // 
+      // nudStreamBitrate
+      // 
+      this.nudStreamBitrate.Location = new System.Drawing.Point(63, 40);
+      this.nudStreamBitrate.Maximum = new decimal(new int[] {
+            999,
+            0,
+            0,
+            0});
+      this.nudStreamBitrate.Name = "nudStreamBitrate";
+      this.nudStreamBitrate.Size = new System.Drawing.Size(53, 20);
+      this.nudStreamBitrate.TabIndex = 2;
+      // 
+      // label44
+      // 
+      this.label44.AutoSize = true;
+      this.label44.Location = new System.Drawing.Point(20, 43);
+      this.label44.Name = "label44";
+      this.label44.Size = new System.Drawing.Size(40, 13);
+      this.label44.TabIndex = 4;
+      this.label44.Text = "Bitrate:";
+      // 
+      // tabFMRadio
+      // 
+      this.tabFMRadio.Controls.Add(this.edFMFreq);
+      this.tabFMRadio.Controls.Add(this.label42);
+      this.tabFMRadio.Location = new System.Drawing.Point(4, 22);
+      this.tabFMRadio.Name = "tabFMRadio";
+      this.tabFMRadio.Padding = new System.Windows.Forms.Padding(3);
+      this.tabFMRadio.Size = new System.Drawing.Size(432, 299);
+      this.tabFMRadio.TabIndex = 7;
+      this.tabFMRadio.Text = "FM Radio";
+      this.tabFMRadio.UseVisualStyleBackColor = true;
+      // 
+      // edFMFreq
+      // 
+      this.edFMFreq.Location = new System.Drawing.Point(69, 17);
+      this.edFMFreq.Name = "edFMFreq";
+      this.edFMFreq.Size = new System.Drawing.Size(86, 20);
+      this.edFMFreq.TabIndex = 7;
+      this.edFMFreq.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.edFMFreq_KeyPress);
+      // 
+      // label42
+      // 
+      this.label42.AutoSize = true;
+      this.label42.Location = new System.Drawing.Point(9, 20);
+      this.label42.Name = "label42";
+      this.label42.Size = new System.Drawing.Size(60, 13);
+      this.label42.TabIndex = 8;
+      this.label42.Text = "Frequency:";
+      // 
+      // mpButtonCancel
+      // 
+      this.mpButtonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.mpButtonCancel.Location = new System.Drawing.Point(377, 343);
+      this.mpButtonCancel.Name = "mpButtonCancel";
+      this.mpButtonCancel.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonCancel.TabIndex = 50;
+      this.mpButtonCancel.Text = "Cancel";
+      this.mpButtonCancel.UseVisualStyleBackColor = true;
+      this.mpButtonCancel.Click += new System.EventHandler(this.mpButtonCancel_Click);
       // 
       // FormEditChannel
       // 
@@ -1688,13 +1689,13 @@ namespace SetupTv.Sections
       this.tabPage5.PerformLayout();
       this.tabPage6.ResumeLayout(false);
       this.tabPage6.PerformLayout();
+      this.tabPage7.ResumeLayout(false);
+      this.tabPage7.PerformLayout();
       this.tabSHOUTcast.ResumeLayout(false);
       this.tabSHOUTcast.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.nudStreamBitrate)).EndInit();
       this.tabFMRadio.ResumeLayout(false);
       this.tabFMRadio.PerformLayout();
-      this.tabPage7.ResumeLayout(false);
-      this.tabPage7.PerformLayout();
       this.ResumeLayout(false);
 
     }
