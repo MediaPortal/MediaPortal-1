@@ -3265,14 +3265,16 @@ namespace TvPlugin
             Log.Debug("TVHome.ViewChannelAndCheck(): rebuilding graph (card changed) - timeshifting continueing.");
 
             RenderBlackImage();
+            g_Player.PauseGraph();
             succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
             // check if after starttimeshift the active card is same as before (tvserver can do "failover" to another card)
             if (succeeded == TvResult.Succeeded && card!= null && Card.Id == card.Id)
             {
               Log.Debug("TVHome.ViewChannelAndCheck(): card was not changed. seek to end.");
               cardChanged = false;
-              SeekToEnd(true);
             }
+            SeekToEnd(true);
+            g_Player.ContinueGraph();
           }
           else //card "probably" not changed.
           {
