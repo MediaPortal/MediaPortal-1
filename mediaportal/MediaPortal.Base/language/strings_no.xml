@@ -984,6 +984,10 @@
     <String id="1517">Tidsskifting stoppet av\rannen bruker</String>
     <String id="1518">Kan ikke lage grafen</String>
     <String id="1519">Ingen støttet software encoder innstallert</String>
+    <String id="1520">Ikke nok ledig diskplass</String>
+    <String id="1600">Vil du slå av?</String>
+    <String id="1601">Vil du sette den i hvilemodus?</String>
+    <String id="1602">Vil du sette den i dvalemodus?</String>
     <String id="1950" prefix="Min ">Status</String>
     <String id="1951">Harddisk</String>
     <String id="1952">Vifte</String>
