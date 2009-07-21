@@ -899,7 +899,7 @@ HRESULT MPEVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType,
     {
       Log("Successfully cloned media type");
     }
-    (*pType)->SetUINT32 (MF_MT_PAN_SCAN_ENABLED, 0);
+    (*pType)->SetUINT32(MF_MT_PAN_SCAN_ENABLED, 0);
 
     i64Size.HighPart = 800;
     i64Size.LowPart	 = 600;
@@ -912,15 +912,31 @@ HRESULT MPEVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType,
     CComPtr<IMFVideoMediaType> pVideoMediaType;
     HRESULT hr;
     AM_MEDIA_TYPE* pAMMedia = NULL;
-    MFVIDEOFORMAT* VideoFormat = NULL;
+    MFVIDEOFORMAT* videoFormat = NULL;
 
     CHECK_HR (pMixerType->GetRepresentation(FORMAT_MFVideoFormat, (void**)&pAMMedia), "pMixerType->GetRepresentation failed!");
-    VideoFormat = (MFVIDEOFORMAT*)pAMMedia->pbFormat;
-    hr = m_pMFCreateVideoMediaType(VideoFormat, &pVideoMediaType);
+    videoFormat = (MFVIDEOFORMAT*)pAMMedia->pbFormat;
+    hr = m_pMFCreateVideoMediaType(videoFormat, &pVideoMediaType);
 
-    if (hr == 0 && VideoFormat->videoInfo.FramesPerSecond.Numerator != 0)
+    if (hr == 0 && videoFormat->videoInfo.FramesPerSecond.Numerator != 0)
     {
-      m_rtTimePerFrame = (20000000I64*VideoFormat->videoInfo.FramesPerSecond.Denominator)/VideoFormat->videoInfo.FramesPerSecond.Numerator;
+      m_rtTimePerFrame = (20000000I64*videoFormat->videoInfo.FramesPerSecond.Denominator)/videoFormat->videoInfo.FramesPerSecond.Numerator;
+      // HD
+      if(videoFormat->videoInfo.dwHeight >= 720 || videoFormat->videoInfo.dwWidth >= 1280 )
+      {
+        Log("Setting MFVideoTransferMatrix_BT709");
+        (*pType)->SetUINT32(MF_MT_YUV_MATRIX, MFVideoTransferMatrix_BT709);
+      }
+      else // SD
+      {
+        Log("Setting MFVideoTransferMatrix_BT601");
+        (*pType)->SetUINT32(MF_MT_YUV_MATRIX, MFVideoTransferMatrix_BT601);
+      }
+    }
+    else
+    {
+      Log("Setting MFVideoTransferMatrix_BT709 (m_pMFCreateVideoMediaType failed, assuming HD)");
+      (*pType)->SetUINT32(MF_MT_YUV_MATRIX, MFVideoTransferMatrix_BT709);
     }
 
     if( m_rtTimePerFrame == 0) 
@@ -944,7 +960,9 @@ HRESULT MPEVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType,
     //for hardware scaling, use the following line:
     //(*pType)->SetBlob(MF_MT_GEOMETRIC_APERTURE, (UINT8*)&Area, sizeof(MFVideoArea));
     CHECK_HR((*pType)->GetBlob(MF_MT_GEOMETRIC_APERTURE, (UINT8*)&Area, sizeof(Area), &rSize), "Failed to get MF_MT_GEOMETRIC_APERTURE");
-    Log("Aperture size: %x:%x, %dx%d", Area.OffsetX.value, Area.OffsetY.value, Area.Area.cx, Area.Area.cy); 
+    Log("Aperture size: %x:%x, %dx%d", Area.OffsetX.value, Area.OffsetY.value, Area.Area.cx, Area.Area.cy);
+
+    (*pType)->SetUINT32(MF_MT_VIDEO_NOMINAL_RANGE, MFNominalRange_0_255);
   }
   return hr;
 }  
