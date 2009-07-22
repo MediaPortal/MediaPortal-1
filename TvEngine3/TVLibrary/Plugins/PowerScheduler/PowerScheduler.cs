@@ -991,6 +991,7 @@ namespace TvEngine.PowerScheduler
       _controller.EpgGrabberEnabled = false;
       SetWakeupTimer();
       DeInitController();
+      RunExternalCommand("suspend");
       SendPowerSchedulerEvent(PowerSchedulerEventType.EnteringStandby, false);
     }
 
