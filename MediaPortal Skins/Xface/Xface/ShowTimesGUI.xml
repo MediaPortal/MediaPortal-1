@@ -8,7 +8,7 @@
   <define>#header.hover:hover_my trailers.png</define>
   <controls>
     <control>
-      <description>background image</description>
+      <description>background main image</description>
       <type>image</type>
       <id>1</id>
       <width>1366</width>
@@ -27,6 +27,21 @@
       <font>font16</font>
     </control>
     <control>
+      <description>movie border</description>
+      <type>image</type>
+      <id>23</id>
+    </control>
+    <control>
+      <description>fanart</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1366</width>
+      <height>515</height>
+      <posY>65</posY>
+      <texture>#st_backdrop</texture>
+      <visible>Control.IsVisible(24)</visible>
+    </control>
+    <control>
       <type>image</type>
       <id>1</id>
       <posX>89</posX>
@@ -34,20 +49,25 @@
       <texture>movieinfo_logo.png</texture>
     </control>
     <control>
-      <description>movie border</description>
-      <type>image</type>
-      <id>23</id>
-    </control>
-    <control>
       <description>movie poster</description>
       <type>image</type>
       <id>24</id>
-      <posX>379</posX>
-      <posY>130</posY>
-      <width>208</width>
-      <height>292</height>
-      <texture flipY="true" diffuse="Thumb_Mask.png">#MyTrailers.Details.Poster</texture>
-      <keepaspectratio>yes</keepaspectratio>
+      <posX>392</posX>
+      <posY>133</posY>
+      <width>198</width>
+      <height>295</height>
+      <texture flipY="true" diffuse="Thumb_Mask.png">#st_poster</texture>
+    </control>
+    <control>
+      <description>movie frame</description>
+      <type>image</type>
+      <id>89</id>
+      <posX>370</posX>
+      <posY>125</posY>
+      <width>240</width>
+      <height>510</height>
+      <texture flipY="true" diffuse="Thumb_Mask.png">Cover_dvd.png</texture>
+      <visible>Control.IsVisible(24)</visible>
     </control>
     <control>
       <type>button</type>
@@ -121,13 +141,21 @@
       <onleft>42</onleft>
     </control>
     <control>
-      <type>label</type>
+      <type>fadelabel</type>
       <description>Next Refresh</description>
       <id>45</id>
-      <posX>28</posX>
-      <posY>450</posY>
+      <posX>100</posX>
+      <posY>720</posY>
       <label>#showtimes_nextupdate</label>
+      <width>200</width>
       <font>font10</font>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>Showtimes</description>
+      <id>46</id>
+      <posX>2228</posX>
+      <posY>2450</posY>
     </control>
     <control>
       <description>Movie Certificate Value</description>
@@ -136,7 +164,7 @@
       <posX>100</posX>
       <posY>620</posY>
       <width>1050</width>
-      <label>#rating</label>
+      <label>#st_rating</label>
       <textcolor>e0000000</textcolor>
       <font>font12</font>
     </control>
@@ -146,19 +174,10 @@
       <id>26</id>
       <posX>100</posX>
       <posY>645</posY>
-      <label>#runtime</label>
+      <label>#st_runtime : Rated #st_userrating</label>
       <font>font12</font>
       <textcolor>e0000000</textcolor>
-    </control>
-    <control>
-      <description>IMDB Rating Value</description>
-      <type>label</type>
-      <id>32</id>
-      <posX>100</posX>
-      <posY>670</posY>
-      <label>#imdb_rating</label>
-      <font>font12</font>
-      <textcolor>e0000000</textcolor>
+      <visible>control.isvisible(24)</visible>
     </control>
     <control>
       <description>Actors label</description>
@@ -169,28 +188,20 @@
       <label>344</label>
       <font>font13</font>
       <textcolor>ff969696</textcolor>
+      <visible>control.isvisible(24)</visible>
     </control>
     <control>
       <Description>Actors value</Description>
       <type>textbox</type>
       <id>29</id>
       <posX>758</posX>
+      <height>150</height>
       <posY>290</posY>
-      <height>125</height>
       <width>500</width>
-      <label>#starring</label>
+      <label>#st_starring</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-    </control>
-    <control>
-      <description>Trailer</description>
-      <type>label</type>
-      <id>27</id>
-      <posX>420</posX>
-      <posY>216</posY>
-      <visible>no</visible>
-      <label>#trailer</label>
-      <font>font14</font>
+      <visible>control.isvisible(24)</visible>
     </control>
     <control>
       <description>Genre label</description>
@@ -201,6 +212,7 @@
       <label>174</label>
       <font>font13</font>
       <textcolor>ff969696</textcolor>
+      <visible>control.isvisible(24)</visible>
     </control>
     <control>
       <description>Genre value</description>
@@ -208,10 +220,11 @@
       <id>36</id>
       <posX>758</posX>
       <posY>150</posY>
-      <width>400</width>
-      <label>#genre</label>
+      <width>500</width>
+      <label>#st_genre</label>
       <textcolor>FFFFFFFF</textcolor>
       <font>font13</font>
+      <visible>control.isvisible(24)</visible>
     </control>
     <control>
       <description>Director Label</description>
@@ -222,17 +235,20 @@
       <label>199</label>
       <font>font13</font>
       <textcolor>ff969696</textcolor>
+      <visible>control.isvisible(24)</visible>
     </control>
     <control>
       <Description>Director Value</Description>
-      <type>textbox</type>
+      <type>fadelabel</type>
       <id>31</id>
       <posX>758</posX>
       <posY>220</posY>
-      <label>#directed</label>
+      <width>500</width>
+      <label>#st_director</label>
       <textcolor>FFFFFFFF</textcolor>
       <font>font13</font>
       <animation effect="fade" time="200">WindowClose</animation>
+      <visible>control.isvisible(24)</visible>
     </control>
     <control>
       <description>Plot label</description>
@@ -241,6 +257,7 @@
       <posX>230</posX>
       <posY>450</posY>
       <label>Plot</label>
+      <visible>no</visible>
     </control>
     <control>
       <description>Plot value</description>
@@ -251,20 +268,23 @@
       <width>900</width>
       <height>120</height>
       <font>font13</font>
-      <label>#plot</label>
+      <label>#st_plot</label>
       <align>right</align>
+      <visible>control.isvisible(24)</visible>
     </control>
     <control>
       <type>fadelabel</type>
       <description>Theater</description>
       <id>44</id>
-      <posX>26</posX>
-      <posY>550</posY>
-      <label>#theater</label>
+      <posX>100</posX>
+      <posY>670</posY>
+      <label>#st_theater : #st_moviedate @ #st_showtimes</label>
       <disabledcolor>ff808080</disabledcolor>
-      <width>800</width>
+      <width>1100</width>
       <font>font13</font>
       <align>left</align>
+      <textcolor>e0000000</textcolor>
+      <visible>control.isvisible(24)+control.hastext(46)</visible>
     </control>
     <control>
       <description>composite control consisting of a list control and a thumbnail panel</description>
@@ -289,17 +309,92 @@
         <folderSuffix></folderSuffix>
       </control>
       <control>
-        <description>Thumbnail Panel</description>
+        <description>default thumbnail panel</description>
         <type>thumbnailpanel</type>
-        <id>50</id>
+        <id>11</id>
         <posX>270</posX>
+        <posY>100</posY>
         <width>1150</width>
-        <font>font12</font>
-        <thumbs flipY="true" diffuse="Thumb_Mask.png"></thumbs>
-        <enableFocusZoom>yes</enableFocusZoom>
+        <height>505</height>
+        <spinWidth>34</spinWidth>
+        <spinHeight>36</spinHeight>
+        <spinPosX>1182</spinPosX>
+        <spinPosY>590</spinPosY>
+        <spinColor>ffffffff</spinColor>
+        <textureUp>page_up_nofocus.png</textureUp>
+        <textureDown>page_down_nofocus.png</textureDown>
+        <textureUpFocus>page_up_focus.png</textureUpFocus>
+        <textureDownFocus>page_down_focus.png</textureDownFocus>
+        <itemWidth>150</itemWidth>
+        <itemHeight>156</itemHeight>
+        <textureWidth>148</textureWidth>
+        <textureHeight>156</textureHeight>
+        <thumbWidth>130</thumbWidth>
+        <thumbHeight>110</thumbHeight>
+        <thumbPosX>8</thumbPosX>
+        <thumbPosY>12</thumbPosY>
+        <thumbZoom>no</thumbZoom>
+        <imageFolder>icon_empty_nofocus.png</imageFolder>
+        <imageFolderFocus>icon_empty_focus.png</imageFolderFocus>
+        <font>font10</font>
+        <selectedColor>00ffffff</selectedColor>
+        <textcolor>ffffffff</textcolor>
+        <colordiffuse>ffffffff</colordiffuse>
+        <remoteColor>ffFFA075</remoteColor>
+        <downloadColor>ff80ff80</downloadColor>
+        <suffix>|</suffix>
         <folderPrefix></folderPrefix>
         <folderSuffix></folderSuffix>
+        <itemWidthBig>200</itemWidthBig>
+        <itemHeightBig>230</itemHeightBig>
+        <textureWidthBig>195</textureWidthBig>
+        <textureHeightBig>230</textureHeightBig>
+        <thumbWidthBig>173</thumbWidthBig>
+        <thumbHeightBig>173</thumbHeightBig>
+        <thumbPosXBig>10</thumbPosXBig>
+        <thumbPosYBig>18</thumbPosYBig>
+        <thumbZoom>no</thumbZoom>
+        <textXOff>10</textXOff>
+        <textYOff>-30</textYOff>
+        <enableFocusZoom>no</enableFocusZoom>
+      </control>
+      <control>
+        <description>Filmstrip view</description>
+        <type>filmstrip</type>
+        <id>50</id>
+        <posX>290</posX>
+        <posY>250</posY>
+        <width>1050</width>
+        <onup>2</onup>
+        <thumbWidth>141</thumbWidth>
+        <thumbHeight>219</thumbHeight>
+        <thumbPosX>17</thumbPosX>
+        <thumbPosY>6</thumbPosY>
+        <imageFolderFocus>Framefocus.png</imageFolderFocus>
+        <frame>Cover_dvd.png</frame>
+        <frameFocus>Coverframe_dvd.png</frameFocus>
+        <itemWidth>203</itemWidth>
+        <itemHeight>210</itemHeight>
+        <textureWidth>173</textureWidth>
+        <textureHeight>380</textureHeight>
+        <font>font12</font>
+        <textXOff>8</textXOff>
+        <textYOff>-125</textYOff>
+        <selectedColor>20ffffff</selectedColor>
+        <textcolor>00ffffff</textcolor>
+        <background>Coverbig.png</background>
+        <thumbs flipY="true" diffuse="Thumb_Mask.png"></thumbs>
+        <InfoImage flipY="true" diffuse="Thumb_Mask.png"></InfoImage>
+        <showFrame>yes</showFrame>
+        <showFolder>no</showFolder>
+        <showBackGround>no</showBackGround>
+        <showInfoImage>no</showInfoImage>
+        <folderPrefix></folderPrefix>
+        <folderSuffix></folderSuffix>
+        <thumbAnimation effect="zoom" start="100,100" end="140,140" time="180">focus</thumbAnimation>
+        <thumbAnimation effect="zoom" start="140,140" end="100,100" time="180">unfocus</thumbAnimation>
       </control>
     </control>
+    <import>common.time.xml</import>
   </controls>
 </window>

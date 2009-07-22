@@ -2547,7 +2547,7 @@
 			<textureFocus>subleft_focus.png</textureFocus>
 			<textureNoFocus>subleft_nofocus.png</textureNoFocus>
 			<visible>Control.HasFocus(5)|Control.HasFocus(55)|Control.HasFocus(555)|Control.HasFocus(601)|Control.HasFocus(602)|Control.HasFocus(612)</visible>
-			<label>tv series</label>
+			<label>TV Series</label>
 			<hyperlink>9811</hyperlink>
 			<font>font14</font>
 			<textcolor>ffffffff</textcolor>
@@ -2922,43 +2922,51 @@
 	  <textureFocus>tv_green_border.png</textureFocus>
 	  <visible>Player.HasVideo + Player.playing</visible>
     </control>
-     <control>
-      <description>Weather image</description>
-      <type>image</type>
-      <id>1282</id>
-      <posX>82</posX>
-      <posY>1</posY>
-      <width>64</width>
-      <height>64</height>
-      <texture>#weatherimg</texture>
-      <align>right</align>
-    </control>
     <control>
-      <description>Location</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>160</posX>
-      <posY>10</posY>
-      <width>750</width>
-      <align>left</align>
-      <font>font10</font>
-      <textcolor>ff969696</textcolor>
-      <label>#location</label>
-      <visible>control.hasthumb(1282)</visible>
-    </control>
-    <control>
-      <description>Temperature</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>160</posX>
-      <posY>30</posY>
-      <width>750</width>
-      <align>left</align>
-      <font>font8</font>
-      <textcolor>ff969696</textcolor>
-      <label>#temp | #condition</label>
-      <visible>control.hasthumb(1282)</visible>
-    </control>
+  <description>Weather image</description> 
+  <type>image</type> 
+  <id>1</id> 
+  <posX>62</posX> 
+  <posY>175</posY> 
+  <width>64</width> 
+  <height>64</height> 
+  <texture>#infoservice.weather.today.img.small.fullpath</texture> 
+  <visible>plugin.isenabled(InfoService)</visible> 
+  </control>
+ <control>
+  <description>Location</description> 
+  <type>label</type> 
+  <id>1</id> 
+  <posX>130</posX> 
+  <posY>175</posY> 
+  <width>750</width> 
+  <font>font10</font> 
+  <label>#infoservice.weather.today.weekday</label> 
+  <visible>plugin.isenabled(InfoService)</visible> 
+  </control>
+ <control>
+  <description>Temperature</description> 
+  <type>label</type> 
+  <id>1</id> 
+  <posX>130</posX> 
+  <posY>200</posY> 
+  <width>500</width> 
+  <font>font10</font> 
+  <label>#infoservice.weather.today.mintemp | #infoservice.weather.today.maxtemp</label> 
+  <visible>plugin.isenabled(InfoService)</visible> 
+  </control>
+ <control>
+  <description>Condition</description> 
+  <type>textbox</type> 
+  <id>1</id> 
+  <posX>130</posX> 
+  <posY>225</posY> 
+  <width>500</width> 
+  <font>font10</font> 
+  <label>#infoservice.weather.today.condition</label> 
+  <visible>plugin.isenabled(InfoService)</visible> 
+  </control>
+
 		<import>common.submenuespin.xml</import>
 	</controls>
 </window>

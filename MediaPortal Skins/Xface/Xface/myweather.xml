@@ -164,7 +164,7 @@
       <posX>88</posX>
       <posY>626</posY>
       <label>-</label>
-      <font>font16</font>      
+      <font>font16</font>
       <textcolor>90010101</textcolor>
     </control>
     <control>
@@ -503,10 +503,10 @@
       <id>75</id>
       <posX>1139</posX>
       <posY>440</posY>
-      <texture>-</texture>
+       <texture flipY="true" diffuse="Thumb_Mask.png">-</texture>
       <colorkey>FFFF00FF</colorkey>
       <colordiffuse>White:#20</colordiffuse>
-    </control>    
+    </control>
     <control>
       <description>Satellite image</description>
       <type>image</type>

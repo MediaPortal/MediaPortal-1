@@ -3,7 +3,7 @@
 	<!--
 		The purpose of TVSeries.SkinSettings.xml is to allow the skinner to control the presentation of the TVSeries plugin to the user
 		Advanced users may disable this by removing the file or by setting the import attribute  to false in the relevant XML element.
-		
+
 		The TVSeries plugin reads this file on load and will import settings into its database.
 		IMPORTANT: Ensure that all settings are wrapped in a CDATA type otherwise this docment will not get parsed as proper XML.
 	-->
@@ -13,13 +13,13 @@
 		<group list="true" bigicons="false" />
 		<series filmstrip="true" widebanners="true" listbanners="true" listposters="true" />
 		<season list="true" bigicons="false" />
-		<episode />		
+		<episode />
 	</layouts>
 	-->
-	
-	<!-- 
+
+	<!--
 		Possible Layout Types supported by the plugin, the defined layout will be what is loaded by default for the corresponding view:
-		
+
 			Groups:
 				layout="List"
 				layout="BigIcons"
@@ -33,21 +33,21 @@
 				layout="BigIcons"
 			Episode:
 				layout="List"
-				
+
 	-->
-	<views import="true"  AppendlmageToList="false">		
+	<views import="true"  AppendlmageToList="false">
 		<group layout="List"></group>
 		<series layout ="WideBanners">
 			<item1>SeriesIcons</item1>
 			<item2><![CDATA[<Series.Pretty_Name>]]></item2>
 			<item3>SeriesEpCount</item3>
 		</series>
-		<season layout="List">	
+		<season layout="List">
 			<item1>SeasonIcons</item1>
 			<item2><![CDATA[Season <Season.SeasonIndex>]]></item2>
 			<item3>SeasonEpCount</item3>
 		</season>
-		<episode>	
+		<episode>
 			<item1><![CDATA[<Episode.FirstAired>]]></item1>
 			<item2><![CDATA[<Episode.EpisodeIndex>: <Episode.LocalEpisodeName>]]></item2>
 			<item3><![CDATA[SPACE]]></item3>
@@ -60,8 +60,8 @@
 		<episode List="true" />
 	</layouts>
 	<formatting import="true">
-		<![CDATA[<Enabled>1<Format><Episode.InfoPanelLine1Key><FormatAs> 
-<Enabled>1<Format><Episode.InfoPanelLine1Value><FormatAs> 
+		<![CDATA[<Enabled>1<Format><Episode.InfoPanelLine1Key><FormatAs>
+<Enabled>1<Format><Episode.InfoPanelLine1Value><FormatAs>
 <Enabled>1<Format><Episode.InfoPanelLine2Key><FormatAs>AIRED
 <Enabled>1<Format><Episode.InfoPanelLine2Value><FormatAs><Episode.FirstAired>
 <Enabled>1<Format><Episode.InfoPanelLine3Key><FormatAs>RATING
@@ -84,8 +84,8 @@
 <Enabled>1<Format><Series.InfoPanelLine4Value><FormatAs><Series.Runtime> minutes
 <Enabled>1<Format>[ x  fps ]  [ channels ]  [0 bytes]<FormatAs>N / A
 <Enabled>1<Format> / 10 (RATED: )<FormatAs> / 10
-<Enabled>1<Format>2channels <FormatAs>2.0 
-<Enabled>1<Format>6channels <FormatAs>5.1 
+<Enabled>1<Format>2channels <FormatAs>2.0
+<Enabled>1<Format>6channels <FormatAs>5.1
 <Enabled>1<Format>V_MPEG4/ISO/AVC<FormatAs>H264
 <Enabled>1<Format>MPA1L3<FormatAs>MP3
 <Enabled>1<Format>MPA2L3<FormatAs>MP3
@@ -102,34 +102,34 @@
 <Enabled>1<Format>SeriesEpCount<FormatAs><Series.EpisodeCount> Episodes
 <Enabled>1<Format>SeasonIcons<FormatAs>Eval(PrettyNumber10(<Season.EpisodesUnWatched>))         Eval(PrettyNumber10(<Season.EpisodeCount>-<Season.EpisodesUnWatched>))
 <Enabled>1<Format>SeasonEpCount<FormatAs><Season.EpisodeCount> Episodes
-<Enabled>1<Format>SPACE<FormatAs> 
+<Enabled>1<Format>SPACE<FormatAs>
 <Enabled>1<Format>SeriesAirsDay<FormatAs><Series.AirsDay>]]>
 	</formatting>
 	<logos import="true">
-		<![CDATA[skin\Monochrome\Media\Logos\SD 43.png;-;<Episode.videoWidth>;-;<;-;960;-;AND;-;<Episode.VideoAspectRatio>;-;<;-;1.5;-;AND;-;<Episode.VideoAspectRatio>;-;>;-;1.2;-;<Restrict:Episode>
-skin\Monochrome\Media\Logos\SD 169.png;-;<Episode.videoWidth>;-;<;-;960;-;AND;-;<Episode.VideoAspectRatio>;-;<;-;1.9;-;AND;-;<Episode.VideoAspectRatio>;-;>=;-;1.5;-;<Restrict:Episode>
-skin\Monochrome\Media\Logos\SD 540P.png;-;<Episode.videoWidth>;-;=;-;960;-;AND;-;<Episode.videoHeight>;-;<=;-;600;-;AND;-;;-;=;-;;-;<Restrict:Episode>
-skin\Monochrome\Media\Logos\HD 720P.png;-;<Episode.videoWidth>;-;=;-;1280;-;AND;-;<Episode.videoHeight>;-;<=;-;720;-;AND;-;;-;=;-;;-;<Restrict:Episode>
-skin\Monochrome\Media\Logos\HD 1080P.png;-;<Episode.videoWidth>;-;=;-;1920;-;AND;-;<Episode.videoHeight>;-;<=;-;1080;-;AND;-;;-;=;-;;-;<Restrict:Episode>
-skin\Monochrome\Media\Logos\DVD.png;-;<Episode.EpisodeFilename>;-;contains;-;DVD;-;AND;-;<Episode.EpisodeFilename>;-;!contains;-;HDDVD;-;AND;-;<Episode.EpisodeFilename>;-;!contains;-;HD-DVD;-;<Restrict:Episode>
-skin\Monochrome\Media\Logos\HDTV.png;-;<Episode.EpisodeFilename>;-;contains;-;HDTV;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;<Restrict:Episode>
-skin\Monochrome\Media\Logos\HDDVD.png;-;<Episode.EpisodeFilename>;-;contains;-;HDDVD;-;OR;-;<Episode.EpisodeFilename>;-;contains;-;HD-DVD;-;AND;-;;-;=;-;;-;<Restrict:Episode>
-skin\Monochrome\Media\Logos\BLURAY.png;-;<Episode.EpisodeFilename>;-;contains;-;BLURAY;-;OR;-;<Episode.EpisodeFilename>;-;contains;-;BLU-RAY;-;AND;-;;-;=;-;;-;<Restrict:Episode>
-skin\Monochrome\Media\Logos\H264.png;-;<Episode.VideoCodec>;-;contains;-;AVC;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;<Restrict:Episode>
-skin\Monochrome\Media\Logos\MPEG2.png;-;<Episode.VideoCodec>;-;contains;-;MPEG;-;AND;-;<Episode.VideoCodec>;-;!contains;-;AVC;-;AND;-;;-;=;-;;-;<Restrict:Episode>
-skin\Monochrome\Media\Logos\DIVX.png;-;<Episode.VideoCodec>;-;contains;-;DIVX;-;OR;-;<Episode.VideoCodec>;-;contains;-;DX50;-;OR;-;<Episode.VideoCodec>;-;contains;-;DIV3;-;<Restrict:Episode>
-skin\Monochrome\Media\Logos\XVID.png;-;<Episode.VideoCodec>;-;contains;-;XVID;-;OR;-;<Episode.VideoCodec>;-;contains;-;MPG4;-;AND;-;;-;=;-;;-;<Restrict:Episode>
-skin\Monochrome\Media\Logos\DD 20.png;-;<Episode.AudioCodec>;-;=;-;AC3;-;AND;-;<Episode.AudioChannels>;-;=;-;2;-;AND;-;;-;=;-;;-;<Restrict:Episode>
-skin\Monochrome\Media\Logos\DD 51.png;-;<Episode.AudioCodec>;-;=;-;AC3;-;AND;-;<Episode.AudioChannels>;-;=;-;6;-;AND;-;;-;=;-;;-;<Restrict:Episode>
-skin\Monochrome\Media\Logos\DTS 51.png;-;<Episode.AudioCodec>;-;=;-;DTS;-;AND;-;<Episode.AudioChannels>;-;=;-;6;-;AND;-;;-;=;-;;-;<Restrict:Episode>
-skin\Monochrome\Media\Logos\FLAC 51.png;-;<Episode.AudioCodec>;-;contains;-;FLAC;-;AND;-;<Episode.AudioChannels>;-;=;-;6;-;AND;-;;-;=;-;;-;<Restrict:Episode>
-skin\Monochrome\Media\Logos\MP3.png;-;<Episode.AudioCodec>;-;contains;-;MPA1L3;-;OR;-;<Episode.AudioCodec>;-;contains;-;MPA2L3;-;AND;-;<Episode.AudioChannels>;-;=;-;2;-;<Restrict:Episode>
-skin\Monochrome\Media\Logos\SUBTITLES.png;-;<Episode.AvailableSubtitles>;-;=;-;1;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
-skin\Monochrome\Media\Logos\<Series.Genre>.png;-;;-;=;-;;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
+		<![CDATA[skin\Xface\Media\Logos\SD 43.png;-;<Episode.videoWidth>;-;<;-;960;-;AND;-;<Episode.VideoAspectRatio>;-;<;-;1.5;-;AND;-;<Episode.VideoAspectRatio>;-;>;-;1.2;-;<Restrict:Episode>
+skin\Xface\Media\Logos\SD 169.png;-;<Episode.videoWidth>;-;<;-;960;-;AND;-;<Episode.VideoAspectRatio>;-;<;-;1.9;-;AND;-;<Episode.VideoAspectRatio>;-;>=;-;1.5;-;<Restrict:Episode>
+skin\Xface\Media\Logos\SD 540P.png;-;<Episode.videoWidth>;-;=;-;960;-;AND;-;<Episode.videoHeight>;-;<=;-;600;-;AND;-;;-;=;-;;-;<Restrict:Episode>
+skin\Xface\Media\Logos\HD 720P.png;-;<Episode.videoWidth>;-;=;-;1280;-;AND;-;<Episode.videoHeight>;-;<=;-;720;-;AND;-;;-;=;-;;-;<Restrict:Episode>
+skin\Xface\Media\Logos\HD 1080P.png;-;<Episode.videoWidth>;-;=;-;1920;-;AND;-;<Episode.videoHeight>;-;<=;-;1080;-;AND;-;;-;=;-;;-;<Restrict:Episode>
+skin\Xface\Media\Logos\DVD.png;-;<Episode.EpisodeFilename>;-;contains;-;DVD;-;AND;-;<Episode.EpisodeFilename>;-;!contains;-;HDDVD;-;AND;-;<Episode.EpisodeFilename>;-;!contains;-;HD-DVD;-;<Restrict:Episode>
+skin\Xface\Media\Logos\HDTV.png;-;<Episode.EpisodeFilename>;-;contains;-;HDTV;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;<Restrict:Episode>
+skin\Xface\Media\Logos\HDDVD.png;-;<Episode.EpisodeFilename>;-;contains;-;HDDVD;-;OR;-;<Episode.EpisodeFilename>;-;contains;-;HD-DVD;-;AND;-;;-;=;-;;-;<Restrict:Episode>
+skin\Xface\Media\Logos\BLURAY.png;-;<Episode.EpisodeFilename>;-;contains;-;BLURAY;-;OR;-;<Episode.EpisodeFilename>;-;contains;-;BLU-RAY;-;AND;-;;-;=;-;;-;<Restrict:Episode>
+skin\Xface\Media\Logos\H264.png;-;<Episode.VideoCodec>;-;contains;-;AVC;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;<Restrict:Episode>
+skin\Xface\Media\Logos\MPEG2.png;-;<Episode.VideoCodec>;-;contains;-;MPEG;-;AND;-;<Episode.VideoCodec>;-;!contains;-;AVC;-;AND;-;;-;=;-;;-;<Restrict:Episode>
+skin\Xface\Media\Logos\DIVX.png;-;<Episode.VideoCodec>;-;contains;-;DIVX;-;OR;-;<Episode.VideoCodec>;-;contains;-;DX50;-;OR;-;<Episode.VideoCodec>;-;contains;-;DIV3;-;<Restrict:Episode>
+skin\Xface\Media\Logos\XVID.png;-;<Episode.VideoCodec>;-;contains;-;XVID;-;OR;-;<Episode.VideoCodec>;-;contains;-;MPG4;-;AND;-;;-;=;-;;-;<Restrict:Episode>
+skin\Xface\Media\Logos\DD 20.png;-;<Episode.AudioCodec>;-;=;-;AC3;-;AND;-;<Episode.AudioChannels>;-;=;-;2;-;AND;-;;-;=;-;;-;<Restrict:Episode>
+skin\Xface\Media\Logos\DD 51.png;-;<Episode.AudioCodec>;-;=;-;AC3;-;AND;-;<Episode.AudioChannels>;-;=;-;6;-;AND;-;;-;=;-;;-;<Restrict:Episode>
+skin\Xface\Media\Logos\DTS 51.png;-;<Episode.AudioCodec>;-;=;-;DTS;-;AND;-;<Episode.AudioChannels>;-;=;-;6;-;AND;-;;-;=;-;;-;<Restrict:Episode>
+skin\Xface\Media\Logos\FLAC 51.png;-;<Episode.AudioCodec>;-;contains;-;FLAC;-;AND;-;<Episode.AudioChannels>;-;=;-;6;-;AND;-;;-;=;-;;-;<Restrict:Episode>
+skin\Xface\Media\Logos\MP3.png;-;<Episode.AudioCodec>;-;contains;-;MPA1L3;-;OR;-;<Episode.AudioCodec>;-;contains;-;MPA2L3;-;AND;-;<Episode.AudioChannels>;-;=;-;2;-;<Restrict:Episode>
+skin\Xface\Media\Logos\SUBTITLES.png;-;<Episode.AvailableSubtitles>;-;=;-;1;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
+skin\Xface\Media\Logos\<Series.Genre>.png;-;;-;=;-;;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
 ]]>
 	</logos>
         <!-- Only used for Thumbnail view creation e.g. Filmstrip and WideBanners. Episode Thumbs are the exception -->
-	<!-- #TVSeries.SeriesBanner and #TVSeries.SeasonBanner properties dont use the values below, the image will be 
+	<!-- #TVSeries.SeriesBanner and #TVSeries.SeasonBanner properties dont use the values below, the image will be
              presented as they are but will be using a delay of 250ms to present image -->
 	<!-- Higher values will achieve better graphics but will result in a drop in performance, test accordingly -->
 	<graphicsquality import="true">

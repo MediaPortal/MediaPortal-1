@@ -221,6 +221,50 @@
       <animation effect="fade" time="500">WindowClose</animation>
       <visible>Player.HasVideo + Player.playing</visible>
     </control>
-     <import>common.rss.xml</import>
+     <control>
+  <description>Weather image</description> 
+  <type>image</type> 
+  <id>1</id> 
+  <posX>62</posX> 
+  <posY>175</posY> 
+  <width>64</width> 
+  <height>64</height> 
+  <texture>#infoservice.weather.today.img.small.fullpath</texture> 
+  <visible>plugin.isenabled(InfoService)</visible> 
+  </control>
+ <control>
+  <description>Location</description> 
+  <type>label</type> 
+  <id>1</id> 
+  <posX>130</posX> 
+  <posY>175</posY> 
+  <width>750</width> 
+  <font>font10</font> 
+  <label>#infoservice.weather.today.weekday</label> 
+  <visible>plugin.isenabled(InfoService)</visible> 
+  </control>
+ <control>
+  <description>Temperature</description> 
+  <type>label</type> 
+  <id>1</id> 
+  <posX>130</posX> 
+  <posY>200</posY> 
+  <width>500</width> 
+  <font>font10</font> 
+  <label>#infoservice.weather.today.mintemp | #infoservice.weather.today.maxtemp</label> 
+  <visible>plugin.isenabled(InfoService)</visible> 
+  </control>
+ <control>
+  <description>Condition</description> 
+  <type>textbox</type> 
+  <id>1</id> 
+  <posX>130</posX> 
+  <posY>225</posY> 
+  <width>500</width> 
+  <font>font10</font> 
+  <label>#infoservice.weather.today.condition</label> 
+  <visible>plugin.isenabled(InfoService)</visible> 
+  </control>
+
   </controls>
 </window>

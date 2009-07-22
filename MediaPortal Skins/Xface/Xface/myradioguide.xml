@@ -10,7 +10,7 @@
 		<id>0</id>
 		<width>1366</width>
 		<height>768</height>
-		  <texture>background5.png</texture>
+		<texture>background5.png</texture>
 	</control>
 	<control>
       <type>image</type>
@@ -36,17 +36,6 @@
       <width>220</width>
       <height>55</height>
       <texture>radio_logo.png</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <type>image</type>
-      <id>1</id>
-      <posX>155</posX>
-      <posY>522</posY>
-      <width>217</width>
-      <height>213</height>
-      <texture>-</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -89,7 +78,7 @@
     <control>
       <description>Guide Text Label</description>
       <type>label</type>
-      <id>1</id>
+      <id>11</id>
       <posX>374</posX>
       <posY>39</posY>
       <label>533</label>
@@ -112,86 +101,7 @@
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="500">WindowClose</animation>
 	</control>
-	  <control>
-      <type>image</type>
-      <posX>22</posX>
-	  <posY>146</posY>
-      <height>62</height>
-      <width>30</width>
-      <texture>tvguide_cap.png</texture>
-      <colorDiffuse>effffffff</colorDiffuse>
-    </control>
-     <control>
-      <type>image</type>
-      <posX>22</posX>
-	  <posY>210</posY>
-      <height>62</height>
-      <width>30</width>
-      <texture>tvguide_cap.png</texture>
-      <colorDiffuse>effffffff</colorDiffuse>
-    </control>
-     <control>
-      <type>image</type>
-      <posX>22</posX>
-	  <posY>274</posY>
-      <height>62</height>
-      <width>30</width>
-      <texture>tvguide_cap.png</texture>
-      <colorDiffuse>effffffff</colorDiffuse>
-    </control>
-     <control>
-      <type>image</type>
-      <posX>22</posX>
-	  <posY>339</posY>
-      <height>62</height>
-      <width>30</width>
-      <texture>tvguide_cap.png</texture>
-      <colorDiffuse>effffffff</colorDiffuse>
-    </control>
-     <control>
-      <type>image</type>
-      <posX>22</posX>
-	  <posY>403</posY>
-      <height>62</height>
-      <width>30</width>
-      <texture>tvguide_cap.png</texture>
-      <colorDiffuse>effffffff</colorDiffuse>
-    </control>
-     <control>
-      <type>image</type>
-      <posX>22</posX>
-	  <posY>467</posY>
-      <height>62</height>
-      <width>30</width>
-      <texture>tvguide_cap.png</texture>
-      <colorDiffuse>effffffff</colorDiffuse>
-    </control>
-	<control>
-		<description>Single Channel Label</description>
-		<type>label</type>
-		<id>32</id>
-		<posX>436</posX>
-		<posY>100</posY>
-		<font>font10</font>
-		<align>left</align>
-		<textcolor>FFFFFFFF</textcolor>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="500">WindowClose</animation>
-	</control>
-	<control>
-		<description>Single Channel Image</description>
-		<type>image</type>
-		<id>33</id>
-		<posX>350</posX>
-		<posY>97</posY>
-		<width>46</width>
-		<height>46</height>
-		<keepaspectratio>yes</keepaspectratio>
-		<zoom>yes</zoom>
-		<texture>defaultVideoBig.png</texture>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="500">WindowClose</animation>
-	</control>
+	
 	<!-- Timeheader background must be dedfined before Timeheader label template -->
 	<!-- b/c Timeheader is on the background and will be rendered first -->
 	<control>
