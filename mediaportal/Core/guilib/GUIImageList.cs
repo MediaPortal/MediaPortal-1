@@ -94,7 +94,7 @@ namespace MediaPortal.GUI.Library
         string percent = GUIPropertyManager.Parse(_tagLine);
         try
         {
-          Percentage = (int) Math.Floor(Double.Parse(percent)*10d);
+          Percentage = (int)(Math.Round(Double.Parse(percent)) * 10d);
         }
         catch (Exception)
         {
@@ -128,7 +128,7 @@ namespace MediaPortal.GUI.Library
         {
           currentPercent = ((imagesToDraw - i)*100)/(imagesToDraw);
         }
-        if (currentPercent < Percentage)
+        if (currentPercent <= Percentage)
         {
           int textureCount = _itemList.Count - 1;
           float fcurrentPercent = currentPercent;
