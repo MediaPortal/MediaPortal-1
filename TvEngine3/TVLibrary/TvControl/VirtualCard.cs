@@ -1053,13 +1053,13 @@ namespace TvControl
     /// <param name="contentRecording">not used</param>
     /// <param name="startTime">not used</param>
     /// <returns>true if success otherwise false</returns>
-    public bool StartRecording(ref string fileName, bool contentRecording, long startTime)
+    public TvResult StartRecording(ref string fileName, bool contentRecording, long startTime)
     {
       try
       {
         if (User.CardId < 0)
         {
-          return false;
+          return TvResult.UnknownError;
         }
         RemoteControl.HostName = _server;
         return RemoteControl.Instance.StartRecording(ref _user, ref fileName, contentRecording, startTime);
@@ -1068,7 +1068,7 @@ namespace TvControl
       {
         HandleFailure();
       }
-      return false;
+      return TvResult.UnknownError;
     }
 
     /// <summary>

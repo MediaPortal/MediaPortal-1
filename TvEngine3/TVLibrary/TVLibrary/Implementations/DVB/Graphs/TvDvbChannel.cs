@@ -494,6 +494,8 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.Error("subch:{0} tswriter StartRecord failed:{1:X}", _subChannelId, hr);
           }
+          Log.Log.WriteFile("Set video / audio observer");
+          _tsFilterInterface.RecorderSetVideoAudioObserver(_subChannelIndex, this);
           _graphState = GraphState.Recording;
         }
       }
@@ -924,6 +926,10 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.Error("subch:[0} StartRecord failed:{1:X}", _subChannelId, hr);
           }
+
+          Log.Log.WriteFile("Set video / audio observer");
+          _tsFilterInterface.RecorderSetVideoAudioObserver(_subChannelIndex, this);
+
           _graphState = GraphState.Recording;
         }
         else if (IsTimeShifting)

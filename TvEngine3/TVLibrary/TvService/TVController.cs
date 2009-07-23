@@ -1869,13 +1869,13 @@ namespace TvService
     /// <param name="contentRecording">if true then create a content recording else a reference recording</param>
     /// <param name="startTime">not used</param>
     /// <returns></returns>
-    public bool StartRecording(ref User user, ref string fileName, bool contentRecording, long startTime)
+    public TvResult StartRecording(ref User user, ref string fileName, bool contentRecording, long startTime)
     {
       if (ValidateTvControllerParams(user))
-        return false;
-      bool result = _cards[user.CardId].Recorder.Start(ref user, ref  fileName, contentRecording, startTime);
+        return TvResult.UnknownError;
+      TvResult result = _cards[user.CardId].Recorder.Start(ref user, ref  fileName, contentRecording, startTime);
 
-      if (result)
+      if (result == TvResult.Succeeded)
       {
         UpdateChannelStatesForUsers();
       }

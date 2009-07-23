@@ -183,6 +183,14 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int RecordSetPmtPid(int handle, int pmtPid, int serviceId, [In, MarshalAs(UnmanagedType.LPArray)] byte[] pmtData, int pmtLength);
+    /// <summary>
+    /// Sets the video/audio observer callback for recorder
+    /// </summary>
+    /// <param name="handle">Handle of the sub channel</param>
+    /// <param name="observer">Oberserver callback</param>
+    /// <returns></returns>
+    [PreserveSig]
+    int RecorderSetVideoAudioObserver(int handle, IVideoAudioObserver observer);
 
     /// <summary>
     /// Sets the timeshifting filename

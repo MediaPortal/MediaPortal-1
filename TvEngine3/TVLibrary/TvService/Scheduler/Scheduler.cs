@@ -746,7 +746,7 @@ namespace TvService
         RecDetail.CardInfo = cardInfo;
         Log.Write("Scheduler : record to {0}", RecDetail.FileName);
         string fileName = RecDetail.FileName;
-        if (false == _controller.StartRecording(ref _user, ref fileName, false, 0))
+        if (TvResult.Succeeded !=  _controller.StartRecording(ref _user, ref fileName, false, 0))
         {
           return;
         }

@@ -862,7 +862,7 @@ namespace TvControl
     /// <param name="contentRecording">not used</param>
     /// <param name="startTime">not used</param>
     /// <returns>true if success otherwise false</returns>
-    bool StartRecording(ref User user, ref string fileName, bool contentRecording, long startTime);
+    TvResult StartRecording(ref User user, ref string fileName, bool contentRecording, long startTime);
 
     /// <summary>
     /// Stops recording.
