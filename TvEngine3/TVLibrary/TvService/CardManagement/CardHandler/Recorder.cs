@@ -100,6 +100,7 @@ namespace TvService
     /// <returns></returns>
     public TvResult Start(ref User user, ref string fileName, bool contentRecording, long startTime)
     {
+      bool useErrorDetection = false;
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false)
@@ -145,16 +146,27 @@ namespace TvService
             fileName = System.IO.Path.ChangeExtension(fileName, ".mpg");
           }
 
-          if (subchannel is BaseSubChannel)
+          if (_cardHandler.Card.CardType == CardType.DvbC ||
+              _cardHandler.Card.CardType == CardType.DvbS ||
+              _cardHandler.Card.CardType == CardType.DvbT
+          )
           {
-            ((BaseSubChannel)subchannel).AudioVideoEvent += AudioVideoEventHandler;
+            useErrorDetection = true;
           }
 
-          if (!_eventsReady)
+          if (useErrorDetection)
           {
-            _eventAudio = new ManualResetEvent(false);
-            _eventVideo = new ManualResetEvent(false);
-            _eventsReady = true;
+            if (subchannel is BaseSubChannel)
+            {
+              ((BaseSubChannel)subchannel).AudioVideoEvent += AudioVideoEventHandler;
+            }
+
+            if (!_eventsReady)
+            {
+              _eventAudio = new ManualResetEvent(false);
+              _eventVideo = new ManualResetEvent(false);
+              _eventsReady = true;
+            }
           }
 
           Log.Write("card: StartRecording {0} {1}", _cardHandler.DataBaseCard.IdCard, fileName);
@@ -164,17 +176,20 @@ namespace TvService
           {
             fileName = subchannel.RecordingFileName;
             context.Owner = user;
-            if (!WaitForRecordingFile(ref user, out isScrambled))
+            if (useErrorDetection)
             {
-              Log.Write("card: Recording failed! {0} {1}", _cardHandler.DataBaseCard.IdCard, fileName);
-
-              Stop(ref user);
-              _cardHandler.Users.RemoveUser(user);
-              if (isScrambled)
+              if (!WaitForRecordingFile(ref user, out isScrambled))
               {
-                return TvResult.ChannelIsScrambled;
+                Log.Write("card: Recording failed! {0} {1}", _cardHandler.DataBaseCard.IdCard, fileName);
+
+                Stop(ref user);
+                _cardHandler.Users.RemoveUser(user);
+                if (isScrambled)
+                {
+                  return TvResult.ChannelIsScrambled;
+                }
+                return TvResult.NoVideoAudioDetected;
               }
-              return TvResult.NoVideoAudioDetected;
             }
           }
           if (_timeshiftingEpgGrabberEnabled)
