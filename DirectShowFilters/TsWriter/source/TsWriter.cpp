@@ -798,6 +798,14 @@ STDMETHODIMP CMpTs::SetVideoAudioObserver(int handle, IVideoAudioObserver* callb
 	return S_OK;
 }
 
+STDMETHODIMP CMpTs::RecordSetVideoAudioObserver(int handle, IVideoAudioObserver* callback)
+{
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_FALSE;
+  pChannel->m_pRecorder->SetVideoAudioObserver(callback);
+	return S_OK;
+}
+
 STDMETHODIMP CMpTs::TTxStart( int handle)
 {
   CTsChannel* pChannel=GetTsChannel(handle);

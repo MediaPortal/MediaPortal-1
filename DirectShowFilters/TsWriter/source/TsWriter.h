@@ -71,6 +71,7 @@ DECLARE_INTERFACE_(ITSFilter, IUnknown)
 	STDMETHOD(RecordGetMode) (THIS_ int handle,int *mode) PURE;
 	STDMETHOD(RecordSetMode) (THIS_ int handle,int mode) PURE;
 	STDMETHOD(RecordSetPmtPid)(THIS_ int handle,int mtPid,int serviceId,byte* pmtData,int pmtLength)PURE;
+	STDMETHOD(RecordSetVideoAudioObserver)(THIS_ int handle, IVideoAudioObserver* callback)PURE;
 
 	STDMETHOD(TimeShiftSetTimeShiftingFileName)(THIS_ int handle, char* pszFileName)PURE;
 	STDMETHOD(TimeShiftStart)(THIS_ int handle )PURE;
@@ -189,6 +190,7 @@ public:
 		STDMETHODIMP RecordGetMode( int handle,int *mode) ;
 		STDMETHODIMP RecordSetMode( int handle,int mode) ;
 		STDMETHODIMP RecordSetPmtPid(int handle,int mtPid,int serviceId,byte* pmtData,int pmtLength );
+		STDMETHODIMP RecordSetVideoAudioObserver(int handle, IVideoAudioObserver* callback);
 
 		STDMETHODIMP TimeShiftSetTimeShiftingFileName( int handle, char* pszFileName);
 		STDMETHODIMP TimeShiftStart( int handle );
