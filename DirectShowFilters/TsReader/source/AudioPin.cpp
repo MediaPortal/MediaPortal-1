@@ -274,7 +274,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
               // Drop audio sample, do not allow slow motion video on channel changes
               delete buffer;
               buffer=NULL ;
-              LogDebug("aud: dropping early sample!");
               return NOERROR;
             }
             
