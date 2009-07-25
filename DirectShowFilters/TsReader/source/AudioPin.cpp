@@ -268,6 +268,16 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           LogDebug("Video Samples : %d, First : %03.3f, Last : %03.3f GOP start : %03.3f",cntV, (float)firstVideo.Millisecs()/1000.0f,(float)lastVideo.Millisecs()/1000.0f, demux.m_IframeSample.Millisecs()/1000.0f);
           if (m_pTsReaderFilter->GetVideoPin()->IsConnected())
           {
+            if( !m_EnableSlowMotionOnZapping &&
+               ( lastAudio.Millisecs() < demux.m_IframeSample.Millisecs() ))
+            {
+              // Drop audio sample, do not allow slow motion video on channel changes
+              delete buffer;
+              buffer=NULL ;
+              LogDebug("aud: dropping early sample!");
+              return NOERROR;
+            }
+            
             if (firstAudio.Millisecs() < demux.m_IframeSample.Millisecs())
             {
               if (lastAudio.Millisecs() - 150 < demux.m_IframeSample.Millisecs())

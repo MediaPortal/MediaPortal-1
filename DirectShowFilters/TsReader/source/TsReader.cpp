@@ -158,7 +158,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
   TCHAR filename[1024];
   GetLogFile(filename);
   ::DeleteFile(filename);
-  LogDebug("-------------- v1.0.6 ----------------");
+  LogDebug("-------------- v1.0.7 ----------------");
 
   m_fileReader=NULL;
   m_fileDuration=NULL;
@@ -187,6 +187,20 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
 
   // Set default filtering mode (normal), if not overriden externaly (see ITSReader::SetRelaxedMode)
   m_demultiplexer.m_DisableDiscontinuitiesFiltering=false ;
+  
+  HANDLE hTest=CreateFile("C:\\DoNotAllowSlowMotionDuringZapping.txt",(DWORD) GENERIC_READ,0,0,(DWORD) OPEN_EXISTING,0,NULL);
+  if (hTest==INVALID_HANDLE_VALUE)
+  {
+    LogDebug("Slow motion video allowed during zapping");
+    m_pAudioPin->m_EnableSlowMotionOnZapping=true;
+  }
+  else
+  {
+    CloseHandle(hTest);
+    LogDebug("No slow motion video allowed during zapping");
+    m_pAudioPin->m_EnableSlowMotionOnZapping=false;
+  }
+  
   SetWaitForSeekToEof(false) ;
   m_bLiveTv = false ;
   m_RandomCompensation = 0 ;     
