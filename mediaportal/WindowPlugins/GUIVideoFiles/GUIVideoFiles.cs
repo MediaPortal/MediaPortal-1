@@ -233,12 +233,12 @@ namespace MediaPortal.GUI.Video
         _switchRemovableDrives = xmlreader.GetValueAsBool("movies", "SwitchRemovableDrives", true);
       }
 
-      if (_currentFolder.Length > 0)
+      if (_currentFolder.Length > 0 && _currentFolder == _virtualStartDirectory)
       {
-        VirtualDirectory VDir = new VirtualDirectory();
-        VDir.LoadSettings("movies");
+        VirtualDirectory vDir = new VirtualDirectory();
+        vDir.LoadSettings("movies");
         int pincode = 0;
-        bool FolderPinProtected = VDir.IsProtectedShare(_currentFolder, out pincode);
+        bool FolderPinProtected = vDir.IsProtectedShare(_currentFolder, out pincode);
         if (FolderPinProtected)
         {
           _currentFolder = string.Empty;

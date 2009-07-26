@@ -286,12 +286,12 @@ namespace MediaPortal.GUI.Music
         _switchRemovableDrives = xmlreader.GetValueAsBool("music", "SwitchRemovableDrives", true);
       }
 
-      if (currentFolder.Length > 0)
+      if (currentFolder.Length > 0 && currentFolder == _startDirectory)
       {
-        VirtualDirectory VDir = new VirtualDirectory();
-        VDir.LoadSettings("music");
+        VirtualDirectory vDir = new VirtualDirectory();
+        vDir.LoadSettings("music");
         int pincode = 0;
-        bool FolderPinProtected = VDir.IsProtectedShare(currentFolder, out pincode);
+        bool FolderPinProtected = vDir.IsProtectedShare(currentFolder, out pincode);
         if (FolderPinProtected)
         {
           currentFolder = string.Empty;
