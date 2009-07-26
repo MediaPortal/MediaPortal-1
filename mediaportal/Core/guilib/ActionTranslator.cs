@@ -229,126 +229,107 @@ namespace MediaPortal.GUI.Library
         {
           but.eKeyChar = 0;
           strButton = strButton.ToLower();
-          if (strButton == "f1")
+
+          switch (strButton)
           {
-            but.eKeyCode = (int) Keys.F1;
-          }
-          if (strButton == "f2")
-          {
-            but.eKeyCode = (int) Keys.F2;
-          }
-          if (strButton == "f3")
-          {
-            but.eKeyCode = (int) Keys.F3;
-          }
-          if (strButton == "f4")
-          {
-            but.eKeyCode = (int) Keys.F4;
-          }
-          if (strButton == "f5")
-          {
-            but.eKeyCode = (int) Keys.F5;
-          }
-          if (strButton == "f6")
-          {
-            but.eKeyCode = (int) Keys.F6;
-          }
-          if (strButton == "f7")
-          {
-            but.eKeyCode = (int) Keys.F7;
-          }
-          if (strButton == "f8")
-          {
-            but.eKeyCode = (int) Keys.F8;
-          }
-          if (strButton == "f9")
-          {
-            but.eKeyCode = (int) Keys.F9;
-          }
-          if (strButton == "f10")
-          {
-            but.eKeyCode = (int) Keys.F10;
-          }
-          if (strButton == "f11")
-          {
-            but.eKeyCode = (int) Keys.F11;
-          }
-          if (strButton == "f12")
-          {
-            but.eKeyCode = (int) Keys.F12;
-          }
-          if (strButton == "backspace")
-          {
-            but.eKeyCode = (int) Keys.Back;
-          }
-          if (strButton == "tab")
-          {
-            but.eKeyCode = (int) Keys.Tab;
-          }
-          if (strButton == "end")
-          {
-            but.eKeyCode = (int) Keys.End;
-          }
-          if (strButton == "insert")
-          {
-            but.eKeyCode = (int) Keys.Insert;
-          }
-          if (strButton == "home")
-          {
-            but.eKeyCode = (int) Keys.Home;
-          }
-          if (strButton == "pageup")
-          {
-            but.eKeyCode = (int) Keys.PageUp;
-          }
-          if (strButton == "pagedown")
-          {
-            but.eKeyCode = (int) Keys.PageDown;
-          }
-          if (strButton == "left")
-          {
-            but.eKeyCode = (int) Keys.Left;
-          }
-          if (strButton == "right")
-          {
-            but.eKeyCode = (int) Keys.Right;
-          }
-          if (strButton == "up")
-          {
-            but.eKeyCode = (int) Keys.Up;
-          }
-          if (strButton == "down")
-          {
-            but.eKeyCode = (int) Keys.Down;
-          }
-          if (strButton == "enter")
-          {
-            but.eKeyCode = (int) Keys.Enter;
-          }
-          if (strButton == "delete")
-          {
-            but.eKeyCode = (int) Keys.Delete;
-          }
-          if (strButton == "pause")
-          {
-            but.eKeyCode = (int) Keys.Pause;
-          }
-          if (strButton == "print")
-          {
-            but.eKeyCode = (int) Keys.PrintScreen;
-          }
-          if (strButton == "escape")
-          {
-            but.eKeyCode = (int) Keys.Escape;
-          }
-          if (strButton == "esc")
-          {
-            but.eKeyCode = (int) Keys.Escape;
-          }
-          if (strButton == "space")
-          {
-            but.eKeyCode = 0;
-            but.eKeyChar = 32;
+              case "f1": 
+                  but.eKeyCode = (int)Keys.F1;
+                  break;
+              case "f2": 
+                  but.eKeyCode = (int)Keys.F2;
+                  break;
+              case "f3": 
+                  but.eKeyCode = (int)Keys.F3;
+                  break;
+              case "f4": 
+                  but.eKeyCode = (int)Keys.F4;
+                  break;
+              case "f5": 
+                  but.eKeyCode = (int)Keys.F5;
+                  break;
+              case "f6": 
+                  but.eKeyCode = (int)Keys.F6;
+                  break;
+              case "f7": 
+                  but.eKeyCode = (int)Keys.F7;
+                  break;
+              case "f8": 
+                  but.eKeyCode = (int)Keys.F8;
+                  break;
+              case "f9": 
+                  but.eKeyCode = (int)Keys.F9;
+                  break;
+              case "f10": 
+                  but.eKeyCode = (int)Keys.F10;
+                  break;
+              case "f11": 
+                  but.eKeyCode = (int)Keys.F11;
+                  break;
+              case "f12": 
+                  but.eKeyCode = (int)Keys.F12;
+                  break;
+              case "backspace": 
+                  but.eKeyCode = (int)Keys.Back;
+                  break;
+              case "tab": 
+                  but.eKeyCode = (int)Keys.Tab;
+                  break;
+              case "end": 
+                  but.eKeyCode = (int)Keys.End;
+                  break;
+              case "insert": 
+                  but.eKeyCode = (int)Keys.Insert;
+                  break;
+              case "home": 
+                  but.eKeyCode = (int)Keys.Home;
+                  break;
+              case "pageup": 
+                  but.eKeyCode = (int)Keys.PageUp;
+                  break;
+              case "pagedown": 
+                  but.eKeyCode = (int)Keys.PageDown;
+                  break;
+              case "left": 
+                  but.eKeyCode = (int)Keys.Left;
+                  break;
+              case "right": 
+                  but.eKeyCode = (int)Keys.Right;
+                  break;
+              case "up": 
+                  but.eKeyCode = (int)Keys.Up;
+                  break;
+              case "down": 
+                  but.eKeyCode = (int)Keys.Down;
+                  break;
+              case "enter": 
+                  but.eKeyCode = (int)Keys.Enter;
+                  break;
+              case "delete": 
+                  but.eKeyCode = (int)Keys.Delete;
+                  break;
+              case "pause": 
+                  but.eKeyCode = (int)Keys.Pause;
+                  break;
+              case "print": 
+                  but.eKeyCode = (int)Keys.PrintScreen;
+                  break;
+              case "escape": 
+                  but.eKeyCode = (int)Keys.Escape;
+                  break;
+              case "esc": 
+                  but.eKeyCode = (int)Keys.Escape;
+                  break;
+              case "apps": 
+                  but.eKeyCode = (int)Keys.Apps;
+                  break;
+              case "win": 
+                  but.eKeyCode = (int)Keys.LWin;
+                  break;
+              case "space": 
+                  but.eKeyCode = 0;
+                  but.eKeyChar = 32;
+                  break;
+
           }
         }
       }
