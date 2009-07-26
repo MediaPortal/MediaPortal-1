@@ -23,6 +23,7 @@
 
 #endregion
 
+using System.Diagnostics;
 using System.Windows.Forms;
 
 #pragma warning disable 108
@@ -38,6 +39,13 @@ namespace SetupTv.Sections
       : base(name)
     {
       InitializeComponent();
+    }
+
+    public override void OnSectionActivated()
+    {
+      FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
+      labelVersion2.Text = versionInfo.FileVersion;
+      labelVersion3.Visible = versionInfo.FileVersion.Length - versionInfo.FileVersion.LastIndexOf('.') > 2;
     }
 
     private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

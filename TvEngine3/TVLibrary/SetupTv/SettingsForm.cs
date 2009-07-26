@@ -69,8 +69,7 @@ namespace SetupTv
       //
       // Set caption
       //
-      FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-      Text = "MediaPortal - TV Server Configuration (" + versionInfo.FileVersion + ")";
+      Text = "MediaPortal - TV Server Configuration";
 
       //
       // Build options tree
@@ -178,6 +177,7 @@ namespace SetupTv
             }
           }
         }
+
         sectionTree.SelectedNode = sectionTree.Nodes[0];
         // make sure window is in front of mediaportal
       }
