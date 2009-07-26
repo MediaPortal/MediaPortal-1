@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using DirectShowLib;
 using TvLibrary.Channels;
-using TvLibrary.Implementations.DVB;
 using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Interfaces;
 using DirectShowLib.BDA;
@@ -48,6 +47,7 @@ namespace TvLibrary.Implementations.DVB
     readonly Twinhan _twinhan;
     readonly KNCAPI _knc;
     readonly Hauppauge _hauppauge;
+    readonly ProfRed _profred;
     readonly DiSEqCMotor _diSEqCMotor;
     readonly Dictionary<int, ConditionalAccessContext> _mapSubChannels;
     readonly GenericBDAS _genericbdas;
@@ -57,7 +57,7 @@ namespace TvLibrary.Implementations.DVB
     readonly ConexantBDA _conexant;
     readonly GenPixBDA _genpix;
 
-    private ICiMenuActions _ciMenu;
+    private readonly ICiMenuActions _ciMenu;
     /// <summary>
     /// Accessor for CI Menu handler
     /// </summary>
@@ -180,6 +180,16 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Info("anysee device detected");
             return;
           }*/
+
+          Log.Log.WriteFile("Check for ProfRed");
+          _profred = new ProfRed(tunerFilter);
+          if (_profred.IsProfRed)
+          {
+              Log.Log.WriteFile("ProfRed card detected");
+              _diSEqCMotor = new DiSEqCMotor(_profred);
+              return;
+          }
+          _profred = null;
 
           Log.Log.WriteFile("Check for Conexant based card");
           _conexant = new ConexantBDA(tunerFilter);
@@ -670,6 +680,12 @@ namespace TvLibrary.Implementations.DVB
           _conexant.SendDiseqCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
+        //if (_profred != null)
+        //{
+        //    _profred.SendDiseqCommand(parameters, channel);
+        //    System.Threading.Thread.Sleep(100);
+        //}
+
         if (_genpix != null)
         {
           _genpix.SendDiseqCommand(parameters, channel);
@@ -806,6 +822,24 @@ namespace TvLibrary.Implementations.DVB
             _hauppauge.SetDVBS2PilotRolloff(channel);
           }
           return channel;
+        }
+        if (_profred != null)
+        {
+            //Set ProfRed pilot, roll-off settings
+            if (channel.ModulationType == ModulationType.ModNotSet)
+            {
+                channel.ModulationType = ModulationType.ModNotDefined;
+            }
+            if (channel.ModulationType == ModulationType.Mod8Psk)
+            {
+                channel.ModulationType = ModulationType.ModBpsk;
+            }
+            Log.Log.WriteFile("ProfRed DVB-S2 modulation set to:{0}", channel.ModulationType);
+            Log.Log.WriteFile("ProfRed DVB-S2 Pilot set to:{0}", channel.Pilot);
+            Log.Log.WriteFile("ProfRed DVB-S2 RollOff set to:{0}", channel.Rolloff);
+            Log.Log.WriteFile("ProfRed DVB-S2 fec set to:{0}", channel.InnerFecRate);
+            //}
+            return channel;
         }
         if (_technoTrend != null)
         {

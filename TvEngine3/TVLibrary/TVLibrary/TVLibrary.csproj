@@ -95,6 +95,7 @@
     <Compile Include="Implementations\Analog\Graphs\HDPVR\TVCardHDPVR.cs" />
     <Compile Include="Implementations\BaseSubChannel.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\ConditionalAccessContext.cs" />
+    <Compile Include="Implementations\DVB\ConditionalAccess\ProfRed\ProfRed.cs" />
     <Compile Include="Implementations\DVB\DisEqC\ConexantBDA.cs" />
     <Compile Include="Implementations\DVB\QAM\GenericATSC.cs" />
     <Compile Include="Implementations\DVB\DisEqC\GenericBDAS.cs" />
