@@ -624,7 +624,7 @@
     <String id="732">Sicher?</String>
     <String id="733">Ansicht: Cover</String>
     <String id="734">Bild</String>
-    <String id="735">Drehen</String>
+    <String id="735">Drehen 90°</String>
     <String id="736">Keine Programminformationen verfügbar</String>
     <String id="737">Satellit</String>
     <String id="738">Temperatur</String>
@@ -671,6 +671,8 @@
     <String id="780">Eingabemethode wählen</String>
     <String id="781">Schnell</String>
     <String id="782">Erweitert</String>
+    <String id="783">Drehen 180°</String>
+    <String id="784">Drehen 270°</String>
     <String id="789">Jetzt: </String>
     <String id="790">Gleich: </String>
     <String id="798">niedrig</String>

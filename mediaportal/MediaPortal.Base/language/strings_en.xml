@@ -624,7 +624,7 @@
     <String id="732">Are you sure?</String>
     <String id="733">Layout: Filmstrip</String>
     <String id="734">Image:</String>
-    <String id="735">Rotate</String>
+    <String id="735">Rotate 90°</String>
     <String id="736">No data available</String>
     <String id="737">View: Satellite</String>
     <String id="738">View: Temperature</String>
@@ -671,6 +671,8 @@
     <String id="780">Select scheduling method</String>
     <String id="781">Quick record</String>
     <String id="782">Advanced record</String>
+	<String id="783">Rotate 180°</String>
+	<String id="784">Rotate 270°</String>
     <String id="789">Now: </String>
     <String id="790">Next: </String>
     <String id="798">low</String>

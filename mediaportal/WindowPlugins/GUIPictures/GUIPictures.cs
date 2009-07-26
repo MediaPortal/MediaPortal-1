@@ -681,6 +681,8 @@ namespace MediaPortal.GUI.Pictures
       if (!item.IsFolder)
       {
         dlg.AddLocalizedString(735); //rotate
+        dlg.AddLocalizedString(783); //rotate 180
+        dlg.AddLocalizedString(784); //rotate 270 
         dlg.AddLocalizedString(923); //show
         dlg.AddLocalizedString(108); //start slideshow
         dlg.AddLocalizedString(940); //properties
@@ -701,7 +703,7 @@ namespace MediaPortal.GUI.Pictures
       {
         dlg.AddLocalizedString(831);
       }
-
+        
 
       dlg.DoModal(GetID);
       if (dlg.SelectedId == -1)
@@ -711,8 +713,16 @@ namespace MediaPortal.GUI.Pictures
       switch (dlg.SelectedId)
       {
         case 735: // rotate
-          OnRotatePicture();
+          OnRotatePicture(90);
           break;
+
+        case 783: // rotate 180
+          OnRotatePicture(180);
+          break;
+
+        case 784: // rotate 270
+          OnRotatePicture(270);
+          break;   
 
         case 923: // show
           OnClick(itemNo);
@@ -1243,7 +1253,7 @@ namespace MediaPortal.GUI.Pictures
       exifDialog.Restore();
     }
 
-    private void OnRotatePicture()
+    private void OnRotatePicture(int degrees)
     {
       GUIListItem item = GetSelectedItem();
       if (item == null)
@@ -1258,18 +1268,36 @@ namespace MediaPortal.GUI.Pictures
       {
         return;
       }
-      DoRotatePicture(item.Path);
+      DoRotatePicture(item.Path, degrees);
       GUIControl.RefreshControl(GetID, facadeView.GetID);
     }
 
     public static void DoRotatePicture(string aPicturePath)
     {
+      DoRotatePicture(aPicturePath, 90);
+    }
+
+    public static void DoRotatePicture(string aPicturePath, int degrees)
+    {
       int rotate = 0;
       rotate = PictureDatabase.GetRotation(aPicturePath);
-      rotate++;
+
+      if (degrees == 90)
+      {
+        rotate++;
+      }
+      else if (degrees == 180)
+      {
+        rotate = rotate + 2;
+      }
+      else if (degrees == 270)
+      {
+        rotate = rotate + 3;
+     }
+
       if (rotate >= 4)
       {
-        rotate = 0;
+        rotate = rotate - 4;
       }
       PictureDatabase.SetRotation(aPicturePath, rotate);
 

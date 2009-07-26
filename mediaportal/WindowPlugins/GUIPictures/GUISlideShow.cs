@@ -497,6 +497,16 @@ namespace MediaPortal.GUI.Pictures
           _slideTime = (int) (DateTime.Now.Ticks/10000);
           break;
 
+        case Action.ActionType.ACTION_ROTATE_PICTURE_180:
+          DoRotate(180);
+          _slideTime = (int)(DateTime.Now.Ticks / 10000);
+          break;
+
+        case Action.ActionType.ACTION_ROTATE_PICTURE_270:
+          DoRotate(270);
+          _slideTime = (int)(DateTime.Now.Ticks / 10000);
+          break;
+
         case Action.ActionType.ACTION_ZOOM_LEVEL_NORMAL:
           _userZoomLevel = 1.0f;
           ZoomBackGround(_defaultZoomFactor*_userZoomLevel);
@@ -2040,6 +2050,8 @@ namespace MediaPortal.GUI.Pictures
 
       dlg.AddLocalizedString(117); //delete
       dlg.AddLocalizedString(735); //rotate
+      dlg.AddLocalizedString(783); //rotate 180
+      dlg.AddLocalizedString(784); //rotate 270 
       if (!_isSlideShow)
       {
         dlg.AddLocalizedString(108); //start slideshow
@@ -2061,6 +2073,14 @@ namespace MediaPortal.GUI.Pictures
         case 735: // Rotate
           DoRotate();
           break;
+
+        case 783: // rotate 180
+          DoRotate(180);
+          break;
+ 
+        case 784: // rotate 270
+          DoRotate(270);
+          break; 
 
         case 108: // Start slideshow
           StartSlideShow();
@@ -2154,7 +2174,12 @@ namespace MediaPortal.GUI.Pictures
 
     private void DoRotate()
     {
-      GUIPictures.DoRotatePicture(_backgroundSlide.FilePath);
+      DoRotate(90);
+    }
+
+    private void DoRotate(int degrees)
+    {
+      GUIPictures.DoRotatePicture(_backgroundSlide.FilePath, degrees);
 
       InvalidateSlide(_backgroundSlide.FilePath);
 
