@@ -748,8 +748,12 @@ namespace MediaPortal.Plugins.Process
           }
           else
           {
-            Log.Info("detected a multiseat setup - using local methods to suspend/hibernate system");
+            Log.Info("PowerScheduler: detected a multiseat setup - using local methods to suspend/hibernate system");
             setting.Set<bool>(false);
+
+            stringSetting = reader.GetValueAsString("tvservice", "hostname", String.Empty);
+            RemotePowerControl.HostName = stringSetting;
+            Log.Info("PowerScheduler: set hostname to {0}", stringSetting);
           }
           changed = true;
 
@@ -918,6 +922,9 @@ namespace MediaPortal.Plugins.Process
         }
         else
         {
+          Log.Info("PowerScheduler: Keep server alive");
+          RemotePowerControl.Instance.UserActivityDetected(DateTime.Now);
+
           // check whether go to standby.
           CheckForStandby();
         }
