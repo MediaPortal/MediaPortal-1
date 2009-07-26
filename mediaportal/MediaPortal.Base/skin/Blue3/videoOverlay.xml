@@ -82,7 +82,7 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <id>5</id>
     </control>
-    <control>
+    <!--control>
       <description>video rectangle</description>
       <type>image</type>
       <id>0</id>
@@ -106,6 +106,6 @@
       <textureFocus>tv_green_border.png</textureFocus>
       <animation effect="fade" time="250">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
-    </control>
+    </control-->
   </controls>
 </window>
