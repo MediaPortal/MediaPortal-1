@@ -193,12 +193,18 @@ namespace TvPlugin
 
     private RecordingThumbCacher thumbworker = null;
 
-    [SkinControl(2)]    protected GUIButtonControl btnViewAs = null;
-    [SkinControl(3)]    protected GUISortButtonControl btnSortBy = null;
-    [SkinControl(5)]    protected GUIButtonControl btnView = null;
-    [SkinControl(6)]    protected GUIButtonControl btnCleanup = null;
-    [SkinControl(7)]    protected GUIButtonControl btnCompress = null;
-    [SkinControl(50)]   protected GUIFacadeControl facadeView = null;
+    [SkinControl(2)]
+    protected GUIButtonControl btnViewAs = null;
+    [SkinControl(3)]
+    protected GUISortButtonControl btnSortBy = null;
+    [SkinControl(5)]
+    protected GUIButtonControl btnView = null;
+    [SkinControl(6)]
+    protected GUIButtonControl btnCleanup = null;
+    [SkinControl(7)]
+    protected GUIButtonControl btnCompress = null;
+    [SkinControl(50)]
+    protected GUIFacadeControl facadeView = null;
 
     #endregion
 
@@ -409,7 +415,10 @@ namespace TvPlugin
 
     protected override void OnPageLoad()
     {
+
       base.OnPageLoad();
+      DeleteInvalidRecordings();
+
       if (btnCompress != null)
       {
         btnCompress.Visible = false;
@@ -747,7 +756,7 @@ namespace TvPlugin
         }
         dlg.Reset();
         dlg.SetHeading(652); // my recorded tv
-        
+
         dlg.AddLocalizedString(914);
         dlg.AddLocalizedString(135);
         dlg.AddLocalizedString(915);
@@ -1685,12 +1694,26 @@ namespace TvPlugin
     {
       IList<Recording> itemlist = Recording.ListAll();
       TvServer server = new TvServer();
+      bool foundInvalidRecording = false;
       foreach (Recording rec in itemlist)
       {
         if (!server.IsRecordingValid(rec.IdRecording))
         {
           server.DeleteRecording(rec.IdRecording);
+          foundInvalidRecording = true;
+
         }
+      }
+      if(foundInvalidRecording)
+      {
+        CacheManager.Clear();
+        LoadDirectory();
+        while (_iSelectedItem >= GetItemCount() && _iSelectedItem > 0)
+        {
+          _iSelectedItem--;
+        }
+
+        GUIControl.SelectItemControl(GetID, facadeView.GetID, _iSelectedItem);
       }
     }
 
