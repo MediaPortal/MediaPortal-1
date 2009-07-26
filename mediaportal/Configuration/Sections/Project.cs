@@ -43,6 +43,13 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
     }
 
+    public override void LoadSettings()
+    {
+      FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
+      labelVersion2.Text = versionInfo.FileVersion;
+      labelVersion3.Visible = versionInfo.FileVersion.Length - versionInfo.FileVersion.LastIndexOf('.') > 2;
+    }
+
     private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       if (linkLabelHomepage.Text == null)

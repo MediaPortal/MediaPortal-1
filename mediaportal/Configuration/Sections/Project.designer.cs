@@ -72,8 +72,13 @@ namespace MediaPortal.Configuration.Sections
       this.labelHomepage = new MediaPortal.UserInterface.Controls.MPLabel();
       this.linkLabelPayPal = new System.Windows.Forms.LinkLabel();
       this.labelMePo = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpGroupBoxAbout = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.labelVersion3 = new System.Windows.Forms.Label();
+      this.labelVersion2 = new System.Windows.Forms.Label();
+      this.labelVersion1 = new System.Windows.Forms.Label();
       this.groupBoxInfo.SuspendLayout();
       this.groupBoxContact.SuspendLayout();
+      this.mpGroupBoxAbout.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBoxInfo
@@ -254,8 +259,50 @@ namespace MediaPortal.Configuration.Sections
       this.labelMePo.Size = new System.Drawing.Size(215, 256);
       this.labelMePo.TabIndex = 9;
       // 
+      // mpGroupBoxAbout
+      // 
+      this.mpGroupBoxAbout.Controls.Add(this.labelVersion3);
+      this.mpGroupBoxAbout.Controls.Add(this.labelVersion2);
+      this.mpGroupBoxAbout.Controls.Add(this.labelVersion1);
+      this.mpGroupBoxAbout.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBoxAbout.Location = new System.Drawing.Point(210, 355);
+      this.mpGroupBoxAbout.Name = "mpGroupBoxAbout";
+      this.mpGroupBoxAbout.Size = new System.Drawing.Size(261, 52);
+      this.mpGroupBoxAbout.TabIndex = 10;
+      this.mpGroupBoxAbout.TabStop = false;
+      this.mpGroupBoxAbout.Text = "About";
+      // 
+      // labelVersion3
+      // 
+      this.labelVersion3.AutoSize = true;
+      this.labelVersion3.ForeColor = System.Drawing.Color.Red;
+      this.labelVersion3.Location = new System.Drawing.Point(122, 20);
+      this.labelVersion3.Name = "labelVersion3";
+      this.labelVersion3.Size = new System.Drawing.Size(125, 13);
+      this.labelVersion3.TabIndex = 2;
+      this.labelVersion3.Text = "(SVN is for testing only!!!)";
+      // 
+      // labelVersion2
+      // 
+      this.labelVersion2.AutoSize = true;
+      this.labelVersion2.Location = new System.Drawing.Point(59, 20);
+      this.labelVersion2.Name = "labelVersion2";
+      this.labelVersion2.Size = new System.Drawing.Size(64, 13);
+      this.labelVersion2.TabIndex = 1;
+      this.labelVersion2.Text = "1.0.3.23400";
+      // 
+      // labelVersion1
+      // 
+      this.labelVersion1.AutoSize = true;
+      this.labelVersion1.Location = new System.Drawing.Point(15, 20);
+      this.labelVersion1.Name = "labelVersion1";
+      this.labelVersion1.Size = new System.Drawing.Size(45, 13);
+      this.labelVersion1.TabIndex = 0;
+      this.labelVersion1.Text = "Version:";
+      // 
       // Project
       // 
+      this.Controls.Add(this.mpGroupBoxAbout);
       this.Controls.Add(this.linkLabelPayPal);
       this.Controls.Add(this.groupBoxContact);
       this.Controls.Add(this.groupBoxInfo);
@@ -265,6 +312,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxInfo.ResumeLayout(false);
       this.groupBoxContact.ResumeLayout(false);
       this.groupBoxContact.PerformLayout();
+      this.mpGroupBoxAbout.ResumeLayout(false);
+      this.mpGroupBoxAbout.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -287,5 +336,9 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel labelInfo2;
     private System.Windows.Forms.LinkLabel linkLabelPayPal;
     private MediaPortal.UserInterface.Controls.MPLabel labelMePo;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBoxAbout;
+    private System.Windows.Forms.Label labelVersion3;
+    private System.Windows.Forms.Label labelVersion2;
+    private System.Windows.Forms.Label labelVersion1;
   }
 }
