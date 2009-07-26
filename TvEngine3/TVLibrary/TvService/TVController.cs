@@ -31,14 +31,12 @@ using System.Reflection;
 using TvLibrary;
 using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Implementations.Analog;
 using TvLibrary.Implementations.Hybrid;
 using TvLibrary.Epg;
 using TvLibrary.Log;
 using TvLibrary.Streaming;
 using TvControl;
-using TvEngine;
 using TvDatabase;
 using TvEngine.Events;
 
@@ -205,8 +203,7 @@ namespace TvService
         return false;
       if (_cards[cardId].CiMenuActions != null)
         return _cards[cardId].CiMenuActions.EnterCIMenu();
-      else
-        return false;
+      return false;
     }
 
     /// <summary>
@@ -220,10 +217,7 @@ namespace TvService
       Log.Debug("SelectCiMenu called");
       if (ValidateTvControllerParams(cardId, false))
         return false;
-      if (_cards[cardId].CiMenuActions != null)
-        return _cards[cardId].CiMenuActions.SelectMenu(choice);
-      else
-        return false;
+      return _cards[cardId].CiMenuActions != null && _cards[cardId].CiMenuActions.SelectMenu(choice);
     }
 
     /// <summary>
@@ -236,10 +230,7 @@ namespace TvService
       Log.Debug("CloseMenu called");
       if (ValidateTvControllerParams(cardId, false))
         return false;
-      if (_cards[cardId].CiMenuActions != null)
-        return _cards[cardId].CiMenuActions.CloseCIMenu();
-      else
-        return false;
+      return _cards[cardId].CiMenuActions != null && _cards[cardId].CiMenuActions.CloseCIMenu();
     }
 
     public bool SendMenuAnswer(int cardId, bool Cancel, string Answer)
@@ -247,10 +238,7 @@ namespace TvService
       Log.Debug("SendMenuAnswer called");
       if (ValidateTvControllerParams(cardId, false))
         return false;
-      if (_cards[cardId].CiMenuActions != null)
-        return _cards[cardId].CiMenuActions.SendMenuAnswer(Cancel, Answer);
-      else
-        return false;
+      return _cards[cardId].CiMenuActions != null && _cards[cardId].CiMenuActions.SendMenuAnswer(Cancel, Answer);
     }
 
     /// <summary>
@@ -1494,6 +1482,7 @@ namespace TvService
         return 0;
       return _cards[cardId].NumberOfChannelsDecrypting;
     }
+
     /// <summary>
     /// Tunes the the specified card to the channel.
     /// </summary>
@@ -1698,7 +1687,7 @@ namespace TvService
         } catch (Exception ex)
         {
           isTimeShifting = false;
-          Log.Error("KWASI: " + ex.Message);
+          Log.Error("Exception in checking  " + ex.Message);
         }
         TvResult result = _cards[cardId].TimeShifter.Start(ref user, ref fileName);
         if (result == TvResult.Succeeded)
