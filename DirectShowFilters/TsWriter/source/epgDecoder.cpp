@@ -611,8 +611,8 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 			if (item_length>0)
 			{
 
-				CAutoString buffer2 (item_length+10);
-				getString468A(&data[pointer+1], item_length,buffer2.GetBuffer());
+				CAutoString buffer2 (item_length*4);
+				getString468A(&data[pointer+1], item_length, buffer2.GetBuffer(), item_length*4);
 				item = buffer2.GetBuffer();
 			}
 
@@ -632,8 +632,8 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 
 		if (text_length>0)
 		{
-			CAutoString buffer (text_length+10);
-			getString468A(&data[pointer], text_length,buffer.GetBuffer());
+			CAutoString buffer (text_length*4);
+			getString468A(&data[pointer], text_length, buffer.GetBuffer(), text_length*4);
 			text = buffer.GetBuffer();
 		}
 
@@ -747,7 +747,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int P
 			else
 			{
 				CAutoString buffer(event_len+10);
-				getString468A(&buf[6],event_len,buffer.GetBuffer());
+				getString468A(&buf[6],event_len,buffer.GetBuffer(), event_len*4);
 				eventText=buffer.GetBuffer();
 			}
 			//		LogDebug("  event:%s",eventText.c_str());
@@ -789,7 +789,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int P
 			else
 			{
 				CAutoString buffer (text_len+10);
-			  getString468A(&buf[off+1],text_len,buffer.GetBuffer());
+			  getString468A(&buf[off+1],text_len,buffer.GetBuffer(), text_len*4);
 				eventDescription=buffer.GetBuffer();
 			}
 

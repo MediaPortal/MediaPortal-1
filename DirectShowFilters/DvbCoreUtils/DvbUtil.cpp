@@ -91,100 +91,88 @@ CDvbUtil::~CDvbUtil(void)
 {
 }
 
-void CDvbUtil::getString468A(BYTE *b, int maxLen,char *text)
+void CDvbUtil::getString468A(BYTE *buf, int bufLen, char *text, int textLen)
 {
-	int i = 0;
-	int num=0;
-	unsigned char c;
-	char em_ON = (char)0x86;
-	char em_OFF = (char)0x87;
+  BYTE c;
+  WORD w;
+	int bufIndex = 0, textIndex = 0;
 
-	bool threeByteEncoding = false; 
+  if (buf == NULL) return;
+  if (bufLen < 1) return;
+  if (text == NULL) return;
+  if (textLen < 2) return;
 
-  if (maxLen< 1) return;
-  if (text==NULL) return;
-  if (b==NULL) return;
-
-  int len=maxLen;
-	do
-	{
-		c = (char)b[i];
-
-		// If first byte is 0x10 use three byte encoding (0x10 0x00 0xXX)
-    if ( i == 0 && (BYTE)c == 0x10 )
+  // reserve place for terminating 0
+  textLen--;
+  c = buf[bufIndex++];
+  if (c != 0x11)
+  {
+    // process 1 byte characters
+    text[textIndex++] = c;
+    text[textIndex] = 0;
+    if (c == 0x10)
     {
-			threeByteEncoding = true;
-      text[num] = 0x10;
-      text[num+1]=0;
-      num++;
-      goto cont;
-    }
-    if ( i == 1 && threeByteEncoding == true )
-    {
-			//NOTE: using 0x00 will mess up the string, so i use 0x10  as a dummy value instead
-      //      this value will be ignored by the DvbTextConverter.Convert() method anyway
-      text[num] = 0x10;
-      text[num+1]=0;
-      num++;
-      goto cont;
-    }
-    if ( i == 2 && threeByteEncoding == true )
-    {
-			// if this value is invalid, the DvbTextConverter.Convert() method will fall back to default charset
-      text[num] = c;
-            
-      text[num+1]=0;
-      num++;
-      goto cont;
-    } 
-
-		if ( (((BYTE)c) >= 0x80) && (((BYTE)c) <= 0x9F))
-		{
-			goto cont;
-		}
-		// GEMX: 11.04.08: This strips off a probably encoding pointer byte !!!
-		/*if (i==0 && ((BYTE)c) < 0x20)
-		{
-			goto cont;
-		}*/
-				
-		if (c == em_ON)
-		{
-			//					
-			goto cont;
-		}
-		if (c == em_OFF)
-		{
-			//					
-			goto cont;
-		}
-				
-		if ( ((BYTE)c) == 0x84)
-		{
-      if (num >=maxLen) return;
-			text[num] = '\r';
-			text[num+1]=0;
-			num++;
-			goto cont;
-		}
-				
-		if (((BYTE)c) < 0x20)
-		{
-      //0x1-0x5 = choose character set...
-      if ((BYTE)c < 0x1 || (BYTE)c>0x5)
+      // three byre encoding
+      if (textLen >= 3)
       {
-			  goto cont;
+        text[textIndex++] = 0x10;
+        text[textIndex++] = buf[2];
+        text[textIndex] = 0;
+        bufIndex += 2;
       }
-		}
-				
-      
-    if (num >=maxLen) return;
-		text[num] = c;
-		text[num+1]=0;
-		num++;
-cont:
-		len -= 1;
-		i += 1;
-	}while (!(len <= 0));
-
+      else
+        return;
+    }
+    while ((bufIndex < bufLen) && (textIndex < textLen))
+    {
+      c = buf[bufIndex++];
+      if (c == 0x8A)
+        c = '\r';
+      else if (((c >= 0x00) && (c <= 0x1F)) || ((c >= 0x80) && (c < 0x9F)))
+        c = 0;
+      if (c != 0)
+        text[textIndex++] = c;
+    }
+  }
+  else
+  {
+    // process 2 byte unicode characters by reencoding it 
+    // to UTF-8 to avoid zero bytes inside string
+    text[textIndex++] = 0x15;
+    text[textIndex] = 0;
+    while (bufIndex + 1 < bufLen)
+    {
+      w = (buf[bufIndex++] << 8);
+      w |= buf[bufIndex++];
+      if (w == 0xE08A)
+        w = '\r';
+      else if (((w >= 0x00) && (w <= 0x1F)) || ((w >= 0xE080) && (w < 0xE09F)))
+        w = 0;
+      if (w != 0)
+      {
+        if (w < 0x80)
+          c = 1;
+        else if (w < 0x800)
+          c = 2;
+        else
+          c = 3;
+        if (textIndex + c >= textLen)
+          break;
+        if (w < 0x80)
+          text[textIndex++] = (char)w;
+        else if (w < 0x800)
+        {
+          text[textIndex++] = (char)((w >> 6) | 0xC0);
+          text[textIndex++] = (char)((w & 0x3F) | 0x80);
+        }
+        else
+        {
+          text[textIndex++] = (char)((w >> 12) | 0xE0);
+          text[textIndex++] = (char)(((w >> 6) & 0x3F) | 0x80);
+          text[textIndex++] = (char)((w & 0x3F) | 0x80);
+        }
+      }
+    }
+  }
+  text[textIndex] = 0;
 }

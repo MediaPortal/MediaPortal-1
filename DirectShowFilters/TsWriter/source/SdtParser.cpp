@@ -128,11 +128,11 @@ void CSdtParser::DVB_GetService(BYTE *b,CChannelInfo& info)
 	info.ServiceType = b[2];
 	service_provider_name_length = b[3];
 	pointer = 4;
-	getString468A(b+pointer,service_provider_name_length,info.ProviderName);
+	getString468A(b+pointer,service_provider_name_length,info.ProviderName,sizeof(info.ProviderName));
 	pointer += service_provider_name_length;
 	service_name_length = b[pointer];
 	pointer += 1;
-	getString468A(b+pointer, service_name_length,info.ServiceName);
+	getString468A(b+pointer, service_name_length,info.ServiceName,sizeof(info.ServiceName));
 }
 
 

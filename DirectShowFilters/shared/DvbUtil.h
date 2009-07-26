@@ -26,7 +26,7 @@ class CDvbUtil
 {
 public:
 	CDvbUtil(void);
-  void getString468A(BYTE *b, int l1,char *text);
+  void getString468A(BYTE *buf, int bufLen, char *text, int textLen);
 public:
 	virtual ~CDvbUtil(void);
 };
