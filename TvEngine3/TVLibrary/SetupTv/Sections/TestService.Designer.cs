@@ -235,7 +235,9 @@ namespace SetupTv.Sections
             this.User,
             this.cardName});
       this.mpListView1.FullRowSelect = true;
+      this.mpListView1.HideSelection = false;
       this.mpListView1.Location = new System.Drawing.Point(12, 252);
+      this.mpListView1.MultiSelect = false;
       this.mpListView1.Name = "mpListView1";
       this.mpListView1.Size = new System.Drawing.Size(446, 134);
       this.mpListView1.TabIndex = 58;

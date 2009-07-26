@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using TvControl;
 using TvDatabase;
+using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using Gentle.Framework;
 using SetupControls;
@@ -106,11 +107,22 @@ namespace SetupTv.Sections
       }
       else
       {
+        string timeShiftingFilename = string.Empty;
         User user = new User();
         user.Name = "setuptv";
         user.IsAdmin = true;          //fixing mantis bug 1513: recordings you start in manual control can not be stopped  
         //user.Name = "setuptv" + id.ToString();
-        TvResult result = server.StartTimeShifting(ref user, id, out card);
+        int cardId = -1;
+        foreach (ListViewItem listViewItem in mpListView1.SelectedItems)
+        {
+          if (listViewItem.SubItems[2].Text != "disabled")
+          {
+            cardId = Convert.ToInt32(listViewItem.SubItems[0].Tag);
+            break; // Keep the first card enabled selected only
+          }
+        }
+        user.CardId = cardId;
+        TvResult result = server.StartTimeShifting(ref user, id, out card,cardId!=-1);
         if (result != TvResult.Succeeded)
         {
           switch (result)
@@ -303,6 +315,7 @@ namespace SetupTv.Sections
 
           VirtualCard vcard = new VirtualCard(user);
           item.SubItems[0].Text = cardNo.ToString();
+          item.SubItems[0].Tag = card.IdCard;
           item.SubItems[1].Text = vcard.Type.ToString();
 
           if (card.Enabled == false)
@@ -360,6 +373,7 @@ namespace SetupTv.Sections
             userFound = true;
             vcard = new VirtualCard(usersForCard[i]);
             item.SubItems[0].Text = cardNo.ToString();
+            item.SubItems[0].Tag = card.IdCard;
             item.SubItems[1].Text = vcard.Type.ToString();
             if (vcard.IsTimeShifting) tmp = "Timeshifting";
             if (vcard.IsRecording && vcard.User.IsAdmin) tmp = "Recording";

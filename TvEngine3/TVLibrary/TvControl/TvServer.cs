@@ -296,6 +296,31 @@ namespace TvControl
       return TvResult.UnknownError;
     }
 
+    /// <summary>
+    /// Start timeshifting on a specific channel
+    /// </summary>
+    /// <param name="user">The user.</param>
+    /// <param name="idChannel">id of the channel</param>
+    /// <param name="card">returns on which card timeshifting is started</param>
+    /// <param name="forceCardId">Indicated, if the card should be forced</param>
+    /// <returns>
+    /// TvResult indicating whether method succeeded
+    /// </returns>
+    public TvResult StartTimeShifting(ref User user, int idChannel, out VirtualCard card, bool forceCardId)
+    {
+      card = null;
+      try
+      {
+        TvResult result = RemoteControl.Instance.StartTimeShifting(ref user, idChannel, out card,forceCardId);
+        return result;
+      }
+      catch (Exception)
+      {
+        HandleFailure();
+      }
+      return TvResult.UnknownError;
+    }
+
 
     /// <summary>
     /// Checks if the schedule specified is currently being recorded and ifso

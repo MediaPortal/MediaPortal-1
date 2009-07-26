@@ -826,6 +826,18 @@ namespace TvControl
     /// <param name="idChannel">The id channel.</param>
     /// <param name="user">user credentials.</param>
     /// <param name="card">returns on which card timeshifting is started</param>
+    /// <param name="forceCardId">Indicated, if the card should be forced</param>
+    /// <returns>
+    /// TvResult indicating whether method succeeded
+    /// </returns>
+    TvResult StartTimeShifting(ref User user, int idChannel, out VirtualCard card, bool forceCardId);
+
+    /// <summary>
+    /// Start timeshifting on a specific channel
+    /// </summary>
+    /// <param name="idChannel">The id channel.</param>
+    /// <param name="user">user credentials.</param>
+    /// <param name="card">returns on which card timeshifting is started</param>
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
