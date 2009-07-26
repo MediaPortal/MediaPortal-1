@@ -624,7 +624,7 @@
     <String id="732">Sei sicuro?</String>
     <String id="733">Vista: Sequenza</String>
     <String id="734">Immagine:</String>
-    <String id="735">Ruota</String>
+    <String id="735">Ruota di 90°</String>
     <String id="736">Nessuna informazione disponibile</String>
     <String id="737">Vedi: Satellite</String>
     <String id="738">Vedi: Temperature</String>
@@ -671,6 +671,8 @@
     <String id="780">Seleziona metodo programmazione</String>
     <String id="781">Registrazione veloce</String>
     <String id="782">Registrazione avanzata</String>
+    <String id="783">Ruota di 180°</String>
+    <String id="784">Ruota di 270°</String>
     <String id="789">Adesso: </String>
     <String id="790">Dopo: </String>
     <String id="798">Basso</String>
@@ -985,6 +987,9 @@
     <String id="1518">Impossible creare il graph</String>
     <String id="1519">Nessun encoder software supportato è installato</String>
     <String id="1520">Spazio libero insufficiente</String>
+    <String id="1600">Si vuole spegnere il sistema ?</String>
+    <String id="1601">Si vuole sospendere il sistema ?</String>
+    <String id="1602">Si vuole ibernare il sistema ?</String>
     <String id="1950" prefix="Il mio ">Stato</String>
     <String id="1951">Hard Disk</String>
     <String id="1952">Ventola</String>
