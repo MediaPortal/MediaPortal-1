@@ -307,8 +307,7 @@ namespace MediaPortal.GUI.Library
                   x = dwPosX + dMaxWidth + _width;
                   break;
               }
-
-              _font.DrawTextWidth(x, (float)dwPosY + ioffy, _textColor, wszText2.Trim(), fTextWidth, _textAlignment);
+              _font.DrawTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor), wszText2.Trim(), fTextWidth, _textAlignment);
             }
 
             switch (_textAlignment)
@@ -322,7 +321,7 @@ namespace MediaPortal.GUI.Library
                 x = dwPosX + _width;
                 break;
             }
-            _font.DrawTextWidth(x, (float)dwPosY + ioffy, _textColor, wszText1.Trim(), (float)dMaxWidth, _textAlignment);
+            _font.DrawTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor), wszText1.Trim(), (float)dMaxWidth, _textAlignment);
 
             //            Log.Info("dw _positionY, dwPosY, _yPositionScroll, _scrollOffset: {0} {1} {2} {3}", _positionY, dwPosY, _yPositionScroll, _scrollOffset);
             //            Log.Info("dw wszText1.Trim() {0}", wszText1.Trim());

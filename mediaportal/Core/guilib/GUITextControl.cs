@@ -182,7 +182,7 @@ namespace MediaPortal.GUI.Library
             wszText2 = String.Format("{0}", strLabel2);
             _font.GetTextExtent(wszText2, ref fTextWidth, ref fTextHeight);
             dMaxWidth -= (int) (fTextWidth);
-            _font.DrawTextWidth((float) dwPosX + dMaxWidth, (float) dwPosY + 2, _textColor, wszText2, (float) fTextWidth,
+            _font.DrawTextWidth((float)dwPosX + dMaxWidth, (float)dwPosY + 2, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor), wszText2, (float)fTextWidth,
                                 _textAlignment);
           }
           switch (_textAlignment)
@@ -194,7 +194,7 @@ namespace MediaPortal.GUI.Library
               x = (float) dwPosX;
               break;
           }
-          _font.DrawTextWidth(x, (float) dwPosY + 2, _textColor, wszText1, (float) dMaxWidth, _textAlignment);
+          _font.DrawTextWidth(x, (float)dwPosY + 2, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor), wszText1, (float)dMaxWidth, _textAlignment);
           dwPosY += (int) _itemHeight;
         }
       }
