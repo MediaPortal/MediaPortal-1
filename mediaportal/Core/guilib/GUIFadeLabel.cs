@@ -39,6 +39,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("align")] private Alignment _textAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("font")] protected string _fontName = "";
     [XMLSkinElement("label")] protected string _label = "";
+    [XMLSkinElement("wrapString")] protected string _userWrapString = "";
 
     private ArrayList _listLabels = new ArrayList();
     private int _currentLabelIndex = 0;
@@ -57,10 +58,13 @@ namespace MediaPortal.GUI.Library
     }
 
     private bool _allowScrolling = true;
+    private bool _allowFadeIn = true;
     private bool _isScrolling = false;
     private bool _containsProperty = false;
 
     private string _previousText = "";
+    private string _labelTail = " ";
+    private string _wrapString = "";
     private GUILabelControl _labelControl = null;
     private GUIFont _font = null;
 
@@ -81,13 +85,17 @@ namespace MediaPortal.GUI.Library
     /// <param name="strFont">The indication of the font of this control.</param>
     /// <param name="dwTextColor">The color of this control.</param>
     /// <param name="dwTextAlign">The alignment of this control.</param>
+    /// <param name="strUserWrapString">The string used to connect a wrapped fade label.</param>
     public GUIFadeLabel(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
-                        string strFont, long dwTextColor, Alignment dwTextAlign)
+                        string strFont, string strLabel, long dwTextColor, Alignment dwTextAlign,
+                        string strUserWrapString)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _fontName = strFont;
+      _label = strLabel;
       _textColor = dwTextColor;
       _textAlignment = dwTextAlign;
+      _userWrapString = strUserWrapString;
       FinalizeConstruction();
     }
 
@@ -101,6 +109,16 @@ namespace MediaPortal.GUI.Library
     {
       base.FinalizeConstruction();
       GUILocalizeStrings.LocalizeLabel(ref _label);
+
+      // The labelTail is used to fill the backend of a scrolling label for both wrapping and non-wrapping labels
+      // The wrapString is the text that joins the back to the front of a wrapping label (not used if the label should not wrap).
+      if (_userWrapString.Length > 0)
+      {
+        _labelTail = "" + _userWrapString[_userWrapString.Length-1];
+        _wrapString = _userWrapString.Substring(0, _userWrapString.Length-1);
+        _label += _wrapString;
+      }
+
       _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
                                           _label, _textColor, _textAlignment, false);
       _labelControl.CacheFont = false;
@@ -141,7 +159,7 @@ namespace MediaPortal.GUI.Library
         string strText = _label;
         if (_containsProperty)
         {
-          strText = GUIPropertyManager.Parse(_label);
+          strText = GUIPropertyManager.Parse(strText);
         }
 
         if (_previousText != strText)
@@ -152,7 +170,7 @@ namespace MediaPortal.GUI.Library
           _scrollOffset = 0.0f;
           _currentFrame = 0;
           timeElapsed = 0.0f;
-          _fadeIn = true;
+          _fadeIn = true && _allowFadeIn;
           _listLabels.Clear();
           _previousText = strText;
           strText = strText.Replace("\\r", "\r");
@@ -292,7 +310,7 @@ namespace MediaPortal.GUI.Library
           _scrollPosition = 0;
           _scrollPosititionX = 0;
           _scrollOffset = 0.0f;
-          _fadeIn = true;
+          _fadeIn = true && _allowFadeIn;
           _currentFrame = 0;
           timeElapsed = 0.0f;
           _currentFrame = 0;
@@ -328,7 +346,7 @@ namespace MediaPortal.GUI.Library
           _scrollPosition = 0;
           _scrollPosititionX = 0;
           _scrollOffset = 0.0f;
-          _fadeIn = true;
+          _fadeIn = true && _allowFadeIn;
           _currentFrame = 0;
           timeElapsed = 0.0f;
           if (message.Label != null)
@@ -360,7 +378,7 @@ namespace MediaPortal.GUI.Library
           _scrollPosition = 0;
           _scrollPosititionX = 0;
           _scrollOffset = 0.0f;
-          _fadeIn = true;
+          _fadeIn = true && _allowFadeIn;
           _currentFrame = 0;
           timeElapsed = 0.0f;
         }
@@ -468,7 +486,7 @@ namespace MediaPortal.GUI.Library
         do
         {
           _font.GetTextExtent(wszOrgText, ref fTextWidth, ref fTextHeight);
-          wszOrgText += " ";
+          wszOrgText += _labelTail;
         } while (fTextWidth >= 0 && fTextWidth < fMaxWidth);
       }
       fMaxWidth += 50.0f;
@@ -512,23 +530,31 @@ namespace MediaPortal.GUI.Library
           {
             _scrollPosition = 0;
             bResult = true;
-            if (GUIGraphicsContext.graphics != null)
+            // If the label is wrapping around the text then avoid resetting the clip rectangle.  Allowing this clip causes
+            // the label to flash off/on for the one frame when this occurs.  This reset occurs when the label has completed
+            // one scroll cycle.
+            if (!WrapAround())
             {
-              GUIGraphicsContext.graphics.SetClip(new Rectangle(0, 0, GUIGraphicsContext.Width,
-                                                                GUIGraphicsContext.Height));
-            }
-            else
-            {
-              GUIGraphicsContext.DX9Device.Viewport = oldviewport;
-            }
+              if (GUIGraphicsContext.graphics != null)
+              {
+                GUIGraphicsContext.graphics.SetClip(new Rectangle(0, 0, GUIGraphicsContext.Width,
+                                                                  GUIGraphicsContext.Height));
+              }
+              else
+              {
+                GUIGraphicsContext.DX9Device.Viewport = oldviewport;
+              }
 
-            return true;
+              return true;
+            }
           }
           // now we need to correct _scrollPosititionX
           // with the sum-length of all cut-off characters
           _scrollOffset += fWidth;
         }
+
         int ipos = 0;
+        int iposWrap = 0;
         for (int i = 0; i < wszOrgText.Length; i++)
         {
           if (i + _scrollPosition < wszOrgText.Length)
@@ -537,7 +563,16 @@ namespace MediaPortal.GUI.Library
           }
           else
           {
-            szText += ' ';
+            // If a wrap string is specified then fill the end of the scrolling text with the beginning of the original text,
+            // else just fill with blanks (default).
+            if (WrapAround())
+            {
+              szText += wszOrgText[iposWrap++];
+            }
+            else
+            {
+              szText += ' ';
+            }
             ipos++;
           }
         }
@@ -571,10 +606,11 @@ namespace MediaPortal.GUI.Library
           {
             // 1) reduce maxwidth to ensure faded right edge is drawn
             // 2) compensate the Width to ensure the faded right edge does not move
-            int xpos = (int) (fPosX - _scrollPosititionX + _scrollOffset);
+            // 3) (+ 1) prevent the text from jumping one pixel when in transition between allowed to scroll and not allowed to scroll
+            int xpos = (int)(fPosX - _scrollPosititionX + _scrollOffset + 1);
             //            _log.Info("fPosX, _scrollPosititionX, _scrollOffset, xpos: {0} {1} {2} {3}", fPosX, _scrollPosititionX, _scrollOffset, xpos);
             //            _log.Info("szText {0}", szText);
-            _labelControl.SetPosition(xpos, (int) fPosY);
+            _labelControl.SetPosition(xpos, (int)fPosY);
           }
           _labelControl.Render(timePassed);
         }
@@ -703,6 +739,23 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Get/set the fadeIn property of the control.
+    /// </summary>
+    public bool AllowFadeIn
+    {
+      get { return _allowFadeIn; }
+      set { _allowFadeIn = value; }
+    }
+
+    /// <summary>
+    /// Return true if the user has specified that this fade label should wrap around.
+    /// </summary>
+    public bool WrapAround()
+    {
+      return (_wrapString.Length > 0);
+    }
+
+    /// <summary>
     /// NeedRefresh() can be called to see if the control needs 2 redraw itself or not
     /// some controls (for example the fadelabel) contain scrolling texts and need 2
     /// ne re-rendered constantly
@@ -729,7 +782,7 @@ namespace MediaPortal.GUI.Library
         {
           return;
         }
-        _label = value;
+        _label = value + _wrapString;
         if (_label.IndexOf("#") >= 0)
         {
           _containsProperty = true;

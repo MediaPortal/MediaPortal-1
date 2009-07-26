@@ -54,12 +54,14 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("hoverY")] protected int _hoverY;
     [XMLSkinElement("hoverWidth")] protected int _hoverWidth;
     [XMLSkinElement("hoverHeight")] protected int _hoverHeight;
+    [XMLSkinElement("scrollStartDelaySec")] protected int _scrollStartDelay = -1;
+    [XMLSkinElement("scrollWrapString")] protected string _userWrapString = "";
 
     protected int _frameCounter = 0;
     protected GUIAnimation _imageFocused = null;
     protected GUIAnimation _imageNonFocused = null;
     protected GUIAnimation _hoverImage = null;
-    protected GUILabelControl _labelControl = null;
+    protected GUIControl _labelControl = null;
 
     public GUIButtonControl(int dwParentID)
       : base(dwParentID)
@@ -130,9 +132,24 @@ namespace MediaPortal.GUI.Library
       }
 
       GUILocalizeStrings.LocalizeLabel(ref _label);
-      _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
-                                          _label, _textColor, Alignment.ALIGN_LEFT, false);
-      _labelControl.TextAlignment = _textAlignment;
+
+      // Use a GUIFadeLabel if a valid scrollStartDelay is specified, otherwise use a GUILabelControl (default)
+      if (_scrollStartDelay < 0)
+      {
+        _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
+                                            _label, _textColor, Alignment.ALIGN_LEFT, false);
+        ((GUILabelControl)_labelControl).TextAlignment = _textAlignment;
+      }
+      else 
+      {
+        _labelControl = new GUIFadeLabel(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
+                                         _label,  
+                                         _textColor, Alignment.ALIGN_LEFT,
+                                         _userWrapString);
+        ((GUIFadeLabel)_labelControl).TextAlignment = _textAlignment;
+        ((GUIFadeLabel)_labelControl).AllowScrolling = false;
+        ((GUIFadeLabel)_labelControl).AllowFadeIn = false;
+      }
       _labelControl.DimColor = DimColor;
       _labelControl.ParentControl = this;
     }
@@ -162,12 +179,23 @@ namespace MediaPortal.GUI.Library
               _imageFocused.Begin();
             }
             GUIPropertyManager.SetProperty("#highlightedbutton", Label);
+            // When button focus is obtained, the GUIFadeLabel (if specified) is allowed to scroll.
+            if (_labelControl is GUIFadeLabel)
+            {
+              ((GUIFadeLabel)_labelControl).Clear(); // Resets the control to use the delayed start
+              ((GUIFadeLabel)_labelControl).AllowScrolling = true;
+            }
           }
           else
           {
             if (_imageNonFocused != null)
             {
               _imageNonFocused.Begin();
+            }
+            // When button focus is lost, the GUIFadeLabel (if specified) is not allowed to scroll.
+            if (_labelControl is GUIFadeLabel)
+            {
+              ((GUIFadeLabel)_labelControl).AllowScrolling = false;
             }
           }
         }
@@ -215,9 +243,18 @@ namespace MediaPortal.GUI.Library
         return;
       }
       _labelControl.Width = labelWidth;
-      _labelControl.TextAlignment = _textAlignment;
-      _labelControl.Label = _label;
-      _labelControl.TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
+      if (_labelControl is GUILabelControl)
+      {
+        ((GUILabelControl)_labelControl).TextAlignment = _textAlignment;
+        ((GUILabelControl)_labelControl).Label = _label;
+        ((GUILabelControl)_labelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
+      }
+      else
+      {
+        ((GUIFadeLabel)_labelControl).TextAlignment = _textAlignment;
+        ((GUIFadeLabel)_labelControl).Label = _label;
+        ((GUIFadeLabel)_labelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
+      }
 
       // render the text on the button
       int x = 0;
@@ -493,7 +530,14 @@ namespace MediaPortal.GUI.Library
           return;
         }
         _fontName = value;
-        _labelControl.FontName = _fontName;
+        if (_labelControl is GUILabelControl)
+        {
+          ((GUILabelControl)_labelControl).FontName = _fontName;
+        }
+        else
+        {
+          ((GUIFadeLabel)_labelControl).FontName = _fontName;
+        }
       }
     }
 
@@ -517,9 +561,18 @@ namespace MediaPortal.GUI.Library
       _textColor = dwColor;
       _fontName = strFontName;
 
-      _labelControl.FontName = _fontName;
-      _labelControl.TextColor = dwColor;
-      _labelControl.Label = strLabel;
+      if (_labelControl is GUILabelControl)
+      {
+        ((GUILabelControl)_labelControl).FontName = _fontName;
+        ((GUILabelControl)_labelControl).TextColor = dwColor;
+        ((GUILabelControl)_labelControl).Label = strLabel;
+      }
+      else
+      {
+        ((GUIFadeLabel)_labelControl).FontName = _fontName;
+        ((GUIFadeLabel)_labelControl).TextColor = dwColor;
+        ((GUIFadeLabel)_labelControl).Label = strLabel;
+      }
     }
 
     /// <summary>
@@ -536,7 +589,14 @@ namespace MediaPortal.GUI.Library
         }
 
         _label = value;
-        _labelControl.Label = _label;
+        if (_labelControl is GUILabelControl)
+        {
+          ((GUILabelControl)_labelControl).Label = _label;
+        }
+        else
+        {
+          ((GUIFadeLabel)_labelControl).Label = _label;
+        }
       }
     }
 
