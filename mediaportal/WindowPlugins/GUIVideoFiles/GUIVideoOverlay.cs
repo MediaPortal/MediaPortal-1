@@ -183,8 +183,12 @@ namespace MediaPortal.GUI.Video
       {
         if (GUIPropertyManager.GetProperty("#Play.Current.Thumb") != _thumbLogo)
         {
-          _fileName = g_Player.CurrentFile;
-          SetCurrentFile(_fileName);
+          _thumbLogo = GUIPropertyManager.GetProperty("#Play.Current.Thumb");
+          if (g_Player.CurrentFile != _fileName)
+          {
+            _fileName = g_Player.CurrentFile;
+            SetCurrentFile(_fileName);
+          }
         }
 
         int speed = g_Player.Speed;
