@@ -55,7 +55,8 @@ namespace SetupTv
       try
       {
         Init();
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Error("Failed to startup cause of exception");
         Log.Write(ex);
@@ -68,7 +69,8 @@ namespace SetupTv
       //
       // Set caption
       //
-      Text = "MediaPortal - TV Server Configuration";
+      FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
+      Text = "MediaPortal - TV Server Configuration (" + versionInfo.FileVersion + ")";
 
       //
       // Build options tree
@@ -85,7 +87,8 @@ namespace SetupTv
         Gentle.Framework.GentleSettings.DefaultProviderName = nodeProvider.InnerText;
         Gentle.Framework.ProviderFactory.GetDefaultProvider();
         Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(node.InnerText);
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         MessageBox.Show("Unable to open:" + String.Format(@"{0}\gentle.config", Log.GetPathName()));
         Log.Write(ex);
@@ -94,7 +97,8 @@ namespace SetupTv
       try
       {
         Server.ListAll();
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         MessageBox.Show("Failed to open database");
         Log.Error("Unable to get list of servers");
@@ -123,7 +127,8 @@ namespace SetupTv
               {
                 Card c = (Card)server.ReferringCard()[0];
                 RemoteControl.Instance.Type(c.IdCard);
-              } catch
+              }
+              catch
               {
                 MessageBox.Show(this, "Unable to connect to " + RemoteControl.HostName);
               }
@@ -147,7 +152,7 @@ namespace SetupTv
         AddChildSection(radioChannels, new RadioEpgGrabber());
 
         AddSection(new ImportExport());
-        AddSection(new ScanSettings());        
+        AddSection(new ScanSettings());
         AddSection(new TvRecording());
         AddSection(new TvSchedules());
         AddSection(new StreamingServer());
@@ -228,7 +233,7 @@ namespace SetupTv
                 break;
               case CardType.RadioWebStream:
                 cardName = String.Format("{0} {1}", cardNo, cardName);
-                InfoPage RadioWebStreamInfo=new InfoPage(cardName);
+                InfoPage RadioWebStreamInfo = new InfoPage(cardName);
                 RadioWebStreamInfo.InfoText = "The RadioWebStream card does not have any options.\n\n\nYou can add your favourite radio webstreams under:\n\n --> 'Radio Channel', 'Add', 'Web-Stream'";
                 AddChildSection(cardPage, RadioWebStreamInfo, 1);
                 DvbCheck = true;
@@ -307,12 +312,12 @@ namespace SetupTv
           RemoveAllChildSections(childNode);
 
           //Remove the section from the hashtable in case we add it again
-          settingSections.Remove(childNode.Text);          
+          settingSections.Remove(childNode.Text);
         }
         // first remove all children and sections, then nodes themself (otherwise collection changes during iterate)
         foreach (SectionTreeNode childNode in parentTreeNode.Nodes)
         {
-          parentTreeNode.Nodes.Remove(childNode); 
+          parentTreeNode.Nodes.Remove(childNode);
         }
       }
     }
@@ -493,7 +498,8 @@ namespace SetupTv
         try
         {
           RemoteControl.Instance.EpgGrabberEnabled = false;
-        } catch (Exception)
+        }
+        catch (Exception)
         {
         }
         //DatabaseManager.Instance.SaveChanges();
@@ -509,7 +515,8 @@ namespace SetupTv
 
         holderPanel.Controls.Clear();
         holderPanel.Controls.Add(section);
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
       }
@@ -530,7 +537,8 @@ namespace SetupTv
           RemoteControl.Instance.EpgGrabberEnabled = true;
           RemoteControl.Instance.OnNewSchedule();
         }
-      } catch (Exception)
+      }
+      catch (Exception)
       { }
 
     }
@@ -655,7 +663,8 @@ namespace SetupTv
           _previousSection = null;
         }
         Close();
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
       }
