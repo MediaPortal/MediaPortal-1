@@ -45,37 +45,7 @@
       <visible>false</visible>
       <!-- to make a control visible only when a LIGHT FANART is loaded do this: <visible>Control.IsVisible(1234)</visible> -->
       <!-- to make a control invisible when a LIGHT FANART is loaded do this: <visible>!Control.IsVisible(1234)</visible> -->
-    </control>
-    <control>
-      <type>label</type>
-      <description>Dummy Label for List triggers</description>
-      <id>1235</id>
-      <posX>-50</posX>
-      <posY>-50</posY>
-      <width>0</width>
-      <textcolor>d4d2d2</textcolor>
-      <font>font14</font>
-      <label>
-      </label>
-      <visible>false</visible>
-      <!-- to make a control visible only when the facade is in LIST MODE do this: <visible>Control.IsVisible(1235)</visible> -->
-      <!-- to make a control invisible when the facade is in LIST MODE do this: <visible>!Control.IsVisible(1235)</visible> -->
-    </control>
-    <control>
-      <type>label</type>
-      <description>Dummy Label for Graphical View</description>
-      <id>1236</id>
-      <posX>-50</posX>
-      <posY>-50</posY>
-      <width>0</width>
-      <textcolor>d4d2d2</textcolor>
-      <font>font14</font>
-      <label>
-      </label>
-      <visible>false</visible>
-      <!-- to make a control visible only when the facade is in BIG THUMBNAIL MODE do this: <visible>Control.IsVisible(1236)</visible> -->
-      <!-- to make a control invisible when the facade is in BIG THUMBNAIL MODE do this: <visible>!Control.IsVisible(1236)</visible> -->
-    </control>
+    </control>   
     <control>
       <type>label</type>
       <description>Dummy Label for Series View</description>

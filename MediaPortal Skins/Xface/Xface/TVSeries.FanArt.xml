@@ -21,15 +21,16 @@
       <height>768</height>
       <texture>#TVSeries.FanArt.SelectedPreview</texture>
       <visible>true</visible>
-    </control>
-    <control>
-      <id>0</id>
+    </control>    
+	<control>
+      <description>FanArt Overlay - Other Views</description>
       <type>image</type>
+      <id>0</id>
       <posX>0</posX>
       <posY>0</posY>
       <width>1366</width>
       <height>768</height>
-      <texture>fanart_overlay_window.png</texture>
+       <texture>filmstrip_overlay.png</texture>     
     </control>
     <!-- :::::::::::::: INFO LABELS :::::::::::::: -->
     <control>
@@ -59,25 +60,14 @@
       <type>fadelabel</type>
       <description>Current View</description>
       <id>0</id>
-        <posX>374</posX>
+	  <posX>374</posX>
       <posY>28</posY>
       <width>950</width>
       <font>font14</font>
       <align>right</align>
-      <label>#TVSeries.Fanart.PageTitle</label>
+      <label>#TVSeries.FanArt.PageTitle</label>
     </control>
-    <control>
-      <description>Current View Label</description>
-      <type>label</type>
-      <label>
-      </label>
-      <id>0</id>
-      <posX>40</posX>
-      <posY>665</posY>
-      <width>700</width>
-      <font>font12</font>
-      <label>#selecteditem</label>
-    </control>
+    
     <control>
       <description>Download Status</description>
       <type>label</type>
@@ -178,8 +168,9 @@
           <posY>400</posY>
           <width>1360</width>
           <height>300</height>
-          <spinPosX>2000</spinPosX>
-          <spinCanFocus>no</spinCanFocus>
+          <spinPosY>700</spinPosY>
+		  <spinPosX>1220</spinPosX>
+          <spinCanFocus>yes</spinCanFocus>
           <imageFolder>tvseries_fanart_nofocus.png</imageFolder>
           <imageFolderFocus>tvseries_fanart_focus.png</imageFolderFocus>
           <downloadColor>ffffffff</downloadColor>

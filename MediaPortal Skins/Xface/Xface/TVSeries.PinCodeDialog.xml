@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>9815</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <import>common.dialog.xml</import>
+    
+	<control>
+		<description>Lock</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>940</posX>
+		<posY>340</posY>
+		<width>48</width>
+		<height>48</height>		
+		<texture>lock.png</texture>		
+    </control>
+	
+	<!-- Star Controls -->
+	<control>
+		<description>PinCode Item 1</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>550</posX>
+		<posY>410</posY>
+		<width>32</width>
+		<height>32</height>
+		<onup>101</onup>
+		<texture>UserRatingStarOff.png</texture>		
+    </control>
+    <control>
+		<description>PinCode Item 1</description>
+		<type>image</type>
+		<id>100</id>
+		<posX>550</posX>
+		<posY>410</posY>
+		<width>32</width>
+		<height>32</height>
+		<onup>101</onup>
+		<texture>UserRatingStarOn.png</texture>		
+    </control>
+
+	<control>
+		<description>PinCode Item 2</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>590</posX>
+		<posY>410</posY>
+		<width>32</width>
+		<height>32</height>
+		<onup>101</onup>
+		<texture>UserRatingStarOff.png</texture>		
+    </control>
+    <control>
+		<description>PinCode Item 2</description>
+		<type>image</type>
+		<id>101</id>
+		<posX>590</posX>
+		<posY>410</posY>
+		<width>32</width>
+		<height>32</height>
+		<onup>102</onup>
+		<texture>UserRatingStarOn.png</texture>
+    </control>
+
+	<control>
+		<description>PinCode Item 3</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>630</posX>
+		<posY>410</posY>
+		<width>32</width>
+		<height>32</height>
+		<onup>101</onup>
+		<texture>UserRatingStarOff.png</texture>		
+    </control>
+    <control>
+		<description>PinCode Item 3</description>
+		<type>image</type>
+		<id>102</id>
+		<posX>630</posX>
+		<posY>410</posY>
+		<width>32</width>
+		<height>32</height>
+		<onup>103</onup>
+		<texture>UserRatingStarOn.png</texture>
+    </control>
+
+	<control>
+		<description>PinCode Item 4</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>670</posX>
+		<posY>410</posY>
+		<width>32</width>
+		<height>32</height>
+		<onup>101</onup>
+		<texture>UserRatingStarOff.png</texture>		
+    </control>
+    <control>
+		<description>PinCode Item 4</description>
+		<type>image</type>
+		<id>103</id>
+		<posX>670</posX>
+		<posY>410</posY>
+		<width>32</width>
+		<height>32</height>
+		<onup>104</onup>
+		<texture>UserRatingStarOn.png</texture>
+    </control>
+		
+	<control>
+		<description>Feedback</description>
+		<type>label</type>
+		<id>6</id>
+		<posX>825</posX>
+		<posY>430</posY>
+		<width>200</width>		
+		<align>right</align>		
+    </control>
+	
+  </controls>
+</window>
