@@ -48,6 +48,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textYOff")] protected int _textOffsetY = 0;
     [XMLSkinElement("textXOff2")] protected int _textOffsetX2 = 0;
     [XMLSkinElement("textYOff2")] protected int _textOffsetY2 = 0;
+    [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
+    [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
+    [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
     protected GUIAnimation _imageBackground = null;
     protected GUIAnimation _imageLeft = null;
     protected GUIAnimation _imageLeftFocus = null;
@@ -100,13 +103,17 @@ namespace MediaPortal.GUI.Library
     /// <param name="strSelectArrowLeftFocus">The texture of the left focused arrow.</param>
     /// <param name="strSelectArrowRight">The texture of the right non-focused arrow.</param>
     /// <param name="strSelectArrowRightFocus">The texture of the right focused arrow.</param>
+    /// <param name="dwShadowAngle">The angle of the shadow; zero degress along x-axis.</param>
+    /// <param name="dwShadowDistance">The distance of the shadow.</param>
+    /// <param name="dwShadowColor">The color of the shadow.</param>
     public GUISelectButtonControl(int dwParentID, int dwControlId,
                                   int dwPosX, int dwPosY,
                                   int dwWidth, int dwHeight,
                                   string strButtonFocus, string strButton,
                                   string strSelectBackground,
                                   string strSelectArrowLeft, string strSelectArrowLeftFocus,
-                                  string strSelectArrowRight, string strSelectArrowRightFocus)
+                                  string strSelectArrowRight, string strSelectArrowRightFocus,
+                                  int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _textureFocusName = strButtonFocus;
@@ -118,6 +125,9 @@ namespace MediaPortal.GUI.Library
       _leftFocusName = strSelectArrowLeftFocus;
       _updateNeeded = false;
       _isSelected = false;
+      _shadowAngle = dwShadowAngle;
+      _shadowDistance = dwShadowDistance;
+      _shadowColor = dwShadowColor;
       FinalizeConstruction();
     }
 
@@ -175,6 +185,9 @@ namespace MediaPortal.GUI.Library
       _labelControl = new GUILabelControl(_parentControlId);
       _labelControl.CacheFont = true;
       _labelControl.ParentControl = this;
+      _labelControl.ShadowAngle = _shadowAngle;
+      _labelControl.ShadowDistance = _shadowDistance;
+      _labelControl.ShadowColor = _shadowColor;
     }
 
     public override void ScaleToScreenResolution()

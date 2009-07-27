@@ -963,7 +963,8 @@ namespace MediaPortal.GUI.TV
           {
             label = new GUILabelControl(GetID, (int) Controls.LABEL_TIME1 + iLabel, xpos, ypos, iLabelWidth,
                                         cntlHeaderBkgImg.RenderHeight, labelTime.FontName, string.Empty,
-                                        labelTime.TextColor, GUIControl.Alignment.ALIGN_CENTER, false);
+                                        labelTime.TextColor, GUIControl.Alignment.ALIGN_CENTER, false,
+                                        labelTime.ShadowAngle, labelTime.ShadowDistance, labelTime.ShadowColor);
             label.AllocResources();
             GUIControl cntl = (GUIControl) label;
             this.Add(ref cntl);
@@ -1427,7 +1428,7 @@ namespace MediaPortal.GUI.TV
         channelLabel = new GUILabelControl(GetID, (int) Controls.SINGLE_CHANNEL_LABEL,
                                            channelImage.XPosition + 44,
                                            channelImage.YPosition + 10,
-                                           300, 40, "font16", channel.Name, 4294967295, GUIControl.Alignment.Left, true);
+                                           300, 40, "font16", channel.Name, 4294967295, GUIControl.Alignment.Left, true, 0, 0, 0xFF000000);
         channelLabel.AllocResources();
         GUIControl temp = (GUIControl) channelLabel;
         Add(ref temp);

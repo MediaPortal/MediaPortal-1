@@ -106,6 +106,13 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("selectedColor")]
     protected long _selectedColor = 0xFFFFFFFF;
 
+    [XMLSkinElement("shadowAngle")]
+    protected int _shadowAngle = 0;
+    [XMLSkinElement("shadowDistance")]
+    protected int _shadowDistance = 0;
+    [XMLSkinElement("shadowColor")]
+    protected long _shadowColor = 0xFF000000;
+
     [XMLSkinElement("spinColor")]
     protected long _spinControlColor;
     [XMLSkinElement("spinAlign")]
@@ -241,7 +248,8 @@ namespace MediaPortal.GUI.Library
                              string strUpFocus, string strDownFocus,
                              long dwSpinColor, int dwSpinX, int dwSpinY,
                              string strFont, long dwTextColor, long dwSelectedColor,
-                             string strScrollbarBackground, string strScrollbarTop, string strScrollbarBottom)
+                             string strScrollbarBackground, string strScrollbarTop, string strScrollbarBottom,
+                             int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       // Please fix or remove this check: (dwPosY > dwPosY - always false)
@@ -262,6 +270,9 @@ namespace MediaPortal.GUI.Library
       _fontName = strFont;
       _textColor = dwTextColor;
       _selectedColor = dwSelectedColor;
+      _shadowAngle = dwShadowAngle;
+      _shadowDistance = dwShadowDistance;
+      _shadowColor = dwShadowColor;
 
       _scrollbarBackGroundTextureName = strScrollbarBackground;
       _scrollbarTopTextureName = strScrollbarTop;
@@ -1826,7 +1837,8 @@ namespace MediaPortal.GUI.Library
       for (int i = 0; i < _columnCount * _rowCount; ++i)
       {
         GUIButtonControl btn = new GUIButtonControl(_parentControlId, _controlId, _positionX, _positionY, _textureWidth,
-                                                    _textureHeight, _imageFolderNameFocus, _imageFolderName);
+                                                    _textureHeight, _imageFolderNameFocus, _imageFolderName,
+                                                    _shadowAngle, _shadowDistance, _shadowColor);
         btn.ParentControl = this;
         btn.AllocResources();
 

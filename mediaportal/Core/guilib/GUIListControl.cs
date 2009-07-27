@@ -132,6 +132,10 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("selectedColor2")] protected long _selectedColor2 = 0xFFFFFFFF;
     [XMLSkinElement("selectedColor3")] protected long _selectedColor3 = 0xFFFFFFFF;
 
+    [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
+    [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
+    [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
+
     [XMLSkinElement("folderPrefix")] protected string _folderPrefix = "[";
     [XMLSkinElement("folderSuffix")] protected string _folderSuffix = "]";
 
@@ -197,6 +201,9 @@ namespace MediaPortal.GUI.Library
     /// <param name="strScrollbarBackground">The name of the background of the scrollbar texture.</param>
     /// <param name="strScrollbarTop">The name of the top of the scrollbar texture.</param>
     /// <param name="strScrollbarBottom">The name of the bottom of the scrollbar texture.</param>
+    /// <param name="dwShadowAngle">The angle of the shadow; zero degress along x-axis.</param>
+    /// <param name="dwShadowDistance">The distance of the shadow.</param>
+    /// <param name="dwShadowColor">The color of the shadow.</param>
     public GUIListControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
                           int dwSpinWidth, int dwSpinHeight,
                           string strUp, string strDown,
@@ -204,8 +211,9 @@ namespace MediaPortal.GUI.Library
                           long dwSpinColor, int dwSpinX, int dwSpinY,
                           string strFont, long dwTextColor, long dwSelectedColor,
                           string strButton, string strButtonFocus,
-                          string strScrollbarBackground, string strScrollbarTop, string strScrollbarBottom)
-      : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
+                          string strScrollbarBackground, string strScrollbarTop, string strScrollbarBottom,
+                          int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
+: base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _spinControlWidth = dwSpinWidth;
       _spinControlHeight = dwSpinHeight;
@@ -228,6 +236,9 @@ namespace MediaPortal.GUI.Library
       _scrollbarBackgroundName = strScrollbarBackground;
       _scrollbarTopName = strScrollbarTop;
       _scrollbarBottomName = strScrollbarBottom;
+      _shadowAngle = dwShadowAngle;
+      _shadowDistance = dwShadowDistance;
+      _shadowColor = dwShadowColor;
 
       FinalizeConstruction();
     }
@@ -2034,7 +2045,8 @@ namespace MediaPortal.GUI.Library
       for (int i = 0; i < _itemsPerPage; ++i)
       {
         GUIButtonControl cntl = new GUIButtonControl(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _width,
-                                                     _itemHeight, _buttonFocusName, _buttonNonFocusName);
+                                                     _itemHeight, _buttonFocusName, _buttonNonFocusName,
+                                                     _shadowAngle, _shadowDistance, _shadowColor);
         cntl.ParentControl = this;
         cntl.AllocResources();
         cntl.DimColor = DimColor;
@@ -2077,11 +2089,14 @@ namespace MediaPortal.GUI.Library
       for (int i = 0; i < _itemsPerPage; ++i)
       {
         GUILabelControl cntl1 = new GUILabelControl(_controlId, 0, 0, 0, 0, 0, _fontName, "", _textColor,
-                                                    Alignment.ALIGN_LEFT, false);
+                                                    Alignment.ALIGN_LEFT, false,
+                                                    _shadowAngle, _shadowDistance, _shadowColor);
         GUILabelControl cntl2 = new GUILabelControl(_controlId, 0, 0, 0, 0, 0, _fontName2Name, "", _textColor2,
-                                                    Alignment.ALIGN_LEFT, false);
+                                                    Alignment.ALIGN_LEFT, false,
+                                                    _shadowAngle, _shadowDistance, _shadowColor);
         GUILabelControl cntl3 = new GUILabelControl(_controlId, 0, 0, 0, 0, 0, _fontName2Name, "", _textColor3,
-                                                    Alignment.ALIGN_RIGHT, false);
+                                                    Alignment.ALIGN_RIGHT, false,
+                                                    _shadowAngle, _shadowDistance, _shadowColor);
         cntl1.ParentControl = this;
         cntl2.ParentControl = this;
         cntl3.ParentControl = this;
@@ -3286,7 +3301,8 @@ namespace MediaPortal.GUI.Library
       wrappedLines = new ArrayList();
       GUILabelControl cntl1 = new GUILabelControl(_controlId, 0, 0, 0, GUIGraphicsContext.Width,
                                                   GUIGraphicsContext.Height, _fontName, "", _textColor,
-                                                  Alignment.ALIGN_LEFT, false);
+                                                  Alignment.ALIGN_LEFT, false,
+                                                  _shadowAngle, _shadowDistance, _shadowColor);
       cntl1.ParentControl = this;
       cntl1.AllocResources();
 

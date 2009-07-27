@@ -51,7 +51,8 @@ namespace MediaPortal.GUI.Library
                            int dwSpinWidth, int dwSpinHeight,
                            string strUp, string strDown,
                            string strUpFocus, string strDownFocus,
-                           long dwSpinColor, int dwSpinX, int dwSpinY)
+                           long dwSpinColor, int dwSpinX, int dwSpinY,
+                           int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
       : base(dwParentID)
     {
       _spinControlWidth = dwSpinWidth;
@@ -70,6 +71,9 @@ namespace MediaPortal.GUI.Library
       _positionY = dwPosY;
       _width = dwWidth;
       _height = dwHeight;
+      _shadowAngle = dwShadowAngle;
+      _shadowDistance = dwShadowDistance;
+      _shadowColor = dwShadowColor;
 
       _focusedTextureName = strTextureFocus;
       _nonFocusedTextureName = strTextureNoFocus;

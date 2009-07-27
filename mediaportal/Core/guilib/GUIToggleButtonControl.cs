@@ -52,7 +52,11 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textXOff")] protected int _textOffsetX = 0;
     [XMLSkinElement("textYOff")] protected int _textOffsetY = 0;
     [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
+    [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
+    [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
 
+    private bool _shadow = false;
 
     public GUIToggleButtonControl(int parentId)
       : base(parentId)
@@ -61,7 +65,8 @@ namespace MediaPortal.GUI.Library
 
     public GUIToggleButtonControl(int parentId, int controlid, int posX, int posY, int width, int height,
                                   string textureFocusName, string textureNoFocusName, string textureAltFocusName,
-                                  string textureAltNoFocusName)
+                                  string textureAltNoFocusName,
+                                  int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
       : base(parentId, controlid, posX, posY, width, height)
     {
       _focusedTextureName = textureFocusName;
@@ -69,6 +74,9 @@ namespace MediaPortal.GUI.Library
       _alternativeFocusTextureName = textureAltFocusName;
       _alternativeNonFocusTextureName = textureAltNoFocusName;
       _isSelected = false;
+      _shadowAngle = dwShadowAngle;
+      _shadowDistance = dwShadowDistance;
+      _shadowColor = dwShadowColor;
       FinalizeConstruction();
       DimColor = base.DimColor;
     }
@@ -97,6 +105,8 @@ namespace MediaPortal.GUI.Library
         _font = GUIFontManager.GetFont(_fontName);
       }
       GUILocalizeStrings.LocalizeLabel(ref _label);
+
+      _shadow = (_shadowAngle > 0) || (_shadowDistance > 0);
     }
 
     public override void ScaleToScreenResolution()
@@ -188,7 +198,14 @@ namespace MediaPortal.GUI.Library
         }
         uint c = (uint) color;
         c = GUIGraphicsContext.MergeAlpha(c);
-        _font.DrawText(x, (float) _textOffsetY + _positionY, c, _label, _textAlignment, -1);
+        if (_shadow)
+        {
+          _font.DrawShadowText(x, (float)_textOffsetY + _positionY, c, _label, _textAlignment, _shadowAngle, _shadowDistance, _shadowColor);
+        }
+        else
+        {
+          _font.DrawText(x, (float)_textOffsetY + _positionY, c, _label, _textAlignment, -1);
+        }
       }
       base.Render(timePassed);
     }

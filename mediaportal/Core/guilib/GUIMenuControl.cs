@@ -67,6 +67,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("spaceAfterSelected")] protected int _spaceAfterSelected = 0;
     [XMLSkinElement("horizontal")] protected bool _horizontal = false;
     [XMLSkinElement("showAllHover")] protected bool _showAllHover = false;
+    [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
+    [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
+    [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
 
     [XMLSkin("hover", "flipX")] protected bool _flipX = false;
     [XMLSkin("hover", "flipY")] protected bool _flipY = false;
@@ -951,7 +954,8 @@ namespace MediaPortal.GUI.Library
             button = new GUIButtonControl(GetID, controlID, buttonX, buttonY, _buttonWidth, _buttonHeight, _textColor,
                                           _textColorNoFocus,
                                           (info.HoverName != "") ? info.HoverName : _textureButtonFocus,
-                                          (info.NonFocusHoverName != "") ? info.NonFocusHoverName : _textureHoverNoFocus);
+                                          (info.NonFocusHoverName != "") ? info.NonFocusHoverName : _textureHoverNoFocus,
+                                          _shadowAngle, _shadowDistance, _shadowColor);
             button.TextAlignment = _textAlignment;
           }
           else
@@ -961,7 +965,8 @@ namespace MediaPortal.GUI.Library
                                           (info.FocusTextureName != "") ? info.FocusTextureName : _textureButtonFocus,
                                           (info.NonFocusTextureName != "")
                                             ? info.NonFocusTextureName
-                                            : _textureButtonNoFocus);
+                                            : _textureButtonNoFocus,
+                                          _shadowAngle, _shadowDistance, _shadowColor);
             button.TextAlignment = _textAlignment;
           }
           button.Label = info.Text;

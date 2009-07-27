@@ -241,7 +241,8 @@ namespace MediaPortal.GUI.Library
                                     int upBtnYOffset,
                                     int downBtnYOffset,
                                     int deleteBtnYOffset)
-      : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTextureFocus, strTextureNoFocus)
+      : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTextureFocus, strTextureNoFocus,
+             0, 0, 0xFF000000) // no shadow
     {
       _focusedTextureName = strTextureFocus;
       _nonFocusedTextureName = strTextureNoFocus;

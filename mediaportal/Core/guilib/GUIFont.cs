@@ -356,24 +356,46 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwColor">The font color.</param>
     /// <param name="strText">The actual text.</param>
     /// <param name="alignment">The alignment of the text.</param>
-    /// <param name="iShadowWidth">The width parameter of the shadow.</param>
-    /// <param name="iShadowHeight">The height parameter of the shadow.</param>
+    /// <param name="iShadowAngle">The angle parameter of the shadow; zero degrees along x-axis.</param>
+    /// <param name="iShadowDistance">The distance parameter of the shadow.</param>
     /// <param name="dwShadowColor">The shadow color.</param>
     public void DrawShadowText(float fOriginX, float fOriginY, long dwColor,
                                string strText,
                                GUIControl.Alignment alignment,
-                               int iShadowWidth,
-                               int iShadowHeight,
+                               int iShadowAngle,
+                               int iShadowDistance,
                                long dwShadowColor)
     {
-      for (int x = -iShadowWidth; x < iShadowWidth; x++)
-      {
-        for (int y = -iShadowHeight; y < iShadowHeight; y++)
-        {
-          DrawText((float)x + fOriginX, (float)y + fOriginY, dwShadowColor, strText, alignment, -1);
-        }
-      }
+      // Draw the shadow
+      float fShadowX = (float)Math.Round((double)iShadowDistance * Math.Cos(ConvertDegreesToRadians((double)iShadowAngle)));
+      float fShadowY = (float)Math.Round((double)iShadowDistance * Math.Sin(ConvertDegreesToRadians((double)iShadowAngle)));
+      DrawText(fOriginX + fShadowX, fOriginY + fShadowY, dwShadowColor, strText, alignment, -1);
+
+      // Draw the text
       DrawText(fOriginX, fOriginY, dwColor, strText, alignment, -1);
+    }
+
+    public void DrawShadowTextWidth(float fOriginX, float fOriginY, long dwColor,
+                               string strText,
+                               GUIControl.Alignment alignment,
+                               int iShadowAngle,
+                               int iShadowDistance,
+                               long dwShadowColor,
+                               float fMaxWidth)
+    {
+      // Draw the shadow
+      float fShadowX = (float)Math.Round((double)iShadowDistance * Math.Cos(ConvertDegreesToRadians((double)iShadowAngle)));
+      float fShadowY = (float)Math.Round((double)iShadowDistance * Math.Sin(ConvertDegreesToRadians((double)iShadowAngle)));
+      DrawTextWidth(fOriginX + fShadowX, fOriginY + fShadowY, dwShadowColor, strText, fMaxWidth, alignment);
+
+      // Draw the text
+      DrawTextWidth(fOriginX, fOriginY, dwColor, strText, fMaxWidth, alignment);
+    }
+
+    private static double ConvertDegreesToRadians(double degrees)
+    {
+      double radians = (Math.PI / 180) * degrees;
+      return (radians);
     }
 
     public void Present()

@@ -172,7 +172,10 @@ namespace MediaPortal.GUI.Library
                                       string strButtonFocus,
                                       string strScrollbarBackground,
                                       string strScrollbarTop,
-                                      string strScrollbarBottom)
+                                      string strScrollbarBottom,
+                                      int dwShadowAngle,
+                                      int dwShadowDistance,
+                                      long dwShadowColor)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight,
              dwSpinWidth, dwSpinHeight,
              strUp, strDown,
@@ -180,7 +183,9 @@ namespace MediaPortal.GUI.Library
              dwSpinColor, dwSpinX, dwSpinY,
              strFont, dwTextColor, dwSelectedColor,
              strButton, strButtonFocus,
-             strScrollbarBackground, strScrollbarTop, strScrollbarBottom)
+             strScrollbarBackground, strScrollbarTop, strScrollbarBottom,
+             dwShadowAngle, dwShadowDistance, dwShadowColor)
+
     {
       _upBtnWidth = upBtnWidth;
       _downBtnWidth = downBtnWidth;

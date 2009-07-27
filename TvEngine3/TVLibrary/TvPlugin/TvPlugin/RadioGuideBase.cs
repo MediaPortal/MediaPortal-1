@@ -851,7 +851,8 @@ namespace TvPlugin
           {
             label = new GUILabelControl(GetID, (int) Controls.LABEL_TIME1 + iLabel, xpos, ypos, iLabelWidth,
                                         cntlHeaderBkgImg.RenderHeight, labelTime.FontName, String.Empty,
-                                        labelTime.TextColor, GUIControl.Alignment.ALIGN_CENTER, false);
+                                        labelTime.TextColor, GUIControl.Alignment.ALIGN_CENTER, false,
+                                        labelTime.ShadowAngle, labelTime.ShadowDistance, labelTime.ShadowColor);
             label.AllocResources();
             GUIControl cntl = (GUIControl) label;
             this.Add(ref cntl);

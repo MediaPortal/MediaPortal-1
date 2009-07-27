@@ -70,6 +70,9 @@ namespace MediaPortal.GUI.Library
     /// <param name="strScrollbarBackground">The name of the background of the scrollbar texture.</param>
     /// <param name="strScrollbarTop">The name of the top of the scrollbar texture.</param>
     /// <param name="strScrollbarBottom">The name of the bottom of the scrollbar texture.</param>
+    /// <param name="dwShadowAngle">The angle of the shadow; zero degress along x-axis.</param>
+    /// <param name="dwShadowDistance">The distance of the shadow.</param>
+    /// <param name="dwShadowColor">The color of the shadow.</param>
     public GUICheckListControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
                                int dwSpinWidth, int dwSpinHeight,
                                string strUp, string strDown,
@@ -77,7 +80,8 @@ namespace MediaPortal.GUI.Library
                                long dwSpinColor, int dwSpinX, int dwSpinY,
                                string strFont, long dwTextColor, long dwSelectedColor,
                                string strButton, string strButtonFocus,
-                               string strScrollbarBackground, string strScrollbarTop, string strScrollbarBottom)
+                               string strScrollbarBackground, string strScrollbarTop, string strScrollbarBottom,
+                               int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight,
              dwSpinWidth, dwSpinHeight,
              strUp, strDown,
@@ -85,7 +89,9 @@ namespace MediaPortal.GUI.Library
              dwSpinColor, dwSpinX, dwSpinY,
              strFont, dwTextColor, dwSelectedColor,
              strButton, strButtonFocus,
-             strScrollbarBackground, strScrollbarTop, strScrollbarBottom)
+             strScrollbarBackground, strScrollbarTop, strScrollbarBottom,
+             dwShadowAngle, dwShadowDistance, dwShadowColor)
+
 
     {
       FinalizeConstruction();
@@ -98,7 +104,8 @@ namespace MediaPortal.GUI.Library
         GUICheckButton cntl = new GUICheckButton(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _width,
                                                  _itemHeight, _buttonFocusName, _buttonNonFocusName,
                                                  _checkMarkFocusTextureName, _checkMarkNoFocusTextureName,
-                                                 _checkMarkWidth, _checkMarkHeight);
+                                                 _checkMarkWidth, _checkMarkHeight,
+                                                 _shadowAngle, _shadowDistance, _shadowColor);
         cntl.ParentControl = this;
         cntl.AllocResources();
         cntl.CheckOffsetX = markOffsetX;

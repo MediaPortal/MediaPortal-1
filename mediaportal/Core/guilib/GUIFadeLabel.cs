@@ -40,6 +40,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("font")] protected string _fontName = "";
     [XMLSkinElement("label")] protected string _label = "";
     [XMLSkinElement("wrapString")] protected string _userWrapString = "";
+    [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
+    [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
+    [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
 
     private ArrayList _listLabels = new ArrayList();
     private int _currentLabelIndex = 0;
@@ -83,12 +86,16 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwWidth">The width of this control.</param>
     /// <param name="dwHeight">The height of this control.</param>
     /// <param name="strFont">The indication of the font of this control.</param>
+    /// <param name="strLabel">The label</param>
     /// <param name="dwTextColor">The color of this control.</param>
     /// <param name="dwTextAlign">The alignment of this control.</param>
     /// <param name="strUserWrapString">The string used to connect a wrapped fade label.</param>
+    /// <param name="dwShadowAngle">The angle of the shadow; zero degrees along x-axis.</param>
+    /// <param name="dwShadowDistance">The distance of the shadow.</param>
+    /// <param name="dwShadowColor">The color of the shadow.</param>
     public GUIFadeLabel(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
                         string strFont, string strLabel, long dwTextColor, Alignment dwTextAlign,
-                        string strUserWrapString)
+                        string strUserWrapString, int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _fontName = strFont;
@@ -96,6 +103,9 @@ namespace MediaPortal.GUI.Library
       _textColor = dwTextColor;
       _textAlignment = dwTextAlign;
       _userWrapString = strUserWrapString;
+      _shadowAngle = dwShadowAngle;
+      _shadowDistance = dwShadowDistance;
+      _shadowColor = dwShadowColor;
       FinalizeConstruction();
     }
 
@@ -120,7 +130,8 @@ namespace MediaPortal.GUI.Library
       }
 
       _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
-                                          _label, _textColor, _textAlignment, false);
+                                          _label, _textColor, _textAlignment, false,
+                                          _shadowAngle, _shadowDistance, _shadowColor);
       _labelControl.CacheFont = false;
       _labelControl.ParentControl = this;
       _labelControl.SetAnimations(Animations);

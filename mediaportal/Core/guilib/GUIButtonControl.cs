@@ -56,6 +56,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("hoverHeight")] protected int _hoverHeight;
     [XMLSkinElement("scrollStartDelaySec")] protected int _scrollStartDelay = -1;
     [XMLSkinElement("scrollWrapString")] protected string _userWrapString = "";
+    [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
+    [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
+    [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
 
     protected int _frameCounter = 0;
     protected GUIAnimation _imageFocused = null;
@@ -79,24 +82,35 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwHeight">The height of this control.</param>
     /// <param name="strTextureFocus">The filename containing the texture of the butten, when the button has the focus.</param>
     /// <param name="strTextureNoFocus">The filename containing the texture of the butten, when the button does not have the focus.</param>
+    /// <param name="dwShadowAngle">The angle of the shadow; zero degress along x-axis.</param>
+    /// <param name="dwShadowDistance">The distance of the shadow.</param>
+    /// <param name="dwShadowColor">The color of the shadow.</param>
     public GUIButtonControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
-                            string strTextureFocus, string strTextureNoFocus)
+                            string strTextureFocus, string strTextureNoFocus,
+                            int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _focusedTextureName = strTextureFocus;
       _nonFocusedTextureName = strTextureNoFocus;
+      _shadowAngle = dwShadowAngle;
+      _shadowDistance = dwShadowDistance;
+      _shadowColor = dwShadowColor;
       FinalizeConstruction();
     }
 
     // allow overriding the textcolor if created by GUIMenuControl
     public GUIButtonControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
-                            long ltextColor, long ltextcolorNoFocus, string strTextureFocus, string strTextureNoFocus)
+                            long ltextColor, long ltextcolorNoFocus, string strTextureFocus, string strTextureNoFocus,
+                            int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _focusedTextureName = strTextureFocus;
       _nonFocusedTextureName = strTextureNoFocus;
       _textColor = ltextColor;
       _textColorNoFocus = ltextcolorNoFocus;
+      _shadowAngle = dwShadowAngle;
+      _shadowDistance = dwShadowDistance;
+      _shadowColor = dwShadowColor;
       FinalizeConstruction();
     }
 
@@ -137,7 +151,7 @@ namespace MediaPortal.GUI.Library
       if (_scrollStartDelay < 0)
       {
         _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
-                                            _label, _textColor, Alignment.ALIGN_LEFT, false);
+                                            _label, _textColor, Alignment.ALIGN_LEFT, false, _shadowAngle, _shadowDistance, _shadowColor);
         ((GUILabelControl)_labelControl).TextAlignment = _textAlignment;
       }
       else 
@@ -145,7 +159,7 @@ namespace MediaPortal.GUI.Library
         _labelControl = new GUIFadeLabel(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
                                          _label,  
                                          _textColor, Alignment.ALIGN_LEFT,
-                                         _userWrapString);
+                                         _userWrapString, _shadowAngle, _shadowDistance, _shadowColor);
         ((GUIFadeLabel)_labelControl).TextAlignment = _textAlignment;
         ((GUIFadeLabel)_labelControl).AllowScrolling = false;
         ((GUIFadeLabel)_labelControl).AllowFadeIn = false;

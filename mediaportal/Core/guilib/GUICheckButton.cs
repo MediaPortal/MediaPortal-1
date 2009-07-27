@@ -53,6 +53,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("MarkHeight")] protected int _checkMarkHeight;
     [XMLSkinElement("MarkOffsetX")] protected int markOffsetX = 0;
     [XMLSkinElement("MarkOffsetY")] protected int markOffsetY = 0;
+    [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
+    [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
+    [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
 
     protected int _frameCounter = 0;
     protected GUIAnimation _imageFocused = null;
@@ -75,11 +78,15 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwHeight">The height of this control.</param>
     /// <param name="strTextureFocus">The filename containing the texture of the butten, when the button has the focus.</param>
     /// <param name="strTextureNoFocus">The filename containing the texture of the butten, when the button does not have the focus.</param>
+    /// <param name="dwShadowAngle">The angle of the shadow; zero degrees along x-axis.</param>
+    /// <param name="dwShadowDistance">The height of the shadow.</param>
+    /// <param name="dwShadowColor">The color of the shadow.</param>
     public GUICheckButton(int dwParentID, int dwControlId, int dwPosX,
                           int dwPosY, int dwWidth, int dwHeight,
                           string strTextureFocus, string strTextureNoFocus,
                           string checkFocus, string checkNoFocus,
-                          int checkWidth, int checkHeight)
+                          int checkWidth, int checkHeight,
+                          int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _focusedTextureName = strTextureFocus;
@@ -88,6 +95,9 @@ namespace MediaPortal.GUI.Library
       _checkMarkNoFocusTextureName = checkNoFocus;
       _checkMarkWidth = checkWidth;
       _checkMarkHeight = checkHeight;
+      _shadowAngle = dwShadowAngle;
+      _shadowDistance = dwShadowDistance;
+      _shadowColor = dwShadowColor;
       FinalizeConstruction();
     }
 
@@ -112,7 +122,8 @@ namespace MediaPortal.GUI.Library
       GUILocalizeStrings.LocalizeLabel(ref _label);
 
       _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
-                                          _label, _textColor, Alignment.ALIGN_LEFT, false);
+                                          _label, _textColor, Alignment.ALIGN_LEFT, false,
+                                          _shadowAngle, _shadowDistance, _shadowColor);
       _labelControl.ParentControl = this;
       _labelControl.DimColor = DimColor;
 

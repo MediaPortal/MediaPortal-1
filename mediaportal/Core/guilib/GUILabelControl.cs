@@ -34,12 +34,16 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("label")] protected string _labelText = "";
     [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
     [XMLSkinElement("align")] private Alignment _textAlignment = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
+    [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
+    [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
 
     private string _cachedTextLabel = "";
     private bool _containsProperty = false;
     private int _textwidth = 0;
     private int _textheight = 0;
     private bool _useFontCache = false;
+    private bool _shadow = false;
 
     private GUIFont _font = null;
     private bool _useViewPort = true;
@@ -60,14 +64,21 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwTextColor">The color of this control.</param>
     /// <param name="dwTextAlign">The alignment of this control.</param>
     /// <param name="bHasPath">Indicates if the label is containing a path.</param>
+    /// <param name="dwShadowAngle">The angle of the shadow; zero degress along x-axis.</param>
+    /// <param name="dwShadowDistance">The distance of the shadow.</param>
+    /// <param name="dwShadowColor">The color of the shadow.</param>
     public GUILabelControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
-                           string strFont, string strLabel, long dwTextColor, Alignment dwTextAlign, bool bHasPath)
+                           string strFont, string strLabel, long dwTextColor, Alignment dwTextAlign, bool bHasPath,
+                           int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _labelText = strLabel;
       _fontName = strFont;
       _textColor = dwTextColor;
       _textAlignment = dwTextAlign;
+      _shadowAngle = dwShadowAngle;
+      _shadowDistance = dwShadowDistance;
+      _shadowColor = dwShadowColor;
 
       FinalizeConstruction();
     }
@@ -106,6 +117,8 @@ namespace MediaPortal.GUI.Library
       {
         _containsProperty = true;
       }
+
+      _shadow = (_shadowAngle > 0) || (_shadowDistance > 0);
 
       _cachedTextLabel = _labelText;
       _propertyHasChanged = true;
@@ -170,13 +183,15 @@ namespace MediaPortal.GUI.Library
           {
             uint c = (uint) color;
             c = GUIGraphicsContext.MergeAlpha(c);
-            _font.DrawTextWidth(_positionX, _positionY, (int) c, _cachedTextLabel, _width, _textAlignment);
+//            _font.DrawTextWidth(_positionX, _positionY, (int)c, _cachedTextLabel, _width, _textAlignment);
+            this.DrawTextWidth(_positionX, _positionY, (int)c, _cachedTextLabel, _width, _textAlignment);
           }
           else
           {
             uint c = (uint) color;
             c = GUIGraphicsContext.MergeAlpha(c);
-            _font.DrawText(_positionX, _positionY, (int) c, _cachedTextLabel, _textAlignment, -1);
+//            _font.DrawText(_positionX, _positionY, (int)c, _cachedTextLabel, _textAlignment, -1);
+            this.DrawText(_positionX, _positionY, (int)c, _cachedTextLabel, _textAlignment, -1);
           }
           base.Render(timePassed);
           return;
@@ -198,7 +213,9 @@ namespace MediaPortal.GUI.Library
           uint c = (uint) color;
           c = GUIGraphicsContext.MergeAlpha(c);
 
-          _font.DrawText((float) _positionX + xoff, (float) _positionY + yoff, (int) c, _cachedTextLabel,
+//          _font.DrawText((float)_positionX + xoff, (float)_positionY + yoff, (int)c, _cachedTextLabel,
+//                         Alignment.ALIGN_LEFT, _width);
+          this.DrawText((float)_positionX + xoff, (float)_positionY + yoff, (int)c, _cachedTextLabel,
                          Alignment.ALIGN_LEFT, _width);
         }
         else
@@ -210,7 +227,9 @@ namespace MediaPortal.GUI.Library
               uint c = (uint) color;
               c = GUIGraphicsContext.MergeAlpha(c);
 
-              _font.DrawText((float) _positionX - _textwidth, (float) _positionY, (int) c, _cachedTextLabel,
+//              _font.DrawText((float)_positionX - _textwidth, (float)_positionY, (int)c, _cachedTextLabel,
+//                             Alignment.ALIGN_LEFT, -1);
+              this.DrawText((float)_positionX - _textwidth, (float)_positionY, (int)c, _cachedTextLabel,
                              Alignment.ALIGN_LEFT, -1);
             }
             else
@@ -242,8 +261,10 @@ namespace MediaPortal.GUI.Library
               uint c = (uint) color;
               c = GUIGraphicsContext.MergeAlpha(c);
 
-              _font.DrawText((float) _positionX - _textwidth, (float) _positionY, (int) c, _cachedTextLabel,
-                             Alignment.ALIGN_LEFT, (int) _width - 5);
+//              _font.DrawText((float)_positionX - _textwidth, (float)_positionY, (int)c, _cachedTextLabel,
+//                             Alignment.ALIGN_LEFT, (int)_width - 5);
+              this.DrawText((float)_positionX - _textwidth, (float)_positionY, (int)c, _cachedTextLabel,
+             Alignment.ALIGN_LEFT, (int)_width - 5);
               //if (_useViewPort)
               //  GUIGraphicsContext.DX9Device.Viewport = oldviewport;
             }
@@ -256,8 +277,10 @@ namespace MediaPortal.GUI.Library
             uint c = (uint) color;
             c = GUIGraphicsContext.MergeAlpha(c);
 
-            _font.DrawText((float) _positionX, (float) _positionY, (int) c, _cachedTextLabel, _textAlignment,
-                           (int) _width);
+//            _font.DrawText((float)_positionX, (float)_positionY, (int)c, _cachedTextLabel, _textAlignment,
+//                           (int)_width);
+            this.DrawText((float)_positionX, (float)_positionY, (int)c, _cachedTextLabel, _textAlignment,
+                           (int)_width);
           }
           else
           {
@@ -286,12 +309,40 @@ namespace MediaPortal.GUI.Library
 
             uint c = (uint) color;
             c = GUIGraphicsContext.MergeAlpha(c);
-            _font.DrawText((float) _positionX, (float) _positionY, (int) c, _cachedTextLabel, _textAlignment,
-                           (int) _width - 5);
+//            _font.DrawText((float)_positionX, (float)_positionY, (int)c, _cachedTextLabel, _textAlignment,
+//                           (int)_width - 5);
+            this.DrawText((float)_positionX, (float)_positionY, (int)c, _cachedTextLabel, _textAlignment,
+                           (int)_width - 5);
           }
         }
       }
       base.Render(timePassed);
+    }
+
+    // Wraps the calls to the GUIFont.  This provides opportunity to shadow the text if requested.
+    public void DrawTextWidth(float xpos, float ypos, long color, string label, float fMaxWidth, GUIControl.Alignment alignment)
+    {
+        if (_shadow)
+        {
+            _font.DrawShadowTextWidth(xpos, ypos, color, label, alignment, _shadowAngle, _shadowDistance, _shadowColor, fMaxWidth);
+        }
+        else
+        {
+            _font.DrawTextWidth(xpos, ypos, color, label, fMaxWidth, alignment);
+        }
+    }
+
+    // Wraps the calls to the GUIFont.  This provides opportunity to shadow the text if requested.
+    public void DrawText(float xpos, float ypos, long color, string label, GUIControl.Alignment alignment, int width)
+    {
+        if (_shadow)
+        {
+            _font.DrawShadowText(xpos, ypos, color, label, alignment, _shadowAngle, _shadowDistance, _shadowColor);
+        }
+        else
+        {
+            _font.DrawText(xpos, ypos, color, label, alignment, width);
+        }
     }
 
     public bool UseViewPort
@@ -478,6 +529,57 @@ namespace MediaPortal.GUI.Library
         _textheight = 0;
         _reCalculate = true;
       }
+    }
+
+    /// <summary>
+    /// Get/set the angle of the shadow
+    /// </summary>
+    public int ShadowAngle
+    {
+        get { return _shadowAngle; }
+        set
+        {
+            if (_shadowAngle != value)
+            {
+                _shadowAngle = value;
+
+                _reCalculate = true;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Get/set the distance of the shadow
+    /// </summary>
+    public int ShadowDistance
+    {
+        get { return _shadowDistance; }
+        set
+        {
+            if (_shadowDistance != value)
+            {
+                _shadowDistance = value;
+
+                _reCalculate = true;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Get/set the color of the shadow
+    /// </summary>
+    public long ShadowColor
+    {
+        get { return _shadowColor; }
+        set
+        {
+            if (_shadowColor != value)
+            {
+                _shadowColor = value;
+
+                _reCalculate = true;
+            }
+        }
     }
 
     /// <summary>
