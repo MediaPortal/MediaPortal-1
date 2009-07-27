@@ -1920,6 +1920,7 @@ namespace TvPlugin
 
       if (!Card.IsTimeShifting)
       {
+        UpdateProgressPercentageBar(); // mantis #2218 : TV guide information in TV home screen does not update when program changes if TV is not playing 
         return;
       }
 
