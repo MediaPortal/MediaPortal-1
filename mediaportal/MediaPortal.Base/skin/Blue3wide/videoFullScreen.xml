@@ -7,8 +7,7 @@
   <define>#play.progressbar.currentplaytime:#currentplaytime</define>
   <define>#play.progressbar.currentremaining:#currentremaining</define>
   <controls>
-<!--  Bav: do not put a progressbar here! This will lead to mantis bug 2307
-    <import>common.play.progressbar.xml</import-->
+    <import>common.play.progressbar.xml</import>
     <import>common.play.fullscreen.xml</import>
     <control>
       <description>TV Logo</description>

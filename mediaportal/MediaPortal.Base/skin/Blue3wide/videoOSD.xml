@@ -9,7 +9,8 @@
 
   <controls>
     <import>common.play.osd.xml</import>
-    <import>common.play.progressbar.xml</import>
+    <!--Bav: do not put a progressbar here! This will lead to mantis bug 2307
+	<import>common.play.progressbar.xml</import-->
     <control>
       <description>TV Logo</description>
       <type>image</type>

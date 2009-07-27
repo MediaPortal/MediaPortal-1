@@ -194,6 +194,57 @@ namespace MediaPortal.GUI.Video
 
     #endregion
 
+		public override void ResetAllControls()
+		{
+			//reset all
+
+			bool bOffScreen = false;
+			int iCalibrationY = GUIGraphicsContext.OSDOffset;
+			int iTop = GUIGraphicsContext.OverScanTop;
+			int iMin = 0;
+
+			foreach (CPosition pos in _listPositions)
+			{
+				pos.control.SetPosition((int)pos.XPos, (int)pos.YPos + iCalibrationY);
+			}
+			foreach (CPosition pos in _listPositions)
+			{
+				GUIControl pControl = pos.control;
+
+				int dwPosY = pControl.YPosition;
+				if (pControl.IsVisible)
+				{
+					if (dwPosY < iTop)
+					{
+						int iSize = iTop - dwPosY;
+						if (iSize > iMin)
+						{
+							iMin = iSize;
+						}
+						bOffScreen = true;
+					}
+				}
+			}
+			if (bOffScreen)
+			{
+				foreach (CPosition pos in _listPositions)
+				{
+					GUIControl pControl = pos.control;
+					int dwPosX = pControl.XPosition;
+					int dwPosY = pControl.YPosition;
+					if (dwPosY < (int)100)
+					{
+						dwPosY += Math.Abs(iMin);
+						pControl.SetPosition(dwPosX, dwPosY);
+					}
+				}
+			}
+			base.ResetAllControls();
+		}
+
+
+
+
     private void OnOsdAction(Action action)
     {
       if (((action.wID == Action.ActionType.ACTION_SHOW_OSD) || (action.wID == Action.ActionType.ACTION_SHOW_GUI) ||
@@ -321,6 +372,7 @@ namespace MediaPortal.GUI.Video
           _isOsdVisible = true;
           _showSkipBar = false;
           GUIWindowManager.VisibleOsd = Window.WINDOW_OSD;
+        	GUIWindowManager.IsOsdVisible = true;
         }
         else if (y < 50)
         {
@@ -631,6 +683,7 @@ namespace MediaPortal.GUI.Video
             _osdWindow.OnMessage(msg); // Send an init msg to the OSD
             _isOsdVisible = true;
             GUIWindowManager.VisibleOsd = Window.WINDOW_OSD;
+						GUIWindowManager.IsOsdVisible = true;
           }
           break;
 
@@ -923,10 +976,10 @@ namespace MediaPortal.GUI.Video
     {
       switch (message.Message)
       {
-        case GUIMessage.MessageType.GUI_MSG_SETFOCUS:
+				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
+				case GUIMessage.MessageType.GUI_MSG_SETFOCUS:
         case GUIMessage.MessageType.GUI_MSG_LOSTFOCUS:
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           m_dwOSDTimeOut = DateTime.Now;
           break;
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
@@ -1013,6 +1066,8 @@ namespace MediaPortal.GUI.Video
             screenState = new FullScreenState();
             NotifyDialogVisible = false;
 
+            ResetAllControls(); // make sure the controls are positioned relevant to the OSD Y offset
+      		
             GUIGraphicsContext.IsFullScreenVideo = true;
             ScreenStateChanged();
             _needToClearScreen = true;
