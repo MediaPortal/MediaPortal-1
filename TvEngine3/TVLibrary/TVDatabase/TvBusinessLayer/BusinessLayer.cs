@@ -1718,11 +1718,11 @@ namespace TvDatabase
       SqlSelectCommand.AppendFormat("where endTime > '{0}'", DateTime.Now.ToString(GetDateTimeString(), mmddFormat));
       if (currentGenre.Length > 0)
       {
-        SqlSelectCommand.AppendFormat("and genre like '{0}%' ", currentGenre);
+        SqlSelectCommand.AppendFormat("and genre like '%{0}%' ", currentGenre);
       }
       if (searchCriteria.Length > 0)
       {
-        SqlSelectCommand.AppendFormat("and title like '%{0}%' ", searchCriteria);
+        SqlSelectCommand.AppendFormat("and title like '{0}%' ", searchCriteria);
       }
       SqlSelectCommand.Append("and c.visibleInGuide = 1 order by title, startTime");
       SqlStatement stmt = new SqlBuilder(StatementType.Select, typeof(Program)).GetStatement(true);
@@ -1738,7 +1738,7 @@ namespace TvDatabase
       SqlSelectCommand.AppendFormat("where endTime > '{0}'", DateTime.Now.ToString(GetDateTimeString(), mmddFormat));
       if (searchCriteria.Length > 0)
       {
-        SqlSelectCommand.AppendFormat("and title like '%{0}%' ", searchCriteria);
+        SqlSelectCommand.AppendFormat("and title like '{0}%' ", searchCriteria);
       }
       SqlSelectCommand.Append("and c.visibleInGuide = 1 order by title, startTime");
       SqlStatement stmt = new SqlBuilder(StatementType.Select, typeof(Program)).GetStatement(true);
