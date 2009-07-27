@@ -38,7 +38,7 @@
 
 ; VER_BUILD is set to zero for Release builds
 !define VER_MAJOR       1
-!define VER_MINOR       8
+!define VER_MINOR       9
 !define VER_REVISION    0
 !define VER_BUILD       0
 
@@ -78,8 +78,8 @@ SetCompressor /SOLID /FINAL lzma
   ; This macro used to define the SelectOption pages.
   ; List all the option pages which should be displayed here.
   !insertmacro "${MacroName}" "EPG"               "11rows"            "9rows"
-  !insertmacro "${MacroName}" "NowPlaying"        "newStyle_VUMeters" "oldStyle"
-  !insertmacro "${MacroName}" "Topbar"            "withoutShortcuts"  "withShortcuts"
+  !insertmacro "${MacroName}" "Basichome"        "Video" "MovingPictures"
+  !insertmacro "${MacroName}" "Topbar"            "withShortcuts"  "withoutShortcuts"
 !macroend
 
 ;======================================

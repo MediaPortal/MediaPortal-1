@@ -14,13 +14,13 @@
 !insertmacro LANG_STRING SelectOptionPageEPG_9rows  "EPG with 8 Rows"
 !insertmacro LANG_STRING SelectOptionPageEPG_11rows "EPG with 11 Rows (default)"
 
-# Strings for NowPlaying selection
-!insertmacro LANG_STRING SelectOptionPageNowPlaying_HEADER    "Customize your NowPlaying Screen"
-!insertmacro LANG_STRING SelectOptionPageNowPlaying_HEADER2   "!! for using the VU meters, you must use a new svn version after MP 1.0.2 !!"
-!insertmacro LANG_STRING SelectOptionPageNowPlaying_INFO      "Select the NowPlaying View you want:"
+# Strings for Basichome selection
+!insertmacro LANG_STRING SelectOptionPageBasichome_HEADER    "Customize"
+!insertmacro LANG_STRING SelectOptionPageBasichome_HEADER2   "your Basichome wich Videoplugin do you use ?"
+!insertmacro LANG_STRING SelectOptionPageBasichome_INFO      "Select the Videoplugin that should start by the videobutton"
 
-!insertmacro LANG_STRING SelectOptionPageNowPlaying_oldStyle          "NowPlaying old style"
-!insertmacro LANG_STRING SelectOptionPageNowPlaying_newStyle_VUMeters "NowPlaying new with VU Meters"
+!insertmacro LANG_STRING SelectOptionPageBasichome_Video          "Default Videoplugin from MP"
+!insertmacro LANG_STRING SelectOptionPageBasichome_MovingPictures   "MovingPictures Video Plugin (additional)"
 
 # Strings for Topbar selection
 !insertmacro LANG_STRING SelectOptionPageTopbar_HEADER    "Customize"
