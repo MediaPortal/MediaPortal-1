@@ -448,6 +448,7 @@
     <String id="517">Fatal fejl, handling ikke udført</String>
     <String id="518">Slet denne sang ?</String>
     <String id="519">Undertekster fra</String>
+    <String id="527">Sorter efter: Set</String>
     <String id="528">Albummets Kunstner</String>
     <String id="529">Vis: Store ikoner</String>
     <String id="530">Fotodisk isat, vil du se indholdet ?</String>
@@ -893,10 +894,42 @@
     <String id="1054">(Optager)</String>
     <String id="1055">(Tidsforskyder)</String>
     <String id="1056">(Ikke tilgængelig)</String>
+    <String id="1057">Optag søn-tors</String>
+    <String id="1058">Optag fre-lør</String>
+    <String id="1059">Søn-tors</String>
+    <String id="1060">Fre-lør</String>
     <String id="1061">Flytbar</String>
     <String id="1062">Objekt</String>
     <String id="1064">Bogmærker</String>
-    <String id="1065">Går til</String>
+    <String id="1065">Gå til</String>
+    <String id="1066">MP4</String>
+    <String id="1067">Meget høj</String>
+    <String id="1068">HD</String>
+    <String id="1069">240x180</String>
+    <String id="1070">288x216</String>
+    <String id="1071">352x240</String>
+    <String id="1072">352x288</String>
+    <String id="1073">640x480</String>
+    <String id="1074">704x480</String>
+    <String id="1075">720x576</String>
+    <String id="1076">1280x720</String>
+    <String id="1077">1920x1080</String>
+    <String id="1078">12.5 FPS</String>
+    <String id="1079">15 FPS</String>
+    <String id="1080">23.97 FPS</String>
+    <String id="1081">25 FPS</String>
+    <String id="1082">29.97 FPS</String>
+    <String id="1083">100 Kbps</String>
+    <String id="1084">256 Kbps</String>
+    <String id="1085">384 Kbps</String>
+    <String id="1086">768 Kbps</String>
+    <String id="1087">1536 Kbps</String>
+    <String id="1088">3072 Kbps</String>
+    <String id="1089">5376 Kbps</String>
+    <String id="1090">Video standard</String>
+    <String id="1091">Film</String>
+    <String id="1092">NTSC</String>
+    <String id="1093">PAL</String>
     <String id="1100">Importér CD</String>
     <String id="1101">Importér valgte numre</String>
     <String id="1102">Annullér import af CD</String>
@@ -949,6 +982,12 @@
     <String id="1515">Tidsforskydning er blevet stoppet af\rTV-server</String>
     <String id="1516">Tidsforskydning er blevet stoppet af\rukendte årsager</String>
     <String id="1517">Tidsforskydning er blevet stoppet af\randen bruger</String>
+    <String id="1518">Ude af stand til til at lave diagram</String>
+    <String id="1519">Ingen No understøttet software encoder installeret</String>
+    <String id="1520">Ikke nok fri plads</String>
+    <String id="1600">Ønsker du at slukke?</String>
+    <String id="1601">Ønsker du at afbryde?</String>
+    <String id="1602">Ønsker du at gå i dvale?</String>
     <String id="1950" prefix="Min ">Status</String>
     <String id="1951">Harddisk</String>
     <String id="1952">Blæser</String>
@@ -1181,6 +1220,8 @@
     <String id="2610">Polsk</String>
     <String id="2611">Tjekkisk</String>
     <String id="2612">Ungarsk</String>
+    <String id="2650">Genloader skrifttyper - vent venligst...</String>
+    <String id="2700">Åben CI menu</String>
     <String id="2997">t</String>
     <String id="2998">min</String>
     <String id="2999">sek</String>
@@ -1311,6 +1352,8 @@
     <String id="6037">Filmstabel</String>
     <String id="6038">Vælg venligst hvilken disk der skal afspilles.</String>
     <String id="6039">AAC Lyd codec</String>
+    <String id="6040">I går</String>
+    <String id="6041">To dage siden</String>
     <String id="8000" prefix="Min ">E-mail</String>
     <String id="8001">Hent post</String>
     <String id="8002">Automatisk kontrol fra</String>
@@ -1352,6 +1395,59 @@
     <String id="9009">Kameramodel:</String>
     <String id="9010">Udstyr:</String>
     <String id="9011">Kommentar:</String>
+    <String id="9100" prefix="My ">MiniDisplay</String>
+    <String id="9101">Plugin er ikke instillet</String>
+    <String id="9102">Venligst kør MediaPortal konfigurationen først!</String>
+    <String id="9103">Lille tastatur indstillinger</String>
+    <String id="9104">Display indstillinger</String>
+    <String id="9105">Display kontrol indstillinger</String>
+    <String id="9106">Equalizer indstillinger</String>
+    <String id="9107">Baggrundslys indstilling</String>
+    <String id="9108">Fjern indstillinger</String>
+    <String id="9109">Overvåg strøm oplsyninger</String>
+    <String id="9110">Kontrast</String>
+    <String id="9111">Lysstyrke</String>
+    <String id="9112">Rød</String>
+    <String id="9113">Grøn</String>
+    <String id="9114">Blå</String>
+    <String id="9115">Invert display</String>
+    <String id="9116">Tom display under videoafspilning</String>
+    <String id="9117">Tom Display Actions</String>
+    <String id="9118">Vis display tid</String>
+    <String id="9119">Blank display ved ledig</String>
+    <String id="9120">Ledig forsinkelse</String>
+    <String id="9121">Volumen display</String>
+    <String id="9122">Forløbs display</String>
+    <String id="9123">Disk ikon</String>
+    <String id="9124">Media status</String>
+    <String id="9125">CD/DVD status</String>
+    <String id="9126">Brug egen skrifttype</String>
+    <String id="9127">Brug store ikoner</String>
+    <String id="9128">Brug egne store ikoner</String>
+    <String id="9129">Invert store ikoner</String>
+    <String id="9130">Skrifttype editor</String>
+    <String id="9131">Ikon editor</String>
+    <String id="9132">Brug equalizer</String>
+    <String id="9133">Equalizer stil</String>
+    <String id="9134">Brug equalizer udjævning</String>
+    <String id="9135">Forsink start</String>
+    <String id="9136">Forsink tid</String>
+    <String id="9137">Vis title</String>
+    <String id="9138">Title tid</String>
+    <String id="9139">Title ofte</String>
+    <String id="9140">INGEN TASTETUR INDSTILLINGER</String>
+    <String id="9141">Slå lille tastatur til</String>
+    <String id="9142">Custom lille tastatur</String>
+    <String id="9143">Tastetur kortlægning</String>
+    <String id="9144">INGEN FJERNBETJENINGS INDSTILLINGER</String>
+    <String id="9145">Slå fjernbetjening fra</String>
+    <String id="9146">Slå gentagelse fra</String>
+    <String id="9147">Gentagelse forsinkelse</String>
+    <String id="9148">Fjernbetjening kortlægning</String>
+    <String id="9149">Normal</String>
+    <String id="9150">Stereo</String>
+    <String id="9151">VU Meter</String>
+    <String id="9152">VU Meter 2</String>
     <String id="9997">Sekunder:</String>
     <String id="9998">Minutter:</String>
     <String id="9999">Timer:</String>
@@ -1391,6 +1487,24 @@
     <String id="13033">Senest Startet</String>
     <String id="13034">Titel</String>
     <String id="13041">Vis Film-Info</String>
+    <String id="14001" prefix="Mine ">udvidelser</String>
+    <String id="14002">Syn</String>
+    <String id="14003">Indstallerede udvidelser</String>
+    <String id="14004">Online udvidelser</String>
+    <String id="14005">Installer udvidelse</String>
+    <String id="14006">Fjern udvidelse</String>	
+    <String id="14007">Geninstaller udvidelse</String>
+    <String id="14008">Ophæv sidste handling</String>
+    <String id="14009">Ved næste start vil denne handling blive afviklet</String>
+    <String id="14010">Download udvidelse</String>
+    <String id="14011">Vælg en option</String>
+    <String id="14012">Ikke kompatibel af denne Mediaportal version!(Kræver version {0})</String>	
+    <String id="14013">Ønsker du at fortsætte?</String>		
+    <String id="14014">Updating online info</String>			
+    <String id="14015">Updateringer</String>	
+    <String id="14016">Sorter efter: Download</String>
+    <String id="14017">Sorter efter: Bedømmelse</String>
+    <String id="14018">Installer updatering</String>
     <String id="16001">Festafspilning</String>
     <String id="19001" prefix="Mit ">Tetris</String>
     <String id="19002">Nyt Spil</String>
@@ -1489,6 +1603,8 @@
     <String id="33019">tilfældige foretrukne numre</String>
     <String id="33030">Top album-numre</String>
     <String id="33031">Andre numre markeret med: </String>
+    <String id="33032">Dette albums topnummer kunne ikke</String>
+    <String id="33033">blive fundet i din samling!</String>
     <String id="33040">Kopiér 'Now Playing' spam til clipboard</String>
     <String id="33041">Tilføj dette album til playliste</String>
     <String id="34000" prefix="Min ">Last.fm</String>
@@ -1496,15 +1612,20 @@
     <String id="34002">Ven: </String>
     <String id="34003">Nabo: </String>
     <String id="34004">Gruppe: </String>
+    <String id="34005">Skift bruger konto</String>
     <String id="34010">Elsk</String>
     <String id="34011">Forbyd</String>
     <String id="34012">Spring over</String>
     <String id="34013">Opdagelses-tilstand</String>
     <String id="34014">Send til profil</String>
     <String id="34015">Genindlæs tags/venner</String>
+    <String id="34016">Afspil en lignende kunstner</String>
+    <String id="34017">Afspil en lignende etiket</String>
     <String id="34020">Nuværende stream: </String>
     <String id="34030">Ingen markeringer</String>
     <String id="34031">Ingen venner</String>
+    <String id="34032">Ingen kunstner</String>
+    <String id="34039">der matcher kunstneren: </String>
     <String id="34040">Anbefalet radio</String>
     <String id="34041">Stil ind på valgt markering: </String>
     <String id="34042">Ingen markering valgt</String>
@@ -1521,6 +1642,10 @@
     <String id="34053">Afspilning af valgt stream fejlede</String>
     <String id="34054">Radioforbindelse fejlede!</String>
     <String id="34055">Streams kan være midlertidigt utilgængelige</String>
+    <String id="34060">Skriv etiket...</String>
+    <String id="34061">Skriv brugernavn...</String>
+    <String id="34062">Skriv kunstner...</String>
+    <String id="34063">Ingen kunstner er valgt</String>
     <String id="40001">Venter på Standby</String>
     <String id="40002">MediaPortal benyttes ikke, men er stadig optaget</String>
     <String id="40003">Når alle nuværende opgaver af afsluttet går MediaPortal på standby.</String>
@@ -1621,6 +1746,8 @@
     <String id="100707" prefix="Min ">EPG -&gt; Kanal-mapping</String>
     <String id="100708" prefix="Min ">Spring trin indstillinger</String>
     <String id="100709" prefix="Min ">TV-server opsætning</String>
+    <String id="100746">TV søgnings type</String>
+    <String id="100747">TV søgning</String
     <String id="100748" prefix="Min ">Programinfo</String>
     <String id="100749" prefix="Mit ">TV/Intet signal</String>
     <String id="100750" prefix="Mine ">Opskrifter</String>
@@ -1633,6 +1760,7 @@
     <String id="100761" prefix="Min ">TV-guide</String>
     <String id="100762" prefix="Min ">Radioguide</String>
     <String id="100770" prefix="Min ">Explorer</String>
+    <String id="100800" prefix="My ">Udvidelser</String>
     <String id="101000">tastatur</String>
     <String id="101002">Virtuelt Standard Tastatur</String>
     <String id="101003">Virtuelt Web Tastatur</String>
@@ -1654,6 +1782,7 @@
     <String id="102014">Billedinfo</String>
     <String id="102015">MiniMenu</String>
     <String id="102016">Besked</String>
+    <String id="102018">CI menu</String>
     <String id="102600" prefix="Mit ">Vejr</String>
     <String id="102700" prefix="Mine ">Nyheder</String>
     <String id="102900">Skærmbeskytter</String>
@@ -1667,6 +1796,9 @@
     <String id="103011" prefix="Min ">TV/Beskæringsopsætning</String>
     <String id="103012">TV modtager detaljer</String>
     <String id="104711" prefix="Min ">Wikipedia</String>
+    <String id="105000">Alarm</String>
+    <String id="105001">Alarm - Alarm detaljer</String>
+    <String id="105002">Alarm - Sovetid</String>
     <String id="105900" prefix="Mine ">Trailere</String>
     <String id="106666">Strømstyring Venter</String>
     <String id="107700" prefix="Mit ">TV/Tekst TV</String>
@@ -1674,6 +1806,16 @@
     <String id="107777" prefix="Mit ">Sudoku</String>
     <String id="107890" prefix="Min ">Last.fm radio</String>
     <String id="108888">Musik menu</String>
+    <String id="109000">MiniDisplay - Setup</String>
+    <String id="109001">MiniDisplay - Setup - Baggrundslys</String>
+    <String id="109002">MiniDisplay - Setup - Display styring</String>
+    <String id="109003">MiniDisplay - Setup - Display indstillinger</String>
+    <String id="109004">MiniDisplay - Setup - Equalizer</String>
+    <String id="109005">MiniDisplay - Setup - Tastetur</String>
+    <String id="109006">MiniDisplay - Setup - fjernbetjeningsstyring</String>
+    <String id="109811" prefix="My ">TV-Series</String>
+    <String id="190478" prefix="My ">Lyrics</String>
+    <String id="196742">MovingPictures</String>
     <String id="200000">Vælg venligst din EPG grabber. Bemærk - hvis dit land ikke er</String>
     <String id="200001">i listen skal du selv levere EPG oplysninger.</String>
     <String id="200002">Du kan nu sammenkæde EPG kanaler med TV kanaler</String>
@@ -1741,5 +1883,6 @@
     <String id="200068">Kan ikke forbinde til database</String>
     <String id="200069">Alle IP porte forbinder ok</String>
     <String id="200070">Check firewall</String>
+    <String id="200071">Slet denne mappe og alle underliggende mapper?</String>
   </Section>
 </Language>
