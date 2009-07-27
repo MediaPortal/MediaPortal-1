@@ -36,6 +36,7 @@ using TvLibrary.Interfaces;
 using TvLibrary.Implementations;
 using TvLibrary.Channels;
 using MediaPortal.UserInterface.Controls;
+using System.Threading;
 
 namespace SetupTv.Sections
 {
@@ -67,6 +68,9 @@ namespace SetupTv.Sections
     private readonly MPListViewStringColumnSorter lvwColumnSorter2;
 
     private bool suppressRefresh = false;
+    private bool isScanning = false;
+    private bool abortScanning = false;
+    private Thread scanThread;
 
     public TvChannels()
       : this("TV Channels")
@@ -796,8 +800,35 @@ namespace SetupTv.Sections
       dlg.Close();
     }
 
+    private void StartScanThread()
+    {
+      scanThread = new Thread(ScanForScrambledChannels);
+      scanThread.Name = "Scrambled channel scan thread";
+      scanThread.Start();
+      mpButtonTestScrambled.Text = "Stop";
+    }
+
+    private void StopScanThread()
+    {
+      abortScanning = true;
+    }
+
     private void mpButtonTestScrambled_Click(object sender, EventArgs e)
     {
+      if (isScanning)
+      {
+        StopScanThread();
+      }
+      else if (!abortScanning) // cancel in progress
+      {
+        StartScanThread();
+      }
+    }
+
+    private void ScanForScrambledChannels()
+    {
+      abortScanning = false;
+      isScanning = true;
       NotifyForm dlg = new NotifyForm("Testing all tv channels...", "Please be patient...");
       dlg.Show();
       dlg.WaitForDisplay();
@@ -814,18 +845,29 @@ namespace SetupTv.Sections
         dlg.SetMessage(
           string.Format("Please be patient...\n\nTesting channel {0} ( {1} of {2} )",
                         _channel.DisplayName, item.Index + 1, mpListView1.Items.Count));
+        Application.DoEvents();
         TvResult result = _server.StartTimeShifting(ref _user, _channel.IdChannel, out _card);
         // test the channel for scrambled or unable to start graph
         if ((result == TvResult.ChannelIsScrambled))
         {
           item.Checked = false;
-        } else if (result == TvResult.Succeeded)
+          // store directly back to db
+          _channel.VisibleInGuide = false;
+          _channel.Persist();
+        }
+        else if (result == TvResult.Succeeded)
         {
           _card.StopTimeShifting();
         }
-
+        if (abortScanning)
+        {
+          break;
+        }
       }
+      mpButtonTestScrambled.Text = "Test";
       dlg.Close();
+      isScanning = false;
+      abortScanning = false;
     }
 
 	  private void mpButtonUp_Click(object sender, EventArgs e)
