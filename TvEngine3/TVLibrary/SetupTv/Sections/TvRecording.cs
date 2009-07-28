@@ -905,9 +905,10 @@ namespace SetupTv.Sections
             try
             {
                 string physicalFile = GetRecordingFilename(aFileName);
+              
                 tagRec = new Recording(GetChannelIdByDisplayName(aTag.channelName),
-                                                 GetRecordingStartTime(physicalFile),
-                                                 GetRecordingEndTime(physicalFile),
+                                                 aTag.startTime,
+                                                 aTag.endTime,
                                                  aTag.title,
                                                  aTag.description,
                                                  aTag.genre,
@@ -916,7 +917,7 @@ namespace SetupTv.Sections
                                                  SqlDateTime.MaxValue.Value,
                                                  0,
                                                  GetServerId(),
-                                                 String.Empty
+                                                 aTag.episodeName
                                                  );
             }
             catch (Exception ex)
@@ -924,28 +925,6 @@ namespace SetupTv.Sections
                 MessageBox.Show(string.Format("Could not build recording from tag: {0}\n{1}", aFileName, ex.Message));
             }
             return tagRec;
-        }
-
-        private static DateTime GetRecordingStartTime(string aFileName)
-        {
-            DateTime startTime = SqlDateTime.MinValue.Value;
-            if (File.Exists(aFileName))
-            {
-                FileInfo fi = new FileInfo(aFileName);
-                startTime = fi.CreationTime;
-            }
-            return startTime;
-        }
-
-        private static DateTime GetRecordingEndTime(string aFileName)
-        {
-            DateTime endTime = SqlDateTime.MinValue.Value;
-            if (File.Exists(aFileName))
-            {
-                FileInfo fi = new FileInfo(aFileName);
-                endTime = fi.LastWriteTime;
-            }
-            return endTime;
         }
 
         /*

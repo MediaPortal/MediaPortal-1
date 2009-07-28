@@ -780,7 +780,12 @@ namespace TvService
           info.title = RecDetail.Program.Title;
           info.description = RecDetail.Program.Description;
           info.genre = RecDetail.Program.Genre;
+          
           info.channelName = RecDetail.Schedule.ReferencedChannel().DisplayName;
+          info.episodeName = RecDetail.Program.EpisodeName;
+          info.startTime = RecDetail.Schedule.StartTime;
+          info.endTime = RecDetail.Schedule.EndTime;
+
           MatroskaTagHandler.WriteTag(System.IO.Path.ChangeExtension(fileName, ".xml"), info);
         }
         Log.Write("Scheduler: recList: count: {0} add scheduleid: {1} card: {2}", _recordingsInProgressList.Count, RecDetail.Schedule.IdSchedule, RecDetail.CardInfo.Card.Name);

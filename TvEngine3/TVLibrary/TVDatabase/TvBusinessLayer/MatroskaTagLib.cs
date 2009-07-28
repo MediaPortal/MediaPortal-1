@@ -33,6 +33,9 @@ namespace TvDatabase
     public string description;
     public string genre;
     public string channelName;
+    public DateTime startTime;
+    public DateTime endTime;
+    public string episodeName;
   }
 
   /// <summary>
@@ -166,6 +169,15 @@ namespace TvDatabase
             case "CHANNEL_NAME":
               info.channelName = simpleTag.ChildNodes[1].InnerText;
               break;
+            case "EPISODE_NAME":
+              info.episodeName = simpleTag.ChildNodes[1].InnerText;
+              break;
+            case "START_TIME":
+              info.startTime = new DateTime(long.Parse(simpleTag.ChildNodes[1].InnerText));
+              break;
+            case "END_TIME":
+              info.endTime = new DateTime(long.Parse(simpleTag.ChildNodes[1].InnerText));
+              break;
           }
         }
       }
@@ -191,6 +203,9 @@ namespace TvDatabase
       tagNode.AppendChild(AddSimpleTag("COMMENT", taginfo.description, doc));
       tagNode.AppendChild(AddSimpleTag("GENRE", taginfo.genre, doc));
       tagNode.AppendChild(AddSimpleTag("CHANNEL_NAME", taginfo.channelName, doc));
+      tagNode.AppendChild(AddSimpleTag("EPISODE_NAME", taginfo.episodeName, doc));
+      tagNode.AppendChild(AddSimpleTag("START_TIME", taginfo.startTime.Ticks.ToString(), doc));
+      tagNode.AppendChild(AddSimpleTag("END_TIME", taginfo.endTime.Ticks.ToString(), doc));
       tagsNode.AppendChild(tagNode);
       doc.AppendChild(tagsNode);
       doc.InsertBefore(xmldecl, tagsNode);
