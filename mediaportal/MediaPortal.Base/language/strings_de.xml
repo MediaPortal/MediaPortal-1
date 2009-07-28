@@ -1353,6 +1353,11 @@
     <String id="6039">LATM AAC Audio-Dekoder</String>
     <String id="6040">Gestern</String>
     <String id="6041">Vorgestern</String>
+    <String id="6050">Diese Woche</String>
+    <String id="6060">Dieser Monat</String>
+    <String id="6070">Dieses Jahr</String>
+    <String id="6080">Letztes Jahr</String>
+    <String id="6090">Älter</String>
     <String id="8000" prefix="Meine ">E-Mails</String>
     <String id="8001">E-Mails abrufen</String>
     <String id="8002">Autocheck aus</String>

@@ -6,8 +6,7 @@ using System;
 using System.Collections.Generic;
 using Gentle.Framework;
 using TvLibrary.Log;
-
-namespace TvDatabase
+  namespace TvDatabase
 {
   /// <summary>
   /// Instances of this class represent the properties and methods of a row in the table <b>Recording</b>.
@@ -45,7 +44,7 @@ namespace TvDatabase
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
     /// </summary> 
     public Recording(int idChannel, DateTime startTime, DateTime endTime, string title, string description, string genre,
-                     string fileName, int keepUntil, DateTime keepUntilDate, int timesWatched, int idServer, string episodeName, 
+                     string fileName, int keepUntil, DateTime keepUntilDate, int timesWatched, int idServer, string episodeName,
                      string seriesNum, string episodeNum,string episodePart)
     {
       isChanged = true;
@@ -172,16 +171,6 @@ namespace TvDatabase
       {
         isChanged |= title != value;
         title = value;
-      }
-    }
-    /// <summary>
-    /// Property relating to database column title and episode info (readonly)
-    /// </summary>
-    public string TitleDisplay
-    {
-      get 
-      {
-        return TVDatabase.Utils.TitleDisplay(title, episodeName, seriesNum, episodeNum, episodePart);
       }
     }
 
@@ -344,7 +333,7 @@ namespace TvDatabase
     {
       get
       {
-        return TVDatabase.Utils.GetEpisodeNumber(seriesNum, episodeNum, episodePart);
+        return TvDatabase.EpisodeFormatter.GetEpisodeNumber(seriesNum, episodeNum, episodePart);
       }
     }
 

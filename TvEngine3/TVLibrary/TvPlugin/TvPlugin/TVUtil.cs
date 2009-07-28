@@ -23,6 +23,8 @@ using System;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using TvDatabase;
+using MediaPortal.Profile;
+
 
 namespace TvPlugin
 {
@@ -32,7 +34,24 @@ namespace TvPlugin
   /// </summary>
   public class TVUtil
   {
+    #region vars
     private int _days;
+    private static int _showEpisodeInfo = -1;
+    private static int ShowEpisodeInfo
+    {
+      get
+      {
+        if (_showEpisodeInfo == -1)
+        {
+          using (Settings xmlreader = new MPSettings())
+          {
+            _showEpisodeInfo = xmlreader.GetValueAsInt("mytv", "showEpisodeInfo", 0);
+          }
+        }
+        return _showEpisodeInfo;
+      }
+    }
+    #endregion
 
     public TVUtil()
     {
@@ -215,6 +234,91 @@ namespace TvPlugin
         }
       }
       return recordings;
+    }
+    public static string GetDisplayTitle(Recording rec)
+    {
+      return TitleDisplay(rec.Title,rec.EpisodeName,rec.SeriesNum,rec.EpisodeNum,rec.EpisodePart);
+    }
+    public static string GetDisplayTitle(Program prog)
+    {
+      return TitleDisplay(prog.Title, prog.EpisodeName, prog.SeriesNum, prog.EpisodeNum, prog.EpisodePart);
+    }
+    ///
+    /// Get Episode info
+    /// Builds string by the following rules set by ShowEpisodeInfo
+    /// 0: [None] (empty string)
+    /// 1: seriesNum.episodeNum.episodePart
+    /// 2: episodeName
+    /// 3: seriesNum.episodeNum.episodePart episodeName
+    public static string GetEpisodeInfo(string episodeName, string seriesNum, string episodeNum, string episodePart)
+    {
+      string episodeInfo = "";
+      if (ShowEpisodeInfo == 1 || ShowEpisodeInfo == 3)
+      {
+        if (!String.IsNullOrEmpty(seriesNum))
+        {
+          episodeInfo = seriesNum.Trim();
+        }
+        if (!String.IsNullOrEmpty(episodeNum))
+        {
+          if (episodeInfo.Length != 0)
+          {
+            episodeInfo = episodeInfo + "." + episodeNum.Trim();
+          }
+          else
+          {
+            episodeInfo = episodeNum.Trim();
+          }
+        }
+        if (!String.IsNullOrEmpty(episodePart))
+        {
+          if (!String.IsNullOrEmpty(episodeInfo))
+          {
+            episodeInfo = episodeInfo + "." + episodePart.Trim();
+          }
+          else
+          {
+            episodeInfo = episodePart.Trim();
+          }
+        }
+        if (ShowEpisodeInfo == 2 || ShowEpisodeInfo == 3)
+        {
+          if (!String.IsNullOrEmpty(episodeName))
+          {
+            if (!String.IsNullOrEmpty(episodeInfo))
+            {
+              episodeInfo = episodeInfo + " " + episodeName;
+            }
+            else
+            {
+              episodeInfo = episodeName;
+            }
+          }
+        }
+      }
+      return episodeInfo;
+    }
+    /// <summary>
+    ///  Create Display Title
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="episodeName"></param>
+    /// <param name="seriesNum"></param>
+    /// <param name="episodeNum"></param>
+    /// <param name="episodePart"></param>
+    /// <returns></returns>
+    public static string TitleDisplay(string title, string episodeName, string seriesNum, string episodeNum, string episodePart)
+    {
+      string titleDisplay = GetEpisodeInfo(episodeName, seriesNum, episodeNum, episodePart);
+      if (!String.IsNullOrEmpty(titleDisplay))
+      {
+        titleDisplay = title + " (" + titleDisplay + ")";
+      }
+      else
+      {
+        titleDisplay = title;
+      }
+      return titleDisplay;
     }
 
     //bool _isSeries = false;

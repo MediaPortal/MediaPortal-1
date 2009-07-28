@@ -1495,7 +1495,7 @@ namespace TvPlugin
         if (tbOnTvNow != null)
         {
           strTime = String.Format("{0} ", prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-          tbOnTvNow.Label = strTime + prog.TitleDisplay;
+          tbOnTvNow.Label = strTime + TVUtil.GetDisplayTitle(prog);
           GUIPropertyManager.SetProperty("#TV.View.start", strTime);
 
           strTime = String.Format("{0} ", prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
@@ -1513,7 +1513,7 @@ namespace TvPlugin
         {
           if (tbOnTvNext != null)
           {
-            tbOnTvNext.Label = strTime + "  " + prog.TitleDisplay;
+            tbOnTvNext.Label = strTime + "  " + TVUtil.GetDisplayTitle(prog);
           }
         }
       }
@@ -1662,7 +1662,7 @@ namespace TvPlugin
                                          prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
           GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
           GUIPropertyManager.SetProperty("#TV.View.genre", prog.Genre);
-          GUIPropertyManager.SetProperty("#TV.View.title", prog.TitleDisplay);
+          GUIPropertyManager.SetProperty("#TV.View.title", TVUtil.GetDisplayTitle(prog));
           GUIPropertyManager.SetProperty("#TV.View.subtitle", prog.EpisodeName);
           GUIPropertyManager.SetProperty("#TV.View.description", prog.Description);
           GUIPropertyManager.SetProperty("#TV.View.episode", prog.EpisodeNumber);
@@ -1683,8 +1683,7 @@ namespace TvPlugin
         if (rec != null)
         {
           description = rec.Description;
-          title = rec.TitleDisplay;
-
+          title = TVUtil.GetDisplayTitle(rec);
           long currentPosition = (long)(g_Player.CurrentPosition);
           startTime = Utils.SecondsToHMSString((int)currentPosition);
 

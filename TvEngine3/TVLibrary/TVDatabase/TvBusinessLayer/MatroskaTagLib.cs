@@ -91,7 +91,7 @@ namespace TvDatabase
         }
         catch (Exception)
         {
-          importDirs = new string[] {aDirectory};
+          importDirs = new string[] { aDirectory };
         }
         List<string> searchDirs = new List<string>(importDirs);
         if (!searchDirs.Contains(aDirectory))
@@ -200,7 +200,7 @@ namespace TvDatabase
               {
                 info.endTime = DateTime.ParseExact(simpleTag.ChildNodes[1].InnerText, "yyyy-MM-dd HH:mm", null);
               }
-              catch (Exception Ex)
+              catch (Exception)
               {
                 info.endTime = SqlDateTime.MinValue.Value;
               }

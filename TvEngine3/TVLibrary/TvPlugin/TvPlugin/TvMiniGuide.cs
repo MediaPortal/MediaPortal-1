@@ -615,7 +615,8 @@ namespace TvPlugin
             //tmpString = CurrentChan.CurrentProgram.Title; <-- this would be SLOW
             if (!string.IsNullOrEmpty(listNowNext[CurrentId].TitleNow))
             {
-              tmpString = listNowNext[CurrentId].TitleNow;
+              tmpString = TVUtil.TitleDisplay(listNowNext[CurrentId].TitleNow, listNowNext[CurrentId].EpisodeName, listNowNext[CurrentId].SeriesNum,
+                                              listNowNext[CurrentId].EpisodeNum, listNowNext[CurrentId].EpisodePart);
             }
           }
           item.Label2 = tmpString;
@@ -650,7 +651,8 @@ namespace TvPlugin
           tmpString = local736;
           if ((listNowNext.ContainsKey(CurrentId)) && (listNowNext[CurrentId].IdProgramNext != -1))
           {
-            tmpString = listNowNext[CurrentId].TitleNext;
+            tmpString = TVUtil.TitleDisplay(listNowNext[CurrentId].TitleNext,listNowNext[CurrentId].EpisodeNameNext,listNowNext[CurrentId].SeriesNumNext,
+                                            listNowNext[CurrentId].EpisodeNumNext,listNowNext[CurrentId].EpisodePartNext);
           }
 
           item.Label2 = sb.ToString();

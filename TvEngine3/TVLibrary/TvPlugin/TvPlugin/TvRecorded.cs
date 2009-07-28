@@ -599,8 +599,8 @@ namespace TvPlugin
         return;
       }
       dlg.Reset();
-      dlg.SetHeading(rec.TitleDisplay);
 
+      dlg.SetHeading(TVUtil.GetDisplayTitle(rec));
       dlg.AddLocalizedString(655); //Play recorded tv
       dlg.AddLocalizedString(656); //Delete recorded tv
       if (rec.TimesWatched > 0)
@@ -894,7 +894,7 @@ namespace TvPlugin
                 {
                   // Add new list item for this recording
                   //GUIListItem item = BuildItemFromRecording(rec);
-                  it.Label = rec.TitleDisplay;
+                  it.Label = TVUtil.GetDisplayTitle(rec);
                   itemlist.Add(it);
                 }
                 else
@@ -957,7 +957,7 @@ namespace TvPlugin
             {
               // Add new list item for this recording
               item = BuildItemFromRecording(rec);
-              item.Label = rec.TitleDisplay;
+              item.Label = TVUtil.GetDisplayTitle(rec);
               if (item != null)
               {
                 itemlist.Add(item);

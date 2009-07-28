@@ -1974,7 +1974,7 @@ namespace TvPlugin
 
         foreach (Program program in programs)
         {
-          string strTitle = program.TitleDisplay;
+          string strTitle = TVUtil.GetDisplayTitle(program);
           bool bStartsBefore = false;
           bool bEndsAfter = false;
           if (Utils.datetolong(program.EndTime) <= iStart)

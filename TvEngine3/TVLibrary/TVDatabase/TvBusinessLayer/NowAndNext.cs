@@ -32,9 +32,19 @@ namespace TvDatabase
     private string _titleNext;
     private int _idProgramNow;
     private int _idProgramNext;
+    private string _episodeName;
+    private string _episodeNameNext;
+    private string _seriesNum;
+    private string _seriesNumNext;
+    private string _episodeNum;
+    private string _episodeNumNext;
+    private string _episodePart;
+    private string _episodePartNext;
 
     public NowAndNext(int idChannel, DateTime nowStart, DateTime nowEnd, string titleNow, string titleNext,
-                      int idProgramNow, int idProgramNext)
+                      int idProgramNow, int idProgramNext,
+                      string episodeName, string episodeNameNext, string seriesNum, string seriesNumNext,
+                      string episodeNum, string EpisodeNumNext, string episodePart, string episodePartNext)
     {
       _idChannel = idChannel;
       _nowStart = nowStart;
@@ -43,6 +53,14 @@ namespace TvDatabase
       _titleNext = titleNext;
       _idProgramNow = idProgramNow;
       _idProgramNext = idProgramNext;
+      _episodeName = episodeName;
+      _episodeNameNext = episodeNameNext;
+      _seriesNum = seriesNum;
+      _seriesNumNext = seriesNumNext;
+      _episodeNum = episodeNum;
+      _episodeNumNext = EpisodeNumNext;
+      _episodePart = episodePart;
+      _episodePartNext = episodePartNext;
     }
 
     public int IdChannel
@@ -86,5 +104,55 @@ namespace TvDatabase
       get { return _idProgramNext; }
       set { _idProgramNext = value; }
     }
+
+    public string EpisodeName
+    {
+      get { return _episodeName;}
+      set { _episodeName = value;}
+    }
+
+    public string EpisodeNameNext
+    {
+      get { return _episodeNameNext; }
+      set { _episodeNameNext = value; }
+    }
+
+    public string SeriesNum
+    {
+      get { return _seriesNum; }
+      set { _seriesNum = value; }
+    }
+
+    public string SeriesNumNext
+    {
+      get { return _seriesNumNext; }
+      set { _seriesNumNext = value; }
+    }
+
+    public string EpisodeNum
+    {
+      get { return _episodeNum; }
+      set { _episodeNum = value; }
+    }
+
+    public string EpisodeNumNext
+    {
+      get { return _episodeNumNext; }
+      set { _episodeNumNext = value; }
+    }
+
+    public string EpisodePart
+    {
+      get { return _episodePart; }
+      set { _episodePart = value; }
+    }
+
+    public string EpisodePartNext
+    {
+      get { return _episodePartNext; }
+      set { _episodePartNext = value; }
+    }
+
+
   }
 }

@@ -40,14 +40,13 @@ using DirectShowLib;
 using DirectShowLib.BDA;
 using Gentle.Framework;
 using MySql.Data.MySqlClient;
+using TvDatabase;
 using TvLibrary;
 using TvLibrary.Channels;
 using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using StatementType = Gentle.Framework.StatementType;
-
-//using FirebirdSql.Data.Firebird;
 
 #endregion
 
@@ -1949,12 +1948,18 @@ namespace TvDatabase
           int nowidProgram = (int)dataSet.Tables[0].Rows[j]["idProgram"];
           DateTime nowStart = (DateTime)dataSet.Tables[0].Rows[j]["startTime"];
           DateTime nowEnd = (DateTime)dataSet.Tables[0].Rows[j]["endTime"];
-          string nowTitle = Utils.TitleDisplay((string)dataSet.Tables[0].Rows[j]["title"], (string)dataSet.Tables[0].Rows[j]["episodeName"], (string)dataSet.Tables[0].Rows[j]["seriesNum"], (string)dataSet.Tables[0].Rows[j]["episodeNum"], (string)dataSet.Tables[0].Rows[j]["episodePart"]);
+          string nowTitle = (string)dataSet.Tables[0].Rows[j]["title"];
+          string episodeName = (string)dataSet.Tables[0].Rows[j]["episodeName"];
+          string seriesNum = (string)dataSet.Tables[0].Rows[j]["seriesNum"];
+          string episodeNum = (string)dataSet.Tables[0].Rows[j]["episodeNum"];
+          string episodePart = (string)dataSet.Tables[0].Rows[j]["episodePart"];
           // if the first entry is not valid for the "Now" entry - use if for "Next" info
           if (nowStart > DateTime.Now)
           {
             NowAndNext p = new NowAndNext(idChannel, SqlDateTime.MinValue.Value, SqlDateTime.MinValue.Value,
-                                          string.Empty, nowTitle, -1, nowidProgram);
+                                          string.Empty, nowTitle, -1, nowidProgram,episodeName,string.Empty,
+                                          seriesNum,string.Empty,episodeNum,string.Empty,
+                                          episodePart,string.Empty);
             progList[idChannel] = p;
             continue;
           }
@@ -1965,15 +1970,22 @@ namespace TvDatabase
             if (idChannel == (int)dataSet.Tables[0].Rows[j + 1]["idChannel"])
             {
               int nextidProgram = (int)dataSet.Tables[0].Rows[j + 1]["idProgram"];
-              string nextTitle = Utils.TitleDisplay((string)dataSet.Tables[0].Rows[j + 1]["title"], (string)dataSet.Tables[0].Rows[j + 1]["episodeName"], (string)dataSet.Tables[0].Rows[j + 1]["seriesNum"], (string)dataSet.Tables[0].Rows[j + 1]["episodeNum"], (string)dataSet.Tables[0].Rows[j + 1]["episodePart"]);
+              string nextTitle = (string)dataSet.Tables[0].Rows[j + 1]["title"];
+              string nextEpisodeName = (string)dataSet.Tables[0].Rows[j + 1]["episodeName"];
+              string nextSeriesNum = (string)dataSet.Tables[0].Rows[j + 1]["seriesNum"];
+              string nextEpisodeNum = (string)dataSet.Tables[0].Rows[j + 1]["episodeNum"];
+              string nextEpisodePart = (string)dataSet.Tables[0].Rows[j + 1]["episodePart"];
               NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nowTitle, nextTitle, nowidProgram,
-                                            nextidProgram);
+                                            nextidProgram,episodeName,nextEpisodeName,seriesNum,nextSeriesNum,
+                                            episodeNum,nextEpisodeNum,episodePart,nextEpisodePart);
               progList[idChannel] = p;
             }
             else
             {
               // no "next" info because of holes in EPG data - we want the "now" info nevertheless
-              NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nowTitle, string.Empty, nowidProgram, -1);
+              NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nowTitle, string.Empty, nowidProgram, -1,
+                                            string.Empty,string.Empty,string.Empty,string.Empty,string.Empty,
+                                            string.Empty,string.Empty,string.Empty);
               progList[idChannel] = p;
             }
           }

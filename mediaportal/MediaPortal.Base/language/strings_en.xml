@@ -1356,6 +1356,11 @@
     <String id="6039">AAC Audio Codec</String>
     <String id="6040">Yesterday</String>
     <String id="6041">Two days ago</String>
+    <String id="6050">Current week</String>
+    <String id="6060">Current month</String>
+    <String id="6070">Current year</String>
+    <String id="6080">Last year</String>
+    <String id="6090">Older</String>
     <String id="8000" prefix="My ">Mail</String>
     <String id="8001">Check Mailbox</String>
     <String id="8002">Auto-check off</String>

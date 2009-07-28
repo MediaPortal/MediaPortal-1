@@ -45,7 +45,7 @@ namespace MediaPortal.InputDevices
         Stop();
       }
       _initialized = true;
-      diRemote.Init();
+      //diRemote.Init();
       X10Remote.Init();
       CentareaRemote.Init();
       HidListener.Init(GUIGraphicsContext.ActiveForm);
@@ -69,7 +69,7 @@ namespace MediaPortal.InputDevices
       CentareaRemote.DeInit();
       HCWRemote.DeInit();
       IrTrans.DeInit();
-      diRemote.Stop();
+      //diRemote.Stop();
 
       _initialized = false;
     }
@@ -135,7 +135,7 @@ namespace MediaPortal.InputDevices
     private static MCE2005Remote MCE2005Remote = new MCE2005Remote();
     private static HcwRemote HCWRemote = new HcwRemote();
     private static X10Remote X10Remote = new X10Remote();
-    private static DirectInputHandler diRemote = new DirectInputHandler();
+    //private static DirectInputHandler diRemote = new DirectInputHandler();
     private static IrTrans IrTrans = new IrTrans();
     private static FireDTVRemote FireDTVRemote = new FireDTVRemote();
     private static CentareaRemote CentareaRemote = new CentareaRemote();
