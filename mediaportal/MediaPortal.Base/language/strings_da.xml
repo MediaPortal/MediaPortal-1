@@ -687,10 +687,10 @@
     <String id="809">Retningslinier</String>
     <String id="810">Kort</String>
     <String id="820">Slet usét optagelse?</String>
-    <String id="830">Sæt 'set'-status tilbage</String>    
+    <String id="830">Sæt 'set'-status tilbage</String>
     <String id="831">Fjern flytbar drev</String>
     <String id="832">Kan ikke fjerne drev: </String>
-    <String id="833">Drevet kan nu sikkert fjernes</String>            
+    <String id="833">Drevet kan nu sikkert fjernes</String>
     <String id="850" prefix="Min ">Alarm</String>
     <String id="851">Playlist</String>
     <String id="852">Alarm Til</String>
@@ -1492,16 +1492,16 @@
     <String id="14003">Indstallerede udvidelser</String>
     <String id="14004">Online udvidelser</String>
     <String id="14005">Installer udvidelse</String>
-    <String id="14006">Fjern udvidelse</String>	
+    <String id="14006">Fjern udvidelse</String>
     <String id="14007">Geninstaller udvidelse</String>
     <String id="14008">Ophæv sidste handling</String>
     <String id="14009">Ved næste start vil denne handling blive afviklet</String>
     <String id="14010">Download udvidelse</String>
     <String id="14011">Vælg en option</String>
-    <String id="14012">Ikke kompatibel af denne Mediaportal version!(Kræver version {0})</String>	
-    <String id="14013">Ønsker du at fortsætte?</String>		
-    <String id="14014">Updating online info</String>			
-    <String id="14015">Updateringer</String>	
+    <String id="14012">Ikke kompatibel af denne Mediaportal version!(Kræver version {0})</String>
+    <String id="14013">Ønsker du at fortsætte?</String>
+    <String id="14014">Updating online info</String>
+    <String id="14015">Updateringer</String>
     <String id="14016">Sorter efter: Download</String>
     <String id="14017">Sorter efter: Bedømmelse</String>
     <String id="14018">Installer updatering</String>
@@ -1747,7 +1747,7 @@
     <String id="100708" prefix="Min ">Spring trin indstillinger</String>
     <String id="100709" prefix="Min ">TV-server opsætning</String>
     <String id="100746">TV søgnings type</String>
-    <String id="100747">TV søgning</String
+    <String id="100747">TV søgning</String>
     <String id="100748" prefix="Min ">Programinfo</String>
     <String id="100749" prefix="Mit ">TV/Intet signal</String>
     <String id="100750" prefix="Mine ">Opskrifter</String>
