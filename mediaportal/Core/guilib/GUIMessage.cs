@@ -130,7 +130,8 @@ namespace MediaPortal.GUI.Library
       GUI_MSG_CODEC_MISSING = 94,   // chemelli
       GUI_MSG_ADD_REMOVABLE_DRIVE = 95,
       GUI_MSG_REMOVE_REMOVABLE_DRIVE = 96,
-      GUI_MSG_REFRESHRATE_CHANGED = 97
+      GUI_MSG_REFRESHRATE_CHANGED = 97,
+      GUI_MSG_TV_ERROR_NOTIFY = 98 // morpheus_xx, tv error handling
     } ;
 
     private string _label = "";
