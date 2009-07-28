@@ -2417,6 +2417,9 @@ namespace TvPlugin
           GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
           GUIPropertyManager.SetProperty("#TV.View.title", String.Empty);
           GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
+          GUIPropertyManager.SetProperty("#TV.View.subtitle", String.Empty);
+          GUIPropertyManager.SetProperty("#TV.View.episode", String.Empty);
+
         }
       }
 
@@ -2501,6 +2504,8 @@ namespace TvPlugin
             GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
             GUIPropertyManager.SetProperty("#TV.View.title", String.Empty);
             GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.subtitle", String.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.episode", String.Empty);
             GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
             GUIPropertyManager.SetProperty("#TV.View.remaining", String.Empty);
             GUIPropertyManager.SetProperty("#TV.View.genre", String.Empty);
@@ -2508,7 +2513,9 @@ namespace TvPlugin
             GUIPropertyManager.SetProperty("#TV.Next.stop", String.Empty);
             GUIPropertyManager.SetProperty("#TV.Next.genre", String.Empty);
             GUIPropertyManager.SetProperty("#TV.Next.title", String.Empty);
+            GUIPropertyManager.SetProperty("#TV.Next.subtitle", String.Empty);
             GUIPropertyManager.SetProperty("#TV.Next.description", String.Empty);
+            GUIPropertyManager.SetProperty("#TV.Next.episode", String.Empty);
             return;
           }
 
@@ -2525,8 +2532,11 @@ namespace TvPlugin
             GUIPropertyManager.SetProperty("#TV.View.remaining",
                                            Utils.SecondsToHMSString(current.EndTime - current.StartTime));
             GUIPropertyManager.SetProperty("#TV.View.genre", current.Genre);
-            GUIPropertyManager.SetProperty("#TV.View.title", current.Title);
+            GUIPropertyManager.SetProperty("#TV.View.title", current.TitleDisplay);
             GUIPropertyManager.SetProperty("#TV.View.description", current.Description);
+            GUIPropertyManager.SetProperty("#TV.View.subtitle", current.EpisodeName);
+            GUIPropertyManager.SetProperty("#TV.View.episode", current.EpisodeNumber);
+
           }
           else
           {
@@ -2542,8 +2552,10 @@ namespace TvPlugin
                                            next.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
             GUIPropertyManager.SetProperty("#TV.Next.remaining", Utils.SecondsToHMSString(next.EndTime - next.StartTime));
             GUIPropertyManager.SetProperty("#TV.Next.genre", next.Genre);
-            GUIPropertyManager.SetProperty("#TV.Next.title", next.Title);
+            GUIPropertyManager.SetProperty("#TV.Next.title", next.TitleDisplay);
             GUIPropertyManager.SetProperty("#TV.Next.description", next.Description);
+            GUIPropertyManager.SetProperty("#TV.Next.subtitle", next.EpisodeName);
+            GUIPropertyManager.SetProperty("#TV.Next.episode", next.EpisodeNumber);
           }
           else
           {
@@ -2644,6 +2656,12 @@ namespace TvPlugin
 
         GUIPropertyManager.SetProperty("#TV.View.start", startTime);
         GUIPropertyManager.SetProperty("#TV.View.stop", endTime);
+        if (rec != null)
+        {
+          GUIPropertyManager.SetProperty("#TV.View.title", rec.TitleDisplay);
+          GUIPropertyManager.SetProperty("#TV.View.subtitle", rec.EpisodeName);
+          GUIPropertyManager.SetProperty("#TV.View.episode", rec.EpisodeNumber);
+        }
 
         string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, displayName);
         if (File.Exists(strLogo))

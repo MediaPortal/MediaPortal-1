@@ -163,6 +163,17 @@ namespace TvDatabase
     }
 
     /// <summary>
+    /// Property relating to database column title and episode info (readonly)
+    /// </summary>
+    public string TitleDisplay
+    {
+      get
+      {
+        return TVDatabase.Utils.TitleDisplay(title,episodeName,seriesNum,episodeNum,episodePart);
+      }
+    }
+
+    /// <summary>
     /// Property relating to database column description
     /// </summary>
     public string Description
@@ -263,6 +274,16 @@ namespace TvDatabase
       {
         isChanged |= episodePart != value;
         episodePart = value;
+      }
+    }
+    /// <summary>
+    /// Property relating to database column seriesNum, episodeNum and episodePart (readonly)
+    /// </summary>
+    public string EpisodeNumber
+    {
+      get
+      {
+        return TVDatabase.Utils.GetEpisodeNumber(seriesNum, episodeNum, episodePart);
       }
     }
 

@@ -1735,7 +1735,7 @@ namespace TvDatabase
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       StringBuilder SqlSelectCommand = new StringBuilder();
       SqlSelectCommand.Append("select p.* from Program p inner join Channel c on c.idChannel = p.idChannel ");
-      SqlSelectCommand.AppendFormat("where endTime > '{0}'", DateTime.Now.ToString(GetDateTimeString(), mmddFormat));
+      SqlSelectCommand.AppendFormat("where endTime > '{0}' ", DateTime.Now.ToString(GetDateTimeString(), mmddFormat));
       if (searchCriteria.Length > 0)
       {
         SqlSelectCommand.AppendFormat("and title like '{0}%' ", searchCriteria);
@@ -1779,7 +1779,7 @@ namespace TvDatabase
           foreach (Channel ch in aEpgChannelList)
           {
             sbSelect.AppendFormat(
-              "(SELECT idChannel,idProgram,starttime,endtime,title FROM program WHERE idChannel={0} AND (Program.endtime >= NOW()) order by starttime limit 2)  UNION  ",
+              "(SELECT idChannel,idProgram,starttime,endtime,title,episodeName,seriesNum,episodeNum,episodePart FROM program WHERE idChannel={0} AND (Program.endtime >= NOW()) order by starttime limit 2)  UNION  ",
               ch.IdChannel);
           }
 
@@ -1795,7 +1795,7 @@ namespace TvDatabase
           //completeStatement = completeStatement.Remove(completeStatement.Length - 12); // Remove trailing UNION ALL
           //completeStatement = completeStatement + " ORDER BY idChannel, startTime";   // MSSQL does not support order by in single UNION selects
 
-          sbSelect.Append("SELECT idChannel,idProgram,starttime,endtime,title FROM Program ");
+          sbSelect.Append("SELECT idChannel,idProgram,starttime,endtime,title,episodeName,seriesNum,episodeNum,episodePart FROM Program ");
           sbSelect.Append("WHERE (Program.endtime >= getdate() AND Program.endtime < DATEADD(day, 1, getdate()))");
 
           StringBuilder whereChannel = new StringBuilder(" AND (");
@@ -1949,8 +1949,7 @@ namespace TvDatabase
           int nowidProgram = (int)dataSet.Tables[0].Rows[j]["idProgram"];
           DateTime nowStart = (DateTime)dataSet.Tables[0].Rows[j]["startTime"];
           DateTime nowEnd = (DateTime)dataSet.Tables[0].Rows[j]["endTime"];
-          string nowTitle = (string)dataSet.Tables[0].Rows[j]["title"];
-
+          string nowTitle = Utils.TitleDisplay((string)dataSet.Tables[0].Rows[j]["title"], (string)dataSet.Tables[0].Rows[j]["episodeName"], (string)dataSet.Tables[0].Rows[j]["seriesNum"], (string)dataSet.Tables[0].Rows[j]["episodeNum"], (string)dataSet.Tables[0].Rows[j]["episodePart"]);
           // if the first entry is not valid for the "Now" entry - use if for "Next" info
           if (nowStart > DateTime.Now)
           {
@@ -1966,8 +1965,7 @@ namespace TvDatabase
             if (idChannel == (int)dataSet.Tables[0].Rows[j + 1]["idChannel"])
             {
               int nextidProgram = (int)dataSet.Tables[0].Rows[j + 1]["idProgram"];
-              string nextTitle = (string)dataSet.Tables[0].Rows[j + 1]["title"];
-
+              string nextTitle = Utils.TitleDisplay((string)dataSet.Tables[0].Rows[j + 1]["title"], (string)dataSet.Tables[0].Rows[j + 1]["episodeName"], (string)dataSet.Tables[0].Rows[j + 1]["seriesNum"], (string)dataSet.Tables[0].Rows[j + 1]["episodeNum"], (string)dataSet.Tables[0].Rows[j + 1]["episodePart"]);
               NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nowTitle, nextTitle, nowidProgram,
                                             nextidProgram);
               progList[idChannel] = p;

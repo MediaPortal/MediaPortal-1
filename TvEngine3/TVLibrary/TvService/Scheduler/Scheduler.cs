@@ -68,6 +68,7 @@ namespace TvService
     User _user;
     bool _createTagInfoXML;
     bool _preventDuplicateEpisodes;
+    int _preventDuplicateEpisodesKey;
 
     #endregion
 
@@ -84,6 +85,7 @@ namespace TvService
       TvBusinessLayer layer = new TvBusinessLayer();
       _createTagInfoXML = (layer.GetSetting("createtaginfoxml", "yes").Value == "yes");
       _preventDuplicateEpisodes = (layer.GetSetting("PreventDuplicates", "no").Value == "yes");
+      _preventDuplicateEpisodesKey = Convert.ToInt32(layer.GetSetting("EpisodeKey", "0").Value);
     }
 
     #endregion
@@ -259,7 +261,16 @@ namespace TvService
       bool NewRecordingNeeded = true;
       //cleanup: remove EPG additions of Clickfinder plugin
       string ToRecordTitle = CleanEpisodeTitle(newRecording.Program.Title);
-      string ToRecordEpisode = CleanEpisodeTitle(newRecording.Program.EpisodeName);
+      string ToRecordEpisode = "";
+      switch (_preventDuplicateEpisodesKey)
+      {
+        case 1:  // Episode Number
+          ToRecordEpisode = newRecording.Program.SeriesNum + "." + newRecording.Program.EpisodeNum + "." + newRecording.Program.EpisodePart;
+          break;
+        default: // Episode Name
+          ToRecordEpisode = CleanEpisodeTitle(newRecording.Program.EpisodeName);
+          break;
+      }
       try
       {
         // Allow user to turn this on or off in case of unreliable EPG
@@ -278,6 +289,7 @@ namespace TvService
           }
           else
           {
+            string pastRecordEpisode = "";
             for (int i = 0; i < pastRecordings.Count; i++)
             {
               // Checking the record "title" itself to avoid unnecessary checks.
@@ -286,7 +298,16 @@ namespace TvService
               {
                 //Log.Debug("Scheduler: Found recordings of schedule {0} - checking episodes...", ToRecordTitle);
                 // The schedule which is about to be recorded is already found on our disk
-                if (CleanEpisodeTitle(pastRecordings[i].EpisodeName).Equals(ToRecordEpisode, StringComparison.CurrentCultureIgnoreCase))
+                switch (_preventDuplicateEpisodesKey)
+                {
+                  case 1: // Episode Number
+                    pastRecordEpisode = pastRecordings[i].SeriesNum + "." + pastRecordings[i].EpisodeNum + "." + pastRecordings[i].EpisodePart;
+                    break;
+                  default: // 0 EpisodeName
+                    pastRecordEpisode = CleanEpisodeTitle(pastRecordings[i].EpisodeName);
+                    break;
+                }
+                if (pastRecordEpisode.Equals(ToRecordEpisode, StringComparison.CurrentCultureIgnoreCase))
                 {
                   // How to handle "interrupted" recordings?
                   // E.g. Windows reboot because of update installation: Previously the tvservice restarted to record the episode 
@@ -756,7 +777,7 @@ namespace TvService
         Log.Debug(String.Format("Scheduler: adding new row in db for title=\"{0}\" of type=\"{1}\"", RecDetail.Program.Title, RecDetail.Schedule.ScheduleType));
         RecDetail.Recording = new Recording(RecDetail.Schedule.IdChannel, RecDetail.RecordingStartDateTime, DateTime.Now, RecDetail.Program.Title,
                             RecDetail.Program.Description, RecDetail.Program.Genre, RecDetail.FileName, RecDetail.Schedule.KeepMethod,
-                            RecDetail.Schedule.KeepDate, 0, idServer, RecDetail.Program.EpisodeName);
+                            RecDetail.Schedule.KeepDate, 0, idServer, RecDetail.Program.EpisodeName, RecDetail.Program.SeriesNum, RecDetail.Program.EpisodeNum, RecDetail.Program.EpisodePart);
         RecDetail.Recording.Persist();
 
         _recordingsInProgressList.Add(RecDetail);
@@ -783,8 +804,11 @@ namespace TvService
           
           info.channelName = RecDetail.Schedule.ReferencedChannel().DisplayName;
           info.episodeName = RecDetail.Program.EpisodeName;
-          info.startTime = RecDetail.Schedule.StartTime;
-          info.endTime = RecDetail.Schedule.EndTime;
+          info.seriesNum = RecDetail.Program.SeriesNum;
+          info.episodeNum = RecDetail.Program.EpisodeNum;
+          info.episodePart = RecDetail.Program.EpisodePart;
+          info.startTime = RecDetail.RecordingStartDateTime;
+          info.endTime = RecDetail.EndTime;
 
           MatroskaTagHandler.WriteTag(System.IO.Path.ChangeExtension(fileName, ".xml"), info);
         }

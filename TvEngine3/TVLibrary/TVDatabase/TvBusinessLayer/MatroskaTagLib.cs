@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using TvLibrary.Log;
+using System.Data.SqlTypes;
 
 namespace TvDatabase
 {
@@ -33,9 +34,12 @@ namespace TvDatabase
     public string description;
     public string genre;
     public string channelName;
-    public DateTime startTime;
-    public DateTime endTime;
-    public string episodeName;
+    public string episodeName = "";
+    public string seriesNum = "";
+    public string episodeNum = "";
+    public string episodePart = "";
+    public DateTime startTime = SqlDateTime.MinValue.Value;
+    public DateTime endTime = SqlDateTime.MinValue.Value;
   }
 
   /// <summary>
@@ -169,14 +173,37 @@ namespace TvDatabase
             case "CHANNEL_NAME":
               info.channelName = simpleTag.ChildNodes[1].InnerText;
               break;
-            case "EPISODE_NAME":
+            case "SERIESNUM":
+              info.seriesNum = simpleTag.ChildNodes[1].InnerText;
+              break;
+            case "EPISODENUM":
+              info.episodeNum = simpleTag.ChildNodes[1].InnerText;
+              break;
+            case "EPISODEPART":
+              info.episodePart = simpleTag.ChildNodes[1].InnerText;
+              break;
+            case "EPISODENAME":
               info.episodeName = simpleTag.ChildNodes[1].InnerText;
               break;
-            case "START_TIME":
-              info.startTime = new DateTime(long.Parse(simpleTag.ChildNodes[1].InnerText));
+            case "STARTTIME":
+              try
+              {
+                info.startTime = DateTime.ParseExact(simpleTag.ChildNodes[1].InnerText, "yyyy-MM-dd HH:mm", null);
+              }
+              catch (Exception)
+              {
+                info.startTime = SqlDateTime.MinValue.Value;
+              }
               break;
-            case "END_TIME":
-              info.endTime = new DateTime(long.Parse(simpleTag.ChildNodes[1].InnerText));
+            case "ENDTIME":
+              try
+              {
+                info.endTime = DateTime.ParseExact(simpleTag.ChildNodes[1].InnerText, "yyyy-MM-dd HH:mm", null);
+              }
+              catch (Exception Ex)
+              {
+                info.endTime = SqlDateTime.MinValue.Value;
+              }
               break;
           }
         }
@@ -203,9 +230,12 @@ namespace TvDatabase
       tagNode.AppendChild(AddSimpleTag("COMMENT", taginfo.description, doc));
       tagNode.AppendChild(AddSimpleTag("GENRE", taginfo.genre, doc));
       tagNode.AppendChild(AddSimpleTag("CHANNEL_NAME", taginfo.channelName, doc));
-      tagNode.AppendChild(AddSimpleTag("EPISODE_NAME", taginfo.episodeName, doc));
-      tagNode.AppendChild(AddSimpleTag("START_TIME", taginfo.startTime.Ticks.ToString(), doc));
-      tagNode.AppendChild(AddSimpleTag("END_TIME", taginfo.endTime.Ticks.ToString(), doc));
+      tagNode.AppendChild(AddSimpleTag("EPISODENAME", taginfo.episodeName, doc));
+      tagNode.AppendChild(AddSimpleTag("SERIESNUM", taginfo.seriesNum, doc));
+      tagNode.AppendChild(AddSimpleTag("EPISODENUM", taginfo.episodeNum, doc));
+      tagNode.AppendChild(AddSimpleTag("EPISODEPART", taginfo.episodePart, doc));
+      tagNode.AppendChild(AddSimpleTag("STARTTIME", taginfo.startTime.ToString("yyyy-MM-dd HH:mm"), doc));
+      tagNode.AppendChild(AddSimpleTag("ENDTIME", taginfo.endTime.ToString("yyyy-MM-dd HH:mm"), doc));
       tagsNode.AppendChild(tagNode);
       doc.AppendChild(tagsNode);
       doc.InsertBefore(xmldecl, tagsNode);

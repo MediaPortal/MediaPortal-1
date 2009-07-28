@@ -75,7 +75,15 @@ namespace MediaPortal.Configuration.Sections
     private MPGroupBox grpTsReader;
     private MPCheckBox cbRelaxTsReader;
     private ListViewColumnSorter _columnSorter;
-
+    private MPLabel labelShowEpisodeinfo;
+    private MPComboBox comboboxShowEpisodeInfo;
+    private string[] ShowEpisodeOptions = new string[]
+                                       {
+                                         "[None]",        // Dont show episode info
+                                         "Number",        // Show seriesNum.episodeNum.episodePart
+                                         "Title",         // Show episodeName
+                                         "Number + Title" // Show number and title
+                                       };
     #endregion
 
     public TVClient()
@@ -87,6 +95,9 @@ namespace MediaPortal.Configuration.Sections
       : base(name)
     {
       InitializeComponent();
+      // Episode Options
+      comboboxShowEpisodeInfo.Items.Clear();
+      comboboxShowEpisodeInfo.Items.AddRange(ShowEpisodeOptions);
     }
 
     public override void LoadSettings()
@@ -112,6 +123,12 @@ namespace MediaPortal.Configuration.Sections
         txtNotifyBefore.Text = xmlreader.GetValueAsString("mytv", "notifyTVBefore", "300");
         txtNotifyAfter.Text = xmlreader.GetValueAsString("mytv", "notifyTVTimeout", "15");
         checkBoxNotifyPlaySound.Checked = xmlreader.GetValueAsBool("mytv", "notifybeep", true);
+        int showEpisodeinfo = xmlreader.GetValueAsInt("mytv", "showEpisodeInfo", 0);
+        if (showEpisodeinfo > this.ShowEpisodeOptions.Length)
+        {
+          showEpisodeinfo = 0;
+        }
+        comboboxShowEpisodeInfo.SelectedIndex = showEpisodeinfo;
       }
       chkTVnotifications_CheckedChanged(null, null);
       // Enable this Panel if the TvPlugin exists in the plug-in Directory
@@ -267,6 +284,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("mytv", "notifyTVBefore", txtNotifyBefore.Text);
         xmlwriter.SetValue("mytv", "notifyTVTimeout", txtNotifyAfter.Text);
         xmlwriter.SetValueAsBool("mytv", "notifybeep", checkBoxNotifyPlaySound.Checked);
+        xmlwriter.SetValue("mytv", "showEpisodeInfo", comboboxShowEpisodeInfo.SelectedIndex);
 
         foreach (ListViewItem item in mpListViewPreferredAudioLang.Items)
         {
@@ -296,6 +314,8 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageGeneralSettings = new MPTabPage();
       this.mpGroupBox6 = new MPGroupBox();
       this.cbShowChannelStateIcons = new MPCheckBox();
+      this.labelShowEpisodeinfo = new MPLabel();
+      this.comboboxShowEpisodeInfo = new MPComboBox();
       this.mpGroupBox5 = new MPGroupBox();
       this.cbHideAllChannels = new MPCheckBox();
       this.tabPageAudioLanguages = new MPTabPage();
@@ -466,30 +486,6 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageGeneralSettings.Text = "General settings";
       this.tabPageGeneralSettings.UseVisualStyleBackColor = true;
       // 
-      // mpGroupBox6
-      // 
-      this.mpGroupBox6.Controls.Add(this.cbShowChannelStateIcons);
-      this.mpGroupBox6.FlatStyle = FlatStyle.Popup;
-      this.mpGroupBox6.Location = new Point(16, 161);
-      this.mpGroupBox6.Name = "mpGroupBox6";
-      this.mpGroupBox6.Size = new Size(431, 53);
-      this.mpGroupBox6.TabIndex = 12;
-      this.mpGroupBox6.TabStop = false;
-      this.mpGroupBox6.Text = "Mini Guide";
-      // 
-      // cbShowChannelStateIcons
-      // 
-      this.cbShowChannelStateIcons.AutoSize = true;
-      this.cbShowChannelStateIcons.Checked = true;
-      this.cbShowChannelStateIcons.CheckState = CheckState.Checked;
-      this.cbShowChannelStateIcons.FlatStyle = FlatStyle.Popup;
-      this.cbShowChannelStateIcons.Location = new Point(22, 19);
-      this.cbShowChannelStateIcons.Name = "cbShowChannelStateIcons";
-      this.cbShowChannelStateIcons.Size = new Size(226, 17);
-      this.cbShowChannelStateIcons.TabIndex = 0;
-      this.cbShowChannelStateIcons.Text = "Show channel state icons (on supp. skins))";
-      this.cbShowChannelStateIcons.UseVisualStyleBackColor = true;
-      // 
       // mpGroupBox5
       // 
       this.mpGroupBox5.Controls.Add(this.cbHideAllChannels);
@@ -511,6 +507,74 @@ namespace MediaPortal.Configuration.Sections
       this.cbHideAllChannels.TabIndex = 0;
       this.cbHideAllChannels.Text = "Hide \"All Channels\" Group";
       this.cbHideAllChannels.UseVisualStyleBackColor = true;
+      // 
+      // mpGroupBox6
+      // 
+      this.mpGroupBox6.Controls.Add(this.cbShowChannelStateIcons);
+      this.mpGroupBox6.Controls.Add(this.labelShowEpisodeinfo);
+      this.mpGroupBox6.Controls.Add(this.comboboxShowEpisodeInfo);
+      this.mpGroupBox6.FlatStyle = FlatStyle.Popup;
+      this.mpGroupBox6.Location = new Point(16, 161);
+      this.mpGroupBox6.Name = "mpGroupBox6";
+      this.mpGroupBox6.Size = new Size(431, 73);
+      this.mpGroupBox6.TabIndex = 12;
+      this.mpGroupBox6.TabStop = false;
+      this.mpGroupBox6.Text = "Guide";
+      // 
+      // cbShowChannelStateIcons
+      // 
+      this.cbShowChannelStateIcons.AutoSize = true;
+      this.cbShowChannelStateIcons.Checked = true;
+      this.cbShowChannelStateIcons.CheckState = CheckState.Checked;
+      this.cbShowChannelStateIcons.FlatStyle = FlatStyle.Popup;
+      this.cbShowChannelStateIcons.Location = new Point(22, 19);
+      this.cbShowChannelStateIcons.Name = "cbShowChannelStateIcons";
+      this.cbShowChannelStateIcons.Size = new Size(226, 17);
+      this.cbShowChannelStateIcons.TabIndex = 0;
+      this.cbShowChannelStateIcons.Text = "Show channel state icons in Mini Guide (on supp. skins))";
+      this.cbShowChannelStateIcons.UseVisualStyleBackColor = true;
+      // 
+      // labelShowEpisodeinfo
+      // 
+      this.labelShowEpisodeinfo.AutoSize = true;
+      this.labelShowEpisodeinfo.Location = new Point(19, 47);
+      this.labelShowEpisodeinfo.Name = "labelShowEpisodeinfo";
+      this.labelShowEpisodeinfo.Size = new Size(58, 13);
+      this.labelShowEpisodeinfo.TabIndex = 1;
+      this.labelShowEpisodeinfo.Text = "Show episode info:";
+      //
+      // showEpisodeInfoComboBox
+      //
+      this.comboboxShowEpisodeInfo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboboxShowEpisodeInfo.FormattingEnabled = true;
+      this.comboboxShowEpisodeInfo.Location = new System.Drawing.Point(126, 43);
+      this.comboboxShowEpisodeInfo.Name = "showEpisodeInfoComboBox";
+      this.comboboxShowEpisodeInfo.Size = new System.Drawing.Size(229, 21);
+      this.comboboxShowEpisodeInfo.TabIndex = 1;
+      // 
+      // grpTsReader
+      // 
+      this.grpTsReader.Controls.Add(this.cbRelaxTsReader);
+      this.grpTsReader.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.grpTsReader.Location = new System.Drawing.Point(16, 255);
+      this.grpTsReader.Name = "grpTsReader";
+      this.grpTsReader.Size = new System.Drawing.Size(431, 53);
+      this.grpTsReader.TabIndex = 12;
+      this.grpTsReader.TabStop = false;
+      this.grpTsReader.Text = "TsReader Options";
+      // 
+      // cbRelaxTsReader
+      // 
+      this.cbRelaxTsReader.AutoSize = true;
+      this.cbRelaxTsReader.Checked = true;
+      this.cbRelaxTsReader.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cbRelaxTsReader.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbRelaxTsReader.Location = new System.Drawing.Point(22, 19);
+      this.cbRelaxTsReader.Name = "cbRelaxTsReader";
+      this.cbRelaxTsReader.Size = new System.Drawing.Size(347, 17);
+      this.cbRelaxTsReader.TabIndex = 0;
+      this.cbRelaxTsReader.Text = "Don\'t drop discontinued packets in TsReader (can reduce stuttering)";
+      this.cbRelaxTsReader.UseVisualStyleBackColor = true;
       // 
       // tabPageAudioLanguages
       // 
@@ -973,30 +1037,6 @@ namespace MediaPortal.Configuration.Sections
       this.chkTVnotifications.Text = "Enabled (shows a notification when a TV program is about to start)";
       this.chkTVnotifications.UseVisualStyleBackColor = true;
       this.chkTVnotifications.CheckedChanged += new EventHandler(this.chkTVnotifications_CheckedChanged);
-      // 
-      // grpTsReader
-      // 
-      this.grpTsReader.Controls.Add(this.cbRelaxTsReader);
-      this.grpTsReader.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.grpTsReader.Location = new System.Drawing.Point(16, 235);
-      this.grpTsReader.Name = "grpTsReader";
-      this.grpTsReader.Size = new System.Drawing.Size(431, 53);
-      this.grpTsReader.TabIndex = 12;
-      this.grpTsReader.TabStop = false;
-      this.grpTsReader.Text = "TsReader Options";
-      // 
-      // cbRelaxTsReader
-      // 
-      this.cbRelaxTsReader.AutoSize = true;
-      this.cbRelaxTsReader.Checked = true;
-      this.cbRelaxTsReader.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.cbRelaxTsReader.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbRelaxTsReader.Location = new System.Drawing.Point(22, 19);
-      this.cbRelaxTsReader.Name = "cbRelaxTsReader";
-      this.cbRelaxTsReader.Size = new System.Drawing.Size(347, 17);
-      this.cbRelaxTsReader.TabIndex = 0;
-      this.cbRelaxTsReader.Text = "Don\'t drop discontinued packets in TsReader (can reduce stuttering)";
-      this.cbRelaxTsReader.UseVisualStyleBackColor = true;
       // 
       // TVClient
       // 

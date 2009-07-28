@@ -33,6 +33,9 @@ namespace TvDatabase
     // stores the last position - to make resume possible
     [TableColumn("stopTime", NotNull = true)] private int stopTime;
     [TableColumn("episodeName", NotNull = true)] private string episodeName;
+    [TableColumn("seriesNum", NotNull = true)] private string seriesNum;
+    [TableColumn("episodeNum", NotNull = true)] private string episodeNum;
+    [TableColumn("episodePart", NotNull = true)] private string episodePart;
 
     #endregion
 
@@ -42,7 +45,8 @@ namespace TvDatabase
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
     /// </summary> 
     public Recording(int idChannel, DateTime startTime, DateTime endTime, string title, string description, string genre,
-                     string fileName, int keepUntil, DateTime keepUntilDate, int timesWatched, int idServer, string episodeName)
+                     string fileName, int keepUntil, DateTime keepUntilDate, int timesWatched, int idServer, string episodeName, 
+                     string seriesNum, string episodeNum,string episodePart)
     {
       isChanged = true;
       this.idChannel = idChannel;
@@ -58,6 +62,9 @@ namespace TvDatabase
       this.idServer = idServer;
       stopTime = 0;
       this.episodeName = episodeName;
+      this.seriesNum = seriesNum;
+      this.episodeNum = episodeNum;
+      this.episodePart = episodePart;
     }
 
     /// <summary> 
@@ -66,7 +73,8 @@ namespace TvDatabase
     /// </summary> 
     public Recording(int idRecording, int idChannel, DateTime startTime, DateTime endTime, string title,
                      string description, string genre, string fileName, int keepUntil, DateTime keepUntilDate,
-                     int timesWatched, int idServer, int stopTime, string episodeName)
+                     int timesWatched, int idServer, int stopTime, string episodeName,
+                     string seriesNum, string episodeNum, string episodePart)
     {
       this.idRecording = idRecording;
       this.idChannel = idChannel;
@@ -82,6 +90,9 @@ namespace TvDatabase
       this.idServer = idServer;
       this.stopTime = stopTime;
       this.episodeName = episodeName;
+      this.seriesNum = seriesNum;
+      this.episodeNum = episodeNum;
+      this.episodePart = episodePart;
     }
 
     #endregion
@@ -161,6 +172,16 @@ namespace TvDatabase
       {
         isChanged |= title != value;
         title = value;
+      }
+    }
+    /// <summary>
+    /// Property relating to database column title and episode info (readonly)
+    /// </summary>
+    public string TitleDisplay
+    {
+      get 
+      {
+        return TVDatabase.Utils.TitleDisplay(title, episodeName, seriesNum, episodeNum, episodePart);
       }
     }
 
@@ -278,6 +299,52 @@ namespace TvDatabase
       {
         isChanged |= episodeName != value;
         episodeName = value;
+      }
+    }
+    /// <summary>
+    /// Property relating to database column serieNum
+    /// </summary>
+    public string SeriesNum
+    {
+      get { return seriesNum; }
+      set
+      {
+        isChanged |= seriesNum != value;
+        seriesNum = value;
+      }
+    }
+    /// <summary>
+    /// Property relating to database column episodeNum
+    /// </summary>
+    public string EpisodeNum
+    {
+      get { return episodeNum; }
+      set
+      {
+        isChanged |= episodeNum != value;
+        episodeNum = value;
+      }
+    }
+    /// <summary>
+    /// Property relating to database column episodePart
+    /// </summary>
+    public string EpisodePart
+    {
+      get { return episodePart; }
+      set
+      {
+        isChanged |= episodePart != value;
+        episodePart = value;
+      }
+    }
+    /// <summary>
+    /// Property relating to database column seriesNum, episodeNum and episodePart (readonly)
+    /// </summary>
+    public string EpisodeNumber
+    {
+      get
+      {
+        return TVDatabase.Utils.GetEpisodeNumber(seriesNum, episodeNum, episodePart);
       }
     }
 

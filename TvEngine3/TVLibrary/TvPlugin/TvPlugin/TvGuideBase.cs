@@ -1389,10 +1389,8 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#TV.Guide.Time", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Guide.Description", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Guide.Genre", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.EpisodeName", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.SeriesNumber", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.EpisodeNumber", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.EpisodePart", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.Guide.SubTitle", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.Guide.Episode", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Guide.EpisodeDetail", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Guide.Date", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Guide.StarRating", String.Empty);
@@ -1420,6 +1418,8 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#TV.Guide.Genre", _currentProgram.Genre);
         GUIPropertyManager.SetProperty("#TV.Guide.Duration", GetDuration(_currentProgram));
         GUIPropertyManager.SetProperty("#TV.Guide.TimeFromNow", GetStartTimeFromNow(_currentProgram));
+        GUIPropertyManager.SetProperty("#TV.Guide.Episode", _currentProgram.EpisodeNumber);
+        GUIPropertyManager.SetProperty("#TV.Guide.SubTitle", _currentProgram.EpisodeName);
         ///@
         /*
         if (_currentProgram.Episode == "-") GUIPropertyManager.SetProperty("#TV.Guide.EpisodeName", String.Empty);
@@ -1974,7 +1974,7 @@ namespace TvPlugin
 
         foreach (Program program in programs)
         {
-          string strTitle = program.Title;
+          string strTitle = program.TitleDisplay;
           bool bStartsBefore = false;
           bool bEndsAfter = false;
           if (Utils.datetolong(program.EndTime) <= iStart)

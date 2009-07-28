@@ -1222,7 +1222,7 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.Scheduled.Time", strTime);
       if (prog != null)
       {
-        GUIPropertyManager.SetProperty("#TV.Scheduled.Title", prog.Title);
+        GUIPropertyManager.SetProperty("#TV.Scheduled.Title", prog.TitleDisplay);
         GUIPropertyManager.SetProperty("#TV.Scheduled.Description", prog.Description);
         GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", prog.Genre);
       }

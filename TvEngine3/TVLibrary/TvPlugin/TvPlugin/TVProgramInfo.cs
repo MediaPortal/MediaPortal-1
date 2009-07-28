@@ -331,7 +331,7 @@ namespace TvPlugin
         if (schedule.IsManual && schedule.IdChannel == program.IdChannel && schedule.EndTime >= program.EndTime)
         {
           Schedule manual = schedule.Clone();
-          manual.ProgramName = program.Title;
+          manual.ProgramName = program.TitleDisplay;
           manual.EndTime = program.EndTime;
           manual.StartTime = program.StartTime;
           if (manual.IsRecordingProgram(program, filterCanceledRecordings))
@@ -365,7 +365,7 @@ namespace TvPlugin
           {
             ScheduleInfo refEpisode = new ScheduleInfo(
                                                        lstProg.IdChannel,
-                                                       lstProg.Title,
+                                                       lstProg.TitleDisplay,
                                                        lstProg.Description,
                                                        lstProg.Genre,
                                                        lstProg.StartTime,
@@ -387,7 +387,7 @@ namespace TvPlugin
       if (episode == null)
       {
         episode = new ScheduleInfo(CurrentProgram.IdChannel,
-                                   CurrentProgram.Title,
+                                   CurrentProgram.TitleDisplay,
                                    CurrentProgram.Description,
                                    CurrentProgram.Genre,
                                    CurrentProgram.StartTime,
@@ -475,12 +475,12 @@ namespace TvPlugin
       {
         Program episode = episodes[i];
         GUIListItem item = new GUIListItem();
-        item.Label = episode.Title;
+        item.Label = episode.TitleDisplay;
         item.OnItemSelected += item_OnItemSelected;
         string logo = Utils.GetCoverArt(Thumbs.TVChannel, episode.ReferencedChannel().DisplayName);
         if (!File.Exists(logo))
         {
-          item.Label = String.Format("{0} {1}", episode.ReferencedChannel().DisplayName, episode.Title);
+          item.Label = String.Format("{0} {1}", episode.ReferencedChannel().DisplayName, episode.TitleDisplay);
           logo = "defaultVideoBig.png";
         }
         Schedule recordingSchedule;
@@ -953,7 +953,7 @@ namespace TvPlugin
         }
 
         dlg.Reset();
-        dlg.SetHeading(program.Title);
+        dlg.SetHeading(program.TitleDisplay);
         dlg.AddLocalizedString(981); //Cancel this show
         dlg.AddLocalizedString(982); //Delete this entire schedule
         dlg.DoModal(GetID);

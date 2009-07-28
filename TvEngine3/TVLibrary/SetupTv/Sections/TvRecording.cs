@@ -187,7 +187,7 @@ namespace SetupTv.Sections
             checkBoxAutoDelete.Checked = (layer.GetSetting("autodeletewatchedrecordings", "no").Value == "yes");
             checkBoxPreventDupes.Checked = (layer.GetSetting("PreventDuplicates", "no").Value == "yes");
             comboBoxFirstWorkingDay.SelectedIndex = Convert.ToInt32(layer.GetSetting("FirstWorkingDay", "0").Value); //default is Monday=0       
-
+            comboBoxEpisodeKey.SelectedIndex = Convert.ToInt32(layer.GetSetting("EpisodeKey", "0").Value); // default EpisodeName
             //checkBoxCreateTagInfoXML.Checked = true; // (layer.GetSetting("createtaginfoxml", "yes").Value == "yes");
             checkboxSchedulerPriority.Checked = (layer.GetSetting("scheduleroverlivetv", "yes").Value == "yes");
             formatString[0] = "";
@@ -250,6 +250,10 @@ namespace SetupTv.Sections
 
             setting = layer.GetSetting("PreventDuplicates", "no");
             setting.Value = checkBoxPreventDupes.Checked ? "yes" : "no";
+            setting.Persist();
+
+            setting = layer.GetSetting("EpisodeKey", "0");
+            setting.Value = comboBoxEpisodeKey.SelectedIndex.ToString();
             setting.Persist();
 
             UpdateDriveInfo(true);
@@ -681,6 +685,18 @@ namespace SetupTv.Sections
             }
         }
 
+        private void checkBoxPreventDupes_CheckedChanged(object sender, EventArgs e)
+        {
+          if (checkBoxPreventDupes.Checked)
+          {
+            comboBoxEpisodeKey.Enabled = true;
+          }
+          else
+          {
+            comboBoxEpisodeKey.Enabled = false;
+          }
+        }
+
         private void tvTagRecs_AfterCheck(object sender, TreeViewEventArgs e)
         {
             SetImportButton();
@@ -767,10 +783,10 @@ namespace SetupTv.Sections
                 tvTagRecs.BeginUpdate();
                 foreach (KeyValuePair<string, MatroskaTagInfo> kvp in FoundTags)
                 {
-                    Recording TagRec = BuildRecordingFromTag(kvp.Key, kvp.Value);
+                  Recording TagRec = BuildRecordingFromTag(kvp.Key, kvp.Value);
                     if (TagRec != null)
                     {
-                        TreeNode TagNode = BuildNodeFromRecording(TagRec);
+                      TreeNode TagNode = BuildNodeFromRecording(TagRec);
                         if (TagNode != null)
                         {
                             bool RecFileFound = false;
@@ -815,9 +831,9 @@ namespace SetupTv.Sections
                 tvTagRecs.EndUpdate();
                 SetImportButton();
             }
-            catch (Exception)
+            catch (Exception Ex)
             {
-                // just in case the GUI controls could be null due to timing problems on thread callback
+              // just in case the GUI controls could be null due to timing problems on thread callback
                 if (btnImport != null)
                     btnImport.Enabled = false;
             }
@@ -905,7 +921,14 @@ namespace SetupTv.Sections
             try
             {
                 string physicalFile = GetRecordingFilename(aFileName);
-              
+                if (aTag.startTime.Equals(SqlDateTime.MinValue.Value))
+                {
+                  aTag.startTime = GetRecordingStartTime(physicalFile);
+                }
+                if (aTag.endTime.Equals(SqlDateTime.MinValue.Value))
+                {
+                  aTag.endTime = GetRecordingEndTime(physicalFile);
+                }
                 tagRec = new Recording(GetChannelIdByDisplayName(aTag.channelName),
                                                  aTag.startTime,
                                                  aTag.endTime,
@@ -917,7 +940,10 @@ namespace SetupTv.Sections
                                                  SqlDateTime.MaxValue.Value,
                                                  0,
                                                  GetServerId(),
-                                                 aTag.episodeName
+                                                 aTag.episodeName,
+                                                 aTag.seriesNum,
+                                                 aTag.episodeNum,
+                                                 aTag.episodePart
                                                  );
             }
             catch (Exception ex)

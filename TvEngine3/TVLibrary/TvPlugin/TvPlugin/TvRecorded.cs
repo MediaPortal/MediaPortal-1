@@ -193,18 +193,13 @@ namespace TvPlugin
 
     private RecordingThumbCacher thumbworker = null;
 
-    [SkinControl(2)]
-    protected GUIButtonControl btnViewAs = null;
-    [SkinControl(3)]
-    protected GUISortButtonControl btnSortBy = null;
-    [SkinControl(5)]
-    protected GUIButtonControl btnView = null;
-    [SkinControl(6)]
-    protected GUIButtonControl btnCleanup = null;
-    [SkinControl(7)]
-    protected GUIButtonControl btnCompress = null;
-    [SkinControl(50)]
-    protected GUIFacadeControl facadeView = null;
+    [SkinControl(2)]    protected GUIButtonControl btnViewAs = null;
+    [SkinControl(3)]    protected GUISortButtonControl btnSortBy = null;
+    [SkinControl(5)]    protected GUIButtonControl btnView = null;
+    [SkinControl(6)]    protected GUIButtonControl btnCleanup = null;
+    [SkinControl(7)]    protected GUIButtonControl btnCompress = null;
+    [SkinControl(50)]   protected GUIFacadeControl facadeView = null;
+
 
     #endregion
 
@@ -604,7 +599,7 @@ namespace TvPlugin
         return;
       }
       dlg.Reset();
-      dlg.SetHeading(rec.Title);
+      dlg.SetHeading(rec.TitleDisplay);
 
       dlg.AddLocalizedString(655); //Play recorded tv
       dlg.AddLocalizedString(656); //Delete recorded tv
@@ -882,6 +877,7 @@ namespace TvPlugin
 
                       item.IsFolder = true;
                       // NO thumbnails for folders please so we can distinguish between single files and folders
+                      item.Label = rec.Title;
                       Utils.SetDefaultIcons(item);
                       item.ThumbnailImage = item.IconImageBig;
                       add = false;
@@ -898,6 +894,7 @@ namespace TvPlugin
                 {
                   // Add new list item for this recording
                   //GUIListItem item = BuildItemFromRecording(rec);
+                  it.Label = rec.TitleDisplay;
                   itemlist.Add(it);
                 }
                 else
@@ -906,7 +903,8 @@ namespace TvPlugin
                   {
                     for (int i = 0; i < itemlist.Count; i++)
                     {
-                      if (itemlist[i].Label.Equals(rec.Title, StringComparison.InvariantCultureIgnoreCase) &&
+                      Recording listRec = itemlist[i].TVTag as Recording;
+                      if (listRec.Title.Equals(rec.Title, StringComparison.InvariantCultureIgnoreCase) &&
                           itemlist[i].IsFolder)
                       {
                         it.IsFolder = true;
@@ -959,7 +957,7 @@ namespace TvPlugin
             {
               // Add new list item for this recording
               item = BuildItemFromRecording(rec);
-              item.Label = rec.Title;
+              item.Label = rec.TitleDisplay;
               if (item != null)
               {
                 itemlist.Add(item);
