@@ -796,7 +796,7 @@ namespace MediaPortal.Player
               break;
 
             case EventCode.DvdWarning:
-              Log.Info("DVDPlayer DVD warning :{0}", p1, p2);
+              Log.Debug("DVDPlayer DVD warning :{0}", p1, p2);
               break;
 
             case EventCode.DvdCurrentHmsfTime:
@@ -815,20 +815,20 @@ namespace MediaPortal.Player
 
             case EventCode.DvdSubPicictureStreamChange:
               {
-                Log.Info("EVT:DvdSubPicture Changed to:{0} Enabled:{1}", p1, p2);
+                Log.Debug("EVT:DvdSubPicture Changed to:{0} Enabled:{1}", p1, p2);
               }
               break;
 
             case EventCode.DvdChapterStart:
               {
-                Log.Info("EVT:DvdChaptStart:{0}", p1);
+                Log.Debug("EVT:DvdChaptStart:{0}", p1);
                 _currChapter = p1;
                 break;
               }
 
             case EventCode.DvdTitleChange:
               {
-                Log.Info("EVT:DvdTitleChange:{0}", p1);
+                Log.Debug("EVT:DvdTitleChange:{0}", p1);
                 _currTitle = p1;
                 UpdateTitle(_currTitle);
                 break;
@@ -838,7 +838,7 @@ namespace MediaPortal.Player
               {
                 if (_pendingCmd)
                 {
-                  Log.Info("  DvdCmdStart with pending");
+                  Log.Debug("EVT:DvdCmdStart with pending");
                 }
                 break;
               }
@@ -851,19 +851,19 @@ namespace MediaPortal.Player
 
             case EventCode.DvdStillOn:
               {
-                Log.Info("EVT:DvdStillOn:{0}", p1);
+                Log.Debug("EVT:DvdStillOn:{0}", p1);
                 break;
               }
 
             case EventCode.DvdStillOff:
               {
-                Log.Info("EVT:DvdStillOff:{0}", p1);
+                Log.Debug("EVT:DvdStillOff:{0}", p1);
                 break;
               }
 
             case EventCode.DvdButtonChange:
               {
-                Log.Info("EVT:DvdButtonChange: buttons:#{0}, focused button: {1}", p1, p2);
+                Log.Debug("EVT:DvdButtonChange: buttons:#{0}, focused button: {1}", p1, p2);
                 buttonCount = p1;
                 focusedButton = p2;
                 if (buttonCount > 0 && !_rootMenuShown && _state == PlayState.Menu)
@@ -876,7 +876,7 @@ namespace MediaPortal.Player
 
             case EventCode.DvdNoFpPgc:
               {
-                Log.Info("EVT:DvdNoFpPgc:{0}", p1);
+                Log.Debug("EVT:DvdNoFpPgc:{0}", p1);
                 if (_dvdCtrl != null)
                 {
                   hr = _dvdCtrl.PlayTitle(1, DvdCmdFlags.None, out _cmdOption);
@@ -886,11 +886,11 @@ namespace MediaPortal.Player
 
             case EventCode.DvdAudioStreamChange:
               // audio stream changed
-              Log.Info("EVT:DvdAudioStreamChange:{0}", p1);
+              Log.Debug("EVT:DvdAudioStreamChange:{0}", p1);
               break;
 
             case EventCode.DvdValidUopsChange:
-              Log.Info("EVT:DvdValidUopsChange:0x{0:X}", p1);
+              Log.Debug("EVT:DvdValidUopsChange:0x{0:X}", p1);
               _UOPs = p1;
               break;
 
@@ -900,29 +900,29 @@ namespace MediaPortal.Player
                 switch ((DvdDomain)p1)
                 {
                   case DvdDomain.FirstPlay:
-                    Log.Info("EVT:DVDPlayer:domain=firstplay");
+                    Log.Debug("EVT:DVDPlayer:domain=firstplay");
                     _state = PlayState.Playing;
                     break;
                   // The DVD Navigator has completed playback of the title or 
                   // chapter and did not find any other branching instruction for 
                   // subsequent playback.
                   case DvdDomain.Stop:
-                    Log.Info("EVT:DVDPlayer:domain=stop");
+                    Log.Debug("EVT:DVDPlayer:domain=stop");
                     Stop();
                     break;
                   case DvdDomain.VideoManagerMenu:
-                    Log.Info("EVT:DVDPlayer:domain=videomanagermenu (menu)");
+                    Log.Debug("EVT:DVDPlayer:domain=videomanagermenu (menu)");
                     _state = PlayState.Menu;
                     break;
                   case DvdDomain.VideoTitleSetMenu:
-                    Log.Info("EVT:DVDPlayer:domain=videotitlesetmenu (menu)");
+                    Log.Debug("EVT:DVDPlayer:domain=videotitlesetmenu (menu)");
                     _state = PlayState.Menu;
                     break;
                   case DvdDomain.Title:
                     _state = PlayState.Playing;
                     break;
                   default:
-                    Log.Info("EVT:DvdDomChange:{0}", p1);
+                    Log.Debug("EVT:DvdDomChange:{0}", p1);
                     break;
                 }
                 break;
@@ -1155,8 +1155,7 @@ namespace MediaPortal.Player
     public override void Stop()
     {
       int hr = 0;
-      if ((_mediaCtrl == null) ||
-          ((_state != PlayState.Playing) && (_state != PlayState.Paused)))
+      if (_mediaCtrl == null || !Playing )
       {
         return;
       }
