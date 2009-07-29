@@ -563,6 +563,8 @@
     <Content Include="images\animation.SatDish.gif" />
     <Content Include="images\icon.card.gif" />
     <Content Include="images\icon.computer.gif" />
+    <EmbeddedResource Include="47_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="47_upgrade_sqlserver_database.sql" />
     <None Include="images\icon.down.png" />
     <Content Include="images\icon.mpConfig.ico" />
     <Content Include="images\icon.radio_fta.png" />
