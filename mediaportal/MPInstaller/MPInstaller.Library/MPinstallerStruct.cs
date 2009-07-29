@@ -318,8 +318,9 @@ namespace MediaPortal.MPInstaller
           settings.OmitXmlDeclaration = true;
           // Create the XmlWriter object and write some content.
           writer = XmlWriter.Create(myStream, settings);
-          writer.WriteStartElement("MPInstaller");
-          writer.WriteElementString("ver", "1.00.000");
+					//writer.WriteStartElement("MPInstaller");  => this is causing mantis bug 2324: 1.1.0 MPI tool is not compatible with 1.0.x 
+        	writer.WriteStartElement("MPinstaler");
+					writer.WriteElementString("ver", "1.00.000");
           writer.WriteStartElement("FileList");
           for (int i = 0; i < this.FileList.Count; i++)
           {
@@ -385,8 +386,11 @@ namespace MediaPortal.MPInstaller
           writer.WriteEndElement();
           writer.WriteStartElement("Option");
           writer.WriteElementString("BuildFileName", this.BuildFileName);
-          writer.WriteElementString("ProjectFileName", Path.GetFullPath(this.ProjectFileName));
-          writer.WriteElementString("ProjectName", this.Name);
+					//this is causing mantis bug 2324: 1.1.0 MPI tool is not compatible with 1.0.x 
+					//writer.WriteElementString("ProjectFileName", Path.GetFullPath(this.ProjectFileName));
+          //writer.WriteElementString("ProjectName", this.Name);
+					writer.WriteElementString("ProiectFileName", Path.GetFullPath(this.ProjectFileName));
+					writer.WriteElementString("ProiectName", this.Name);
           writer.WriteElementString("Author", this.Author);
           writer.WriteElementString("UpdateURL", this.UpdateURL);
           writer.WriteElementString("Version", this.Version);
@@ -454,7 +458,9 @@ namespace MediaPortal.MPInstaller
           if (File.Exists(ProjectFileName))
           {
             sr = new StreamReader(Path.GetFullPath(ProjectFileName));
-            zip.AddFileStream("installer.xmp", "", sr.BaseStream);
+						//this is causing mantis bug 2324: 1.1.0 MPI tool is not compatible with 1.0.x 
+            //zip.AddFileStream("installer.xmp", "", sr.BaseStream);
+						zip.AddFileStream("instaler.xmp", "", sr.BaseStream);
           }
           else ls.Items.Add("Error : Project file not found !");
 
