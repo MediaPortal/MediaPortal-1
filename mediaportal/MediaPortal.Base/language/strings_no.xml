@@ -671,6 +671,8 @@
     <String id="780">Velg metode for planlagt opptak</String>
     <String id="781">Hurtig opptak</String>
     <String id="782">Avansert opptak</String>
+	<String id="783">Roter 180°</String>
+	<String id="784">Roter 270°</String>
     <String id="789">Nå: </String>
     <String id="790">Neste: </String>
     <String id="798">lav</String>
@@ -1354,6 +1356,11 @@
     <String id="6039">LATM AAC Audio Codecs</String>
     <String id="6040">I går</String>
     <String id="6041">To dager siden</String>
+    <String id="6050">Denne uken</String>
+    <String id="6060">Denne måneden</String>
+    <String id="6070">Dette året</String>
+    <String id="6080">I fjor</String>
+    <String id="6090">Eldre</String>
     <String id="8000" prefix="Min ">Epost</String>
     <String id="8001">Sjekk postboks</String>
     <String id="8002">Autosjekk av</String>
