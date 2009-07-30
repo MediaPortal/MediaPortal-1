@@ -294,6 +294,57 @@ namespace TvPlugin
 
     #endregion
 
+		public override void ResetAllControls()
+		{
+			//reset all
+
+			bool bOffScreen = false;
+			int iCalibrationY = GUIGraphicsContext.OSDOffset;
+			int iTop = GUIGraphicsContext.OverScanTop;
+			int iMin = 0;
+
+			foreach (CPosition pos in _listPositions)
+			{
+				pos.control.SetPosition((int)pos.XPos, (int)pos.YPos + iCalibrationY);
+			}
+			foreach (CPosition pos in _listPositions)
+			{
+				GUIControl pControl = pos.control;
+
+				int dwPosY = pControl.YPosition;
+				if (pControl.IsVisible)
+				{
+					if (dwPosY < iTop)
+					{
+						int iSize = iTop - dwPosY;
+						if (iSize > iMin)
+						{
+							iMin = iSize;
+						}
+						bOffScreen = true;
+					}
+				}
+			}
+			if (bOffScreen)
+			{
+				foreach (CPosition pos in _listPositions)
+				{
+					GUIControl pControl = pos.control;
+					int dwPosX = pControl.XPosition;
+					int dwPosY = pControl.YPosition;
+					if (dwPosY < (int)100)
+					{
+						dwPosY += Math.Abs(iMin);
+						pControl.SetPosition(dwPosX, dwPosY);
+					}
+				}
+			}
+			base.ResetAllControls();
+		}
+
+
+
+
     public override void OnAction(Action action)
     {
       _needToClearScreen = true;
@@ -1434,8 +1485,11 @@ namespace TvPlugin
             _bottomDialogMenuVisible = false;
             _statusTimeOutTimer = DateTime.Now;
             //imgVolumeBar.Current = VolumeHandler.Instance.Step;
-            //imgVolumeBar.Maximum = VolumeHandler.Instance.StepMax;
-            RenderVolume(false);
+						//imgVolumeBar.Maximum = VolumeHandler.Instance.StepMax;
+						
+						ResetAllControls(); // make sure the controls are positioned relevant to the OSD Y offset
+						
+						RenderVolume(false);
             ScreenStateChanged();
             UpdateGUI();
 
