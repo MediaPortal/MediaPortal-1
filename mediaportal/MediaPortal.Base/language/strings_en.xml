@@ -1288,6 +1288,7 @@
     <String id="4554">Lookup CD info</String>
     <String id="4555">Current Playlist</String>
     <String id="4557">Add all to playlist</String>
+	<String id="4558">Recently added</String>
     <String id="5900" prefix="My ">Trailers</String>
     <String id="5901">Show Movies</String>
     <String id="5902">Show which movies?</String>

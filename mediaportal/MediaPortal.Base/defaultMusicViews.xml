@@ -50,7 +50,7 @@
 </a3:ViewDefinition>
 <a3:ViewDefinition id="ref-11" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <listFilters href="#ref-29"/>
-<name id="ref-30">Recently Added</name>
+<name id="ref-30">4558</name>
 </a3:ViewDefinition>
 <a1:ArrayList id="ref-13" xmlns:a1="http://schemas.microsoft.com/clr/ns/System.Collections">
 <_items href="#ref-31"/>
