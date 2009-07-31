@@ -127,9 +127,6 @@ namespace MediaPortal.Util
     static ArrayList m_VideoExtensions = new ArrayList();
     static ArrayList m_PictureExtensions = new ArrayList();
 
-    static List<string> ProcStdOut = new List<string>();
-    static List<string> ProcStdErr = new List<string>();
-
     static string[] _artistNamePrefixes;
 
     static bool m_bHideExtensions = false;
@@ -1381,6 +1378,25 @@ namespace MediaPortal.Util
       return StartProcess(procInfo, bWaitForExit);
     }
 
+    private static void OutputDataHandler(object sendingProcess,
+            DataReceivedEventArgs outLine)
+    {
+      if (!String.IsNullOrEmpty(outLine.Data))
+      {
+        Log.Debug("Util: StdOut - {0}", outLine.Data);
+      }
+    }
+
+    private static void ErrorDataHandler(object sendingProcess,
+        DataReceivedEventArgs errLine)
+    {
+      if (!String.IsNullOrEmpty(errLine.Data))
+      {
+        Log.Debug("Util: StdErr - {0}", errLine.Data);
+      }
+    }
+
+
     [MethodImpl(MethodImplOptions.Synchronized)]
     public static bool StartProcess(string aAppName, string aArguments, string aWorkingDir, int aExpectedTimeoutMs, bool aLowerPriority, ProcessFailedConditions aFailConditions)
     {
@@ -1397,19 +1413,15 @@ namespace MediaPortal.Util
       ProcOptions.CreateNoWindow = true;                                         // Do not spawn a "Dos-Box"      
       ProcOptions.ErrorDialog = false;                                           // Do not open an error box on failure        
 
-      //ExternalProc.OutputDataReceived += new DataReceivedEventHandler(ExternalProc_OutputDataReceived);
-      //ExternalProc.ErrorDataReceived += new DataReceivedEventHandler(ExternalProc_ErrorDataReceived);
+      ExternalProc.OutputDataReceived += new DataReceivedEventHandler(OutputDataHandler);
+      ExternalProc.ErrorDataReceived += new DataReceivedEventHandler(ErrorDataHandler);
       ExternalProc.EnableRaisingEvents = true;                                   // We want to know when and why the process died        
       ExternalProc.StartInfo = ProcOptions;
       if (File.Exists(ProcOptions.FileName))
       {
         try
         {
-          ProcStdOut.Clear();
-          ProcStdErr.Clear();
           ExternalProc.Start();
-          //ExternalProc.BeginErrorReadLine();
-          //ExternalProc.BeginOutputReadLine();
           if (aLowerPriority)
           {
             try
@@ -1421,52 +1433,18 @@ namespace MediaPortal.Util
               Log.Error("Util: Error setting process priority for {0}: {1}", aAppName, ex2.Message);
             }
           }
-
-          ProcStdOut.AddRange(ExternalProc.StandardOutput.ReadToEnd().Split(new char[] { '\n', '\r' }));
-          ProcStdErr.AddRange(ExternalProc.StandardError.ReadToEnd().Split(new char[] { '\n', '\r' }));
-
-          // Log.Debug("Util: Buffer status - Stdout: {0} Stderr: {1}", ProcStdOut.Count, ProcStdErr.Count);
+          // Read in asynchronous  mode to avoid deadlocks (if error stream is full)
+          // http://msdn.microsoft.com/en-us/library/system.diagnostics.processstartinfo.redirectstandarderror.aspx
+          ExternalProc.BeginErrorReadLine();
+          ExternalProc.BeginOutputReadLine();
 
           // wait this many seconds until the process has to be finished
           ExternalProc.WaitForExit(aExpectedTimeoutMs);
 
-          using (StreamReader outStream = ExternalProc.StandardOutput)
-          {
-            while (outStream.Peek() >= 0)
-            {
-              ProcStdOut.Add(outStream.ReadLine());
-            }
-          }
-          using (StreamReader errStream = ExternalProc.StandardError)
-          {
-            while (errStream.Peek() >= 0)
-            {
-              ProcStdErr.Add(errStream.ReadLine());
-            }
-          }
-
           success = (ExternalProc.HasExited && ExternalProc.ExitCode == aFailConditions.SuccessExitCode);
 
-          foreach (string line in ProcStdOut)
-          {
-            if (String.IsNullOrEmpty(line))
-              continue;
-            Log.Debug("Util: StdOut - {0}", line);
-          }
-          foreach (string line in ProcStdErr)
-          {
-            if (String.IsNullOrEmpty(line))
-              continue;
-            Log.Debug("Util: StdErr - {0}", line);
-            foreach (string failure in aFailConditions.CriticalOutputLines)
-            {
-              if (line.ToLowerInvariant().Contains(failure.ToLowerInvariant()))
-              {
-                success = false;
-                Log.Warn("Util: {0} failed on condition: {1}", aAppName, line);
-              }
-            }
-          }
+          ExternalProc.OutputDataReceived -= new DataReceivedEventHandler(OutputDataHandler);
+          ExternalProc.ErrorDataReceived -= new DataReceivedEventHandler(ErrorDataHandler);
         }
         catch (Exception ex)
         {
