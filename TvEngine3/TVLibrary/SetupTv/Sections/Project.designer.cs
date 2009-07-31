@@ -260,6 +260,8 @@ namespace SetupTv.Sections
       // 
       // mpGroupBoxAbout
       // 
+      this.mpGroupBoxAbout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBoxAbout.Controls.Add(this.labelVersion3);
       this.mpGroupBoxAbout.Controls.Add(this.labelVersion2);
       this.mpGroupBoxAbout.Controls.Add(this.labelVersion1);
