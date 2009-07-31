@@ -272,18 +272,12 @@ namespace MediaPortal.GUI.Pictures
       Date = 1
     }
 
-    [SkinControl(2)]
-    protected GUIButtonControl btnViewAs = null;
-    [SkinControl(3)]
-    protected GUISortButtonControl btnSortBy = null;
-    [SkinControl(4)]
-    protected GUIButtonControl btnSwitchView = null;
-    [SkinControl(6)]
-    protected GUIButtonControl btnSlideShow = null;
-    [SkinControl(7)]
-    protected GUIButtonControl btnSlideShowRecursive = null;
-    [SkinControl(50)]
-    protected GUIFacadeControl facadeView = null;
+    [SkinControl(2)] protected GUIButtonControl btnViewAs = null;
+    [SkinControl(3)] protected GUISortButtonControl btnSortBy = null;
+    [SkinControl(4)] protected GUIButtonControl btnSwitchView = null;
+    [SkinControl(6)] protected GUIButtonControl btnSlideShow = null;
+    [SkinControl(7)] protected GUIButtonControl btnSlideShowRecursive = null;
+    [SkinControl(50)] protected GUIFacadeControl facadeView = null;
 
     private const int MAX_PICS_PER_DATE = 1000;
 
@@ -1922,7 +1916,7 @@ namespace MediaPortal.GUI.Pictures
               }
               catch (Exception)
               {
-                Log.Warn("GUIPictures: There's no file for this database entry: {0}", item.Path);
+                Log.Warn("GUIPictures: There is no file for this database entry: {0}", item.Path);
               }
             }
           }
