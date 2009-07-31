@@ -272,12 +272,18 @@ namespace MediaPortal.GUI.Pictures
       Date = 1
     }
 
-    [SkinControl(2)] protected GUIButtonControl btnViewAs = null;
-    [SkinControl(3)] protected GUISortButtonControl btnSortBy = null;
-    [SkinControl(4)] protected GUIButtonControl btnSwitchView = null;
-    [SkinControl(6)] protected GUIButtonControl btnSlideShow = null;
-    [SkinControl(7)] protected GUIButtonControl btnSlideShowRecursive = null;
-    [SkinControl(50)] protected GUIFacadeControl facadeView = null;
+    [SkinControl(2)]
+    protected GUIButtonControl btnViewAs = null;
+    [SkinControl(3)]
+    protected GUISortButtonControl btnSortBy = null;
+    [SkinControl(4)]
+    protected GUIButtonControl btnSwitchView = null;
+    [SkinControl(6)]
+    protected GUIButtonControl btnSlideShow = null;
+    [SkinControl(7)]
+    protected GUIButtonControl btnSlideShowRecursive = null;
+    [SkinControl(50)]
+    protected GUIFacadeControl facadeView = null;
 
     private const int MAX_PICS_PER_DATE = 1000;
 
@@ -588,11 +594,9 @@ namespace MediaPortal.GUI.Pictures
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_START_SLIDESHOW:
-          {
-            string strUrl = message.Label;
-            LoadDirectory(strUrl);
-            OnSlideShow();
-          }
+          string strUrl = message.Label;
+          LoadDirectory(strUrl);
+          OnSlideShow();
           break;
 
         case GUIMessage.MessageType.GUI_MSG_AUTOPLAY_VOLUME:
@@ -616,6 +620,7 @@ namespace MediaPortal.GUI.Pictures
           }
           LoadDirectory(currentFolder);
           break;
+
         case GUIMessage.MessageType.GUI_MSG_REMOVE_REMOVABLE_DRIVE:
           if (!Util.Utils.IsRemovable(message.Label))
           {
@@ -627,6 +632,7 @@ namespace MediaPortal.GUI.Pictures
           }
           LoadDirectory(currentFolder);
           break;
+
         case GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING:
           GUIFacadeControl pControl = (GUIFacadeControl)GetControl(facadeView.GetID);
           pControl.OnMessage(message);
@@ -703,7 +709,7 @@ namespace MediaPortal.GUI.Pictures
       {
         dlg.AddLocalizedString(831);
       }
-        
+
 
       dlg.DoModal(GetID);
       if (dlg.SelectedId == -1)
@@ -722,7 +728,7 @@ namespace MediaPortal.GUI.Pictures
 
         case 784: // rotate 270
           OnRotatePicture(270);
-          break;   
+          break;
 
         case 923: // show
           OnClick(itemNo);
@@ -1293,7 +1299,7 @@ namespace MediaPortal.GUI.Pictures
       else if (degrees == 270)
       {
         rotate = rotate + 3;
-     }
+      }
 
       if (rotate >= 4)
       {
@@ -1323,7 +1329,7 @@ namespace MediaPortal.GUI.Pictures
       catch (Exception ex)
       {
         Log.Error("GUIPictures: Error recreating thumbnails after rotation of {0} - {1}", aPicturePath, ex.ToString());
-      }      
+      }
     }
 
     private void OnClick(int itemIndex)
@@ -1380,7 +1386,6 @@ namespace MediaPortal.GUI.Pictures
       {
         return;
       }
-
 
       SlideShow.Reset();
       for (int i = 0; i < GetItemCount(); ++i)
@@ -1771,78 +1776,20 @@ namespace MediaPortal.GUI.Pictures
 
     private void LoadDateView(string strNewDirectory)
     {
-      CountOfNonImageItems = 0;
-      if (strNewDirectory == "")
+      try
       {
-        // Years
-        List<string> Years = new List<string>();
-        int Count = PictureDatabase.ListYears(ref Years);
-        foreach (string year in Years)
+        CountOfNonImageItems = 0;
+        if (strNewDirectory == "")
         {
-          GUIListItem item = new GUIListItem(year);
-          item.Label = year;
-          //Log.Debug("Load Year: " + year);
-          item.Path = year;
-          item.IsFolder = true;
-          Util.Utils.SetDefaultIcons(item);
-          item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
-          item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-          facadeView.Add(item);
-          CountOfNonImageItems++; // necessary to select the right item later from the slideshow
-        }
-      }
-      else if (strNewDirectory.Length == 4)
-      {
-        // Months
-        string year = strNewDirectory.Substring(0, 4);
-        GUIListItem item = new GUIListItem("..");
-        item.Path = "";
-        item.IsFolder = true;
-        Util.Utils.SetDefaultIcons(item);
-        item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
-        item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-        facadeView.Add(item);
-        CountOfNonImageItems++; // necessary to select the right item later from the slideshow
-
-        List<string> Months = new List<string>();
-        int Count = PictureDatabase.ListMonths(year, ref Months);
-        foreach (string month in Months)
-        {
-          // show month in a user friendly string
-          item = new GUIListItem(Util.Utils.GetNamedMonth(month));
-          item.Path = year + "\\" + month;
-          item.IsFolder = true;
-          Util.Utils.SetDefaultIcons(item);
-          item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
-          item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-          facadeView.Add(item);
-          CountOfNonImageItems++; // necessary to select the right item later from the slideshow
-        }
-      }
-
-      // check if day grouping is enabled
-      if (_useDayGrouping)
-      {
-        if (strNewDirectory.Length == 7)
-        {
-          // Days
-          string year = strNewDirectory.Substring(0, 4);
-          string month = strNewDirectory.Substring(5, 2);
-          GUIListItem item = new GUIListItem("..");
-          item.Path = year;
-          item.IsFolder = true;
-          Util.Utils.SetDefaultIcons(item);
-          item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
-          item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-          facadeView.Add(item);
-          CountOfNonImageItems++; // necessary to select the right item later from the slideshow
-
-          List<string> Days = new List<string>();
-          int Count = PictureDatabase.ListDays(month, year, ref Days);
-          foreach (string day in Days)
+          // Years
+          List<string> Years = new List<string>();
+          int Count = PictureDatabase.ListYears(ref Years);
+          foreach (string year in Years)
           {
-            item = new GUIListItem(day);
-            item.Path = year + "\\" + month + "\\" + day;
+            GUIListItem item = new GUIListItem(year);
+            item.Label = year;
+            //Log.Debug("Load Year: " + year);
+            item.Path = year;
             item.IsFolder = true;
             Util.Utils.SetDefaultIcons(item);
             item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
@@ -1851,14 +1798,12 @@ namespace MediaPortal.GUI.Pictures
             CountOfNonImageItems++; // necessary to select the right item later from the slideshow
           }
         }
-        else if (strNewDirectory.Length == 10)
+        else if (strNewDirectory.Length == 4)
         {
-          // Pics from one day
+          // Months
           string year = strNewDirectory.Substring(0, 4);
-          string month = strNewDirectory.Substring(5, 2);
-          string day = strNewDirectory.Substring(8, 2);
           GUIListItem item = new GUIListItem("..");
-          item.Path = year + "\\" + month;
+          item.Path = "";
           item.IsFolder = true;
           Util.Utils.SetDefaultIcons(item);
           item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
@@ -1866,59 +1811,133 @@ namespace MediaPortal.GUI.Pictures
           facadeView.Add(item);
           CountOfNonImageItems++; // necessary to select the right item later from the slideshow
 
-          List<string> pics = new List<string>();
-          int Count = PictureDatabase.ListPicsByDate(year + "-" + month + "-" + day, ref pics);
-          foreach (string pic in pics)
+          List<string> Months = new List<string>();
+          int Count = PictureDatabase.ListMonths(year, ref Months);
+          foreach (string month in Months)
           {
-            item = new GUIListItem(Path.GetFileNameWithoutExtension(pic));
-            item.Path = pic;
-            item.IsFolder = false;
+            // show month in a user friendly string
+            item = new GUIListItem(Util.Utils.GetNamedMonth(month));
+            item.Path = year + "\\" + month;
+            item.IsFolder = true;
             Util.Utils.SetDefaultIcons(item);
             item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
             item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-            item.FileInfo = new FileInformation(pic, false);
             facadeView.Add(item);
+            CountOfNonImageItems++; // necessary to select the right item later from the slideshow
           }
         }
-      }
-      else
-      {
-        if (strNewDirectory.Length == 7)
+
+        // check if day grouping is enabled
+        if (_useDayGrouping)
         {
-          // Pics from one month
-          string year = strNewDirectory.Substring(0, 4);
-          string month = strNewDirectory.Substring(5, 2);
-
-          GUIListItem item = new GUIListItem("..");
-          item.Path = year;
-          item.IsFolder = true;
-          Util.Utils.SetDefaultIcons(item);
-          item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
-          item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-          facadeView.Add(item);
-          CountOfNonImageItems++; // necessary to select the right item later from the slideshow
-
-          List<string> pics = new List<string>();
-          int Count = PictureDatabase.ListPicsByDate(year + "-" + month, ref pics);
-          foreach (string pic in pics)
+          if (strNewDirectory.Length == 7)
           {
-            item = new GUIListItem(Path.GetFileNameWithoutExtension(pic));
-            item.Path = pic;
-            item.IsFolder = false;
+            // Days
+            string year = strNewDirectory.Substring(0, 4);
+            string month = strNewDirectory.Substring(5, 2);
+            GUIListItem item = new GUIListItem("..");
+            item.Path = year;
+            item.IsFolder = true;
             Util.Utils.SetDefaultIcons(item);
             item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
             item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-            item.FileInfo = new FileInformation(pic, false);
             facadeView.Add(item);
+            CountOfNonImageItems++; // necessary to select the right item later from the slideshow
+
+            List<string> Days = new List<string>();
+            int Count = PictureDatabase.ListDays(month, year, ref Days);
+            foreach (string day in Days)
+            {
+              item = new GUIListItem(day);
+              item.Path = year + "\\" + month + "\\" + day;
+              item.IsFolder = true;
+              Util.Utils.SetDefaultIcons(item);
+              item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+              item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+              facadeView.Add(item);
+              CountOfNonImageItems++; // necessary to select the right item later from the slideshow
+            }
+          }
+          else if (strNewDirectory.Length == 10)
+          {
+            // Pics from one day
+            string year = strNewDirectory.Substring(0, 4);
+            string month = strNewDirectory.Substring(5, 2);
+            string day = strNewDirectory.Substring(8, 2);
+            GUIListItem item = new GUIListItem("..");
+            item.Path = year + "\\" + month;
+            item.IsFolder = true;
+            Util.Utils.SetDefaultIcons(item);
+            item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+            item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+            facadeView.Add(item);
+            CountOfNonImageItems++; // necessary to select the right item later from the slideshow
+
+            List<string> pics = new List<string>();
+            int Count = PictureDatabase.ListPicsByDate(year + "-" + month + "-" + day, ref pics);
+            foreach (string pic in pics)
+            {
+              item = new GUIListItem(Path.GetFileNameWithoutExtension(pic));
+              item.Path = pic;
+              item.IsFolder = false;
+              Util.Utils.SetDefaultIcons(item);
+              item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+              item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+              item.FileInfo = new FileInformation(pic, false);
+              facadeView.Add(item);
+            }
           }
         }
-      }
+        else
+        {
+          if (strNewDirectory.Length == 7)
+          {
+            // Pics from one month
+            string year = strNewDirectory.Substring(0, 4);
+            string month = strNewDirectory.Substring(5, 2);
 
-      if (facadeView.Count == 0 && strNewDirectory != "")
+            GUIListItem item = new GUIListItem("..");
+            item.Path = year;
+            item.IsFolder = true;
+            Util.Utils.SetDefaultIcons(item);
+            item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+            item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+            facadeView.Add(item);
+            CountOfNonImageItems++; // necessary to select the right item later from the slideshow
+
+            List<string> pics = new List<string>();
+            int Count = PictureDatabase.ListPicsByDate(year + "-" + month, ref pics);
+            foreach (string pic in pics)
+            {
+              try
+              {
+                item = new GUIListItem(Path.GetFileNameWithoutExtension(pic));
+                item.Path = pic;
+                item.IsFolder = false;
+                Util.Utils.SetDefaultIcons(item);
+                item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+                item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+                item.FileInfo = new FileInformation(pic, false);
+                facadeView.Add(item);
+              }
+              catch (Exception)
+              {
+                Log.Warn("GUIPictures: There's no file for this database entry: {0}", item.Path);
+              }
+            }
+          }
+        }
+
+        if (facadeView.Count == 0 && strNewDirectory != "")
+        {
+          // Wrong path for date view, go back to top level
+          currentFolder = "";
+          LoadDateView(currentFolder);
+        }
+      }
+      catch (Exception ex)
       {
-        // Wrong path for date view, go back to top level
-        currentFolder = "";
-        LoadDateView(currentFolder);
+        Log.Error("GUIPictures: Error loading date view - {0}", ex.ToString());
       }
     }
 
