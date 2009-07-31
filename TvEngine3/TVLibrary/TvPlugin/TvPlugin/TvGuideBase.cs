@@ -952,7 +952,7 @@ namespace TvPlugin
           }
 
 
-          if (_viewingTime.Date.Equals(DateTime.Now.Date))
+          if (_viewingTime.Date.Equals(DateTime.Now.Date) && _viewingTime < DateTime.Now)
           {
             int iStartX = GetControl((int)Controls.LABEL_TIME1).XPosition;
             int iWidth = GetControl((int)Controls.LABEL_TIME1 + 1).XPosition - iStartX;
