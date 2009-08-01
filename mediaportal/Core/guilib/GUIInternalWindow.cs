@@ -23,23 +23,24 @@
 
 #endregion
 
-using MediaPortal.GUI.Library;
-
-namespace MediaPortal.GUI.Settings
+namespace MediaPortal.GUI.Library
 {
   /// <summary>
-  /// Summary description for Class1.
+  /// base class for every window of MP itself. It contains all methods needed for basic window management like
+  /// - initialization
+  /// - deitialization
+  /// - render itself onscreen
+  /// - processing actions like keypresses, mouse clicks/movements
+  /// - processing messages
+  /// 
+  /// Each window plugin should derive from this base class
+  /// Pluginwindows should be copied in the plugins/windows folder
   /// </summary>
-  public class GUIWizardFinished : GUIInternalWindow
+  public class GUIInternalWindow : GUIWindow
   {
-    public GUIWizardFinished()
+    public override string GetModuleName()
     {
-      GetID = (int) Window.WINDOW_WIZARD_FINISHED;
-    }
-
-    public override bool Init()
-    {
-      return Load(GUIGraphicsContext.Skin + @"\wizard_Finished.xml");
+      return GUILocalizeStrings.Get(100000 + GetID);
     }
   }
 }

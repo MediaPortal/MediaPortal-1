@@ -38,7 +38,7 @@ namespace MediaPortal.GUI.Video
   /// <summary>
   /// 
   /// </summary>
-  public class GUIVideoInfo : GUIWindow, IRenderLayer, IMDB.IProgress
+  public class GUIVideoInfo : GUIInternalWindow, IRenderLayer, IMDB.IProgress
   {
     #region ThumbDownloader
 

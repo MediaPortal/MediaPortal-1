@@ -2,7 +2,7 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Plugins.Process
 {
-  public class UnattendedWindow : GUIWindow
+  public class UnattendedWindow : GUIInternalWindow
   {
     public UnattendedWindow()
     {

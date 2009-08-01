@@ -31,7 +31,7 @@ namespace MediaPortal.GUI.Settings
   /// <summary>
   /// 
   /// </summary>
-  public class GUISettingsMovieCalibration : GUIWindow
+  public class GUISettingsMovieCalibration : GUIInternalWindow
   {
     private enum Controls
     {

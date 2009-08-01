@@ -47,7 +47,7 @@ namespace MediaPortal.GUI.Pictures
   /// Displays pictures and offers methods for exif and rotation
   /// </summary>
   [PluginIcons("WindowPlugins.GUIPictures.Pictures.gif", "WindowPlugins.GUIPictures.PicturesDisabled.gif")]
-  public class GUIPictures : GUIWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
+  public class GUIPictures : GUIInternalWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
     #region ThumbCacher class
 

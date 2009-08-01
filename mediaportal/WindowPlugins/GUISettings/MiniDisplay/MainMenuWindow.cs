@@ -27,7 +27,7 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 {
-  public class MainMenuWindow : GUIWindow
+  public class MainMenuWindow : GUIInternalWindow
   {
     [SkinControl(3)] protected GUILabelControl labelInfo1 = null;
     [SkinControl(4)] protected GUILabelControl labelInfo2 = null;

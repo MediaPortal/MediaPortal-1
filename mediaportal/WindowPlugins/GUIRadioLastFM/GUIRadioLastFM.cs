@@ -44,7 +44,7 @@ using Point = MediaPortal.Drawing.Point;
 namespace MediaPortal.GUI.RADIOLASTFM
 {
   [PluginIcons("WindowPlugins.GUIRadioLastFM.BallonRadio.gif", "WindowPlugins.GUIRadioLastFM.BallonRadioDisabled.gif")]
-  public class GUIRadioLastFM : GUIWindow, ISetupForm, IShowPlugin
+  public class GUIRadioLastFM : GUIInternalWindow, ISetupForm, IShowPlugin
   {
     #region Event delegates
 

@@ -60,7 +60,7 @@ namespace TvPlugin
   /// TV Home screen.
   /// </summary>
   [PluginIcons("TvPlugin.TVPlugin.gif", "TvPlugin.TVPluginDisabled.gif")]
-  public class TVHome : GUIWindow, ISetupForm, IShowPlugin, IPluginReceiver
+  public class TVHome : GUIInternalWindow, ISetupForm, IShowPlugin, IPluginReceiver
   {
     #region constants
 

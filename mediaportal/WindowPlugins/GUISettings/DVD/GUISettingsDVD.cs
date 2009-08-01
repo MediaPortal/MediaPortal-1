@@ -40,7 +40,7 @@ namespace WindowPlugins.GUISettings.TV
   /// <summary>
   /// Summary description for GUISettingsDVD.
   /// </summary>
-  public class GUISettingsDVD : GUIWindow
+  public class GUISettingsDVD : GUIInternalWindow
   {
     [SkinControl(21)] protected GUIButtonControl btnDVDNavigator = null;
     [SkinControl(22)] protected GUIToggleButtonControl btnEnableSubtitles = null;

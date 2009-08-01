@@ -1550,7 +1550,7 @@ namespace MediaPortal.GUI.Library
                                               null);
               OnMessage(msg);
 
-              GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
+              GUIPropertyManager.SetProperty("#currentmodule", GetModuleName());
               Log.Debug("Window: {0} init", this.ToString());
 
               _hasRendered = false;
@@ -1572,7 +1572,7 @@ namespace MediaPortal.GUI.Library
                 OnPageDestroy(message.Param1);
                 if (_previousWindowId != (int) Window.WINDOW_INVALID)
                 {
-                  GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + _previousWindowId));
+                  GUIPropertyManager.SetProperty("#currentmodule", GUIWindowManager.GetWindow(_previousWindowId).GetModuleName());
                 }
 
                 Log.Debug("Window: {0} deinit", this.ToString());
@@ -1747,6 +1747,11 @@ namespace MediaPortal.GUI.Library
 
     public virtual void OnAdded()
     {
+    }
+
+    public virtual string GetModuleName()
+    {
+      return string.Empty;
     }
 
     #region effects

@@ -35,7 +35,7 @@ namespace TvPlugin
   /// <summary>
   /// Summary description for TvRecordedInfo.
   /// </summary>
-  public class TvRecordedInfo : GUIWindow
+  public class TvRecordedInfo : GUIInternalWindow
   {
     [SkinControl(17)] protected GUILabelControl lblProgramGenre = null;
     [SkinControl(15)] protected GUITextScrollUpControl lblProgramDescription = null;

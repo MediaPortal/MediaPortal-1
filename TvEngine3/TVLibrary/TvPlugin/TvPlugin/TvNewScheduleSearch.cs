@@ -32,7 +32,7 @@ using TvDatabase;
 
 namespace TvPlugin
 {
-  public class TvNewScheduleSearch : GUIWindow
+  public class TvNewScheduleSearch : GUIInternalWindow
   {
     #region enums
 

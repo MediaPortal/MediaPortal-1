@@ -32,7 +32,7 @@ namespace MediaPortal.GUI.Settings
   /// <summary>
   /// 
   /// </summary>
-  public class GUISettingsSlideshow : GUIWindow
+  public class GUISettingsSlideshow : GUIInternalWindow
   {
     [SkinControl(8)] protected GUICheckMarkControl cmLoopSlideShows = null;
     [SkinControl(9)] protected GUICheckMarkControl cmShuffleSlideShows = null;

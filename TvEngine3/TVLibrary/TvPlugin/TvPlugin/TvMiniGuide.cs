@@ -44,7 +44,7 @@ namespace TvPlugin
   /// GUIMiniGuide
   /// </summary>
   /// 
-  public class TvMiniGuide : GUIWindow, IRenderLayer
+  public class TvMiniGuide : GUIInternalWindow, IRenderLayer
   {
     // Member variables                                  
     [SkinControl(34)] protected GUIButtonControl cmdExit = null;

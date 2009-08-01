@@ -31,7 +31,7 @@ namespace MediaPortal.GUI.Settings.Wizard
   /// <summary>
   /// Summary description for Class1.
   /// </summary>
-  public class GUIWizardGeneral : GUIWindow
+  public class GUIWizardGeneral : GUIInternalWindow
   {
     [SkinControl(4)] protected GUICheckMarkControl cmInternetYes = null;
     [SkinControl(5)] protected GUICheckMarkControl cmInternetNo = null;

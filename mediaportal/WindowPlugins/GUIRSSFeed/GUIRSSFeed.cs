@@ -32,7 +32,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
 using System.Xml;
-using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -43,7 +42,7 @@ namespace MediaPortal.GUI.RSS
   /// <summary>
   /// A My News (RSS Feed) Plugin for MediaPortal
   /// </summary>
-  public class GUIRSSFeed : GUIWindow
+  public class GUIRSSFeed : GUIInternalWindow
   {
     private class Site
     {

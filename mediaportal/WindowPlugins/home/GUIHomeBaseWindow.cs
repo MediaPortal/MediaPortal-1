@@ -40,7 +40,7 @@ namespace MediaPortal.GUI.Home
   /// <summary>
   /// The implementation of the GUIHome Window base class.  (This window is coupled to the myHome.xml skin file).
   /// </summary>
-  public abstract class GUIHomeBaseWindow : GUIWindow
+  public abstract class GUIHomeBaseWindow : GUIInternalOverlayWindow
   {
     #region Properties (Skin)
 

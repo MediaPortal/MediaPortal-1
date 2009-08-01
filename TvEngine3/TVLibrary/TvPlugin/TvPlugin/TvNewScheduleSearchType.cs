@@ -34,7 +34,7 @@ using TvDatabase;
 
 namespace TvPlugin
 {
-  public class TvNewScheduleSearchType : GUIWindow
+  public class TvNewScheduleSearchType : GUIInternalWindow
   {
     [SkinControl(2)] protected GUIButtonControl btnQuickRecord = null;
     [SkinControl(3)] protected GUIButtonControl btnAdvancedRecord = null;

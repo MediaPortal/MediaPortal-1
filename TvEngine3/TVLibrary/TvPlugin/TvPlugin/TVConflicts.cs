@@ -35,7 +35,7 @@ using TvDatabase;
 
 namespace TvPlugin
 {
-  public class GUITVConflicts : GUIWindow
+  public class GUITVConflicts : GUIInternalWindow
   {
     #region variables, ctor/dtor
 

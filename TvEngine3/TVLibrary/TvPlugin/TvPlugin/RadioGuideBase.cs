@@ -46,7 +46,7 @@ namespace TvPlugin
   /// <summary>
   /// 
   /// </summary>
-  public class RadioGuideBase : GUIWindow
+  public class RadioGuideBase : GUIInternalWindow
   {
     #region constants
 

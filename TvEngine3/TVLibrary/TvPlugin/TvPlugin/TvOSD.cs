@@ -43,7 +43,7 @@ namespace TvPlugin
   /// 
   /// </summary>
   /// 
-  public class TvOsd : GUIWindow
+  public class TvOsd : GUIInternalWindow
   {
     private enum Controls
     {

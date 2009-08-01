@@ -36,7 +36,7 @@ namespace MediaPortal.GUI.Video
   /// This window serves as a back drop for the System.Windows.Forms.UserControl based visualization window and helps
   /// ensure that we don't popup any context menus or other GUI controls over the visualization UserControl.
   /// </summary>
-  public class GUIMusicFullscreen : GUIWindow, IRenderLayer
+  public class GUIMusicFullscreen : GUIInternalWindow, IRenderLayer
   {
     private PlayListPlayer playlistPlayer;
 

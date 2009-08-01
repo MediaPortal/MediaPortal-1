@@ -12,7 +12,7 @@ using TvDatabase;
 
 namespace TvPlugin
 {
-  public class TvSetup : GUIWindow
+  public class TvSetup : GUIInternalWindow
   {
     #region Variables
 

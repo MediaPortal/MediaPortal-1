@@ -33,7 +33,7 @@ namespace MediaPortal.GUI.Video
   /// <summary>
   /// 
   /// </summary>
-  public class GUIVideoArtistInfo : GUIWindow, IRenderLayer
+  public class GUIVideoArtistInfo : GUIInternalWindow, IRenderLayer
   {
     [SkinControl(3)] protected GUIToggleButtonControl btnBiography = null;
     [SkinControl(4)] protected GUIToggleButtonControl btnMovies = null;

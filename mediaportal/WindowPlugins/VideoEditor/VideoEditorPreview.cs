@@ -39,7 +39,7 @@ using TsCutterPackage;
 
 namespace WindowPlugins.VideoEditor
 {
-  internal class VideoEditorPreview : GUIWindow
+  internal class VideoEditorPreview : GUIInternalWindow
   {
     private const int windowID = 170602;
 

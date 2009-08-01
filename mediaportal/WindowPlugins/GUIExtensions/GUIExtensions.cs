@@ -14,7 +14,7 @@ using MediaPortal.MPInstaller;
 
 namespace WindowPlugins.GUI.Extensions
 {
-  public class GUIExtensions : GUIWindow, ISetupForm, IComparer<GUIListItem>, IShowPlugin
+  public class GUIExtensions : GUIInternalWindow, ISetupForm, IComparer<GUIListItem>, IShowPlugin
   {
     #region enums
     enum SortMethod

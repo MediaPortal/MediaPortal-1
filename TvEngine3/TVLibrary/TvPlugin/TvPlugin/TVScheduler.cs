@@ -42,7 +42,7 @@ namespace TvPlugin
   /// <summary>
   /// 
   /// </summary>
-  public class TvScheduler : GUIWindow, IComparer<GUIListItem>
+  public class TvScheduler : GUIInternalWindow, IComparer<GUIListItem>
   {
     #region variables, ctor/dtor
 

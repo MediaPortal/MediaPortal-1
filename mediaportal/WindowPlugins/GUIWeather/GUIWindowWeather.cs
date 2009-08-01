@@ -40,7 +40,7 @@ using MediaPortal.Util;
 namespace MediaPortal.GUI.Weather
 {
   [PluginIcons("WindowPlugins.GUIWeather.Weather.gif", "WindowPlugins.GUIWeather.WeatherDisabled.gif")]
-  public class GUIWindowWeather : GUIWindow, ISetupForm, IShowPlugin
+  public class GUIWindowWeather : GUIInternalWindow, ISetupForm, IShowPlugin
   {
     #region structs
 

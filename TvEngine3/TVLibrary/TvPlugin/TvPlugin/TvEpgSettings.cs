@@ -31,7 +31,7 @@ using TvDatabase;
 
 namespace TvPlugin
 {
-  public class TvEpgSettings : GUIWindow
+  public class TvEpgSettings : GUIInternalWindow
   {
     [SkinControl(10)] protected GUICheckListControl listChannels = null;
     [SkinControl(2)] protected GUIButtonControl btnSelectAll = null;

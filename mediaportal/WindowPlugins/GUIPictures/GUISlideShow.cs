@@ -46,7 +46,7 @@ namespace MediaPortal.GUI.Pictures
   /// <summary>
   /// todo : adding zoom OSD (stripped if for KenBurns)
   /// </summary>
-  public class GUISlideShow : GUIWindow
+  public class GUISlideShow : GUIInternalWindow
   {
     private SlidePicture LoadCurrentSlide()
     {

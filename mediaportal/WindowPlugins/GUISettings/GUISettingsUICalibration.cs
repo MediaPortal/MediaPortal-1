@@ -33,7 +33,7 @@ namespace MediaPortal.GUI.Settings
   /// <summary>
   /// 
   /// </summary>
-  public class GUISettingsUICalibration : GUIWindow
+  public class GUISettingsUICalibration : GUIInternalWindow
   {
     private const int CONTROL_LABEL = 2;
     private const float ZOOM_MAX = 1.25f;

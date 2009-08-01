@@ -29,7 +29,7 @@ using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 {
-  public class DisplayOptionsWindow : GUIWindow
+  public class DisplayOptionsWindow : GUIInternalWindow
   {
     [SkinControl(30)] protected GUIToggleButtonControl btnVolume = null;
     [SkinControl(31)] protected GUIToggleButtonControl btnProgress = null;

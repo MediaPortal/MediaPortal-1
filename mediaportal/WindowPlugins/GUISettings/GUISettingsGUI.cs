@@ -32,7 +32,7 @@ namespace MediaPortal.GUI.Settings
   /// <summary>
   /// 
   /// </summary>
-  public class GUISettingsGUI : GUIWindow
+  public class GUISettingsGUI : GUIInternalWindow
   {
     private enum Controls
     {

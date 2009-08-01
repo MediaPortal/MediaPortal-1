@@ -28,7 +28,7 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Dialogs
 {
-  public abstract class GUIDialogWindow : GUIWindow, IRenderLayer
+  public abstract class GUIDialogWindow : GUIInternalWindow, IRenderLayer
   {
     #region Variables
 

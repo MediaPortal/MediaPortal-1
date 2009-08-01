@@ -54,7 +54,7 @@ namespace TvPlugin
   /// <summary>
   /// 
   /// </summary>
-  public class TvFullScreen : GUIWindow, IRenderLayer, IMDB.IProgress
+  public class TvFullScreen : GUIInternalWindow, IRenderLayer, IMDB.IProgress
   {
     #region FullScreenState class
 

@@ -42,7 +42,7 @@ namespace MediaPortal.GUI.Video
   /// <summary>
   /// Summary description for GUIVideoFullscreen.
   /// </summary>
-  public class GUIVideoFullscreen : GUIWindow, IRenderLayer
+  public class GUIVideoFullscreen : GUIInternalWindow, IRenderLayer
   {
     private class FullScreenState
     {

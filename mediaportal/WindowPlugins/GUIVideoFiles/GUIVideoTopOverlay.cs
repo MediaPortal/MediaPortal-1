@@ -31,7 +31,7 @@ namespace MediaPortal.GUI.Video
   /// <summary>
   /// Summary description for Class1.
   /// </summary>
-  public class GUIVideoTopOverlay : GUIOverlayWindow, IRenderLayer
+  public class GUIVideoTopOverlay : GUIInternalOverlayWindow, IRenderLayer
   {
     [SkinControl(4)] protected GUIImage imagePause = null;
     [SkinControl(5)] protected GUIImage imageFastForward = null;

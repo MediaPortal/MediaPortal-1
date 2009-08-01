@@ -37,7 +37,7 @@ namespace MediaPortal.Dialogs
   /// <summary>
   /// 
   /// </summary>
-  public class GUIDialogFile : GUIWindow, IRenderLayer
+  public class GUIDialogFile : GUIInternalWindow, IRenderLayer
   {
     #region Base Dialog Variables
 

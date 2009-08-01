@@ -32,7 +32,7 @@ namespace TvPlugin
   /// <summary>
   /// 
   /// </summary>
-  public class TvOverlay : GUIOverlayWindow, IRenderLayer
+  public class TvOverlay : GUIInternalOverlayWindow, IRenderLayer
   {
     private DateTime _updateTimer = DateTime.Now;
     private bool _lastStatus = false;

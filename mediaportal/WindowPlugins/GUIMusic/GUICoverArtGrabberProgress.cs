@@ -37,7 +37,7 @@ using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Music
 {
-  public class GUICoverArtGrabberProgress : GUIWindow
+  public class GUICoverArtGrabberProgress : GUIInternalWindow
   {
     public delegate void CoverArtSelectedHandler(
       AlbumInfo albumInfo, string albumPath, bool bSaveToAlbumFolder, bool bSaveToThumbsFolder);

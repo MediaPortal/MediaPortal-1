@@ -39,7 +39,7 @@ namespace TvPlugin
   /// 
   /// </summary>
   /// 
-  public class TvZapOsd : GUIWindow
+  public class TvZapOsd : GUIInternalWindow
   {
     [SkinControl(35)] protected GUILabelControl lblCurrentChannel = null;
     [SkinControl(36)] protected GUITextControl lblOnTvNow = null;

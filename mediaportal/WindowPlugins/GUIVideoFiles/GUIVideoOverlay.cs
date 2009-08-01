@@ -35,7 +35,7 @@ namespace MediaPortal.GUI.Video
   /// <summary>
   /// Container for preview window - also setting video properties like title, playtime, etc for skin access
   /// </summary>
-  public class GUIVideoOverlay : GUIOverlayWindow, IRenderLayer
+  public class GUIVideoOverlay : GUIInternalOverlayWindow, IRenderLayer
   {
     private bool _isFocused = false;
     private string _fileName = "";

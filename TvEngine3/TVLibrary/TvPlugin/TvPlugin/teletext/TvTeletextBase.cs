@@ -51,7 +51,7 @@ namespace TvPlugin
   /// <summary>
   /// Common class for both teletext windows
   /// </summary>
-  public class TvTeletextBase : GUIWindow
+  public class TvTeletextBase : GUIInternalWindow
   {
     #region gui controls
 

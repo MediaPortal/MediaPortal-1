@@ -45,7 +45,7 @@ namespace MediaPortal.GUI.Music
   /// <summary>
   /// Summary description for GUIMusicBaseWindow.
   /// </summary>
-  public class GUIMusicBaseWindow : GUIWindow
+  public class GUIMusicBaseWindow : GUIInternalWindow
   {
     #region enums
 

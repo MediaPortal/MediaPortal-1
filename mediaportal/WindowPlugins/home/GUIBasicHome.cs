@@ -31,7 +31,7 @@ namespace WindowPlugins.home
   /// <summary>
   /// Summary description for GUIBasicHome.
   /// </summary>
-  public class GUIBasicHome : GUIWindow
+  public class GUIBasicHome : GUIInternalWindow
   {
     [SkinControl(99)] protected GUIVideoControl _videoWindow = null;
 

@@ -40,7 +40,7 @@ namespace Wikipedia
   /// Windowplugin to search in Wikipedia and display articles using the MP Wikipedia Classes.
   /// </summary>
   [PluginIcons("WindowPlugins.GUIWikipedia.Wikipedia.gif", "WindowPlugins.GUIWikipedia.WikipediaDisabled.gif")]
-  public class GUIWikipedia : GUIWindow, ISetupForm, IShowPlugin
+  public class GUIWikipedia : GUIInternalWindow, ISetupForm, IShowPlugin
   {
     #region SkinControls
 

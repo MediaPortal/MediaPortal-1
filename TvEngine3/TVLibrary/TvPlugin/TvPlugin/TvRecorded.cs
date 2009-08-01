@@ -50,7 +50,7 @@ using TvDatabase;
 
 namespace TvPlugin
 {
-  public class TvRecorded : GUIWindow, IComparer<GUIListItem>
+  public class TvRecorded : GUIInternalWindow, IComparer<GUIListItem>
   {
     #region ThumbCacher
 

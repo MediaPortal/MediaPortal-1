@@ -42,7 +42,7 @@ namespace TvPlugin
   /// <summary>
   /// 
   /// </summary>
-  public class TvPriorities : GUIWindow
+  public class TvPriorities : GUIInternalWindow
   {
     #region variables, ctor/dtor
 

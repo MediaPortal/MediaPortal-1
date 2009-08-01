@@ -32,7 +32,7 @@ using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 {
-  public class KeyPadWindow : GUIWindow
+  public class KeyPadWindow : GUIInternalWindow
   {
     [SkinControl(50)] protected GUILabelControl label1 = null;
     [SkinControl(60)] protected GUIToggleButtonControl btnEnableKeyPad = null;

@@ -35,7 +35,7 @@ namespace MediaPortal.GUI.Settings
   /// <summary>
   /// Summary description for Class1.
   /// </summary>
-  public class GUISettingsMusic : GUIWindow
+  public class GUISettingsMusic : GUIInternalWindow
   {
     private enum Controls
     {

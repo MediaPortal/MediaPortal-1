@@ -54,7 +54,7 @@ namespace MediaPortal.GUI.Music
   /// Window added by Steve5 (why not using the MusicBaseWindow?)
   /// Internet lookups added by rtv
   /// </summary>
-  public class GUIMusicPlayingNow : GUIWindow
+  public class GUIMusicPlayingNow : GUIInternalWindow
   {
     #region Enums
 

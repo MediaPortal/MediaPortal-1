@@ -30,7 +30,7 @@ namespace MediaPortal.GUI.Settings
   /// <summary>
   /// 
   /// </summary>
-  public class GUISettingsScreen : GUIWindow
+  public class GUISettingsScreen : GUIInternalWindow
   {
     public GUISettingsScreen()
     {

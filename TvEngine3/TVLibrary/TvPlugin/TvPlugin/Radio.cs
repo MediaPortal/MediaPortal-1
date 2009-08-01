@@ -41,7 +41,7 @@ using TvLibrary.Interfaces;
 namespace TvPlugin
 {
   [PluginIcons("TvPlugin.Radio.gif", "TvPlugin.Radio_disabled.gif")]
-  public class Radio : GUIWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
+  public class Radio : GUIInternalWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
     #region constants
 

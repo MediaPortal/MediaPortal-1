@@ -41,7 +41,7 @@ namespace WindowPlugins.GUISettings
   /// <summary>
   /// Summary description for GUISettingsGeneral.
   /// </summary>
-  public class GUISettingsGeneral : GUIWindow
+  public class GUISettingsGeneral : GUIInternalWindow
   {
     [SkinControl(10)] protected GUIButtonControl btnSkin = null;
     [SkinControl(11)] protected GUISelectButtonControl btnLanguage = null;

@@ -32,7 +32,7 @@ using MediaPortal.Profile;
 
 namespace WindowPlugins.GUISettings
 {
-  public class GUISettingsSkipSteps : GUIWindow
+  public class GUISettingsSkipSteps : GUIInternalWindow
   {
     #region Skin elements
 

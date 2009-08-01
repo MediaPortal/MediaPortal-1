@@ -28,7 +28,7 @@ using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 {
-  public class BacklightWindow : GUIWindow
+  public class BacklightWindow : GUIInternalWindow
   {
     private MatrixGX.MOGX_Control BackLightOptions = new MatrixGX.MOGX_Control();
     [SkinControl(65)] protected GUISelectButtonControl btnRed = null;

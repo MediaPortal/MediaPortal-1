@@ -29,7 +29,7 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Dialogs
 {
-  public abstract class VirtualKeyboard : GUIWindow, IRenderLayer
+  public abstract class VirtualKeyboard : GUIInternalWindow, IRenderLayer
   {
     #region constants
 

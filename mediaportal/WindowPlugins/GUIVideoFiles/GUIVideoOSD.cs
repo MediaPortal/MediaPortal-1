@@ -32,7 +32,7 @@ using MediaPortal.Video.Database;
 
 namespace MediaPortal.GUI.Video
 {
-  public class GUIVideoOSD : GUIWindow
+  public class GUIVideoOSD : GUIInternalWindow
   {
     private enum Controls : int
     {

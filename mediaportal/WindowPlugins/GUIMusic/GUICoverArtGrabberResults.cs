@@ -34,7 +34,7 @@ using Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal.GUI.Music
 {
-  public class GUICoverArtGrabberResults : GUIWindow, IRenderLayer
+  public class GUICoverArtGrabberResults : GUIInternalWindow, IRenderLayer
   {
     public delegate void FindCoverArtProgressHandler(AmazonWebservice aws, int progressPercent);
 

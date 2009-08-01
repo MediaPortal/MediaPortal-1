@@ -97,7 +97,7 @@ namespace TvPlugin
   /// <summary>
   /// Summary description for GUITVProgramInfo.
   /// </summary>
-  public class TVProgramInfo : GUIWindow
+  public class TVProgramInfo : GUIInternalWindow
   {
     #region Invoke delegates
 

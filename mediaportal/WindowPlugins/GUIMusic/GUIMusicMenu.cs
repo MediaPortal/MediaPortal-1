@@ -27,7 +27,7 @@ using MediaPortal.GUI.Library;
 
 namespace WindowPlugins.GUIMusic
 {
-  public class GUIMusicMenu : GUIWindow
+  public class GUIMusicMenu : GUIInternalWindow
   {
     public GUIMusicMenu()
     {

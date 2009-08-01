@@ -38,7 +38,7 @@ namespace TvPlugin
 {
   /// <summary>
   /// </summary>
-  public class TvSearch : GUIWindow, IComparer<GUIListItem>
+  public class TvSearch : GUIInternalWindow, IComparer<GUIListItem>
   {
     [SkinControl(2)] protected GUISortButtonControl btnSortBy = null;
     [SkinControl(4)] protected GUIToggleButtonControl btnSearchByGenre = null;

@@ -23,23 +23,16 @@
 
 #endregion
 
-using MediaPortal.GUI.Library;
-
-namespace MediaPortal.GUI.Settings
+namespace MediaPortal.GUI.Library
 {
   /// <summary>
-  /// Summary description for Class1.
+  /// Summary description for GUIInternalOverlayWindow.
   /// </summary>
-  public class GUIWizardFinished : GUIInternalWindow
+  public class GUIInternalOverlayWindow : GUIOverlayWindow
   {
-    public GUIWizardFinished()
+    public override string GetModuleName()
     {
-      GetID = (int) Window.WINDOW_WIZARD_FINISHED;
-    }
-
-    public override bool Init()
-    {
-      return Load(GUIGraphicsContext.Skin + @"\wizard_Finished.xml");
+      return GUILocalizeStrings.Get(100000 + GetID);
     }
   }
 }

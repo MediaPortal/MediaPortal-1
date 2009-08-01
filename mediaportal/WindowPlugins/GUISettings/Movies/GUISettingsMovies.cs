@@ -40,7 +40,7 @@ namespace WindowPlugins.GUISettings.TV
   /// <summary>
   /// Summary description for GUISettingsMovies.
   /// </summary>
-  public class GUISettingsMovies : GUIWindow
+  public class GUISettingsMovies : GUIInternalWindow
   {
     [SkinControl(24)] protected GUIButtonControl btnVideoCodec = null;
     [SkinControl(25)] protected GUIButtonControl btnAudioCodec = null;

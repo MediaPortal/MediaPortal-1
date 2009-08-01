@@ -27,7 +27,7 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 {
-  public class DisplayControlWindow : GUIWindow
+  public class DisplayControlWindow : GUIInternalWindow
   {
     [SkinControl(40)] protected GUIToggleButtonControl btnDisplayVideo = null;
     [SkinControl(41)] protected GUIToggleButtonControl btnDisplayAction = null;

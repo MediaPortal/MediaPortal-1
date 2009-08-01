@@ -27,7 +27,7 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 {
-  public class EqualizerWindow : GUIWindow
+  public class EqualizerWindow : GUIInternalWindow
   {
     [SkinControl(20)] protected GUIToggleButtonControl btnUseEqualizer = null;
     [SkinControl(21)] protected GUISelectButtonControl btnUseStyle = null;

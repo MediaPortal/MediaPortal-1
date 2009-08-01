@@ -28,7 +28,7 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.GUI.Settings.Wizard
 {
-  public class GUIWizardRemote : GUIWindow
+  public class GUIWizardRemote : GUIInternalWindow
   {
     [SkinControl(4)]
     protected GUICheckMarkControl cmMicrosoftMCE = null;

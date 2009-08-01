@@ -38,7 +38,7 @@ namespace WindowPlugins.GUISettings.TV
   /// <summary>
   /// Summary description for GUISettingsTv.
   /// </summary>
-  public class GUISettingsTv : GUIWindow
+  public class GUISettingsTv : GUIInternalWindow
   {
     [SkinControl(24)]
     protected GUIButtonControl btnVideoCodec = null;

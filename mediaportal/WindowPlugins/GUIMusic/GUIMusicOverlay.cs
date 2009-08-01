@@ -39,7 +39,7 @@ namespace MediaPortal.GUI.Music
   /// <summary>
   /// Summary description for Class1.
   /// </summary>
-  public class GUIMusicOverlay : GUIOverlayWindow, IRenderLayer
+  public class GUIMusicOverlay : GUIInternalOverlayWindow, IRenderLayer
   {
     #region Enums
 

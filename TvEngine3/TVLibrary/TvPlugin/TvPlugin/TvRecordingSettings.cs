@@ -33,7 +33,7 @@ namespace TvPlugin
   /// <summary>
   /// Summary description for GUISettingsRecordings.
   /// </summary>
-  public class TvRecordingSettings : GUIWindow
+  public class TvRecordingSettings : GUIInternalWindow
   {
     [SkinControl(4)] protected GUICheckMarkControl cbAutoDeleteRecordings = null;
     [SkinControl(5)] protected GUICheckMarkControl cbCreateTagInfoXML = null;

@@ -46,7 +46,7 @@ namespace MediaPortal.GUI.GUIBurner
   /// Summary description for GUIBurner.
   /// </summary>
   [PluginIcons("WindowPlugins.GUIBurner.Burner.gif", "WindowPlugins.GUIBurner.BurnerDisabled.gif")]
-  public class GUIBurner : GUIWindow, ISetupForm, IShowPlugin
+  public class GUIBurner : GUIInternalWindow, ISetupForm, IShowPlugin
   {
     #region Private Enumerations
 

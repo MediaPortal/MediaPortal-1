@@ -36,7 +36,7 @@ namespace MediaPortal.GUI.Music
   /// <summary>
   /// 
   /// </summary>
-  public class GUIMusicArtistInfo : GUIWindow, IRenderLayer
+  public class GUIMusicArtistInfo : GUIInternalWindow, IRenderLayer
   {
     [SkinControl(20)] protected GUILabelControl lblArtist = null;
     [SkinControl(21)] protected GUILabelControl lblArtistName = null;

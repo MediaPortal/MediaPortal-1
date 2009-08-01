@@ -34,7 +34,7 @@ namespace MediaPortal.GUI.Settings
   /// <summary>
   /// Summary description for Class1.
   /// </summary>
-  public class GUIWizardWelcome : GUIWindow
+  public class GUIWizardWelcome : GUIInternalWindow
   {
     [SkinControl(5)] protected GUIButtonControl btnNext = null;
     [SkinControl(6)] protected GUIButtonControl btnLanguage = null;

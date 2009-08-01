@@ -33,7 +33,7 @@ namespace MediaPortal.Topbar
   /// <summary>
   /// 
   /// </summary>
-  public class GUITopbar : GUIOverlayWindow, IRenderLayer
+  public class GUITopbar : GUIInternalOverlayWindow, IRenderLayer
   {
     private const int HIDE_SPEED = 8;
 

@@ -34,7 +34,7 @@ using TvDatabase;
 
 namespace TvPlugin
 {
-  public class ChannelSettings : GUIWindow, IComparer<Channel>
+  public class ChannelSettings : GUIInternalWindow, IComparer<Channel>
   {
     [SkinControl(24)] protected GUIButtonControl btnTvGroup = null;
     [SkinControl(10)] protected GUIUpDownListControl listChannels = null;

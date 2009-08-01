@@ -37,7 +37,7 @@ namespace TvPlugin
   /// <summary>
   /// TvCropSettings
   /// </summary>
-  public class TvCropSettings : GUIWindow, IRenderLayer
+  public class TvCropSettings : GUIInternalWindow, IRenderLayer
   {
     [SkinControl(2)] protected GUIButtonControl btnClose = null;
     [SkinControl(8)] protected GUISpinControl spinTop = null;

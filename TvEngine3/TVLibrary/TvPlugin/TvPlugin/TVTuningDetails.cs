@@ -29,7 +29,7 @@ using TvDatabase;
 
 namespace TvPlugin
 {
-  public class TVTuningDetails : GUIWindow
+  public class TVTuningDetails : GUIInternalWindow
   {
     public TVTuningDetails()
     {

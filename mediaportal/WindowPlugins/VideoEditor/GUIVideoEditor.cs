@@ -40,7 +40,7 @@ using Mpeg2SplitterPackage;
 
 namespace WindowPlugins.VideoEditor
 {
-  public class GUIVideoEditor : GUIWindow
+  public class GUIVideoEditor : GUIInternalWindow
   {
     #region GUIControls
 
