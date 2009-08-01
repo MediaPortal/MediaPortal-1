@@ -1288,6 +1288,7 @@
     <String id="4554">Cerca informazioni sul CD</String>
     <String id="4555">Playlist attuale</String>
     <String id="4557">Aggiungi tutto alla playlist</String>
+    <String id="4558">Aggiunti di recente</String>
     <String id="5900" prefix="I miei ">Trailers</String>
     <String id="5901">Mostra film</String>
     <String id="5902">Mostra quali film?</String>
@@ -1663,7 +1664,6 @@
     <String id="100004">Impostazioni</String>
     <String id="100005" prefix="La mia ">Musica</String>
     <String id="100006" prefix="I miei ">Filmati</String>
-    <String id="100007">Informazioni sul sistema</String>
     <String id="100008">Impostazioni-&gt;Generali</String>
     <String id="100009">Impostazioni-&gt;Schermo</String>
     <String id="100010">Impostazioni-&gt;Schermo-&gt;Calibrazione I. U.</String>
@@ -1686,8 +1686,6 @@
     <String id="100029">Impostazioni-&gt;Generali-&gt;LCD</String>
     <String id="100030" prefix="La mia ">Radio</String>
     <String id="100031">Impostazioni-&gt;Schermo-&gt;Velocità di scorrimento</String>
-    <String id="100032">MSN Messenger</String>
-    <String id="100033">Conversazione di MSN Messenger</String>
     <String id="100034" prefix="I miei ">Plugins</String>
     <String id="100035">Home semplificata</String>
     <String id="100100">Dialogo Sì/No</String>
@@ -1757,7 +1755,6 @@
     <String id="100747">Ricerca TV</String>
     <String id="100748">Informazioni sul programma</String>
     <String id="100749">TV/Nessun segnale</String>
-    <String id="100750">Ricette</String>
     <String id="100755">Stato</String>
     <String id="100756">Dettagli di stato</String>
     <String id="100757">Preferenze di stato</String>
@@ -1766,7 +1763,6 @@
     <String id="100760">Masterizzatore</String>
     <String id="100761">Guida TV</String>
     <String id="100762">Guida Radio</String>
-    <String id="100770">Explorer</String>
     <String id="100800" prefix="Le mie ">Estensioni</String>
     <String id="101000">Tastiera</String>
     <String id="101002">Tastiera virtuale normale</String>
@@ -1803,10 +1799,6 @@
     <String id="103011" prefix="La mia ">TV/Impostazioni Ritaglio</String>
     <String id="103012">TV - Dettagli sintonizzazione</String>
     <String id="104711" prefix="La mia ">Wikipedia</String>
-    <String id="105000">Allarme</String>
-    <String id="105001">Allarme - Dettagli allarme</String>
-    <String id="105002">Allarme - Tempo di sleep</String>
-    <String id="105900" prefix="I miei ">Trailers</String>
     <String id="106666">Power Scheduler in attesa</String>
     <String id="107700" prefix="La mia ">TV/Televideo</String>
     <String id="107701" prefix="La mia ">TV/Televideo</String>
@@ -1820,9 +1812,6 @@
     <String id="109004">MiniDisplay - Configurazione - Equalizzatore</String>
     <String id="109005">MiniDisplay - Configurazione - Tastiera</String>
     <String id="109006">MiniDisplay - Configurazione - Telecomando</String>
-    <String id="109811" prefix="Le mie">Serie TV</String>
-    <String id="190478" prefix="I miei">Testi</String>
-    <String id="196742">MovingPictures</String>
     <String id="200000">Per favore seleziona il tuo Grabber EPG (Guida Elettronica Programmi). Nota che se la tua nazione non</String>
     <String id="200001">è in elenco dovrai inserire l'EPG manualmente</String>
     <String id="200002">Ora puoi far corrispondere i canali EPG ai tuoi canali TV</String>

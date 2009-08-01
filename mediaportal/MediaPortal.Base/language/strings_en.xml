@@ -1664,7 +1664,6 @@
     <String id="100004">Settings</String>
     <String id="100005" prefix="My ">Music</String>
     <String id="100006" prefix="My ">Videos</String>
-    <String id="100007">System information</String>
     <String id="100008">Settings-&gt;General</String>
     <String id="100009">Settings-&gt;Screen</String>
     <String id="100010">Settings-&gt;Screen-&gt;UI Calibration</String>
@@ -1687,8 +1686,6 @@
     <String id="100029">Settings-&gt;General-&gt;LCD</String>
     <String id="100030" prefix="My ">Radio</String>
     <String id="100031">Settings-&gt;Screen-&gt;scroll speed</String>
-    <String id="100032">MSN Messenger</String>
-    <String id="100033">MSN Messenger chat</String>
     <String id="100034" prefix="My ">Plugins</String>
     <String id="100035">Basic home</String>
     <String id="100100">Yes/No dialog</String>
@@ -1756,9 +1753,8 @@
     <String id="100709">TV server settings</String>
     <String id="100746">TV search type</String>
     <String id="100747">TV search</String>
-    <String id="100748">Programme info.</String>
+    <String id="100748">Program info</String>
     <String id="100749">TV/No signal</String>
-    <String id="100750">Recipes</String>
     <String id="100755">Status</String>
     <String id="100756">Status details</String>
     <String id="100757">Status preferences</String>
@@ -1767,7 +1763,6 @@
     <String id="100760">Burner</String>
     <String id="100761">TV guide</String>
     <String id="100762">Radio guide</String>
-    <String id="100770">Explorer</String>
     <String id="100800" prefix="My ">Extensions</String>
     <String id="101000">keyboard</String>
     <String id="101002">Virtual Standard Keyboard</String>
@@ -1804,10 +1799,6 @@
     <String id="103011" prefix="My ">TV/Crop settings</String>
     <String id="103012">TV tuning details</String>
     <String id="104711" prefix="My ">Wikipedia</String>
-    <String id="105000">Alarm</String>
-    <String id="105001">Alarm - Alarm details</String>
-    <String id="105002">Alarm - Sleeptime</String>
-    <String id="105900" prefix="My ">Trailers</String>
     <String id="106666">Power Scheduler Waiting</String>
     <String id="107700" prefix="My ">TV/Teletext</String>
     <String id="107701" prefix="My ">TV/Teletext</String>
@@ -1821,9 +1812,6 @@
     <String id="109004">MiniDisplay - Setup - Equalizer</String>
     <String id="109005">MiniDisplay - Setup - KeyPad</String>
     <String id="109006">MiniDisplay - Setup - Remote Control</String>
-    <String id="109811" prefix="My ">TV-Series</String>
-    <String id="190478" prefix="My ">Lyrics</String>
-    <String id="196742">MovingPictures</String>
     <String id="200000">Please select your EPG grabber. Note if your country is</String>
     <String id="200001">not listed then you will need to supply the EPG manually</String>
     <String id="200002">You can now map the EPG channels to your TV channels</String>
