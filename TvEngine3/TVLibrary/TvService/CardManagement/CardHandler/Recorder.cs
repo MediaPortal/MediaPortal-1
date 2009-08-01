@@ -184,6 +184,10 @@ namespace TvService
 
                 Stop(ref user);
                 _cardHandler.Users.RemoveUser(user);
+                
+                // delete 0-byte file in case of error
+                Utils.DeleteFileAndEmptyDirectory(fileName);
+
                 if (isScrambled)
                 {
                   return TvResult.ChannelIsScrambled;

@@ -521,6 +521,38 @@ namespace TvService
       }
       return false;
     }
+    /// <summary>
+    /// Deletes a file. After this the containing folder is deleted also, if it's empty
+    /// </summary>
+    /// <param name="strFile">filename</param>
+    /// <returns>true if successful</returns>
+    static public bool DeleteFileAndEmptyDirectory(string strFile)
+    {
+      if (String.IsNullOrEmpty(strFile)) return true;
+      try
+      {
+        if (System.IO.File.Exists(strFile))
+        {
+          System.IO.File.Delete(strFile);
+        }
+        String FolderName = System.IO.Path.GetDirectoryName(strFile);
+        DirectoryInfo ContainingFolder = new DirectoryInfo(FolderName);
+        if (ContainingFolder != null)
+        {
+          DirectoryInfo[] subfolders = ContainingFolder.GetDirectories();
+          FileInfo[] files = ContainingFolder.GetFiles();
+          if (files.Length == 0 && subfolders.Length == 0)
+          {
+            System.IO.Directory.Delete(FolderName);
+          }
+        }
+        return true;
+      }
+      catch (Exception)
+      {
+      }
+      return false;
+    }
     static public bool DirectoryDelete(string strDir)
     {
       if (strDir == null) return false;
