@@ -1270,6 +1270,19 @@ namespace TvDatabase
       return "yyyyMMdd HH:mm:ss";
     }
 
+    public string EscapeSQLString(string original)
+    {
+        string provider = ProviderFactory.GetDefaultProvider().Name.ToLowerInvariant();
+        if (provider == "mysql")
+        {
+            return original.Replace("'", "\\'");
+        }
+        else
+        {
+            return original.Replace("'", "''");
+        }
+    }
+
     public void RemoveOldPrograms()
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Program));
@@ -1643,7 +1656,7 @@ namespace TvDatabase
       SqlSelectCommand.Append("select p.* from Program p inner join Channel c on c.idChannel = p.idChannel ");
       SqlSelectCommand.AppendFormat(
         "where ((EndTime > '{0}' and EndTime < '{1}') or (StartTime >= '{0}' and StartTime <= '{1}') or (StartTime <= '{0}' and EndTime >= '{1}')) and title like '%{2}%' and c.visibleInGuide = 1 order by startTime",
-        StartTimeString, EndTimeString, title
+        StartTimeString, EndTimeString, EscapeSQLString(title)
       );
       SqlStatement stmt = new SqlBuilder(StatementType.Select, typeof(Program)).GetStatement(true);
       SqlStatement ManualJoinSQL = new SqlStatement(StatementType.Select, stmt.Command, SqlSelectCommand.ToString(), typeof(Program));
@@ -1737,7 +1750,7 @@ namespace TvDatabase
       SqlSelectCommand.AppendFormat("where endTime > '{0}' ", DateTime.Now.ToString(GetDateTimeString(), mmddFormat));
       if (searchCriteria.Length > 0)
       {
-        SqlSelectCommand.AppendFormat("and title like '{0}%' ", searchCriteria);
+        SqlSelectCommand.AppendFormat("and title like '{0}%' ", EscapeSQLString(searchCriteria));
       }
       SqlSelectCommand.Append("and c.visibleInGuide = 1 order by title, startTime");
       SqlStatement stmt = new SqlBuilder(StatementType.Select, typeof(Program)).GetStatement(true);
