@@ -377,16 +377,14 @@ namespace MediaPortal.GUI.Library
         {
           newHeight2 = m_height2;
           newWidth2 = (int)((float)newHeight2 * aspectRatio);
-          _positionX = m_posx2 - (int)(newWidth2 - m_width2) / 2;
-          _positionY = m_posy2 - (int)(newHeight2 - m_height2) / 2;
         }
         else
         {
           newHeight2 = (int)((float)newWidth2 / aspectRatio);
-          _positionX = m_posx2 - (int)(newWidth2 - m_width2) / 2;
-          _positionY = m_posy2 - (int)(newHeight2 - m_height2) / 2;
         }
       }
+      _positionX = m_posx2 - (int)(newWidth2 - m_width2) / 2;
+      _positionY = m_posy2 - (int)(newHeight2 - m_height2) / 2;
       m_images[image].SetPosition(_positionX, _positionY);
       m_images[image].Width = newWidth2;
       m_images[image].Height = newHeight2;
