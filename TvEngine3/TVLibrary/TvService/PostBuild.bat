@@ -5,7 +5,7 @@ REM %2 = $(ConfigurationName) Debug/Release
 rem xcopy /y %1\MediaPortal.Support\bin\%2\MediaPortal.Support.* .
 
 xcopy %1\DirectShowLib\bin\%2\*.* . /R /Y
-xcopy %1\Plugins\PowerScheduler\PowerScheduler.Interfaces\bin\%2\*.* . /R /Y
+xcopy %1\..\..\Common-MP-TVE3\PowerScheduler.Interfaces\bin\%2\*.* . /R /Y
 xcopy %1\Plugins\PowerScheduler\bin\%2\*.* Plugins\ /R /Y
 xcopy %1\Plugins\ServerBlaster\ServerBlaster (Learn)\bin\%2\*.* Plugins\ /R /Y
 xcopy %1\Plugins\PluginBase\bin\%2\*.* Plugins\ /R /Y

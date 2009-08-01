@@ -59,6 +59,7 @@
 !define svn_ROOT "..\.."
 !define svn_MP "${svn_ROOT}\mediaportal"
 !define svn_TVServer "${svn_ROOT}\TvEngine3\TVLibrary"
+!define svn_Common_MP_TVE3 "${svn_ROOT}\Common-MP-TVE3"
 !define svn_DeployTool "${svn_ROOT}\Tools\MediaPortal.DeployTool"
 !define svn_DirectShowFilters "${svn_ROOT}\DirectShowFilters"
 !define svn_InstallScripts "${svn_ROOT}\Tools\InstallationScripts"
@@ -681,7 +682,7 @@ Section "-Powerscheduler Client plugin" SecPowerScheduler
   ${LOG_TEXT} "INFO" "Installing Powerscheduler client plugin..."
 
   SetOutPath "$MPdir.Base"
-  File "${svn_TVServer}\Plugins\PowerScheduler\PowerScheduler.Interfaces\bin\${BUILD_TYPE}\PowerScheduler.Interfaces.dll"
+  File "${svn_Common_MP_TVE3}\PowerScheduler.Interfaces\bin\${BUILD_TYPE}\PowerScheduler.Interfaces.dll"
   File "${svn_TVServer}\TvControl\bin\${BUILD_TYPE}\TvControl.dll"
   File "${svn_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
 

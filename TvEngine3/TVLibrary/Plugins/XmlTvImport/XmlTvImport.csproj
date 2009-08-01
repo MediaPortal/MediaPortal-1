@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{158A88D6-FA0D-4D50-B9DC-D90E189206B0}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -94,6 +94,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Common-MP-TVE3\PowerScheduler.Interfaces\PowerScheduler.Interfaces.csproj">
+      <Project>{7701AA79-18D4-4A18-BB52-16774FB7943D}</Project>
+      <Name>PowerScheduler.Interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\SetupControls\SetupControls.csproj">
       <Project>{A2792D3C-04C1-4A92-9383-A33D59C54D8D}</Project>
       <Name>SetupControls</Name>
@@ -122,11 +126,6 @@
     <ProjectReference Include="..\PluginBase\PluginBase.csproj">
       <Project>{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}</Project>
       <Name>PluginBase</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\PowerScheduler\PowerScheduler.Interfaces\PowerScheduler.Interfaces.csproj">
-      <Project>{7701AA79-18D4-4A18-BB52-16774FB7943D}</Project>
-      <Name>PowerScheduler.Interfaces</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>

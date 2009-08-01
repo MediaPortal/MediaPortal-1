@@ -82,7 +82,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blaster (Learn)", "Plugins\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerScheduler", "Plugins\PowerScheduler\PowerScheduler.csproj", "{3F8F1617-A987-4516-BF37-E01D04D2686F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerScheduler.Interfaces", "Plugins\PowerScheduler\PowerScheduler.Interfaces\PowerScheduler.Interfaces.csproj", "{7701AA79-18D4-4A18-BB52-16774FB7943D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerScheduler.Interfaces", "..\..\Common-MP-TVE3\PowerScheduler.Interfaces\PowerScheduler.Interfaces.csproj", "{7701AA79-18D4-4A18-BB52-16774FB7943D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComSkipLauncher", "Plugins\ComSkipLauncher\ComSkipLauncher.csproj", "{AD20D519-D1AF-484E-ADDE-251F7CA912D9}"
 EndProject

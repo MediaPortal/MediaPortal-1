@@ -18,7 +18,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TVDatabase", "..\TVDatabase
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvBusinessLayer", "..\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj", "{58C35C9D-F18D-40F2-8024-24E50D01E9C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerScheduler.Interfaces", "..\Plugins\PowerScheduler\PowerScheduler.Interfaces\PowerScheduler.Interfaces.csproj", "{7701AA79-18D4-4A18-BB52-16774FB7943D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerScheduler.Interfaces", "..\..\..\Common-MP-TVE3\PowerScheduler.Interfaces\PowerScheduler.Interfaces.csproj", "{7701AA79-18D4-4A18-BB52-16774FB7943D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientPlugin", "..\Plugins\PowerScheduler\ClientPlugin\ClientPlugin.csproj", "{CC77F438-DBD3-4D9C-80B1-C86BA50CF635}"
 EndProject
