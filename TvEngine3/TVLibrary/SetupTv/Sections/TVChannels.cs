@@ -432,7 +432,7 @@ namespace SetupTv.Sections
 
         this.RefreshContextMenu();
         this.RefreshTabs();
-      } 
+      }
       else
       {
         group = (ChannelGroup)menuItem.Tag;
@@ -649,7 +649,8 @@ namespace SetupTv.Sections
       {
         // Reverse the current sort direction for this column.
         lvwColumnSorter.Order = lvwColumnSorter.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
-      } else
+      }
+      else
       {
         // Set the column number that is to be sorted; default to ascending.
         lvwColumnSorter.SortColumn = e.Column;
@@ -719,7 +720,7 @@ namespace SetupTv.Sections
 
     private void mpButtonDeleteEncrypted_Click(object sender, EventArgs e)
     {
-      NotifyForm dlg = new NotifyForm("Clearing all scrambled tv channels...", "This can take some time\n\nPlease be patient...");
+      NotifyForm dlg = new NotifyForm("Deleting all scrambled tv channels...", "This can take some time\n\nPlease be patient...");
       dlg.Show();
       dlg.WaitForDisplay();
       List<ListViewItem> itemsToRemove = new List<ListViewItem>();
@@ -802,10 +803,10 @@ namespace SetupTv.Sections
 
     private void StartScanThread()
     {
-      scanThread = new Thread(ScanForScrambledChannels);
-      scanThread.Name = "Scrambled channel scan thread";
+      scanThread = new Thread(ScanForUsableChannels);
+      scanThread.Name = "Channels test thread";
       scanThread.Start();
-      mpButtonTestScrambled.Text = "Stop";
+      mpButtonTestAvailable.Text = "Stop";
     }
 
     private void StopScanThread()
@@ -813,7 +814,7 @@ namespace SetupTv.Sections
       abortScanning = true;
     }
 
-    private void mpButtonTestScrambled_Click(object sender, EventArgs e)
+    private void mpButtonTestAvailable_Click(object sender, EventArgs e)
     {
       if (isScanning)
       {
@@ -825,11 +826,11 @@ namespace SetupTv.Sections
       }
     }
 
-    private void ScanForScrambledChannels()
+    private void ScanForUsableChannels()
     {
       abortScanning = false;
       isScanning = true;
-      NotifyForm dlg = new NotifyForm("Testing all tv channels...", "Please be patient...");
+      NotifyForm dlg = new NotifyForm("Testing all checked tv channels...", "Please be patient...");
       dlg.Show();
       dlg.WaitForDisplay();
 
@@ -840,80 +841,79 @@ namespace SetupTv.Sections
 
       foreach (ListViewItem item in mpListView1.Items)
       {
-        if (item.Checked == false) continue;  // do not test "un-checked" channels
+        if (item.Checked == false)
+        {
+          continue;  // do not test "un-checked" channels
+        }
         Channel _channel = (Channel)item.Tag; // get channel
         dlg.SetMessage(
           string.Format("Please be patient...\n\nTesting channel {0} ( {1} of {2} )",
                         _channel.DisplayName, item.Index + 1, mpListView1.Items.Count));
         Application.DoEvents();
         TvResult result = _server.StartTimeShifting(ref _user, _channel.IdChannel, out _card);
-        // test the channel for scrambled or unable to start graph
-        if ((result == TvResult.ChannelIsScrambled))
-        {
-          item.Checked = false;
-          // store directly back to db
-          _channel.VisibleInGuide = false;
-          _channel.Persist();
-        }
-        else if (result == TvResult.Succeeded)
+        if (result == TvResult.Succeeded)
         {
           _card.StopTimeShifting();
+          break;
         }
+        item.Checked = false;
+        _channel.VisibleInGuide = false;
+        _channel.Persist();
         if (abortScanning)
         {
           break;
         }
       }
-      mpButtonTestScrambled.Text = "Test";
+      mpButtonTestAvailable.Text = "Test";
       dlg.Close();
       isScanning = false;
       abortScanning = false;
     }
 
-	  private void mpButtonUp_Click(object sender, EventArgs e)
-	  {
-		  mpListView1.BeginUpdate();
-		  ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-		  if (indexes.Count == 0)
-			  return;
-		  for (int i = 0; i < indexes.Count; ++i)
-		  {
-			  int index = indexes[i];
-			  if (index > 0)
-			  {
-				  ListViewItem item = mpListView1.Items[index];
-				  mpListView1.Items.RemoveAt(index);
-				  mpListView1.Items.Insert(index - 1, item);
-			  }
-		  }
-		  ReOrder();
-		  mpListView1.EndUpdate();
-	  }
+    private void mpButtonUp_Click(object sender, EventArgs e)
+    {
+      mpListView1.BeginUpdate();
+      ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
+      if (indexes.Count == 0)
+        return;
+      for (int i = 0; i < indexes.Count; ++i)
+      {
+        int index = indexes[i];
+        if (index > 0)
+        {
+          ListViewItem item = mpListView1.Items[index];
+          mpListView1.Items.RemoveAt(index);
+          mpListView1.Items.Insert(index - 1, item);
+        }
+      }
+      ReOrder();
+      mpListView1.EndUpdate();
+    }
 
-	  private void mpButtonDown_Click(object sender, EventArgs e)
-	  {
-		  mpListView1.BeginUpdate();
-		  ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-		  if (indexes.Count == 0)
-			  return;
-		  if (mpListView1.Items.Count < 2)
-			  return;
-		  for (int i = indexes.Count - 1; i >= 0; i--)
-		  {
-			  int index = indexes[i];
-			  ListViewItem item = mpListView1.Items[index];
-			  mpListView1.Items.RemoveAt(index);
-			  if (index + 1 < mpListView1.Items.Count)
-				  mpListView1.Items.Insert(index + 1, item);
-			  else
-				  mpListView1.Items.Add(item);
-		  }
-		  ReOrder();
-		  mpListView1.EndUpdate();
-	  }
+    private void mpButtonDown_Click(object sender, EventArgs e)
+    {
+      mpListView1.BeginUpdate();
+      ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
+      if (indexes.Count == 0)
+        return;
+      if (mpListView1.Items.Count < 2)
+        return;
+      for (int i = indexes.Count - 1; i >= 0; i--)
+      {
+        int index = indexes[i];
+        ListViewItem item = mpListView1.Items[index];
+        mpListView1.Items.RemoveAt(index);
+        if (index + 1 < mpListView1.Items.Count)
+          mpListView1.Items.Insert(index + 1, item);
+        else
+          mpListView1.Items.Add(item);
+      }
+      ReOrder();
+      mpListView1.EndUpdate();
+    }
 
-	  private void mpButtonAddGroup_Click(object sender, EventArgs e)
-	  {
+    private void mpButtonAddGroup_Click(object sender, EventArgs e)
+    {
       GroupNameForm dlg = new GroupNameForm();
       if (dlg.ShowDialog(this) != DialogResult.OK)
       {
@@ -925,17 +925,17 @@ namespace SetupTv.Sections
 
       this.RefreshContextMenu();
       this.RefreshTabs();
-	  }
+    }
 
-	  private void mpButtonRenameGroup_Click(object sender, EventArgs e)
-	  {
+    private void mpButtonRenameGroup_Click(object sender, EventArgs e)
+    {
       GroupSelectionForm dlgGrpSel = new GroupSelectionForm();
 
       if (dlgGrpSel.ShowDialog(typeof(ChannelGroup), this) != DialogResult.OK)
       {
         return;
       }
-      
+
       ChannelGroup group = dlgGrpSel.Group as ChannelGroup;
       if (group == null)
       {
@@ -960,10 +960,10 @@ namespace SetupTv.Sections
         this.RefreshContextMenu();
         this.RefreshTabs();
       }
-	  }
+    }
 
-	  private void mpButtonDelGroup_Click(object sender, EventArgs e)
-	  {
+    private void mpButtonDelGroup_Click(object sender, EventArgs e)
+    {
       GroupSelectionForm dlgGrpSel = new GroupSelectionForm();
 
       if (dlgGrpSel.ShowDialog(typeof(ChannelGroup), this) != DialogResult.OK)
@@ -998,7 +998,7 @@ namespace SetupTv.Sections
         this.RefreshContextMenu();
         this.RefreshTabs();
       }
-	  }
+    }
 
     private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
     {
@@ -1211,7 +1211,7 @@ namespace SetupTv.Sections
         return;
       }
 
-      DialogResult result = MessageBox.Show(string.Format("Are you sure you want to delete the group '{0}'?", 
+      DialogResult result = MessageBox.Show(string.Format("Are you sure you want to delete the group '{0}'?",
         group.GroupName), "", MessageBoxButtons.YesNo);
 
       if (result == DialogResult.No)
@@ -1234,5 +1234,6 @@ namespace SetupTv.Sections
         this.RefreshContextMenu();
       }
     }
+
   }
 }
