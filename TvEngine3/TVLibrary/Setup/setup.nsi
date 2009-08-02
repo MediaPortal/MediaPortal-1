@@ -690,6 +690,8 @@ ${MementoSectionEnd}
   Delete "$MPdir.Base\log4net.dll"
   Delete "$MPdir.Base\MySql.Data.dll"
   Delete "$MPdir.Base\TvBusinessLayer.dll"
+  Delete "$MPdir.Base\TvControl.dll"
+  Delete "$MPdir.Base\TvLibrary.Interfaces.dll"
 !macroend
 
 ${MementoSectionDone}

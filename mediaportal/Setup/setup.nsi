@@ -685,14 +685,12 @@ Section "-Powerscheduler Client plugin" SecPowerScheduler
   File "${svn_Common_MP_TVE3}\PowerScheduler.Interfaces\bin\${BUILD_TYPE}\PowerScheduler.Interfaces.dll"
 
   SetOutPath "$MPdir.Plugins\Process"
-  File "${svn_TVServer}\Plugins\PowerScheduler\ClientPlugin\bin\${BUILD_TYPE}\PowerSchedulerClientPlugin.dll"
+  File "${svn_MP}\PowerSchedulerClientPlugin\bin\${BUILD_TYPE}\PowerSchedulerClientPlugin.dll"
 SectionEnd
 !macro Remove_${SecPowerScheduler}
   ${LOG_TEXT} "INFO" "Uninstalling Powerscheduler client plugin..."
 
   Delete "$MPdir.Base\PowerScheduler.Interfaces.dll"
-  Delete "$MPdir.Base\TvControl.dll"
-  Delete "$MPdir.Base\TvLibrary.Interfaces.dll"
 
   Delete "$MPdir.Plugins\Process\PowerSchedulerClientPlugin.dll"
 !macroend
