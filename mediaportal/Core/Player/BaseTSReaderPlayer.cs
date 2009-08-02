@@ -145,6 +145,7 @@ namespace MediaPortal.Player
     protected int _aspectY = 1;
     protected long _speedRate = 10000;
     protected bool _CodecSupportsFastSeeking = true;
+    protected bool _usingFastSeeking = false;
     protected IBaseFilter _interfaceTSReader = null;
     protected IBaseFilter _videoCodecFilter = null;
     protected IBaseFilter _h264videoCodecFilter = null;
@@ -798,7 +799,7 @@ namespace MediaPortal.Player
         {
           return 1;
         }
-        if (_CodecSupportsFastSeeking)
+        if (_CodecSupportsFastSeeking && _usingFastSeeking)
         {
           return iSpeed;
         }
@@ -834,19 +835,34 @@ namespace MediaPortal.Player
       {
         if (_state != PlayState.Init)
         {
+          bool setRateFailed = false;
           if (_CodecSupportsFastSeeking)
           {
             if (iSpeed != value)
             {
+              _usingFastSeeking = true;
+              int previousSpeed = iSpeed;
               iSpeed = value;
 
               int hr = _mediaSeeking.SetRate((double) iSpeed);
+
+              FilterState state;
+              _mediaCtrl.GetState(100, out state);
+              if (state != FilterState.Running)
+              {
+                _mediaCtrl.Run();
+              }
+              
               Log.Info("VideoPlayer:SetRate to:{0} {1:X}", iSpeed, hr);
               if (hr != 0)
               {
                 IMediaSeeking oldMediaSeek = _graphBuilder as IMediaSeeking;
                 hr = oldMediaSeek.SetRate((double) iSpeed);
-                Log.Info("VideoPlayer:SetRateOld to:{0} {1:X}", iSpeed, hr);
+               
+                setRateFailed = true;
+                _usingFastSeeking = false;
+                iSpeed = 0;
+                Log.Info("VideoPlayer:SetRate - fast seeking is not supported, falling back to normal seeking");
               }
               if (iSpeed == 1)
               {
@@ -854,14 +870,13 @@ namespace MediaPortal.Player
                 Application.DoEvents();
                 Thread.Sleep(200);
                 Application.DoEvents();
-                FilterState state;
-                _mediaCtrl.GetState(100, out state);
-                //Log.Info("state:{0}", state.ToString());
                 _mediaCtrl.Run();
+                _speedRate = 10000;
+                _usingFastSeeking = false;
               }
             }
           }
-          else
+          if( !_CodecSupportsFastSeeking || setRateFailed )
           {
             switch ((int) value)
             {
@@ -1859,7 +1874,7 @@ namespace MediaPortal.Player
 
     protected void DoFFRW()
     {
-      if (!Playing)
+      if (!Playing || _usingFastSeeking)
       {
         return;
       }
