@@ -1474,34 +1474,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   }
   m_pids=pids;
   LogDebug("New channel found (PAT/PMT/SDT changed)");
-  LogDebug(" pcr      pid: %4x ",m_pids.PcrPid);
-  LogDebug(" pmt      pid: %4x ",m_pids.PmtPid);
-
-  // Log all video streams (Blu-ray can have multiple video streams)
-  for(int i(0) ; i < m_pids.videoPids.size() ; i++)
-  {
-    LogDebug(" video    pid: %4x type: %s",
-      m_pids.videoPids[i].Pid, 
-      StreamFormatAsString(m_pids.videoPids[i].VideoServiceType));
-  }
-
-  // Log all audio streams
-  for(int i(0) ; i < m_pids.audioPids.size() ; i++)
-  {
-    LogDebug(" audio    pid: %4x language %3s type: %s",
-      m_pids.audioPids[i].Pid, 
-      m_pids.audioPids[i].Lang,
-      StreamFormatAsString(m_pids.audioPids[i].AudioServiceType));
-  }
-  
-  // Log all subtitle streams
-  for(int i(0) ; i < m_pids.subtitlePids.size() ; i++)
-  {
-    LogDebug(" Subtitle pid: %4x language %3s type: %s",
-      m_pids.subtitlePids[i].Pid, 
-      m_pids.subtitlePids[i].Lang,
-      StreamFormatAsString(m_pids.subtitlePids[i].SubtitleServiceType));  
-  }  
+  m_pids.LogPIDs();
 
   if(pTeletextEventCallback != NULL)
   {
@@ -1947,62 +1920,5 @@ void CDeMultiplexer::CallTeletextEventCallback(int eventCode,unsigned long int e
     //LogDebug("CallTeletextEventCallback %i %i", eventCode,eventValue);
     (*pTeletextEventCallback)(eventCode,eventValue);
   }
-}
-
-
-// This should be moved into DvbCoreUtils... maybe tomorrow...
-LPCTSTR CDeMultiplexer::StreamFormatAsString(int streamType)
-{
-	switch (streamType)
-	{
-	case 0x01:
-		return _T("MPEG1");
-	case 0x02:
-		return _T("MPEG2");
-	case 0x03:
-		return _T("MPEG1 - audio");
-	case 0x04:
-		return _T("MPEG2 - audio");
-	case 0x05:
-		return _T("DVB subtitle 1");
-	case 0x06:
-		return _T("DVB subtitle 2");
-	case 0x10:
-		return _T("MPEG4");
-	case 0x1B:
-		return _T("H264");
-	case 0xEA:
-		return _T("VC1");
-	case 0x80:
-		return _T("LPCM");
-	case 0x81:
-		return _T("AC3");
-	case 0x82:
-		return _T("DTS");
-	case 0x83:
-		return _T("MLP");
-	case 0x84:
-		return _T("DD+");
-	case 0x85:
-		return _T("DTS-HD");
-	case 0x86:
-		return _T("DTS-HD Master Audio");
-  case 0x0f:
-		return _T("AAC");
-	case 0x11:
-		return _T("LATM AAC");
-  case 0xA1:
-		return _T("DD+");
-	case 0xA2:
-		return _T("DTS-HD");
-	case 0x90:
-		return _T("PGS");
-	case 0x91:
-		return _T("IG");
-	case 0x92:
-		return _T("Text");
-	default:
-		return _T("Unknown");
-	}
 }
 

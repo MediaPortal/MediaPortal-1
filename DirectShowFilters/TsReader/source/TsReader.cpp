@@ -153,12 +153,12 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
   m_pCallback(NULL),
   m_pRequestAudioCallback(NULL)
 {
- // use the following line if u r having trouble setting breakpoints
- // #pragma comment( lib, "strmbasd" )
+  // use the following line if you are having trouble setting breakpoints
+  // #pragma comment( lib, "strmbasd" )
   TCHAR filename[1024];
   GetLogFile(filename);
   ::DeleteFile(filename);
-  LogDebug("-------------- v1.0.7 ----------------");
+  LogDebug("-------------- v1.0.8 ----------------");
 
   m_fileReader=NULL;
   m_fileDuration=NULL;
@@ -416,8 +416,10 @@ STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
   else
   {
     m_lastRun = GetTickCount() ;
-    if (m_bStreamCompensated && m_bLiveTv) ;
+    if (m_bStreamCompensated && m_bLiveTv)
+    {
       LogDebug("Elapsed time from pause to Audio/Video ( total zapping time ) : %d mS",GetTickCount()-m_lastPause);
+    }
   }
 
   ShowBuffer=40 ;

@@ -91,7 +91,6 @@ public:
   void       FlushSubtitle();
   void       FlushTeletext();
   int        GetVideoServiceType();
-  LPCTSTR    StreamFormatAsString(int streamType);
 
   void SetTeletextEventCallback(int (CALLBACK *pTeletextResetCallback)(int,DWORD64));
   void SetTeletextPacketCallback(int (CALLBACK *pTeletextPacketCallback)(byte*, int));

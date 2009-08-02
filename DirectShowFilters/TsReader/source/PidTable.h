@@ -129,6 +129,9 @@ public:
   virtual ~CPidTable();
   void Reset();
 
+  void LogPIDs();
+  LPCTSTR StreamFormatAsString(int streamType);
+
   bool HasTeletextPageInfo(int page); // do we have a TeletextServiceInfo entry for that page
 
   CPidTable& operator = (const CPidTable& pids);
