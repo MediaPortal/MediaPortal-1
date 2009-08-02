@@ -119,7 +119,6 @@ namespace MediaPortal.GUI.Library
     //private System.Drawing.Image m_image = null;
     private Rectangle m_destRect;
     private string _cachedTextureFileName = "";
-    private int g_nAnisotropy = 0;
 
 
     private DateTime _animationTimer = DateTime.MinValue;
@@ -145,6 +144,8 @@ namespace MediaPortal.GUI.Library
     private bool _reCalculate = false;
     private bool _allocated = false;
     private bool _registeredForEvent = false;
+
+    private object _lockingObject = new object();
 
     private GUIImage()
     {
@@ -533,8 +534,6 @@ namespace MediaPortal.GUI.Library
         }
         _propertyChanged = false;
 
-        g_nAnisotropy = GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
-
         //reset animation
         BeginAnimation();
 
@@ -693,6 +692,11 @@ namespace MediaPortal.GUI.Library
       if (_textureFileNameTag.IndexOf(tag) >= 0)
       {
         _propertyChanged = true;
+      }
+      string lockid = GUIPropertyManager.Parse(_textureFileNameTag);
+      if((_lockingObject = GUITextureManager.GetCachedTexture(lockid))==null)
+      {
+        _lockingObject = new object();
       }
     }
 
@@ -1132,18 +1136,7 @@ namespace MediaPortal.GUI.Library
 
       // if this image is managed by the GUITextureManager then lock the cached texture
       // to prevent it from being unloaded in another thread while we try to render
-      string id = _containsProperty ? GUIPropertyManager.Parse(_textureFileNameTag) : _textureFileNameTag;
-      object lockingObject = GUITextureManager.GetCachedTexture(id);
-      if (lockingObject == null)
-      {
-        lockingObject = new object();
-      }
-      //else
-      //{
-      //    Log.Debug("GUIImage: Locked texture {0}", id);
-      //}
-
-      lock (lockingObject)
+      lock (_lockingObject)
       {
         if (_packedTextureNo >= 0 && _packedTexture != null)
         {
@@ -1413,6 +1406,7 @@ namespace MediaPortal.GUI.Library
       else
       {
         _containsProperty = false;
+        _lockingObject = GUITextureManager.GetCachedTexture(_textureFileNameTag);
       }
 
       //reallocate & load then new image
