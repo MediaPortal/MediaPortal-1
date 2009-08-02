@@ -691,7 +691,7 @@ namespace SetupTv.Sections
                 comboBoxPol.SelectedIndex = 2;
                 break;
               case Polarisation.CircularR:
-                comboBoxPol.SelectedIndex = 2;
+                comboBoxPol.SelectedIndex = 3;
                 break;
             }
             comboBoxModulation.SelectedIndex = detail.Modulation + 1;
