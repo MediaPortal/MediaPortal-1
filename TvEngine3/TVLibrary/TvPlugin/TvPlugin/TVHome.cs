@@ -1118,8 +1118,15 @@ namespace TvPlugin
     private void OnAudioTracksReady()
     {
       Log.Debug("TVHome.OnAudioTracksReady()");
-      int prefLangIdx = GetPreferedAudioStreamIndex();
+
+      eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
+      int prefLangIdx = GetPreferedAudioStreamIndex(out dualMonoMode);
       g_Player.CurrentAudioStream = prefLangIdx;
+
+      if (dualMonoMode != eAudioDualMonoMode.UNSUPPORTED)
+      {
+        g_Player.SetAudioDualMonoMode(dualMonoMode);
+      }      
     }
 
     private void OnPlayBackStarted(g_Player.MediaType type, string filename)
@@ -2709,7 +2716,7 @@ namespace TvPlugin
       Navigator.ZapToPreviousChannel(false);
     }
 
-    public static int GetPreferedAudioStreamIndex() // also used from tvrecorded class
+    public static int GetPreferedAudioStreamIndex(out eAudioDualMonoMode dualMonoMode) // also used from tvrecorded class
     {
       int idxFirstAc3 = -1; // the index of the first avail. ac3 found
       int idxFirstmpeg = -1; // the index of the first avail. mpg found
@@ -2719,6 +2726,7 @@ namespace TvPlugin
       string langSel = ""; // find audio based on this language.
       string ac3BasedOnLang = ""; // for debugging, what lang. in prefs. where used to choose the ac3 audio track ?
       string mpegBasedOnLang = ""; // for debugging, what lang. in prefs. where used to choose the mpeg audio track ?
+      dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
 
       IAudioStream[] streams;
 
@@ -2797,26 +2805,54 @@ namespace TvPlugin
 
         //now find the ones based on LANG prefs.
         if (_preferredLanguages != null)
-        {
-          int index = _preferredLanguages.IndexOf(streams[i].Language);
-          langSel = streams[i].Language;
-          //Log.Debug(streams[i].Language + " Pref index " + index);
-          Log.Debug("Stream {0} lang {1}, preffered index {2}", i, langSel, index);
+        {          
+          if (g_Player.GetAudioDualMonoMode() != eAudioDualMonoMode.UNSUPPORTED && streams[i].Language.Length == 6)
+          {            
+            string leftAudioLang = streams[i].Language.Substring(0,3);
+            string rightAudioLang = streams[i].Language.Substring(3, 3);
 
-          if (index >= 0 && index < priority)
-          {
-            if ((streams[i].StreamType == AudioStreamType.AC3)) //is the audio track an AC3 track ?
+            int index = _preferredLanguages.IndexOf(leftAudioLang);
+            if (index >= 0 && index < priority)
             {
-              idxLangAc3 = i;
-              ac3BasedOnLang = langSel;
-            }
-            else //audiotrack is mpeg
-            {
+              dualMonoMode = eAudioDualMonoMode.LEFT_MONO;
+              mpegBasedOnLang = leftAudioLang;
               idxLangmpeg = i;
-              mpegBasedOnLang = langSel;
+              priority = index;           
             }
-            Log.Debug("Setting as pref");
-            priority = index;
+            else
+            {              
+              index = _preferredLanguages.IndexOf(rightAudioLang);
+              if (index >= 0 && index < priority)
+              {                
+                dualMonoMode = eAudioDualMonoMode.RIGHT_MONO;
+                mpegBasedOnLang = rightAudioLang;
+                idxLangmpeg = i;                
+                priority = index;
+              }
+            }            
+          }
+          else
+          {
+            int index = _preferredLanguages.IndexOf(streams[i].Language);
+            langSel = streams[i].Language;
+            //Log.Debug(streams[i].Language + " Pref index " + index);
+            Log.Debug("Stream {0} lang {1}, preffered index {2}", i, langSel, index);
+
+            if (index >= 0 && index < priority)
+            {
+              if ((streams[i].StreamType == AudioStreamType.AC3)) //is the audio track an AC3 track ?
+              {
+                idxLangAc3 = i;
+                ac3BasedOnLang = langSel;
+              }
+              else //audiotrack is mpeg
+              {
+                idxLangmpeg = i;
+                mpegBasedOnLang = langSel;
+              }
+              Log.Debug("Setting as pref");
+              priority = index;
+            }
           }
         }
         if (idxFirstAc3 > -1 && idxFirstmpeg > -1 && idxLangAc3 > -1 && idxLangmpeg > -1)

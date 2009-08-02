@@ -2171,11 +2171,16 @@ namespace TvPlugin
       }
 
       // set audio track based on user prefs. 
-      int prefLangIdx = TVHome.GetPreferedAudioStreamIndex();
-
+      eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
+      int prefLangIdx = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
+      
       Log.Debug("TVRecorded.OnPlayRecordingBackStarted(): setting audioIndex on tsreader {0}", prefLangIdx);
       g_Player.CurrentAudioStream = prefLangIdx;
 
+      if (dualMonoMode != eAudioDualMonoMode.UNSUPPORTED)
+      {
+        g_Player.SetAudioDualMonoMode(dualMonoMode);
+      }            
       //@VideoDatabase.AddMovieFile(filename);
     }
 
