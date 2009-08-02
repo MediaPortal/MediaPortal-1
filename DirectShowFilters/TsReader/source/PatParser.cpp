@@ -210,8 +210,10 @@ void CPatParser::Dump()
     {
       LogDebug("%d) onid:%x tsid:%x sid:%x major:%d minor:%x freq:%x type:%d provider:%s service:%s",i,
             info.NetworkId,info.TransportId,info.ServiceId,info.MajorChannel,info.MinorChannel,info.Frequency,info.ServiceType,info.ProviderName,info.ServiceName);
-      LogDebug("  pcr:%x pmt:%x video:%x audio1:%x audio2:%x audio3:%x ttx:%x sub:%x",
-            info.PidTable.PcrPid,info.PidTable.PmtPid,info.PidTable.VideoPid,info.PidTable.AudioPid1,info.PidTable.AudioPid2,info.PidTable.AudioPid3,info.PidTable.TeletextPid,info.PidTable.SubtitlePid1);
+      
+      // TODO FIX THIS LOGGING to print all PIDS!!!!
+      //LogDebug("  pcr:%x pmt:%x video:%x audio1:%x audio2:%x audio3:%x ttx:%x sub:%x",
+      //      info.PidTable.PcrPid,info.PidTable.PmtPid,info.PidTable.VideoPid,info.PidTable.AudioPid1,info.PidTable.AudioPid2,info.PidTable.AudioPid3,info.PidTable.TeletextPid,info.PidTable.SubtitlePid1);
     }
     else
     {

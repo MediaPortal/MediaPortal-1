@@ -520,7 +520,7 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 
 	if (!hr)
 	{
-    LogDebug("FileReader::Read() read failed");
+    LogDebug("FileReader::Read() read failed - error = %d",  HRESULT_FROM_WIN32(GetLastError()));
 		return E_FAIL;
 	}
 

@@ -888,7 +888,7 @@ void CTsReaderFilter::Seek(CRefTime& seekTime, bool seekInfile)
 
     //update the duration of the stream
     double duration=m_rtspClient.Duration()/1000.0f;
-CPcr pcrstart,pcrEnd,pcrMax;
+    CPcr pcrstart,pcrEnd,pcrMax;
     pcrstart=m_duration.StartPcr();
     duration+=pcrstart.ToClock();
     pcrEnd.FromClock(duration);

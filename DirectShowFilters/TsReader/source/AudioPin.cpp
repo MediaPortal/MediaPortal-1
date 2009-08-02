@@ -557,9 +557,9 @@ void CAudioPin::UpdateFromSeek()
   }
 	if (demux.IsVideoChanging())
 	{
-     LogDebug("aud:skip seek-2");
+    LogDebug("aud:skip seek-2");
     demux.FlushAudio() ;
-		 return ;
+    return ;
 	}
 
   m_seekTimer=GetTickCount();

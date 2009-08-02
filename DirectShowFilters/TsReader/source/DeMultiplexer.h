@@ -90,8 +90,8 @@ public:
   void       FlushAudio();
   void       FlushSubtitle();
   void       FlushTeletext();
-  //void     SyncTeletext();
   int        GetVideoServiceType();
+  LPCTSTR    StreamFormatAsString(int streamType);
 
   void SetTeletextEventCallback(int (CALLBACK *pTeletextResetCallback)(int,DWORD64));
   void SetTeletextPacketCallback(int (CALLBACK *pTeletextPacketCallback)(byte*, int));
@@ -101,8 +101,8 @@ public:
 
   void SetVideoChanging(bool onOff) ;
   bool IsVideoChanging() ;
-	void RequestNewPat(void) ;
-	void ClearRequestNewPat(void) ;
+  void RequestNewPat(void) ;
+  void ClearRequestNewPat(void) ;
 
   bool m_DisableDiscontinuitiesFiltering ;
   CRefTime  m_IframeSample ;
@@ -181,8 +181,8 @@ private:
   //bool m_bPreferAC3;
   int m_iAudioIdx;
   int m_iPatVersion;
-	int m_ReqPatVersion;
-	int m_WaitNewPatTmo;
+  int m_ReqPatVersion;
+  int m_WaitNewPatTmo;
   int m_receivedPackets;
 
   bool m_bIframeFound ;
@@ -193,7 +193,6 @@ private:
   bool m_bSetAudioDiscontinuity;
   bool m_bSetVideoDiscontinuity;
   CPcr m_subtitlePcr;
-  //void ReadAudioIndexFromRegistry();
 
   int (CALLBACK *pTeletextServiceInfoCallback)(int, byte,byte,byte,byte);
   int (CALLBACK *pTeletextPacketCallback)(byte*, int);
@@ -201,6 +200,4 @@ private:
   int (CALLBACK *pSubUpdateCallback)(int c, void* opts,int* bi);
 
   // used to sync teletext packets with video
-  //DWORD64 m_inVideoBuffer;
-  //DWORD64 m_outVideoBuffer;
 };

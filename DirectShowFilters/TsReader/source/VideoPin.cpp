@@ -460,12 +460,11 @@ void CVideoPin::UpdateFromSeek()
       return;
     }
   }
-	if (demux.IsVideoChanging())
-	{
-   
-		LogDebug("vid:skip seek-2");
+  if (demux.IsVideoChanging())
+  {
+    LogDebug("vid:skip seek-2");
     demux.FlushVideo() ;
-		return;
+    return;
 	}
 
   //Note that the seek timestamp (m_rtStart) is done in the range

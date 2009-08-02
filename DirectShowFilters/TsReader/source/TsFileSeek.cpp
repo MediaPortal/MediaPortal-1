@@ -23,7 +23,7 @@
 #include "TsFileSeek.h"
 #include "..\..\shared\adaptionfield.h"
 
-const float SEEKING_ACCURACY = 0.025;
+const float SEEKING_ACCURACY = (float)0.08; // 1/25 *2 (2 frames in PAL)
 const int MAX_SEEKING_ITERATIONS = 50;
 
 extern void LogDebug(const char *fmt, ...) ;
@@ -60,7 +60,7 @@ void CTsFileSeek::Seek(CRefTime refTime)
 
   //make a guess where should start looking in the file
   double percent=seekTimeStamp/fileDuration;
-  __int64 filePos=m_reader->GetFileSize()*percent;
+  __int64 filePos=(__int64)(m_reader->GetFileSize()*percent);
 
   filePos/=188;
   filePos*=188;

@@ -23,6 +23,103 @@
 #include "TeletextServiceInfo.h"
 #include <vector>
 
+// This class used to store subtitle stream specific information
+class SubtitlePid
+{
+public:
+
+  SubtitlePid()
+  {
+    Pid=-1; SubtitleServiceType=-1; Lang[0]='U'; Lang[1]='N'; Lang[2]='K'; Lang[3]=0;
+  }
+  
+  bool operator ==(const SubtitlePid& other) const
+  {
+    if(Pid != other.Pid
+      || Lang[0] != other.Lang[0]
+      || Lang[1] != other.Lang[1]
+      || Lang[2] != other.Lang[2]
+      || Lang[3] != other.Lang[3])
+      {
+        return false;
+      }
+    else
+    {
+      return true;
+    }
+  }
+  WORD Pid;
+  WORD SubtitleServiceType;
+  BYTE Lang[4];
+};
+
+// This class used to store audio stream specific information
+class AudioPid
+{
+public:
+  AudioPid()
+  {
+    Pid=-1; AudioServiceType=-1; Lang[0]='U'; Lang[1]='N'; Lang[2]='K'; Lang[3]=0;
+  }
+  bool operator ==(const AudioPid& other) const
+  {
+    if(Pid != other.Pid
+      || Lang[0] != other.Lang[0]
+      || Lang[1] != other.Lang[1]
+      || Lang[2] != other.Lang[2]
+      || Lang[3] != other.Lang[3]
+      || AudioServiceType != other.AudioServiceType)
+      {
+        return false;
+      }
+    else
+    {
+      return true;
+    }
+  }
+  WORD Pid;
+  BYTE Lang[4];
+  WORD AudioServiceType;
+};
+
+// This class used to store video stream specific information
+class VideoPid
+{
+public:
+  VideoPid()
+  {
+    Pid=-1; VideoServiceType=-1; 
+  }
+
+  bool operator ==(const VideoPid& other) const
+  {
+    if(Pid != other.Pid 
+      || VideoServiceType != other.VideoServiceType)
+    {
+      return false;
+    }
+    else
+    {
+      return true;
+    }
+  }
+
+  WORD Pid;
+  int VideoServiceType;
+};
+
+class TempPid
+{
+public:
+
+  TempPid()
+  {
+    Pid=-1; Lang[0]='U'; Lang[1]='N'; Lang[2]='K'; Lang[3]=0;;
+  }
+  WORD Pid;
+  BYTE Lang[4];
+};
+
 class CPidTable
 {
 public:
@@ -34,71 +131,19 @@ public:
 
   bool HasTeletextPageInfo(int page); // do we have a TeletextServiceInfo entry for that page
 
-  CPidTable& operator = (const CPidTable &pids);
+  CPidTable& operator = (const CPidTable& pids);
+  bool operator==(const CPidTable& other) const;
+
   void Copy(const CPidTable &pids);
-	ULONG PcrPid;
-	ULONG PmtPid;
-	WORD VideoPid;
-	WORD AudioPid1;
-	WORD AudioServiceType1;
-	BYTE Lang1_1;
-	BYTE Lang1_2;
-	BYTE Lang1_3;
-	WORD AudioPid2;
-	WORD AudioServiceType2;
-	BYTE Lang2_1;
-	BYTE Lang2_2;
-	BYTE Lang2_3;
-  WORD AudioPid3;
-	WORD AudioServiceType3;
-	BYTE Lang3_1;
-	BYTE Lang3_2;
-	BYTE Lang3_3;
-  WORD AudioPid4;
-	WORD AudioServiceType4;
-	BYTE Lang4_1;
-	BYTE Lang4_2;
-	BYTE Lang4_3;
-  WORD AudioPid5;
-	WORD AudioServiceType5;
-	BYTE Lang5_1;
-	BYTE Lang5_2;
-	BYTE Lang5_3;
-  WORD AudioPid6;
-	WORD AudioServiceType6;
-	BYTE Lang6_1;
-	BYTE Lang6_2;
-	BYTE Lang6_3;
-  WORD AudioPid7;
-	WORD AudioServiceType7;
-	BYTE Lang7_1;
-	BYTE Lang7_2;
-	BYTE Lang7_3;
-	BYTE Lang8_1;
-	BYTE Lang8_2;
-	BYTE Lang8_3;
-	WORD AudioPid8;
-	WORD AudioServiceType8;
-	WORD TeletextPid; // which PID contains the teletext data
-	//WORD TeletextSubPage; // which page is the primary subtitles on
-	//char TeletextSubLang[3]; // which language are they in
-	std::vector<TeletextServiceInfo> TeletextInfo;
-	WORD SubtitlePid1;
-	BYTE SubLang1_1;
-	BYTE SubLang1_2;
-	BYTE SubLang1_3;
-	WORD SubtitlePid2;
-	BYTE SubLang2_1;
-	BYTE SubLang2_2;
-	BYTE SubLang2_3;
-	WORD SubtitlePid3;
-	BYTE SubLang3_1;
-	BYTE SubLang3_2;
-	BYTE SubLang3_3;
-	WORD SubtitlePid4;
-	BYTE SubLang4_1;
-	BYTE SubLang4_2;
-	BYTE SubLang4_3;
-	int  ServiceId;
-  int  videoServiceType;
+
+  ULONG PcrPid;
+  ULONG PmtPid;
+  WORD TeletextPid; // which PID contains the teletext data
+  std::vector<TeletextServiceInfo> TeletextInfo;
+
+  int  ServiceId;
+
+  std::vector<VideoPid> videoPids;
+  std::vector<AudioPid> audioPids;
+  std::vector<SubtitlePid> subtitlePids;
 };
