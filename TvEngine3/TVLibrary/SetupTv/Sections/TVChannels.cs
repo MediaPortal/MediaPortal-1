@@ -854,11 +854,13 @@ namespace SetupTv.Sections
         if (result == TvResult.Succeeded)
         {
           _card.StopTimeShifting();
-          break;
         }
-        item.Checked = false;
-        _channel.VisibleInGuide = false;
-        _channel.Persist();
+        else
+        {
+          item.Checked = false;
+          _channel.VisibleInGuide = false;
+          _channel.Persist();
+        }
         if (abortScanning)
         {
           break;
