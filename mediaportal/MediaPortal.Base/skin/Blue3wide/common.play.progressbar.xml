@@ -12,7 +12,7 @@
       <texture>OSD-Smalbackground.png</texture>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
-      <visible>player.rewinding|Control.IsVisible(10)|player.forwarding|player.paused+!window.isosdvisible</visible>
+      <visible>[player.rewinding|Control.IsVisible(10)|player.forwarding|player.paused]+!window.isosdvisible</visible>
     </control>
      <control>
       <description>Movie Name</description>
@@ -27,7 +27,7 @@
       <textcolor>white</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
-     <visible>player.rewinding|Control.IsVisible(10)|player.forwarding|player.paused+!window.isosdvisible</visible>
+      <visible>[player.rewinding|Control.IsVisible(10)|player.forwarding|player.paused]+!window.isosdvisible</visible>
     </control>
      <control>
       <description>Stripe</description>
@@ -39,7 +39,7 @@
       <texture>OSD_Stripe.png</texture>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
-      <visible>player.rewinding|Control.IsVisible(10)|player.forwarding|player.paused+!window.isosdvisible</visible>
+      <visible>[player.rewinding|Control.IsVisible(10)|player.forwarding|player.paused]+!window.isosdvisible</visible>
     </control>
      <control>
       <description>Current Time Info</description>
@@ -51,7 +51,7 @@
       <textcolor>white</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
-     <visible>player.rewinding|Control.IsVisible(10)|player.forwarding|player.paused+!window.isosdvisible</visible>
+     <visible>[player.rewinding|Control.IsVisible(10)|player.forwarding|player.paused]+!window.isosdvisible</visible>
     </control>
     <control>
       <description>progress bar background</description>
