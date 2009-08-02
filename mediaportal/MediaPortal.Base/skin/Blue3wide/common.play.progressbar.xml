@@ -4,6 +4,7 @@
     <!-- these elements need condition visibility for OSD IS VISIBLE -->
      <control>
       <description>background botton</description>
+      <id>300</id>
       <type>image</type>
       <posX>247</posX>
       <posY>582</posY>
@@ -13,6 +14,22 @@
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
       <visible>[player.rewinding|Control.IsVisible(10)|player.forwarding|player.paused]+!window.isosdvisible</visible>
+    </control>
+     <control>
+      <description>TV Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1130</posX>
+      <posY>635</posY>
+      <width>70</width>
+      <height>70</height>
+      <texture>#Play.Current.Thumb</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+      <visible>[player.rewinding|Control.IsVisible(10)|player.forwarding|player.paused]+!window.isosdvisible</visible>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
      <control>
       <description>Movie Name</description>

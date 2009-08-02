@@ -9,20 +9,6 @@
   <controls>
     <import>common.play.progressbar.xml</import>
     <import>common.play.fullscreen.xml</import>
-    <control>
-      <description>TV Logo</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1130</posX>
-      <posY>635</posY>
-      <width>70</width>
-      <height>70</height>
-      <texture>#Play.Current.Thumb</texture>
-      <keepaspectratio>yes</keepaspectratio>
-      <centered>yes</centered>
-      <visible>player.rewinding|Control.IsVisible(10)|player.forwarding|player.paused+!window.isosdvisible</visible>
-      <animation effect="fade" time="150">windowopen</animation>
-    </control>
     <!--  will be removed later if no issues occur
  <control>
       <description>bar image</description>
