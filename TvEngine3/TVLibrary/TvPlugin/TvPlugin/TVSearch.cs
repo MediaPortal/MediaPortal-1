@@ -221,14 +221,20 @@ namespace TvPlugin
         {
           return;
         }
-        string searchterm = string.Empty;
+        String searchterm = string.Empty;
         keyboard.Reset();
-        keyboard.Text = filterLetter;
+
+        String tmpFilterLetter = filterLetter;
+        if (tmpFilterLetter.StartsWith("%"))
+        {
+          tmpFilterLetter = tmpFilterLetter.Substring(1); // cut of leading % for display in dialog
+        }
+        keyboard.Text = tmpFilterLetter;
         keyboard.DoModal(GetID); // show it...
 
         if (keyboard.IsConfirmed)
         {
-          filterLetter = keyboard.Text;
+          filterLetter = "%" + keyboard.Text; // re-add % to perform fulltext search
           Update();
         }
       }
