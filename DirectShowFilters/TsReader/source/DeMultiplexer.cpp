@@ -246,6 +246,9 @@ void CDeMultiplexer::GetAudioStreamInfo(int stream,char* szName)
   szName[1]=m_audioStreams[stream].language[1];
   szName[2]=m_audioStreams[stream].language[2];
   szName[3]=m_audioStreams[stream].language[3];
+  szName[4]=m_audioStreams[stream].language[4];
+  szName[5]=m_audioStreams[stream].language[5];
+  szName[6]=m_audioStreams[stream].language[6];  
 }
 int CDeMultiplexer::GetAudioStreamCount()
 {
@@ -1506,7 +1509,11 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     audio.language[0]=m_pids.audioPids[i].Lang[0];
     audio.language[1]=m_pids.audioPids[i].Lang[1];
     audio.language[2]=m_pids.audioPids[i].Lang[2];
-    audio.language[3]=0;
+	//audio.language[3] = 0;0
+	audio.language[3]=m_pids.audioPids[i].Lang[3];
+    audio.language[4]=m_pids.audioPids[i].Lang[4];
+    audio.language[5]=m_pids.audioPids[i].Lang[5];
+    audio.language[6]=0;
     audio.audioType = m_pids.audioPids[i].AudioServiceType;
     m_audioStreams.push_back(audio);
   }

@@ -46,6 +46,18 @@ bool CPmtParser::IsReady()
 {
   return _isFound;
 }
+
+byte ByteValidChar (BYTE dIn)
+{
+  BYTE dOut = 0;
+  //check for the ASCII range A-Z and a-z
+  if ((dIn > 64 && dIn < 91) || (dIn > 96 && dIn < 123))
+  {
+	dOut=dIn;
+  }  
+  return dOut;
+}
+
 void CPmtParser::OnNewSection(CSection& section)
 {   
   if (section.table_id!=2)
@@ -148,6 +160,9 @@ void CPmtParser::OnNewSection(CSection& section)
               pid.Lang[0]=tempPids[i].Lang[0];
               pid.Lang[1]=tempPids[i].Lang[1];
               pid.Lang[2]=tempPids[i].Lang[2];
+			  //pid.Lang[3]=tempPids[i].Lang[3];
+              //pid.Lang[4]=tempPids[i].Lang[4];
+              //pid.Lang[5]=tempPids[i].Lang[5];
               tempPids.pop_back();
               break;
             }
@@ -175,8 +190,14 @@ void CPmtParser::OnNewSection(CSection& section)
             {
               m_pidInfo.audioPids[i].Lang[0]=section.Data[pointer+2];
               m_pidInfo.audioPids[i].Lang[1]=section.Data[pointer+3];
-              m_pidInfo.audioPids[i].Lang[2]=section.Data[pointer+4];
-              m_pidInfo.audioPids[i].Lang[3]=0;
+              m_pidInfo.audioPids[i].Lang[2]=section.Data[pointer+4];			  
+			  
+			  m_pidInfo.audioPids[i].Lang[3]=ByteValidChar (section.Data[pointer+6]);
+              m_pidInfo.audioPids[i].Lang[4]=ByteValidChar (section.Data[pointer+7]);
+              m_pidInfo.audioPids[i].Lang[5]=ByteValidChar (section.Data[pointer+8]);
+
+			  //m_pidInfo.audioPids[i].Lang[3]=0;
+              m_pidInfo.audioPids[i].Lang[6]=0;
               pidFound=true;
             }
           // Find corresponding subtitle stream by PID, if not found

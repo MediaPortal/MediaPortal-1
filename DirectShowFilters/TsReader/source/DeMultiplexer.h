@@ -112,7 +112,7 @@ private:
   {
     int pid;
     int audioType;
-    char language[4];
+    char language[7];
   };
   struct stSubtitleStream
   {

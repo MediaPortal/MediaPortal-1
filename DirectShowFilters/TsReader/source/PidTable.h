@@ -59,7 +59,8 @@ class AudioPid
 public:
   AudioPid()
   {
-    Pid=-1; AudioServiceType=-1; Lang[0]='U'; Lang[1]='N'; Lang[2]='K'; Lang[3]=0;
+    Pid=-1; AudioServiceType=-1; Lang[0]='U'; Lang[1]='N'; Lang[2]='K';
+	Lang[3]='U'; Lang[4]='N'; Lang[5]='K'; Lang[6]=0;
   }
   bool operator ==(const AudioPid& other) const
   {
@@ -68,6 +69,9 @@ public:
       || Lang[1] != other.Lang[1]
       || Lang[2] != other.Lang[2]
       || Lang[3] != other.Lang[3]
+	  || Lang[4] != other.Lang[4]
+      || Lang[5] != other.Lang[5]
+      || Lang[6] != other.Lang[6]
       || AudioServiceType != other.AudioServiceType)
       {
         return false;
@@ -78,7 +82,7 @@ public:
     }
   }
   WORD Pid;
-  BYTE Lang[4];
+  BYTE Lang[7];
   WORD AudioServiceType;
 };
 
@@ -114,7 +118,10 @@ public:
 
   TempPid()
   {
-    Pid=-1; Lang[0]='U'; Lang[1]='N'; Lang[2]='K'; Lang[3]=0;;
+	Pid=-1; Lang[0]='U'; Lang[1]='N'; Lang[2]='K'; Lang[3]=0;;
+    /*Pid=-1; Lang[0]='U'; Lang[1]='N'; Lang[2]='K';
+	Lang[3]='U'; Lang[4]='N'; Lang[5]='K'; Lang[6]=0;;
+	  */  
   }
   WORD Pid;
   BYTE Lang[4];
