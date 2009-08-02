@@ -99,7 +99,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerScheduler", "PowerSche
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerScheduler.Interfaces", "..\Common-MP-TVE3\PowerScheduler.Interfaces\PowerScheduler.Interfaces.csproj", "{7701AA79-18D4-4A18-BB52-16774FB7943D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientPlugin", "PowerSchedulerClientPlugin\ClientPlugin.csproj", "{CC77F438-DBD3-4D9C-80B1-C86BA50CF635}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerSchedulerClientPlugin", "PowerSchedulerClientPlugin\PowerSchedulerClientPlugin.csproj", "{CC77F438-DBD3-4D9C-80B1-C86BA50CF635}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
