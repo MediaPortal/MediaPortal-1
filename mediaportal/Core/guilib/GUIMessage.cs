@@ -131,7 +131,8 @@ namespace MediaPortal.GUI.Library
       GUI_MSG_ADD_REMOVABLE_DRIVE = 95,
       GUI_MSG_REMOVE_REMOVABLE_DRIVE = 96,
       GUI_MSG_REFRESHRATE_CHANGED = 97,
-      GUI_MSG_TV_ERROR_NOTIFY = 98 // morpheus_xx, tv error handling
+      GUI_MSG_TV_ERROR_NOTIFY = 98, // morpheus_xx, tv error handling
+      PS_ONSTANDBY = 9999
     } ;
 
     private string _label = "";

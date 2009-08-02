@@ -683,8 +683,6 @@ Section "-Powerscheduler Client plugin" SecPowerScheduler
 
   SetOutPath "$MPdir.Base"
   File "${svn_Common_MP_TVE3}\PowerScheduler.Interfaces\bin\${BUILD_TYPE}\PowerScheduler.Interfaces.dll"
-  File "${svn_TVServer}\TvControl\bin\${BUILD_TYPE}\TvControl.dll"
-  File "${svn_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
 
   SetOutPath "$MPdir.Plugins\Process"
   File "${svn_TVServer}\Plugins\PowerScheduler\ClientPlugin\bin\${BUILD_TYPE}\PowerSchedulerClientPlugin.dll"

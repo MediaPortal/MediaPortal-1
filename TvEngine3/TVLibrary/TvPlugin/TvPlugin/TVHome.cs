@@ -1879,6 +1879,9 @@ namespace TvPlugin
     {
       switch (message.Message)
       {
+        case GUIMessage.MessageType.PS_ONSTANDBY:
+          RemoteControl.Clear();
+          break;
         case GUIMessage.MessageType.GUI_MSG_RESUME_TV:
           {
             if (_autoTurnOnTv && !wasPrevWinTVplugin())

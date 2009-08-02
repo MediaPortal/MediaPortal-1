@@ -623,6 +623,8 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   #---------------------------- File Copy ----------------------
   ; Common Files
   SetOutPath "$MPdir.Base"
+  File "${svn_TVServer}\TvControl\bin\${BUILD_TYPE}\TvControl.dll"
+  File "${svn_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
   File "${svn_TVServer}\TVDatabase\bin\${BUILD_TYPE}\TVDatabase.dll"
   File "${svn_TVServer}\TVDatabase\references\Gentle.Common.DLL"
   File "${svn_TVServer}\TVDatabase\references\Gentle.Framework.DLL"
@@ -631,7 +633,7 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File "${svn_TVServer}\TVDatabase\references\log4net.dll"
   File "${svn_TVServer}\TVDatabase\references\MySql.Data.dll"
   File "${svn_TVServer}\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\TvBusinessLayer.dll"
-  
+
   ;Gentle.Config
   SetOutPath "$MPdir.Config"
   File "${svn_TVServer}\TvPlugin\TvPlugin\Gentle.config"

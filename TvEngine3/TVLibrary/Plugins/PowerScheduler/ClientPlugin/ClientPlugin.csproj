@@ -89,10 +89,6 @@
     <Compile Include="UnattendedWindow.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\TvControl\TvControl.csproj">
-      <Project>{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}</Project>
-      <Name>TvControl</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Common-MP-TVE3\PowerScheduler.Interfaces\PowerScheduler.Interfaces.csproj">
       <Project>{7701AA79-18D4-4A18-BB52-16774FB7943D}</Project>
       <Name>PowerScheduler.Interfaces</Name>

@@ -43,7 +43,6 @@ using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.Services;
 using MediaPortal.Util;
-using TvControl;
 using TvEngine.PowerScheduler;
 using TvEngine.PowerScheduler.Interfaces;
 using Timer=System.Timers.Timer;
@@ -1296,7 +1295,8 @@ namespace MediaPortal.Plugins.Process
         LogVerbose("resetting PowerScheduler RemotePowerControl interface");
         RemotePowerControl.Clear();
         LogVerbose("resetting TVServer RemoteControl interface");
-        RemoteControl.Clear();
+        GUIMessage message = new GUIMessage(GUIMessage.MessageType.PS_ONSTANDBY, 0, 0, 0, 0, 0, null);
+        GUIGraphicsContext.SendMessage(message);
       }
     }
 
