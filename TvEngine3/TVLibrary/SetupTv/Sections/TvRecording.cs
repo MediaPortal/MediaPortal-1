@@ -62,7 +62,10 @@ namespace SetupTv.Sections
 
     #region Example Format class
 
-    private readonly string[] formatString = { string.Empty, string.Empty };
+    private readonly int[] _formatIndex = new int[2];
+    private readonly string[][] _formatString = new string[2][];
+    private readonly string[] _customFormat = new string[2];
+
     private class Example
     {
       public readonly string Channel;
@@ -102,49 +105,52 @@ namespace SetupTv.Sections
                                   example[recType].StartDate.Hour,
                                   example[recType].StartDate.Minute,
                                   DateTime.Now.Minute, DateTime.Now.Second);
-      if (strInput != string.Empty)
+      if (String.IsNullOrEmpty(strInput))
       {
-        strInput = Utils.ReplaceTag(strInput, "%channel%", example[recType].Channel, "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%title%", example[recType].Title, "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%name%", example[recType].Episode, "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%series%", example[recType].SeriesNum, "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%episode%", example[recType].EpisodeNum, "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%part%", example[recType].EpisodePart, "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%date%", example[recType].StartDate.ToShortDateString(), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%start%", example[recType].StartDate.ToShortTimeString(), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%end%", example[recType].EndDate.ToShortTimeString(), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%genre%", example[recType].Genre, "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%startday%", example[recType].StartDate.ToString("dd"), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%startmonth%", example[recType].StartDate.ToString("MM"), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%startyear%", example[recType].StartDate.ToString("yyyy"), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%starthh%", example[recType].StartDate.ToString("HH"), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%startmm%", example[recType].StartDate.ToString("mm"), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%endday%", example[recType].EndDate.ToString("dd"), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%endmonth%", example[recType].EndDate.ToString("MM"), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%endyear%", example[recType].EndDate.ToString("yyyy"), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%endhh%", example[recType].EndDate.ToString("HH"), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%endmm%", example[recType].EndDate.ToString("mm"), "unknown");
-
-        int index = strInput.LastIndexOf('\\');
-        switch (index)
-        {
-          case -1:
-            strName = strInput;
-            break;
-          case 0:
-            strName = strInput.Substring(1);
-            break;
-          default:
-            {
-              strDirectory = "\\" + strInput.Substring(0, index);
-              strName = strInput.Substring(index + 1);
-            }
-            break;
-        }
-
-        strDirectory = Utils.MakeDirectoryPath(strDirectory);
-        strName = Utils.MakeFileName(strName);
+        return string.Empty;
       }
+
+      strInput = Utils.ReplaceTag(strInput, "%channel%", example[recType].Channel, "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%title%", example[recType].Title, "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%name%", example[recType].Episode, "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%series%", example[recType].SeriesNum, "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%episode%", example[recType].EpisodeNum, "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%part%", example[recType].EpisodePart, "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%date%", example[recType].StartDate.ToShortDateString(), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%start%", example[recType].StartDate.ToShortTimeString(), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%end%", example[recType].EndDate.ToShortTimeString(), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%genre%", example[recType].Genre, "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%startday%", example[recType].StartDate.ToString("dd"), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%startmonth%", example[recType].StartDate.ToString("MM"), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%startyear%", example[recType].StartDate.ToString("yyyy"), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%starthh%", example[recType].StartDate.ToString("HH"), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%startmm%", example[recType].StartDate.ToString("mm"), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%endday%", example[recType].EndDate.ToString("dd"), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%endmonth%", example[recType].EndDate.ToString("MM"), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%endyear%", example[recType].EndDate.ToString("yyyy"), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%endhh%", example[recType].EndDate.ToString("HH"), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%endmm%", example[recType].EndDate.ToString("mm"), "unknown");
+
+      int index = strInput.LastIndexOf('\\');
+      switch (index)
+      {
+        case -1:
+          strName = strInput;
+          break;
+        case 0:
+          strName = strInput.Substring(1);
+          break;
+        default:
+          {
+            strDirectory = "\\" + strInput.Substring(0, index);
+            strName = strInput.Substring(index + 1);
+          }
+          break;
+      }
+
+      strDirectory = Utils.MakeDirectoryPath(strDirectory);
+      strName = Utils.MakeFileName(strName);
+
       if (strName == string.Empty)
         strName = strDefaultName;
       string strReturn = strDirectory;
@@ -190,25 +196,33 @@ namespace SetupTv.Sections
       comboBoxEpisodeKey.SelectedIndex = Convert.ToInt32(layer.GetSetting("EpisodeKey", "0").Value); // default EpisodeName
       //checkBoxCreateTagInfoXML.Checked = true; // (layer.GetSetting("createtaginfoxml", "yes").Value == "yes");
       checkboxSchedulerPriority.Checked = (layer.GetSetting("scheduleroverlivetv", "yes").Value == "yes");
-      formatString[0] = "";
-      formatString[1] = "";
 
       numericUpDownPreRec.Value = int.Parse(layer.GetSetting("preRecordInterval", "7").Value);
       numericUpDownPostRec.Value = int.Parse(layer.GetSetting("postRecordInterval", "10").Value);
-      formatString[0] = layer.GetSetting("moviesformat", @"%title%\%title% - %channel% - %date% - %start%").Value;
-      formatString[1] = layer.GetSetting("seriesformat", @"%title%\%title% - %channel% - %date% - %start%").Value;
 
-      /*using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-      {
-        startTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("capture", "prerecord", 5));
-        endTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("capture", "postrecord", 5));
-        cbDeleteWatchedShows.Checked = xmlreader.GetValueAsBool("capture", "deletewatchedshows", false);
-        cbAddRecordingsToMovie.Checked = xmlreader.GetValueAsBool("capture", "addrecordingstomoviedatabase", true);
-        formatString[0] = xmlreader.GetValueAsString("capture", "moviesformat", string.Empty);
-        formatString[1] = xmlreader.GetValueAsString("capture", "seriesformat", string.Empty);
-      }*/
+      // Movies formats
+      _formatString[0] = new string[4];
+      _formatString[0][0] = @"%title% - %channel% - %date%";
+      _formatString[0][1] = @"%title% - %channel% - %date% - %start%";
+      _formatString[0][2] = @"%title%\%title% - %channel% - %date% - %start%";
+      _formatString[0][3] = @"[User custom value]";   // Must be the last one in the array list
+
+      // Series formats
+      _formatString[1] = new string[5];
+      _formatString[1][0] = @"%channel%\%title% %date%\%title% [- S%series%] [- E%episode%] [- %name%]";
+      _formatString[1][1] = @"%channel%\%title% (%starthh%%startmm% - %endhh%%endmm% %date%)\%title%";
+      _formatString[1][2] = @"%title%\%title% - S%series%E%episode% - %name%";
+      _formatString[1][3] = @"%title% - %channel%\%title% - %date% - %start%";
+      _formatString[1][4] = @"[User custom value]";   // Must be the last one in the array list
+
+      Int32.TryParse(layer.GetSetting("moviesformatindex", (_formatString[0].Length - 1).ToString()).Value, out _formatIndex[0]);
+      Int32.TryParse(layer.GetSetting("seriesformatindex", (_formatString[1].Length - 1).ToString()).Value, out _formatIndex[1]);
+
+      _customFormat[0] = layer.GetSetting("moviesformat", "").Value;
+      _customFormat[1] = layer.GetSetting("seriesformat", "").Value;
+
       comboBoxMovies.SelectedIndex = 0;
-      textBoxSample.Text = ShowExample(formatString[comboBoxMovies.SelectedIndex], comboBoxMovies.SelectedIndex);
+      UpdateFieldDisplay();
 
       enableDiskQuota.Checked = (layer.GetSetting("diskQuotaEnabled", "False").Value == "True");
       enableDiskQuotaControls();
@@ -226,10 +240,20 @@ namespace SetupTv.Sections
       setting.Value = numericUpDownPostRec.Value.ToString();
       setting.Persist();
       setting = layer.GetSetting("moviesformat", "");
-      setting.Value = formatString[0];
+      setting.Value = _formatIndex[0] == (_formatString[0].Length - 1)
+                        ? _customFormat[0]
+                        : _formatString[0][_formatIndex[0]];
+      setting.Persist();
+      setting = layer.GetSetting("moviesformatindex", "0");
+      setting.Value = _formatIndex[0].ToString();
       setting.Persist();
       setting = layer.GetSetting("seriesformat", "");
-      setting.Value = formatString[1];
+      setting.Value = _formatIndex[1] == (_formatString[1].Length - 1)
+                        ? _customFormat[1]
+                        : _formatString[1][_formatIndex[1]];
+      setting.Persist();
+      setting = layer.GetSetting("seriesformatindex", "0");
+      setting.Value = _formatIndex[1].ToString();
       setting.Persist();
 
       setting = layer.GetSetting("autodeletewatchedrecordings", "no");
@@ -263,16 +287,34 @@ namespace SetupTv.Sections
 
     #region GUI-Events
 
-    private void textBoxFormat_TextChanged(object sender, EventArgs e)
+    private void comboBoxMovies_SelectedIndexChanged(object sender, EventArgs e)
     {
-      formatString[comboBoxMovies.SelectedIndex] = textBoxFormat.Text;
-      textBoxSample.Text = ShowExample(textBoxFormat.Text, comboBoxMovies.SelectedIndex);
+      comboBoxFormat.Items.Clear();
+      comboBoxFormat.Items.AddRange(_formatString[comboBoxMovies.SelectedIndex]);
+      comboBoxFormat.SelectedIndex = _formatIndex[comboBoxMovies.SelectedIndex];
+      UpdateFieldDisplay();
     }
 
-    private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+    private void comboBoxFormat_SelectedIndexChanged(object sender, EventArgs e)
     {
+      _formatIndex[comboBoxMovies.SelectedIndex] = comboBoxFormat.SelectedIndex;
+      UpdateFieldDisplay();
+    }
 
-      textBoxFormat.Text = formatString[comboBoxMovies.SelectedIndex];
+    private void UpdateFieldDisplay()
+    {
+      bool isCustom = comboBoxFormat.SelectedIndex == _formatString[comboBoxMovies.SelectedIndex].Length - 1;
+      string frm = isCustom ? textBoxCustomFormat.Text : comboBoxFormat.Items[comboBoxFormat.SelectedIndex].ToString();
+      textBoxSample.Text = ShowExample(frm, comboBoxMovies.SelectedIndex);
+      labelCustomFormat.Visible = isCustom;
+      textBoxCustomFormat.Visible = isCustom;
+      textBoxCustomFormat.Text = _customFormat[comboBoxMovies.SelectedIndex];
+    }
+
+    private void textBoxCustomFormat_TextChanged(object sender, EventArgs e)
+    {
+      textBoxSample.Text = ShowExample(textBoxCustomFormat.Text, comboBoxMovies.SelectedIndex);
+      _customFormat[comboBoxMovies.SelectedIndex] = textBoxCustomFormat.Text;
     }
 
     private void comboBoxDrive_SelectedIndexChanged(object sender, EventArgs e)
@@ -280,7 +322,7 @@ namespace SetupTv.Sections
       UpdateDriveInfo(false);
     }
 
-    private void textBoxFormat_KeyPress(object sender, KeyPressEventArgs e)
+    private void textBoxCustomFormat_KeyPress(object sender, KeyPressEventArgs e)
     {
       if ((e.KeyChar == '/') || (e.KeyChar == ':') || (e.KeyChar == '*') ||
         (e.KeyChar == '?') || (e.KeyChar == '\"') || (e.KeyChar == '<') ||

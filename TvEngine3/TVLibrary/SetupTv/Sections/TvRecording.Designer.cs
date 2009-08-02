@@ -35,9 +35,9 @@ namespace SetupTv.Sections
       this.groupBoxScheduler = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxPreventDupes = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.comboBoxFirstWorkingDay = new System.Windows.Forms.ComboBox();
+      this.label12 = new System.Windows.Forms.Label();
       this.comboBoxEpisodeKey = new System.Windows.Forms.ComboBox();
       this.labelEpisodeKey = new System.Windows.Forms.Label();
-      this.label12 = new System.Windows.Forms.Label();
       this.checkboxSchedulerPriority = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxGap = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label1 = new System.Windows.Forms.Label();
@@ -49,7 +49,8 @@ namespace SetupTv.Sections
       this.checkBoxAutoDelete = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tpCustom = new System.Windows.Forms.TabPage();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
-      this.label15 = new System.Windows.Forms.Label();
+      this.textBoxCustomFormat = new System.Windows.Forms.TextBox();
+      this.comboBoxFormat = new System.Windows.Forms.ComboBox();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -58,8 +59,6 @@ namespace SetupTv.Sections
       this.textBoxSample = new System.Windows.Forms.TextBox();
       this.label8 = new System.Windows.Forms.Label();
       this.label7 = new System.Windows.Forms.Label();
-      this.textBoxFormat = new System.Windows.Forms.TextBox();
-      this.label6 = new System.Windows.Forms.Label();
       this.label5 = new System.Windows.Forms.Label();
       this.comboBoxMovies = new System.Windows.Forms.ComboBox();
       this.tpDiskQuota = new System.Windows.Forms.TabPage();
@@ -97,6 +96,7 @@ namespace SetupTv.Sections
       this.lblRecFolders = new System.Windows.Forms.Label();
       this.cbRecPaths = new System.Windows.Forms.ComboBox();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+      this.labelCustomFormat = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
       this.tpSettings.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -172,6 +172,21 @@ namespace SetupTv.Sections
       this.groupBoxScheduler.TabStop = false;
       this.groupBoxScheduler.Text = "Scheduler";
       // 
+      // checkBoxPreventDupes
+      // 
+      this.checkBoxPreventDupes.AutoSize = true;
+      this.checkBoxPreventDupes.Checked = true;
+      this.checkBoxPreventDupes.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxPreventDupes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxPreventDupes.Location = new System.Drawing.Point(15, 90);
+      this.checkBoxPreventDupes.Name = "checkBoxPreventDupes";
+      this.checkBoxPreventDupes.Size = new System.Drawing.Size(491, 17);
+      this.checkBoxPreventDupes.TabIndex = 13;
+      this.checkBoxPreventDupes.Text = "Check episode of already recorded programs to prevent duplicate recording of repe" +
+          "ated broadcasts";
+      this.checkBoxPreventDupes.UseVisualStyleBackColor = true;
+      this.checkBoxPreventDupes.CheckedChanged += new System.EventHandler(this.checkBoxPreventDupes_CheckedChanged);
+      // 
       // comboBoxFirstWorkingDay
       // 
       this.comboBoxFirstWorkingDay.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -193,6 +208,28 @@ namespace SetupTv.Sections
       this.label12.TabIndex = 1;
       this.label12.Text = "First workday: ";
       // 
+      // comboBoxEpisodeKey
+      // 
+      this.comboBoxEpisodeKey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxEpisodeKey.Enabled = this.checkBoxPreventDupes.Checked;
+      this.comboBoxEpisodeKey.FormattingEnabled = true;
+      this.comboBoxEpisodeKey.Items.AddRange(new object[] {
+            "Episode Title",
+            "Episode Number"});
+      this.comboBoxEpisodeKey.Location = new System.Drawing.Point(93, 122);
+      this.comboBoxEpisodeKey.Name = "comboBoxEpisodeKey";
+      this.comboBoxEpisodeKey.Size = new System.Drawing.Size(137, 21);
+      this.comboBoxEpisodeKey.TabIndex = 13;
+      // 
+      // labelEpisodeKey
+      // 
+      this.labelEpisodeKey.AutoSize = true;
+      this.labelEpisodeKey.Location = new System.Drawing.Point(12, 125);
+      this.labelEpisodeKey.Name = "labelEpisodeKey";
+      this.labelEpisodeKey.Size = new System.Drawing.Size(71, 13);
+      this.labelEpisodeKey.TabIndex = 1;
+      this.labelEpisodeKey.Text = "Episode key: ";
+      // 
       // checkboxSchedulerPriority
       // 
       this.checkboxSchedulerPriority.AutoSize = true;
@@ -205,43 +242,6 @@ namespace SetupTv.Sections
       this.checkboxSchedulerPriority.TabIndex = 8;
       this.checkboxSchedulerPriority.Text = "Allow server to stop LiveTV to record when no free card is available";
       this.checkboxSchedulerPriority.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxPreventDupes
-      // 
-      this.checkBoxPreventDupes.Checked = true;
-      this.checkBoxPreventDupes.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxPreventDupes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxPreventDupes.Location = new System.Drawing.Point(15, 90);
-      this.checkBoxPreventDupes.Name = "checkBoxPreventDupes";
-      this.checkBoxPreventDupes.Size = new System.Drawing.Size(342, 33);
-      this.checkBoxPreventDupes.TabIndex = 13;
-      this.checkBoxPreventDupes.Text = "Check episode of already recorded programs to prevent duplicate recording o" +
-          "f repeated broadcasts";
-      this.checkBoxPreventDupes.UseVisualStyleBackColor = true;
-      this.checkBoxPreventDupes.CheckedChanged += new System.EventHandler(this.checkBoxPreventDupes_CheckedChanged);
-
-      // 
-      // comboBoxEpisodeKey
-      // 
-      this.comboBoxEpisodeKey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxEpisodeKey.FormattingEnabled = true;
-      this.comboBoxEpisodeKey.Items.AddRange(new object[] {
-            "Episode Title",
-            "Episode Number"});
-      this.comboBoxEpisodeKey.Location = new System.Drawing.Point(93, 122);
-      this.comboBoxEpisodeKey.Name = "comboBoxEpisodeKey";
-      this.comboBoxEpisodeKey.Size = new System.Drawing.Size(137, 21);
-      this.comboBoxEpisodeKey.TabIndex = 13;
-      this.comboBoxEpisodeKey.Enabled = this.checkBoxPreventDupes.Checked;
-      // 
-      // labelEpisodeKey
-      // 
-      this.labelEpisodeKey.AutoSize = true;
-      this.labelEpisodeKey.Location = new System.Drawing.Point(12, 125);
-      this.labelEpisodeKey.Name = "labelEpisodeKey";
-      this.labelEpisodeKey.Size = new System.Drawing.Size(75, 13);
-      this.labelEpisodeKey.TabIndex = 1;
-      this.labelEpisodeKey.Text = "Episode key: ";
       // 
       // groupBoxGap
       // 
@@ -349,13 +349,13 @@ namespace SetupTv.Sections
       this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox2.Controls.Add(this.label15);
+      this.groupBox2.Controls.Add(this.labelCustomFormat);
+      this.groupBox2.Controls.Add(this.textBoxCustomFormat);
+      this.groupBox2.Controls.Add(this.comboBoxFormat);
       this.groupBox2.Controls.Add(this.groupBox3);
       this.groupBox2.Controls.Add(this.textBoxSample);
       this.groupBox2.Controls.Add(this.label8);
       this.groupBox2.Controls.Add(this.label7);
-      this.groupBox2.Controls.Add(this.textBoxFormat);
-      this.groupBox2.Controls.Add(this.label6);
       this.groupBox2.Controls.Add(this.label5);
       this.groupBox2.Controls.Add(this.comboBoxMovies);
       this.groupBox2.Location = new System.Drawing.Point(6, 3);
@@ -364,14 +364,24 @@ namespace SetupTv.Sections
       this.groupBox2.TabIndex = 0;
       this.groupBox2.TabStop = false;
       // 
-      // label15
+      // textBoxCustomFormat
       // 
-      this.label15.AutoSize = true;
-      this.label15.Location = new System.Drawing.Point(85, 132);
-      this.label15.Name = "label15";
-      this.label15.Size = new System.Drawing.Size(318, 13);
-      this.label15.TabIndex = 8;
-      this.label15.Text = "Use blockquotes[] to specify optional fields and \\ for relative paths";
+      this.textBoxCustomFormat.Location = new System.Drawing.Point(88, 101);
+      this.textBoxCustomFormat.Name = "textBoxCustomFormat";
+      this.textBoxCustomFormat.Size = new System.Drawing.Size(328, 20);
+      this.textBoxCustomFormat.TabIndex = 10;
+      this.textBoxCustomFormat.TextChanged += new System.EventHandler(this.textBoxCustomFormat_TextChanged);
+      this.textBoxCustomFormat.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCustomFormat_KeyPress);
+      // 
+      // comboBoxFormat
+      // 
+      this.comboBoxFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxFormat.FormattingEnabled = true;
+      this.comboBoxFormat.Location = new System.Drawing.Point(88, 74);
+      this.comboBoxFormat.Name = "comboBoxFormat";
+      this.comboBoxFormat.Size = new System.Drawing.Size(328, 21);
+      this.comboBoxFormat.TabIndex = 9;
+      this.comboBoxFormat.SelectedIndexChanged += new System.EventHandler(this.comboBoxFormat_SelectedIndexChanged);
       // 
       // groupBox3
       // 
@@ -379,7 +389,7 @@ namespace SetupTv.Sections
       this.groupBox3.Controls.Add(this.mpLabel2);
       this.groupBox3.Controls.Add(this.mpLabel3);
       this.groupBox3.Controls.Add(this.mpLabel4);
-      this.groupBox3.Location = new System.Drawing.Point(29, 174);
+      this.groupBox3.Location = new System.Drawing.Point(29, 183);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(387, 165);
       this.groupBox3.TabIndex = 7;
@@ -431,7 +441,7 @@ namespace SetupTv.Sections
       // textBoxSample
       // 
       this.textBoxSample.Enabled = false;
-      this.textBoxSample.Location = new System.Drawing.Point(88, 106);
+      this.textBoxSample.Location = new System.Drawing.Point(88, 148);
       this.textBoxSample.Name = "textBoxSample";
       this.textBoxSample.ReadOnly = true;
       this.textBoxSample.Size = new System.Drawing.Size(328, 20);
@@ -440,7 +450,7 @@ namespace SetupTv.Sections
       // label8
       // 
       this.label8.AutoSize = true;
-      this.label8.Location = new System.Drawing.Point(27, 109);
+      this.label8.Location = new System.Drawing.Point(27, 151);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(42, 13);
       this.label8.TabIndex = 5;
@@ -449,29 +459,11 @@ namespace SetupTv.Sections
       // label7
       // 
       this.label7.AutoSize = true;
-      this.label7.Location = new System.Drawing.Point(27, 83);
+      this.label7.Location = new System.Drawing.Point(27, 77);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(39, 13);
       this.label7.TabIndex = 4;
       this.label7.Text = "Format";
-      // 
-      // textBoxFormat
-      // 
-      this.textBoxFormat.Location = new System.Drawing.Point(88, 80);
-      this.textBoxFormat.Name = "textBoxFormat";
-      this.textBoxFormat.Size = new System.Drawing.Size(328, 20);
-      this.textBoxFormat.TabIndex = 3;
-      this.textBoxFormat.TextChanged += new System.EventHandler(this.textBoxFormat_TextChanged);
-      this.textBoxFormat.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxFormat_KeyPress);
-      // 
-      // label6
-      // 
-      this.label6.AutoSize = true;
-      this.label6.Location = new System.Drawing.Point(85, 48);
-      this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(204, 13);
-      this.label6.TabIndex = 2;
-      this.label6.Text = "Movies = manual or single type recordings";
       // 
       // label5
       // 
@@ -487,13 +479,13 @@ namespace SetupTv.Sections
       this.comboBoxMovies.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxMovies.FormattingEnabled = true;
       this.comboBoxMovies.Items.AddRange(new object[] {
-            "Movies",
+            "Movies  (manual or single type recordings)",
             "Series"});
       this.comboBoxMovies.Location = new System.Drawing.Point(88, 24);
       this.comboBoxMovies.Name = "comboBoxMovies";
       this.comboBoxMovies.Size = new System.Drawing.Size(328, 21);
       this.comboBoxMovies.TabIndex = 0;
-      this.comboBoxMovies.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+      this.comboBoxMovies.SelectedIndexChanged += new System.EventHandler(this.comboBoxMovies_SelectedIndexChanged);
       // 
       // tpDiskQuota
       // 
@@ -881,6 +873,15 @@ namespace SetupTv.Sections
       // 
       this.openFileDialog1.FileName = "openFileDialog1";
       // 
+      // labelCustomFormat
+      // 
+      this.labelCustomFormat.AutoSize = true;
+      this.labelCustomFormat.Location = new System.Drawing.Point(85, 124);
+      this.labelCustomFormat.Name = "labelCustomFormat";
+      this.labelCustomFormat.Size = new System.Drawing.Size(323, 13);
+      this.labelCustomFormat.TabIndex = 11;
+      this.labelCustomFormat.Text = "Use blockquotes[] to specify optional fields and \\\\ for relative paths";
+      // 
       // TvRecording
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -931,8 +932,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.TextBox textBoxSample;
     private System.Windows.Forms.Label label8;
     private System.Windows.Forms.Label label7;
-    private System.Windows.Forms.TextBox textBoxFormat;
-    private System.Windows.Forms.Label label6;
     private System.Windows.Forms.Label label5;
     private System.Windows.Forms.ComboBox comboBoxMovies;
     private System.Windows.Forms.TabPage tpDiskQuota;
@@ -943,7 +942,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label10;
     private System.Windows.Forms.ComboBox comboBoxDrive;
     private System.Windows.Forms.Label label9;
-    private System.Windows.Forms.Label label15;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
@@ -985,5 +983,8 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxScheduler;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxGap;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxPreventDupes;
+    private System.Windows.Forms.ComboBox comboBoxFormat;
+    private System.Windows.Forms.TextBox textBoxCustomFormat;
+    private System.Windows.Forms.Label labelCustomFormat;
   }
 }
