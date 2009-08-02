@@ -247,6 +247,7 @@ namespace SetupTv.Sections
       this.linkLabelPayPal.TabIndex = 2;
       this.linkLabelPayPal.TabStop = true;
       this.linkLabelPayPal.Text = "http://www.team-mediaportal.com/donate.html";
+      this.linkLabelPayPal.UseCompatibleTextRendering = true;
       this.linkLabelPayPal.VisitedLinkColor = System.Drawing.Color.Transparent;
       this.linkLabelPayPal.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelPayPal_LinkClicked);
       // 
