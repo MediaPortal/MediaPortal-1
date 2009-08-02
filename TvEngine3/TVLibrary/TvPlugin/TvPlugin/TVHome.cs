@@ -2811,25 +2811,23 @@ namespace TvPlugin
             string leftAudioLang = streams[i].Language.Substring(0,3);
             string rightAudioLang = streams[i].Language.Substring(3, 3);
 
-            int index = _preferredLanguages.IndexOf(leftAudioLang);
-            if (index >= 0 && index < priority)
+            int indexLeft = _preferredLanguages.IndexOf(leftAudioLang);
+            if (indexLeft >= 0 && indexLeft < priority)
             {
               dualMonoMode = eAudioDualMonoMode.LEFT_MONO;
               mpegBasedOnLang = leftAudioLang;
               idxLangmpeg = i;
-              priority = index;           
-            }
-            else
-            {              
-              index = _preferredLanguages.IndexOf(rightAudioLang);
-              if (index >= 0 && index < priority)
-              {                
-                dualMonoMode = eAudioDualMonoMode.RIGHT_MONO;
-                mpegBasedOnLang = rightAudioLang;
-                idxLangmpeg = i;                
-                priority = index;
-              }
+              priority = indexLeft;           
             }            
+                          
+            int indexRight = _preferredLanguages.IndexOf(rightAudioLang);
+            if (indexRight >= 0 && indexRight < priority)
+            {                
+              dualMonoMode = eAudioDualMonoMode.RIGHT_MONO;
+              mpegBasedOnLang = rightAudioLang;
+              idxLangmpeg = i;
+              priority = indexRight;
+            }                        
           }
           else
           {
