@@ -92,6 +92,11 @@ namespace MediaPortal.GUI.Library
       blackImage.FreeResources();
     }
 
+		public override void OnDeInit()
+		{
+			GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 0, 0);
+			base.OnDeInit();
+		}
 
     public override bool CanFocus()
     {
