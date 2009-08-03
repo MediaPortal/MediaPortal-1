@@ -142,6 +142,7 @@
       <DependentUpon>CI_Menu_Dialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\Helpers\FileFilters.cs" />
+    <Compile Include="Sections\Helpers\ScanTypes.cs" />
     <Compile Include="Sections\ImportExport.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -493,6 +494,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\CardDvbIP.resx">
       <DependentUpon>CardDvbIP.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\ChannelsInGroupControl.resx">
       <SubType>Designer</SubType>
@@ -504,6 +506,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\CIMenu\CI_Menu_Dialog.resx">
       <DependentUpon>CI_Menu_Dialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Combinations.resx">
       <DependentUpon>Combinations.cs</DependentUpon>
