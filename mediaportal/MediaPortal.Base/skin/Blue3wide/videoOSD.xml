@@ -15,7 +15,7 @@
       <description>TV Logo</description>
       <type>image</type>
       <id>0</id>
-      <posX>1117</posX>
+      <posX>70</posX>
       <posY>600</posY>
       <width>100</width>
       <height>100</height>
@@ -31,7 +31,7 @@
       <description>TV Logo</description>
       <type>image</type>
       <id>0</id>
-      <posX>1117</posX>
+      <posX>70</posX>
       <posY>600</posY>
       <width>100</width>
       <height>100</height>
@@ -42,13 +42,12 @@
       <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="150">windowopen</animation>
     </control>
-     <control>
+      <control>
       <description>Current Time Info</description>
       <type>label</type>
-      <posX>1105</posX>
+      <posX>70</posX>
       <posY>567</posY>
       <label>#time</label>
-      <centered>yes</centered>
       <font>font13</font>
       <textcolor>white</textcolor>
       <visible>!Control.IsVisible(989)</visible>
@@ -58,14 +57,13 @@
      <control>
       <description>Current Time Info</description>
       <type>label</type>
-      <posX>1105</posX>
+      <posX>70</posX>
       <posY>567</posY>
       <label>#time</label>
-      <centered>yes</centered>
       <font>font13</font>
       <textcolor>white</textcolor>
       <visible>Control.IsVisible(989)</visible>
-          <animation effect="slide" start="0,0" end="0,-100" time="400" reversible="false">visible</animation>
+      <animation effect="slide" start="0,0" end="0,-100" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -75,7 +73,7 @@
       <type>fadelabel</type>
       <width>515</width>
       <height>37</height>
-      <posX>335</posX>
+      <posX>185</posX>
       <posY>525</posY>
       <font>font14</font>
       <label>#Play.Current.Title</label>
@@ -90,7 +88,7 @@
       <type>fadelabel</type>
       <width>515</width>
       <height>37</height>
-      <posX>335</posX>
+      <posX>185</posX>
       <posY>525</posY>
       <font>font14</font>
       <label>#Play.Current.Title</label>
@@ -103,9 +101,9 @@
     <control>
       <description>Plot</description>
       <type>textboxscrollup</type>
-      <posX>334</posX>
+     <posX>184</posX>
       <posY>570</posY>
-      <width>650</width>
+      <width>715</width>
       <height>65</height>
       <label>#Play.Current.Plot</label>
       <font>font13</font>
@@ -117,7 +115,7 @@
      <control>
       <description>Plot</description>
       <type>textboxscrollup</type>
-      <posX>334</posX>
+      <posX>184</posX>
       <posY>470</posY>
       <width>715</width>
       <height>162</height>
@@ -133,7 +131,7 @@
       <description>AAC</description>
       <type>image</type>
       <id>0</id>
-      <posX>1050</posX>
+      <posX>800</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -149,7 +147,7 @@
       <description>AAC</description>
       <type>image</type>
       <id>0</id>
-      <posX>1050</posX>
+      <posX>800</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -165,7 +163,7 @@
       <description>MP3</description>
       <type>image</type>
       <id>0</id>
-      <posX>1050</posX>
+      <posX>800</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -181,7 +179,7 @@
       <description>MP3</description>
       <type>image</type>
       <id>0</id>
-      <posX>1050</posX>
+      <posX>800</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -197,7 +195,7 @@
       <description>AC3</description>
       <type>image</type>
       <id>0</id>
-      <posX>1050</posX>
+      <posX>800</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -213,7 +211,7 @@
       <description>AC3</description>
       <type>image</type>
       <id>0</id>
-      <posX>1050</posX>
+      <posX>800</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -229,7 +227,7 @@
       <description>DTS</description>
       <type>image</type>
       <id>0</id>
-      <posX>1050</posX>
+      <posX>800</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -245,7 +243,7 @@
       <description>DTS</description>
       <type>image</type>
       <id>0</id>
-      <posX>1050</posX>
+      <posX>800</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -261,7 +259,7 @@
       <description>MP2A</description>
       <type>image</type>
       <id>0</id>
-      <posX>1050</posX>
+      <posX>800</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -277,7 +275,7 @@
       <description>MP2A</description>
       <type>image</type>
       <id>0</id>
-      <posX>1050</posX>
+      <posX>800</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -293,7 +291,7 @@
       <description>WMA</description>
       <type>image</type>
       <id>0</id>
-      <posX>1050</posX>
+      <posX>800</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -309,7 +307,7 @@
       <description>WMA</description>
       <type>image</type>
       <id>0</id>
-      <posX>1050</posX>
+      <posX>800</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -325,7 +323,7 @@
       <description>PCM</description>
       <type>image</type>
       <id>0</id>
-      <posX>1050</posX>
+      <posX>800</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -341,7 +339,7 @@
       <description>PCM</description>
       <type>image</type>
       <id>0</id>
-      <posX>1050</posX>
+      <posX>800</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -357,7 +355,7 @@
       <description>OGG</description>
       <type>image</type>
       <id>0</id>
-      <posX>1050</posX>
+      <posX>800</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -373,7 +371,7 @@
       <description>OGG</description>
       <type>image</type>
       <id>0</id>
-      <posX>1050</posX>
+      <posX>800</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -389,7 +387,7 @@
       <description>FLAC</description>
       <type>image</type>
       <id>0</id>
-      <posX>1050</posX>
+      <posX>800</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -405,7 +403,7 @@
       <description>FLAC</description>
       <type>image</type>
       <id>0</id>
-      <posX>1050</posX>
+      <posX>800</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -421,7 +419,7 @@
       <description>DivX</description>
       <type>image</type>
       <id>0</id>
-      <posX>1144</posX>
+      <posX>890</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -437,7 +435,7 @@
       <description>DivX</description>
       <type>image</type>
       <id>0</id>
-      <posX>1144</posX>
+      <posX>890</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -453,7 +451,7 @@
       <description>XVID</description>
       <type>image</type>
       <id>0</id>
-      <posX>1144</posX>
+      <posX>890</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -469,7 +467,7 @@
       <description>XVID</description>
       <type>image</type>
       <id>0</id>
-      <posX>1144</posX>
+      <posX>890</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -485,7 +483,7 @@
       <description>H264</description>
       <type>image</type>
       <id>0</id>
-      <posX>1144</posX>
+      <posX>890</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -501,7 +499,7 @@
       <description>H264</description>
       <type>image</type>
       <id>0</id>
-      <posX>1144</posX>
+      <posX>890</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -517,7 +515,7 @@
       <description>Generic MPEG4</description>
       <type>image</type>
       <id>0</id>
-      <posX>1144</posX>
+      <posX>890</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -533,7 +531,7 @@
       <description>Generic MPEG4</description>
       <type>image</type>
       <id>0</id>
-      <posX>1144</posX>
+      <posX>890</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -549,7 +547,7 @@
       <description>MP1V</description>
       <type>image</type>
       <id>0</id>
-      <posX>1144</posX>
+      <posX>890</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -565,7 +563,7 @@
       <description>MP1V</description>
       <type>image</type>
       <id>0</id>
-      <posX>1144</posX>
+      <posX>890</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -581,7 +579,7 @@
       <description>MP2V</description>
       <type>image</type>
       <id>0</id>
-      <posX>1144</posX>
+      <posX>890</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -597,7 +595,7 @@
       <description>MP2V</description>
       <type>image</type>
       <id>0</id>
-      <posX>1144</posX>
+      <posX>890</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -613,7 +611,7 @@
       <description>WMV</description>
       <type>image</type>
       <id>0</id>
-      <posX>1144</posX>
+      <posX>890</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -629,7 +627,7 @@
       <description>WMV</description>
       <type>image</type>
       <id>0</id>
-      <posX>1144</posX>
+      <posX>890</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -645,7 +643,7 @@
       <description>Subtitles</description>
       <type>image</type>
       <id>0</id>
-      <posX>956</posX>
+      <posX>710</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
@@ -661,7 +659,7 @@
       <description>Subtitles</description>
       <type>image</type>
       <id>0</id>
-      <posX>956</posX>
+      <posX>710</posX>
       <posY>520</posY>
       <width>92</width>
       <height>52</height>

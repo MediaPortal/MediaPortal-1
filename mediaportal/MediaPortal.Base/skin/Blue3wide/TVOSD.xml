@@ -13,7 +13,7 @@
       <description>TV Logo</description>
       <type>image</type>
       <id>0</id>
-      <posX>1125</posX>
+      <posX>70</posX>
       <posY>600</posY>
       <width>80</width>
       <height>80</height>
@@ -28,7 +28,7 @@
       <description>TV Logo</description>
       <type>image</type>
       <id>0</id>
-      <posX>1125</posX>
+      <posX>70</posX>
       <posY>600</posY>
       <width>80</width>
       <height>80</height>
@@ -44,7 +44,7 @@
       <description>progress bar background</description>
       <id>0</id>
       <type>image</type>
-      <posX>270</posX>
+      <posX>170</posX>
       <posY>646</posY>
       <width>831</width>
       <height>25</height>
@@ -57,7 +57,7 @@
       <description>TV Progress Bar</description>
       <type>tvprogress</type>
       <id>101</id>
-      <posX>255</posX>
+      <posX>155</posX>
       <posY>647</posY>
       <width>822</width>
       <height>25</height>
@@ -86,8 +86,8 @@
       <description>rec logo</description>
       <type>image</type>
       <id>39</id>
-      <posX>1035</posX>
-      <posY>603</posY>
+      <posX>910</posX>
+      <posY>530</posY>
       <texture>rec.png</texture>
       <animation effect="fade" time="150">visiblechange</animation>
       <animation effect="fade" time="150">windowopen</animation>
@@ -95,11 +95,11 @@
     <control>
       <description>Channel Name</description>
       <type>label</type>
-      <width>551</width>
+      <width>451</width>
       <height>37</height>
-      <posX>1200</posX>
+      <posX>70</posX>
       <posY>530</posY>
-      <align>right</align>
+      <align>left</align>
       <font>font13</font>
       <label>#TV.View.channel</label>
       <textcolor>FFFFFFFF</textcolor>
@@ -110,11 +110,11 @@
     <control>
       <description>Channel Name</description>
       <type>label</type>
-      <width>551</width>
+      <width>451</width>
       <height>37</height>
-      <posX>1200</posX>
+      <posX>70</posX>
       <posY>530</posY>
-      <align>right</align>
+      <align>left</align>
       <font>font13</font>
       <label>#TV.View.channel</label>
       <textcolor>FFFFFFFF</textcolor>
@@ -126,7 +126,7 @@
       <description>On tv NOW</description>
       <id>36</id>
       <type>textbox</type>
-      <width>515</width>
+      <width>415</width>
       <height>37</height>
       <posX>1435</posX>
       <posY>525</posY>
@@ -137,9 +137,9 @@
      <control>
       <description>TV Now Label</description>
       <type>label</type>
-      <width>515</width>
+      <width>415</width>
       <height>37</height>
-      <posX>335</posX>
+      <posX>185</posX>
       <posY>525</posY>
       <font>font14</font>
       <label>#TV.View.title</label>
@@ -151,9 +151,9 @@
      <control>
       <description>TV Now Label 2</description>
       <type>label</type>
-      <width>515</width>
+      <width>415</width>
       <height>37</height>
-      <posX>335</posX>
+      <posX>185</posX>
       <posY>525</posY>
       <font>font14</font>
       <label>#TV.View.title</label>
@@ -165,7 +165,7 @@
     <control>
       <description>Plot</description>
       <type>textboxscrollup</type>
-      <posX>334</posX>
+      <posX>184</posX>
       <posY>570</posY>
       <width>715</width>
       <height>65</height>
@@ -179,7 +179,7 @@
      <control>
       <description>Plot</description>
       <type>textboxscrollup</type>
-      <posX>334</posX>
+      <posX>184</posX>
       <posY>470</posY>
       <width>715</width>
       <height>162</height>
@@ -194,7 +194,7 @@
       <description>On tv NEXT</description>
       <id>37</id>
       <type>textbox</type>
-      <posX>420</posX>
+      <posX>320</posX>
       <posY>673</posY>
        <width>500</width>
        <height>24</height>
@@ -297,7 +297,7 @@
     <control>
       <description>Current Time Info</description>
       <type>label</type>
-      <posX>1105</posX>
+      <posX>70</posX>
       <posY>567</posY>
       <label>#time</label>
       <font>font13</font>
@@ -309,13 +309,13 @@
      <control>
       <description>Current Time Info</description>
       <type>label</type>
-      <posX>1105</posX>
+      <posX>70</posX>
       <posY>567</posY>
       <label>#time</label>
       <font>font13</font>
       <textcolor>white</textcolor>
       <visible>Control.IsVisible(989)</visible>
-          <animation effect="slide" start="0,0" end="0,-100" time="400" reversible="false">visible</animation>
+      <animation effect="slide" start="0,0" end="0,-100" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>

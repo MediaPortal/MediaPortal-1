@@ -37,11 +37,11 @@
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
-    
+
      <control>
       <description>Stripe</description>
       <type>image</type>
-      <posX>267</posX>
+      <posX>67</posX>
       <posY>566</posY>
       <width>957</width>
       <height>3</height>
@@ -54,7 +54,7 @@
      <control>
       <description>Stripe</description>
       <type>image</type>
-      <posX>267</posX>
+      <posX>67</posX>
       <posY>566</posY>
       <width>957</width>
       <height>3</height>
@@ -67,7 +67,7 @@
       <description>Up button</description>
       <type>button</type>
       <id>999</id>
-      <posX>274</posX>
+      <posX>980</posX>
       <posY>521</posY>
       <width>38</width>
       <height>38</height>
@@ -84,38 +84,22 @@
       <description>Down button</description>
       <type>button</type>
       <id>213</id>
-      <posX>274</posX>
+      <posX>980</posX>
       <posY>573</posY>
       <width>38</width>
       <height>38</height>
-      <onleft>997</onleft>
-      <onright>213</onright>
-      <ondown>997</ondown>
+      <onleft>213</onleft>
+      <onright>997</onright>
+      <ondown>213</ondown>
       <onup>999</onup>
       <textureFocus>OSD_Arrow_down_focus.png</textureFocus>
       <textureNoFocus>OSD_Arrow_down_nofocus.png</textureNoFocus>
    </control>
     <control>
-      <description>Menue button</description>
-      <type>button</type>
-      <id>997</id>
-      <posX>210</posX>
-      <posY>518</posY>
-      <width>45</width>
-      <height>45</height>
-      <onleft>998</onleft>
-      <onright>213</onright>
-      <ondown>997</ondown>
-      <onup>997</onup>
-      <action>106</action>
-      <textureFocus>OSD_Menu_button_focus.png</textureFocus>
-      <textureNoFocus>OSD_Menu_button_nofocus.png</textureNoFocus>
-   </control>
-    <control>
       <description>label MainMenu</description>
       <type>label</type>
       <id>1</id>
-      <posX>160</posX>
+      <posX>1127</posX>
       <posY>580</posY>
       <label>Main Menu</label>
       <font>font11</font>
@@ -128,7 +112,7 @@
       <description>label SubtitleMenu</description>
       <type>label</type>
       <id>1</id>
-      <posX>160</posX>
+      <posX>1127</posX>
       <posY>580</posY>
       <label>Subtitle</label>
       <font>font11</font>
@@ -141,7 +125,7 @@
       <description>label VideopostionMenu</description>
       <type>label</type>
       <id>1</id>
-      <posX>160</posX>
+      <posX>1127</posX>
       <posY>580</posY>
       <label>Videoposition</label>
       <font>font11</font>
@@ -154,7 +138,7 @@
       <description>label MuteMenu</description>
       <type>label</type>
       <id>1</id>
-      <posX>160</posX>
+      <posX>1127</posX>
       <posY>580</posY>
       <label>Mute</label>
       <font>font11</font>
@@ -163,16 +147,32 @@
       <visible>Control.HasFocus(998)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
+     <control>
+      <description>Menue button</description>
+      <type>button</type>
+      <id>997</id>
+      <posX>1028</posX>
+      <posY>518</posY>
+      <width>45</width>
+      <height>45</height>
+      <onleft>213</onleft>
+      <onright>998</onright>
+      <ondown>997</ondown>
+      <onup>997</onup>
+      <action>106</action>
+      <textureFocus>OSD_Menu_button_focus.png</textureFocus>
+      <textureNoFocus>OSD_Menu_button_nofocus.png</textureNoFocus>
+   </control>
     <control>
       <description>Mute button</description>
       <type>button</type>
       <id>998</id>
-      <posX>162</posX>
+      <posX>1080</posX>
       <posY>518</posY>
       <width>45</width>
       <height>45</height>
-      <onleft>220</onleft>
-      <onright>997</onright>
+      <onleft>997</onleft>
+      <onright>220</onright>
       <ondown>998</ondown>
       <onup>998</onup>
       <action>9982</action>
@@ -183,7 +183,7 @@
         <description>Video Position Menu</description>
         <type>togglebutton</type>
         <id>220</id>
-        <posX>115</posX>
+        <posX>1130</posX>
         <posY>518</posY>
         <width>45</width>
         <height>45</height>
@@ -193,8 +193,8 @@
         <textureNoFocus>osd_video_nofocus.png</textureNoFocus>
         <label>-</label>
         <font>-</font>
-        <onleft>218</onleft>
-        <onright>998</onright>
+        <onleft>998</onleft>
+        <onright>218</onright>
         <onup>220</onup>
         <ondown>220</ondown>
       </control>
@@ -202,7 +202,7 @@
       <description>Subtitles Menu</description>
       <type>togglebutton</type>
       <id>218</id>
-      <posX>66</posX>
+      <posX>1180</posX>
       <posY>518</posY>
       <width>45</width>
       <height>45</height>
@@ -212,8 +212,8 @@
       <textureNoFocus>osd_subtitles_nofocus.png</textureNoFocus>
       <label>-</label>
       <font>-</font>
-      <onleft>997</onleft>
-      <onright>220</onright>
+      <onleft>220</onleft>
+      <onright>997</onright>
       <onup>218</onup>
       <ondown>218</ondown>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -236,8 +236,8 @@
       <description>SubTitle Delay label</description>
       <type>label</type>
       <id>850</id>
-      <posX>70</posX>
-      <posY>639</posY>
+      <posX>1152</posX>
+      <posY>590</posY>
       <label>303</label>
       <font>font10</font>
       <textcolor>60ffffff</textcolor>
@@ -249,7 +249,7 @@
       <description>SubTitle Delay Slider</description>
       <type>slider</type>
       <id>800</id>
-      <posX>70</posX>
+      <posX>1030</posX>
       <posY>615</posY>
       <spintype>float</spintype>
       <showrange>yes</showrange>
@@ -268,7 +268,7 @@
       <description>SubTitles On/Off Checkbox</description>
       <type>checkmark</type>
       <id>801</id>
-      <posX>70</posX>
+      <posX>1052</posX>
       <posY>590</posY>
       <label>305</label>
       <MarkWidth>20</MarkWidth>
@@ -287,10 +287,10 @@
       <description>Sub Titles List Control</description>
       <type>listcontrol</type>
       <id>802</id>
-      <posX>70</posX>
-      <posY>668</posY>
-      <width>180</width>
-      <height>90</height>
+      <posX>1030</posX>
+      <posY>645</posY>
+      <width>190</width>
+      <height>110</height>
       <font>font10</font>
       <textureHeight>25</textureHeight>
       <textXOff>0</textXOff>
@@ -597,7 +597,7 @@
       <description>Video Position label</description>
       <type>label</type>
       <id>750</id>
-      <posX>70</posX>
+      <posX>1040</posX>
       <posY>639</posY>
       <label>Video Position</label>
       <font>font10</font>
@@ -610,7 +610,7 @@
       <description>Video Position Slider</description>
       <type>slider</type>
       <id>700</id>
-      <posX>70</posX>
+      <posX>1040</posX>
       <posY>615</posY>
       <spintype>int</spintype>
       <showrange>no</showrange>
@@ -826,7 +826,7 @@
      <control>
       <description>MPosdlogo</description>
       <type>image</type>
-      <posX>100</posX>
+      <posX>1070</posX>
       <posY>440</posY>
       <width>121</width>
       <height>64</height>

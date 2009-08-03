@@ -6,7 +6,7 @@
       <description>background botton</description>
       <id>300</id>
       <type>image</type>
-      <posX>247</posX>
+      <posX>150</posX>
       <posY>582</posY>
       <width>1005</width>
       <height>139</height>
@@ -19,7 +19,7 @@
       <description>TV Logo</description>
       <type>image</type>
       <id>0</id>
-      <posX>1130</posX>
+      <posX>1050</posX>
       <posY>635</posY>
       <width>70</width>
       <height>70</height>
@@ -37,7 +37,7 @@
       <type>fadelabel</type>
       <width>515</width>
       <height>37</height>
-      <posX>335</posX>
+      <posX>180</posX>
       <posY>595</posY>
       <font>font14</font>
       <label>#Play.Current.Title</label>
@@ -49,7 +49,7 @@
      <control>
       <description>Stripe</description>
       <type>image</type>
-      <posX>267</posX>
+      <posX>170</posX>
       <posY>630</posY>
       <width>957</width>
       <height>3</height>
@@ -61,10 +61,11 @@
      <control>
       <description>Current Time Info</description>
       <type>label</type>
-      <posX>1105</posX>
+      <posX>1125</posX>
       <posY>597</posY>
       <label>#time</label>
       <font>font14</font>
+      <align>right</align>
       <textcolor>white</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
@@ -73,7 +74,7 @@
     <control>
       <description>progress bar background</description>
       <type>image</type>
-      <posX>270</posX>
+      <posX>170</posX>
       <posY>646</posY>
       <width>831</width>
       <height>25</height>
@@ -86,7 +87,7 @@
       <description>progress bar</description>
       <type>progress</type>
       <id>1</id>
-      <posX>265</posX>
+      <posX>165</posX>
       <posY>647</posY>
       <width>822</width>
       <height>25</height>
@@ -98,7 +99,7 @@
     <control>
       <description>Start Time Info</description>
       <type>label</type>
-      <posX>305</posX>
+      <posX>205</posX>
       <posY>691</posY>
       <label>#play.progressbar.currentplaytime</label>
       <align>center</align>
@@ -111,7 +112,7 @@
     <control>
       <description>End Time Info</description>
       <type>label</type>
-      <posX>1065</posX>
+      <posX>965</posX>
       <posY>691</posY>
       <label>#play.progressbar.currentremaining</label>
       <align>center</align>
@@ -125,7 +126,7 @@
     <control>
       <description>pause image</description>
       <type>image</type>
-      <posX>630</posX>
+      <posX>530</posX>
       <posY>680</posY>
       <width>111</width>
       <height>20</height>
@@ -138,7 +139,7 @@
     <control>
       <description>2x image</description>
       <type>image</type>
-      <posX>630</posX>
+      <posX>530</posX>
       <posY>680</posY>
       <width>111</width>
       <height>20</height>
@@ -151,7 +152,7 @@
     <control>
       <description>4x image</description>
       <type>image</type>
-      <posX>630</posX>
+      <posX>530</posX>
       <posY>680</posY>
       <width>111</width>
       <height>20</height>
@@ -164,7 +165,7 @@
     <control>
       <description>8x image</description>
       <type>image</type>
-      <posX>630</posX>
+      <posX>530</posX>
       <posY>680</posY>
       <width>111</width>
       <height>20</height>
@@ -177,7 +178,7 @@
     <control>
       <description>16x image</description>
       <type>image</type>
-       <posX>630</posX>
+       <posX>530</posX>
       <posY>680</posY>
       <width>111</width>
       <height>20</height>
@@ -190,7 +191,7 @@
     <control>
       <description>32x image</description>
       <type>image</type>
-      <posX>630</posX>
+      <posX>530</posX>
       <posY>680</posY>
       <width>111</width>
       <height>20</height>
@@ -204,7 +205,7 @@
       <description>- 2x image</description>
       <type>image</type>
       <id>23</id>
-      <posX>630</posX>
+      <posX>530</posX>
       <posY>680</posY>
       <width>111</width>
       <height>20</height>
@@ -218,7 +219,7 @@
       <description>- 4x image</description>
       <type>image</type>
       <id>24</id>
-      <posX>630</posX>
+      <posX>530</posX>
       <posY>680</posY>
       <width>111</width>
       <height>20</height>
@@ -232,7 +233,7 @@
       <description>- 8x image</description>
       <type>image</type>
       <id>25</id>
-      <posX>630</posX>
+      <posX>530</posX>
       <posY>680</posY>
       <width>111</width>
       <height>20</height>
@@ -246,7 +247,7 @@
       <description>- 16x image</description>
       <type>image</type>
       <id>26</id>
-      <posX>630</posX>
+      <posX>530</posX>
       <posY>680</posY>
       <width>111</width>
       <height>20</height>
@@ -260,7 +261,7 @@
       <description>- 32x image</description>
       <type>image</type>
       <id>27</id>
-      <posX>630</posX>
+      <posX>530</posX>
       <posY>680</posY>
       <width>111</width>
       <height>20</height>

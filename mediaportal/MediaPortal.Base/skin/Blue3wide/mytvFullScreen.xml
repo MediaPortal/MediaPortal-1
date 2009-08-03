@@ -27,7 +27,7 @@
       <description>TV Logo</description>
       <type>image</type>
       <id>0</id>
-      <posX>1130</posX>
+      <posX>1050</posX>
       <posY>635</posY>
       <width>70</width>
       <height>70</height>
@@ -70,7 +70,7 @@
       <description>TV Progress Bar</description>
       <type>tvprogress</type>
       <id>100</id>
-      <posX>255</posX>
+      <posX>155</posX>
       <posY>647</posY>
       <width>822</width>
       <height>25</height>
@@ -94,17 +94,6 @@
       <label2>#TV.Record.percent3</label2>
       <font>font13</font>
       <textcolor>FF000000</textcolor>
-    </control>
-    <control>
-      <description>rec logo</description>
-      <type>image</type>
-      <id>39</id>
-      <posX>49</posX>
-      <posY>42</posY>
-      <width>30</width>
-      <height>18</height>
-      <texture>rec.png</texture>
-      <animation effect="fade" time="250">visiblechange</animation>
     </control>
     <control>
       <description>MSGBox</description>
