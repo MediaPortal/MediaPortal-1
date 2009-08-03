@@ -30,7 +30,7 @@ void LogDebug(const char *fmt, ...) ;
 CPmtParser::CPmtParser()
 {
   m_pmtCallback=NULL;
-  _isFound=false;
+  m_isFound=false;
 }
 
 CPmtParser::~CPmtParser(void)
@@ -44,18 +44,7 @@ void CPmtParser::SetPmtCallBack(IPmtCallBack* callback)
 
 bool CPmtParser::IsReady()
 {
-  return _isFound;
-}
-
-byte ByteValidChar (BYTE dIn)
-{
-  BYTE dOut = 0;
-  //check for the ASCII range A-Z and a-z
-  if ((dIn > 64 && dIn < 91) || (dIn > 96 && dIn < 123))
-  {
-	dOut=dIn;
-  }  
-  return dOut;
+  return m_isFound;
 }
 
 void CPmtParser::OnNewSection(CSection& section)
@@ -74,10 +63,10 @@ void CPmtParser::OnNewSection(CSection& section)
     int pointer = 12;
     int len1 = section.section_length -( 9 + program_info_length +4);
     int x;
-    if (!_isFound)
+    if (!m_isFound)
     {
       //LogDebug("got pmt:%x service id:%x", GetPid(), program_number);
-      _isFound=true;	
+      m_isFound=true;	
       if (m_pmtCallback!=NULL)
       {
         m_pmtCallback->OnPmtReceived(GetPid());
@@ -160,9 +149,9 @@ void CPmtParser::OnNewSection(CSection& section)
               pid.Lang[0]=tempPids[i].Lang[0];
               pid.Lang[1]=tempPids[i].Lang[1];
               pid.Lang[2]=tempPids[i].Lang[2];
-			  //pid.Lang[3]=tempPids[i].Lang[3];
-              //pid.Lang[4]=tempPids[i].Lang[4];
-              //pid.Lang[5]=tempPids[i].Lang[5];
+              pid.Lang[3]=tempPids[i].Lang[3]; // should be null if no extra data is available
+              pid.Lang[4]=tempPids[i].Lang[4];
+              pid.Lang[5]=tempPids[i].Lang[5];
               tempPids.pop_back();
               break;
             }
@@ -188,16 +177,22 @@ void CPmtParser::OnNewSection(CSection& section)
           {
             if(m_pidInfo.audioPids[i].Pid == elementary_PID)
             {
+              int descriptorLen = section.Data[pointer+1];
+
               m_pidInfo.audioPids[i].Lang[0]=section.Data[pointer+2];
               m_pidInfo.audioPids[i].Lang[1]=section.Data[pointer+3];
-              m_pidInfo.audioPids[i].Lang[2]=section.Data[pointer+4];			  
+              m_pidInfo.audioPids[i].Lang[2]=section.Data[pointer+4];	
+              m_pidInfo.audioPids[i].Lang[3]=0;
 			  
-			  m_pidInfo.audioPids[i].Lang[3]=ByteValidChar (section.Data[pointer+6]);
-              m_pidInfo.audioPids[i].Lang[4]=ByteValidChar (section.Data[pointer+7]);
-              m_pidInfo.audioPids[i].Lang[5]=ByteValidChar (section.Data[pointer+8]);
+              // Get the additional language descriptor data (NORSWE etc.)
+              if( descriptorLen == 8 )
+              {
+                m_pidInfo.audioPids[i].Lang[3]=section.Data[pointer+6];
+                m_pidInfo.audioPids[i].Lang[4]=section.Data[pointer+7];
+                m_pidInfo.audioPids[i].Lang[5]=section.Data[pointer+8];
+                m_pidInfo.audioPids[i].Lang[6]=0;
+              }
 
-			  //m_pidInfo.audioPids[i].Lang[3]=0;
-              m_pidInfo.audioPids[i].Lang[6]=0;
               pidFound=true;
             }
           // Find corresponding subtitle stream by PID, if not found
@@ -216,11 +211,26 @@ void CPmtParser::OnNewSection(CSection& section)
             
           if(!pidFound)
           {
+            int descriptorLen = section.Data[pointer+1];
             TempPid pid;
             pid.Pid=elementary_PID;
             pid.Lang[0]=section.Data[pointer+2];
             pid.Lang[1]=section.Data[pointer+3];
             pid.Lang[2]=section.Data[pointer+4];
+            // Get the additional language descriptor data (NORSWE etc.)
+            if( descriptorLen == 8 )
+            {
+              pid.Lang[3]=section.Data[pointer+6];
+              pid.Lang[4]=section.Data[pointer+7];
+              pid.Lang[5]=section.Data[pointer+8];
+            }
+            else
+            {
+              pid.Lang[3]=0;
+              pid.Lang[4]=0;
+              pid.Lang[5]=0;
+            }
+
             tempPids.push_back(pid);
           }
         }

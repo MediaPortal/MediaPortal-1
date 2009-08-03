@@ -63,7 +63,7 @@ public:
 
 private:
   int           m_pmtPid;
-  bool          _isFound;
+  bool          m_isFound;
   IPmtCallBack* m_pmtCallback;
   CTsHeader     m_tsHeader;
   CPidTable     m_pidInfo;  
