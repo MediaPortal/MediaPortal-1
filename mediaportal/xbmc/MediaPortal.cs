@@ -1303,7 +1303,7 @@ public class MediaPortalApp : D3DApp, IRender
     } //we are suspended/hibernated
     try
     {
-     g_Player.Process();
+      g_Player.Process();
       HandleMessage();
       FrameMove();
       //if (GUIGraphicsContext.UseSeparateRenderThread)
@@ -1339,10 +1339,10 @@ public class MediaPortalApp : D3DApp, IRender
     {
       return;
     } //we are suspended/hibernated
-		if (_resetDevice)
-		{
-			return;
-		} // we are resetting
+    if (_resetDevice)
+    {
+      return;
+    } // we are resetting
     try
     {
       CreateStateBlock();
@@ -1583,7 +1583,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       MessageBox.Show(String.Format("Failed to load your language! Aborting startup...\n\n{0}\nstack:{1}", exl.Message, exl.StackTrace), "Critical error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
       Close();
-    }    
+    }
     UpdateSplashScreenMessage("Caching graphics...");
     try
     {
@@ -1716,48 +1716,48 @@ public class MediaPortalApp : D3DApp, IRender
     // Only perform the device reset if we're not shutting down MediaPortal.
     if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
     {
-    	Log.Info("Main: OnDeviceReset called");
-    	_resetDevice = true; // sync Reset with render loop
+      Log.Info("Main: OnDeviceReset called");
+      _resetDevice = true; // sync Reset with render loop
     }
   }
 
-	protected void DeviceReset()
-	{
-		// Only perform the device reset if we're not shutting down MediaPortal.
-		if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
-		{
-			Log.Info("Main: Resetting DX9 device");
+  protected void DeviceReset()
+  {
+    // Only perform the device reset if we're not shutting down MediaPortal.
+    if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
+    {
+      Log.Info("Main: Resetting DX9 device");
 
-			int activeWin = GUIWindowManager.ActiveWindow;
-			GUIWindowManager.UnRoute();    // avoid that there is an active Window when GUIWindowManager.ActivateWindow(activeWin); is called
-			Log.Info("Main: UnRoute - done");
+      int activeWin = GUIWindowManager.ActiveWindow;
+      GUIWindowManager.UnRoute();    // avoid that there is an active Window when GUIWindowManager.ActivateWindow(activeWin); is called
+      Log.Info("Main: UnRoute - done");
 
       GUITextureManager.Dispose();
-			GUIFontManager.Dispose();
+      GUIFontManager.Dispose();
 
-			GUIGraphicsContext.DX9Device.EvictManagedResources();
-			GUIWaitCursor.Dispose();
-			if (!m_strSkin.Equals(GUIGraphicsContext.Skin))
-			{
-				m_strSkin = GUIGraphicsContext.Skin;
-			}
-			GUIGraphicsContext.Load();
-			GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
-			GUIFontManager.InitializeDeviceObjects();
+      GUIGraphicsContext.DX9Device.EvictManagedResources();
+      GUIWaitCursor.Dispose();
+      if (!m_strSkin.Equals(GUIGraphicsContext.Skin))
+      {
+        m_strSkin = GUIGraphicsContext.Skin;
+      }
+      GUIGraphicsContext.Load();
+      GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
+      GUIFontManager.InitializeDeviceObjects();
 
-			if (GUIGraphicsContext.DX9Device != null)
-			{
-				GUIWindowManager.OnResize();
-				GUIWindowManager.PreInit();
-				GUIWindowManager.ActivateWindow(activeWin);
-				GUIWindowManager.OnDeviceRestored();
-			}
-			// Must set the FVF after reset
-			GUIFontManager.SetDevice();
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        GUIWindowManager.OnResize();
+        GUIWindowManager.PreInit();
+        GUIWindowManager.ActivateWindow(activeWin);
+        GUIWindowManager.OnDeviceRestored();
+      }
+      // Must set the FVF after reset
+      GUIFontManager.SetDevice();
 
-			Log.Info("Main: Resetting DX9 device done");
-		}
-	}
+      Log.Info("Main: Resetting DX9 device done");
+    }
+  }
 
 
   #endregion
@@ -1765,9 +1765,9 @@ public class MediaPortalApp : D3DApp, IRender
   #region Render()
 
   private static bool reentrant = false;
-	private bool _resetDevice = false;
+  private bool _resetDevice = false;
 
-	protected override void Render(float timePassed)
+  protected override void Render(float timePassed)
   {
     if (_suspended)
     {
@@ -1980,12 +1980,12 @@ public class MediaPortalApp : D3DApp, IRender
         Log.Info("Main: Stopping FrameMove");
         Close();
       }
-			if (_resetDevice)
-			{
-				DeviceReset();
-				_resetDevice = false;
-			}
- 
+      if (_resetDevice)
+      {
+        DeviceReset();
+        _resetDevice = false;
+      }
+
       try
       {
         GUIWindowManager.DispatchThreadMessages();
