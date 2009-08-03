@@ -6,6 +6,7 @@ xcopy "TvControl\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\" /R /Y
 xcopy "TVDatabase\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\" /R /Y
 xcopy "TVLibrary\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\" /R /Y
 xcopy "TvLibrary.Interfaces\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\" /R /Y
+xcopy "TvLibrary.Utils\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\" /R /Y
 xcopy "TvService\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\" /R /Y
 xcopy "Plugins\PowerScheduler\PowerScheduler.Interfaces\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\" /R /Y
 xcopy "Plugins\ServerBlaster\ServerBlaster (Learn)\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\" /R /Y
@@ -16,6 +17,7 @@ xcopy "Plugins\PersonalTVGuide\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Ser
 xcopy "Plugins\ServerBlaster\ServerBlaster\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\Plugins\" /R /Y
 xcopy "Plugins\TvMovie\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\Plugins\" /R /Y
 xcopy "Plugins\XmlTvImport\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\Plugins\" /R /Y
+xcopy "Plugins\WebEPG\WebEPGPlugin\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\Plugins\" /R /Y
 
 xcopy "TvPlugin\TvPlugin\Gentle.config" "_TvPluginDebug\MediaPortal\" /R /Y
 xcopy "TvPlugin\TvPlugin\bin\Debug\TvPlugin.dll" "_TvPluginDebug\MediaPortal\plugins\Windows\" /R /Y

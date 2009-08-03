@@ -413,6 +413,9 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ; Tuning Parameter Directory
   SetOutPath "${COMMON_APPDATA}\TuningParameters"
   File /r /x .svn "${TVSERVER.BASE}\TuningParameters\*"
+  ; WebEPG Grabbers Directory
+  SetOutPath "${COMMON_APPDATA}\WebEPG"
+  File /r /x .svn "${TVSERVER.BASE}\WebEPG\*"
 
   ; The Plugin Directory
   SetOutPath "$INSTDIR\Plugins"
@@ -422,6 +425,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${svn_TVServer}\Plugins\ServerBlaster\ServerBlaster\bin\${BUILD_TYPE}\ServerBlaster.dll"
   File "${svn_TVServer}\Plugins\TvMovie\bin\${BUILD_TYPE}\TvMovie.dll"
   File "${svn_TVServer}\Plugins\XmlTvImport\bin\${BUILD_TYPE}\XmlTvImport.dll"
+  File "${svn_TVServer}\Plugins\WebEPG\WebEPG\bin\${BUILD_TYPE}\WebEPGImport.dll"
+  File "${svn_TVServer}\Plugins\WebEPG\WebEPGPlugin\bin\${BUILD_TYPE}\WebEPG.dll"
 
   ; Rest of Files
   SetOutPath "$INSTDIR"
@@ -445,6 +450,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${svn_TVServer}\TvService\bin\${BUILD_TYPE}\TvService.exe"
   File "${svn_TVServer}\TvService\bin\${BUILD_TYPE}\TvService.exe.config"
   File "${svn_TVServer}\SetupControls\bin\${BUILD_TYPE}\SetupControls.dll"
+  File "${svn_TVServer}\TVLibrary.Utils\bin\${BUILD_TYPE}\TVLibrary.Utils.dll"
+  File "${svn_TVServer}\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
 
   ; 3rd party assemblys
   File "${TVSERVER.BASE}\hauppauge.dll"

@@ -42,7 +42,8 @@ namespace TvEngine
     {
       public string Name;
       public string ExternalId;
-      public ArrayList programs = new ArrayList();
+      //public ArrayList programs = new ArrayList();
+      public ProgramList programs = new ProgramList();
     };
 
     public class Stats
@@ -697,103 +698,88 @@ namespace TvEngine
                 // empty, skip it
                 if (progChan.programs.Count == 0) continue;
 
-                progChan.programs.Sort(this);
-                for (int i = 0 ; i < progChan.programs.Count ; ++i)
-                {
-                  Program prog = (Program)progChan.programs[i];
-                  if (i + 1 < progChan.programs.Count)
-                  {
-                    //correct the times of the current program using the times of the next one
-                    Program progNext = (Program)progChan.programs[i + 1];
-                    if (prog.StartTime >= prog.EndTime)
-                    {
-                      prog.EndTime = progNext.StartTime;
-                    }
-                    if (prog.EndTime > progNext.StartTime)
-                    {
-                      //if the endTime of this program is later that the start of the next program 
-                      //it probably needs to be corrected (only needed when the grabber )
-                      prog.EndTime = progNext.StartTime;
-                    }
-                  }
-                }
+                progChan.programs.Sort();
+                progChan.programs.AlreadySorted = true;
+                progChan.programs.FixEndTimes();
 
-                RemoveOverlappingPrograms(ref progChan.programs); // be sure that we do not have any overlapping
+                //for (int i = 0 ; i < progChan.programs.Count ; ++i)
+                //{
+                //  Program prog = (Program)progChan.programs[i];
+                //  if (i + 1 < progChan.programs.Count)
+                //  {
+                //    //correct the times of the current program using the times of the next one
+                //    Program progNext = (Program)progChan.programs[i + 1];
+                //    if (prog.StartTime >= prog.EndTime)
+                //    {
+                //      prog.EndTime = progNext.StartTime;
+                //    }
+                //    if (prog.EndTime > progNext.StartTime)
+                //    {
+                //      //if the endTime of this program is later that the start of the next program 
+                //      //it probably needs to be corrected (only needed when the grabber )
+                //      prog.EndTime = progNext.StartTime;
+                //    }
+                //  }
+                //}
+
+                progChan.programs.RemoveOverlappingPrograms(); // be sure that we do not have any overlapping
 
                 // get the id of the channel, just get the IdChannel of the first program
-                int idChannel = ((Program)progChan.programs[0]).IdChannel;
+                int idChannel = progChan.programs[0].IdChannel;
 
                 // retrieve all programs for this channel
-                ArrayList programs = new ArrayList();
+                ProgramList dbPrograms = new ProgramList();// = new ArrayList();
                 {
                   SqlBuilder sb2 = new SqlBuilder(StatementType.Select, typeof(Program));
                   sb2.AddConstraint(Operator.Equals, "idChannel", idChannel);
                   sb2.AddOrderByField(false, "starttime");
                   SqlStatement stmt2 = sb2.GetStatement(true);
-                  IList<Program> programsInDbs = ObjectFactory.GetCollection<Program>(stmt2.Execute());
+                  //IList<Program> programsInDbs = ObjectFactory.GetCollection<Program>(stmt2.Execute());
+                  dbPrograms = new ProgramList(ObjectFactory.GetCollection<Program>(stmt2.Execute()));
 
-                  int count = programsInDbs.Count;
-                  programs.Capacity = count;
-                  for (int i = 0 ; i < count ; i++)
-                    programs.Add(programsInDbs[i]);
+                  //int count = programsInDbs.Count;
+                  //programs.Capacity = count;
+                  //for (int i = 0 ; i < count ; i++)
+                  //  programs.Add(programsInDbs[i]);
                 }
 
-                List<Program> importProgs = new List<Program>(progChan.programs.Count);
+                //List<Program> importProgs = new List<Program>(progChan.programs.Count);
+                progChan.programs.RemoveOverlappingPrograms(dbPrograms);
+
                 for (int i = 0 ; i < progChan.programs.Count ; ++i)
                 {                  
-                  Program prog = (Program)progChan.programs[i];
+                  Program prog = progChan.programs[i];
                   // don't import programs which have already ended...
-                  if (prog.EndTime > dtStartDate)
+                  if (prog.EndTime <= dtStartDate)
                   {
-                    DateTime start = prog.StartTime;
-                    DateTime end = prog.EndTime;
-                    DateTime airDate = System.Data.SqlTypes.SqlDateTime.MinValue.Value;
-                    try
-                    {
-                      airDate = prog.OriginalAirDate;
-                      if (airDate > System.Data.SqlTypes.SqlDateTime.MinValue.Value && airDate < System.Data.SqlTypes.SqlDateTime.MaxValue.Value)
-                        prog.OriginalAirDate = airDate;
-                    }
-                    catch (Exception)
-                    {
-                      Log.Info("XMLTVImport: Invalid year for OnAirDate - {0}", prog.OriginalAirDate);
-                    }
-
-                    bool overlaps = false;
-                    // check whether there exists a program that overlaps with prog
-                    for (int j = 0 ; j < programs.Count ; j++)
-                    {
-                      Program proggi = (Program)programs[j];
-                      if (proggi.RunningAt(start, end))
-                      {
-                        overlaps = true;
-                        break;
-                      }
-                    }
-                    if (!overlaps)
-                    {
-                      importProgs.Add(prog);
-                      //try
-                      //{
-                      //  prog.Persist();
-                      //}
-                      //catch (Exception e)
-                      //{
-                      //  Log.Error("Error while saving {0}", prog.IdChannel + ":" + prog.Title + ":" + prog.Description);
-                      //  throw e;
-                      //}
-                      //Thread.Sleep(_backgroundDelay);
-                    }
-                    if (prog.StartTime < _status.StartTime)
-                      _status.StartTime = prog.StartTime;
-                    if (prog.EndTime > _status.EndTime)
-                      _status.EndTime = prog.EndTime;
-                    _status.Programs++;
-                    if (showProgress && ShowProgress != null && (_status.Programs % 100) == 0) ShowProgress(_status);
+                    progChan.programs.RemoveAt(i);
+                    i--;
+                    continue;
                   }
+
+                  DateTime start = prog.StartTime;
+                  DateTime end = prog.EndTime;
+                  DateTime airDate = System.Data.SqlTypes.SqlDateTime.MinValue.Value;
+                  try
+                  {
+                    airDate = prog.OriginalAirDate;
+                    if (airDate > System.Data.SqlTypes.SqlDateTime.MinValue.Value && airDate < System.Data.SqlTypes.SqlDateTime.MaxValue.Value)
+                      prog.OriginalAirDate = airDate;
+                  }
+                  catch (Exception)
+                  {
+                    Log.Info("XMLTVImport: Invalid year for OnAirDate - {0}", prog.OriginalAirDate);
+                  }
+
+                  if (prog.StartTime < _status.StartTime)
+                    _status.StartTime = prog.StartTime;
+                  if (prog.EndTime > _status.EndTime)
+                    _status.EndTime = prog.EndTime;
+                  _status.Programs++;
+                  if (showProgress && ShowProgress != null && (_status.Programs % 100) == 0) ShowProgress(_status);
                 }
-                Log.Info("XMLTVImport: Inserting {0} programs for {1}", importProgs.Count.ToString(), progChan.Name);
-                layer.InsertPrograms(importProgs, ThreadPriority.BelowNormal);
+                Log.Info("XMLTVImport: Inserting {0} programs for {1}", progChan.programs.Count.ToString(), progChan.Name);
+                layer.InsertPrograms(progChan.programs, ThreadPriority.BelowNormal);
               }
             }           
               #endregion

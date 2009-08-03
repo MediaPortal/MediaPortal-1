@@ -14,6 +14,7 @@ xcopy %1\Plugins\ConflictsManager\bin\%2\*.* Plugins\ /R /Y
 xcopy %1\Plugins\ServerBlaster\ServerBlaster\bin\%2\*.* Plugins\ /R /Y
 xcopy %1\Plugins\TvMovie\bin\%2\*.* Plugins\ /R /Y
 xcopy %1\Plugins\XmlTvImport\bin\%2\*.* Plugins\ /R /Y
+xcopy %1\Plugins\WebEPG\WebEPGPlugin\bin\%2\*.* Plugins\ /R /Y
 xcopy %1\TVServer.Base\*.* . /R /Y
 xcopy %1\SetupControls\bin\%2\*.* . /R /Y
 xcopy %1\..\..\DirectShowFilters\StreamingServer\bin\%2\*.* . /R /Y

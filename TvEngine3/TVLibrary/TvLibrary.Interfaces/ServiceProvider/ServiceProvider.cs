@@ -77,6 +77,23 @@ namespace TvLibrary.Interfaces
     }
 
     /// <summary>
+    /// returns the service
+    /// </summary>
+    /// <typeparam name="T">service type</typeparam>
+    /// <returns>service itself</returns>
+    /// <remarks>if service is not registered a suitable default is returned</remarks>
+    public T TryGet<T>()
+    {
+      Type t = typeof(T);
+      if (services.ContainsKey(t))
+      {
+        return (T)services[t];
+      }
+      return default(T);
+    }
+
+
+    /// <summary>
     /// removes a service from the service provider
     /// </summary>
     /// <typeparam name="T">Service type</typeparam>
