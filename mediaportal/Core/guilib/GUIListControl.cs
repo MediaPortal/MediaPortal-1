@@ -3397,6 +3397,11 @@ namespace MediaPortal.GUI.Library
     {
       _cursorX = 0;
       _offset = 0;
+      // Mantis 0002389 - Missing Free
+      foreach (GUIListItem item in _listItems)
+      {
+        item.FreeIcons();
+      }
       _listItems.Clear();
       //GUITextureManager.CleanupThumbs();
       _upDownControl.SetRange(1, 1);

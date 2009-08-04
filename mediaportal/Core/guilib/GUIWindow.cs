@@ -1514,7 +1514,7 @@ namespace MediaPortal.GUI.Library
               else
               {
                 LoadSkin();
-                AllocResources();
+                //AllocResources(); // Mantis 0002389 - Double AllocResources
               }
 
               InitControls();
