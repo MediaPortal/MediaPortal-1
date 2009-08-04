@@ -713,7 +713,6 @@ namespace MediaPortal.Util
 
     public static void GetVideoThumb(object i)
     {
-      UInt32 expectedError = 0x8004B200;
       GUIListItem item = (GUIListItem)i;
       string path = item.Path;
       string strThumb = String.Format(@"{0}\{1}.jpg", Thumbs.Videos, EncryptLine(path));
@@ -756,7 +755,7 @@ namespace MediaPortal.Util
       }
       catch (COMException comex)
       {
-        if (comex.ErrorCode == expectedError)
+        if (comex.ErrorCode == unchecked((int)0x8004B200))
         {
           Log.Warn("Could not create thumbnail for {0} [Unknown error 0x8004B200]", path);
         }
