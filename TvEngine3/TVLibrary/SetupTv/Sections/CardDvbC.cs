@@ -234,13 +234,13 @@ namespace SetupTv.Sections
     private void SetDefaults()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
-      int index = Int32.Parse(layer.GetSetting("dvbc" + _cardNumber + "Country", "0").Value);
+      int index = Math.Max(Int32.Parse(layer.GetSetting("dvbc" + _cardNumber + "Country", "0").Value), 0); // limit to >= 0
       if (index < mpComboBoxCountry.Items.Count)
       {
         mpComboBoxCountry.SelectedIndex = index;
       }
 
-      index = Int32.Parse(layer.GetSetting("dvbc" + _cardNumber + "Region", "0").Value);
+      index = Math.Max(Int32.Parse(layer.GetSetting("dvbc" + _cardNumber + "Region", "0").Value), 0); // limit to >= 0
       if (index < mpComboBoxRegion.Items.Count)
       {
         mpComboBoxRegion.SelectedIndex = index;
@@ -249,7 +249,7 @@ namespace SetupTv.Sections
       textBoxFreq.Text = layer.GetSetting("dvbc" + _cardNumber + "Freq", "306000").Value;
       textBoxSymbolRate.Text = layer.GetSetting("dvbc" + _cardNumber + "Symbolrate", "6900").Value;
 
-      index = Int32.Parse(layer.GetSetting("dvbc" + _cardNumber + "Modulation", "3").Value);
+      index = Math.Max(Int32.Parse(layer.GetSetting("dvbc" + _cardNumber + "Modulation", "3").Value), 0); // limit to >= 0
       if (index < mpComboBoxMod.Items.Count)
       {
         mpComboBoxMod.SelectedIndex = index;
