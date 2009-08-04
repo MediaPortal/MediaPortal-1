@@ -239,6 +239,7 @@ namespace SetupTv.Sections
       // 
       this.linkLabelPayPal.ActiveLinkColor = System.Drawing.Color.Transparent;
       this.linkLabelPayPal.DisabledLinkColor = System.Drawing.Color.Transparent;
+      this.linkLabelPayPal.ForeColor = System.Drawing.SystemColors.ControlText;
       this.linkLabelPayPal.Image = global::SetupTv.Properties.Resources.logo_PayPal;
       this.linkLabelPayPal.LinkColor = System.Drawing.Color.Transparent;
       this.linkLabelPayPal.Location = new System.Drawing.Point(133, 314);

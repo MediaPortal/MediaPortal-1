@@ -161,6 +161,12 @@
     <Compile Include="Sections\Project.designer.cs">
       <DependentUpon>Project.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\ThirdPartyChecks.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\ThirdPartyChecks.Designer.cs">
+      <DependentUpon>ThirdPartyChecks.cs</DependentUpon>
+    </Compile>
     <Compile Include="WizardForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -568,6 +574,9 @@
     <Content Include="images\icon.computer.gif" />
     <EmbeddedResource Include="47_upgrade_mysql_database.sql" />
     <EmbeddedResource Include="47_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="Sections\ThirdPartyChecks.resx">
+      <DependentUpon>ThirdPartyChecks.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="images\icon.down.png" />
     <Content Include="images\icon.mpConfig.ico" />
     <Content Include="images\icon.radio_fta.png" />

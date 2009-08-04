@@ -154,7 +154,6 @@ namespace TvService
       }
 
       StartRemoting();
-      Utils.ShutDownMCEServices();
       _started = true;
       Log.Info("TV service: Started");
     }

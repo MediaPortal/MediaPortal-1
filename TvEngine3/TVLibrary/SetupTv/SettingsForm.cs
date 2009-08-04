@@ -178,6 +178,8 @@ namespace SetupTv
           }
         }
 
+        AddSection(new ThirdPartyChecks());
+
         sectionTree.SelectedNode = sectionTree.Nodes[0];
         // make sure window is in front of mediaportal
       }
