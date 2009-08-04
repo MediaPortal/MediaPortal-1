@@ -51,6 +51,7 @@ using TvControl;
 using TvDatabase;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Interfaces;
+using System.Text;
 
 #endregion
 
@@ -166,6 +167,21 @@ namespace TvPlugin
     private static bool _connected = false;
     protected static TvServer _server;
 
+    // error handling
+    public class ChannelErrorInfo
+    {
+      public Channel FailingChannel;
+      public TvResult Result;
+      public List<String> Messages = new List<string>();
+    };
+    public static ChannelErrorInfo _lastError = new ChannelErrorInfo();
+
+    // CI Menu
+    private static CiMenuHandler ciMenuHandler;
+    public static GUIDialogCIMenu dlgCiMenu;
+    public static GUIDialogNotify _dialogNotify = null;
+
+
     #endregion
 
     #region Events
@@ -273,11 +289,30 @@ namespace TvPlugin
           strLine += "TvPlugin Version: " + pluginVersion;
           throw new Exception(strLine);
         }
+
+        RegisterCiMenu();
       }
       catch (Exception ex)
       {
         Log.Error("TVHome: Error occured in constructor: {0}", ex.Message);
       }
+    }
+
+    /// <summary>
+    /// Register the remoting service and attaching ciMenuHandler for server events
+    /// </summary>
+    public static void RegisterCiMenu()
+    {
+      if (ciMenuHandler == null)
+      {
+        Log.Debug("CiMenu: PrepareCiMenu");
+        ciMenuHandler = new CiMenuHandler();
+
+      }
+      // attach local eventhandler to server event
+      RemoteControl.RegisterCiMenuCallbacks(ciMenuHandler);
+
+      bool res = TVHome.Card.SetCiMenuHandler(null); // null because handler registers tvserver there
     }
 
     public TVHome()
@@ -2956,181 +2991,114 @@ namespace TvPlugin
     private static void ChannelTuneFailedNotifyUser(TvResult succeeded, bool wasPlaying, Channel channel)
     {
       GUIGraphicsContext.RenderBlackImage = false;
-      string errorMessage = GUILocalizeStrings.Get(1500);
+
+      _lastError.Result = succeeded;
+      _lastError.FailingChannel = channel;
+      _lastError.Messages.Clear();
+
+      // reset the last channel, so you can switch back after error
+      TVHome.Navigator.SetFailingChannel(_lastError.FailingChannel);
+
+      int TextID = 0;
+      _lastError.Messages.Add(GUILocalizeStrings.Get(1500));
       switch (succeeded)
       {
         case TvResult.NoSignalDetected:
-          errorMessage += "\r" + GUILocalizeStrings.Get(1499) + "\r";
+          TextID = 1499;
           break;
         case TvResult.CardIsDisabled:
-          errorMessage += "\r" + GUILocalizeStrings.Get(1501) + "\r";
+          TextID = 1501;
           break;
         case TvResult.AllCardsBusy:
-          errorMessage += "\r" + GUILocalizeStrings.Get(1502) + "\r";
+          TextID = 1502;
           break;
         case TvResult.ChannelIsScrambled:
-          errorMessage += "\r" + GUILocalizeStrings.Get(1503) + "\r";
+          TextID = 1503;
           break;
         case TvResult.NoVideoAudioDetected:
-          errorMessage += "\r" + GUILocalizeStrings.Get(1504) + "\r";
+          TextID = 1504;
           break;
         case TvResult.UnableToStartGraph:
-          errorMessage += "\r" + GUILocalizeStrings.Get(1505) + "\r";
+          TextID = 1505;
           break;
         case TvResult.UnknownError:
           // this error can also happen if we have no connection to the server.
           if (!Connected || !RemoteControl.IsConnected)
           {
-            errorMessage += "\r" + GUILocalizeStrings.Get(1510) + "\r"; // Connection to TV server lost
+            TextID = 1510;
           }
           else
           {
-            errorMessage += "\r" + GUILocalizeStrings.Get(1506) + "\r";
+            TextID = 1506;
           }
           break;
         case TvResult.UnknownChannel:
-          errorMessage += "\r" + GUILocalizeStrings.Get(1507) + "\r";
+          TextID = 1507;
           break;
         case TvResult.ChannelNotMappedToAnyCard:
-          errorMessage += "\r" + GUILocalizeStrings.Get(1508) + "\r";
+          TextID = 1508;
           break;
         case TvResult.NoTuningDetails:
-          errorMessage += "\r" + GUILocalizeStrings.Get(1509) + "\r";
+          TextID = 1509;
           break;
         case TvResult.GraphBuildingFailed:
-          errorMessage += "\r" + GUILocalizeStrings.Get(1518) + "\r";
+          TextID = 1518;
           break;
         case TvResult.SWEncoderMissing:
-          errorMessage += "\r" + GUILocalizeStrings.Get(1519) + "\r";
+          TextID = 1519;
           break;
         case TvResult.NoFreeDiskSpace:
-          errorMessage += "\r" + GUILocalizeStrings.Get(1520) + "\r";
+          TextID = 1520;
           break;
         default:
           // this error can also happen if we have no connection to the server.
           if (!Connected || !RemoteControl.IsConnected)
           {
-            errorMessage += "\r" + GUILocalizeStrings.Get(1510) + "\r"; // Connection to TV server lost
+            TextID = 1510;
           }
           else
           {
-            errorMessage += "\r" + GUILocalizeStrings.Get(1506) + "\r";
+            TextID = 1506;
           }
           break;
       }
-      if (wasPlaying) //show yes no dialogue
+
+      if (TextID != 0)
       {
-        GUIDialogYesNo pDlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
-        string[] lines = errorMessage.Split('\r');
-        string caption = GUILocalizeStrings.Get(605) + " - " + GUILocalizeStrings.Get(1512);
-        pDlgYesNo.SetHeading(caption); //my tv
-        pDlgYesNo.SetLine(1, channel.DisplayName);
-        pDlgYesNo.SetLine(2, lines[0]);
-        if (lines.Length > 1)
-        {
-          pDlgYesNo.SetLine(3, lines[1]);
-        }
-        else
-        {
-          pDlgYesNo.SetLine(3, "");
-        }
-        if (lines.Length > 2)
-        {
-          pDlgYesNo.SetLine(4, lines[2]);
-        }
-        else
-        {
-          pDlgYesNo.SetLine(4, "");
-        }
-
-        if (GUIWindowManager.ActiveWindow == (int)(int)Window.WINDOW_TVFULLSCREEN)
-        {
-          pDlgYesNo.DoModal((int)GUIWindowManager.ActiveWindowEx);
-          // If failed and wasPlaying TV, fallback to the last viewed channel. 
-
-          if (pDlgYesNo.IsConfirmed)
-          {
-            ViewChannelAndCheck(Navigator.Channel);
-            //GUIWaitCursor.Hide();
-          }
-        }
-        else
-        {
-          if (OnShowDlgCompleted == null)
-          {
-            OnShowDlgCompleted += new ShowDlgSuccessful(ShowDlgCompleted);
-          }
-          ParameterizedThreadStart pThread = new ParameterizedThreadStart(ShowDlgThread);
-          Thread showDlgThread = new Thread(pThread);
-          showDlgThread.IsBackground = true;
-          //GUIWaitCursor.Hide();						
-          // show the dialog asynch.
-          // this fixes a hang situation that would happen when resuming TV with showlastactivemodule
-          showDlgThread.Start(pDlgYesNo);
-        }
+        _lastError.Messages.Add(GUILocalizeStrings.Get(TextID));
       }
-      else //show ok
+
+      GUIDialogNotify pDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
+      string caption = GUILocalizeStrings.Get(605) + " - " + channel.Name; // +GUILocalizeStrings.Get(1512); ("tune last?")
+      pDlgNotify.SetHeading(caption); //my tv
+      StringBuilder sbMessage = new StringBuilder();
+      // ignore the "unable to start timeshift" line to avoid scrolling, because NotifyDLG has very few space available.
+      for (int idx = 1; idx < _lastError.Messages.Count; idx++ )
       {
-        GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
-        string[] lines = errorMessage.Split('\r');
-        pDlgOK.SetHeading(605); //my tv
-        pDlgOK.SetLine(1, channel.DisplayName);
-        pDlgOK.SetLine(2, lines[0]);
-        if (lines.Length > 1)
-        {
-          pDlgOK.SetLine(3, lines[1]);
-        }
-        else
-        {
-          pDlgOK.SetLine(3, "");
-        }
-        if (lines.Length > 2)
-        {
-          pDlgOK.SetLine(4, lines[2]);
-        }
-        else
-        {
-          pDlgOK.SetLine(4, "");
-        }
+        sbMessage.AppendFormat("\n{0}", _lastError.Messages[idx]);
+      }
+      pDlgNotify.SetText(sbMessage.ToString());
 
-        if (GUIWindowManager.ActiveWindow == (int)(int)Window.WINDOW_TVFULLSCREEN)
-        {
-          pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
-        }
-        else
-        {
-          if (OnShowDlgCompleted == null)
-          {
-            OnShowDlgCompleted += new ShowDlgSuccessful(ShowDlgCompleted);
-          }
-
-          ParameterizedThreadStart pThread = new ParameterizedThreadStart(ShowDlgThread);
-          Thread showDlgThread = new Thread(pThread);
-          showDlgThread.IsBackground = true;
-          // show the dialog asynch.
-          // this fixes a hang situation that would happen when resuming TV with showlastactivemodule
-          showDlgThread.Start(pDlgOK);
-        }
+      // Fullscreen shows the TVZapOSD to handle error messages
+      if (GUIWindowManager.ActiveWindow == (int)(int)Window.WINDOW_TVFULLSCREEN)
+      {
+        // If failed and wasPlaying TV, left screen as it is and show osd with error message 
+        Log.Info("send message to fullscreen tv");
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_TV_ERROR_NOTIFY, GUIWindowManager.ActiveWindow, 0, 0, 0, 0,
+                                        null);
+        msg.SendToTargetWindow = true;
+        msg.TargetWindowId = (int)(int)Window.WINDOW_TVFULLSCREEN;
+        msg.Object = _lastError; // forward error info object
+        msg.Param1 = 3; // sec timeout
+        GUIGraphicsContext.SendMessage(msg);
+        return;
+      }
+      else 
+      {
+        // show notify dialog 
+        pDlgNotify.DoModal((int)GUIWindowManager.ActiveWindowEx);
       }
     }
-
-    /*
-    // for joboehl
-    private static bool isChannelAnalogue(Channel ch)
-    {
-      if (ch.ReferringTuningDetail() != null)
-      {
-        foreach (TuningDetail td in ch.ReferringTuningDetail())
-        {
-          if (td.ChannelType == 0)
-          {
-            return true;
-          }
-        }
-      }
-      return false;
-    }
-    */
 
     private static void OnBlackImageRendered()
     {
@@ -3431,14 +3399,13 @@ namespace TvPlugin
 
         }
 
-        //GUIWaitCursor.Hide();
-
-        //GUIWaitCursor.Hide();
+        // ensure right channel name, even if not watchable:Navigator.Channel = channel; 
         ChannelTuneFailedNotifyUser(succeeded, wasPlaying, channel);
 
-        _doingChannelChange = false;
-        return false;
+        _doingChannelChange = true; // keep fullscreen false;
+        return true; // "success"
       }
+
       catch (Exception ex)
       {
         Log.Debug("TvPlugin:ViewChannelandCheck Exception {0}", ex.ToString());
@@ -3451,6 +3418,11 @@ namespace TvPlugin
       finally
       {
         StopRenderBlackImage();
+        if (cardChanged == true)
+        {
+          Log.Debug("TvPlugin: CiMenuHandler attached to new card {0}", TVHome.Card.Name);
+          bool res = TVHome.Card.SetCiMenuHandler(null); // null because handler registers tvserver there
+        }
       }
     }
 
@@ -3659,6 +3631,115 @@ namespace TvPlugin
         }
       }
     }
+
+    #region CI Menu
+    /// <summary>
+    /// Keyboard input for ci menu
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="maxLength"></param>
+    /// <param name="bPassword"></param>
+    /// <param name="strLine"></param>
+    /// <returns></returns>
+    protected static bool GetKeyboard(string title, int maxLength, bool bPassword, ref string strLine)
+    {
+      StandardKeyboard keyboard = (StandardKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
+      if (null == keyboard)
+      {
+        return false;
+      }
+      keyboard.Password = bPassword;
+      keyboard.Title = title;
+      keyboard.SetMaxLength(maxLength);
+      keyboard.Reset();
+      keyboard.Text = strLine;
+      keyboard.DoModal(GUIWindowManager.ActiveWindowEx);
+      if (keyboard.IsConfirmed)
+      {
+        strLine = keyboard.Text;
+        return true;
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Handles all CiMenu actions from callback
+    /// </summary>
+    /// <param name="Menu">complete CI menu object</param>
+    public static void CiMenuCallback(CiMenu Menu)
+    {
+      if (dlgCiMenu == null)
+      {
+        dlgCiMenu = (GUIDialogCIMenu)GUIWindowManager.GetWindow((int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_DIALOG_CIMENU);
+      } 
+      
+      switch (Menu.State)
+      {
+          // choices available, so show them
+        case TvLibrary.Interfaces.CiMenuState.Ready:
+          dlgCiMenu.Reset();
+          dlgCiMenu.SetHeading(Menu.Title, Menu.Subtitle, Menu.BottomText); // CI Menu
+
+          for (int i = 0; i < Menu.NumChoices; i++) // CI Menu Entries
+            dlgCiMenu.Add(Menu.MenuEntries[i].Message); // take only message, numbers come from dialog
+
+          // show dialog and wait for result       
+          dlgCiMenu.DoModal(GUIWindowManager.ActiveWindow);
+          if (Menu.State != TvLibrary.Interfaces.CiMenuState.Error)
+          {
+            if (dlgCiMenu.SelectedId != -1)
+            {
+              TVHome.Card.SelectCiMenu(Convert.ToByte(dlgCiMenu.SelectedId));
+            }
+            else
+            {
+              TVHome.Card.SelectCiMenu(0); // 0 means "back"
+            }
+          }
+          else
+          {
+            TVHome.Card.CloseMenu(); // in case of error close the menu
+          }
+          break;
+
+          // errors and menu options with no choices
+        case TvLibrary.Interfaces.CiMenuState.Error:
+        case TvLibrary.Interfaces.CiMenuState.NoChoices:
+
+          if (_dialogNotify == null)
+          {
+            //_dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+            _dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
+          }
+          if (null != _dialogNotify)
+          {
+            _dialogNotify.Reset();
+            _dialogNotify.ClearAll();
+            _dialogNotify.SetHeading(Menu.Title);
+
+            _dialogNotify.SetText(String.Format("{0}\r\n{1}",Menu.Subtitle, Menu.BottomText));
+            _dialogNotify.TimeOut = 2; // seconds
+            _dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
+          }
+          break;
+
+          // requests require users input so open keyboard
+        case TvLibrary.Interfaces.CiMenuState.Request:
+          String result="";
+          if (GetKeyboard(Menu.RequestText, Menu.AnswerLength, Menu.Password, ref result) == true)
+          {
+            TVHome.Card.SendMenuAnswer(false, result); // send answer, cancel=false
+          }
+          else
+          {
+            TVHome.Card.SendMenuAnswer(true, null); // cancel request 
+          }
+          break;
+      }
+    }
+
+    #endregion
+
   }
 
   #region ChannelNavigator class
@@ -3984,6 +4065,15 @@ namespace TvPlugin
 
     #region Public methods
 
+    /// <summary>
+    /// Sets last failed channel
+    /// </summary>
+    /// <param name="failedChannel"></param>
+    public void SetFailingChannel(Channel failedChannel)
+    {
+      m_currentChannel = failedChannel;
+    }
+
     public void ZapNow()
     {
       m_zaptime = DateTime.Now.AddSeconds(-1);
@@ -4032,22 +4122,24 @@ namespace TvPlugin
           //if (m_zapchannel != m_currentchannel)
           //  lastViewedChannel = m_currentchannel;
           // Zap to desired channel
-          Channel zappingTo = m_zapchannel;
-
-          //remember to apply the new group also.
-          if (m_zapchannel.CurrentGroup != null)
+          if (m_zapchannel != null) // might be NULL after tuning failed
           {
-            m_currentgroup = GetGroupIndex(m_zapchannel.CurrentGroup.GroupName);
-            Log.Info("Channel change:{0} on group {1}", zappingTo.DisplayName, m_zapchannel.CurrentGroup.GroupName);
-          }
-          else
-          {
-            Log.Info("Channel change:{0}", zappingTo.DisplayName);
-          }
+            Channel zappingTo = m_zapchannel;
 
-          m_zapchannel = null;
+            //remember to apply the new group also.
+            if (m_zapchannel.CurrentGroup != null)
+            {
+              m_currentgroup = GetGroupIndex(m_zapchannel.CurrentGroup.GroupName);
+              Log.Info("Channel change:{0} on group {1}", zappingTo.DisplayName, m_zapchannel.CurrentGroup.GroupName);
+            }
+            else
+            {
+              Log.Info("Channel change:{0}", zappingTo.DisplayName);
+            }
+            m_zapchannel = null;
 
-          TVHome.ViewChannel(zappingTo);
+            TVHome.ViewChannel(zappingTo);
+          }
           reentrant = false;
 
           return true;
@@ -4651,6 +4743,37 @@ namespace TvPlugin
 
     #endregion
   }
-
-  #endregion
 }
+#endregion
+
+#region CI Menu
+/// <summary>
+/// Handler class for gui interactions of ci menu
+/// </summary>
+public class CiMenuHandler : CiMenuCallbackSink
+{
+  /// <summary>
+  /// eventhandler to show CI Menu dialog
+  /// </summary>
+  /// <param name="Menu"></param>
+  protected override void CiMenuCallback(CiMenu Menu)
+  {
+    try
+    {
+      Log.Debug("Callback from tvserver {0}", Menu.Title);
+
+      // pass menu to calling dialog
+      //if (refDlg != null)
+        TvPlugin.TVHome.CiMenuCallback(Menu);
+    }
+    catch
+    {
+      Menu = new CiMenu("Remoting Exception", "Communication with server failed", null, TvLibrary.Interfaces.CiMenuState.Error);
+      // pass menu to calling dialog
+      //if (refDlg != null)
+      TvPlugin.TVHome.CiMenuCallback(Menu);
+    }
+  }
+}
+#endregion
+

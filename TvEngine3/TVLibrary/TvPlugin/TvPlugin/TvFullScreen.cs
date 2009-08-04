@@ -118,7 +118,6 @@ namespace TvPlugin
     private bool _isDialogVisible = false;
     //bool _isMsnChatPopup = false;       // msn related can be removed
     private GUIDialogMenu dlg;
-    private GUIDialogCIMenu dlgCiMenu;
     private GUIDialogNotify _dialogNotify = null;
     private GUIDialogMenuBottomRight _dialogBottomMenu = null;
     private GUIDialogYesNo _dlgYesNo = null;
@@ -136,6 +135,8 @@ namespace TvPlugin
     private bool _immediateSeekIsRelative = true;
     private int _immediateSeekValue = 10;
 
+    // Tv error handling
+    private TvPlugin.TVHome.ChannelErrorInfo _gotTvErrorMessage = null;
     ///@
     ///VMR9OSD _vmr9OSD = null;
     private FullScreenState _screenState = new FullScreenState();
@@ -152,7 +153,6 @@ namespace TvPlugin
     private VideoRendererStatistics.State videoState = VideoRendererStatistics.State.VideoPresent;
     private List<Geometry.Type> _allowedArModes = new List<Geometry.Type>();
 
-    private readonly CiMenuHandler ciMenuHandler;
     #endregion
 
     #region enums
@@ -189,7 +189,6 @@ namespace TvPlugin
     {
       Log.Debug("TvFullScreen:ctor");
       GetID = (int) Window.WINDOW_TVFULLSCREEN;
-      ciMenuHandler = new CiMenuHandler();
     }
 
     public override bool SupportsDelayedLoad
@@ -532,6 +531,11 @@ namespace TvPlugin
               {
                 GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _zapWindow.GetID, 0, 0,
                                                 GetID, 0, null);
+                if (_gotTvErrorMessage != null)
+                {
+                  _zapWindow.LastError = _gotTvErrorMessage;
+                  _gotTvErrorMessage = null;
+                }
                 _zapWindow.OnMessage(msg);
                 Log.Debug("ZAP OSD:ON");
                 _zapTimeOutTimer = DateTime.Now;
@@ -1245,7 +1249,16 @@ namespace TvPlugin
       }
 
       #endregion
+      #region case GUI_MSG_NOTIFY_TV_PROGRAM
 
+      // TEST for TV error handling
+      if (message.Message == GUIMessage.MessageType.GUI_MSG_TV_ERROR_NOTIFY)
+      {
+        UpdateOSD((TvPlugin.TVHome.ChannelErrorInfo)message.Object);
+        return true;
+      }
+
+      #endregion
       #region case GUI_MSG_WINDOW_DEINIT
 
       if (_isOsdVisible)
@@ -2054,110 +2067,21 @@ namespace TvPlugin
 
     #region CI Menu 
     /// <summary>
-    /// Sets callbacks and calls EnterCiMenu; Actions are done from callbacks
+    /// Sets callbacks and calls EnterCiMenu; Actions are done from callbacks and handled in TVHome globally
     /// </summary>
     private void PrepareCiMenu()
     {
-      bool res;
-      Log.Debug("CiMenu: PrepareCiMenu");
-      
-      // attach local eventhandler to server event
-      RemoteControl.RegisterCiMenuCallbacks(ciMenuHandler);
-      // register this for callback
-      ciMenuHandler.SetCaller(this);
-      // needed once to tell tvserver to handle the ICiMenuCallbacks and then forward it through event
-      res = TVHome.Card.SetCiMenuHandler(null); // null because handler registers tvserver there
-      
-      if (res==true)
-        TVHome.Card.EnterCiMenu(); // Enter menu. Dialog shows up on callback
+      TVHome.RegisterCiMenu(); // Ensure listener attached
+      TVHome.Card.EnterCiMenu(); // Enter menu. Dialog shows up on callback
     }
-
-    /// <summary>
-    /// Handles all CiMenu actions from callback
-    /// </summary>
-    /// <param name="Menu">complete CI menu object</param>
-    public void CiMenuCallback(CiMenu Menu)
-    {
-      if (dlgCiMenu == null)
-      {
-        dlgCiMenu = (GUIDialogCIMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_CIMENU);
-      } 
-      
-      switch (Menu.State)
-      {
-          // choices available, so show them
-        case TvLibrary.Interfaces.CiMenuState.Ready:
-          dlgCiMenu.Reset();
-          dlgCiMenu.SetHeading(Menu.Title, Menu.Subtitle, Menu.BottomText); // CI Menu
-
-          for (int i = 0; i < Menu.NumChoices; i++) // CI Menu Entries
-            dlgCiMenu.Add(Menu.MenuEntries[i].Message); // take only message, numbers come from dialog
-
-          // show dialog and wait for result       
-          dlgCiMenu.DoModal(GUIWindowManager.ActiveWindow);
-          if (Menu.State != TvLibrary.Interfaces.CiMenuState.Error)
-          {
-            if (dlgCiMenu.SelectedId != -1)
-            {
-              TVHome.Card.SelectCiMenu(Convert.ToByte(dlgCiMenu.SelectedId));
-            }
-            else
-            {
-              TVHome.Card.SelectCiMenu(0); // 0 means "back"
-            }
-          }
-          else
-          {
-            TVHome.Card.CloseMenu(); // in case of error close the menu
-          }
-          break;
-
-          // errors and menu options with no choices
-        case TvLibrary.Interfaces.CiMenuState.Error:
-        case TvLibrary.Interfaces.CiMenuState.NoChoices:
-
-          if (_dialogNotify == null)
-          {
-            //_dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
-            _dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
-          }
-          if (null != _dialogNotify)
-          {
-            _dialogNotify.Reset();
-            _dialogNotify.ClearAll();
-            _dialogNotify.SetHeading(Menu.Title);
-
-            _dialogNotify.SetText(String.Format("{0}\r\n{1}",Menu.Subtitle, Menu.BottomText));
-            _dialogNotify.TimeOut = 2; // seconds
-            _dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
-          }
-          break;
-
-          // requests require users input so open keyboard
-        case TvLibrary.Interfaces.CiMenuState.Request:
-          String result="";
-          if (GetKeyboard(Menu.RequestText, Menu.AnswerLength, Menu.Password, ref result) == true)
-          {
-            TVHome.Card.SendMenuAnswer(false, result); // send answer, cancel=false
-          }
-          else
-          {
-            TVHome.Card.SendMenuAnswer(true, null); // cancel request 
-          }
-          break;
-      }
-    }
-
     #endregion
 
     private void SortChannels()
     {
       GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_SORT_CHANNELS);
       //ChannelSettings channelSettings = (ChannelSettings)GUIWindowManager.GetWindow((int)Window.WINDOW_SETTINGS_SORT_CHANNELS);
-      //channelSettings.StartM
-      //channelSettings.O
-      //channelSettings.;
     }
+
     private void ShowAudioLanguageMenu()
     {
       if (dlg == null)
@@ -2776,6 +2700,10 @@ namespace TvPlugin
 
     public void UpdateOSD()
     {
+      UpdateOSD(null);
+    }
+    public void UpdateOSD(TvPlugin.TVHome.ChannelErrorInfo message)
+    {
       if (GUIWindowManager.ActiveWindow != GetID)
       {
         return;
@@ -2788,6 +2716,9 @@ namespace TvPlugin
       }
       else
       {
+        // FIXME: avoid globals
+        _gotTvErrorMessage = message;
+
         Action myaction = new Action();
         //Show ZAP window indefinetely until channel has been tuned
         myaction.fAmount1 = -1;
@@ -3425,61 +3356,5 @@ namespace TvPlugin
       }
       return false;
     }
-    protected bool GetKeyboard(string title, int maxLength, bool bPassword, ref string strLine)
-    {
-      StandardKeyboard keyboard = (StandardKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
-      if (null == keyboard)
-      {
-        return false;
-      }
-      keyboard.Password = bPassword;
-      keyboard.Title = title;
-      keyboard.SetMaxLength(maxLength);
-      keyboard.Reset();
-      keyboard.Text = strLine;
-      keyboard.DoModal(GetID);
-      if (keyboard.IsConfirmed)
-      {
-        strLine = keyboard.Text;
-        return true;
-      }
-      return false;
-    }
   }
-
-  #region CI Menu
-  /// <summary>
-  /// Handler class for gui interactions of ci menu
-  /// </summary>
-  public class CiMenuHandler : CiMenuCallbackSink
-  {
-    TvFullScreen refDlg;
-    public void SetCaller (TvFullScreen caller)
-    {
-      refDlg = caller;
-    }
-    /// <summary>
-    /// eventhandler to show CI Menu dialog
-    /// </summary>
-    /// <param name="Menu"></param>
-    protected override void CiMenuCallback(CiMenu Menu)
-    {
-      try
-      {
-        Log.Debug("Callback from tvserver {0}", Menu.Title);
-
-        // pass menu to calling dialog
-        if (refDlg != null)
-          refDlg.CiMenuCallback(Menu);
-      }
-      catch
-      {
-        Menu = new CiMenu("Remoting Exception", "Communication with server failed", null, TvLibrary.Interfaces.CiMenuState.Error);
-        // pass menu to calling dialog
-        if (refDlg != null)
-          refDlg.CiMenuCallback(Menu);
-      }
-    }
-  }
-  #endregion
 }
