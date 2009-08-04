@@ -158,21 +158,21 @@ namespace MediaPortal.Util
         _artistNamePrefixes = artistNamePrefixes.Split(',');
 
         string strTmp = xmlreader.GetValueAsString("music", "extensions", ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc");
-        Tokens tok = new Tokens(strTmp, new [] { ',' });
+        Tokens tok = new Tokens(strTmp, new[] { ',' });
         foreach (string extension in tok)
         {
           m_AudioExtensions.Add(extension.ToLower());
         }
 
         strTmp = xmlreader.GetValueAsString("movies", "extensions", ".avi,.mpg,.ogm,.mpeg,.mkv,.wmv,.ifo,.qt,.rm,.mov,.sbe,.dvr-ms,.ts,.mp4,.divx");
-        tok = new Tokens(strTmp, new [] { ',' });
+        tok = new Tokens(strTmp, new[] { ',' });
         foreach (string extension in tok)
         {
           m_VideoExtensions.Add(extension.ToLower());
         }
 
         strTmp = xmlreader.GetValueAsString("pictures", "extensions", ".jpg,.jpeg,.gif,.bmp,.png");
-        tok = new Tokens(strTmp, new [] { ',' });
+        tok = new Tokens(strTmp, new[] { ',' });
         foreach (string extension in tok)
         {
           m_PictureExtensions.Add(extension.ToLower());
@@ -665,13 +665,16 @@ namespace MediaPortal.Util
                       item.ThumbnailImage = strThumb;
                       item.IconImageBig = strThumb;
                     }
-                    
+
                   }
                   else if (createVideoThumbs)
                   {
-                    Thread extractVideoThumbThread = new Thread(GetVideoThumb);
-                    extractVideoThumbThread.IsBackground = true;
-                    extractVideoThumbThread.Priority = ThreadPriority.Lowest;
+                    Thread extractVideoThumbThread = new Thread(GetVideoThumb)
+                                                       {
+                                                         Name = "ExtractVideoThumb",
+                                                         IsBackground = true,
+                                                         Priority = ThreadPriority.Lowest
+                                                       };
                     extractVideoThumbThread.Start(item);
                   }
                 }
@@ -710,6 +713,7 @@ namespace MediaPortal.Util
 
     public static void GetVideoThumb(object i)
     {
+      UInt32 expectedError = 0x8004B200;
       GUIListItem item = (GUIListItem)i;
       string path = item.Path;
       string strThumb = String.Format(@"{0}\{1}.jpg", Thumbs.Videos, EncryptLine(path));
@@ -717,7 +721,7 @@ namespace MediaPortal.Util
       {
         return;
       }
-      
+
       // Do not try to create thumbnails for DVDs
       if (path.Contains("VIDEO_TS\\VIDEO_TS.IFO"))
       {
@@ -731,7 +735,7 @@ namespace MediaPortal.Util
         if (!success)
         {
           //Failed due to incompatible format or no write permissions on folder. Try querying Explorer for thumb.
-          Log.Error("Failed to extract thumb for {0}, trying another method.", path);
+          Log.Warn("Failed to extract thumb for {0}, trying another method.", path);
           if (Environment.OSVersion.Version.Major >= 6)
           {
             thumb = VistaToolbelt.Shell.ThumbnailGenerator.GenerateThumbnail(path); //only works for Vista/7
@@ -750,6 +754,18 @@ namespace MediaPortal.Util
         else
           SetThumbnails(ref item);
       }
+      catch (COMException comex)
+      {
+        if (comex.ErrorCode == expectedError)
+        {
+          Log.Warn("Could not create thumbnail for {0} [Unknown error 0x8004B200]", path);
+        }
+        else
+        {
+          Log.Error("Could not create thumbnail for {0}", path);
+          Log.Error(comex);
+        }
+      }
       catch (Exception ex)
       {
         Log.Error("Could not create thumbnail for {0}", path);
@@ -761,7 +777,7 @@ namespace MediaPortal.Util
           thumb.Dispose();
       }
     }
-    
+
     public static string SecondsToShortHMSString(int lSeconds)
     {
       if (lSeconds < 0) return ("0:00");
@@ -1751,7 +1767,7 @@ namespace MediaPortal.Util
 
     public static bool DirectoryDelete(string aDirectory)
     {
-       return DirectoryDelete(aDirectory, false);
+      return DirectoryDelete(aDirectory, false);
     }
 
     public static bool DirectoryDelete(string aDirectory, bool aRecursive)
