@@ -1982,8 +1982,8 @@ public class MediaPortalApp : D3DApp, IRender
       }
       if (_resetDevice)
       {
-        DeviceReset();
-        _resetDevice = false;
+				_resetDevice = false;
+				DeviceReset();
       }
 
       try
