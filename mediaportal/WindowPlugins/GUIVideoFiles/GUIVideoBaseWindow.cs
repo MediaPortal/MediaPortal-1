@@ -492,7 +492,7 @@ namespace MediaPortal.GUI.Video
       }
       else
       {
-        GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
+        GUIPropertyManager.SetProperty("#currentmodule", GetModuleName());
       }
 
       GUIControl.HideControl(GetID, facadeView.GetID);

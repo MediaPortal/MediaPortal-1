@@ -240,7 +240,7 @@ namespace MediaPortal.Dialogs
             GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
 
             GUIPropertyManager.SetProperty("#currentmoduleid", Convert.ToString(GUIWindowManager.ActiveWindow));
-            GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
+            GUIPropertyManager.SetProperty("#currentmodule", GetModuleName());
             Log.Debug("DialogWindow: {0} init", this.ToString());
 
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, _defaultControlId, 0, 0,

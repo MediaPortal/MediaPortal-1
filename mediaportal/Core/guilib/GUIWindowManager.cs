@@ -1408,7 +1408,7 @@ namespace MediaPortal.GUI.Library
         else
         {
           //System.Diagnostics.Debugger.Launch();
-          GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + ActiveWindow));
+          GUIPropertyManager.SetProperty("#currentmodule", GetWindow(ActiveWindow).GetModuleName());
           GUIPropertyManager.SetProperty("#currentmoduleid", Convert.ToString(ActiveWindow));
         }
 

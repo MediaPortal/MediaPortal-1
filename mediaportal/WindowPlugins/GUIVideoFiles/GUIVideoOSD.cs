@@ -262,14 +262,14 @@ namespace MediaPortal.GUI.Video
               HideControl(GetID, i);
             }
             FreeResources();
-            GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + message.Param1));
+            GUIPropertyManager.SetProperty("#currentmodule", GUIWindowManager.GetWindow(message.Param1).GetModuleName());
             return true;
           }
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT: // fired when OSD is shown
           {
             // following line should stay. Problems with OSD not
             // appearing are already fixed elsewhere
-            GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
+            GUIPropertyManager.SetProperty("#currentmodule", GetModuleName());
             AllocResources();
             // if (g_application.m_pPlayer) g_application.m_pPlayer.ShowOSD(false);
             ResetAllControls(); // make sure the controls are positioned relevant to the OSD Y offset

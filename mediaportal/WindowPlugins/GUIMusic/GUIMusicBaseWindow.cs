@@ -575,7 +575,7 @@ namespace MediaPortal.GUI.Music
       }
       else
       {
-        GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
+        GUIPropertyManager.SetProperty("#currentmodule", GetModuleName());
       }
 
       facadeView.IsVisible = false;

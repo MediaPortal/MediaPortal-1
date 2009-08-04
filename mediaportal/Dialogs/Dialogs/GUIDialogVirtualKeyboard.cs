@@ -544,7 +544,7 @@ namespace MediaPortal.Dialogs
       _previousOverlayVisible = GUIGraphicsContext.Overlay;
       _pressedEnter = false;
       GUIGraphicsContext.Overlay = false;
-      GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
+      GUIPropertyManager.SetProperty("#currentmodule", GetModuleName());
       Log.Debug("Window: {0} init", ToString());
       Initialize();
     }
