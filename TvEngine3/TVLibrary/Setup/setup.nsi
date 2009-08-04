@@ -425,8 +425,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${svn_TVServer}\Plugins\ServerBlaster\ServerBlaster\bin\${BUILD_TYPE}\ServerBlaster.dll"
   File "${svn_TVServer}\Plugins\TvMovie\bin\${BUILD_TYPE}\TvMovie.dll"
   File "${svn_TVServer}\Plugins\XmlTvImport\bin\${BUILD_TYPE}\XmlTvImport.dll"
-  File "${svn_TVServer}\Plugins\WebEPG\WebEPG\bin\${BUILD_TYPE}\WebEPGImport.dll"
-  File "${svn_TVServer}\Plugins\WebEPG\WebEPGPlugin\bin\${BUILD_TYPE}\WebEPG.dll"
+  File "${svn_TVServer}\Plugins\WebEPG\WebEPG\bin\${BUILD_TYPE}\WebEPG.dll"
+  File "${svn_TVServer}\Plugins\WebEPG\WebEPGPlugin\bin\${BUILD_TYPE}\WebEPGImport.dll"
 
   ; Rest of Files
   SetOutPath "$INSTDIR"
