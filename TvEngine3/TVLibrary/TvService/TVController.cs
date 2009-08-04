@@ -3497,9 +3497,10 @@ namespace TvService
             {
               Log.Write("Controller:   delete {0}", files[i]);
               File.Delete(files[i]);
-            } catch (Exception)
+            } catch (Exception e)
             {
               Log.Error("Controller: Error on delete in CleanTimeshiftFiles");
+              Log.Error("{0}", e);
             }
           }
         }
