@@ -73,19 +73,19 @@
       <description>On tv NOW</description>
       <id>36</id>
       <type>textbox</type>
-      <width>533</width>
+      <width>900</width>
       <height>37</height>
       <posX>266</posX>
       <posY>600</posY>
       <align>left</align>
-      <font>font17</font>
+      <font>font15</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
       <description>On tv NEXT</description>
       <id>37</id>
       <type>textbox</type>
-      <width>533</width>
+      <width>900</width>
       <height>37</height>
       <posX>266</posX>
       <posY>642</posY>
