@@ -560,6 +560,8 @@ ${MementoSectionEnd}
   ${LOG_TEXT} "INFO" "remove files..."
   ; Remove TuningParameters
   RMDir /r "${COMMON_APPDATA}\TuningParameters"
+  ; Remove WebEPG Grabbers
+  RMDir /r "${COMMON_APPDATA}\WebEPG"
 
   ; Remove Plugins
   Delete "$INSTDIR\Plugins\ComSkipLauncher.dll"
@@ -567,6 +569,8 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\Plugins\PowerScheduler.dll"
   Delete "$INSTDIR\Plugins\ServerBlaster.dll"
   Delete "$INSTDIR\Plugins\TvMovie.dll"
+  Delete "$INSTDIR\Plugins\WebEPG.dll"
+  Delete "$INSTDIR\Plugins\WebEPGImport.dll"
   Delete "$INSTDIR\Plugins\XmlTvImport.dll"
   RMDir "$INSTDIR\Plugins"
 
