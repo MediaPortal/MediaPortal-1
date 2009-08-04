@@ -1,5 +1,10 @@
-public interface IEpgDataSink
+using MediaPortal.WebEPG.Parser;
+
+namespace MediaPortal.WebEPG
 {
+
+  public interface IEpgDataSink
+  {
     // Methods
     void Close();
     void EndChannelPrograms(string id, string name);
@@ -7,4 +12,5 @@ public interface IEpgDataSink
     bool StartChannelPrograms(string id, string name);
     void WriteChannel(string id, string name);
     void WriteProgram(ProgramData programData, bool merged);
+  }
 }
