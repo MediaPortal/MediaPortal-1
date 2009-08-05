@@ -98,6 +98,27 @@ namespace MediaPortal.GUI.Library
 			base.OnDeInit();
 		}
 
+		public override void OnInit()
+		{
+			base.OnInit();
+
+			float x = base.XPosition;
+			float y = base.YPosition;
+			GUIGraphicsContext.Correct(ref x, ref y);
+
+			_videoWindows[0].X = (int)x;
+			_videoWindows[0].Y = (int)y;
+			_videoWindows[0].Width = base.Width;
+			_videoWindows[0].Height = base.Height;
+
+			if (_setVideoWindow)
+			{
+				GUIGraphicsContext.VideoWindow = _videoWindows[0];
+			}
+
+		}
+		
+
     public override bool CanFocus()
     {
       if (_imageFocusRectangle.FileName == string.Empty)

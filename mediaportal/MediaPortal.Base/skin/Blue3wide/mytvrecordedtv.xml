@@ -199,5 +199,6 @@
       </control>    
     </control>
     <import>common.facade.recordings.xml</import>
+	<import>common.videowindow.small.xml</import>
   </controls>
 </window>

@@ -187,36 +187,6 @@
       <onup>13</onup>
       <ondown>50</ondown>
     </control>
-	
-	    <control>
-      <description>video rectangle</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>78</posX>
-      <posY>553</posY>
-      <width>219</width>
-      <height>124</height>
-      <texture>Picture_cover.png</texture>
-	  <visible>player.hasmedia</visible>
-      <animation effect="fade" time="150">WindowClose</animation>
-      <animation effect="fade" time="150">WindowOpen</animation>
-    </control>
-    <control>
-      <description>video preview window</description>
-      <type>videowindow</type>
-      <id>99</id>
-      <posX>86</posX>
-      <posY>558</posY>
-      <width>203</width>
-      <height>115</height>
-      <keepaspectratio>yes</keepaspectratio>
-      <centered>yes</centered>
-      <action>18</action>
-      <textureFocus>tv_green_border.png</textureFocus>
-	  <visible>player.hasmedia</visible>
-      <animation effect="fade" time="150">WindowClose</animation>
-      <animation effect="fade" time="150">WindowOpen</animation>
-    </control>
-
+	<import>common.videowindow.small.xml</import>
   </controls>
 </window>

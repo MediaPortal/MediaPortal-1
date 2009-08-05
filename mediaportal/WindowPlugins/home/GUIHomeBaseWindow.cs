@@ -121,8 +121,7 @@ namespace MediaPortal.GUI.Home
       //set video window position
       if (videoWindow != null)
       {
-        GUIGraphicsContext.VideoWindow = new Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width,
-                                                       videoWindow.Height);
+        videoWindow.OnInit();
       }
     }
 

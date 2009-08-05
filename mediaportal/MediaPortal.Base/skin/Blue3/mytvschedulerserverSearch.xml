@@ -67,5 +67,6 @@
       <textboxColor>FFFFFF00</textboxColor>
       <textboxBgColor>ffffffff</textboxBgColor>
     </control>
+	<import>common.videowindow.small.xml</import>	
   </controls>
 </window>
