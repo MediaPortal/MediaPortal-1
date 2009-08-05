@@ -42,23 +42,27 @@ namespace SetupTv.Sections
       {
         case McsPolicyStatus.PolicyInPlace:
           mpLabelStatusMCS.Text = "services disabled by policy";
+          mpLabelStatusMCS.ForeColor = System.Drawing.Color.Green;
           mpButtonMCS.Text = "Re-enable services";
           mpButtonMCS.Visible = true;
           mpButtonMCS.Enabled = true;
           break;
         case McsPolicyStatus.ServiceStopped:
           mpLabelStatusMCS.Text = "services stopped";
+          mpLabelStatusMCS.ForeColor = System.Drawing.Color.Green;
           mpButtonMCS.Text = "Enable policy to prevent services startup";
           mpButtonMCS.Visible = true;
           mpButtonMCS.Enabled = true;
           break;
         case McsPolicyStatus.NotAMceSystem:
           mpLabelStatusMCS.Text = "services not installed";
+          mpLabelStatusMCS.ForeColor = System.Drawing.Color.Green;
           mpButtonMCS.Visible = false;
           mpButtonMCS.Enabled = false;
           break;
         default:
           mpLabelStatusMCS.Text = "services running";
+          mpLabelStatusMCS.ForeColor = System.Drawing.Color.Red;
           mpButtonMCS.Text = "Enable policy to prevent services startup";
           mpButtonMCS.Visible = true;
           mpButtonMCS.Enabled = true;
@@ -69,12 +73,14 @@ namespace SetupTv.Sections
       if (_dvbVersion < new Version(6, 5, 2710, 2732))
       {
         mpLabelStatusDVBHotfix.Text = "not installed";
+        mpLabelStatusDVBHotfix.ForeColor = System.Drawing.Color.Red;
         linkLabelDVBHotfix.Enabled = true;
         linkLabelDVBHotfix.Visible = true;
       }
       else
       {
         mpLabelStatusDVBHotfix.Text = osver < 60 ? "installed" : "not needed on Vista and up";
+        mpLabelStatusDVBHotfix.ForeColor = System.Drawing.Color.Green;
         linkLabelDVBHotfix.Enabled = false;
         linkLabelDVBHotfix.Visible = false;
       }
@@ -82,12 +88,14 @@ namespace SetupTv.Sections
       if (_isStreamingOk)
       {
         mpLabelStatusStreamingPort.Text = "port " + STREAMING_PORT + " is available";
+        mpLabelStatusStreamingPort.ForeColor = System.Drawing.Color.Green;
         linkLabelStreamingPort.Enabled = false;
         linkLabelStreamingPort.Visible = false;
       }
       else
       {
         mpLabelStatusStreamingPort.Text = "port " + STREAMING_PORT + " is already bound";
+        mpLabelStatusStreamingPort.ForeColor = System.Drawing.Color.Red;
         linkLabelStreamingPort.Enabled = true;
         linkLabelStreamingPort.Visible = true;
       }
