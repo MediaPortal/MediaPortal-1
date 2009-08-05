@@ -95,7 +95,7 @@
     <control>
       <description>Channel Name</description>
       <type>label</type>
-      <width>451</width>
+      <width>141</width>
       <height>37</height>
       <posX>70</posX>
       <posY>530</posY>
@@ -110,7 +110,7 @@
     <control>
       <description>Channel Name</description>
       <type>label</type>
-      <width>451</width>
+      <width>141</width>
       <height>37</height>
       <posX>70</posX>
       <posY>530</posY>
@@ -139,7 +139,7 @@
       <type>label</type>
       <width>415</width>
       <height>37</height>
-      <posX>185</posX>
+      <posX>225</posX>
       <posY>525</posY>
       <font>font14</font>
       <label>#TV.View.title</label>
@@ -153,7 +153,7 @@
       <type>label</type>
       <width>415</width>
       <height>37</height>
-      <posX>185</posX>
+      <posX>225</posX>
       <posY>525</posY>
       <font>font14</font>
       <label>#TV.View.title</label>
@@ -165,7 +165,7 @@
     <control>
       <description>Plot</description>
       <type>textboxscrollup</type>
-      <posX>184</posX>
+      <posX>225</posX>
       <posY>570</posY>
       <width>715</width>
       <height>65</height>
@@ -174,12 +174,12 @@
       <textcolor>FFFFFFFF</textcolor>
        <visible>!Control.IsVisible(989)</visible>
       <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
-      <animation effect="fade" time="150">windowopen</animation>
+      <animation effect="fade" time="800" delay="250" reversible="false">visible</animation>
     </control>
      <control>
       <description>Plot</description>
       <type>textboxscrollup</type>
-      <posX>184</posX>
+      <posX>225</posX>
       <posY>470</posY>
       <width>715</width>
       <height>162</height>
