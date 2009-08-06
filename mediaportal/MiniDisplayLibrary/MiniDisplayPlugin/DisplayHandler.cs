@@ -18,6 +18,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private readonly Brush graphicBrush = new SolidBrush(Color.White);
     private int graphicTextHeight = -1;
     protected int heightInChars;
+    protected int heightInCharsSim;
     private int heightInPixels;
     private List<Image> images;
     protected Line[] lines;
@@ -33,20 +34,31 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     {
       this.display = _display;
       this.heightInChars = Settings.Instance.TextHeight;
+      if (this.heightInChars == 1)
+      {
+        this.heightInCharsSim = 2;
+      }
+      else
+      {
+        this.heightInCharsSim = this.heightInChars;
+      }
       this.widthInChars = Settings.Instance.TextWidth;
       this.pixelsToScroll = Settings.Instance.PixelsToScroll;
       this.widthInPixels = Settings.Instance.GraphicWidth;
       this.heightInPixels = Settings.Instance.GraphicHeight;
       this.charsToScroll = Settings.Instance.CharsToScroll;
       this.forceGraphicText = Settings.Instance.ForceGraphicText;
-      this.lines = new Line[this.heightInChars];
+      this.lines = new Line[this.heightInCharsSim];
       this.prevLines = new string[this.heightInChars];
       this.posSkips = new int[this.heightInChars];
       this.pos = new int[this.heightInChars];
       font = new Font(Settings.Instance.Font, (float) Settings.Instance.FontSize);
-      for (int i = 0; i < this.heightInChars; i++)
+      for (int i = 0; i < this.heightInCharsSim; i++)
       {
         this.lines[i] = new Line();
+      }
+      for (int i = 0; i < this.heightInChars; i++)
+      {
         this.pos[i] = 0;
       }
     }
@@ -141,8 +153,20 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         Log.Info("MiniDisplayPlugin.DisplayHandler.Process(): Processing line #{0}", new object[] {_line});
       }
-      Line line = this.lines[_line];
-      string str = line.Process();
+      Line line;
+      Line line2;
+      string str;
+      if (this.heightInChars == 1)
+      {
+        line = this.lines[0];
+        line2 = this.lines[1];
+        str = line2.Process() + " - " + line.Process();
+      }
+      else
+      {
+        line = this.lines[_line];
+        str = line.Process();
+      }
       if (Settings.Instance.ExtensiveLogging)
       {
         Log.Info("MiniDisplayPlugin.DisplayHandler.Process(): translated line #{0} to \"{2}\"",
@@ -374,12 +398,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       set
       {
         int index = 0;
-        while ((index < value.Count) && (index < this.heightInChars))
+        while ((index < value.Count) && (index < this.heightInCharsSim))
         {
           this.lines[index] = value[index];
           index++;
         }
-        while (index < this.heightInChars)
+        while (index < this.heightInCharsSim)
         {
           this.lines[index] = new Line();
           index++;
