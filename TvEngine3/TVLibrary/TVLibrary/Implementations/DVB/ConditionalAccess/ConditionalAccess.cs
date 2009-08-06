@@ -680,12 +680,11 @@ namespace TvLibrary.Implementations.DVB
           _conexant.SendDiseqCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
-        //if (_profred != null)
-        //{
-        //    _profred.SendDiseqCommand(parameters, channel);
-        //    System.Threading.Thread.Sleep(100);
-        //}
-
+        if (_profred != null)
+        {
+            _profred.SendDiseqCommand(parameters, channel);
+            System.Threading.Thread.Sleep(100);
+        }
         if (_genpix != null)
         {
           _genpix.SendDiseqCommand(parameters, channel);
