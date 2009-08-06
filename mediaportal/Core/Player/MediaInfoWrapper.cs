@@ -65,6 +65,43 @@ namespace MediaPortal.Player
       try
       {
         _mI = new MediaInfo();
+
+        if (Util.VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(strFile)))
+          strFile = Util.DaemonTools.GetVirtualDrive() + @"\VIDEO_TS\VIDEO_TS.IFO";
+
+        if (strFile.ToLower().EndsWith(".ifo"))
+        {
+          string mainTitle = "";
+          string path = Path.GetDirectoryName(strFile);
+          string[] titles = Directory.GetFiles(path, "VTS_*0.IFO", SearchOption.TopDirectoryOnly);
+
+          // find the longest duration of all vobs
+          foreach (string title in titles)
+          {
+            int titleDuration = 0;
+            string titleSearch = Path.GetFileName(title);
+            titleSearch = titleSearch.Substring(0, titleSearch.LastIndexOf('_')) + "*.VOB";
+            string[] vobs = Directory.GetFiles(path, titleSearch, SearchOption.TopDirectoryOnly);
+
+            foreach (string vob in vobs)
+            {              
+              int vobDuration = 0;
+              _mI.Open(vob);
+              int.TryParse(_mI.Get(StreamKind.Video, 0, "PlayTime"), out vobDuration);
+              _mI.Close();
+              titleDuration += vobDuration;
+            }
+
+            if (titleDuration > _videoDuration)
+            {
+              mainTitle = title;
+              _videoDuration = titleDuration;
+            }
+          }
+          // get all other info from main title's 1st vob, 0 is menu
+          strFile = mainTitle.Replace("0.IFO", "1.VOB");
+        }
+        
         _mI.Open(strFile);
 
         NumberFormatInfo providerNumber = new NumberFormatInfo();
@@ -90,21 +127,8 @@ namespace MediaPortal.Player
         {
           _videoResolution = "1080I";
         }
-
-        if (strFile.ToLower().EndsWith(".ifo"))
-        {
-          // mediainfo is not able to obtain duration of IFO files        
-          // so we use this to loop through all corresponding VOBs and add up the duration           
-          _videoDuration = 0;
-          string filePrefix = Path.GetFileName(strFile);
-          filePrefix = filePrefix.Substring(0, filePrefix.LastIndexOf('_'));
-          foreach (string file in Directory.GetFiles(Path.GetDirectoryName(strFile), filePrefix + "*.VOB"))
-          {
-            MediaInfoWrapper wrapper = new MediaInfoWrapper(file);
-            _videoDuration += wrapper._videoDuration;
-          }
-        }
-        else
+        
+        if(_videoDuration==0)
         {
           int.TryParse(_mI.Get(StreamKind.Video, 0, "PlayTime"), out _videoDuration);
         }
