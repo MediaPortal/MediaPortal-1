@@ -70,36 +70,23 @@ namespace MediaPortal.Player
           strFile = Util.DaemonTools.GetVirtualDrive() + @"\VIDEO_TS\VIDEO_TS.IFO";
 
         if (strFile.ToLower().EndsWith(".ifo"))
-        {
-          string mainTitle = "";
+        {          
           string path = Path.GetDirectoryName(strFile);
-          string[] titles = Directory.GetFiles(path, "VTS_*0.IFO", SearchOption.TopDirectoryOnly);
+          string mainTitle = GetLargestFileInDirectory(path, "VTS_*1.VOB");
+          string titleSearch = Path.GetFileName(mainTitle);
+          titleSearch = titleSearch.Substring(0, titleSearch.LastIndexOf('_')) + "*.VOB";
+          string[] vobs = Directory.GetFiles(path, titleSearch, SearchOption.TopDirectoryOnly);
 
-          // find the longest duration of all vobs
-          foreach (string title in titles)
+          foreach (string vob in vobs)
           {
-            int titleDuration = 0;
-            string titleSearch = Path.GetFileName(title);
-            titleSearch = titleSearch.Substring(0, titleSearch.LastIndexOf('_')) + "*.VOB";
-            string[] vobs = Directory.GetFiles(path, titleSearch, SearchOption.TopDirectoryOnly);
-
-            foreach (string vob in vobs)
-            {              
-              int vobDuration = 0;
-              _mI.Open(vob);
-              int.TryParse(_mI.Get(StreamKind.Video, 0, "PlayTime"), out vobDuration);
-              _mI.Close();
-              titleDuration += vobDuration;
-            }
-
-            if (titleDuration > _videoDuration)
-            {
-              mainTitle = title;
-              _videoDuration = titleDuration;
-            }
+            int vobDuration = 0;
+            _mI.Open(vob);
+            int.TryParse(_mI.Get(StreamKind.General, 0, "PlayTime"), out vobDuration);
+            _mI.Close();
+            _videoDuration += vobDuration;
           }
-          // get all other info from main title's 1st vob, 0 is menu
-          strFile = mainTitle.Replace("0.IFO", "1.VOB");
+          // get all other info from main title's 1st vob
+          strFile = mainTitle;
         }
         
         _mI.Open(strFile);
@@ -214,6 +201,31 @@ namespace MediaPortal.Player
     #endregion
 
     #region private methods
+
+    private string GetLargestFileInDirectory(string targetDir, string fileMask)
+    {
+      string largestFile = null;
+      long largestSize = 0;
+      DirectoryInfo dir = new DirectoryInfo(targetDir);
+      try
+      {
+        FileInfo[] files = dir.GetFiles(fileMask, SearchOption.TopDirectoryOnly);
+        foreach (FileInfo file in files)
+        {
+          long fileSize = file.Length;
+          if (fileSize > largestSize)
+          {
+            largestSize = fileSize;
+            largestFile = file.FullName;
+          }
+        }
+      }
+      catch (Exception e)
+      {        
+        Log.Error("Error while retrieving files for: {0} {1}" + targetDir, e.Message);
+      }
+      return largestFile;
+    }
 
     private bool checkHasExternalSubtitles(string strFile)
     {
