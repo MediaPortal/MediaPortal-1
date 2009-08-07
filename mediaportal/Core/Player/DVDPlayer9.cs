@@ -203,7 +203,7 @@ namespace MediaPortal.Player
               if (path != null)
               {
                 if (path.Length != 0)
-                {
+                {                  
                   hr = _dvdCtrl.SetDVDDirectory(path);
                 }
               }
@@ -327,6 +327,9 @@ namespace MediaPortal.Player
 
     private void Cleanup()
     {
+      if (Util.DaemonTools.IsMounted(_currentFile))
+        Util.DaemonTools.UnMount();
+      
       if (_graphBuilder == null)
       {
         return;
