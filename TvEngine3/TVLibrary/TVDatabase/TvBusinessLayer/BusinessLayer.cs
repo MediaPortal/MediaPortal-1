@@ -1766,7 +1766,7 @@ namespace TvDatabase
       SqlSelectCommand.AppendFormat("where endTime > '{0}'", DateTime.Now.ToString(GetDateTimeString(), mmddFormat));
       if (searchCriteria.Length > 0)
       {
-        SqlSelectCommand.AppendFormat("and description like '%{0}%' ", searchCriteria);
+        SqlSelectCommand.AppendFormat("and description like '{0}%' ", searchCriteria);
       }
       SqlSelectCommand.Append("and c.visibleInGuide = 1 order by description, startTime");
       SqlStatement stmt = new SqlBuilder(StatementType.Select, typeof(Program)).GetStatement(true);
