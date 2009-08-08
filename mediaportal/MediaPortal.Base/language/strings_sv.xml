@@ -448,6 +448,7 @@
     <String id="517">Allvarligt fel, åtgärden ej genomförd</String>
     <String id="518">Radera denna låt?</String>
     <String id="519">Textning avslagen</String>
+    <String id="527">Sortera efter: Sedda</String>
     <String id="528">Album Artister</String>
     <String id="529">Visa: Album</String>
     <String id="530">Fotoskiva isatt, vill du öppna den?</String>
@@ -687,6 +688,9 @@
     <String id="810">Kort</String>
     <String id="820">Ta bort ej sedd inspelning?</String>
     <String id="830">Återställ status till ej sedd</String>
+    <String id="831">Mata ut borttagbar disk</String>
+    <String id="832">Kan inte koppla från disken:</String>
+    <String id="833">Disken kan nu tas bort säkert</String>
     <String id="850" prefix="Mitt">Alarm</String>
     <String id="851">Spellista</String>
     <String id="852">Alarm på</String>
@@ -890,6 +894,10 @@
     <String id="1054">(inspelning)</String>
     <String id="1055">(timeshifting)</String>
     <String id="1056">(ej tillgänglig)</String>
+    <String id="1057">Spela in Sön-Tors</String>
+    <String id="1058">Spela in Fre-Lör</String>
+    <String id="1059">Sön-Tor</String>
+    <String id="1060">Fre-Lör</String>
     <String id="1061">Flyttbar</String>
     <String id="1062">Objekt</String>
     <String id="1064">Bokmärken</String>
@@ -954,6 +962,7 @@
     <String id="1448">Välj ingen</String>
     <String id="1449">Stoppa inspelning</String>
     <String id="1450">Är du säker på att du vill stoppa inspelningen?</String>
+    <String id="1451">Kan inte spela</String>
     <String id="1499">Ingen signal</String>
     <String id="1500">Kunde ej starta timeshift</String>
     <String id="1501">Kort är deaktiverat</String>
@@ -973,6 +982,12 @@
     <String id="1515">Timeshift stoppad av\rTV-server</String>
     <String id="1516">Timeshift stoppad av\rokänd anledning</String>
     <String id="1517">Timeshift stoppad av en \rannan användare</String>
+    <String id="1518">Kan inte skapa graf</String>
+    <String id="1519">Ingen fungerande mjukvaruavkodare installerad</String>
+    <String id="1520">Inte tillräckligt diskutrymme</String>
+    <String id="1600">Vill du stänga av?</String>
+    <String id="1601">Vill du sätta i vänteläge?</String>
+    <String id="1602">Vill du sätta i viloläge?</String>
     <String id="1950" prefix="Min ">Status</String>
     <String id="1951">Hårddisk</String>
     <String id="1952">Fläkt</String>
@@ -1205,6 +1220,8 @@
     <String id="2610">Polska</String>
     <String id="2611">Tjeckiska</String>
     <String id="2612">Ungerska</String>
+    <String id="2650">Laddar om fonter - vänta...</String>
+    <String id="2700">Öppna CI meny</String>
     <String id="2997">h.</String>
     <String id="2998">min.</String>
     <String id="2999">sek.</String>
@@ -1335,6 +1352,8 @@
     <String id="6037">Travade filmer</String>
     <String id="6038">Välj fil att spela.</String>
     <String id="6039">AAC Audio codec</String>
+    <String id="6040">Igår</String>
+    <String id="6041">För två dagar sedan</String>
     <String id="8000" prefix="Min">E-post</String>
     <String id="8001">Kolla brevlådan</String>
     <String id="8002">Autokoll Av</String>
@@ -1435,7 +1454,7 @@
     <String id="10100">Gömda minor</String>
     <String id="10101">Speltid</String>
     <String id="10102">Snabbast tid</String>
-    <String id="10103" prefix="Min ">Minesweeper</String>
+    <String id="10103" prefix="Min ">Minsvepare</String>
     <String id="10104">Liten TV-tablå</String>
     <String id="10105">Visas nu</String>
     <String id="11000">Inställningar beskärning</String>
@@ -1468,6 +1487,24 @@
     <String id="13033">Senast Använt</String>
     <String id="13034">Titel</String>
     <String id="13041">Visa filinformation</String>
+    <String id="14001" prefix="Mina">Tillägg</String>
+    <String id="14002">Vyer</String>
+    <String id="14003">Installerade tillägg</String>
+    <String id="14004">Tillägg på nätet</String>
+    <String id="14005">Installera tillägg</String>
+    <String id="14006">Avinstallera tillägg</String>
+    <String id="14007">Ominstallera tillägg</String>
+    <String id="14008">Ångra senaste åtgärd</String>
+    <String id="14009">Åtgärden genomförs vid nästa omstart</String>
+    <String id="14010">Ladda ner tillägg</String>
+    <String id="14011">Välj ett alternativ</String>
+    <String id="14012">Mediaportal versionen stöds ej ! (Needed version {0} </String>
+    <String id="14013">Vill du fortsätta ?</String>
+    <String id="14014">Uppdaterar lista från nätet</String>
+    <String id="14015">Uppdateringar</String>
+    <String id="14016">Sortera efter: Nedladdning</String>
+    <String id="14017">Sortera efter: Betyg</String>
+    <String id="14018">Installera uppdatering</String>
     <String id="16001">Partyblanda</String>
     <String id="19001" prefix="Mitt ">Tetris</String>
     <String id="19002">Nytt Spel</String>
@@ -1575,6 +1612,7 @@
     <String id="34002">Vän: </String>
     <String id="34003">Granne: </String>
     <String id="34004">Grupp: </String>
+    <String id="34005">Byt användarkonto</String>
     <String id="34010">Älskar</String>
     <String id="34011">Blockera</String>
     <String id="34012">Hoppa över</String>
@@ -1592,7 +1630,7 @@
     <String id="34041">Liknande etikett:</String>
     <String id="34042">Ingen etikett har valts ännu:</String>
     <String id="34043">Radiostation tillhörande:</String>
-    <String id="34044">Loved tracks of: </String>
+    <String id="34044">Älskade spår av: </String>
     <String id="34045">Inga vänner har valts ännu</String>
     <String id="34046">Min radiostation</String>
     <String id="34047">Mina älsklingslåtar</String>
@@ -1665,15 +1703,15 @@
     <String id="100602" prefix="Min ">TV/Fullskärm</String>
     <String id="100603" prefix="Min ">TV/Inspelad TV</String>
     <String id="100604" prefix="Min ">TV/Sök</String>
-    <String id="100605" prefix="Min ">TV/Inpelad Tv/Genre</String>
+    <String id="100605" prefix="Min ">TV/Inspelad Tv/Genre</String>
     <String id="100606" prefix="Min ">TV/Inspelad Tv/kanaler</String>
     <String id="100607">TV/Schemaläggare/Prioriteter</String>
     <String id="100608">TV/Schemaläggare/Konflikter</String>
-    <String id="100609">TV/Koprimera/Översikt</String>
-    <String id="100610">TV/Koprimera/Inställningar</String>
-    <String id="100611">TV/Koprimera/Automatiskt</String>
-    <String id="100612">TV/Koprimera/Komprimera</String>
-    <String id="100613">TV/Koprimera/Status</String>
+    <String id="100609">TV/Komprimera/Översikt</String>
+    <String id="100610">TV/Komprimera/Inställningar</String>
+    <String id="100611">TV/Komprimera/Automatiskt</String>
+    <String id="100612">TV/Komprimera/Komprimera</String>
+    <String id="100613">TV/Komprimera/Status</String>
     <String id="100614">Video Artist Info</String>
     <String id="100615">Guide/Välkommen</String>
     <String id="100616">Guide/Hittade kort</String>
@@ -1708,6 +1746,8 @@
     <String id="100707">EPG -&gt; Kanalmappning</String>
     <String id="100708">Skip step settings</String>
     <String id="100709">TV server inställningar</String>
+    <String id="100746">TV sökning typ</String>
+    <String id="100747">Sök TV</String>
     <String id="100748">Programinformation</String>
     <String id="100749">TV/Ingen signal</String>
     <String id="100750">Recept</String>
@@ -1720,6 +1760,7 @@
     <String id="100761" prefix="Min ">TV-tablå</String>
     <String id="100762" prefix="Min ">Radio-tablå</String>
     <String id="100770" prefix="Min ">Utforskare</String>
+    <String id="100800" prefix="Mina">Tillägg</String>
     <String id="101000">tangentbord</String>
     <String id="101002">Virtuellt standardtangentbord</String>
     <String id="101003">Virtuellt webtangentbord</String>
@@ -1741,6 +1782,7 @@
     <String id="102014">Bildinfo</String>
     <String id="102015">Minimeny</String>
     <String id="102016">Upplysning</String>
+    <String id="102018">CI meny</String>
     <String id="102600" prefix="Mitt">Väder</String>
     <String id="102700" prefix="Mina">Nyheter</String>
     <String id="102900">Skärmsläckare</String>
@@ -1771,6 +1813,9 @@
     <String id="109004">MiniDisplay - Inställningar - Equalizer</String>
     <String id="109005">MiniDisplay - Inställningar - Tangentbord</String>
     <String id="109006">MiniDisplay - Inställningar - Fjärrkontroll</String>
+    <String id="109811" prefix="Mina">TV-serier</String>
+    <String id="190478" prefix="Mina">Texter</String>
+    <String id="196742">Rörliga bilder</String>
     <String id="200000">Var god ange vilken EPG grabber du använder. Om ditt land inte</String>
     <String id="200001">finns på listan måste du tillföra EPG:n manuellt</String>
     <String id="200002">Nu kan du mappa EPG-kanalerna till dina TV-kanaler</String>
@@ -1809,9 +1854,9 @@
     <String id="200036">Manuell sökning</String>
     <String id="200037">Hoppa över&gt;</String>
     <String id="200038">På en PC som även används till annat</String>
-    <String id="200039">Add skip step</String>
-    <String id="200040">Remove skip step</String>
-    <String id="200041">Tuning details</String>
+    <String id="200039">Lägg till hoppsteg</String>
+    <String id="200040">Ta bort hoppsteg</String>
+    <String id="200041">Tuningsdetaljer</String>
     <String id="200042">Länkade kanaler</String>
     <String id="200043">Rensa Inspelningar</String>
     <String id="200044">Ogiltiga inspelningar</String>
@@ -1838,5 +1883,6 @@
     <String id="200068">Kan inte ansluta till databasen</String>
     <String id="200069">Alla IP-portar verkar fungera</String>
     <String id="200070">Var god kontrollera brandväggen</String>
+    <String id="200071">Ta bort mappen och alla undermappar?</String>
   </Section>
 </Language>
