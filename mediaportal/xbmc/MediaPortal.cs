@@ -2118,34 +2118,7 @@ public class MediaPortalApp : D3DApp, IRender
               }
             }
           }
-          break;
-
-        //show DVD menu
-        case Action.ActionType.ACTION_DVD_MENU:
-          if (g_Player.IsDVD && g_Player.Playing)
-          {
-            g_Player.OnAction(action);
-            return;
-          }
-          break;
-
-        //DVD: goto next chapter
-        case Action.ActionType.ACTION_NEXT_CHAPTER:
-          if (g_Player.Playing && (g_Player.IsDVD || g_Player.HasChapters))
-          {
-            g_Player.OnAction(action);
-            return;
-          }
-          break;
-
-        //DVD: goto previous chapter
-        case Action.ActionType.ACTION_PREV_CHAPTER:
-          if (g_Player.Playing && (g_Player.IsDVD || g_Player.HasChapters))
-          {
-            g_Player.OnAction(action);
-            return;
-          }
-          break;
+          break;        
 
         //TV: zap to previous channel
         case Action.ActionType.ACTION_PREV_CHANNEL:
@@ -2487,8 +2460,26 @@ public class MediaPortalApp : D3DApp, IRender
       {
         switch (action.wID)
         {
+          //show DVD menu
+          case Action.ActionType.ACTION_DVD_MENU:
+            if (g_Player.IsDVD)
+            {
+              g_Player.OnAction(action);
+              return;
+            }
+            break;
+
+          //DVD: goto previous chapter
           //play previous item from playlist;
           case Action.ActionType.ACTION_PREV_ITEM:
+          case Action.ActionType.ACTION_PREV_CHAPTER:
+            if (g_Player.IsDVD || g_Player.HasChapters)
+            {
+              action = new Action(Action.ActionType.ACTION_PREV_CHAPTER, 0, 0);
+              g_Player.OnAction(action);
+              return;
+            }
+
             if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key))
             {
               playlistPlayer.PlayPrevious();
@@ -2496,7 +2487,16 @@ public class MediaPortalApp : D3DApp, IRender
             break;
 
           //play next item from playlist;
+          //DVD: goto next chapter
+          case Action.ActionType.ACTION_NEXT_CHAPTER:
           case Action.ActionType.ACTION_NEXT_ITEM:
+            if (g_Player.IsDVD || g_Player.HasChapters)
+            {
+              action = new Action(Action.ActionType.ACTION_NEXT_CHAPTER, 0, 0);
+              g_Player.OnAction(action);
+              return;
+            }
+
             if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key))
             {
               playlistPlayer.PlayNext();
@@ -2505,90 +2505,38 @@ public class MediaPortalApp : D3DApp, IRender
 
           //stop playback
           case Action.ActionType.ACTION_STOP:
-            if (!GUIGraphicsContext.IsFullScreenVideo)
-            {
-              Log.Info("Main: Stopping media");
-              g_Player.Stop();
-              return;
-            }
-            break;
+            Log.Info("Main: Stopping media");
+            g_Player.Stop();
+            return;
 
           //play music
+          //resume playback
+          case Action.ActionType.ACTION_PLAY:
           case Action.ActionType.ACTION_MUSIC_PLAY:
-            if (!GUIGraphicsContext.IsFullScreenVideo)
+            g_Player.StepNow();
+            g_Player.Speed = 1;
+            if (g_Player.Paused)
             {
-              g_Player.StepNow();
-              g_Player.Speed = 1;
-              if (g_Player.Paused)
-              {
-                g_Player.Pause();
-              }
-              return;
+              g_Player.Pause();
             }
-            break;
+            return;
 
           //pause (or resume playback)
           case Action.ActionType.ACTION_PAUSE:
-            if (!GUIGraphicsContext.IsFullScreenVideo)
-            {
-              g_Player.Pause();
-              return;
-            }
-            break;
-
-          //resume playback
-          case Action.ActionType.ACTION_PLAY:
-            if (!GUIGraphicsContext.IsFullScreenVideo)
-            {
-              if (g_Player.Speed != 1)
-              {
-                g_Player.Speed = 1;
-              }
-              if (g_Player.Paused)
-              {
-                g_Player.Pause();
-              }
-              return;
-            }
-            break;
+            g_Player.Pause();
+            return;
 
           //fast forward...
           case Action.ActionType.ACTION_FORWARD:
           case Action.ActionType.ACTION_MUSIC_FORWARD:
-            if (!GUIGraphicsContext.IsFullScreenVideo)
-            {
-              //SV Fixes Music player seek with new Bass Audio Engine
-              if (g_Player.IsMusic && BassMusicPlayer.IsDefaultMusicPlayer)
-              {
-                break;
-              }
-
-              if (!g_Player.IsTV)
-              {
-                g_Player.Speed = Utils.GetNextForwardSpeed(g_Player.Speed);
-                return;
-              }
-            }
-            break;
+            g_Player.Speed = Utils.GetNextForwardSpeed(g_Player.Speed);
+            return;
 
           //fast rewind...
           case Action.ActionType.ACTION_REWIND:
           case Action.ActionType.ACTION_MUSIC_REWIND:
-            if (!GUIGraphicsContext.IsFullScreenVideo)
-            {
-              //SV Fixes Music player seek with new Bass Audio Engine
-              if (g_Player.IsMusic && BassMusicPlayer.IsDefaultMusicPlayer)
-              {
-                break;
-              }
-
-              if (!g_Player.IsTV)
-              {
-                g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
-                return;
-              }
-            }
-            break;
+            g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
+            return;
         }
       }
       GUIWindowManager.OnAction(action);
