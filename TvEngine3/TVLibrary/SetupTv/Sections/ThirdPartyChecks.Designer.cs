@@ -40,6 +40,8 @@
       this.linkLabelStreamingPort = new System.Windows.Forms.LinkLabel();
       this.mpLabelStatusStreamingPort = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabelStatus3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabelStatus4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabelWindowsMediaSharingServiceStatus = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBoxMCS.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();
       this.mpGroupBoxStreamingPort.SuspendLayout();
@@ -93,7 +95,7 @@
       this.mpGroupBox2.Controls.Add(this.mpLabelStatusDVBHotfix);
       this.mpGroupBox2.Controls.Add(this.mpLabelStatus2);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox2.Location = new System.Drawing.Point(12, 145);
+      this.mpGroupBox2.Location = new System.Drawing.Point(13, 129);
       this.mpGroupBox2.Name = "mpGroupBox2";
       this.mpGroupBox2.Size = new System.Drawing.Size(445, 112);
       this.mpGroupBox2.TabIndex = 1;
@@ -132,13 +134,15 @@
       // 
       // mpGroupBoxStreamingPort
       // 
+      this.mpGroupBoxStreamingPort.Controls.Add(this.mpLabelWindowsMediaSharingServiceStatus);
+      this.mpGroupBoxStreamingPort.Controls.Add(this.mpLabelStatus4);
       this.mpGroupBoxStreamingPort.Controls.Add(this.linkLabelStreamingPort);
       this.mpGroupBoxStreamingPort.Controls.Add(this.mpLabelStatusStreamingPort);
       this.mpGroupBoxStreamingPort.Controls.Add(this.mpLabelStatus3);
       this.mpGroupBoxStreamingPort.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBoxStreamingPort.Location = new System.Drawing.Point(13, 280);
+      this.mpGroupBoxStreamingPort.Location = new System.Drawing.Point(13, 247);
       this.mpGroupBoxStreamingPort.Name = "mpGroupBoxStreamingPort";
-      this.mpGroupBoxStreamingPort.Size = new System.Drawing.Size(445, 112);
+      this.mpGroupBoxStreamingPort.Size = new System.Drawing.Size(445, 145);
       this.mpGroupBoxStreamingPort.TabIndex = 2;
       this.mpGroupBoxStreamingPort.TabStop = false;
       this.mpGroupBoxStreamingPort.Text = "Streaming port";
@@ -146,7 +150,7 @@
       // linkLabelStreamingPort
       // 
       this.linkLabelStreamingPort.AutoSize = true;
-      this.linkLabelStreamingPort.Location = new System.Drawing.Point(74, 78);
+      this.linkLabelStreamingPort.Location = new System.Drawing.Point(74, 109);
       this.linkLabelStreamingPort.Name = "linkLabelStreamingPort";
       this.linkLabelStreamingPort.Size = new System.Drawing.Size(298, 13);
       this.linkLabelStreamingPort.TabIndex = 4;
@@ -172,6 +176,24 @@
       this.mpLabelStatus3.Size = new System.Drawing.Size(40, 13);
       this.mpLabelStatus3.TabIndex = 2;
       this.mpLabelStatus3.Text = "Status:";
+      // 
+      // mpLabelStatus4
+      // 
+      this.mpLabelStatus4.AutoSize = true;
+      this.mpLabelStatus4.Location = new System.Drawing.Point(73, 71);
+      this.mpLabelStatus4.Name = "mpLabelStatus4";
+      this.mpLabelStatus4.Size = new System.Drawing.Size(203, 13);
+      this.mpLabelStatus4.TabIndex = 5;
+      this.mpLabelStatus4.Text = "Windows Media Network Sharing startup:";
+      // 
+      // mpLabelWindowsMediaSharingServiceStatus
+      // 
+      this.mpLabelWindowsMediaSharingServiceStatus.AutoSize = true;
+      this.mpLabelWindowsMediaSharingServiceStatus.Location = new System.Drawing.Point(284, 71);
+      this.mpLabelWindowsMediaSharingServiceStatus.Name = "mpLabelWindowsMediaSharingServiceStatus";
+      this.mpLabelWindowsMediaSharingServiceStatus.Size = new System.Drawing.Size(42, 13);
+      this.mpLabelWindowsMediaSharingServiceStatus.TabIndex = 6;
+      this.mpLabelWindowsMediaSharingServiceStatus.Text = "running";
       // 
       // ThirdPartyChecks
       // 
@@ -206,5 +228,7 @@
     private MediaPortal.UserInterface.Controls.MPLabel mpLabelStatus3;
     private System.Windows.Forms.LinkLabel linkLabelStreamingPort;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabelStatusStreamingPort;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabelWindowsMediaSharingServiceStatus;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabelStatus4;
   }
 }

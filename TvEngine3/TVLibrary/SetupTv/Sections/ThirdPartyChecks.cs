@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Net.NetworkInformation;
 using System.ServiceProcess;
 using Microsoft.Win32;
@@ -15,6 +16,7 @@ namespace SetupTv.Sections
     private static McsPolicyStatus _mcsServices;
     private static Version _dvbVersion;
     private static bool _isStreamingOk;
+    private static WmpServiceStatus _wmpServices;
 
     public ThirdPartyChecks()
       : this("Additional 3rd party checks")
@@ -32,6 +34,10 @@ namespace SetupTv.Sections
       _mcsServices = McsPolicyCheck();
       _dvbVersion = GetDvbhotFixVersion();
       _isStreamingOk = IsStreamingPortAvailable();
+      if (!_isStreamingOk)
+      {
+        CheckWindowsMediaSharingService();
+      }
 
       RefreshForm();
     }
@@ -47,7 +53,7 @@ namespace SetupTv.Sections
           mpButtonMCS.Visible = true;
           mpButtonMCS.Enabled = true;
           break;
-        case McsPolicyStatus.ServiceStopped:
+        case McsPolicyStatus.ServicesStopped:
           mpLabelStatusMCS.Text = "services stopped";
           mpLabelStatusMCS.ForeColor = System.Drawing.Color.Green;
           mpButtonMCS.Text = "Enable policy to prevent services startup";
@@ -91,6 +97,8 @@ namespace SetupTv.Sections
         mpLabelStatusStreamingPort.ForeColor = System.Drawing.Color.Green;
         linkLabelStreamingPort.Enabled = false;
         linkLabelStreamingPort.Visible = false;
+        mpLabelWindowsMediaSharingServiceStatus.Visible = false;
+        mpLabelStatus4.Visible = false;
       }
       else
       {
@@ -98,6 +106,27 @@ namespace SetupTv.Sections
         mpLabelStatusStreamingPort.ForeColor = System.Drawing.Color.Red;
         linkLabelStreamingPort.Enabled = true;
         linkLabelStreamingPort.Visible = true;
+        mpLabelWindowsMediaSharingServiceStatus.Visible = true;
+        mpLabelStatus4.Visible = true;
+        switch (_wmpServices)
+        {
+          case WmpServiceStatus.StartupAutomatic:
+            mpLabelWindowsMediaSharingServiceStatus.Text = "automatic";
+            mpLabelWindowsMediaSharingServiceStatus.ForeColor = System.Drawing.Color.Red;
+            break;
+          case WmpServiceStatus.StartupManual:
+            mpLabelWindowsMediaSharingServiceStatus.Text = "manual";
+            mpLabelWindowsMediaSharingServiceStatus.ForeColor = System.Drawing.Color.Red;
+            break;
+          case WmpServiceStatus.StartupDisabled:
+            mpLabelWindowsMediaSharingServiceStatus.Text = "disabled";
+            mpLabelWindowsMediaSharingServiceStatus.ForeColor = System.Drawing.Color.Green;
+            break;
+          case WmpServiceStatus.NotInstalled:
+            mpLabelWindowsMediaSharingServiceStatus.Text = "not installed";
+            mpLabelWindowsMediaSharingServiceStatus.ForeColor = System.Drawing.Color.Green;
+            break;
+        }
       }
     }
 
@@ -132,7 +161,7 @@ namespace SetupTv.Sections
         return McsPolicyStatus.PolicyInPlace;
       }
       // No MCE services running and no policy: services are stopped
-      return McsPolicyStatus.ServiceStopped;
+      return McsPolicyStatus.ServicesStopped;
     }
 
     private static McsPolicyStatus McsPolicyManipulation(bool checkonly)
@@ -160,7 +189,7 @@ namespace SetupTv.Sections
         {
           key.DeleteValue("MediaCenter");
           key.Close();
-          _mcsServices = McsPolicyStatus.ServiceStopped;
+          _mcsServices = McsPolicyStatus.ServicesStopped;
         }
         else
         {
@@ -183,7 +212,7 @@ namespace SetupTv.Sections
     {
       NotAMceSystem,
       ServicesRunning,
-      ServiceStopped,
+      ServicesStopped,
       PolicyInPlace
     }
 
@@ -219,17 +248,61 @@ namespace SetupTv.Sections
 
     private static bool IsStreamingPortAvailable()
     {
-      IPGlobalProperties ipGlobalProperties =
-        IPGlobalProperties.GetIPGlobalProperties();
-      TcpConnectionInformation[] tcpConnInfoArray = ipGlobalProperties.GetActiveTcpConnections();
-      foreach (TcpConnectionInformation tcpi in tcpConnInfoArray)
+      IPGlobalProperties ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
+      IPEndPoint[] tcpConnInfoArray = ipGlobalProperties.GetActiveTcpListeners();
+      foreach (IPEndPoint endPoint in tcpConnInfoArray)
       {
-        if (tcpi.LocalEndPoint.Port == STREAMING_PORT)
+        if (endPoint.Port == STREAMING_PORT)
         {
-          return false;
+          //check if the port is used by TvServer or by some other process
+          try
+          {
+            int serverId = TvControl.RemoteControl.Instance.IdServer;
+            return true;
+          }
+          catch
+          {
+            return false;
+          }
         }
       }
       return true;
+    }
+
+    private static void CheckWindowsMediaSharingService()
+    {
+      const string keyPath = "SYSTEM\\CurrentControlSet\\Services\\WMPNetworkSvc";
+      RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath);
+
+      if (key != null)
+      {
+        string strUninstall = key.GetValue("Start").ToString();
+        key.Close();
+        switch (strUninstall)
+        {
+          case "1":
+            _wmpServices = WmpServiceStatus.StartupAutomatic;
+            break;
+          case "2":
+            _wmpServices = WmpServiceStatus.StartupManual;
+            break;
+          case "4":
+            _wmpServices = WmpServiceStatus.StartupDisabled;
+            break;
+        }
+      }
+      else
+      {
+        _wmpServices = WmpServiceStatus.NotInstalled;
+      }
+    }
+
+    enum WmpServiceStatus
+    {
+      NotInstalled,
+      StartupAutomatic,
+      StartupManual,
+      StartupDisabled
     }
 
     #endregion
