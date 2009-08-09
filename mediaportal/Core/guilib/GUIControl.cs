@@ -74,7 +74,9 @@ namespace MediaPortal.GUI.Library
     private List<VisualEffect> _animations = new List<VisualEffect>();
     private List<VisualEffect> _thumbAnimations = new List<VisualEffect>();
     private List<int> _infoList = new List<int>();
-    //protected int DimColor = 0x60ffffff;
+
+    private TransformMatrix _transform = new TransformMatrix();
+    private int _animationsCount = 0; // List.Count is very slow. Use cached value instead.
 
     /// <summary>
     /// enum to specify the alignment of the control
@@ -204,7 +206,11 @@ namespace MediaPortal.GUI.Library
 
     public virtual void DoRender(float timePassed, uint currentTime)
     {
-      Animate(currentTime);
+      if (_animationsCount != 0)
+      {
+        TransformMatrix transform = getTransformMatrix(currentTime);
+        GUIGraphicsContext.AddTransform(transform);
+      }
       if (_hasCamera)
       {
         GUIGraphicsContext.SetCameraPosition(_camera);
@@ -214,7 +220,8 @@ namespace MediaPortal.GUI.Library
       {
         GUIGraphicsContext.RestoreCameraPosition();
       }
-      GUIGraphicsContext.RemoveTransform();
+      if (_animationsCount != 0)
+        GUIGraphicsContext.RemoveTransform();
     }
 
     /// <summary>
@@ -1555,9 +1562,11 @@ namespace MediaPortal.GUI.Library
     public virtual void SetAnimations(List<VisualEffect> animations)
     {
       _animations = new List<VisualEffect>();
+      _animationsCount = 0;
       foreach (VisualEffect effect in animations)
       {
         _animations.Add((VisualEffect) effect.Clone());
+        _animationsCount++;
       }
     }
 
@@ -1571,10 +1580,12 @@ namespace MediaPortal.GUI.Library
       if (_animations == null)
       {
         _animations = new List<VisualEffect>();
+        _animationsCount = 0;
       }
       foreach (VisualEffect effect in animations)
       {
         _animations.Add((VisualEffect) effect.Clone());
+        _animationsCount++;
       }
     }
 
@@ -1801,10 +1812,10 @@ namespace MediaPortal.GUI.Library
 
     public TransformMatrix getTransformMatrix(uint currentTime)
     {
-      TransformMatrix transform = new TransformMatrix();
       if (GUIGraphicsContext.Animations)
       {
-        for (int i = 0; i < _animations.Count; i++)
+        _transform.Reset();
+        for (int i = 0; i < _animationsCount; i++)
         {
           VisualEffect anim = _animations[i];
           anim.Animate(currentTime, HasRendered);
@@ -1818,18 +1829,12 @@ namespace MediaPortal.GUI.Library
           //GUIGraphicsContext.ScaleHorizontal(ref centerX);
           //GUIGraphicsContext.ScaleVertical(ref centerY);
           anim.SetCenter(centerX, centerY);
-          anim.RenderAnimation(ref transform);
+          anim.RenderAnimation(ref _transform);
           anim.CenterX = centerXOrg;
           anim.CenterY = centerYOrg;
         }
       }
-      return transform;
-    }
-
-    public void Animate(uint currentTime)
-    {
-      TransformMatrix transform = getTransformMatrix(currentTime);
-      GUIGraphicsContext.AddTransform(transform);
+      return _transform;
     }
 
     public virtual bool IsEffectAnimating(AnimationType animType)
