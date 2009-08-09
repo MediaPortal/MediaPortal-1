@@ -694,7 +694,8 @@ void CDeMultiplexer::Start()
     {
       // dynamic pins are currently disabled
       #ifdef USE_DYNAMIC_PINS
-      if ((m_mpeg2VideoInfo.hdr.dwReserved2!=0 && m_pids.videoPids[0].Pid>1) && dwBytesProcessed<5000000)
+      if ((m_mpeg2VideoInfo.hdr.dwReserved2!=0 && m_pids.videoPids.size() > 0 && 
+        m_pids.videoPids[0].Pid>1) && dwBytesProcessed<5000000)
       {
         dwBytesProcessed+=BytesRead;
         continue;
@@ -1061,7 +1062,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
 /// ifso, it decodes the PES video packet and stores it in the video buffers
 void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
 {
-  if (m_pids.videoPids[0].Pid==0) return;
+  if (m_pids.videoPids.size() == 0 || m_pids.videoPids[0].Pid==0) return;
   if (header.Pid!=m_pids.videoPids[0].Pid) return;
 
   if ( header.AdaptionFieldOnly() )return;
@@ -1540,7 +1541,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   bool changed=false;
   bool videoChanged=false;
   //did the video format change?
-  if (oldVideoServiceType != m_pids.videoPids[0].VideoServiceType )
+  if (m_pids.videoPids.size() > 0 && oldVideoServiceType != m_pids.videoPids[0].VideoServiceType )
   {
     //yes, is the video pin connected?
     if (m_filter.GetVideoPin()->IsConnected())
