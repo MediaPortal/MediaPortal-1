@@ -408,14 +408,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
           UIntPtr res = UIntPtr.Zero;
           int OsVer = (OSInfo.OSInfo.OSMajorVersion * 10) + OSInfo.OSInfo.OSServicePackMinor;
-          int options = Convert.ToInt32(RegistryRights.ReadKey);
-          if (OsVer >= 52)
-          {
-            options = options | Convert.ToInt32(Reg.RegWow64Options.KEY_WOW64_64KEY);
-          }
           UIntPtr rKey = new UIntPtr(Convert.ToUInt32(Reg.RegistryRoot.HKLM));
           int lastError;
-          int retval = Reg.RegOpenKeyEx(rKey, "SOFTWARE\\IR Server Suite", 0, options, out res);
+          int retval = Reg.RegOpenKeyEx(rKey, "SOFTWARE\\IR Server Suite", 0, Convert.ToInt32(RegistryRights.ReadKey), out res);
           if (retval == 0)
           {
             uint tKey;
