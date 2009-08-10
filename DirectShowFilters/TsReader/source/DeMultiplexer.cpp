@@ -115,7 +115,14 @@ void CDeMultiplexer::ResetMpeg2VideoInfo()
 
 int CDeMultiplexer::GetVideoServiceType()
 {
-  return m_pids.videoPids[0].VideoServiceType;
+  if(m_pids.videoPids.size() > 0)
+  {
+    return m_pids.videoPids[0].VideoServiceType;
+  }
+  else
+  {
+    return SERVICE_TYPE_VIDEO_UNKNOWN;
+  }
 }
 
 void CDeMultiplexer::GetVideoMedia(CMediaType *pmt)
@@ -388,6 +395,12 @@ bool CDeMultiplexer::GetSubtitleStreamType(__int32 stream, __int32 &type)
 void CDeMultiplexer::GetVideoStreamType(CMediaType& pmt)
 {
   pmt.InitMediaType();
+
+  if( m_pids.videoPids.size() == 0)
+  {
+    return;
+  }
+
   switch (m_pids.videoPids[0].VideoServiceType)
   {
     case SERVICE_TYPE_VIDEO_MPEG1:

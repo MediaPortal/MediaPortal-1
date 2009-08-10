@@ -26,6 +26,7 @@
 #include "tsreader.h"
 #include "audiopin.h"
 #include "videopin.h"
+#include "pmtparser.h"
 
 #define MAX_TIME  86400000L
 byte MPEG1AudioFormat[] =
@@ -269,7 +270,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           if (m_pTsReaderFilter->GetVideoPin()->IsConnected())
           {
             if( !m_EnableSlowMotionOnZapping &&
-               ( lastAudio.Millisecs() < demux.m_IframeSample.Millisecs() ))
+               ( lastAudio.Millisecs() < demux.m_IframeSample.Millisecs() ) &&
+               demux.GetVideoServiceType() != SERVICE_TYPE_VIDEO_UNKNOWN )
             {
               // Drop audio sample, do not allow slow motion video on channel changes
               delete buffer;

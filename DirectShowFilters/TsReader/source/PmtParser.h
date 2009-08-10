@@ -25,6 +25,7 @@
 #include <map>
 using namespace std;
 
+#define SERVICE_TYPE_VIDEO_UNKNOWN	-1
 #define SERVICE_TYPE_VIDEO_MPEG1		0x1
 #define SERVICE_TYPE_VIDEO_MPEG2		0x2
 #define SERVICE_TYPE_VIDEO_MPEG4		0x10
