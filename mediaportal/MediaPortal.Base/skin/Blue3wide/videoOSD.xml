@@ -391,7 +391,7 @@
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
-      <visible>string.contains(#Play.Current.VideoCodec, FLAC)+Control.IsVisible(989)</visible>
+      <visible>string.contains(#Play.Current.AudioCodec, FLAC)+Control.IsVisible(989)</visible>
       <texture>logos\flac.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -407,7 +407,7 @@
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
-      <visible>string.contains(#Play.Current.VideoCodec, FLAC)+!Control.IsVisible(989)</visible>
+      <visible>string.contains(#Play.Current.AudioCodec, FLAC)+!Control.IsVisible(989)</visible>
       <texture>logos\flac.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
