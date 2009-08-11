@@ -231,7 +231,7 @@ namespace MediaPortal.Player
 
     public delegate void PlaybackProgressHandler(object sender, double duration, double curPosition);
 
-    public event PlaybackProgressHandler PlaybackProgress;
+    //public event PlaybackProgressHandler PlaybackProgress;
 
     public delegate void TrackPlaybackCompletedHandler(object sender, string filePath);
 
@@ -280,7 +280,7 @@ namespace MediaPortal.Player
     private bool _Initialized = false;
     private bool _BassFreed = false;
     private int _StreamVolume = 40;
-    private Timer UpdateTimer = new Timer();
+    //private Timer UpdateTimer = new Timer();
     private VisualizationWindow VizWindow = null;
     private VisualizationManager VizManager = null;
     private bool _CrossFading = false; // true if crossfading has started
@@ -304,6 +304,8 @@ namespace MediaPortal.Player
     private string _asioDevice = string.Empty;
     private int _asioDeviceNumber = -1;
     private int _asioNumberChannels = 2;
+    private int _speed = 1;
+    private DateTime _seekUpdate = DateTime.Now;
     private float _asioBalance = 0.00f;
     private BassAsioHandler _asioHandler = null; // Make it Global to prevent GC stealing the object
 
@@ -507,8 +509,8 @@ namespace MediaPortal.Player
     /// </summary>
     public override int Speed
     {
-      get { return 1; }
-      set { }
+      get { return _speed; }
+      set { _speed = value; }
     }
 
     /// <summary>
@@ -1342,8 +1344,9 @@ namespace MediaPortal.Player
       return Streams[CurrentStreamIndex];
     }
 
+    /*
     /// <summary>
-    /// Timer to update the Plaback Process
+    /// Timer to update the Playback Process
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -1367,7 +1370,7 @@ namespace MediaPortal.Player
         UpdateTimer.Stop();
       }
     }
-
+    */
     /// <summary>
     /// Load External BASS Audio Decoder Plugins
     /// </summary>
@@ -2798,7 +2801,8 @@ namespace MediaPortal.Player
     /// <returns></returns>
     public bool SeekForward(int ms)
     {
-      Log.Debug("BASS: SeekForward for {0} ms", Convert.ToString(ms));
+      if (_speed == 1) // not to exhaust log when ff
+        Log.Debug("BASS: SeekForward for {0} ms", Convert.ToString(ms));
       _CrossFading = false;
 
       if (State != PlayState.Playing)
@@ -2861,7 +2865,8 @@ namespace MediaPortal.Player
     /// <returns></returns>
     public bool SeekReverse(int ms)
     {
-      Log.Debug("BASS: SeekReverse for {0} ms", Convert.ToString(ms));
+      if (_speed == 1) // not to exhaust log
+        Log.Debug("BASS: SeekReverse for {0} ms", Convert.ToString(ms));
       _CrossFading = false;
 
       if (State != PlayState.Playing)
@@ -3077,6 +3082,18 @@ namespace MediaPortal.Player
       {
         return;
       }
+
+      TimeSpan ts = DateTime.Now - _seekUpdate;
+      if (_speed > 1 && ts.TotalMilliseconds > 120)
+      {
+        SeekForward(80 * _speed);
+        _seekUpdate = DateTime.Now;
+      }
+      else if (_speed < 0 && ts.TotalMilliseconds > 120)
+      {
+        SeekReverse(80 * -_speed);
+        _seekUpdate = DateTime.Now;
+      }      
 
       if (VizManager == null)
       {
