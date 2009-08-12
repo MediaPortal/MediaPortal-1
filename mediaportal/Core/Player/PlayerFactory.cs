@@ -224,7 +224,7 @@ namespace MediaPortal.Player
       {
         // Set to anything here as it will only be passed if aMediaType is not null
         g_Player.MediaType localType = g_Player.MediaType.Video;
-        if (aMediaType != null)
+        if (aMediaType != null && aMediaType != g_Player.MediaType.Unknown)
         {
           localType = (g_Player.MediaType) aMediaType;
         }
@@ -293,6 +293,10 @@ namespace MediaPortal.Player
               //  //GUIWindowManager.SendMessage(msg);
               //}
               return new StreamBufferPlayer9();
+            }
+            if (extension == ".ifo" || Util.VirtualDirectory.IsImageFile(extension))
+            {
+              return new DVDPlayer9();
             }
           }
 

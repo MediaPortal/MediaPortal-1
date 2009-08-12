@@ -1171,34 +1171,24 @@ namespace MediaPortal.Player
       {
         if (string.IsNullOrEmpty(strFile))
         {
-          //UnableToPlay(strFile, type);
           Log.Error("g_Player.Play() called without file attribute");
           return false;
-        }
+        }        
+        
         if (Util.Utils.IsDVD(strFile))
+        {
           ChangeDriveSpeed(strFile, DriveType.CD);
-                
+        }
+       
         _mediaInfo = new MediaInfoWrapper(strFile);
-
         Starting = true;
-        //stop radio
-        if (!Util.Utils.IsLiveRadio(strFile))
-        {
-          GUIMessage msgRadio = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO, 0, 0, 0, 0, 0, null);
-          GUIWindowManager.SendMessage(msgRadio);
-        }
-        /*
-        if (!Util.Utils.IsLiveTv(strFile) && !Util.Utils.IsLiveRadio(strFile))
-        {
-          //file is not a live tv file
-          //so tell recorder to stop timeshifting live-tv
-          Log.Info("player: file is not live tv, so stop timeshifting:{0}", strFile);
-          GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
-          GUIWindowManager.SendMessage(msgTv);
-        }
-        */
+        
         if (Util.Utils.IsVideo(strFile) || Util.Utils.IsLiveTv(strFile)) //video, tv, rtsp
         {
+          if (type == MediaType.Unknown)
+          {
+            type = MediaType.Video;
+          }
           // refreshrate change done here.
           RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
 
@@ -1207,9 +1197,8 @@ namespace MediaPortal.Player
             TimeSpan ts = DateTime.Now - RefreshRateChanger.RefreshRateChangeExecutionTime;
             if (ts.TotalSeconds > RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX)
             {
-              Log.Info(
-                "g_Player.Play - waited {0}s for refreshrate change, but it never took place (check your config). Proceeding with playback.",
-                RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX);
+              Log.Info("g_Player.Play - waited {0}s for refreshrate change, but it never took place (check your config). Proceeding with playback.",
+              RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX);
               RefreshRateChanger.ResetRefreshRateState();
             }
             else
@@ -1217,36 +1206,26 @@ namespace MediaPortal.Player
               return true;
             }
           }
-        }        
+        }
 
         _currentStep = 0;
         _currentStepIndex = -1;
-        _seekTimer = DateTime.MinValue;        
+        _seekTimer = DateTime.MinValue;
         _isInitialized = true;
         _subs = null;
-        Log.Info("g_Player.Play({0} {1})", strFile, type);
+
         if (_player != null)
         {
           GUIGraphicsContext.ShowBackground = true;
           OnChanged(strFile);
           OnStopped();
-          //SV 
-          // If we're using the internal music player and cross-fading is enabled
-          // we don't want a hard stop here as it will break cross-fading
-          //_player.Stop();
-          //CachePlayer();
-          //_player = null;
-          //if (!_player.IsExternal)
-          {
-            //GC.Collect();
-            //GC.Collect();
-            //GC.Collect();
-            //GC.Collect();
-          }
-          //?? ms-help://MS.VSCC.v80/MS.MSDN.v80/MS.NETDEVFX.v20.de/cpref2/html/M_System_GC_Collect_1_804c5d7d.htm
           bool doStop = true;
           if (Util.Utils.IsAudio(strFile))
           {
+            if (type == MediaType.Unknown)
+            {
+              type = MediaType.Music;
+            }
             if (BassMusicPlayer.IsDefaultMusicPlayer && BassMusicPlayer.Player.Playing)
             {
               doStop = !BassMusicPlayer.Player.CrossFadingEnabled;
@@ -1258,28 +1237,17 @@ namespace MediaPortal.Player
             {
               _player.Stop();
             }
-
-            //bool isExternal = _player.IsExternal;
             CachePlayer();
             _player = null;
-            //if (!isExternal)
-            {
-              //GC.Collect();
-              //GC.Collect();
-              //GC.Collect();
-              //GC.Collect();
-            }
           }
         }
 
+        Log.Info("g_Player.Play({0} {1})", strFile, type);
         if (!Util.Utils.IsAVStream(strFile) && Util.Utils.IsVideo(strFile))
         {
-          // Free BASS to avoid problems with Digital Audio, when watching movies
-          if (BassMusicPlayer.IsDefaultMusicPlayer)
-            BassMusicPlayer.Player.FreeBass();
-
-          bool isImageFile = Util.VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(strFile));
           string extension = Path.GetExtension(strFile).ToLower();
+          bool isImageFile = Util.VirtualDirectory.IsImageFile(extension);
+          
           if (!Util.Utils.IsRTSP(strFile) && extension != ".ts") // do not play recorded tv with external player
           {
             using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
@@ -1291,7 +1259,9 @@ namespace MediaPortal.Player
               if ((!bInternalDVD && (extension == ".ifo" || extension == ".vob" || isImageFile)) || (!bInternal && (extension != ".ifo" && extension != ".vob" && !isImageFile))) // external player used
               {
                 if (isImageFile)
+                {
                   strFile = Util.DaemonTools.GetVirtualDrive() + @"\VIDEO_TS\VIDEO_TS.IFO";
+                }
                 if (Util.Utils.PlayMovie(strFile))
                 {
                   return true;
@@ -1303,42 +1273,11 @@ namespace MediaPortal.Player
                 }
               }
             }
-          }
-          if (extension == ".ifo" || isImageFile)
-          {            
-            _player = new DVDPlayer9();
-            _player = CachePreviousPlayer(_player);
-            bool _isPlaybackPossible = _player.Play(strFile);
-            if (!_isPlaybackPossible)
-            {
-              Log.Info("g_Player: ended");
-              _player.Release();
-              _player = null;
-              _subs = null;
-              //GC.Collect();
-              //GC.Collect();
-              //GC.Collect();
-              UnableToPlay(strFile, type);
-            }
-            else if (_player.Playing)
-            {
-              _isInitialized = false;
-              _currentFilePlaying = _player.CurrentFile;
-              OnStarted();
-              GUIGraphicsContext.IsFullScreenVideo = true;
-              GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-            }           
-            return _isPlaybackPossible;
-          }
+          }          
         }
-        if (type == MediaType.Unknown)
-        {
-          _player = _factory.Create(strFile);
-        }
-        else
-        {
-          _player = _factory.Create(strFile, type);
-        }
+        
+        _player = _factory.Create(strFile, type);
+        
         if (_player != null)
         {
           LoadChapters(strFile);
@@ -1350,9 +1289,6 @@ namespace MediaPortal.Player
             _player.Release();
             _player = null;
             _subs = null;
-            //GC.Collect();
-            //GC.Collect();
-            //GC.Collect();
             UnableToPlay(strFile, type);          
           }
           else if (_player.Playing)
@@ -1951,7 +1887,6 @@ namespace MediaPortal.Player
       _currentStep = 0;
       _currentStepIndex = -1;
       _seekTimer = DateTime.MinValue;
-      Speed = Speed;
     }
 
     public static void SeekAsolutePercentage(int iPercentage)
