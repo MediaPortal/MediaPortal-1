@@ -17,15 +17,18 @@ namespace TvPlugin
     #region Variables
 
     private string _hostName;
-    [SkinControl(24)] protected GUIButtonControl btnChange = null;
-    [SkinControl(25)] protected GUIButtonControl btnBack = null;
-    [SkinControl(30)] protected GUILabelControl lblHostName = null;
+    [SkinControl(24)]
+    protected GUIButtonControl btnChange = null;
+    [SkinControl(25)]
+    protected GUIButtonControl btnBack = null;
+    [SkinControl(30)]
+    protected GUILabelControl lblHostName = null;
 
     #endregion
 
     public TvSetup()
     {
-      GetID = (int) Window.WINDOW_SETTINGS_TVENGINE;
+      GetID = (int)Window.WINDOW_SETTINGS_TVENGINE;
     }
 
     #region Serialisation
@@ -58,7 +61,7 @@ namespace TvPlugin
         basicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
       }
 
-      int homeWindow = basicHome ? (int) Window.WINDOW_SECOND_HOME : (int) Window.WINDOW_HOME;
+      int homeWindow = basicHome ? (int)Window.WINDOW_SECOND_HOME : (int)Window.WINDOW_HOME;
       GUIWindowManager.ActivateWindow(homeWindow);
     }
 
@@ -129,8 +132,10 @@ namespace TvPlugin
     {
       bool succeeded = true;
       string provider = ProviderFactory.GetDefaultProvider().Name;
+      Log.Debug("TvPlugin: Detected provider name is -{0}-", provider);
       if (provider.ToLower() == "sqlserver")
       {
+        Log.Debug("TvPlugin: Going to test ports 1433(tcp) and 1434(udp) because of MSSQL detected");
         if (!CheckTcpPort(1433)) // MS SQL TCP Port
         {
           portErrors.Add("1433 (TCP) MS SQL Server");
@@ -144,7 +149,8 @@ namespace TvPlugin
       }
       else
       {
-        if (!CheckTcpPort(3306)) // MS SQL TCP Port
+        Log.Debug("TvPlugin: Going to test port 3306(tcp) because of MySQL detected");
+        if (!CheckTcpPort(3306)) // MySQL TCP Port
         {
           portErrors.Add("3306 (TCP) MySQL Server");
           succeeded = false;
@@ -254,7 +260,7 @@ namespace TvPlugin
           bool databaseOk = CheckDatabaseConnection(portErrors);
 
           //Show the check results dialog to the user
-          GUIDialogOK pDlgOK = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+          GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
           if (tvServerOk && databaseOk)
           {
             TVHome.Navigator.ReLoad();
@@ -269,7 +275,7 @@ namespace TvPlugin
             return;
           }
           RemoteControl.Clear();
-          pDlgOK = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+          pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
           if (pDlgOK != null)
           {
             if (portErrors.Count > 0)
@@ -346,7 +352,7 @@ namespace TvPlugin
 
     protected bool GetKeyboard(ref string strLine)
     {
-      VirtualKeyboard keyboard = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
       if (keyboard == null)
       {
         return false;
