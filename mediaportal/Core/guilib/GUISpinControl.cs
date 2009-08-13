@@ -62,15 +62,17 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textureDown")] protected string _downTextureName;
     [XMLSkinElement("textureUpFocus")] protected string _upTextureNameFocus;
     [XMLSkinElement("textureDownFocus")] protected string _downTextureNameFocus;
-
     [XMLSkinElement("align")] protected Alignment _alignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("spintype")] protected SpinType _spinType = SpinType.SPIN_CONTROL_TYPE_TEXT;
     [XMLSkinElement("orientation")] protected eOrientation _orientation = eOrientation.Horizontal;
+    [XMLSkinElement("cycleItems")] protected bool _cycleItems = false;
+    [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
+    [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
+    [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
+    [XMLSkinElement("prefixText")] protected string _prefixText = "";
+    [XMLSkinElement("suffixText")] protected string _suffixText = "";
 
-    protected bool _cycleItems = false;
-                   //currently only impl. for SPIN_CONTROL_TYPE_DISC_NUMBER - used in mini EPG guide in tvplugin.
-
-    protected bool autoCheck = true;
+    protected bool _autoCheck = true;
     protected int _startInt = 0;
     protected int _endInt = 100;
     protected float _startFloat = 0.0f;
@@ -91,6 +93,9 @@ namespace MediaPortal.GUI.Library
     protected GUIFont _font = null;
     protected string _typed = "";
     private GUILabelControl _labelControl = null;
+
+    // Used to allow classes that encapsulate this class to detect handled actions.
+    private bool _actionHandled = false;
 
     public GUISpinControl(int dwParentID)
       : base(dwParentID)
@@ -146,6 +151,7 @@ namespace MediaPortal.GUI.Library
       _labelControl.CacheFont = true;
       _labelControl.ParentControl = this;
       _labelControl.DimColor = DimColor;
+      _labelControl.SetShadow(_shadowAngle, _shadowDistance, _shadowColor);
     }
 
     public override void Render(float timePassed)
@@ -184,10 +190,30 @@ namespace MediaPortal.GUI.Library
         {
           wszText = strValue.ToString();
         }
+
+        if (_prefixText.Length > 0)
+        {
+          wszText = _prefixText + " " + wszText;
+        }
+
+        if (_suffixText.Length > 0)
+        {
+          wszText = wszText + " " + _suffixText;
+        }
       }
       else if (_spinType == SpinType.SPIN_CONTROL_TYPE_FLOAT)
       {
         wszText = String.Format("{0:2}/{1:2}", _floatValue, _endFloat);
+
+        if (_prefixText.Length > 0)
+        {
+          wszText = _prefixText + " " + wszText;
+        }
+
+        if (_suffixText.Length > 0)
+        {
+          wszText = wszText + " " + _suffixText;
+        }
       }
       else
       {
@@ -381,6 +407,7 @@ namespace MediaPortal.GUI.Library
 
     public override void OnAction(Action action)
     {
+      _actionHandled = false;
       switch (action.wID)
       {
         case Action.ActionType.REMOTE_0:
@@ -486,6 +513,7 @@ namespace MediaPortal.GUI.Library
         {
           PageUp();
         }
+        _actionHandled = true;
         return;
       }
       if (action.wID == Action.ActionType.ACTION_PAGE_DOWN)
@@ -498,6 +526,7 @@ namespace MediaPortal.GUI.Library
         {
           PageDown();
         }
+        _actionHandled = true;
         return;
       }
       if (action.wID == Action.ActionType.ACTION_MOVE_UP ||
@@ -523,6 +552,8 @@ namespace MediaPortal.GUI.Library
             {
               if (CanMoveUp())
               {
+                // Only a change in _spinSelect state defines a handled action.
+                _actionHandled = _spinSelect != SpinSelect.SPIN_BUTTON_DOWN;
                 _spinSelect = SpinSelect.SPIN_BUTTON_DOWN;
                 return;
               }
@@ -531,6 +562,8 @@ namespace MediaPortal.GUI.Library
             {
               if (CanMoveDown())
               {
+                // Only a change in _spinSelect state defines a handled action.
+                _actionHandled = _spinSelect != SpinSelect.SPIN_BUTTON_DOWN;
                 _spinSelect = SpinSelect.SPIN_BUTTON_DOWN;
                 return;
               }
@@ -554,6 +587,8 @@ namespace MediaPortal.GUI.Library
             {
               if (CanMoveDown())
               {
+                // Only a change in _spinSelect state defines a handled action.
+                _actionHandled = _spinSelect != SpinSelect.SPIN_BUTTON_UP;
                 _spinSelect = SpinSelect.SPIN_BUTTON_UP;
                 return;
               }
@@ -562,6 +597,8 @@ namespace MediaPortal.GUI.Library
             {
               if (CanMoveUp())
               {
+                // Only a change in _spinSelect state defines a handled action.
+                _actionHandled = _spinSelect != SpinSelect.SPIN_BUTTON_UP;
                 _spinSelect = SpinSelect.SPIN_BUTTON_UP;
                 return;
               }
@@ -586,6 +623,7 @@ namespace MediaPortal.GUI.Library
               MoveUp();
             }
             action.wID = Action.ActionType.ACTION_INVALID;
+            _actionHandled = true;
             return;
           }
           if (_spinSelect == SpinSelect.SPIN_BUTTON_DOWN)
@@ -599,6 +637,7 @@ namespace MediaPortal.GUI.Library
               MoveDown();
             }
             action.wID = Action.ActionType.ACTION_INVALID;
+            _actionHandled = true;
             return;
           }
         }
@@ -1087,7 +1126,7 @@ namespace MediaPortal.GUI.Library
 
     protected bool CanMoveDown()
     {
-      if (!AutoCheck)
+      if (!AutoCheck || CycleItems)
       {
         return true;
       }
@@ -1126,7 +1165,7 @@ namespace MediaPortal.GUI.Library
 
     protected bool CanMoveUp()
     {
-      if (!AutoCheck)
+      if (!AutoCheck || CycleItems)
       {
         return true;
       }
@@ -1173,6 +1212,10 @@ namespace MediaPortal.GUI.Library
             {
               _intValue--;
             }
+            else if (_cycleItems)
+            {
+              _intValue = _endInt;
+            }
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0,
                                             null);
             msg.Param1 = _intValue;
@@ -1185,6 +1228,10 @@ namespace MediaPortal.GUI.Library
             if (_floatValue - _floatInterval >= _startFloat)
             {
               _floatValue -= _floatInterval;
+            }
+            else if (_cycleItems)
+            {
+              _floatValue = _endFloat;
             }
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0,
                                             null);
@@ -1227,8 +1274,14 @@ namespace MediaPortal.GUI.Library
             {
               _intValue++;
             }
+            else if (_cycleItems)
+            {
+              _intValue = _startInt;
+            }
+
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0,
                                             null);
+            msg.Param1 = _intValue;
             GUIGraphicsContext.SendMessage(msg);
             return;
           }
@@ -1239,9 +1292,12 @@ namespace MediaPortal.GUI.Library
             {
               _floatValue += _floatInterval;
             }
+            else if (_cycleItems)
+            {
+              _floatValue = _startFloat;
+            }
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0,
                                             null);
-            msg.Param1 = _intValue;
             GUIGraphicsContext.SendMessage(msg);
             return;
           }
@@ -1385,8 +1441,8 @@ namespace MediaPortal.GUI.Library
 
     public bool AutoCheck
     {
-      get { return autoCheck; }
-      set { autoCheck = value; }
+      get { return _autoCheck; }
+      set { _autoCheck = value; }
     }
 
     public SpinSelect SelectedButton
@@ -1422,6 +1478,32 @@ namespace MediaPortal.GUI.Library
           _labelControl.DimColor = value;
         }
       }
+    }
+
+    public bool ActionHandled
+    {
+      get { return _actionHandled; }
+      set { _actionHandled = value; }
+    }
+
+    public void SetShadow(int angle, int distance, long color)
+    {
+      _shadowAngle = angle;
+      _shadowDistance = distance;
+      _shadowColor = color;
+      _labelControl.SetShadow(_shadowAngle, _shadowDistance, _shadowColor);
+    }
+
+    public string PrefixText
+    {
+      get { return _prefixText; }
+      set { _prefixText = value; }
+    }
+
+    public string SuffixText
+    {
+      get { return _suffixText; }
+      set { _suffixText = value; }
     }
   }
 }

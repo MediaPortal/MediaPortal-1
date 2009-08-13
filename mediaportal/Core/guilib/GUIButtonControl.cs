@@ -47,6 +47,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textXOff")] protected int _textOffsetX = 0;
     [XMLSkinElement("textYOff")] protected int _textOffsetY = 0;
     [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("textvalign")] protected VAlignment _textVAlignment = VAlignment.ALIGN_TOP;
     [XMLSkinElement("application")] protected string _application = "";
     [XMLSkinElement("arguments")] protected string _arguments = "";
     [XMLSkinElement("hover")] protected string _hoverFilename = string.Empty;
@@ -54,17 +55,36 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("hoverY")] protected int _hoverY;
     [XMLSkinElement("hoverWidth")] protected int _hoverWidth;
     [XMLSkinElement("hoverHeight")] protected int _hoverHeight;
-    [XMLSkinElement("scrollStartDelaySec")] protected int _scrollStartDelay = -1;
-    [XMLSkinElement("scrollWrapString")] protected string _userWrapString = "";
     [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
     [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
     [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
+    [XMLSkinElement("scrollStartDelaySec")] protected int _scrollStartDelay = -1;
+    [XMLSkinElement("scrollWrapString")] protected string _userWrapString = "";
+    [XMLSkin("textureFocus", "border")] protected string _strBorderTF = "";
+    [XMLSkin("textureFocus", "position")] protected string _strBorderPositionTF = "outside";
+    [XMLSkin("textureFocus", "textureRepeat")] protected bool _borderTextureRepeatTF = false;
+    [XMLSkin("textureFocus", "textureRotate")] protected bool _borderTextureRotateTF = false;
+    [XMLSkin("textureFocus", "texture")] protected string _borderTextureFileNameTF = "image_border.png";
+    [XMLSkin("textureFocus", "colorKey")] protected long _borderColorKeyTF = 0xFFFFFFFF;
+    [XMLSkin("textureNoFocus", "border")] protected string _strBorderTNF = "";
+    [XMLSkin("textureNoFocus", "position")] protected string _strBorderPositionTNF = "outside";
+    [XMLSkin("textureNoFocus", "textureRepeat")] protected bool _borderTextureRepeatTNF = false;
+    [XMLSkin("textureNoFocus", "textureRotate")] protected bool _borderTextureRotateTNF = false;
+    [XMLSkin("textureNoFocus", "texture")] protected string _borderTextureFileNameTNF = "image_border.png";
+    [XMLSkin("textureNoFocus", "colorKey")] protected long _borderColorKeyTNF = 0xFFFFFFFF;
+    [XMLSkin("hover", "border")] protected string _strBorderH = "";
+    [XMLSkin("hover", "position")] protected string _strBorderPositionH = "outside";
+    [XMLSkin("hover", "textureRepeat")] protected bool _borderTextureRepeatH = false;
+    [XMLSkin("hover", "textureRotate")] protected bool _borderTextureRotateH = false;
+    [XMLSkin("hover", "texture")] protected string _borderTextureFileNameH = "image_border.png";
+    [XMLSkin("hover", "colorKey")] protected long _borderColorKeyH = 0xFFFFFFFF;
 
     protected int _frameCounter = 0;
     protected GUIAnimation _imageFocused = null;
     protected GUIAnimation _imageNonFocused = null;
     protected GUIAnimation _hoverImage = null;
     protected GUIControl _labelControl = null;
+    private bool _keepLook = false;
 
     public GUIButtonControl(int dwParentID)
       : base(dwParentID)
@@ -127,6 +147,7 @@ namespace MediaPortal.GUI.Library
       _imageFocused.Filtering = false;
       _imageFocused.DimColor = DimColor;
       _imageFocused.ColourDiffuse = ColourDiffuse;
+      _imageFocused.SetBorder(_strBorderTF, _strBorderPositionTF, _borderTextureRepeatTF, _borderTextureRotateTF, _borderTextureFileNameTF, _borderColorKeyTF);
 
       _imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
                                               _nonFocusedTextureName);
@@ -134,6 +155,7 @@ namespace MediaPortal.GUI.Library
       _imageNonFocused.Filtering = false;
       _imageNonFocused.DimColor = DimColor;
       _imageNonFocused.ColourDiffuse = ColourDiffuse;
+      _imageNonFocused.SetBorder(_strBorderTNF, _strBorderPositionTNF, _borderTextureRepeatTNF, _borderTextureRotateTNF, _borderTextureFileNameTNF, _borderColorKeyTNF);
 
       if (_hoverFilename != string.Empty)
       {
@@ -143,6 +165,7 @@ namespace MediaPortal.GUI.Library
         _hoverImage.ParentControl = this;
         _hoverImage.DimColor = DimColor;
         _hoverImage.ColourDiffuse = ColourDiffuse;
+        _hoverImage.SetBorder(_strBorderH, _strBorderPositionH, _borderTextureRepeatH, _borderTextureRotateH, _borderTextureFileNameH, _borderColorKeyH);
       }
 
       GUILocalizeStrings.LocalizeLabel(ref _label);
@@ -151,16 +174,18 @@ namespace MediaPortal.GUI.Library
       if (_scrollStartDelay < 0)
       {
         _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
-                                            _label, _textColor, Alignment.ALIGN_LEFT, false, _shadowAngle, _shadowDistance, _shadowColor);
+                                            _label, _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP, false, _shadowAngle, _shadowDistance, _shadowColor);
         ((GUILabelControl)_labelControl).TextAlignment = _textAlignment;
+        ((GUILabelControl)_labelControl).TextVAlignment = _textVAlignment;
       }
       else 
       {
         _labelControl = new GUIFadeLabel(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
-                                         _label,  
-                                         _textColor, Alignment.ALIGN_LEFT,
-                                         _userWrapString, _shadowAngle, _shadowDistance, _shadowColor);
+                                         _label, _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP,
+                                        _shadowAngle, _shadowDistance, _shadowColor,
+                                         _userWrapString);
         ((GUIFadeLabel)_labelControl).TextAlignment = _textAlignment;
+        ((GUIFadeLabel)_labelControl).TextVAlignment = _textVAlignment;
         ((GUIFadeLabel)_labelControl).AllowScrolling = false;
         ((GUIFadeLabel)_labelControl).AllowFadeIn = false;
       }
@@ -233,9 +258,17 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      // The GUIButtonControl has the focus
-      if (Focus)
+      // The GUIButtonControl has the focus or the focused look is being maintained.
+      // _keepLook forces the render of the focused (or hovered) image when focus may have been lost.
+      // _keepLook is managed by onleft,onright,onup,ondown actions.
+      if (Focus || _keepLook)
       {
+        // Apply the dim color to the render if _keepLook is set; avoid affecting Dimmed otherwise.
+        if (_keepLook)
+        {
+          _imageFocused.Dimmed = true;
+        }
+
         //render the focused image
         _imageFocused.Render(timePassed);
 
@@ -260,18 +293,21 @@ namespace MediaPortal.GUI.Library
       if (_labelControl is GUILabelControl)
       {
         ((GUILabelControl)_labelControl).TextAlignment = _textAlignment;
+        ((GUILabelControl)_labelControl).TextVAlignment = _textVAlignment;
         ((GUILabelControl)_labelControl).Label = _label;
         ((GUILabelControl)_labelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
       }
       else
       {
         ((GUIFadeLabel)_labelControl).TextAlignment = _textAlignment;
+        ((GUIFadeLabel)_labelControl).TextVAlignment = _textVAlignment;
         ((GUIFadeLabel)_labelControl).Label = _label;
         ((GUIFadeLabel)_labelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
       }
 
       // render the text on the button
       int x = 0;
+      int y = 0;
 
       switch (_textAlignment)
       {
@@ -287,7 +323,23 @@ namespace MediaPortal.GUI.Library
           x = _positionX + ((_width/2) - (labelWidth/2));
           break;
       }
-      _labelControl.SetPosition(x, _textOffsetY + _positionY);
+
+      switch (_textVAlignment)
+      {
+        case VAlignment.ALIGN_TOP:
+          y = _textOffsetY + _positionY;
+          break;
+
+        case VAlignment.ALIGN_BOTTOM:
+          y = _positionY + _height - _textOffsetY;
+          break;
+
+        case VAlignment.ALIGN_MIDDLE:
+          y = _positionY + ((_height / 2) - (_labelControl.Height / 2));
+          break;
+      }
+
+      _labelControl.SetPosition(x, y);
       _labelControl.Render(timePassed);
       base.Render(timePassed);
     }
@@ -304,6 +356,22 @@ namespace MediaPortal.GUI.Library
       GUIMessage message;
       if (Focus)
       {
+        switch (action.wID)
+        {
+          case Action.ActionType.ACTION_MOVE_DOWN:
+            _keepLook = _keepLookOnDown;
+            break;
+          case Action.ActionType.ACTION_MOVE_UP:
+            _keepLook = _keepLookOnUp;
+            break;
+          case Action.ActionType.ACTION_MOVE_LEFT:
+            _keepLook = _keepLookOnLeft;
+            break;
+          case Action.ActionType.ACTION_MOVE_RIGHT:
+            _keepLook = _keepLookOnRight;
+            break;
+        }
+
         if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_SELECT_ITEM)
         {
           if (ContextMenu != null)
@@ -748,6 +816,12 @@ namespace MediaPortal.GUI.Library
     {
       get { return _textAlignment; }
       set { _textAlignment = value; }
+    }
+
+    public VAlignment TextVAlignment
+    {
+      get { return _textVAlignment; }
+      set { _textVAlignment = value; }
     }
 
     /// <summary>

@@ -49,10 +49,26 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("arguments")] protected string _arguments = "";
     [XMLSkinElement("textureCheckmarkNoFocus")] protected string _checkMarkNoFocusTextureName = string.Empty;
     [XMLSkinElement("textureCheckmark")] protected string _checkMarkFocusTextureName = string.Empty;
-    [XMLSkinElement("MarkWidth")] protected int _checkMarkWidth;
-    [XMLSkinElement("MarkHeight")] protected int _checkMarkHeight;
-    [XMLSkinElement("MarkOffsetX")] protected int markOffsetX = 0;
-    [XMLSkinElement("MarkOffsetY")] protected int markOffsetY = 0;
+    [XMLSkinElement("markWidth")] protected int _checkMarkWidth;
+    [XMLSkinElement("markHeight")] protected int _checkMarkHeight;
+    [XMLSkinElement("markXOff")] protected int _markOffsetX = 0;
+    [XMLSkinElement("markYOff")] protected int _markOffsetY = 0;
+    [XMLSkinElement("markalign")] protected Alignment _markAlignment = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("markvalign")] protected VAlignment _markVAlignment = VAlignment.ALIGN_MIDDLE;
+    [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("textvalign")] protected VAlignment _textVAlignment = VAlignment.ALIGN_TOP;
+    [XMLSkin("textureFocus", "border")] protected string _strBorderTF = "";
+    [XMLSkin("textureFocus", "position")] protected string _strBorderPositionTF = "outside";
+    [XMLSkin("textureFocus", "textureRepeat")] protected bool _borderTextureRepeatTF = false;
+    [XMLSkin("textureFocus", "textureRotate")] protected bool _borderTextureRotateTF = false;
+    [XMLSkin("textureFocus", "texture")] protected string _borderTextureFileNameTF = "image_border.png";
+    [XMLSkin("textureFocus", "colorKey")] protected long _borderColorKeyTF = 0xFFFFFFFF;
+    [XMLSkin("textureNoFocus", "border")] protected string _strBorderTNF = "";
+    [XMLSkin("textureNoFocus", "position")] protected string _strBorderPositionTNF = "outside";
+    [XMLSkin("textureNoFocus", "textureRepeat")]protected bool _borderTextureRepeatTNF = false;
+    [XMLSkin("textureNoFocus", "textureRotate")] protected bool _borderTextureRotateTNF = false;
+    [XMLSkin("textureNoFocus", "texture")] protected string _borderTextureFileNameTNF = "image_border.png";
+    [XMLSkin("textureNoFocus", "colorKey")] protected long _borderColorKeyTNF = 0xFFFFFFFF;
     [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
     [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
     [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
@@ -113,19 +129,23 @@ namespace MediaPortal.GUI.Library
       _imageFocused.ParentControl = this;
       _imageFocused.Filtering = false;
       _imageFocused.DimColor = DimColor;
+      _imageFocused.SetBorder(_strBorderTF, _strBorderPositionTF, _borderTextureRepeatTF, _borderTextureRotateTF, _borderTextureFileNameTF, _borderColorKeyTF);
 
       _imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
                                               _nonFocusedTextureName);
       _imageNonFocused.ParentControl = this;
       _imageNonFocused.Filtering = false;
       _imageNonFocused.DimColor = DimColor;
+      _imageNonFocused.SetBorder(_strBorderTNF, _strBorderPositionTNF, _borderTextureRepeatTNF, _borderTextureRotateTNF, _borderTextureFileNameTNF, _borderColorKeyTNF);
       GUILocalizeStrings.LocalizeLabel(ref _label);
 
       _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
-                                          _label, _textColor, Alignment.ALIGN_LEFT, false,
+                                          _label, _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP, false,
                                           _shadowAngle, _shadowDistance, _shadowColor);
       _labelControl.ParentControl = this;
       _labelControl.DimColor = DimColor;
+      _labelControl.TextAlignment = _textAlignment;
+      _labelControl.TextVAlignment = _textVAlignment;
 
       checkMark = new GUICheckMarkControl(0, 0, _positionX + _width - _checkMarkWidth, _positionY, _checkMarkWidth,
                                           _checkMarkHeight, _checkMarkFocusTextureName, _checkMarkNoFocusTextureName,
@@ -174,14 +194,14 @@ namespace MediaPortal.GUI.Library
 
     public int CheckOffsetX
     {
-      get { return markOffsetX; }
-      set { markOffsetX = value; }
+      get { return _markOffsetX; }
+      set { _markOffsetX = value; }
     }
 
     public int CheckOffsetY
     {
-      get { return markOffsetY; }
-      set { markOffsetY = value; }
+      get { return _markOffsetY; }
+      set { _markOffsetY = value; }
     }
 
     public override bool Selected
@@ -222,23 +242,90 @@ namespace MediaPortal.GUI.Library
         _imageNonFocused.Render(timePassed);
       }
 
+      int labelWidth = _width - 2 * _textOffsetX;
+      if (labelWidth <= 0)
+      {
+        base.Render(timePassed);
+        return;
+      }
+      _labelControl.Width = labelWidth;
+
       // render the text on the button
-      if (Disabled)
+      _labelControl.TextAlignment = _textAlignment;
+      _labelControl.TextVAlignment = _textVAlignment;
+      _labelControl.Label = _label;
+      _labelControl.TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
+
+      int x = 0;
+      int y = 0;
+
+      switch (_textAlignment)
       {
-        _labelControl.Label = _label;
-        _labelControl.TextColor = _disabledColor;
-        _labelControl.SetPosition(_textOffsetX + _positionX, _textOffsetY + _positionY);
-        _labelControl.Render(timePassed);
+        case Alignment.ALIGN_LEFT:
+          x = _textOffsetX + _positionX;
+          break;
+
+        case Alignment.ALIGN_RIGHT:
+          x = _positionX + _width - _textOffsetX;
+          break;
+
+        case Alignment.ALIGN_CENTER:
+          x = _positionX + ((_width / 2) - (labelWidth / 2));
+          break;
       }
-      else
+
+      switch (_textVAlignment)
       {
-        _labelControl.Label = _label;
-        _labelControl.TextColor = Focus ? _textColor : _textColorNoFocus;
-        _labelControl.SetPosition(_textOffsetX + _positionX, _textOffsetY + _positionY);
-        _labelControl.Render(timePassed);
+        case VAlignment.ALIGN_TOP:
+          y = _textOffsetY + _positionY;
+          break;
+
+        case VAlignment.ALIGN_BOTTOM:
+          y = _positionY + _height - _textOffsetY;
+          break;
+
+        case VAlignment.ALIGN_MIDDLE:
+          y = _positionY + ((_height / 2) - (_labelControl.Height / 2));
+          break;
       }
-      checkMark.SetPosition(_imageNonFocused.XPosition + _imageNonFocused.Width - CheckOffsetX - checkMark.Width,
-                            _imageNonFocused.YPosition + CheckOffsetY);
+
+      _labelControl.SetPosition(x, y);
+        _labelControl.Render(timePassed);
+
+      x = 0;
+      y = 0;
+
+      switch (_markAlignment)
+      {
+        case Alignment.ALIGN_LEFT:
+          x = _markOffsetX + _positionX;
+          break;
+
+        case Alignment.ALIGN_RIGHT:
+          x = _positionX + _width - _markOffsetX - checkMark.Width;
+          break;
+
+        case Alignment.ALIGN_CENTER:
+          x = _positionX + ((_width / 2) - (checkMark.Width / 2));
+          break;
+      }
+
+      switch (_markVAlignment)
+      {
+        case VAlignment.ALIGN_TOP:
+          y = _markOffsetY + _positionY;
+          break;
+
+        case VAlignment.ALIGN_BOTTOM:
+          y = _positionY + _height - _markOffsetY - checkMark.Height;
+          break;
+
+        case VAlignment.ALIGN_MIDDLE:
+          y = _positionY + ((_height / 2) - (checkMark.Height / 2));
+          break;
+      }
+
+      checkMark.SetPosition(x, y);
       checkMark.Render(timePassed);
       base.Render(timePassed);
     }
@@ -257,6 +344,13 @@ namespace MediaPortal.GUI.Library
       {
         if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_SELECT_ITEM)
         {
+          // Send a message that the checkbox was clicked.
+          _isSelected = !_isSelected;
+
+          // send a message to anyone interested 
+          message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
+          GUIGraphicsContext.SendMessage(message);
+
           // If this button contains scriptactions call the scriptactions.
           if (_application.Length != 0)
           {
@@ -301,10 +395,6 @@ namespace MediaPortal.GUI.Library
             }
             Label = (string) GetSubItem(SelectedItem);
           }
-
-          // send a message to anyone interested 
-          message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
-          GUIGraphicsContext.SendMessage(message);
         }
       }
     }
@@ -563,6 +653,24 @@ namespace MediaPortal.GUI.Library
         }
         _textOffsetY = value;
       }
+    }
+
+    public Alignment TextAlignment
+    {
+      get { return _textAlignment; }
+      set { _textAlignment = value; }
+    }
+
+    public VAlignment TextVAlignment
+    {
+      get { return _textVAlignment; }
+      set { _textVAlignment = value; }
+    }
+
+    public VAlignment MarkVAlignment
+    {
+      get { return _markVAlignment; }
+      set { _markVAlignment = value; }
     }
 
     /// <summary>

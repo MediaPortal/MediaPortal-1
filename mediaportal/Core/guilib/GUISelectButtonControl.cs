@@ -185,9 +185,7 @@ namespace MediaPortal.GUI.Library
       _labelControl = new GUILabelControl(_parentControlId);
       _labelControl.CacheFont = true;
       _labelControl.ParentControl = this;
-      _labelControl.ShadowAngle = _shadowAngle;
-      _labelControl.ShadowDistance = _shadowDistance;
-      _labelControl.ShadowColor = _shadowColor;
+      _labelControl.SetShadow(_shadowAngle, _shadowDistance, _shadowColor);
     }
 
     public override void ScaleToScreenResolution()

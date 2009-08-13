@@ -39,6 +39,12 @@ namespace MediaPortal.GUI.Library
     protected bool _flipX = false;
     protected bool _flipY = false;
     protected string _diffuseFileName = "";
+    private string _strBorder = "";
+    private string _strBorderPosition = "";
+    private bool _borderTextureRepeat = false;
+    private bool _borderTextureRotate = false;
+    private string _borderTextureFileName = "";
+    private long _borderColorKey = 0;
 
     #region Constructors
 
@@ -181,6 +187,7 @@ namespace MediaPortal.GUI.Library
         _images[index].DiffuseFileName = _diffuseFileName;
         _images[index].FlipY = _flipX;
         _images[index].FlipY = _flipY;
+        _images[index].SetBorder(_strBorder, _strBorderPosition, _borderTextureRepeat, _borderTextureRotate, _borderTextureFileName, _borderColorKey);
         _images[index].AllocResources();
         //_images[index].ScaleToScreenResolution(); -> causes too big images in fullscreen
 
@@ -271,6 +278,16 @@ namespace MediaPortal.GUI.Library
       {
         _images[index].SetPosition(dwPosX, dwPosY);
       }
+    }
+
+    public void SetBorder(string border, string position, bool textureRepeat, bool textureRotate, string textureFilename, long colorKey)
+    {
+      _strBorder = border;
+      _strBorderPosition = position;
+      _borderTextureRepeat = textureRepeat;
+      _borderTextureRotate = textureRotate;
+      _borderTextureFileName = textureFilename;
+      _borderColorKey = colorKey;
     }
 
     public override int Width
