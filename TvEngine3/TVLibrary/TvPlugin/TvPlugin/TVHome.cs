@@ -1161,7 +1161,7 @@ namespace TvPlugin
       if (dualMonoMode != eAudioDualMonoMode.UNSUPPORTED)
       {
         g_Player.SetAudioDualMonoMode(dualMonoMode);
-      }      
+      }
     }
 
     private void OnPlayBackStarted(g_Player.MediaType type, string filename)
@@ -2840,10 +2840,10 @@ namespace TvPlugin
 
         //now find the ones based on LANG prefs.
         if (_preferredLanguages != null)
-        {          
+        {
           if (g_Player.GetAudioDualMonoMode() != eAudioDualMonoMode.UNSUPPORTED && streams[i].Language.Length == 6)
-          {            
-            string leftAudioLang = streams[i].Language.Substring(0,3);
+          {
+            string leftAudioLang = streams[i].Language.Substring(0, 3);
             string rightAudioLang = streams[i].Language.Substring(3, 3);
 
             int indexLeft = _preferredLanguages.IndexOf(leftAudioLang);
@@ -2852,17 +2852,17 @@ namespace TvPlugin
               dualMonoMode = eAudioDualMonoMode.LEFT_MONO;
               mpegBasedOnLang = leftAudioLang;
               idxLangmpeg = i;
-              priority = indexLeft;           
-            }            
-                          
+              priority = indexLeft;
+            }
+
             int indexRight = _preferredLanguages.IndexOf(rightAudioLang);
             if (indexRight >= 0 && indexRight < priority)
-            {                
+            {
               dualMonoMode = eAudioDualMonoMode.RIGHT_MONO;
               mpegBasedOnLang = rightAudioLang;
               idxLangmpeg = i;
               priority = indexRight;
-            }                        
+            }
           }
           else
           {
@@ -3073,7 +3073,7 @@ namespace TvPlugin
       pDlgNotify.SetHeading(caption); //my tv
       StringBuilder sbMessage = new StringBuilder();
       // ignore the "unable to start timeshift" line to avoid scrolling, because NotifyDLG has very few space available.
-      for (int idx = 1; idx < _lastError.Messages.Count; idx++ )
+      for (int idx = 1; idx < _lastError.Messages.Count; idx++)
       {
         sbMessage.AppendFormat("\n{0}", _lastError.Messages[idx]);
       }
@@ -3093,7 +3093,7 @@ namespace TvPlugin
         GUIGraphicsContext.SendMessage(msg);
         return;
       }
-      else 
+      else
       {
         // show notify dialog 
         pDlgNotify.DoModal((int)GUIWindowManager.ActiveWindowEx);
@@ -3301,20 +3301,11 @@ namespace TvPlugin
             g_Player.PauseGraph();
             succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
             // check if after starttimeshift the active card is same as before (tvserver can do "failover" to another card)
-            bool isSingleSeat = IsSingleSeat();
+
             if (succeeded == TvResult.Succeeded && card != null && Card.Id == card.Id)
             {
               Log.Debug("TVHome.ViewChannelAndCheck(): card was not changed. seek to end.");
               cardChanged = false;
-              //hack - seek2end will cause a huge delay on singleseat systems, but multiseat needs it.
-              if (!isSingleSeat)
-              {
-                SeekToEnd(true);
-              }
-            }
-            //hack - seek2end will cause a huge delay on singleseat systems, but multiseat needs it.
-            if (isSingleSeat)
-            {
               SeekToEnd(true);
             }
             g_Player.ContinueGraph();
@@ -3671,11 +3662,11 @@ namespace TvPlugin
       if (dlgCiMenu == null)
       {
         dlgCiMenu = (GUIDialogCIMenu)GUIWindowManager.GetWindow((int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_DIALOG_CIMENU);
-      } 
-      
+      }
+
       switch (Menu.State)
       {
-          // choices available, so show them
+        // choices available, so show them
         case TvLibrary.Interfaces.CiMenuState.Ready:
           dlgCiMenu.Reset();
           dlgCiMenu.SetHeading(Menu.Title, Menu.Subtitle, Menu.BottomText); // CI Menu
@@ -3702,7 +3693,7 @@ namespace TvPlugin
           }
           break;
 
-          // errors and menu options with no choices
+        // errors and menu options with no choices
         case TvLibrary.Interfaces.CiMenuState.Error:
         case TvLibrary.Interfaces.CiMenuState.NoChoices:
 
@@ -3717,15 +3708,15 @@ namespace TvPlugin
             _dialogNotify.ClearAll();
             _dialogNotify.SetHeading(Menu.Title);
 
-            _dialogNotify.SetText(String.Format("{0}\r\n{1}",Menu.Subtitle, Menu.BottomText));
+            _dialogNotify.SetText(String.Format("{0}\r\n{1}", Menu.Subtitle, Menu.BottomText));
             _dialogNotify.TimeOut = 2; // seconds
             _dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
           }
           break;
 
-          // requests require users input so open keyboard
+        // requests require users input so open keyboard
         case TvLibrary.Interfaces.CiMenuState.Request:
-          String result="";
+          String result = "";
           if (GetKeyboard(Menu.RequestText, Menu.AnswerLength, Menu.Password, ref result) == true)
           {
             TVHome.Card.SendMenuAnswer(false, result); // send answer, cancel=false
@@ -4744,7 +4735,7 @@ namespace TvPlugin
     #endregion
   }
 }
-#endregion
+  #endregion
 
 #region CI Menu
 /// <summary>
@@ -4764,7 +4755,7 @@ public class CiMenuHandler : CiMenuCallbackSink
 
       // pass menu to calling dialog
       //if (refDlg != null)
-        TvPlugin.TVHome.CiMenuCallback(Menu);
+      TvPlugin.TVHome.CiMenuCallback(Menu);
     }
     catch
     {
