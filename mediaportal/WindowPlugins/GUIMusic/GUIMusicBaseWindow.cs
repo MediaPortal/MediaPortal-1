@@ -1090,7 +1090,7 @@ namespace MediaPortal.GUI.Music
       }
 
       //set object count label
-      if (totalPlayingTime.TotalSeconds > 0)
+      if (totalPlayingTime.TotalSeconds > 0 && method !=  MusicSort.SortMethod.Album)
       {
         GUIPropertyManager.SetProperty("#itemcount",
                                        Util.Utils.GetSongCountLabel(iTotalItems, (int) totalPlayingTime.TotalSeconds));
