@@ -623,7 +623,7 @@ namespace MediaPortal.Player
       string newRRDescription = "";
       FindExtCmdfromSettings(fps, currentRR, deviceReset, out newRR, out newExtCmd, out newRRDescription);
 
-      if ((currentRR != newRR && newRR > 0) || force_refresh_rate)
+      if (newRR > 0 && (currentRR != newRR || force_refresh_rate))
       //run external command in order to change refresh rate.
       {
         Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: current refreshrate is {0}hz - changing it to {1}hz",
