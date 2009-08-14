@@ -76,7 +76,6 @@ namespace MediaPortal.GUI.Library
     private List<int> _infoList = new List<int>();
 
     private TransformMatrix _transform = new TransformMatrix();
-    private int _animationsCount = 0; // List.Count is very slow. Use cached value instead.
 
     /// <summary>
     /// enum to specify the alignment of the control
@@ -206,7 +205,9 @@ namespace MediaPortal.GUI.Library
 
     public virtual void DoRender(float timePassed, uint currentTime)
     {
-      if (_animationsCount != 0)
+      int count = _animations.Count;
+
+      if (count != 0)
       {
         TransformMatrix transform = getTransformMatrix(currentTime);
         GUIGraphicsContext.AddTransform(transform);
@@ -220,7 +221,7 @@ namespace MediaPortal.GUI.Library
       {
         GUIGraphicsContext.RestoreCameraPosition();
       }
-      if (_animationsCount != 0)
+      if (count != 0)
         GUIGraphicsContext.RemoveTransform();
     }
 
@@ -1562,11 +1563,9 @@ namespace MediaPortal.GUI.Library
     public virtual void SetAnimations(List<VisualEffect> animations)
     {
       _animations = new List<VisualEffect>();
-      _animationsCount = 0;
       foreach (VisualEffect effect in animations)
       {
         _animations.Add((VisualEffect) effect.Clone());
-        _animationsCount++;
       }
     }
 
@@ -1580,12 +1579,10 @@ namespace MediaPortal.GUI.Library
       if (_animations == null)
       {
         _animations = new List<VisualEffect>();
-        _animationsCount = 0;
       }
       foreach (VisualEffect effect in animations)
       {
         _animations.Add((VisualEffect) effect.Clone());
-        _animationsCount++;
       }
     }
 
@@ -1815,7 +1812,7 @@ namespace MediaPortal.GUI.Library
       if (GUIGraphicsContext.Animations)
       {
         _transform.Reset();
-        for (int i = 0; i < _animationsCount; i++)
+        for (int i = 0; i < _animations.Count; i++)
         {
           VisualEffect anim = _animations[i];
           anim.Animate(currentTime, HasRendered);
