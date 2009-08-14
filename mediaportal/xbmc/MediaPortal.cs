@@ -2505,9 +2505,13 @@ public class MediaPortalApp : D3DApp, IRender
 
           //stop playback
           case Action.ActionType.ACTION_STOP:
-            Log.Info("Main: Stopping media");
-            g_Player.Stop();
-            return;
+            if (!g_Player.IsTV)
+            {
+              Log.Info("Main: Stopping media");
+              g_Player.Stop();
+              return;
+            }
+            break;
 
           //play music
           //resume playback
