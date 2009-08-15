@@ -100,5 +100,6 @@
         <label>9131</label>
       </control>
     </control>
+	<import>common.videowindow.small.xml</import>	
   </controls>
 </window>

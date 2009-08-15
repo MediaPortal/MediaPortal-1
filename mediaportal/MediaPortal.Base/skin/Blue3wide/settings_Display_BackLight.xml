@@ -52,5 +52,6 @@
         <ondown>99</ondown>
       </control>
     </control>
+	<import>common.videowindow.small.xml</import>	
   </controls>
 </window>

@@ -297,5 +297,6 @@
         <font>font12</font>
       </control>
     </control>
+        <import>common.videowindow.small.xml</import>
   </controls>
 </window>

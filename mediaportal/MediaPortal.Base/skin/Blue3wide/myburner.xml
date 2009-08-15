@@ -164,5 +164,6 @@
       <onup>4</onup>
       <ondown>2</ondown>
     </control>
+      <import>common.videowindow.small.xml</import>
   </controls>
 </window>

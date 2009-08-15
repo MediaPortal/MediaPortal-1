@@ -116,5 +116,6 @@
         <textcolor>FFB2D4F5</textcolor>
       </control>
     </control>
+        <import>common.videowindow.small.xml</import>
   </controls>
 </window>

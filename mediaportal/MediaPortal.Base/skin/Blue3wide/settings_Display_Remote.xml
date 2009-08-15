@@ -58,5 +58,6 @@
         <label>9148</label>
       </control>
     </control>
+      <import>common.videowindow.small.xml</import>
   </controls>
 </window>
