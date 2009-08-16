@@ -168,15 +168,15 @@ namespace SetupTv.Sections
     {
       const string keyPath = "SOFTWARE\\Policies\\Microsoft\\WindowsMediaCenter";
 
-      RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath);
+      RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath, !checkonly);
 
       if (checkonly)
       {
         if (key != null)
         {
-          string strUninstall = key.GetValue("MediaCenter").ToString();
+          object objValue = key.GetValue("MediaCenter");
           key.Close();
-          if (strUninstall == "1")
+          if (objValue != null && objValue.ToString() == "1")
           {
             _mcsServices = McsPolicyStatus.PolicyInPlace;
           }
@@ -196,7 +196,7 @@ namespace SetupTv.Sections
           {
             key = Registry.LocalMachine.CreateSubKey(keyPath);
           }
-          key.SetValue("MediaCenter", "1");
+          key.SetValue("MediaCenter", "1", RegistryValueKind.DWord);
           key.Close();
           _mcsServices = McsPolicyStatus.PolicyInPlace;
         }
