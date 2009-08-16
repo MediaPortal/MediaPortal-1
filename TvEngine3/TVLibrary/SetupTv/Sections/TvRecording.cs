@@ -336,18 +336,11 @@ namespace SetupTv.Sections
     {
       CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
       textBoxFolder.Text = info.card.RecordingFolder;
-      textBoxTimeShiftFolder.Text = info.card.TimeShiftFolder;
       if (textBoxFolder.Text == "")
       {
         textBoxFolder.Text = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
         if (!Directory.Exists(textBoxFolder.Text))
           Directory.CreateDirectory(textBoxFolder.Text);
-      }
-      if (textBoxTimeShiftFolder.Text == "")
-      {
-        textBoxTimeShiftFolder.Text = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-        if (!Directory.Exists(textBoxTimeShiftFolder.Text))
-          Directory.CreateDirectory(textBoxTimeShiftFolder.Text);
       }
       /*
        * Mantis #0001991: disable mpg recording  (part I: force TS recording format)
@@ -429,44 +422,6 @@ namespace SetupTv.Sections
       }
     }
 
-    // Browse TimeShift folder
-    private void buttonTimeShiftBrowse_Click(object sender, EventArgs e)
-    {
-      FolderBrowserDialog dlg = new FolderBrowserDialog();
-      dlg.SelectedPath = textBoxTimeShiftFolder.Text;
-      dlg.Description = "Specify timeshift folder";
-      dlg.ShowNewFolderButton = true;
-      if (dlg.ShowDialog(this) == DialogResult.OK)
-      {
-        textBoxTimeShiftFolder.Text = dlg.SelectedPath;
-        /*
-         * This code is never executed: recording test instead of timeshifting
-         * 
-        CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
-        if (info.card.RecordingFolder != textBoxFolder.Text)
-        {
-            info.card.RecordingFolder = textBoxFolder.Text;
-            info.card.TimeShiftFolder = textBoxTimeShiftFolder.Text;
-            info.card.Persist();
-            _needRestart = true;
-            LoadComboBoxDrive();
-        }
-        */
-      }
-    }
-
-    // When TimeShift folder has been changed
-    private void textBoxTimeShiftFolder_TextChanged(object sender, EventArgs e)
-    {
-      CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
-      if (info.card.TimeShiftFolder != textBoxTimeShiftFolder.Text)
-      {
-        info.card.TimeShiftFolder = textBoxTimeShiftFolder.Text;
-        info.card.Persist();
-        _needRestart = true;
-      }
-    }
-
     // Click on Same recording folder for all cards
     private void buttonSameRecFolder_Click(object sender, EventArgs e)
     {
@@ -477,25 +432,6 @@ namespace SetupTv.Sections
         if (info.card.RecordingFolder != textBoxFolder.Text)
         {
           info.card.RecordingFolder = textBoxFolder.Text;
-          info.card.Persist();
-          if (!_needRestart)
-          {
-            _needRestart = true;
-          }
-        }
-      }
-    }
-
-    // Click on Same timeshift folder for all cards
-    private void buttonSameTimeshiftFolder_Click(object sender, EventArgs e)
-    {
-      // Change timeshiftFolder for all cards
-      for (int iIndex = 0; iIndex < comboBoxCards.Items.Count; iIndex++)
-      {
-        CardInfo info = (CardInfo)comboBoxCards.Items[iIndex];
-        if (info.card.TimeShiftFolder != textBoxTimeShiftFolder.Text)
-        {
-          info.card.TimeShiftFolder = textBoxTimeShiftFolder.Text;
           info.card.Persist();
           if (!_needRestart)
           {

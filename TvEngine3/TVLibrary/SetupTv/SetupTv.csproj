@@ -141,6 +141,12 @@
     <Compile Include="Sections\CIMenu\CI_Menu_Dialog.designer.cs">
       <DependentUpon>CI_Menu_Dialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\TvTimeshifting.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\TvTimeshifting.Designer.cs">
+      <DependentUpon>TvTimeshifting.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\Helpers\FileFilters.cs" />
     <Compile Include="Sections\Helpers\ScanTypes.cs" />
     <Compile Include="Sections\ImportExport.cs">
@@ -516,6 +522,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Combinations.resx">
       <DependentUpon>Combinations.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\TvTimeshifting.resx">
+      <DependentUpon>TvTimeshifting.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\ImportExport.resx">

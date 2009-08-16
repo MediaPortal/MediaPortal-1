@@ -153,6 +153,7 @@ namespace SetupTv
         AddSection(new ImportExport());
         AddSection(new ScanSettings());
         AddSection(new TvRecording());
+        AddSection(new TvTimeshifting());
         AddSection(new TvSchedules());
         AddSection(new StreamingServer());
 

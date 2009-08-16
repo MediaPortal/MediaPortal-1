@@ -59,10 +59,6 @@ namespace SetupTv.Sections
       checkBoxEnableEpgWhileTimeshifting.Checked = (layer.GetSetting("timeshiftingEpgGrabberEnabled", "no").Value == "yes");
       numericUpDownTSEpgTimeout.Value = Convert.ToDecimal(layer.GetSetting("timeshiftingEpgGrabberTimeout", "2").Value);
 
-      numericUpDownMinFiles.Value = ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftMinFiles", "6").Value), 3, 100);
-      numericUpDownMaxFiles.Value = ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftMaxFiles", "20").Value), 3, 100);
-      numericUpDownMaxFileSize.Value = ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftMaxFileSize", "256").Value), 20, 1024);
-
       checkBoxEnableLinkageScanner.Checked = (layer.GetSetting("linkageScannerEnabled", "no").Value == "yes");
 
       mpComboBoxPrio.Items.Clear();
@@ -83,9 +79,6 @@ namespace SetupTv.Sections
 
       edTitleTemplate.Text = layer.GetSetting("epgTitleTemplate", "%TITLE%").Value;
       edDescriptionTemplate.Text = layer.GetSetting("epgDescriptionTemplate", "%DESCRIPTION%").Value;
-
-      numericUpDownWaitTimeshifting.Value = ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftWaitForTimeshifting", "15").Value), 1, 30);
-      numericUpDownWaitUnscrambled.Value = ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftWaitForUnscrambled", "5").Value), 1, 30);
     }
 
     public override void OnSectionDeActivated()
@@ -144,18 +137,6 @@ namespace SetupTv.Sections
       s.Value = numericUpDownTSEpgTimeout.Value.ToString();
       s.Persist();
 
-      s = layer.GetSetting("timeshiftMinFiles", "6");
-      s.Value = numericUpDownMinFiles.Value.ToString();
-      s.Persist();
-
-      s = layer.GetSetting("timeshiftMaxFiles", "20");
-      s.Value = numericUpDownMaxFiles.Value.ToString();
-      s.Persist();
-
-      s = layer.GetSetting("timeshiftMaxFileSize", "256");
-      s.Value = numericUpDownMaxFileSize.Value.ToString();
-      s.Persist();
-
       s = layer.GetSetting("linkageScannerEnabled", "no");
       s.Value = checkBoxEnableLinkageScanner.Checked ? "yes" : "no";
       s.Persist();
@@ -170,14 +151,6 @@ namespace SetupTv.Sections
 
       s = layer.GetSetting("epgDescriptionTemplate", "%DESCRIPTION%");
       s.Value = edDescriptionTemplate.Text;
-      s.Persist();
-
-      s = layer.GetSetting("timeshiftWaitForTimeshifting", "15");
-      s.Value = numericUpDownWaitTimeshifting.Value.ToString();
-      s.Persist();
-
-      s = layer.GetSetting("timeshiftWaitForUnscrambled", "5");
-      s.Value = numericUpDownWaitUnscrambled.Value.ToString();
       s.Persist();
 
       s = layer.GetSetting("delayCardDetect", "0");
@@ -251,15 +224,6 @@ namespace SetupTv.Sections
       defaults.Add("%NEWLINE%", Environment.NewLine);
       edTitleTest.Text = EvalTemplate(edTitleTemplate.Text, defaults);
       edDescriptionTest.Text = EvalTemplate(edDescriptionTemplate.Text, defaults);
-    }
-
-    private static decimal ValueSanityCheck(decimal Value, int Min, int Max)
-    {
-      if (Value < Min)
-        return Min;
-      if (Value > Max)
-        return Max;
-      return Value;
     }
   }
 }

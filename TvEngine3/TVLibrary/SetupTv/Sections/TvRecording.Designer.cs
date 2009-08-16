@@ -49,6 +49,7 @@ namespace SetupTv.Sections
       this.checkBoxAutoDelete = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tpCustom = new System.Windows.Forms.TabPage();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.labelCustomFormat = new System.Windows.Forms.Label();
       this.textBoxCustomFormat = new System.Windows.Forms.TextBox();
       this.comboBoxFormat = new System.Windows.Forms.ComboBox();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -74,19 +75,14 @@ namespace SetupTv.Sections
       this.label11 = new System.Windows.Forms.Label();
       this.tpRecording = new System.Windows.Forms.TabPage();
       this.groupBoxRecordSettings = new System.Windows.Forms.GroupBox();
-      this.buttonSameTimeshiftFolder = new System.Windows.Forms.Button();
       this.buttonSameRecFolder = new System.Windows.Forms.Button();
       this.textBoxRecordingFormat = new System.Windows.Forms.TextBox();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
-      this.labelTSFolder = new System.Windows.Forms.Label();
       this.comboBoxCards = new System.Windows.Forms.ComboBox();
       this.label23 = new System.Windows.Forms.Label();
       this.textBoxFolder = new System.Windows.Forms.TextBox();
       this.label13 = new System.Windows.Forms.Label();
-      this.buttonTimeShiftBrowse = new System.Windows.Forms.Button();
       this.buttonBrowse = new System.Windows.Forms.Button();
-      this.label22 = new System.Windows.Forms.Label();
-      this.textBoxTimeShiftFolder = new System.Windows.Forms.TextBox();
       this.tpRecordImport = new System.Windows.Forms.TabPage();
       this.buttonChangeChannel = new System.Windows.Forms.Button();
       this.btnRemoveInvalidFiles = new System.Windows.Forms.Button();
@@ -96,7 +92,6 @@ namespace SetupTv.Sections
       this.lblRecFolders = new System.Windows.Forms.Label();
       this.cbRecPaths = new System.Windows.Forms.ComboBox();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-      this.labelCustomFormat = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
       this.tpSettings.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -364,6 +359,15 @@ namespace SetupTv.Sections
       this.groupBox2.TabIndex = 0;
       this.groupBox2.TabStop = false;
       // 
+      // labelCustomFormat
+      // 
+      this.labelCustomFormat.AutoSize = true;
+      this.labelCustomFormat.Location = new System.Drawing.Point(85, 124);
+      this.labelCustomFormat.Name = "labelCustomFormat";
+      this.labelCustomFormat.Size = new System.Drawing.Size(323, 13);
+      this.labelCustomFormat.TabIndex = 11;
+      this.labelCustomFormat.Text = "Use blockquotes[] to specify optional fields and \\\\ for relative paths";
+      // 
       // textBoxCustomFormat
       // 
       this.textBoxCustomFormat.Location = new System.Drawing.Point(88, 101);
@@ -610,24 +614,19 @@ namespace SetupTv.Sections
       this.tpRecording.Name = "tpRecording";
       this.tpRecording.Size = new System.Drawing.Size(457, 374);
       this.tpRecording.TabIndex = 3;
-      this.tpRecording.Text = "Recording folders";
+      this.tpRecording.Text = "Folders";
       this.tpRecording.UseVisualStyleBackColor = true;
       // 
       // groupBoxRecordSettings
       // 
-      this.groupBoxRecordSettings.Controls.Add(this.buttonSameTimeshiftFolder);
       this.groupBoxRecordSettings.Controls.Add(this.buttonSameRecFolder);
       this.groupBoxRecordSettings.Controls.Add(this.textBoxRecordingFormat);
       this.groupBoxRecordSettings.Controls.Add(this.pictureBox1);
-      this.groupBoxRecordSettings.Controls.Add(this.labelTSFolder);
       this.groupBoxRecordSettings.Controls.Add(this.comboBoxCards);
       this.groupBoxRecordSettings.Controls.Add(this.label23);
       this.groupBoxRecordSettings.Controls.Add(this.textBoxFolder);
       this.groupBoxRecordSettings.Controls.Add(this.label13);
-      this.groupBoxRecordSettings.Controls.Add(this.buttonTimeShiftBrowse);
       this.groupBoxRecordSettings.Controls.Add(this.buttonBrowse);
-      this.groupBoxRecordSettings.Controls.Add(this.label22);
-      this.groupBoxRecordSettings.Controls.Add(this.textBoxTimeShiftFolder);
       this.groupBoxRecordSettings.Location = new System.Drawing.Point(6, 3);
       this.groupBoxRecordSettings.Name = "groupBoxRecordSettings";
       this.groupBoxRecordSettings.Size = new System.Drawing.Size(445, 365);
@@ -635,22 +634,10 @@ namespace SetupTv.Sections
       this.groupBoxRecordSettings.TabStop = false;
       this.groupBoxRecordSettings.Text = "Card settings";
       // 
-      // buttonSameTimeshiftFolder
-      // 
-      this.buttonSameTimeshiftFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonSameTimeshiftFolder.DialogResult = System.Windows.Forms.DialogResult.OK;
-      this.buttonSameTimeshiftFolder.Location = new System.Drawing.Point(227, 315);
-      this.buttonSameTimeshiftFolder.Name = "buttonSameTimeshiftFolder";
-      this.buttonSameTimeshiftFolder.Size = new System.Drawing.Size(181, 20);
-      this.buttonSameTimeshiftFolder.TabIndex = 28;
-      this.buttonSameTimeshiftFolder.Text = "Same timeshift folder for all cards";
-      this.buttonSameTimeshiftFolder.UseVisualStyleBackColor = true;
-      this.buttonSameTimeshiftFolder.Click += new System.EventHandler(this.buttonSameTimeshiftFolder_Click);
-      // 
       // buttonSameRecFolder
       // 
       this.buttonSameRecFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonSameRecFolder.Location = new System.Drawing.Point(23, 315);
+      this.buttonSameRecFolder.Location = new System.Drawing.Point(110, 258);
       this.buttonSameRecFolder.Name = "buttonSameRecFolder";
       this.buttonSameRecFolder.Size = new System.Drawing.Size(185, 20);
       this.buttonSameRecFolder.TabIndex = 28;
@@ -660,7 +647,7 @@ namespace SetupTv.Sections
       // 
       // textBoxRecordingFormat
       // 
-      this.textBoxRecordingFormat.Location = new System.Drawing.Point(23, 99);
+      this.textBoxRecordingFormat.Location = new System.Drawing.Point(23, 109);
       this.textBoxRecordingFormat.Name = "textBoxRecordingFormat";
       this.textBoxRecordingFormat.ReadOnly = true;
       this.textBoxRecordingFormat.Size = new System.Drawing.Size(326, 20);
@@ -670,24 +657,12 @@ namespace SetupTv.Sections
       // pictureBox1
       // 
       this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-      this.pictureBox1.Location = new System.Drawing.Point(23, 33);
+      this.pictureBox1.Location = new System.Drawing.Point(23, 43);
       this.pictureBox1.Name = "pictureBox1";
       this.pictureBox1.Size = new System.Drawing.Size(33, 23);
       this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
       this.pictureBox1.TabIndex = 18;
       this.pictureBox1.TabStop = false;
-      // 
-      // labelTSFolder
-      // 
-      this.labelTSFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.labelTSFolder.AutoSize = true;
-      this.labelTSFolder.Location = new System.Drawing.Point(32, 272);
-      this.labelTSFolder.Name = "labelTSFolder";
-      this.labelTSFolder.Size = new System.Drawing.Size(362, 26);
-      this.labelTSFolder.TabIndex = 25;
-      this.labelTSFolder.Text = "Placing a timeshift folder on a dedicated disk will improve your performance \r\n(e" +
-          ".g. with many simultaneous clients / recordings)";
       // 
       // comboBoxCards
       // 
@@ -695,7 +670,7 @@ namespace SetupTv.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxCards.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxCards.FormattingEnabled = true;
-      this.comboBoxCards.Location = new System.Drawing.Point(74, 33);
+      this.comboBoxCards.Location = new System.Drawing.Point(74, 43);
       this.comboBoxCards.Name = "comboBoxCards";
       this.comboBoxCards.Size = new System.Drawing.Size(352, 21);
       this.comboBoxCards.TabIndex = 0;
@@ -704,7 +679,7 @@ namespace SetupTv.Sections
       // label23
       // 
       this.label23.AutoSize = true;
-      this.label23.Location = new System.Drawing.Point(20, 73);
+      this.label23.Location = new System.Drawing.Point(20, 93);
       this.label23.Name = "label23";
       this.label23.Size = new System.Drawing.Size(91, 13);
       this.label23.TabIndex = 23;
@@ -730,17 +705,6 @@ namespace SetupTv.Sections
       this.label13.TabIndex = 3;
       this.label13.Text = "Recording folder:";
       // 
-      // buttonTimeShiftBrowse
-      // 
-      this.buttonTimeShiftBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonTimeShiftBrowse.Location = new System.Drawing.Point(355, 236);
-      this.buttonTimeShiftBrowse.Name = "buttonTimeShiftBrowse";
-      this.buttonTimeShiftBrowse.Size = new System.Drawing.Size(51, 20);
-      this.buttonTimeShiftBrowse.TabIndex = 21;
-      this.buttonTimeShiftBrowse.Text = "Browse";
-      this.buttonTimeShiftBrowse.UseVisualStyleBackColor = true;
-      this.buttonTimeShiftBrowse.Click += new System.EventHandler(this.buttonTimeShiftBrowse_Click);
-      // 
       // buttonBrowse
       // 
       this.buttonBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -751,26 +715,6 @@ namespace SetupTv.Sections
       this.buttonBrowse.Text = "Browse";
       this.buttonBrowse.UseVisualStyleBackColor = true;
       this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
-      // 
-      // label22
-      // 
-      this.label22.AutoSize = true;
-      this.label22.Location = new System.Drawing.Point(20, 218);
-      this.label22.Name = "label22";
-      this.label22.Size = new System.Drawing.Size(81, 13);
-      this.label22.TabIndex = 20;
-      this.label22.Text = "Timeshift folder:";
-      // 
-      // textBoxTimeShiftFolder
-      // 
-      this.textBoxTimeShiftFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxTimeShiftFolder.Location = new System.Drawing.Point(23, 236);
-      this.textBoxTimeShiftFolder.Name = "textBoxTimeShiftFolder";
-      this.textBoxTimeShiftFolder.ReadOnly = true;
-      this.textBoxTimeShiftFolder.Size = new System.Drawing.Size(326, 20);
-      this.textBoxTimeShiftFolder.TabIndex = 19;
-      this.textBoxTimeShiftFolder.TextChanged += new System.EventHandler(this.textBoxTimeShiftFolder_TextChanged);
       // 
       // tpRecordImport
       // 
@@ -873,15 +817,6 @@ namespace SetupTv.Sections
       // 
       this.openFileDialog1.FileName = "openFileDialog1";
       // 
-      // labelCustomFormat
-      // 
-      this.labelCustomFormat.AutoSize = true;
-      this.labelCustomFormat.Location = new System.Drawing.Point(85, 124);
-      this.labelCustomFormat.Name = "labelCustomFormat";
-      this.labelCustomFormat.Size = new System.Drawing.Size(323, 13);
-      this.labelCustomFormat.TabIndex = 11;
-      this.labelCustomFormat.Text = "Use blockquotes[] to specify optional fields and \\\\ for relative paths";
-      // 
       // TvRecording
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -953,11 +888,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.TextBox textBoxFolder;
     private System.Windows.Forms.OpenFileDialog openFileDialog1;
     private System.Windows.Forms.PictureBox pictureBox1;
-    private System.Windows.Forms.Button buttonTimeShiftBrowse;
-    private System.Windows.Forms.Label label22;
-    private System.Windows.Forms.TextBox textBoxTimeShiftFolder;
     private System.Windows.Forms.Label label23;
-    private System.Windows.Forms.Label labelTSFolder;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel5;
     private MediaPortal.UserInterface.Controls.MPNumericTextBox mpNumericTextBoxDiskQuota;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkboxSchedulerPriority;
@@ -978,7 +909,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label12;
     private System.Windows.Forms.ComboBox comboBoxEpisodeKey;
     private System.Windows.Forms.Label labelEpisodeKey;
-    private System.Windows.Forms.Button buttonSameTimeshiftFolder;
     private System.Windows.Forms.Button buttonSameRecFolder;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxScheduler;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxGap;
