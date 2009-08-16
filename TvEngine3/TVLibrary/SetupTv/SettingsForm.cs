@@ -140,15 +140,18 @@ namespace SetupTv
 
         TvChannels tvChannels = new TvChannels();
         AddSection(tvChannels);
-        AddChildSection(tvChannels, new TvCombinations());
+        AddChildSection(tvChannels, new TvCombinations("TV Combinations"));
         AddChildSection(tvChannels, new TvChannelMapping());
-        AddChildSection(tvChannels, new TvEpgGrabber());
-
+        
         RadioChannels radioChannels = new RadioChannels();
         AddSection(radioChannels);
         AddChildSection(radioChannels, new RadioCombinations("Radio Combinations"));
         AddChildSection(radioChannels, new RadioChannelMapping());
-        AddChildSection(radioChannels, new RadioEpgGrabber());
+
+        Epg EpgSection = new Epg();
+        AddSection(EpgSection);
+        AddChildSection(EpgSection, new RadioEpgGrabber());
+        AddChildSection(EpgSection, new TvEpgGrabber());
 
         AddSection(new ImportExport());
         AddSection(new ScanSettings());

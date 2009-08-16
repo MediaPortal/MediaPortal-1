@@ -141,6 +141,12 @@
     <Compile Include="Sections\CIMenu\CI_Menu_Dialog.designer.cs">
       <DependentUpon>CI_Menu_Dialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\Epg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\Epg.Designer.cs">
+      <DependentUpon>Epg.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\TvTimeshifting.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -584,6 +590,9 @@
     <Content Include="images\icon.computer.gif" />
     <EmbeddedResource Include="47_upgrade_mysql_database.sql" />
     <EmbeddedResource Include="47_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="Sections\Epg.resx">
+      <DependentUpon>Epg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\ThirdPartyChecks.resx">
       <DependentUpon>ThirdPartyChecks.cs</DependentUpon>
     </EmbeddedResource>

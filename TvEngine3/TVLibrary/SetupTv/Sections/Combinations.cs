@@ -59,11 +59,7 @@ namespace SetupTv.Sections
     private readonly MPListViewStringColumnSorter lvwColumnSorter3;
 
     bool _redrawTab1;
-    public TvCombinations()
-      : this("TV Combinations")
-    {
-    }
-
+    
     public TvCombinations(string name)
       : base(name)
     {
