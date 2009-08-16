@@ -166,10 +166,9 @@ namespace SetupTv.Sections
 
     private static McsPolicyStatus McsPolicyManipulation(bool checkonly)
     {
-      const string keyPath = "SOFTWARE\\Policies\\Microsoft";
-      const string keyPolicy = "WindowsMediaCenter";
+      const string keyPath = "SOFTWARE\\Policies\\Microsoft\\WindowsMediaCenter";
 
-      RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath + "\\" + keyPolicy, !checkonly);
+      RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath);
 
       if (checkonly)
       {
@@ -195,10 +194,7 @@ namespace SetupTv.Sections
         {
           if (key == null)
           {
-            key = Registry.LocalMachine.OpenSubKey(keyPath, true);
-            key.CreateSubKey(keyPolicy);
-            key.Close();
-            key = Registry.LocalMachine.OpenSubKey(keyPath + "\\" + keyPolicy);
+            key = Registry.LocalMachine.CreateSubKey(keyPath);
           }
           key.SetValue("MediaCenter", "1");
           key.Close();
