@@ -1811,6 +1811,7 @@ namespace TvPlugin
       {
         //_userChannelChanged = true;
         ViewChannelAndCheck(miniGuide.SelectedChannel);
+        UpdateGUIonPlaybackStateChange();
       }
 
       benchClock.Stop();
@@ -1981,7 +1982,10 @@ namespace TvPlugin
       // BAV, 02.03.08: a channel change should not be delayed by rendering.
       //                by moving thisthe 1 min delays in zapping should be fixed
       // Let the navigator zap channel if needed
-      Navigator.CheckChannelChange();
+      if (Navigator.CheckChannelChange())
+      {
+        UpdateGUIonPlaybackStateChange();
+      }
 
       if (GUIGraphicsContext.InVmr9Render)
       {
@@ -2463,18 +2467,6 @@ namespace TvPlugin
             g_Player.Stop();
           }
         }*/
-        if ((g_Player.currentDescription.Length == 0) &&
-            (GUIPropertyManager.GetProperty("#TV.View.description").Length != 0))
-        {
-          GUIPropertyManager.SetProperty("#TV.View.channel", "");
-          GUIPropertyManager.SetProperty("#TV.View.start", String.Empty);
-          GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
-          GUIPropertyManager.SetProperty("#TV.View.title", String.Empty);
-          GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
-          GUIPropertyManager.SetProperty("#TV.View.subtitle", String.Empty);
-          GUIPropertyManager.SetProperty("#TV.View.episode", String.Empty);
-
-        }
       }
 
       //set audio video related media info properties.
@@ -2542,7 +2534,6 @@ namespace TvPlugin
         }
       }
 
-
       if (!g_Player.IsTVRecording) //playing live TV
       {
         if (Navigator.Channel == null)
@@ -2574,7 +2565,7 @@ namespace TvPlugin
           }
 
           GUIPropertyManager.SetProperty("#TV.View.channel", Navigator.CurrentChannel);
-          GUIPropertyManager.SetProperty("#TV.View.title", Navigator.CurrentChannel);
+
           Program current = Navigator.Channel.CurrentProgram;
 
           if (current != null)
@@ -2590,11 +2581,16 @@ namespace TvPlugin
             GUIPropertyManager.SetProperty("#TV.View.description", current.Description);
             GUIPropertyManager.SetProperty("#TV.View.subtitle", current.EpisodeName);
             GUIPropertyManager.SetProperty("#TV.View.episode", current.EpisodeNumber);
-
           }
           else
           {
             GUIPropertyManager.SetProperty("#TV.View.title", GUILocalizeStrings.Get(736)); // no epg for this channel
+            GUIPropertyManager.SetProperty("#TV.View.start", String.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.subtitle", String.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.episode", String.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.genre", String.Empty);
           }
 
           Program next = Navigator.Channel.NextProgram;
@@ -2614,6 +2610,12 @@ namespace TvPlugin
           else
           {
             GUIPropertyManager.SetProperty("#TV.Next.title", GUILocalizeStrings.Get(736)); // no epg for this channel
+            GUIPropertyManager.SetProperty("#TV.Next.start", String.Empty);
+            GUIPropertyManager.SetProperty("#TV.Next.stop", String.Empty);
+            GUIPropertyManager.SetProperty("#TV.Next.description", String.Empty);
+            GUIPropertyManager.SetProperty("#TV.Next.subtitle", String.Empty);
+            GUIPropertyManager.SetProperty("#TV.Next.episode", String.Empty);
+            GUIPropertyManager.SetProperty("#TV.Next.genre", String.Empty);
           }
 
           string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, Navigator.CurrentChannel);

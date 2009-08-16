@@ -609,6 +609,10 @@ namespace TvPlugin
 
       //set object count label
       GUIPropertyManager.SetProperty("#itemcount", Utils.GetObjectCountLabel(total));
+      if (total == 0)
+      {
+        SetProperties(null, null);
+      }
 
       OnSort();
       UpdateButtonStates();
@@ -1213,42 +1217,41 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.Scheduled.Time", String.Empty);
       GUIPropertyManager.SetProperty("#TV.Scheduled.Description", String.Empty);
       GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", String.Empty);
 
-      string strTime = String.Format("{0} {1} - {2}",
-                                     Utils.GetShortDayString(schedule.StartTime),
-                                     schedule.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                     schedule.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
-      GUIPropertyManager.SetProperty("#TV.Scheduled.Time", strTime);
       if (prog != null)
       {
         GUIPropertyManager.SetProperty("#TV.Scheduled.Title", TVUtil.GetDisplayTitle(prog));
         GUIPropertyManager.SetProperty("#TV.Scheduled.Description", prog.Description);
         GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", prog.Genre);
       }
-      else
-      {
-        GUIPropertyManager.SetProperty("#TV.Scheduled.Title", "");
-        GUIPropertyManager.SetProperty("#TV.Scheduled.Description", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", String.Empty);
-      }
 
-      if (schedule.IdChannel < 0)
+      if (schedule != null)
       {
-        GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", schedule.ReferencedChannel().DisplayName);
-        string logo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.ReferencedChannel().DisplayName);
-        if (File.Exists(logo))
+        string strTime = String.Format("{0} {1} - {2}",
+                                 Utils.GetShortDayString(schedule.StartTime),
+                                 schedule.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                 schedule.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+
+        GUIPropertyManager.SetProperty("#TV.Scheduled.Time", strTime);
+
+        if (schedule.IdChannel < 0)
         {
-          GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", logo);
+          GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", schedule.ReferencedChannel().DisplayName);
+          string logo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.ReferencedChannel().DisplayName);
+          if (File.Exists(logo))
+          {
+            GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", logo);
+          }
+          else
+          {
+            GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", "defaultVideoBig.png");
+          }
         }
         else
         {
           GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", "defaultVideoBig.png");
         }
-      }
-      else
-      {
-        GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", "defaultVideoBig.png");
       }
     }
 
