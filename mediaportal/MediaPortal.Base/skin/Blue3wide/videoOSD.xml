@@ -423,7 +423,7 @@
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
-      <visible>string.contains(#Play.Current.VideoCodec, DX50)+Control.IsVisible(989)</visible>
+      <visible>[string.contains(#Play.Current.VideoCodec, DX50)|string.contains(#Play.Current.VideoCodec, DIV3)]+Control.IsVisible(989)</visible>
       <texture>logos\divx.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -439,7 +439,7 @@
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
-      <visible>string.contains(#Play.Current.VideoCodec, DX50)+!Control.IsVisible(989)</visible>
+      <visible>[string.contains(#Play.Current.VideoCodec, DX50)|string.contains(#Play.Current.VideoCodec, DIV3)]+!Control.IsVisible(989)</visible>
       <texture>logos\divx.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
