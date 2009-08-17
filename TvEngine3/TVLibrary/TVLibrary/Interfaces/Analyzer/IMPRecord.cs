@@ -136,6 +136,15 @@ namespace TvLibrary.Interfaces.Analyzer
     int SetVideoAudioObserver(int subChannelId, IAnalogVideoAudioObserver observer);
 
     /// <summary>
+    /// Sets the callback for the video/audio observer when recording
+    /// </summary>
+    /// <param name="subChannelId">SubChannel id</param>
+    /// <param name="observer">Video/audio observer</param>
+    /// <returns></returns>
+    [PreserveSig]
+    int SetRecorderVideoAudioObserver(int subChannelId, IAnalogVideoAudioObserver observer);
+
+    /// <summary>
     /// Adds a new subchannel
     /// </summary>
     /// <param name="subChannelId">SubChannel id</param>

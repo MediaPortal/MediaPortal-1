@@ -96,6 +96,11 @@ void CProgramToTransportStreamRecorder::Write(byte* data, int len)
 		}
 		while (m_buffer.Size()>300000)
 		{
+			if(m_bSendVideoAudioObserverEvents && m_pCallback != NULL){
+				m_bSendVideoAudioObserverEvents = false;
+				m_pCallback->OnNotify(Audio);
+				m_pCallback->OnNotify(Video);
+			}
 			m_env->taskScheduler().doEventLoop(); 
 		}
 	}
@@ -171,4 +176,9 @@ void CProgramToTransportStreamRecorder::ThreadProc()
 	LogDebug("CProgramToTransportStreamRecorder::Thread stopped()");
 	m_BufferThreadActive = false;
 	return;
+}
+
+void CProgramToTransportStreamRecorder::SetVideoAudioObserver(IAnalogVideoAudioObserver* callback){
+	LogDebug("CProgramToTransportStream::SetVideoAudioObserver - %x", callback);
+	m_pCallback = callback;
 }

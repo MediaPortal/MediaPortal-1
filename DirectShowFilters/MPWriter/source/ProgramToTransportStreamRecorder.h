@@ -6,6 +6,8 @@
 #include "TSThread.h"
 #include "FileSinkRecorder.h"
 #include "MemoryStreamSource.h" 
+#include "AnalogVideoAudioObserver.h"
+
 class CProgramToTransportStreamRecorder: public TSThread
 {
 public:
@@ -21,6 +23,7 @@ public:
 	void Flush();
 	virtual void ThreadProc();
 	bool m_BufferThreadActive;
+	void SetVideoAudioObserver(IAnalogVideoAudioObserver* callback);
 
 private:
 	UsageEnvironment* m_env;
@@ -28,8 +31,10 @@ private:
 	CFileSinkRecorder* m_outputSink;
 	CMemoryStreamSource* m_inputSource;
 	FramedSource* m_tsFrames;
+	bool m_bSendVideoAudioObserverEvents;
 	bool m_bRunning;
 	bool m_bStarting;
 	int  m_iPacketsToSkip;
+	IAnalogVideoAudioObserver* m_pCallback;
 
 };

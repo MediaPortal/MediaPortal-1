@@ -275,3 +275,9 @@ STDMETHODIMP CSubChannel::SetVideoAudioObserver(IAnalogVideoAudioObserver* callb
 	return S_OK;
 }
 
+
+STDMETHODIMP CSubChannel::SetRecorderVideoAudioObserver(IAnalogVideoAudioObserver* callback){
+	LogDebug("CSubChannel::SetRecorderVideoAudioObserver() - (%d)",m_id);
+	m_pTsRecorder->SetVideoAudioObserver(callback);
+	return S_OK;
+}

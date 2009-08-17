@@ -673,6 +673,12 @@ STDMETHODIMP CMPFileWriter::SetVideoAudioObserver(int subChannelId, IAnalogVideo
 	return pSubChannel->SetVideoAudioObserver(callback);
 }
 
+STDMETHODIMP CMPFileWriter::SetRecorderVideoAudioObserver(int subChannelId, IAnalogVideoAudioObserver* callback){
+	CSubChannel* pSubChannel=GetSubChannel(subChannelId);
+	if (pSubChannel==NULL) return S_OK;
+	return pSubChannel->SetRecorderVideoAudioObserver(callback);
+}
+
 STDMETHODIMP CMPFileWriter::AddChannel(int* subChannelId)
 {
 	CAutoLock lock(&m_Lock);

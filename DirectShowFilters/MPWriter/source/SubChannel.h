@@ -52,6 +52,7 @@ public:
 	STDMETHODIMP SetTimeShiftParams(int minFiles, int maxFiles, ULONG maxFileSize);
 	STDMETHODIMP TTxSetCallBack(IAnalogTeletextCallBack* callback);
 	STDMETHODIMP SetVideoAudioObserver(IAnalogVideoAudioObserver* callback);
+	STDMETHODIMP SetRecorderVideoAudioObserver(IAnalogVideoAudioObserver* callback);
 
 
 	CProgramToTransportStreamRecorder* m_pTsRecorder;

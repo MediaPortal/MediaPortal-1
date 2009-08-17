@@ -196,6 +196,7 @@ namespace TvLibrary.Implementations.Analog
       }
       _mpRecord.SetRecordingFileName(_subChannelId, fileName);
       _mpRecord.StartRecord(_subChannelId);
+      _mpRecord.SetRecorderVideoAudioObserver(_subChannelId, this);
     }
 
     /// <summary>

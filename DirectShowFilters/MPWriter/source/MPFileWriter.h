@@ -53,6 +53,7 @@ DECLARE_INTERFACE_(IMPFileRecord, IUnknown)
 	STDMETHOD(SetTimeShiftParams)(THIS_ int subChannelId, int minFiles, int maxFiles, ULONG maxFileSize)PURE;
 	STDMETHOD(TTxSetCallBack)(THIS_ int subChannelId, IAnalogTeletextCallBack* callback)PURE;
 	STDMETHOD(SetVideoAudioObserver)(THIS_ int subChannelId, IAnalogVideoAudioObserver* callback)PURE;
+	STDMETHOD(SetRecorderVideoAudioObserver)(THIS_ int subChannelId, IAnalogVideoAudioObserver* callback)PURE;
 	STDMETHOD(AddChannel)(THIS_ int* subChannelId)PURE;
 	STDMETHOD(DeleteChannel)(THIS_ int subChannelId)PURE;
 	STDMETHOD(DeleteAllChannels)(THIS_)PURE;
@@ -154,6 +155,7 @@ public:
 	STDMETHODIMP SetTimeShiftParams(int subChannelId,  int minFiles, int maxFiles, ULONG maxFileSize);
 	STDMETHODIMP TTxSetCallBack(int subChannelId, IAnalogTeletextCallBack* callback);
 	STDMETHODIMP SetVideoAudioObserver(int subChannelId, IAnalogVideoAudioObserver* callback);
+	STDMETHODIMP SetRecorderVideoAudioObserver(int subChannelId, IAnalogVideoAudioObserver* callback);
 	STDMETHODIMP AddChannel(int* subChannelId);
 	STDMETHODIMP DeleteChannel(int subChannelId);
 	STDMETHODIMP DeleteAllChannels();

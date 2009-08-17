@@ -243,6 +243,8 @@ namespace TvLibrary.Implementations.Analog
       {
         Log.Log.Error("subch:{0} StartRecord failed:{1:X}", _subChannelId, hr);
       }
+      _tsFilterInterface.RecorderSetVideoAudioObserver(_subChannelId, this);
+
       _graphState = GraphState.Recording;
     }
 
