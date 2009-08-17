@@ -146,14 +146,8 @@ namespace TvService
             fileName = System.IO.Path.ChangeExtension(fileName, ".mpg");
           }
 
-          if (_cardHandler.Card.CardType == CardType.DvbC ||
-              _cardHandler.Card.CardType == CardType.DvbS ||
-              _cardHandler.Card.CardType == CardType.DvbT
-          )
-          {
-            useErrorDetection = true;
-          }
-
+          useErrorDetection = true;
+          
           if (useErrorDetection)
           {
             if (subchannel is BaseSubChannel)
