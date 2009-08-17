@@ -419,7 +419,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             retval = Reg.RegQueryValueEx(res, "Install_Dir", 0, out tKey, sKey, ref lKey);
             if (retval == 0)
             {
-              workdir = sKey + "\\IR Server";
+              workdir = sKey.ToString();
             }
             else
             {
