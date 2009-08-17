@@ -368,7 +368,7 @@ namespace SetupTv.Sections
       // columnHeader1
       // 
       this.columnHeader1.Text = "Status";
-      this.columnHeader1.Width = 350;
+      this.columnHeader1.Width = 450;
       // 
       // checkBoxCreateGroups
       // 

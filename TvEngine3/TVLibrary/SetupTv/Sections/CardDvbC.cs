@@ -290,7 +290,7 @@ namespace SetupTv.Sections
     }
 
     /// <summary>
-    /// Get Tunining details from manual scan section
+    /// Get Tuning details from manual scan section
     /// </summary>
     /// <returns></returns>
     private DVBCChannel GetManualTuning()
@@ -523,6 +523,7 @@ namespace SetupTv.Sections
             if (dbChannel.IsTv)
             {
               layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
+              layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.DVBC);
               if (checkBoxCreateGroups.Checked)
               {
                 layer.AddChannelToGroup(dbChannel, channel.Provider);
@@ -531,6 +532,7 @@ namespace SetupTv.Sections
             if (dbChannel.IsRadio)
             {
               layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.AllChannels);
+              layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.DVBC);
               if (checkBoxCreateGroups.Checked)
               {
                 layer.AddChannelToRadioGroup(dbChannel, channel.Provider);
@@ -557,6 +559,7 @@ namespace SetupTv.Sections
               else
               {
                 tv.newChannel++;
+                tv.newChannels.Add(channel);
               }
             }
             if (channel.IsRadio)
@@ -568,6 +571,7 @@ namespace SetupTv.Sections
               else
               {
                 radio.newChannel++;
+                radio.newChannels.Add(channel);
               }
             }
             layer.MapChannelToCard(card, dbChannel, false);
@@ -575,9 +579,7 @@ namespace SetupTv.Sections
             item.Text = line;
           }
           tv.updChannelSum += tv.updChannel;
-          tv.newChannelSum += tv.newChannel;
           radio.updChannelSum += radio.updChannel;
-          radio.newChannelSum += radio.newChannel;
         }
       }
       catch (Exception ex)
@@ -593,8 +595,17 @@ namespace SetupTv.Sections
         scanState = ScanState.Done;
         SetButtonState();
       }
-      listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radio.newChannelSum, radio.updChannelSum)));
-      listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", tv.newChannelSum, tv.updChannelSum)));
+      listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels updated:{0}, new:{1}", radio.updChannelSum, radio.newChannelSum)));
+      foreach (IChannel newChannel in radio.newChannels)
+      {
+        listViewStatus.Items.Add(new ListViewItem(String.Format("  -> new channel: {0}",newChannel.Name)));
+      }
+
+      listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels updated:{0}, new:{1}", tv.updChannelSum, tv.newChannelSum)));
+      foreach (IChannel newChannel in tv.newChannels)
+      {
+        listViewStatus.Items.Add(new ListViewItem(String.Format("  -> new channel: {0}", newChannel.Name)));
+      }
       ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
       lastItem.EnsureVisible();
     }
