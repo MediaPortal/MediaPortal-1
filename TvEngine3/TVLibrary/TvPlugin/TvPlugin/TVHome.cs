@@ -311,8 +311,6 @@ namespace TvPlugin
       }
       // attach local eventhandler to server event
       RemoteControl.RegisterCiMenuCallbacks(ciMenuHandler);
-
-      bool res = TVHome.Card.SetCiMenuHandler(null); // null because handler registers tvserver there
     }
 
     public TVHome()
@@ -3153,6 +3151,7 @@ namespace TvPlugin
       //GUIWaitCursor.Show();
       _doingChannelChange = false;
       bool cardChanged = false;
+      bool wasPlaying = false;
 
       if (!_resumed && _suspended && _waitonresume > 0)
       {
@@ -3268,7 +3267,7 @@ namespace TvPlugin
           user.CardId = Card.Id;
         }
 
-        bool wasPlaying = (g_Player.Playing && g_Player.IsTimeShifting && !g_Player.Stopped) &&
+        wasPlaying = (g_Player.Playing && g_Player.IsTimeShifting && !g_Player.Stopped) &&
                           (g_Player.IsTV || g_Player.IsRadio);
 
         //Start timeshifting the new tv channel
@@ -3411,10 +3410,13 @@ namespace TvPlugin
       finally
       {
         StopRenderBlackImage();
-        if (cardChanged == true)
+        if (cardChanged == true || wasPlaying == false)
         {
-          Log.Debug("TvPlugin: CiMenuHandler attached to new card {0}", TVHome.Card.Name);
-          bool res = TVHome.Card.SetCiMenuHandler(null); // null because handler registers tvserver there
+          if (TVHome.Card.CiMenuSupported())
+          {
+            Log.Debug("TvPlugin: CiMenuHandler attached to new card {0}", TVHome.Card.Name);
+            bool res = TVHome.Card.SetCiMenuHandler(null); // null because handler registers tvserver there
+          }
         }
       }
     }
