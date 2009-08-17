@@ -22,6 +22,14 @@ namespace TvLibrary.Interfaces
       /// Name of group where all analog channels are stored
       /// </summary>
       public static string Analog = "Analog";
+      /// <summary>
+      /// Name of group where all DVB-T channels are stored
+      /// </summary>
+      public static string DVBT = "Digital terrestrial";
+      /// <summary>
+      /// Name of group where all DVB-C channels are stored
+      /// </summary>
+      public static string DVBC = "Digital cable";
     }
 
     /// <summary>
@@ -37,6 +45,14 @@ namespace TvLibrary.Interfaces
       /// Name of group where all analog channels are stored
       /// </summary>
       public static string Analog = "Analog";
+      /// <summary>
+      /// Name of group where all DVB-T channels are stored
+      /// </summary>
+      public static string DVBT = "Digital terrestrial";
+      /// <summary>
+      /// Name of group where all DVB-C channels are stored
+      /// </summary>
+      public static string DVBC = "Digital cable";
     }
   }
 }
