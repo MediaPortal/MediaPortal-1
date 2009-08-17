@@ -138,6 +138,8 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.WriteFile("Twinhan card detected");
             _diSEqCMotor = new DiSEqCMotor(_twinhan);
+            Log.Log.WriteFile("Twinhan registering CI menu capabilities");
+            _ciMenu = _twinhan; // Register Twinhan CI Menu capabilities when CAM detected and ready
             return;
           }
           _twinhan = null;
@@ -1042,6 +1044,10 @@ namespace TvLibrary.Implementations.DVB
       if (_winTvCiModule != null)
       {
         _winTvCiModule.Dispose();
+      }
+      if (_twinhan != null)
+      {
+        _twinhan.Dispose();
       }
     }
     #endregion
