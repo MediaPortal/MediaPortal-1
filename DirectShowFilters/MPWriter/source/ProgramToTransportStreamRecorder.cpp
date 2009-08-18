@@ -12,6 +12,7 @@ CProgramToTransportStreamRecorder::CProgramToTransportStreamRecorder(void)
 	m_outputSink=NULL;
 	m_inputSource=NULL;
 	m_tsFrames=NULL;
+	m_bSendVideoAudioObserverEvents = true;
 }
 
 CProgramToTransportStreamRecorder::~CProgramToTransportStreamRecorder(void)
@@ -56,11 +57,13 @@ void CProgramToTransportStreamRecorder::Initialize(char* fileNameOut)
 	m_buffer.Clear();
 	m_iPacketsToSkip=100;
 	//StartBufferThread();
+	m_bSendVideoAudioObserverEvents = true;
 	m_bStarting=true;
 	m_bRunning=true;
 }
 void CProgramToTransportStreamRecorder::Flush()
 {
+	m_bSendVideoAudioObserverEvents = true;
 	// LogDebug("CProgramToTransportStreamRecorder::Flush()");
 	// m_iPacketsToSkip=0;
 	// m_buffer.Clear();
