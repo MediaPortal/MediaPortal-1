@@ -28,25 +28,8 @@
     /// </summary>
     private void InitializeComponent()
     {
-      this.mpGroupBoxEpg = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.groupBox7 = new System.Windows.Forms.GroupBox();
-      this.checkBoxAlwaysUpdate = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxAlwaysFillHoles = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBox5 = new System.Windows.Forms.GroupBox();
-      this.numericUpDownTSEpgTimeout = new System.Windows.Forms.NumericUpDown();
-      this.checkBoxEnableEpgWhileTimeshifting = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.label22 = new System.Windows.Forms.Label();
-      this.label23 = new System.Windows.Forms.Label();
-      this.groupBox2 = new System.Windows.Forms.GroupBox();
-      this.numericUpDownEpgRefresh = new System.Windows.Forms.NumericUpDown();
-      this.numericUpDownEpgTimeOut = new System.Windows.Forms.NumericUpDown();
-      this.checkBoxEnableEPGWhileIdle = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.label15 = new System.Windows.Forms.Label();
-      this.label14 = new System.Windows.Forms.Label();
-      this.label8 = new System.Windows.Forms.Label();
-      this.label7 = new System.Windows.Forms.Label();
       this.groupBox9 = new System.Windows.Forms.GroupBox();
-      this.textBox1 = new System.Windows.Forms.TextBox();
+      this.label31 = new System.Windows.Forms.Label();
       this.edTitleTemplate = new System.Windows.Forms.TextBox();
       this.label27 = new System.Windows.Forms.Label();
       this.label28 = new System.Windows.Forms.Label();
@@ -57,130 +40,169 @@
       this.label29 = new System.Windows.Forms.Label();
       this.edDescriptionTest = new System.Windows.Forms.TextBox();
       this.btnTest = new System.Windows.Forms.Button();
-      this.mpGroupBoxEpg.SuspendLayout();
-      this.groupBox7.SuspendLayout();
-      this.groupBox5.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTSEpgTimeout)).BeginInit();
+      this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.numericUpDownEpgRefresh = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDownEpgTimeOut = new System.Windows.Forms.NumericUpDown();
+      this.checkBoxEnableEPGWhileIdle = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.label15 = new System.Windows.Forms.Label();
+      this.label14 = new System.Windows.Forms.Label();
+      this.label8 = new System.Windows.Forms.Label();
+      this.label7 = new System.Windows.Forms.Label();
+      this.groupBox5 = new System.Windows.Forms.GroupBox();
+      this.numericUpDownTSEpgTimeout = new System.Windows.Forms.NumericUpDown();
+      this.checkBoxEnableEpgWhileTimeshifting = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.label22 = new System.Windows.Forms.Label();
+      this.label23 = new System.Windows.Forms.Label();
+      this.groupBox7 = new System.Windows.Forms.GroupBox();
+      this.checkBoxAlwaysUpdate = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxAlwaysFillHoles = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.tabControlEpg = new System.Windows.Forms.TabControl();
+      this.groupBox9.SuspendLayout();
       this.groupBox2.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEpgRefresh)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEpgTimeOut)).BeginInit();
-      this.groupBox9.SuspendLayout();
+      this.groupBox5.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTSEpgTimeout)).BeginInit();
+      this.groupBox7.SuspendLayout();
+      this.tabPage1.SuspendLayout();
+      this.tabControlEpg.SuspendLayout();
       this.SuspendLayout();
       // 
-      // mpGroupBoxEpg
+      // groupBox9
       // 
-      this.mpGroupBoxEpg.Controls.Add(this.groupBox9);
-      this.mpGroupBoxEpg.Controls.Add(this.groupBox2);
-      this.mpGroupBoxEpg.Controls.Add(this.groupBox5);
-      this.mpGroupBoxEpg.Controls.Add(this.groupBox7);
-      this.mpGroupBoxEpg.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBoxEpg.Location = new System.Drawing.Point(3, 3);
-      this.mpGroupBoxEpg.Name = "mpGroupBoxEpg";
-      this.mpGroupBoxEpg.Size = new System.Drawing.Size(468, 411);
-      this.mpGroupBoxEpg.TabIndex = 0;
-      this.mpGroupBoxEpg.TabStop = false;
-      this.mpGroupBoxEpg.Text = "Main settings";
-      // 
-      // groupBox7
-      // 
-      this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBox9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox7.Controls.Add(this.checkBoxAlwaysUpdate);
-      this.groupBox7.Controls.Add(this.checkBoxAlwaysFillHoles);
-      this.groupBox7.Location = new System.Drawing.Point(6, 19);
-      this.groupBox7.Name = "groupBox7";
-      this.groupBox7.Size = new System.Drawing.Size(454, 48);
-      this.groupBox7.TabIndex = 38;
-      this.groupBox7.TabStop = false;
-      this.groupBox7.Text = "General";
+      this.groupBox9.Controls.Add(this.label31);
+      this.groupBox9.Controls.Add(this.edTitleTemplate);
+      this.groupBox9.Controls.Add(this.label27);
+      this.groupBox9.Controls.Add(this.label28);
+      this.groupBox9.Controls.Add(this.label38);
+      this.groupBox9.Controls.Add(this.edDescriptionTemplate);
+      this.groupBox9.Controls.Add(this.label30);
+      this.groupBox9.Controls.Add(this.edTitleTest);
+      this.groupBox9.Controls.Add(this.label29);
+      this.groupBox9.Controls.Add(this.edDescriptionTest);
+      this.groupBox9.Controls.Add(this.btnTest);
+      this.groupBox9.Location = new System.Drawing.Point(3, 161);
+      this.groupBox9.Name = "groupBox9";
+      this.groupBox9.Size = new System.Drawing.Size(457, 228);
+      this.groupBox9.TabIndex = 41;
+      this.groupBox9.TabStop = false;
+      this.groupBox9.Text = "Display options";
       // 
-      // checkBoxAlwaysUpdate
+      // label31
       // 
-      this.checkBoxAlwaysUpdate.AutoSize = true;
-      this.checkBoxAlwaysUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxAlwaysUpdate.Location = new System.Drawing.Point(140, 19);
-      this.checkBoxAlwaysUpdate.Name = "checkBoxAlwaysUpdate";
-      this.checkBoxAlwaysUpdate.Size = new System.Drawing.Size(310, 17);
-      this.checkBoxAlwaysUpdate.TabIndex = 11;
-      this.checkBoxAlwaysUpdate.Text = "Always try to update existing entries (might raise CPU usage!)";
-      this.checkBoxAlwaysUpdate.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxAlwaysFillHoles
-      // 
-      this.checkBoxAlwaysFillHoles.AutoSize = true;
-      this.checkBoxAlwaysFillHoles.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxAlwaysFillHoles.Location = new System.Drawing.Point(11, 19);
-      this.checkBoxAlwaysFillHoles.Name = "checkBoxAlwaysFillHoles";
-      this.checkBoxAlwaysFillHoles.Size = new System.Drawing.Size(123, 17);
-      this.checkBoxAlwaysFillHoles.TabIndex = 9;
-      this.checkBoxAlwaysFillHoles.Text = "Always try to fill holes";
-      this.checkBoxAlwaysFillHoles.UseVisualStyleBackColor = true;
-      // 
-      // groupBox5
-      // 
-      this.groupBox5.Controls.Add(this.numericUpDownTSEpgTimeout);
-      this.groupBox5.Controls.Add(this.checkBoxEnableEpgWhileTimeshifting);
-      this.groupBox5.Controls.Add(this.label22);
-      this.groupBox5.Controls.Add(this.label23);
-      this.groupBox5.Location = new System.Drawing.Point(6, 73);
-      this.groupBox5.Name = "groupBox5";
-      this.groupBox5.Size = new System.Drawing.Size(226, 98);
-      this.groupBox5.TabIndex = 39;
-      this.groupBox5.TabStop = false;
-      this.groupBox5.Text = "EPG grabbing while timeshifting/recording";
-      // 
-      // numericUpDownTSEpgTimeout
-      // 
-      this.numericUpDownTSEpgTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.label31.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.numericUpDownTSEpgTimeout.Location = new System.Drawing.Point(70, 42);
-      this.numericUpDownTSEpgTimeout.Maximum = new decimal(new int[] {
-            3600,
-            0,
-            0,
-            0});
-      this.numericUpDownTSEpgTimeout.Name = "numericUpDownTSEpgTimeout";
-      this.numericUpDownTSEpgTimeout.Size = new System.Drawing.Size(86, 20);
-      this.numericUpDownTSEpgTimeout.TabIndex = 10;
-      this.numericUpDownTSEpgTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownTSEpgTimeout.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
+      this.label31.Location = new System.Drawing.Point(326, 80);
+      this.label31.Name = "label31";
+      this.label31.Size = new System.Drawing.Size(125, 142);
+      this.label31.TabIndex = 37;
+      this.label31.Text = "%TITLE%\r\n%DESCRIPTION%\r\n%GENRE%\r\n%STARRATING%\r\n%STARRATING_STR%\r\n%CLASSIFICATION%" +
+          "\r\n%PARENTALRATING%\r\n%NEWLINE%";
       // 
-      // checkBoxEnableEpgWhileTimeshifting
+      // edTitleTemplate
       // 
-      this.checkBoxEnableEpgWhileTimeshifting.AutoSize = true;
-      this.checkBoxEnableEpgWhileTimeshifting.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxEnableEpgWhileTimeshifting.Location = new System.Drawing.Point(11, 19);
-      this.checkBoxEnableEpgWhileTimeshifting.Name = "checkBoxEnableEpgWhileTimeshifting";
-      this.checkBoxEnableEpgWhileTimeshifting.Size = new System.Drawing.Size(63, 17);
-      this.checkBoxEnableEpgWhileTimeshifting.TabIndex = 9;
-      this.checkBoxEnableEpgWhileTimeshifting.Text = "Enabled";
-      this.checkBoxEnableEpgWhileTimeshifting.UseVisualStyleBackColor = true;
+      this.edTitleTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.edTitleTemplate.Location = new System.Drawing.Point(75, 19);
+      this.edTitleTemplate.Name = "edTitleTemplate";
+      this.edTitleTemplate.Size = new System.Drawing.Size(245, 20);
+      this.edTitleTemplate.TabIndex = 20;
       // 
-      // label22
+      // label27
       // 
-      this.label22.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.label22.AutoSize = true;
-      this.label22.Location = new System.Drawing.Point(173, 42);
-      this.label22.Name = "label22";
-      this.label22.Size = new System.Drawing.Size(28, 13);
-      this.label22.TabIndex = 7;
-      this.label22.Text = "mins";
+      this.label27.AutoSize = true;
+      this.label27.Location = new System.Drawing.Point(6, 22);
+      this.label27.Name = "label27";
+      this.label27.Size = new System.Drawing.Size(30, 13);
+      this.label27.TabIndex = 19;
+      this.label27.Text = "Title:";
       // 
-      // label23
+      // label28
       // 
-      this.label23.AutoSize = true;
-      this.label23.Location = new System.Drawing.Point(6, 44);
-      this.label23.Name = "label23";
-      this.label23.Size = new System.Drawing.Size(48, 13);
-      this.label23.TabIndex = 5;
-      this.label23.Text = "Timeout:";
+      this.label28.AutoSize = true;
+      this.label28.Location = new System.Drawing.Point(6, 48);
+      this.label28.Name = "label28";
+      this.label28.Size = new System.Drawing.Size(63, 13);
+      this.label28.TabIndex = 21;
+      this.label28.Text = "Description:";
+      // 
+      // label38
+      // 
+      this.label38.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.label38.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.label38.Location = new System.Drawing.Point(326, 16);
+      this.label38.Name = "label38";
+      this.label38.Size = new System.Drawing.Size(125, 61);
+      this.label38.TabIndex = 35;
+      this.label38.Text = "You can use any combination of the placeholders shown below";
+      // 
+      // edDescriptionTemplate
+      // 
+      this.edDescriptionTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.edDescriptionTemplate.Location = new System.Drawing.Point(75, 45);
+      this.edDescriptionTemplate.Name = "edDescriptionTemplate";
+      this.edDescriptionTemplate.Size = new System.Drawing.Size(245, 20);
+      this.edDescriptionTemplate.TabIndex = 22;
+      // 
+      // label30
+      // 
+      this.label30.AutoSize = true;
+      this.label30.Location = new System.Drawing.Point(6, 103);
+      this.label30.Name = "label30";
+      this.label30.Size = new System.Drawing.Size(30, 13);
+      this.label30.TabIndex = 23;
+      this.label30.Text = "Title:";
+      // 
+      // edTitleTest
+      // 
+      this.edTitleTest.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.edTitleTest.Location = new System.Drawing.Point(75, 100);
+      this.edTitleTest.Name = "edTitleTest";
+      this.edTitleTest.ReadOnly = true;
+      this.edTitleTest.Size = new System.Drawing.Size(245, 20);
+      this.edTitleTest.TabIndex = 24;
+      // 
+      // label29
+      // 
+      this.label29.AutoSize = true;
+      this.label29.Location = new System.Drawing.Point(6, 129);
+      this.label29.Name = "label29";
+      this.label29.Size = new System.Drawing.Size(63, 13);
+      this.label29.TabIndex = 25;
+      this.label29.Text = "Description:";
+      // 
+      // edDescriptionTest
+      // 
+      this.edDescriptionTest.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.edDescriptionTest.Location = new System.Drawing.Point(75, 126);
+      this.edDescriptionTest.Multiline = true;
+      this.edDescriptionTest.Name = "edDescriptionTest";
+      this.edDescriptionTest.ReadOnly = true;
+      this.edDescriptionTest.Size = new System.Drawing.Size(245, 96);
+      this.edDescriptionTest.TabIndex = 26;
+      // 
+      // btnTest
+      // 
+      this.btnTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnTest.Location = new System.Drawing.Point(245, 71);
+      this.btnTest.Name = "btnTest";
+      this.btnTest.Size = new System.Drawing.Size(75, 23);
+      this.btnTest.TabIndex = 27;
+      this.btnTest.Text = "Test";
+      this.btnTest.UseVisualStyleBackColor = true;
+      this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
       // 
       // groupBox2
       // 
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.numericUpDownEpgRefresh);
       this.groupBox2.Controls.Add(this.numericUpDownEpgTimeOut);
       this.groupBox2.Controls.Add(this.checkBoxEnableEPGWhileIdle);
@@ -188,9 +210,9 @@
       this.groupBox2.Controls.Add(this.label14);
       this.groupBox2.Controls.Add(this.label8);
       this.groupBox2.Controls.Add(this.label7);
-      this.groupBox2.Location = new System.Drawing.Point(238, 73);
+      this.groupBox2.Location = new System.Drawing.Point(235, 57);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(219, 98);
+      this.groupBox2.Size = new System.Drawing.Size(225, 98);
       this.groupBox2.TabIndex = 40;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "EPG grabbing while idle";
@@ -278,166 +300,156 @@
       this.label7.TabIndex = 2;
       this.label7.Text = "Timeout:";
       // 
-      // groupBox9
+      // groupBox5
       // 
-      this.groupBox9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBox5.Controls.Add(this.numericUpDownTSEpgTimeout);
+      this.groupBox5.Controls.Add(this.checkBoxEnableEpgWhileTimeshifting);
+      this.groupBox5.Controls.Add(this.label22);
+      this.groupBox5.Controls.Add(this.label23);
+      this.groupBox5.Location = new System.Drawing.Point(3, 57);
+      this.groupBox5.Name = "groupBox5";
+      this.groupBox5.Size = new System.Drawing.Size(226, 98);
+      this.groupBox5.TabIndex = 39;
+      this.groupBox5.TabStop = false;
+      this.groupBox5.Text = "EPG grabbing while timeshifting/recording";
+      // 
+      // numericUpDownTSEpgTimeout
+      // 
+      this.numericUpDownTSEpgTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox9.Controls.Add(this.textBox1);
-      this.groupBox9.Controls.Add(this.edTitleTemplate);
-      this.groupBox9.Controls.Add(this.label27);
-      this.groupBox9.Controls.Add(this.label28);
-      this.groupBox9.Controls.Add(this.label38);
-      this.groupBox9.Controls.Add(this.edDescriptionTemplate);
-      this.groupBox9.Controls.Add(this.label30);
-      this.groupBox9.Controls.Add(this.edTitleTest);
-      this.groupBox9.Controls.Add(this.label29);
-      this.groupBox9.Controls.Add(this.edDescriptionTest);
-      this.groupBox9.Controls.Add(this.btnTest);
-      this.groupBox9.Location = new System.Drawing.Point(6, 177);
-      this.groupBox9.Name = "groupBox9";
-      this.groupBox9.Size = new System.Drawing.Size(454, 228);
-      this.groupBox9.TabIndex = 41;
-      this.groupBox9.TabStop = false;
-      this.groupBox9.Text = "Display options";
+      this.numericUpDownTSEpgTimeout.Location = new System.Drawing.Point(70, 42);
+      this.numericUpDownTSEpgTimeout.Maximum = new decimal(new int[] {
+            3600,
+            0,
+            0,
+            0});
+      this.numericUpDownTSEpgTimeout.Name = "numericUpDownTSEpgTimeout";
+      this.numericUpDownTSEpgTimeout.Size = new System.Drawing.Size(86, 20);
+      this.numericUpDownTSEpgTimeout.TabIndex = 10;
+      this.numericUpDownTSEpgTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownTSEpgTimeout.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
       // 
-      // textBox1
+      // checkBoxEnableEpgWhileTimeshifting
       // 
-      this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+      this.checkBoxEnableEpgWhileTimeshifting.AutoSize = true;
+      this.checkBoxEnableEpgWhileTimeshifting.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxEnableEpgWhileTimeshifting.Location = new System.Drawing.Point(11, 19);
+      this.checkBoxEnableEpgWhileTimeshifting.Name = "checkBoxEnableEpgWhileTimeshifting";
+      this.checkBoxEnableEpgWhileTimeshifting.Size = new System.Drawing.Size(63, 17);
+      this.checkBoxEnableEpgWhileTimeshifting.TabIndex = 9;
+      this.checkBoxEnableEpgWhileTimeshifting.Text = "Enabled";
+      this.checkBoxEnableEpgWhileTimeshifting.UseVisualStyleBackColor = true;
+      // 
+      // label22
+      // 
+      this.label22.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.label22.AutoSize = true;
+      this.label22.Location = new System.Drawing.Point(173, 42);
+      this.label22.Name = "label22";
+      this.label22.Size = new System.Drawing.Size(28, 13);
+      this.label22.TabIndex = 7;
+      this.label22.Text = "mins";
+      // 
+      // label23
+      // 
+      this.label23.AutoSize = true;
+      this.label23.Location = new System.Drawing.Point(6, 44);
+      this.label23.Name = "label23";
+      this.label23.Size = new System.Drawing.Size(48, 13);
+      this.label23.TabIndex = 5;
+      this.label23.Text = "Timeout:";
+      // 
+      // groupBox7
+      // 
+      this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-      this.textBox1.Location = new System.Drawing.Point(323, 80);
-      this.textBox1.Multiline = true;
-      this.textBox1.Name = "textBox1";
-      this.textBox1.ReadOnly = true;
-      this.textBox1.Size = new System.Drawing.Size(125, 142);
-      this.textBox1.TabIndex = 37;
-      this.textBox1.Text = "%TITLE%\r\n%DESCRIPTION%\r\n%GENRE%\r\n%STARRATING%\r\n%STARRATING_STR%\r\n%CLASSIFICATION%" +
-          "\r\n%PARENTALRATING%\r\n%NEWLINE%";
-      this.textBox1.WordWrap = false;
+      this.groupBox7.Controls.Add(this.checkBoxAlwaysUpdate);
+      this.groupBox7.Controls.Add(this.checkBoxAlwaysFillHoles);
+      this.groupBox7.Location = new System.Drawing.Point(3, 3);
+      this.groupBox7.Name = "groupBox7";
+      this.groupBox7.Size = new System.Drawing.Size(457, 48);
+      this.groupBox7.TabIndex = 38;
+      this.groupBox7.TabStop = false;
+      this.groupBox7.Text = "General";
       // 
-      // edTitleTemplate
+      // checkBoxAlwaysUpdate
       // 
-      this.edTitleTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.edTitleTemplate.Location = new System.Drawing.Point(75, 19);
-      this.edTitleTemplate.Name = "edTitleTemplate";
-      this.edTitleTemplate.Size = new System.Drawing.Size(242, 20);
-      this.edTitleTemplate.TabIndex = 20;
+      this.checkBoxAlwaysUpdate.AutoSize = true;
+      this.checkBoxAlwaysUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxAlwaysUpdate.Location = new System.Drawing.Point(140, 19);
+      this.checkBoxAlwaysUpdate.Name = "checkBoxAlwaysUpdate";
+      this.checkBoxAlwaysUpdate.Size = new System.Drawing.Size(310, 17);
+      this.checkBoxAlwaysUpdate.TabIndex = 11;
+      this.checkBoxAlwaysUpdate.Text = "Always try to update existing entries (might raise CPU usage!)";
+      this.checkBoxAlwaysUpdate.UseVisualStyleBackColor = true;
       // 
-      // label27
+      // checkBoxAlwaysFillHoles
       // 
-      this.label27.AutoSize = true;
-      this.label27.Location = new System.Drawing.Point(6, 22);
-      this.label27.Name = "label27";
-      this.label27.Size = new System.Drawing.Size(30, 13);
-      this.label27.TabIndex = 19;
-      this.label27.Text = "Title:";
+      this.checkBoxAlwaysFillHoles.AutoSize = true;
+      this.checkBoxAlwaysFillHoles.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxAlwaysFillHoles.Location = new System.Drawing.Point(11, 19);
+      this.checkBoxAlwaysFillHoles.Name = "checkBoxAlwaysFillHoles";
+      this.checkBoxAlwaysFillHoles.Size = new System.Drawing.Size(123, 17);
+      this.checkBoxAlwaysFillHoles.TabIndex = 9;
+      this.checkBoxAlwaysFillHoles.Text = "Always try to fill holes";
+      this.checkBoxAlwaysFillHoles.UseVisualStyleBackColor = true;
       // 
-      // label28
+      // tabPage1
       // 
-      this.label28.AutoSize = true;
-      this.label28.Location = new System.Drawing.Point(6, 48);
-      this.label28.Name = "label28";
-      this.label28.Size = new System.Drawing.Size(63, 13);
-      this.label28.TabIndex = 21;
-      this.label28.Text = "Description:";
+      this.tabPage1.Controls.Add(this.groupBox9);
+      this.tabPage1.Controls.Add(this.groupBox7);
+      this.tabPage1.Controls.Add(this.groupBox2);
+      this.tabPage1.Controls.Add(this.groupBox5);
+      this.tabPage1.Location = new System.Drawing.Point(4, 22);
+      this.tabPage1.Name = "tabPage1";
+      this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPage1.Size = new System.Drawing.Size(466, 391);
+      this.tabPage1.TabIndex = 0;
+      this.tabPage1.Text = "DVB EPG";
+      this.tabPage1.UseVisualStyleBackColor = true;
       // 
-      // label38
+      // tabControlEpg
       // 
-      this.label38.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.label38.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label38.Location = new System.Drawing.Point(323, 16);
-      this.label38.Name = "label38";
-      this.label38.Size = new System.Drawing.Size(125, 61);
-      this.label38.TabIndex = 35;
-      this.label38.Text = "You can use any combination of the placeholders shown below";
-      // 
-      // edDescriptionTemplate
-      // 
-      this.edDescriptionTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.edDescriptionTemplate.Location = new System.Drawing.Point(75, 45);
-      this.edDescriptionTemplate.Name = "edDescriptionTemplate";
-      this.edDescriptionTemplate.Size = new System.Drawing.Size(242, 20);
-      this.edDescriptionTemplate.TabIndex = 22;
-      // 
-      // label30
-      // 
-      this.label30.AutoSize = true;
-      this.label30.Location = new System.Drawing.Point(6, 103);
-      this.label30.Name = "label30";
-      this.label30.Size = new System.Drawing.Size(30, 13);
-      this.label30.TabIndex = 23;
-      this.label30.Text = "Title:";
-      // 
-      // edTitleTest
-      // 
-      this.edTitleTest.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.edTitleTest.Location = new System.Drawing.Point(75, 100);
-      this.edTitleTest.Name = "edTitleTest";
-      this.edTitleTest.ReadOnly = true;
-      this.edTitleTest.Size = new System.Drawing.Size(242, 20);
-      this.edTitleTest.TabIndex = 24;
-      // 
-      // label29
-      // 
-      this.label29.AutoSize = true;
-      this.label29.Location = new System.Drawing.Point(6, 129);
-      this.label29.Name = "label29";
-      this.label29.Size = new System.Drawing.Size(63, 13);
-      this.label29.TabIndex = 25;
-      this.label29.Text = "Description:";
-      // 
-      // edDescriptionTest
-      // 
-      this.edDescriptionTest.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+      this.tabControlEpg.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.edDescriptionTest.Location = new System.Drawing.Point(75, 126);
-      this.edDescriptionTest.Multiline = true;
-      this.edDescriptionTest.Name = "edDescriptionTest";
-      this.edDescriptionTest.ReadOnly = true;
-      this.edDescriptionTest.Size = new System.Drawing.Size(242, 96);
-      this.edDescriptionTest.TabIndex = 26;
-      // 
-      // btnTest
-      // 
-      this.btnTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnTest.Location = new System.Drawing.Point(242, 71);
-      this.btnTest.Name = "btnTest";
-      this.btnTest.Size = new System.Drawing.Size(75, 23);
-      this.btnTest.TabIndex = 27;
-      this.btnTest.Text = "Test";
-      this.btnTest.UseVisualStyleBackColor = true;
-      this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
+      this.tabControlEpg.Controls.Add(this.tabPage1);
+      this.tabControlEpg.Location = new System.Drawing.Point(0, 0);
+      this.tabControlEpg.Name = "tabControlEpg";
+      this.tabControlEpg.SelectedIndex = 0;
+      this.tabControlEpg.Size = new System.Drawing.Size(474, 417);
+      this.tabControlEpg.TabIndex = 1;
       // 
       // Epg
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.Controls.Add(this.mpGroupBoxEpg);
+      this.Controls.Add(this.tabControlEpg);
       this.Name = "Epg";
       this.Size = new System.Drawing.Size(474, 417);
-      this.mpGroupBoxEpg.ResumeLayout(false);
-      this.groupBox7.ResumeLayout(false);
-      this.groupBox7.PerformLayout();
-      this.groupBox5.ResumeLayout(false);
-      this.groupBox5.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTSEpgTimeout)).EndInit();
+      this.groupBox9.ResumeLayout(false);
+      this.groupBox9.PerformLayout();
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEpgRefresh)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEpgTimeOut)).EndInit();
-      this.groupBox9.ResumeLayout(false);
-      this.groupBox9.PerformLayout();
+      this.groupBox5.ResumeLayout(false);
+      this.groupBox5.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTSEpgTimeout)).EndInit();
+      this.groupBox7.ResumeLayout(false);
+      this.groupBox7.PerformLayout();
+      this.tabPage1.ResumeLayout(false);
+      this.tabControlEpg.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
 
     #endregion
 
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBoxEpg;
     private System.Windows.Forms.GroupBox groupBox7;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAlwaysUpdate;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAlwaysFillHoles;
@@ -455,7 +467,7 @@
     private System.Windows.Forms.Label label8;
     private System.Windows.Forms.Label label7;
     private System.Windows.Forms.GroupBox groupBox9;
-    private System.Windows.Forms.TextBox textBox1;
+    private System.Windows.Forms.Label label31;
     private System.Windows.Forms.TextBox edTitleTemplate;
     private System.Windows.Forms.Label label27;
     private System.Windows.Forms.Label label28;
@@ -466,6 +478,8 @@
     private System.Windows.Forms.Label label29;
     private System.Windows.Forms.TextBox edDescriptionTest;
     private System.Windows.Forms.Button btnTest;
+    private System.Windows.Forms.TabPage tabPage1;
+    private System.Windows.Forms.TabControl tabControlEpg;
 
   }
 }

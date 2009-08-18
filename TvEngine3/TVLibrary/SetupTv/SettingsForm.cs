@@ -150,10 +150,9 @@ namespace SetupTv
 
         Epg EpgSection = new Epg();
         AddSection(EpgSection);
-        AddChildSection(EpgSection, new RadioEpgGrabber());
         AddChildSection(EpgSection, new TvEpgGrabber());
+        AddChildSection(EpgSection, new RadioEpgGrabber());
 
-        AddSection(new ImportExport());
         AddSection(new ScanSettings());
         AddSection(new TvRecording());
         AddSection(new TvTimeshifting());
@@ -182,6 +181,7 @@ namespace SetupTv
           }
         }
 
+        AddSection(new ImportExport());
         AddSection(new ThirdPartyChecks());
 
         sectionTree.SelectedNode = sectionTree.Nodes[0];

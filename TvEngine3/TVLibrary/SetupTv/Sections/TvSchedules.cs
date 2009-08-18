@@ -32,7 +32,7 @@ namespace SetupTv.Sections
   public partial class TvSchedules : SectionSettings
   {
     public TvSchedules()
-      : this("TV Schedules")
+      : this("Schedules")
     {
     }
 

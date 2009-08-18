@@ -137,19 +137,19 @@ namespace SetupTv.Sections
       // 
       // tabSettings
       // 
-      this.tabSettings.BackColor = System.Drawing.SystemColors.Control;
+      this.tabSettings.BackColor = System.Drawing.Color.Transparent;
       this.tabSettings.Controls.Add(this.panel1);
       this.tabSettings.Location = new System.Drawing.Point(4, 22);
       this.tabSettings.Name = "tabSettings";
       this.tabSettings.Padding = new System.Windows.Forms.Padding(3);
       this.tabSettings.Size = new System.Drawing.Size(475, 424);
       this.tabSettings.TabIndex = 0;
-      this.tabSettings.Text = "Settings";
+      this.tabSettings.Text = "General";
+      this.tabSettings.UseVisualStyleBackColor = true;
       // 
       // panel1
       // 
       this.panel1.AutoSize = true;
-      this.panel1.BackColor = System.Drawing.SystemColors.Control;
       this.panel1.Controls.Add(this.label1);
       this.panel1.Controls.Add(this.checkBoxDeleteBeforeImport);
       this.panel1.Controls.Add(this.label23);
@@ -244,7 +244,7 @@ namespace SetupTv.Sections
       this.groupBox1.Controls.Add(this.label12);
       this.groupBox1.Location = new System.Drawing.Point(9, 278);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(426, 119);
+      this.groupBox1.Size = new System.Drawing.Size(426, 112);
       this.groupBox1.TabIndex = 30;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Import status report:";
@@ -284,7 +284,7 @@ namespace SetupTv.Sections
       // label5
       // 
       this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(17, 97);
+      this.label5.Location = new System.Drawing.Point(17, 89);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(70, 13);
       this.label5.TabIndex = 20;
@@ -293,7 +293,7 @@ namespace SetupTv.Sections
       // label10
       // 
       this.label10.AutoSize = true;
-      this.label10.Location = new System.Drawing.Point(17, 75);
+      this.label10.Location = new System.Drawing.Point(17, 67);
       this.label10.Name = "label10";
       this.label10.Size = new System.Drawing.Size(123, 13);
       this.label10.TabIndex = 19;
@@ -302,7 +302,7 @@ namespace SetupTv.Sections
       // label11
       // 
       this.label11.AutoSize = true;
-      this.label11.Location = new System.Drawing.Point(17, 52);
+      this.label11.Location = new System.Drawing.Point(17, 44);
       this.label11.Name = "label11";
       this.label11.Size = new System.Drawing.Size(123, 13);
       this.label11.TabIndex = 18;
@@ -311,7 +311,7 @@ namespace SetupTv.Sections
       // label12
       // 
       this.label12.AutoSize = true;
-      this.label12.Location = new System.Drawing.Point(17, 28);
+      this.label12.Location = new System.Drawing.Point(17, 20);
       this.label12.Name = "label12";
       this.label12.Size = new System.Drawing.Size(91, 13);
       this.label12.TabIndex = 17;
@@ -416,7 +416,6 @@ namespace SetupTv.Sections
       // 
       // tabMappings
       // 
-      this.tabMappings.BackColor = System.Drawing.SystemColors.Control;
       this.tabMappings.Controls.Add(this.panel2);
       this.tabMappings.Location = new System.Drawing.Point(4, 22);
       this.tabMappings.Name = "tabMappings";
@@ -424,12 +423,13 @@ namespace SetupTv.Sections
       this.tabMappings.Size = new System.Drawing.Size(475, 424);
       this.tabMappings.TabIndex = 1;
       this.tabMappings.Text = "Mappings";
+      this.tabMappings.UseVisualStyleBackColor = true;
       // 
       // panel2
       // 
       this.panel2.AutoSize = true;
       this.panel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-      this.panel2.BackColor = System.Drawing.SystemColors.Control;
+      this.panel2.BackColor = System.Drawing.Color.Transparent;
       this.panel2.Controls.Add(this.groupBox2);
       this.panel2.Controls.Add(this.dataGridChannelMappings);
       this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -601,7 +601,7 @@ namespace SetupTv.Sections
       this.Id.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
       this.Id.HeaderText = "Id";
       this.Id.Name = "Id";
-      this.Id.Width = 45;
+      this.Id.Width = 41;
       // 
       // tuningChannel
       // 
@@ -632,7 +632,7 @@ namespace SetupTv.Sections
       this.matchType.ReadOnly = true;
       this.matchType.ToolTipText = "Type of match. White = already mapped, Green = exact, Yellow = partial, Red = non" +
           "e";
-      this.matchType.Width = 40;
+      this.matchType.Width = 36;
       // 
       // ShowInGuide
       // 
@@ -641,7 +641,7 @@ namespace SetupTv.Sections
       this.ShowInGuide.Name = "ShowInGuide";
       this.ShowInGuide.ReadOnly = true;
       this.ShowInGuide.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-      this.ShowInGuide.Width = 108;
+      this.ShowInGuide.Width = 104;
       // 
       // tabRemote
       // 
@@ -657,7 +657,7 @@ namespace SetupTv.Sections
       // panel3
       // 
       this.panel3.AutoSize = true;
-      this.panel3.BackColor = System.Drawing.SystemColors.Control;
+      this.panel3.BackColor = System.Drawing.Color.Transparent;
       this.panel3.Controls.Add(this.groupBox4);
       this.panel3.Controls.Add(this.groupBox3);
       this.panel3.Controls.Add(this.label3);

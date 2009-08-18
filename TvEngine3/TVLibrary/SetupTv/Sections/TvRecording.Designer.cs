@@ -122,7 +122,7 @@ namespace SetupTv.Sections
       this.tabControl1.Location = new System.Drawing.Point(3, 3);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(465, 400);
+      this.tabControl1.Size = new System.Drawing.Size(471, 409);
       this.tabControl1.TabIndex = 0;
       this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
@@ -132,9 +132,9 @@ namespace SetupTv.Sections
       this.tpSettings.Location = new System.Drawing.Point(4, 22);
       this.tpSettings.Name = "tpSettings";
       this.tpSettings.Padding = new System.Windows.Forms.Padding(3);
-      this.tpSettings.Size = new System.Drawing.Size(457, 374);
+      this.tpSettings.Size = new System.Drawing.Size(463, 383);
       this.tpSettings.TabIndex = 0;
-      this.tpSettings.Text = "Settings";
+      this.tpSettings.Text = "General";
       this.tpSettings.UseVisualStyleBackColor = true;
       // 
       // groupBox1
@@ -147,12 +147,14 @@ namespace SetupTv.Sections
       this.groupBox1.Controls.Add(this.checkBoxAutoDelete);
       this.groupBox1.Location = new System.Drawing.Point(6, 3);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(445, 365);
+      this.groupBox1.Size = new System.Drawing.Size(451, 374);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       // 
       // groupBoxScheduler
       // 
+      this.groupBoxScheduler.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxScheduler.Controls.Add(this.checkBoxPreventDupes);
       this.groupBoxScheduler.Controls.Add(this.comboBoxFirstWorkingDay);
       this.groupBoxScheduler.Controls.Add(this.label12);
@@ -162,7 +164,7 @@ namespace SetupTv.Sections
       this.groupBoxScheduler.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxScheduler.Location = new System.Drawing.Point(15, 112);
       this.groupBoxScheduler.Name = "groupBoxScheduler";
-      this.groupBoxScheduler.Size = new System.Drawing.Size(412, 166);
+      this.groupBoxScheduler.Size = new System.Drawing.Size(418, 166);
       this.groupBoxScheduler.TabIndex = 14;
       this.groupBoxScheduler.TabStop = false;
       this.groupBoxScheduler.Text = "Scheduler";
@@ -240,6 +242,8 @@ namespace SetupTv.Sections
       // 
       // groupBoxGap
       // 
+      this.groupBoxGap.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxGap.Controls.Add(this.label1);
       this.groupBoxGap.Controls.Add(this.label2);
       this.groupBoxGap.Controls.Add(this.numericUpDownPostRec);
@@ -249,7 +253,7 @@ namespace SetupTv.Sections
       this.groupBoxGap.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxGap.Location = new System.Drawing.Point(15, 19);
       this.groupBoxGap.Name = "groupBoxGap";
-      this.groupBoxGap.Size = new System.Drawing.Size(412, 84);
+      this.groupBoxGap.Size = new System.Drawing.Size(418, 84);
       this.groupBoxGap.TabIndex = 13;
       this.groupBoxGap.TabStop = false;
       this.groupBoxGap.Text = "Pre- and post recording";
@@ -334,7 +338,7 @@ namespace SetupTv.Sections
       this.tpCustom.Location = new System.Drawing.Point(4, 22);
       this.tpCustom.Name = "tpCustom";
       this.tpCustom.Padding = new System.Windows.Forms.Padding(3);
-      this.tpCustom.Size = new System.Drawing.Size(457, 374);
+      this.tpCustom.Size = new System.Drawing.Size(463, 383);
       this.tpCustom.TabIndex = 1;
       this.tpCustom.Text = "Custom paths and filenames";
       this.tpCustom.UseVisualStyleBackColor = true;
@@ -355,12 +359,14 @@ namespace SetupTv.Sections
       this.groupBox2.Controls.Add(this.comboBoxMovies);
       this.groupBox2.Location = new System.Drawing.Point(6, 3);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(445, 365);
+      this.groupBox2.Size = new System.Drawing.Size(448, 374);
       this.groupBox2.TabIndex = 0;
       this.groupBox2.TabStop = false;
       // 
       // labelCustomFormat
       // 
+      this.labelCustomFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.labelCustomFormat.AutoSize = true;
       this.labelCustomFormat.Location = new System.Drawing.Point(85, 124);
       this.labelCustomFormat.Name = "labelCustomFormat";
@@ -370,32 +376,38 @@ namespace SetupTv.Sections
       // 
       // textBoxCustomFormat
       // 
+      this.textBoxCustomFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxCustomFormat.Location = new System.Drawing.Point(88, 101);
       this.textBoxCustomFormat.Name = "textBoxCustomFormat";
-      this.textBoxCustomFormat.Size = new System.Drawing.Size(328, 20);
+      this.textBoxCustomFormat.Size = new System.Drawing.Size(331, 20);
       this.textBoxCustomFormat.TabIndex = 10;
       this.textBoxCustomFormat.TextChanged += new System.EventHandler(this.textBoxCustomFormat_TextChanged);
       this.textBoxCustomFormat.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCustomFormat_KeyPress);
       // 
       // comboBoxFormat
       // 
+      this.comboBoxFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxFormat.FormattingEnabled = true;
       this.comboBoxFormat.Location = new System.Drawing.Point(88, 74);
       this.comboBoxFormat.Name = "comboBoxFormat";
-      this.comboBoxFormat.Size = new System.Drawing.Size(328, 21);
+      this.comboBoxFormat.Size = new System.Drawing.Size(331, 21);
       this.comboBoxFormat.TabIndex = 9;
       this.comboBoxFormat.SelectedIndexChanged += new System.EventHandler(this.comboBoxFormat_SelectedIndexChanged);
       // 
       // groupBox3
       // 
+      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox3.Controls.Add(this.mpLabel1);
       this.groupBox3.Controls.Add(this.mpLabel2);
       this.groupBox3.Controls.Add(this.mpLabel3);
       this.groupBox3.Controls.Add(this.mpLabel4);
       this.groupBox3.Location = new System.Drawing.Point(29, 183);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(387, 165);
+      this.groupBox3.Size = new System.Drawing.Size(390, 165);
       this.groupBox3.TabIndex = 7;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Available tags";
@@ -444,11 +456,13 @@ namespace SetupTv.Sections
       // 
       // textBoxSample
       // 
+      this.textBoxSample.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxSample.Enabled = false;
       this.textBoxSample.Location = new System.Drawing.Point(88, 148);
       this.textBoxSample.Name = "textBoxSample";
       this.textBoxSample.ReadOnly = true;
-      this.textBoxSample.Size = new System.Drawing.Size(328, 20);
+      this.textBoxSample.Size = new System.Drawing.Size(331, 20);
       this.textBoxSample.TabIndex = 6;
       // 
       // label8
@@ -480,6 +494,8 @@ namespace SetupTv.Sections
       // 
       // comboBoxMovies
       // 
+      this.comboBoxMovies.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxMovies.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxMovies.FormattingEnabled = true;
       this.comboBoxMovies.Items.AddRange(new object[] {
@@ -487,7 +503,7 @@ namespace SetupTv.Sections
             "Series"});
       this.comboBoxMovies.Location = new System.Drawing.Point(88, 24);
       this.comboBoxMovies.Name = "comboBoxMovies";
-      this.comboBoxMovies.Size = new System.Drawing.Size(328, 21);
+      this.comboBoxMovies.Size = new System.Drawing.Size(331, 21);
       this.comboBoxMovies.TabIndex = 0;
       this.comboBoxMovies.SelectedIndexChanged += new System.EventHandler(this.comboBoxMovies_SelectedIndexChanged);
       // 
@@ -505,7 +521,7 @@ namespace SetupTv.Sections
       this.tpDiskQuota.Controls.Add(this.label11);
       this.tpDiskQuota.Location = new System.Drawing.Point(4, 22);
       this.tpDiskQuota.Name = "tpDiskQuota";
-      this.tpDiskQuota.Size = new System.Drawing.Size(457, 374);
+      this.tpDiskQuota.Size = new System.Drawing.Size(463, 383);
       this.tpDiskQuota.TabIndex = 2;
       this.tpDiskQuota.Text = "Disk quota";
       this.tpDiskQuota.UseVisualStyleBackColor = true;
@@ -612,13 +628,16 @@ namespace SetupTv.Sections
       this.tpRecording.Controls.Add(this.groupBoxRecordSettings);
       this.tpRecording.Location = new System.Drawing.Point(4, 22);
       this.tpRecording.Name = "tpRecording";
-      this.tpRecording.Size = new System.Drawing.Size(457, 374);
+      this.tpRecording.Size = new System.Drawing.Size(463, 383);
       this.tpRecording.TabIndex = 3;
       this.tpRecording.Text = "Folders";
       this.tpRecording.UseVisualStyleBackColor = true;
       // 
       // groupBoxRecordSettings
       // 
+      this.groupBoxRecordSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxRecordSettings.Controls.Add(this.buttonSameRecFolder);
       this.groupBoxRecordSettings.Controls.Add(this.textBoxRecordingFormat);
       this.groupBoxRecordSettings.Controls.Add(this.pictureBox1);
@@ -728,7 +747,7 @@ namespace SetupTv.Sections
       this.tpRecordImport.Location = new System.Drawing.Point(4, 22);
       this.tpRecordImport.Name = "tpRecordImport";
       this.tpRecordImport.Padding = new System.Windows.Forms.Padding(3);
-      this.tpRecordImport.Size = new System.Drawing.Size(457, 374);
+      this.tpRecordImport.Size = new System.Drawing.Size(463, 383);
       this.tpRecordImport.TabIndex = 4;
       this.tpRecordImport.Text = "Database import";
       this.tpRecordImport.UseVisualStyleBackColor = true;
@@ -736,7 +755,7 @@ namespace SetupTv.Sections
       // buttonChangeChannel
       // 
       this.buttonChangeChannel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonChangeChannel.Location = new System.Drawing.Point(171, 336);
+      this.buttonChangeChannel.Location = new System.Drawing.Point(171, 345);
       this.buttonChangeChannel.Name = "buttonChangeChannel";
       this.buttonChangeChannel.Size = new System.Drawing.Size(100, 23);
       this.buttonChangeChannel.TabIndex = 5;
@@ -747,7 +766,7 @@ namespace SetupTv.Sections
       // btnRemoveInvalidFiles
       // 
       this.btnRemoveInvalidFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnRemoveInvalidFiles.Location = new System.Drawing.Point(307, 336);
+      this.btnRemoveInvalidFiles.Location = new System.Drawing.Point(298, 345);
       this.btnRemoveInvalidFiles.Name = "btnRemoveInvalidFiles";
       this.btnRemoveInvalidFiles.Size = new System.Drawing.Size(135, 23);
       this.btnRemoveInvalidFiles.TabIndex = 4;
@@ -758,7 +777,7 @@ namespace SetupTv.Sections
       // btnImport
       // 
       this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.btnImport.Location = new System.Drawing.Point(30, 336);
+      this.btnImport.Location = new System.Drawing.Point(30, 345);
       this.btnImport.Name = "btnImport";
       this.btnImport.Size = new System.Drawing.Size(135, 23);
       this.btnImport.TabIndex = 3;
@@ -786,7 +805,7 @@ namespace SetupTv.Sections
       this.tvTagRecs.Name = "tvTagRecs";
       this.tvTagRecs.ShowPlusMinus = false;
       this.tvTagRecs.ShowRootLines = false;
-      this.tvTagRecs.Size = new System.Drawing.Size(412, 236);
+      this.tvTagRecs.Size = new System.Drawing.Size(403, 245);
       this.tvTagRecs.TabIndex = 2;
       this.tvTagRecs.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.tvTagRecs_AfterCheck);
       this.tvTagRecs.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvTagRecs_AfterSelect);
@@ -808,7 +827,7 @@ namespace SetupTv.Sections
       this.cbRecPaths.FormattingEnabled = true;
       this.cbRecPaths.Location = new System.Drawing.Point(30, 43);
       this.cbRecPaths.Name = "cbRecPaths";
-      this.cbRecPaths.Size = new System.Drawing.Size(412, 21);
+      this.cbRecPaths.Size = new System.Drawing.Size(403, 21);
       this.cbRecPaths.Sorted = true;
       this.cbRecPaths.TabIndex = 1;
       this.cbRecPaths.SelectedIndexChanged += new System.EventHandler(this.cbRecPaths_SelectedIndexChanged);

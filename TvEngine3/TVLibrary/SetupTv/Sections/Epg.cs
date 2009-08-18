@@ -7,7 +7,7 @@ namespace SetupTv.Sections
   public partial class Epg : SectionSettings
   {
     public Epg()
-      : this("EPG settings")
+      : this("DVB EPG")
     {
     }
 

@@ -171,7 +171,7 @@ namespace SetupTv.Sections
     #region Constructors
 
     public TvRecording()
-      : this("Recording settings")
+      : this("Recording")
     {
     }
 

@@ -30,15 +30,6 @@ namespace SetupTv.Sections
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TvTimeshifting));
       this.tabControl1 = new System.Windows.Forms.TabControl();
-      this.tpTimeshifingFolders = new System.Windows.Forms.TabPage();
-      this.groupBoxTimeshiftSettings = new System.Windows.Forms.GroupBox();
-      this.buttonSameTimeshiftFolder = new System.Windows.Forms.Button();
-      this.pictureBox1 = new System.Windows.Forms.PictureBox();
-      this.labelTSFolder = new System.Windows.Forms.Label();
-      this.comboBoxCards = new System.Windows.Forms.ComboBox();
-      this.buttonTimeShiftBrowse = new System.Windows.Forms.Button();
-      this.label22 = new System.Windows.Forms.Label();
-      this.textBoxTimeShiftFolder = new System.Windows.Forms.TextBox();
       this.tpTimeshifing = new System.Windows.Forms.TabPage();
       this.groupBox10 = new System.Windows.Forms.GroupBox();
       this.numericUpDownWaitTimeshifting = new System.Windows.Forms.NumericUpDown();
@@ -56,6 +47,15 @@ namespace SetupTv.Sections
       this.label37 = new System.Windows.Forms.Label();
       this.label39 = new System.Windows.Forms.Label();
       this.label46 = new System.Windows.Forms.Label();
+      this.tpTimeshifingFolders = new System.Windows.Forms.TabPage();
+      this.groupBoxTimeshiftSettings = new System.Windows.Forms.GroupBox();
+      this.buttonSameTimeshiftFolder = new System.Windows.Forms.Button();
+      this.pictureBox1 = new System.Windows.Forms.PictureBox();
+      this.labelTSFolder = new System.Windows.Forms.Label();
+      this.comboBoxCards = new System.Windows.Forms.ComboBox();
+      this.buttonTimeShiftBrowse = new System.Windows.Forms.Button();
+      this.label22 = new System.Windows.Forms.Label();
+      this.textBoxTimeShiftFolder = new System.Windows.Forms.TextBox();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.tabPageApplication = new System.Windows.Forms.TabPage();
       this.groupBox8 = new System.Windows.Forms.GroupBox();
@@ -129,9 +129,6 @@ namespace SetupTv.Sections
       this.label19 = new System.Windows.Forms.Label();
       this.label25 = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
-      this.tpTimeshifingFolders.SuspendLayout();
-      this.groupBoxTimeshiftSettings.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.tpTimeshifing.SuspendLayout();
       this.groupBox10.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWaitTimeshifting)).BeginInit();
@@ -139,6 +136,9 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFileSize)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFiles)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinFiles)).BeginInit();
+      this.tpTimeshifingFolders.SuspendLayout();
+      this.groupBoxTimeshiftSettings.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.tabPageApplication.SuspendLayout();
       this.groupBox8.SuspendLayout();
       this.groupBox6.SuspendLayout();
@@ -178,110 +178,6 @@ namespace SetupTv.Sections
       this.tabControl1.TabIndex = 0;
       this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
-      // tpTimeshifingFolders
-      // 
-      this.tpTimeshifingFolders.Controls.Add(this.groupBoxTimeshiftSettings);
-      this.tpTimeshifingFolders.Location = new System.Drawing.Point(4, 22);
-      this.tpTimeshifingFolders.Name = "tpTimeshifingFolders";
-      this.tpTimeshifingFolders.Size = new System.Drawing.Size(457, 374);
-      this.tpTimeshifingFolders.TabIndex = 3;
-      this.tpTimeshifingFolders.Text = "Folders";
-      this.tpTimeshifingFolders.UseVisualStyleBackColor = true;
-      // 
-      // groupBoxTimeshiftSettings
-      // 
-      this.groupBoxTimeshiftSettings.Controls.Add(this.buttonSameTimeshiftFolder);
-      this.groupBoxTimeshiftSettings.Controls.Add(this.pictureBox1);
-      this.groupBoxTimeshiftSettings.Controls.Add(this.labelTSFolder);
-      this.groupBoxTimeshiftSettings.Controls.Add(this.comboBoxCards);
-      this.groupBoxTimeshiftSettings.Controls.Add(this.buttonTimeShiftBrowse);
-      this.groupBoxTimeshiftSettings.Controls.Add(this.label22);
-      this.groupBoxTimeshiftSettings.Controls.Add(this.textBoxTimeShiftFolder);
-      this.groupBoxTimeshiftSettings.Location = new System.Drawing.Point(6, 3);
-      this.groupBoxTimeshiftSettings.Name = "groupBoxTimeshiftSettings";
-      this.groupBoxTimeshiftSettings.Size = new System.Drawing.Size(445, 365);
-      this.groupBoxTimeshiftSettings.TabIndex = 26;
-      this.groupBoxTimeshiftSettings.TabStop = false;
-      this.groupBoxTimeshiftSettings.Text = "Card settings";
-      this.groupBoxTimeshiftSettings.Enter += new System.EventHandler(this.groupBoxTimeshiftSettings_Enter);
-      // 
-      // buttonSameTimeshiftFolder
-      // 
-      this.buttonSameTimeshiftFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonSameTimeshiftFolder.DialogResult = System.Windows.Forms.DialogResult.OK;
-      this.buttonSameTimeshiftFolder.Location = new System.Drawing.Point(110, 228);
-      this.buttonSameTimeshiftFolder.Name = "buttonSameTimeshiftFolder";
-      this.buttonSameTimeshiftFolder.Size = new System.Drawing.Size(181, 20);
-      this.buttonSameTimeshiftFolder.TabIndex = 28;
-      this.buttonSameTimeshiftFolder.Text = "Same timeshift folder for all cards";
-      this.buttonSameTimeshiftFolder.UseVisualStyleBackColor = true;
-      this.buttonSameTimeshiftFolder.Click += new System.EventHandler(this.buttonSameTimeshiftFolder_Click);
-      // 
-      // pictureBox1
-      // 
-      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-      this.pictureBox1.Location = new System.Drawing.Point(23, 43);
-      this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(33, 23);
-      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-      this.pictureBox1.TabIndex = 18;
-      this.pictureBox1.TabStop = false;
-      // 
-      // labelTSFolder
-      // 
-      this.labelTSFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.labelTSFolder.AutoSize = true;
-      this.labelTSFolder.Location = new System.Drawing.Point(20, 170);
-      this.labelTSFolder.Name = "labelTSFolder";
-      this.labelTSFolder.Size = new System.Drawing.Size(362, 26);
-      this.labelTSFolder.TabIndex = 25;
-      this.labelTSFolder.Text = "Placing a timeshift folder on a dedicated disk will improve your performance \r\n(e" +
-          ".g. with many simultaneous clients / recordings)";
-      // 
-      // comboBoxCards
-      // 
-      this.comboBoxCards.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxCards.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxCards.FormattingEnabled = true;
-      this.comboBoxCards.Location = new System.Drawing.Point(74, 43);
-      this.comboBoxCards.Name = "comboBoxCards";
-      this.comboBoxCards.Size = new System.Drawing.Size(352, 21);
-      this.comboBoxCards.TabIndex = 0;
-      this.comboBoxCards.SelectedIndexChanged += new System.EventHandler(this.comboBoxCards_SelectedIndexChanged);
-      // 
-      // buttonTimeShiftBrowse
-      // 
-      this.buttonTimeShiftBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonTimeShiftBrowse.Location = new System.Drawing.Point(355, 120);
-      this.buttonTimeShiftBrowse.Name = "buttonTimeShiftBrowse";
-      this.buttonTimeShiftBrowse.Size = new System.Drawing.Size(51, 20);
-      this.buttonTimeShiftBrowse.TabIndex = 21;
-      this.buttonTimeShiftBrowse.Text = "Browse";
-      this.buttonTimeShiftBrowse.UseVisualStyleBackColor = true;
-      this.buttonTimeShiftBrowse.Click += new System.EventHandler(this.buttonTimeShiftBrowse_Click);
-      // 
-      // label22
-      // 
-      this.label22.AutoSize = true;
-      this.label22.Location = new System.Drawing.Point(20, 101);
-      this.label22.Name = "label22";
-      this.label22.Size = new System.Drawing.Size(81, 13);
-      this.label22.TabIndex = 20;
-      this.label22.Text = "Timeshift folder:";
-      // 
-      // textBoxTimeShiftFolder
-      // 
-      this.textBoxTimeShiftFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxTimeShiftFolder.Location = new System.Drawing.Point(23, 120);
-      this.textBoxTimeShiftFolder.Name = "textBoxTimeShiftFolder";
-      this.textBoxTimeShiftFolder.ReadOnly = true;
-      this.textBoxTimeShiftFolder.Size = new System.Drawing.Size(326, 20);
-      this.textBoxTimeShiftFolder.TabIndex = 19;
-      this.textBoxTimeShiftFolder.TextChanged += new System.EventHandler(this.textBoxTimeShiftFolder_TextChanged);
-      // 
       // tpTimeshifing
       // 
       this.tpTimeshifing.Controls.Add(this.groupBox10);
@@ -290,7 +186,7 @@ namespace SetupTv.Sections
       this.tpTimeshifing.Padding = new System.Windows.Forms.Padding(3);
       this.tpTimeshifing.Size = new System.Drawing.Size(457, 374);
       this.tpTimeshifing.TabIndex = 4;
-      this.tpTimeshifing.Text = "Settings";
+      this.tpTimeshifing.Text = "General";
       this.tpTimeshifing.UseVisualStyleBackColor = true;
       // 
       // groupBox10
@@ -511,6 +407,113 @@ namespace SetupTv.Sections
       this.label46.Size = new System.Drawing.Size(48, 13);
       this.label46.TabIndex = 15;
       this.label46.Text = "Minimum";
+      // 
+      // tpTimeshifingFolders
+      // 
+      this.tpTimeshifingFolders.Controls.Add(this.groupBoxTimeshiftSettings);
+      this.tpTimeshifingFolders.Location = new System.Drawing.Point(4, 22);
+      this.tpTimeshifingFolders.Name = "tpTimeshifingFolders";
+      this.tpTimeshifingFolders.Size = new System.Drawing.Size(457, 374);
+      this.tpTimeshifingFolders.TabIndex = 3;
+      this.tpTimeshifingFolders.Text = "Folders";
+      this.tpTimeshifingFolders.UseVisualStyleBackColor = true;
+      // 
+      // groupBoxTimeshiftSettings
+      // 
+      this.groupBoxTimeshiftSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxTimeshiftSettings.Controls.Add(this.buttonSameTimeshiftFolder);
+      this.groupBoxTimeshiftSettings.Controls.Add(this.pictureBox1);
+      this.groupBoxTimeshiftSettings.Controls.Add(this.labelTSFolder);
+      this.groupBoxTimeshiftSettings.Controls.Add(this.comboBoxCards);
+      this.groupBoxTimeshiftSettings.Controls.Add(this.buttonTimeShiftBrowse);
+      this.groupBoxTimeshiftSettings.Controls.Add(this.label22);
+      this.groupBoxTimeshiftSettings.Controls.Add(this.textBoxTimeShiftFolder);
+      this.groupBoxTimeshiftSettings.Location = new System.Drawing.Point(6, 3);
+      this.groupBoxTimeshiftSettings.Name = "groupBoxTimeshiftSettings";
+      this.groupBoxTimeshiftSettings.Size = new System.Drawing.Size(445, 365);
+      this.groupBoxTimeshiftSettings.TabIndex = 26;
+      this.groupBoxTimeshiftSettings.TabStop = false;
+      this.groupBoxTimeshiftSettings.Text = "Card settings";
+      this.groupBoxTimeshiftSettings.Enter += new System.EventHandler(this.groupBoxTimeshiftSettings_Enter);
+      // 
+      // buttonSameTimeshiftFolder
+      // 
+      this.buttonSameTimeshiftFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonSameTimeshiftFolder.DialogResult = System.Windows.Forms.DialogResult.OK;
+      this.buttonSameTimeshiftFolder.Location = new System.Drawing.Point(110, 228);
+      this.buttonSameTimeshiftFolder.Name = "buttonSameTimeshiftFolder";
+      this.buttonSameTimeshiftFolder.Size = new System.Drawing.Size(181, 20);
+      this.buttonSameTimeshiftFolder.TabIndex = 28;
+      this.buttonSameTimeshiftFolder.Text = "Same timeshift folder for all cards";
+      this.buttonSameTimeshiftFolder.UseVisualStyleBackColor = true;
+      this.buttonSameTimeshiftFolder.Click += new System.EventHandler(this.buttonSameTimeshiftFolder_Click);
+      // 
+      // pictureBox1
+      // 
+      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+      this.pictureBox1.Location = new System.Drawing.Point(23, 43);
+      this.pictureBox1.Name = "pictureBox1";
+      this.pictureBox1.Size = new System.Drawing.Size(33, 23);
+      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+      this.pictureBox1.TabIndex = 18;
+      this.pictureBox1.TabStop = false;
+      // 
+      // labelTSFolder
+      // 
+      this.labelTSFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelTSFolder.AutoSize = true;
+      this.labelTSFolder.Location = new System.Drawing.Point(20, 170);
+      this.labelTSFolder.Name = "labelTSFolder";
+      this.labelTSFolder.Size = new System.Drawing.Size(362, 26);
+      this.labelTSFolder.TabIndex = 25;
+      this.labelTSFolder.Text = "Placing a timeshift folder on a dedicated disk will improve your performance \r\n(e" +
+          ".g. with many simultaneous clients / recordings)";
+      // 
+      // comboBoxCards
+      // 
+      this.comboBoxCards.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxCards.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxCards.FormattingEnabled = true;
+      this.comboBoxCards.Location = new System.Drawing.Point(74, 43);
+      this.comboBoxCards.Name = "comboBoxCards";
+      this.comboBoxCards.Size = new System.Drawing.Size(352, 21);
+      this.comboBoxCards.TabIndex = 0;
+      this.comboBoxCards.SelectedIndexChanged += new System.EventHandler(this.comboBoxCards_SelectedIndexChanged);
+      // 
+      // buttonTimeShiftBrowse
+      // 
+      this.buttonTimeShiftBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonTimeShiftBrowse.Location = new System.Drawing.Point(355, 120);
+      this.buttonTimeShiftBrowse.Name = "buttonTimeShiftBrowse";
+      this.buttonTimeShiftBrowse.Size = new System.Drawing.Size(51, 20);
+      this.buttonTimeShiftBrowse.TabIndex = 21;
+      this.buttonTimeShiftBrowse.Text = "Browse";
+      this.buttonTimeShiftBrowse.UseVisualStyleBackColor = true;
+      this.buttonTimeShiftBrowse.Click += new System.EventHandler(this.buttonTimeShiftBrowse_Click);
+      // 
+      // label22
+      // 
+      this.label22.AutoSize = true;
+      this.label22.Location = new System.Drawing.Point(20, 101);
+      this.label22.Name = "label22";
+      this.label22.Size = new System.Drawing.Size(81, 13);
+      this.label22.TabIndex = 20;
+      this.label22.Text = "Timeshift folder:";
+      // 
+      // textBoxTimeShiftFolder
+      // 
+      this.textBoxTimeShiftFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxTimeShiftFolder.Location = new System.Drawing.Point(23, 120);
+      this.textBoxTimeShiftFolder.Name = "textBoxTimeShiftFolder";
+      this.textBoxTimeShiftFolder.ReadOnly = true;
+      this.textBoxTimeShiftFolder.Size = new System.Drawing.Size(326, 20);
+      this.textBoxTimeShiftFolder.TabIndex = 19;
+      this.textBoxTimeShiftFolder.TextChanged += new System.EventHandler(this.textBoxTimeShiftFolder_TextChanged);
       // 
       // openFileDialog1
       // 
@@ -1389,10 +1392,6 @@ namespace SetupTv.Sections
       this.Name = "TvTimeshifting";
       this.Size = new System.Drawing.Size(474, 412);
       this.tabControl1.ResumeLayout(false);
-      this.tpTimeshifingFolders.ResumeLayout(false);
-      this.groupBoxTimeshiftSettings.ResumeLayout(false);
-      this.groupBoxTimeshiftSettings.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.tpTimeshifing.ResumeLayout(false);
       this.groupBox10.ResumeLayout(false);
       this.groupBox10.PerformLayout();
@@ -1401,6 +1400,10 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFileSize)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFiles)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinFiles)).EndInit();
+      this.tpTimeshifingFolders.ResumeLayout(false);
+      this.groupBoxTimeshiftSettings.ResumeLayout(false);
+      this.groupBoxTimeshiftSettings.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.tabPageApplication.ResumeLayout(false);
       this.groupBox8.ResumeLayout(false);
       this.groupBox8.PerformLayout();

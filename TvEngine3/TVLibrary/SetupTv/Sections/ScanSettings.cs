@@ -28,7 +28,7 @@ namespace SetupTv.Sections
   public partial class ScanSettings : SectionSettings
   {
     public ScanSettings()
-      : this("General settings")
+      : this("General")
     {
     }
     public ScanSettings(string name)

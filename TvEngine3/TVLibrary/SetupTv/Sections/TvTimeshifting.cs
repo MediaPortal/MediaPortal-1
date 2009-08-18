@@ -69,7 +69,7 @@ namespace SetupTv.Sections
     #region Constructors
 
     public TvTimeshifting()
-      : this("Timeshifting settings")
+      : this("Timeshifting")
     {
     }
 
