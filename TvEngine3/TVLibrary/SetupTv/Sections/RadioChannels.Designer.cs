@@ -164,7 +164,7 @@ namespace SetupTv.Sections
       // 
       this.addToFavoritesToolStripMenuItem.Name = "addToFavoritesToolStripMenuItem";
       this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
-      this.addToFavoritesToolStripMenuItem.Text = "Add to favorites";
+      this.addToFavoritesToolStripMenuItem.Text = "Add to group";
       // 
       // deleteThisChannelToolStripMenuItem
       // 

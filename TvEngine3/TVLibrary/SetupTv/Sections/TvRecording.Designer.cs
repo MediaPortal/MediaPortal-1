@@ -318,7 +318,7 @@ namespace SetupTv.Sections
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(145, 13);
       this.label4.TabIndex = 5;
-      this.label4.Text = "minute(s) afters program ends";
+      this.label4.Text = "minute(s) after program ends";
       // 
       // checkBoxAutoDelete
       // 

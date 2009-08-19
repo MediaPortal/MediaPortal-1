@@ -84,7 +84,7 @@ namespace TvPlugin
     private string currentFolder;
     private string lastFolder = "..";
     private int selectedItemIndex = -1;
-    private bool showAllChannelsGroup = true;
+    private bool hideAllChannelsGroup = false;
     private string rootGroup = "(none)";
     public static RadioChannelGroup selectedGroup;
 
@@ -331,7 +331,7 @@ namespace TvPlugin
         {
           currentFolder = xmlreader.GetValueAsString("myradio", "lastgroup", null);
         }
-        showAllChannelsGroup = xmlreader.GetValueAsBool("myradio", "showallchannelsgroup", true);
+        hideAllChannelsGroup = xmlreader.GetValueAsBool("myradio", "hideAllChannelsGroup", false);
         rootGroup = xmlreader.GetValueAsString("myradio", "rootgroup", "(none)");
       }
     }
@@ -696,13 +696,11 @@ namespace TvPlugin
         IList<RadioChannelGroup> groups = RadioChannelGroup.ListAll();
         foreach (RadioChannelGroup group in groups)
         {
-          if (!showAllChannelsGroup)
+          if (hideAllChannelsGroup && group.GroupName.Equals(TvConstants.RadioGroupNames.AllChannels) && groups.Count > 1)
           {
-            if (group.GroupName == TvConstants.RadioGroupNames.AllChannels)
-            {
-              continue;
-            }
+            continue;
           }
+
           if (group.GroupName == rootGroup)
           {
             continue;
