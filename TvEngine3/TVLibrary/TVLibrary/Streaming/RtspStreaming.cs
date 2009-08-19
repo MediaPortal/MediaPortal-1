@@ -23,6 +23,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Net;
+using System.Net.Sockets;
+using System.Management;
 
 namespace TvLibrary.Streaming
 {
@@ -74,18 +76,40 @@ namespace TvLibrary.Streaming
       int result;
       try
       {
+        IList<IPAddress> preferedAddresses = GetDefGatewayNetAddresses();
         IPHostEntry local = Dns.GetHostByName(hostName);
+        IPAddress selectedAddress = null;
+
         foreach (IPAddress ipaddress in local.AddressList)
         {
-          result=StreamSetupEx(ipaddress.ToString());
+          if (ipaddress.AddressFamily == AddressFamily.InterNetwork)
+          {
+            if (selectedAddress == null)
+            {
+              selectedAddress = ipaddress;
+            }
+            if (preferedAddresses.Contains(ipaddress))
+            {
+              selectedAddress = ipaddress;
+              break;
+            }
+          }
+        }
+
+        if (selectedAddress != null)
+        {
+          result = StreamSetupEx(selectedAddress.ToString());
           if (result == 1)
           {
             throw new Exception("Error initializing streaming server");
           }
-          break;
-        }
         _initialized = true;
         _streams = new Dictionary<string, RtspStream>();
+        }
+        else
+        {
+          throw new Exception("RtspStreaming: Could not find an ip address to listen on.");
+        }
       } catch (Exception ex)
       {
         Log.Log.Write(ex);
@@ -286,6 +310,47 @@ namespace TvLibrary.Streaming
     {
       get { return _streams.Count; }
     }
+    #endregion
+
+    #region private members
+
+    IList<IPAddress> GetDefGatewayNetAddresses()
+    {
+      List<IPAddress> addresses = new List<IPAddress>();
+      try
+      {
+
+        ManagementObjectSearcher searcher = 
+          new ManagementObjectSearcher("root\\CIMV2", 
+          "SELECT DefaultIPGateway, IPAddress FROM Win32_NetworkAdapterConfiguration"); 
+
+        foreach (ManagementObject queryObj in searcher.Get())
+        {
+          if(queryObj["DefaultIPGateway"] != null && queryObj["IPAddress"] != null)
+          {
+            String[] arrDefaultIPGateway = (String[])(queryObj["DefaultIPGateway"]);
+            String[] arrIPAddress = (String[])(queryObj["IPAddress"]);
+            if (arrDefaultIPGateway.Length > 0 && arrIPAddress.Length > 0)
+            {
+              foreach (string address in arrIPAddress)
+              {
+                IPAddress ipAddress = IPAddress.Parse(address);
+                if (ipAddress.AddressFamily == AddressFamily.InterNetwork)
+                {
+                  addresses.Add(ipAddress);
+                }
+              }
+            }
+          }
+        }
+      }
+      catch (ManagementException e)
+      {
+        Log.Log.Error("Failed to retrieve ip addresses with default gateway, WMI error: " + e.ToString());
+      }
+      return addresses;
+    }
+
     #endregion
   }
 }

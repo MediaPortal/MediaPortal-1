@@ -2839,7 +2839,10 @@ namespace TvService
         IPHostEntry local = Dns.GetHostEntry(localHostName);
         foreach (IPAddress ipaddress in local.AddressList)
         {
-          ipadresses.Add(ipaddress.ToString());
+          if (ipaddress.AddressFamily == AddressFamily.InterNetwork)
+          {
+            ipadresses.Add(ipaddress.ToString());
+          }
         }
         return ipadresses;
       }
