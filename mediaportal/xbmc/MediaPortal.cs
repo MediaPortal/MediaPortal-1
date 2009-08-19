@@ -2505,7 +2505,7 @@ public class MediaPortalApp : D3DApp, IRender
 
           //stop playback
           case Action.ActionType.ACTION_STOP:
-            if (!g_Player.IsTV)
+            if (!g_Player.IsTV || !GUIGraphicsContext.IsFullScreenVideo)
             {
               Log.Info("Main: Stopping media");
               g_Player.Stop();
@@ -2517,14 +2517,17 @@ public class MediaPortalApp : D3DApp, IRender
           //resume playback
           case Action.ActionType.ACTION_PLAY:
           case Action.ActionType.ACTION_MUSIC_PLAY:
-            g_Player.StepNow();
-            g_Player.Speed = 1;
-            if (g_Player.Paused)
+            if (!g_Player.IsTV || !GUIGraphicsContext.IsFullScreenVideo)
             {
-              g_Player.Pause();
+              g_Player.StepNow();
+              g_Player.Speed = 1;
+              if (g_Player.Paused)
+              {
+                g_Player.Pause();
+              }
+              return;
             }
-            return;
-
+            break;
           //pause (or resume playback)
           case Action.ActionType.ACTION_PAUSE:
             g_Player.Pause();
