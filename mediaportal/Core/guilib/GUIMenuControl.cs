@@ -215,11 +215,13 @@ namespace MediaPortal.GUI.Library
           _buttonList.RemoveAt(0);
           if (!_horizontal)
           {
-            button._positionY = _buttonList[_buttonList.Count - 1]._positionY + _spaceBetweenButtons + _buttonHeight;
+            // Must use set position or else the images are not updated!
+            button.SetPosition(button._positionX, _buttonList[_buttonList.Count - 1]._positionY + _spaceBetweenButtons + _buttonHeight);
           }
           else
           {
-            button._positionX = _buttonList[_buttonList.Count - 1]._positionX + _spaceBetweenButtons + _buttonWidth;
+            // Must use set position or else the images are not updated!
+            button.SetPosition(_buttonList[_buttonList.Count - 1]._positionX + _spaceBetweenButtons + _buttonWidth, button._positionY);
           }
           _buttonList.Add(button);
         }
