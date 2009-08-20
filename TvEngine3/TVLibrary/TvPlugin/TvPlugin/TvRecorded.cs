@@ -599,8 +599,9 @@ namespace TvPlugin
         return;
       }
       dlg.Reset();
-
+      
       dlg.SetHeading(TVUtil.GetDisplayTitle(rec));
+      
       dlg.AddLocalizedString(655); //Play recorded tv
       dlg.AddLocalizedString(656); //Delete recorded tv
       if (rec.TimesWatched > 0)
@@ -857,7 +858,7 @@ namespace TvPlugin
                         merge = GetSpokenViewDate(rec.StartTime).Equals(GetSpokenViewDate(listRec.StartTime));
                         break;
                       case DBView.Recordings:
-                        merge = rec.Title.Equals(listRec.Title, StringComparison.InvariantCultureIgnoreCase);
+                        merge = TVUtil.GetDisplayTitle(rec).Equals(listRec.Title, StringComparison.InvariantCultureIgnoreCase);
                         break;
                       case DBView.Channel:
                         merge = rec.IdChannel == listRec.IdChannel;
@@ -877,7 +878,6 @@ namespace TvPlugin
 
                       item.IsFolder = true;
                       // NO thumbnails for folders please so we can distinguish between single files and folders
-                      item.Label = rec.Title;
                       Utils.SetDefaultIcons(item);
                       item.ThumbnailImage = item.IconImageBig;
                       add = false;
@@ -894,7 +894,6 @@ namespace TvPlugin
                 {
                   // Add new list item for this recording
                   //GUIListItem item = BuildItemFromRecording(rec);
-                  it.Label = TVUtil.GetDisplayTitle(rec);
                   itemlist.Add(it);
                 }
                 else
@@ -903,8 +902,7 @@ namespace TvPlugin
                   {
                     for (int i = 0; i < itemlist.Count; i++)
                     {
-                      Recording listRec = itemlist[i].TVTag as Recording;
-                      if (listRec.Title.Equals(rec.Title, StringComparison.InvariantCultureIgnoreCase) &&
+                      if (itemlist[i].Label.Equals(rec.Title, StringComparison.InvariantCultureIgnoreCase) &&
                           itemlist[i].IsFolder)
                       {
                         it.IsFolder = true;
@@ -943,7 +941,7 @@ namespace TvPlugin
                 addToList = GetSpokenViewDate(rec.StartTime).Equals(_currentLabel);
                 break;
               case DBView.Recordings:
-                addToList = rec.Title.Equals(_currentLabel, StringComparison.InvariantCultureIgnoreCase);
+                addToList = TVUtil.GetDisplayTitle(rec).Equals(_currentLabel, StringComparison.InvariantCultureIgnoreCase);
                 break;
               case DBView.Channel:
                 addToList = rec.ReferencedChannel().DisplayName.Equals(_currentLabel, StringComparison.InvariantCultureIgnoreCase);
@@ -1080,7 +1078,7 @@ namespace TvPlugin
         switch (_currentDbView)
         {
           case DBView.Recordings:
-            item.Label = aRecording.Title;
+            item.Label = TVUtil.GetDisplayTitle(aRecording);
             break;
           case DBView.Channel:
             item.Label = strChannelName;
@@ -2173,7 +2171,7 @@ namespace TvPlugin
       // set audio track based on user prefs. 
       eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
       int prefLangIdx = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
-      
+
       Log.Debug("TVRecorded.OnPlayRecordingBackStarted(): setting audioIndex on tsreader {0}", prefLangIdx);
       g_Player.CurrentAudioStream = prefLangIdx;
 
