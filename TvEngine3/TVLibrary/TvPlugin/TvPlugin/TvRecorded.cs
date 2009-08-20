@@ -190,6 +190,7 @@ namespace TvPlugin
     private bool _deleteWatchedShows = false;
     private int _iSelectedItem = 0;
     private string _currentLabel = string.Empty;
+    private int _rootItem = 0;
 
     private RecordingThumbCacher thumbworker = null;
 
@@ -378,6 +379,8 @@ namespace TvPlugin
                 {
                   _currentLabel = string.Empty;
                   LoadDirectory();
+                  GUIControl.SelectItemControl(GetID, facadeView.GetID, _rootItem);
+                  _rootItem = 0;
                   return;
                 }
               }
@@ -1291,8 +1294,14 @@ namespace TvPlugin
         else
         {
           _currentLabel = pItem.Label;
+          _rootItem = iItem;
         }
         LoadDirectory();
+        if (pItem.Label.Equals(".."))
+        {
+          GUIControl.SelectItemControl(GetID, facadeView.GetID, _rootItem);
+          _rootItem = 0;
+        }
         return false;
       }
 
