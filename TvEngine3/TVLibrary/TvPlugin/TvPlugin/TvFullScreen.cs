@@ -2071,7 +2071,7 @@ namespace TvPlugin
     /// </summary>
     private void PrepareCiMenu()
     {
-      TVHome.RegisterCiMenu(); // Ensure listener attached
+      TVHome.RegisterCiMenu(TVHome.Card.Id); // Ensure listener attached
       TVHome.Card.EnterCiMenu(); // Enter menu. Dialog shows up on callback
     }
     #endregion

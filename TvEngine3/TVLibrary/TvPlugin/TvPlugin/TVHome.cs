@@ -289,8 +289,6 @@ namespace TvPlugin
           strLine += "TvPlugin Version: " + pluginVersion;
           throw new Exception(strLine);
         }
-
-        RegisterCiMenu();
       }
       catch (Exception ex)
       {
@@ -301,18 +299,23 @@ namespace TvPlugin
     /// <summary>
     /// Register the remoting service and attaching ciMenuHandler for server events
     /// </summary>
-    public static void RegisterCiMenu()
+    public static void RegisterCiMenu(int newCardId)
     {
       if (ciMenuHandler == null)
       {
         Log.Debug("CiMenu: PrepareCiMenu");
         ciMenuHandler = new CiMenuHandler();
-
+        // opens remoting and attach local eventhandler to server event, call only once
+        RemoteControl.RegisterCiMenuCallbacks(ciMenuHandler);
       }
-      // attach local eventhandler to server event
-      RemoteControl.RegisterCiMenuCallbacks(ciMenuHandler);
+      // Check if card supports CI menu
+      if (newCardId != -1 && RemoteControl.Instance.CiMenuSupported(newCardId))
+      {
+        // Enable CI menu handling in card
+        RemoteControl.Instance.SetCiMenuHandler(newCardId, null);
+        Log.Debug("TvPlugin: CiMenuHandler attached to new card {0}", newCardId);
+      }
     }
-
     public TVHome()
     {
       GUIGraphicsContext.OnBlackImageRendered += new BlackImageRenderedHandler(OnBlackImageRendered);
@@ -3274,22 +3277,27 @@ namespace TvPlugin
         TvServer server = new TvServer();
         VirtualCard card;
         int newCardId = -1;
+
+        // check which card will be used
+        newCardId = server.TimeShiftingWouldUseCard(ref user, channel.IdChannel);
+
+        //Added by joboehl - If any major related to the timeshifting changed during the start, restart the player.           
+        if (newCardId == -1)
+        {
+          cardChanged = false;
+        }
+        else
+        {
+          cardChanged = (Card.Id != newCardId);
+          if (cardChanged)
+          {
+            RegisterCiMenu(newCardId);
+          }
+        }
+
         if (wasPlaying)
         {
           // we need to stop player HERE if card has changed.        
-          newCardId = server.TimeShiftingWouldUseCard(ref user, channel.IdChannel);
-
-          //Added by joboehl - If any major related to the timeshifting changed during the start, restart the player.           
-          if (newCardId == -1)
-          {
-            cardChanged = false;
-          }
-          else
-          {
-            cardChanged = (Card.Id != newCardId);
-            // || TVHome.Card.RTSPUrl != newCard.RTSPUrl || TVHome.Card.TimeShiftFileName != newCard.TimeShiftFileName);
-          }
-
           if (cardChanged)
           {
             Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. CardId:{0}/{1}, RTSP:{2}", Card.Id, newCardId, Card.RTSPUrl);
@@ -3410,13 +3418,9 @@ namespace TvPlugin
       finally
       {
         StopRenderBlackImage();
-        if (cardChanged == true || wasPlaying == false)
+        if (cardChanged == true)
         {
-          if (TVHome.Card.CiMenuSupported())
-          {
-            Log.Debug("TvPlugin: CiMenuHandler attached to new card {0}", TVHome.Card.Name);
-            bool res = TVHome.Card.SetCiMenuHandler(null); // null because handler registers tvserver there
-          }
+          RegisterCiMenu(TVHome.Card.Id);
         }
       }
     }
@@ -3661,7 +3665,7 @@ namespace TvPlugin
     /// Handles all CiMenu actions from callback
     /// </summary>
     /// <param name="Menu">complete CI menu object</param>
-    public static void CiMenuCallback(CiMenu Menu)
+    public static void ShowMenu(CiMenu Menu)
     {
       if (dlgCiMenu == null)
       {
@@ -4758,15 +4762,13 @@ public class CiMenuHandler : CiMenuCallbackSink
       Log.Debug("Callback from tvserver {0}", Menu.Title);
 
       // pass menu to calling dialog
-      //if (refDlg != null)
-      TvPlugin.TVHome.CiMenuCallback(Menu);
+      TvPlugin.TVHome.ShowMenu(Menu);
     }
     catch
     {
       Menu = new CiMenu("Remoting Exception", "Communication with server failed", null, TvLibrary.Interfaces.CiMenuState.Error);
       // pass menu to calling dialog
-      //if (refDlg != null)
-      TvPlugin.TVHome.CiMenuCallback(Menu);
+      TvPlugin.TVHome.ShowMenu(Menu);
     }
   }
 }
