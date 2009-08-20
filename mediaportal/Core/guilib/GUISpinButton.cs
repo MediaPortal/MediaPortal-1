@@ -54,6 +54,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("spinvalign")] protected VAlignment _spinVAlignment = VAlignment.ALIGN_MIDDLE;
     [XMLSkinElement("spinPrefixText")] protected string _prefixText = "";
     [XMLSkinElement("spinSuffixText")] protected string _suffixText = "";
+    [XMLSkinElement("spinTextXOff")] protected int _spinTextOffsetX = 0;
+    [XMLSkinElement("spinTextYOff")] protected int _spinTextOffsetY = 0;
     [XMLSkinElement("showrange")] protected bool _showRange = true;
     [XMLSkinElement("digits")] protected int _digits = -1;
     [XMLSkinElement("reverse")] protected bool _reverse = false;
@@ -174,6 +176,8 @@ namespace MediaPortal.GUI.Library
       _spinControl.SetShadow(_shadowAngle, _shadowDistance, _shadowColor);
       _spinControl.PrefixText = _prefixText;
       _spinControl.SuffixText = _suffixText;
+      _spinControl.TextOffsetX = _spinTextOffsetX;
+      _spinControl.TextOffsetY = _spinTextOffsetY;
 
       // Pass all of the subitems to the spin control.
       for (int i = 0; i < SubItemCount; ++i)
@@ -359,9 +363,6 @@ namespace MediaPortal.GUI.Library
     /// <param name="action">action : contains the action</param>
     public override void OnAction(Action action)
     {
-      // Allow the spin control to handle actions first.
-      _spinControl.OnAction(action);
-
       GUIMessage message;
       if (Focus)
       {
@@ -373,6 +374,9 @@ namespace MediaPortal.GUI.Library
 
         }
       }
+
+      // Allow the spin control to handle actions first.
+      _spinControl.OnAction(action);
 
       // If the spin control handled the action then avoid the base action handler.
       // In particular this avoids the move up,down,left,right actions from leaving this control too soon.

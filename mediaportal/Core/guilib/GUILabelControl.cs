@@ -560,62 +560,30 @@ namespace MediaPortal.GUI.Library
       _shadowColor = color;
     }
 
+    public int ShadowAngle
+    {
+      get { return _shadowAngle; }
+      set { _shadowAngle = value; }
+    }
+
+    public int ShadowDistance
+    {
+      get { return _shadowDistance; }
+      set { _shadowDistance = value; }
+    }
+
+    public long ShadowColor
+    {
+      get { return _shadowColor; }
+      set { _shadowColor = value; }
+    }
+
     private bool Shadow
     {
       get
       {
         return (_shadowDistance > 0) && ((_shadowColor >> 24) > 0);
       }
-    }
-    /// <summary>
-    /// Get/set the angle of the shadow
-    /// </summary>
-    public int ShadowAngle
-    {
-        get { return _shadowAngle; }
-        set
-        {
-            if (_shadowAngle != value)
-            {
-                _shadowAngle = value;
-
-                _reCalculate = true;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Get/set the distance of the shadow
-    /// </summary>
-    public int ShadowDistance
-    {
-      get { return _shadowDistance; }
-      set
-      {
-        if (_shadowDistance != value)
-        {
-          _shadowDistance = value;
-
-          _reCalculate = true;
-        }
-      }
-    }
-
-    /// <summary>
-    /// Get/set the color of the shadow
-    /// </summary>
-    public long ShadowColor
-    {
-        get { return _shadowColor; }
-        set
-        {
-            if (_shadowColor != value)
-            {
-                _shadowColor = value;
-
-                _reCalculate = true;
-            }
-        }
     }
 
     /// <summary>

@@ -71,6 +71,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
     [XMLSkinElement("prefixText")] protected string _prefixText = "";
     [XMLSkinElement("suffixText")] protected string _suffixText = "";
+    [XMLSkinElement("textXOff")] protected int _textOffsetX = 0;
+    [XMLSkinElement("textYOff")] protected int _textOffsetY = 0;
 
     protected bool _autoCheck = true;
     protected int _startInt = 0;
@@ -392,12 +394,18 @@ namespace MediaPortal.GUI.Library
             fPosY -= fHeight;
             fPosY += (float) _positionY;
 
-            _labelControl.SetPosition(_positionX - 3, (int) fPosY);
+            // This offset positioning preserves the legacy behavior of a (hardcoded) 3 pixel offset.
+            int sign = 1;
+            if (_alignment == Alignment.ALIGN_RIGHT)
+            {
+              sign = -1;
           }
+            _labelControl.SetPosition(_positionX - 3 + (_textOffsetX * sign), (int) fPosY + _textOffsetY);
+        }
         }
         else
         {
-          _labelControl.SetPosition(iTextXPos, iTextYPos);
+          _labelControl.SetPosition(iTextXPos + _textOffsetX, iTextYPos + _textOffsetY);
           _labelControl.TextAlignment = Alignment.ALIGN_LEFT;
         }
         _labelControl.Render(timePassed);
@@ -1504,6 +1512,18 @@ namespace MediaPortal.GUI.Library
     {
       get { return _suffixText; }
       set { _suffixText = value; }
+    }
+
+    public int TextOffsetX
+    {
+      get { return _textOffsetX; }
+      set { _textOffsetX = value; }
+    }
+
+    public int TextOffsetY
+    {
+      get { return _textOffsetY; }
+      set { _textOffsetY = value; }
     }
   }
 }

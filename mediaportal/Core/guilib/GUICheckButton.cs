@@ -55,6 +55,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("markYOff")] protected int _markOffsetY = 0;
     [XMLSkinElement("markalign")] protected Alignment _markAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("markvalign")] protected VAlignment _markVAlignment = VAlignment.ALIGN_MIDDLE;
+    [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
+    [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
+    [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
     [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("textvalign")] protected VAlignment _textVAlignment = VAlignment.ALIGN_TOP;
     [XMLSkin("textureFocus", "border")] protected string _strBorderTF = "";
@@ -69,9 +72,6 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("textureNoFocus", "textureRotate")] protected bool _borderTextureRotateTNF = false;
     [XMLSkin("textureNoFocus", "texture")] protected string _borderTextureFileNameTNF = "image_border.png";
     [XMLSkin("textureNoFocus", "colorKey")] protected long _borderColorKeyTNF = 0xFFFFFFFF;
-    [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
-    [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
-    [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
 
     protected int _frameCounter = 0;
     protected GUIAnimation _imageFocused = null;
@@ -206,7 +206,7 @@ namespace MediaPortal.GUI.Library
 
     public override bool Selected
     {
-      get { return base.Selected; }
+      get { return checkMark.Selected; }
       set
       {
         base.Selected = value;
@@ -290,7 +290,7 @@ namespace MediaPortal.GUI.Library
       }
 
       _labelControl.SetPosition(x, y);
-        _labelControl.Render(timePassed);
+      _labelControl.Render(timePassed);
 
       x = 0;
       y = 0;
@@ -345,7 +345,7 @@ namespace MediaPortal.GUI.Library
         if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_SELECT_ITEM)
         {
           // Send a message that the checkbox was clicked.
-          _isSelected = !_isSelected;
+          Selected = !Selected;
 
           // send a message to anyone interested 
           message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
