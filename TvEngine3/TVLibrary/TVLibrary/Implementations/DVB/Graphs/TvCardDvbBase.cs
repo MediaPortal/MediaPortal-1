@@ -571,6 +571,7 @@ namespace TvLibrary.Implementations.DVB
       {
         _mdplugs.FreeAllChannels();
       }
+      _previousChannel = null;
 
       if (_graphBuilder == null)
         return;
@@ -1431,6 +1432,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("  free...");
       _interfaceChannelScan = null;
       _interfaceEpgGrabber = null;
+      _previousChannel = null;
       if (_filterMpeg2DemuxTif != null)
       {
         Release.ComObject("_filterMpeg2DemuxTif filter", _filterMpeg2DemuxTif);
