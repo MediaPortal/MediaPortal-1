@@ -25,7 +25,7 @@
 
 using System.Collections;
 
-namespace WebEPG_conf
+namespace SetupTv.Sections.WebEPGConfig
 {
   /// <summary>
   /// Summary description for ChannelInfo.

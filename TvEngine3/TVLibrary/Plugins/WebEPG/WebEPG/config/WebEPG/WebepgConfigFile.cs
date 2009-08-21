@@ -35,6 +35,7 @@ namespace MediaPortal.WebEPG.Config
 
     [XmlElement("Info")] public WebepgInfo Info;
     [XmlArray("ChannelMap")] [XmlArrayItem("Channel")] public List<ChannelMap> Channels;
+    [XmlArray("RadioChannelMap")] [XmlArrayItem("Channel")] public List<ChannelMap> RadioChannels;
     [XmlArray("Authentication")] [XmlArrayItem("Site")] public List<SiteAuth> Sites;
 
     #endregion

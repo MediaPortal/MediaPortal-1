@@ -29,8 +29,61 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using MediaPortal.UserInterface.Controls;
 
-namespace WebEPG_conf
+namespace SetupTv.Sections.WebEPGConfig
 {
+
+  public class GrabberSelectionInfo
+  {
+    private string channelId;
+    private string grabberId;
+
+    public GrabberSelectionInfo(string channelId, string grabberId)
+    {
+      this.channelId = channelId;
+      this.grabberId = grabberId;
+    }
+
+    public string ChannelId
+    {
+      get
+      {
+        return channelId;
+      }
+      set
+      {
+        channelId = value;
+      }
+    }
+
+    public string GrabberId
+    {
+      get
+      {
+        return grabberId;
+      }
+      set
+      {
+        grabberId = value;
+      }
+    }
+  }
+
+  public class GrabberSelectedEventArgs : EventArgs
+  {
+    public readonly GrabberSelectionInfo Selection;
+
+    public GrabberSelectedEventArgs(GrabberSelectionInfo selection)
+    {
+      Selection = selection;
+    }
+
+    public GrabberSelectedEventArgs(string channelId, string grabberId)
+    {
+      Selection = new GrabberSelectionInfo(channelId, grabberId);
+    }
+  }
+
+
   /// <summary>
   /// Summary description for Form1.
   /// </summary>
@@ -48,7 +101,11 @@ namespace WebEPG_conf
     /// </summary>
     private Container components = null;
 
-    public fSelection(TreeNode grabbers, bool bChanGrab, EventHandler select_click)
+    public delegate void GrabberSelectedEventHandler(object sender, GrabberSelectedEventArgs e);
+
+    public event GrabberSelectedEventHandler GrabberSelected;
+
+    public fSelection(TreeNode grabbers) //, bool bChanGrab, EventHandler select_click)
     {
       //
       // Required for Windows Form Designer support
@@ -67,14 +124,14 @@ namespace WebEPG_conf
       treeView1.TreeViewNodeSorter = new NodeSorter();
 
       handler = new EventHandler(DoEvent);
-      bSelect.Click += select_click;
+      bSelect.Click += DoSelect;// select_click;
       bClose.Click += handler;
-      treeView1.DoubleClick += select_click;
+      treeView1.DoubleClick += DoSelect;//select_click;
     }
 
-    public string[] Selected
+    public GrabberSelectionInfo Selected
     {
-      get { return (string[]) treeView1.SelectedNode.Tag; }
+      get { return (GrabberSelectionInfo) treeView1.SelectedNode.Tag; }
     }
 
     /// <summary>
@@ -176,6 +233,18 @@ namespace WebEPG_conf
 
     #endregion
 
+    private void DoSelect(Object source, EventArgs e)
+    {
+      if (GrabberSelected != null)
+      {
+        GrabberSelectionInfo selection = Selected;
+        if (selection != null)
+        {
+          GrabberSelected(this, new GrabberSelectedEventArgs(Selected));
+        }
+      }
+    }
+
     private void DoEvent(Object source, EventArgs e)
     {
       if (source == bClose)
@@ -192,7 +261,7 @@ namespace WebEPG_conf
       this.treeView1.Nodes.Add((TreeNode) tGrabbers.Clone());
     }
 
-    private TreeNode FindNode(TreeNode tNode, string[] tag)
+    private TreeNode FindNode(TreeNode tNode, GrabberSelectionInfo tag)
     {
       tNode.Expand();
       foreach (TreeNode cNode in tNode.Nodes)
@@ -204,8 +273,8 @@ namespace WebEPG_conf
         }
       }
 
-      string[] ntag = (string[]) tNode.Tag;
-      if (ntag != null && ntag[0] == tag[0] && ntag[1] == tag[1])
+      GrabberSelectionInfo ntag = (GrabberSelectionInfo)tNode.Tag;
+      if (ntag != null && ntag.ChannelId == tag.ChannelId && ntag.GrabberId == tag.GrabberId)
       {
         return tNode;
       }

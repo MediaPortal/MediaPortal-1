@@ -30,23 +30,20 @@ using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml.Serialization;
-using MediaPortal.Configuration;
+using MediaPortal.EPG;
 using MediaPortal.EPG.config;
-//using MediaPortal.Services;
 using MediaPortal.WebEPG.Config;
 using MediaPortal.WebEPG.Config.Grabber;
 using MediaPortal.WebEPG.Profile;
+using SetupTv.Sections.WebEPGConfig;
 using TvDatabase;
+using TvEngine.PowerScheduler;
 using TvLibrary.Log;
-using WebEPG_conf;
-using ChannelMap=MediaPortal.WebEPG.Config.ChannelMap;
-using MediaPortal.EPG;
-using TvEngine;
-using Gentle.Framework;
+using ChannelMap = MediaPortal.WebEPG.Config.ChannelMap;
 
 namespace SetupTv.Sections
 {
-  public partial class WebEPGConfigControl : SectionSettings
+  public partial class WebEPGSetup : SectionSettings
   {
 
     private class CBChannelGroup
@@ -71,42 +68,24 @@ namespace SetupTv.Sections
     private string _webepgFilesDir;
     private string _configFileDir;
     private WebepgConfigFile _configFile;
-    private Dictionary<string, ChannelMap> _channelMapping;
     private fSelection selection;
-    private MergedChannelDetails _mergeConfig;
-    //private TreeNode tChannels;
     private TreeNode tGrabbers;
     private SortedList CountryList;
-    private SortedList ChannelList;
     private Hashtable hChannelConfigInfo;
     private Hashtable hGrabberConfigInfo;
     private ChannelsList _channelInfo;
     private Dictionary<string, string> _countryList;
-    private ListViewColumnSorter lvwColumnSorter;
     private bool _initialized = false;
 
-    public WebEPGConfigControl()
+    public WebEPGSetup()
       : this("WebEPG")
     {
     }
 
-    public WebEPGConfigControl(string name)
+    public WebEPGSetup(string name)
       : base(name)
     {
       InitializeComponent();
-
-      lvMapping.Columns.Add("EPG Name", 100, HorizontalAlignment.Left);
-      lvMapping.Columns.Add("Channel Name", 100, HorizontalAlignment.Left);
-      lvMapping.Columns.Add("Channel ID", 80, HorizontalAlignment.Left);
-      lvMapping.Columns.Add("Grabber", 120, HorizontalAlignment.Left);
-
-      lvwColumnSorter = new ListViewColumnSorter();
-      lvMapping.ListViewItemSorter = lvwColumnSorter;
-
-      lvMerged.Columns.Add("Channel", 100, HorizontalAlignment.Left);
-      lvMerged.Columns.Add("Grabber", 105, HorizontalAlignment.Left);
-      lvMerged.Columns.Add("Start", 50, HorizontalAlignment.Left);
-      lvMerged.Columns.Add("End", 50, HorizontalAlignment.Left);
 
       _webepgFilesDir = Log.GetPathName() + @"\WebEPG\";
 
@@ -126,24 +105,8 @@ namespace SetupTv.Sections
     public override void OnSectionActivated()
     {
       Initialize();
-
-      //// load all distinct groups
-      //try
-      //{
-      //  GroupComboBox.Items.Clear();
-      //  GroupComboBox.Items.Add(new CBChannelGroup("", -1));
-      //  GroupComboBox.Tag = "";
-
-      //  IList<ChannelGroup> channelGroups = ChannelGroup.ListAll();
-      //  foreach (ChannelGroup cg in channelGroups)
-      //  {
-      //    GroupComboBox.Items.Add(new CBChannelGroup(cg.GroupName, cg.IdGroup));
-      //  }
-      //}
-      //catch (Exception e)
-      //{
-      //  Log.Error("Failed to load groups {0}", e.Message);
-      //}
+      TvMappings.LoadGroups();
+      RadioMappings.LoadGroups();
 
       ShowStatus();
 
@@ -179,12 +142,44 @@ namespace SetupTv.Sections
       }
 
       textBoxFolder.Text = layer.GetSetting("webepgDestinationFolder").Value;
-      checkBoxDeleteBeforeImport.Checked = layer.GetSetting("webepgDeleteBeforeImport", "true").Value == "true";
-      checkBoxDeleteOnlyOverlapping.Checked = layer.GetSetting("webepgDeleteOnlyOverlapping", "true").Value == "true";
+      checkBoxDeleteBeforeImport.Checked = Convert.ToBoolean(layer.GetSetting("webepgDeleteBeforeImport", "true").Value);
+      checkBoxDeleteOnlyOverlapping.Checked = Convert.ToBoolean(layer.GetSetting("webepgDeleteOnlyOverlapping", "true").Value);
 
       LoadWebepgConfigFile();
+      //RedrawList(null);
 
-      RedrawList(null);
+      // Schedule
+      ScheduleGrabCheckBox.Checked = Convert.ToBoolean(layer.GetSetting("webepgScheduleEnabled", "true").Value);
+      EPGWakeupConfig config = new EPGWakeupConfig(layer.GetSetting("webepgSchedule", String.Empty).Value);
+      foreach (EPGGrabDays day in config.Days)
+      {
+        switch (day)
+        {
+          case EPGGrabDays.Monday:
+            MondayCheckBox.Checked = true;
+            break;
+          case EPGGrabDays.Tuesday:
+            TuesdayCheckBox.Checked = true;
+            break;
+          case EPGGrabDays.Wednesday:
+            WednesdayCheckBox.Checked = true;
+            break;
+          case EPGGrabDays.Thursday:
+            ThursdayCheckBox.Checked = true;
+            break;
+          case EPGGrabDays.Friday:
+            FridayCheckBox.Checked = true;
+            break;
+          case EPGGrabDays.Saturday:
+            SaturdayCheckBox.Checked = true;
+            break;
+          case EPGGrabDays.Sunday:
+            SundayCheckBox.Checked = true;
+            break;
+        }
+      }
+      grabTimeTextBox.Text = String.Format("{0:00}:{1:00}", config.Hour, config.Minutes);
+
     }
 
     public override void SaveSettings()
@@ -195,9 +190,13 @@ namespace SetupTv.Sections
 
       _configFile.Channels = new List<ChannelMap>();
 
-      foreach (ChannelMap channel in _channelMapping.Values)
+      foreach (ChannelMap channel in TvMappings.ChannelMapping.Values)
       {
         _configFile.Channels.Add(channel);
+      }
+      foreach (ChannelMap channel in RadioMappings.ChannelMapping.Values)
+      {
+        _configFile.RadioChannels.Add(channel);
       }
 
       Log.Info("WebEPG Config: Button: Save");
@@ -241,6 +240,41 @@ namespace SetupTv.Sections
       setting = layer.GetSetting("webepgDeleteOnlyOverlapping", "true");
       setting.Value = checkBoxDeleteOnlyOverlapping.Checked ? "true" : "false";
       setting.Persist();
+
+      setting = layer.GetSetting("webepgScheduleEnabled", "true");
+      setting.Value = ScheduleGrabCheckBox.Checked ? "true" : "false";
+      setting.Persist();
+
+      setting = layer.GetSetting("webepgSchedule", String.Empty);
+      EPGWakeupConfig cfg = new EPGWakeupConfig(setting.Value);
+      EPGWakeupConfig newcfg = new EPGWakeupConfig();
+      newcfg.Hour = cfg.Hour;
+      newcfg.Minutes = cfg.Minutes;
+      // newcfg.Days = cfg.Days;
+      newcfg.LastRun = cfg.LastRun;
+      string[] time = grabTimeTextBox.Text.Split(System.Globalization.DateTimeFormatInfo.CurrentInfo.TimeSeparator[0]);
+      newcfg.Hour = Convert.ToInt32(time[0]);
+      newcfg.Minutes = Convert.ToInt32(time[1]);
+      CheckDay(newcfg, EPGGrabDays.Monday, MondayCheckBox.Checked);
+      CheckDay(newcfg, EPGGrabDays.Tuesday, TuesdayCheckBox.Checked);
+      CheckDay(newcfg, EPGGrabDays.Wednesday, WednesdayCheckBox.Checked);
+      CheckDay(newcfg, EPGGrabDays.Thursday, ThursdayCheckBox.Checked);
+      CheckDay(newcfg, EPGGrabDays.Friday, FridayCheckBox.Checked);
+      CheckDay(newcfg, EPGGrabDays.Saturday, SaturdayCheckBox.Checked);
+      CheckDay(newcfg, EPGGrabDays.Sunday, SundayCheckBox.Checked);
+
+      if (!cfg.Equals(newcfg))
+      {
+        setting.Value = newcfg.SerializeAsString();
+        setting.Persist();
+      }
+
+    }
+
+    private void CheckDay(EPGWakeupConfig cfg, EPGGrabDays day, bool enabled)
+    {
+      if (enabled)
+        cfg.Days.Add(day);
     }
 
     #region Private
@@ -287,169 +321,6 @@ namespace SetupTv.Sections
       labelStatus.Text = layer.GetSetting("webepgResultStatus", "").Value;
     }
 
-    private void getTvServerTvChannels()
-    {
-      //CBChannelGroup chGroup = (CBChannelGroup)GroupComboBox.SelectedItem;
-
-      IList<Channel> Channels = Channel.ListAll();
-      //IList<Channel> Channels;
-
-      //bool loadRadio = LoadRadioCheckBox.Checked;
-
-      //if (chGroup != null && chGroup.idGroup != -1)
-      //{
-      //  SqlBuilder sb1 = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
-      //  SqlStatement stmt1 = sb1.GetStatement(true);
-      //  SqlStatement ManualJoinSQL = new SqlStatement(stmt1.StatementType, stmt1.Command, String.Format("select c.* from Channel c join GroupMap g on c.idChannel=g.idChannel where " + (loadRadio ? "" : " c.isTv = 1 and ") + " g.idGroup = '{0}' order by g.sortOrder", chGroup.idGroup), typeof(Channel));
-      //  Channels = ObjectFactory.GetCollection<Channel>(ManualJoinSQL.Execute());
-      //}
-      //else
-      //{
-      //  SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
-      //  sb.AddOrderByField(true, "sortOrder");
-      //  if (!loadRadio)
-      //    sb.AddConstraint(" isTv = 1");
-      //  SqlStatement stmt = sb.GetStatement(true);
-      //  Channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
-      //}
-
-      foreach (Channel chan in Channels)
-      {
-        if (!_channelMapping.ContainsKey(chan.DisplayName))
-        {
-          ChannelMap channel = new ChannelMap();
-          channel.displayName = chan.DisplayName;
-          _channelMapping.Add(chan.DisplayName, channel);
-        }
-      }
-    }
-
-    private void RedrawList(string selectName)
-    {
-      int selectedIndex = 0;
-      if (lvMapping.SelectedIndices.Count > 0)
-      {
-        selectedIndex = lvMapping.SelectedIndices[0];
-      }
-
-      lvMapping.Items.Clear();
-
-      //add all channels
-      foreach (ChannelMap channel in _channelMapping.Values)
-      {
-        ListViewItem channelItem = new ListViewItem(channel.displayName);
-        string name = string.Empty;
-        if (channel.id != null)
-        {
-          ChannelConfigInfo info = (ChannelConfigInfo) hChannelConfigInfo[channel.id];
-          if (info != null)
-          {
-            name = info.FullName;
-          }
-        }
-        else
-        {
-          if (channel.merged != null)
-          {
-            name = "[Merged]";
-          }
-        }
-        channelItem.SubItems.Add(name);
-        channelItem.SubItems.Add(channel.id);
-        channelItem.SubItems.Add(channel.grabber);
-        lvMapping.Items.Add(channelItem);
-      }
-
-      if (lvMapping.Items.Count > 0)
-      {
-        if (lvMapping.Items.Count > selectedIndex)
-        {
-          lvMapping.Items[selectedIndex].Selected = true;
-        }
-        else
-        {
-          lvMapping.Items[lvMapping.Items.Count - 1].Selected = true;
-        }
-      }
-
-      lvMapping.Sort();
-      tbCount.Text = lvMapping.Items.Count.ToString();
-      lvMapping.Select();
-    }
-
-    private void UpdateList()
-    {
-      //update existing channels
-      foreach (ListViewItem channel in lvMapping.Items)
-      {
-        if (_channelMapping.ContainsKey(channel.Text))
-        {
-          ChannelMap channelDetails = _channelMapping[channel.Text];
-          string name = string.Empty;
-          if (channelDetails.id != null)
-          {
-            ChannelConfigInfo info = (ChannelConfigInfo) hChannelConfigInfo[channelDetails.id];
-            if (info != null)
-            {
-              name = info.FullName;
-            }
-          }
-          else
-          {
-            if (channelDetails.merged != null)
-            {
-              name = "[Merged]";
-            }
-          }
-          channel.SubItems[1].Text = name;
-          channel.SubItems[2].Text = channelDetails.id;
-          channel.SubItems[3].Text = channelDetails.grabber;
-        }
-        else
-        {
-          int selectedIndex = 0;
-          if (lvMapping.SelectedIndices.Count > 0)
-          {
-            selectedIndex = lvMapping.SelectedIndices[0];
-          }
-
-          lvMapping.Items.Remove(channel);
-
-          if (lvMapping.Items.Count > 0)
-          {
-            if (lvMapping.Items.Count > selectedIndex)
-            {
-              lvMapping.Items[selectedIndex].Selected = true;
-            }
-            else
-            {
-              lvMapping.Items[lvMapping.Items.Count - 1].Selected = true;
-            }
-          }
-        }
-      }
-      lvMapping.Select();
-    }
-
-    private void UpdateMergedList(ChannelMap channelMap)
-    {
-      lvMerged.Items.Clear();
-
-      if (channelMap != null && channelMap.merged != null)
-      {
-        //add all channels
-        foreach (MergedChannel channel in channelMap.merged)
-        {
-          ListViewItem channelItem = new ListViewItem(channel.id);
-          channelItem.Tag = channel;
-          channelItem.SubItems.Add(channel.grabber);
-          channelItem.SubItems.Add(channel.start);
-          channelItem.SubItems.Add(channel.end);
-          lvMerged.Items.Add(channelItem);
-        }
-      }
-    }
-
     private void LoadCountries()
     {
       _channelInfo = new ChannelsList(_webepgFilesDir);
@@ -486,6 +357,8 @@ namespace SetupTv.Sections
     {
       Log.Info("WebEPG Config: Loading Channels");
       hChannelConfigInfo = new Hashtable();
+      TvMappings.HChannelConfigInfo = hChannelConfigInfo;
+      RadioMappings.HChannelConfigInfo = hChannelConfigInfo;
 
       if (File.Exists(_webepgFilesDir + "\\channels\\channels.xml"))
       {
@@ -515,7 +388,6 @@ namespace SetupTv.Sections
         Log.Info("WebEPG Config: Cannot find grabbers directory");
       }
 
-
       IDictionaryEnumerator Enumerator = hChannelConfigInfo.GetEnumerator();
       while (Enumerator.MoveNext())
       {
@@ -539,34 +411,6 @@ namespace SetupTv.Sections
           }
         }
       }
-
-      //tChannels = new TreeNode("Channels");
-      //IDictionaryEnumerator countryEnum = CountryList.GetEnumerator();
-      //while (countryEnum.MoveNext())
-      //{
-      //  SortedList chList = (SortedList)countryEnum.Value;
-      //  TreeNode cNode = new TreeNode();
-      //  cNode.Text = (string)countryEnum.Key;
-
-      //  IDictionaryEnumerator chEnum = chList.GetEnumerator();
-      //  while (chEnum.MoveNext())
-      //  {
-      //    TreeNode chNode = new TreeNode();
-
-      //    ChannelConfigInfo info = (ChannelConfigInfo)hChannelConfigInfo[chEnum.Key];
-      //    chNode.Text = info.FullName;
-      //    string[] tag = new string[2];
-      //    tag[0] = info.ChannelID;
-      //    tag[1] = (string)chEnum.Value;
-      //    chNode.Tag = tag;
-
-      //    cNode.Nodes.Add(chNode);
-      //  }
-
-      //  tChannels.Nodes.Add(cNode);
-      //}
-
-      ChannelList = new SortedList();
     }
 
     private void LoadWebepgConfigFile()
@@ -604,16 +448,27 @@ namespace SetupTv.Sections
         _configFile.Info.GrabDays = 2;
       }
 
-      _channelMapping = new Dictionary<string, ChannelMap>();
-
+      TvMappings.ChannelMapping = new Dictionary<string, ChannelMap>();
       foreach (ChannelMap channel in _configFile.Channels)
       {
-        _channelMapping.Add(channel.displayName, channel);
+        TvMappings.ChannelMapping.Add(channel.displayName, channel);
         if (channel.merged != null && channel.merged.Count == 0)
         {
           channel.merged = null;
         }
       }
+      TvMappings.OnChannelMappingChanged();
+
+      RadioMappings.ChannelMapping = new Dictionary<string, ChannelMap>();
+      foreach (ChannelMap channel in _configFile.RadioChannels)
+      {
+        RadioMappings.ChannelMapping.Add(channel.displayName, channel);
+        if (channel.merged != null && channel.merged.Count == 0)
+        {
+          channel.merged = null;
+        }
+      }
+      RadioMappings.OnChannelMappingChanged();
 
       nMaxGrab.Value = _configFile.Info.GrabDays;
     }
@@ -751,10 +606,7 @@ namespace SetupTv.Sections
             if (info != null) // && info.GrabberList[gInfo.GrabberID] != null)
             {
               TreeNode tNode = new TreeNode(info.FullName);
-              string[] tag = new string[2];
-              tag[0] = info.ChannelID;
-              tag[1] = gInfo.GrabberID;
-              tNode.Tag = tag;
+              tNode.Tag = new GrabberSelectionInfo(info.ChannelID, gInfo.GrabberID);
               gNode.Nodes.Add(tNode);
               if (info.GrabberList == null)
               {
@@ -775,10 +627,7 @@ namespace SetupTv.Sections
               hChannelConfigInfo.Add(info.ChannelID, info);
 
               TreeNode tNode = new TreeNode(info.FullName);
-              string[] tag = new string[2];
-              tag[0] = info.ChannelID;
-              tag[1] = gInfo.GrabberID;
-              tNode.Tag = tag;
+              tNode.Tag = new GrabberSelectionInfo(info.ChannelID, gInfo.GrabberID);
               gNode.Nodes.Add(tNode);
             }
           }
@@ -827,203 +676,53 @@ namespace SetupTv.Sections
       //}
     }
 
+
+    private void AutoMapChannels(ICollection<ChannelMap> ChannelMapping)
+    {
+      if (cbCountry.SelectedItem != null)
+      {
+        string countryCode = _countryList[cbCountry.SelectedItem.ToString()];
+        List<ChannelGrabberInfo> channels =
+          _channelInfo.GetChannelArrayList(countryCode);
+        foreach (ChannelMap channelMap in ChannelMapping)
+        {
+          if (channelMap.id == null)
+          {
+            int channelNumb = _channelInfo.FindChannel(channelMap.displayName, countryCode);
+            if (channelNumb >= 0)
+            {
+              ChannelGrabberInfo channelDetails = channels[channelNumb];
+              if (channelDetails.GrabberList != null)
+              {
+                channelMap.id = channelDetails.ChannelID;
+                channelMap.grabber = channelDetails.GrabberList[0].GrabberID;
+              }
+            }
+          }
+        }
+      }
+    }
+
     #endregion
 
     #region Event handlers
-
-    private void bImport_Click(object sender, EventArgs e)
-    {
-      Log.Info("WebEPG Config: Button: Import");
-      try
-      {
-        Log.Info("WebEPG Config: Importing from TV Server Database");
-        getTvServerTvChannels();
-        RedrawList(null);
-      }
-      catch (Exception ex)
-      {
-        Log.Error("WebEPG Config: Import failed - {0}", ex.Message);
-        MessageBox.Show("An error occured while trying to import channels. See log for more details.", "Import Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-      }
-    }
 
     private void bSave_Click(object sender, EventArgs e)
     {
       SaveSettings();
     }
 
-    private void bAdd_Click(object sender, EventArgs e)
+    private void DoSelect(Object source, GrabberSelectedEventArgs e)
     {
-      if (!_channelMapping.ContainsKey(mtbNewChannel.Text))
+      GrabberSelectionInfo id = e.Selection;
+      switch (tabMain.SelectedIndex)
       {
-        ChannelMap channel = new ChannelMap();
-        channel.displayName = mtbNewChannel.Text;
-        _channelMapping.Add(channel.displayName, channel);
-        RedrawList(channel.displayName);
-      }
-      else
-      {
-        MessageBox.Show("Channel with that name already exists", "Name Entry Error", MessageBoxButtons.OK,
-                        MessageBoxIcon.Exclamation);
-      }
-    }
-
-    private void bRemove_Click(object sender, EventArgs e)
-    {
-      foreach (ListViewItem channel in lvMapping.SelectedItems)
-      {
-        if (_channelMapping.ContainsKey(channel.Text))
-        {
-          _channelMapping.Remove(channel.Text);
-        }
-      }
-
-      UpdateList();
-    }
-
-    private void bClearMapping_Click(object sender, EventArgs e)
-    {
-      foreach (ListViewItem channel in lvMapping.SelectedItems)
-      {
-        if (_channelMapping.ContainsKey(channel.Text))
-        {
-          ChannelMap channelMap = _channelMapping[channel.Text];
-          channelMap.id = null;
-          channelMap.grabber = null;
-          channelMap.merged = null;
-          _channelMapping.Remove(channel.Text);
-          _channelMapping.Add(channel.Text, channelMap);
-        }
-      }
-
-      UpdateList();
-      DisplaySelectedChannelGrabberInfo();
-    }
-
-    private void bChannelID_Click(object sender, EventArgs e)
-    {
-      if (selection == null)
-      {
-        selection = new fSelection(tGrabbers, true, this.DoSelect);
-        selection.MinimizeBox = false;
-        selection.Closed += new EventHandler(this.CloseSelect);
-        selection.Show();
-      }
-      else
-      {
-        selection.BringToFront();
-      }
-    }
-
-    private void bGrabber_Click(object sender, EventArgs e)
-    {
-      //if (selection == null)
-      //{
-      //  selection = new fSelection(tChannels, tGrabbers, false, this.DoSelect);
-      //  selection.MinimizeBox = false;
-      //  selection.Closed += new System.EventHandler(this.CloseSelect);
-      //  selection.Show();
-      //}
-      //else
-      //{
-      //  selection.BringToFront();
-      //}
-    }
-
-    private void DisplaySelectedChannelGrabberInfo()
-    {
-      if (lvMapping.SelectedItems.Count == 1 && _channelMapping.ContainsKey(lvMapping.SelectedItems[0].Text))
-      {
-        ChannelMap channel = _channelMapping[lvMapping.SelectedItems[0].Text];
-        DisplayChannelGrabberInfo(channel);
-      }
-      else
-      {
-        DisplayChannelGrabberInfo(null);
-      }
-    }
-
-    private bool UpdateGrabberDetails(string channelId, string grabberId)
-    {
-      tbChannelName.Text = null;
-      tbGrabSite.Text = null;
-      tbGrabDays.Text = null;
-
-      if (channelId != null && grabberId != null)
-      {
-        tbChannelName.Tag = channelId;
-        ChannelConfigInfo info = (ChannelConfigInfo) hChannelConfigInfo[channelId];
-        if (info != null)
-        {
-          tbChannelName.Text = info.FullName;
-          Log.Info("WebEPG Config: Selection: {0}", info.FullName);
-
-          GrabberConfigInfo gInfo = (GrabberConfigInfo) info.GrabberList[grabberId];
-          if (gInfo != null)
-          {
-            tbGrabSite.Text = gInfo.GrabberName;
-            //tbGrabSite.Tag = gInfo.GrabberID;
-            tbGrabDays.Text = gInfo.GrabDays.ToString();
-            return true;
-          }
-          else
-          {
-            tbGrabSite.Text = "(Unknown)";
-          }
-        }
-      }
-      return false;
-    }
-
-    private void DisplayChannelGrabberInfo(ChannelMap channel)
-    {
-      if (channel == null)
-      {
-        tcMappingDetails.SelectedIndex = 0;
-        UpdateGrabberDetails(null, null);
-        UpdateMergedList(null);
-      }
-      else
-      {
-        if (channel.merged != null && channel.merged.Count > 0)
-        {
-          tcMappingDetails.SelectedIndex = 1;
-          UpdateMergedList(channel);
-        }
-        else
-        {
-          tcMappingDetails.SelectedIndex = 0;
-          UpdateGrabberDetails(channel.id, channel.grabber);
-        }
-      }
-
-      lvMapping.Select();
-    }
-
-    private void DoSelect(Object source, EventArgs e)
-    {
-      //this.Activate(); -> form control
-      string[] id = selection.Selected;
-
-      if (id != null)
-      {
-        if (UpdateGrabberDetails(id[0], id[1]))
-        {
-          foreach (ListViewItem channel in lvMapping.SelectedItems)
-          {
-            if (_channelMapping.ContainsKey(channel.Text))
-            {
-              ChannelMap channelMap = _channelMapping[channel.Text];
-              channelMap.id = id[0];
-              channelMap.grabber = id[1];
-              _channelMapping.Remove(channel.Text);
-              _channelMapping.Add(channel.Text, channelMap);
-            }
-          }
-        }
-
-        UpdateList();
+        case 1:
+          TvMappings.OnGrabberSelected(source, e);
+          break;
+        case 2:
+          RadioMappings.OnGrabberSelected(source, e);
+          break;
       }
     }
 
@@ -1035,215 +734,50 @@ namespace SetupTv.Sections
       }
     }
 
-    private void lvMapping_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      DisplaySelectedChannelGrabberInfo();
-    }
-
     private void bAutoMap_Click(object sender, EventArgs e)
     {
       if (cbCountry.SelectedItem != null)
       {
-        tabMain.SelectedIndex = 1;
-        lvMapping.Select();
-        if (lvMapping.Items.Count == 0)
-        {
-          try
-          {
-            Log.Info("WebEPG Config: Importing channels from TV Server Database");
-            getTvServerTvChannels();
-            RedrawList(null);
-          }
-          catch (Exception ex)
-          {
-            Log.Error("WebEPG Config: Import failed - {0}", ex.Message);
-            MessageBox.Show("An error occured while trying to import channels. See log for more details.", "Import Error",
-                            MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-          }
-        }
-
         Cursor.Current = Cursors.WaitCursor;
-        List<ChannelGrabberInfo> channels =
-          _channelInfo.GetChannelArrayList(_countryList[cbCountry.SelectedItem.ToString()]);
-        foreach (ListViewItem channel in lvMapping.Items)
+        tabMain.SelectedIndex = 2;
+        if (TvMappings.ChannelMapping.Count == 0)
         {
-          ChannelMap channelMap = _channelMapping[channel.Text];
-          if (channelMap.id == null)
-          {
-            lvMapping.SelectedItems.Clear();
-            channel.Selected = true;
-            channel.EnsureVisible();
-            lvMapping.Refresh();
-            int channelNumb = _channelInfo.FindChannel(channel.Text, _countryList[cbCountry.SelectedItem.ToString()]);
-            if (channelNumb >= 0)
-            {
-              ChannelGrabberInfo channelDetails = channels[channelNumb];
-              if (channelDetails.GrabberList != null)
-              {
-                channelMap.id = channelDetails.ChannelID;
-                channelMap.grabber = channelDetails.GrabberList[0].GrabberID;
-                _channelMapping.Remove(channel.Text);
-                _channelMapping.Add(channel.Text, channelMap);
-              }
-              UpdateList();
-            }
-          }
+          TvMappings.DoImportChannels();
         }
-        Cursor.Current = Cursors.Default;
-      }
-    }
+        AutoMapChannels(TvMappings.ChannelMapping.Values);
 
-    private void lvMapping_ColumnClick(object sender, ColumnClickEventArgs e)
-    {
-      // Determine if clicked column is already the column that is being sorted.
-      if (e.Column == lvwColumnSorter.SortColumn)
-      {
-        // Reverse the current sort direction for this column.
-        if (lvwColumnSorter.Order == SortOrder.Ascending)
+        tabMain.SelectedIndex = 3;
+        if (RadioMappings.ChannelMapping.Count == 0)
         {
-          lvwColumnSorter.Order = SortOrder.Descending;
+          RadioMappings.DoImportChannels();
         }
-        else
-        {
-          lvwColumnSorter.Order = SortOrder.Ascending;
-        }
+        AutoMapChannels(TvMappings.ChannelMapping.Values);
       }
-      else
-      {
-        // Set the column number that is to be sorted; default to ascending.
-        lvwColumnSorter.SortColumn = e.Column;
-        lvwColumnSorter.Order = SortOrder.Ascending;
-      }
-
-      // Perform the sort with these new sort options.
-      this.lvMapping.Sort();
+      return;
     }
 
     #endregion
 
-    private void bMergedAdd_Click(object sender, EventArgs e)
+    private fSelection ShowGrabberSelection()
     {
-      lvMerged.SelectedItems.Clear();
-      _mergeConfig = new MergedChannelDetails(tGrabbers, null, this.bMergedOk_Click);
-      _mergeConfig.MinimizeBox = false;
-      _mergeConfig.Show();
-    }
-
-    private void bMergedOk_Click(object sender, EventArgs e)
-    {
-      if (lvMapping.SelectedItems.Count == 1)
+      if (selection == null)
       {
-        ChannelMap channelMap = _channelMapping[lvMapping.SelectedItems[0].Text];
-        if (lvMerged.SelectedItems.Count == 1)
-        {
-          MergedChannel channelDetails = (MergedChannel) lvMerged.SelectedItems[0].Tag;
-
-          channelDetails.id = _mergeConfig.ChannelDetails.id;
-          channelDetails.grabber = _mergeConfig.ChannelDetails.grabber;
-          channelDetails.start = _mergeConfig.ChannelDetails.start;
-          channelDetails.end = _mergeConfig.ChannelDetails.end;
-        }
-        else
-        {
-          channelMap.merged.Add(_mergeConfig.ChannelDetails);
-        }
-        UpdateMergedList(channelMap);
-      }
-      _mergeConfig.Close();
-    }
-
-    private void bMergedRemove_Click(object sender, EventArgs e)
-    {
-      if (lvMerged.SelectedItems.Count == 1 && lvMapping.SelectedItems.Count == 1)
-      {
-        ChannelMap channelMap = _channelMapping[lvMapping.SelectedItems[0].Text];
-        channelMap.merged.Remove((MergedChannel) lvMerged.SelectedItems[0].Tag);
-        UpdateMergedList(channelMap);
-      }
-    }
-
-    private void bMergedEdit_Click(object sender, EventArgs e)
-    {
-      if (lvMerged.SelectedItems.Count == 1 && lvMapping.SelectedItems.Count == 1)
-      {
-        MergedChannel channel = (MergedChannel) lvMerged.SelectedItems[0].Tag;
-        _mergeConfig = new MergedChannelDetails(tGrabbers, channel, this.bMergedOk_Click);
-        _mergeConfig.MinimizeBox = false;
-        _mergeConfig.Show();
-      }
-    }
-
-    private void tcMappingDetails_Selecting(object sender, TabControlCancelEventArgs e)
-    {
-      if (tcMappingDetails.SelectedIndex == 1)
-      {
-        if (lvMapping.SelectedItems.Count == 1)
-        {
-          if (_channelMapping.ContainsKey(lvMapping.SelectedItems[0].Text))
-          {
-            ChannelMap channelMap = _channelMapping[lvMapping.SelectedItems[0].Text];
-            if (channelMap.merged == null || channelMap.merged.Count == 0)
-            {
-              channelMap.merged = new List<MergedChannel>();
-              if (channelMap.id != null)
-              {
-                MergedChannel channel = new MergedChannel();
-                channel.id = channelMap.id;
-                channelMap.id = null;
-                channel.grabber = channelMap.grabber;
-                channelMap.grabber = null;
-                channelMap.merged.Add(channel);
-              }
-              //_channelMapping.Remove(channel.Text);
-              //_channelMapping.Add(channel.Text, channelMap);
-            }
-            UpdateMergedList(channelMap);
-            UpdateList();
-          }
-        }
-        else
-        {
-          e.Cancel = true;
-          MessageBox.Show("Only one channel can be mapped to multiple channels at a time.", "Multiple Selection Error",
-                          MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-        }
+        selection = new fSelection(tGrabbers); //, true, this.DoSelect);
+        selection.GrabberSelected += this.DoSelect;
+        selection.MinimizeBox = false;
+        selection.Closed += new EventHandler(this.CloseSelect);
+        selection.Show();
       }
       else
       {
-        if (lvMapping.SelectedItems.Count == 1)
-        {
-          if (_channelMapping.ContainsKey(lvMapping.SelectedItems[0].Text))
-          {
-            if (_channelMapping[lvMapping.SelectedItems[0].Text].merged == null ||
-                _channelMapping[lvMapping.SelectedItems[0].Text].merged.Count <= 1)
-            {
-              ChannelMap channelMap = _channelMapping[lvMapping.SelectedItems[0].Text];
-              if (channelMap.merged != null)
-              {
-                if (channelMap.merged.Count > 0)
-                {
-                  channelMap.id = channelMap.merged[0].id;
-                  channelMap.grabber = channelMap.merged[0].grabber;
-                }
-                channelMap.merged = null;
-              }
-              UpdateMergedList(channelMap);
-              UpdateList();
-            }
-            else
-            {
-              e.Cancel = true;
-              MessageBox.Show("Cannot convert multiple channels to single channel. Please remove one.",
-                              "Multiple Channel Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            }
-          }
-        }
+        selection.BringToFront();
       }
+      return selection;
     }
 
     private void buttonManualImport_Click(object sender, EventArgs e)
     {
-      WebEPGImport importer = new WebEPGImport();
+      TvEngine.WebEPGImport importer = new TvEngine.WebEPGImport();
 
       importer.ForceImport(ShowImportProgress);
     }
@@ -1277,5 +811,15 @@ namespace SetupTv.Sections
       textBoxFolder.Text = folderBrowserDialogTVGuide.SelectedPath;
     }
 
+    private void Mappings_SelectGrabberClick(object sender, EventArgs e)
+    {
+      ShowGrabberSelection();
+    }
+
+    private void Mappings_AutoMapChannels(object sender, EventArgs e)
+    {
+      WebEPGMappingControl mappings = sender as WebEPGMappingControl;
+      AutoMapChannels(mappings.ChannelMapping.Values);
+    }
   }
 }

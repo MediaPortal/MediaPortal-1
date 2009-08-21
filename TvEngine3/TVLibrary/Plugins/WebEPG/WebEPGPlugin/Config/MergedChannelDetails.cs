@@ -2,17 +2,21 @@ using System;
 using System.Windows.Forms;
 using MediaPortal.WebEPG.Config;
 
-namespace WebEPG_conf
+namespace SetupTv.Sections.WebEPGConfig
 {
+
   public partial class MergedChannelDetails : Form
   {
-    private fSelection _selection;
-    private TreeNode _tGrabbers;
+    //private fSelection _selection;
+    private GetGrabberSelectorCallback _getGrabberSelector;
+    //private TreeNode _tGrabbers;
 
-    public MergedChannelDetails(TreeNode grabbers, MergedChannel channel, EventHandler ok_click)
+
+    public MergedChannelDetails(MergedChannel channel, GetGrabberSelectorCallback getGrabberSelectorCallback, EventHandler ok_click)
     {
       InitializeComponent();
 
+      _getGrabberSelector = getGrabberSelectorCallback;
 
       if (channel != null)
       {
@@ -21,9 +25,43 @@ namespace WebEPG_conf
         tbStart.Text = channel.start;
         tbEnd.Text = channel.end;
       }
-      _tGrabbers = grabbers;
       bOk.Click += ok_click;
     }
+
+    //public static bool EditMergedChannel(MergedChannel channel, GetGrabberSelectorCallback getGrabberSelectorCallback)
+    //{
+    //  using (MergedChannelDetails dlg = new MergedChannelDetails(channel, getGrabberSelectorCallback))
+    //  {
+    //    if (dlg.ShowDialog() == DialogResult.OK)
+    //    {
+    //      channel.id = dlg.tbChannelName.Text;
+    //      channel.grabber = dlg.tbGrabSite.Text;
+    //      channel.start = dlg.tbStart.Text;
+    //      channel.end = dlg.tbEnd.Text;
+          
+    //      return true;
+    //    }
+    //    else
+    //    {
+    //      return false;
+    //    }
+    //  }
+    //}
+
+    //public static MergedChannel AddMergedChannel(GetGrabberSelectorCallback getGrabberSelectorCallback)
+    //{
+    //  using (MergedChannelDetails dlg = new MergedChannelDetails(null, getGrabberSelectorCallback))
+    //  {
+    //    if (dlg.ShowDialog() == DialogResult.OK)
+    //    {
+    //      return dlg.ChannelDetails;
+    //    }
+    //    else
+    //    {
+    //      return null;
+    //    }
+    //  }
+    //}
 
     public MergedChannel ChannelDetails
     {
@@ -38,6 +76,21 @@ namespace WebEPG_conf
       }
     }
 
+    private void ShowGrabberSelection()
+    {
+      _getGrabberSelector();
+      //if (_selection == null)
+      //{
+      //  _selection = _getGrabberSelector();
+      //  _selection.GrabberSelected += this.DoSelect;
+      //  _selection.Closed += new EventHandler(this.CloseSelect);
+      //}
+      //else
+      //{
+      //  _selection.BringToFront();
+      //}
+    }
+
     private void bCancel_Click(object sender, EventArgs e)
     {
       this.Close();
@@ -45,11 +98,7 @@ namespace WebEPG_conf
 
     private void bChannelID_Click(object sender, EventArgs e)
     {
-      _selection = new fSelection(_tGrabbers, true, this.DoSelect);
-      _selection.MinimizeBox = false;
-      _selection.Text = "Merge Selection";
-      _selection.Closed += new EventHandler(this.CloseSelect);
-      _selection.Show();
+      ShowGrabberSelection();
     }
 
     private void bGrabber_Click(object sender, EventArgs e)
@@ -61,26 +110,37 @@ namespace WebEPG_conf
       //_selection.Show();
     }
 
-    private void DoSelect(Object source, EventArgs e)
+    public void DoSelect(Object source, GrabberSelectedEventArgs e)
     {
       this.Activate();
-      string[] id = _selection.Selected;
+      GrabberSelectionInfo id = e.Selection;
 
       if (id != null)
       {
-        tbChannelName.Text = id[0];
-        tbGrabSite.Text = id[1];
+        tbChannelName.Text = id.ChannelId;
+        tbGrabSite.Text = id.GrabberId;
       }
 
-      _selection.Close();
+      this.BringToFront();
+      //_selection.Close();
     }
 
-    private void CloseSelect(Object source, EventArgs e)
-    {
-      if (source == _selection)
-      {
-        _selection = null;
-      }
-    }
+    //private void CloseSelect(Object source, EventArgs e)
+    //{
+    //  if (source == _selection)
+    //  {
+    //    _selection.GrabberSelected -= this.DoSelect;
+    //    _selection = null;
+    //  }
+    //}
+
+    //private void MergedChannelDetails_FormClosing(object sender, FormClosingEventArgs e)
+    //{
+    //  if (_selection != null)
+    //  {
+    //    _selection.GrabberSelected -= this.DoSelect;
+    //    _selection = null;
+    //  }
+    //}
   }
 }

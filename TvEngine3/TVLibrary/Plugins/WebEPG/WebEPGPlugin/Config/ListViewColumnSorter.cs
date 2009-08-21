@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Windows.Forms;
 
-namespace WebEPG_conf
+namespace SetupTv.Sections.WebEPGConfig
 {
   /// <summary>
   /// This class is an implementation of the 'IComparer' interface.

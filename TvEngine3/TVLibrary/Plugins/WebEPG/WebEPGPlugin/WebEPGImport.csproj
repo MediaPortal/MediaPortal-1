@@ -85,6 +85,12 @@
     <Compile Include="Config\WebEPGConfigControl.designer.cs">
       <DependentUpon>WebEPGConfigControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Config\WebEPGMappingControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Config\WebEPGMappingControl.Designer.cs">
+      <DependentUpon>WebEPGMappingControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="DatabaseEPGDataSink.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebEPGImport.cs" />
@@ -144,6 +150,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Config\WebEPGConfigControl.resx">
       <DependentUpon>WebEPGConfigControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Config\WebEPGMappingControl.resx">
+      <DependentUpon>WebEPGMappingControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

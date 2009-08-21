@@ -36,18 +36,21 @@ using System.Runtime.CompilerServices;
 using Gentle.Common;
 using Gentle.Framework;
 using MediaPortal.EPG;
+using TvEngine.PowerScheduler;
 
 namespace TvEngine
 {
-  public class WebEPGImport : ITvServerPlugin, ITvServerPluginStartedAll//, IWakeupHandler, IStandbyHandler
+  public class WebEPGImport : ITvServerPlugin, ITvServerPluginStartedAll, IWakeupHandler//, IStandbyHandler
   {
     #region constants
-
+    private const string _wakeupHandlerName = "WebEPGWakeupHandler";
     #endregion
 
     #region variables
 
     private bool _workerThreadRunning = false;
+    private System.Timers.Timer _scheduleTimer;
+
 
     #endregion
     
@@ -117,8 +120,11 @@ namespace TvEngine
       Log.WriteFile("plugin: webepg started");      
       
       //CheckNewTVGuide();
+      _scheduleTimer = new System.Timers.Timer();
+      _scheduleTimer.Interval = 60000;
+      _scheduleTimer.Enabled = true;
+      _scheduleTimer.Elapsed += new System.Timers.ElapsedEventHandler(_scheduleTimer_Elapsed);
     }
-
 
     /// <summary>
     /// Stops the plugin
@@ -126,6 +132,13 @@ namespace TvEngine
     public void Stop()
     {
       Log.WriteFile("plugin: webepg stopped");
+      UnregisterWakeupHandler();
+      if (_scheduleTimer != null)
+      {
+        _scheduleTimer.Enabled = false;
+        _scheduleTimer.Dispose();
+        _scheduleTimer = null;
+      }
     }
 
     /// <summary>
@@ -135,268 +148,9 @@ namespace TvEngine
     {
       get
       {
-        return new SetupTv.Sections.WebEPGConfigControl();
+        return new SetupTv.Sections.WebEPGSetup();
       }
     }   
-
-    //private void DownloadFileCallback(object sender, DownloadDataCompletedEventArgs e)
-    //{      
-    //  //System.Diagnostics.Debugger.Launch();
-    //  try
-    //  {
-    //    TvBusinessLayer layer = new TvBusinessLayer();
-    //    string info = "";
-    //    byte[] result = null;
-
-    //    try
-    //    {
-    //      if (e.Result != null || e.Result.Length > 0)
-    //      {
-    //        result = e.Result;            
-    //      }
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //      info = "Download failed: (" + ex.InnerException.Message + ").";
-    //    }
-
-    //    if (result != null)
-    //    {
-    //      if (result.Length == 0)
-    //      {
-    //        info = "File empty.";
-    //      }
-    //      else
-    //      {
-    //        info = "File downloaded.";
-
-    //        if (_remoteURL.Length == 0)
-    //        {
-    //          return;
-    //        }
-
-    //        Uri uri = new Uri(_remoteURL);
-    //        string filename = uri.GetComponents(UriComponents.Path, UriFormat.SafeUnescaped);
-    //        filename = filename.ToLower().Trim();
-
-    //        bool isZip = (filename.IndexOf(".zip") > -1);
-    //        bool isTvGuide = (filename.IndexOf("tvguide.xml") > -1);
-
-    //        FileInfo fI = new FileInfo(filename);
-    //        filename = fI.Name;
-         
-    //        //check if file can be opened for writing....																		
-    //        string path = layer.GetSetting("xmlTv", "").Value;
-
-    //        if (isTvGuide || isZip)
-    //        {
-    //          path = path + @"\" + filename;
-    //        }
-    //        else
-    //        {
-    //          path = path + @"\tvguide.xml";
-    //        }
-            
-    //        bool waitingForFileAccess = true;
-    //        int retries = 0;
-    //        bool fileWritten = false;
-    //        //in case the destination file is locked by another process, retry each 30 secs, but max 5 min. before giving up
-    //        while (waitingForFileAccess && retries < 10)
-    //        {
-    //          if (!_remoteFileDownloadInProgress)
-    //          {
-    //            return;
-    //          }
-    //          try
-    //          {
-    //            //IOUtil.CheckFileAccessRights(path, FileMode.Open, FileAccess.Write, FileShare.Write);
-    //            if (!fileWritten)
-    //            {
-    //              using (FileStream fs = new FileStream(path, FileMode.Create))
-    //              {
-    //                fs.Write(e.Result, 0, e.Result.Length);
-    //                fs.Close();
-    //                fileWritten = true;
-    //              }
-    //            }
-    //          }
-    //          catch (Exception ex)
-    //          {
-    //            Log.Info("file is locked, retrying in 30secs. [" + ex.Message + "]");
-    //            retries++;
-    //            Thread.Sleep(30000); //wait 30 sec. before retrying.
-    //          }
-
-    //          if (isZip)
-    //          {
-    //            try
-    //            {
-    //              string newLoc = layer.GetSetting("xmlTv", "").Value + @"\";
-    //              Log.Info("extracting zip file {0} to location {1}", path, newLoc);
-    //              ZipFile zip = new ZipFile(path);
-    //              zip.ExtractAll(newLoc, true);
-    //            }
-    //            catch (Exception ex2)
-    //            {
-    //              Log.Info("file is locked, retrying in 30secs. [" + ex2.Message + "]");
-    //              retries++;
-    //              Thread.Sleep(30000); //wait 30 sec. before retrying.
-    //            }
-    //          }
-              
-    //          waitingForFileAccess = false;
-
-    //        }
-
-    //        if (waitingForFileAccess)
-    //        {              
-    //          info = "Trouble writing to file.";
-    //        }
-
-    //      }
-    //    }
-
-    //    Setting setting;
-    //    setting = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "");
-    //    setting.Value = info;
-    //    setting.Persist();
-
-    //    setting = layer.GetSetting("xmlTvRemoteScheduleLastTransfer", "");
-    //    setting.Value = DateTime.Now.ToString();
-    //    setting.Persist();
-
-    //    Log.Info(info);
-    //  }
-    //  catch (Exception)
-    //  {
-    //  }
-    //  finally
-    //  {
-    //    _remoteFileDownloadInProgress = false; //signal that we are done downloading.
-    //    SetStandbyAllowed(true);
-    //  }
-    //}
-
-    //public void RetrieveRemoteFile(String folder, string URL)
-    //{
-    //  //System.Diagnostics.Debugger.Launch();			
-    //  if (_remoteFileDownloadInProgress)
-    //  {
-    //    return;
-    //  }
-    //  string lastTransferAt = "";
-    //  string transferStatus = "";
-
-    //  _remoteURL = URL;
-
-    //  TvBusinessLayer layer = new TvBusinessLayer();
-    //  Setting setting;
-
-    //  string errMsg = "";
-    //  if (URL.Length == 0)
-    //  {
-    //    errMsg = "No URL defined.";
-    //    Log.Error(errMsg);
-    //    setting = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "");
-    //    setting.Value = errMsg;
-    //    setting.Persist();
-    //    _remoteFileDownloadInProgress = false;
-    //    SetStandbyAllowed(true);
-    //    return;
-    //  }
-
-    //  if (folder.Length == 0)
-    //  {
-    //    errMsg = "No tvguide.xml path defined.";
-    //    Log.Error(errMsg);
-    //    setting = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "");
-    //    setting.Value = errMsg;
-    //    setting.Persist();
-    //    _remoteFileDownloadInProgress = false;
-    //    SetStandbyAllowed(true);
-    //    return;
-    //  }
-
-    //  lastTransferAt = DateTime.Now.ToString();
-    //  transferStatus = "downloading...";
-
-    //  WebClient Client = new WebClient();
-
-
-    //  bool isHTTP = (URL.ToLowerInvariant().IndexOf("http://") == 0);
-    //  bool isFTP = (URL.ToLowerInvariant().IndexOf("ftp://") == 0);
-
-    //  if (isFTP)
-    //  {
-    //    // grab username, password and server from the URL
-    //    // ftp://user:pass@www.somesite.com/TVguide.xml
-
-    //    Log.Info("FTP URL detected.");
-
-    //    int passwordEndIdx = URL.IndexOf("@");
-
-    //    if (passwordEndIdx > -1)
-    //    {
-    //      Log.Info("FTP username/password detected.");
-
-    //      int userStartIdx = 6; //6 is the length of chars in  --> "ftp://"
-    //      int userEndIdx = URL.IndexOf(":", userStartIdx);
-
-    //      string user = URL.Substring(userStartIdx, (userEndIdx - userStartIdx));
-    //      string pass = URL.Substring(userEndIdx + 1, (passwordEndIdx - userEndIdx - 1));
-    //      URL = "ftp://" + URL.Substring(passwordEndIdx + 1);
-
-    //      Client.Credentials = new NetworkCredential(user, pass);
-    //      Client.Proxy.Credentials = CredentialCache.DefaultCredentials;
-    //    }
-    //    else
-    //    {
-    //      Log.Info("no FTP username/password detected. Using anonymous access.");
-    //    }
-    //  }
-    //  else
-    //  {
-    //    Log.Info("HTTP URL detected.");
-    //  }
-
-    //  Log.Info("initiating download of remote file from " + URL);
-    //  Uri uri = new Uri(URL);
-    //  Client.DownloadDataCompleted += new DownloadDataCompletedEventHandler(DownloadFileCallback);
-
-    //  try
-    //  {
-    //    SetStandbyAllowed(false);
-    //    _remoteFileDownloadInProgress = true;
-    //    _remoteFileDonwloadInProgressAt = DateTime.Now;
-    //    Client.DownloadDataAsync(uri);
-    //  }
-    //  catch (WebException ex)
-    //  {
-    //    errMsg = "An error occurred while downloading the file: " + URL + " (" + ex.Message + ").";
-    //    Log.Error(errMsg);
-    //    lastTransferAt = errMsg;
-    //  }
-    //  catch (InvalidOperationException ex)
-    //  {
-    //    errMsg = "The " + folder + @"\tvguide.xml file is in use by another thread (" + ex.Message + ").";
-    //    Log.Error(errMsg);
-    //    lastTransferAt = errMsg;
-    //  }
-    //  catch (Exception ex)
-    //  {
-    //    errMsg = "Unknown error @ " + URL + "(" + ex.Message + ").";
-    //    Log.Error(errMsg);
-    //    lastTransferAt = errMsg;
-    //  }
-      
-    //  setting = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "");
-    //  setting.Value = transferStatus;
-    //  setting.Persist();
-
-    //  setting = layer.GetSetting("xmlTvRemoteScheduleLastTransfer", "");
-    //  setting.Value = lastTransferAt;
-    //  setting.Persist();
-    //}
 
     /// <summary>
     /// Forces the import of the tvguide. Usable when testing the grabber
@@ -417,7 +171,7 @@ namespace TvEngine
     #endregion
 
     #region private members
-    
+
     [MethodImpl(MethodImplOptions.Synchronized)]
     protected void StartImport(WebEPG.ShowProgressHandler showProgress)
     {
@@ -468,8 +222,8 @@ namespace TvEngine
 
           if (destination == "db")
           {
-            bool deleteBeforeImport = layer.GetSetting("webepgDeleteBeforeImport", "true").Value == "true";
-            bool deleteOnlyOverlapping = (layer.GetSetting("webepgDeleteOnlyOverlapping", "true").Value == "true") 
+            bool deleteBeforeImport = Convert.ToBoolean(layer.GetSetting("webepgDeleteBeforeImport", "true").Value);
+            bool deleteOnlyOverlapping = Convert.ToBoolean(layer.GetSetting("webepgDeleteOnlyOverlapping", "true").Value) 
                                           && deleteBeforeImport;
             // Allow for deleting of all existing programs before adding the new ones. 
             // Already imported programs might have incorrect data depending on the grabber & setup
@@ -547,6 +301,25 @@ namespace TvEngine
       }
     }
 
+    void _scheduleTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      bool scheduleEnabled = Convert.ToBoolean(layer.GetSetting("webepgScheduleEnabled", "true").Value);
+      if (scheduleEnabled)
+      {
+        Setting configSetting = layer.GetSetting("webepgSchedule", String.Empty);
+        EPGWakeupConfig config = new EPGWakeupConfig(configSetting.Value);
+        if (ShouldRunNow())
+        {
+          Log.Info("WebEPGImporter: WebEPG schedule {0}:{1} is due: {2}:{3}",
+                    config.Hour, config.Minutes, DateTime.Now.Hour, DateTime.Now.Minute);
+          StartImport(null);
+          configSetting.Value = config.SerializeAsString();
+          configSetting.Persist();
+        }
+      }
+    }
+
     private void EPGScheduleDue()
     {
       StartImport(null);
@@ -569,6 +342,25 @@ namespace TvEngine
       Log.Debug("WebEPGImporter: NOT registered with PowerScheduler EPG handler");
     }
 
+    private void RegisterWakeupHandler()
+    {
+      if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
+      {
+        GlobalServiceProvider.Instance.Get<IPowerScheduler>().Register(this as IWakeupHandler);
+        Log.Debug("WebEPGImporter: registered WakeupHandler with PowerScheduler ");
+        return;
+      }
+      Log.Debug("WebEPGImporter: NOT registered WakeupHandler with PowerScheduler ");
+    }
+
+    private void UnregisterWakeupHandler()
+    {
+      if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
+      {
+        GlobalServiceProvider.Instance.Get<IPowerScheduler>().Unregister(this as IWakeupHandler);
+        Log.Debug("WebEPGImporter: unregistered WakeupHandler with PowerScheduler ");
+      }
+    }
 
     private void SetStandbyAllowed(bool allowed)
     {
@@ -578,6 +370,88 @@ namespace TvEngine
         GlobalServiceProvider.Instance.Get<IEpgHandler>().SetStandbyAllowed(this, allowed, 3600);
       }
     }
+
+    /// <summary>
+    /// Returns whether a schedule is due, and the EPG should run now.
+    /// </summary>
+    /// <returns></returns>
+    private bool ShouldRunNow()
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      EPGWakeupConfig config = new EPGWakeupConfig(layer.GetSetting("webepgSchedule", String.Empty).Value);
+
+      // check if schedule is due
+      // check if we've already run today
+      if (config.LastRun.Day != DateTime.Now.Day)
+      {
+        // check if we should run today
+        if (ShouldRun(config.Days, DateTime.Now.DayOfWeek))
+        {
+          // check if schedule is due
+          if (DateTime.Now.Hour >= config.Hour)
+          {
+            if (DateTime.Now.Minute >= config.Minutes)
+            {
+              return true;
+            }
+          }
+        }
+      }
+      return false;
+    }
+
+    private bool ShouldRun(List<EPGGrabDays> days, DayOfWeek dow)
+    {
+      switch (dow)
+      {
+        case DayOfWeek.Monday:
+          return (days.Contains(EPGGrabDays.Monday));
+        case DayOfWeek.Tuesday:
+          return (days.Contains(EPGGrabDays.Tuesday));
+        case DayOfWeek.Wednesday:
+          return (days.Contains(EPGGrabDays.Wednesday));
+        case DayOfWeek.Thursday:
+          return (days.Contains(EPGGrabDays.Thursday));
+        case DayOfWeek.Friday:
+          return (days.Contains(EPGGrabDays.Friday));
+        case DayOfWeek.Saturday:
+          return (days.Contains(EPGGrabDays.Saturday));
+        case DayOfWeek.Sunday:
+          return (days.Contains(EPGGrabDays.Sunday));
+        default:
+          return false;
+      }
+    }
+
+    private DateTime GetNextWakeupSchedule(DateTime earliestWakeupTime)
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+
+      EPGWakeupConfig cfg = new EPGWakeupConfig(layer.GetSetting("webepgSchedule", String.Empty).Value);
+      
+      // Start by thinking we should run today
+      DateTime nextRun = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, cfg.Hour, cfg.Minutes, 0);
+      // check if we should run today or some other day in the future
+      if (cfg.LastRun.Day == DateTime.Now.Day || nextRun < earliestWakeupTime)
+      {
+        // determine first next day to run EPG grabber
+        for (int i = 1; i < 8; i++)
+        {
+          if (ShouldRun(cfg.Days, nextRun.AddDays(i).DayOfWeek))
+          {
+            nextRun = nextRun.AddDays(i);
+            break;
+          }
+        }
+        if (DateTime.Now.Day == nextRun.Day)
+        {
+          Log.Error("WebEPG: no valid next wakeup date for EPG grabbing found!");
+          nextRun = DateTime.MaxValue;
+        }
+      }
+      return nextRun;
+    }
+
     #endregion
 
     #region ITvServerPluginStartedAll Members
@@ -585,8 +459,29 @@ namespace TvEngine
     public void StartedAll()
     {
       RegisterForEPGSchedule();
+      RegisterWakeupHandler();
     }
 
+    #endregion   
+
+    #region IWakeupHandler implementation
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public DateTime GetNextWakeupTime(DateTime earliestWakeupTime)
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      bool scheduleEnabled = Convert.ToBoolean(layer.GetSetting("webepgScheduleEnabled", "true").Value);
+      if (!scheduleEnabled)
+      {
+        return DateTime.MaxValue;
+      }
+
+      return GetNextWakeupSchedule(earliestWakeupTime);
+    }
+
+    public string HandlerName
+    {
+      get { return _wakeupHandlerName; }
+    }
     #endregion   
    
   }

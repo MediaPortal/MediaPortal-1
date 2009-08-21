@@ -163,6 +163,7 @@ namespace MediaPortal.EPG.config
       Levenstein comparer = new Levenstein();
       float bestSimilarity;
       float similarity;
+      int mostSimilarChan = -1;
 
       bestSimilarity = MIN_SIMILARITY;
       for (int i = 0; i < channels.Count; i++)
@@ -179,17 +180,19 @@ namespace MediaPortal.EPG.config
         if (ch.FullName.IndexOf(Name, StringComparison.OrdinalIgnoreCase) != -1)
         {
           retChan = i;
-          break;
         }
 
         similarity = comparer.getSimilarity(Name, ch.FullName);
 
         if (similarity > bestSimilarity)
         {
-          retChan = i;
+          mostSimilarChan = i;
           bestSimilarity = similarity;
         }
       }
+
+      if (retChan < 0)
+        return mostSimilarChan;
 
       return retChan;
     }

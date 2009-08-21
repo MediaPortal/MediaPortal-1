@@ -1,6 +1,6 @@
 namespace SetupTv.Sections
 {
-  partial class WebEPGConfigControl
+  partial class WebEPGSetup
   {
     /// <summary> 
     /// Required designer variable.
@@ -29,28 +29,11 @@ namespace SetupTv.Sections
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      this.gbChannelDetails = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.tcMappingDetails = new System.Windows.Forms.TabControl();
-      this.tpSingle = new System.Windows.Forms.TabPage();
-      this.gbGrabber = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.tbGrabDays = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.lGuideDays = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.bGrabber = new MediaPortal.UserInterface.Controls.MPButton();
-      this.Grabber = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbGrabSite = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.bChannelID = new MediaPortal.UserInterface.Controls.MPButton();
-      this.l_cID = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbChannelName = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tpMultiple = new System.Windows.Forms.TabPage();
-      this.bMergedEdit = new System.Windows.Forms.Button();
-      this.bMergedRemove = new System.Windows.Forms.Button();
-      this.bMergedAdd = new System.Windows.Forms.Button();
-      this.lvMerged = new System.Windows.Forms.ListView();
+      this.bsMergedChannel = new System.Windows.Forms.BindingSource(this.components);
       this.gbMapping = new System.Windows.Forms.GroupBox();
       this.label3 = new System.Windows.Forms.Label();
       this.cbCountry = new System.Windows.Forms.ComboBox();
       this.bAutoMap = new System.Windows.Forms.Button();
-      this.bImport = new MediaPortal.UserInterface.Controls.MPButton();
       this.gbGlobal = new System.Windows.Forms.GroupBox();
       this.checkBoxDeleteOnlyOverlapping = new System.Windows.Forms.CheckBox();
       this.checkBoxDeleteBeforeImport = new System.Windows.Forms.CheckBox();
@@ -60,21 +43,9 @@ namespace SetupTv.Sections
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.nMaxGrab = new System.Windows.Forms.NumericUpDown();
       this.lGrabDay = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.gbChannels = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.LoadRadioCheckBox = new System.Windows.Forms.CheckBox();
-      this.label1 = new System.Windows.Forms.Label();
-      this.GroupComboBox = new System.Windows.Forms.ComboBox();
-      this.label2 = new System.Windows.Forms.Label();
-      this.mtbNewChannel = new System.Windows.Forms.MaskedTextBox();
-      this.lvMapping = new System.Windows.Forms.ListView();
-      this.bClearMapping = new System.Windows.Forms.Button();
-      this.lCount = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbCount = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.bRemove = new MediaPortal.UserInterface.Controls.MPButton();
-      this.bAdd = new MediaPortal.UserInterface.Controls.MPButton();
       this.bSave = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabMain = new System.Windows.Forms.TabControl();
-      this.tabSettings = new System.Windows.Forms.TabPage();
+      this.tabGeneral = new System.Windows.Forms.TabPage();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.labelStatus = new System.Windows.Forms.Label();
       this.buttonManualImport = new System.Windows.Forms.Button();
@@ -85,217 +56,42 @@ namespace SetupTv.Sections
       this.label10 = new System.Windows.Forms.Label();
       this.label11 = new System.Windows.Forms.Label();
       this.label12 = new System.Windows.Forms.Label();
-      this.tabMappings = new System.Windows.Forms.TabPage();
+      this.tabTVMappings = new System.Windows.Forms.TabPage();
+      this.TvMappings = new SetupTv.Sections.WebEPGConfig.WebEPGMappingControl();
+      this.tabRadioMappings = new System.Windows.Forms.TabPage();
+      this.RadioMappings = new SetupTv.Sections.WebEPGConfig.WebEPGMappingControl();
+      this.tabSchedule = new System.Windows.Forms.TabPage();
+      this.groupBox3 = new System.Windows.Forms.GroupBox();
+      this.mpLabel2 = new System.Windows.Forms.Label();
+      this.ScheduleGrabCheckBox = new System.Windows.Forms.CheckBox();
+      this.panel1 = new System.Windows.Forms.Panel();
+      this.SundayCheckBox = new System.Windows.Forms.CheckBox();
+      this.SaturdayCheckBox = new System.Windows.Forms.CheckBox();
+      this.FridayCheckBox = new System.Windows.Forms.CheckBox();
+      this.ThursdayCheckBox = new System.Windows.Forms.CheckBox();
+      this.WednesdayCheckBox = new System.Windows.Forms.CheckBox();
+      this.TuesdayCheckBox = new System.Windows.Forms.CheckBox();
+      this.MondayCheckBox = new System.Windows.Forms.CheckBox();
+      this.grabTimeTextBox = new System.Windows.Forms.MaskedTextBox();
       this.StatusTimer = new System.Windows.Forms.Timer(this.components);
       this.folderBrowserDialogTVGuide = new System.Windows.Forms.FolderBrowserDialog();
-      this.gbChannelDetails.SuspendLayout();
-      this.tcMappingDetails.SuspendLayout();
-      this.tpSingle.SuspendLayout();
-      this.gbGrabber.SuspendLayout();
-      this.tpMultiple.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.bsMergedChannel)).BeginInit();
       this.gbMapping.SuspendLayout();
       this.gbGlobal.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.nMaxGrab)).BeginInit();
-      this.gbChannels.SuspendLayout();
       this.tabMain.SuspendLayout();
-      this.tabSettings.SuspendLayout();
+      this.tabGeneral.SuspendLayout();
       this.groupBox1.SuspendLayout();
-      this.tabMappings.SuspendLayout();
+      this.tabTVMappings.SuspendLayout();
+      this.tabRadioMappings.SuspendLayout();
+      this.tabSchedule.SuspendLayout();
+      this.groupBox3.SuspendLayout();
+      this.panel1.SuspendLayout();
       this.SuspendLayout();
       // 
-      // gbChannelDetails
+      // bsMergedChannel
       // 
-      this.gbChannelDetails.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.gbChannelDetails.Controls.Add(this.tcMappingDetails);
-      this.gbChannelDetails.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.gbChannelDetails.Location = new System.Drawing.Point(3, 250);
-      this.gbChannelDetails.Name = "gbChannelDetails";
-      this.gbChannelDetails.Size = new System.Drawing.Size(436, 167);
-      this.gbChannelDetails.TabIndex = 21;
-      this.gbChannelDetails.TabStop = false;
-      this.gbChannelDetails.Text = "Mapping Details";
-      // 
-      // tcMappingDetails
-      // 
-      this.tcMappingDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.tcMappingDetails.Controls.Add(this.tpSingle);
-      this.tcMappingDetails.Controls.Add(this.tpMultiple);
-      this.tcMappingDetails.Location = new System.Drawing.Point(6, 19);
-      this.tcMappingDetails.Name = "tcMappingDetails";
-      this.tcMappingDetails.SelectedIndex = 0;
-      this.tcMappingDetails.Size = new System.Drawing.Size(424, 142);
-      this.tcMappingDetails.TabIndex = 16;
-      this.tcMappingDetails.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(this.tcMappingDetails_Selecting);
-      // 
-      // tpSingle
-      // 
-      this.tpSingle.Controls.Add(this.gbGrabber);
-      this.tpSingle.Controls.Add(this.bChannelID);
-      this.tpSingle.Controls.Add(this.l_cID);
-      this.tpSingle.Controls.Add(this.tbChannelName);
-      this.tpSingle.Location = new System.Drawing.Point(4, 22);
-      this.tpSingle.Name = "tpSingle";
-      this.tpSingle.Padding = new System.Windows.Forms.Padding(3);
-      this.tpSingle.Size = new System.Drawing.Size(416, 116);
-      this.tpSingle.TabIndex = 0;
-      this.tpSingle.Text = "Single";
-      this.tpSingle.UseVisualStyleBackColor = true;
-      // 
-      // gbGrabber
-      // 
-      this.gbGrabber.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.gbGrabber.Controls.Add(this.tbGrabDays);
-      this.gbGrabber.Controls.Add(this.lGuideDays);
-      this.gbGrabber.Controls.Add(this.bGrabber);
-      this.gbGrabber.Controls.Add(this.Grabber);
-      this.gbGrabber.Controls.Add(this.tbGrabSite);
-      this.gbGrabber.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.gbGrabber.Location = new System.Drawing.Point(3, 38);
-      this.gbGrabber.Name = "gbGrabber";
-      this.gbGrabber.Size = new System.Drawing.Size(410, 65);
-      this.gbGrabber.TabIndex = 15;
-      this.gbGrabber.TabStop = false;
-      this.gbGrabber.Text = "Grabber Details";
-      // 
-      // tbGrabDays
-      // 
-      this.tbGrabDays.Location = new System.Drawing.Point(79, 39);
-      this.tbGrabDays.Name = "tbGrabDays";
-      this.tbGrabDays.ReadOnly = true;
-      this.tbGrabDays.Size = new System.Drawing.Size(116, 20);
-      this.tbGrabDays.TabIndex = 7;
-      // 
-      // lGuideDays
-      // 
-      this.lGuideDays.Location = new System.Drawing.Point(3, 42);
-      this.lGuideDays.Name = "lGuideDays";
-      this.lGuideDays.Size = new System.Drawing.Size(70, 17);
-      this.lGuideDays.TabIndex = 8;
-      this.lGuideDays.Text = "Guide Days";
-      // 
-      // bGrabber
-      // 
-      this.bGrabber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.bGrabber.Location = new System.Drawing.Point(374, 12);
-      this.bGrabber.Name = "bGrabber";
-      this.bGrabber.Size = new System.Drawing.Size(30, 20);
-      this.bGrabber.TabIndex = 6;
-      this.bGrabber.Text = "...";
-      this.bGrabber.UseVisualStyleBackColor = true;
-      this.bGrabber.Visible = false;
-      // 
-      // Grabber
-      // 
-      this.Grabber.Location = new System.Drawing.Point(3, 16);
-      this.Grabber.Name = "Grabber";
-      this.Grabber.Size = new System.Drawing.Size(56, 17);
-      this.Grabber.TabIndex = 1;
-      this.Grabber.Text = "Site";
-      // 
-      // tbGrabSite
-      // 
-      this.tbGrabSite.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.tbGrabSite.Location = new System.Drawing.Point(79, 13);
-      this.tbGrabSite.Name = "tbGrabSite";
-      this.tbGrabSite.ReadOnly = true;
-      this.tbGrabSite.Size = new System.Drawing.Size(289, 20);
-      this.tbGrabSite.TabIndex = 0;
-      // 
-      // bChannelID
-      // 
-      this.bChannelID.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.bChannelID.Location = new System.Drawing.Point(377, 12);
-      this.bChannelID.Name = "bChannelID";
-      this.bChannelID.Size = new System.Drawing.Size(30, 20);
-      this.bChannelID.TabIndex = 9;
-      this.bChannelID.Text = "...";
-      this.bChannelID.UseVisualStyleBackColor = true;
-      this.bChannelID.Click += new System.EventHandler(this.bChannelID_Click);
-      // 
-      // l_cID
-      // 
-      this.l_cID.Location = new System.Drawing.Point(6, 15);
-      this.l_cID.Name = "l_cID";
-      this.l_cID.Size = new System.Drawing.Size(56, 17);
-      this.l_cID.TabIndex = 8;
-      this.l_cID.Text = "Channel";
-      // 
-      // tbChannelName
-      // 
-      this.tbChannelName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.tbChannelName.Location = new System.Drawing.Point(82, 12);
-      this.tbChannelName.Name = "tbChannelName";
-      this.tbChannelName.ReadOnly = true;
-      this.tbChannelName.Size = new System.Drawing.Size(289, 20);
-      this.tbChannelName.TabIndex = 7;
-      // 
-      // tpMultiple
-      // 
-      this.tpMultiple.Controls.Add(this.bMergedEdit);
-      this.tpMultiple.Controls.Add(this.bMergedRemove);
-      this.tpMultiple.Controls.Add(this.bMergedAdd);
-      this.tpMultiple.Controls.Add(this.lvMerged);
-      this.tpMultiple.Location = new System.Drawing.Point(4, 22);
-      this.tpMultiple.Name = "tpMultiple";
-      this.tpMultiple.Padding = new System.Windows.Forms.Padding(3);
-      this.tpMultiple.Size = new System.Drawing.Size(416, 116);
-      this.tpMultiple.TabIndex = 1;
-      this.tpMultiple.Text = "Multiple (Merged)";
-      this.tpMultiple.UseVisualStyleBackColor = true;
-      // 
-      // bMergedEdit
-      // 
-      this.bMergedEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.bMergedEdit.Location = new System.Drawing.Point(254, 87);
-      this.bMergedEdit.Name = "bMergedEdit";
-      this.bMergedEdit.Size = new System.Drawing.Size(75, 23);
-      this.bMergedEdit.TabIndex = 3;
-      this.bMergedEdit.Text = "Edit";
-      this.bMergedEdit.UseVisualStyleBackColor = true;
-      this.bMergedEdit.Click += new System.EventHandler(this.bMergedEdit_Click);
-      // 
-      // bMergedRemove
-      // 
-      this.bMergedRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.bMergedRemove.Location = new System.Drawing.Point(335, 87);
-      this.bMergedRemove.Name = "bMergedRemove";
-      this.bMergedRemove.Size = new System.Drawing.Size(75, 23);
-      this.bMergedRemove.TabIndex = 2;
-      this.bMergedRemove.Text = "Remove";
-      this.bMergedRemove.UseVisualStyleBackColor = true;
-      this.bMergedRemove.Click += new System.EventHandler(this.bMergedRemove_Click);
-      // 
-      // bMergedAdd
-      // 
-      this.bMergedAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.bMergedAdd.Location = new System.Drawing.Point(173, 87);
-      this.bMergedAdd.Name = "bMergedAdd";
-      this.bMergedAdd.Size = new System.Drawing.Size(75, 23);
-      this.bMergedAdd.TabIndex = 1;
-      this.bMergedAdd.Text = "Add";
-      this.bMergedAdd.UseVisualStyleBackColor = true;
-      this.bMergedAdd.Click += new System.EventHandler(this.bMergedAdd_Click);
-      // 
-      // lvMerged
-      // 
-      this.lvMerged.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.lvMerged.FullRowSelect = true;
-      this.lvMerged.HideSelection = false;
-      this.lvMerged.Location = new System.Drawing.Point(0, 0);
-      this.lvMerged.MultiSelect = false;
-      this.lvMerged.Name = "lvMerged";
-      this.lvMerged.Size = new System.Drawing.Size(416, 81);
-      this.lvMerged.TabIndex = 0;
-      this.lvMerged.UseCompatibleStateImageBehavior = false;
-      this.lvMerged.View = System.Windows.Forms.View.Details;
+      this.bsMergedChannel.DataSource = typeof(MediaPortal.WebEPG.Config.MergedChannel);
       // 
       // gbMapping
       // 
@@ -342,17 +138,6 @@ namespace SetupTv.Sections
       this.bAutoMap.Text = "Auto Map";
       this.bAutoMap.UseVisualStyleBackColor = true;
       this.bAutoMap.Click += new System.EventHandler(this.bAutoMap_Click);
-      // 
-      // bImport
-      // 
-      this.bImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.bImport.Location = new System.Drawing.Point(358, 17);
-      this.bImport.Name = "bImport";
-      this.bImport.Size = new System.Drawing.Size(72, 24);
-      this.bImport.TabIndex = 11;
-      this.bImport.Text = "Import";
-      this.bImport.UseVisualStyleBackColor = true;
-      this.bImport.Click += new System.EventHandler(this.bImport_Click);
       // 
       // gbGlobal
       // 
@@ -469,149 +254,6 @@ namespace SetupTv.Sections
       this.lGrabDay.TabIndex = 9;
       this.lGrabDay.Text = "Grab Days";
       // 
-      // gbChannels
-      // 
-      this.gbChannels.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.gbChannels.Controls.Add(this.bImport);
-      this.gbChannels.Controls.Add(this.label2);
-      this.gbChannels.Controls.Add(this.mtbNewChannel);
-      this.gbChannels.Controls.Add(this.lvMapping);
-      this.gbChannels.Controls.Add(this.bClearMapping);
-      this.gbChannels.Controls.Add(this.lCount);
-      this.gbChannels.Controls.Add(this.tbCount);
-      this.gbChannels.Controls.Add(this.bRemove);
-      this.gbChannels.Controls.Add(this.bAdd);
-      this.gbChannels.Controls.Add(this.LoadRadioCheckBox);
-      this.gbChannels.Controls.Add(this.label1);
-      this.gbChannels.Controls.Add(this.GroupComboBox);
-      this.gbChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.gbChannels.Location = new System.Drawing.Point(3, 3);
-      this.gbChannels.Name = "gbChannels";
-      this.gbChannels.Size = new System.Drawing.Size(436, 241);
-      this.gbChannels.TabIndex = 20;
-      this.gbChannels.TabStop = false;
-      this.gbChannels.Text = "Channel Mapping";
-      // 
-      // LoadRadioCheckBox
-      // 
-      this.LoadRadioCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.LoadRadioCheckBox.AutoSize = true;
-      this.LoadRadioCheckBox.Location = new System.Drawing.Point(230, 22);
-      this.LoadRadioCheckBox.Name = "LoadRadioCheckBox";
-      this.LoadRadioCheckBox.Size = new System.Drawing.Size(122, 17);
-      this.LoadRadioCheckBox.TabIndex = 23;
-      this.LoadRadioCheckBox.Text = "Load radio channels";
-      this.LoadRadioCheckBox.UseVisualStyleBackColor = true;
-      this.LoadRadioCheckBox.Visible = false;
-      // 
-      // label1
-      // 
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(3, 23);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(39, 13);
-      this.label1.TabIndex = 22;
-      this.label1.Text = "Group:";
-      this.label1.Visible = false;
-      // 
-      // GroupComboBox
-      // 
-      this.GroupComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.GroupComboBox.FormattingEnabled = true;
-      this.GroupComboBox.Location = new System.Drawing.Point(48, 20);
-      this.GroupComboBox.Name = "GroupComboBox";
-      this.GroupComboBox.Size = new System.Drawing.Size(176, 21);
-      this.GroupComboBox.TabIndex = 21;
-      this.GroupComboBox.Visible = false;
-      // 
-      // label2
-      // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(6, 22);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(71, 13);
-      this.label2.TabIndex = 19;
-      this.label2.Text = "New Channel";
-      // 
-      // mtbNewChannel
-      // 
-      this.mtbNewChannel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.mtbNewChannel.Location = new System.Drawing.Point(85, 19);
-      this.mtbNewChannel.Name = "mtbNewChannel";
-      this.mtbNewChannel.Size = new System.Drawing.Size(180, 20);
-      this.mtbNewChannel.TabIndex = 18;
-      // 
-      // lvMapping
-      // 
-      this.lvMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.lvMapping.FullRowSelect = true;
-      this.lvMapping.HideSelection = false;
-      this.lvMapping.Location = new System.Drawing.Point(6, 45);
-      this.lvMapping.Name = "lvMapping";
-      this.lvMapping.Size = new System.Drawing.Size(424, 160);
-      this.lvMapping.TabIndex = 17;
-      this.lvMapping.UseCompatibleStateImageBehavior = false;
-      this.lvMapping.View = System.Windows.Forms.View.Details;
-      this.lvMapping.SelectedIndexChanged += new System.EventHandler(this.lvMapping_SelectedIndexChanged);
-      this.lvMapping.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lvMapping_ColumnClick);
-      // 
-      // bClearMapping
-      // 
-      this.bClearMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.bClearMapping.Location = new System.Drawing.Point(253, 211);
-      this.bClearMapping.Name = "bClearMapping";
-      this.bClearMapping.Size = new System.Drawing.Size(90, 24);
-      this.bClearMapping.TabIndex = 20;
-      this.bClearMapping.Text = "Clear Mapping";
-      this.bClearMapping.UseVisualStyleBackColor = true;
-      this.bClearMapping.Click += new System.EventHandler(this.bClearMapping_Click);
-      // 
-      // lCount
-      // 
-      this.lCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.lCount.Location = new System.Drawing.Point(67, 217);
-      this.lCount.Name = "lCount";
-      this.lCount.Size = new System.Drawing.Size(80, 16);
-      this.lCount.TabIndex = 1;
-      this.lCount.Text = "Channel Count";
-      // 
-      // tbCount
-      // 
-      this.tbCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.tbCount.Location = new System.Drawing.Point(6, 214);
-      this.tbCount.Name = "tbCount";
-      this.tbCount.ReadOnly = true;
-      this.tbCount.Size = new System.Drawing.Size(55, 20);
-      this.tbCount.TabIndex = 0;
-      // 
-      // bRemove
-      // 
-      this.bRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.bRemove.Location = new System.Drawing.Point(349, 211);
-      this.bRemove.Name = "bRemove";
-      this.bRemove.Size = new System.Drawing.Size(81, 24);
-      this.bRemove.TabIndex = 17;
-      this.bRemove.Text = "Remove";
-      this.bRemove.UseVisualStyleBackColor = true;
-      this.bRemove.Click += new System.EventHandler(this.bRemove_Click);
-      // 
-      // bAdd
-      // 
-      this.bAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.bAdd.Location = new System.Drawing.Point(271, 17);
-      this.bAdd.Name = "bAdd";
-      this.bAdd.Size = new System.Drawing.Size(81, 24);
-      this.bAdd.TabIndex = 12;
-      this.bAdd.Text = "Add";
-      this.bAdd.UseVisualStyleBackColor = true;
-      this.bAdd.Click += new System.EventHandler(this.bAdd_Click);
-      // 
       // bSave
       // 
       this.bSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -625,30 +267,30 @@ namespace SetupTv.Sections
       // 
       // tabMain
       // 
-      this.tabMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.tabMain.Controls.Add(this.tabSettings);
-      this.tabMain.Controls.Add(this.tabMappings);
+      this.tabMain.Controls.Add(this.tabGeneral);
+      this.tabMain.Controls.Add(this.tabTVMappings);
+      this.tabMain.Controls.Add(this.tabRadioMappings);
+      this.tabMain.Controls.Add(this.tabSchedule);
+      this.tabMain.Dock = System.Windows.Forms.DockStyle.Fill;
       this.tabMain.Location = new System.Drawing.Point(0, 0);
       this.tabMain.Name = "tabMain";
       this.tabMain.SelectedIndex = 0;
       this.tabMain.Size = new System.Drawing.Size(457, 455);
       this.tabMain.TabIndex = 26;
       // 
-      // tabSettings
+      // tabGeneral
       // 
-      this.tabSettings.Controls.Add(this.groupBox1);
-      this.tabSettings.Controls.Add(this.bSave);
-      this.tabSettings.Controls.Add(this.gbMapping);
-      this.tabSettings.Controls.Add(this.gbGlobal);
-      this.tabSettings.Location = new System.Drawing.Point(4, 22);
-      this.tabSettings.Name = "tabSettings";
-      this.tabSettings.Padding = new System.Windows.Forms.Padding(3);
-      this.tabSettings.Size = new System.Drawing.Size(449, 429);
-      this.tabSettings.TabIndex = 1;
-      this.tabSettings.Text = "Settings";
-      this.tabSettings.UseVisualStyleBackColor = true;
+      this.tabGeneral.Controls.Add(this.groupBox1);
+      this.tabGeneral.Controls.Add(this.bSave);
+      this.tabGeneral.Controls.Add(this.gbMapping);
+      this.tabGeneral.Controls.Add(this.gbGlobal);
+      this.tabGeneral.Location = new System.Drawing.Point(4, 22);
+      this.tabGeneral.Name = "tabGeneral";
+      this.tabGeneral.Padding = new System.Windows.Forms.Padding(3);
+      this.tabGeneral.Size = new System.Drawing.Size(449, 429);
+      this.tabGeneral.TabIndex = 1;
+      this.tabGeneral.Text = "General";
+      this.tabGeneral.UseVisualStyleBackColor = true;
       // 
       // groupBox1
       // 
@@ -749,17 +391,194 @@ namespace SetupTv.Sections
       this.label12.TabIndex = 17;
       this.label12.Text = "Last grab run at:";
       // 
-      // tabMappings
+      // tabTVMappings
       // 
-      this.tabMappings.Controls.Add(this.gbChannels);
-      this.tabMappings.Controls.Add(this.gbChannelDetails);
-      this.tabMappings.Location = new System.Drawing.Point(4, 22);
-      this.tabMappings.Name = "tabMappings";
-      this.tabMappings.Padding = new System.Windows.Forms.Padding(3);
-      this.tabMappings.Size = new System.Drawing.Size(449, 429);
-      this.tabMappings.TabIndex = 0;
-      this.tabMappings.Text = "Mappings";
-      this.tabMappings.UseVisualStyleBackColor = true;
+      this.tabTVMappings.Controls.Add(this.TvMappings);
+      this.tabTVMappings.Location = new System.Drawing.Point(4, 22);
+      this.tabTVMappings.Name = "tabTVMappings";
+      this.tabTVMappings.Size = new System.Drawing.Size(449, 429);
+      this.tabTVMappings.TabIndex = 2;
+      this.tabTVMappings.Text = "TV Mappings";
+      this.tabTVMappings.UseVisualStyleBackColor = true;
+      // 
+      // TvMappings
+      // 
+      this.TvMappings.BackColor = System.Drawing.Color.Transparent;
+      this.TvMappings.ChannelMapping = null;
+      this.TvMappings.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.TvMappings.HChannelConfigInfo = null;
+      this.TvMappings.IsTvMapping = true;
+      this.TvMappings.Location = new System.Drawing.Point(0, 0);
+      this.TvMappings.Name = "TvMappings";
+      this.TvMappings.Size = new System.Drawing.Size(449, 429);
+      this.TvMappings.TabIndex = 0;
+      this.TvMappings.AutoMapChannels += new System.EventHandler(this.Mappings_AutoMapChannels);
+      this.TvMappings.SelectGrabberClick += new System.EventHandler(this.Mappings_SelectGrabberClick);
+      // 
+      // tabRadioMappings
+      // 
+      this.tabRadioMappings.Controls.Add(this.RadioMappings);
+      this.tabRadioMappings.Location = new System.Drawing.Point(4, 22);
+      this.tabRadioMappings.Name = "tabRadioMappings";
+      this.tabRadioMappings.Size = new System.Drawing.Size(449, 429);
+      this.tabRadioMappings.TabIndex = 3;
+      this.tabRadioMappings.Text = "Radio Mappings";
+      this.tabRadioMappings.UseVisualStyleBackColor = true;
+      // 
+      // RadioMappings
+      // 
+      this.RadioMappings.BackColor = System.Drawing.Color.Transparent;
+      this.RadioMappings.ChannelMapping = null;
+      this.RadioMappings.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.RadioMappings.HChannelConfigInfo = null;
+      this.RadioMappings.IsTvMapping = false;
+      this.RadioMappings.Location = new System.Drawing.Point(0, 0);
+      this.RadioMappings.Name = "RadioMappings";
+      this.RadioMappings.Size = new System.Drawing.Size(449, 429);
+      this.RadioMappings.TabIndex = 0;
+      this.RadioMappings.AutoMapChannels += new System.EventHandler(this.Mappings_AutoMapChannels);
+      this.RadioMappings.SelectGrabberClick += new System.EventHandler(this.Mappings_SelectGrabberClick);
+      // 
+      // tabSchedule
+      // 
+      this.tabSchedule.Controls.Add(this.groupBox3);
+      this.tabSchedule.Location = new System.Drawing.Point(4, 22);
+      this.tabSchedule.Name = "tabSchedule";
+      this.tabSchedule.Size = new System.Drawing.Size(449, 429);
+      this.tabSchedule.TabIndex = 4;
+      this.tabSchedule.Text = "Schedule";
+      this.tabSchedule.UseVisualStyleBackColor = true;
+      // 
+      // groupBox3
+      // 
+      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox3.Controls.Add(this.mpLabel2);
+      this.groupBox3.Controls.Add(this.ScheduleGrabCheckBox);
+      this.groupBox3.Controls.Add(this.panel1);
+      this.groupBox3.Controls.Add(this.grabTimeTextBox);
+      this.groupBox3.Location = new System.Drawing.Point(3, 3);
+      this.groupBox3.Name = "groupBox3";
+      this.groupBox3.Size = new System.Drawing.Size(443, 240);
+      this.groupBox3.TabIndex = 1;
+      this.groupBox3.TabStop = false;
+      this.groupBox3.Text = "Grabber scheduling";
+      // 
+      // mpLabel2
+      // 
+      this.mpLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpLabel2.Location = new System.Drawing.Point(6, 192);
+      this.mpLabel2.Name = "mpLabel2";
+      this.mpLabel2.Size = new System.Drawing.Size(431, 45);
+      this.mpLabel2.TabIndex = 6;
+      this.mpLabel2.Text = "Note: If you have configured the PowerScheduler plugin to wake up for EPG grabbin" +
+          "g, the above schedule will be followed in addition to that of PowerScheduler";
+      this.mpLabel2.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+      // 
+      // ScheduleGrabCheckBox
+      // 
+      this.ScheduleGrabCheckBox.AutoSize = true;
+      this.ScheduleGrabCheckBox.Location = new System.Drawing.Point(88, 61);
+      this.ScheduleGrabCheckBox.Name = "ScheduleGrabCheckBox";
+      this.ScheduleGrabCheckBox.Size = new System.Drawing.Size(232, 17);
+      this.ScheduleGrabCheckBox.TabIndex = 5;
+      this.ScheduleGrabCheckBox.Text = "Grab EPG on the following days at this time:";
+      this.ScheduleGrabCheckBox.UseVisualStyleBackColor = true;
+      // 
+      // panel1
+      // 
+      this.panel1.Controls.Add(this.SundayCheckBox);
+      this.panel1.Controls.Add(this.SaturdayCheckBox);
+      this.panel1.Controls.Add(this.FridayCheckBox);
+      this.panel1.Controls.Add(this.ThursdayCheckBox);
+      this.panel1.Controls.Add(this.WednesdayCheckBox);
+      this.panel1.Controls.Add(this.TuesdayCheckBox);
+      this.panel1.Controls.Add(this.MondayCheckBox);
+      this.panel1.Location = new System.Drawing.Point(78, 84);
+      this.panel1.Name = "panel1";
+      this.panel1.Size = new System.Drawing.Size(256, 83);
+      this.panel1.TabIndex = 3;
+      // 
+      // SundayCheckBox
+      // 
+      this.SundayCheckBox.AutoSize = true;
+      this.SundayCheckBox.Location = new System.Drawing.Point(10, 59);
+      this.SundayCheckBox.Name = "SundayCheckBox";
+      this.SundayCheckBox.Size = new System.Drawing.Size(62, 17);
+      this.SundayCheckBox.TabIndex = 6;
+      this.SundayCheckBox.Text = "Sunday";
+      this.SundayCheckBox.UseVisualStyleBackColor = true;
+      // 
+      // SaturdayCheckBox
+      // 
+      this.SaturdayCheckBox.AutoSize = true;
+      this.SaturdayCheckBox.Location = new System.Drawing.Point(170, 37);
+      this.SaturdayCheckBox.Name = "SaturdayCheckBox";
+      this.SaturdayCheckBox.Size = new System.Drawing.Size(68, 17);
+      this.SaturdayCheckBox.TabIndex = 5;
+      this.SaturdayCheckBox.Text = "Saturday";
+      this.SaturdayCheckBox.UseVisualStyleBackColor = true;
+      // 
+      // FridayCheckBox
+      // 
+      this.FridayCheckBox.AutoSize = true;
+      this.FridayCheckBox.Location = new System.Drawing.Point(96, 37);
+      this.FridayCheckBox.Name = "FridayCheckBox";
+      this.FridayCheckBox.Size = new System.Drawing.Size(54, 17);
+      this.FridayCheckBox.TabIndex = 4;
+      this.FridayCheckBox.Text = "Friday";
+      this.FridayCheckBox.UseVisualStyleBackColor = true;
+      // 
+      // ThursdayCheckBox
+      // 
+      this.ThursdayCheckBox.AutoSize = true;
+      this.ThursdayCheckBox.Location = new System.Drawing.Point(10, 37);
+      this.ThursdayCheckBox.Name = "ThursdayCheckBox";
+      this.ThursdayCheckBox.Size = new System.Drawing.Size(70, 17);
+      this.ThursdayCheckBox.TabIndex = 3;
+      this.ThursdayCheckBox.Text = "Thursday";
+      this.ThursdayCheckBox.UseVisualStyleBackColor = true;
+      // 
+      // WednesdayCheckBox
+      // 
+      this.WednesdayCheckBox.AutoSize = true;
+      this.WednesdayCheckBox.Location = new System.Drawing.Point(170, 14);
+      this.WednesdayCheckBox.Name = "WednesdayCheckBox";
+      this.WednesdayCheckBox.Size = new System.Drawing.Size(83, 17);
+      this.WednesdayCheckBox.TabIndex = 2;
+      this.WednesdayCheckBox.Text = "Wednesday";
+      this.WednesdayCheckBox.UseVisualStyleBackColor = true;
+      // 
+      // TuesdayCheckBox
+      // 
+      this.TuesdayCheckBox.AutoSize = true;
+      this.TuesdayCheckBox.Location = new System.Drawing.Point(96, 14);
+      this.TuesdayCheckBox.Name = "TuesdayCheckBox";
+      this.TuesdayCheckBox.Size = new System.Drawing.Size(67, 17);
+      this.TuesdayCheckBox.TabIndex = 1;
+      this.TuesdayCheckBox.Text = "Tuesday";
+      this.TuesdayCheckBox.UseVisualStyleBackColor = true;
+      // 
+      // MondayCheckBox
+      // 
+      this.MondayCheckBox.AutoSize = true;
+      this.MondayCheckBox.Location = new System.Drawing.Point(10, 14);
+      this.MondayCheckBox.Name = "MondayCheckBox";
+      this.MondayCheckBox.Size = new System.Drawing.Size(64, 17);
+      this.MondayCheckBox.TabIndex = 0;
+      this.MondayCheckBox.Text = "Monday";
+      this.MondayCheckBox.UseVisualStyleBackColor = true;
+      // 
+      // grabTimeTextBox
+      // 
+      this.grabTimeTextBox.Location = new System.Drawing.Point(324, 60);
+      this.grabTimeTextBox.Mask = "00:00";
+      this.grabTimeTextBox.Name = "grabTimeTextBox";
+      this.grabTimeTextBox.Size = new System.Drawing.Size(36, 20);
+      this.grabTimeTextBox.TabIndex = 2;
+      this.grabTimeTextBox.Text = "0400";
+      this.grabTimeTextBox.ValidatingType = typeof(System.DateTime);
       // 
       // StatusTimer
       // 
@@ -767,76 +586,46 @@ namespace SetupTv.Sections
       this.StatusTimer.Interval = 10000;
       this.StatusTimer.Tick += new System.EventHandler(this.StatusTimer_Tick);
       // 
-      // WebEPGConfigControl
+      // WebEPGSetup
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabMain);
-      this.Name = "WebEPGConfigControl";
+      this.Name = "WebEPGSetup";
       this.Size = new System.Drawing.Size(457, 455);
-      this.gbChannelDetails.ResumeLayout(false);
-      this.tcMappingDetails.ResumeLayout(false);
-      this.tpSingle.ResumeLayout(false);
-      this.tpSingle.PerformLayout();
-      this.gbGrabber.ResumeLayout(false);
-      this.gbGrabber.PerformLayout();
-      this.tpMultiple.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.bsMergedChannel)).EndInit();
       this.gbMapping.ResumeLayout(false);
       this.gbMapping.PerformLayout();
       this.gbGlobal.ResumeLayout(false);
       this.gbGlobal.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.nMaxGrab)).EndInit();
-      this.gbChannels.ResumeLayout(false);
-      this.gbChannels.PerformLayout();
       this.tabMain.ResumeLayout(false);
-      this.tabSettings.ResumeLayout(false);
+      this.tabGeneral.ResumeLayout(false);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
-      this.tabMappings.ResumeLayout(false);
+      this.tabTVMappings.ResumeLayout(false);
+      this.tabRadioMappings.ResumeLayout(false);
+      this.tabSchedule.ResumeLayout(false);
+      this.groupBox3.ResumeLayout(false);
+      this.groupBox3.PerformLayout();
+      this.panel1.ResumeLayout(false);
+      this.panel1.PerformLayout();
       this.ResumeLayout(false);
 
     }
 
     #endregion
 
-    private MediaPortal.UserInterface.Controls.MPGroupBox gbChannelDetails;
-    private System.Windows.Forms.TabControl tcMappingDetails;
-    private System.Windows.Forms.TabPage tpSingle;
-    private MediaPortal.UserInterface.Controls.MPGroupBox gbGrabber;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbGrabDays;
-    private MediaPortal.UserInterface.Controls.MPLabel lGuideDays;
-    private MediaPortal.UserInterface.Controls.MPButton bGrabber;
-    private MediaPortal.UserInterface.Controls.MPLabel Grabber;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbGrabSite;
-    private MediaPortal.UserInterface.Controls.MPButton bChannelID;
-    private MediaPortal.UserInterface.Controls.MPLabel l_cID;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbChannelName;
-    private System.Windows.Forms.TabPage tpMultiple;
-    private System.Windows.Forms.Button bMergedEdit;
-    private System.Windows.Forms.Button bMergedRemove;
-    private System.Windows.Forms.Button bMergedAdd;
-    private System.Windows.Forms.ListView lvMerged;
     private System.Windows.Forms.GroupBox gbMapping;
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.ComboBox cbCountry;
     private System.Windows.Forms.Button bAutoMap;
-    private MediaPortal.UserInterface.Controls.MPButton bImport;
     private System.Windows.Forms.GroupBox gbGlobal;
     private System.Windows.Forms.NumericUpDown nMaxGrab;
     private MediaPortal.UserInterface.Controls.MPLabel lGrabDay;
-    private MediaPortal.UserInterface.Controls.MPGroupBox gbChannels;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.MaskedTextBox mtbNewChannel;
-    private System.Windows.Forms.ListView lvMapping;
-    private System.Windows.Forms.Button bClearMapping;
-    private MediaPortal.UserInterface.Controls.MPLabel lCount;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbCount;
-    private MediaPortal.UserInterface.Controls.MPButton bRemove;
-    private MediaPortal.UserInterface.Controls.MPButton bAdd;
     private MediaPortal.UserInterface.Controls.MPButton bSave;
     private System.Windows.Forms.TabControl tabMain;
-    private System.Windows.Forms.TabPage tabMappings;
-    private System.Windows.Forms.TabPage tabSettings;
+    private System.Windows.Forms.TabPage tabGeneral;
     private System.Windows.Forms.Button buttonManualImport;
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.Label labelStatus;
@@ -855,8 +644,23 @@ namespace SetupTv.Sections
     private System.Windows.Forms.CheckBox checkBoxDeleteBeforeImport;
     private System.Windows.Forms.CheckBox checkBoxDeleteOnlyOverlapping;
     private System.Windows.Forms.FolderBrowserDialog folderBrowserDialogTVGuide;
-    private System.Windows.Forms.CheckBox LoadRadioCheckBox;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.ComboBox GroupComboBox;
+    private System.Windows.Forms.BindingSource bsMergedChannel;
+    private System.Windows.Forms.TabPage tabTVMappings;
+    private System.Windows.Forms.TabPage tabRadioMappings;
+    private System.Windows.Forms.TabPage tabSchedule;
+    private SetupTv.Sections.WebEPGConfig.WebEPGMappingControl RadioMappings;
+    private SetupTv.Sections.WebEPGConfig.WebEPGMappingControl TvMappings;
+    private System.Windows.Forms.GroupBox groupBox3;
+    private System.Windows.Forms.Panel panel1;
+    private System.Windows.Forms.CheckBox SundayCheckBox;
+    private System.Windows.Forms.CheckBox SaturdayCheckBox;
+    private System.Windows.Forms.CheckBox FridayCheckBox;
+    private System.Windows.Forms.CheckBox ThursdayCheckBox;
+    private System.Windows.Forms.CheckBox WednesdayCheckBox;
+    private System.Windows.Forms.CheckBox TuesdayCheckBox;
+    private System.Windows.Forms.CheckBox MondayCheckBox;
+    private System.Windows.Forms.MaskedTextBox grabTimeTextBox;
+    private System.Windows.Forms.CheckBox ScheduleGrabCheckBox;
+    private System.Windows.Forms.Label mpLabel2;
   }
 }

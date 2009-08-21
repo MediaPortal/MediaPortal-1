@@ -1,4 +1,4 @@
-namespace WebEPG_conf
+namespace SetupTv.Sections.WebEPGConfig
 {
   partial class MergedChannelDetails
   {
@@ -134,6 +134,7 @@ namespace WebEPG_conf
       // 
       // bOk
       // 
+      this.bOk.DialogResult = System.Windows.Forms.DialogResult.OK;
       this.bOk.Location = new System.Drawing.Point(148, 169);
       this.bOk.Name = "bOk";
       this.bOk.Size = new System.Drawing.Size(75, 23);
@@ -143,6 +144,7 @@ namespace WebEPG_conf
       // 
       // bCancel
       // 
+      this.bCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.bCancel.Location = new System.Drawing.Point(229, 169);
       this.bCancel.Name = "bCancel";
       this.bCancel.Size = new System.Drawing.Size(75, 23);

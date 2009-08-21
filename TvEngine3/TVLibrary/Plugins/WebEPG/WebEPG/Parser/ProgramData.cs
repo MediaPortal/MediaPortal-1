@@ -146,6 +146,18 @@ namespace MediaPortal.WebEPG.Parser
       set { _endTime = value; }
     }
 
+    public int Episode
+    {
+      get { return _episode; }
+      set { _episode = value; }
+    }
+    
+    public int Season
+    {
+      get { return _season; }
+      set { _season = value; }
+    }
+
     #endregion
 
     #region Public Methods

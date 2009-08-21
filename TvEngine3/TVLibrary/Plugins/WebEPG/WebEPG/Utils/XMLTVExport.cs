@@ -119,53 +119,49 @@ namespace MediaPortal.WebEPG
         channelId = "[Merged]";
       }
 
-      Program program = programData.ToTvProgram(GetDBChannelId(_currentChannelName + "-" + channelId));
-
-      if (//program != null &&
-          program.StartTime != null && 
-          //program.StartTime != System.Data.SqlTypes.SqlDateTime.MinValue.Value &&
+      if (programData.StartTime != null && 
           programData.ChannelId != string.Empty &&
-          program.Title != string.Empty)
+          programData.Title != string.Empty)
       {
         _writer.WriteStartElement("programme");
         TimeSpan t = TimeZone.CurrentTimeZone.GetUtcOffset(DateTime.Now);
         string tzOff = " " + t.Hours.ToString("+00;-00") + t.Minutes.ToString("00");
-        _writer.WriteAttributeString("start", program.StartTime.ToString("yyyyMMddHHmmss") + tzOff);
-        if (program.EndTime != null)
+        _writer.WriteAttributeString("start", programData.StartTime.ToLocalTime().ToString("yyyyMMddHHmmss") + tzOff);
+        if (programData.EndTime != null)
         {
-          _writer.WriteAttributeString("stop", program.EndTime.ToString("yyyyMMddHHmmss") + tzOff);
+          _writer.WriteAttributeString("stop", programData.EndTime.ToLocalTime().ToString("yyyyMMddHHmmss") + tzOff);
         }
         _writer.WriteAttributeString("channel", _currentChannelName + "-" + channelId);
 
         _writer.WriteStartElement("title");
         //_writer.WriteAttributeString("lang", "de");
-        _writer.WriteString(program.Title);
+        _writer.WriteString(programData.Title);
         _writer.WriteEndElement();
 
-        if (program.EpisodeName != string.Empty && program.EpisodeName != "unknown")
+        if (programData.SubTitle != string.Empty && programData.SubTitle != "unknown")
         {
-          _writer.WriteElementString("sub-title", program.EpisodeName);
+          _writer.WriteElementString("sub-title", programData.SubTitle);
         }
 
-        if (program.Description != string.Empty && program.Description != "unknown")
+        if (programData.Description != string.Empty && programData.Description != "unknown")
         {
-          _writer.WriteElementString("desc", program.Description);
+          _writer.WriteElementString("desc", programData.Description);
         }
 
-        if (program.Genre != string.Empty && program.Genre != "-")
+        if (programData.Genre != string.Empty && programData.Genre != "-")
         {
-          _writer.WriteElementString("category", program.Genre);
+          _writer.WriteElementString("category", programData.Genre);
         }
 
         string episodeNum = string.Empty;
-        if (program.EpisodeNum != string.Empty)
+        if (programData.Episode > 0)
         {
-          episodeNum += program.EpisodeNum;
+          episodeNum += programData.Episode;
         }
 
-        if (program.SeriesNum != string.Empty)
+        if (programData.Season > 0)
         {
-          episodeNum += "." + program.SeriesNum;
+          episodeNum += "." + programData.Season;
         }
 
         if (episodeNum != string.Empty)
