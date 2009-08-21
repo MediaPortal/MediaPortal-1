@@ -442,7 +442,7 @@ namespace MediaPortal.Player
 
     internal static void OnAudioTracksReady()
     {
-      if (AudioTracksReady != null) // FIXME: the event handler might not be set if TV plugin is not installed! 
+      if (AudioTracksReady != null) // FIXME: the event handler might not be set if TV plugin is not installed!
       {
         AudioTracksReady();
       }
@@ -458,15 +458,16 @@ namespace MediaPortal.Player
 
       if (!newFile.Equals(CurrentFile))
       {
-        //yes, then raise event 
+        //yes, then raise event
         Log.Info("g_Player.OnChanged()");
         if (PlayBackChanged != null)
         {
           if ((_currentMedia == MediaType.TV || _currentMedia == MediaType.Video || _currentMedia == MediaType.Recording) && (!Util.Utils.IsVideo(newFile)))
           {
             RefreshRateChanger.AdaptRefreshRate();
-          }          
-          PlayBackChanged(_currentMedia, (int) CurrentPosition, CurrentFile);
+          }
+          PlayBackChanged(_currentMedia, (int)CurrentPosition, (!String.IsNullOrEmpty(currentFileName) ? currentFileName : CurrentFile));
+          currentFileName = String.Empty;
         }
       }
     }
@@ -477,29 +478,30 @@ namespace MediaPortal.Player
       //check if we're playing
       if (Playing && PlayBackStopped != null)
       {
-        //yes, then raise event 
+        //yes, then raise event
         Log.Info("g_Player.OnStopped()");
         if (PlayBackStopped != null)
         {
-          PlayBackStopped(_currentMedia, (int) CurrentPosition, CurrentFile);
+          PlayBackStopped(_currentMedia, (int)CurrentPosition, (!String.IsNullOrEmpty(currentFileName) ? currentFileName : CurrentFile));
+          currentFileName = String.Empty;
           _mediaInfo = null;
         }
       }
-      
     }
 
-    //called when current playing file is stopped
+    //called when current playing file ends
     private static void OnEnded()
     {
       //check if we're playing
       if (PlayBackEnded != null)
       {
-        //yes, then raise event 
-        Log.Info("g_Player.OnEnded()");        
-        PlayBackEnded(_currentMedia, _currentFilePlaying);
+        //yes, then raise event
+        Log.Info("g_Player.OnEnded()");
+        PlayBackEnded(_currentMedia, (!String.IsNullOrEmpty(currentFileName) ? currentFileName : _currentFilePlaying));
         RefreshRateChanger.AdaptRefreshRate();
+        currentFileName = String.Empty;
         _mediaInfo = null;
-      }      
+      }
     }
 
     //called when starting playing a file
@@ -1166,20 +1168,20 @@ namespace MediaPortal.Player
     }
 
     public static bool Play(string strFile, MediaType type)
-    {          
+    {
       try
       {
         if (string.IsNullOrEmpty(strFile))
         {
           Log.Error("g_Player.Play() called without file attribute");
           return false;
-        }        
-        
+        }
+
         if (Util.Utils.IsDVD(strFile))
         {
           ChangeDriveSpeed(strFile, DriveType.CD);
         }
-       
+
         _mediaInfo = new MediaInfoWrapper(strFile);
         Starting = true;
         
@@ -1273,11 +1275,11 @@ namespace MediaPortal.Player
                 }
               }
             }
-          }          
+          }
         }
-        
+
         _player = _factory.Create(strFile, type);
-        
+
         if (_player != null)
         {
           LoadChapters(strFile);
@@ -1289,7 +1291,7 @@ namespace MediaPortal.Player
             _player.Release();
             _player = null;
             _subs = null;
-            UnableToPlay(strFile, type);          
+            UnableToPlay(strFile, type);
           }
           else if (_player.Playing)
           {
@@ -1300,7 +1302,7 @@ namespace MediaPortal.Player
               _chapters = _player.Chapters;
             }
             OnStarted();
-          }          
+          }
           return bResult;
         }
       }
@@ -1310,7 +1312,7 @@ namespace MediaPortal.Player
       }
       UnableToPlay(strFile, type);
       return false;
-    }    
+    }
 
     public static bool IsExternalPlayer
     {
@@ -2436,14 +2438,14 @@ namespace MediaPortal.Player
       }
       return false;
     }
-    
+
     private static bool LoadChapters(string videoFile)
     {
       _chapters = null;
       _jumpPoints = null;
 
       try
-      {        
+      {
         string chapterFile = Path.ChangeExtension(videoFile, ".txt");        
         if(!File.Exists(chapterFile) || IsFileUsedbyAnotherProcess(chapterFile))
         {

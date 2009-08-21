@@ -342,6 +342,7 @@ namespace TvPlugin
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(OnPlayRecordingBackStopped);
       g_Player.PlayBackEnded += new g_Player.EndedHandler(OnPlayRecordingBackEnded);
       g_Player.PlayBackStarted += new g_Player.StartedHandler(OnPlayRecordingBackStarted);
+      g_Player.PlayBackChanged += new g_Player.ChangedHandler(OnPlayRecordingBackChanged);
 
       bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvrecordedtv.xml");
       //LoadSettings();
@@ -1320,8 +1321,6 @@ namespace TvPlugin
         }
       }
 
-      g_Player.Stop();
-
       if (TVHome.Card != null)
       {
         TVHome.Card.StopTimeShifting();
@@ -1406,17 +1405,11 @@ namespace TvPlugin
       */
       string fileName = GetFileName(rec.FileName);
 
-      //populates recording metadata to g_player;
-      g_Player.currentFileName = fileName;
-
       bool useRTSP = TVHome.UseRTSP();
       if (useRTSP)
       {
         fileName = TVHome.TvServer.GetStreamUrlForFileName(rec.IdRecording);
       }
-
-      g_Player.currentTitle = rec.Title;
-      g_Player.currentDescription = rec.Description;
 
       Log.Info("TvRecorded Play:{0} - using rtsp mode:{1}", fileName, useRTSP);
       if (g_Player.Play(fileName, g_Player.MediaType.Recording))
@@ -1430,8 +1423,15 @@ namespace TvPlugin
         {
           g_Player.SeekAbsolute(stoptime);
         }
+
+        //populates recording metadata to g_player;
+        g_Player.currentFileName = GetFileName(rec.FileName);
+        g_Player.currentTitle = rec.Title;
+        g_Player.currentDescription = rec.Description;
+
         rec.TimesWatched++;
         rec.Persist();
+
         return true;
       }
       return false;
@@ -1442,7 +1442,7 @@ namespace TvPlugin
       bool useRTSP = TVHome.UseRTSP();
       bool fileExists = File.Exists(fileName);
 
-      if (!fileExists && !useRTSP) //singleseat      
+      if (!fileExists && !useRTSP) //singleseat
       {
         if (TVHome.RecordingPath().Length > 0)
         {
@@ -2080,25 +2080,12 @@ namespace TvPlugin
 
     #region playback events
 
-    private void OnPlayRecordingBackStopped(g_Player.MediaType type, int stoptime, string filename)
+    private void doOnPlayBackStoppedOrChanged(g_Player.MediaType type, int stoptime, string filename, string caller)
     {
-      Log.Info("TvRecorded:OnStopped {0} {1}", type, filename);
+      Log.Info("TvRecorded:{0} {1} {2}", caller, type, filename);
       if (type != g_Player.MediaType.Recording)
       {
         return;
-      }
-
-      // the m_oActiveRecording object should always reflect the currently played back recording
-      // we can not rely on filename from the method parameter, as this can be a RTSP://123455 kind of URL.
-      if (_oActiveRecording != null)
-      {
-        filename = _oActiveRecording.FileName;
-      }
-
-      if (filename.Length > 0)
-      {
-        FileInfo f = new FileInfo(filename);
-        filename = f.Name;
       }
 
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -2115,7 +2102,7 @@ namespace TvPlugin
       }
       else
       {
-        Log.Info("TvRecorded:OnStopped no recording found with filename {0}", filename);
+        Log.Info("TvRecorded:{0} no recording found with filename {1}", caller, filename);
       }
 
       /*
@@ -2128,18 +2115,22 @@ namespace TvPlugin
       */
     }
 
+    private void OnPlayRecordingBackChanged(MediaPortal.Player.g_Player.MediaType type, int stoptime, string filename)
+    {
+      doOnPlayBackStoppedOrChanged(type, stoptime, filename, "OnPlayRecordingBackChanged");
+    }
+
+    private void OnPlayRecordingBackStopped(g_Player.MediaType type, int stoptime, string filename)
+    {
+      doOnPlayBackStoppedOrChanged(type, stoptime, filename, "OnPlayRecordingBackStopped");
+    }
+
     private void OnPlayRecordingBackEnded(g_Player.MediaType type, string filename)
     {
       if (type != g_Player.MediaType.Recording)
       {
         return;
       }
-
-      if (filename.Substring(0, 4) == "rtsp")
-      {
-        filename = g_Player.currentFileName;
-      }
-      ;
 
       g_Player.Stop();
 
@@ -2177,7 +2168,7 @@ namespace TvPlugin
         return;
       }
 
-      // set audio track based on user prefs. 
+      // set audio track based on user prefs.
       eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
       int prefLangIdx = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
@@ -2187,10 +2178,9 @@ namespace TvPlugin
       if (dualMonoMode != eAudioDualMonoMode.UNSUPPORTED)
       {
         g_Player.SetAudioDualMonoMode(dualMonoMode);
-      }            
+      }
       //@VideoDatabase.AddMovieFile(filename);
     }
-
 
     private void ResetWatchedStatus(Recording aRecording)
     {

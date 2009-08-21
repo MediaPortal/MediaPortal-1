@@ -2775,7 +2775,7 @@ namespace TvDatabase
     public Recording GetRecordingByFileName(string fileName)
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Recording));
-      sb.AddConstraint(Operator.Like, "fileName", "%" + fileName + "%");
+      sb.AddConstraint(Operator.Equals, "fileName", fileName);
       sb.SetRowLimit(1);
       SqlStatement stmt = sb.GetStatement(true);
       IList<Recording> recordings = ObjectFactory.GetCollection<Recording>(stmt.Execute());
