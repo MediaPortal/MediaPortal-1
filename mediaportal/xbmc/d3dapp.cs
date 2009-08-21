@@ -2429,23 +2429,6 @@ namespace MediaPortal
     }
 
     /// <summary>
-    /// Handle OnResizeEnd
-    /// </summary>
-    protected override void OnResizeEnd(EventArgs e)
-    {
-      if (GUIGraphicsContext.IsDirectX9ExUsed())
-      {
-        _resizeOngoing = false;
-        if (_clientSize != ClientSize)
-        {
-          SwitchFullScreenOrWindowed(false);
-          OnDeviceReset(null, null);
-        }
-      }
-      base.OnResizeEnd(e);
-    }
-
-    /// <summary>
     /// Handles the OnSizeChanged event, which isn't the same as the resize event.
     /// </summary>
     /// <param name="e">Event arguments</param>
@@ -2528,7 +2511,8 @@ namespace MediaPortal
         }
         active = !(this.WindowState == FormWindowState.Minimized);
         base.OnResize(e);
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Error("d3dapp: An error occured in OnResize - {0}", ex.ToString());
       }

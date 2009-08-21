@@ -151,6 +151,7 @@ public class MediaPortalApp : D3DApp, IRender
   private int m_iDateLayout;
   private static SplashScreen splashScreen;
   private static bool _avoidVersionChecking;
+  private bool _resetOnResize = false;
 
   #endregion
 
@@ -1339,10 +1340,6 @@ public class MediaPortalApp : D3DApp, IRender
     {
       return;
     } //we are suspended/hibernated
-    if (_resetDevice)
-    {
-      return;
-    } // we are resetting
     try
     {
       CreateStateBlock();
@@ -1711,61 +1708,77 @@ public class MediaPortalApp : D3DApp, IRender
   /// etc., that don't change during rendering can be set once here to
   /// avoid redundant state setting during Render() or FrameMove().
   /// </summary>
-  protected override void OnDeviceReset(Object sender, EventArgs e)
+	protected override void OnDeviceReset(Object sender, EventArgs e)
   {
-    // Only perform the device reset if we're not shutting down MediaPortal.
-    if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
-    {
-      Log.Info("Main: OnDeviceReset called");
-      _resetDevice = true; // sync Reset with render loop
-    }
+  	// Only perform the device reset if we're not shutting down MediaPortal.
+  	if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
+  	{
+  		Log.Info("Main: OnDeviceReset called");
+
+  		// Only perform the device reset if we're not shutting down MediaPortal.
+  		if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
+  		{
+  			Log.Info("Main: Resetting DX9 device");
+
+  			int activeWin = GUIWindowManager.ActiveWindow;
+  			GUIWindowManager.UnRoute();
+  			// avoid that there is an active Window when GUIWindowManager.ActivateWindow(activeWin); is called
+  			Log.Info("Main: UnRoute - done");
+
+  			GUITextureManager.Dispose();
+  			GUIFontManager.Dispose();
+
+  			GUIGraphicsContext.DX9Device.EvictManagedResources();
+  			GUIWaitCursor.Dispose();
+  			if (!m_strSkin.Equals(GUIGraphicsContext.Skin))
+  			{
+  				m_strSkin = GUIGraphicsContext.Skin;
+  			}
+  			GUIGraphicsContext.Load();
+  			GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
+  			GUIFontManager.InitializeDeviceObjects();
+
+  			if (GUIGraphicsContext.DX9Device != null)
+  			{
+  				GUIWindowManager.OnResize();
+  				GUIWindowManager.PreInit();
+  				GUIWindowManager.ActivateWindow(activeWin);
+  				GUIWindowManager.OnDeviceRestored();
+  			}
+  			// Must set the FVF after reset
+  			GUIFontManager.SetDevice();
+
+  			Log.Info("Main: Resetting DX9 device done");
+  		}
+  	}
   }
 
-  protected void DeviceReset()
-  {
-    // Only perform the device reset if we're not shutting down MediaPortal.
-    if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
-    {
-      Log.Info("Main: Resetting DX9 device");
+	#endregion
 
-      int activeWin = GUIWindowManager.ActiveWindow;
-      GUIWindowManager.UnRoute();    // avoid that there is an active Window when GUIWindowManager.ActivateWindow(activeWin); is called
-      Log.Info("Main: UnRoute - done");
-
-      GUITextureManager.Dispose();
-      GUIFontManager.Dispose();
-
-      GUIGraphicsContext.DX9Device.EvictManagedResources();
-      GUIWaitCursor.Dispose();
-      if (!m_strSkin.Equals(GUIGraphicsContext.Skin))
-      {
-        m_strSkin = GUIGraphicsContext.Skin;
-      }
-      GUIGraphicsContext.Load();
-      GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
-      GUIFontManager.InitializeDeviceObjects();
-
-      if (GUIGraphicsContext.DX9Device != null)
-      {
-        GUIWindowManager.OnResize();
-        GUIWindowManager.PreInit();
-        GUIWindowManager.ActivateWindow(activeWin);
-        GUIWindowManager.OnDeviceRestored();
-      }
-      // Must set the FVF after reset
-      GUIFontManager.SetDevice();
-
-      Log.Info("Main: Resetting DX9 device done");
-    }
-  }
+	/// <summary>
+	/// Handle OnResizeEnd
+	/// </summary>
+	protected override void OnResizeEnd(EventArgs e)
+	{
+	  Log.Info("Main: OnResizeEndn called");
+	  if (GUIGraphicsContext.IsDirectX9ExUsed())
+	  {
+	    _resizeOngoing = false;
+	    if (_clientSize != ClientSize)
+	    {
+	      _resetOnResize = true;
+	    }
+	  }
+	  base.OnResizeEnd(e);
+	}
 
 
-  #endregion
+
+
 
   #region Render()
 
   private static bool reentrant = false;
-  private bool _resetDevice = false;
 
   protected override void Render(float timePassed)
   {
@@ -1980,10 +1993,14 @@ public class MediaPortalApp : D3DApp, IRender
         Log.Info("Main: Stopping FrameMove");
         Close();
       }
-      if (_resetDevice)
+      if (_resetOnResize)
       {
-				_resetDevice = false;
-				DeviceReset();
+        // sync reset with rendering loop
+        _resetOnResize = false;
+        if (g_Player.Playing) GUIGraphicsContext.BlankScreen = true; // stop FrameMove calls
+        SwitchFullScreenOrWindowed(false);
+        OnDeviceReset(null, null);
+        GUIGraphicsContext.BlankScreen = false;
       }
 
       try
@@ -2105,10 +2122,10 @@ public class MediaPortalApp : D3DApp, IRender
       {
         // record current tv program
         case Action.ActionType.ACTION_RECORD:
-          if ((GUIWindowManager.ActiveWindowEx != (int)GUIWindow.Window.WINDOW_TVGUIDE) &&
-              (GUIWindowManager.ActiveWindowEx != (int)GUIWindow.Window.WINDOW_DIALOG_TVGUIDE))
+          if ((GUIWindowManager.ActiveWindowEx != (int) GUIWindow.Window.WINDOW_TVGUIDE) &&
+              (GUIWindowManager.ActiveWindowEx != (int) GUIWindow.Window.WINDOW_DIALOG_TVGUIDE))
           {
-            GUIWindow tvHome = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
+            GUIWindow tvHome = GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_TV);
             if (tvHome != null)
             {
               if (tvHome.GetID != GUIWindowManager.ActiveWindow)
@@ -2118,13 +2135,13 @@ public class MediaPortalApp : D3DApp, IRender
               }
             }
           }
-          break;        
+          break;
 
         //TV: zap to previous channel
         case Action.ActionType.ACTION_PREV_CHANNEL:
           if (!GUIWindowManager.IsRouted)
           {
-            window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
+            window = GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_TV);
             window.OnAction(action);
             return;
           }
@@ -2134,7 +2151,7 @@ public class MediaPortalApp : D3DApp, IRender
         case Action.ActionType.ACTION_NEXT_CHANNEL:
           if (!GUIWindowManager.IsRouted)
           {
-            window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
+            window = GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_TV);
             window.OnAction(action);
             return;
           }
@@ -2144,7 +2161,7 @@ public class MediaPortalApp : D3DApp, IRender
         case Action.ActionType.ACTION_LAST_VIEWED_CHANNEL: // mPod
           if (!GUIWindowManager.IsRouted)
           {
-            window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
+            window = GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_TV);
             window.OnAction(action);
             return;
           }
@@ -2154,7 +2171,7 @@ public class MediaPortalApp : D3DApp, IRender
         case Action.ActionType.ACTION_TOGGLE_WINDOWED_FULLSCREEN:
           ToggleFullWindowed();
           return;
-        //break;
+          //break;
 
         //mute or unmute audio
         case Action.ActionType.ACTION_VOLUME_MUTE:
@@ -2206,28 +2223,28 @@ public class MediaPortalApp : D3DApp, IRender
         //switch between several home windows
         case Action.ActionType.ACTION_SWITCH_HOME:
           GUIMessage homeMsg;
-          if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_HOME)
+          if (GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_HOME)
           {
             homeMsg =
               new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0,
-                             (int)GUIWindow.Window.WINDOW_SECOND_HOME, 0, null);
+                             (int) GUIWindow.Window.WINDOW_SECOND_HOME, 0, null);
           }
-          else if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SECOND_HOME)
+          else if (GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_SECOND_HOME)
           {
             homeMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0,
-                                     (int)GUIWindow.Window.WINDOW_HOME, 0, null);
+                                     (int) GUIWindow.Window.WINDOW_HOME, 0, null);
           }
           else
           {
             if (_startWithBasicHome)
             {
               homeMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0,
-                                       (int)GUIWindow.Window.WINDOW_SECOND_HOME, 0, null);
+                                       (int) GUIWindow.Window.WINDOW_SECOND_HOME, 0, null);
             }
             else
             {
               homeMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0,
-                                       (int)GUIWindow.Window.WINDOW_HOME, 0, null);
+                                       (int) GUIWindow.Window.WINDOW_HOME, 0, null);
             }
           }
           GUIWindowManager.SendThreadMessage(homeMsg);
@@ -2354,7 +2371,7 @@ public class MediaPortalApp : D3DApp, IRender
         case Action.ActionType.ACTION_SHUTDOWN:
           {
             Log.Info("Main: Shutdown dialog");
-            GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+            GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_MENU);
             if (dlg != null)
             {
               dlg.Reset();
@@ -2367,7 +2384,7 @@ public class MediaPortalApp : D3DApp, IRender
               //RestartOptions option = RestartOptions.Suspend;
               if (dlg.SelectedId < 0)
               {
-                GUIWindow win = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_HOME);
+                GUIWindow win = GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_HOME);
                 if (win != null)
                 {
                   win.OnAction(new Action(Action.ActionType.ACTION_MOVE_LEFT, 0, 0));
@@ -2528,6 +2545,7 @@ public class MediaPortalApp : D3DApp, IRender
               return;
             }
             break;
+
           //pause (or resume playback)
           case Action.ActionType.ACTION_PAUSE:
             g_Player.Pause();
