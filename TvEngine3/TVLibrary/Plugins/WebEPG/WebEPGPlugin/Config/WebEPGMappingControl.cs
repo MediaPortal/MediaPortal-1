@@ -227,7 +227,7 @@ namespace SetupTv.Sections.WebEPGConfig
     {
       if (gbChannels != null)
       {
-        gbChannels.Text = (IsTvMapping ? "TV" : "Radio") + "Channel Mapping";
+        gbChannels.Text = (IsTvMapping ? "TV" : "Radio") + " Channel Mapping";
       }
     }
 
