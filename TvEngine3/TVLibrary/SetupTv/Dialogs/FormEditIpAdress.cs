@@ -8,6 +8,8 @@ namespace SetupTv.Sections
   public partial class FormEditIpAdress : Form
   {
     string _hostName = "";
+    int _portNo = 554;
+
     public FormEditIpAdress()
     {
       InitializeComponent();
@@ -29,7 +31,7 @@ namespace SetupTv.Sections
         counter++;
       }
       mpComboBox1.SelectedIndex = selected;
-
+      PortNoNumericTextBox.Value = PortNo;
     }
 
     private void button2_Click(object sender, EventArgs e)
@@ -43,6 +45,7 @@ namespace SetupTv.Sections
       if (mpComboBox1.SelectedIndex >= 0)
       {
         HostName = mpComboBox1.SelectedItem.ToString();
+        PortNo = PortNoNumericTextBox.Value;
       }
       DialogResult = DialogResult.OK;
       Close();
@@ -59,5 +62,18 @@ namespace SetupTv.Sections
         _hostName = value;
       }
     }
+
+    public int PortNo
+    {
+      get
+      {
+        return _portNo;
+      }
+      set
+      {
+        _portNo = value;
+      }
+    }
+
   }
 }

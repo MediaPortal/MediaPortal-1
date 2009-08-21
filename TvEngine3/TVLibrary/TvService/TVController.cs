@@ -305,6 +305,8 @@ namespace TvService
       if (String.Compare(hostName, localHostName, true) == 0)
         return true;
       IPHostEntry local = Dns.GetHostEntry(localHostName);
+      if (String.Compare(hostName, local.HostName, true) == 0)
+        return true;
       foreach (IPAddress ipaddress in local.AddressList)
       {
         if (String.Compare(hostName, ipaddress.ToString(), true) == 0)
@@ -490,7 +492,7 @@ namespace TvService
           {
             //there are no other servers so we are the master one.
             Log.Info("Controller: create new server in database");
-            _ourServer = new Server(false, Dns.GetHostName());
+            _ourServer = new Server(false, Dns.GetHostName(), 0);
             _ourServer.IsMaster = true;
             _isMaster = true;
             _ourServer.Persist();
@@ -679,7 +681,7 @@ namespace TvService
         }
 
         Log.Info("Controller: setup streaming");
-        _streamer = new RtspStreaming(_ourServer.HostName);
+        _streamer = new RtspStreaming(_ourServer.HostName, _ourServer.RtspPort);
 
         if (_isMaster)
         {
@@ -2121,7 +2123,7 @@ namespace TvService
             return "";
           }
         }
-        return String.Format("rtsp://{0}/stream{1}.{2}", _ourServer.HostName, user.CardId, user.SubChannel);
+        return String.Format("rtsp://{0}:{1}/stream{2}.{3}", _ourServer.HostName, _streamer.Port, user.CardId, user.SubChannel);
       } catch (Exception)
       {
         Log.Error("Controller: Can't get streaming url");
@@ -2160,7 +2162,7 @@ namespace TvService
             string streamName = String.Format("{0:X}", recording.FileName.GetHashCode());
             RtspStream stream = new RtspStream(streamName, recording.FileName, recording.Title);
             _streamer.AddStream(stream);
-            string url = String.Format("rtsp://{0}/{1}", _ourServer.HostName, streamName);
+            string url = String.Format("rtsp://{0}:{1}/{2}", _ourServer.HostName, _streamer.Port, streamName);
             Log.Info("Controller: streaming url:{0} file:{1}", url, recording.FileName);
             return url;
           }
@@ -2188,7 +2190,7 @@ namespace TvService
         string streamName = String.Format("{0:X}", fileName.GetHashCode());
         RtspStream stream = new RtspStream(streamName, fileName, streamName);
         _streamer.AddStream(stream);
-        string url = String.Format("rtsp://{0}/{1}", _ourServer.HostName, streamName);
+        string url = String.Format("rtsp://{0}:{1}/{2}", _ourServer.HostName, _streamer.Port, streamName);
         Log.Info("Controller: streaming url:{0} file:{1}", url, fileName);
         return url;
       }
@@ -3064,6 +3066,22 @@ namespace TvService
     #endregion
 
     #region streaming
+
+    public int StreamingPort
+    {
+      get
+      {
+        if (_streamer != null)
+        {
+          return _streamer.Port;
+        }
+        else
+        {
+          return 0;
+        }
+      }
+    }
+
     public List<RtspClient> StreamingClients
     {
       get

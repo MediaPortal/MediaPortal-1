@@ -33,17 +33,18 @@ namespace SetupTv.Sections
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+      this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+      this.chooseIPForStreamingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.buttonDelete = new System.Windows.Forms.Button();
       this.buttonMaster = new System.Windows.Forms.Button();
       this.buttonChooseIp = new System.Windows.Forms.Button();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-      this.chooseIPForStreamingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.contextMenuStrip1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
-      this.contextMenuStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
       // mpListView1
@@ -55,15 +56,17 @@ namespace SetupTv.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.mpListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
-            this.columnHeader2});
+            this.columnHeader2,
+            this.columnHeader3});
       this.mpListView1.ContextMenuStrip = this.contextMenuStrip1;
       this.mpListView1.FullRowSelect = true;
       this.mpListView1.HideSelection = false;
+      this.mpListView1.IsChannelListView = false;
       this.mpListView1.LargeImageList = this.imageList1;
       this.mpListView1.Location = new System.Drawing.Point(0, 0);
       this.mpListView1.MultiSelect = false;
       this.mpListView1.Name = "mpListView1";
-      this.mpListView1.Size = new System.Drawing.Size(452, 172);
+      this.mpListView1.Size = new System.Drawing.Size(452, 203);
       this.mpListView1.SmallImageList = this.imageList1;
       this.mpListView1.TabIndex = 0;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
@@ -78,6 +81,26 @@ namespace SetupTv.Sections
       // columnHeader2
       // 
       this.columnHeader2.Text = "Type";
+      // 
+      // columnHeader3
+      // 
+      this.columnHeader3.Text = "RTSP Port";
+      this.columnHeader3.Width = 75;
+      // 
+      // contextMenuStrip1
+      // 
+      this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.chooseIPForStreamingToolStripMenuItem});
+      this.contextMenuStrip1.Name = "contextMenuStrip1";
+      this.contextMenuStrip1.Size = new System.Drawing.Size(214, 26);
+      this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
+      // 
+      // chooseIPForStreamingToolStripMenuItem
+      // 
+      this.chooseIPForStreamingToolStripMenuItem.Name = "chooseIPForStreamingToolStripMenuItem";
+      this.chooseIPForStreamingToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
+      this.chooseIPForStreamingToolStripMenuItem.Text = "Change streaming settings";
+      this.chooseIPForStreamingToolStripMenuItem.Click += new System.EventHandler(this.chooseIPForStreamingToolStripMenuItem_Click);
       // 
       // imageList1
       // 
@@ -100,7 +123,7 @@ namespace SetupTv.Sections
       // buttonMaster
       // 
       this.buttonMaster.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonMaster.Location = new System.Drawing.Point(147, 178);
+      this.buttonMaster.Location = new System.Drawing.Point(167, 178);
       this.buttonMaster.Name = "buttonMaster";
       this.buttonMaster.Size = new System.Drawing.Size(135, 23);
       this.buttonMaster.TabIndex = 2;
@@ -115,10 +138,11 @@ namespace SetupTv.Sections
       this.buttonChooseIp.Enabled = false;
       this.buttonChooseIp.Location = new System.Drawing.Point(6, 178);
       this.buttonChooseIp.Name = "buttonChooseIp";
-      this.buttonChooseIp.Size = new System.Drawing.Size(135, 23);
+      this.buttonChooseIp.Size = new System.Drawing.Size(155, 23);
       this.buttonChooseIp.TabIndex = 1;
-      this.buttonChooseIp.Text = "Choose IP for streaming";
+      this.buttonChooseIp.Text = "Change  streaming settings";
       this.buttonChooseIp.UseVisualStyleBackColor = true;
+      this.buttonChooseIp.Visible = false;
       this.buttonChooseIp.Click += new System.EventHandler(this.buttonChooseIp_Click);
       // 
       // tabControl1
@@ -135,10 +159,10 @@ namespace SetupTv.Sections
       // 
       // tabPage1
       // 
-      this.tabPage1.Controls.Add(this.buttonChooseIp);
       this.tabPage1.Controls.Add(this.mpListView1);
       this.tabPage1.Controls.Add(this.buttonMaster);
       this.tabPage1.Controls.Add(this.buttonDelete);
+      this.tabPage1.Controls.Add(this.buttonChooseIp);
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -146,21 +170,6 @@ namespace SetupTv.Sections
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Servers";
       this.tabPage1.UseVisualStyleBackColor = true;
-      // 
-      // contextMenuStrip1
-      // 
-      this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.chooseIPForStreamingToolStripMenuItem});
-      this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(202, 48);
-      this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
-      // 
-      // chooseIPForStreamingToolStripMenuItem
-      // 
-      this.chooseIPForStreamingToolStripMenuItem.Name = "chooseIPForStreamingToolStripMenuItem";
-      this.chooseIPForStreamingToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
-      this.chooseIPForStreamingToolStripMenuItem.Text = "Choose IP for streaming";
-      this.chooseIPForStreamingToolStripMenuItem.Click += new System.EventHandler(this.chooseIPForStreamingToolStripMenuItem_Click);
       // 
       // Servers
       // 
@@ -170,9 +179,9 @@ namespace SetupTv.Sections
       this.Name = "Servers";
       this.Size = new System.Drawing.Size(469, 240);
       this.Load += new System.EventHandler(this.Servers_Load);
+      this.contextMenuStrip1.ResumeLayout(false);
       this.tabControl1.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
-      this.contextMenuStrip1.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -190,5 +199,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.TabPage tabPage1;
     private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
     private System.Windows.Forms.ToolStripMenuItem chooseIPForStreamingToolStripMenuItem;
+    private System.Windows.Forms.ColumnHeader columnHeader3;
   }
 }

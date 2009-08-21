@@ -24,11 +24,32 @@ using System.Windows.Forms;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Streaming;
+using System.Net;
+using TvLibrary.Log;
 
 namespace SetupTv.Sections
 {
   public partial class StreamingServer : SectionSettings
   {
+    private class IpAddressOption
+    {
+      public string DisplayString;
+      public string HostName;
+
+      public IpAddressOption(string displayString, string hostName)
+      {
+        DisplayString = displayString;
+        HostName = hostName;
+      }
+
+      public override string ToString()
+      {
+        return DisplayString;
+      }
+    }
+
+    private Server _ourServer;
+
     public StreamingServer()
       : this("Streaming Server")
     {
@@ -43,12 +64,74 @@ namespace SetupTv.Sections
     public override void OnSectionActivated()
     {
       timer1.Enabled = true;
+
+      _ourServer = Server.Retrieve(RemoteControl.Instance.IdServer);
+      string ourServerName = _ourServer.HostName;
+      try
+      {
+        ourServerName = Dns.GetHostEntry(_ourServer.HostName).HostName;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Failed to get our server host name");
+        Log.Write(ex);
+      }
+      List<string> ipAdresses = RemoteControl.Instance.ServerIpAdresses;
+      IpAddressComboBox.Items.Clear();
+      IpAddressComboBox.Items.Add(new IpAddressOption("(auto)", ourServerName));
+      int selected = 0;
+      int counter = 1;
+      foreach (string ipAdress in ipAdresses)
+      {
+        IpAddressComboBox.Items.Add(new IpAddressOption(ipAdress, ipAdress));
+        if (String.Compare(ipAdress, _ourServer.HostName , true) == 0)
+        {
+          selected = counter;
+        }
+        counter++;
+      }
+      IpAddressComboBox.SelectedIndex = selected;
+      PortNoNumericTextBox.Value = _ourServer.RtspPort;
     }
 
     public override void OnSectionDeActivated()
     {
       timer1.Enabled = false;
       base.OnSectionDeActivated();
+
+      ApplyStreamingSettings();
+    }
+
+    private void ApplyStreamingSettings()
+    {
+      if (_ourServer != null)
+      {
+        string newHostName = ((IpAddressOption)IpAddressComboBox.SelectedItem).HostName;
+        int newRtspPort = _ourServer.RtspPort;
+        int.TryParse(PortNoNumericTextBox.Text, out newRtspPort);
+        if (_ourServer.HostName != newHostName ||
+            _ourServer.RtspPort != newRtspPort)
+        {
+          _ourServer.HostName = newHostName;
+          _ourServer.RtspPort = newRtspPort;
+          _ourServer.Persist();
+          ServiceNeedsToRestart();
+        }
+      }
+    }
+
+    private void ServiceNeedsToRestart()
+    {
+      if (MessageBox.Show(this, "Changes made require TvService to restart. Restart it now?", "TvService", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+      {
+        NotifyForm dlgNotify = new NotifyForm("Restart TvService...", "This can take some time\n\nPlease be patient...");
+        dlgNotify.Show();
+        dlgNotify.WaitForDisplay();
+
+        RemoteControl.Instance.Restart();
+
+        dlgNotify.Close();
+      }
     }
 
     private void timer1_Tick(object sender, EventArgs e)
@@ -137,6 +220,11 @@ namespace SetupTv.Sections
     private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
     {
       mpButtonKick_Click(sender, e);
+    }
+
+    private void ApplyButton_Click(object sender, EventArgs e)
+    {
+      ApplyStreamingSettings();
     }
   }
 }

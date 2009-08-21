@@ -11,7 +11,7 @@ namespace SetupTv.Sections
 {
   public partial class ThirdPartyChecks : SectionSettings
   {
-    private const int STREAMING_PORT = 554;
+    private static int STREAMING_PORT;
 
     private static McsPolicyStatus _mcsServices;
     private static Version _dvbVersion;
@@ -244,24 +244,15 @@ namespace SetupTv.Sections
 
     private static bool IsStreamingPortAvailable()
     {
-      IPGlobalProperties ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
-      IPEndPoint[] tcpConnInfoArray = ipGlobalProperties.GetActiveTcpListeners();
-      foreach (IPEndPoint endPoint in tcpConnInfoArray)
+      int RtspPort = TvControl.RemoteControl.Instance.StreamingPort;
+      STREAMING_PORT = RtspPort;
+      if (STREAMING_PORT == 0)
       {
-        if (endPoint.Port == STREAMING_PORT)
-        {
-          //check if the port is used by TvServer or by some other process
-          try
-          {
-            int serverId = TvControl.RemoteControl.Instance.IdServer;
-            return true;
-          }
-          catch
-          {
-            return false;
-          }
-        }
+        TvDatabase.Server ourServer = TvDatabase.Server.Retrieve(TvControl.RemoteControl.Instance.IdServer);
+        STREAMING_PORT = ourServer.RtspPort;
+        return false;
       }
+
       return true;
     }
 

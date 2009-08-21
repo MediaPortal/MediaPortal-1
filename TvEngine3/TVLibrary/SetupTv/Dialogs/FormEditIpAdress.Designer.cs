@@ -32,6 +32,8 @@ namespace SetupTv.Sections
       this.mpButtonOK = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpComboBox1 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.PortNoNumericTextBox = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
       this.SuspendLayout();
       // 
       // mpLabel1
@@ -47,7 +49,7 @@ namespace SetupTv.Sections
       // mpButtonOK
       // 
       this.mpButtonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonOK.Location = new System.Drawing.Point(196, 80);
+      this.mpButtonOK.Location = new System.Drawing.Point(189, 140);
       this.mpButtonOK.Name = "mpButtonOK";
       this.mpButtonOK.Size = new System.Drawing.Size(75, 23);
       this.mpButtonOK.TabIndex = 1;
@@ -59,7 +61,7 @@ namespace SetupTv.Sections
       // 
       this.mpButtonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.mpButtonCancel.Location = new System.Drawing.Point(277, 80);
+      this.mpButtonCancel.Location = new System.Drawing.Point(270, 140);
       this.mpButtonCancel.Name = "mpButtonCancel";
       this.mpButtonCancel.Size = new System.Drawing.Size(75, 23);
       this.mpButtonCancel.TabIndex = 2;
@@ -75,8 +77,26 @@ namespace SetupTv.Sections
       this.mpComboBox1.FormattingEnabled = true;
       this.mpComboBox1.Location = new System.Drawing.Point(15, 41);
       this.mpComboBox1.Name = "mpComboBox1";
-      this.mpComboBox1.Size = new System.Drawing.Size(337, 21);
+      this.mpComboBox1.Size = new System.Drawing.Size(330, 21);
       this.mpComboBox1.TabIndex = 0;
+      // 
+      // mpLabel2
+      // 
+      this.mpLabel2.AutoSize = true;
+      this.mpLabel2.Location = new System.Drawing.Point(12, 75);
+      this.mpLabel2.Name = "mpLabel2";
+      this.mpLabel2.Size = new System.Drawing.Size(269, 13);
+      this.mpLabel2.TabIndex = 3;
+      this.mpLabel2.Text = "Please select the port for RTSP streaming (default 554):";
+      // 
+      // PortNoNumericTextBox
+      // 
+      this.PortNoNumericTextBox.Location = new System.Drawing.Point(15, 101);
+      this.PortNoNumericTextBox.Name = "PortNoNumericTextBox";
+      this.PortNoNumericTextBox.Size = new System.Drawing.Size(100, 20);
+      this.PortNoNumericTextBox.TabIndex = 5;
+      this.PortNoNumericTextBox.Text = "554";
+      this.PortNoNumericTextBox.Value = 554;
       // 
       // FormEditIpAdress
       // 
@@ -84,7 +104,9 @@ namespace SetupTv.Sections
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.CancelButton = this.mpButtonCancel;
-      this.ClientSize = new System.Drawing.Size(372, 115);
+      this.ClientSize = new System.Drawing.Size(365, 175);
+      this.Controls.Add(this.PortNoNumericTextBox);
+      this.Controls.Add(this.mpLabel2);
       this.Controls.Add(this.mpComboBox1);
       this.Controls.Add(this.mpButtonCancel);
       this.Controls.Add(this.mpButtonOK);
@@ -107,5 +129,7 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBox1;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonOK;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonCancel;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
+    private MediaPortal.UserInterface.Controls.MPNumericTextBox PortNoNumericTextBox;
   }
 }

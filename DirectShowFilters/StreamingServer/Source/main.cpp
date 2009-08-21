@@ -16,13 +16,14 @@
 const char* STREAM_NAME = "testStream";
 const char* STREAM_DESCRIPTION = "Session streamed by \"MediaPortal Tv Server v1.0\"";
 const char* FILE_NAME = "C:\\temp\\testApp\\live.ts.tsbuffer";
+const int	DEFAULT_RTSP_PORT = 554;
 extern void Log(const char *fmt, ...) ;
 
 UsageEnvironment* m_env;
 RTSPServer*			m_rtspServer;
 
 void StreamSetup(char* ipAdress);
-int  StreamSetupEx(char* ipAdress);
+int  StreamSetupEx(char* ipAdress, int port);
 void StreamRun();
 void announceStream(RTSPServer* rtspServer, ServerMediaSession* sms,char * streamName, char * inputFileName); // fwd
 void StreamAddTimeShiftFile(char* streamName, char* fileName,bool isProgramStream);
@@ -87,14 +88,14 @@ void StreamGetClientDetail(int clientNr, char** ipAdres, char** streamName, int*
 //**************************************************************************************
 void StreamSetup(char* ipAdress)
 {
-  if (StreamSetupEx(ipAdress) == 1)
+  if (StreamSetupEx(ipAdress, DEFAULT_RTSP_PORT) == 1)
   {
     Log("Exiting process after error");
     exit(1);
   }
 }
 //**************************************************************************************
-int StreamSetupEx(char* ipAdress)
+int StreamSetupEx(char* ipAdress, int port)
 {
   TCHAR folder[MAX_PATH];
   TCHAR fileName[MAX_PATH];
@@ -103,14 +104,14 @@ int StreamSetupEx(char* ipAdress)
   ::DeleteFile(fileName);
 
   Log("-------------- v1.0.0.1---------------");
-	Log("Stream server:Setup stream server for ip:%s",ipAdress);
+  Log("Stream server:Setup stream server for ip: %s:%d", ipAdress, port);
 	
 	ReceivingInterfaceAddr=inet_addr(ipAdress );
 	SendingInterfaceAddr=inet_addr(ipAdress );
 
   TaskScheduler* scheduler = BasicTaskScheduler::createNew();
   m_env = BasicUsageEnvironment::createNew(*scheduler);
-  m_rtspServer = RTSPServer::createNew(*m_env);
+  m_rtspServer = RTSPServer::createNew(*m_env, port);
   if (m_rtspServer == NULL) 
   {
     Log("Stream server:Failed to create RTSP server: %s",m_env->getResultMsg());

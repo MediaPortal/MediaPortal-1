@@ -38,7 +38,7 @@ namespace TvLibrary.Streaming
     private static extern void StreamSetup(string ipAdress);
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
-    private static extern int StreamSetupEx(string ipAdress);
+    private static extern int StreamSetupEx(string ipAdress, int port);
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
     private static extern void StreamRun();
@@ -60,7 +60,14 @@ namespace TvLibrary.Streaming
     private static extern void StreamGetClientDetail(short clientNr, out IntPtr ipAdres, out IntPtr streamName, ref short isActive, out long ticks);
     #endregion
 
+    #region constants
+
+    public const int DefaultPort = 554;
+
+    #endregion
+
     #region variables
+    int _port;
     bool _running;
     readonly bool _initialized;
     readonly Dictionary<string, RtspStream> _streams;
@@ -72,6 +79,16 @@ namespace TvLibrary.Streaming
     /// </summary>
     /// <param name="hostName">ipadress to use for streaming.</param>
     public RtspStreaming(string hostName)
+      : this(hostName, DefaultPort)
+    { 
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RtspStreaming"/> class.
+    /// </summary>
+    /// <param name="hostName">ipadress to use for streaming.</param>
+    /// <param name="port">port no to use for streaming</param>
+    public RtspStreaming(string hostName, int port)
     {
       int result;
       try
@@ -98,13 +115,14 @@ namespace TvLibrary.Streaming
 
         if (selectedAddress != null)
         {
-          result = StreamSetupEx(selectedAddress.ToString());
+          result = StreamSetupEx(selectedAddress.ToString(), port);
           if (result == 1)
           {
             throw new Exception("Error initializing streaming server");
           }
-        _initialized = true;
-        _streams = new Dictionary<string, RtspStream>();
+          _port = port;
+          _initialized = true;
+          _streams = new Dictionary<string, RtspStream>();
         }
         else
         {
@@ -171,6 +189,15 @@ namespace TvLibrary.Streaming
         return clients;
       }
     }
+
+    public int Port
+    {
+      get 
+      {
+        return _initialized? _port : 0;
+      }
+    }
+
     #endregion
     #region public members
     /// <summary>

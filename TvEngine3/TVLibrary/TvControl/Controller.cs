@@ -484,6 +484,13 @@ namespace TvControl
     #region streaming
 
     /// <summary>
+    /// Returns the port used for RTSP streaming.
+    /// If streaming is not initialized, returns 0.
+    /// </summary>
+    /// <value>The streaming port</value>
+    int StreamingPort { get; }
+
+    /// <summary>
     /// Gets a list of all streaming clients.
     /// </summary>
     /// <value>The streaming clients.</value>

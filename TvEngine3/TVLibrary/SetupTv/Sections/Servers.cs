@@ -53,6 +53,7 @@ namespace SetupTv.Sections
         {
           item.SubItems.Add("Slave");
         }
+        item.SubItems.Add(server.RtspPort.ToString());
         item.Tag = server;
       }
       mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
@@ -113,12 +114,15 @@ namespace SetupTv.Sections
 
       FormEditIpAdress dlg = new FormEditIpAdress();
       dlg.HostName = server.HostName;
+      dlg.PortNo = server.RtspPort;
       if (dlg.ShowDialog(this) == DialogResult.OK)
       {
-        if (dlg.HostName.Equals(server.HostName) == false)
+        if (dlg.HostName.Equals(server.HostName) == false || dlg.PortNo != server.RtspPort)
         {
           item.Text = dlg.HostName;
+          item.SubItems[2].Text = dlg.PortNo.ToString();
           server.HostName = dlg.HostName;
+          server.RtspPort = dlg.PortNo;
           server.Persist();
           ServiceNeedsToRestart();
         }

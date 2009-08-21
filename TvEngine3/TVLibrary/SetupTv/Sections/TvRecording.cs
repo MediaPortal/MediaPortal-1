@@ -985,10 +985,12 @@ namespace SetupTv.Sections
       try
       {
         string localHost = System.Net.Dns.GetHostName();
+        string localDomainName = System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().DomainName.ToLowerInvariant();
         IList<Server> dbsServers = Server.ListAll();
         foreach (Server computer in dbsServers)
         {
-          if (computer.HostName.ToLowerInvariant() == localHost.ToLowerInvariant())
+          if (computer.HostName.ToLowerInvariant() == localHost.ToLowerInvariant() ||
+              computer.HostName.ToLowerInvariant() == localHost.ToLowerInvariant() + "." + localDomainName)
             serverId = computer.IdServer;
         }
       }

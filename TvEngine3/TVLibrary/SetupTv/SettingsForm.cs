@@ -195,7 +195,9 @@ namespace SetupTv
       foreach (Server server in dbsServers)
       {
         int cardNo = 1;
-        bool isLocal = server.HostName.ToLowerInvariant() == Dns.GetHostName().ToLowerInvariant();
+        bool isLocal = (server.HostName.ToLowerInvariant() == Dns.GetHostName().ToLowerInvariant() ||
+                        server.HostName.ToLowerInvariant() == Dns.GetHostName().ToLowerInvariant() + "." 
+                            + System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().DomainName.ToLowerInvariant());
         bool DvbCheck = false;
         cardPage = new TvCards(server.HostName);
         cardPage.TvCardsChanged += OnTvCardsChanged;

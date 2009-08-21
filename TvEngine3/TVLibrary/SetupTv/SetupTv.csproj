@@ -596,6 +596,8 @@
     <EmbeddedResource Include="Sections\ThirdPartyChecks.resx">
       <DependentUpon>ThirdPartyChecks.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="48_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="48_upgrade_mysql_database.sql" />
     <None Include="images\icon.down.png" />
     <Content Include="images\icon.mpConfig.ico" />
     <Content Include="images\icon.radio_fta.png" />

@@ -102,16 +102,13 @@ namespace TvPlugin
     private bool CheckTvServerConnection(List<string> portErrors)
     {
       bool succeeded = true;
+
       if (!CheckTcpPort(31456)) // TvService.RemoteControl
       {
         portErrors.Add("31456 (TCP) RemoteControl");
         succeeded = false;
       }
-      if (!CheckTcpPort(554)) // RTSP streaming
-      {
-        portErrors.Add("554 (TCP) RTSP streaming");
-        succeeded = false;
-      }
+
       if (succeeded)
       {
         try
@@ -147,7 +144,7 @@ namespace TvPlugin
           succeeded = false;
         }
       }
-      else
+      else if (provider.ToLower() == "mysql")
       {
         Log.Debug("TvPlugin: Going to test port 3306(tcp) because of MySQL detected");
         if (!CheckTcpPort(3306)) // MySQL TCP Port
@@ -155,6 +152,11 @@ namespace TvPlugin
           portErrors.Add("3306 (TCP) MySQL Server");
           succeeded = false;
         }
+      }
+      else
+      {
+        //portErrors.Add("SQL connection not tested");
+        succeeded = false;
       }
       if (succeeded)
       {
@@ -167,6 +169,51 @@ namespace TvPlugin
           succeeded = false;
         }
       }
+      return succeeded;
+    }
+
+    private bool CheckStreamingConnection(bool tvServerAvailable, bool databaseAvailable, List<string> portErrors)
+    {
+      bool succeeded = true;
+      int RtspPort = 0;
+
+      if (tvServerAvailable)
+      {
+        RtspPort = RemoteControl.Instance.StreamingPort;
+      }
+      if (RtspPort == 0 && databaseAvailable)
+      {
+        try
+        {
+          IList<Server> servers = Server.ListAll();
+          foreach (Server server in servers)
+          {
+            if (server.IsMaster)
+            {
+              RtspPort = server.RtspPort;
+              break;
+            }
+          }
+        }
+        catch (Exception)
+        {
+          // do nothing
+        }
+      }
+
+      if (RtspPort > 0)
+      {
+        if (!CheckTcpPort(RtspPort)) // RTSP streaming
+        {
+          portErrors.Add(RtspPort.ToString() + " (TCP) RTSP streaming");
+          succeeded = false;
+        }
+      }
+      else 
+      {
+        succeeded = false;
+      }
+
       return succeeded;
     }
 
@@ -258,10 +305,11 @@ namespace TvPlugin
           List<string> portErrors = new List<string>();
           bool tvServerOk = CheckTvServerConnection(portErrors);
           bool databaseOk = CheckDatabaseConnection(portErrors);
+          bool streamingOk = CheckStreamingConnection(tvServerOk, databaseOk, portErrors);
 
           //Show the check results dialog to the user
           GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
-          if (tvServerOk && databaseOk)
+          if (tvServerOk && databaseOk && streamingOk)
           {
             TVHome.Navigator.ReLoad();
             if (pDlgOK != null)
