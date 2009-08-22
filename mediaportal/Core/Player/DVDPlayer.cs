@@ -1651,42 +1651,42 @@ namespace MediaPortal.Player
         switch (action.wID)
         {
           case Action.ActionType.ACTION_MOVE_LEFT:
-            if (_state == PlayState.Menu && buttonCount > 0)
+            Log.Info("DVDPlayer: move left {0}", buttonCount);
+            if (buttonCount > 0)
             {
-              Log.Info("DVDPlayer: move left");
               _dvdCtrl.SelectRelativeButton(DvdRelativeButton.Left);
               return true;
             }
             break;
 
           case Action.ActionType.ACTION_MOVE_RIGHT:
-            if (_state == PlayState.Menu && buttonCount > 0)
+            Log.Info("DVDPlayer: move right {0}", buttonCount);
+            if (buttonCount > 0)
             {
-              Log.Info("DVDPlayer: move right");
               _dvdCtrl.SelectRelativeButton(DvdRelativeButton.Right);
               return true;
             }
             break;
           case Action.ActionType.ACTION_MOVE_UP:
-            if (_state == PlayState.Menu && buttonCount > 0)
+            Log.Info("DVDPlayer: move up {0}", buttonCount);
+            if (buttonCount > 0)
             {
-              Log.Info("DVDPlayer: move up");
               _dvdCtrl.SelectRelativeButton(DvdRelativeButton.Upper);
               return true;
             }
             break;
 
           case Action.ActionType.ACTION_MOVE_DOWN:
-            if (_state == PlayState.Menu && buttonCount > 0)
+            Log.Info("DVDPlayer: move down {0}", buttonCount);
+            if (buttonCount > 0)
             {
-              Log.Info("DVDPlayer: move down");
               _dvdCtrl.SelectRelativeButton(DvdRelativeButton.Lower);
               return true;
             }
             break;
 
           case Action.ActionType.ACTION_SELECT_ITEM:
-            if (_state == PlayState.Menu && buttonCount > 0 && focusedButton > 0 && _dvdCtrl != null)
+            if (buttonCount > 0 && focusedButton > 0 && _dvdCtrl != null)
             {
               Log.Info("DVDPlayer: select");
               _dvdCtrl.ActivateButton();
