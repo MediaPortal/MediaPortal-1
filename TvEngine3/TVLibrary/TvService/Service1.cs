@@ -263,11 +263,6 @@ namespace TvService
       }
       _powerEventThreadId = 0;
       _powerEventThread = null;
-
-      if (!Environment.HasShutdownStarted)
-      {
-        Utils.RestartMCEServices();
-      }
       _started = false;
       Log.WriteFile("TV Service: stopped");
     }

@@ -1546,8 +1546,6 @@ public class MediaPortalApp : D3DApp, IRender
     GUILocalizeStrings.Dispose();
     TexturePacker.Cleanup();
     VolumeHandler.Dispose();
-    // Restart MCE Services
-    Utils.RestartMCEServices();
     if (isWinScreenSaverInUse)
     {
       SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, 1, 0, SPIF_SENDWININICHANGE);
@@ -3646,8 +3644,6 @@ public class MediaPortalApp : D3DApp, IRender
       }
     }
 
-    // Stop MCE services
-    Utils.StopMCEServices();
     EnableS3Trick();
     GUIWindowManager.OnNewAction += new OnActionHandler(OnAction);
     GUIWindowManager.Receivers += new SendMessageHandler(OnMessage);

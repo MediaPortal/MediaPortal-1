@@ -83,19 +83,8 @@ namespace TvService
 
     [DllImport("kernel32.dll", SetLastError = true)]
     static extern bool CloseHandle(IntPtr hObject);
-    
-    //Variables for MCE services
-    static bool _restartMCEehRecvr = false;
-    static bool _restartMCEehSched = false;
-    static bool _restartWmcEhtray = false;
-    static bool _restartWmcEhmsas = false;
-    static ServiceController _ehRecvr = new ServiceController("ehRecvr");
-    static ServiceController _ehSched = new ServiceController("ehSched");
-    static string _ehtrayPath = string.Empty;
-    static string _ehmsasPath = string.Empty;
 
     public delegate void UtilEventHandler(Process proc, bool waitForExit);
-
 
     static char[] crypt = new char[10] { 'G', 'D', 'J', 'S', 'I', 'B', 'T', 'P', 'W', 'Q' };
 
@@ -782,136 +771,6 @@ namespace TvService
         connStr = connStr.Insert(start + 9, "xxxxxx;");
       }
       return connStr;
-    }
-
-    /// <summary>
-    /// Shut down the MCE services
-    /// </summary>
-    public static void ShutDownMCEServices()
-    {
-        // Stop Vista & XP services
-        bool ehRecvrExist = false;
-        bool ehSchedExist = false;
-        bool success = true;
-
-        // Check for existance of MCE services without throwing/catching exceptions
-        ServiceController[] services = ServiceController.GetServices();
-        foreach (ServiceController srv in services)
-        {
-            if (srv.ServiceName == "ehRecvr")
-            {
-                ehRecvrExist = true;
-                if (ehSchedExist) //Found both services
-                    break;
-            }
-            if (srv.ServiceName == "ehSched")
-            {
-                ehSchedExist = true;
-                if (ehRecvrExist) //Found both services
-                    break;
-            }
-        }
-
-        // Stop MCE ehRecvr and ehSched services
-        if ((ehRecvrExist && (_ehRecvr.Status != ServiceControllerStatus.Stopped) && (_ehRecvr.Status != ServiceControllerStatus.StopPending))
-          || (ehSchedExist && (_ehSched.Status != ServiceControllerStatus.Stopped) && (_ehSched.Status != ServiceControllerStatus.StopPending)))
-        {
-            Log.Info("  Stopping Microsoft Media Center services");
-            try
-            {
-                if ((_ehRecvr.Status != ServiceControllerStatus.Stopped) && (_ehRecvr.Status != ServiceControllerStatus.StopPending))
-                {
-                    _ehRecvr.Stop();
-                    _restartMCEehRecvr = true;
-                }
-            }
-            catch
-            {
-                success = false;
-                Log.Error("Error stopping MCE service \"ehRecvr\"");
-            }
-            try
-            {
-                if ((_ehSched.Status != ServiceControllerStatus.Stopped) && (_ehSched.Status != ServiceControllerStatus.StopPending))
-                {
-                    _ehSched.Stop();
-                    _restartMCEehSched = true;
-                }
-            }
-            catch
-            {
-                success = false;
-                Log.Error("Error stopping MCE service \"ehSched\"");
-            }
-        }
-
-        if (success)
-        {
-            try
-            {
-                // Stop Vista specific services
-                if (Process.GetProcessesByName("ehtray").Length != 0)
-                {
-                    _restartWmcEhtray = true;
-                    _ehtrayPath = Process.GetProcessesByName("ehtray")[0].MainModule.FileName;
-                    foreach (Process proc in Process.GetProcessesByName("ehtray"))
-                        proc.Kill();
-                }
-
-                Thread.Sleep(200);
-                if (Process.GetProcessesByName("ehtray").Length != 0)
-                {
-                    Log.Error("StopVistaServices: Cannot terminate ehtray.exe");
-                }
-            }
-            catch (System.ComponentModel.Win32Exception)
-            {
-            }
-        }
-        else
-            Log.Error("!!! MediaPortal needs to be run as Administrator on Vista to stop the Media Center services that occupy your TV cards/remote control !!!");
-
-
-    }
-
-    /// <summary>
-    /// Restart the MCE services
-    /// </summary>
-    public static void RestartMCEServices()
-    {
-        if (_restartMCEehRecvr || _restartMCEehSched)
-        {
-            Log.Info("Restarting MCE services");
-
-            try
-            {
-                if (_restartMCEehRecvr)
-                    _ehRecvr.Start();
-            }
-            catch (Exception ex)
-            {
-                if (_ehRecvr.Status != ServiceControllerStatus.Running)
-                    Log.Info("Error starting MCE service \"ehRecvr\" {0}", ex.ToString());
-            }
-
-            try
-            {
-                if (_restartMCEehSched)
-                    _ehSched.Start();
-            }
-            catch (Exception ex)
-            {
-                if (_ehSched.Status != ServiceControllerStatus.Running)
-                    Log.Info("Error starting MCE service \"ehSched\" {0}", ex.ToString());
-            }
-        }
-
-        if ((_restartWmcEhtray && _ehtrayPath != string.Empty) || (_restartWmcEhmsas && _ehmsasPath != string.Empty))
-        {
-            Log.Info("Restarting Vista MC specific background applications");
-            if (_restartWmcEhtray)
-                Process.Start(_ehtrayPath);
-        }
     }
   }
 }

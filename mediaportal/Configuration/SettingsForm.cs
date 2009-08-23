@@ -202,12 +202,6 @@ namespace MediaPortal.Configuration
       // Required for Windows Form Designer support
       InitializeComponent();
       this.linkLabel1.Links.Add(0, linkLabel1.Text.Length, "http://www.team-mediaportal.com/donate.html");
-      // Stop MCE services
-      if (splashScreen != null)
-      {
-        splashScreen.SetInformation("Stopping MCE services...");
-      }
-      Util.Utils.StopMCEServices();
       // Build options tree
       if (splashScreen != null)
       {
@@ -1052,8 +1046,6 @@ namespace MediaPortal.Configuration
 
     private void SettingsForm_Closed(object sender, EventArgs e)
     {
-      // Restart MCE services
-      Util.Utils.RestartMCEServices();
       try
       {
         // stop serial ir receiver thread
