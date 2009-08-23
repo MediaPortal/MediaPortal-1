@@ -334,6 +334,7 @@ namespace MediaPortal.Ripper
       StopListening();
 
       GUIMessage msg;
+      bool shouldPlay  = false;
       switch (DetectMediaType(strDrive))
       {
         case MediaType.AUDIO_CD:
@@ -404,19 +405,24 @@ namespace MediaPortal.Ripper
           if (forcePlay || m_dvd == "Yes")
           {
             Log.Info("Autoplay: Yes, start DVD in {0}", strDrive);
-            g_Player.PlayDVD(strDrive + @"\VIDEO_TS\VIDEO_TS.IFO");
+            shouldPlay = true;
           }
           else if (m_dvd == "Ask")
           {
             if (ShouldWeAutoPlay(MediaType.DVD))
             {
               Log.Info("Autoplay: Answered yes, start DVD in {0}", strDrive);
-              g_Player.PlayDVD(strDrive + @"\VIDEO_TS\VIDEO_TS.IFO");
+              shouldPlay = true;
             }
             else
             {
               Log.Info("Autoplay: Answered no, do not start DVD in {0}", strDrive);
             }
+          }
+          if (shouldPlay)
+          {
+            g_Player.PlayDVD(strDrive + @"\VIDEO_TS\VIDEO_TS.IFO");
+            g_Player.ShowFullScreenWindow();
           }
           break;
 
