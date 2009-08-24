@@ -62,8 +62,8 @@ namespace SetupTv.Sections
       comboBoxGroups.Items.Clear();
       IList<ChannelGroup> groups = ChannelGroup.ListAll();
       foreach (ChannelGroup group in groups)
-        comboBoxGroups.Items.Add(new ComboBoxExItem(group.GroupName,-1,group.IdGroup));
-      if (comboBoxGroups.Items.Count==0)
+        comboBoxGroups.Items.Add(new ComboBoxExItem(group.GroupName, -1, group.IdGroup));
+      if (comboBoxGroups.Items.Count == 0)
         comboBoxGroups.Items.Add(new ComboBoxExItem("(no groups defined)", -1, -1));
       comboBoxGroups.SelectedIndex = 0;
 
@@ -122,7 +122,7 @@ namespace SetupTv.Sections
           }
         }
         user.CardId = cardId;
-        TvResult result = server.StartTimeShifting(ref user, id, out card,cardId!=-1);
+        TvResult result = server.StartTimeShifting(ref user, id, out card, cardId != -1);
         if (result != TvResult.Succeeded)
         {
           switch (result)
@@ -244,14 +244,13 @@ namespace SetupTv.Sections
           progressBarQuality.Value = Math.Min(100, card.SignalQuality);
           mpLabelSignalQuality.Text = card.SignalQuality.ToString();
 
-          mpLabelRecording.Text = card.RecordingFileName;
-
-
-          mpLabelTimeShift.Text = card.TimeShiftFileName;
           mpLabelChannel.Text = card.Channel.ToString();
-          mpButtonRec.Text = card.IsRecording ? "Stop Rec/TimeShift" : "Record";
+          mpLabelRecording.Text = card.RecordingFileName;
+          mpLabelTimeShift.Text = card.TimeShiftFileName;
 
           mpButtonTimeShift.Text = card.IsTimeShifting ? "Stop TimeShift" : "Start TimeShift";
+          mpButtonRec.Text = card.IsRecording ? "Stop Rec/TimeShift" : "Record";
+          mpButtonRec.Enabled = card.IsRecording;
 
           return;
         }
@@ -283,7 +282,7 @@ namespace SetupTv.Sections
         {
           cardNo++;
           User user = new User();
-          user.CardId = card.IdCard;          
+          user.CardId = card.IdCard;
           if (off >= mpListView1.Items.Count)
           {
             item = mpListView1.Items.Add("");
@@ -329,8 +328,8 @@ namespace SetupTv.Sections
             item.SubItems[6].Text = card.Name;
             off++;
             continue;
-          }                    
-          
+          }
+
           User[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
           if (usersForCard == null)
           {
@@ -358,7 +357,7 @@ namespace SetupTv.Sections
             off++;
             continue;
           }
-          
+
 
           bool userFound = false;
           for (int i = 0; i < usersForCard.Length; ++i)
