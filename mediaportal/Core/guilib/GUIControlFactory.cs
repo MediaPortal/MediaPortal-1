@@ -770,8 +770,12 @@ namespace MediaPortal.GUI.Library
           return typeof (GUIThumbnailPanel);
         case ("spincontrol"):
           return typeof (GUISpinControl);
+        case ("spinbutton"):
+          return typeof(GUISpinButton);
         case ("checkmark"):
-          return typeof (GUICheckMarkControl);
+          return typeof(GUICheckMarkControl);
+        case ("checkbutton"):
+          return typeof(GUICheckButton);
         case ("selectbutton"):
           return typeof (GUISelectButtonControl);
         case ("listcontrol"):

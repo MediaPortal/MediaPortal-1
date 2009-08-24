@@ -266,6 +266,27 @@ namespace MediaPortal.GUI.Library
                     }
                 }
             }
+
+            public void Draw(float x, float y, float nw, float nh, float zrot, float uoff, float voff, float umax, float vmax, int color)
+            {
+              if (_textureNumber >= 0)
+              {
+                // Rotate around the x,y point of the specified rectangle; maintain aspect ratio (1.0f)
+                TransformMatrix localTransform = new TransformMatrix();
+                localTransform.SetZRotation(zrot, x, y, 1.0f);
+                TransformMatrix finalTransform = GUIGraphicsContext.GetFinalTransform();
+                localTransform = finalTransform.multiply(localTransform);
+
+                FontEngineDrawTexture(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax, color, localTransform.Matrix);
+        }
+              else
+              {
+                if (logTextures)
+                {
+                  Log.Info("fontengine:Draw() ERROR. Texture is disposed:{0} {1}", _textureNumber.ToString(), _imageName);
+                }
+              }
+            }
         }
 
         #endregion

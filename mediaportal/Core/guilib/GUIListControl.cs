@@ -2089,13 +2089,13 @@ namespace MediaPortal.GUI.Library
       for (int i = 0; i < _itemsPerPage; ++i)
       {
         GUILabelControl cntl1 = new GUILabelControl(_controlId, 0, 0, 0, 0, 0, _fontName, "", _textColor,
-                                                    Alignment.ALIGN_LEFT, false,
+                                                    Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP, false,
                                                     _shadowAngle, _shadowDistance, _shadowColor);
         GUILabelControl cntl2 = new GUILabelControl(_controlId, 0, 0, 0, 0, 0, _fontName2Name, "", _textColor2,
-                                                    Alignment.ALIGN_LEFT, false,
+                                                    Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP, false,
                                                     _shadowAngle, _shadowDistance, _shadowColor);
         GUILabelControl cntl3 = new GUILabelControl(_controlId, 0, 0, 0, 0, 0, _fontName2Name, "", _textColor3,
-                                                    Alignment.ALIGN_RIGHT, false,
+                                                    Alignment.ALIGN_RIGHT, VAlignment.ALIGN_TOP, false,
                                                     _shadowAngle, _shadowDistance, _shadowColor);
         cntl1.ParentControl = this;
         cntl2.ParentControl = this;
@@ -3301,7 +3301,7 @@ namespace MediaPortal.GUI.Library
       wrappedLines = new ArrayList();
       GUILabelControl cntl1 = new GUILabelControl(_controlId, 0, 0, 0, GUIGraphicsContext.Width,
                                                   GUIGraphicsContext.Height, _fontName, "", _textColor,
-                                                  Alignment.ALIGN_LEFT, false,
+                                                  Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP, false,
                                                   _shadowAngle, _shadowDistance, _shadowColor);
       cntl1.ParentControl = this;
       cntl1.AllocResources();
@@ -3397,11 +3397,6 @@ namespace MediaPortal.GUI.Library
     {
       _cursorX = 0;
       _offset = 0;
-      // Mantis 0002389 - Missing Free
-      foreach (GUIListItem item in _listItems)
-      {
-        item.FreeIcons();
-      }
       _listItems.Clear();
       //GUITextureManager.CleanupThumbs();
       _upDownControl.SetRange(1, 1);

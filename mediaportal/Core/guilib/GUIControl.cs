@@ -46,6 +46,11 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("onright")] protected int _rightControlId = 0;
     [XMLSkinElement("onup")] protected int _upControlId = 0;
     [XMLSkinElement("ondown")] protected int _downControlId = 0;
+    // keepLook provides for the implementing control to maintain it's focused render look, if desired, based on where focus is moving.
+    [XMLSkin("onleft", "keepLook")] protected bool _keepLookOnLeft = false;
+    [XMLSkin("onright", "keepLook")] protected bool _keepLookOnRight = false;
+    [XMLSkin("onup", "keepLook")] protected bool _keepLookOnUp = false;
+    [XMLSkin("ondown", "keepLook")] protected bool _keepLookOnDown = false;
     [XMLSkinElement("colordiffuse")] protected long _diffuseColor = 0xFFFFFFFF;
     [XMLSkinElement("id")] protected int _controlId = 0;
     [XMLSkinElement("type")] protected string _controlType = "";
@@ -90,6 +95,22 @@ namespace MediaPortal.GUI.Library
       Left = ALIGN_LEFT,
       Right = ALIGN_RIGHT,
       Center = ALIGN_CENTER,
+    }
+
+
+    /// <summary>
+    /// enum to specify the vertical alignment of the control
+    /// </summary>
+    public enum VAlignment
+    {
+      ALIGN_TOP,
+      ALIGN_BOTTOM,
+      ALIGN_MIDDLE,
+
+      // added to support XAML parser
+      Top = ALIGN_TOP,
+      Bottom = ALIGN_BOTTOM,
+      Middle = ALIGN_MIDDLE,
     }
 
 

@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -63,6 +64,10 @@ namespace MediaPortal.GUI.Library
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEnginePresentTextures();
 
+    /// <summary>The border position.</summary>
+    private const int BORDER_OUTSIDE = 0;
+    private const int BORDER_INSIDE = 1;
+    private const int BORDER_CENTER = 2;
 
     /// <summary>The width of the current texture.</summary>
     private int _textureWidth = 0;
@@ -78,32 +83,25 @@ namespace MediaPortal.GUI.Library
     private int _currentAnimationLoop = 0;
     private int _currentFrameNumber = 0;
 
-    [XMLSkinElement("colorkey")]
-    private long m_dwColorKey = 0;
-    [XMLSkinElement("texture")]
-    private string _textureFileNameTag = "";
-    [XMLSkinElement("keepaspectratio")]
-    private bool _keepAspectRatio = false;
-    [XMLSkinElement("zoom")]
-    private bool _zoomIn = false;
-    [XMLSkinElement("zoomfromtop")]
-    private bool _zoomFromTop = false;
-    [XMLSkinElement("fixedheight")]
-    private bool _isFixedHeight = false;
-    [XMLSkinElement("RepeatBehavior")]
-    protected RepeatBehavior _repeatBehavior = RepeatBehavior.Forever;
-    [XMLSkin("texture", "flipX")]
-    protected bool _flipX = false;
-    [XMLSkin("texture", "flipY")]
-    protected bool _flipY = false;
-    [XMLSkin("texture", "diffuse")]
-    protected string _diffuseFileName = "";
-    [XMLSkinElement("filtered")]
-    private bool _filterImage = true;
-    [XMLSkinElement("centered")]
-    private bool _centerImage = false;
-    [XMLSkinElement("imagepath")]
-    private string _imagePath = "";  // Image path used to store VUMeter files
+    [XMLSkinElement("colorkey")] protected long m_dwColorKey = 0;
+    [XMLSkinElement("texture")] protected string _textureFileNameTag = "";
+    [XMLSkinElement("keepaspectratio")] protected bool _keepAspectRatio = false;
+    [XMLSkinElement("zoom")] protected bool _zoomIn = false;
+    [XMLSkinElement("zoomfromtop")] protected bool _zoomFromTop = false;
+    [XMLSkinElement("fixedheight")] protected bool _isFixedHeight = false;
+    [XMLSkinElement("RepeatBehavior")] protected RepeatBehavior _repeatBehavior = RepeatBehavior.Forever;
+    [XMLSkin("texture", "flipX")] protected bool _flipX = false;
+    [XMLSkin("texture", "flipY")] protected bool _flipY = false;
+    [XMLSkin("texture", "diffuse")] protected string _diffuseFileName = "";
+    [XMLSkinElement("filtered")] protected bool _filterImage = true;
+    [XMLSkinElement("centered")] protected bool _centerImage = false;
+    [XMLSkinElement("border")] protected string _strBorder = "";
+    [XMLSkin("border", "position")] protected string _strBorderPosition = "outside";
+    [XMLSkin("border", "textureRepeat")] protected bool _borderTextureRepeat = false;
+    [XMLSkin("border", "textureRotate")] protected bool _borderTextureRotate = false;
+    [XMLSkin("border", "texture")] protected string _borderTextureFileName = "image_border.png";
+    [XMLSkin("border", "colorKey")] protected long _borderColorKey = 0xFFFFFFFF;
+    [XMLSkinElement("imagepath")] private string _imagePath = "";  // Image path used to store VUMeter files
 
     private int _diffuseTexWidth = 0;
     private int _diffuseTexHeight = 0;
@@ -147,6 +145,12 @@ namespace MediaPortal.GUI.Library
 
     private object _lockingObject = new object();
 
+    private int _borderLeft = 0;
+    private int _borderRight = 0;
+    private int _borderTop = 0;
+    private int _borderBottom = 0;
+    private int _borderPosition = 0;
+
     private GUIImage()
     {
     }
@@ -160,6 +164,50 @@ namespace MediaPortal.GUI.Library
                     string strTexture, Color color)
       : this(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTexture, color.ToArgb())
     {
+    }
+
+    public GUIImage(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
+                    string strTexture, Color color, int[] border, int strBorderPosition, bool borderTextureRotate, bool borderTextureRepeat, Color borderColor)
+      : this(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTexture, color.ToArgb(), border, strBorderPosition, borderTextureRepeat, borderTextureRotate, borderColor.ToArgb())
+    {
+    }
+
+    public GUIImage(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
+              string strTexture, long dwColorKey, int[] border, int strBorderPosition, bool borderTextureRepeat, bool borderTextureRotate, long dwBorderColorKey)
+      : this(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTexture, dwColorKey)
+    {
+      // Border array parameter order is left,right,top,bottom.
+      if (border.Length >= 4)
+      {
+        _borderLeft = border[0];
+        _borderRight = border[1];
+        _borderTop = border[2];
+        _borderBottom = border[3];
+      }
+      else if (border.Length >= 1)
+      {
+        _borderLeft = border[0];
+        _borderRight = border[0];
+        _borderTop = border[0];
+        _borderBottom = border[0];
+      }
+
+      if ("center".Equals(strBorderPosition))
+      {
+        _borderPosition = BORDER_CENTER;
+      }
+      else if ("inside".Equals(strBorderPosition))
+      {
+        _borderPosition = BORDER_INSIDE;
+      }
+      else
+      {
+        _borderPosition = BORDER_OUTSIDE;
+      }
+
+      _borderTextureRepeat = borderTextureRepeat;
+      _borderTextureRotate = borderTextureRotate;
+      _borderColorKey = dwBorderColorKey;
     }
 
     /// <summary>
@@ -279,6 +327,79 @@ namespace MediaPortal.GUI.Library
       {
         _containsProperty = true;
       }
+        FinalizeBorder();
+    }
+
+    private void FinalizeBorder()
+    {
+      // Set the border sizes for user specified values (overrides the default values).
+      _strBorder = _strBorder.Trim();
+      if (!"".Equals(_strBorder))
+      {
+        int[] valueParameters = ParseParameters(_strBorder);
+
+        // The user may specify either all four values in the order left,right,top,bottom or a single value that will
+        // be used for all four sides.
+        if (valueParameters.Length >= 4)
+        {
+          _borderLeft = valueParameters[0];
+          _borderRight = valueParameters[1];
+          _borderTop = valueParameters[2];
+          _borderBottom = valueParameters[3];
+        }
+        else if (valueParameters.Length >= 1)
+        {
+          _borderLeft = valueParameters[0];
+          _borderRight = valueParameters[0];
+          _borderTop = valueParameters[0];
+          _borderBottom = valueParameters[0];
+        }
+
+        if ("center".Equals(_strBorderPosition))
+        {
+          _borderPosition = BORDER_CENTER;
+        }
+        else if ("inside".Equals(_strBorderPosition))
+        {
+          _borderPosition = BORDER_INSIDE;
+        }
+        else
+        {
+          _borderPosition = BORDER_OUTSIDE;
+        }
+      }
+    }
+
+    private static int[] ParseParameters(string valueText)
+    {
+      if ("".Equals(valueText))
+      {
+        return new int[0];
+      }
+
+      try
+      {
+        ArrayList valuesTemp = new ArrayList();
+
+        foreach (string token in valueText.Split(new char[] { ',', ' ' }))
+        {
+          if (token == string.Empty)
+          {
+            continue;
+          }
+          valuesTemp.Add(int.Parse(token));
+        }
+
+        int[] values = new int[valuesTemp.Count];
+        Array.Copy(valuesTemp.ToArray(), values, values.Length);
+
+        return values;
+      }
+      catch
+      {
+      }
+
+      return new int[0];
     }
 
     /// <summary>
@@ -1266,6 +1387,11 @@ namespace MediaPortal.GUI.Library
               }
             }
 
+            if ((_borderLeft > 0 || _borderRight > 0 || _borderTop > 0 || _borderBottom > 0) && _borderTextureFileName.Length > 0)
+            {
+              DrawBorder();
+            }
+
             base.Render(timePassed);
             return;
           }
@@ -1376,6 +1502,212 @@ namespace MediaPortal.GUI.Library
             GUIGraphicsContext.BypassUICalibration(false);
           }
         }
+      }
+    }
+
+    //*******************************************************************************************************************
+    // Draw a rectangle using one texture for four rectangles around the specified rectangle; one on each side.
+    // |------|
+    // |      |
+    // |      |
+    // |------|
+    // bl,br,bt,bb - border width on the left,right,top,bottom
+    // The border position (pos) is specified by pos relative to the x,y,nw,nh rectangle
+    // pos values 0=outside, 1=inside, 2=center
+    private void DrawBorder()
+    {
+      float bl = _borderLeft;
+      float br = _borderRight;
+      float bt = _borderTop;
+      float bb = _borderBottom;
+
+      float tx, ty, tw, th;  // scaling translations for border position (center, inside, outside)
+      float bx, by, bw, bh;  // one border rectangle (reused for each side)
+      float umax, vmax;      // Texture coordinate extent
+      float zrot = 0.0f;     // Rotation of a textured border edge if specified by borderTextureOrientation
+
+      CachedTexture.Frame texture;
+      int itw;
+      int ith;
+      float textureWidth;
+      float textureHeight;
+
+      // Get a texture from the texture file.
+      GUITextureManager.Load(_borderTextureFileName, _borderColorKey, -1, -1, true);
+      texture = GUITextureManager.GetTexture(_borderTextureFileName, 0, out itw, out ith);
+
+      textureWidth = (float)itw;
+      textureHeight = (float)ith;
+
+      // Border at center position
+      if (_borderPosition == BORDER_CENTER)
+      {
+        // Use Ceiling(), need an even numbered pixel count in border width to avoid aliasing and gaps due to rounding during presentation.
+        tx = _fx + (float)Math.Ceiling(bl / 2);
+        ty = _fy + (float)Math.Ceiling(bt / 2);
+        tw = _nw - (float)Math.Ceiling(bl / 2) - (float)Math.Ceiling(br / 2);
+        th = _nh - (float)Math.Ceiling(bt / 2) - (float)Math.Ceiling(bb / 2);
+      }
+      // Border at inside position
+      else if (_borderPosition == BORDER_INSIDE)
+      {
+        tx = _fx + bl;
+        ty = _fy + bt;
+        tw = _nw - bl - br;
+        th = _nh - bt - bb;
+      }
+      // Border at outside position
+      else
+      {
+        tx = _fx;
+        ty = _fy;
+        tw = _nw;
+        th = _nh;
+      }
+
+      // Left border rectangle
+      // Rotated 270 deg (-PI/2 radians)
+      bx = tx - bl;
+      by = ty - bt;
+      bw = bl;
+      bh = bt + th + bb;
+      if ((bw > 0) && (bh > 0))
+      {
+        if (_borderTextureRotate)
+        {
+          zrot = -(float)Math.PI / 2;
+
+          // Transpose the border rectangle
+          float temp = bw;
+          bw = bh;
+          bh = temp;
+
+          // Translate the border rectangle origin
+          // (-1) pixel offset accounts for rotation point being at upper left of the pixel at (bx,by)
+          //bx = bx;
+          by = by + bw - 1;
+
+          // Calculate the texture extent for repeat behaviour while maintaining the textures aspect ratio
+          umax = bw / (bh * (textureWidth / textureHeight));
+          vmax = 1;
+        }
+        else
+        {
+          // Calculate the texture extent for repeat behaviour while maintaining the textures aspect ratio
+          umax = 1;
+          vmax = (bh * (textureHeight / textureWidth)) / bw;
+        }
+
+        // Force texture to stretch if repeat not specified.
+        if (!_borderTextureRepeat)
+        {
+          umax = 1;
+          vmax = 1;
+        }
+
+        texture.Draw(bx, by, bw, bh, zrot, 0, 0, umax, vmax, (int)_borderColorKey);
+      }
+
+      // Right border rectangle
+      // Rotated 90 deg (PI/2 radians)
+      bx = tx + tw;
+      by = ty - bt;
+      bw = br;
+      bh = bt + th + bb;
+      if ((bw > 0) && (bh > 0))
+      {
+        if (_borderTextureRotate)
+        {
+          zrot = (float)Math.PI / 2;
+
+          // Transpose the border rectangle
+          float temp = bw;
+          bw = bh;
+          bh = temp;
+
+          // Translate the border rectangle origin
+          // (-1) pixel offset accounts for rotation point being at upper left of the pixel at (bx,by)
+          bx = bx + bh - 1;
+          //by = by;
+
+          // Calculate the texture extent for repeat behaviour while maintaining the textures aspect ratio
+          umax = bw / (bh * (textureWidth / textureHeight));
+          vmax = 1;
+        }
+        else
+        {
+          // Calculate the texture extent for repeat behaviour while maintaining the textures aspect ratio
+          umax = 1;
+          vmax = (bh * (textureHeight / textureWidth)) / bw;
+        }
+
+        // Force texture to stretch if repeat not specified.
+        if (!_borderTextureRepeat)
+        {
+          umax = 1;
+          vmax = 1;
+        }
+
+        texture.Draw(bx, by, bw, bh, zrot, 0, 0, umax, vmax, (int)_borderColorKey);
+      }
+
+      // Top border rectangle
+      // No rotation
+      bx = tx;
+      by = ty - bt;
+      bw = tw;
+      bh = bt;
+      if ((bw > 0) && (bh > 0))
+      {
+        if (_borderTextureRotate)
+        {
+          zrot = 0.0f;
+        }
+
+        // Calculate the texture extent for repeat behaviour while maintaining the textures aspect ratio
+        umax = bw / (bh * (textureWidth / textureHeight));
+        vmax = 1;
+
+        // Force texture to stretch if repeat not specified.
+        if (!_borderTextureRepeat)
+        {
+          umax = 1;
+          vmax = 1;
+        }
+
+        texture.Draw(bx, by, bw, bh, zrot, 0, 0, umax, vmax, (int)_borderColorKey);
+      }
+
+      // Bottom border rectangle
+      // Rotated 180 deg (PI radians)
+      bx = tx;
+      by = ty + th;
+      bw = tw;
+      bh = bb;
+      if ((bw > 0) && (bh > 0))
+      {
+        if (_borderTextureRotate)
+        {
+          zrot = (float)Math.PI;
+
+          // Translate the border rectangle origin
+          // (-1) pixel offset accounts for rotation point being at upper left of the pixel at (bx,by)
+          bx = bx + bw - 1;
+          by = by + bh - 1;
+        }
+
+        // Calculate the texture extent for repeat behaviour while maintaining the textures aspect ratio
+        umax = bw / (bh * (textureWidth / textureHeight));
+        vmax = 1;
+
+        // Force texture to stretch if repeat not specified.
+        if (!_borderTextureRepeat)
+        {
+          umax = 1;
+          vmax = 1;
+        }
+
+        texture.Draw(bx, by, bw, bh, zrot, 0, 0, umax, vmax, (int)_borderColorKey);
       }
     }
 
@@ -1595,6 +1927,18 @@ namespace MediaPortal.GUI.Library
       _reCalculate = true;
     }
 
+    public void SetBorder(string border, string position, bool textureRepeat, bool textureRotate, string textureFilename, long colorKey)
+    {
+      _strBorder = border;
+      _strBorderPosition = position;
+      _borderTextureRepeat = textureRepeat;
+      _borderTextureRotate = textureRotate;
+      _borderTextureFileName = textureFilename;
+      _borderColorKey = colorKey;
+
+      FinalizeBorder();
+    }
+
     public override void Animate(float timePassed, Animator animator)
     {
       base.Animate(timePassed, animator);
@@ -1628,6 +1972,22 @@ namespace MediaPortal.GUI.Library
           return;
         }
         _diffuseFileName = value;
+      }
+    }
+
+    /// <summary>
+    /// Get/set the filename of the border texture.
+    /// </summary>
+    public string BorderFileName
+    {
+      get { return _borderTextureFileName; }
+      set
+      {
+        if (_borderTextureFileName == value)
+        {
+          return;
+        }
+        _borderTextureFileName = value;
       }
     }
 

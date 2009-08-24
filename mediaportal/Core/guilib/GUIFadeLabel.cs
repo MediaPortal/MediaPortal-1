@@ -37,12 +37,13 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("scrollStartDelaySec")] protected int _scrollStartDelay = 1;
     [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
     [XMLSkinElement("align")] private Alignment _textAlignment = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("valign")] private VAlignment _textVAlignment = VAlignment.ALIGN_TOP;
     [XMLSkinElement("font")] protected string _fontName = "";
     [XMLSkinElement("label")] protected string _label = "";
-    [XMLSkinElement("wrapString")] protected string _userWrapString = "";
     [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
     [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
     [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
+    [XMLSkinElement("wrapString")] protected string _userWrapString = "";
 
     private ArrayList _listLabels = new ArrayList();
     private int _currentLabelIndex = 0;
@@ -89,23 +90,26 @@ namespace MediaPortal.GUI.Library
     /// <param name="strLabel">The label</param>
     /// <param name="dwTextColor">The color of this control.</param>
     /// <param name="dwTextAlign">The alignment of this control.</param>
-    /// <param name="strUserWrapString">The string used to connect a wrapped fade label.</param>
+    /// <param name="dwTextVAlign">The vertical alignment of this control.</param>
     /// <param name="dwShadowAngle">The angle of the shadow; zero degrees along x-axis.</param>
     /// <param name="dwShadowDistance">The distance of the shadow.</param>
     /// <param name="dwShadowColor">The color of the shadow.</param>
+    /// <param name="strUserWrapString">The string used to connect a wrapped fade label.</param>
     public GUIFadeLabel(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
-                        string strFont, string strLabel, long dwTextColor, Alignment dwTextAlign,
-                        string strUserWrapString, int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
+                        string strFont, string strLabel, long dwTextColor, Alignment dwTextAlign, VAlignment dwTextVAlign,
+                        int dwShadowAngle, int dwShadowDistance, long dwShadowColor,
+                        string strUserWrapString)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _fontName = strFont;
       _label = strLabel;
       _textColor = dwTextColor;
       _textAlignment = dwTextAlign;
-      _userWrapString = strUserWrapString;
+      _textVAlignment = dwTextVAlign;
       _shadowAngle = dwShadowAngle;
       _shadowDistance = dwShadowDistance;
       _shadowColor = dwShadowColor;
+      _userWrapString = strUserWrapString;
       FinalizeConstruction();
     }
 
@@ -130,7 +134,7 @@ namespace MediaPortal.GUI.Library
       }
 
       _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
-                                          _label, _textColor, _textAlignment, false,
+                                          _label, _textColor, _textAlignment, _textVAlignment, false,
                                           _shadowAngle, _shadowDistance, _shadowColor);
       _labelControl.CacheFont = false;
       _labelControl.ParentControl = this;
@@ -235,11 +239,31 @@ namespace MediaPortal.GUI.Library
 
       // get the current label
       string strLabel = (string) _listLabels[_currentLabelIndex];
+
+      //Get the text height to compute vertical position.
+/*      float fTextHeight = 0, fTextWidth = 0;
+      if (_font == null)
+      {
+        return;
+      }
+      _font.GetTextExtent(strLabel, ref fTextWidth, ref fTextHeight);
+
+      int ypos = _positionY;
+      if (VAlignment.ALIGN_BOTTOM == _textVAlignment)
+      {
+        ypos += (int)(_height - fTextHeight);
+      }
+      else if (VAlignment.ALIGN_MIDDLE == _textVAlignment)
+      {
+        ypos += (int)((_height - fTextHeight) / 2);
+      }
+*/
       _labelControl.Width = _width;
       _labelControl.Height = _height;
       _labelControl.Label = strLabel;
       _labelControl.SetPosition(_positionX, _positionY);
       _labelControl.TextAlignment = _textAlignment;
+      _labelControl.TextVAlignment = _textVAlignment;
       _labelControl.TextColor = _textColor;
       if (_labelControl.TextWidth < _width)
       {
@@ -261,6 +285,11 @@ namespace MediaPortal.GUI.Library
       {
         if (_labelControl.TextWidth < _width)
         {
+          if (WrapAround())
+          {
+            // Remove the wrap string since we are not scrolling.
+            StripWrapString(_labelControl);
+          }
           _labelControl.Render(timePassed);
           base.Render(timePassed);
           return;
@@ -328,6 +357,12 @@ namespace MediaPortal.GUI.Library
         }
       }
       base.Render(timePassed);
+    }
+
+    private void StripWrapString(GUILabelControl labelControl)
+    {
+      labelControl.Label = labelControl.Label.Substring(0, labelControl.Label.Length - _wrapString.Length);
+      return;
     }
 
     /// <summary>
@@ -441,18 +476,6 @@ namespace MediaPortal.GUI.Library
         fPosCY = (float) GUIGraphicsContext.Height;
       }
 
-
-      float fWidth = 0;
-      float fHeight = 60;
-      if (fHeight + fPosCY >= GUIGraphicsContext.Height)
-      {
-        fHeight = GUIGraphicsContext.Height - fPosCY - 1;
-      }
-      if (fHeight <= 0)
-      {
-        return true;
-      }
-
       if (_textAlignment == Alignment.ALIGN_RIGHT)
       {
         fPosCX -= fMaxWidth;
@@ -460,7 +483,27 @@ namespace MediaPortal.GUI.Library
       if (_textAlignment == Alignment.ALIGN_CENTER)
       {
         fPosCX += ((_width - fTextWidth)/2);
-        fPosCY += ((_height - fTextHeight)/2);
+      }
+
+      if (_textAlignment == Alignment.ALIGN_CENTER ||
+          _textVAlignment == VAlignment.ALIGN_MIDDLE)
+      {
+        fPosCY += ((_height - fTextHeight) / 2);
+      }
+      else if (_textVAlignment == VAlignment.ALIGN_BOTTOM)
+      {
+        fPosCY += (_height - fTextHeight);
+      }
+
+      float fWidth = 0;
+      float fHeight = fTextHeight;
+      if (fHeight + fPosCY >= GUIGraphicsContext.Height)
+      {
+        fHeight = GUIGraphicsContext.Height - fPosCY - 1;
+      }
+      if (fHeight <= 0)
+      {
+        return true;
       }
 
       Viewport oldviewport = GUIGraphicsContext.DX9Device.Viewport;
@@ -590,6 +633,7 @@ namespace MediaPortal.GUI.Library
         if (fPosY >= 0.0)
         {
           _labelControl.TextAlignment = Alignment.ALIGN_LEFT;
+          _labelControl.TextVAlignment = _textVAlignment;
           _labelControl.Label = szText;
           _labelControl.Width = (int) (fMaxWidth - 50 + _scrollPosititionX - _scrollOffset);
           _labelControl.TextColor = color;
@@ -600,14 +644,15 @@ namespace MediaPortal.GUI.Library
             //            string strLabel = GetShortenedText(wszOrgText, _width, ref fwt);
             GetShortenedText(wszOrgText, _width, ref fwt);
             int xpos = (int) (fPosX - fwt - _scrollPosititionX + _scrollOffset);
-            _labelControl.SetPosition(xpos, (int) fPosY);
+            _labelControl.SetPosition(xpos, (int)fPosY);
           }
           else if (Alignment.ALIGN_CENTER == _textAlignment)
           {
             // 1) reduce maxwidth to ensure faded right edge is drawn
             // 2) compensate the Width to ensure the faded right edge does not move
             _labelControl.TextColor = color;
-            int xpos = (int) (fPosX - _scrollPosititionX + _scrollOffset);
+            _labelControl.TextVAlignment = VAlignment.ALIGN_TOP;  // Computing ypos here (below).
+            int xpos = (int)(fPosX - _scrollPosititionX + _scrollOffset);
             //            _log.Info("fPosX, _scrollPosititionX, _scrollOffset, xpos: {0} {1} {2} {3}", fPosX, _scrollPosititionX, _scrollOffset, xpos);
             //            _log.Info("szText {0}", szText);
             _labelControl.SetPosition(xpos + ((int) ((_width - fTextWidth)/2)),
@@ -641,8 +686,10 @@ namespace MediaPortal.GUI.Library
           {
             _labelControl.Width = (int) fMaxWidth - 50;
           }
+
           _labelControl.TextColor = color;
-          _labelControl.SetPosition((int) fPosX, (int) fPosY);
+          _labelControl.TextVAlignment = _textVAlignment;
+          _labelControl.SetPosition((int)fPosX, (int)fPosY);
           _labelControl.Render(timePassed);
         }
       }
@@ -691,6 +738,15 @@ namespace MediaPortal.GUI.Library
     {
       get { return _textAlignment; }
       set { _textAlignment = value; }
+    }
+
+    /// <summary>
+    /// Get/set the vertical alignment of the text.
+    /// </summary>
+    public VAlignment TextVAlignment
+    {
+      get { return _textVAlignment; }
+      set { _textVAlignment = value; }
     }
 
     /// <summary>
