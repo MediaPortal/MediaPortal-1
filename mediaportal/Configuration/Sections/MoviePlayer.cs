@@ -371,10 +371,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxExternalPlayer
       // 
-      this.groupBoxExternalPlayer.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxExternalPlayer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxExternalPlayer.Controls.Add(this.externalPlayerCheckBox);
       this.groupBoxExternalPlayer.Controls.Add(this.parametersButton);
       this.groupBoxExternalPlayer.Controls.Add(this.parametersTextBox);
@@ -404,9 +402,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // parametersButton
       // 
-      this.parametersButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.parametersButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.parametersButton.Location = new System.Drawing.Point(384, 84);
       this.parametersButton.Name = "parametersButton";
       this.parametersButton.Size = new System.Drawing.Size(72, 22);
@@ -417,10 +413,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // parametersTextBox
       // 
-      this.parametersTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.parametersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.parametersTextBox.BorderColor = System.Drawing.Color.Empty;
       this.parametersTextBox.Location = new System.Drawing.Point(168, 84);
       this.parametersTextBox.Name = "parametersTextBox";
@@ -437,9 +431,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileNameButton
       // 
-      this.fileNameButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileNameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.fileNameButton.Location = new System.Drawing.Point(384, 60);
       this.fileNameButton.Name = "fileNameButton";
       this.fileNameButton.Size = new System.Drawing.Size(72, 22);
@@ -450,10 +442,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileNameTextBox
       // 
-      this.fileNameTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.fileNameTextBox.BorderColor = System.Drawing.Color.Empty;
       this.fileNameTextBox.Location = new System.Drawing.Point(168, 60);
       this.fileNameTextBox.Name = "fileNameTextBox";
@@ -470,10 +460,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.labelAACDecoder);
       this.mpGroupBox1.Controls.Add(this.aacAudioCodecComboBox);
       this.mpGroupBox1.Controls.Add(this.enableAudioDualMonoModes);
@@ -504,10 +492,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // aacAudioCodecComboBox
       // 
-      this.aacAudioCodecComboBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.aacAudioCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.aacAudioCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.aacAudioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.aacAudioCodecComboBox.Location = new System.Drawing.Point(168, 96);
@@ -524,9 +510,8 @@ namespace MediaPortal.Configuration.Sections
       this.enableAudioDualMonoModes.Name = "enableAudioDualMonoModes";
       this.enableAudioDualMonoModes.Size = new System.Drawing.Size(386, 30);
       this.enableAudioDualMonoModes.TabIndex = 10;
-      this.enableAudioDualMonoModes.Text =
-        "Enable AudioDualMono mode switching\r\n(if 1 audio stream contains 2x mono channels" +
-        ", you can switch between them)";
+      this.enableAudioDualMonoModes.Text = "Enable AudioDualMono mode switching\r\n(if 1 audio stream contains 2x mono channels" +
+          ", you can switch between them)";
       this.enableAudioDualMonoModes.UseVisualStyleBackColor = true;
       // 
       // autoDecoderSettings
@@ -538,10 +523,10 @@ namespace MediaPortal.Configuration.Sections
       this.autoDecoderSettings.Name = "autoDecoderSettings";
       this.autoDecoderSettings.Size = new System.Drawing.Size(309, 30);
       this.autoDecoderSettings.TabIndex = 0;
-      this.autoDecoderSettings.Text =
-        "Automatic Decoder Settings \r\n(use with caution - knowledge of DirectShow merits r" +
-        "equired)";
+      this.autoDecoderSettings.Text = "Automatic Decoder Settings \r\n(use with caution - knowledge of DirectShow merits r" +
+          "equired)";
       this.autoDecoderSettings.UseVisualStyleBackColor = true;
+      this.autoDecoderSettings.CheckedChanged += new System.EventHandler(this.autoDecoderSettings_CheckedChanged);
       // 
       // mpLabel1
       // 
@@ -553,10 +538,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // h264videoCodecComboBox
       // 
-      this.h264videoCodecComboBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.h264videoCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.h264videoCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.h264videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.h264videoCodecComboBox.Location = new System.Drawing.Point(168, 48);
@@ -566,10 +549,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // audioRendererComboBox
       // 
-      this.audioRendererComboBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioRendererComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.audioRendererComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioRendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.audioRendererComboBox.Location = new System.Drawing.Point(168, 120);
@@ -595,10 +576,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // audioCodecComboBox
       // 
-      this.audioCodecComboBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.audioCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.audioCodecComboBox.Location = new System.Drawing.Point(168, 72);
@@ -608,10 +587,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // videoCodecComboBox
       // 
-      this.videoCodecComboBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.videoCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.videoCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.videoCodecComboBox.Location = new System.Drawing.Point(168, 24);
@@ -629,10 +606,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // wmvGroupBox
       // 
-      this.wmvGroupBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.wmvGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.wmvGroupBox.Controls.Add(this.mpLabel2);
       this.wmvGroupBox.Controls.Add(this.wmvCheckBox);
       this.wmvGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -676,6 +651,7 @@ namespace MediaPortal.Configuration.Sections
       this.wmvGroupBox.ResumeLayout(false);
       this.wmvGroupBox.PerformLayout();
       this.ResumeLayout(false);
+
     }
 
     #endregion
@@ -735,6 +711,6 @@ namespace MediaPortal.Configuration.Sections
     private void autoDecoderSettings_CheckedChanged(object sender, EventArgs e)
     {
       UpdateDecoderSettings();
-    }
+    }   
   }
 }
