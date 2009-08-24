@@ -204,6 +204,11 @@ namespace MediaPortal.Player
         devMode.dmFields = Win32.DEVMODE_Fields.DM_DISPLAYFREQUENCY;
         devMode.dmDisplayFrequency = refreshRate;
         Win32.ChangeDisplaySettings_Result r = Win32.ChangeDisplaySettingsEx(displayDevice.DeviceName, devMode, IntPtr.Zero, Win32.ChangeDisplaySettings_Flags.None, IntPtr.Zero);
+        Log.Debug("CycleRefreshRate: result {0} for refresh rate change ({1}hz)", r, refreshRate);
+      }
+      else
+      {
+        Log.Error("CycleRefreshRate: unable to change refresh rate ({0}hz) for monitor {1}", refreshRate, monitorIndex);
       }
     }
   }
@@ -280,7 +285,7 @@ namespace MediaPortal.Player
     #endregion
 
     #region public methods
-    
+
     #endregion
   }
 
@@ -290,7 +295,7 @@ namespace MediaPortal.Player
 
     public const int WAIT_FOR_REFRESHRATE_RESET_MAX = 10; //10 secs
 
-    #endregion        
+    #endregion
 
     #region private static vars
 
@@ -320,7 +325,7 @@ namespace MediaPortal.Player
     #endregion
 
     #region private static methods
-    
+
     private static void RefreshRateShowNotification(string msg, bool waitForFullscreen)
     {
       if (GUIGraphicsContext.IsFullScreenVideo == waitForFullscreen)
@@ -330,7 +335,7 @@ namespace MediaPortal.Player
         guiMsg.Label2 = msg;
         guiMsg.Param1 = 5;
 
-        GUIGraphicsContext.SendMessage(guiMsg);         
+        GUIGraphicsContext.SendMessage(guiMsg);
       }
     }
 
@@ -345,15 +350,15 @@ namespace MediaPortal.Player
         return;
       }
 
-      string msg = (string) oMsg;
-      bool waitForFullScreen = (bool) oWaitForFullScreen;
+      string msg = (string)oMsg;
+      bool waitForFullScreen = (bool)oWaitForFullScreen;
 
       DateTime now = DateTime.Now;
       TimeSpan ts = DateTime.Now - now;
 
 
       while (GUIGraphicsContext.IsFullScreenVideo != waitForFullScreen && ts.TotalSeconds < 10)
-        //lets wait 5sec for fullscreen video to occur.
+      //lets wait 5sec for fullscreen video to occur.
       {
         Thread.Sleep(50);
         ts = DateTime.Now - now;
@@ -373,8 +378,8 @@ namespace MediaPortal.Player
         bool notify = xmlreader.GetValueAsBool("general", "notify_on_refreshrate", false);
 
         if (notify)
-        {          
-          ThreadStart starter = delegate { NotifyRefreshRateChangedThread((object) msg, (object) waitForFullScreen); };
+        {
+          ThreadStart starter = delegate { NotifyRefreshRateChangedThread((object)msg, (object)waitForFullScreen); };
           Thread notifyRefreshRateChangedThread = new Thread(starter);
           notifyRefreshRateChangedThread.IsBackground = true;
           notifyRefreshRateChangedThread.Start();
@@ -395,13 +400,13 @@ namespace MediaPortal.Player
         if (setting.Name.ToLower().Equals(name))
         {
           return setting;
-        }        
+        }
       }
-      return null;     
+      return null;
     }
 
 
-    private static void GetRefreshRateConfiguration ()
+    private static void GetRefreshRateConfiguration()
     {
       if (_refreshRateSettings == null)
       {
@@ -427,7 +432,7 @@ namespace MediaPortal.Player
 
           RefreshRateSetting setting = new RefreshRateSetting();
 
-          setting.Name = name;          
+          setting.Name = name;
 
           char[] splitter = { ';' };
           string[] fpsArray = fps.Split(splitter);
@@ -435,7 +440,7 @@ namespace MediaPortal.Player
           List<double> fpsList = new List<double>();
           foreach (string fpsItem in fpsArray)
           {
-            double fpsAsDouble = -1;            
+            double fpsAsDouble = -1;
             double.TryParse(fpsItem, NumberStyles.AllowDecimalPoint, provider, out fpsAsDouble);
 
             if (fpsAsDouble > -1)
@@ -452,8 +457,8 @@ namespace MediaPortal.Player
           setting.Hz = hzAsDouble;
           setting.ExtCmd = extCmd;
 
-          _refreshRateSettings.Add(setting);          
-        }        
+          _refreshRateSettings.Add(setting);
+        }
       }
     }
 
@@ -479,11 +484,11 @@ namespace MediaPortal.Player
             return;
           }
         }
-      }                  
+      }
     }
 
     private static bool RunExternalJob(string newExtCmd, string strFile, MediaType type, bool deviceReset)
-    {      
+    {
       Log.Info("RefreshRateChanger.RunExternalJob: running external job in order to change refreshrate {0}", newExtCmd);
 
 
@@ -614,7 +619,7 @@ namespace MediaPortal.Player
           Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: 'auto refreshrate changer' disabled");
           return;
         }
-        force_refresh_rate = xmlreader.GetValueAsBool("general", "force_refresh_rate", false);        
+        force_refresh_rate = xmlreader.GetValueAsBool("general", "force_refresh_rate", false);
         deviceReset = xmlreader.GetValueAsBool("general", "devicereset", false);
       }
 
@@ -631,7 +636,7 @@ namespace MediaPortal.Player
 
         if (newExtCmd.Length == 0)
         {
-          Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: using internal win32 method for changing refreshrate. current is {0}hz, desired is {1}",currentRR, newRR);
+          Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: using internal win32 method for changing refreshrate. current is {0}hz, desired is {1}", currentRR, newRR);
           Win32.CycleRefreshRate((uint)currentScreenNr, (uint)newRR);
           NotifyRefreshRateChanged(newRRDescription, (strFile.Length > 0));
         }
@@ -645,7 +650,7 @@ namespace MediaPortal.Player
         if (newRR == 0)
         {
           Log.Info(
-          "RefreshRateChanger.SetRefreshRateBasedOnFPS: could not find a matching refreshrate based on {0} fps (check config)",fps);          
+          "RefreshRateChanger.SetRefreshRateBasedOnFPS: could not find a matching refreshrate based on {0} fps (check config)", fps);
         }
         else
         {
@@ -684,7 +689,7 @@ namespace MediaPortal.Player
 
         force_refresh_rate = xmlreader.GetValueAsBool("general", "force_refresh_rate", false);
         bool useDefaultHz = xmlreader.GetValueAsBool("general", "use_default_hz", false);
-        
+
         if (!useDefaultHz)
         {
           Log.Info(
@@ -709,8 +714,8 @@ namespace MediaPortal.Player
             {
               defaultFPS = setting.Fps[0];
             }
-          }         
-        }        
+          }
+        }
 
         deviceReset = xmlreader.GetValueAsBool("general", "devicereset", false);
       }
@@ -753,9 +758,9 @@ namespace MediaPortal.Player
         }
 
         deviceReset = xmlreader.GetValueAsBool("general", "devicereset", false);
-        force_refresh_rate = xmlreader.GetValueAsBool("general", "force_refresh_rate", false);        
+        force_refresh_rate = xmlreader.GetValueAsBool("general", "force_refresh_rate", false);
       }
-      
+
       RefreshRateSetting setting = RetrieveRefreshRateChangerSetting("TV");
 
       if (setting == null)
@@ -776,11 +781,11 @@ namespace MediaPortal.Player
         else
         {
           StackTrace st = new StackTrace(true);
-          StackFrame sf = st.GetFrame(0);          
+          StackFrame sf = st.GetFrame(0);
 
           Log.Error("RefreshRateChanger.AdaptRefreshRate: g_Player.MediaInfo was null. file: {0} st: {1}", strFile, sf.GetMethod().Name);
           return;
-        }       
+        }
       }
       else if (isTV || isRTSP)
       {
@@ -799,7 +804,7 @@ namespace MediaPortal.Player
         Log.Info("RefreshRateChanger.AdaptRefreshRate: framerate on file {0} is {1}", strFile, fps);
       }
 
-      SetRefreshRateBasedOnFPS(fps, strFile, type);    
+      SetRefreshRateBasedOnFPS(fps, strFile, type);
     }
 
     #endregion
