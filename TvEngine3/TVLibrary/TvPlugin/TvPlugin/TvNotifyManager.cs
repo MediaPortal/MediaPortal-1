@@ -81,6 +81,9 @@ namespace TvPlugin
       _timer.Interval = 15000;
       _timer.Enabled = true;
       _timer.Tick += new EventHandler(_timer_Tick);
+
+      _notifiedRecordings = new ArrayList();
+      _notifiedRecordingsStarted = new Dictionary<int, Schedule>();
     }
 
     public static bool RecordingNotificationEnabled
@@ -183,8 +186,8 @@ namespace TvPlugin
         sb.AddConstraint(Operator.Equals, "notify", 1);
         SqlStatement stmt = sb.GetStatement(true);
         _notifiesList = ObjectFactory.GetCollection(typeof (Program), stmt.Execute());
-        _notifiedRecordings = new ArrayList();
-        _notifiedRecordingsStarted = new Dictionary<int, Schedule>();
+        _notifiedRecordings.Clear();
+        _notifiedRecordingsStarted.Clear();
 
         if (_notifiesList != null)
         {
