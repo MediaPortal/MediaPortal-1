@@ -519,7 +519,7 @@
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
-      <visible>string.contains(#Play.Current.VideoCodec, FMP4)+Control.IsVisible(989)</visible>
+      <visible>[string.contains(#Play.Current.VideoCodec, FMP4)|string.contains(#Play.Current.VideoCodec, MPEG-4V)]+Control.IsVisible(989)</visible>
       <texture>logos\mp4v.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -535,7 +535,7 @@
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
-      <visible>string.contains(#Play.Current.VideoCodec, FMP4)+!Control.IsVisible(989)</visible>
+      <visible>[string.contains(#Play.Current.VideoCodec, FMP4)|string.contains(#Play.Current.VideoCodec, MPEG-4V)]+!Control.IsVisible(989)</visible>
       <texture>logos\mp4v.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
