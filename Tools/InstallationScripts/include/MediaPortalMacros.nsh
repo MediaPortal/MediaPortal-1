@@ -782,7 +782,7 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
     !insertmacro GetServicePack $R1 $R2
     ${If} $R2 > 0
       StrCpy $0 "OSwarnBetaSP"
-    ${ElseIf} $R1 < 3
+    ${ElseIf} $R1 < 2
       StrCpy $0 "OSabort"
     ${Else}
       StrCpy $0 "OSok"
