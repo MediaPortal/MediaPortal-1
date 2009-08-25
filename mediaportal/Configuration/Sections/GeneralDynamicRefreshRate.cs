@@ -38,7 +38,7 @@ namespace MediaPortal.Configuration.Sections
   public class GeneralDynamicRefreshRate : SectionSettings
   {
     private MPGroupBox groupBoxRR;
-    private LinkLabel linkLabel1;
+    private LinkLabel linkLabelWiki;
     private MPCheckBox chkEnableDynamicRR;
     private MPCheckBox chkNotifyOnRR;
     private MPCheckBox chkForceRR;
@@ -69,7 +69,7 @@ namespace MediaPortal.Configuration.Sections
       // This call is required by the Windows Form Designer.
       InitializeComponent();
 
-      this.linkLabel1.Links.Add(0, linkLabel1.Text.Length, "http://wiki.team-mediaportal.com/");
+      this.linkLabelWiki.Links.Add(0, linkLabelWiki.Text.Length, "http://wiki.team-mediaportal.com/");
       dataGridViewRR.Rows.Clear();
     }
 
@@ -116,15 +116,15 @@ namespace MediaPortal.Configuration.Sections
 
         for (int i = 1; i < 100; i++)
         {
-          string extCmd = xmlreader.GetValueAsString("general", "refreshrate0" + Convert.ToString (i) + "_ext", "");
-          string name = xmlreader.GetValueAsString("general", "refreshrate0" + Convert.ToString(i) + "_name", "");          
+          string extCmd = xmlreader.GetValueAsString("general", "refreshrate0" + Convert.ToString(i) + "_ext", "");
+          string name = xmlreader.GetValueAsString("general", "refreshrate0" + Convert.ToString(i) + "_name", "");
 
           if (string.IsNullOrEmpty(name))
           {
             continue;
-          }          
+          }
 
-          string fps  = xmlreader.GetValueAsString("general", name + "_fps", "");
+          string fps = xmlreader.GetValueAsString("general", name + "_fps", "");
           string hz = xmlreader.GetValueAsString("general", name + "_hz", "");
 
           p = new String[4];
@@ -135,25 +135,25 @@ namespace MediaPortal.Configuration.Sections
           dataGridViewRR.Rows.Add((object[])p);
           row = dataGridViewRR.Rows[dataGridViewRR.Rows.Count - 1];
           defaultHz.Items.Add(p[0]);
-          if(sDefaultHz==hz)
+          if (sDefaultHz == hz)
             defaultHz.SelectedItem = name;
 
           if (name.ToLower().IndexOf("tv") > -1)
-          {            
+          {
             row.Cells[0].ReadOnly = true;
           }
         }
-        
+
         if (dataGridViewRR.Rows.Count == 0)
         {
-          InsertDefaultValues();          
-        }                      
-      }      
+          InsertDefaultValues();
+        }
+      }
       updateStates();
     }
 
     public override void SaveSettings()
-    {      
+    {
       using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("general", "autochangerefreshrate", chkEnableDynamicRR.Checked);
@@ -174,7 +174,7 @@ namespace MediaPortal.Configuration.Sections
         //delete all refreshrate entries, then re-add them.
         Settings xmlreader = new MPSettings();
         for (int i = 1; i < 100; i++)
-        {          
+        {
           string name = xmlreader.GetValueAsString("general", "refreshrate0" + Convert.ToString(i) + "_name", "");
 
           if (string.IsNullOrEmpty(name))
@@ -186,16 +186,16 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.RemoveEntry("general", name + "_hz");
           xmlwriter.RemoveEntry("general", "refreshrate0" + Convert.ToString(i) + "_ext");
           xmlwriter.RemoveEntry("general", "refreshrate0" + Convert.ToString(i) + "_name");
-        }       
+        }
 
         int j = 1;
         foreach (DataGridViewRow row in dataGridViewRR.Rows)
-        {          
+        {
           string name = (string)row.Cells[0].Value;
           string fps = (string)row.Cells[1].Value;
           string hz = (string)row.Cells[2].Value;
           string extCmd = (string)row.Cells[3].Value;
-          
+
           xmlwriter.SetValue("general", name + "_fps", fps);
           xmlwriter.SetValue("general", name + "_hz", hz);
           xmlwriter.SetValue("general", "refreshrate0" + Convert.ToString(j) + "_ext", extCmd);
@@ -207,7 +207,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      Process.Start((string) e.Link.LinkData);
+      Process.Start((string)e.Link.LinkData);
     }
 
     #region Designer generated code
@@ -219,7 +219,7 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GeneralDynamicRefreshRate));
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
       this.groupBoxRR = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.defaultHz = new System.Windows.Forms.ComboBox();
       this.mpButtonDefault = new MediaPortal.UserInterface.Controls.MPButton();
@@ -227,16 +227,16 @@ namespace MediaPortal.Configuration.Sections
       this.buttonAdd = new MediaPortal.UserInterface.Controls.MPButton();
       this.lblDescription = new MediaPortal.UserInterface.Controls.MPLabel();
       this.dataGridViewRR = new System.Windows.Forms.DataGridView();
+      this.gridColType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.gridColFramerates = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.gridColRR = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.gridColAction = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.chkUseDefaultRR = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.chkForceRR = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.chkUseDeviceReset = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.chkNotifyOnRR = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.chkEnableDynamicRR = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-      this.gridColType = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.gridColFramerates = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.gridColRR = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.gridColAction = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.linkLabelWiki = new System.Windows.Forms.LinkLabel();
       this.groupBoxRR.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridViewRR)).BeginInit();
       this.SuspendLayout();
@@ -257,7 +257,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxRR.Controls.Add(this.chkUseDeviceReset);
       this.groupBoxRR.Controls.Add(this.chkNotifyOnRR);
       this.groupBoxRR.Controls.Add(this.chkEnableDynamicRR);
-      this.groupBoxRR.Controls.Add(this.linkLabel1);
+      this.groupBoxRR.Controls.Add(this.linkLabelWiki);
       this.groupBoxRR.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxRR.Location = new System.Drawing.Point(3, 3);
       this.groupBoxRR.Name = "groupBoxRR";
@@ -325,14 +325,14 @@ namespace MediaPortal.Configuration.Sections
             this.gridColFramerates,
             this.gridColRR,
             this.gridColAction});
-      dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
-      dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-      dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-      dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-      this.dataGridViewRR.DefaultCellStyle = dataGridViewCellStyle1;
+      dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
+      dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+      dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+      dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+      this.dataGridViewRR.DefaultCellStyle = dataGridViewCellStyle3;
       this.dataGridViewRR.Location = new System.Drawing.Point(19, 214);
       this.dataGridViewRR.Name = "dataGridViewRR";
       this.dataGridViewRR.RowHeadersVisible = false;
@@ -340,6 +340,32 @@ namespace MediaPortal.Configuration.Sections
       this.dataGridViewRR.Size = new System.Drawing.Size(434, 115);
       this.dataGridViewRR.TabIndex = 17;
       this.dataGridViewRR.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewRR_CellValueChanged);
+      // 
+      // gridColType
+      // 
+      this.gridColType.Frozen = true;
+      this.gridColType.HeaderText = "Name";
+      this.gridColType.Name = "gridColType";
+      this.gridColType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+      // 
+      // gridColFramerates
+      // 
+      this.gridColFramerates.HeaderText = "Frame rate(s)";
+      this.gridColFramerates.Name = "gridColFramerates";
+      this.gridColFramerates.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+      // 
+      // gridColRR
+      // 
+      this.gridColRR.HeaderText = "Refresh rate";
+      this.gridColRR.Name = "gridColRR";
+      this.gridColRR.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+      // 
+      // gridColAction
+      // 
+      this.gridColAction.HeaderText = "Action";
+      this.gridColAction.Name = "gridColAction";
+      this.gridColAction.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+      this.gridColAction.Width = 130;
       // 
       // chkUseDefaultRR
       // 
@@ -398,42 +424,17 @@ namespace MediaPortal.Configuration.Sections
       this.chkEnableDynamicRR.UseVisualStyleBackColor = true;
       this.chkEnableDynamicRR.CheckedChanged += new System.EventHandler(this.chkEnableDynamicRR_CheckedChanged);
       // 
-      // linkLabel1
+      // linkLabelWiki
       // 
-      this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.linkLabel1.AutoSize = true;
-      this.linkLabel1.Location = new System.Drawing.Point(341, 373);
-      this.linkLabel1.Name = "linkLabel1";
-      this.linkLabel1.Size = new System.Drawing.Size(112, 13);
-      this.linkLabel1.TabIndex = 10;
-      this.linkLabel1.TabStop = true;
-      this.linkLabel1.Text = "more info in the wiki ...";
-      // 
-      // gridColType
-      // 
-      this.gridColType.Frozen = true;
-      this.gridColType.HeaderText = "Name";
-      this.gridColType.Name = "gridColType";
-      this.gridColType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-      // 
-      // gridColFramerates
-      // 
-      this.gridColFramerates.HeaderText = "Frame rate(s)";
-      this.gridColFramerates.Name = "gridColFramerates";
-      this.gridColFramerates.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-      // 
-      // gridColRR
-      // 
-      this.gridColRR.HeaderText = "Refresh rate";
-      this.gridColRR.Name = "gridColRR";
-      this.gridColRR.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-      // 
-      // gridColAction
-      // 
-      this.gridColAction.HeaderText = "Action";
-      this.gridColAction.Name = "gridColAction";
-      this.gridColAction.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-      this.gridColAction.Width = 130;
+      this.linkLabelWiki.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.linkLabelWiki.AutoSize = true;
+      this.linkLabelWiki.Location = new System.Drawing.Point(341, 373);
+      this.linkLabelWiki.Name = "linkLabelWiki";
+      this.linkLabelWiki.Size = new System.Drawing.Size(112, 13);
+      this.linkLabelWiki.TabIndex = 10;
+      this.linkLabelWiki.TabStop = true;
+      this.linkLabelWiki.Text = "more info in the wiki ...";
+      this.linkLabelWiki.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelWiki_LinkClicked);
       // 
       // GeneralDynamicRefreshRate
       // 
@@ -449,7 +450,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #endregion
-   
+
     private void InsertDefaultValues()
     {
       Settings xmlreader = new MPSettings();
@@ -524,8 +525,8 @@ namespace MediaPortal.Configuration.Sections
     {
       DataGridViewRow row = new DataGridViewRow();
 
-      row.ReadOnly = false;            
-      dataGridViewRR.Rows.Add(row);      
+      row.ReadOnly = false;
+      dataGridViewRR.Rows.Add(row);
     }
 
     private void buttonRemove_Click(object sender, EventArgs e)
@@ -542,15 +543,15 @@ namespace MediaPortal.Configuration.Sections
       }
 
       foreach (DataGridViewRow row in sel)
-      {        
+      {
         if (row.Cells[0].Value.ToString().ToLower().IndexOf("tv") > -1)
         {
           continue;
         }
 
         defaultHz.Items.Remove(row.Cells[0].Value);
-        dataGridViewRR.Rows.Remove(row);        
-      }      
+        dataGridViewRR.Rows.Remove(row);
+      }
 
     }
 
@@ -560,7 +561,7 @@ namespace MediaPortal.Configuration.Sections
       InsertDefaultValues();
     }
 
-    
+
 
     private void dataGridViewRR_CellValueChanged(object sender, DataGridViewCellEventArgs e)
     {
@@ -595,7 +596,7 @@ namespace MediaPortal.Configuration.Sections
             defaultHz.SelectedItem = row.Cells[0].Value;
         }
         i++;
-      }      
+      }
     }
 
     private void defaultHz_SelectedIndexChanged(object sender, EventArgs e)
@@ -609,8 +610,19 @@ namespace MediaPortal.Configuration.Sections
           sDefaultHz = hz;
           break;
         }
-      }      
-    }    
-   
+      }
+    }
+
+    private void linkLabelWiki_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      try
+      {
+        Process.Start("http://wiki.team-mediaportal.com/MediaPortal/Configuration/General/RefreshRate");
+      }
+      catch (Exception)
+      {
+      }
+    }
+
   }
 }
