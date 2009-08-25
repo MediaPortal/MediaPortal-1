@@ -340,7 +340,7 @@ namespace OSInfo
           }
           return OSServicePackMinor == 0 ? 1 : 2;
         case OSList.Windows7:
-          return OSBuildVersion >= 7301 ? 1 : 2;
+          return OSBuildVersion == 7600 ? 1 : 2;
         case OSList.Windows2003:
         case OSList.Windows2008:
           return 2;
