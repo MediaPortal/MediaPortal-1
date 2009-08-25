@@ -250,7 +250,7 @@ namespace SetupTv.Sections
 
           mpButtonTimeShift.Text = card.IsTimeShifting ? "Stop TimeShift" : "Start TimeShift";
           mpButtonRec.Text = card.IsRecording ? "Stop Rec/TimeShift" : "Record";
-          mpButtonRec.Enabled = card.IsRecording;
+          mpButtonRec.Enabled = card.IsTimeShifting;
 
           return;
         }
