@@ -2024,10 +2024,10 @@ namespace MediaPortal.GUI.Library
             bReturn = true;
             break;
           case PLAYER_HAS_AUDIO:
-            bReturn = g_Player.Playing;
+            bReturn = !g_Player.HasVideo;
             break;
           case PLAYER_HAS_VIDEO:
-            bReturn = (g_Player.Playing && g_Player.HasVideo);
+            bReturn = g_Player.HasVideo;
             break;
           case PLAYER_PLAYING:
             bReturn = !(g_Player.Paused && (g_Player.Speed == 1));

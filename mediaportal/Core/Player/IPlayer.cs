@@ -453,7 +453,7 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
-    /// Property which should return true if the player wants to show a video window
+    /// Property which should return true if the player is capable of rendering video
     /// </summary>
     public virtual bool HasVideo
     {

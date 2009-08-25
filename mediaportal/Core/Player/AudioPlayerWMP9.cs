@@ -491,7 +491,7 @@ namespace MediaPortal.Player
 
     public override bool HasVideo
     {
-      get { return true; }
+      get { return false; }
     }
 
     public override bool IsCDA
