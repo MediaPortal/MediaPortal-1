@@ -177,10 +177,10 @@ namespace SetupTv.Sections
       this.checkBoxPreventDupes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxPreventDupes.Location = new System.Drawing.Point(15, 90);
       this.checkBoxPreventDupes.Name = "checkBoxPreventDupes";
-      this.checkBoxPreventDupes.Size = new System.Drawing.Size(491, 17);
+      this.checkBoxPreventDupes.Size = new System.Drawing.Size(335, 30);
       this.checkBoxPreventDupes.TabIndex = 13;
-      this.checkBoxPreventDupes.Text = "Check episode of already recorded programs to prevent duplicate recording of repe" +
-          "ated broadcasts";
+      this.checkBoxPreventDupes.Text = "Check episode of already recorded programs to prevent duplicate \r\nrecording of re" +
+          "peated broadcasts";
       this.checkBoxPreventDupes.UseVisualStyleBackColor = true;
       this.checkBoxPreventDupes.CheckedChanged += new System.EventHandler(this.checkBoxPreventDupes_CheckedChanged);
       // 
@@ -213,7 +213,7 @@ namespace SetupTv.Sections
       this.comboBoxEpisodeKey.Items.AddRange(new object[] {
             "Episode Title",
             "Episode Number"});
-      this.comboBoxEpisodeKey.Location = new System.Drawing.Point(93, 122);
+      this.comboBoxEpisodeKey.Location = new System.Drawing.Point(93, 132);
       this.comboBoxEpisodeKey.Name = "comboBoxEpisodeKey";
       this.comboBoxEpisodeKey.Size = new System.Drawing.Size(137, 21);
       this.comboBoxEpisodeKey.TabIndex = 13;
@@ -221,7 +221,7 @@ namespace SetupTv.Sections
       // labelEpisodeKey
       // 
       this.labelEpisodeKey.AutoSize = true;
-      this.labelEpisodeKey.Location = new System.Drawing.Point(12, 125);
+      this.labelEpisodeKey.Location = new System.Drawing.Point(12, 135);
       this.labelEpisodeKey.Name = "labelEpisodeKey";
       this.labelEpisodeKey.Size = new System.Drawing.Size(71, 13);
       this.labelEpisodeKey.TabIndex = 1;
