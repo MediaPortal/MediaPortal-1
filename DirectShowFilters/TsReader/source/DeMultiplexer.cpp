@@ -322,6 +322,7 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt)
       pmt.SetFormat(AACAudioFormat,sizeof(AACAudioFormat));
       break;
     case SERVICE_TYPE_AUDIO_AC3:
+    case SERVICE_TYPE_AUDIO_DD_PLUS:
       pmt.InitMediaType();
       pmt.SetType      (& MEDIATYPE_Audio);
       pmt.SetSubtype   (& MEDIASUBTYPE_DOLBY_AC3);

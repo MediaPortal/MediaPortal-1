@@ -25,7 +25,7 @@
 #include "channelinfo.h"
 #include <cassert>
 
-void LogDebug(const char *fmt, ...) ; 
+void LogDebug(const char *fmt, ...); 
 
 CPmtParser::CPmtParser()
 {
@@ -111,7 +111,8 @@ void CPmtParser::OnNewSection(CSection& section)
         stream_type==SERVICE_TYPE_AUDIO_MPEG2 || 
         stream_type==SERVICE_TYPE_AUDIO_AC3 || 
         stream_type==SERVICE_TYPE_AUDIO_AAC || 
-        stream_type==SERVICE_TYPE_AUDIO_LATM_AAC )
+        stream_type==SERVICE_TYPE_AUDIO_LATM_AAC ||
+        stream_type==SERVICE_TYPE_AUDIO_DD_PLUS )
       {				  
         AudioPid pid;
         pid.Pid=elementary_PID;
@@ -136,11 +137,11 @@ void CPmtParser::OnNewSection(CSection& section)
         int indicator=section.Data[pointer];
         x = section.Data[pointer + 1] + 2;
   						
-		    if(indicator==DESCRIPTOR_DVB_AC3)
+        if(indicator==DESCRIPTOR_DVB_AC3 || indicator==DESCRIPTOR_DVB_E_AC3)
         {								
           AudioPid pid;
           pid.Pid=elementary_PID;
-          pid.AudioServiceType=SERVICE_TYPE_AUDIO_AC3;
+          pid.AudioServiceType=(indicator==DESCRIPTOR_DVB_AC3) ? SERVICE_TYPE_AUDIO_AC3 : SERVICE_TYPE_AUDIO_DD_PLUS;
           
           for(int i(0); i<tempPids.size(); i++)
           {
