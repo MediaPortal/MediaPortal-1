@@ -2481,6 +2481,7 @@ namespace TvPlugin
         switch (streamType)
         {
           case "AC3":
+          case "AC3plus": // just for the time being use the same icon for AC3 & AC3plus
             GUIPropertyManager.SetProperty("#TV.View.IsAC3",
                                            string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\",
                                                          "ac3.png"));
@@ -2780,6 +2781,9 @@ namespace TvPlugin
           case "AC3":
             stream.StreamType = AudioStreamType.AC3;
             break;
+          case "AC3plus":
+            stream.StreamType = AudioStreamType.EAC3;
+            break;
           case "Mpeg1":
             stream.StreamType = AudioStreamType.Mpeg1;
             break;
@@ -2826,7 +2830,8 @@ namespace TvPlugin
       for (int i = 0; i < streams.Length; i++)
       {
         //tag the first found ac3 and mpeg indexes
-        if (streams[i].StreamType == AudioStreamType.AC3)
+        if (streams[i].StreamType == AudioStreamType.AC3 ||
+            streams[i].StreamType == AudioStreamType.EAC3)
         {
           if (idxFirstAc3 == -1)
           {
@@ -2876,7 +2881,9 @@ namespace TvPlugin
 
             if (index >= 0 && index < priority)
             {
-              if ((streams[i].StreamType == AudioStreamType.AC3)) //is the audio track an AC3 track ?
+              // is the audio track an AC3/AC3plus track?
+              if (streams[i].StreamType == AudioStreamType.AC3 ||
+                  streams[i].StreamType == AudioStreamType.EAC3) 
               {
                 idxLangAc3 = i;
                 ac3BasedOnLang = langSel;

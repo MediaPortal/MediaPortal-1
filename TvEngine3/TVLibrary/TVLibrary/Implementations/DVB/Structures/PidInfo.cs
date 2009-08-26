@@ -57,6 +57,10 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// </summary>
     public bool isAC3Audio;
     /// <summary>
+    /// true if pid contains e_ac3 audio
+    /// </summary>
+    public bool isEAC3Audio;
+    /// <summary>
     /// true if pid contains mpeg1/2 or aac audio
     /// </summary>
     public bool isAudio;
@@ -286,6 +290,8 @@ namespace TvLibrary.Implementations.DVB.Structures
         return String.Format("pid:{0:X} video type:MPEG-1", pid);
       if (isAC3Audio)
         return String.Format("pid:{0:X} audio lang:{1} type:AC3", pid, language);
+      if (isEAC3Audio)
+        return String.Format("pid:{0:X} audio lang:{1} type:E-AC3", pid, language);
       if (IsMpeg2Audio)
         return String.Format("pid:{0:X} audio lang:{1} type:MPEG-2", pid, language);
       if (IsMpeg1Audio)

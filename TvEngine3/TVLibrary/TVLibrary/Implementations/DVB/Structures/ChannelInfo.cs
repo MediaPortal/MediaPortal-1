@@ -428,10 +428,12 @@ namespace TvLibrary.Implementations.DVB.Structures
           case 0x3://MPEG-1 AUDIO ISO/IEC 11172 
             pidInfo.isAudio = true;
             pidInfo.isAC3Audio = false;
+            pidInfo.isEAC3Audio = false;
             break;
           case 0x4://MPEG-3 AUDIO ISO/IEC 13818-3 
             pidInfo.isAudio = true;
             pidInfo.isAC3Audio = false;
+            pidInfo.isEAC3Audio = false;
             break;
           case 0x81://AC3 AUDIO
             pidInfo.isAudio = false;
@@ -440,10 +442,12 @@ namespace TvLibrary.Implementations.DVB.Structures
           case 0x0f://AAC AUDIO
             pidInfo.isAudio = true;
             pidInfo.isAC3Audio = false;
+            pidInfo.isEAC3Audio = false;
             break;
           case 0x11://LATM AAC AUDIO
             pidInfo.isAudio = true;
             pidInfo.isAC3Audio = false;
+            pidInfo.isEAC3Audio = false;
             break;
         }
         pointer += 5;
@@ -484,6 +488,7 @@ namespace TvLibrary.Implementations.DVB.Structures
                     pidInfo.isTeletext = false;
                     pidInfo.isDVBSubtitle = false;
                     pidInfo.isAC3Audio = false;
+                    pidInfo.isEAC3Audio = false;
                     break;
                   case 0x03: // audio
                     //Log.Write("dvbsections: indicator {1} {0} found",(indicator==0x02?"for video":"for audio"),indicator);
@@ -492,6 +497,7 @@ namespace TvLibrary.Implementations.DVB.Structures
                     pidInfo.isTeletext = false;
                     pidInfo.isDVBSubtitle = false;
                     pidInfo.isAC3Audio = false;
+                    pidInfo.isEAC3Audio = false;
                     pidInfo.stream_type = 0x03;
                     break;
                   case 0x09:
@@ -511,10 +517,21 @@ namespace TvLibrary.Implementations.DVB.Structures
                     pidInfo.isTeletext = false;
                     pidInfo.isDVBSubtitle = false;
                     pidInfo.isAC3Audio = true;
+                    pidInfo.isEAC3Audio = false;
                     pidInfo.stream_type = 0x81;
+                    break;
+                  case 0x7A: //E-AC3									
+                    pidInfo.isAudio = false;
+                    pidInfo.isVideo = false;
+                    pidInfo.isTeletext = false;
+                    pidInfo.isDVBSubtitle = false;
+                    pidInfo.isAC3Audio = false;
+                    pidInfo.isEAC3Audio = true;
+                    pidInfo.stream_type = 0x84;
                     break;
                   case 0x56://teletext
                     pidInfo.isAC3Audio = false;
+                    pidInfo.isEAC3Audio = false;
                     pidInfo.isAudio = false;
                     pidInfo.isVideo = false;
                     pidInfo.isTeletext = true;
@@ -528,6 +545,7 @@ namespace TvLibrary.Implementations.DVB.Structures
                     if (pidInfo.stream_type == 0x05 || pidInfo.stream_type == 0x06)
                     {
                       pidInfo.isAC3Audio = false;
+                      pidInfo.isEAC3Audio = false;
                       pidInfo.isAudio = false;
                       pidInfo.isVideo = false;
                       pidInfo.isTeletext = false;
@@ -552,7 +570,7 @@ namespace TvLibrary.Implementations.DVB.Structures
             pointer += x;
           }
         }
-        if (pidInfo.isVideo || pidInfo.isAC3Audio || pidInfo.isAudio)
+        if (pidInfo.isVideo || pidInfo.isAC3Audio || pidInfo.isEAC3Audio || pidInfo.isAudio)
         {
           if (pmtEs.ElementaryStreamInfoLength > 0)
           {

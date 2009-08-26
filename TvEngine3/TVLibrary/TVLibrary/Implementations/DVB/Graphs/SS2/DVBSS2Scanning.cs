@@ -165,7 +165,7 @@ namespace TvLibrary.Implementations.DVB
           atscChannel.FreeToAir = !info.scrambled;
           foreach (PidInfo pid in info.pids)
           {
-            if (pid.isAC3Audio)
+            if (pid.isAC3Audio || pid.isEAC3Audio)
             {
               if (pid.pid > 0)
               {

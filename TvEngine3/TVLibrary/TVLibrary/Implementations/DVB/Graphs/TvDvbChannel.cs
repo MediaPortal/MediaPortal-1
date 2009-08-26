@@ -595,6 +595,14 @@ namespace TvLibrary.Implementations.DVB
             stream.StreamType = AudioStreamType.AC3;
             streams.Add(stream);
           }
+          else if (info.isEAC3Audio)
+          {
+            DVBAudioStream stream = new DVBAudioStream();
+            stream.Language = info.language;
+            stream.Pid = info.pid;
+            stream.StreamType = AudioStreamType.EAC3;
+            streams.Add(stream);
+          }
           else if (info.isAudio)
           {
             DVBAudioStream stream = new DVBAudioStream();
@@ -827,9 +835,9 @@ namespace TvLibrary.Implementations.DVB
               hwPids.Add((ushort)pidInfo.pid);
               _hasTeletext = true;
             }
-            if (pidInfo.isAC3Audio || pidInfo.isAudio)
+            if (pidInfo.isAC3Audio || pidInfo.isEAC3Audio || pidInfo.isAudio)
             {
-              if (_currentAudioStream == null || pidInfo.isAC3Audio)
+              if (_currentAudioStream == null || pidInfo.isAC3Audio || pidInfo.isEAC3Audio)
               {
                 _currentAudioStream = new DVBAudioStream();
                 _currentAudioStream.Pid = pidInfo.pid;
@@ -840,6 +848,8 @@ namespace TvLibrary.Implementations.DVB
                   _currentAudioStream.StreamType = AudioStreamType.Mpeg2;
                 if (pidInfo.isAC3Audio)
                   _currentAudioStream.StreamType = AudioStreamType.AC3;
+                if (pidInfo.isEAC3Audio)
+                  _currentAudioStream.StreamType = AudioStreamType.EAC3;
                 if (pidInfo.IsAACAudio)
                   _currentAudioStream.StreamType = AudioStreamType.AAC;
                 if (pidInfo.IsLATMAACAudio)
