@@ -168,6 +168,9 @@ bool CPmtParser::DecodePmt(CSection sections, int &pcr_pid, vector<PidInfo2>& pi
 			if(indicator==DESCRIPTOR_DVB_AC3)
 				pidInfo2.logicalStreamType=SERVICE_TYPE_AUDIO_AC3;
 
+			if(indicator==DESCRIPTOR_DVB_E_AC3)
+				pidInfo2.logicalStreamType=SERVICE_TYPE_AUDIO_E_AC3;
+
 			if(indicator==DESCRIPTOR_DVB_TELETEXT)
 				pidInfo2.logicalStreamType=DESCRIPTOR_DVB_TELETEXT;
 

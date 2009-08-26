@@ -670,6 +670,7 @@ bool CDiskRecorder::IsStreamWanted(int stream_type)
 					stream_type==SERVICE_TYPE_AUDIO_MPEG1 || 
 					stream_type==SERVICE_TYPE_AUDIO_MPEG2 || 
 					stream_type==SERVICE_TYPE_AUDIO_AC3 ||
+					stream_type==SERVICE_TYPE_AUDIO_E_AC3 ||
 					stream_type==SERVICE_TYPE_DVB_SUBTITLES2 ||
 					stream_type==DESCRIPTOR_DVB_TELETEXT ||
           stream_type==SERVICE_TYPE_AUDIO_AAC ||
@@ -708,7 +709,7 @@ void CDiskRecorder::AddStream(PidInfo2 pidInfo)
 		pi.rawDescriptorSize=pidInfo.rawDescriptorSize;
 		memset(pi.rawDescriptorData,0xFF,pi.rawDescriptorSize);
 		memcpy(pi.rawDescriptorData,pidInfo.rawDescriptorData,pi.rawDescriptorSize);
-		if (pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_AC3 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG2 || pidInfo.streamType==SERVICE_TYPE_AUDIO_AAC  || pidInfo.streamType==SERVICE_TYPE_AUDIO_LATM_AAC)
+		if (pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_AC3 || pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_E_AC3 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG2 || pidInfo.streamType==SERVICE_TYPE_AUDIO_AAC  || pidInfo.streamType==SERVICE_TYPE_AUDIO_LATM_AAC)
 		{
 			if (m_streamMode==StreamMode::TransportStream)
 			{
@@ -718,7 +719,7 @@ void CDiskRecorder::AddStream(PidInfo2 pidInfo)
 			}
 			else
 			{
-				if (pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_AC3)
+				if ((pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_AC3) || (pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_E_AC3))
 					m_multiPlexer.AddPesStream(pi.elementaryPid,true,false,false);
 				else
 					m_multiPlexer.AddPesStream(pi.elementaryPid,false,true,false);
@@ -960,7 +961,7 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 					}
 				}
 	
-				if (info.streamType==SERVICE_TYPE_AUDIO_MPEG1 || info.streamType==SERVICE_TYPE_AUDIO_MPEG2|| info.logicalStreamType==SERVICE_TYPE_AUDIO_AC3 || info.logicalStreamType==SERVICE_TYPE_AUDIO_AAC || info.logicalStreamType==SERVICE_TYPE_AUDIO_LATM_AAC)
+				if (info.streamType==SERVICE_TYPE_AUDIO_MPEG1 || info.streamType==SERVICE_TYPE_AUDIO_MPEG2|| info.logicalStreamType==SERVICE_TYPE_AUDIO_AC3 || info.logicalStreamType==SERVICE_TYPE_AUDIO_E_AC3 || info.logicalStreamType==SERVICE_TYPE_AUDIO_AAC || info.logicalStreamType==SERVICE_TYPE_AUDIO_LATM_AAC)
 				{
 					//audio
 					if (!info.seenStart)

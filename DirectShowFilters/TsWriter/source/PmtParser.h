@@ -34,6 +34,7 @@ using namespace std;
 #define SERVICE_TYPE_AUDIO_MPEG1		0x3
 #define SERVICE_TYPE_AUDIO_MPEG2		0x4
 #define SERVICE_TYPE_AUDIO_AC3			0x81 //fake
+#define SERVICE_TYPE_AUDIO_E_AC3		0x84 //fake
 #define SERVICE_TYPE_AUDIO_AAC			0x0f
 #define SERVICE_TYPE_AUDIO_LATM_AAC	0x11 //LATM AAC audio
 
@@ -42,6 +43,7 @@ using namespace std;
 //#define SERVICE_TYPE_TELETEXT			0x6; // ?
 
 #define DESCRIPTOR_DVB_AC3				0x6a
+#define DESCRIPTOR_DVB_E_AC3			0x7a
 #define DESCRIPTOR_DVB_TELETEXT			0x56
 #define DESCRIPTOR_DVB_SUBTITLING		0x59
 #define DESCRIPTOR_MPEG_ISO639_Lang		0x0a
