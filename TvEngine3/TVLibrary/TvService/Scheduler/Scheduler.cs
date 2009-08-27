@@ -841,6 +841,7 @@ namespace TvService
         Log.Write("Scheduler: stop record {0} {1}-{2} {3}", recording.Channel.Name, recording.RecordingStartDateTime, recording.EndTime, recording.Schedule.ProgramName);
         if (_controller.StopRecording(ref _user))
         {
+          recording.Recording.Refresh();
           recording.Recording.EndTime = DateTime.Now;
           recording.Recording.Persist();
 

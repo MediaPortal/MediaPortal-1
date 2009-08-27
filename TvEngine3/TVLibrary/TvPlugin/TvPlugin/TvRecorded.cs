@@ -2097,6 +2097,7 @@ namespace TvPlugin
           stoptime = 0;
         }
         ; //temporary workaround before end of stream get's properly implemented
+        rec.Refresh();
         rec.StopTime = stoptime;
         rec.Persist();
       }
@@ -2145,6 +2146,7 @@ namespace TvPlugin
         }
         else
         {
+          rec.Refresh();
           rec.StopTime = 0;
           rec.Persist();
         }
