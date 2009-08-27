@@ -453,6 +453,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void InsertDefaultValues()
     {
+      defaultHz.Items.Clear();
       Settings xmlreader = new MPSettings();
       //first time mp config is run, no refreshrate settings available, create the default ones.
       string[] p = new String[4];
@@ -466,6 +467,14 @@ namespace MediaPortal.Configuration.Sections
       p = new String[4];
       p[0] = "PAL";
       p[1] = "25"; // fps
+      p[2] = "50"; //hz
+      p[3] = ""; //action
+      dataGridViewRR.Rows.Add((object[])p);
+      defaultHz.Items.Add(p[0]);
+
+      p = new String[4];
+      p[0] = "HDTV";
+      p[1] = "50"; // fps
       p[2] = "50"; //hz
       p[3] = ""; //action
       dataGridViewRR.Rows.Add((object[])p);
