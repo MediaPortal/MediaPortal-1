@@ -148,7 +148,7 @@ namespace MediaPortal.Player
     private bool enableDVBBitmapSubtitles = false;
     private bool enableDVBTtxtSubtitles = false;
     private bool enableMPAudioSwitcher = false;
-    private int  relaxTsReader = 0; // Disable dropping of discontinued dvb packets
+    private int relaxTsReader = 0; // Disable dropping of discontinued dvb packets
 
     #endregion
 
@@ -220,7 +220,7 @@ namespace MediaPortal.Player
         Log.Info("TsReaderPlayer: GetAudioDualMonoMode failed 0x{0:X}", hr);
         return eAudioDualMonoMode.UNSUPPORTED;
       }
-      eAudioDualMonoMode mode = (eAudioDualMonoMode) iMode;
+      eAudioDualMonoMode mode = (eAudioDualMonoMode)iMode;
       Log.Info("TsReaderPlayer: GetAudioDualMonoMode mode={0} succeeded", iMode.ToString(), hr);
       return mode;
     }
@@ -238,7 +238,7 @@ namespace MediaPortal.Player
         Log.Info("TsReaderPlayer: AudioDualMonoMode switching not available. Audioswitcher filter not loaded");
         return false;
       }
-      int hr = mpSwitcher.SetAudioDualMonoMode((uint) mode);
+      int hr = mpSwitcher.SetAudioDualMonoMode((uint)mode);
       if (hr != 0)
       {
         Log.Info("TsReaderPlayer: SetAudioDualMonoMode mode={0} failed 0x{1:X}", mode.ToString(), hr);
@@ -362,8 +362,8 @@ namespace MediaPortal.Player
       try
       {
         Cleanup(); //before adding vmr9 - make sure that cleanup is done, otherwise MP could hang in (_vmr9.AddVMR9)
-        _graphBuilder = (IGraphBuilder) new FilterGraph();
-        _rotEntry = new DsROTEntry((IFilterGraph) _graphBuilder);
+        _graphBuilder = (IGraphBuilder)new FilterGraph();
+        _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
 
         #region add vmr9
 
@@ -417,7 +417,7 @@ namespace MediaPortal.Player
           }
           try
           {
-            if (strH264VideoCodec.Length > 0)
+            if (strH264VideoCodec.Length > 0 && strH264VideoCodec != strVideoCodec)
             {
               _h264videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strH264VideoCodec);
             }
@@ -477,13 +477,13 @@ namespace MediaPortal.Player
         #region add TsReader
 
         TsReader reader = new TsReader();
-        _fileSource = (IBaseFilter) reader;
-        ireader = (ITSReader) reader;
+        _fileSource = (IBaseFilter)reader;
+        ireader = (ITSReader)reader;
         ireader.SetRelaxedMode(relaxTsReader); // enable/disable continousity filtering
         ireader.SetTsReaderCallback(this);
         ireader.SetRequestAudioChangeCallback(this);
         Log.Info("TSReaderPlayer:add TsReader to graph");
-        int hr = _graphBuilder.AddFilter((IBaseFilter) _fileSource, "TsReader");
+        int hr = _graphBuilder.AddFilter((IBaseFilter)_fileSource, "TsReader");
         if (hr != 0)
         {
           Log.Error("TSReaderPlayer:Failed to add TsReader to graph");
@@ -495,7 +495,7 @@ namespace MediaPortal.Player
 
         #region load file in TsReader
 
-        IFileSourceFilter interfaceFile = (IFileSourceFilter) _fileSource;
+        IFileSourceFilter interfaceFile = (IFileSourceFilter)_fileSource;
         if (interfaceFile == null)
         {
           Log.Error("TSReaderPlayer:Failed to get IFileSourceFilter");
@@ -584,8 +584,8 @@ namespace MediaPortal.Player
 
         #endregion
 
-        _mediaCtrl = (IMediaControl) _graphBuilder;
-        _mediaEvt = (IMediaEventEx) _graphBuilder;
+        _mediaCtrl = (IMediaControl)_graphBuilder;
+        _mediaEvt = (IMediaEventEx)_graphBuilder;
         _mediaSeeking = _graphBuilder as IMediaSeeking;
         if (_mediaSeeking == null)
         {
@@ -645,7 +645,7 @@ namespace MediaPortal.Player
           hr = mp.SetSyncSource(null);
           hr = mp.SetSyncSource(clock);
           //Log.Info("TSReaderPlayer:set reference clock:{0:X}", hr);
-          _basicAudio = (IBasicAudio) _graphBuilder;
+          _basicAudio = (IBasicAudio)_graphBuilder;
           //_mediaSeeking.SetPositions(new DsLong(0), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
         }
         if (_isRadio == false)
@@ -910,7 +910,7 @@ namespace MediaPortal.Player
               dTimeInSecs = 0;
             }
             dTimeInSecs *= 10000000d;
-            long lTime = (long) dTimeInSecs;
+            long lTime = (long)dTimeInSecs;
             long pStop = 0;
             long lContentStart, lContentEnd;
             _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
@@ -1035,8 +1035,8 @@ namespace MediaPortal.Player
         ireader.OnZapping(info);
       }
       Log.Info("TSReaderPlayer: OnZapping :{0}", info);
-      
+
     }
-    
+
   }
 }
