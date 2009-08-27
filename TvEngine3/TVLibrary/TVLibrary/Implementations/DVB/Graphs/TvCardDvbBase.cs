@@ -593,12 +593,16 @@ namespace TvLibrary.Implementations.DVB
           throw new TvException("Unable to stop graph");
         }
         _conditionalAccess.OnStopGraph();
+        // *** this should be removed when solution for graph start problem exists
+          if (System.IO.File.Exists(@"c:\resetgraph.txt"))
+            Decompose();
+        // ***
       }
       else
       {
         Log.Log.WriteFile("dvb:StopGraph - conditionalAccess.AllowedToStopGraph = false");
-      }
-      _graphState = GraphState.Created;
+        _graphState = GraphState.Created;
+      }      
     }
 
     /// <summary>
