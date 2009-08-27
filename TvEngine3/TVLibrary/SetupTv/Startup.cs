@@ -104,8 +104,14 @@ namespace SetupTv
     public static void Main(string[] arguments)
     {
       Thread.CurrentThread.Name = "SetupTv";
+      
+      Process[] p = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
+      if (p.Length > 1)
+      {
+        System.Environment.Exit(0);
+      }
 
-	  Application.SetCompatibleTextRenderingDefault(false);
+      Application.SetCompatibleTextRenderingDefault(false);
 
       // set working dir from application.exe
       string applicationPath = Application.ExecutablePath;
