@@ -103,8 +103,14 @@ int StreamSetupEx(char* ipAdress, int port)
   sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\streaming server.Log",folder);
   ::DeleteFile(fileName);
 
-  Log("-------------- v1.0.0.1---------------");
-  Log("Stream server:Setup stream server for ip: %s:%d", ipAdress, port);
+  Log("-------------- v1.0.0.2---------------");
+  if (port == DEFAULT_RTSP_PORT) {
+    Log("Stream server:Setup stream server for ip: %s", ipAdress);
+  }
+  else
+  {
+    Log("Stream server:Setup stream server for ip: %s:%d", ipAdress, port);
+  }
 	
 	ReceivingInterfaceAddr=inet_addr(ipAdress );
 	SendingInterfaceAddr=inet_addr(ipAdress );
