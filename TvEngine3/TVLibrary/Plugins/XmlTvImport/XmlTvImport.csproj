@@ -87,6 +87,7 @@
     <Compile Include="XmlTvImporter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XmlTvSetup.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="XmlTvSetup.designer.cs">
       <DependentUpon>XmlTvSetup.cs</DependentUpon>
