@@ -562,8 +562,17 @@ namespace SetupTv.Sections
               tvChannelGroupCount++;
               string groupName = nodeChannelGroup.Attributes["GroupName"].Value;
               int groupSortOrder = Int32.Parse(nodeChannelGroup.Attributes["SortOrder"].Value);
-              ChannelGroup group = layer.GetGroupByName(groupName, groupSortOrder) ??
+              ChannelGroup group=null;
+              if (groupName == TvConstants.TvGroupNames.AllChannels)
+              {
+                group = layer.GetGroupByName(groupName) ??
                                    new ChannelGroup(groupName, groupSortOrder);
+              }
+              else
+              {
+                group = layer.GetGroupByName(groupName, groupSortOrder) ??
+                                    new ChannelGroup(groupName, groupSortOrder);
+              }
               group.Persist();
               XmlNodeList mappingList = nodeChannelGroup.SelectNodes("mappings/map");
               foreach (XmlNode nodeMap in mappingList)
