@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{158A88D6-FA0D-4D50-B9DC-D90E189206B0}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -87,7 +87,6 @@
     <Compile Include="XmlTvImporter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XmlTvSetup.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="XmlTvSetup.designer.cs">
       <DependentUpon>XmlTvSetup.cs</DependentUpon>

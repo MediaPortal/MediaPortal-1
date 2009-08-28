@@ -670,6 +670,7 @@ namespace TvService
           _tvController.StopGrabbingEpg(_user);
           _tvController.StopCard(_user);
         }
+        _currentTransponder.InUse = false;
         _state = EpgState.Idle;
         _user.CardId = -1;
         _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.ProgramUpdated));
