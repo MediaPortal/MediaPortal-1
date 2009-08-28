@@ -99,6 +99,7 @@ void CPmtParser::OnNewSection(CSection& section)
       // LogDebug("pmt: pid:%x type:%x",elementary_PID, stream_type);
       if(stream_type==SERVICE_TYPE_VIDEO_MPEG1 
         || stream_type==SERVICE_TYPE_VIDEO_MPEG2
+        || stream_type==SERVICE_TYPE_DCII_VIDEO_MPEG2
         || stream_type==SERVICE_TYPE_VIDEO_MPEG4
         || stream_type==SERVICE_TYPE_VIDEO_H264 )
       {
@@ -112,7 +113,8 @@ void CPmtParser::OnNewSection(CSection& section)
         stream_type==SERVICE_TYPE_AUDIO_AC3 || 
         stream_type==SERVICE_TYPE_AUDIO_AAC || 
         stream_type==SERVICE_TYPE_AUDIO_LATM_AAC ||
-        stream_type==SERVICE_TYPE_AUDIO_DD_PLUS )
+        stream_type==SERVICE_TYPE_AUDIO_DD_PLUS ||
+        stream_type==SERVICE_TYPE_AUDIO_EAC3)
       {				  
         AudioPid pid;
         pid.Pid=elementary_PID;
@@ -157,7 +159,6 @@ void CPmtParser::OnNewSection(CSection& section)
               break;
             }
           }
-
           m_pidInfo.audioPids.push_back(pid);
         }
   			

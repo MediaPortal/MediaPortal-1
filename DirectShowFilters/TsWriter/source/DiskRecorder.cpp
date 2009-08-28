@@ -65,7 +65,7 @@ int DR_FAKE_SUBTITLE_PID = 0x50;                 // pid we use for subtitles
 int DR_FAKE_TELETEXT_PID = 0x60; // Ziphnor
 
 double DR_MAX_ALLOWED_PCR_DIFF = 10.0; // (clock value) if pcr/pts/dts difference between last and current value is higher than
-								    //			   this value a hole/jump is assumed
+//			   this value a hole/jump is assumed
 
 extern void LogDebug(const char *fmt, ...) ;
 
@@ -112,11 +112,11 @@ CDiskRecorder::CDiskRecorder(RecordingMode mode)
 CDiskRecorder::~CDiskRecorder(void)
 {
 	CEnterCriticalSection enter(m_section);
-  if (m_hFile!=INVALID_HANDLE_VALUE)
-  {
-	  CloseHandle(m_hFile);
-	  m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file
-  }
+	if (m_hFile!=INVALID_HANDLE_VALUE)
+	{
+		CloseHandle(m_hFile);
+		m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file
+	}
 	delete [] m_pWriteBuffer;
 	m_pPmtParser->Reset();
 	delete m_pPmtParser;
@@ -176,14 +176,14 @@ bool CDiskRecorder::Start()
 				m_hFile=INVALID_HANDLE_VALUE;
 			}
 			m_hFile = CreateFile(m_szFileName,      // The filename
-												 (DWORD) GENERIC_WRITE,         // File access
-												 (DWORD) FILE_SHARE_READ,       // Share access
-												  NULL,                  // Security
-												 (DWORD) OPEN_ALWAYS,           // Open flags
-//				  						 (DWORD) FILE_FLAG_RANDOM_ACCESS,
-//											 (DWORD) FILE_FLAG_WRITE_THROUGH,             // More flags
-												 (DWORD) 0,             // More flags
-													NULL);                 // Template
+				(DWORD) GENERIC_WRITE,         // File access
+				(DWORD) FILE_SHARE_READ,       // Share access
+				NULL,                  // Security
+				(DWORD) OPEN_ALWAYS,           // Open flags
+				//				  						 (DWORD) FILE_FLAG_RANDOM_ACCESS,
+				//											 (DWORD) FILE_FLAG_WRITE_THROUGH,             // More flags
+				(DWORD) 0,             // More flags
+				NULL);                 // Template
 			if (m_hFile == INVALID_HANDLE_VALUE)
 			{
 				LogDebug("Recorder:unable to create file:'%s' %d",m_szFileName, GetLastError());
@@ -246,19 +246,19 @@ void CDiskRecorder::Stop()
 void CDiskRecorder::Pause(BYTE onOff) 
 {
 	CEnterCriticalSection enter(m_section);
-  if (onOff!=0)
-  {
+	if (onOff!=0)
+	{
 		m_bClearTsQueue=true;
-    m_bPaused=TRUE;
-  }
+		m_bPaused=TRUE;
+	}
 	else
-  {
+	{
 		m_bPaused=FALSE;
-  }
+	}
 	if (m_bPaused)
-  {
+	{
 		WriteLog("paused=yes"); 
-  }
+	}
 	else
 	{
 		WriteLog("paused=no"); 
@@ -322,7 +322,7 @@ void CDiskRecorder::SetPmtPid(int pmtPid,int serviceId,byte* pmtData,int pmtLeng
 {
 	CEnterCriticalSection enter(m_section);
 	WriteLog("Received from TvService: pmt pid:0x%x serviceId: 0x%x pmtlength:%d",pmtPid,serviceId,pmtLength);
-  m_iPmtPid=pmtPid;
+	m_iPmtPid=pmtPid;
 	m_iServiceId=serviceId;
 	m_pPmtParser->Reset();
 	m_pPmtParser->SetFilter(pmtPid,serviceId);
@@ -354,16 +354,16 @@ void CDiskRecorder::SetPmtPid(int pmtPid,int serviceId,byte* pmtData,int pmtLeng
 
 void CDiskRecorder::SetVideoAudioObserver (IVideoAudioObserver* callback)
 {
-  if(callback)
-  {
-    WriteLog("SetVideoAudioObserver observer ok");
-    m_pVideoAudioObserver = callback;
-  }
-  else
-  {
-    WriteLog("SetVideoAudioObserver observer was null");  
+	if(callback)
+	{
+		WriteLog("SetVideoAudioObserver observer ok");
+		m_pVideoAudioObserver = callback;
+	}
+	else
+	{
+		WriteLog("SetVideoAudioObserver observer was null");  
 		return;
-  }
+	}
 }
 
 void CDiskRecorder::GetBufferSize(long *size)
@@ -463,149 +463,149 @@ void CDiskRecorder::WriteToRecording(byte* buffer, int len)
 {
 	CEnterCriticalSection enter(m_section);
 	try{
-	if (!m_bRunning) return;
-  if (buffer==NULL) return;
-  if (m_bPaused || m_bClearTsQueue) 
-  {
-     try
-     {
-        WriteLog("clear TS packet queue"); 
-        m_bClearTsQueue = false;
-        ZeroMemory(m_pWriteBuffer, WRITE_BUFFER_SIZE);
-        m_iWriteBufferPos = 0;
-      }
-      catch(...)
-      {
-        WriteLog("Write exception - 1");
-      }
-      return;
-  }
-  if (len <=0) return;
-  if (len + m_iWriteBufferPos >= RECORD_BUFFER_SIZE)
-  {
-	  try
-	  {
-      if (m_iWriteBufferPos > 0)
-      {
-		    if (m_hFile != INVALID_HANDLE_VALUE)
-		    {
-	        DWORD written = 0;
-	        if (FALSE == WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL))
-          {
-            //On fat16/fat32 we can only create files of max. 2gb/4gb
-            if (ERROR_FILE_TOO_LARGE == GetLastError())
-            {
-              LogDebug("Recorder:Maximum filesize reached for file:'%s' %d",m_szFileName);
-                //close the file...
-		          CloseHandle(m_hFile);
-              m_hFile=INVALID_HANDLE_VALUE;
+		if (!m_bRunning) return;
+		if (buffer==NULL) return;
+		if (m_bPaused || m_bClearTsQueue) 
+		{
+			try
+			{
+				WriteLog("clear TS packet queue"); 
+				m_bClearTsQueue = false;
+				ZeroMemory(m_pWriteBuffer, WRITE_BUFFER_SIZE);
+				m_iWriteBufferPos = 0;
+			}
+			catch(...)
+			{
+				WriteLog("Write exception - 1");
+			}
+			return;
+		}
+		if (len <=0) return;
+		if (len + m_iWriteBufferPos >= RECORD_BUFFER_SIZE)
+		{
+			try
+			{
+				if (m_iWriteBufferPos > 0)
+				{
+					if (m_hFile != INVALID_HANDLE_VALUE)
+					{
+						DWORD written = 0;
+						if (FALSE == WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL))
+						{
+							//On fat16/fat32 we can only create files of max. 2gb/4gb
+							if (ERROR_FILE_TOO_LARGE == GetLastError())
+							{
+								LogDebug("Recorder:Maximum filesize reached for file:'%s' %d",m_szFileName);
+								//close the file...
+								CloseHandle(m_hFile);
+								m_hFile=INVALID_HANDLE_VALUE;
 
-              //create a new file
-              char ext[MAX_PATH];
-              char fileName[MAX_PATH];
-              char part[100];
-						  int len=strlen(m_szFileName)-1;
-						  int pos=len-1;
-						  while (pos>0)
-						  {
-							  if (m_szFileName[pos]=='.') break;
-							  pos--;
-						  }
-              strcpy(ext, &m_szFileName[pos]);
-              strncpy(fileName, m_szFileName, pos);
-              fileName[pos]=0;
-              sprintf(part,"_p%d",m_iPart);
-              char newFileName[MAX_PATH];
-              sprintf(newFileName,"%s%s%s",fileName,part,ext);
+								//create a new file
+								char ext[MAX_PATH];
+								char fileName[MAX_PATH];
+								char part[100];
+								int len=strlen(m_szFileName)-1;
+								int pos=len-1;
+								while (pos>0)
+								{
+									if (m_szFileName[pos]=='.') break;
+									pos--;
+								}
+								strcpy(ext, &m_szFileName[pos]);
+								strncpy(fileName, m_szFileName, pos);
+								fileName[pos]=0;
+								sprintf(part,"_p%d",m_iPart);
+								char newFileName[MAX_PATH];
+								sprintf(newFileName,"%s%s%s",fileName,part,ext);
 
-						  LogDebug("Recorder:Create new  file:'%s' %d",newFileName);
-	            m_hFile = CreateFile(newFileName,      // The filename
-						             (DWORD) GENERIC_WRITE,         // File access
-						             (DWORD) FILE_SHARE_READ,       // Share access
-						             NULL,                  // Security
-						             (DWORD) OPEN_ALWAYS,           // Open flags
-						             (DWORD) 0,             // More flags
-						             NULL);                 // Template
-	            if (m_hFile == INVALID_HANDLE_VALUE)
-	            {
-                LogDebug("Recorder:unable to create file:'%s' %d",newFileName, GetLastError());
-                m_iWriteBufferPos=0;
-		            return ;
-	            }
-              m_iPart++;
-              WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL);
-            }//of if (ERROR_FILE_TOO_LARGE == GetLastError())
-						else
-						{				 
-							LogDebug("Recorder:unable to write file:'%s' %d %d %x",m_szFileName, GetLastError(),m_iWriteBufferPos,m_hFile);
-						}
-          }//of if (FALSE == WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL))
-		    }//if (m_hFile!=INVALID_HANDLE_VALUE)
-      }//if (m_iWriteBufferPos>0)
-      m_iWriteBufferPos=0;
-	  }
-	  catch(...)
-	  {
-		  LogDebug("Recorder:Write exception");
-	  }
-  }// of if (len + m_iWriteBufferPos >= RECORD_BUFFER_SIZE)
+								LogDebug("Recorder:Create new  file:'%s' %d",newFileName);
+								m_hFile = CreateFile(newFileName,      // The filename
+									(DWORD) GENERIC_WRITE,         // File access
+									(DWORD) FILE_SHARE_READ,       // Share access
+									NULL,                  // Security
+									(DWORD) OPEN_ALWAYS,           // Open flags
+									(DWORD) 0,             // More flags
+									NULL);                 // Template
+								if (m_hFile == INVALID_HANDLE_VALUE)
+								{
+									LogDebug("Recorder:unable to create file:'%s' %d",newFileName, GetLastError());
+									m_iWriteBufferPos=0;
+									return ;
+								}
+								m_iPart++;
+								WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL);
+							}//of if (ERROR_FILE_TOO_LARGE == GetLastError())
+							else
+							{				 
+								LogDebug("Recorder:unable to write file:'%s' %d %d %x",m_szFileName, GetLastError(),m_iWriteBufferPos,m_hFile);
+							}
+						}//of if (FALSE == WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL))
+					}//if (m_hFile!=INVALID_HANDLE_VALUE)
+				}//if (m_iWriteBufferPos>0)
+				m_iWriteBufferPos=0;
+			}
+			catch(...)
+			{
+				LogDebug("Recorder:Write exception");
+			}
+		}// of if (len + m_iWriteBufferPos >= RECORD_BUFFER_SIZE)
 
-  if ( (m_iWriteBufferPos+len) < RECORD_BUFFER_SIZE && len > 0)
-  {
-    memcpy(&m_pWriteBuffer[m_iWriteBufferPos],buffer,len);
-    m_iWriteBufferPos+=len;
-  }
+		if ( (m_iWriteBufferPos+len) < RECORD_BUFFER_SIZE && len > 0)
+		{
+			memcpy(&m_pWriteBuffer[m_iWriteBufferPos],buffer,len);
+			m_iWriteBufferPos+=len;
+		}
 	} catch (...) { WriteLog("Exception in writetorecording");}
 }
 
 void CDiskRecorder::WriteToTimeshiftFile(byte* buffer, int len)
 {
-  if (!m_bRunning) return;
-  if (buffer == NULL) return;
-  if (len != 188) return; //sanity check
-  if (m_pWriteBuffer == NULL) return; //sanity check
-  if (m_bPaused || m_bClearTsQueue) 
-  {
-     try
-     {
-        WriteLog("clear TS packet queue"); 
-        m_bClearTsQueue = false;
-        ZeroMemory(m_pWriteBuffer, WRITE_BUFFER_SIZE);
-        m_iWriteBufferPos = 0;
-      }
-      catch(...)
-      {
-        WriteLog("Write exception - 1");
-      }
-      if (m_bPaused) return;							// If m_bPaused == false, this packet should be stored.
-    }
-    CEnterCriticalSection enter(m_section);
+	if (!m_bRunning) return;
+	if (buffer == NULL) return;
+	if (len != 188) return; //sanity check
+	if (m_pWriteBuffer == NULL) return; //sanity check
+	if (m_bPaused || m_bClearTsQueue) 
+	{
+		try
+		{
+			WriteLog("clear TS packet queue"); 
+			m_bClearTsQueue = false;
+			ZeroMemory(m_pWriteBuffer, WRITE_BUFFER_SIZE);
+			m_iWriteBufferPos = 0;
+		}
+		catch(...)
+		{
+			WriteLog("Write exception - 1");
+		}
+		if (m_bPaused) return;							// If m_bPaused == false, this packet should be stored.
+	}
+	CEnterCriticalSection enter(m_section);
 
-    try  
-    {      
-      // Copy first TS packet from the queue to the I/O buffer
-      if (m_iWriteBufferPos >= 0 && m_iWriteBufferPos+188 <= WRITE_BUFFER_SIZE)
-      {
-         memcpy(&m_pWriteBuffer[m_iWriteBufferPos], buffer,188);
-         m_iWriteBufferPos+=188;
-      }
-      else
-      {
-         WriteLog("Write m_iWriteBufferPos overflow!");
-         m_iWriteBufferPos=0;
-      }
-    }
-    catch(...)
-    {
-      WriteLog("Write exception - 3");
-      return;
-    }
+	try  
+	{      
+		// Copy first TS packet from the queue to the I/O buffer
+		if (m_iWriteBufferPos >= 0 && m_iWriteBufferPos+188 <= WRITE_BUFFER_SIZE)
+		{
+			memcpy(&m_pWriteBuffer[m_iWriteBufferPos], buffer,188);
+			m_iWriteBufferPos+=188;
+		}
+		else
+		{
+			WriteLog("Write m_iWriteBufferPos overflow!");
+			m_iWriteBufferPos=0;
+		}
+	}
+	catch(...)
+	{
+		WriteLog("Write exception - 3");
+		return;
+	}
 
-    if (m_iWriteBufferPos >= WRITE_BUFFER_SIZE)
-    {
-      Flush();
-    }
-  }
+	if (m_iWriteBufferPos >= WRITE_BUFFER_SIZE)
+	{
+		Flush();
+	}
+}
 
 void CDiskRecorder::WriteLog(const char* fmt,...)
 {
@@ -628,11 +628,11 @@ void CDiskRecorder::SetPcrPid(int pcrPid)
 {
 	CEnterCriticalSection enter(m_section);
 	WriteLog("pcr pid:0x%x",pcrPid); 
-    WriteLog("SetPcrPid clear old PIDs");
-    m_vecPids.clear();
+	WriteLog("SetPcrPid clear old PIDs");
+	m_vecPids.clear();
 	m_AudioOrVideoSeen=false ;
-    m_bClearTsQueue=true;
-    m_TsPacketCount=0;
+	m_bClearTsQueue=true;
+	m_TsPacketCount=0;
 
 	if (m_bRunning)
 	{
@@ -664,38 +664,39 @@ void CDiskRecorder::SetPcrPid(int pcrPid)
 bool CDiskRecorder::IsStreamWanted(int stream_type)
 {
 	return (stream_type==SERVICE_TYPE_VIDEO_MPEG1 || 
-					stream_type==SERVICE_TYPE_VIDEO_MPEG2 || 
-					stream_type==SERVICE_TYPE_VIDEO_MPEG4 || 
-					stream_type==SERVICE_TYPE_VIDEO_H264 ||
-					stream_type==SERVICE_TYPE_AUDIO_MPEG1 || 
-					stream_type==SERVICE_TYPE_AUDIO_MPEG2 || 
-					stream_type==SERVICE_TYPE_AUDIO_AC3 ||
-					stream_type==SERVICE_TYPE_AUDIO_E_AC3 ||
-					stream_type==SERVICE_TYPE_DVB_SUBTITLES2 ||
-					stream_type==DESCRIPTOR_DVB_TELETEXT ||
-          stream_type==SERVICE_TYPE_AUDIO_AAC ||
-          stream_type==SERVICE_TYPE_AUDIO_LATM_AAC
-					);
+		stream_type==SERVICE_TYPE_VIDEO_MPEG2 ||
+		stream_type==SERVICE_TYPE_DCII_VIDEO_MPEG2 || 
+		stream_type==SERVICE_TYPE_VIDEO_MPEG4 || 
+		stream_type==SERVICE_TYPE_VIDEO_H264 ||
+		stream_type==SERVICE_TYPE_AUDIO_MPEG1 || 
+		stream_type==SERVICE_TYPE_AUDIO_MPEG2 || 
+		stream_type==SERVICE_TYPE_AUDIO_AC3 ||
+		stream_type==SERVICE_TYPE_DVB_SUBTITLES2 ||
+		stream_type==DESCRIPTOR_DVB_TELETEXT ||
+		stream_type==SERVICE_TYPE_AUDIO_AAC ||
+		stream_type==SERVICE_TYPE_AUDIO_LATM_AAC ||
+		stream_type==SERVICE_TYPE_AUDIO_DD_PLUS ||
+		stream_type==SERVICE_TYPE_AUDIO_EAC3);
 }
 
 void CDiskRecorder::AddStream(PidInfo2 pidInfo)
 {
-  ivecPidInfo2 it = m_vecPids.begin();
-  while (it!=m_vecPids.end())
-  {
+	ivecPidInfo2 it = m_vecPids.begin();
+	while (it!=m_vecPids.end())
+	{
 		PidInfo2 info=*it;
 		if (info.elementaryPid==pidInfo.elementaryPid)
-      return;
-    ++it;
-  }
-  //ITV HD workaround, this enables TSWriter to timeshift / record & avoids no audio/video found.
-  if (pidInfo.streamType==SERVICE_TYPE_DVB_SUBTITLES2 && pidInfo.logicalStreamType==0xffffffff && pidInfo.elementaryPid==0xd49)
-  {
-    pidInfo.streamType=SERVICE_TYPE_VIDEO_H264;
-    pidInfo.logicalStreamType=SERVICE_TYPE_VIDEO_H264;
-    LogDebug("AddStream: set ITV HD video stream to H.264");
-  }
-  //end of workaround
+			return;
+		++it;
+	}
+	//ITV HD workaround, this enables TSWriter to timeshift / record & avoids no audio/video found.
+	if (pidInfo.streamType==SERVICE_TYPE_DVB_SUBTITLES2 && pidInfo.logicalStreamType==0xffffffff && pidInfo.elementaryPid==0xd49)
+	{
+		pidInfo.streamType=SERVICE_TYPE_VIDEO_H264;
+		pidInfo.logicalStreamType=SERVICE_TYPE_VIDEO_H264;
+		LogDebug("AddStream: set ITV HD video stream to H.264");
+	}
+	//end of workaround
 	if (IsStreamWanted(pidInfo.logicalStreamType))
 	{
 		PidInfo2 pi;
@@ -709,7 +710,7 @@ void CDiskRecorder::AddStream(PidInfo2 pidInfo)
 		pi.rawDescriptorSize=pidInfo.rawDescriptorSize;
 		memset(pi.rawDescriptorData,0xFF,pi.rawDescriptorSize);
 		memcpy(pi.rawDescriptorData,pidInfo.rawDescriptorData,pi.rawDescriptorSize);
-		if (pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_AC3 || pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_E_AC3 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG2 || pidInfo.streamType==SERVICE_TYPE_AUDIO_AAC  || pidInfo.streamType==SERVICE_TYPE_AUDIO_LATM_AAC)
+		if (pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_AC3 || pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_DD_PLUS || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG2 || pidInfo.streamType==SERVICE_TYPE_AUDIO_AAC  || pidInfo.streamType==SERVICE_TYPE_AUDIO_LATM_AAC)
 		{
 			if (m_streamMode==StreamMode::TransportStream)
 			{
@@ -719,14 +720,14 @@ void CDiskRecorder::AddStream(PidInfo2 pidInfo)
 			}
 			else
 			{
-				if ((pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_AC3) || (pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_E_AC3))
+				if ((pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_AC3) || (pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_DD_PLUS) || (pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_EAC3))
 					m_multiPlexer.AddPesStream(pi.elementaryPid,true,false,false);
 				else
 					m_multiPlexer.AddPesStream(pi.elementaryPid,false,true,false);
 			}
 			WriteLog("add audio stream pid: 0x%x fake pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pi.fakePid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
 		}
-		else if (pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG2 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG4 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_H264)
+		else if (pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG2 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG2 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG4 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_H264)
 		{
 			if (m_streamMode==StreamMode::TransportStream)
 			{
@@ -757,7 +758,7 @@ void CDiskRecorder::AddStream(PidInfo2 pidInfo)
 		}
 		else
 			if (pidInfo.logicalStreamType==DESCRIPTOR_DVB_TELETEXT || pidInfo.logicalStreamType==SERVICE_TYPE_DVB_SUBTITLES1 || pidInfo.logicalStreamType==SERVICE_TYPE_DVB_SUBTITLES2)
-			WriteLog("stream rejected - pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
+				WriteLog("stream rejected - pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
 
 		if (pi.elementaryPid==m_pcrPid)
 			DR_FAKE_PCR_PID=pi.fakePid;
@@ -800,7 +801,7 @@ int GetPesHeader(byte* tsPacket, CTsHeader& header, PidInfo2& PidInfo)
 		LogDebug("Recorder:PesHeader Pid %x Cannot decrypt PES ( splitted in more than 4 ts packets )",header.Pid ) ;
 		return 1 ; // therefore, write packets.
 	}
-		
+
 	memcpy(&PidInfo.TsPktQ[PidInfo.NPktQ][0], tsPacket, 188) ;
 	PidInfo.TsHeaderQ[PidInfo.NPktQ] = header ;
 	PidInfo.NPktQ++ ;
@@ -812,7 +813,7 @@ int GetPesHeader(byte* tsPacket, CTsHeader& header, PidInfo2& PidInfo)
 
 	if ((PidInfo.PesHeaderLength >= 7) && ((PidInfo.PesHeader[6] & 0xC0)!=0x80))
 	{
-//		LogDebug("Recorder:PesHeader Pid %x ( No-PTS-DTS -4 ) Sz %d Length : %d %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[0],PidInfo.PesHeader[1],PidInfo.PesHeader[2],PidInfo.PesHeader[3],PidInfo.PesHeader[4],PidInfo.PesHeader[5],PidInfo.PesHeader[6]) ;
+		//		LogDebug("Recorder:PesHeader Pid %x ( No-PTS-DTS -4 ) Sz %d Length : %d %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[0],PidInfo.PesHeader[1],PidInfo.PesHeader[2],PidInfo.PesHeader[3],PidInfo.PesHeader[4],PidInfo.PesHeader[5],PidInfo.PesHeader[6]) ;
 		return 0 ;	// Empty PES.
 	}
 
@@ -821,41 +822,41 @@ int GetPesHeader(byte* tsPacket, CTsHeader& header, PidInfo2& PidInfo)
 		int RequiredLength = 8 ;
 		switch (PidInfo.PesHeader[7] & 0xC0)
 		{
-			case 0x80 :
-			case 0x40 : if (PidInfo.PesHeaderLength>=14)
-						{
-//							if (PidInfo.NPktQ > 1)
-//								LogDebug("Recorder:PesHeader Pid %x ( Ready PTS or DTS ) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
-							return 1 ;	// Ready to read.
-						}
-						else
-						{
-//							LogDebug("Recorder:PesHeader Pid %x ( Wait next - 1) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
-							return 2 ;	// Not enough data.
-						}
+		case 0x80 :
+		case 0x40 : if (PidInfo.PesHeaderLength>=14)
+					{
+						//							if (PidInfo.NPktQ > 1)
+						//								LogDebug("Recorder:PesHeader Pid %x ( Ready PTS or DTS ) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
+						return 1 ;	// Ready to read.
+					}
+					else
+					{
+						//							LogDebug("Recorder:PesHeader Pid %x ( Wait next - 1) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
+						return 2 ;	// Not enough data.
+					}
 
-			case 0xC0 : if (PidInfo.PesHeaderLength>=19)
-						{
-//							if (PidInfo.NPktQ > 1)
-//								LogDebug("Recorder:PesHeader Pid %x ( Ready : PTS+DTS ) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
-							return 1 ;	// Ready to read.
-						}
-						else
-						{
-//							LogDebug("Recorder:PesHeader Pid %x ( Wait next - 2) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
-							return 2 ;	// Not enough data.
-						}
-			default:
-			case 0x00 :	// no PTS-DTS 
-						{
-//						LogDebug("Recorder:PesHeader Pid %x ( No PTS-DTS - 3) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
-						return 0 ; // no PTS-DTS...
-						}
+		case 0xC0 : if (PidInfo.PesHeaderLength>=19)
+					{
+						//							if (PidInfo.NPktQ > 1)
+						//								LogDebug("Recorder:PesHeader Pid %x ( Ready : PTS+DTS ) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
+						return 1 ;	// Ready to read.
+					}
+					else
+					{
+						//							LogDebug("Recorder:PesHeader Pid %x ( Wait next - 2) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
+						return 2 ;	// Not enough data.
+					}
+		default:
+		case 0x00 :	// no PTS-DTS 
+			{
+				//						LogDebug("Recorder:PesHeader Pid %x ( No PTS-DTS - 3) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
+				return 0 ; // no PTS-DTS...
+			}
 		}
 	}
 	else
 	{
-//		LogDebug("Recorder:PesHeader Pid %x ( Wait next - 5 ) Sz %d Length : %d %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[0],PidInfo.PesHeader[1],PidInfo.PesHeader[2],PidInfo.PesHeader[3],PidInfo.PesHeader[4],PidInfo.PesHeader[5],PidInfo.PesHeader[6]) ;
+		//		LogDebug("Recorder:PesHeader Pid %x ( Wait next - 5 ) Sz %d Length : %d %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[0],PidInfo.PesHeader[1],PidInfo.PesHeader[2],PidInfo.PesHeader[3],PidInfo.PesHeader[4],PidInfo.PesHeader[5],PidInfo.PesHeader[6]) ;
 		return 2 ;	// Not enough data.
 	}
 }
@@ -908,7 +909,7 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 			if (m_tsHeader.Pid==info.elementaryPid)
 			{
 				if (m_tsHeader.AdaptionFieldLength && (tsPacket[5] & 0x80))
-          LogDebug("Recorder:Pid %x : Discontinuity header bit set!", m_tsHeader.Pid);
+					LogDebug("Recorder:Pid %x : Discontinuity header bit set!", m_tsHeader.Pid);
 				if (info.ccPrev!=255)
 				{
 					// Do not check 1st packet after channel change.
@@ -917,35 +918,35 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 						// Check Ts packet continuity with payload, remove duplicate frames.
 						/*if ((m_tsHeader.ContinuityCounter != ((info.ccPrev+1) & 0x0F)))
 						{
-							if (m_tsHeader.ContinuityCounter == info.ccPrev)
-							{	
-								// May be duplicated....
-								int PayLoadLen = 188-m_tsHeader.PayLoadStart ;
-								if (PayLoadLen<0) PayLoadLen = 0 ;
-								if (((PayLoadLen) && (memcmp(info.m_Pkt+m_tsHeader.PayLoadStart, tsPacket+m_tsHeader.PayLoadStart, PayLoadLen)==0)) || (PayLoadLen==0)) 
-								{
-									LogDebug("Recorder:Pid %x Same ts packet...( removed ) %x, PayLoadLen : %d", m_tsHeader.Pid, info.ccPrev, PayLoadLen) ;
-									return ; 
-								}
-								else
-									LogDebug("Recorder:Pid %x Continuity error...! Should be same ! %x ( prev %x ), PayLoadLen : %d", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev, PayLoadLen) ;
-							}
-							else
-								LogDebug("Recorder:Pid %x Continuity error... %x ( prev %x )", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev) ;
+						if (m_tsHeader.ContinuityCounter == info.ccPrev)
+						{	
+						// May be duplicated....
+						int PayLoadLen = 188-m_tsHeader.PayLoadStart ;
+						if (PayLoadLen<0) PayLoadLen = 0 ;
+						if (((PayLoadLen) && (memcmp(info.m_Pkt+m_tsHeader.PayLoadStart, tsPacket+m_tsHeader.PayLoadStart, PayLoadLen)==0)) || (PayLoadLen==0)) 
+						{
+						LogDebug("Recorder:Pid %x Same ts packet...( removed ) %x, PayLoadLen : %d", m_tsHeader.Pid, info.ccPrev, PayLoadLen) ;
+						return ; 
+						}
+						else
+						LogDebug("Recorder:Pid %x Continuity error...! Should be same ! %x ( prev %x ), PayLoadLen : %d", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev, PayLoadLen) ;
+						}
+						else
+						LogDebug("Recorder:Pid %x Continuity error... %x ( prev %x )", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev) ;
 						}*/
 					}
 					else
 					{
 						// Check Ts packet continuity without payload.
 						if (m_tsHeader.ContinuityCounter != info.ccPrev)
-								LogDebug("Recorder:Pid %x , No PayLoad, Continuity Counter should be the same ! %x ( prev %x )", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev) ;
+							LogDebug("Recorder:Pid %x , No PayLoad, Continuity Counter should be the same ! %x ( prev %x )", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev) ;
 					}
 				}
 				info.ccPrev = m_tsHeader.ContinuityCounter ;
 
 				memcpy(info.m_Pkt,tsPacket,188);
-	
-				if (info.streamType==SERVICE_TYPE_VIDEO_MPEG1 || info.streamType==SERVICE_TYPE_VIDEO_MPEG2||info.streamType==SERVICE_TYPE_VIDEO_MPEG4||info.streamType==SERVICE_TYPE_VIDEO_H264)
+
+				if (info.streamType==SERVICE_TYPE_VIDEO_MPEG1 || info.streamType==SERVICE_TYPE_VIDEO_MPEG2 || info.streamType==SERVICE_TYPE_DCII_VIDEO_MPEG2 || info.streamType==SERVICE_TYPE_VIDEO_MPEG4 || info.streamType==SERVICE_TYPE_VIDEO_H264)
 				{
 					//video
 					if (!info.seenStart) 
@@ -955,13 +956,13 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 							info.seenStart=true;
 							m_AudioOrVideoSeen=true;
 							WriteLog("start of video detected");
-	              			if(m_pVideoAudioObserver) m_pVideoAudioObserver->OnNotify(PidType::Video);
+							if(m_pVideoAudioObserver) m_pVideoAudioObserver->OnNotify(PidType::Video);
 						}
-					else return ;
+						else return ;
 					}
 				}
-	
-				if (info.streamType==SERVICE_TYPE_AUDIO_MPEG1 || info.streamType==SERVICE_TYPE_AUDIO_MPEG2|| info.logicalStreamType==SERVICE_TYPE_AUDIO_AC3 || info.logicalStreamType==SERVICE_TYPE_AUDIO_E_AC3 || info.logicalStreamType==SERVICE_TYPE_AUDIO_AAC || info.logicalStreamType==SERVICE_TYPE_AUDIO_LATM_AAC)
+
+				if (info.streamType==SERVICE_TYPE_AUDIO_MPEG1 || info.streamType==SERVICE_TYPE_AUDIO_MPEG2 || info.logicalStreamType==SERVICE_TYPE_AUDIO_AC3 || info.logicalStreamType==SERVICE_TYPE_AUDIO_AAC || info.logicalStreamType==SERVICE_TYPE_AUDIO_LATM_AAC || info.logicalStreamType==SERVICE_TYPE_AUDIO_DD_PLUS || info.logicalStreamType==SERVICE_TYPE_AUDIO_EAC3)
 				{
 					//audio
 					if (!info.seenStart)
@@ -971,12 +972,12 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 							info.seenStart=true;
 							m_AudioOrVideoSeen=true;
 							WriteLog("start of audio detected");
-	              			if(m_pVideoAudioObserver) m_pVideoAudioObserver->OnNotify(PidType::Audio);
+							if(m_pVideoAudioObserver) m_pVideoAudioObserver->OnNotify(PidType::Audio);
 						}
 						else return ;
 					}
 				}
-	
+
 				if (info.logicalStreamType==SERVICE_TYPE_DVB_SUBTITLES1 || info.streamType==SERVICE_TYPE_DVB_SUBTITLES2)
 				{
 					// subtitles
@@ -986,30 +987,30 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 						else return ;
 					}                        
 				}
-	 
+
 				if (info.seenStart)
 				{
-				 	// Video / Audio / subtitles.
+					// Video / Audio / subtitles.
 					int pid=info.fakePid;
 					info.m_Pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
 					info.m_Pkt[2]=(pid&0xff);
 					if (m_tsHeader.Pid==m_pcrPid) PatchPcr(info.m_Pkt,m_tsHeader);
 
-	      	if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
+					if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 					{						
 						if ((PayLoadUnitStart) || info.NPktQ)
 						{
 							int i=0 ;
 							switch(GetPesHeader(info.m_Pkt, m_tsHeader, info))
 							{
-								case 2:	break ;				// Wait for next ts packet
-								case 1:	PatchPtsDts(info.PesHeader, m_tsHeader, info) ;
-												UpdatePesHeader(info) ;
-								case 0:	do
-												{
-													Write(&info.TsPktQ[i++][0],188);
-													m_iPacketCounter++ ;	
-												} while (--info.NPktQ) ;
+							case 2:	break ;				// Wait for next ts packet
+							case 1:	PatchPtsDts(info.PesHeader, m_tsHeader, info) ;
+								UpdatePesHeader(info) ;
+							case 0:	do
+									{
+										Write(&info.TsPktQ[i++][0],188);
+										m_iPacketCounter++ ;	
+									} while (--info.NPktQ) ;
 							}
 						}
 						else
@@ -1028,16 +1029,16 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 					if (m_tsHeader.Pid==m_pcrPid) PatchPcr(info.m_Pkt,m_tsHeader);
 
 					if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
-				  	{							  
+					{							  
 						Write(info.m_Pkt,188);
 						m_iPacketCounter++;
-				  	}
+					}
 				}
 				return;
 			}
 			++it;
 		}
-	
+
 		if ((m_tsHeader.Pid==m_pcrPid) && m_AudioOrVideoSeen)
 		{
 			byte pkt[200];
@@ -1048,7 +1049,7 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 			pkt[2]=(pid&0xff);
 			pkt[3]=(2<<4);// Adaption Field Control==adaptation field only, no payload
 			pkt[4]=0xb7;
-	
+
 			if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 			{						
 				Write(pkt,188);
@@ -1206,10 +1207,10 @@ void CDiskRecorder::WriteFakePMT()
 
 __int64 CDiskRecorder::EcPcrTime(__int64 New, __int64 Prev)
 {   // Compute a signed difference between new and previous 33bits timer.
-		__int64 dt = New - Prev ;
-		if (dt & 0x100000000) dt |= 0xFFFFFFFF00000000LL ;  // Negative
-		else                  dt &= 0x00000000FFFFFFFFLL ;  // Positive
-		return dt ;
+	__int64 dt = New - Prev ;
+	if (dt & 0x100000000) dt |= 0xFFFFFFFF00000000LL ;  // Negative
+	else                  dt &= 0x00000000FFFFFFFFLL ;  // Positive
+	return dt ;
 }
 
 void CDiskRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
@@ -1225,7 +1226,7 @@ void CDiskRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 
 	DWORD TimeStamp = GetTickCount();                 // try to have an idea of elapsed time from previous PCR ( used for long delays )
 	__int64 dt2 = ((__int64)(TimeStamp - m_prevTimeStamp)) * 90 /*KHz*/  ;
-	
+
 	if (m_bStartPcrFound==false)                      // Tv or recording turned on. !
 	{
 		m_bDetermineNewStartPcr=false;
@@ -1306,7 +1307,7 @@ void CDiskRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 							m_JumpInProgress=0 ;                                                         // Jump completed.
 
 							WriteLog("Info : Program clock reference backward jump ( %I64d ).", dt) ;
-						  wjump=verbose ;
+							wjump=verbose ;
 						}
 						else
 							m_prevPcr.PcrReferenceBase += (__int64)( m_PcrSpeed / 2 ) ;           // Evaluate current PCR to recover in case of false jump. 
@@ -1317,7 +1318,7 @@ void CDiskRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 					m_JumpInProgress=1 ;
 					m_PcrFutureCompensation = FutureComp ;
 					m_prevPcr.PcrReferenceBase += (__int64)( m_PcrSpeed  / 2 ) ;              // Evaluate current PCR to recover in case of false jump. 
-                                                                                    // Approximative and slower than reality to avoid falling in negative case.
+					// Approximative and slower than reality to avoid falling in negative case.
 					if (verbose) WriteLog("PCR backward jump ( %I64d ) detected, Wait for confirmation.", dt) ;
 					wjump=verbose ;
 				}
@@ -1368,7 +1369,7 @@ void CDiskRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 							m_JumpInProgress=1 ;                                                      // Jump detected, but may be false, need to confirm, no change             
 							m_PcrFutureCompensation = m_PcrCompensation - dt + (__int64)m_PcrSpeed ;                                                              
 							m_prevPcr.PcrReferenceBase += (__int64)( m_PcrSpeed  / 2 ) ;              // Evaluate current PCR to recover in case of false jump.                  
-                                                                                        // Approximative and slower than reality to avoid falling in negative case.
+							// Approximative and slower than reality to avoid falling in negative case.
 							if (verbose) WriteLog("PCR forward jump ( %I64d, Time Jump %I64d ) detected, Wait for confirmation.", dt, dt2) ;
 							wjump=verbose ;
 						}
@@ -1376,7 +1377,7 @@ void CDiskRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 				}
 				else
 				{
-   				m_PcrSpeed += ((float)dt - m_PcrSpeed) * 0.1 ;                                // Time average between 2 PCR
+					m_PcrSpeed += ((float)dt - m_PcrSpeed) * 0.1 ;                                // Time average between 2 PCR
 					if (m_JumpInProgress && verbose)
 					{
 						WriteLog("PCR jump aborted after %d confirmation.", m_JumpInProgress) ;
@@ -1391,8 +1392,8 @@ void CDiskRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 	if (wjump)
 	{
 		WriteLog("PcrCompensation %I64x, newPcr %I64x, prevPcr %I64x, FutureComp %I64x, Speed %f,  ",m_PcrCompensation, pcrNew.PcrReferenceBase, m_prevPcr.PcrReferenceBase, m_PcrFutureCompensation, m_PcrSpeed) ;
-//    WriteLog("tsheader:%02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x",
-//					tsPacket[0],tsPacket[1],tsPacket[2],tsPacket[3],tsPacket[4],tsPacket[5],tsPacket[6],tsPacket[7],tsPacket[8],tsPacket[9],tsPacket[10],tsPacket[11]);
+		//    WriteLog("tsheader:%02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x",
+		//					tsPacket[0],tsPacket[1],tsPacket[2],tsPacket[3],tsPacket[4],tsPacket[5],tsPacket[6],tsPacket[7],tsPacket[8],tsPacket[9],tsPacket[10],tsPacket[11]);
 	}
 
 	__int64 PcrObj = (m_prevPcr.PcrReferenceBase + m_PcrCompensation) & 0x1FFFFFFFFLL ;
@@ -1411,7 +1412,7 @@ void CDiskRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 void CDiskRecorder::PatchPtsDts(byte* tsPacket,CTsHeader& header,PidInfo2& PidInfo)
 {
 	DWORD TimeStamp = GetTickCount();
-	
+
 	if (tsPacket[0] !=0 || tsPacket[1] !=0 || tsPacket[2] !=1) return; 
 
 	byte* pesHeader=tsPacket;
@@ -1423,9 +1424,9 @@ void CDiskRecorder::PatchPtsDts(byte* tsPacket,CTsHeader& header,PidInfo2& PidIn
 		return ;
 	}
 
-// ---- As it's really difficult to detect random jumps on non monotonic Video PTS ( occurs first, then audio, then PCR ) 
-// ---- this is just to monitor random PTS/DTS jumps. PCR compensation is used as default. 
-// ---- It seems enough to avoid definitive freezes & crashes....
+	// ---- As it's really difficult to detect random jumps on non monotonic Video PTS ( occurs first, then audio, then PCR ) 
+	// ---- this is just to monitor random PTS/DTS jumps. PCR compensation is used as default. 
+	// ---- It seems enough to avoid definitive freezes & crashes....
 
 	imapLastPtsDts it=m_mapLastPtsDts.begin() ;
 	while(it != m_mapLastPtsDts.end())
@@ -1445,7 +1446,7 @@ void CDiskRecorder::PatchPtsDts(byte* tsPacket,CTsHeader& header,PidInfo2& PidIn
 		m_mapLastPtsDts.push_back(lastRec) ;
 		it = m_mapLastPtsDts.end() ;
 		it-- ;
-//Remove verbosity		WriteLog(">>> Add Pid %x ( Type : %x, Logical %x, fake pid %x ) <<<<<", it->m_Pid, PidInfo.streamType, PidInfo.logicalStreamType, PidInfo.fakePid ) ;
+		//Remove verbosity		WriteLog(">>> Add Pid %x ( Type : %x, Logical %x, fake pid %x ) <<<<<", it->m_Pid, PidInfo.streamType, PidInfo.logicalStreamType, PidInfo.fakePid ) ;
 	}
 
 	if (pts.IsValid)
@@ -1455,11 +1456,11 @@ void CDiskRecorder::PatchPtsDts(byte* tsPacket,CTsHeader& header,PidInfo2& PidIn
 			__int64 dt = EcPcrTime( pts.PcrReferenceBase, it->m_prevPts ) ;
 			__int64 dt2 = ((__int64)(TimeStamp - it->m_prevPtsTimeStamp)) * 90 /*KHz*/  ;
 			__int64 dt3 = dt2-dt ;
-//Remove verbosity if (((dt3 < -30000LL) || (dt3 > 30000LL)) && (((PidInfo.fakePid & 0xFF0)==DR_FAKE_VIDEO_PID) || ((PidInfo.fakePid & 0xFF0)==DR_FAKE_AUDIO_PID)))      
-//Remove verbosity			{
-//Remove verbosity				WriteLog(">>> Pts Jump detected %I64d ( Time %I64d  / DT %I64d )( new %I64x, prev %I64x, pid %x pespid %x)<<<<<", dt, dt2, dt3,  pts.PcrReferenceBase, it->m_prevPts, header.Pid, tsPacket[start+3]) ;
-//Remove verbosity				WriteLog("head:%02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x", tsPacket[0],tsPacket[1],tsPacket[2],tsPacket[3],tsPacket[4],tsPacket[5],tsPacket[6],tsPacket[7],tsPacket[8],tsPacket[9],tsPacket[10],tsPacket[11]);
-//Remove verbosity			}
+			//Remove verbosity if (((dt3 < -30000LL) || (dt3 > 30000LL)) && (((PidInfo.fakePid & 0xFF0)==DR_FAKE_VIDEO_PID) || ((PidInfo.fakePid & 0xFF0)==DR_FAKE_AUDIO_PID)))      
+			//Remove verbosity			{
+			//Remove verbosity				WriteLog(">>> Pts Jump detected %I64d ( Time %I64d  / DT %I64d )( new %I64x, prev %I64x, pid %x pespid %x)<<<<<", dt, dt2, dt3,  pts.PcrReferenceBase, it->m_prevPts, header.Pid, tsPacket[start+3]) ;
+			//Remove verbosity				WriteLog("head:%02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x", tsPacket[0],tsPacket[1],tsPacket[2],tsPacket[3],tsPacket[4],tsPacket[5],tsPacket[6],tsPacket[7],tsPacket[8],tsPacket[9],tsPacket[10],tsPacket[11]);
+			//Remove verbosity			}
 		}
 
 		it->m_prevPts = pts.PcrReferenceBase ;
@@ -1488,17 +1489,17 @@ void CDiskRecorder::PatchPtsDts(byte* tsPacket,CTsHeader& header,PidInfo2& PidIn
 				__int64 dt  = EcPcrTime( dts.PcrReferenceBase, it->m_prevDts ) ;
 				__int64 dt2 = ((__int64)(TimeStamp - it->m_prevPtsTimeStamp)) * 90 /*KHz*/  ;
 				__int64 dt3 = dt2-dt ;
-//Remove verbosity				if (((dt3 < -30000LL) || (dt3 > 30000LL)) && (((PidInfo.fakePid & 0xFF0)==DR_FAKE_VIDEO_PID) || ((PidInfo.fakePid & 0xFF0)==DR_FAKE_AUDIO_PID)))           
-//Remove verbosity				{
-//Remove verbosity					WriteLog(">>> Dts Jump detected %I64d ( new %I64x, prev %I64x, pid %x)<<<<<", dt, dts.PcrReferenceBase, it->m_prevDts, header.Pid) ;
-//Remove verbosity					WriteLog("head:%02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x", tsPacket[0],tsPacket[1],tsPacket[2],tsPacket[3],tsPacket[4],tsPacket[5],tsPacket[6],tsPacket[7],tsPacket[8],tsPacket[9],tsPacket[10],tsPacket[11]);
-//Remove verbosity				}
+				//Remove verbosity				if (((dt3 < -30000LL) || (dt3 > 30000LL)) && (((PidInfo.fakePid & 0xFF0)==DR_FAKE_VIDEO_PID) || ((PidInfo.fakePid & 0xFF0)==DR_FAKE_AUDIO_PID)))           
+				//Remove verbosity				{
+				//Remove verbosity					WriteLog(">>> Dts Jump detected %I64d ( new %I64x, prev %I64x, pid %x)<<<<<", dt, dts.PcrReferenceBase, it->m_prevDts, header.Pid) ;
+				//Remove verbosity					WriteLog("head:%02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x", tsPacket[0],tsPacket[1],tsPacket[2],tsPacket[3],tsPacket[4],tsPacket[5],tsPacket[6],tsPacket[7],tsPacket[8],tsPacket[9],tsPacket[10],tsPacket[11]);
+				//Remove verbosity				}
 			}
 
 			it->m_prevPts = dts.PcrReferenceBase ;
 			__int64 dtsPatched = (dts.PcrReferenceBase +  m_PcrCompensation /*it->m_DtsCompensation*/) & 0x1FFFFFFFFLL ;
 
-//      WriteLog(" 14- %x 16- %x 18 %x",pesHeader[14] & 0xF1,pesHeader[16] & 0x01,pesHeader[18] & 0x01) ;
+			//      WriteLog(" 14- %x 16- %x 18 %x",pesHeader[14] & 0xF1,pesHeader[16] & 0x01,pesHeader[18] & 0x01) ;
 			// 14       15        16        17      18
 			//76543210 76543210 76543210 76543210 76543210
 			//0001pppM pppppppp pppppppM pppppppp pppppppM 
