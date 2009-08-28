@@ -3140,7 +3140,7 @@ namespace TvPlugin
     {
       if (GUIGraphicsContext.RenderBlackImage)
       {
-        FramesBeforeStopRenderBlackImage = 3;
+        FramesBeforeStopRenderBlackImage = 5;
         // Ambass : we need to wait the 3rd frame to avoid persistance of previous channel....Why ?????
       }
     }
