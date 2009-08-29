@@ -229,7 +229,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     {
       get
       {
-        return (isVideo && stream_type == 2 || isVideo && stream_type == 80);
+        return (isVideo && stream_type == 2);
       }
     }
     /// <summary>

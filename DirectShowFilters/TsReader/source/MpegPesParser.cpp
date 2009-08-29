@@ -330,7 +330,7 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,int offset, MPEG2VIDEOINFO &mpeg2
 {
   //LogDebug("Found VIDEO offset=%d 0x%x%x%x%x",offset,tsPacket[offset],tsPacket[offset+1],tsPacket[offset+2],tsPacket[offset+3]);
   unsigned int marker = 0xffffffff;
-  if (videoServiceType==SERVICE_TYPE_VIDEO_MPEG2 || SERVICE_TYPE_DCII_VIDEO_MPEG2)
+	if (videoServiceType==SERVICE_TYPE_VIDEO_MPEG2)
 	{
 	  for (; offset < m_Length; offset++)
 		{

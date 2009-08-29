@@ -134,7 +134,7 @@ HRESULT CVideoPin::CheckConnect(IPin *pReceivePin)
   bool mpeg2Video=false;
   CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   if (demux.GetVideoServiceType()==SERVICE_TYPE_VIDEO_MPEG1 ||
-    demux.GetVideoServiceType()==SERVICE_TYPE_VIDEO_MPEG2 || demux.GetVideoServiceType()==SERVICE_TYPE_DCII_VIDEO_MPEG2)
+    demux.GetVideoServiceType()==SERVICE_TYPE_VIDEO_MPEG2)
   {
     mpeg2Video=true;
   }

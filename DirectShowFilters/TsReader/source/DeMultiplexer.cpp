@@ -322,7 +322,6 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt)
       pmt.SetFormat(AACAudioFormat,sizeof(AACAudioFormat));
       break;
     case SERVICE_TYPE_AUDIO_AC3:
-    case SERVICE_TYPE_AUDIO_EAC3:
     case SERVICE_TYPE_AUDIO_DD_PLUS:
       pmt.InitMediaType();
       pmt.SetType      (& MEDIATYPE_Audio);
@@ -409,7 +408,6 @@ void CDeMultiplexer::GetVideoStreamType(CMediaType& pmt)
       GetVideoMedia(&pmt);
     break;
     case SERVICE_TYPE_VIDEO_MPEG2:
-    case SERVICE_TYPE_DCII_VIDEO_MPEG2:
       GetVideoMedia(&pmt);
     break;
     case SERVICE_TYPE_VIDEO_MPEG4:
@@ -1183,7 +1181,7 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
           unsigned int marker = 0xffffffff;
           int offset=0 ;
           byte *p = (*it)->Data() ;
-          if (m_pids.videoPids[0].VideoServiceType==SERVICE_TYPE_VIDEO_MPEG2 || SERVICE_TYPE_DCII_VIDEO_MPEG2)
+          if (m_pids.videoPids[0].VideoServiceType==SERVICE_TYPE_VIDEO_MPEG2)
           {
             for (; offset < 1000; offset++)
             {
