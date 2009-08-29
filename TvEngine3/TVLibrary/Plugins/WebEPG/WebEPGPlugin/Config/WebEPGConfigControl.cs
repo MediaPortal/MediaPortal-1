@@ -115,6 +115,12 @@ namespace SetupTv.Sections
 
     public override void OnSectionDeActivated()
     {
+      if (selection != null)
+      {
+        selection.Close();
+        selection = null;
+      }
+
       base.OnSectionDeActivated();
     }
     

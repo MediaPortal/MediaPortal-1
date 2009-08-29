@@ -314,6 +314,7 @@ namespace TvEngine
           Log.Info("WebEPGImporter: WebEPG schedule {0}:{1} is due: {2}:{3}",
                     config.Hour, config.Minutes, DateTime.Now.Hour, DateTime.Now.Minute);
           StartImport(null);
+          config.LastRun = DateTime.Now;
           configSetting.Value = config.SerializeAsString();
           configSetting.Persist();
         }
@@ -388,12 +389,10 @@ namespace TvEngine
         if (ShouldRun(config.Days, DateTime.Now.DayOfWeek))
         {
           // check if schedule is due
-          if (DateTime.Now.Hour >= config.Hour)
+          DateTime now = DateTime.Now;
+          if (now.Hour > config.Hour || (now.Hour == config.Hour && now.Minute >= config.Minutes))
           {
-            if (DateTime.Now.Minute >= config.Minutes)
-            {
-              return true;
-            }
+            return true;
           }
         }
       }
