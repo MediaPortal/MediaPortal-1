@@ -563,6 +563,10 @@ namespace MediaPortal.Player
       get { return false; }
     }
 
+    public override bool HasViz
+    {
+      get { return true; }
+    }
     /// <summary>
     /// Gets/Sets Fullscreen Status
     /// </summary>

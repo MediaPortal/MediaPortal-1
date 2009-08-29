@@ -494,6 +494,11 @@ namespace MediaPortal.Player
       get { return false; }
     }
 
+    public override bool HasViz
+    {
+      get { return true; }
+    }
+
     public override bool IsCDA
     {
       get { return _isCDA; }

@@ -1921,6 +1921,23 @@ namespace MediaPortal.Player
       }
     }
 
+
+    public static bool HasViz
+    {
+      get
+      {
+        if (RefreshRateChanger.RefreshRateChangePending)
+        {
+          return true;
+        }
+        if (_player == null)
+        {
+          return false;
+        }
+        return _player.HasViz;
+      }
+    }
+
     public static bool IsVideo
     {
       get
@@ -2268,7 +2285,7 @@ namespace MediaPortal.Player
       {
         return;
       }
-      if (!HasVideo)
+      if (!HasVideo && !HasViz)
       {
         return;
       }
@@ -2708,7 +2725,7 @@ namespace MediaPortal.Player
     public static bool ShowFullScreenWindowVideoDefault()
     {
       // If current player has no video, then fail
-      if (!HasVideo)
+      if (!HasVideo && !HasViz)
       {
         return false;
       }

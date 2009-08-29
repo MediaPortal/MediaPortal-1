@@ -461,6 +461,14 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
+    /// Property which should return true if the player is capable of rendering vizualization
+    /// </summary>
+    public virtual bool HasViz
+    {
+      get { return false; }
+    }
+
+    /// <summary>
     /// This method will be called on a regular basis by MP
     /// it allows the external player to do some work
     /// </summary>
