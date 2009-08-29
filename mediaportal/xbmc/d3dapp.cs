@@ -1602,7 +1602,7 @@ namespace MediaPortal
             {
               g_Player.Play(RefreshRateChanger.RefreshRateChangeStrFile);
             }
-            if (g_Player.HasVideo && RefreshRateChanger.RefreshRateChangeFullscreenVideo)
+            if ((g_Player.HasVideo || g_Player.HasViz) && RefreshRateChanger.RefreshRateChangeFullscreenVideo)
             {
               g_Player.ShowFullScreenWindow();
             }
