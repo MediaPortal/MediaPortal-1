@@ -881,6 +881,7 @@ namespace TvLibrary.Implementations.DVB
     {
       int Index;
       int end_Index;
+      byte[] ANSIName;
       //is mdapi installed?
       if (mdapiFilter == null)
         return; //nop, then return
@@ -898,14 +899,15 @@ namespace TvLibrary.Implementations.DVB
       if (dvbChannel.Name != null)
       {
         end_Index = _mDPlugTProg82.Name.GetLength(0) - 1;
+        ANSIName = System.Text.Encoding.Default.GetBytes(dvbChannel.Name);
 
-        if (dvbChannel.Name.Length < end_Index)
+        if (ANSIName.GetUpperBound(0) + 1 < end_Index)
         {
-          end_Index = dvbChannel.Name.Length;
+           end_Index = ANSIName.GetUpperBound(0) + 1;
         }
         for (Index = 0; Index < end_Index; ++Index)
         {
-          _mDPlugTProg82.Name[Index] = (byte)dvbChannel.Name[Index];
+          _mDPlugTProg82.Name[Index] = ANSIName[Index];// (byte)dvbChannel.Name[Index];
         }
       }
       else
@@ -916,11 +918,12 @@ namespace TvLibrary.Implementations.DVB
       if (dvbChannel.Provider != null)
       {
         end_Index = _mDPlugTProg82.Provider.GetLength(0) - 1;
-        if (dvbChannel.Provider.Length < end_Index)
-          end_Index = dvbChannel.Provider.Length;
+        ANSIName = System.Text.Encoding.Default.GetBytes(dvbChannel.Provider);
+        if (ANSIName.GetUpperBound(0) + 1 < end_Index)
+            end_Index = ANSIName.GetUpperBound(0) + 1;
         for (Index = 0; Index < end_Index; ++Index)
         {
-          _mDPlugTProg82.Provider[Index] = (byte)dvbChannel.Provider[Index];
+          _mDPlugTProg82.Provider[Index] = ANSIName[Index];
         }
       }
       else
