@@ -893,7 +893,7 @@ namespace MediaPortal.Dialogs
             DoDeleteItem(subItem);
           }
 
-          Util.Utils.DirectoryDelete(item.Path);
+          Util.Utils.DirectoryDelete(item.Path,true);
         }
       }
       else if (!item.IsRemote)
