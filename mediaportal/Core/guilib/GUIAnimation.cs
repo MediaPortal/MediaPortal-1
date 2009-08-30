@@ -28,7 +28,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Media.Animation;
-using MediaPortal.Configuration;
 using MediaPortal.Drawing;
 using MediaPortal.Profile;
 
@@ -36,6 +35,34 @@ namespace MediaPortal.GUI.Library
 {
   public class GUIAnimation : GUIControl
   {
+    #region Properties (Skin)
+    [XMLSkinElement("Easing")] protected Easing _easing = Easing.Linear;
+    [XMLSkinElement("FillBehavior")] protected FillBehavior _fillBehavior = FillBehavior.HoldEnd;
+    [XMLSkinElement("HorizontalAlignment")] protected HorizontalAlignment _horizontalAlignment = HorizontalAlignment.Left;
+    [XMLSkinElement("textures")] protected string _textureNames = string.Empty;
+    [XMLSkinElement("rate")] protected double _rate = 1;
+    [XMLSkinElement("Duration")] protected Duration _duration = Duration.Automatic;
+    [XMLSkinElement("RepeatBehavior")] protected RepeatBehavior _repeatBehavior = RepeatBehavior.Forever;
+    [XMLSkinElement("VerticalAlignment")] protected VerticalAlignment _verticalAlignment = VerticalAlignment.Top;
+    [XMLSkinElement("Triggers")] protected string _triggerNames = "init";
+    [XMLSkinElement("keepaspectratio")] private bool _keepAspectRatio = false;
+    #endregion Properties (Skin)
+
+    #region Fields
+    private ArrayList _filenames;
+    private GUIImage[] _images;
+    private bool _animating = false;
+    private bool _isFirstRender = true;
+    private int _iterationCount = 0;
+    private static int _imageId = 200000;
+    private double _startTick = 0;
+    private bool _hidePngAnimations = false;
+    protected List<GUIMessage.MessageType> _triggerList = new List<GUIMessage.MessageType>();
+    private int _renderWidth = 0;
+    private int _renderHeight = 0;
+    private int _textureWidth = 0;
+    private int _textureHeight = 0;
+
     protected bool _flipX = false;
     protected bool _flipY = false;
     protected string _diffuseFileName = "";
@@ -45,6 +72,87 @@ namespace MediaPortal.GUI.Library
     private bool _borderTextureRotate = false;
     private string _borderTextureFileName = "";
     private long _borderColorKey = 0;
+    #endregion Fields
+
+    #region Properties
+
+    public Duration Duration
+    {
+      get { return _duration; }
+      set { _duration = value; }
+    }
+
+    public Easing Easing
+    {
+      get { return _easing; }
+      set { _easing = value; }
+    }
+
+    public ArrayList Filenames
+    {
+      get
+      {
+        if (_filenames == null)
+        {
+          _filenames = new ArrayList();
+        }
+        return _filenames;
+      }
+    }
+
+    public string FileName
+    {
+      get { return _textureNames; }
+    }
+
+    public new HorizontalAlignment HorizontalAlignment
+    {
+      get { return _horizontalAlignment; }
+      set { _horizontalAlignment = value; }
+    }
+
+    public RepeatBehavior RepeatBehavior
+    {
+      get { return _repeatBehavior; }
+      set
+      {
+        _repeatBehavior = value;
+        if (_images == null)
+        {
+          return;
+        }
+        for (int index = 0; index < _images.Length; index++)
+        {
+          _images[index].RepeatBehavior = value;
+        }
+      }
+    }
+
+    public new VerticalAlignment VerticalAlignment
+    {
+      get { return _verticalAlignment; }
+      set { _verticalAlignment = value; }
+    }
+
+    public bool FlipY
+    {
+      get { return _flipY; }
+      set { _flipY = value; }
+    }
+
+    public bool FlipX
+    {
+      get { return _flipX; }
+      set { _flipX = value; }
+    }
+
+    public string DiffuseFileName
+    {
+      get { return _diffuseFileName; }
+      set { _diffuseFileName = value; }
+    }
+
+    #endregion Properties
 
     #region Constructors
 
@@ -93,24 +201,6 @@ namespace MediaPortal.GUI.Library
     }
 
     #endregion Constructors
-
-    public bool FlipY
-    {
-      get { return _flipY; }
-      set { _flipY = value; }
-    }
-
-    public bool FlipX
-    {
-      get { return _flipX; }
-      set { _flipX = value; }
-    }
-
-    public string DiffuseFileName
-    {
-      get { return _diffuseFileName; }
-      set { _diffuseFileName = value; }
-    }
 
     #region Methods
 
@@ -473,6 +563,15 @@ namespace MediaPortal.GUI.Library
 
     public override void Render(float timePassed)
     {
+      // Do not render if not visible.
+      if (GUIGraphicsContext.EditMode == false)
+      {
+        if (!IsVisible)
+        {
+          base.Render(timePassed);
+          return;
+        }
+      }
       if (_images == null)
       {
         base.Render(timePassed);
@@ -539,110 +638,5 @@ namespace MediaPortal.GUI.Library
     }
 
     #endregion Methods
-
-    #region Properties
-
-    public Duration Duration
-    {
-      get { return _duration; }
-      set { _duration = value; }
-    }
-
-    public Easing Easing
-    {
-      get { return _easing; }
-      set { _easing = value; }
-    }
-
-    public ArrayList Filenames
-    {
-      get
-      {
-        if (_filenames == null)
-        {
-          _filenames = new ArrayList();
-        }
-        return _filenames;
-      }
-    }
-
-    public string FileName
-    {
-      get { return _textureNames; }
-    }
-
-    public new HorizontalAlignment HorizontalAlignment
-    {
-      get { return _horizontalAlignment; }
-      set { _horizontalAlignment = value; }
-    }
-
-    public RepeatBehavior RepeatBehavior
-    {
-      get { return _repeatBehavior; }
-      set
-      {
-        _repeatBehavior = value;
-        if (_images == null)
-        {
-          return;
-        }
-        for (int index = 0; index < _images.Length; index++)
-        {
-          _images[index].RepeatBehavior = value;
-        }
-      }
-    }
-
-    public new VerticalAlignment VerticalAlignment
-    {
-      get { return _verticalAlignment; }
-      set { _verticalAlignment = value; }
-    }
-
-    #endregion Properties
-
-    #region Properties (Skin)
-
-    [XMLSkinElement("Easing")] protected Easing _easing = Easing.Linear;
-
-    [XMLSkinElement("FillBehavior")] protected FillBehavior _fillBehavior = FillBehavior.HoldEnd;
-
-    [XMLSkinElement("HorizontalAlignment")] protected HorizontalAlignment _horizontalAlignment =
-      HorizontalAlignment.Left;
-
-    [XMLSkinElement("textures")] protected string _textureNames = string.Empty;
-
-    [XMLSkinElement("rate")] protected double _rate = 1;
-
-    [XMLSkinElement("Duration")] protected Duration _duration = Duration.Automatic;
-
-    [XMLSkinElement("RepeatBehavior")] protected RepeatBehavior _repeatBehavior = RepeatBehavior.Forever;
-
-    [XMLSkinElement("VerticalAlignment")] protected VerticalAlignment _verticalAlignment = VerticalAlignment.Top;
-
-    [XMLSkinElement("Triggers")] protected string _triggerNames = "init";
-
-    [XMLSkinElement("keepaspectratio")] private bool _keepAspectRatio = false;
-
-    #endregion Properties (Skin)
-
-    #region Fields
-
-    private ArrayList _filenames;
-    private GUIImage[] _images;
-    private bool _animating = false;
-    private bool _isFirstRender = true;
-    private int _iterationCount = 0;
-    private static int _imageId = 200000;
-    private double _startTick = 0;
-    private bool _hidePngAnimations = false;
-    protected List<GUIMessage.MessageType> _triggerList = new List<GUIMessage.MessageType>();
-    private int _renderWidth = 0;
-    private int _renderHeight = 0;
-    private int _textureWidth = 0;
-    private int _textureHeight = 0;
-
-    #endregion Fields
   }
 }
