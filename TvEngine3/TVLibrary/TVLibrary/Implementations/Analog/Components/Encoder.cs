@@ -366,16 +366,12 @@ namespace TvLibrary.Implementations.Analog.Components
         AddTvMultiPlexer(false, _graphBuilder, _tuner, _tvAudio, _crossbar, _capture);
         FindCapturePin(MediaType.Stream, MediaSubType.Mpeg2Program, _filterMultiplexer);
       }
-
       //add the mpeg-2 demultiplexer filter
       AddMpeg2Demultiplexer(_graphBuilder);
-
-      //FilterGraphTools.SaveGraphFile(_graphBuilder, "hp.grf");
       if (!AddMpegMuxer(_graphBuilder, _capture))
       {
         throw new TvException("Analog: unable to add mpeg muxer");
       }
-
       return true;
     }
     #endregion
@@ -396,6 +392,7 @@ namespace TvLibrary.Implementations.Analog.Components
     {
       if (filter == null)
       {
+        Log.Log.WriteFile("analog: FinCapturePin - no filter???");
         return;
       }
       IEnumPins enumPins;
@@ -432,7 +429,7 @@ namespace TvLibrary.Implementations.Analog.Components
               _pinCapture = pins[0];
               //Log.Log.WriteFile("analog: FindCapturePin pin:{0}", FilterGraphTools.LogPinInfo(pins[0]));
               //Log.Log.WriteFile("analog: FindCapturePin   major:{0} sub:{1}", media[0].majorType, media[0].subType);
-              Log.Log.WriteFile("analog: FindCapturePin succeeded");
+              Log.Log.WriteFile("analog: FindCapturePin succeeded.");
               DsUtils.FreeAMMediaType(media[0]);
               return;
             }

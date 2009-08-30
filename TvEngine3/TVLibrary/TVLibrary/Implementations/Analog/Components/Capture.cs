@@ -282,9 +282,18 @@ namespace TvLibrary.Implementations.Analog.Components
       //get a list of all video capture devices
       try
       {
-        devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture); //shouldn't be VideoInputDevice
-        devices = DeviceSorter.Sort(devices, tuner.TunerName, tvAudio.TvAudioName, crossbar.CrossBarName);
-      } catch (Exception)
+        if (tuner.TunerName == "Adaptec USB TvTuner")
+        {
+          Log.Log.WriteFile("analog: Adaptec USB device detected!");
+          devices = DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice);
+        }
+        else
+        {
+          devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture); //shouldn't be VideoInputDevice
+          devices = DeviceSorter.Sort(devices, tuner.TunerName, tvAudio.TvAudioName, crossbar.CrossBarName);
+        }
+      }
+      catch (Exception)
       {
         Log.Log.WriteFile("analog: AddTvCaptureFilter no tvcapture devices found");
         return false;
@@ -307,7 +316,10 @@ namespace TvLibrary.Implementations.Analog.Components
         Log.Log.WriteFile("analog: AddTvCaptureFilter try:{0} {1}", devices[i].Name, i);
         // if video capture filter is in use, then we can skip it
         if (DevicesInUse.Instance.IsUsed(devices[i]))
+        {
+          Log.Log.WriteFile("analog: Device: {0} in use?", devices[i].Name);
           continue;
+        }
         if (!videoDeviceName.Equals(devices[i].Name) && !audioDeviceName.Equals(devices[i].Name))
           continue;
         int hr;
@@ -315,7 +327,8 @@ namespace TvLibrary.Implementations.Analog.Components
         {
           // add video capture filter to graph
           hr = graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           Log.Log.WriteFile("analog: cannot add filter to graph");
           continue;
@@ -325,6 +338,7 @@ namespace TvLibrary.Implementations.Analog.Components
           //cannot add video capture filter to graph, try next one
           if (tmp != null)
           {
+            Log.Log.WriteFile("analog: cannot add filter: {0} to graph", devices[i].Name);
             graphBuilder.RemoveFilter(tmp);
             Release.ComObject("TvCaptureFilter", tmp);
           }
@@ -356,6 +370,11 @@ namespace TvLibrary.Implementations.Analog.Components
           Log.Log.WriteFile("analog: AddTvCaptureFilter connected audio to crossbar successfully");
           audioConnected = true;
           filterUsed = true;
+        }
+        // _audioCaptureDevice should never be null - avoids null exception crashes with Encoder.cs
+        else
+        {
+          _audioCaptureDevice = devices[i];
         }
 
         if (!filterUsed)
@@ -414,9 +433,18 @@ namespace TvLibrary.Implementations.Analog.Components
       //get a list of all video capture devices
       try
       {
-        devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture); //shouldn't be VideoInputDevice
-        devices = DeviceSorter.Sort(devices, tuner.TunerName, tvAudio.TvAudioName, crossbar.CrossBarName);
-      } catch (Exception)
+        if (tuner.TunerName == "Adaptec USB TvTuner")
+        {
+          Log.Log.WriteFile("analog: Adaptec USB device detected!");
+          devices = DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice);
+        }
+        else
+        {
+          devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture);
+          devices = DeviceSorter.Sort(devices, tuner.TunerName, tvAudio.TvAudioName, crossbar.CrossBarName);
+        }
+      }
+      catch (Exception)
       {
         Log.Log.WriteFile("analog: AddTvCaptureFilter no tvcapture devices found");
         return false;
@@ -445,7 +473,8 @@ namespace TvLibrary.Implementations.Analog.Components
         {
           // add video capture filter to graph
           hr = graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           Log.Log.WriteFile("analog: cannot add filter to graph");
           continue;
@@ -472,14 +501,13 @@ namespace TvLibrary.Implementations.Analog.Components
             DevicesInUse.Instance.Add(_videoCaptureDevice);
           }
           Log.Log.WriteFile("analog: AddTvCaptureFilter connected video to crossbar successfully");
-          graph.Capture.Name = devices[i].Name;
+          graph.Capture.Name = _videoCaptureDevice.Name;
           graph.Capture.VideoIn = destinationIndex;
           videoConnected = true;
           filterUsed = true;
         }
         // crossbar->audio capture filter
         // Many video capture are also the audio capture filter, so we can always try it again
-
         if (videoConnected && FilterGraphTools.ConnectFilter(graphBuilder, crossbar.AudioOut, tmp, out destinationIndex))
         {
           _filterAudioCapture = tmp;
@@ -493,6 +521,11 @@ namespace TvLibrary.Implementations.Analog.Components
           graph.Capture.AudioIn = destinationIndex;
           audioConnected = true;
           filterUsed = true;
+        }
+        // _audioCaptureDevice should never be null - avoids null exception crashes with Encoder.cs
+        else
+        {
+          _audioCaptureDevice = devices[i];
         }
 
         if (!filterUsed)

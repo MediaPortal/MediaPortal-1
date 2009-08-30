@@ -504,25 +504,26 @@ namespace TvLibrary.Implementations.Analog
         _maxChannel = _tuner.MaxChannel;
         //add the wdm crossbar device and connect tvtuner->crossbar
         _crossbar = new Crossbar();
-        if (!_crossbar.CreateFilterInstance(graph,_graphBuilder, _tuner))
+        if (!_crossbar.CreateFilterInstance(graph, _graphBuilder, _tuner))
         {
           Log.Log.Error("analog: unable to add tv crossbar filter");
           throw new TvException("Analog: unable to add tv crossbar filter");
         }
         //add the tv audio tuner device and connect it to the crossbar
         _tvAudio = new TvAudio();
-        if (!_tvAudio.CreateFilterInstance(graph,_graphBuilder, _tuner, _crossbar))
+        if (!_tvAudio.CreateFilterInstance(graph, _graphBuilder, _tuner, _crossbar))
         {
           Log.Log.Error("analog: unable to add tv audio tuner filter");
           throw new TvException("Analog: unable to add tv audio tuner filter");
         }
         //add the tv capture device and connect it to the crossbar
         _capture = new Capture();
-        if (!_capture.CreateFilterInstance(graph,_capBuilder, _graphBuilder, _tuner, _crossbar, _tvAudio))
+        if (!_capture.CreateFilterInstance(graph, _capBuilder, _graphBuilder, _tuner, _crossbar, _tvAudio))
         {
           Log.Log.Error("analog: unable to add capture filter");
           throw new TvException("Analog: unable to add capture filter");
         }
+        Configuration.writeConfiguration(_configuration);
         _teletext = new TeletextComponent();
         if (_capture.SupportsTeletext)
         {
@@ -570,6 +571,7 @@ namespace TvLibrary.Implementations.Analog
           throw new TvException("Analog: unable to add mpfilewriter");
         }
         Log.Log.WriteFile("analog: Graph is built");
+        FilterGraphTools.SaveGraphFile(_graphBuilder, "analog.grf");
         ReloadCardConfiguration();
         _graphState = GraphState.Created;
       } catch(TvExceptionSWEncoderMissing ex)
