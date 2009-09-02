@@ -520,6 +520,10 @@ namespace MediaPortal.GUI.Video
               listItem.ThumbnailImage = coverArtImage;
             }
           }
+          else
+          {
+            Util.Utils.SetThumbnails(ref listItem);
+          }
         }
       }
     }
