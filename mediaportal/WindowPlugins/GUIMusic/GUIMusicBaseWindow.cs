@@ -856,6 +856,7 @@ namespace MediaPortal.GUI.Music
       SetLabels();
       facadeView.Sort(new MusicSort(CurrentSortMethod, CurrentSortAsc));
       UpdateButtonStates();
+      SelectCurrentItem();
     }
 
     protected virtual void SetLabels()

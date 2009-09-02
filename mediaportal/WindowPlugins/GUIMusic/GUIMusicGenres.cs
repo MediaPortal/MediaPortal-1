@@ -1422,6 +1422,7 @@ namespace MediaPortal.GUI.Music
       }
 
       UpdateButtonStates();
+      SelectCurrentItem();
 
       if (btnSortBy != null)
       {

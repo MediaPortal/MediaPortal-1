@@ -661,6 +661,7 @@ namespace WindowPlugins.GUI.Extensions
       SetLabels();
       facadeView.Sort(this);
       UpdateButtonStates();
+      SelectCurrentItem();
     }
 
     public int Compare(GUIListItem item1, GUIListItem item2)

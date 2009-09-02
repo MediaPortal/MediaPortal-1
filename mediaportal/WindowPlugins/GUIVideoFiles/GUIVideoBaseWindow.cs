@@ -605,6 +605,7 @@ namespace MediaPortal.GUI.Video
       SetLabels();
       facadeView.Sort(new VideoSort(CurrentSortMethod, CurrentSortAsc));
       UpdateButtonStates();
+      SelectCurrentItem();
     }
 
     #endregion
