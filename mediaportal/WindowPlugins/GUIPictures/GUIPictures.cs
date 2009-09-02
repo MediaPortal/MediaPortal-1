@@ -399,6 +399,7 @@ namespace MediaPortal.GUI.Pictures
           {
             currentFolder = lastFolder;
           }
+          disp = (Display)xmlreader.GetValueAsInt("pictures", "lastview", (int)disp);                    
         }
         _switchRemovableDrives = xmlreader.GetValueAsBool("pictures", "SwitchRemovableDrives", true);
         //_hideExtensions = xmlreader.GetValueAsBool("general", "hideextensions", true);
@@ -1001,6 +1002,7 @@ namespace MediaPortal.GUI.Pictures
         if (xmlreader.GetValueAsBool("pictures", "rememberlastfolder", false))
         {
           xmlreader.SetValue("pictures", "lastfolder", folderName);
+          xmlreader.SetValue("pictures", "lastview", (int)disp);
         }
       }
     }
