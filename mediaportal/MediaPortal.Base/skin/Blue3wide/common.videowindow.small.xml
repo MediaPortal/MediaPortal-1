@@ -11,7 +11,7 @@
       <height>124</height>
       <texture>Picture_cover.png</texture>
       <animation effect="fade" time="250">visiblechange</animation>
-	   <animation effect="fade" time="150">WindowClose</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
       <animation effect="fade" time="150">WindowOpen</animation>
       <visible>player.hasmedia</visible>
     </control>
@@ -27,9 +27,9 @@
       <centered>yes</centered>
       <action>18</action>
       <textureFocus>tv_green_border.png</textureFocus>
-	  <visible>player.hasmedia</visible>
-	  <animation effect="fade" time="250">visiblechange</animation>
-	   <animation effect="fade" time="150">WindowClose</animation>
+      <visible>player.hasvideo</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
       <animation effect="fade" time="150">WindowOpen</animation>
     </control>
   </controls>

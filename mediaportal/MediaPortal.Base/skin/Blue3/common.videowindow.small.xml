@@ -6,12 +6,12 @@
       <type>image</type>
       <id>0</id>
       <posX>49</posX>
-	  <posY>419</posY>
+      <posY>419</posY>
       <width>161</width>
       <height>124</height>
       <texture>Picture_cover.png</texture>
-	  <visible>player.hasmedia</visible>
-	  <animation effect="fade" time="250">visiblechange</animation>
+      <visible>player.hasmedia</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
     </control>
@@ -25,8 +25,8 @@
       <height>111</height>
       <action>18</action>
       <textureFocus>tv_green_border.png</textureFocus>
-	  <visible>player.hasmedia</visible>
-	  <animation effect="fade" time="250">visiblechange</animation>
+      <visible>player.hasvideo</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
     </control>
