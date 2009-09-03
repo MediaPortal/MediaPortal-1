@@ -1272,6 +1272,15 @@ namespace MediaPortal.GUI.Video
         {
           VideoDatabase.GetMovieInfo(path + @"\VIDEO_TS\VIDEO_TS.IFO", ref info);
         }
+        if (info.IsEmpty)
+        {
+          if (_markWatchedFiles)
+          {
+            int fID = VideoDatabase.GetFileId(path);
+            if (VideoDatabase.GetMovieStopTime(fID) > 0)
+              info.Watched = 1;
+          }
+        }
         if (isMultiMovieFolder)
         {
           info.Reset();
