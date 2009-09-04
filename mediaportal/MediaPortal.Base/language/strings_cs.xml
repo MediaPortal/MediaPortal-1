@@ -525,7 +525,7 @@
     <String id="650">Pokaždé na {0}</String>
     <String id="651">Pokaždé na jakémkoliv kanálu</String>
     <String id="652">Nahrané TV pořady</String>
-    <String id="653">Zrušení záznamu</String>
+    <String id="653">Odstranit záznam</String>
     <String id="654">Vysunout</String>
     <String id="655">Přehrát TV záznam</String>
     <String id="656">Smazat TV záznam</String>
@@ -596,7 +596,7 @@
     <String id="733">Zobrazení: Filnový pás</String>
     <String id="734">Plakáty:</String>
     <String id="735">Otočit</String>
-    <String id="736">Žádná EPG data nejsou dostupná</String>
+    <String id="736">/Bez EPG/</String>
     <String id="737">Zobrazení: Satelitní mapa</String>
     <String id="738">Zobrazení: Teplota</String>
     <String id="739">Zobrazení: UV index</String>
