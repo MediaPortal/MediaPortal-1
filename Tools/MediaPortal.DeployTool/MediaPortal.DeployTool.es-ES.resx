@@ -493,4 +493,13 @@ Transfiere esta carpeta a tu HTPC. Comienza la instalación ejecutando "MediaPor
     <value>NOTA: No puedes actualizar desde SVN build,
           éstas están diseñadas sólo para su testeo.</value>
   </data>
+   <data name="Install_actionUpgradeInstall" xml:space="preserve">
+    <value>Actualizar-&gt;Instalar</value>
+  </data>
+  <data name="DBMSType_lbMSSQL_disabled" xml:space="preserve">
+    <value>(descubre aquí por qué)</value>
+  </data>
+  <data name="DBMSType_rbMSSQL_disabled" xml:space="preserve">
+    <value>Microsoft SQL-Server Express 2005 está deshabilitado</value>
+  </data>
 </root>
