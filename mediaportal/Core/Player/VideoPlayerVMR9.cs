@@ -457,7 +457,7 @@ namespace MediaPortal.Player
         _rotEntry = null;
         if (graphBuilder != null)
         {
-          RemoveAllFilters();
+          DirectShowUtil.RemoveFilters(graphBuilder);
           while ((hr = DirectShowUtil.ReleaseComObject(graphBuilder)) > 0)
           {
             ;
@@ -476,33 +476,6 @@ namespace MediaPortal.Player
       Log.Info("VideoPlayerVMR9: Disabling DX9 exclusive mode");
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
       GUIWindowManager.SendMessage(msg);
-    }
-
-    private void RemoveAllFilters()
-    {
-      int hr = 0;
-      IEnumFilters enumFilters;
-      ArrayList filtersArray = new ArrayList();
-
-      hr = graphBuilder.EnumFilters(out enumFilters);
-      DsError.ThrowExceptionForHR(hr);
-
-      IBaseFilter[] filters = new IBaseFilter[1];
-      int fetched;
-
-      while (enumFilters.Next(filters.Length, filters, out fetched) == 0)
-      {
-        filtersArray.Add(filters[0]);
-      }
-
-      foreach (IBaseFilter filter in filtersArray)
-      {
-        FilterInfo info;
-        filter.QueryFilterInfo(out info);
-        Log.Debug("VideoPlayerVMR9: remove filter from graph: {0}", info.achName);
-        hr = graphBuilder.RemoveFilter(filter);
-        while (Marshal.ReleaseComObject(filter) > 0) ;
-      }
-    }
+    }    
   }
 }

@@ -1440,61 +1440,51 @@ namespace DShowNET.Helper
       return null;
     }
 
-    public static void RemoveFilters(IGraphBuilder m_graphBuilder)
+    public static void RemoveFilters(IGraphBuilder graphBuilder)
     {
-      int hr;
-      if (m_graphBuilder == null)
+      if (graphBuilder == null)
       {
         return;
       }
-      for (int counter = 0; counter < 100; counter++)
+
+      int hr = 0;
+      IEnumFilters enumFilters = null;
+      ArrayList filtersArray = new ArrayList();
+
+      try
       {
-        bool bFound = false;
-        IEnumFilters ienumFilt = null;
-        try
+        hr = graphBuilder.EnumFilters(out enumFilters);
+        DsError.ThrowExceptionForHR(hr);
+
+        IBaseFilter[] filters = new IBaseFilter[1];
+        int fetched;
+
+        while (enumFilters.Next(filters.Length, filters, out fetched) == 0)
         {
-          hr = m_graphBuilder.EnumFilters(out ienumFilt);
-          if (hr == 0)
-          {
-            int iFetched;
-            IBaseFilter[] filter = new IBaseFilter[2];
-            ;
-            ienumFilt.Reset();
-            do
-            {
-              hr = ienumFilt.Next(1, filter, out iFetched);
-              if (hr == 0 && iFetched == 1)
-              {
-                m_graphBuilder.RemoveFilter(filter[0]);
-                int hres = ReleaseComObject(filter[0]);
-                filter[0] = null;
-                bFound = true;
-              }
-            } while (iFetched == 1 && hr == 0);
-            if (ienumFilt != null)
-            {
-              ReleaseComObject(ienumFilt);
-            }
-            ienumFilt = null;
-          }
-          if (!bFound)
-          {
-            return;
-          }
+          filtersArray.Add(filters[0]);
         }
-        catch (Exception)
+
+        foreach (IBaseFilter filter in filtersArray)
         {
-          return;
-        }
-        finally
-        {
-          if (ienumFilt != null)
-          {
-            hr = ReleaseComObject(ienumFilt);
-          }
+          FilterInfo info;
+          filter.QueryFilterInfo(out info);
+          Log.Debug("Remove filter from graph: {0}", info.achName);
+          hr = graphBuilder.RemoveFilter(filter);
+          while (ReleaseComObject(filter) > 0) ;
         }
       }
-    }
+      catch (Exception)
+      {       
+        return;
+      }
+      finally
+      {
+        if (enumFilters != null)
+        {
+          ReleaseComObject(enumFilters);
+        }
+      }
+    }    
 
     public static IntPtr GetUnmanagedSurface(Surface surface)
     {
