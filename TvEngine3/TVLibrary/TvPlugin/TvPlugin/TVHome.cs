@@ -34,12 +34,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.Net;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
-using System.Xml;
-using Gentle.Framework;
 using MediaPortal;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
@@ -90,10 +87,17 @@ namespace TvPlugin
       LABEL_REC_INFO = 22,
       IMG_REC_RECTANGLE = 23,
     } ;
+    
+    [Flags]
+    public enum LiveTvStatus
+    {
+      WasPlaying = 1,
+      CardChange = 2,
+      SeekToEnd = 4
+    }
 
     //heartbeat related stuff
     private Thread heartBeatTransmitterThread = null;
-    //private static string _newTimeshiftFileName = "";
     private static DateTime _updateProgressTimer = DateTime.MinValue;
     private static ChannelNavigator m_navigator;
     private static TVUtil _util;
@@ -101,12 +105,10 @@ namespace TvPlugin
     private DateTime _updateTimer = DateTime.Now;
     private static bool _autoTurnOnTv = false;
     private static int _waitonresume = 0;
-    //int _lagtolerance = 10; //Added by joboehl
     public static bool settingsLoaded = false;
     private DateTime _dtlastTime = DateTime.Now;
     private TvCropManager _cropManager = new TvCropManager();
     private TvNotifyManager _notifyManager = new TvNotifyManager();
-    //static string[] _preferredLanguages;
     private static List<string> _preferredLanguages;
     private static bool _usertsp = true;
     private static string _recordingpath = "";
@@ -140,20 +142,18 @@ namespace TvPlugin
     private static DateTime lastRecordTime = DateTime.MinValue;
     // we need to reset the lastActiveRecChannelId based on how long since a rec. was initiated.
 
-    //Stopwatch benchClock = null;
+    private static BitHelper<LiveTvStatus> _status = new BitHelper<LiveTvStatus>();
 
     [SkinControl(2)]
     protected GUIButtonControl btnTvGuide = null;
     [SkinControl(3)]
     protected GUIButtonControl btnRecord = null;
-    // [SkinControlAttribute(6)]     protected GUIButtonControl btnGroup = null;
     [SkinControl(7)]
     protected GUIButtonControl btnChannel = null;
     [SkinControl(8)]
     protected GUIToggleButtonControl btnTvOnOff = null;
     [SkinControl(13)]
     protected GUIButtonControl btnTeletext = null;
-    //    [SkinControlAttribute(14)]    protected GUIButtonControl btnTuningDetails = null;
     [SkinControl(24)]
     protected GUIImage imgRecordingIcon = null;
     [SkinControl(99)]
@@ -248,10 +248,6 @@ namespace TvPlugin
 
     public void ShowPlugin()
     {
-      /*
-      TvSetupForm setup = new TvSetupForm();
-      setup.ShowDialog();
-       */
     }
 
     #endregion
@@ -296,26 +292,6 @@ namespace TvPlugin
       }
     }
 
-    /// <summary>
-    /// Register the remoting service and attaching ciMenuHandler for server events
-    /// </summary>
-    public static void RegisterCiMenu(int newCardId)
-    {
-      if (ciMenuHandler == null)
-      {
-        Log.Debug("CiMenu: PrepareCiMenu");
-        ciMenuHandler = new CiMenuHandler();
-        // opens remoting and attach local eventhandler to server event, call only once
-        RemoteControl.RegisterCiMenuCallbacks(ciMenuHandler);
-      }
-      // Check if card supports CI menu
-      if (newCardId != -1 && RemoteControl.Instance.CiMenuSupported(newCardId))
-      {
-        // Enable CI menu handling in card
-        RemoteControl.Instance.SetCiMenuHandler(newCardId, null);
-        Log.Debug("TvPlugin: CiMenuHandler attached to new card {0}", newCardId);
-      }
-    }
     public TVHome()
     {
       GUIGraphicsContext.OnBlackImageRendered += new BlackImageRenderedHandler(OnBlackImageRendered);
@@ -352,7 +328,7 @@ namespace TvPlugin
     {
       while (true)
       {
-        if (Connected && _resumed && !_suspended)
+        if (Connected /*&& _resumed */ && !_suspended)
         {
           bool isTS = (Card != null && Card.IsTimeShifting);
           if (Connected && isTS)
@@ -416,7 +392,6 @@ namespace TvPlugin
                 pDlgOK.SetHeading(GUILocalizeStrings.Get(605) + " - " + Navigator.CurrentChannel); //my tv
                 errMsg = errMsg.Replace("\\r", "\r");
                 string[] lines = errMsg.Split('\r');
-                //pDlgOK.SetLine(1, TVHome.Navigator.CurrentChannel);
 
                 for (int i = 0; i < lines.Length; i++)
                 {
@@ -900,7 +875,6 @@ namespace TvPlugin
         if (!Connected)
         {
           _ServerLastStatusOK = false; // to enable TV connect button again
-          //g_Player.Stop(); // moved to Process() for correct threading
 
           Card.User.Name = new User().Name;
 
@@ -924,8 +898,6 @@ namespace TvPlugin
             pDlgOK.SetHeading(605); //my tv
             pDlgOK.SetLine(1, Navigator.CurrentChannel);
             pDlgOK.SetLine(2, GUILocalizeStrings.Get(1510)); //Connection to TV server lost
-
-            //pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
 
             if (OnShowDlgCompleted == null)
             {
@@ -1050,7 +1022,6 @@ namespace TvPlugin
         GUIGraphicsContext.ARType = Utils.GetAspectRatio(strValue);
 
         string preferredLanguages = xmlreader.GetValueAsString("tvservice", "preferredaudiolanguages", "");
-        //_preferredLanguages = preferredLanguages.Split(';');
         _preferredLanguages = new List<string>();
         Log.Debug("TVHome.LoadSettings(): Preferred Audio Languages: " + preferredLanguages);
 
@@ -1210,12 +1181,6 @@ namespace TvPlugin
         return;
       }
 
-      /*if (_newTimeshiftFileName.Length > 0 && !_newTimeshiftFileName.Equals(filename))
-      {
-        return;
-      }
-      */
-
       //tv off
       Log.Info("TVHome:turn tv off");
       SaveSettings();
@@ -1224,11 +1189,9 @@ namespace TvPlugin
 
       if (type == g_Player.MediaType.Radio || type == g_Player.MediaType.TV)
       {
-        // doProcess();
         UpdateGUIonPlaybackStateChange(false);
       }
 
-      //_newTimeshiftFileName = "";
       _playbackStopped = true;
     }
 
@@ -1624,16 +1587,6 @@ namespace TvPlugin
 
       if (channel != null)
       {
-        /*
-        if (TVHome.Card.IsTimeShifting)
-        {
-          int id = TVHome.Card.IdChannel;
-          if (id >= 0)
-          {
-            channel = Channel.Retrieve(id);
-          }
-        }
-        */
         Log.Info("tv home init:{0}", channel.DisplayName);
         if (_autoTurnOnTv && !_playbackStopped && !wasPrevWinTVplugin())
         {
@@ -1676,21 +1629,6 @@ namespace TvPlugin
           }
           else //no delay needed here, since this is when the system is being used normally
           {
-            // wait for timeshifting to complete
-            /*
-            int waits = 0;
-            while (_playbackStopped && waits < 100)
-            {
-              //Log.Debug("TVHome.OnPageLoad(): waiting for timeshifting to start");
-              Thread.Sleep(100);
-              waits++;
-            }
-            if (!_playbackStopped)
-            {
-              //Log.Debug("TVHome.OnPageLoad(): timeshifting has started - waits: {0}", waits);
-              g_Player.ShowFullScreenWindow();
-            }
-            */
             g_Player.ShowFullScreenWindow();
           }
         }
@@ -1701,26 +1639,11 @@ namespace TvPlugin
         }
       }
 
-      /*
-      string currentChannel = TVHome.Navigator.CurrentChannel;
-      if (currentChannel != null && currentChannel.Length > 0)
-      {
-        TvServer server = new TvServer();
-        VirtualCard vc;
-        server.IsRecording(currentChannel, out vc);
-        if (vc != null)
-        {
-          TVHome.Card = vc;
-        }
-      }      
-      */
-
       _onPageLoadDone = true;
       _resumed = false;
 
       UpdateGUIonPlaybackStateChange();
       doProcess();
-      //GUIWaitCursor.Hide();
     }
 
     private void TvDelayThread()
@@ -1787,14 +1710,6 @@ namespace TvPlugin
 
       Navigator.SetCurrentGroup(dlg.SelectedLabelText);
       GUIPropertyManager.SetProperty("#TV.Guide.Group", dlg.SelectedLabelText);
-
-      //if (Navigator.CurrentGroup != null)
-      //{
-      //  if (Navigator.CurrentGroup.ReferringGroupMap().Count > 0)
-      //  {
-      //    GroupMap gm = (GroupMap)Navigator.CurrentGroup.ReferringGroupMap()[0];
-      //  }
-      //}
     }
 
     private void OnSelectChannel()
@@ -1810,7 +1725,6 @@ namespace TvPlugin
       //Without this, a ChannelChange might occur even when MiniGuide is canceled. 
       if (!miniGuide.Canceled)
       {
-        //_userChannelChanged = true;
         ViewChannelAndCheck(miniGuide.SelectedChannel);
         UpdateGUIonPlaybackStateChange();
       }
@@ -1892,20 +1806,12 @@ namespace TvPlugin
         benchClock.Stop();
         Log.Warn("TVHome.OnClicked(): Total Time - {0} ms", benchClock.ElapsedMilliseconds.ToString());
       }
-      /*
-      if (control == btnGroup)
-      {
-        OnSelectGroup();
-      }*/
+
       if (control == btnTeletext)
       {
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_TELETEXT);
         return;
       }
-      //if (control == btnTuningDetails)
-      //{
-      //  GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_TUNING_DETAILS);
-      //}
 
       if (control == btnRecord)
       {
@@ -2403,14 +2309,6 @@ namespace TvPlugin
       // if we're recording tv, update gui with info
       if (Connected && Card.IsRecording)
       {
-        /*if (lastRecordTime == DateTime.MinValue)
-        {
-          lastRecordTime = now;
-          
-        }
-        */
-
-        //int card;
         int scheduleId = Card.RecordingScheduleId;
         if (scheduleId > 0)
         {
@@ -2459,19 +2357,7 @@ namespace TvPlugin
         return;
       }
 
-      if (g_Player.Playing && g_Player.IsTimeShifting)
-      {
-        /*if (TVHome.Card != null)
-        {
-          if (TVHome.Card.IsTimeShifting == false)
-          {
-            g_Player.Stop();
-          }
-        }*/
-      }
-
       //set audio video related media info properties.
-
       int currAudio = g_Player.CurrentAudioStream;
 
       if (currAudio > -1)
@@ -2668,12 +2554,9 @@ namespace TvPlugin
           timeShiftStartPointPercent *= 100.0d;
           GUIPropertyManager.SetProperty("#TV.Record.percent1", ((int)timeShiftStartPointPercent).ToString());
 
-          //if (!g_Player.Paused) // remarked by LKuech too fix the bug that the current position was not shown correctly when paused live tv
-          //{
           double playingPointPercent = ((double)playingPoint) / ((double)programDuration);
           playingPointPercent *= 100.0d;
           GUIPropertyManager.SetProperty("#TV.Record.percent2", ((int)playingPointPercent).ToString());
-          //}
 
           double percentLivePoint = ((double)livePoint) / ((double)programDuration);
           percentLivePoint *= 100.0d;
@@ -3142,6 +3025,8 @@ namespace TvPlugin
       {
         FramesBeforeStopRenderBlackImage = 3;
         // Ambass : we need to wait the 3rd frame to avoid persistance of previous channel....Why ?????
+        // Morpheus: number of frames depends on hardware, from 1..5 or higher might be needed! 
+        //           Probably the faster the graphics card is, the more frames required???
       }
     }
 
@@ -3156,13 +3041,15 @@ namespace TvPlugin
       }
     }
 
-    public static bool ViewChannelAndCheck(Channel channel)
+    /// <summary>
+    /// Pre-tune checks "outsourced" to reduce code complexity
+    /// </summary>
+    /// <param name="channel">the channel to tune</param>
+    /// <param name="doContinue">indicate to continue</param>
+    /// <returns>return value when not continuing</returns>
+    private static bool PreTuneChecks(Channel channel, out bool doContinue)
     {
-      //GUIWaitCursor.Show();
-      _doingChannelChange = false;
-      bool cardChanged = false;
-      bool wasPlaying = false;
-
+      doContinue = false;
       if (!_resumed && _suspended && _waitonresume > 0)
       {
         Log.Info("TVHome.ViewChannelAndCheck(): system just woke up...waiting {0} ms. resumed {1}, suspended {2}", _waitonresume, _resumed, _suspended);
@@ -3170,106 +3057,104 @@ namespace TvPlugin
       }
 
       _waitForVideoReceived.Reset();
-      _waitForVideoReceived.Reset();
 
-      //System.Diagnostics.Debugger.Launch();
-      try
+      if (channel == null)
       {
-        if (channel == null)
+        Log.Info("TVHome.ViewChannelAndCheck(): channel==null");
+        return false;
+      }
+      Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.DisplayName);
+
+      //if a channel is untunable, then there is no reason to carry on or even stop playback.
+      ChannelState CurrentChanState = TvServer.GetChannelState(channel.IdChannel, Card.User);
+      if (CurrentChanState == ChannelState.nottunable)
+      {
+        ChannelTuneFailedNotifyUser(TvResult.AllCardsBusy, false, channel);
+        return false;
+      }
+
+      //BAV: fixing mantis bug 1263: TV starts with no video if Radio is previously ON & channel selected from TV guide
+      if ((!channel.IsRadio && g_Player.IsRadio) || (channel.IsRadio && !g_Player.IsRadio))
+      {
+        Log.Info("TVHome.ViewChannelAndCheck(): Stop g_Player");
+        g_Player.Stop(true);
+      }
+      // do we stop the player when changing channel ?
+      // _userChannelChanged is true if user did interactively change the channel, like with mini ch. list. etc.
+      if (!_userChannelChanged)
+      {
+        if (g_Player.IsTVRecording)
         {
-          Log.Info("TVHome.ViewChannelAndCheck(): channel==null");
-          //GUIWaitCursor.Hide();
-          return false;
+          return true;
         }
-        Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.DisplayName);
-
-        //if a channel is untunable, then there is no reason to carry on or even stop playback.
-
-
-        //if (!isChannelAnalogue(channel))
-        //{
-        int CurrentChanState = (int)TvServer.GetChannelState(channel.IdChannel, Card.User);
-        if (CurrentChanState == (int)ChannelState.nottunable)
+        if (!_autoTurnOnTv) //respect the autoturnontv setting.
         {
-          ChannelTuneFailedNotifyUser(TvResult.AllCardsBusy, false, channel);
-          //GUIWaitCursor.Hide();
-          return false;
-        }
-        //}
-
-        //BAV: fixing mantis bug 1263: TV starts with no video if Radio is previously ON & channel selected from TV guide
-        if ((!channel.IsRadio && g_Player.IsRadio) || (channel.IsRadio && !g_Player.IsRadio))
-        {
-          Log.Info("TVHome.ViewChannelAndCheck(): Stop g_Player");
-          g_Player.Stop(true);
-        }
-        // do we stop the player when changing channel ?
-        // _userChannelChanged is true if user did interactively change the channel, like with mini ch. list. etc.
-        if (!_userChannelChanged)
-        {
-          if (g_Player.IsTVRecording)
+          if (g_Player.IsVideo || g_Player.IsDVD || g_Player.IsMusic)
           {
-            //GUIWaitCursor.Hide();
             return true;
           }
-          if (!_autoTurnOnTv) //respect the autoturnontv setting.
-          {
-            if (g_Player.IsVideo || g_Player.IsDVD || g_Player.IsMusic)
-            {
-              //GUIWaitCursor.Hide();
-              return true;
-            }
-          }
-          else
-          {
-            if (g_Player.IsVideo || g_Player.IsDVD || g_Player.IsMusic || g_Player.IsCDA) // || g_Player.IsRadio)
-            {
-              g_Player.Stop(true); // tell that we are zapping so exclusive mode is not going to be disabled
-            }
-          }
-        }
-        else if (g_Player.IsTVRecording && _userChannelChanged)
-        //we are watching a recording, we have now issued a ch. change..stop the player.
-        {
-          _userChannelChanged = false;
-          g_Player.Stop(true);
-        }
-        else if ((channel.IsTv && g_Player.IsRadio) || (channel.IsRadio && g_Player.IsTV) || g_Player.IsCDA ||
-                 g_Player.IsMusic || g_Player.IsVideo)
-        {
-          g_Player.Stop(true);
-        }
-
-        /* A part of the code to implement IP-TV 
-        if (channel.IsWebstream())
-        {
-          IList details = channel.ReferringTuningDetail();
-          TuningDetail detail = (TuningDetail)details[0];
-          g_Player.PlayVideoStream(detail.Url, channel.DisplayName);
-          return true;
         }
         else
         {
-          if (Navigator.LastViewedChannel.IsWebstream())
-            g_Player.Stop();
-        }*/
-
-        TvResult succeeded;
-        if (Card != null)
-        {
-          if (g_Player.Playing && g_Player.IsTV && !g_Player.IsTVRecording)
-          //modified by joboehl. Avoids other video being played instead of TV. 
+          if (g_Player.IsVideo || g_Player.IsDVD || g_Player.IsMusic || g_Player.IsCDA) // || g_Player.IsRadio)
           {
-            //if we're already watching this channel, then simply return
-            if (Card.IsTimeShifting == true && Card.IdChannel == channel.IdChannel)
-            {
-              //GUIWaitCursor.Hide();
-              return true;
-            }
+            g_Player.Stop(true); // tell that we are zapping so exclusive mode is not going to be disabled
           }
         }
+      }
+      else if (g_Player.IsTVRecording && _userChannelChanged)
+      //we are watching a recording, we have now issued a ch. change..stop the player.
+      {
+        _userChannelChanged = false;
+        g_Player.Stop(true);
+      }
+      else if ((channel.IsTv && g_Player.IsRadio) || (channel.IsRadio && g_Player.IsTV) || g_Player.IsCDA ||
+               g_Player.IsMusic || g_Player.IsVideo)
+      {
+        g_Player.Stop(true);
+      }
+
+      if (Card != null)
+      {
+        if (g_Player.Playing && g_Player.IsTV && !g_Player.IsTVRecording)
+        //modified by joboehl. Avoids other video being played instead of TV. 
+        {
+          //if we're already watching this channel, then simply return
+          if (Card.IsTimeShifting == true && Card.IdChannel == channel.IdChannel)
+          {
+            return true;
+          }
+        }
+      }
+
+      // if all checks passed then we won't return
+      doContinue = true;
+      return true; // will be ignored
+    }
+
+    /// <summary>
+    /// Tunes to a new channel
+    /// </summary>
+    /// <param name="channel"></param>
+    /// <returns></returns>
+    public static bool ViewChannelAndCheck(Channel channel)
+    {
+      bool checkResult;
+      bool doContinue;
+
+      _status.Clear();
+
+      _doingChannelChange = false;
+
+      try 
+      {
+        checkResult = PreTuneChecks(channel, out doContinue);
+        if (doContinue == false)
+          return checkResult;
 
         _doingChannelChange = true;
+        TvResult succeeded;
+
 
         User user = new User();
         if (Card != null)
@@ -3277,8 +3162,10 @@ namespace TvPlugin
           user.CardId = Card.Id;
         }
 
-        wasPlaying = (g_Player.Playing && g_Player.IsTimeShifting && !g_Player.Stopped) &&
-                          (g_Player.IsTV || g_Player.IsRadio);
+        if ((g_Player.Playing && g_Player.IsTimeShifting && !g_Player.Stopped) && (g_Player.IsTV || g_Player.IsRadio))
+        {
+          _status.Set(LiveTvStatus.WasPlaying);
+        }
 
         //Start timeshifting the new tv channel
         TvServer server = new TvServer();
@@ -3289,134 +3176,102 @@ namespace TvPlugin
         newCardId = server.TimeShiftingWouldUseCard(ref user, channel.IdChannel);
 
         //Added by joboehl - If any major related to the timeshifting changed during the start, restart the player.           
-        if (newCardId == -1)
+        if (newCardId != -1 && Card.Id != newCardId)
         {
-          cardChanged = false;
-        }
-        else
-        {
-          cardChanged = (Card.Id != newCardId);
-          if (cardChanged)
-          {
-            RegisterCiMenu(newCardId);
-          }
+          _status.Set(LiveTvStatus.CardChange);
+          RegisterCiMenu(newCardId);
         }
 
-        if (wasPlaying)
+        // we need to stop player HERE if card has changed.        
+        if (_status.AllSet(LiveTvStatus.WasPlaying|LiveTvStatus.CardChange))
         {
-          // we need to stop player HERE if card has changed.        
-          if (cardChanged)
-          {
-            Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. CardId:{0}/{1}, RTSP:{2}", Card.Id, newCardId, Card.RTSPUrl);
-            Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. Timeshifting:{0}", Card.TimeShiftFileName);
-            //g_Player.StopAndKeepTimeShifting(); // keep timeshifting on server, we only want to recreate the graph on the client
-            //server.StopTimeShifting(ref user);              
-            Log.Debug("TVHome.ViewChannelAndCheck(): rebuilding graph (card changed) - timeshifting continueing.");
-
-            RenderBlackImage();
-            g_Player.PauseGraph();
-            succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
-            // check if after starttimeshift the active card is same as before (tvserver can do "failover" to another card)
-
-            if (succeeded == TvResult.Succeeded && card != null && Card.Id == card.Id)
-            {
-              Log.Debug("TVHome.ViewChannelAndCheck(): card was not changed. seek to end.");
-              cardChanged = false;
-              SeekToEnd(true);
-            }
-            g_Player.ContinueGraph();
-          }
-          else //card "probably" not changed.
-          {
-            // PauseGraph & ContinueGraph does add a bit overhead to channel change times                        
-            RenderBlackImage();
-            g_Player.PauseGraph();
-            g_Player.OnZapping(0x80);           // Setup Zapping for TsReader
-            succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
-            if (card != null)
-              g_Player.OnZapping((int)card.Type);
-            else
-              g_Player.OnZapping(-1);            // Send Zapping failed for TsReader.
-
-            if (succeeded == TvResult.Succeeded)
-            {
-              if (newCardId != card.Id && Card.Id != card.Id)
-              {
-                // we might have a situation on the server where card has changed in order to complete a 
-                // channel change. - lets check for this.
-                // if this has happened, we need to re-create graph.
-                cardChanged = true;
-                wasPlaying = false;
-                //g_Player.StopAndKeepTimeShifting();
-              }
-              else if (succeeded == TvResult.Succeeded) // no card change occured, so carry on.
-              {
-                cardChanged = false;
-                SeekToEnd(true);
-                g_Player.ContinueGraph();
-              }
-            }
-            else
-            {
-              cardChanged = false;
-            }
-          }
+          Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. CardId:{0}/{1}, RTSP:{2}", Card.Id, newCardId, Card.RTSPUrl);
+          Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. Timeshifting:{0}", Card.TimeShiftFileName);
+          Log.Debug("TVHome.ViewChannelAndCheck(): rebuilding graph (card changed) - timeshifting continueing.");
         }
-        else //was not playing
+        if (_status.IsSet(LiveTvStatus.WasPlaying))
         {
-          succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
+          RenderBlackImage();
+          g_Player.PauseGraph();
         }
 
-        if (succeeded == TvResult.Succeeded)
+        // if card was not changed
+        if (_status.IsNotSet(LiveTvStatus.CardChange))
         {
-          if (Navigator.Channel != null)
-          {
-            if (channel.IdChannel != Navigator.Channel.IdChannel || (Navigator.LastViewedChannel == null))
-            {
-              Navigator.LastViewedChannel = Navigator.Channel;
-            }
-          }
+          g_Player.OnZapping(0x80);           // Setup Zapping for TsReader, requesting new PAT from stream
+        }
+
+        succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
+
+        if (_status.IsSet(LiveTvStatus.WasPlaying))
+        {
+          if (card != null)
+            g_Player.OnZapping((int)card.Type);
           else
-          {
-            Log.Info("Navigator.Channel==null");
-          }
-
-          //timeshifting succeeded					                    
-          Log.Info("succeeded:{0} {1}", succeeded, card);
-
-          Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
-
-          if (!g_Player.Playing || cardChanged)
-          {
-            StartPlay();
-          }
-
-          _playbackStopped = false;
-
-          //GUIWaitCursor.Hide();
-          _doingChannelChange = false;
-          _ServerNotConnectedHandled = false;
-          //GUIWaitCursor.Hide();
-          return true;
+            g_Player.OnZapping(-1);
         }
-        else
+
+
+        if (succeeded != TvResult.Succeeded)
         {
           //timeshifting new channel failed. 
           g_Player.Stop();
 
+          // ensure right channel name, even if not watchable:Navigator.Channel = channel; 
+          ChannelTuneFailedNotifyUser(succeeded, _status.IsSet(LiveTvStatus.WasPlaying), channel);
+
+          _doingChannelChange = true; // keep fullscreen false;
+          return true; // "success"
         }
 
-        // ensure right channel name, even if not watchable:Navigator.Channel = channel; 
-        ChannelTuneFailedNotifyUser(succeeded, wasPlaying, channel);
 
-        _doingChannelChange = true; // keep fullscreen false;
-        return true; // "success"
+        //timeshifting succeeded					                    
+
+        // we might have a situation on the server where card has changed in order to complete a 
+        // channel change. - lets check for this.
+        // if this has happened, we need to re-create graph.
+        if (newCardId != card.Id || Card.Id != card.Id)
+        {
+          _status.Set(LiveTvStatus.CardChange);
+          _status.Reset(LiveTvStatus.WasPlaying);
+        }
+        else
+        {
+          // check if after starttimeshift the active card is same as before (tvserver can do "failover" to another card)
+          _status.Reset(LiveTvStatus.CardChange);
+          _status.Set(LiveTvStatus.SeekToEnd);
+        }
+
+        // Update channel navigator
+        if (Navigator.Channel != null && (channel.IdChannel != Navigator.Channel.IdChannel || (Navigator.LastViewedChannel == null)))
+        {
+          Navigator.LastViewedChannel = Navigator.Channel;
+        }
+        Log.Info("succeeded:{0} {1}", succeeded, card);
+        Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
+
+        // if needed seek to end
+        if (_status.IsSet(LiveTvStatus.SeekToEnd))
+        {
+          SeekToEnd(true);
+        }
+
+        // continue graph
+        g_Player.ContinueGraph();
+
+        if (!g_Player.Playing || _status.IsSet(LiveTvStatus.CardChange))
+        {
+          StartPlay();
+        }
+
+        _playbackStopped = false;
+        _doingChannelChange = false;
+        _ServerNotConnectedHandled = false;
+        return true;
       }
-
       catch (Exception ex)
       {
-        Log.Debug("TvPlugin:ViewChannelandCheck Exception {0}", ex.ToString());
-        //GUIWaitCursor.Hide();
+        Log.Debug("TvPlugin:ViewChannelandCheckV2 Exception {0}", ex.ToString());
         _doingChannelChange = false;
         Card.User.Name = new User().Name;
         Card.StopTimeShifting();
@@ -3425,13 +3280,8 @@ namespace TvPlugin
       finally
       {
         StopRenderBlackImage();
-        if (cardChanged == true)
-        {
-          RegisterCiMenu(TVHome.Card.Id);
-        }
       }
     }
-
 
     public static void ViewChannel(Channel channel)
     {
@@ -3558,34 +3408,21 @@ namespace TvPlugin
         }
       }
 
-      //_newTimeshiftFileName = timeshiftFileName;
-
-      if (!useRTSP)
-      {
-        Log.Info("tvhome:startplay:{0} - using rtsp mode:{1}", timeshiftFileName, useRTSP);
-        g_Player.Play(timeshiftFileName, mediaType);
-        benchClock.Stop();
-        Log.Warn("tvhome:startplay.  Phase 2 - {0} ms - Done starting g_Player.Play()",
-                 benchClock.ElapsedMilliseconds.ToString());
-        benchClock.Reset();
-        //benchClock.Start();
-        //SeekToEnd(false);
-        //Log.Warn("tvhome:startplay.  Phase 3 - {0} ms - Done seeking.", benchClock.ElapsedMilliseconds.ToString());
-      }
-      else //multiseat
+      if (useRTSP)
       {
         timeshiftFileName = Card.RTSPUrl;
-        Log.Info("tvhome:startplay:{0} - using rtsp mode:{1}", timeshiftFileName, useRTSP);
-        g_Player.Play(timeshiftFileName, mediaType);
-        benchClock.Stop();
-        Log.Warn("tvhome:startplay.  Phase 2 - {0} ms - Done starting g_Player.Play()",
-                 benchClock.ElapsedMilliseconds.ToString());
-        benchClock.Reset();
-        //benchClock.Start();
-        //SeekToEnd(true);
-        //Log.Warn("tvhome:startplay.  Phase 3 - {0} ms - Done seeking.", benchClock.ElapsedMilliseconds.ToString());
-        //SeekToEnd(true);
       }
+      Log.Info("tvhome:startplay:{0} - using rtsp mode:{1}", timeshiftFileName, useRTSP);
+      g_Player.Play(timeshiftFileName, mediaType);
+      benchClock.Stop();
+      Log.Warn("tvhome:startplay.  Phase 2 - {0} ms - Done starting g_Player.Play()",
+               benchClock.ElapsedMilliseconds.ToString());
+      benchClock.Reset();
+      //benchClock.Start();
+      //SeekToEnd(true);
+      //Log.Warn("tvhome:startplay.  Phase 3 - {0} ms - Done seeking.", benchClock.ElapsedMilliseconds.ToString());
+      //SeekToEnd(true);
+
       benchClock.Stop();
     }
 
@@ -3596,49 +3433,48 @@ namespace TvPlugin
 
       bool useRtsp = UseRTSP();
 
-
-      Log.Info("tvhome:SeektoEnd({0}, rtsp={1}", zapping, useRtsp);
-
-      //singleseat
-      if (!useRtsp)
+      Log.Info("tvhome:SeektoEnd({0}/{1}),{2},rtsp={3}", position, duration, zapping, useRtsp);
+      if (duration > 0 || position > 0)
       {
-        if (duration > 0 || position > 0)
+        try
         {
-          try
+          //singleseat or  multiseat rtsp streaming....
+          if (!useRtsp || (useRtsp && zapping))
           {
             g_Player.SeekAbsolute(duration);
           }
-          catch (Exception e)
-          {
-            Log.Error("tvhome:SeektoEnd({0}, rtsp={1} exception: {2}", zapping, useRtsp, e.Message);
-            g_Player.Stop();
-          }
         }
-      }
-      else
-      {
-        //multiseat rtsp streaming....
-        if (zapping)
+        catch (Exception e)
         {
-          //System.Threading.Thread.Sleep(100);            
-          Log.Info("tvhome:SeektoEnd({0}/{1})", position, duration);
-          if (duration > 0 || position > 0)
-          {
-            try
-            {
-              g_Player.SeekAbsolute(duration); // + 10);
-            }
-            catch (Exception e)
-            {
-              Log.Error("tvhome:SeektoEnd({0}, rtsp={1} exception: {2}", zapping, useRtsp, e.Message);
-              g_Player.Stop();
-            }
-          }
+          Log.Error("tvhome:SeektoEnd({0}, rtsp={1} exception: {2}", zapping, useRtsp, e.Message);
+          g_Player.Stop();
         }
       }
     }
 
     #region CI Menu
+
+    /// <summary>
+    /// Register the remoting service and attaching ciMenuHandler for server events
+    /// </summary>
+    public static void RegisterCiMenu(int newCardId)
+    {
+      if (ciMenuHandler == null)
+      {
+        Log.Debug("CiMenu: PrepareCiMenu");
+        ciMenuHandler = new CiMenuHandler();
+        // opens remoting and attach local eventhandler to server event, call only once
+        RemoteControl.RegisterCiMenuCallbacks(ciMenuHandler);
+      }
+      // Check if card supports CI menu
+      if (newCardId != -1 && RemoteControl.Instance.CiMenuSupported(newCardId))
+      {
+        // Enable CI menu handling in card
+        RemoteControl.Instance.SetCiMenuHandler(newCardId, null);
+        Log.Debug("TvPlugin: CiMenuHandler attached to new card {0}", newCardId);
+      }
+    }
+
     /// <summary>
     /// Keyboard input for ci menu
     /// </summary>
@@ -3745,1012 +3581,9 @@ namespace TvPlugin
     }
 
     #endregion
-
-  }
-
-  #region ChannelNavigator class
-
-  /// <summary>
-  /// Handles the logic for channel zapping. This is used by the different GUI modules in the TV section.
-  /// </summary>
-  public class ChannelNavigator
-  {
-    #region config xml file
-
-    private const string ConfigFileXml =
-      @"<?xml version=|1.0| encoding=|utf-8|?> 
-<ideaBlade xmlns:xsi=|http://www.w3.org/2001/XMLSchema-instance| xmlns:xsd=|http://www.w3.org/2001/XMLSchema| useDeclarativeTransactions=|false| version=|1.03|> 
-  <useDTC>false</useDTC>
-  <copyLocal>false</copyLocal>
-  <logging>
-    <archiveLogs>false</archiveLogs>
-    <logFile>DebugMediaPortal.GUI.Library.Log.xml</logFile>
-    <usesSeparateAppDomain>false</usesSeparateAppDomain>
-    <port>0</port>
-  </logging>
-  <rdbKey name=|default| databaseProduct=|Unknown|>
-    <connection>[CONNECTION]</connection>
-    <probeAssemblyName>TVDatabase</probeAssemblyName>
-  </rdbKey>
-  <remoting>
-    <remotePersistenceEnabled>false</remotePersistenceEnabled>
-    <remoteBaseURL>http://localhost</remoteBaseURL>
-    <serverPort>9009</serverPort>
-    <serviceName>PersistenceServer</serviceName>
-    <serverDetectTimeoutMilliseconds>-1</serverDetectTimeoutMilliseconds>
-    <proxyPort>0</proxyPort>
-  </remoting>
-  <appUpdater/>
-</ideaBlade>
-";
-
-    #endregion
-
-    #region Private members
-
-    private List<Channel> _channelList = new List<Channel>();
-
-    private List<ChannelGroup> m_groups = new List<ChannelGroup>();
-    // Contains all channel groups (including an "all channels" group)
-
-    private int m_currentgroup = 0;
-    private DateTime m_zaptime;
-    private long m_zapdelay;
-    private Channel m_zapchannel = null;
-    private int m_zapgroup = -1;
-    private Channel _lastViewedChannel = null; // saves the last viewed Channel  // mPod    
-    private Channel m_currentChannel = null;
-    private IList channels = new ArrayList();
-    private bool reentrant = false;
-
-    #endregion
-
-    #region Constructors
-
-    public ChannelNavigator()
-    {
-      // Load all groups
-      //ServiceProvider services = GlobalServiceProvider.Instance;
-      Log.Debug("ChannelNavigator: ctor()");
-      string IpAddress;
-
-      using (Settings xmlreader = new MPSettings())
-      {
-        IpAddress = xmlreader.GetValueAsString("tvservice", "hostname", "");
-        if (string.IsNullOrEmpty(IpAddress) || IpAddress == "localhost")
-        {
-          try
-          {
-            IpAddress = Dns.GetHostName();
-
-            Log.Info("TVHome: No valid hostname specified in mediaportal.xml!");
-            xmlreader.SetValue("tvservice", "hostname", IpAddress);
-            IpAddress = "localhost";
-            Settings.SaveCache();
-          }
-          catch (Exception ex)
-          {
-            Log.Info("TVHome: Error resolving hostname - {0}", ex.Message);
-            return;
-          }
-        }
-      }
-      RemoteControl.HostName = IpAddress;
-      Log.Info("Remote control:master server :{0}", RemoteControl.HostName);
-
-      ReLoad();
-    }
-
-    public void ReLoad()
-    {
-      try
-      {
-        string connectionString, provider;
-        RemoteControl.Instance.GetDatabaseConnectionString(out connectionString, out provider);
-
-        try
-        {
-          XmlDocument doc = new XmlDocument();
-          doc.Load(Config.GetFile(Config.Dir.Config, "gentle.config"));
-          XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
-          XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
-          XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
-          node.InnerText = connectionString;
-          nodeProvider.InnerText = provider;
-          doc.Save(Config.GetFile(Config.Dir.Config, "gentle.config"));
-        }
-        catch (Exception ex)
-        {
-          Log.Error("Unable to create/modify gentle.config {0},{1}", ex.Message, ex.StackTrace);
-        }
-
-        Log.Info("ChannelNavigator::Reload()");
-        ProviderFactory.ResetGentle(true);
-        ProviderFactory.SetDefaultProviderConnectionString(connectionString);
-        Log.Info("get channels from database");
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
-        sb.AddConstraint(Operator.Equals, "isTv", 1);
-        sb.AddOrderByField(true, "sortOrder");
-        SqlStatement stmt = sb.GetStatement(true);
-        channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
-        Log.Info("found:{0} tv channels", channels.Count);
-        TvNotifyManager.OnNotifiesChanged();
-        m_groups.Clear();
-
-        TvBusinessLayer layer = new TvBusinessLayer();
-        RadioChannelGroup allRadioChannelsGroup = layer.GetRadioChannelGroupByName(TvConstants.RadioGroupNames.AllChannels);
-        IList<Channel> radioChannels = layer.GetAllRadioChannels();
-        if (radioChannels != null)
-        {
-          if (radioChannels.Count > allRadioChannelsGroup.ReferringRadioGroupMap().Count)
-          {
-            foreach (Channel radioChannel in radioChannels)
-            {
-              layer.AddChannelToRadioGroup(radioChannel, allRadioChannelsGroup);
-            }
-          }
-        }
-        Log.Info("Done.");
-
-        Log.Info("get all groups from database");
-        sb = new SqlBuilder(StatementType.Select, typeof(ChannelGroup));
-        sb.AddOrderByField(true, "groupName");
-        stmt = sb.GetStatement(true);
-        IList<ChannelGroup> groups = ObjectFactory.GetCollection<ChannelGroup>(stmt.Execute());
-        IList<GroupMap> allgroupMaps = GroupMap.ListAll();
-
-        bool hideAllChannelsGroup = false;
-        using (
-          Settings xmlreader =
-            new MPSettings())
-        {
-          hideAllChannelsGroup = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
-        }
-
-
-        foreach (ChannelGroup group in groups)
-        {
-          if (group.GroupName == TvConstants.TvGroupNames.AllChannels)
-          {
-            foreach (Channel channel in channels)
-            {
-              if (channel.IsTv == false)
-              {
-                continue;
-              }
-              bool groupContainsChannel = false;
-              foreach (GroupMap map in allgroupMaps)
-              {
-                if (map.IdGroup != group.IdGroup)
-                {
-                  continue;
-                }
-                if (map.IdChannel == channel.IdChannel)
-                {
-                  groupContainsChannel = true;
-                  break;
-                }
-              }
-              if (!groupContainsChannel)
-              {
-                layer.AddChannelToGroup(channel, TvConstants.TvGroupNames.AllChannels);
-              }
-            }
-            break;
-          }
-        }
-
-        groups = ChannelGroup.ListAll();
-        foreach (ChannelGroup group in groups)
-        {
-          //group.GroupMaps.ApplySort(new GroupMap.Comparer(), false);
-          if (hideAllChannelsGroup && group.GroupName.Equals(TvConstants.TvGroupNames.AllChannels) && groups.Count > 1)
-          {
-            continue;
-          }
-          m_groups.Add(group);
-        }
-        Log.Info("loaded {0} tv groups", m_groups.Count);
-
-        //TVHome.Connected = true;
-      }
-      catch (Exception ex)
-      {
-        Log.Error("TVHome: Error in Reload");
-        Log.Error(ex);
-        //TVHome.Connected = false;
-      }
-    }
-
-    #endregion
-
-    #region Public properties
-
-    /// <summary>
-    /// Gets the channel that we currently watch.
-    /// Returns empty string if there is no current channel.
-    /// </summary>
-    public string CurrentChannel
-    {
-      get
-      {
-        if (m_currentChannel == null)
-        {
-          return null;
-        }
-        return m_currentChannel.DisplayName;
-      }
-    }
-
-    public Channel Channel
-    {
-      get { return m_currentChannel; }
-    }
-
-    /// <summary>
-    /// Gets and sets the last viewed channel
-    /// Returns empty string if no zap occurred before
-    /// </summary>
-    public Channel LastViewedChannel
-    {
-      get { return _lastViewedChannel; }
-      set { _lastViewedChannel = value; }
-    }
-
-    /// <summary>
-    /// Gets the currently active tv channel group.
-    /// </summary>
-    public ChannelGroup CurrentGroup
-    {
-      get
-      {
-        if (m_groups.Count == 0)
-        {
-          return null;
-        }
-        return (ChannelGroup)m_groups[m_currentgroup];
-      }
-    }
-    /// <summary>
-    /// Gets the index of currently active tv channel group.
-    /// </summary>
-    public int CurrentGroupIndex
-    {
-      get
-      {
-        return m_currentgroup;
-      }
-    }
-    /// <summary>
-    /// Gets the list of tv channel groups.
-    /// </summary>
-    public List<ChannelGroup> Groups
-    {
-      get { return m_groups; }
-    }
-
-    /// <summary>
-    /// Gets the channel that we will zap to. Contains the current channel if not zapping to anything.
-    /// </summary>
-    public Channel ZapChannel
-    {
-      get
-      {
-        if (m_zapchannel == null)
-        {
-          return m_currentChannel;
-        }
-        return m_zapchannel;
-      }
-    }
-
-    /// <summary>
-    /// Gets the configured zap delay (in milliseconds).
-    /// </summary>
-    public long ZapDelay
-    {
-      get { return m_zapdelay; }
-    }
-
-    /// <summary>
-    /// Gets the group that we will zap to. Contains the current group name if not zapping to anything.
-    /// </summary>
-    public string ZapGroupName
-    {
-      get
-      {
-        if (m_zapgroup == -1)
-        {
-          return CurrentGroup.GroupName;
-        }
-        return ((ChannelGroup)m_groups[m_zapgroup]).GroupName;
-      }
-    }
-
-    #endregion
-
-    #region Public methods
-
-    /// <summary>
-    /// Sets last failed channel
-    /// </summary>
-    /// <param name="failedChannel"></param>
-    public void SetFailingChannel(Channel failedChannel)
-    {
-      m_currentChannel = failedChannel;
-    }
-
-    public void ZapNow()
-    {
-      m_zaptime = DateTime.Now.AddSeconds(-1);
-      // MediaPortal.GUI.Library.Log.Info(MediaPortal.GUI.Library.Log.LogType.Error, "zapnow group:{0} current group:{0}", m_zapgroup, m_currentgroup);
-      //if (m_zapchannel == null)
-      //   MediaPortal.GUI.Library.Log.Info(MediaPortal.GUI.Library.Log.LogType.Error, "zapchannel==null");
-      //else
-      //   MediaPortal.GUI.Library.Log.Info(MediaPortal.GUI.Library.Log.LogType.Error, "zapchannel=={0}",m_zapchannel);
-    }
-
-    /// <summary>
-    /// Checks if it is time to zap to a different channel. This is called during Process().
-    /// </summary>
-    public bool CheckChannelChange()
-    {
-      if (reentrant)
-      {
-        return false;
-      }
-      // BAV, 02.03.08: a channel change should not be delayed by rendering.
-      //                by scipping this => 1 min delays in zapping should be avoided 
-      //if (GUIGraphicsContext.InVmr9Render) return false;
-      reentrant = true;
-      UpdateCurrentChannel();
-
-      // Zapping to another group or channel?
-      if (m_zapgroup != -1 || m_zapchannel != null)
-      {
-        // Time to zap?
-        if (DateTime.Now >= m_zaptime)
-        {
-          // Zapping to another group?
-          if (m_zapgroup != -1 && m_zapgroup != m_currentgroup)
-          {
-            // Change current group and zap to the first channel of the group
-            m_currentgroup = m_zapgroup;
-            if (CurrentGroup != null && CurrentGroup.ReferringGroupMap().Count > 0)
-            {
-              GroupMap gm = (GroupMap)CurrentGroup.ReferringGroupMap()[0];
-              Channel chan = (Channel)gm.ReferencedChannel();
-              m_zapchannel = chan;
-            }
-          }
-          m_zapgroup = -1;
-
-          //if (m_zapchannel != m_currentchannel)
-          //  lastViewedChannel = m_currentchannel;
-          // Zap to desired channel
-          if (m_zapchannel != null) // might be NULL after tuning failed
-          {
-            Channel zappingTo = m_zapchannel;
-
-            //remember to apply the new group also.
-            if (m_zapchannel.CurrentGroup != null)
-            {
-              m_currentgroup = GetGroupIndex(m_zapchannel.CurrentGroup.GroupName);
-              Log.Info("Channel change:{0} on group {1}", zappingTo.DisplayName, m_zapchannel.CurrentGroup.GroupName);
-            }
-            else
-            {
-              Log.Info("Channel change:{0}", zappingTo.DisplayName);
-            }
-            m_zapchannel = null;
-
-            TVHome.ViewChannel(zappingTo);
-          }
-          reentrant = false;
-
-          return true;
-        }
-      }
-
-      reentrant = false;
-      return false;
-    }
-
-    /// <summary>
-    /// Changes the current channel group.
-    /// </summary>
-    /// <param name="groupname">The name of the group to change to.</param>
-    public void SetCurrentGroup(string groupname)
-    {
-      m_currentgroup = GetGroupIndex(groupname);
-    }
-
-    /// <summary>
-    /// Changes the current channel group.
-    /// </summary>
-    /// <param name="groupIndex">The id of the group to change to.</param>
-    public void SetCurrentGroup(int groupIndex)
-    {
-      m_currentgroup = groupIndex;
-    }
-
-
-    /// <summary>
-    /// Ensures that the navigator has the correct current channel (retrieved from the Recorder).
-    /// </summary>
-    public void UpdateCurrentChannel()
-    {
-      Channel newChannel = null;
-      //if current card is watching tv then use that channel
-      int id;
-
-
-      if (!TVHome.HandleServerNotConnected())
-      {
-        if (TVHome.Card.IsTimeShifting || TVHome.Card.IsRecording)
-        {
-          id = TVHome.Card.IdChannel;
-          if (id >= 0)
-          {
-            newChannel = Channel.Retrieve(id);
-          }
-        }
-        else
-        {
-          // else if any card is recording
-          // then get & use that channel
-          TvServer server = new TvServer();
-          if (server.IsAnyCardRecording())
-          {
-            for (int i = 0; i < server.Count; ++i)
-            {
-              User user = new User();
-              VirtualCard card = server.CardByIndex(user, i);
-              if (card.IsRecording)
-              {
-                id = card.IdChannel;
-                if (id >= 0)
-                {
-                  newChannel = Channel.Retrieve(id);
-                  break;
-                }
-              }
-            }
-          }
-        }
-        if (newChannel == null)
-        {
-          newChannel = m_currentChannel;
-        }
-        if (m_currentChannel.IdChannel != newChannel.IdChannel && newChannel != null)
-        {
-          m_currentChannel = newChannel;
-          m_currentChannel.CurrentGroup = CurrentGroup;
-        }
-      }
-    }
-
-    /// <summary>
-    /// Changes the current channel after a specified delay.
-    /// </summary>
-    /// <param name="channelName">The channel to switch to.</param>
-    /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
-    public void ZapToChannel(Channel channel, bool useZapDelay)
-    {
-      Log.Debug("ChannelNavigator.ZapToChannel {0} - zapdelay {1}", channel.DisplayName, useZapDelay);
-      TVHome.UserChannelChanged = true;
-      m_zapchannel = channel;
-
-      if (useZapDelay)
-      {
-        m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
-      }
-      else
-      {
-        m_zaptime = DateTime.Now;
-      }
-    }
-
-    private void GetChannels(bool refresh)
-    {
-      if (refresh)
-      {
-        _channelList = new List<Channel>();
-      }
-      if (_channelList == null)
-      {
-        _channelList = new List<Channel>();
-      }
-      if (_channelList.Count == 0)
-      {
-        try
-        {
-          if (TVHome.Navigator.CurrentGroup != null)
-          {
-            foreach (GroupMap chan in TVHome.Navigator.CurrentGroup.ReferringGroupMap())
-            {
-              Channel ch = chan.ReferencedChannel();
-              if (ch.VisibleInGuide && ch.IsTv)
-              {
-                _channelList.Add(ch);
-              }
-            }
-          }
-        }
-        catch
-        {
-        }
-
-        if (_channelList.Count == 0)
-        {
-          Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false,
-                                           DateTime.MinValue, 0, true, "", true, GUILocalizeStrings.Get(911));
-          for (int i = 0; i < 10; ++i)
-          {
-            _channelList.Add(newChannel);
-          }
-        }
-      }
-    }
-
-    /// <summary>
-    /// Changes the current channel (based on channel number) after a specified delay.
-    /// </summary>
-    /// <param name="channelNr">The nr of the channel to change to.</param>
-    /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
-    public void ZapToChannelNumber(int channelNr, bool useZapDelay)
-    {
-      IList<GroupMap> channels = CurrentGroup.ReferringGroupMap();
-      if (channelNr >= 0)
-      {
-        Log.Debug("channels.Count {0}", channels.Count);
-
-        bool found = false;
-        int iCounter = 0;
-        Channel chan;
-        GetChannels(true);
-        while (iCounter < channels.Count && found == false)
-        {
-          chan = (Channel)_channelList[iCounter];
-
-          Log.Debug("chan {0}", chan.DisplayName);
-
-          foreach (TuningDetail detail in chan.ReferringTuningDetail())
-          {
-            Log.Debug("detail nr {0} id{1}", detail.ChannelNumber, detail.IdChannel);
-
-            if (detail.ChannelNumber == channelNr)
-            {
-              Log.Debug("find channel: iCounter {0}, detail.ChannelNumber {1}, detail.name {2}, channels.Count {3}",
-                        iCounter, detail.ChannelNumber, detail.Name, channels.Count);
-              found = true;
-              ZapToChannel(iCounter + 1, useZapDelay);
-            }
-          }
-          iCounter++;
-        }
-      }
-    }
-
-    /// <summary>
-    /// Changes the current channel after a specified delay.
-    /// </summary>
-    /// <param name="channelNr">The nr of the channel to change to.</param>
-    /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
-    public void ZapToChannel(int channelNr, bool useZapDelay)
-    {
-      IList<GroupMap> channels = CurrentGroup.ReferringGroupMap();
-      channelNr--;
-      if (channelNr >= 0 && channelNr < channels.Count)
-      {
-        GroupMap gm = (GroupMap)channels[channelNr];
-        Channel chan = gm.ReferencedChannel();
-        TVHome.UserChannelChanged = true;
-        ZapToChannel(chan, useZapDelay);
-      }
-    }
-
-    /// <summary>
-    /// Changes to the next channel in the current group.
-    /// </summary>
-    /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
-    public void ZapToNextChannel(bool useZapDelay)
-    {
-      Channel currentChan = null;
-      int currindex;
-      if (m_zapchannel == null)
-      {
-        currindex = GetChannelIndex(Channel);
-        currentChan = Channel;
-      }
-      else
-      {
-        currindex = GetChannelIndex(m_zapchannel); // Zap from last zap channel 
-        currentChan = Channel;
-      }
-      GroupMap gm;
-      Channel chan;
-      //check if channel is visible 
-      //if not find next visible 
-      do
-      {
-        // Step to next channel 
-        currindex++;
-        if (currindex >= CurrentGroup.ReferringGroupMap().Count)
-        {
-          currindex = 0;
-        }
-        gm = (GroupMap)CurrentGroup.ReferringGroupMap()[currindex];
-        chan = (Channel)gm.ReferencedChannel();
-      } while (!chan.VisibleInGuide);
-
-      TVHome.UserChannelChanged = true;
-      m_zapchannel = chan;
-      Log.Info("Navigator:ZapNext {0}->{1}", currentChan.DisplayName, m_zapchannel.DisplayName);
-      if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
-      {
-        if (useZapDelay)
-        {
-          m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
-        }
-        else
-        {
-          m_zaptime = DateTime.Now;
-        }
-      }
-      else
-      {
-        m_zaptime = DateTime.Now;
-      }
-    }
-
-    /// <summary>
-    /// Changes to the previous channel in the current group.
-    /// </summary>
-    /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
-    public void ZapToPreviousChannel(bool useZapDelay)
-    {
-      Channel currentChan = null;
-      int currindex;
-      if (m_zapchannel == null)
-      {
-        currentChan = Channel;
-        currindex = GetChannelIndex(Channel);
-      }
-      else
-      {
-        currentChan = m_zapchannel;
-        currindex = GetChannelIndex(m_zapchannel); // Zap from last zap channel 
-      }
-      GroupMap gm;
-      Channel chan;
-      //check if channel is visible 
-      //if not find next visible 
-      do
-      {
-        // Step to prev channel 
-        currindex--;
-        if (currindex < 0)
-        {
-          currindex = CurrentGroup.ReferringGroupMap().Count - 1;
-        }
-        gm = (GroupMap)CurrentGroup.ReferringGroupMap()[currindex];
-        chan = (Channel)gm.ReferencedChannel();
-      } while (!chan.VisibleInGuide);
-
-      TVHome.UserChannelChanged = true;
-      m_zapchannel = chan;
-      Log.Info("Navigator:ZapPrevious {0}->{1}",
-               currentChan.DisplayName, m_zapchannel.DisplayName);
-      if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
-      {
-        if (useZapDelay)
-        {
-          m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
-        }
-        else
-        {
-          m_zaptime = DateTime.Now;
-        }
-      }
-      else
-      {
-        m_zaptime = DateTime.Now;
-      }
-    }
-
-    /// <summary>
-    /// Changes to the next channel group.
-    /// </summary>
-    public void ZapToNextGroup(bool useZapDelay)
-    {
-      if (m_zapgroup == -1)
-      {
-        m_zapgroup = m_currentgroup + 1;
-      }
-      else
-      {
-        m_zapgroup = m_zapgroup + 1; // Zap from last zap group
-      }
-
-      if (m_zapgroup >= m_groups.Count)
-      {
-        m_zapgroup = 0;
-      }
-
-      if (useZapDelay)
-      {
-        m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
-      }
-      else
-      {
-        m_zaptime = DateTime.Now;
-      }
-    }
-
-    /// <summary>
-    /// Changes to the previous channel group.
-    /// </summary>
-    public void ZapToPreviousGroup(bool useZapDelay)
-    {
-      if (m_zapgroup == -1)
-      {
-        m_zapgroup = m_currentgroup - 1;
-      }
-      else
-      {
-        m_zapgroup = m_zapgroup - 1;
-      }
-
-      if (m_zapgroup < 0)
-      {
-        m_zapgroup = m_groups.Count - 1;
-      }
-
-      if (useZapDelay)
-      {
-        m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
-      }
-      else
-      {
-        m_zaptime = DateTime.Now;
-      }
-    }
-
-    /// <summary>
-    /// Zaps to the last viewed Channel (without ZapDelay).  // mPod
-    /// </summary>
-    public void ZapToLastViewedChannel()
-    {
-      if (_lastViewedChannel != null)
-      {
-        TVHome.UserChannelChanged = true;
-        m_zapchannel = _lastViewedChannel;
-        m_zaptime = DateTime.Now;
-      }
-    }
-
-    #endregion
-
-    #region Private methods
-
-    /// <summary>
-    /// Retrieves the index of the current channel.
-    /// </summary>
-    /// <returns></returns>
-    private int GetChannelIndex(Channel ch)
-    {
-      IList<GroupMap> groupMaps = CurrentGroup.ReferringGroupMap();
-      for (int i = 0; i < groupMaps.Count; i++)
-      {
-        GroupMap gm = (GroupMap)groupMaps[i];
-        Channel chan = (Channel)gm.ReferencedChannel();
-        if (chan.IdChannel == ch.IdChannel)
-        {
-          return i;
-        }
-      }
-      return 0; // Not found, return first channel index
-    }
-
-    /// <summary>
-    /// Retrieves the index of the group with the specified name.
-    /// </summary>
-    /// <param name="groupname"></param>
-    /// <returns></returns>
-    private int GetGroupIndex(string groupname)
-    {
-      for (int i = 0; i < m_groups.Count; i++)
-      {
-        ChannelGroup group = (ChannelGroup)m_groups[i];
-        if (group.GroupName == groupname)
-        {
-          return i;
-        }
-      }
-      return -1;
-    }
-
-    public Channel GetChannel(int channelId)
-    {
-      foreach (Channel chan in channels)
-      {
-        if (chan.IdChannel == channelId && chan.VisibleInGuide)
-        {
-          return chan;
-        }
-      }
-      return null;
-    }
-
-    public Channel GetChannel(string channelName)
-    {
-      foreach (Channel chan in channels)
-      {
-        if (chan.DisplayName == channelName && chan.VisibleInGuide)
-        {
-          return chan;
-        }
-      }
-      return null;
-    }
-
-    #endregion
-
-    #region Serialization
-
-    public void LoadSettings(Settings xmlreader)
-    {
-      Log.Info("ChannelNavigator::LoadSettings()");
-      string currentchannelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
-      m_zapdelay = 1000 * xmlreader.GetValueAsInt("movieplayer", "zapdelay", 2);
-      string groupname = xmlreader.GetValueAsString("mytv", "group", TvConstants.TvGroupNames.AllChannels);
-      m_currentgroup = GetGroupIndex(groupname);
-      if (m_currentgroup < 0 || m_currentgroup >= m_groups.Count) // Group no longer exists?
-      {
-        m_currentgroup = 0;
-      }
-
-      m_currentChannel = GetChannel(currentchannelName);
-
-      if (m_currentChannel == null)
-      {
-        if (m_currentgroup < m_groups.Count)
-        {
-          ChannelGroup group = (ChannelGroup)m_groups[m_currentgroup];
-          if (group.ReferringGroupMap().Count > 0)
-          {
-            GroupMap gm = (GroupMap)group.ReferringGroupMap()[0];
-            m_currentChannel = gm.ReferencedChannel();
-          }
-        }
-      }
-
-      //check if the channel does indeed belong to the group read from the XML setup file ?
-
-
-      bool foundMatchingGroupName = false;
-
-      if (m_currentChannel != null)
-      {
-        foreach (GroupMap groupMap in m_currentChannel.ReferringGroupMap())
-        {
-          if (groupMap.ReferencedChannelGroup().GroupName == groupname)
-          {
-            foundMatchingGroupName = true;
-            break;
-          }
-        }
-      }
-
-      //if we still havent found the right group, then iterate through the selected group and find the channelname.      
-      if (!foundMatchingGroupName && m_currentChannel != null && m_groups != null)
-      {
-        foreach (GroupMap groupMap in ((ChannelGroup)m_groups[m_currentgroup]).ReferringGroupMap())
-        {
-          if (groupMap.ReferencedChannel().DisplayName == currentchannelName)
-          {
-            foundMatchingGroupName = true;
-            m_currentChannel = GetChannel(groupMap.ReferencedChannel().IdChannel);
-            break;
-          }
-        }
-      }
-
-
-      // if the groupname does not match any of the groups assigned to the channel, then find the last group avail. (avoiding the all "channels group") for that channel and set is as the new currentgroup
-      if (!foundMatchingGroupName && m_currentChannel != null && m_currentChannel.ReferringGroupMap().Count > 0)
-      {
-        GroupMap groupMap =
-          (GroupMap)m_currentChannel.ReferringGroupMap()[m_currentChannel.ReferringGroupMap().Count - 1];
-        m_currentgroup = GetGroupIndex(groupMap.ReferencedChannelGroup().GroupName);
-        if (m_currentgroup < 0 || m_currentgroup >= m_groups.Count) // Group no longer exists?
-        {
-          m_currentgroup = 0;
-        }
-      }
-
-      if (m_currentChannel != null)
-      {
-        m_currentChannel.CurrentGroup = CurrentGroup;
-      }
-    }
-
-    public void SaveSettings(Settings xmlwriter)
-    {
-      string groupName = "";
-      if (CurrentGroup != null)
-      {
-        groupName = CurrentGroup.GroupName.Trim();
-        try
-        {
-          if (groupName != String.Empty)
-          {
-            if (m_currentgroup > -1)
-            {
-              groupName = ((ChannelGroup)m_groups[m_currentgroup]).GroupName;
-            }
-            else if (m_currentChannel != null)
-            {
-              groupName = m_currentChannel.CurrentGroup.GroupName;
-            }
-
-            if (groupName.Length > 0)
-            {
-              xmlwriter.SetValue("mytv", "group", groupName);
-            }
-          }
-        }
-        catch (Exception)
-        {
-        }
-      }
-
-      if (m_currentChannel != null)
-      {
-        try
-        {
-          if (m_currentChannel.IsTv)
-          {
-            bool foundMatchingGroupName = false;
-
-            foreach (GroupMap groupMap in m_currentChannel.ReferringGroupMap())
-            {
-              if (groupMap.ReferencedChannelGroup().GroupName == groupName)
-              {
-                foundMatchingGroupName = true;
-                break;
-              }
-            }
-            if (foundMatchingGroupName)
-            {
-              xmlwriter.SetValue("mytv", "channel", m_currentChannel.DisplayName);
-            }
-            else
-            //the channel did not belong to the group, then pick the first channel avail in the group and set this as the last channel.
-            {
-              if (m_currentgroup > -1)
-              {
-                ChannelGroup cg = (ChannelGroup)m_groups[m_currentgroup];
-                if (cg.ReferringGroupMap().Count > 0)
-                {
-                  GroupMap gm = (GroupMap)cg.ReferringGroupMap()[0];
-                  xmlwriter.SetValue("mytv", "channel", gm.ReferencedChannel().DisplayName);
-                }
-              }
-            }
-          }
-        }
-        catch (Exception)
-        {
-        }
-      }
-    }
-
-    #endregion
   }
 }
-  #endregion
+
 
 #region CI Menu
 /// <summary>
