@@ -624,7 +624,7 @@
     <String id="732">Etes-vous sûr?</String>
     <String id="733">Vue: Pellicule</String>
     <String id="734">Image:</String>
-    <String id="735">Pivoter</String>
+    <String id="735">Rotation 90°</String>
     <String id="736">Pas de données disponibles pour le GuideTV</String>
     <String id="737">Vue : Carte</String>
     <String id="738">Vue : Température</String>
@@ -671,6 +671,8 @@
     <String id="780">Sélectionner la méthode de programmation</String>
     <String id="781">Enregistrement rapide</String>
     <String id="782">Enregistrement avancé</String>
+    <String id="783">Rotation 180°</String>
+    <String id="784">Rotation 270°</String>
     <String id="789">Maintenant : </String>
     <String id="790">Suivant : </String>
     <String id="798">bas</String>
@@ -985,6 +987,9 @@
     <String id="1518">Impossible de créer un graphe</String>
     <String id="1519">Pas d'encodeur logiciel supporté d'installé</String>
     <String id="1520">Pas assez d'espace disque disponible</String>
+    <String id="1600">Voulez-vous arrêter ?</String>
+    <String id="1601">Voulez-vous mettre en veille ?</String>
+    <String id="1602">Voulez-vous mettre en veille prolongée ?</String>
     <String id="1950" prefix="Mon ">Etat</String>
     <String id="1951">Disque dur</String>
     <String id="1952">Ventilateur</String>
@@ -1283,6 +1288,7 @@
     <String id="4554">Consulter les infos du CD</String>
     <String id="4555">Playlist actuelle</String>
     <String id="4557">Ajouter tout à playlist</String>
+    <String id="4558">Ajouté récemment</String>
     <String id="5900" prefix="Mes ">Bandes Annonces</String>
     <String id="5901">Voir les bandes annonces</String>
     <String id="5902">Quelles bandes annonces ?</String>
@@ -1351,6 +1357,11 @@
     <String id="6039">Codec audio LATM AAC</String>
     <String id="6040">Hier</String>
     <String id="6041">2 jours avant</String>
+    <String id="6050">Semaine en cours</String>
+    <String id="6060">Mois en cours</String>
+    <String id="6070">Année en cours</String>
+    <String id="6080">L'année dernière</String>
+    <String id="6090">Plus ancien</String>
     <String id="8000" prefix="Mes ">Messages</String>
     <String id="8001">Vérifier boîte aux lettres</String>
     <String id="8002">Vérification auto. inactive</String>
@@ -1654,7 +1665,6 @@
     <String id="100004">Réglages</String>
     <String id="100005" prefix="Ma ">Musique</String>
     <String id="100006" prefix="Mes ">Vidéos</String>
-    <String id="100007">Informations système</String>
     <String id="100008">Réglages-&gt;Général</String>
     <String id="100009">Réglages-&gt;Ecran</String>
     <String id="100010">Réglages-&gt;Ecran-&gt;Calibration IU</String>
@@ -1677,8 +1687,6 @@
     <String id="100029">Réglages-&gt;Général-&gt;LCD</String>
     <String id="100030" prefix="Ma ">Radio</String>
     <String id="100031">Réglages-&gt;Ecran-&gt;Vitesse défilement</String>
-    <String id="100032">MSN Messenger</String>
-    <String id="100033">Chat MSN Messenger</String>
     <String id="100034" prefix="Mes ">Plugins</String>
     <String id="100035">Basic home</String>
     <String id="100100">Boîte Oui/Non</String>
@@ -1748,7 +1756,6 @@
     <String id="100747">Recherche TV</String>
     <String id="100748">Infos du programme</String>
     <String id="100749">TV/Pas de signal</String>
-    <String id="100750">Recettes</String>
     <String id="100755">État</String>
     <String id="100756">Détails sur l'état</String>
     <String id="100757">Préférences de statut</String>
@@ -1757,7 +1764,6 @@
     <String id="100760">Graveur</String>
     <String id="100761">Guide télé</String>
     <String id="100762">Guide radio</String>
-    <String id="100770">Explorateur</String>
     <String id="100800" prefix="Mes ">Extensions</String>
     <String id="108888">Menu Musique</String>	
     <String id="101000">Clavier</String>
@@ -1795,10 +1801,6 @@
     <String id="103011" prefix="Mes ">TV/Réglages Crop</String>
     <String id="103012">Détails des réglages TV</String>
     <String id="104711" prefix="Mon ">Wikipedia</String>
-    <String id="105000">Alarme</String>
-    <String id="105001">Alarme - détails de l'alarme</String>
-    <String id="105002">Alarme - durée avant arrêt</String>
-    <String id="105900" prefix="Mes ">Bandes Annonces</String>
     <String id="106666">Attente mise en veille</String>
     <String id="107700" prefix="Mon ">TV/Télétexte</String>
     <String id="107701" prefix="Mon ">TV/Télétexte</String>
@@ -1812,9 +1814,6 @@
     <String id="109004">Mini écran - Configuration - Egaliseur</String>
     <String id="109005">Mini écran - Configuration - Pavé numérique</String>
     <String id="109006">Mini écran - Configuration - Télécommande</String>
-    <String id="109811" prefix="Mes ">Series TV</String>
-    <String id="190478" prefix="Mes ">Lyriques</String>
-    <String id="196742">Images Animées</String>
     <String id="200000">Sélectionnez le logiciel de récupération des programmes TV. Note : Si votre pays n'est</String>
     <String id="200001">pas dans la liste, il vous faudra remplir manuellement le fichier tvguide.xml.</String>
     <String id="200002">Vous pouvez maintenant relier vos programmes TV à vos chaînes TV.</String>
