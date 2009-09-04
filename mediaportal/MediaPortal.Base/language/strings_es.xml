@@ -671,6 +671,8 @@
     <String id="780">Seleccionar el método de programación</String>
     <String id="781">Grabacion básica</String>
     <String id="782">Grabación avanzada</String>
+    <String id="783">Rotar 180°</String>
+    <String id="784">Rotar 270°</String>
     <String id="789">Ahora: </String>
     <String id="790">A continuación: </String>
     <String id="798">bajo</String>
@@ -901,7 +903,7 @@
     <String id="1061">Extraíble</String>
     <String id="1062">Objeto</String>
     <String id="1064">Marcadores</String>
-    <String id="1065">Saltar a</String>
+    <String id="1065">Ir a</String>
     <String id="1066">MP4</String>
     <String id="1067">Muy Alto</String>
     <String id="1068">Alta definición</String>
@@ -984,6 +986,10 @@
     <String id="1517">Timeshift detenido por\rotro usuario</String>
     <String id="1518">No es posible crear gráfica</String>
     <String id="1519">No hay instalado software de codificación soportado</String>
+    <String id="1520">No hay suficiente espacio libre en disco</String>
+    <String id="1600">¿Quiere apagarlo?</String>
+    <String id="1601">¿Quiere suspenderlo?</String>
+    <String id="1602">¿Quiere hibernarlo?</String>
     <String id="1950" prefix="Mi ">Estado</String>
     <String id="1951">Disco duro</String>
     <String id="1952">Ventilador</String>
@@ -1282,6 +1288,7 @@
     <String id="4554">Buscar info CD</String>
     <String id="4555">Lista de reproducción actual</String>
     <String id="4557">Añadir todo a la lista de reproducción</String>
+    <String id="4558">Añadido recientemente</String>
     <String id="5900" prefix="Mis ">Trailers</String>
     <String id="5901">Ver películas</String>
     <String id="5902">¿Qué películas mostrar?</String>
@@ -1350,6 +1357,11 @@
     <String id="6039">Codec de Audio LATM AAC</String>
     <String id="6040">Ayer</String>
     <String id="6041">Hace dos días</String>
+    <String id="6050">Esta semana</String>
+    <String id="6060">Este mes</String>
+    <String id="6070">Este año</String>
+    <String id="6080">El año pasado</String>
+    <String id="6090">Más antiguo</String>
     <String id="8000" prefix="Mi ">Correo</String>
     <String id="8001">Comprobar buzón de entrada</String>
     <String id="8002">Autocomprobar desactivado</String>
@@ -1652,7 +1664,6 @@
     <String id="100004">Configuración</String>
     <String id="100005" prefix="Mi ">Música</String>
     <String id="100006" prefix="Mis ">Vídeos</String>
-    <String id="100007">Información del Sistema</String>
     <String id="100008">Configuración-&gt;General</String>
     <String id="100009">Configuración-&gt;Pantalla</String>
     <String id="100010">Configuración-&gt;Pantalla-&gt;Calibración IU</String>
@@ -1675,8 +1686,6 @@
     <String id="100029">Configuración-&gt;General-&gt;LCD</String>
     <String id="100030" prefix="Mi ">Radio</String>
     <String id="100031">Configuración-&gt;Pantalla-&gt;Velocidad de desplazamiento</String>
-    <String id="100032">MSN Messenger</String>
-    <String id="100033">Chat del MSN Messenger</String>
     <String id="100034" prefix="Mis ">Plugins</String>
     <String id="100035">Pantalla inicial</String>
     <String id="100100">Diálogo Sí/No</String>
@@ -1746,7 +1755,6 @@
     <String id="100747">Búsqueda de TV</String>
     <String id="100748">Información del programa</String>
     <String id="100749">TV/Sin señal</String>
-    <String id="100750">Recetas</String>
     <String id="100755">Estado</String>
     <String id="100756">Detalles de estado</String>
     <String id="100757">Preferencias de estado</String>
@@ -1755,7 +1763,6 @@
     <String id="100760">Grabadora</String>
     <String id="100761">Guía de TV</String>
     <String id="100762">Guía de Radio</String>
-    <String id="100770">Explorador</String>
     <String id="100800" prefix="Mis">Extensiones</String>
     <String id="101000">teclado</String>
     <String id="101002">Teclado Virtual Estandard</String>
@@ -1792,10 +1799,6 @@
     <String id="103011" prefix="Mi ">TV/Configuración de recorte</String>
     <String id="103012">Detalles de sintonización de TV</String>
     <String id="104711" prefix="Mi ">Wikipedia</String>
-    <String id="105000">Alarma</String>
-    <String id="105001">Alarma - Detalles de Alarma</String>
-    <String id="105002">Alarma - Sleeptime</String>
-    <String id="105900" prefix="Mis">Trailers</String>
     <String id="106666">Espera de la programación de apagado</String>
     <String id="107700" prefix="Mi ">TV/Teletexto</String>
     <String id="107701" prefix="Mi ">TV/Teletexto</String>
@@ -1809,9 +1812,6 @@
     <String id="109004">MiniDisplay - Configuración - Ecualizador</String>
     <String id="109005">MiniDisplay - Configuración - Teclado</String>
     <String id="109006">MiniDisplay - Configuración - Control remoto</String>
-    <String id="109811" prefix="Mis">Mis Series de TV</String>
-    <String id="190478" prefix="Mis">Letras</String>
-    <String id="196742">MovingPictures</String>
     <String id="200000">Seleccione su EPG. Tenga en cuenta que si su país</String>
     <String id="200001">no está en la lista, necesitará hacerlo manualmente</String>
     <String id="200002">Ahora puede ordenar los canales de la Guía Electrónica</String>
