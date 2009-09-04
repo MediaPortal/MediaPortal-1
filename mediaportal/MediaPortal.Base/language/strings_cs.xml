@@ -270,8 +270,8 @@
     <String id="343">Nastavit framerate</String>
     <String id="344">Herci</String>
     <String id="345">Rok</String>
-    <String id="346">Uložit</String>
-    <String id="347">*Unstack</String>
+    <String id="346">Spojovat videa</String>
+    <String id="347">Nespojovat videa</String>
     <String id="349">Zobrazit pouze Default.xbe</String>
     <String id="350">Programy</String>
     <String id="351">Vypnout</String>
@@ -419,7 +419,7 @@
     <String id="500">Menu soubor</String>
     <String id="501">Vybrat jako cíl</String>
     <String id="503">Vymazat adresář</String>
-    <String id="502">Nelze dokončít úlohu</String>
+    <String id="502">Nelze dokončit úlohu</String>
     <String id="504">Otevřít cílovou složku</String>
     <String id="505">Počítám</String>
     <String id="506">Jste si jistí?</String>
@@ -658,6 +658,9 @@
     <String id="810">Karta</String>
     <String id="820">Smazat neshlédnutý záznam?</String>
     <String id="830">Odstranit status "shlédnuto"</String>
+    <String id="831">Odebrat vyměnitelný disk</String>
+    <String id="832">Nelze odebrat vyměnitelný disk: </String>
+    <String id="833">Nyní můžete disk bezpečně odebrat</String>
     <String id="850">Budík</String>
     <String id="851">Seznam</String>
     <String id="852">Budit v:</String>
@@ -819,6 +822,7 @@
     <String id="1050">So-Ne</String>
     <String id="1051">Nahrávat So-Ne</String>
     <String id="1052">skladeb</String>
+    <String id="1061">Vyměnitelný disk</String>
     <String id="1062">položka</String>
     <String id="1064">Záložky</String>
     <String id="1065">Skočit na</String>
@@ -1150,7 +1154,7 @@
     <String id="4521">Zobrazit informace o albu/umělci</String>
     <String id="4522">Stahuji: {0}...</String>
     <String id="4540">Právě hraje</String>
-    <String id="4541">Příští skladba:</String>
+    <String id="4541">Následující skladba:</String>
     <String id="4542">Nebyl načten žádný playlist</String>
     <String id="4543">Informace o skladbě nejsou dostupné</String>
     <String id="4550">Cue</String>
