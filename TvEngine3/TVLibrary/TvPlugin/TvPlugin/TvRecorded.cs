@@ -862,7 +862,8 @@ namespace TvPlugin
                         merge = GetSpokenViewDate(rec.StartTime).Equals(GetSpokenViewDate(listRec.StartTime));
                         break;
                       case DBView.Recordings:
-                        merge = TVUtil.GetDisplayTitle(rec).Equals(listRec.Title, StringComparison.InvariantCultureIgnoreCase);
+                        merge = rec.Title.Equals(listRec.Title, StringComparison.InvariantCultureIgnoreCase);
+                        //merge = TVUtil.GetDisplayTitle(rec).Equals(listRec.Title, StringComparison.InvariantCultureIgnoreCase);
                         break;
                       case DBView.Channel:
                         merge = rec.IdChannel == listRec.IdChannel;
@@ -945,7 +946,8 @@ namespace TvPlugin
                 addToList = GetSpokenViewDate(rec.StartTime).Equals(_currentLabel);
                 break;
               case DBView.Recordings:
-                addToList = TVUtil.GetDisplayTitle(rec).Equals(_currentLabel, StringComparison.InvariantCultureIgnoreCase);
+                addToList = rec.Title.Equals(_currentLabel, StringComparison.InvariantCultureIgnoreCase);
+                //addToList = TVUtil.GetDisplayTitle(rec).Equals(_currentLabel, StringComparison.InvariantCultureIgnoreCase);
                 break;
               case DBView.Channel:
                 addToList = rec.ReferencedChannel().DisplayName.Equals(_currentLabel, StringComparison.InvariantCultureIgnoreCase);
@@ -1295,6 +1297,11 @@ namespace TvPlugin
         else
         {
           _currentLabel = pItem.Label;
+          Recording listRec = pItem.TVTag as Recording;
+          if (listRec != null)
+          {
+            _currentLabel = listRec.Title;
+          }
           _rootItem = iItem;
         }
         LoadDirectory();
