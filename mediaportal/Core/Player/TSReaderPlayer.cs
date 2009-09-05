@@ -361,7 +361,6 @@ namespace MediaPortal.Player
       //Log.Info("TSReaderPlayer: build graph");
       try
       {
-        Cleanup(); //before adding vmr9 - make sure that cleanup is done, otherwise MP could hang in (_vmr9.AddVMR9)
         _graphBuilder = (IGraphBuilder)new FilterGraph();
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
 
@@ -718,7 +717,7 @@ namespace MediaPortal.Player
     private void Cleanup()
     {
       int hr;
-      Log.Info("TSReaderPlayer:cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
+      Log.Info("TSReaderPlayer: cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
       try
       {
         if (_graphBuilder != null)
@@ -731,7 +730,7 @@ namespace MediaPortal.Player
         }
         else
         {
-          Log.Info("TSReaderPlayer:grapbuilder=null");
+          Log.Info("TSReaderPlayer: grapbuilder=null");
         }
         if (_vmr9 != null)
         {
@@ -869,6 +868,7 @@ namespace MediaPortal.Player
         _rotEntry = null;
         if (_graphBuilder != null)
         {
+          DirectShowUtil.RemoveFilters(_graphBuilder);
           while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0)
           {
             ;
@@ -877,7 +877,6 @@ namespace MediaPortal.Player
         }
         GUIGraphicsContext.form.Invalidate(true);
         _state = PlayState.Init;
-        GC.Collect();
       }
       catch (Exception ex)
       {

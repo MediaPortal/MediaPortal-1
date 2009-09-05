@@ -1442,9 +1442,7 @@ namespace MediaPortal.Player
         {
           _vmr7.RemoveVMR7();
         }
-        _vmr7 = null;
-
-        DirectShowUtil.RemoveFilters(_graphBuilder);
+        _vmr7 = null;        
 
         if (_rotEntry != null)
         {
@@ -1454,18 +1452,16 @@ namespace MediaPortal.Player
 
         if (_graphBuilder != null)
         {
+          DirectShowUtil.RemoveFilters(_graphBuilder);
           while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0)
           {
             ;
           }
+           _graphBuilder = null;
         }
-        _graphBuilder = null;
 
         _state = PlayState.Init;
         GUIGraphicsContext.form.Invalidate(true);
-        GC.Collect();
-        GC.Collect();
-        GC.Collect();
       }
       catch (Exception ex)
       {

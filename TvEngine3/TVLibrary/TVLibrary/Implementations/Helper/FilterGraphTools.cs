@@ -750,17 +750,17 @@ namespace TvLibrary.Implementations.DVB
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static void RemoveAllFilters(IGraphBuilder graphBuilder)
     {
-      IEnumFilters enumFilters;
-      List<IBaseFilter> filtersArray = new List<IBaseFilter>();
-
       if (graphBuilder == null)
         throw new ArgumentNullException("graphBuilder");
 
-      int hr = graphBuilder.EnumFilters(out enumFilters);
-      DsError.ThrowExceptionForHR(hr);
-
+      IEnumFilters enumFilters = null;
+      System.Collections.ArrayList filtersArray = new System.Collections.ArrayList();
+      
       try
       {
+        int hr = graphBuilder.EnumFilters(out enumFilters);
+        DsError.ThrowExceptionForHR(hr);
+
         IBaseFilter[] filters = new IBaseFilter[1];
         int fetched;
 
@@ -768,6 +768,19 @@ namespace TvLibrary.Implementations.DVB
         {
           filtersArray.Add(filters[0]);
         }
+        foreach (IBaseFilter filter in filtersArray)
+        {
+          FilterInfo info;
+          filter.QueryFilterInfo(out info);
+          Log.Log.Write("Remove filter from graph: {0}", info.achName);
+          graphBuilder.RemoveFilter(filter);
+          while(Marshal.ReleaseComObject(filter) > 0) ;
+        }
+      }
+      catch (Exception)
+      {
+        Log.Log.Write("Remove filter error!");
+        return;
       }
       finally
       {
@@ -775,13 +788,7 @@ namespace TvLibrary.Implementations.DVB
         {
           Marshal.ReleaseComObject(enumFilters);
         }
-      }
-
-      foreach (IBaseFilter filter in filtersArray)
-      {
-        graphBuilder.RemoveFilter(filter);
-        Marshal.ReleaseComObject(filter);
-      }
+      }      
     }
 
     /// <summary>

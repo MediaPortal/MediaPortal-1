@@ -596,6 +596,8 @@ namespace TvLibrary.Implementations.DVB
         // *** this should be removed when solution for graph start problem exists
           if (System.IO.File.Exists(@"c:\resetgraph.txt"))
             Decompose();
+          else
+            _graphState = GraphState.Created;
         // ***
       }
       else
@@ -1431,8 +1433,8 @@ namespace TvLibrary.Implementations.DVB
         _conditionalAccess = null;
       }
 
-      Log.Log.WriteFile("  remove all filters");
-      FilterGraphTools.RemoveAllFilters(_graphBuilder);
+      //Log.Log.WriteFile("  remove all filters");
+      //FilterGraphTools.RemoveAllFilters(_graphBuilder);
       Log.Log.WriteFile("  free...");
       _interfaceChannelScan = null;
       _interfaceEpgGrabber = null;
@@ -1517,6 +1519,7 @@ namespace TvLibrary.Implementations.DVB
       }
       if (_graphBuilder != null)
       {
+        FilterGraphTools.RemoveAllFilters(_graphBuilder);
         Release.ComObject("graph builder", _graphBuilder);
         _graphBuilder = null;
       }

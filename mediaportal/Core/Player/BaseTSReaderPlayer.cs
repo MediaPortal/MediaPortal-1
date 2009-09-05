@@ -430,10 +430,7 @@ namespace MediaPortal.Player
       //  interFaceFile.Load(strFile, null);
       //}
       //else
-      Log.Info("TSReaderPlayer:play {0}", strFile);
-      GC.Collect();
-      CloseInterfaces();
-      GC.Collect();
+      Log.Info("TSReaderPlayer:play {0}", strFile);      
       _isStarted = false;
       if (!GetInterfaces(strFile))
       {
@@ -1795,7 +1792,7 @@ namespace MediaPortal.Player
           _vmr7.RemoveVMR7();
         }
         _vmr7 = null;
-        DirectShowUtil.RemoveFilters(_graphBuilder);
+        
         if (_rotEntry != null)
         {
           _rotEntry.Dispose();
@@ -1803,15 +1800,16 @@ namespace MediaPortal.Player
         _rotEntry = null;
         if (_graphBuilder != null)
         {
+          DirectShowUtil.RemoveFilters(_graphBuilder);
           while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0)
           {
             ;
           }
+          _graphBuilder = null;
         }
-        _graphBuilder = null;
+        
         _state = PlayState.Init;
         GUIGraphicsContext.form.Invalidate(true);
-        GC.Collect();
       }
       catch (Exception ex)
       {
