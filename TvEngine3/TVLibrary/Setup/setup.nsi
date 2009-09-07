@@ -560,8 +560,9 @@ ${MementoSectionEnd}
   ${LOG_TEXT} "INFO" "remove files..."
   ; Remove TuningParameters
   RMDir /r "${COMMON_APPDATA}\TuningParameters"
-  ; Remove WebEPG Grabbers
-  RMDir /r "${COMMON_APPDATA}\WebEPG"
+  ; Remove WebEPG subdirs (grabbers & channels)
+  RMDir /r "${COMMON_APPDATA}\WebEPG\channels"
+  RMDir /r "${COMMON_APPDATA}\WebEPG\grabbers"
 
   ; Remove Plugins
   Delete "$INSTDIR\Plugins\ComSkipLauncher.dll"
