@@ -25,6 +25,7 @@
 
 using System;
 using MediaPortal.WebEPG.Parser;
+using MediaPortal.Utils.Time;
 
 namespace MediaPortal.WebEPG
 {
@@ -34,6 +35,7 @@ namespace MediaPortal.WebEPG
     void Close();
     void WriteChannel(string id, string name);
     bool StartChannelPrograms(string id, string name);
+    void SetTimeWindow(TimeRange window);
     void WriteProgram(ProgramData programData, bool merged);
     void EndChannelPrograms(string id, string name);
   }

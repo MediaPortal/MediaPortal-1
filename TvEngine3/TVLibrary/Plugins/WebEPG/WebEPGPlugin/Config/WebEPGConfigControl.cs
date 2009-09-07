@@ -450,6 +450,7 @@ namespace SetupTv.Sections
       {
         _configFile = new WebepgConfigFile();
         _configFile.Channels = new List<ChannelMap>();
+        _configFile.RadioChannels = new List<ChannelMap>();
         _configFile.Info = new WebepgInfo();
         _configFile.Info.GrabDays = 2;
       }
@@ -745,19 +746,21 @@ namespace SetupTv.Sections
       if (cbCountry.SelectedItem != null)
       {
         Cursor.Current = Cursors.WaitCursor;
-        tabMain.SelectedIndex = 2;
+        tabMain.SelectedIndex = 1;
         if (TvMappings.ChannelMapping.Count == 0)
         {
           TvMappings.DoImportChannels();
         }
         AutoMapChannels(TvMappings.ChannelMapping.Values);
+        TvMappings.OnChannelMappingChanged();
 
-        tabMain.SelectedIndex = 3;
+        tabMain.SelectedIndex = 2;
         if (RadioMappings.ChannelMapping.Count == 0)
         {
           RadioMappings.DoImportChannels();
         }
-        AutoMapChannels(TvMappings.ChannelMapping.Values);
+        AutoMapChannels(RadioMappings.ChannelMapping.Values);
+        RadioMappings.OnChannelMappingChanged();
       }
       return;
     }

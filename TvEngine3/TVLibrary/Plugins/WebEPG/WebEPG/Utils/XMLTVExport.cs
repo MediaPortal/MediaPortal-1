@@ -30,6 +30,7 @@ using System;
 using TvDatabase;
 using MediaPortal.WebEPG.Parser;
 using Gentle.Framework;
+using MediaPortal.Utils.Time;
 
 namespace MediaPortal.WebEPG
 {
@@ -109,6 +110,10 @@ namespace MediaPortal.WebEPG
     {
       _currentChannelName = name;
       return true;
+    }
+
+    void IEpgDataSink.SetTimeWindow(TimeRange window)
+    {
     }
 
     void IEpgDataSink.WriteProgram(ProgramData programData, bool merged)

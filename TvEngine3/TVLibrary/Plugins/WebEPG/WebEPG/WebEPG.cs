@@ -304,13 +304,13 @@ namespace MediaPortal.EPG
               _status.Status = string.Format("Writing channel {0}", grab.name);
               if (ShowProgress != null) ShowProgress(_status);
 
-              if (_epgDataSink.StartChannelPrograms(channelid, grab.name))
+              if (grab.merged)
               {
-                if (grab.merged)
+                Log.Info("WebEPG: Writing Merged Channel Part: {0}", grab.name);
+                Log.Info("        [{0}]", grab.linkTime);
+                if (_epgDataSink.StartChannelPrograms("[Merged]", grab.name))
                 {
-                  Log.Info("WebEPG: Writing Merged Channel Part: {0}", grab.name);
-                  Log.Info("        [{0}]", grab.linkTime);
-
+                  _epgDataSink.SetTimeWindow(grab.linkTime);
                   for (int p = 0; p < programs.Count; p++)
                   {
                     if (grab.linkTime.IsInRange(programs[p].StartTime.ToLocalTime()))
@@ -320,21 +320,24 @@ namespace MediaPortal.EPG
                       _status.Programs++;
                     }
                   }
+                  _epgDataSink.EndChannelPrograms("[Merged]", grab.name);
                 }
-                else
+              }
+              else
+              {
+                Log.Info("WebEPG: Writing Channel: {0}", grab.name);
+                if (_epgDataSink.StartChannelPrograms(channelid, grab.name))
                 {
-                  Log.Info("WebEPG: Writing Channel: {0}", grab.name);
-
                   for (int p = 0; p < programs.Count; p++)
                   {
                     //xmltv.WriteProgram(programs[p], grab.name, false);
                     _epgDataSink.WriteProgram(programs[p], false);
                     _status.Programs++;
                   }
+                  _epgDataSink.EndChannelPrograms(channelid, grab.name);
                 }
               }
-
-              _epgDataSink.EndChannelPrograms(channelid, grab.name);
+              
               _status.Channels++;
               if (ShowProgress != null) ShowProgress(_status);
             }

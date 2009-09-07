@@ -30,6 +30,7 @@ using MediaPortal.WebEPG.Parser;
 using TvDatabase;
 using System.Threading;
 using TvLibrary.Log;
+using MediaPortal.Utils.Time;
 
 namespace MediaPortal.WebEPG
 {
@@ -42,6 +43,7 @@ namespace MediaPortal.WebEPG
     Dictionary<string, List<Channel>> _channels;
     List<Channel> _currentChannels;
     ProgramList _channelPrograms;
+    TimeRange _timeWindow;
 
     TvBusinessLayer layer = new TvBusinessLayer();
 
@@ -66,6 +68,33 @@ namespace MediaPortal.WebEPG
     {
       get { return _channelPrograms; }
       set { _channelPrograms = value; }
+    }
+
+    #endregion
+
+    #region Private members
+
+    private void ClipProgramsToWindow()
+    {
+      if (_timeWindow == null)
+        return;
+      _channelPrograms.SortIfNeeded();
+      for (int i = 0; i < _channelPrograms.Count; ++i)
+      {
+        Program prog = _channelPrograms[i];
+        if (i + 1 < _channelPrograms.Count)
+        {
+          DateTime windowEnd = new DateTime(prog.StartTime.Year, prog.StartTime.Month, prog.StartTime.Day, _timeWindow.End.Hour, _timeWindow.End.Minute, 0);
+          if (windowEnd < prog.StartTime)
+          {
+            windowEnd.AddDays(1);
+          }
+          if (prog.EndTime > windowEnd)
+          {
+            prog.EndTime = windowEnd;
+          }
+        }
+      }
     }
 
     #endregion
@@ -108,6 +137,8 @@ namespace MediaPortal.WebEPG
     {
       string channelKey = name + "-" + id;
 
+      _timeWindow = null;
+
       if (_channels.TryGetValue(channelKey, out _currentChannels))
       {
         _channelPrograms = new ProgramList();
@@ -120,6 +151,11 @@ namespace MediaPortal.WebEPG
         Log.Info("WebEPG: Unknown channel (display name = {0}, channel id = {1}) - skipping...", name, id);
         return false;
       }
+    }
+
+    void IEpgDataSink.SetTimeWindow(TimeRange window)
+    {
+      _timeWindow = window;
     }
 
     void IEpgDataSink.WriteProgram(ProgramData programData, bool merged)
@@ -144,6 +180,7 @@ namespace MediaPortal.WebEPG
 
       // Fix end times
       _channelPrograms.FixEndTimes();
+      ClipProgramsToWindow();
 
       // Remove overlapping programs
       _channelPrograms.RemoveOverlappingPrograms();

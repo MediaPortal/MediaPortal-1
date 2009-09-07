@@ -310,19 +310,21 @@ namespace TvDatabase
         {
           //correct the times of the current program using the times of the next one
           Program progNext = this[i + 1];
-          if (prog.StartTime >= prog.EndTime)
+          if (prog.IdChannel == progNext.IdChannel)
           {
-            prog.EndTime = progNext.StartTime;
-          }
-          if (prog.EndTime > progNext.StartTime)
-          {
-            //if the endTime of this program is later that the start of the next program 
-            //it probably needs to be corrected (only needed when the grabber )
-            prog.EndTime = progNext.StartTime;
+            if (prog.StartTime >= prog.EndTime)
+            {
+              prog.EndTime = progNext.StartTime;
+            }
+            if (prog.EndTime > progNext.StartTime)
+            {
+              //if the endTime of this program is later that the start of the next program 
+              //it probably needs to be corrected (only needed when the grabber )
+              prog.EndTime = progNext.StartTime;
+            }
           }
         }
       }
-
     }
 
     #endregion
