@@ -67,7 +67,7 @@ namespace TsPacketChecker
         int es_descriptors_length = ((section[ndx++] & 0x0f) << 8) + section[ndx++];
         if (addToNode)
         {
-          TreeNode node = baseNode.Nodes.Add("pid: 0x" + pid.ToString("x") + " " + StringUtils.StreamTypeToStr(stream_type));
+          TreeNode node = baseNode.Nodes.Add("pid: 0x" + pid.ToString("x") + " type: 0x" + stream_type.ToString("x")+" " + StringUtils.StreamTypeToStr(stream_type));
           if (es_descriptors_length > 0)
           {
             int off = 0;
@@ -77,6 +77,9 @@ namespace TsPacketChecker
               int descriptor_len = section[ndx + off + 1];
               switch (descriptor_tag)
               {
+                case 0x5:
+                  node.Nodes.Add("0x" + descriptor_tag.ToString("x") + " - Registration descriptor "+descriptor_len.ToString());
+                  break;
                 case 0x9: // CA Descriptor
                   int ca_system_id = (section[ndx+off+ 2] << 8) + section[ndx+off+3];
                   int ca_pid = ((section[ndx+off+4] & 0x1f) << 8) + section[ndx+off+5];
@@ -97,7 +100,16 @@ namespace TsPacketChecker
                 case 0x5F: // private data
                   node.Text = "pid: 0x" + pid.ToString("x") + " [Private Data] " + StringUtils.StreamTypeToStr(stream_type);
                   break;
-                  default:
+                case 0xA1:
+                  node.Nodes.Add("0x" + descriptor_tag.ToString("x") + " - ATSC: service location");
+                  break;
+                case 0xA2:
+                  node.Nodes.Add("0x" + descriptor_tag.ToString("x")+" - ATSC: time shifted service");
+                  break;
+                case 0xA3:
+                  node.Nodes.Add("0x" + descriptor_tag.ToString("x") + " - ATSC: component name");
+                  break;
+                default:
                   node.Nodes.Add("0x" + descriptor_tag.ToString("x"));
                   break;
               }

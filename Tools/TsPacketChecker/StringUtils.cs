@@ -321,6 +321,10 @@ namespace TsPacketChecker
           return "Auxiliary video data stream as defined in ISO/IEC 23002-3";
         case 0x7F:
           return "IPMP stream";
+        case 0x80:
+          return "[DC-II video]";
+        case 0x81:
+          return "[AC3-Audio]";
       }
       if (streamType >= 0x1F && streamType <= 0x7E)
         return "ITU-T Rec. H.222.0 | ISO/IEC 13818-1 reserved";
