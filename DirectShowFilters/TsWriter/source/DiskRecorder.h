@@ -19,7 +19,6 @@
  *
  */
 #pragma once
-#include "multiplexer.h"
 #include "multifilewriter.h"
 #include "criticalsection.h"
 #include "entercriticalsection.h"
@@ -41,11 +40,6 @@ enum RecordingMode
 	Recording=1
 };
 
-enum StreamMode
-{
-  ProgramStream=0,
-  TransportStream=1
-};
 //* enum which specified the pid type 
 enum PidType
 {
@@ -65,6 +59,12 @@ typedef struct stLastPtsDtsRecord
   int m_Pid ;
 } LastPtsDtsRecord;
 
+class IFileWriter
+{
+public:
+	virtual void Write(byte* buffer, int len)=0;
+};
+
 class CDiskRecorder: public IFileWriter
 {
 public:
@@ -78,8 +78,6 @@ public:
 	void Reset();
 
 	void GetRecordingMode(int *mode) ;
-	void SetStreamMode(int mode) ;
-	void GetStreamMode(int *mode) ;
 	void SetPmtPid(int pmtPid,int serviceId,byte* pmtData,int pmtLength);
 
 	// Only needed for timeshifting
@@ -118,10 +116,8 @@ private:
   void PatchPcr(byte* tsPacket,CTsHeader& header);
   void PatchPtsDts(byte* tsPacket,CTsHeader& header,PidInfo2& pidInfo);
 
-	CMultiplexer     m_multiPlexer;
 	MultiFileWriterParam m_params;
   RecordingMode    m_recordingMode;
-	StreamMode			 m_streamMode;
 	CPmtParser*					 m_pPmtParser;
 	bool				         m_bRunning;
 	char				         m_szFileName[2048];

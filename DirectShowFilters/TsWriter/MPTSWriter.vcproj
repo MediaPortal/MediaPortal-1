@@ -333,10 +333,6 @@
 				Name="PES"
 				>
 				<File
-					RelativePath=".\source\Multiplexer.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\source\PcrDecoder.cpp"
 					>
 				</File>
@@ -433,10 +429,6 @@
 			<Filter
 				Name="PES"
 				>
-				<File
-					RelativePath=".\source\Multiplexer.h"
-					>
-				</File>
 				<File
 					RelativePath=".\source\PcrDecoder.h"
 					>

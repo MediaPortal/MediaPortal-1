@@ -649,22 +649,6 @@ STDMETHODIMP CMpTs::RecordStopRecord( int handle)
 	return S_OK;
 }
 
-STDMETHODIMP CMpTs::RecordGetMode( int handle,int *mode) 
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	pChannel->m_pRecorder->GetStreamMode( mode) ;
-	return S_OK;
-}
-
-STDMETHODIMP CMpTs::RecordSetMode( int handle,int mode) 
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	pChannel->m_pRecorder->SetStreamMode(  mode) ;
-	return S_OK;
-}
-
 STDMETHODIMP CMpTs::RecordSetPmtPid(int handle,int mtPid, int serviceId,byte* pmtData,int pmtLength )
 {
   CTsChannel* pChannel=GetTsChannel(handle);
@@ -744,22 +728,6 @@ STDMETHODIMP CMpTs:: TimeShiftGetBufferSize( int handle, long * size)
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
 	pChannel->m_pTimeShifting->GetBufferSize( size);
-	return S_OK;
-}
-
-STDMETHODIMP CMpTs:: TimeShiftSetMode( int handle, int mode) 
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	pChannel->m_pTimeShifting->SetStreamMode( mode);
-	return S_OK;
-}
-
-STDMETHODIMP CMpTs:: TimeShiftGetMode( int handle, int *mode) 
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	pChannel->m_pTimeShifting->GetStreamMode( mode);
 	return S_OK;
 }
 

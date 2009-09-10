@@ -21,7 +21,6 @@
 #pragma once
 
 #include "..\..\shared\packetsync.h"
-#include "multiplexer.h"
 #include "videoanalyzer.h"
 #include "channelscan.h"
 #include "pmtgrabber.h"
