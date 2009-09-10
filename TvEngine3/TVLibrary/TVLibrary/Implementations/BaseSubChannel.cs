@@ -115,10 +115,6 @@ namespace TvLibrary.Implementations
     /// </summary>
     protected ScanParameters _parameters;
     /// <summary>
-    /// Indicates, if this subchannel is recording in transport stream format
-    /// </summary>
-    protected bool _isRecordingsTransportStream;
-    /// <summary>
     /// Indicates, if timeshifting is started
     /// </summary>
     protected bool _startTimeShifting;
@@ -126,10 +122,6 @@ namespace TvLibrary.Implementations
     /// Indicates, if recording is started
     /// </summary>
     protected bool _startRecording;
-    /// <summary>
-    /// Indicates, if this subchannel should record in transport stream format
-    /// </summary>
-    protected bool _recordTransportStream;
     #endregion
 
     #region ctor
@@ -247,33 +239,6 @@ namespace TvLibrary.Implementations
     }
 
     /// <summary>
-    /// returns true if we timeshift in transport stream mode
-    /// false we timeshift in program stream mode
-    /// </summary>
-    /// <value>true for transport stream, false for program stream.</value>
-    public bool IsTimeshiftingTransportStream
-    {
-      get
-      {
-        if (IsTimeShifting) return true;
-        return false;
-      }
-    }
-
-    /// <summary>
-    /// returns true if we record in transport stream mode
-    /// false we record in program stream mode
-    /// </summary>
-    /// <value>true for transport stream, false for program stream.</value>
-    public bool IsRecordingTransportStream
-    {
-      get
-      {
-        return _isRecordingsTransportStream;
-      }
-    }
-
-    /// <summary>
     /// Gets or sets the parameters.
     /// </summary>
     /// <value>The parameters.</value>
@@ -374,16 +339,14 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// Starts recording
     /// </summary>
-    /// <param name="transportStream">Recording type (content or reference)</param>
     /// <param name="fileName">filename to which to recording should be saved</param>
     /// <returns></returns>
-    public bool StartRecording(bool transportStream, string fileName)
+    public bool StartRecording(string fileName)
     {
       try
       {
         Log.Log.WriteFile("StartRecording to {0}", fileName);
-        OnStartRecording(transportStream, fileName);
-        _isRecordingsTransportStream = transportStream;
+        OnStartRecording(fileName);
         _recordingFileName = fileName;
 
         if (this is AnalogSubChannel)
@@ -424,7 +387,6 @@ namespace TvLibrary.Implementations
     {
       Log.Log.WriteFile("basesubchannel.StopRecording {}", this._subChannelId);
       OnStopRecording();
-      _isRecordingsTransportStream = false;
       _graphState = _timeshiftFileName != "" ? GraphState.TimeShifting : GraphState.Created;
       _recordingFileName = "";
       _dateRecordingStarted = DateTime.MinValue;
@@ -611,7 +573,7 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// A derrived class should start here the recording on the tv card. It will be called from StartRecording()
     /// </summary>
-    protected abstract void OnStartRecording(bool transportStream, string fileName);
+    protected abstract void OnStartRecording(string fileName);
 
     /// <summary>
     /// A derrived class should stop here the recording on the tv card. It will be called from StopRecording()

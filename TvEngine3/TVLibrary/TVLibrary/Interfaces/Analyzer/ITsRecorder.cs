@@ -49,20 +49,6 @@ namespace TvLibrary.Interfaces.Analyzer
     [PreserveSig]
     int StopRecord();
     /// <summary>
-    /// Gets the recording mode.
-    /// </summary>
-    /// <param name="mode">The mode.</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int GetMode(out TimeShiftingMode mode);
-    /// <summary>
-    /// Sets the recording mode.
-    /// </summary>
-    /// <param name="mode">The mode.</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int SetMode(TimeShiftingMode mode);
-    /// <summary>
     /// Sets the pmt pid
     /// </summary>
     /// <param name="pmtPid">The PMT pid</param>

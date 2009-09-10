@@ -22,21 +22,7 @@ using System.Runtime.InteropServices;
 
 namespace TvLibrary.Interfaces.Analyzer
 {
-  /// <summary>
-  /// Time shifting mode types
-  /// </summary>
-  public enum TimeShiftingMode : short
-  {
-    /// <summary>
-    /// use mpeg-2 program stream for timeshifting files
-    /// </summary>
-    ProgramStream = 0,
-    /// <summary>
-    /// use mpeg-2 transport stream for timeshifting files
-    /// </summary>
-    TransportStream = 1
-  }
-  /// <summary>
+   /// <summary>
   /// interface to the timeshift com object
   /// </summary>
   [ComVisible(true), ComImport,
@@ -160,20 +146,6 @@ Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
     /// <returns></returns>
     [PreserveSig]
     int GetFileBufferSize(out long lpllsize);
-    /// <summary>
-    /// Sets the timeshifting mode.
-    /// </summary>
-    /// <param name="mode">The mode.</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int SetMode(TimeShiftingMode mode);
-    /// <summary>
-    /// Gets the timeshifting mode
-    /// </summary>
-    /// <param name="mode">The mode.</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int GetMode(out TimeShiftingMode mode);
     /// <summary>
     /// Sets the PMT pid.
     /// </summary>

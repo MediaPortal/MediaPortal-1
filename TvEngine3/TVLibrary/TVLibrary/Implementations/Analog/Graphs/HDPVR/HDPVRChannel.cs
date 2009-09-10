@@ -199,7 +199,6 @@ namespace TvLibrary.Implementations.Analog
       ScanParameters parameters = _card.Parameters;
       _tsFilterInterface.TimeShiftSetParams(_subChannelId, parameters.MinimumFiles, parameters.MaximumFiles, parameters.MaximumFileSize);
       _tsFilterInterface.TimeShiftSetTimeShiftingFileName(_subChannelId, fileName);
-      _tsFilterInterface.TimeShiftSetMode(_subChannelId, TimeShiftingMode.TransportStream);
 
       _tsFilterInterface.TimeShiftPause(_subChannelId, 1);
       _tsFilterInterface.TimeShiftSetPmtPid(_subChannelId, 0x0100, 1, _pmtData, _pmtLength);
@@ -228,14 +227,12 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Starts recording
     /// </summary>
-    /// <param name="transportStream">Recording type (content or reference)</param>
     /// <param name="fileName">filename to which to recording should be saved</param>
     /// <returns></returns>
-    protected override void OnStartRecording(bool transportStream, string fileName)
+    protected override void OnStartRecording(string fileName)
     {
       _recordingFileName = fileName;
       _tsFilterInterface.RecordSetRecordingFileName(_subChannelId, fileName);
-      _tsFilterInterface.RecordSetMode(_subChannelId, TimeShiftingMode.TransportStream);
       _tsFilterInterface.RecordSetPmtPid(_subChannelId, 0x0100, 1, _pmtData, _pmtLength);
       _startRecording = true;
       int hr = _tsFilterInterface.RecordStartRecord(_subChannelId);

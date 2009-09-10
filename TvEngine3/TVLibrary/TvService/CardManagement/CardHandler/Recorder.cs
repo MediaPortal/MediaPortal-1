@@ -137,14 +137,7 @@ namespace TvService
           //gibman 
           // RecordingFormat 0 = ts
           // RecordingFormat 1 = mpeg
-          if (subchannel.IsRecordingTransportStream || (_cardHandler.DataBaseCard.RecordingFormat == 0))
-          {
-            fileName = System.IO.Path.ChangeExtension(fileName, ".ts");
-          }
-          else
-          {
-            fileName = System.IO.Path.ChangeExtension(fileName, ".mpg");
-          }
+          fileName = System.IO.Path.ChangeExtension(fileName, ".ts");
 
           useErrorDetection = true;
           
@@ -164,7 +157,7 @@ namespace TvService
           }
 
           Log.Write("card: StartRecording {0} {1}", _cardHandler.DataBaseCard.IdCard, fileName);
-          bool result = subchannel.StartRecording((_cardHandler.DataBaseCard.RecordingFormat == 0), fileName);
+          bool result = subchannel.StartRecording(fileName);
           bool isScrambled;
           if (result)
           {

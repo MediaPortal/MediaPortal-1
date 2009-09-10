@@ -32,14 +32,6 @@ namespace TvLibrary.Interfaces.Analyzer
   public interface IMPRecord
   {
     /// <summary>
-    /// Sets the mode of the recording
-    /// </summary>
-    /// <param name="subChannelId">SubChannel id</param>
-    /// <param name="mode"></param>
-    /// <returns></returns>
-    [PreserveSig]
-    int SetRecordingMode(int subChannelId, TimeShiftingMode mode);
-    /// <summary>
     /// Sets the name of the recording file.
     /// </summary>
     /// <param name="subChannelId">SubChannel id</param>

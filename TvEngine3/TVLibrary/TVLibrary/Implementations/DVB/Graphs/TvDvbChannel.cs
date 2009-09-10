@@ -424,7 +424,6 @@ namespace TvLibrary.Implementations.DVB
       _recordingFileName = "";
       _channelInfo = new ChannelInfo();
       _currentChannel = null;
-      _recordTransportStream = false;
 
       if (_tsFilterInterface != null)
       {
@@ -455,25 +454,12 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Starts recording
     /// </summary>
-    /// <param name="transportStream">if set to <c>true</c> [transport stream].</param>
     /// <param name="fileName">filename to which to recording should be saved</param>
-    protected override void OnStartRecording(bool transportStream, string fileName)
+    protected override void OnStartRecording(string fileName)
     {
       Log.Log.WriteFile("subch:{0} StartRecord({1})", _subChannelId, fileName);
-      _recordTransportStream = transportStream;
       if (_tsFilterInterface != null)
       {
-        if (transportStream)
-        {
-          _tsFilterInterface.RecordSetMode(_subChannelIndex, TimeShiftingMode.TransportStream);
-          Log.Log.WriteFile("subch:{0} record transport stream mode", _subChannelId);
-        }
-        else
-        {
-          _tsFilterInterface.RecordSetMode(_subChannelIndex, TimeShiftingMode.ProgramStream);
-          Log.Log.WriteFile("subch:{0} record program stream mode", _subChannelId);
-        }
-
         int hr = _tsFilterInterface.RecordSetRecordingFileName(_subChannelIndex, fileName);
         if (hr != 0)
         {
@@ -544,7 +530,6 @@ namespace TvLibrary.Implementations.DVB
         _tsFilterInterface.SetVideoAudioObserver(_subChannelIndex, this);
         _tsFilterInterface.TimeShiftSetParams(_subChannelIndex, _parameters.MinimumFiles, _parameters.MaximumFiles, _parameters.MaximumFileSize);
         _tsFilterInterface.TimeShiftSetTimeShiftingFileName(_subChannelIndex, fileName);
-        _tsFilterInterface.TimeShiftSetMode(_subChannelIndex, TimeShiftingMode.TransportStream);
         Log.Log.WriteFile("subch:{0} SetTimeShiftFileName fill in pids", _subChannelId);
         _startTimeShifting = false;
         SetTimeShiftPids();
@@ -1004,19 +989,9 @@ namespace TvLibrary.Implementations.DVB
       if (dvbChannel == null)
         return;
 
-      if (_recordTransportStream)
+      if (dvbChannel.PmtPid > 0)
       {
-        if (dvbChannel.PmtPid > 0)
-        {
-          _tsFilterInterface.RecordSetPmtPid(_subChannelIndex, dvbChannel.PmtPid, dvbChannel.ServiceId, _pmtData, _pmtLength);
-        }
-      }
-      else
-      {
-        if (dvbChannel.PmtPid > 0)
-        {
-          _tsFilterInterface.RecordSetPmtPid(_subChannelIndex, dvbChannel.PmtPid, dvbChannel.ServiceId, _pmtData, _pmtLength);
-        }
+        _tsFilterInterface.RecordSetPmtPid(_subChannelIndex, dvbChannel.PmtPid, dvbChannel.ServiceId, _pmtData, _pmtLength);
       }
       _dateRecordingStarted = DateTime.Now;
     }

@@ -81,20 +81,6 @@ namespace TvLibrary.Interfaces
     /// </summary>
     IChannel CurrentChannel { get; }
 
-    /// <summary>
-    /// returns true if we timeshift in transport stream mode
-    /// false we timeshift in program stream mode
-    /// </summary>
-    /// <value>true for transport stream, false for program stream.</value>
-    bool IsTimeshiftingTransportStream { get; }
-
-    /// <summary>
-    /// returns true if we record in transport stream mode
-    /// false we record in program stream mode
-    /// </summary>
-    /// <value>true for transport stream, false for program stream.</value>
-    bool IsRecordingTransportStream { get; }
-
     #endregion
 
     /// <summary>
@@ -141,10 +127,9 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// Starts recording
     /// </summary>
-    /// <param name="transportStream">if true, then record transport stream</param>
     /// <param name="fileName">filename to which to recording should be saved</param>
     /// <returns>true if succeeded else false</returns>
-    bool StartRecording(bool transportStream, string fileName);
+    bool StartRecording(string fileName);
 
     /// <summary>
     /// Stop recording

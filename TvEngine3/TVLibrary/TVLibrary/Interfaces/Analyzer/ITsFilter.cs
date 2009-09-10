@@ -157,22 +157,6 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     [PreserveSig]
     int RecordStopRecord(int handle);
     /// <summary>
-    /// Gets the recording of the given sub channel
-    /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
-    /// <param name="mode">Recording mode</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int RecordGetMode(int handle, out TimeShiftingMode mode);
-    /// <summary>
-    /// Sets the recording mode on the given sub channel
-    /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
-    /// <param name="mode">Recording mode</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int RecordSetMode(int handle, TimeShiftingMode mode);
-    /// <summary>
     /// Sets the pmt pid for recording on the sub channel
     /// </summary>
     /// <param name="handle">Handle of the sub channel</param>
@@ -229,22 +213,6 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int TimeShiftGetBufferSize(int handle, out long size);
-    /// <summary>
-    /// Sets the timeshifting mode on the given sub channel
-    /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
-    /// <param name="mode">Timeshifting mode</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int TimeShiftSetMode(int handle, TimeShiftingMode mode);
-    /// <summary>
-    /// Gets the timeshifting mode of the given sub channel
-    /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
-    /// <param name="mode">Timeshifting mode</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int TimeShiftGetMode(int handle, out TimeShiftingMode mode);
     /// <summary>
     /// Sets the PMT pid on the given sub channel
     /// </summary>

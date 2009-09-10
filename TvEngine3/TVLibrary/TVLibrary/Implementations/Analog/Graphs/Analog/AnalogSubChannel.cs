@@ -174,26 +174,15 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Starts recording
     /// </summary>
-    /// <param name="transportStream">Recording type (content or reference)</param>
     /// <param name="fileName">filename to which to recording should be saved</param>
     /// <returns></returns>
-    protected override void OnStartRecording(bool transportStream, string fileName)
+    protected override void OnStartRecording(string fileName)
     {
       if (_card.SupportsQualityControl)
       {
         _card.Quality.StartRecord();
       }
       Log.Log.WriteFile("analog:StartRecord({0})", fileName);
-      if (transportStream)
-      {
-        Log.Log.WriteFile("analog:SetRecording: uses .ts");
-        _mpRecord.SetRecordingMode(_subChannelId, TimeShiftingMode.TransportStream);
-      }
-      else
-      {
-        Log.Log.WriteFile("analog:SetRecording: uses .mpg");
-        _mpRecord.SetRecordingMode(_subChannelId, TimeShiftingMode.ProgramStream);
-      }
       _mpRecord.SetRecordingFileName(_subChannelId, fileName);
       _mpRecord.StartRecord(_subChannelId);
       _mpRecord.SetRecorderVideoAudioObserver(_subChannelId, this);

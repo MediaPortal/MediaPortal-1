@@ -840,7 +840,7 @@ namespace TvService
     }
 
     /// <summary>
-    /// Gets the current audio stream.
+    /// Gets the current video stream.
     /// </summary>
     /// <returns></returns>
     public int GetCurrentVideoStream(User user)
