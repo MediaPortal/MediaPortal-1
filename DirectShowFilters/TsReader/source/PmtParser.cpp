@@ -55,7 +55,8 @@ void CPmtParser::OnNewSection(CSection& section)
   }
 
   try
-  {
+	{
+		bool lpcm_audio_found=false;
     int program_number = section.table_id_extension;
     int pcr_pid=((section.Data[8]& 0x1F)<<8)+section.Data[9];
     int program_info_length = ((section.Data[10] & 0xF)<<8)+section.Data[11];
@@ -317,10 +318,28 @@ void CPmtParser::OnNewSection(CSection& section)
             m_pidInfo.subtitlePids.push_back(pid);
           }
         }
+				if (indicator==DESCRIPTOR_REGISTRATION)
+				{
+					if (section.Data[pointer+2]=='H' && section.Data[pointer+3]=='D' && section.Data[pointer+4]=='M' && section.Data[pointer+5]=='V' && stream_type==SERVICE_TYPE_DCII_OR_LPCM)
+					{
+						AudioPid pid;
+						pid.Pid=elementary_PID;
+						pid.AudioServiceType=stream_type;
+						m_pidInfo.audioPids.push_back(pid);
+						lpcm_audio_found=true;
+					}
+				}
         len2 -= x;
         len1 -= x;
         pointer += x;
 	    }
+			if (stream_type==SERVICE_TYPE_DCII_OR_LPCM && !lpcm_audio_found)
+			{
+				VideoPid pid;
+        pid.Pid=elementary_PID;
+        pid.VideoServiceType=SERVICE_TYPE_VIDEO_MPEG2;
+        m_pidInfo.videoPids.push_back(pid);
+			}
     }
     if (m_pmtCallback!=NULL)
     {

@@ -642,6 +642,7 @@ bool CDiskRecorder::IsStreamWanted(int stream_type)
 {
 	return (stream_type==SERVICE_TYPE_VIDEO_MPEG1 || 
 					stream_type==SERVICE_TYPE_VIDEO_MPEG2 || 
+					stream_type==SERVICE_TYPE_VIDEO_MPEG2_DCII ||
 					stream_type==SERVICE_TYPE_VIDEO_MPEG4 || 
 					stream_type==SERVICE_TYPE_VIDEO_H264 ||
 					stream_type==SERVICE_TYPE_AUDIO_MPEG1 || 
@@ -693,7 +694,7 @@ void CDiskRecorder::AddStream(PidInfo2 pidInfo)
 			m_vecPids.push_back(pi);
 			WriteLog("add audio stream pid: 0x%x fake pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pi.fakePid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
 		}
-		else if (pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG2 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG4 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_H264)
+		else if (pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG2 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG4 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_H264 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG2_DCII)
 		{
 			pi.fakePid=DR_FAKE_VIDEO_PID;
 			DR_FAKE_VIDEO_PID++;
@@ -898,7 +899,7 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 
 				memcpy(info.m_Pkt,tsPacket,188);
 	
-				if (info.streamType==SERVICE_TYPE_VIDEO_MPEG1 || info.streamType==SERVICE_TYPE_VIDEO_MPEG2||info.streamType==SERVICE_TYPE_VIDEO_MPEG4||info.streamType==SERVICE_TYPE_VIDEO_H264)
+				if (info.streamType==SERVICE_TYPE_VIDEO_MPEG1 || info.streamType==SERVICE_TYPE_VIDEO_MPEG2||info.streamType==SERVICE_TYPE_VIDEO_MPEG4||info.streamType==SERVICE_TYPE_VIDEO_H264 || info.streamType==SERVICE_TYPE_VIDEO_MPEG2_DCII)
 				{
 					//video
 					if (!info.seenStart) 

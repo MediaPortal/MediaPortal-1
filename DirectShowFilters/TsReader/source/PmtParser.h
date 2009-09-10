@@ -28,6 +28,7 @@ using namespace std;
 #define SERVICE_TYPE_VIDEO_UNKNOWN	-1
 #define SERVICE_TYPE_VIDEO_MPEG1		0x1
 #define SERVICE_TYPE_VIDEO_MPEG2		0x2
+#define SERVICE_TYPE_DCII_OR_LPCM		0x80 // can be DC-II MPEG2 Video OR LPCM Audio if registration descriptor=HDMV
 #define SERVICE_TYPE_VIDEO_MPEG4		0x10
 #define SERVICE_TYPE_VIDEO_H264		  0x1b
 #define SERVICE_TYPE_AUDIO_MPEG1		0x3
@@ -40,6 +41,7 @@ using namespace std;
 #define SERVICE_TYPE_DVB_SUBTITLES1 0x5
 #define SERVICE_TYPE_DVB_SUBTITLES2 0x6
 
+#define DESCRIPTOR_REGISTRATION     0x05
 #define DESCRIPTOR_VBI_TELETEXT     0x46
 #define DESCRIPTOR_DVB_AC3          0x6a
 #define DESCRIPTOR_DVB_E_AC3        0x7a
