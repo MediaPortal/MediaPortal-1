@@ -83,6 +83,7 @@ namespace TvLibrary.Implementations.DVB
         AddMpeg2DemuxerToGraph();
         AddAndConnectBDABoardFilters(_device);
         AddBdaTransportFiltersToGraph();
+        //FilterGraphTools.SaveGraphFile(_graphBuilder, "DVB-S Graph.grf");
         GetTunerSignalStatistics();
         _graphState = GraphState.Created;
       } catch (Exception ex)

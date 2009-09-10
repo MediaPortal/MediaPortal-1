@@ -80,9 +80,11 @@ namespace TvLibrary.Implementations.DVB
         AddMpeg2DemuxerToGraph();
         AddAndConnectBDABoardFilters(_device);
         AddBdaTransportFiltersToGraph();
+        //FilterGraphTools.SaveGraphFile(_graphBuilder, "ATSC Graph.grf");
         GetTunerSignalStatistics();
         _graphState = GraphState.Created;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Log.Write(ex);
         Dispose();
