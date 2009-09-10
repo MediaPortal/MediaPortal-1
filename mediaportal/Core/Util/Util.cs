@@ -3091,22 +3091,6 @@ namespace MediaPortal.Util
       return "English";
     }
 
-    public static string GetCultureRegionLanguageName()
-    {
-      string strLongLanguage = CultureInfo.CurrentCulture.EnglishName;
-      int iTrimIndex = strLongLanguage.IndexOf(" ", 0, strLongLanguage.Length);
-      string strShortLanguage = strLongLanguage.Substring(0, iTrimIndex);
-
-      foreach (CultureInfo cultureInformation in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
-      {
-        if (cultureInformation.EnglishName.ToLower().IndexOf(strShortLanguage.ToLower()) != -1)
-        {
-          return cultureInformation.TwoLetterISOLanguageName;
-        }
-      }
-      return "EN";
-    }
-
     public static void PopulateLanguagesToComboBox(ComboBox comboBox, string defaultLanguage)
     {
       comboBox.Items.Clear();
@@ -3114,22 +3098,10 @@ namespace MediaPortal.Util
       foreach (CultureInfo cultureInformation in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
       {
         comboBox.Items.Add(cultureInformation.EnglishName);
-        if (String.Compare(cultureInformation.EnglishName, defaultLanguage, true) == 0)
+        if (String.Compare(cultureInformation.TwoLetterISOLanguageName, defaultLanguage, true) == 0)
         {
-          comboBox.Text = defaultLanguage;
+          comboBox.Text = cultureInformation.EnglishName;
         }
-      }
-    }
-
-    public static void GetISOLanguageNames(List<LanguageInfo> ISOLanguagePair)
-    {
-      foreach (CultureInfo cultureInformation in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
-      {
-        LanguageInfo li;
-        li.EnglishName = cultureInformation.EnglishName;
-        li.TwoLetterISO = cultureInformation.TwoLetterISOLanguageName;
-
-        ISOLanguagePair.Add(li);
       }
     }
   }

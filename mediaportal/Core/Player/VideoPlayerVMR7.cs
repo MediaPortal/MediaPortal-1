@@ -264,7 +264,7 @@ namespace MediaPortal.Player
         {
           videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
           videoWin.put_WindowStyle(
-            (WindowStyle) ((int) WindowStyle.Child + (int) WindowStyle.ClipChildren + (int) WindowStyle.ClipSiblings));
+            (WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
           videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
         }
         if (basicVideo != null)
@@ -289,7 +289,7 @@ namespace MediaPortal.Player
         {
         }*/
         DirectShowUtil.SetARMode(graphBuilder, AspectRatioMode.Stretched);
-        _rotEntry = new DsROTEntry((IFilterGraph) graphBuilder);
+        _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
         // DsUtils.DumpFilters(graphBuilder);
         hr = mediaCtrl.Run();
         if (hr < 0)
@@ -330,12 +330,12 @@ namespace MediaPortal.Player
       {
         try
         {
-          ci = new CultureInfo(xmlreader.GetValueAsString("subtitles", "language", "EN"));
+          ci = new CultureInfo(xmlreader.GetValueAsString("subtitles", "language", "English"));
           showSubtitles = xmlreader.GetValueAsBool("subtitles", "enabled", true);
         }
         catch (Exception ex)
         {
-          ci = new CultureInfo("EN");
+          ci = new CultureInfo("English");
           Log.Error("SelectSubtitleLanguage - unable to build CultureInfo, make sure MediaPortal.xml is not corrupted! - {0}", ex);
         }
       }
@@ -361,11 +361,11 @@ namespace MediaPortal.Player
       {
         try
         {
-          ci = new CultureInfo(xmlreader.GetValueAsString("movieplayer", "audiolanguage", "EN"));
+          ci = new CultureInfo(xmlreader.GetValueAsString("movieplayer", "audiolanguage", "English"));
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
-          ci = new CultureInfo("EN");
+          ci = new CultureInfo("English");
           Log.Error("SelectAudioLanguage - unable to build CultureInfo, make sure MediaPortal.xml is not corrupted! - {0}", ex);
         }
       }
@@ -471,8 +471,8 @@ namespace MediaPortal.Player
         m_geometry.ARType = GUIGraphicsContext.ARType;
         m_geometry.PixelRatio = GUIGraphicsContext.PixelRatio;
         m_geometry.GetWindow(aspectX, aspectY, out rSource, out rDest);
-        rDest.X += (int) x;
-        rDest.Y += (int) y;
+        rDest.X += (int)x;
+        rDest.Y += (int)y;
         Log.Info("overlay: video WxH  : {0}x{1}", m_iVideoWidth, m_iVideoHeight);
         Log.Info("overlay: video AR   : {0}:{1}", aspectX, aspectY);
         Log.Info("overlay: screen WxH : {0}x{1}", nw, nh);
@@ -828,7 +828,7 @@ namespace MediaPortal.Player
         {
           if (mediaSeek != null)
           {
-            switch ((int) value)
+            switch ((int)value)
             {
               case -1:
                 TrySpeed(-1, -10000);
@@ -887,8 +887,8 @@ namespace MediaPortal.Player
             if (basicAudio != null)
             {
               // Divide by 100 to get equivalent decibel value. For example, �10,000 is �100 dB. 
-              float fPercent = (float) m_iVolume/100.0f;
-              int iVolume = (int) (5000.0f*fPercent);
+              float fPercent = (float)m_iVolume / 100.0f;
+              int iVolume = (int)(5000.0f * fPercent);
               basicAudio.put_Volume((iVolume - 5000));
             }
           }
@@ -961,9 +961,9 @@ namespace MediaPortal.Player
           double dCurrentPos;
           mediaPos.get_CurrentPosition(out dCurrentPos);
           double dDuration = Duration;
-          double fCurPercent = (dCurrentPos/Duration)*100.0d;
-          double fOnePercent = Duration/100.0d;
-          fCurPercent = fCurPercent + (double) iPercentage;
+          double fCurPercent = (dCurrentPos / Duration) * 100.0d;
+          double fOnePercent = Duration / 100.0d;
+          fCurPercent = fCurPercent + (double)iPercentage;
           fCurPercent *= fOnePercent;
           if (fCurPercent < 0.0d)
           {
@@ -991,8 +991,8 @@ namespace MediaPortal.Player
           {
             iPercentage = 100;
           }
-          double fPercent = Duration/100.0f;
-          fPercent *= (double) iPercentage;
+          double fPercent = Duration / 100.0f;
+          fPercent *= (double)iPercentage;
           mediaPos.put_CurrentPosition(fPercent);
         }
       }
@@ -1090,13 +1090,13 @@ namespace MediaPortal.Player
       //         earliest/10000000,latest/10000000,current/10000000,stop/10000000,m_speedRate, (latest-earliest)/10000000);
       //earliest += + 30 * 10000000;
       // new time = current time + 2*timerinterval* (speed)
-      long lTimerInterval = (long) ts.TotalMilliseconds;
+      long lTimerInterval = (long)ts.TotalMilliseconds;
       if (lTimerInterval > 300)
       {
         lTimerInterval = 300;
       }
       lTimerInterval = 300;
-      rewind = (long) (current + (2*(long) (lTimerInterval)*m_speedRate));
+      rewind = (long)(current + (2 * (long)(lTimerInterval) * m_speedRate));
       int hr;
       pStop = 0;
       // if we end up before the first moment of time then just
@@ -1200,7 +1200,7 @@ namespace MediaPortal.Player
         streamName = regex.Replace(streamName, "").Trim();
         //Put things back together
         //streamName = language + (streamName == string.Empty ? "" : " [" + streamName + "]");
-        if (language.Length > 0 ) // && streamName.Length <= 0)
+        if (language.Length > 0) // && streamName.Length <= 0)
         {
           streamName = language;
         }
@@ -1341,29 +1341,29 @@ namespace MediaPortal.Player
                   {
                     FSInfos.Type = StreamType.Unknown;
                   }
-                    //VIDEO
+                  //VIDEO
                   else if (sPDWGroup == 0)
                   {
                     FSInfos.Type = StreamType.Video;
                   }
-                    //AUDIO
+                  //AUDIO
                   else if (sPDWGroup == 1)
                   {
                     FSInfos.Type = StreamType.Audio;
                   }
-                    //SUBTITLE
+                  //SUBTITLE
                   else if (sPDWGroup == 2 && sName.LastIndexOf("off") == -1 && sName.LastIndexOf("Hide ") == -1 &&
                            sName.LastIndexOf("No ") == -1 && sName.LastIndexOf("Miscellaneous ") == -1)
                   {
                     FSInfos.Type = StreamType.Subtitle;
                   }
-                    //NO SUBTITILE TAG
+                  //NO SUBTITILE TAG
                   else if ((sPDWGroup == 2 && (sName.LastIndexOf("off") != -1 || sName.LastIndexOf("No ") != -1)) ||
                            (sPDWGroup == 6590033 && sName.LastIndexOf("Hide ") != -1))
                   {
                     FSInfos.Type = StreamType.Subtitle_hidden;
                   }
-                    //DirectVobSub SHOW SUBTITLE TAG
+                  //DirectVobSub SHOW SUBTITLE TAG
                   else if (sPDWGroup == 6590033 && sName.LastIndexOf("Show ") != -1)
                   {
                     FSInfos.Type = StreamType.Subtitle_shown;

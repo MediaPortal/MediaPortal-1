@@ -49,10 +49,10 @@ namespace MediaPortal.Configuration.Sections
     private string fontName;
     private byte fontCharset;
     private string fontColor;
-      private bool fontIsBold;
+    private bool fontIsBold;
     private int fontSize;
-    private readonly string m_strDefaultSubtitleLanguageISO = "EN";
-    private readonly string m_strDefaultAudioLanguageISO = "EN";
+    private readonly string m_strDefaultSubtitleLanguageISO = "English";
+    private readonly string m_strDefaultAudioLanguageISO = "English";
     private MPTabPage tabPage1;
     private MPGroupBox gAllowedModes;
     private MPCheckBox cbAllowNormal;
@@ -117,20 +117,15 @@ namespace MediaPortal.Configuration.Sections
       // This call is required by the Windows Form Designer.
       InitializeComponent();
 
-      Util.Utils.GetISOLanguageNames(ISOLanguagePairs);
-      
       // Populate combo boxes with languages
-      m_strDefaultSubtitleLanguageISO = Util.Utils.GetCultureRegionLanguageName();
-      m_strDefaultAudioLanguageISO = Util.Utils.GetCultureRegionLanguageName();
-      
-      CultureInfo subtitleLanguageCI = new CultureInfo(m_strDefaultSubtitleLanguageISO);
-      defaultSubtitleLanguageComboBox.Text = subtitleLanguageCI.EnglishName;
+      string curCultureName = CultureInfo.CurrentCulture.Name;
+      string curCultureTwoLetter = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
 
-      CultureInfo audioLanguageCI = new CultureInfo(m_strDefaultAudioLanguageISO);
-      defaultAudioLanguageComboBox.Text = audioLanguageCI.EnglishName;
+      m_strDefaultSubtitleLanguageISO = curCultureName;
+      m_strDefaultAudioLanguageISO = curCultureName;
 
-      Util.Utils.PopulateLanguagesToComboBox(defaultSubtitleLanguageComboBox, m_strDefaultSubtitleLanguageISO);
-      Util.Utils.PopulateLanguagesToComboBox(defaultAudioLanguageComboBox, m_strDefaultAudioLanguageISO);
+      Util.Utils.PopulateLanguagesToComboBox(defaultSubtitleLanguageComboBox, curCultureTwoLetter);
+      Util.Utils.PopulateLanguagesToComboBox(defaultAudioLanguageComboBox, curCultureTwoLetter);
       //
       // Load all available aspect ratio
       //
@@ -190,16 +185,7 @@ namespace MediaPortal.Configuration.Sections
         showSubtitlesCheckBox.Checked = xmlreader.GetValueAsBool("subtitles", "enabled", false);
         checkBoxShowWatched.Checked = xmlreader.GetValueAsBool("movies", "markwatched", true);
 
-        try
-        {
-          CultureInfo ci = new CultureInfo(xmlreader.GetValueAsString("subtitles", "language", m_strDefaultSubtitleLanguageISO));
-          defaultSubtitleLanguageComboBox.SelectedItem = ci.EnglishName;
-        }
-        catch( Exception ex)
-        {
-          Log.Error("LoadSettings - failed to load default subtitle language, using English - {0} ", ex);
-          defaultSubtitleLanguageComboBox.SelectedItem = "English";
-        }
+        defaultSubtitleLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("subtitles", "language", m_strDefaultSubtitleLanguageISO);
         shadowDepthUpDown.Value = xmlreader.GetValueAsInt("subtitles", "shadow", 3);
         borderWidthUpDown.Value = xmlreader.GetValueAsInt("subtitles", "borderWidth", 2);
         borderOutlineRadioButton.Checked = xmlreader.GetValueAsBool("subtitles", "borderOutline", true);
@@ -262,16 +248,7 @@ namespace MediaPortal.Configuration.Sections
           }
         }
 
-        try
-        {
-          CultureInfo ci = new CultureInfo(xmlreader.GetValueAsString("movieplayer", "audiolanguage", m_strDefaultAudioLanguageISO));
-          defaultAudioLanguageComboBox.SelectedItem = ci.EnglishName;
-        }
-        catch (Exception ex)
-        {
-          Log.Error("LoadSettings - failed to load default audio language, using English - {0} ", ex);
-          defaultAudioLanguageComboBox.SelectedItem = "English";
-        }
+        defaultAudioLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "audiolanguage", m_strDefaultAudioLanguageISO);
       }
     }
 
@@ -290,17 +267,8 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("subtitles", "shadow", shadowDepthUpDown.Value);
         xmlwriter.SetValue("subtitles", "borderWidth", borderWidthUpDown.Value);
         xmlwriter.SetValueAsBool("subtitles", "borderOutline", borderOutlineRadioButton.Checked);
+        xmlwriter.SetValue("subtitles", "language", defaultSubtitleLanguageComboBox.Text);
 
-
-
-        foreach (LanguageInfo li in ISOLanguagePairs)
-        {
-          if (li.EnglishName == defaultSubtitleLanguageComboBox.Text)
-          {
-            xmlwriter.SetValue("subtitles", "language", li.TwoLetterISO);
-          }
-        }
-        
         xmlwriter.SetValue("subtitles", "fontface", fontName);
         xmlwriter.SetValue("subtitles", "color", fontColor);
         xmlwriter.SetValueAsBool("subtitles", "bold", fontIsBold);
@@ -324,13 +292,8 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("movies", "allowarnonlinear", cbAllowNonLinearStretch.Checked);
         xmlwriter.SetValueAsBool("movies", "allowarletterbox", cbAllowLetterbox.Checked);
 
-        foreach (LanguageInfo li in ISOLanguagePairs)
-        {
-          if (li.EnglishName == defaultAudioLanguageComboBox.Text)
-          {
-            xmlwriter.SetValue("movieplayer", "audiolanguage", li.TwoLetterISO);
-          }
-        }
+        xmlwriter.SetValue("movieplayer", "audiolanguage", defaultAudioLanguageComboBox.Text);
+
       }
     }
 
@@ -1114,7 +1077,7 @@ namespace MediaPortal.Configuration.Sections
         if (dialogResult == DialogResult.OK)
         {
           fontName = fontDialog.Font.Name;
-          fontSize = (int) fontDialog.Font.Size;
+          fontSize = (int)fontDialog.Font.Size;
           fontIsBold = fontDialog.Font.Style == FontStyle.Bold;
           fontColor = String.Format("{0:x}", fontDialog.Color.ToArgb());
           fontCharset = fontDialog.Font.GdiCharSet;
@@ -1142,13 +1105,13 @@ namespace MediaPortal.Configuration.Sections
 
     private void subEnginesCombo_SelectedIndexChanged(object sender, EventArgs e)
     {
-      string selection = (string) subEnginesCombo.SelectedItem;
+      string selection = (string)subEnginesCombo.SelectedItem;
       advancedButton.Enabled = !selection.Equals("Disabled");
     }
 
     private void advancedButton_Click(object sender, EventArgs e)
     {
-      string selection = (string) subEnginesCombo.SelectedItem;
+      string selection = (string)subEnginesCombo.SelectedItem;
       if (selection.Equals("MPC-HC"))
       {
         MpcHcSubsForm dlg = new MpcHcSubsForm();

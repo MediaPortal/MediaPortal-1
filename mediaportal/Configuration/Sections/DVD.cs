@@ -24,6 +24,7 @@
 #endregion
 
 using System.ComponentModel;
+using System.Globalization;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 
@@ -70,11 +71,13 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
 
       // Populate combo box with languages
-      m_strDefaultRegionLanguage = Util.Utils.GetCultureRegionLanguage();
-      defaultSubtitleLanguageComboBox.Text = m_strDefaultRegionLanguage;
-      defaultAudioLanguageComboBox.Text = m_strDefaultRegionLanguage;
-      Util.Utils.PopulateLanguagesToComboBox(defaultSubtitleLanguageComboBox, m_strDefaultRegionLanguage);
-      Util.Utils.PopulateLanguagesToComboBox(defaultAudioLanguageComboBox, m_strDefaultRegionLanguage);
+      string curCultureName = CultureInfo.CurrentCulture.Name;
+      string curCultureTwoLetter = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+
+      m_strDefaultRegionLanguage = curCultureName;
+
+      Util.Utils.PopulateLanguagesToComboBox(defaultSubtitleLanguageComboBox, curCultureTwoLetter);
+      Util.Utils.PopulateLanguagesToComboBox(defaultAudioLanguageComboBox, curCultureTwoLetter);
 
       autoPlayComboBox.Items.Clear();
       autoPlayComboBox.Items.AddRange(autoPlayOptions);
