@@ -168,6 +168,9 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox checkBoxCentareaReMapMouseButton;
     private MPCheckBox checkBoxMapJoystick;
     private PictureBox pictureBoxMceVista;
+    private MPGroupBox groupBoxStatus;
+    private Label label1Status;
+    private Label label2Status;
     private MPLabel labelFireDTVModel;
 
     #endregion
@@ -412,6 +415,16 @@ namespace MediaPortal.Configuration.Sections
 
         #region FireDTV
 
+        if (Util.Win32API.Check64Bit())
+        {
+          checkBoxFireDTVEnabled.Enabled = false;
+          checkBoxFireDTVExtendedLogging.Enabled = false;
+          buttonFireDTVMapping.Enabled = false;
+          comboBoxFireDTVReceiver.Enabled = false;
+          groupBoxStatus.Visible = true;
+          return;
+        }
+
         // Is the FireDTV remote enabled
         checkBoxFireDTVEnabled.Checked = xmlreader.GetValueAsBool("remote", "FireDTV", false);
 
@@ -604,6 +617,9 @@ namespace MediaPortal.Configuration.Sections
       this.buttonCentareaMapping = new MediaPortal.UserInterface.Controls.MPButton();
       this.pictureBoxCentarea = new System.Windows.Forms.PictureBox();
       this.tabPageFireDtv = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.groupBoxStatus = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.label2Status = new System.Windows.Forms.Label();
+      this.label1Status = new System.Windows.Forms.Label();
       this.pictureBox3 = new System.Windows.Forms.PictureBox();
       this.groupBoxFireDTVRecieiverSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.labelFireDTVModel = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -688,6 +704,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxCentareaOptions.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCentarea)).BeginInit();
       this.tabPageFireDtv.SuspendLayout();
+      this.groupBoxStatus.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
       this.groupBoxFireDTVRecieiverSettings.SuspendLayout();
       this.groupBoxFireDTVReceiverGeneral.SuspendLayout();
@@ -1001,6 +1018,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageFireDtv
       // 
+      this.tabPageFireDtv.Controls.Add(this.groupBoxStatus);
       this.tabPageFireDtv.Controls.Add(this.pictureBox3);
       this.tabPageFireDtv.Controls.Add(this.groupBoxFireDTVRecieiverSettings);
       this.tabPageFireDtv.Controls.Add(this.groupBoxFireDTVReceiverGeneral);
@@ -1010,6 +1028,38 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageFireDtv.TabIndex = 2;
       this.tabPageFireDtv.Text = "FireDTV";
       this.tabPageFireDtv.UseVisualStyleBackColor = true;
+      // 
+      // groupBoxStatus
+      // 
+      this.groupBoxStatus.Controls.Add(this.label2Status);
+      this.groupBoxStatus.Controls.Add(this.label1Status);
+      this.groupBoxStatus.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxStatus.Location = new System.Drawing.Point(156, 191);
+      this.groupBoxStatus.Name = "groupBoxStatus";
+      this.groupBoxStatus.Size = new System.Drawing.Size(296, 105);
+      this.groupBoxStatus.TabIndex = 5;
+      this.groupBoxStatus.TabStop = false;
+      this.groupBoxStatus.Text = "Status";
+      this.groupBoxStatus.Visible = false;
+      // 
+      // label2Status
+      // 
+      this.label2Status.AutoSize = true;
+      this.label2Status.Location = new System.Drawing.Point(20, 61);
+      this.label2Status.Name = "label2Status";
+      this.label2Status.Size = new System.Drawing.Size(250, 26);
+      this.label2Status.TabIndex = 1;
+      this.label2Status.Text = "Unfortunately x64 driver doesn\'t onor calls from x86 \r\n applications.";
+      // 
+      // label1Status
+      // 
+      this.label1Status.AutoSize = true;
+      this.label1Status.ForeColor = System.Drawing.Color.Red;
+      this.label1Status.Location = new System.Drawing.Point(20, 28);
+      this.label1Status.Name = "label1Status";
+      this.label1Status.Size = new System.Drawing.Size(212, 13);
+      this.label1Status.TabIndex = 0;
+      this.label1Status.Text = "Driver disabled due to architecture limitation";
       // 
       // pictureBox3
       // 
@@ -1138,7 +1188,8 @@ namespace MediaPortal.Configuration.Sections
       this.labelX10DriverInfo.Name = "labelX10DriverInfo";
       this.labelX10DriverInfo.Size = new System.Drawing.Size(392, 13);
       this.labelX10DriverInfo.TabIndex = 0;
-      this.labelX10DriverInfo.Text = "You have to use the driver below, or your remote might not work with MediaPortal.";
+      this.labelX10DriverInfo.Text = "You have to use the driver below, or your remote might not work with MediaPortal." +
+          "";
       // 
       // linkLabelDownloadX10
       // 
@@ -1852,6 +1903,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxCentareaOptions.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCentarea)).EndInit();
       this.tabPageFireDtv.ResumeLayout(false);
+      this.groupBoxStatus.ResumeLayout(false);
+      this.groupBoxStatus.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
       this.groupBoxFireDTVRecieiverSettings.ResumeLayout(false);
       this.groupBoxFireDTVRecieiverSettings.PerformLayout();
