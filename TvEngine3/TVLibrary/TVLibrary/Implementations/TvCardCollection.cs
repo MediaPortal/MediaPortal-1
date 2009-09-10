@@ -242,10 +242,10 @@ namespace TvLibrary.Implementations
               int pulcNetworkTypes;
               Guid[] lpDeinterlaceModes = new Guid[ulcNetworkTypesMax];
               int hr = _providerType.get_SupportedNetworkTypes(ulcNetworkTypesMax, out pulcNetworkTypes, lpDeinterlaceModes);
-              Log.Log.WriteFile("Number of SupportedNetworkTypes = {0}", pulcNetworkTypes);
+              Log.Log.Debug("Number of SupportedNetworkTypes = {0}", pulcNetworkTypes);
               for (int n = 0; n < pulcNetworkTypes; n++)
               {
-                Log.Log.WriteFile("SupportedNetworkTypes = {0}", lpDeinterlaceModes[n]);
+                Log.Log.Debug("SupportedNetworkTypes = {0}", lpDeinterlaceModes[n]);
               }
               //test the first found guid to determine the DVB card type
               if (lpDeinterlaceModes[0] == (typeof(DVBTNetworkProvider).GUID))
