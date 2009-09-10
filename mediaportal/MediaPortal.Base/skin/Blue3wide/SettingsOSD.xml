@@ -52,6 +52,5 @@
       <onright>20</onright>
       <buddycontrolid>100</buddycontrolid>
     </control>
-        <import>common.videowindow.small.xml</import>
   </controls>
 </window>

@@ -107,6 +107,5 @@
       <centered>yes</centered>
       <keepaspectratio>yes</keepaspectratio>
     </control>
-      <import>common.videowindow.small.xml</import>
   </controls>
 </window>

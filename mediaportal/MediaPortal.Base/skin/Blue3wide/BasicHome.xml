@@ -223,6 +223,5 @@
       <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="300">WindowOpen</animation>
       <animation effect="zoom" start="100,100" end="1,1" center="640,360" time="300">WindowClose</animation>
     </control>
-	<import>common.videowindow.small.xml</import>	
   </controls>
 </window>

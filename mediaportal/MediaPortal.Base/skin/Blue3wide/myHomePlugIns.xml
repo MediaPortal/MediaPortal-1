@@ -6,7 +6,7 @@
   <disabletopbar>yes</disabletopbar>
   <define>#header.hover:hover_my plugins.png</define>
   <controls>
-     <control>
+    <control>
       <description>background image</description>
       <type>image</type>
       <id>1</id>
@@ -188,6 +188,5 @@
       <onup>13</onup>
       <ondown>50</ondown>
     </control>
-	<import>common.videowindow.small.xml</import>
   </controls>
 </window>

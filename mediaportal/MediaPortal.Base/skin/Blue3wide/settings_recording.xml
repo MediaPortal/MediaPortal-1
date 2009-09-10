@@ -85,6 +85,5 @@
 				<label>6019</label>
 			</control>
 		</control>
-                        <import>common.videowindow.small.xml</import>
 	</controls>
 </window>

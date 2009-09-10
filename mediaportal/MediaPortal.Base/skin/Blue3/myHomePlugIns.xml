@@ -188,6 +188,5 @@
       <onup>13</onup>
       <ondown>50</ondown>
     </control>
-	<import>common.videowindow.small.xml</import>	
   </controls>
 </window>

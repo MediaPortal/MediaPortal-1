@@ -155,6 +155,5 @@
         <animation effect="fade" time="250">WindowClose</animation>
       </control>
     </control>
-        <import>common.videowindow.small.xml</import>
   </controls>
 </window>

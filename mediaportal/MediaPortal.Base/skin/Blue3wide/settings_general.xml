@@ -80,6 +80,5 @@
       <height>375</height>
       <texture />
     </control>
-      <import>common.videowindow.small.xml</import>
   </controls>
 </window>
