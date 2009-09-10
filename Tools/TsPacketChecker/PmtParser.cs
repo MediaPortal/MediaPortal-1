@@ -78,7 +78,7 @@ namespace TsPacketChecker
               switch (descriptor_tag)
               {
                 case 0x5:
-                  node.Nodes.Add("0x" + descriptor_tag.ToString("x") + " - Registration descriptor "+descriptor_len.ToString());
+                  node.Nodes.Add("0x" + descriptor_tag.ToString("x") + " - Registration descriptor: " + StringUtils.getString468A(section, ndx + off + 2, descriptor_len));
                   break;
                 case 0x9: // CA Descriptor
                   int ca_system_id = (section[ndx+off+ 2] << 8) + section[ndx+off+3];
@@ -87,6 +87,9 @@ namespace TsPacketChecker
                   break;
                 case 0x0A: // ISO_639_language
                   node.Nodes.Add("ISO_639_language: " + StringUtils.getString468A(section, ndx + off + 2, 3));
+                  break;
+                case 0x52:
+                  node.Nodes.Add("0x" + descriptor_tag.ToString("x") + " - stream identifier descriptor 0x"+section[ndx+off+2].ToString("x"));
                   break;
                 case 0x56: // Teletext
                   node.Text = "pid: 0x" + pid.ToString("x") + " [Teletext] " + StringUtils.StreamTypeToStr(stream_type);
