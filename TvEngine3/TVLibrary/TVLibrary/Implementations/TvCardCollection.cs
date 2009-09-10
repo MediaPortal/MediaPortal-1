@@ -278,8 +278,9 @@ namespace TvLibrary.Implementations
             Log.Log.WriteFile("Not connected with generic MS Network Provider, using the original method");
             graphBuilder.RemoveFilter(networkDVB);
             Release.ComObject("ms provider", networkDVB);
+            genericNP = false;
           }
-          else
+          if (!genericNP)
           {
             if (ConnectFilter(graphBuilder, networkDVBT, tmp))
             {
