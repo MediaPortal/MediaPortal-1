@@ -1573,7 +1573,7 @@ namespace MediaPortal.Visualization
 
       try
       {
-        if (_EnableStatusOverlays && !Viz.IsWmpVis())
+        if (_EnableStatusOverlays && Viz != null && !IsWmpVis())
         {
           // Make sure we're using the original defaults...
           TrackInfoImageWidth = DefaultTrackInfoImageWidth;
@@ -2009,7 +2009,7 @@ namespace MediaPortal.Visualization
 
       try
       {
-        if ((_EnableStatusOverlays || !FullScreen) && !Viz.IsWmpVis())
+        if ((_EnableStatusOverlays || !FullScreen) && !IsWmpVis())
         {
           if (DialogWindowIsActive)
           {
@@ -2134,7 +2134,6 @@ namespace MediaPortal.Visualization
 
           return sleepMS;
         }
-
         else
         {
           sleepMS = Viz.RenderVisualization();
@@ -2977,6 +2976,20 @@ namespace MediaPortal.Visualization
       _CoverArtImages.Clear();
       _ImagesPathsList.Clear();
       CurrentCoverArtImageIndex = -1;
+    }
+
+    // Do we have a WMP Vis
+    private bool IsWmpVis()
+    {
+      if (Viz == null)
+      {
+        return false;
+      }
+      if (Viz.IsWmpVis())
+      {
+        return true;
+      }
+      return false;
     }
   }
 }
