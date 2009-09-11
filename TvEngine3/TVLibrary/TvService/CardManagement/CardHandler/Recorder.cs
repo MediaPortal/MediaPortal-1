@@ -39,10 +39,6 @@ namespace TvService
     readonly int _waitForTimeshifting = 15; // seconds
     ManualResetEvent _eventAudio; // gets signaled when audio PID is seen
     ManualResetEvent _eventVideo; // gets signaled when video PID is seen
-    bool _eventsReady;
-
-    DateTime _timeAudioEvent;
-    DateTime _timeVideoEvent;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Recording"/> class.
@@ -52,42 +48,27 @@ namespace TvService
     {
       _eventAudio = new ManualResetEvent(false);
       _eventVideo = new ManualResetEvent(false);
-      _eventsReady = true;
 
       TvBusinessLayer layer = new TvBusinessLayer();
       _cardHandler = cardHandler;
       _timeshiftingEpgGrabberEnabled = (layer.GetSetting("timeshiftingEpgGrabberEnabled", "no").Value == "yes");
       _waitForTimeshifting = Int32.Parse(layer.GetSetting("timeshiftWaitForTimeshifting", "15").Value);
-
-      _timeAudioEvent = DateTime.Now;
-      _timeVideoEvent = DateTime.Now;
     }
 
     private void AudioVideoEventHandler(PidType pidType)
     {
+      Log.Debug("Recorder audioVideoEventHandler {0}", pidType);
+      
       // we are only interested in video and audio PIDs
       if (pidType == PidType.Audio)
       {
-        TimeSpan ts = DateTime.Now - _timeAudioEvent;
-        if (ts.TotalMilliseconds > 1000)
-        {
-          // Avoid repetitive events that are kept for next channel change, so trig only once.
-          Log.Info("audioVideoEventHandler {0}", pidType);
-          _eventAudio.Set();
-        }
-        _timeAudioEvent = DateTime.Now;
+        _eventAudio.Set();
+
       }
 
       if (pidType == PidType.Video)
       {
-        TimeSpan ts = DateTime.Now - _timeVideoEvent;
-        if (ts.TotalMilliseconds > 1000)
-        {
-          // Avoid repetitive events that are kept for next channel change, so trig only once.
-          Log.Info("audioVideoEventHandler {0}", pidType);
-          _eventVideo.Set();
-        }
-        _timeVideoEvent = DateTime.Now;
+        _eventVideo.Set();
       }
     }
     /// <summary>
@@ -143,17 +124,8 @@ namespace TvService
           
           if (useErrorDetection)
           {
-            if (subchannel is BaseSubChannel)
-            {
-              ((BaseSubChannel)subchannel).AudioVideoEvent += AudioVideoEventHandler;
-            }
-
-            if (!_eventsReady)
-            {
-              _eventAudio = new ManualResetEvent(false);
-              _eventVideo = new ManualResetEvent(false);
-              _eventsReady = true;
-            }
+            Log.Debug("Recorder.start add audioVideoEventHandler");
+            ((BaseSubChannel)subchannel).AudioVideoEvent += AudioVideoEventHandler;
           }
 
           Log.Write("card: StartRecording {0} {1}", _cardHandler.DataBaseCard.IdCard, fileName);
@@ -174,13 +146,14 @@ namespace TvService
                 
                 // delete 0-byte file in case of error
                 Utils.DeleteFileAndEmptyDirectory(fileName);
-
+                ((BaseSubChannel)subchannel).AudioVideoEvent -= AudioVideoEventHandler;
                 if (isScrambled)
                 {
                   return TvResult.ChannelIsScrambled;
                 }
                 return TvResult.NoVideoAudioDetected;
               }
+              ((BaseSubChannel)subchannel).AudioVideoEvent -= AudioVideoEventHandler;
             }
           }
           if (_timeshiftingEpgGrabberEnabled)
@@ -517,6 +490,9 @@ namespace TvService
       IChannel channel = _cardHandler.Card.SubChannels[0].CurrentChannel;
       bool isRadio = channel.IsRadio;
 
+      _eventVideo.Reset();
+      _eventAudio.Reset();
+
       if (isRadio)
       {
         Log.Write("card: WaitForRecordingFile - waiting _eventAudio");
@@ -526,14 +502,11 @@ namespace TvService
           // start of the video & audio is seen
           TimeSpan ts = DateTime.Now - timeStart;
           Log.Write("card: WaitForRecordingFile - audio is seen after {0} seconds", ts.TotalSeconds);
-          _eventVideo.Reset();
-          _eventAudio.Reset();
+
           return true;
         }
         else
         {
-          _eventVideo.Reset();
-          _eventAudio.Reset();
           TimeSpan ts = DateTime.Now - timeStart;
           Log.Write("card: WaitForRecordingFile - no audio was found after {0} seconds", ts.TotalSeconds);
           if (_cardHandler.IsScrambled(ref user))
@@ -549,19 +522,15 @@ namespace TvService
         // block until video & audio PIDs are seen or the timeout is reached
         if (_eventAudio.WaitOne(waitForEvent, true))
         {
-          _eventAudio.Reset();
           if (_eventVideo.WaitOne(waitForEvent, true))
           {
             // start of the video & audio is seen
             TimeSpan ts = DateTime.Now - timeStart;
             Log.Write("card: WaitForRecordingFile - video and audio are seen after {0} seconds", ts.TotalSeconds);
-            _eventVideo.Reset();
             return true;
           }
           else
           {
-            _eventVideo.Reset();
-            _eventAudio.Reset();
             TimeSpan ts = DateTime.Now - timeStart;
             Log.Write("card: WaitForRecordingFile - video was found, but audio was not found after {0} seconds", ts.TotalSeconds);
             if (_cardHandler.IsScrambled(ref user))
@@ -573,8 +542,6 @@ namespace TvService
         }
         else
         {
-          _eventVideo.Reset();
-          _eventAudio.Reset();
           TimeSpan ts = DateTime.Now - timeStart;
           Log.Write("card: WaitForRecordingFile - no audio was found after {0} seconds", ts.TotalSeconds);
           if (_cardHandler.IsScrambled(ref user))
