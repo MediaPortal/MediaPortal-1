@@ -137,6 +137,13 @@ namespace TvLibrary.Interfaces
     /// <returns>true if succeeded else false</returns>
     bool StopRecording();
 
+    /// <summary>
+    /// Returns the position in the current timeshift file and the id of the current timeshift file
+    /// </summary>
+    /// <param name="position">The position in the current timeshift buffer file</param>
+    /// <param name="bufferId">The id of the current timeshift buffer file</param>
+    void TimeShiftGetCurrentFilePosition(ref Int64 position,ref long bufferId);
+
     #endregion
 
     #region audio streams

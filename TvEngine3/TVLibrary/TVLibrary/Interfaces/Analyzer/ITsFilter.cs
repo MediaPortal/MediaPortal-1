@@ -243,6 +243,14 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     [PreserveSig]
     int TimeShiftSetParams(int handle, int minFiles, int maxFiles, UInt32 chunkSize);
     /// <summary>
+    /// Returns the position in the current timeshift file and the id of the current timeshift file
+    /// </summary>
+    /// <param name="handle">Handle of the sub channel</param>
+    /// <param name="position">The position in the current timeshift buffer file</param>
+    /// <param name="bufferId">The id of the current timeshift buffer file</param>
+    [PreserveSig]
+    int TimeShiftGetCurrentFilePosition(int handle, [Out] out Int64 position, [Out] out long bufferId);
+    /// <summary>
     /// Sets the video/audio observer callback
     /// </summary>
     /// <param name="handle">Handle of the sub channel</param>

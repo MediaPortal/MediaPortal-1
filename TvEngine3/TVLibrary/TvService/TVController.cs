@@ -1082,6 +1082,19 @@ namespace TvService
     }
 
     /// <summary>
+    /// Returns the position in the current timeshift file and the id of the current timeshift file
+    /// </summary>
+    /// <param name="user">The user.</param>
+    /// <param name="position">The position in the current timeshift buffer file</param>
+    /// <param name="bufferId">The id of the current timeshift buffer file</param>
+    public bool TimeShiftGetCurrentFilePosition(ref User user,ref Int64 position,ref long bufferId)
+    {
+      if (ValidateTvControllerParams(user))
+        return false;
+      return _cards[user.CardId].TimeShifter.GetCurrentFilePosition(ref user,ref position,ref bufferId);
+    }
+
+    /// <summary>
     /// Returns if the card is timeshifting or not
     /// </summary>
     /// <param name="user">User</param>
@@ -1429,6 +1442,21 @@ namespace TvService
       if (ValidateTvControllerParams(user))
         return DateTime.MinValue;
       return _cards[user.CardId].Recorder.RecordingStarted(user);
+    }
+
+    /// <summary>
+    /// Copies the time shift buffer files to the currently started recording 
+    /// </summary>
+    /// <param name="position1">start offset in first ts buffer file </param>
+    /// <param name="bufferFile1">ts buffer file to start with</param>
+    /// <param name="position2">end offset in last ts buffer file</param>
+    /// <param name="bufferFile2">ts buffer file to stop at</param>
+    /// <param name="recordingFile">filename of the recording</param>
+    public void CopyTimeShiftFile(Int64 position1, string bufferFile1, Int64 position2, string bufferFile2,string recordingFile)
+    {
+      TsCopier copier = new TsCopier(position1, bufferFile1, position2, bufferFile2, recordingFile);
+      Thread worker = new Thread(new ThreadStart(copier.DoCopy));
+      worker.Start();
     }
 
     /// <summary>
@@ -2020,6 +2048,7 @@ namespace TvService
       }
       return false;
     }
+
     /// <summary>
     /// Checks if the files of a recording still exist
     /// </summary>

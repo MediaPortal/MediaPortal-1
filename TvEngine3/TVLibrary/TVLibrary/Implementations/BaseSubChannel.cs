@@ -222,7 +222,6 @@ namespace TvLibrary.Implementations
         return (_timeshiftFileName.Length > 0);
       }
     }
-
     /// <summary>
     /// returns the IChannel to which the card is currently tuned
     /// </summary>
@@ -391,6 +390,15 @@ namespace TvLibrary.Implementations
       _recordingFileName = "";
       _dateRecordingStarted = DateTime.MinValue;
       return true;
+    }
+    /// <summary>
+    /// Returns the position in the current timeshift file and the id of the current timeshift file
+    /// </summary>
+    /// <param name="position">The position in the current timeshift buffer file</param>
+    /// <param name="bufferId">The id of the current timeshift buffer file</param>
+    public void TimeShiftGetCurrentFilePosition(ref Int64 position, ref long bufferId)
+    {
+      OnGetTimeShiftFilePosition(ref position, ref bufferId);
     }
     #endregion
 
@@ -579,6 +587,13 @@ namespace TvLibrary.Implementations
     /// A derrived class should stop here the recording on the tv card. It will be called from StopRecording()
     /// </summary>
     protected abstract void OnStopRecording();
+
+    /// <summary>
+    /// Returns the position in the current timeshift file and the id of the current timeshift file
+    /// </summary>
+    /// <param name="position">The position in the current timeshift buffer file</param>
+    /// <param name="bufferId">The id of the current timeshift buffer file</param>
+    protected abstract void OnGetTimeShiftFilePosition(ref Int64 position,ref long bufferId);
 
     /// <summary>
     /// A derrived class should activate or deactivate the teletext grabbing on the tv card.

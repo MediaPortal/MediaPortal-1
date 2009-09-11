@@ -96,7 +96,6 @@ namespace TvService
           Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return "";
         }
-
         TvCardContext context = _cardHandler.Card.Context as TvCardContext;
         if (context == null)
           return null;
@@ -109,6 +108,51 @@ namespace TvService
       {
         Log.Write(ex);
         return "";
+      }
+    }
+
+    /// <summary>
+    /// Returns the position in the current timeshift file and the id of the current timeshift file
+    /// </summary>
+    /// <param name="user">The user.</param>
+    /// <param name="position">The position in the current timeshift buffer file</param>
+    /// <param name="bufferId">The id of the current timeshift buffer file</param>
+    public bool GetCurrentFilePosition(ref User user,ref Int64 position,ref long bufferId)
+    {
+      try
+      {
+        if (_cardHandler.DataBaseCard.Enabled == false)
+          return false;
+
+        try
+        {
+          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+          if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
+            return false;
+          if (_cardHandler.IsLocal == false)
+          {
+            return RemoteControl.Instance.TimeShiftGetCurrentFilePosition(ref user,ref position,ref bufferId);
+          }
+        }
+        catch (Exception)
+        {
+          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          return false;
+        }
+        TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+        if (context == null)
+          return false;
+        context.GetUser(ref user);
+        ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
+        if (subchannel == null)
+          return false;
+        subchannel.TimeShiftGetCurrentFilePosition(ref position, ref bufferId);
+        return (position != -1);
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+        return false;
       }
     }
 

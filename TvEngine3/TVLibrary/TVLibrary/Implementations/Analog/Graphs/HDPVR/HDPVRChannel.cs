@@ -258,7 +258,15 @@ namespace TvLibrary.Implementations.Analog
         _card.Quality.StartPlayback();
       }
     }
-
+    /// <summary>
+    /// Returns the position in the current timeshift file and the id of the current timeshift file
+    /// </summary>
+    /// <param name="position">The position in the current timeshift buffer file</param>
+    /// <param name="bufferId">The id of the current timeshift buffer file</param>
+    protected override void OnGetTimeShiftFilePosition(ref Int64 position,ref long bufferId)
+    {
+      _tsFilterInterface.TimeShiftGetCurrentFilePosition(_subChannelId,out position,out bufferId);
+    }
     #endregion
 
     #region audio streams
