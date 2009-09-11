@@ -78,6 +78,7 @@ DECLARE_INTERFACE_(ITSFilter, IUnknown)
 	STDMETHOD(TimeShiftSetPmtPid) (THIS_ int handle, int pmtPid,int serviceId,byte* pmtData,int pmtLength) PURE;
 	STDMETHOD(TimeShiftPause) (THIS_ int handle, BYTE onOff) PURE;
 	STDMETHOD(TimeShiftSetParams) (THIS_ int handle, int minFiles, int maxFiles, ULONG chunkSize) PURE;
+	STDMETHOD(TimeShiftGetCurrentFilePosition) (THIS_ int handle,__int64 * position, long * bufferId) PURE;
 	STDMETHOD(SetVideoAudioObserver)(THIS_ int handle, IVideoAudioObserver* callback)PURE;
 
 	STDMETHOD(TTxStart)(THIS_ int handle)PURE;
@@ -193,6 +194,7 @@ public:
 		STDMETHODIMP TimeShiftSetPmtPid( int handle, int pmtPid, int serviceId,byte* pmtData,int pmtLength) ;
 		STDMETHODIMP TimeShiftPause( int handle, BYTE onOff) ;
 	  STDMETHODIMP TimeShiftSetParams(int handle, int minFiles, int maxFiles, ULONG chunkSize) ;
+		STDMETHODIMP TimeShiftGetCurrentFilePosition(int handle,__int64 * position,long * bufferId);
 		STDMETHODIMP SetVideoAudioObserver(int handle, IVideoAudioObserver* callback);
 
 		STDMETHODIMP TTxStart( int handle);

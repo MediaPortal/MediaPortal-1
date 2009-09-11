@@ -660,3 +660,18 @@ void MultiFileWriter::setChunkReserve(__int64 chunkSize)
 	m_chunkReserve = chunkSize;
 	m_pCurrentTSFile->SetChunkReserve(TRUE, m_chunkReserve, m_maxTSFileSize);
 }
+
+void MultiFileWriter::GetPosition(__int64 * position)
+{
+	if (m_pCurrentTSFile==NULL)
+	{
+		*position=-1;
+		return;
+	}
+	if (m_pCurrentTSFile->IsFileInvalid())
+	{
+		*position=-1;
+		return;
+	}
+	*position=m_pCurrentTSFile->GetFilePointer();
+}

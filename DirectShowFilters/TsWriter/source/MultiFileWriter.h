@@ -67,6 +67,7 @@ public:
 	void setMaxTSFileSize(__int64 maxSize);
 	__int64 getChunkReserve(void);
 	void setChunkReserve(__int64 chunkSize);
+	void GetPosition(__int64 * position);
 
 protected:
 	HRESULT PrepareTSFile();

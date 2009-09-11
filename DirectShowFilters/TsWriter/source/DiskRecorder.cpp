@@ -413,6 +413,12 @@ void CDiskRecorder::GetFileBufferSize(__int64 *lpllsize)
 	m_pTimeShiftFile->GetFileSize(lpllsize);
 }
 
+void CDiskRecorder::GetTimeShiftPosition(__int64 * position,long * bufferId)
+{
+	m_pTimeShiftFile->GetPosition(position);
+	*bufferId=m_pTimeShiftFile->getCurrentFileId();
+}
+
 
 
 void CDiskRecorder::OnTsPacket(byte* tsPacket)

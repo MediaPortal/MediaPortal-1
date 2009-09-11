@@ -758,6 +758,14 @@ STDMETHODIMP CMpTs::TimeShiftSetParams(int handle, int minFiles, int maxFiles, U
   return S_OK;
 }
 
+STDMETHODIMP CMpTs::TimeShiftGetCurrentFilePosition(int handle,__int64 * position,long * bufferId)
+{
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	pChannel->m_pTimeShifting->GetTimeShiftPosition(position,bufferId);
+  return S_OK;
+}
+
 STDMETHODIMP CMpTs::SetVideoAudioObserver(int handle, IVideoAudioObserver* callback)
 {
   CTsChannel* pChannel=GetTsChannel(handle);

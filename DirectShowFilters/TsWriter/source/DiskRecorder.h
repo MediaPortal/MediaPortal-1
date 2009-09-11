@@ -95,6 +95,7 @@ public:
 	void GetChunkReserve( __int64 *chunkSize) ;
 	void SetChunkReserve( __int64 chunkSize) ;
 	void GetFileBufferSize( __int64 *lpllsize) ;
+	void GetTimeShiftPosition(__int64 * position,long * bufferId);
 
 	void OnTsPacket(byte* tsPacket);
 	void Write(byte* buffer, int len);
