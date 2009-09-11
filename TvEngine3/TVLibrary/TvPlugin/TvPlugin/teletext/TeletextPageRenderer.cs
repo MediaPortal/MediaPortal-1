@@ -36,7 +36,8 @@ namespace TvLibrary.Teletext
 
     public TeletextPageRenderer()
     {
-      _isRegionalDK = (RegionInfo.CurrentRegion.TwoLetterISORegionName.Equals("DK", StringComparison.InvariantCultureIgnoreCase));
+      _isRegionalDKorNO = (RegionInfo.CurrentRegion.TwoLetterISORegionName.Equals("DK", StringComparison.InvariantCultureIgnoreCase))
+                       || (RegionInfo.CurrentRegion.TwoLetterISORegionName.Equals("NO", StringComparison.InvariantCultureIgnoreCase));
     }
 
     #endregion
@@ -50,7 +51,7 @@ namespace TvLibrary.Teletext
     #region variables
 
     //regional stuff
-    private readonly bool _isRegionalDK;
+    private readonly bool _isRegionalDKorNO;
 
     private Bitmap _pageBitmap;
     private Graphics _renderGraphics;
@@ -707,7 +708,7 @@ namespace TvLibrary.Teletext
           txtLanguage = 4;
           break;
         case 2:
-          txtLanguage = _isRegionalDK ? 13 : 11;
+          txtLanguage = _isRegionalDKorNO ? 13 : 11;
           break;
         case 3:
           txtLanguage = 5;
