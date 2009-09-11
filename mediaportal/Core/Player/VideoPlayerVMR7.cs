@@ -210,6 +210,8 @@ namespace MediaPortal.Player
     protected FilterStreams FStreams = null;
     protected double[] chapters = null;
 
+    protected const string defaultLanguageCulture = "EN";
+
     public override double[] Chapters
     {
       get { return chapters; }
@@ -330,12 +332,12 @@ namespace MediaPortal.Player
       {
         try
         {
-          ci = new CultureInfo(xmlreader.GetValueAsString("subtitles", "language", "English"));
+          ci = new CultureInfo(xmlreader.GetValueAsString("subtitles", "language", defaultLanguageCulture));
           showSubtitles = xmlreader.GetValueAsBool("subtitles", "enabled", true);
         }
         catch (Exception ex)
         {
-          ci = new CultureInfo("English");
+          ci = new CultureInfo(defaultLanguageCulture);
           Log.Error("SelectSubtitleLanguage - unable to build CultureInfo, make sure MediaPortal.xml is not corrupted! - {0}", ex);
         }
       }
@@ -361,11 +363,11 @@ namespace MediaPortal.Player
       {
         try
         {
-          ci = new CultureInfo(xmlreader.GetValueAsString("movieplayer", "audiolanguage", "English"));
+          ci = new CultureInfo(xmlreader.GetValueAsString("movieplayer", "audiolanguage", defaultLanguageCulture));
         }
         catch (Exception ex)
         {
-          ci = new CultureInfo("English");
+          ci = new CultureInfo(defaultLanguageCulture);
           Log.Error("SelectAudioLanguage - unable to build CultureInfo, make sure MediaPortal.xml is not corrupted! - {0}", ex);
         }
       }

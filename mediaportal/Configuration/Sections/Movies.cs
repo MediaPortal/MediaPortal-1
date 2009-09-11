@@ -51,8 +51,8 @@ namespace MediaPortal.Configuration.Sections
     private string fontColor;
     private bool fontIsBold;
     private int fontSize;
-    private readonly string m_strDefaultSubtitleLanguageISO = "English";
-    private readonly string m_strDefaultAudioLanguageISO = "English";
+    private readonly string m_strDefaultSubtitleLanguageISO = "EN";
+    private readonly string m_strDefaultAudioLanguageISO = "EN";
     private MPTabPage tabPage1;
     private MPGroupBox gAllowedModes;
     private MPCheckBox cbAllowNormal;
@@ -185,7 +185,18 @@ namespace MediaPortal.Configuration.Sections
         showSubtitlesCheckBox.Checked = xmlreader.GetValueAsBool("subtitles", "enabled", false);
         checkBoxShowWatched.Checked = xmlreader.GetValueAsBool("movies", "markwatched", true);
 
-        defaultSubtitleLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("subtitles", "language", m_strDefaultSubtitleLanguageISO);
+        try
+        {
+          CultureInfo ci = new CultureInfo(xmlreader.GetValueAsString("subtitles", "language", m_strDefaultSubtitleLanguageISO));
+          defaultSubtitleLanguageComboBox.SelectedItem = ci.EnglishName;
+        }
+        catch (Exception ex)
+        {
+          CultureInfo ci = new CultureInfo(m_strDefaultSubtitleLanguageISO);
+          Log.Error("LoadSettings - failed to load default subtitle language, using {0} - {1} ", ci.EnglishName, ex);
+          defaultSubtitleLanguageComboBox.SelectedItem = ci.EnglishName;
+        }
+
         shadowDepthUpDown.Value = xmlreader.GetValueAsInt("subtitles", "shadow", 3);
         borderWidthUpDown.Value = xmlreader.GetValueAsInt("subtitles", "borderWidth", 2);
         borderOutlineRadioButton.Checked = xmlreader.GetValueAsBool("subtitles", "borderOutline", true);
@@ -248,7 +259,17 @@ namespace MediaPortal.Configuration.Sections
           }
         }
 
-        defaultAudioLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "audiolanguage", m_strDefaultAudioLanguageISO);
+        try
+        {
+          CultureInfo ci = new CultureInfo(xmlreader.GetValueAsString("movieplayer", "audiolanguage", m_strDefaultAudioLanguageISO));
+          defaultAudioLanguageComboBox.SelectedItem = ci.EnglishName;
+        }
+        catch (Exception ex)
+        {
+          CultureInfo ci = new CultureInfo(m_strDefaultAudioLanguageISO);
+          Log.Error("LoadSettings - failed to load default audio language, using {0} - {1} ", ci.EnglishName, ex);
+          defaultAudioLanguageComboBox.SelectedItem = ci.EnglishName;
+        }
       }
     }
 
@@ -267,7 +288,14 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("subtitles", "shadow", shadowDepthUpDown.Value);
         xmlwriter.SetValue("subtitles", "borderWidth", borderWidthUpDown.Value);
         xmlwriter.SetValueAsBool("subtitles", "borderOutline", borderOutlineRadioButton.Checked);
-        xmlwriter.SetValue("subtitles", "language", defaultSubtitleLanguageComboBox.Text);
+
+        foreach (CultureInfo ci in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
+        {
+          if (ci.EnglishName == defaultSubtitleLanguageComboBox.Text)
+          {
+            xmlwriter.SetValue("subtitles", "language", ci.Name);
+          }
+        }
 
         xmlwriter.SetValue("subtitles", "fontface", fontName);
         xmlwriter.SetValue("subtitles", "color", fontColor);
@@ -292,7 +320,13 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("movies", "allowarnonlinear", cbAllowNonLinearStretch.Checked);
         xmlwriter.SetValueAsBool("movies", "allowarletterbox", cbAllowLetterbox.Checked);
 
-        xmlwriter.SetValue("movieplayer", "audiolanguage", defaultAudioLanguageComboBox.Text);
+        foreach (CultureInfo ci in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
+        {
+          if (ci.EnglishName == defaultAudioLanguageComboBox.Text)
+          {
+            xmlwriter.SetValue("movieplayer", "audiolanguage", ci.Name);
+          }
+        }
 
       }
     }
