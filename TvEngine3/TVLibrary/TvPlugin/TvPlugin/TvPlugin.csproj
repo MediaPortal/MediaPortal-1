@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -164,6 +164,7 @@
     <Compile Include="TvSetupForm.Designer.cs">
       <DependentUpon>TvSetupForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="TvTimeShiftPositionWatcher.cs" />
     <Compile Include="TVTuningDetails.cs" />
     <Compile Include="TVUtil.cs" />
     <Compile Include="TVZapOSD.cs" />

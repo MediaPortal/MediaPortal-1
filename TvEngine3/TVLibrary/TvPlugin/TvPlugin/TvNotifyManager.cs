@@ -263,6 +263,7 @@ namespace TvPlugin
       ;
       try
       {
+        TvTimeShiftPositionWatcher.CheckOrUpdateTimeShiftPosition(false);
         DateTime preNotifySecs = DateTime.Now.AddSeconds(_preNotifyConfig);
         if (_enableTVNotification)
         {
@@ -379,7 +380,8 @@ namespace TvPlugin
                                  newRecording.Title,
                                  newRecording.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                  endTime);
-
+            //Recording started
+            TvTimeShiftPositionWatcher.InitiateBufferFilesCopyProcess(newRecording.FileName);
             if (!Notify(GUILocalizeStrings.Get(1446), text, newRecording.ReferencedChannel().DisplayName))
             {
               _actualRecordings.Remove(newRecording.IdRecording);

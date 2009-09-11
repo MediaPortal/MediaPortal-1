@@ -181,7 +181,6 @@ namespace TvPlugin
     public static GUIDialogCIMenu dlgCiMenu;
     public static GUIDialogNotify _dialogNotify = null;
 
-
     #endregion
 
     #region Events
@@ -3263,7 +3262,7 @@ namespace TvPlugin
         {
           StartPlay();
         }
-
+        TvTimeShiftPositionWatcher.CheckOrUpdateTimeShiftPosition(true);
         _playbackStopped = false;
         _doingChannelChange = false;
         _ServerNotConnectedHandled = false;
@@ -3521,6 +3520,7 @@ namespace TvPlugin
         case TvLibrary.Interfaces.CiMenuState.Ready:
           dlgCiMenu.Reset();
           dlgCiMenu.SetHeading(Menu.Title, Menu.Subtitle, Menu.BottomText); // CI Menu
+
 
           for (int i = 0; i < Menu.NumChoices; i++) // CI Menu Entries
             dlgCiMenu.Add(Menu.MenuEntries[i].Message); // take only message, numbers come from dialog
