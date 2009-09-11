@@ -437,6 +437,11 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
+      if (!isLoaded)
+      {
+        Log.Info("PluginsNew: plugins were never loaded and therefore don't need to be persisted again");
+        return;
+      }
       LoadAll();
       string dllsToLoad = "";
       string dllsToSkip = "";
