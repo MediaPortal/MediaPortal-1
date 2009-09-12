@@ -239,7 +239,7 @@ namespace TvPlugin
 
     private void _timer_Tick(object sender, EventArgs e)
     {
-      if (!RemoteControl.IsConnected || (!_enableTVNotification && !_enableRecNotification))
+      if (!TVHome.Connected || (!_enableTVNotification && !_enableRecNotification))
       {
         return;
       }

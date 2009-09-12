@@ -327,6 +327,7 @@ namespace TvPlugin
     {
       while (true)
       {
+        Connected = RemoteControl.IsConnected;
         if (Connected /*&& _resumed */ && !_suspended)
         {
           bool isTS = (Card != null && Card.IsTimeShifting);
@@ -449,8 +450,6 @@ namespace TvPlugin
 
       // replace g_player's ShowFullScreenWindowTV
       g_Player.ShowFullScreenWindowTV = ShowFullScreenWindowTVHandler;
-
-      Connected = RemoteControl.IsConnected;
     }
 
     public override bool IsTv
@@ -1455,7 +1454,7 @@ namespace TvPlugin
       int waits = 0;
       while (true)
       {
-        if (!RemoteControl.IsConnected)
+        if (!Connected)
         {
           if (!_onPageLoadDone)
           {
@@ -1465,8 +1464,7 @@ namespace TvPlugin
           }
           else if (waits >= MAX_WAIT_FOR_SERVER_CONNECTION)
           {
-            bool res = HandleServerNotConnected();
-
+            HandleServerNotConnected();
             UpdateStateOfRecButton();
             UpdateProgressPercentageBar();
             UpdateRecordingIndicator();
@@ -1481,7 +1479,6 @@ namespace TvPlugin
         else
         {
           Log.Info("tv home onpageload: done waiting for TVservice.");
-          Connected = true;
           break;
         }
       }
@@ -1502,7 +1499,7 @@ namespace TvPlugin
       catch (Exception)
       {
         // lets try one more time - seems like the gentle framework is not properly initialized when coming out of standby/hibernation.        
-        if (Connected && RemoteControl.IsConnected)
+        if (RemoteControl.IsConnected)
         {
           //lets wait 10 secs before giving up.
           DateTime now = DateTime.Now;
@@ -1673,7 +1670,7 @@ namespace TvPlugin
         //and we're not playing which means we dont timeshift tv
         //g_Player.Stop();
       }
-      if (RemoteControl.IsConnected)
+      if (Connected)
       {
         SaveSettings();
       }
@@ -1871,11 +1868,15 @@ namespace TvPlugin
         return;
       }
       //stop playing non-fullscreen TV here to overcome thread error
-      if (!RemoteControl.IsConnected && !g_Player.FullScreen && g_Player.IsTV)
+      if (!Connected)
       {
-        g_Player.Stop();
+        if (g_Player.Playing && !g_Player.FullScreen && g_Player.IsTV)
+        {
+          g_Player.Stop();
+        }
+        return;
       }
-
+      
       UpdateRecordingIndicator();
       UpdateStateOfRecButton();
 
@@ -3257,7 +3258,6 @@ namespace TvPlugin
 
         // continue graph
         g_Player.ContinueGraph();
-
         if (!g_Player.Playing || _status.IsSet(LiveTvStatus.CardChange))
         {
           StartPlay();

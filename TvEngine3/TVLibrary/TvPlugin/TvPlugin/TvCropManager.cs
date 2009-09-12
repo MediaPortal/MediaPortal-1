@@ -96,7 +96,7 @@ namespace TvPlugin
       {
         try
         {
-          using (Settings xmlreader = new Settings("MediaPortal.xml"))
+          if (CropSettings.Top > 0 || CropSettings.Bottom > 0 || CropSettings.Left > 0 || CropSettings.Right > 0)
           {
             Log.Info("TvCropManager.SendCropMessage(): {0}, {1}, {2}, {3}", CropSettings.Top, CropSettings.Bottom,
                      CropSettings.Left, CropSettings.Right);
