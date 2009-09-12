@@ -2,7 +2,7 @@
 <window>
   <id>30</id>
   <defaultcontrol>2</defaultcontrol>
-  <allowoverlay>no</allowoverlay>
+  <allowoverlay>[facadeview.list|facadeview.filmstrip]</allowoverlay>
   <define>#header.label:666</define>
   <define>#header.image:radio_logo.png</define>
   <define>#header.hover:-</define>
@@ -265,7 +265,7 @@
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
       <animation effect="fade" time="250" reversible="false">visible</animation>
     </control>
-    <control>
+    <!--<control>
       <description>video rectangle</description>
       <type>image</type>
       <id>0</id>
@@ -341,6 +341,6 @@
       <textcolor>20ffffff</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
       <visible>[facadeview.list|facadeview.filmstrip]+[Control.HasFocus(50) + player.hasmedia]</visible>
-    </control>
+    </control>-->
   </controls>
 </window>

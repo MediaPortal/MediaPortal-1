@@ -266,6 +266,7 @@ namespace MediaPortal.GUI.Library
     protected List<CPosition> _listPositions = new List<CPosition>();
     protected string _windowXmlFileName = "";
     protected bool _isOverlayAllowed = true;
+    protected int _isOverlayAllowedCondition = 0;
     private Object instance;
 
     //-1=default from topbar.xml 
@@ -599,9 +600,13 @@ namespace MediaPortal.GUI.Library
             {
               _isOverlayAllowed = true;
             }
-            if (allowed == "no" || allowed == "false")
+            else if (allowed == "no" || allowed == "false")
             {
               _isOverlayAllowed = false;
+            }
+            else
+            {
+              _isOverlayAllowedCondition = GUIInfoManager.TranslateString(nodeOverlay.InnerText);
             }
           }
         }
@@ -884,6 +889,37 @@ namespace MediaPortal.GUI.Library
       this.instance = obj;
     }
 
+    private void UpdateOverlayAllowed()
+    {
+      if (_isOverlayAllowedCondition == 0)
+      {
+        return;
+      }
+      bool bWasAllowed = GUIGraphicsContext.Overlay;
+      _isOverlayAllowed = GUIInfoManager.GetBool(_isOverlayAllowedCondition, GetID);
+      if (bWasAllowed != _isOverlayAllowed)
+      {
+        GUIGraphicsContext.Overlay = _isOverlayAllowed;
+      }
+    }
+
+    private void SetInitialOverlayAllowed()
+    {
+      if (_isOverlayAllowedCondition == 0)
+      {
+        return;
+      }
+      _isOverlayAllowed = GUIGraphicsContext.Overlay = GUIInfoManager.GetBool(_isOverlayAllowedCondition, GetID);
+
+      // no need to enquire every frame if overlays are always allowed or never allowed
+      if (_isOverlayAllowedCondition == GUIInfoManager.SYSTEM_ALWAYS_TRUE ||
+          _isOverlayAllowedCondition == GUIInfoManager.SYSTEM_ALWAYS_FALSE)
+      {
+        _isOverlayAllowedCondition = 0;
+      }
+    }
+
+
     private void SetControlVisibility()
     {
       // reset our info manager caches
@@ -926,6 +962,7 @@ namespace MediaPortal.GUI.Library
       }
 
       SetControlVisibility();
+      SetInitialOverlayAllowed();
       QueueAnimation(AnimationType.WindowOpen);
     }
 
@@ -1312,6 +1349,7 @@ namespace MediaPortal.GUI.Library
             return;
           }
 
+          UpdateOverlayAllowed();
           foreach (GUIControl control in Children)
           {
             control.UpdateVisibility();
@@ -1519,6 +1557,7 @@ namespace MediaPortal.GUI.Library
 
               InitControls();
 
+              UpdateOverlayAllowed();
               GUIGraphicsContext.Overlay = _isOverlayAllowed;
 
               // set topbar autohide 

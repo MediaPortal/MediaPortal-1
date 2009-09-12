@@ -2,7 +2,7 @@
 <window>
   <id>25</id>
   <defaultcontrol>2</defaultcontrol>
-  <allowoverlay>no</allowoverlay>
+  <allowoverlay>[facadeview.list|facadeview.filmstrip]</allowoverlay>
   <define>#header.label:#view</define>
   <define>#header.image:videos_logo.png</define>
   <define>#header.hover:-</define>
@@ -502,7 +502,7 @@
 		  <animation effect="fade" time="250">WindowOpen</animation>
 		  <animation effect="fade" time="250">WindowClose</animation>
 	</control>
-		<control>
+		<!--<control>
 	<description>video rectangle</description>
 	<type>image</type>
 	<id>0</id>
@@ -576,6 +576,6 @@
       <textcolor>20ffffff</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
       <visible>[facadeview.filmstrip]+[Control.HasFocus(50) + player.hasmedia]</visible>
-    </control>
+    </control>-->
   </controls>
 </window>
