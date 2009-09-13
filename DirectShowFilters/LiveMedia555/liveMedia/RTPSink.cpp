@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // RTP Sinks
 // Implementation
 
@@ -215,7 +215,7 @@ RTPTransmissionStatsDB::Iterator::~Iterator() {
 RTPTransmissionStats*
 RTPTransmissionStatsDB::Iterator::next() {
   char const* key; // dummy
- 
+
   return (RTPTransmissionStats*)(fIter->next(key));
 }
 
@@ -237,7 +237,7 @@ RTPTransmissionStats::RTPTransmissionStats(RTPSink& rtpSink, u_int32_t SSRC)
   : fOurRTPSink(rtpSink), fSSRC(SSRC), fLastPacketNumReceived(0),
     fPacketLossRatio(0), fTotNumPacketsLost(0), fJitter(0),
     fLastSRTime(0), fDiffSR_RRTime(0), fFirstPacket(True),
-    fTotalOctetCount_hi(0), fTotalOctetCount_lo(0), 
+    fTotalOctetCount_hi(0), fTotalOctetCount_lo(0),
     fTotalPacketCount_hi(0), fTotalPacketCount_lo(0) {
   gettimeofday(&fTimeCreated, NULL);
 
@@ -272,7 +272,7 @@ void RTPTransmissionStats
 #ifdef DEBUG_RR
   fprintf(stderr, "RTCP RR data (received at %lu.%06ld): lossStats 0x%08x, lastPacketNumReceived 0x%08x, jitter 0x%08x, lastSRTime 0x%08x, diffSR_RRTime 0x%08x\n",
           fTimeReceived.tv_sec, fTimeReceived.tv_usec, lossStats, lastPacketNumReceived, jitter, lastSRTime, diffSR_RRTime);
-  unsigned rtd = roundTripDelay(); 
+  unsigned rtd = roundTripDelay();
   fprintf(stderr, "=> round-trip delay: 0x%04x (== %f seconds)\n", rtd, rtd/65536.0);
 #endif
 
@@ -300,7 +300,7 @@ void RTPTransmissionStats
 unsigned RTPTransmissionStats::roundTripDelay() const {
   // Compute the round-trip delay that was indicated by the most recently-received
   // RTCP RR packet.  Use the method noted in the RTP/RTCP specification (RFC 3350).
-  
+
   if (fLastSRTime == 0) {
     // Either no RTCP RR packet has been received yet, or else the
     // reporting receiver has not yet received any RTCP SR packets from us:

@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // RTCP
 // C++ header
 
@@ -66,7 +66,7 @@ public:
       // This prevents (for example) the handler for a multicast receiver being
       // called if some other multicast receiver happens to exit.
       // If "handleActiveParticipantsOnly" is False, then the handler is called
-      // for any incoming RTCP "BYE". 
+      // for any incoming RTCP "BYE".
   void setSRHandler(TaskFunc* handlerTask, void* clientData);
   void setRRHandler(TaskFunc* handlerTask, void* clientData);
       // Assigns a handler routine to be called if a "SR" or "RR"
@@ -84,7 +84,7 @@ public:
   void setStreamSocket(int sockNum, unsigned char streamChannelId);
   void addStreamSocket(int sockNum, unsigned char streamChannelId);
   void removeStreamSocket(int sockNum, unsigned char streamChannelId) {
-    fRTCPInterface.removeStreamSocket(sockNum, streamChannelId);    
+    fRTCPInterface.removeStreamSocket(sockNum, streamChannelId);
   }
     // hacks to allow sending RTP over TCP (RFC 2236, section 10.12)
 

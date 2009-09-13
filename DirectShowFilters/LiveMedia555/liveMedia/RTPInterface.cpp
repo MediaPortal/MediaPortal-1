@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // An abstraction of a network interface used for RTP (or RTCP).
 // (This allows the RTP-over-TCP hack (RFC 2326, section 10.12) to
 // be implemented transparently.)
@@ -94,6 +94,12 @@ RTPInterface::RTPInterface(Medium* owner, Groupsock* gs)
     fNextTCPReadSize(0), fNextTCPReadStreamSocketNum(-1),
     fNextTCPReadStreamChannelId(0xFF), fReadHandlerProc(NULL),
     fAuxReadHandlerFunc(NULL), fAuxReadHandlerClientData(NULL) {
+  // Make the socket non-blocking, even though it will be read from only asynchronously, when packets arrive.
+  // The reason for this is that, in some OSs, reads on a blocking socket can (allegedly) sometimes block,
+  // even if the socket was previously reported (e.g., by "select()") as having data available.
+  // (This can supposedly happen if the UDP checksum fails, for example.)
+  makeSocketNonBlocking(fGS->socketNum());
+  increaseSendBufferTo(envir(), fGS->socketNum(), 50*1024);
 }
 
 RTPInterface::~RTPInterface() {
@@ -124,13 +130,24 @@ void RTPInterface::addStreamSocket(int sockNum,
   fTCPStreams = new tcpStreamRecord(sockNum, streamChannelId, fTCPStreams);
 }
 
+static void deregisterSocket(UsageEnvironment& env, int sockNum, unsigned char streamChannelId) {
+  SocketDescriptor* socketDescriptor = lookupSocketDescriptor(env, sockNum);
+  if (socketDescriptor != NULL) {
+    socketDescriptor->deregisterRTPInterface(streamChannelId);
+        // Note: This may delete "socketDescriptor",
+        // if no more interfaces are using this socket
+  }
+}
+
 void RTPInterface::removeStreamSocket(int sockNum,
 				      unsigned char streamChannelId) {
   for (tcpStreamRecord** streamsPtr = &fTCPStreams; *streamsPtr != NULL;
        streamsPtr = &((*streamsPtr)->fNext)) {
     if ((*streamsPtr)->fStreamSocketNum == sockNum
 	&& (*streamsPtr)->fStreamChannelId == streamChannelId) {
-      // Remove the record pointed to by *streamsPtr :
+      deregisterSocket(envir(), sockNum, streamChannelId);
+
+      // Then remove the record pointed to by *streamsPtr :
       tcpStreamRecord* next = (*streamsPtr)->fNext;
       (*streamsPtr)->fNext = NULL;
       delete (*streamsPtr);
@@ -189,9 +206,9 @@ Boolean RTPInterface::handleRead(unsigned char* buffer,
     // Read from the TCP connection:
     bytesRead = 0;
     unsigned totBytesToRead = fNextTCPReadSize;
-    if (totBytesToRead > bufferMaxSize) totBytesToRead = bufferMaxSize; 
+    if (totBytesToRead > bufferMaxSize) totBytesToRead = bufferMaxSize;
     unsigned curBytesToRead = totBytesToRead;
-    unsigned curBytesRead;
+    int curBytesRead;
     while ((curBytesRead = readSocket(envir(), fNextTCPReadStreamSocketNum,
 				      &buffer[bytesRead], curBytesToRead,
 				      fromAddress)) > 0) {
@@ -223,13 +240,7 @@ void RTPInterface::stopNetworkReading() {
   // Also turn off read handling on each of our TCP connections:
   for (tcpStreamRecord* streams = fTCPStreams; streams != NULL;
        streams = streams->fNext) {
-    SocketDescriptor* socketDescriptor
-      = lookupSocketDescriptor(envir(), streams->fStreamSocketNum);
-    if (socketDescriptor != NULL) {
-      socketDescriptor->deregisterRTPInterface(streams->fStreamChannelId);
-        // Note: This may delete "socketDescriptor",
-        // if no more interfaces are using this socket
-    }
+    deregisterSocket(envir(), streams->fStreamSocketNum, streams->fStreamChannelId);
   }
 }
 
@@ -324,9 +335,13 @@ void SocketDescriptor::tcpReadHandler(SocketDescriptor* socketDescriptor,
     // (Later, fix) #####
     unsigned char c;
     struct sockaddr_in fromAddress;
+    struct timeval timeout; timeout.tv_sec = 0; timeout.tv_usec = 0;
     do {
-      if (readSocket(env, socketNum, &c, 1, fromAddress) != 1) { // error reading TCP socket
-	env.taskScheduler().turnOffBackgroundReadHandling(socketNum); // stops further calls to us
+      int result = readSocket(env, socketNum, &c, 1, fromAddress, &timeout);
+      if (result != 1) { // error reading TCP socket
+	if (result < 0) {
+	  env.taskScheduler().turnOffBackgroundReadHandling(socketNum); // stops further calls to us
+	}
 	return;
       }
     } while (c != '$');
@@ -372,4 +387,4 @@ tcpStreamRecord
 tcpStreamRecord::~tcpStreamRecord() {
   delete fNext;
 }
-                                                                                
+
