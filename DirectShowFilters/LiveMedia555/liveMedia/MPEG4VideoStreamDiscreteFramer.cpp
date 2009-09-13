@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A simplified version of "MPEG4VideoStreamFramer" that takes only complete,
 // discrete frames (rather than an arbitrary byte stream) as input.
 // This avoids the parsing and data copying overhead of the full
@@ -83,7 +83,7 @@ void MPEG4VideoStreamDiscreteFramer
 	  break; // The configuration information ends here
 	}
       }
-      fNumConfigBytes = i-3;
+      fNumConfigBytes = i < frameSize ? i-3 : frameSize;
       delete[] fConfigBytes; fConfigBytes = new unsigned char[fNumConfigBytes];
       for (unsigned j = 0; j < fNumConfigBytes; ++j) fConfigBytes[j] = fTo[j];
 
@@ -143,7 +143,7 @@ void MPEG4VideoStreamDiscreteFramer
 	    mask >>= 1;
 	  }
 	}
-	
+
 	// If this is a "B" frame, then we have to tweak "presentationTime":
 	if (vop_coding_type == 2/*B*/
 	    && (fLastNonBFramePresentationTime.tv_usec > 0 ||

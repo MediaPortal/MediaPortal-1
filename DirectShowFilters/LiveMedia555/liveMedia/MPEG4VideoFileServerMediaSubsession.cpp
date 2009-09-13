@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A 'ServerMediaSubsession' object that creates new, unicast, "RTPSink"s
 // on demand, from a MPEG-4 video file.
 // Implementation
@@ -80,15 +80,15 @@ char const* MPEG4VideoFileServerMediaSubsession
   // "auxSDPLine()" will be NULL initially, and we need to start reading
   // data from our file until this changes.
   fDummyRTPSink = rtpSink;
-    
+
   // Start reading the file:
   fDummyRTPSink->startPlaying(*inputSource, afterPlayingDummy, this);
-    
+
   // Check whether the sink's 'auxSDPLine()' is ready:
   checkForAuxSDPLine(this);
-    
+
   envir().taskScheduler().doEventLoop(&fDoneFlag);
-    
+
   char const* auxSDPLine = fDummyRTPSink->auxSDPLine();
   return auxSDPLine;
 }

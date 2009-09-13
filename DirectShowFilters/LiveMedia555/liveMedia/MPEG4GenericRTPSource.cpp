@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // MPEG4-GENERIC ("audio", "video", or "application") RTP stream sources
 // Implementation
 
@@ -126,7 +126,7 @@ Boolean MPEG4GenericRTPSource
 
   if (fSizeLength > 0) {
     // The packet begins with a "AU Header Section".  Parse it, to
-    // determine the "AU-header"s for each frame present in this packet: 
+    // determine the "AU-header"s for each frame present in this packet:
     resultSpecialHeaderSize += 2;
     if (packetSize < resultSpecialHeaderSize) return False;
 
@@ -223,7 +223,7 @@ unsigned samplingFrequencyFromAudioSpecificConfig(char const* configStr) {
       result = samplingFrequencyFromIndex[samplingFrequencyIndex];
       break;
     }
-    
+
     // Index == 15 means that the actual frequency is next (24 bits):
     if (configSize < 5) break;
     result = ((config[1]&0x7F)<<17) | (config[2]<<9) | (config[3]<<1) | (config[4]>>7);

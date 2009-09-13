@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // RTP sink for MPEG-4 Elementary Stream video (RFC 3016)
 // Implementation
 
@@ -26,11 +26,11 @@ MPEG4ESVideoRTPSink
 		      unsigned char rtpPayloadFormat,
 		      u_int32_t rtpTimestampFrequency)
   : VideoRTPSink(env, RTPgs, rtpPayloadFormat, rtpTimestampFrequency, "MP4V-ES"),
-    fVOPIsPresent(False), fAuxSDPLine(NULL) {
+    fVOPIsPresent(False), fFmtpSDPLine(NULL) {
 }
 
 MPEG4ESVideoRTPSink::~MPEG4ESVideoRTPSink() {
-  delete[] fAuxSDPLine;
+  delete[] fFmtpSDPLine;
 }
 
 MPEG4ESVideoRTPSink*
@@ -122,9 +122,9 @@ char const* MPEG4ESVideoRTPSink::auxSDPLine() {
     endPtr += 2;
   }
   sprintf(endPtr, "\r\n");
-	  
-  delete[] fAuxSDPLine;
-  fAuxSDPLine = strDup(fmtp);
+
+  delete[] fFmtpSDPLine;
+  fFmtpSDPLine = strDup(fmtp);
   delete[] fmtp;
-  return fAuxSDPLine;
+  return fFmtpSDPLine;
 }

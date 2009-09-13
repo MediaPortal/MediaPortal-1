@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A filter that breaks up an MPEG-4 video elementary stream into
 //   frames for:
 // - Visual Object Sequence (VS) Header + Visual Object (VO) Header
@@ -38,7 +38,7 @@ enum MPEGParseState {
   PARSING_GROUP_OF_VIDEO_OBJECT_PLANE,
   PARSING_VIDEO_OBJECT_PLANE,
   PARSING_VISUAL_OBJECT_SEQUENCE_END_CODE
-}; 
+};
 
 class MPEG4VideoStreamParser: public MPEGVideoStreamParser {
 public:
@@ -72,13 +72,13 @@ private:
 
 private:
   MPEGParseState fCurrentParseState;
-  unsigned fNumBitsSeenSoFar; // used by the getNextFrameBit*() routines 
+  unsigned fNumBitsSeenSoFar; // used by the getNextFrameBit*() routines
   u_int32_t vop_time_increment_resolution;
   unsigned fNumVTIRBits;
       // # of bits needed to count to "vop_time_increment_resolution"
   u_int8_t fixed_vop_rate;
   unsigned fixed_vop_time_increment; // used if 'fixed_vop_rate' is set
-  unsigned fSecondsSinceLastTimeCode, fTotalTicksSinceLastTimeCode, fPrevNewTotalTicks; 
+  unsigned fSecondsSinceLastTimeCode, fTotalTicksSinceLastTimeCode, fPrevNewTotalTicks;
   unsigned fPrevPictureCountDelta;
   Boolean fJustSawTimeCode;
 };
@@ -129,7 +129,7 @@ void MPEG4VideoStreamFramer
   // Copy the old, then the new, config bytes there:
   memmove(configNew, fNewConfigBytes, fNumNewConfigBytes);
   memmove(&configNew[fNumNewConfigBytes], newConfigBytes, numNewBytes);
-  
+
   delete[] fNewConfigBytes; fNewConfigBytes = configNew;
   fNumNewConfigBytes += numNewBytes;
 }
@@ -257,7 +257,7 @@ unsigned MPEG4VideoStreamParser
   while (next4Bytes != VISUAL_OBJECT_START_CODE) {
     saveToNextCode(next4Bytes);
   }
-  
+
   setParseState(PARSING_VISUAL_OBJECT);
 
   // Compute this frame's presentation time:
@@ -300,7 +300,7 @@ unsigned MPEG4VideoStreamParser::parseVisualObject() {
   if (visual_object_type != 1) {
     usingSource()->envir() << "MPEG4VideoStreamParser::parseVisualObject(): Warning: We don't handle visual_object_type " << visual_object_type << "\n";
   }
-  
+
   // Now, copy all bytes that we see, up until we reach
   // a video_object_start_code
   u_int32_t next4Bytes = get4Bytes();
@@ -443,7 +443,7 @@ unsigned MPEG4VideoStreamParser::parseVideoObjectLayer() {
     saveToNextCode(next4Bytes);
   } while (next4Bytes != GROUP_VOP_START_CODE
 	   && next4Bytes != VOP_START_CODE);
-  
+
   analyzeVOLHeader();
 
   setParseState((next4Bytes == GROUP_VOP_START_CODE)
@@ -470,7 +470,7 @@ unsigned MPEG4VideoStreamParser::parseGroupOfVideoObjectPlane() {
   // Next, extract the (18-bit) time code from the next 3 bytes:
   u_int8_t next3Bytes[3];
   getBytes(next3Bytes, 3);
-  saveByte(next3Bytes[0]);saveByte(next3Bytes[1]);saveByte(next3Bytes[2]); 
+  saveByte(next3Bytes[0]);saveByte(next3Bytes[1]);saveByte(next3Bytes[2]);
   unsigned time_code
     = (next3Bytes[0]<<10)|(next3Bytes[1]<<2)|(next3Bytes[2]>>6);
   unsigned time_code_hours    = (time_code&0x0003E000)>>13;
@@ -489,7 +489,7 @@ unsigned MPEG4VideoStreamParser::parseGroupOfVideoObjectPlane() {
   while (next4Bytes != VOP_START_CODE) {
     saveToNextCode(next4Bytes);
   }
-  
+
   // Compute this frame's presentation time:
   usingSource()->computePresentationTime(fTotalTicksSinceLastTimeCode);
 
@@ -552,10 +552,10 @@ unsigned MPEG4VideoStreamParser::parseVideoObjectPlane() {
 #ifdef DEBUG
   fprintf(stderr, "vop_coding_type: %d(%c), modulo_time_base: %d, vop_time_increment: %d\n", vop_coding_type, "IPBS"[vop_coding_type], modulo_time_base, vop_time_increment);
 #endif
-    
+
   // Now, copy all bytes that we see, up until we reach a code of some sort:
   saveToNextCode(next4Bytes);
-  
+
   // Update our counters based on the frame timing information that we saw:
   if (fixed_vop_time_increment > 0) {
     // This is a 'fixed_vop_rate' stream.  Use 'fixed_vop_time_increment':
@@ -606,9 +606,9 @@ unsigned MPEG4VideoStreamParser::parseVideoObjectPlane() {
     }
   }
   fJustSawTimeCode = False; // for next time
-  
+
   // The next thing to parse depends on the code that we just saw,
-  // but we are assumed to have ended the current picture: 
+  // but we are assumed to have ended the current picture:
   usingSource()->fPictureEndMarker = True; // HACK #####
   switch (next4Bytes) {
   case VISUAL_OBJECT_SEQUENCE_END_CODE: {
