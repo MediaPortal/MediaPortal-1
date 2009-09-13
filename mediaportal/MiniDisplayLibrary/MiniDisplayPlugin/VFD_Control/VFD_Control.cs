@@ -244,7 +244,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
 
             // Keep looking until we find the device or there are no more left to examine.
             MemberIndex = MemberIndex + 1;
-          } while (!(_MyDeviceDetected | (MemberIndex == DevicePathName.Length)));
+          } while (!(_MyDeviceDetected || (MemberIndex == DevicePathName.Length) || DevicePathName[MemberIndex] == null));
         }
 
         if (_MyDeviceDetected)
