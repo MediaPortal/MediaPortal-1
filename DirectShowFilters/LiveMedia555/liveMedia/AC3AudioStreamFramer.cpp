@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A filter that breaks up an AC3 audio elementary stream into frames
 // Implementation
 
@@ -167,7 +167,7 @@ void AC3AudioStreamFramer::parseNextFrame() {
     // We were able to acquire a frame from the input.
     // It has already been copied to the reader's space.
     fFrameSize = acquiredFrameSize;
-    
+
     // Also set the presentation time, and increment it for next time,
     // based on the length of this frame:
     fPresentationTime = fNextFramePresentationTime;
@@ -253,7 +253,7 @@ Boolean AC3AudioStreamParser
   } else {
     // Discard all of the data that was just read:
     totNumValidBytes() = totNumValidBytes() - size;
-    
+
     return False;
   }
 }
@@ -270,7 +270,7 @@ unsigned AC3AudioStreamParser::parseFrame(unsigned& numTruncatedBytes) {
 
   try {
     saveParserState();
-    
+
     // We expect an AC3 audio header (first 2 bytes == 0x0B77) at the start:
     while (1) {
       unsigned next4Bytes = test4Bytes();
@@ -280,10 +280,10 @@ unsigned AC3AudioStreamParser::parseFrame(unsigned& numTruncatedBytes) {
     }
     fCurrentFrame.hdr0 = get4Bytes();
     fCurrentFrame.hdr1 = test4Bytes();
-    
+
     fCurrentFrame.setParamsFromHeader();
     fHaveParsedAFrame = True;
-    
+
     // Copy the frame to the requested destination:
     unsigned frameSize = fCurrentFrame.frameSize;
     if (frameSize > fMaxSize) {
@@ -299,7 +299,7 @@ unsigned AC3AudioStreamParser::parseFrame(unsigned& numTruncatedBytes) {
     fTo[3] = fCurrentFrame.hdr0;
     getBytes(&fTo[4], frameSize-4);
     skipBytes(numTruncatedBytes);
-    
+
     return frameSize;
   } catch (int /*e*/) {
 #ifdef DEBUG
@@ -316,7 +316,7 @@ void AC3AudioStreamParser::readAndSaveAFrame() {
 
   fSavedFrameFlag = 0;
   fUsingSource->getNextFrame(fSavedFrame, maxAC3FrameSize,
-			     afterGettingSavedFrame, this, 
+			     afterGettingSavedFrame, this,
 			     onSavedFrameClosure, this);
   fUsingSource->envir().taskScheduler().doEventLoop(&fSavedFrameFlag);
 }
