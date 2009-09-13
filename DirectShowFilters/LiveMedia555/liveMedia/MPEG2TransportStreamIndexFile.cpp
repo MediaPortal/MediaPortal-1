@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A class that encapsulates MPEG-2 Transport Stream 'index files'/
 // These index files are used to implement 'trick play' operations
 // (seek-by-time, fast forward, reverse play) on Transport Stream files.
@@ -68,14 +68,14 @@ void MPEG2TransportStreamIndexFile
     tsPacketNumber = indexRecordNumber = 0;
     return;
   }
-  
+
   // If "npt" is the same as the one that we last looked up, return its cached result:
   if (npt == fCachedPCR) {
     tsPacketNumber = fCachedTSPacketNumber;
-    indexRecordNumber = fCachedIndexRecordNumber; 
+    indexRecordNumber = fCachedIndexRecordNumber;
     return;
   }
-  
+
   // Search for the pair of neighboring index records whose PCR values span "npt".
   // Use the 'regula-falsi' method.
   Boolean success = False;
@@ -87,7 +87,7 @@ void MPEG2TransportStreamIndexFile
     pcrRight = pcrFromBuf();
     if (npt > pcrRight) npt = pcrRight;
         // handle "npt" too large by seeking to the last frame of the file
-    
+
     while (ixRight-ixLeft > 1 && pcrLeft < npt && npt <= pcrRight) {
       unsigned long ixNew = ixLeft
 	+ (unsigned long)(((npt-pcrLeft)/(pcrRight-pcrLeft))*(ixRight-ixLeft));
@@ -106,12 +106,12 @@ void MPEG2TransportStreamIndexFile
       }
     }
     if (ixRight-ixLeft > 1 || npt <= pcrLeft || npt > pcrRight) break; // bad PCR values in index file?
-    
+
     ixFound = ixRight;
     // "Rewind' until we reach the start of a Video Sequence or GOP header:
     success = rewindToVSH(ixFound);
   } while (0);
-  
+
   if (success && readIndexRecord(ixFound)) {
     // Return (and cache) information from record "ixFound":
     npt = fCachedPCR = pcrFromBuf();
@@ -133,14 +133,14 @@ void MPEG2TransportStreamIndexFile
     indexRecordNumber = 0;
     return;
   }
-  
+
   // If "tsPacketNumber" is the same as the one that we last looked up, return its cached result:
   if (tsPacketNumber == fCachedTSPacketNumber) {
     pcr = fCachedPCR;
-    indexRecordNumber = fCachedIndexRecordNumber; 
+    indexRecordNumber = fCachedIndexRecordNumber;
     return;
   }
-  
+
   // Search for the pair of neighboring index records whose TS packet #s span "tsPacketNumber".
   // Use the 'regula-falsi' method.
   Boolean success = False;
@@ -152,7 +152,7 @@ void MPEG2TransportStreamIndexFile
     tsRight = tsPacketNumFromBuf();
     if (tsPacketNumber > tsRight) tsPacketNumber = tsRight;
         // handle "tsPacketNumber" too large by seeking to the last frame of the file
-    
+
     while (ixRight-ixLeft > 1 && tsLeft < tsPacketNumber && tsPacketNumber <= tsRight) {
       unsigned long ixNew = ixLeft
 	+ (unsigned long)(((tsPacketNumber-tsLeft)/(tsRight-tsLeft))*(ixRight-ixLeft));
@@ -171,7 +171,7 @@ void MPEG2TransportStreamIndexFile
       }
     }
     if (ixRight-ixLeft > 1 || tsPacketNumber <= tsLeft || tsPacketNumber > tsRight) break; // bad PCR values in index file?
-    
+
     ixFound = ixRight;
     if (reverseToPreviousVSH) {
       // "Rewind' until we reach the start of a Video Sequence or GOP header:
@@ -180,7 +180,7 @@ void MPEG2TransportStreamIndexFile
       success = True;
     }
   } while (0);
-  
+
   if (success && readIndexRecord(ixFound)) {
     // Return (and cache) information from record "ixFound":
     pcr = fCachedPCR = pcrFromBuf();
@@ -200,7 +200,7 @@ Boolean MPEG2TransportStreamIndexFile
 			unsigned long& transportPacketNum, u_int8_t& offset,
 			u_int8_t& size, float& pcr, u_int8_t& recordType) {
   if (!readIndexRecord(indexRecordNum)) return False;
-  
+
   transportPacketNum = tsPacketNumFromBuf();
   offset = offsetFromBuf();
   size = sizeFromBuf();
@@ -211,7 +211,7 @@ Boolean MPEG2TransportStreamIndexFile
 
 float MPEG2TransportStreamIndexFile::getPlayingDuration() {
   if (fNumIndexRecords == 0 || !readOneIndexRecord(fNumIndexRecords-1)) return 0.0f;
-  
+
   return pcrFromBuf();
 }
 
@@ -221,15 +221,15 @@ Boolean MPEG2TransportStreamIndexFile::openFid() {
       fCurrentIndexRecordNum = 0;
     }
   }
-  
+
   return fFid != NULL;
 }
 
 Boolean MPEG2TransportStreamIndexFile::seekToIndexRecord(unsigned long indexRecordNumber) {
   if (!openFid()) return False;
-  
+
   if (indexRecordNumber == fCurrentIndexRecordNum) return True; // we're already there
-  
+
   if (SeekFile64(fFid, (int64_t)(indexRecordNumber*INDEX_RECORD_SIZE), SEEK_SET) != 0) return False;
   fCurrentIndexRecordNum = indexRecordNumber;
   return True;
@@ -240,17 +240,17 @@ Boolean MPEG2TransportStreamIndexFile::readIndexRecord(unsigned long indexRecord
     if (!seekToIndexRecord(indexRecordNum)) break;
     if (fread(fBuf, INDEX_RECORD_SIZE, 1, fFid) != 1) break;
     ++fCurrentIndexRecordNum;
-    
+
     return True;
   } while (0);
-  
+
   return False; // an error occurred
 }
 
 Boolean MPEG2TransportStreamIndexFile::readOneIndexRecord(unsigned long indexRecordNum) {
   Boolean result = readIndexRecord(indexRecordNum);
   closeFid();
-  
+
   return result;
 }
 
@@ -273,17 +273,17 @@ unsigned long MPEG2TransportStreamIndexFile::tsPacketNumFromBuf() {
 
 Boolean MPEG2TransportStreamIndexFile::rewindToVSH(unsigned long&ixFound) {
   Boolean success = False;
-  
+
   while (ixFound > 0) {
     if (!readIndexRecord(ixFound)) break;
-    
+
     u_int8_t recordType = recordTypeFromBuf();
     if ((recordType&0x80) != 0 && (recordType&0x7F) <= 2/*GOP*/) {
       if ((recordType&0x7F) == 2) {
 	// This is a GOP.  Hack: If the preceding record is for a Video Sequence Header,
 	// then use it instead:
 	unsigned long newIxFound = ixFound;
-	
+
 	while (--newIxFound > 0) {
 	  if (!readIndexRecord(newIxFound)) break;
 	  recordType = recordTypeFromBuf();
@@ -301,6 +301,6 @@ Boolean MPEG2TransportStreamIndexFile::rewindToVSH(unsigned long&ixFound) {
     --ixFound;
   }
   if (ixFound == 0) success = True; // use record 0 anyway
-  
+
   return success;
 }
