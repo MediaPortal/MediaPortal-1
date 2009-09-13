@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A simple UDP sink (i.e., without RTP or other headers added); one frame per packet
 // Implementation
 
@@ -30,7 +30,7 @@ BasicUDPSink::BasicUDPSink(UsageEnvironment& env, Groupsock* gs,
 			   unsigned maxPayloadSize)
   : MediaSink(env),
     fGS(gs), fMaxPayloadSize(maxPayloadSize) {
-  fOutputBuffer = new unsigned char[fMaxPayloadSize]; 
+  fOutputBuffer = new unsigned char[fMaxPayloadSize];
 }
 
 BasicUDPSink::~BasicUDPSink() {
@@ -79,7 +79,7 @@ void BasicUDPSink::afterGettingFrame1(unsigned frameSize, unsigned numTruncatedB
   fNextSendTime.tv_usec += durationInMicroseconds;
   fNextSendTime.tv_sec += fNextSendTime.tv_usec/1000000;
   fNextSendTime.tv_usec %= 1000000;
-  
+
   struct timeval timeNow;
   gettimeofday(&timeNow, NULL);
   int uSecondsToGo;
