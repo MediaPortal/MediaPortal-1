@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A source object for AMR audio files (as defined in RFC 3267, section 5)
 // Implementation
 
@@ -43,7 +43,7 @@ AMRAudioFileSource::createNew(UsageEnvironment& env, char const* fileName) {
     if (fread(buf, 1, 6, fid) < 6) break;
     if (strncmp(buf, "#!AMR", 5) != 0) break; // bad magic #
     unsigned bytesRead = 6;
-    
+
     // The next bytes must be "\n", "-WB\n", "_MC1.0\n", or "-WB_MC1.0\n"
     if (buf[5] == '-') {
       // The next bytes must be "WB\n" or "WB_MC1.0\n"
@@ -145,8 +145,8 @@ void AMRAudioFileSource::doGetNextFrame() {
 	break;
       }
     }
-  } 
-      
+  }
+
   // Next, read the frame-block into the buffer provided:
   fFrameSize *= fNumChannels; // because multiple channels make up a frame-block
   if (fFrameSize > fMaxSize) {

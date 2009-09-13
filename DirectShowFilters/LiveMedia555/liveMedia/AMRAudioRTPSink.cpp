@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // RTP sink for AMR audio (RFC 3267)
 // Implementation
 
@@ -41,11 +41,11 @@ AMRAudioRTPSink
 		 sourceIsWideband ? 16000 : 8000,
 		 sourceIsWideband ? "AMR-WB": "AMR",
 		 numChannelsInSource),
-  fSourceIsWideband(sourceIsWideband), fAuxSDPLine(NULL) {
+  fSourceIsWideband(sourceIsWideband), fFmtpSDPLine(NULL) {
 }
 
 AMRAudioRTPSink::~AMRAudioRTPSink() {
-  delete[] fAuxSDPLine;
+  delete[] fFmtpSDPLine;
 }
 
 Boolean AMRAudioRTPSink::sourceIsCompatibleWithUs(MediaSource& source) {
@@ -94,6 +94,8 @@ void AMRAudioRTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,
   // Set the TOC field for the current frame, based on the "FT" and "Q"
   // values from our source:
   AMRAudioSource* amrSource = (AMRAudioSource*)fSource;
+  if (amrSource == NULL) return; // sanity check
+
   u_int8_t toc = amrSource->lastFrameHeader();
   // Clear the "F" bit, because we're the last frame in this packet: #####
   toc &=~ 0x80;
@@ -117,16 +119,16 @@ Boolean AMRAudioRTPSink
 unsigned AMRAudioRTPSink::specialHeaderSize() const {
   // For now, because we're packing only one frame per packet,
   // there's just a 1-byte payload header, plus a 1-byte TOC #####
-  return 2; 
+  return 2;
 }
 
 char const* AMRAudioRTPSink::auxSDPLine() {
-  if (fAuxSDPLine == NULL) {
+  if (fFmtpSDPLine == NULL) {
     // Generate a "a=fmtp:" line with "octet-aligned=1"
     // (That is the only non-default parameter.)
     char buf[100];
     sprintf(buf, "a=fmtp:%d octet-align=1\r\n", rtpPayloadType());
-    delete[] fAuxSDPLine; fAuxSDPLine = strDup(buf);
+    delete[] fFmtpSDPLine; fFmtpSDPLine = strDup(buf);
   }
-  return fAuxSDPLine;
+  return fFmtpSDPLine;
 }
