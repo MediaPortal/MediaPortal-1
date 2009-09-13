@@ -1151,6 +1151,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\liveMedia\RTSPOverHTTPServer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\liveMedia\RTSPOverHTTPServer.hh"
+				>
+			</File>
+			<File
 				RelativePath=".\liveMedia\RTSPServer.cpp"
 				>
 			</File>
