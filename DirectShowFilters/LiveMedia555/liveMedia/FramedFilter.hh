@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // Framed Filters
 // C++ header
 
@@ -28,6 +28,9 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 class FramedFilter: public FramedSource {
 public:
   FramedSource* inputSource() const { return fInputSource; }
+
+  // Call before destruction if you want to prevent the destructor from closing the input source
+  void detachInputSource() { fInputSource = NULL; }
 
 protected:
   FramedFilter(UsageEnvironment& env, FramedSource* inputSource);
