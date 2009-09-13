@@ -11,9 +11,9 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
-// Copyright (c) 1996-2000 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // Basic Hash Table implementation
 // Implementation
 
@@ -108,7 +108,7 @@ void* BasicHashTable::Iterator::next(char const*& key) {
 
   BasicHashTable::TableEntry* entry = fNextEntry;
   fNextEntry = entry->fNext;
-  
+
   key = entry->key;
   return entry->value;
 }

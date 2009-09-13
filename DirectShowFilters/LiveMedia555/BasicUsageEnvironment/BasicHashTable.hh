@@ -11,9 +11,9 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
-// Copyright (c) 1996-2000 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // Basic Hash Table implementation
 // C++ header
 
@@ -25,7 +25,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #endif
 
 // A simple hash table implementation, inspired by the hash table
-// implementation used in Tcl 7.6: <http://www.tcl.tk/> 
+// implementation used in Tcl 7.6: <http://www.tcl.tk/>
 
 #define SMALL_HASH_TABLE_SIZE 4
 
@@ -36,22 +36,22 @@ private:
 public:
   BasicHashTable(int keyType);
   virtual ~BasicHashTable();
-  
+
   // Used to iterate through the members of the table:
   class Iterator; friend class Iterator; // to make Sun's C++ compiler happy
   class Iterator: public HashTable::Iterator {
   public:
     Iterator(BasicHashTable& table);
-    
+
   private: // implementation of inherited pure virtual functions
     void* next(char const*& key); // returns 0 if none
-    
+
   private:
     BasicHashTable& fTable;
     unsigned fNextIndex; // index of next bucket to be enumerated after this
     TableEntry* fNextEntry; // next entry in the current bucket
   };
-  
+
 private: // implementation of inherited pure virtual functions
   virtual void* Add(char const* key, void* value);
   // Returns the old value if different, otherwise 0
@@ -59,7 +59,7 @@ private: // implementation of inherited pure virtual functions
   virtual void* Lookup(char const* key) const;
   // Returns 0 if not found
   virtual unsigned numEntries() const;
-  
+
 private:
   class TableEntry {
   public:
