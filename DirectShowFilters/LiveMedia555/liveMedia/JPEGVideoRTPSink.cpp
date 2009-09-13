@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // RTP sink for JPEG video (RFC 2435)
 // Implementation
 
@@ -52,7 +52,8 @@ void JPEGVideoRTPSink
 			 struct timeval frameTimestamp,
 			 unsigned numRemainingBytes) {
   // Our source is known to be a JPEGVideoSource
-  JPEGVideoSource* source = (JPEGVideoSource*)fSource; 
+  JPEGVideoSource* source = (JPEGVideoSource*)fSource;
+  if (source == NULL) return; // sanity check
 
   u_int8_t mainJPEGHeader[8]; // the special header
 
@@ -72,7 +73,7 @@ void JPEGVideoRTPSink
     u_int16_t length;
     u_int8_t const* quantizationTables
       = source->quantizationTables(precision, length);
-    
+
     unsigned const quantizationHeaderSize = 4 + length;
     u_int8_t* quantizationHeader = new u_int8_t[quantizationHeaderSize];
 
@@ -104,7 +105,8 @@ void JPEGVideoRTPSink
 
 unsigned JPEGVideoRTPSink::specialHeaderSize() const {
   // Our source is known to be a JPEGVideoSource
-  JPEGVideoSource* source = (JPEGVideoSource*)fSource; 
+  JPEGVideoSource* source = (JPEGVideoSource*)fSource;
+  if (source == NULL) return 0; // sanity check
 
   unsigned headerSize = 8; // by default
 
