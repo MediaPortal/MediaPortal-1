@@ -40,7 +40,6 @@ DEFINE_GUID(IID_IMPFileRecord,0xd5ff805e, 0xa98b, 0x4d56,  0xbe, 0xde, 0x3f, 0x1
 
 DECLARE_INTERFACE_(IMPFileRecord, IUnknown)
 {
-	STDMETHOD(SetRecordingMode)(THIS_ int subChannelId, int mode)PURE;
 	STDMETHOD(SetRecordingFileName)(THIS_ int subChannelId, char* pszFileName)PURE;
 	STDMETHOD(StartRecord)(THIS_ int subChannelId)PURE;
 	STDMETHOD(StopRecord)(THIS_ int subChannelId)PURE;
@@ -140,7 +139,6 @@ public:
 
 	HRESULT		 Write(PBYTE pbData, LONG lDataLength);
 	HRESULT		 WriteTeletext(PBYTE pbData, LONG lDataLength);
-	STDMETHODIMP SetRecordingMode(int subChannelId, int mode);
 	STDMETHODIMP SetRecordingFileName(int subChannelId, char* pszFileName);
 	STDMETHODIMP StartRecord(int subChannelId);
 	STDMETHODIMP StopRecord(int subChannelId);

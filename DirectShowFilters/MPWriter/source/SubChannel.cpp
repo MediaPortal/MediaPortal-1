@@ -38,8 +38,6 @@ CSubChannel::CSubChannel(LPUNKNOWN pUnk, HRESULT *phr, int id)
 	m_id = id;
 	LogDebug("CSubChannel::ctor() - (%d)",m_id);
 
-	m_pMpegRecordWriter = NULL;
-
 	m_pTsWriter = new CProgramToTransportStream();
 	m_pTsRecorder = new CProgramToTransportStreamRecorder();
 
@@ -160,21 +158,6 @@ STDMETHODIMP CSubChannel::PauseTimeShifting(int onOff)
 	return S_OK;
 }
 
-
-STDMETHODIMP CSubChannel::SetRecordingMode(int mode)
-{
-	if(m_bIsRecording){
-		return S_OK;
-	}
-	m_recordingMode = (RecordingMode) mode;
-	if (m_recordingMode==ProgramStream)
-		LogDebug("CSubChannel::SetRecordingMode() - (%d) - program stream mode",m_id);
-	else
-		LogDebug("CSubChannel::SetRecordingMode() - (%d) - transport stream mode",m_id);
-	return S_OK;
-}
-
-
 STDMETHODIMP CSubChannel::SetRecordingFileName(char* pszFileName)
 {
 	if(m_bIsRecording){
@@ -193,21 +176,7 @@ STDMETHODIMP CSubChannel::StartRecord()
 
 	::DeleteFile((LPCTSTR) m_strRecordingFileName);
 	LogDebug("CSubChannel::StartRecord() - (%d) - Filename:'%s'",m_id,m_strRecordingFileName);
-	if(m_recordingMode == ProgramStream){
-		WCHAR wstrFileName[2048];
-		MultiByteToWideChar(CP_ACP,0,m_strRecordingFileName,-1,wstrFileName,1+strlen(m_strRecordingFileName));
-		m_pMpegRecordWriter = new FileWriter();
-		m_pMpegRecordWriter->SetFileName( wstrFileName);
-		if (FAILED(m_pMpegRecordWriter->OpenFile())) 
-		{
-			m_pMpegRecordWriter->CloseFile();
-			delete m_pMpegRecordWriter;
-			m_pMpegRecordWriter=NULL;
-			return E_FAIL;
-		}
-	}else{
-		m_pTsRecorder->Initialize(m_strRecordingFileName);
-	}
+	m_pTsRecorder->Initialize(m_strRecordingFileName);
 	m_bIsRecording = true;
 	return S_OK;
 
@@ -220,14 +189,7 @@ STDMETHODIMP CSubChannel::StopRecord()
 	}
 
 	LogDebug("CSubChannel::StopRecord() - (%d) - Filename:'%s'",m_id,m_strRecordingFileName);
-	if(m_recordingMode == ProgramStream){
-		m_pMpegRecordWriter->FlushFile();
-		m_pMpegRecordWriter->CloseFile();
-		delete m_pMpegRecordWriter;
-		m_pMpegRecordWriter=NULL;
-	}else{
-		m_pTsRecorder->Close();
-	}
+	m_pTsRecorder->Close();
 	strcpy(m_strRecordingFileName,"");
 	m_bIsRecording = false;
 	return S_OK;
@@ -237,11 +199,7 @@ HRESULT CSubChannel::Write(PBYTE pbData, LONG lDataLength)
 {
 	CAutoLock lock(&m_Lock);
 	if(m_bIsRecording){
-		if(m_recordingMode == ProgramStream){
-			m_pMpegRecordWriter->Write(pbData,lDataLength);
-		}else{
 			m_pTsRecorder->Write(pbData,lDataLength);
-		}
 	}
 	if (m_bIsTimeShifting)
 	{

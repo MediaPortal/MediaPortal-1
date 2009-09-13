@@ -584,14 +584,6 @@ STDMETHODIMP CMPFileWriter::PauseTimeShifting(int subChannelId, int onOff)
 }
 
 
-STDMETHODIMP CMPFileWriter::SetRecordingMode(int subChannelId, int mode)
-{
-	CSubChannel* pSubChannel=GetSubChannel(subChannelId);
-	if (pSubChannel==NULL) return S_OK;
-	return pSubChannel->SetRecordingMode(mode);
-}
-
-
 STDMETHODIMP CMPFileWriter::SetRecordingFileName(int subChannelId, char* pszFileName)
 {
 	CSubChannel* pSubChannel=GetSubChannel(subChannelId);

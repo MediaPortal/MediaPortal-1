@@ -24,12 +24,6 @@
 #include "AnalogVideoAudioObserver.h"
 #include "TeletextGrabber.h"
 
-enum RecordingMode
-{
-	ProgramStream=0,
-	TransportStream=1
-};
-
 class CSubChannel: CUnknown
 {
 	CCritSec m_Lock; // Main renderer critical section
@@ -40,7 +34,6 @@ public:
 	HRESULT WriteTeletext(PBYTE pbData, LONG lDataLength);
 	int Handle() { return m_id;}
 
-	STDMETHODIMP SetRecordingMode(int mode);
 	STDMETHODIMP SetRecordingFileName(char* pszFileName);
 	STDMETHODIMP StartRecord();
 	STDMETHODIMP StopRecord();
@@ -56,8 +49,6 @@ public:
 
 
 	CProgramToTransportStreamRecorder* m_pTsRecorder;
-	FileWriter* m_pMpegRecordWriter;
-	RecordingMode m_recordingMode;
 	char m_strRecordingFileName[1024];
 	bool m_bIsRecording;
 	CProgramToTransportStream* m_pTsWriter;
