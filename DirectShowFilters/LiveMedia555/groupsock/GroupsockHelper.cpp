@@ -562,7 +562,7 @@ static Boolean badAddress(netAddressBits addr) {
 
 Boolean loopbackWorks = 1;
 
-netAddressBits ourSourceAddressForMulticast(UsageEnvironment& env) {
+netAddressBits ourIPAddress(UsageEnvironment& env) {
   static netAddressBits ourAddress = 0;
   int sock = -1;
   struct in_addr testAddr;
@@ -685,7 +685,7 @@ netAddressBits ourSourceAddressForMulticast(UsageEnvironment& env) {
 
 netAddressBits chooseRandomIPv4SSMAddress(UsageEnvironment& env) {
   // First, a hack to ensure that our random number generator is seeded:
-  (void) ourSourceAddressForMulticast(env);
+  (void) ourIPAddress(env);
 
   // Choose a random address in the range [232.0.1.0, 232.255.255.255)
   // i.e., [0xE8000100, 0xE8FFFFFF)

@@ -109,7 +109,7 @@ char* RTSPServer::rtspURLPrefix() const {
   struct in_addr ourAddress;
   ourAddress.s_addr = ReceivingInterfaceAddr != 0
     ? ReceivingInterfaceAddr
-    : ourSourceAddressForMulticast(envir()); // hack
+    : ourIPAddress(envir()); // hack
 
   char urlBuffer[100]; // more than big enough for "rtsp://<ip-address>:<port>/"
 

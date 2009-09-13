@@ -79,7 +79,7 @@ void StreamGetClientDetail(int clientNr, char** ipAdres, char** streamName, int*
                                    client->fClientAddr.sin_addr.S_un.S_un_b.s_b3,
                                    client->fClientAddr.sin_addr.S_un.S_un_b.s_b4);
   *isActive=client->fSessionIsActive;
-  strcpy(szstreamName,client->fOurServerMediaSession->fStreamName);
+  strcpy(szstreamName,client->fOurServerMediaSession->streamName());
   *streamName=&szstreamName[0];
   *ipAdres=&szipAdres[0];
   *ticks=client->startDateTime;

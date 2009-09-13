@@ -75,7 +75,7 @@ Boolean socketLeaveGroupSSM(UsageEnvironment&, int socket,
 
 Boolean getSourcePort(UsageEnvironment& env, int socket, Port& port);
 
-netAddressBits ourSourceAddressForMulticast(UsageEnvironment& env); // in network order
+netAddressBits ourIPAddress(UsageEnvironment& env); // in network order
 
 // IP addresses of our sending and receiving interfaces.  (By default, these
 // are INADDR_ANY (i.e., 0), specifying the default interface.)

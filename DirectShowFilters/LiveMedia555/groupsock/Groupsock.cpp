@@ -122,7 +122,7 @@ Groupsock::Groupsock(UsageEnvironment& env, struct in_addr const& groupAddr,
   }
   
   // Make sure we can get our source address:
-  if (ourSourceAddressForMulticast(env) == 0) {
+  if (ourIPAddress(env) == 0) {
     if (DebugLevel >= 0) { // this is a fatal error
       env << "Unable to determine our source address: "
 	  << env.getResultMsg() << "\n";
@@ -272,7 +272,7 @@ Boolean Groupsock::output(UsageEnvironment& env, u_int8_t ttlToSend,
     int numMembers =
       outputToAllMembersExcept(interfaceNotToFwdBackTo,
 			       ttlToSend, buffer, bufferSize,
-			       ourSourceAddressForMulticast(env));
+			       ourIPAddress(env));
     if (numMembers < 0) break;
     
     if (DebugLevel >= 3) {
@@ -350,7 +350,7 @@ Boolean Groupsock::handleRead(unsigned char* buffer, unsigned bufferMaxSize,
 Boolean Groupsock::wasLoopedBackFromUs(UsageEnvironment& env,
 				       struct sockaddr_in& fromAddress) {
   if (fromAddress.sin_addr.s_addr
-      == ourSourceAddressForMulticast(env)) {
+      == ourIPAddress(env)) {
     if (fromAddress.sin_port == sourcePortNum()) {
 #ifdef DEBUG_LOOPBACK_CHECKING
       if (DebugLevel >= 3) {
