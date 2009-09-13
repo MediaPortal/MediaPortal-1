@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A filter that breaks up an H263 video stream into frames.
 // derived from MPEG4IP h263.c
 // Author Benhard Feiten
@@ -77,8 +77,8 @@ public:
    virtual ~H263plusVideoStreamParser();
 
    void registerReadInterest(unsigned char* to, unsigned maxSize);
- 
-   unsigned parse(u_int64_t & currentDuration);    // returns the size of the frame  that was acquired, or 0 if none 
+
+   unsigned parse(u_int64_t & currentDuration);    // returns the size of the frame  that was acquired, or 0 if none
    unsigned numTruncatedBytes() const { return fNumTruncatedBytes; }  // The number of truncated bytes (if any)
 
 
@@ -92,7 +92,7 @@ protected:
 
 
 private:
-   int       parseH263Frame( ); 
+   int       parseH263Frame( );
    bool      ParseShortHeader(u_int8_t *headerBuffer, H263INFO *outputInfoStruct);
    void      GetMaxBitrate( MaxBitrate_CTX *ctx, u_int32_t frameSize, u_int8_t frameTRDiff);
    u_int64_t CalculateDuration(u_int8_t trDiff);
@@ -117,7 +117,7 @@ private:
    H263INFO       fCurrentInfo;    // Holds information about the current frame
    MaxBitrate_CTX fMaxBitrateCtx;  // Context for the GetMaxBitrate function
    char           fStates[3][256];
-   u_int8_t       fNextHeader[H263_REQUIRE_HEADER_SIZE_BYTES]; 
+   u_int8_t       fNextHeader[H263_REQUIRE_HEADER_SIZE_BYTES];
 
   u_int32_t fnextTR;   // The next frame's presentation time in TR units
   u_int64_t fcurrentPT;   // The current frame's presentation time in milli-seconds

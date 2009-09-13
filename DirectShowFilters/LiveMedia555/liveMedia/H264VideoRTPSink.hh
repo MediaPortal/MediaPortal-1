@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // RTP sink for H.264 video (RFC 3984)
 // C++ header
 
@@ -47,6 +47,9 @@ protected:
 
   virtual ~H264VideoRTPSink();
 
+protected: // redefined virtual functions:
+  virtual char const* auxSDPLine();
+
 private: // redefined virtual functions:
   virtual Boolean sourceIsCompatibleWithUs(MediaSource& source);
   virtual Boolean continuePlaying();
@@ -58,7 +61,6 @@ private: // redefined virtual functions:
                                       unsigned numRemainingBytes);
   virtual Boolean frameCanAppearAfterPacketStart(unsigned char const* frameStart,
 						 unsigned numBytesInFrame) const;
-  virtual char const* auxSDPLine();
 
 protected:
   H264FUAFragmenter* fOurFragmenter;

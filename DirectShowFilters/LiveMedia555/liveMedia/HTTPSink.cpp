@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // HTTP sinks
 // Implementation
 
@@ -37,9 +37,9 @@ HTTPSink* HTTPSink::createNew(UsageEnvironment& env, Port ourPort) {
 
     HTTPSink* newSink = new HTTPSink(env, ourSocket);
     if (newSink == NULL) break;
-    
+
     appendPortNum(env, ourPort);
-    
+
     return newSink;
   } while (0);
 
@@ -56,7 +56,7 @@ int HTTPSink::setUpOurSocket(UsageEnvironment& env, Port& ourPort) {
 
     // Make sure we have a big send buffer:
     if (!increaseSendBufferTo(env, ourSocket, 50*1024)) break;
-    
+
     if (listen(ourSocket, 1) < 0) { // we allow only one connection
       env.setResultErrMsg("listen() failed: ");
       break;
@@ -68,7 +68,7 @@ int HTTPSink::setUpOurSocket(UsageEnvironment& env, Port& ourPort) {
     }
 
     return ourSocket;
-  } while (0);  
+  } while (0);
 
   if (ourSocket != -1) ::closeSocket(ourSocket);
   return -1;
@@ -123,11 +123,11 @@ Boolean HTTPSink::continuePlaying() {
       sprintf(okResponse, responseFmt, fSource->MIMEtype());
 #else
       snprintf(okResponse, sizeof okResponse, responseFmt, fSource->MIMEtype());
-#endif 
+#endif
       send(fClientSocket, okResponse, strlen(okResponse), 0);
     }
   }
-  
+
   fSource->getNextFrame(fBuffer, sizeof fBuffer,
 			afterGettingFrame, this,
 			ourOnSourceClosure, this);

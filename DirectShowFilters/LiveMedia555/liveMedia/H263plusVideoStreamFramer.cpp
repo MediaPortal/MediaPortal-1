@@ -11,13 +11,13 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // Author Bernhard Feiten
 // A filter that breaks up an H.263plus video stream into frames.
-// 
+//
 
 #include "H263plusVideoStreamFramer.hh"
 #include "H263plusVideoStreamParser.hh"
@@ -46,7 +46,7 @@ H263plusVideoStreamFramer::H263plusVideoStreamFramer(
                               FramedSource* inputSource,
                               Boolean createParser)
                               : FramedFilter(env, inputSource),
-                                fFrameRate(0.0), // until we learn otherwise 
+                                fFrameRate(0.0), // until we learn otherwise
                                 fPictureEndMarker(False)
 {
    // Use the current wallclock time as the base 'presentation time':
@@ -94,12 +94,12 @@ void H263plusVideoStreamFramer::continueReadProcessing(
 ///////////////////////////////////////////////////////////////////////////////
 void H263plusVideoStreamFramer::continueReadProcessing()
 {
-   unsigned acquiredFrameSize; 
- 
+   unsigned acquiredFrameSize;
+
    u_int64_t frameDuration;  // in ms
 
-   acquiredFrameSize = fParser->parse(frameDuration);   
-// Calculate some average bitrate information (to be adapted)	
+   acquiredFrameSize = fParser->parse(frameDuration);
+// Calculate some average bitrate information (to be adapted)
 //	avgBitrate = (totalBytes * 8 * H263_TIMESCALE) / totalDuration;
 
    if (acquiredFrameSize > 0) {
@@ -110,10 +110,10 @@ void H263plusVideoStreamFramer::continueReadProcessing()
 
       fFrameRate = frameDuration == 0 ? 0.0 : 1000./(long)frameDuration;
 
-      // Compute "fPresentationTime" 
+      // Compute "fPresentationTime"
       if (acquiredFrameSize == 5) // first frame
          fPresentationTime = fPresentationTimeBase;
-      else 
+      else
          fPresentationTime.tv_usec += (long) frameDuration*1000;
 
       while (fPresentationTime.tv_usec >= 1000000) {
@@ -121,7 +121,7 @@ void H263plusVideoStreamFramer::continueReadProcessing()
          ++fPresentationTime.tv_sec;
       }
 
-      // Compute "fDurationInMicroseconds" 
+      // Compute "fDurationInMicroseconds"
       fDurationInMicroseconds = (unsigned int) frameDuration*1000;;
 
       // Call our own 'after getting' function.  Because we're not a 'leaf'

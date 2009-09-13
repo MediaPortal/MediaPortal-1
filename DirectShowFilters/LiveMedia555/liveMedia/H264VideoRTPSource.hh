@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // H.264 Video RTP Sources
 // C++ header
 
@@ -46,7 +46,7 @@ private:
   // redefined virtual functions:
   virtual Boolean processSpecialHeader(BufferedPacket* packet,
                                        unsigned& resultSpecialHeaderSize);
-  virtual char const* MIMEtype() const; 
+  virtual char const* MIMEtype() const;
 
 private:
   friend class H264BufferedPacket;
@@ -67,6 +67,6 @@ SPropRecord* parseSPropParameterSets(char const* sPropParameterSetsStr,
     // Returns the binary value of each 'parameter set' specified in a
     // "sprop-parameter-sets" string (in the SDP description for a H.264/RTP stream).
     // The value is returned as an array (length "numSPropRecords") of "SPropRecord"s.
-    // This array is dynamically allocated by this routine, and must be delete[]d by the caller. 
+    // This array is dynamically allocated by this routine, and must be delete[]d by the caller.
 
 #endif

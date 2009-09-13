@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // H.264 Video File sinks
 // Implementation
 
@@ -25,7 +25,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 H264VideoFileSink
 ::H264VideoFileSink(UsageEnvironment& env, FILE* fid, unsigned bufferSize,
-		   char const* perFrameFileNamePrefix) 
+		   char const* perFrameFileNamePrefix)
   : FileSink(env, fid, bufferSize, perFrameFileNamePrefix) {
 }
 
@@ -64,7 +64,7 @@ void H264VideoFileSink::afterGettingFrame1(unsigned frameSize,
 					  struct timeval presentationTime) {
   unsigned char start_code[4] = {0x00, 0x00, 0x00, 0x01};
   addData(start_code, 4, presentationTime);
-    
+
   // Call the parent class to complete the normal file write with the input data:
   FileSink::afterGettingFrame1(frameSize, presentationTime);
 }

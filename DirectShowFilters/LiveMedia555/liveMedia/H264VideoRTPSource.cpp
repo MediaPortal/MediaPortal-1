@@ -11,12 +11,12 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // H.264 Video RTP Sources
-// Implementation 
+// Implementation
 
 #include "H264VideoRTPSource.hh"
 #include "Base64.hh"
@@ -67,11 +67,11 @@ Boolean H264VideoRTPSource
                        unsigned& resultSpecialHeaderSize) {
   unsigned char* headerStart = packet->data();
   unsigned packetSize = packet->dataSize();
-  
+
   // The header has a minimum size of 0, since the NAL header is used
   // as a payload header
   unsigned expectedHeaderSize = 0;
-  
+
   // Check if the type field is 28 (FU-A) or 29 (FU-B)
   fCurPacketNALUnitType = (headerStart[0]&0x1F);
   switch (fCurPacketNALUnitType) {
@@ -92,7 +92,7 @@ Boolean H264VideoRTPSource
       expectedHeaderSize = 1;
       if (packetSize < expectedHeaderSize) return False;
 
-      headerStart[1] = (headerStart[0]&0xE0)+(headerStart[1]&0x1F); 
+      headerStart[1] = (headerStart[0]&0xE0)+(headerStart[1]&0x1F);
       fCurrentPacketBeginsFrame = True;
     } else {
       // If the startbit is not set, both the FU indicator and header
@@ -110,7 +110,7 @@ Boolean H264VideoRTPSource
     break;
   }
   }
-  
+
   resultSpecialHeaderSize = expectedHeaderSize;
   return True;
 }
@@ -138,7 +138,7 @@ SPropRecord* parseSPropParameterSets(char const* sPropParameterSetsStr,
       *s = '\0';
     }
   }
-  
+
   // Allocate and fill in the result array:
   SPropRecord* resultArray = new SPropRecord[numSPropRecords];
   s = inStr;
@@ -190,7 +190,7 @@ unsigned H264BufferedPacket
   default: {
     // Common case: We use the entire packet data:
     return dataSize;
-  } 
+  }
   }
 
   return (resultNALUSize <= dataSize) ? resultNALUSize : dataSize;
