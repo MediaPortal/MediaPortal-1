@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "mTunnel" multicast access service
-// Copyright (c) 1996-1998 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // Network Addresses
 // Implementation
 
@@ -90,14 +90,14 @@ NetAddressList::NetAddressList(char const* hostname)
     if (addr != INADDR_NONE) { // yes it was an IP address string
       //##### host = gethostbyaddr((char*)&addr, sizeof (netAddressBits), AF_INET);
       host = NULL; // don't bother calling gethostbyaddr(); we only want 1 addr
-      
+
       if (host == NULL) {
 	// For some unknown reason, gethostbyaddr() failed, so just
 	// return a 1-element list with the address we were given:
 	fNumAddresses = 1;
 	fAddressArray = new NetAddress*[fNumAddresses];
 	if (fAddressArray == NULL) return;
-	
+
 	fAddressArray[0] = new NetAddress((u_int8_t*)&addr,
 					  sizeof (netAddressBits));
 	return;
@@ -126,11 +126,11 @@ NetAddressList::NetAddressList(char const* hostname)
 	++fNumAddresses;
 	++hAddrPtr1;
       }
-      
+
       // Next, set up the list:
       fAddressArray = new NetAddress*[fNumAddresses];
       if (fAddressArray == NULL) return;
-      
+
       for (unsigned i = 0; i < fNumAddresses; ++i) {
 	fAddressArray[i]
 	  = new NetAddress(hAddrPtr[i], host->h_length);

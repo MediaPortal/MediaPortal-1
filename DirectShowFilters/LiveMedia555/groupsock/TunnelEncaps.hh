@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "mTunnel" multicast access service
-// Copyright (c) 1996-1998 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // Encapsulation trailer for tunnels
 // C++ header
 
@@ -42,9 +42,9 @@ class TunnelEncapsulationTrailer {
 
     public:
 	Cookie& srcCookie()
-		{ return *(Cookie*)byteOffset(0); } 
+		{ return *(Cookie*)byteOffset(0); }
 	Cookie& dstCookie()
-		{ return *(Cookie*)byteOffset(2); } 
+		{ return *(Cookie*)byteOffset(2); }
 	u_int32_t& address()
 		{ return *(u_int32_t*)byteOffset(4); }
 	Port& port()

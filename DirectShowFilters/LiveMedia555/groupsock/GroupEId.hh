@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "multikit" Multicast Application Shell
-// Copyright (c) 1996-1997, Live Networks, Inc.  All rights reserved
+// Copyright (c) 1996-2009, Live Networks, Inc.  All rights reserved
 // "Group Endpoint Id"
 // C++ header
 
@@ -64,7 +64,7 @@ public:
 	   portNumBits portNum,
 	   unsigned numSuccessiveGroupAddrs = 1);
       // used for a 'source-specific multicast' group
-  GroupEId(); // used only as a temp constructor prior to initialization 
+  GroupEId(); // used only as a temp constructor prior to initialization
 
   struct in_addr const& groupAddress() const { return fGroupAddress; }
   struct in_addr const& sourceFilterAddress() const { return fSourceFilterAddress; }
@@ -75,7 +75,7 @@ public:
     // could be >1 for hier encoding
     return fNumSuccessiveGroupAddrs;
   }
-	
+
   portNumBits portNum() const { return fPortNum; }
 
   const Scope& scope() const { return fScope; }
