@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // MP3 HTTP Sources
 // Implementation
 
@@ -47,7 +47,7 @@ MP3HTTPSource* MP3HTTPSource::createNew(UsageEnvironment& env,
 
     // Make sure we have a big receive buffer:
     if (!increaseReceiveBufferTo(env, ourSocket, 100*1024)) break;
-    
+
     // Try to make the new socket into a FILE*:
     unsigned streamLength = 0; //#####
     FILE* fid = NULL;
@@ -65,7 +65,7 @@ MP3HTTPSource* MP3HTTPSource::createNew(UsageEnvironment& env,
 
     newSource = new MP3HTTPSource(env, fid);
     if (newSource == NULL) break;
-    
+
     newSource->assignStream(fid, streamLength);
 
     // Write the HTTP 'GET' command:

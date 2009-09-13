@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // MP3 internal implementation details
 // Implementation
 
@@ -48,7 +48,7 @@ struct bandInfoStruct {
   int shortDiff[13];
 };
 
-static struct bandInfoStruct const bandInfo[7] = { 
+static struct bandInfoStruct const bandInfo[7] = {
 /* MPEG 1.0 */
  { {0,4,8,12,16,20,24,30,36,44,52,62,74, 90,110,134,162,196,238,288,342,418,576},
    {4,4,4,4,4,4,6,6,8, 8,10,12,16,20,24,28,34,42,50,54, 76,158},
@@ -91,7 +91,7 @@ static struct bandInfoStruct const bandInfo[7] = {
 unsigned int n_slen2[512]; /* MPEG 2.0 slen for 'normal' mode */
 unsigned int i_slen2[256]; /* MPEG 2.0 slen for intensity stereo */
 
-#define MPG_MD_MONO 3 
+#define MPG_MD_MONO 3
 
 
 ////////// MP3FrameParams //////////
@@ -162,19 +162,19 @@ void MP3FrameParams::setParamsFromHeader() {
     isMPEG2 = 1;
     isMPEG2_5 = 1;
   }
-  
+
   layer = 4-((hdr>>17)&3);
   if (layer == 4) layer = 3; // layer==4 is not allowed
   bitrateIndex = ((hdr>>12)&0xf);
-  
+
   if (isMPEG2_5) {
     samplingFreqIndex = ((hdr>>10)&0x3) + 6;
   } else {
     samplingFreqIndex = ((hdr>>10)&0x3) + (isMPEG2*3);
   }
-  
+
   hasCRC = ((hdr>>16)&0x1)^0x1;
-  
+
   padding   = ((hdr>>9)&0x1);
   extension = ((hdr>>8)&0x1);
   mode      = ((hdr>>6)&0x3);
@@ -182,9 +182,9 @@ void MP3FrameParams::setParamsFromHeader() {
   copyright = ((hdr>>3)&0x1);
   original  = ((hdr>>2)&0x1);
   emphasis  = hdr & 0x3;
-  
+
   stereo    = (mode == MPG_MD_MONO) ? 1 : 2;
-  
+
   if (((hdr>>10)&0x3) == 0x3) {
 #ifdef DEBUG_ERRORS
     fprintf(stderr,"Stream error - hdr: 0x%08x\n", hdr);
@@ -202,7 +202,7 @@ void MP3FrameParams::setParamsFromHeader() {
 
 unsigned MP3FrameParams::computeSideInfoSize() {
   unsigned size;
-  
+
   if (isMPEG2) {
     size = isStereo ? 17 : 9;
   } else {
@@ -277,7 +277,7 @@ static unsigned updateSideInfoSizes(MP3SideInfo& sideInfo, Boolean isMPEG2,
   fprintf(stderr, "updateSideInfoSizes (allowed: %d): %d->%d, %d->%d\n", allowedNumBits, p23L0+p23L0Trunc, p23L0, p23L1+p23L1Trunc, p23L1);
 #endif
 
-  // The truncations computed above are still estimates.  We need to 
+  // The truncations computed above are still estimates.  We need to
   // adjust them so that the new fields will continue to end on
   // Huffman-encoded sample boundaries:
   updateSideInfoForHuffman(sideInfo, isMPEG2, mainDataPtr,
@@ -358,7 +358,7 @@ static void getSideInfo1(MP3FrameParams& fr, MP3SideInfo& si,
    si.main_data_begin = fr.getBits(9);
    if (stereo == 1)
      si.private_bits = fr.getBits(5);
-   else 
+   else
      si.private_bits = fr.getBits(3);
 
    for (ch=0; ch<stereo; ch++) {
@@ -402,11 +402,11 @@ static void getSideInfo1(MP3FrameParams& fr, MP3SideInfo& si,
            fprintf(stderr,"Blocktype == 0 and window-switching == 1 not allowed.\n");
          }
 #endif
-         /* region_count/start parameters are implicit in this case. */       
+         /* region_count/start parameters are implicit in this case. */
          gr_info.region1start = 36>>1;
          gr_info.region2start = 576>>1;
        }
-       else 
+       else
        {
          int i,r0c,r1c;
          for (i=0; i<3; i++) {
@@ -441,7 +441,7 @@ static void getSideInfo2(MP3FrameParams& fr, MP3SideInfo& si,
    si.main_data_begin = fr.getBits(8);
    if (stereo == 1)
      si.private_bits = fr.get1Bit();
-   else 
+   else
      si.private_bits = fr.getBits(2);
 
    for (ch=0; ch<stereo; ch++) {
@@ -481,7 +481,7 @@ static void getSideInfo2(MP3FrameParams& fr, MP3SideInfo& si,
            fprintf(stderr,"Blocktype == 0 and window-switching == 1 not allowed.\n");
          }
 #endif
-         /* region_count/start parameters are implicit in this case. */       
+         /* region_count/start parameters are implicit in this case. */
 /* check this again! */
          if (gr_info.block_type == 2)
            gr_info.region1start = 36>>1;
@@ -490,7 +490,7 @@ static void getSideInfo2(MP3FrameParams& fr, MP3SideInfo& si,
          }
          gr_info.region2start = 576>>1;
        }
-       else 
+       else
        {
          int i,r0c,r1c;
          for (i=0; i<3; i++) {
@@ -537,17 +537,17 @@ static void putSideInfo1(BitVector& bv,
 			 MP3SideInfo const& si, Boolean isStereo) {
   int ch, gr, i;
   int stereo = isStereo ? 2 : 1;
-  
+
   bv.putBits(si.main_data_begin,9);
   if (stereo == 1)
     bv.putBits(si.private_bits, 5);
   else
     bv.putBits(si.private_bits, 3);
-  
+
   for (ch=0; ch<stereo; ch++) {
     bv.putBits(si.ch[ch].gr[1].scfsi, 4);
   }
-  
+
   for (gr=0; gr<2; gr++) {
     for (ch=0; ch<stereo; ch++) {
       MP3SideInfo::gr_info_s_t const& gr_info = si.ch[ch].gr[gr];
@@ -570,8 +570,8 @@ static void putSideInfo1(BitVector& bv,
 	  bv.putBits(gr_info.table_select[i], 5);
 	bv.putBits(gr_info.region0_count, 4);
 	bv.putBits(gr_info.region1_count, 3);
-      }      
-      
+      }
+
       bv.put1Bit(gr_info.preflag);
       bv.put1Bit(gr_info.scalefac_scale);
       bv.put1Bit(gr_info.count1table_select);
@@ -583,16 +583,16 @@ static void putSideInfo2(BitVector& bv,
 			 MP3SideInfo const& si, Boolean isStereo) {
   int ch, i;
   int stereo = isStereo ? 2 : 1;
-  
+
   bv.putBits(si.main_data_begin,8);
   if (stereo == 1)
     bv.put1Bit(si.private_bits);
   else
     bv.putBits(si.private_bits, 2);
-  
+
   for (ch=0; ch<stereo; ch++) {
     MP3SideInfo::gr_info_s_t const& gr_info = si.ch[ch].gr[0];
-    
+
     bv.putBits(gr_info.part2_3_length, 12);
     bv.putBits(gr_info.big_values, 9);
     bv.putBits(gr_info.global_gain, 8);
@@ -611,8 +611,8 @@ static void putSideInfo2(BitVector& bv,
 	bv.putBits(gr_info.table_select[i], 5);
       bv.putBits(gr_info.region0_count, 4);
       bv.putBits(gr_info.region1_count, 3);
-    }      
-    
+    }
+
     bv.put1Bit(gr_info.scalefac_scale);
     bv.put1Bit(gr_info.count1table_select);
   }
@@ -670,7 +670,7 @@ static unsigned MP3BitrateToBitrateIndex(unsigned bitrate /* in kbps */,
 
   // "bitrate" was larger than any possible, so return the largest possible:
   return 14;
-}           
+}
 
 static void outputHeader(unsigned char* toPtr, unsigned hdr) {
   toPtr[0] = (unsigned char)(hdr>>24);
@@ -688,7 +688,7 @@ static void assignADUBackpointer(MP3FrameParams const& fr,
 
   unsigned backpointerSize = availableBytesForBackpointer;
   if (backpointerSize > maxBackpointerSize) {
-    backpointerSize = maxBackpointerSize; 
+    backpointerSize = maxBackpointerSize;
   }
 
   // Store the new backpointer now:
@@ -780,22 +780,22 @@ fprintf(stderr, "shrinkage %d->%d [(%d,%d),(%d,%d)] (trunc: [(%d,%d),(%d,%d)]) {
  // 'main data', using the new lengths
  unsigned toBitOffset = 0;
  unsigned fromBitOffset = 0;
- 
+
  /* rebuild portion 0a: */
  memmove(toPtr, fromPtr, (part23Length0a+7)/8);
  toBitOffset += part23Length0a;
  fromBitOffset += part23Length0a + part23Length0aTruncation;
- 
+
  /* rebuild portion 0b: */
  shiftBits(toPtr, toBitOffset, fromPtr, fromBitOffset, part23Length0b);
  toBitOffset += part23Length0b;
  fromBitOffset += part23Length0b + part23Length0bTruncation;
- 
+
  /* rebuild portion 1a: */
  shiftBits(toPtr, toBitOffset, fromPtr, fromBitOffset, part23Length1a);
  toBitOffset += part23Length1a;
  fromBitOffset += part23Length1a + part23Length1aTruncation;
- 
+
  /* rebuild portion 1b: */
  shiftBits(toPtr, toBitOffset, fromPtr, fromBitOffset, part23Length1b);
  toBitOffset += part23Length1b;

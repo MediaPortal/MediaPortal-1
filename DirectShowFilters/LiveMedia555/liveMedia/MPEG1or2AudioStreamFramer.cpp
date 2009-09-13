@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A filter that breaks up an MPEG (1,2) audio elementary stream into frames
 // Implementation
 
@@ -136,7 +136,7 @@ void MPEG1or2AudioStreamFramer::continueReadProcessing() {
     // We were able to acquire a frame from the input.
     // It has already been copied to the reader's space.
     fFrameSize = acquiredFrameSize;
-    
+
     // Also set the presentation time, and increment it for next time,
     // based on the length of this frame:
     fPresentationTime = fNextFramePresentationTime;
@@ -179,15 +179,15 @@ void MPEG1or2AudioStreamParser::registerReadInterest(unsigned char* to,
 unsigned MPEG1or2AudioStreamParser::parse(unsigned& numTruncatedBytes) {
   try {
     saveParserState();
-    
+
     // We expect a MPEG audio header (first 11 bits set to 1) at the start:
     while (((fCurrentFrame.hdr = test4Bytes())&0xFFE00000) != 0xFFE00000) {
       skipBytes(1);
       saveParserState();
     }
-    
+
     fCurrentFrame.setParamsFromHeader();
-    
+
     // Copy the frame to the requested destination:
     unsigned frameSize = fCurrentFrame.frameSize + 4; // include header
     if (frameSize > fMaxSize) {
@@ -199,7 +199,7 @@ unsigned MPEG1or2AudioStreamParser::parse(unsigned& numTruncatedBytes) {
 
     getBytes(fTo, frameSize);
     skipBytes(numTruncatedBytes);
-    
+
     return frameSize;
   } catch (int /*e*/) {
 #ifdef DEBUG

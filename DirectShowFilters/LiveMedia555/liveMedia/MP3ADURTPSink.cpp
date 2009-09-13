@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // RTP sink for 'ADUized' MP3 frames ("mpa-robust")
 // Implementation
 
@@ -107,7 +107,7 @@ unsigned MP3ADURTPSink::specialHeaderSize() const {
   // Normally there's no special header.
   // (The "ADU descriptor" is already present in the data.)
   unsigned specialHeaderSize = 0;
-  
+
   // However, if we're about to output the second (or subsequent) fragment
   // of a fragmented ADU, then we need to insert a new ADU descriptor at
   // the front of the packet:

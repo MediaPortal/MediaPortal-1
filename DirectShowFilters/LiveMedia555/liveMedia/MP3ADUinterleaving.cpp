@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // Interleaving of MP3 ADUs
 // Implementation
 
@@ -54,12 +54,12 @@ FramedSource* MP3ADUinterleaverBase::getInputSource(UsageEnvironment& env,
   FramedSource* inputSource;
   if (!FramedSource::lookupByName(env, inputSourceName, inputSource))
     return NULL;
-  
+
   if (strcmp(inputSource->MIMEtype(), "audio/MPA-ROBUST") != 0) {
     env.setResultMsg(inputSourceName, " is not an MP3 ADU source");
     return NULL;
   }
-  
+
   return inputSource;
 }
 
@@ -188,7 +188,7 @@ class DeinterleavingFrames {
 public:
   DeinterleavingFrames();
   virtual ~DeinterleavingFrames();
-  
+
   Boolean haveReleaseableFrame();
   void getIncomingFrameParams(unsigned char*& dataPtr,
 			      unsigned& bytesAvailable);
@@ -222,6 +222,7 @@ MP3ADUdeinterleaver::MP3ADUdeinterleaver(UsageEnvironment& env,
 }
 
 MP3ADUdeinterleaver::~MP3ADUdeinterleaver() {
+  delete fFrames;
 }
 
 MP3ADUdeinterleaver* MP3ADUdeinterleaver::createNew(UsageEnvironment& env,
@@ -241,7 +242,7 @@ void MP3ADUdeinterleaver::doGetNextFrame() {
   } else {
 #ifdef TEST_LOSS
   NOTE: This code no longer works, because it uses synchronous reads,
-  which are no longer supported. 
+  which are no longer supported.
     static unsigned const framesPerPacket = 3;
     static unsigned const frameCount = 0;
     static Boolean packetIsLost;
@@ -286,7 +287,7 @@ void MP3ADUdeinterleaver::afterGettingFrame(unsigned numBytesRead,
 				       icc, ii);
 
   // Compare these to the values we saw last:
-  if (icc != fICClastSeen || ii == fIIlastSeen) { 
+  if (icc != fICClastSeen || ii == fIIlastSeen) {
     // We've started a new interleave cycle
     // (or interleaving was not used).  Release all
     // pending ADU frames to the ADU->MP3 conversion step:
@@ -465,7 +466,7 @@ void DeinterleavingFrames
   desc.frameDataSize = frameSize;
   desc.presentationTime = presentationTime;
   desc.durationInMicroseconds = durationInMicroseconds;
-  
+
   // Advance over the ADU descriptor, to get to the MPEG 'syncword':
   unsigned char* ptr = desc.frameData;
   (void)ADUdescriptor::getRemainingFrameSize(ptr);

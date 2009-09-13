@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // 'ADU' MP3 streams (for improved loss-tolerance)
 // Implementation
 
@@ -89,7 +89,7 @@ private:
 				    struct timeval presentationTime,
 				    unsigned durationInMicroseconds);
 
-  Boolean sqAfterGettingCommon(Segment& seg, unsigned numBytesRead); 
+  Boolean sqAfterGettingCommon(Segment& seg, unsigned numBytesRead);
   Boolean isEmptyOrFull() {return headIndex() == nextFreeIndex();}
 
   unsigned fHeadIndex, fNextFreeIndex, fTotalDataSize;
@@ -358,7 +358,7 @@ Boolean MP3FromADUSource::needToGetAnADU() {
     Segment* seg = &(fSegments->headSegment());
     int const endOfHeadFrame = (int) seg->dataHere();
     unsigned frameOffset = 0;
-    
+
     while (1) {
       int endOfData = frameOffset - seg->backpointer + seg->aduSize;
       if (endOfData >= endOfHeadFrame) {
@@ -366,14 +366,14 @@ Boolean MP3FromADUSource::needToGetAnADU() {
 	needToEnqueue = False;
 	break;
       }
-      
+
       frameOffset += seg->dataHere();
       index = SegmentQueue::nextIndex(index);
       if (index == fSegments->nextFreeIndex()) break;
       seg = &(fSegments->s[index]);
     }
   }
-  
+
   return needToEnqueue;
 }
 
@@ -385,11 +385,11 @@ void MP3FromADUSource::insertDummyADUsIfNecessary() {
   // of the previous ADU, then we need to insert one or more
   // empty, 'dummy' ADUs ahead of it.  (This situation should occur
   // only if an intermediate ADU was lost.)
-  
+
   unsigned tailIndex
     = SegmentQueue::prevIndex(fSegments->nextFreeIndex());
   Segment* tailSeg = &(fSegments->s[tailIndex]);
-  
+
   while (1) {
     unsigned prevADUend; // relative to the start of the new ADU
     if (fSegments->headIndex() != tailIndex) {
@@ -406,7 +406,7 @@ void MP3FromADUSource::insertDummyADUsIfNecessary() {
     } else {
       prevADUend = 0;
     }
-    
+
     if (tailSeg->backpointer > prevADUend) {
       // We need to insert a dummy ADU in front of the tail
 #ifdef DEBUG
@@ -430,20 +430,20 @@ Boolean MP3FromADUSource::generateFrameFromHeadADU() {
     fprintf(stderr, "a->m:outputting frame for %d<-%d (fs %d, dh %d), (descriptorSize: %d)\n", seg->aduSize, seg->backpointer, seg->frameSize, seg->dataHere(), seg->descriptorSize);
 #endif
     unsigned char* toPtr = fTo;
-    
+
     // output header and side info:
     fFrameSize = seg->frameSize;
     fPresentationTime = seg->presentationTime;
     fDurationInMicroseconds = seg->durationInMicroseconds;
     memmove(toPtr, seg->dataStart(), seg->headerSize + seg->sideInfoSize);
     toPtr += seg->headerSize + seg->sideInfoSize;
-    
+
     // zero out the rest of the frame, in case ADU data doesn't fill it all in
-    unsigned bytesToZero = seg->dataHere(); 
+    unsigned bytesToZero = seg->dataHere();
     for (unsigned i = 0; i < bytesToZero; ++i) {
       toPtr[i] = '\0';
     }
-    
+
     // Fill in the frame with appropriate ADU data from this and
     // subsequent ADUs:
     unsigned frameOffset = 0;
@@ -453,12 +453,12 @@ Boolean MP3FromADUSource::generateFrameFromHeadADU() {
     while (toOffset < endOfHeadFrame) {
       int startOfData = frameOffset - seg->backpointer;
       if (startOfData > (int)endOfHeadFrame) break; // no more ADUs needed
-      
+
       int endOfData = startOfData + seg->aduSize;
       if (endOfData > (int)endOfHeadFrame) {
 	endOfData = endOfHeadFrame;
       }
-      
+
       unsigned fromOffset;
       if (startOfData <= (int)toOffset) {
 	fromOffset = toOffset - startOfData;
@@ -466,7 +466,7 @@ Boolean MP3FromADUSource::generateFrameFromHeadADU() {
 	if (endOfData < startOfData) endOfData = startOfData;
       } else {
 	fromOffset = 0;
-	
+
 	// we may need some padding bytes beforehand
 	unsigned bytesToZero = startOfData - toOffset;
 #ifdef DEBUG
@@ -474,7 +474,7 @@ Boolean MP3FromADUSource::generateFrameFromHeadADU() {
 #endif
 	toOffset += bytesToZero;
       }
-      
+
       unsigned char* fromPtr
 	= &seg->dataStart()[seg->headerSize + seg->sideInfoSize + fromOffset];
       unsigned bytesUsedHere = endOfData - startOfData;
@@ -483,13 +483,13 @@ Boolean MP3FromADUSource::generateFrameFromHeadADU() {
 #endif
       memmove(toPtr + toOffset, fromPtr, bytesUsedHere);
       toOffset += bytesUsedHere;
-      
+
       frameOffset += seg->dataHere();
       index = SegmentQueue::nextIndex(index);
       if (index == fSegments->nextFreeIndex()) break;
       seg = &(fSegments->s[index]);
     }
-    
+
     fSegments->dequeue();
 
     return True;
@@ -505,7 +505,7 @@ unsigned Segment::dataHere() {
   }
 
   return (unsigned)result;
-} 
+}
 
 ////////// SegmentQueue //////////
 
@@ -516,9 +516,9 @@ void SegmentQueue::enqueueNewSegment(FramedSource* inputSource,
     FramedSource::handleClosure(usingSource);
     return;
   }
-  
+
   fUsingSource = usingSource;
-  
+
   Segment& seg = nextFreeSegment();
   inputSource->getNextFrame(seg.buf, sizeof seg.buf,
 			    sqAfterGettingSegment, this,
@@ -549,7 +549,7 @@ void SegmentQueue::sqAfterGettingSegment(void* clientData,
 
 // Common code called after a new segment is enqueued
 Boolean SegmentQueue::sqAfterGettingCommon(Segment& seg,
-					   unsigned numBytesRead) { 
+					   unsigned numBytesRead) {
   unsigned char* fromPtr = seg.buf;
 
   if (fIncludeADUdescriptors) {
@@ -570,7 +570,7 @@ Boolean SegmentQueue::sqAfterGettingCommon(Segment& seg,
 			      seg.backpointer, seg.aduSize)) {
     return False;
   }
-  
+
   // If we've just read an ADU (rather than a regular MP3 frame), then use the
   // entire "numBytesRead" data for the 'aduSize', so that we include any
   // 'ancillary data' that may be present at the end of the ADU:

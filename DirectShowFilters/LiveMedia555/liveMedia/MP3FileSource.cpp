@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // MP3 File Sources
 // Implementation
 
@@ -68,7 +68,7 @@ void MP3FileSource::setPresentationTimeScale(unsigned scale) {
   fStreamState->setPresentationTimeScale(scale);
 }
 
-void MP3FileSource::seekWithinFile(float seekNPT) {
+void MP3FileSource::seekWithinFile(double seekNPT) {
   fStreamState->seekWithinFile(seekNPT);
 }
 
@@ -106,7 +106,7 @@ Boolean MP3FileSource::doGetNextFrame1() {
     fPresentationTime = fFirstFramePresentationTime;
     fHaveJustInitialized = False;
   }
-  
+
   if (!fStreamState->readFrame(fTo, fMaxSize, fFrameSize, fDurationInMicroseconds)) {
     char tmp[200];
     sprintf(tmp,
