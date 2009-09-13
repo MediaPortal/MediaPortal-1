@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A filter that breaks up an MPEG video elementary stream into
 //   headers and frames
 // Implementation
@@ -99,8 +99,8 @@ void MPEGVideoStreamFramer
 #ifdef DEBUG
   if (firstPT.tv_sec == 0 && firstPT.tv_usec == 0) firstPT = fPresentationTime;
   struct timeval diffPT;
-  diffPT.tv_sec = fPresentationTime.tv_sec - firstPT.tv_sec; 
-  diffPT.tv_usec = fPresentationTime.tv_usec - firstPT.tv_usec; 
+  diffPT.tv_sec = fPresentationTime.tv_sec - firstPT.tv_sec;
+  diffPT.tv_usec = fPresentationTime.tv_usec - firstPT.tv_usec;
   if (fPresentationTime.tv_usec < firstPT.tv_usec) {
     --diffPT.tv_sec;
     diffPT.tv_usec += 1000000;
@@ -157,7 +157,7 @@ void MPEGVideoStreamFramer::continueReadProcessing() {
     // It has already been copied to the reader's space.
     fFrameSize = acquiredFrameSize;
     fNumTruncatedBytes = fParser->numTruncatedBytes();
-    
+
     // "fPresentationTime" should have already been computed.
 
     // Compute "fDurationInMicroseconds" now:
