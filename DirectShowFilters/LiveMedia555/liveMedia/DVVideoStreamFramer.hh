@@ -15,39 +15,36 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 **********/
 // "liveMedia"
 // Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
-// A template for a MediaSource encapsulating an audio/video input device
+// A filter that parses a DV input stream into DV frames to deliver to the downstream object
 // C++ header
 
-#ifndef _DEVICE_SOURCE_HH
-#define _DEVICE_SOURCE_HH
+#ifndef _DV_VIDEO_STREAM_FRAMER_HH
+#define _DV_VIDEO_STREAM_FRAMER_HH
 
-#ifndef _FRAMED_SOURCE_HH
-#include "FramedSource.hh"
+#ifndef _FRAMED_FILTER_HH
+#include "FramedFilter.hh"
 #endif
 
-// The following class can be used to define specific encoder parameters
-class DeviceParameters {
-};
-
-class DeviceSource: public FramedSource {
+class DVVideoStreamFramer: public FramedFilter {
 public:
-  static DeviceSource* createNew(UsageEnvironment& env,
-				 DeviceParameters params);
+  static DVVideoStreamFramer*
+  createNew(UsageEnvironment& env, FramedSource* inputSource);
+
+  char const* profileName() const;
 
 protected:
-  DeviceSource(UsageEnvironment& env, DeviceParameters params);
-  // called only by createNew(), or by subclass constructors
-  virtual ~DeviceSource();
+  DVVideoStreamFramer(UsageEnvironment& env,
+		      FramedSource* inputSource);
+      // called only by createNew(), or by subclass constructors
+  virtual ~DVVideoStreamFramer();
 
 private:
   // redefined virtual functions:
+  virtual Boolean isDVVideoStreamFramer() const;
   virtual void doGetNextFrame();
 
 private:
-  void deliverFrame();
-
-private:
-  DeviceParameters fParams;
+  char const* fProfileName;
 };
 
 #endif

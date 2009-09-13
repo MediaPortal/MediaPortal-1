@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // File sinks
 // Implementation
 
@@ -29,7 +29,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 ////////// FileSink //////////
 
 FileSink::FileSink(UsageEnvironment& env, FILE* fid, unsigned bufferSize,
-		   char const* perFrameFileNamePrefix) 
+		   char const* perFrameFileNamePrefix)
   : MediaSink(env), fOutFid(fid), fBufferSize(bufferSize) {
   fBuffer = new unsigned char[bufferSize];
   if (perFrameFileNamePrefix != NULL) {
@@ -43,7 +43,7 @@ FileSink::FileSink(UsageEnvironment& env, FILE* fid, unsigned bufferSize,
 
 FileSink::~FileSink() {
   delete[] fPerFrameFileNameBuffer;
-  delete[] fPerFrameFileNamePrefix; 
+  delete[] fPerFrameFileNamePrefix;
   delete[] fBuffer;
   if (fOutFid != NULL) fclose(fOutFid);
 }
@@ -86,7 +86,7 @@ void FileSink::afterGettingFrame(void* clientData, unsigned frameSize,
 				 unsigned /*durationInMicroseconds*/) {
   FileSink* sink = (FileSink*)clientData;
   sink->afterGettingFrame1(frameSize, presentationTime);
-} 
+}
 
 void FileSink::addData(unsigned char* data, unsigned dataSize,
 		       struct timeval presentationTime) {
@@ -125,7 +125,7 @@ void FileSink::afterGettingFrame1(unsigned frameSize,
     stopPlaying();
     return;
   }
- 
+
   if (fPerFrameFileNameBuffer != NULL) {
     if (fOutFid != NULL) { fclose(fOutFid); fOutFid = NULL; }
   }
