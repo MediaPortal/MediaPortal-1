@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A data structure that represents a session that consists of
 // potentially multiple (audio and/or video) sub-sessions
 // (This data structure is used for media *streamers* - i.e., servers.
@@ -41,7 +41,7 @@ public:
 				       char const* description = NULL,
 				       Boolean isSSM = False,
 				       char const* miscSDPLines = NULL);
-			       
+
   virtual ~ServerMediaSession();
 
   static Boolean lookupByName(UsageEnvironment& env,
@@ -83,9 +83,8 @@ private:
   ServerMediaSubsession* fSubsessionsHead;
   ServerMediaSubsession* fSubsessionsTail;
   unsigned fSubsessionCounter;
-public:
+
   char* fStreamName;
-private:
   char* fInfoSDPString;
   char* fDescriptionSDPString;
   char* fMiscSDPLines;
@@ -99,10 +98,10 @@ class ServerMediaSubsessionIterator {
 public:
   ServerMediaSubsessionIterator(ServerMediaSession& session);
   virtual ~ServerMediaSubsessionIterator();
-  
+
   ServerMediaSubsession* next(); // NULL if none
   void reset();
-  
+
 private:
   ServerMediaSession& fOurSession;
   ServerMediaSubsession* fNextPtr;
@@ -136,7 +135,7 @@ public:
 			   unsigned short& rtpSeqNum,
 			   unsigned& rtpTimestamp) = 0;
   virtual void pauseStream(unsigned clientSessionId, void* streamToken);
-  virtual void seekStream(unsigned clientSessionId, void* streamToken, float seekNPT);
+  virtual void seekStream(unsigned clientSessionId, void* streamToken, double seekNPT);
   virtual void setStreamScale(unsigned clientSessionId, void* streamToken, float scale);
   virtual void deleteStream(unsigned clientSessionId, void*& streamToken);
 
