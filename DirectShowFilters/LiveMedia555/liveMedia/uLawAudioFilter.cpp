@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // Filters for converting between raw PCM audio and uLaw
 // Implementation
 
@@ -28,7 +28,7 @@ uLawFromPCMAudioSource* uLawFromPCMAudioSource
   if (byteOrdering < 0 || byteOrdering > 2) {
     env.setResultMsg("uLawFromPCMAudioSource::createNew(): bad \"byteOrdering\" parameter");
     return NULL;
-  } 
+  }
   return new uLawFromPCMAudioSource(env, inputSource, byteOrdering);
 }
 
@@ -37,11 +37,11 @@ uLawFromPCMAudioSource
 			 int byteOrdering)
   : FramedFilter(env, inputSource),
     fByteOrdering(byteOrdering), fInputBuffer(NULL), fInputBufferSize(0) {
-}    
+}
 
 uLawFromPCMAudioSource::~uLawFromPCMAudioSource() {
   delete[] fInputBuffer;
-} 
+}
 
 void uLawFromPCMAudioSource::doGetNextFrame() {
   // Figure out how many bytes of input data to ask for, and increase
@@ -154,11 +154,11 @@ PCMFromuLawAudioSource
 			 FramedSource* inputSource)
   : FramedFilter(env, inputSource),
     fInputBuffer(NULL), fInputBufferSize(0) {
-}    
+}
 
 PCMFromuLawAudioSource::~PCMFromuLawAudioSource() {
   delete[] fInputBuffer;
-} 
+}
 
 void PCMFromuLawAudioSource::doGetNextFrame() {
   // Figure out how many bytes of input data to ask for, and increase
@@ -230,10 +230,10 @@ NetworkFromHostOrder16
 ::NetworkFromHostOrder16(UsageEnvironment& env,
 			 FramedSource* inputSource)
   : FramedFilter(env, inputSource) {
-}    
+}
 
 NetworkFromHostOrder16::~NetworkFromHostOrder16() {
-} 
+}
 
 void NetworkFromHostOrder16::doGetNextFrame() {
   // Arrange to read data directly into the client's buffer:
@@ -284,10 +284,10 @@ HostFromNetworkOrder16
 ::HostFromNetworkOrder16(UsageEnvironment& env,
 			 FramedSource* inputSource)
   : FramedFilter(env, inputSource) {
-}    
+}
 
 HostFromNetworkOrder16::~HostFromNetworkOrder16() {
-} 
+}
 
 void HostFromNetworkOrder16::doGetNextFrame() {
   // Arrange to read data directly into the client's buffer:
@@ -337,10 +337,10 @@ EndianSwap16::createNew(UsageEnvironment& env, FramedSource* inputSource) {
 EndianSwap16::EndianSwap16(UsageEnvironment& env,
 			 FramedSource* inputSource)
   : FramedFilter(env, inputSource) {
-}    
+}
 
 EndianSwap16::~EndianSwap16() {
-} 
+}
 
 void EndianSwap16::doGetNextFrame() {
   // Arrange to read data directly into the client's buffer:

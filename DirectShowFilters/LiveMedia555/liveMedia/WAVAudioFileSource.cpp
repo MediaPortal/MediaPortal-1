@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A WAV audio file source
 // Implementation
 
@@ -75,26 +75,25 @@ unsigned char WAVAudioFileSource::getAudioFormat() {
 
 
 #define nextc fgetc(fid)
-#define ucEOF ((unsigned char)EOF)
 
 static Boolean get4Bytes(FILE* fid, unsigned& result) { // little-endian
-  unsigned char c0, c1, c2, c3;
-  if ((c0 = nextc) == ucEOF || (c1 = nextc) == ucEOF ||
-      (c2 = nextc) == ucEOF || (c3 = nextc) == ucEOF) return False;
+  int c0, c1, c2, c3;
+  if ((c0 = nextc) == EOF || (c1 = nextc) == EOF ||
+      (c2 = nextc) == EOF || (c3 = nextc) == EOF) return False;
   result = (c3<<24)|(c2<<16)|(c1<<8)|c0;
   return True;
 }
 
 static Boolean get2Bytes(FILE* fid, unsigned short& result) {//little-endian
-  unsigned char c0, c1;
-  if ((c0 = nextc) == ucEOF || (c1 = nextc) == ucEOF) return False;
+  int c0, c1;
+  if ((c0 = nextc) == EOF || (c1 = nextc) == EOF) return False;
   result = (c1<<8)|c0;
   return True;
 }
 
 static Boolean skipBytes(FILE* fid, int num) {
   while (num-- > 0) {
-    if (nextc == ucEOF) return False;
+    if (nextc == EOF) return False;
   }
   return True;
 }
@@ -127,7 +126,7 @@ WAVAudioFileSource::WAVAudioFileSource(UsageEnvironment& env, FILE* fid)
     if (!get2Bytes(fid, audioFormat)) break;
 
     fAudioFormat = (unsigned char)audioFormat;
-    if (fAudioFormat != WA_PCM && fAudioFormat != WA_PCMA && fAudioFormat != WA_PCMU) { 
+    if (fAudioFormat != WA_PCM && fAudioFormat != WA_PCMA && fAudioFormat != WA_PCMU) {
       // not PCM/PCMU/PCMA - we can't handle this
       env.setResultMsg("Audio format is not PCM/PCMU/PCMA");
       break;
@@ -157,7 +156,7 @@ WAVAudioFileSource::WAVAudioFileSource(UsageEnvironment& env, FILE* fid)
     if (!skipBytes(fid, formatLength - 16)) break;
 
     // FACT chunk (optional):
-    unsigned char c = nextc;
+    int c = nextc;
     if (c == 'f') {
       if (nextc != 'a' || nextc != 'c' || nextc != 't') break;
       unsigned factLength;
@@ -174,7 +173,7 @@ WAVAudioFileSource::WAVAudioFileSource(UsageEnvironment& env, FILE* fid)
     fWAVHeaderSize = ftell(fid);
     success = True;
   } while (0);
-  
+
   if (!success) {
     env.setResultMsg("Bad WAV file format");
     // Set "fBitsPerSample" to zero, to indicate failure:
@@ -219,7 +218,7 @@ void WAVAudioFileSource::doGetNextFrame() {
     fFrameSize = fread(fTo, 1, bytesToRead, fFid);
   } else {
     // We read every 'fScaleFactor'th sample:
-    fFrameSize = 0; 
+    fFrameSize = 0;
     while (bytesToRead > 0) {
       size_t bytesRead = fread(fTo, 1, bytesPerSample, fFid);
       if (bytesRead <= 0) break;

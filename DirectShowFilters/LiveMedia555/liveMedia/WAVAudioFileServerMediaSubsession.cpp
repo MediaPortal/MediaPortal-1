@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A 'ServerMediaSubsession' object that creates new, unicast, "RTPSink"s
 // on demand, from an WAV audio file.
 // Implementation
@@ -43,7 +43,7 @@ WAVAudioFileServerMediaSubsession
 }
 
 void WAVAudioFileServerMediaSubsession
-::seekStreamSource(FramedSource* inputSource, float seekNPT) {
+::seekStreamSource(FramedSource* inputSource, double seekNPT) {
   WAVAudioFileSource* wavSource;
   if (fBitsPerSample == 16) {
     // "inputSource" is a filter; its input source is the original WAV file source:
@@ -55,7 +55,7 @@ void WAVAudioFileServerMediaSubsession
 
   unsigned seekSampleNumber = (unsigned)(seekNPT*fSamplingFrequency);
   unsigned seekByteNumber = (seekSampleNumber*fNumChannels*fBitsPerSample)/8;
-  
+
   wavSource->seekToPCMByte(seekByteNumber);
 }
 
@@ -109,7 +109,7 @@ FramedSource* WAVAudioFileServerMediaSubsession
 	  = uLawFromPCMAudioSource::createNew(envir(), wavSource, 1/*little-endian*/);
 	bitsPerSecond /= 2;
       } else {
-	// Add a filter that converts from little-endian to network (big-endian) order: 
+	// Add a filter that converts from little-endian to network (big-endian) order:
 	resultSource = EndianSwap16::createNew(envir(), wavSource);
       }
     } else { // fBitsPerSample == 8
@@ -131,9 +131,9 @@ RTPSink* WAVAudioFileServerMediaSubsession
 		   unsigned char rtpPayloadTypeIfDynamic,
 		   FramedSource* /*inputSource*/) {
   do {
-    char* mimeType;
+    char const* mimeType;
     unsigned char payloadFormatCode;
-    if (fAudioFormat == WA_PCM) { 
+    if (fAudioFormat == WA_PCM) {
       if (fBitsPerSample == 16) {
 	if (fConvertToULaw) {
 	  mimeType = "PCMU";
@@ -173,7 +173,7 @@ RTPSink* WAVAudioFileServerMediaSubsession
     } else { //unknown format
 		break;
 	}
-    
+
     return SimpleRTPSink::createNew(envir(), rtpGroupsock,
 				    payloadFormatCode, fSamplingFrequency,
 				    "audio", mimeType, fNumChannels);

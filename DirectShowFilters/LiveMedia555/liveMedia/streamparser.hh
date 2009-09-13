@@ -11,17 +11,17 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // Abstract class for parsing a byte stream
 // C++ header
 
 #ifndef _STREAM_PARSER_HH
 #define _STREAM_PARSER_HH
 
-#ifndef _FRAMED_SOURCE_HH 
+#ifndef _FRAMED_SOURCE_HH
 #include "FramedSource.hh"
 #endif
 
