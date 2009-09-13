@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // RTP sink for MPEG video (RFC 2250)
 // Implementation
 
@@ -51,7 +51,7 @@ Boolean MPEG1or2VideoRTPSink
   // complete picture) can appear at other than the first position in a packet
   // in all situations, EXCEPT when it follows the end of (i.e., the last slice
   // of) a picture.  I.e., the headers at the beginning of a picture must
-  // appear at the start of a RTP packet. 
+  // appear at the start of a RTP packet.
   if (!fPreviousFrameWasSlice) return True;
 
   // A slice is already packed into this packet.  We allow this new 'frame'
@@ -72,7 +72,7 @@ void MPEG1or2VideoRTPSink
 			 unsigned numRemainingBytes) {
   Boolean thisFrameIsASlice = False; // until we learn otherwise
   if (isFirstFrameInPacket()) {
-    fSequenceHeaderPresent = fPacketBeginsSlice = fPacketEndsSlice = False; 
+    fSequenceHeaderPresent = fPacketBeginsSlice = fPacketEndsSlice = False;
   }
 
   if (fragmentationOffset == 0) {
@@ -94,7 +94,7 @@ void MPEG1or2VideoRTPSink
       unsigned char byte8 = numBytesInFrame == 8 ? 0 : frameStart[8];
 
       fPictureState.temporal_reference = (next4Bytes&0xFFC00000)>>(32-10);
-      fPictureState.picture_coding_type = (next4Bytes&0x00380000)>>(32-(10+3)); 
+      fPictureState.picture_coding_type = (next4Bytes&0x00380000)>>(32-(10+3));
 
       unsigned char FBV, BFC, FFV, FFC;
       FBV = BFC = FFV = FFC = 0;
@@ -141,7 +141,7 @@ void MPEG1or2VideoRTPSink
   // in the packet.  That's OK, because this situation happens infrequently,
   // and we want the video-specific header to reflect the most up-to-date
   // information (in particular, from a Picture Header) anyway.
-  unsigned videoSpecificHeader = 
+  unsigned videoSpecificHeader =
     // T == 0
     (fPictureState.temporal_reference<<16) |
     // AN == N == 0

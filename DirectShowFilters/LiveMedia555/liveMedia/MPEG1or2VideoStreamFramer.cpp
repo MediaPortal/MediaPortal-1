@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A filter that breaks up an MPEG 1 or 2 video elementary stream into
 //   frames for: Video_Sequence_Header, GOP_Header, Picture_Header
 // Implementation
@@ -33,7 +33,7 @@ enum MPEGParseState {
   PARSING_GOP_HEADER_SEEN_CODE,
   PARSING_PICTURE_HEADER,
   PARSING_SLICE
-}; 
+};
 
 #define VSH_MAX_SIZE 1000
 
@@ -68,7 +68,7 @@ private:
   unsigned short fCurPicTemporalReference;
       // used to compute slice timestamp
   unsigned char fCurrentSliceNumber; // set when parsing a slice
-  
+
   // A saved copy of the most recently seen 'video_sequence_header',
   // in case we need to insert it into the stream periodically:
   unsigned char fSavedVSHBuffer[VSH_MAX_SIZE];
@@ -283,7 +283,7 @@ unsigned MPEG1or2VideoStreamParser
   do {
     saveToNextCode(next4Bytes);
   } while (next4Bytes != GROUP_START_CODE && next4Bytes != PICTURE_START_CODE);
-  
+
   setParseState((next4Bytes == GROUP_START_CODE)
 		? PARSING_GOP_HEADER_SEEN_CODE : PARSING_PICTURE_HEADER);
 
@@ -355,7 +355,7 @@ unsigned MPEG1or2VideoStreamParser::parseGOPHeader(Boolean haveSeenStartCode) {
 
   // Compute this frame's timestamp:
   usingSource()->computePresentationTime(0);
-  
+
   setParseState(PARSING_PICTURE_HEADER);
 
   return curFrameSize();
@@ -397,7 +397,7 @@ unsigned MPEG1or2VideoStreamParser::parsePictureHeader() {
       saveToNextCode(next4Bytes);
     } while (!isSliceStartCode(next4Bytes));
   }
-  
+
   setParseState(PARSING_SLICE);
 
   fCurrentSliceNumber = next4Bytes&0xFF;
@@ -410,7 +410,7 @@ unsigned MPEG1or2VideoStreamParser::parsePictureHeader() {
 
   if (fSkippingCurrentPicture) {
     return parse(); // try again, until we get a non-skipped frame
-  } else { 
+  } else {
     return curFrameSize();
   }
 }
@@ -429,7 +429,7 @@ unsigned MPEG1or2VideoStreamParser::parseSlice() {
     // Copy all bytes that we see, up until we reach a code of some sort:
     saveToNextCode(next4Bytes);
   }
-  
+
   // The next thing to parse depends on the code that we just saw:
   if (isSliceStartCode(next4Bytes)) { // common case
     setParseState(PARSING_SLICE);
@@ -472,7 +472,7 @@ unsigned MPEG1or2VideoStreamParser::parseSlice() {
 
   if (fSkippingCurrentPicture) {
     return parse(); // try again, until we get a non-skipped frame
-  } else { 
+  } else {
     return curFrameSize();
   }
 }

@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A simplified version of "MPEG1or2VideoStreamFramer" that takes only
 // complete, discrete frames (rather than an arbitrary byte stream) as input.
 // This avoids the parsing and data copying overhead of the full
@@ -32,7 +32,7 @@ MPEG1or2VideoStreamDiscreteFramer::createNew(UsageEnvironment& env,
   return new MPEG1or2VideoStreamDiscreteFramer(env, inputSource,
                                                iFramesOnly, vshPeriod);
 }
-                                                                                
+
 MPEG1or2VideoStreamDiscreteFramer
 ::MPEG1or2VideoStreamDiscreteFramer(UsageEnvironment& env,
                                     FramedSource* inputSource,
@@ -45,10 +45,10 @@ MPEG1or2VideoStreamDiscreteFramer
   fLastNonBFramePresentationTime.tv_sec = 0;
   fLastNonBFramePresentationTime.tv_usec = 0;
 }
-                                                                                
+
 MPEG1or2VideoStreamDiscreteFramer::~MPEG1or2VideoStreamDiscreteFramer() {
 }
-                                                                                
+
 void MPEG1or2VideoStreamDiscreteFramer::doGetNextFrame() {
   // Arrange to read data (which should be a complete MPEG-1 or 2 video frame)
   // from our data source, directly into the client's input buffer.
@@ -57,7 +57,7 @@ void MPEG1or2VideoStreamDiscreteFramer::doGetNextFrame() {
                              afterGettingFrame, this,
                              FramedSource::handleClosure, this);
 }
-                                                                                
+
 void MPEG1or2VideoStreamDiscreteFramer
 ::afterGettingFrame(void* clientData, unsigned frameSize,
                     unsigned numTruncatedBytes,
@@ -145,7 +145,7 @@ void MPEG1or2VideoStreamDiscreteFramer
       }
     }
 
-    if (nextCode == 0x00 /*PICTURE_START_CODE*/ && i+2 < frameSize) { 
+    if (nextCode == 0x00 /*PICTURE_START_CODE*/ && i+2 < frameSize) {
       // Get the 'temporal_reference' and 'picture_coding_type' from the
       // following 2 bytes:
       ++i;
@@ -191,7 +191,7 @@ void MPEG1or2VideoStreamDiscreteFramer
 
   // ##### Later:
   // - do "iFramesOnly" if requested
- 
+
   // Complete delivery to the client:
   fFrameSize = frameSize;
   fNumTruncatedBytes = numTruncatedBytes;

@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A 'ServerMediaSubsession' object that creates new, unicast, "RTPSink"s
 // on demand, from a MPEG-1 or 2 demuxer.
 // Implementation
@@ -28,7 +28,6 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "AC3AudioRTPSink.hh"
 #include "ByteStreamFileSource.hh"
 
-extern void Log(const char *fmt, ...) ;
 MPEG1or2DemuxedServerMediaSubsession* MPEG1or2DemuxedServerMediaSubsession
 ::createNew(MPEG1or2FileServerDemux& demux, u_int8_t streamIdTag,
 	    Boolean reuseFirstSource, Boolean iFramesOnly, double vshPeriod) {
@@ -43,14 +42,10 @@ MPEG1or2DemuxedServerMediaSubsession
 				       Boolean iFramesOnly, double vshPeriod)
   : OnDemandServerMediaSubsession(demux.envir(), reuseFirstSource),
     fOurDemux(demux), fStreamIdTag(streamIdTag),
-    fIFramesOnly(iFramesOnly), fVSHPeriod(vshPeriod) 
-{
-  Log("MPEG1or2DemuxedServerMediaSubsession:ctor");
+    fIFramesOnly(iFramesOnly), fVSHPeriod(vshPeriod) {
 }
 
-MPEG1or2DemuxedServerMediaSubsession::~MPEG1or2DemuxedServerMediaSubsession() 
-{
-  Log("MPEG1or2DemuxedServerMediaSubsession:dtor");
+MPEG1or2DemuxedServerMediaSubsession::~MPEG1or2DemuxedServerMediaSubsession() {
 }
 
 FramedSource* MPEG1or2DemuxedServerMediaSubsession
@@ -99,7 +94,7 @@ RTPSink* MPEG1or2DemuxedServerMediaSubsession
 }
 
 void MPEG1or2DemuxedServerMediaSubsession
-::seekStreamSource(FramedSource* inputSource, float seekNPT) {
+::seekStreamSource(FramedSource* inputSource, double seekNPT) {
   float const dur = duration();
   unsigned const size = fOurDemux.fileSize();
   unsigned absBytePosition = dur == 0.0 ? 0 : (unsigned)((seekNPT/dur)*size);

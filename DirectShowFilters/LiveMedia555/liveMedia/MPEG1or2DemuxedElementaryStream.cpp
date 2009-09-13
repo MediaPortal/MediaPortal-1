@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A MPEG 1 or 2 Elementary Stream, demultiplexed from a Program Stream
 // Implementation
 
@@ -22,14 +22,11 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 ////////// MPEG1or2DemuxedElementaryStream //////////
 
-extern void Log(const char *fmt, ...) ;
 MPEG1or2DemuxedElementaryStream::
 MPEG1or2DemuxedElementaryStream(UsageEnvironment& env, u_int8_t streamIdTag,
 			    MPEG1or2Demux& sourceDemux)
   : FramedSource(env),
-    fOurStreamIdTag(streamIdTag), fOurSourceDemux(sourceDemux), fMPEGversion(0) 
-{
-  Log("MPEG1or2DemuxedElementaryStream:ctor:%x",this);
+    fOurStreamIdTag(streamIdTag), fOurSourceDemux(sourceDemux), fMPEGversion(0) {
   // Set our MIME type string for known media types:
   if ((streamIdTag&0xE0) == 0xC0) {
     fMIMEtype = "audio/MPEG";
@@ -40,9 +37,7 @@ MPEG1or2DemuxedElementaryStream(UsageEnvironment& env, u_int8_t streamIdTag,
   }
 }
 
-MPEG1or2DemuxedElementaryStream::~MPEG1or2DemuxedElementaryStream() 
-{
-  Log("MPEG1or2DemuxedElementaryStream:dtor:%x",this);
+MPEG1or2DemuxedElementaryStream::~MPEG1or2DemuxedElementaryStream() {
   fOurSourceDemux.noteElementaryStreamDeletion(this);
 }
 

@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A HTTP Sink specifically for MPEG Video
 // Implementation
 
@@ -31,9 +31,9 @@ MPEG1or2VideoHTTPSink* MPEG1or2VideoHTTPSink::createNew(UsageEnvironment& env, P
 
     MPEG1or2VideoHTTPSink* newSink = new MPEG1or2VideoHTTPSink(env, ourSocket);
     if (newSink == NULL) break;
-    
+
     appendPortNum(env, ourPort);
-    
+
     return newSink;
   } while (0);
 
@@ -65,7 +65,7 @@ Boolean MPEG1or2VideoHTTPSink::isUseableFrame(unsigned char* framePtr,
     = (framePtr[0]<<24)|(framePtr[1]<<16)|(framePtr[2]<<8)|framePtr[3];
 
   if (first4Bytes == VIDEO_SEQUENCE_HEADER_START_CODE) {
-    fHaveSeenFirstVSH = True; 
+    fHaveSeenFirstVSH = True;
     return True;
   } else {
     return False;

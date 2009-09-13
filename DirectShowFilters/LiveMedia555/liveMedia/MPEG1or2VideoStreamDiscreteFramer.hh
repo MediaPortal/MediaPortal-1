@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A simplified version of "MPEG1or2VideoStreamFramer" that takes only
 // complete, discrete frames (rather than an arbitrary byte stream) as input.
 // This avoids the parsing and data copying overhead of the full
@@ -36,18 +36,18 @@ public:
   createNew(UsageEnvironment& env, FramedSource* inputSource,
             Boolean iFramesOnly = False,
             double vshPeriod = 5.0); // see MPEG1or2VideoStreamFramer.hh
-  
+
 private:
   MPEG1or2VideoStreamDiscreteFramer(UsageEnvironment& env,
                                     FramedSource* inputSource,
                                     Boolean iFramesOnly, double vshPeriod);
   // called only by createNew()
   virtual ~MPEG1or2VideoStreamDiscreteFramer();
-                                                                                
+
 private:
   // redefined virtual functions:
   virtual void doGetNextFrame();
-                                                                                
+
 private:
   static void afterGettingFrame(void* clientData, unsigned frameSize,
                                 unsigned numTruncatedBytes,
