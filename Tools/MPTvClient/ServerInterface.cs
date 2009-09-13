@@ -40,11 +40,11 @@ namespace MPTvClient
 {
   public class ServerInterface
   {
-    IList groups;
-    IList radioGroups;
-    IList channels;
-    IList mappings;
-    IList cards;
+    IList<ChannelGroup> groups;
+    IList<RadioChannelGroup> radioGroups;
+    IList<Channel> channels;
+    IList<GroupMap> mappings;
+    IList<Card> cards;
     User me;
     bool _isTimeShifting = false;
     public Exception lastException = null;
@@ -312,7 +312,7 @@ namespace MPTvClient
         {
           if (group.GroupName == groupName)
           {
-            IList maps = group.ReferringGroupMap();
+            IList<GroupMap> maps = group.ReferringGroupMap();
             TvDatabase.Program epg;
             foreach (GroupMap map in maps)
             {
@@ -355,7 +355,7 @@ namespace MPTvClient
         {
           if (group.GroupName == groupName)
           {
-            IList maps = group.ReferringRadioGroupMap();
+            IList<RadioGroupMap> maps = group.ReferringRadioGroupMap();
             TvDatabase.Program epg;
             foreach (RadioGroupMap map in maps)
             {
@@ -431,7 +431,7 @@ namespace MPTvClient
     {
       string url = "";
       Channel chan = Channel.Retrieve(idChannel);
-      IList details = chan.ReferringTuningDetail();
+      IList<TuningDetail> details = chan.ReferringTuningDetail();
       foreach (TuningDetail detail in details)
       {
         if (detail.ChannelType == 5)
@@ -447,7 +447,7 @@ namespace MPTvClient
       List<RecordingInfo> recInfos = new List<RecordingInfo>();
       try
       {
-        IList recordings = Recording.ListAll();
+        IList<Recording> recordings = Recording.ListAll();
         foreach (Recording rec in recordings)
         {
           RecordingInfo recInfo = new RecordingInfo();
@@ -471,7 +471,7 @@ namespace MPTvClient
       List<ScheduleInfo> schedInfos = new List<ScheduleInfo>();
       try
       {
-        IList schedules = Schedule.ListAll();
+        IList<Schedule> schedules = Schedule.ListAll();
         foreach (Schedule schedule in schedules)
         {
           ScheduleInfo sched = new ScheduleInfo();

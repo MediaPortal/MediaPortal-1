@@ -166,7 +166,11 @@ namespace MPTvClient
         return;
       }
       foreach (string group in groups)
+      {
+        if (!cbAllChannels.Checked && group == "All Channels")
+          continue;
         cbGroups.Items.Add(group);
+      }
       if (cbGroups.Items.Count > 0)
         cbGroups.SelectedIndex = 0;
 
@@ -178,7 +182,11 @@ namespace MPTvClient
         return;
       }
       foreach (string group in radioGroups)
+      {
+        if (!cbAllChannels.Checked && group=="All Channels")
+          continue;
         cbRadioGroups.Items.Add(group);
+      }
       if (cbRadioGroups.Items.Count > 0)
         cbRadioGroups.SelectedIndex = 0;      
 
