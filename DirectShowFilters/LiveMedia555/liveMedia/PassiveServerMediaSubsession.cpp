@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A 'ServerMediaSubsession' object that represents an existing
 // 'RTPSink', rather than one that creates new 'RTPSink's on demand.
 // Implementation
@@ -29,7 +29,7 @@ PassiveServerMediaSubsession::createNew(RTPSink& rtpSink,
 					RTCPInstance* rtcpInstance) {
   return new PassiveServerMediaSubsession(rtpSink, rtcpInstance);
 }
-			    
+
 PassiveServerMediaSubsession
 ::PassiveServerMediaSubsession(RTPSink& rtpSink, RTCPInstance* rtcpInstance)
   : ServerMediaSubsession(rtpSink.envir()),
@@ -51,12 +51,12 @@ PassiveServerMediaSubsession::sdpLines() {
     char const* rangeLine = rangeSDPLine();
     char const* auxSDPLine = fRTPSink.auxSDPLine();
     if (auxSDPLine == NULL) auxSDPLine = "";
-    
+
     char* const ipAddressStr = strDup(our_inet_ntoa(ipAddress));
-    
+
     char const* const sdpFmt =
       "m=%s %d RTP/AVP %d\r\n"
-      "c=IN IP4 %s/%d\r\n" 
+      "c=IN IP4 %s/%d\r\n"
       "%s"
       "%s"
       "%s"
@@ -69,7 +69,7 @@ PassiveServerMediaSubsession::sdpLines() {
       + strlen(auxSDPLine)
       + strlen(trackId());
     char* sdpLines = new char[sdpFmtSize];
-    sprintf(sdpLines, sdpFmt, 
+    sprintf(sdpLines, sdpFmt,
 	    mediaType, // m= <media>
 	    portNum, // m= <port>
 	    rtpPayloadType, // m= <fmt list>
@@ -80,7 +80,7 @@ PassiveServerMediaSubsession::sdpLines() {
 	    auxSDPLine, // optional extra SDP line
 	    trackId()); // a=control:<track-id>
     delete[] ipAddressStr; delete[] (char*)rangeLine; delete[] rtpmapLine;
-    
+
     fSDPLines = strDup(sdpLines);
     delete[] sdpLines;
   }
