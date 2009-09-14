@@ -1716,7 +1716,8 @@ namespace MediaPortal.GUI.Video
       if (_isVolumeVisible)
       {
         TimeSpan ts = DateTime.Now - _volumeTimer;
-        if (ts.TotalSeconds >= 3)
+        // mantis 0002467: Keep Mute Icon on screen if muting is ON 
+        if (ts.TotalSeconds >= 3 && !VolumeHandler.Instance.IsMuted)
         {
           RenderVolume(false);
         }
