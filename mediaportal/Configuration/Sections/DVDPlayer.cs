@@ -48,6 +48,7 @@ namespace MediaPortal.Configuration.Sections
     private OpenFileDialog openFileDialog;
     private MPGroupBox mpGroupBox3;
     private MPComboBox defaultZoomModeComboBox;
+    private CheckBox useMediaInfo;
     private MPLabel label6;
 
     public DVDPlayer()
@@ -71,6 +72,7 @@ namespace MediaPortal.Configuration.Sections
       {
         fileNameTextBox.Text = xmlreader.GetValueAsString("dvdplayer", "path", @"");
         parametersTextBox.Text = xmlreader.GetValueAsString("dvdplayer", "arguments", "");
+        useMediaInfo.Checked = xmlreader.GetValueAsBool("dvdplayer", "mediainfoused", false);
 
         //
         // Fake a check changed to force a CheckChanged event
@@ -114,6 +116,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("dvdplayer", "arguments", parametersTextBox.Text);
 
         xmlwriter.SetValueAsBool("dvdplayer", "internal", !internalPlayerCheckBox.Checked);
+        xmlwriter.SetValueAsBool("dvdplayer", "mediainfoused", useMediaInfo.Checked);
 
         xmlwriter.SetValue("dvdplayer", "defaultar", defaultZoomModeComboBox.SelectedItem);
       }
@@ -152,6 +155,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBox1 = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
       this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.useMediaInfo = new System.Windows.Forms.CheckBox();
       this.mpGroupBox1.SuspendLayout();
       this.mpGroupBox3.SuspendLayout();
       this.SuspendLayout();
@@ -180,7 +184,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.fileNameTextBox);
       this.mpGroupBox1.Controls.Add(this.label1);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(0, 68);
+      this.mpGroupBox1.Location = new System.Drawing.Point(0, 90);
       this.mpGroupBox1.Name = "mpGroupBox1";
       this.mpGroupBox1.Size = new System.Drawing.Size(472, 104);
       this.mpGroupBox1.TabIndex = 1;
@@ -251,7 +255,7 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultZoomModeComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 24);
+      this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 25);
       this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
       this.defaultZoomModeComboBox.Size = new System.Drawing.Size(288, 21);
       this.defaultZoomModeComboBox.TabIndex = 3;
@@ -284,15 +288,26 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox3.Controls.Add(this.useMediaInfo);
       this.mpGroupBox3.Controls.Add(this.label6);
       this.mpGroupBox3.Controls.Add(this.defaultZoomModeComboBox);
       this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox3.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox3.Name = "mpGroupBox3";
-      this.mpGroupBox3.Size = new System.Drawing.Size(472, 60);
+      this.mpGroupBox3.Size = new System.Drawing.Size(472, 84);
       this.mpGroupBox3.TabIndex = 0;
       this.mpGroupBox3.TabStop = false;
       this.mpGroupBox3.Text = "Settings";
+      // 
+      // useMediaInfo
+      // 
+      this.useMediaInfo.AutoSize = true;
+      this.useMediaInfo.Location = new System.Drawing.Point(19, 57);
+      this.useMediaInfo.Name = "useMediaInfo";
+      this.useMediaInfo.Size = new System.Drawing.Size(303, 17);
+      this.useMediaInfo.TabIndex = 4;
+      this.useMediaInfo.Text = "Use MediaInfo for DVDs. This can slow down playing start!";
+      this.useMediaInfo.UseVisualStyleBackColor = true;
       // 
       // DVDPlayer
       // 
@@ -303,6 +318,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
       this.mpGroupBox3.ResumeLayout(false);
+      this.mpGroupBox3.PerformLayout();
       this.ResumeLayout(false);
 
     }

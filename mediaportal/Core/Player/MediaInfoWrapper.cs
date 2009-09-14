@@ -4,6 +4,7 @@ using System.IO;
 using System.Globalization;
 
 using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 
 #region API
 
@@ -27,6 +28,8 @@ namespace MediaPortal.Player
     private bool _isInterlaced = false;
     private string _videoResolution = string.Empty;
     private int _videoDuration = 0;
+    private bool _DVDenabled = false;
+
     //Audio
     private int _audioRate = 0;
     private int _audioChannels = 0;
@@ -44,14 +47,17 @@ namespace MediaPortal.Player
 
     public MediaInfoWrapper(string strFile)
     {
-
+      using (Settings xmlreader = new MPSettings())
+      {
+        _DVDenabled = xmlreader.GetValueAsBool("dvdplayer", "mediainfoused", false);
+      }
       bool isTV = Util.Utils.IsLiveTv(strFile);
       bool isRadio = Util.Utils.IsLiveRadio(strFile);
       bool isDVD = Util.Utils.IsDVD(strFile);
       bool isVideo = Util.Utils.IsVideo(strFile);
       bool isAVStream = Util.Utils.IsAVStream(strFile); //rtsp users for live TV and recordings.
 
-      if (isTV || isRadio || isAVStream)
+      if (isTV || isRadio || isAVStream || (isDVD && !_DVDenabled))
       {
         return;
       }
