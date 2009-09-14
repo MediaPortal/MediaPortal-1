@@ -291,13 +291,6 @@ namespace MediaPortal.GUI.Library
       }
       else
       {
-        //if (_parentWin != null)
-        //{
-        //  if (_isWinOverlayAllowed != _parentWin.IsOverlayAllowed)
-        //  {
-        //    GUIGraphicsContext.Overlay = _parentWin.IsOverlayAllowed = _isWinOverlayAllowed;
-        //  }
-        //}
         _imageNonFocused.Render(timePassed);
       }
       base.Render(timePassed);
