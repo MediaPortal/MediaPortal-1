@@ -141,7 +141,7 @@ namespace TvPlugin
     ///VMR9OSD _vmr9OSD = null;
     private FullScreenState _screenState = new FullScreenState();
 
-    private bool _isVolumeVisible = false;
+    private bool _isVolumeVisible = VolumeHandler.Instance.IsMuted;
     private DateTime _volumeTimer = DateTime.MinValue;
     private bool _isStartingTSForRecording = false;
     private bool _autoZapMode = false;
@@ -1502,7 +1502,7 @@ namespace TvPlugin
 						
 						ResetAllControls(); // make sure the controls are positioned relevant to the OSD Y offset
 						
-						RenderVolume(false);
+						RenderVolume(_isVolumeVisible);
             ScreenStateChanged();
             UpdateGUI();
 
@@ -2513,7 +2513,8 @@ namespace TvPlugin
       if (_isVolumeVisible)
       {
         TimeSpan ts = DateTime.Now - _volumeTimer;
-        if (ts.TotalSeconds >= 3)
+        // mantis 0002467: Keep Mute Icon on screen if muting is ON 
+        if (ts.TotalSeconds >= 3 && !VolumeHandler.Instance.IsMuted)
         {
           RenderVolume(false);
         }
