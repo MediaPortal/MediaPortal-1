@@ -2205,7 +2205,12 @@ namespace MediaPortal.Music.Database
           {
             if (child.Name == "reach" && child.ChildNodes.Count != 0)
             {
-              nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
+              try
+              {
+                nodeSong.TimesPlayed = Convert.ToInt32(Math.Round(Double.Parse(child.ChildNodes[0].Value, NumberStyles.Float, CultureInfo.InvariantCulture)));
+              }
+              catch (FormatException) { }
+              catch (OverflowException) { }
             }
             else if (child.Name == "url" && child.ChildNodes.Count != 0)
             {
@@ -2262,7 +2267,12 @@ namespace MediaPortal.Music.Database
             }
             else if (mainchild.Name == "reach" && mainchild.ChildNodes.Count != 0)
             {
-              nodeSong.TimesPlayed = Convert.ToInt32(mainchild.ChildNodes[0].Value);
+              try
+              {
+                nodeSong.TimesPlayed = Convert.ToInt32(Math.Round(Double.Parse(mainchild.ChildNodes[0].Value, NumberStyles.Float, CultureInfo.InvariantCulture)));
+              }
+              catch (FormatException) { }
+              catch (OverflowException) { }
             }
             else if (mainchild.Name == "url" && mainchild.ChildNodes.Count != 0)
             {
@@ -2415,7 +2425,12 @@ namespace MediaPortal.Music.Database
             }
             if (child.Name == "count" && child.ChildNodes.Count != 0)
             {
-              nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
+              try
+              {
+                nodeSong.TimesPlayed = Convert.ToInt32(Math.Round(Double.Parse(child.ChildNodes[0].Value, NumberStyles.Float, CultureInfo.InvariantCulture)));
+              }
+              catch (FormatException) { }
+              catch (OverflowException) { }
             }
           }
           UsedTagsList.Add(nodeSong);
@@ -2505,7 +2520,12 @@ namespace MediaPortal.Music.Database
             }
             if (node.Attributes["count"].Value != "")
             {
-              nodeSong.TimesPlayed = Convert.ToInt32(node.Attributes["count"].Value);
+              try
+              {
+                nodeSong.TimesPlayed = Convert.ToInt32(Math.Round(Double.Parse(node.Attributes["count"].Value, NumberStyles.Float, CultureInfo.InvariantCulture)));
+              }
+              catch (FormatException) { }
+              catch (OverflowException) { }
             }
           }
           TagsList.Add(nodeSong);
@@ -2566,7 +2586,12 @@ namespace MediaPortal.Music.Database
                   //  nodeSong.Title = ConvertUtf8StringToSystemCodepage(child.ChildNodes[0].Value);
                 else if (child.Name == "playcount" && child.ChildNodes.Count != 0)
                 {
-                  nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
+                  try
+                  {
+                    nodeSong.TimesPlayed = Convert.ToInt32(Math.Round(Double.Parse(child.ChildNodes[0].Value, NumberStyles.Float, CultureInfo.InvariantCulture)));
+                  }
+                  catch (FormatException) { }
+                  catch (OverflowException) { }
                 }
                 else if (child.Name == "url" && child.ChildNodes.Count != 0)
                 {
@@ -2590,7 +2615,12 @@ namespace MediaPortal.Music.Database
                 }
                 else if (child.Name == "playcount" && child.ChildNodes.Count != 0)
                 {
-                  nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
+                  try
+                  {
+                    nodeSong.TimesPlayed = Convert.ToInt32(Math.Round(Double.Parse(child.ChildNodes[0].Value, NumberStyles.Float, CultureInfo.InvariantCulture)));
+                  }
+                  catch (FormatException) { }
+                  catch (OverflowException) { }
                 }
                 else if (child.Name == "url" && child.ChildNodes.Count != 0)
                 {
@@ -2604,7 +2634,12 @@ namespace MediaPortal.Music.Database
                 }
                 else if (child.Name == "count" && child.ChildNodes.Count != 0)
                 {
-                  nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
+                  try
+                  {
+                    nodeSong.TimesPlayed = Convert.ToInt32(Math.Round(Double.Parse(child.ChildNodes[0].Value, NumberStyles.Float, CultureInfo.InvariantCulture)));
+                  }
+                  catch (FormatException) { }
+                  catch (OverflowException) { }
                 }
                 else if (child.Name == "url" && child.ChildNodes.Count != 0)
                 {
@@ -2618,8 +2653,13 @@ namespace MediaPortal.Music.Database
                   nodeSong.Artist = DecodeUtf8String(node.Attributes["name"].Value);
                 }
                 if (node.Attributes["count"].Value != "")
-                {
-                  nodeSong.TimesPlayed = Convert.ToInt32(node.Attributes["count"].Value);
+                {                  
+                  try
+                  {
+                    nodeSong.TimesPlayed = Convert.ToInt32(Math.Round(Double.Parse(node.Attributes["count"].Value, NumberStyles.Float, CultureInfo.InvariantCulture)));
+                  }
+                  catch (FormatException) { }
+                  catch (OverflowException) { }
                 }
                 if (node.Attributes["url"].Value != "")
                 {
@@ -2693,7 +2733,12 @@ namespace MediaPortal.Music.Database
                 }
                 else if (child.Name == "registered" && child.ChildNodes.Count != 0)
                 {
-                  nodeSong.DateTimePlayed = Convert.ToDateTime(child.ChildNodes[0].Value);
+                  try
+                  {
+                    nodeSong.TimesPlayed = Convert.ToInt32(Math.Round(Double.Parse(child.ChildNodes[0].Value, NumberStyles.Float, CultureInfo.InvariantCulture)));
+                  }
+                  catch (FormatException) { }
+                  catch (OverflowException) { }
                 }
                 else if (child.Name == "statsreset" && child.ChildNodes.Count != 0)
                 {
