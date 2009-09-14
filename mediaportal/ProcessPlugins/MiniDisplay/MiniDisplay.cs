@@ -49,7 +49,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private Status status;
     private bool stopRequested;
     private Thread t;
-    private object ThreadAccessMutex = new object();
 
     #endregion
 
@@ -227,11 +226,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         }
         else
         {
-          Log.Info("MiniDisplay.DoStop(): waiting for background thread access.");
-          lock (this.ThreadAccessMutex)
-          {
-            this.stopRequested = true;
-          }
+          this.stopRequested = true;
           Log.Info("MiniDisplay.DoStop(): Requesting background thread to stop.");
           DateTime time = DateTime.Now.AddSeconds(5.0);
           while (this.t.IsAlive && (DateTime.Now.Ticks < time.Ticks))
@@ -261,7 +256,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         Log.Error(exception);
       }
     }
-
+    
     private void DoWork()
     {
       try
@@ -442,9 +437,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           {
             try
             {
-              lock (this.ThreadAccessMutex)
+              if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
               {
-                this.DoWork();
+                DoWork();
               }
             }
             catch (Exception exception)
@@ -457,9 +452,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             }
             try
             {
-              lock (this.ThreadAccessMutex)
+              if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
               {
-                this.handler.DisplayLines();
+                handler.DisplayLines();
               }
             }
             catch (Exception exception2)
