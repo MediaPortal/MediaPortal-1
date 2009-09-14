@@ -104,7 +104,7 @@ namespace MediaPortal.GUI.Video
     private DateTime _vmr7UpdateTimer = DateTime.Now;
     private bool _IsDialogVisible = false;
     private bool _needToClearScreen = false;
-    private bool _isVolumeVisible = false;
+    private bool _isVolumeVisible = VolumeHandler.Instance.IsMuted;
     private bool _isForbiddenVisible = false;
     private GUIDialogMenu dlg;
     private GUIVideoOSD _osdWindow = null;
@@ -1055,7 +1055,7 @@ namespace MediaPortal.GUI.Video
             _vmr7UpdateTimer = DateTime.Now;
             _IsDialogVisible = false;
             _needToClearScreen = false;
-            _isVolumeVisible = false;
+            _isVolumeVisible = VolumeHandler.Instance.IsMuted;
             _isForbiddenVisible = false;
             NotifyDialogVisible = false;
             _notifyTVTimeout = 15;
@@ -1073,7 +1073,7 @@ namespace MediaPortal.GUI.Video
             _needToClearScreen = true;
             UpdateGUI();
             GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Osd);
-            RenderVolume(false);
+            RenderVolume(_isVolumeVisible);
             RenderForbidden(false);
             if (!screenState.Paused)
             {
