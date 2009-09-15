@@ -11,14 +11,13 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A filter for converting a stream of MPEG PES packets to a MPEG-2 Transport Stream
 // Implementation
 
-extern void Log(const char *fmt, ...) ;
 #include "MPEG2TransportStreamFromPESSource.hh"
 
 #define MAX_PES_PACKET_SIZE (6+65535)
@@ -34,17 +33,11 @@ MPEG2TransportStreamFromPESSource
   : MPEG2TransportStreamMultiplexor(env),
     fInputSource(inputSource) {
   fInputBuffer = new unsigned char[MAX_PES_PACKET_SIZE];
-
-  Log("MPEG2TransportStreamFromPESSource::ctor:%x",this);
 }
 
-MPEG2TransportStreamFromPESSource::~MPEG2TransportStreamFromPESSource() 
-{
-  Log("MPEG2TransportStreamFromPESSource::dtor:%x",this);
+MPEG2TransportStreamFromPESSource::~MPEG2TransportStreamFromPESSource() {
   Medium::close(fInputSource);
   delete[] fInputBuffer;
-  fInputBuffer=NULL;
-  fInputSource=NULL;
 }
 
 void MPEG2TransportStreamFromPESSource::doStopGettingFrames() {

@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A server demultiplexer for a MPEG 1 or 2 Program Stream
 // Implementation
 
@@ -22,7 +22,6 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "MPEG1or2DemuxedServerMediaSubsession.hh"
 #include "ByteStreamFileSource.hh"
 
-extern void Log(const char *fmt, ...) ;
 MPEG1or2FileServerDemux*
 MPEG1or2FileServerDemux::createNew(UsageEnvironment& env, char const* fileName,
 				   Boolean reuseFirstSource) {
@@ -40,11 +39,9 @@ MPEG1or2FileServerDemux
     fSession0Demux(NULL), fLastCreatedDemux(NULL), fLastClientSessionId(~0) {
   fFileName = strDup(fileName);
   fFileDuration = MPEG1or2ProgramStreamFileDuration(env, fileName, fFileSize);
-  Log("MPEG1or2FileServerDemux:ctor");
 }
 
 MPEG1or2FileServerDemux::~MPEG1or2FileServerDemux() {
-  Log("MPEG1or2FileServerDemux:dtor");
   Medium::close(fSession0Demux);
   delete[] (char*)fFileName;
 }
@@ -145,7 +142,7 @@ static float MPEG1or2ProgramStreamFileDuration(UsageEnvironment& env,
     if (!getMPEG1or2TimeCode(dataSource, *baseDemux, True, firstTimeCode)) break;
 
     // Then, read the last time code from the file.
-    // (Before doing this, flush the demux's input buffers, 
+    // (Before doing this, flush the demux's input buffers,
     //  and seek towards the end of the file, for efficiency.)
     baseDemux->flushInput();
     unsigned const startByteFromEnd = 100000;
@@ -165,6 +162,8 @@ static float MPEG1or2ProgramStreamFileDuration(UsageEnvironment& env,
   Medium::close(dataSource);
   return duration;
 }
+
+#define DUMMY_SINK_BUFFER_SIZE (6+65535) /* large enough for a PES packet */
 
 class DummySink: public MediaSink {
 public:
@@ -187,7 +186,7 @@ private:
 private:
   MPEG1or2Demux& fOurDemux;
   Boolean fReturnFirstSeenCode;
-  unsigned char fBuf[10000];
+  unsigned char fBuf[DUMMY_SINK_BUFFER_SIZE];
 };
 
 static void afterPlayingDummySink(DummySink* sink); // forward
@@ -204,7 +203,7 @@ static Boolean getMPEG1or2TimeCode(FramedSource* dataSource,
   sink.startPlaying(*dataSource,
 		    (MediaSink::afterPlayingFunc*)afterPlayingDummySink, &sink);
   env.taskScheduler().doEventLoop(&sink.watchVariable);
-  
+
   timeCode = computeSCRTimeCode(parentDemux.lastSeenSCR());
   return parentDemux.lastSeenSCR().isValid;
 }
@@ -221,6 +220,8 @@ DummySink::~DummySink() {
 }
 
 Boolean DummySink::continuePlaying() {
+  if (fSource == NULL) return False; // sanity check
+
   fSource->getNextFrame(fBuf, sizeof fBuf,
 			afterGettingFrame, this,
 			onSourceClosure, this);
@@ -247,7 +248,7 @@ void DummySink::afterGettingFrame1() {
 }
 
 static void afterPlayingDummySink(DummySink* sink) {
-  // Return from the "doEventLoop()" call: 
+  // Return from the "doEventLoop()" call:
   sink->watchVariable = ~0;
 }
 

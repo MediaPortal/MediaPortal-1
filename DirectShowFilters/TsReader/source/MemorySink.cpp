@@ -4,14 +4,14 @@
 
 ////////// CMemorySink //////////
 #define SUBMIT_BUF_SIZE (1316*30)
-extern void Log(const char *fmt, ...) ;
+extern void LogDebug(const char *fmt, ...) ;
 
 CMemorySink::CMemorySink(UsageEnvironment& env,CMemoryBuffer& buffer, unsigned bufferSize) 
   : MediaSink(env),  
   fBufferSize(bufferSize),
   m_buffer(buffer)
 {
-  Log("CMemorySink::ctor");
+  LogDebug("CMemorySink::ctor");
   fBuffer = new unsigned char[bufferSize];
   m_pSubmitBuffer = new byte[SUBMIT_BUF_SIZE];
   m_iSubmitBufferPos=0;
@@ -20,7 +20,7 @@ CMemorySink::CMemorySink(UsageEnvironment& env,CMemoryBuffer& buffer, unsigned b
 
 CMemorySink::~CMemorySink() 
 {
-  Log("CMemorySink::dtor");
+  LogDebug("CMemorySink::dtor");
   delete[] fBuffer;
   delete[] m_pSubmitBuffer;
 }
@@ -49,14 +49,14 @@ void CMemorySink::addData(unsigned char* data, unsigned dataSize,struct timeval 
 {
   if (testsize ==0)
   {
-    Log("CMemorySink:addData");
+    LogDebug("CMemorySink:addData");
     testsize=1;
   }
   if (dataSize==0) return;
   if (data==NULL) return;
   if (m_bReEntrant)
   {
-    Log("REENTRANT IN MEMORYSINK.CPP");
+    LogDebug("REENTRANT IN MEMORYSINK.CPP");
     return;
   }
   CAutoLock BufferLock(&m_BufferLock);

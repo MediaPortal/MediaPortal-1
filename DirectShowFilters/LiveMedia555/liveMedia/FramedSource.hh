@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // Framed Sources
 // C++ header
 
@@ -43,20 +43,7 @@ public:
 		    void* afterGettingClientData,
 		    onCloseFunc* onCloseFunc,
 		    void* onCloseClientData);
-  // ##### The following is for backwards-compatibility; remove it eventually:
-#ifdef BACKWARDS_COMPATIBLE_WITH_OLD_AFTER_GETTING_FUNC
-  typedef void (bwCompatAfterGettingFunc)(void* clientData, unsigned frameSize,
-					  struct timeval presentationTime);
-  void getNextFrame(unsigned char* to, unsigned maxSize,
-		    bwCompatAfterGettingFunc* afterGettingFunc,
-		    void* afterGettingClientData,
-		    onCloseFunc* onCloseFunc,
-		    void* onCloseClientData);
-  bwCompatAfterGettingFunc* fSavedBWCompatAfterGettingFunc;
-  void* fSavedBWCompatAfterGettingClientData;
-#endif
-  // ##### End of code for backwards-compatibility.
- 
+
   static void handleClosure(void* clientData);
       // This should be called (on ourself) if the source is discovered
       // to be closed (i.e., no longer readable)

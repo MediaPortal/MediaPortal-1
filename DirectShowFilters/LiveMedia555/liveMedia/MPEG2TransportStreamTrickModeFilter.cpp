@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A filter that converts a MPEG Transport Stream file - with corresponding index file
 // - to a corresponding Video Elementary Stream.  It also uses a "scale" parameter
 // to implement 'trick mode' (fast forward or reverse play, using I-frames) on
@@ -23,6 +23,14 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 #include "MPEG2TransportStreamTrickModeFilter.hh"
 #include <ByteStreamFileSource.hh>
+
+// Define the following to be True if we want the output file to have the same frame rate as the original file.
+//    (Because the output file contains I-frames only, this means that each I-frame will appear in the output file
+//     several times, and therefore the output file's bitrate will be significantly higher than that of the original.)
+// Define the following to be False if we want the output file to include each I-frame no more than once.
+//    (This means that - except for high 'scale' values - both the output frame rate and the output bit rate
+//     will be less than that of the original.)
+#define KEEP_ORIGINAL_FRAME_RATE False
 
 MPEG2TransportStreamTrickModeFilter* MPEG2TransportStreamTrickModeFilter
 ::createNew(UsageEnvironment& env, FramedSource* inputSource,
@@ -37,7 +45,7 @@ MPEG2TransportStreamTrickModeFilter
     fHaveStarted(False), fIndexFile(indexFile), fScale(scale), fDirection(1),
     fState(SKIPPING_FRAME), fFrameCount(0),
     fNextIndexRecordNum(0), fNextTSPacketNum(0),
-    fCurrentTSPacketNum((unsigned long)(-1)) {
+    fCurrentTSPacketNum((unsigned long)(-1)), fUseSavedFrameNextTime(False) {
   if (fScale < 0) { // reverse play
     fScale = -fScale;
     fDirection = -1;
@@ -68,7 +76,7 @@ void MPEG2TransportStreamTrickModeFilter::doGetNextFrame() {
     afterGetting(this);
     return;
   }
-  
+
   while (1) {
     // Get the next record from our index file.
     // This tells us the type of frame this data is, which Transport Stream packet
@@ -96,7 +104,7 @@ void MPEG2TransportStreamTrickModeFilter::doGetNextFrame() {
     //    fprintf(stderr, "#####read index record %ld: ts %ld: %c, PCR %f\n", fNextIndexRecordNum, fDesiredTSPacketNum, isIFrameStart(recordType) ? 'I' : isNonIFrameStart(recordType) ? 'j' : 'x', recordPCR);
     fNextIndexRecordNum
       += (fState == DELIVERING_SAVED_FRAME) ? 1 : fDirection;
-    
+
     // Handle this index record, depending on the record type and our current state:
     switch (fState) {
     case SKIPPING_FRAME:
@@ -105,8 +113,9 @@ void MPEG2TransportStreamTrickModeFilter::doGetNextFrame() {
       if (isIFrameStart(recordType)) {
 	// Save a record of this frame:
 	fSavedFrameIndexRecordStart = fNextIndexRecordNum - fDirection;
+	fUseSavedFrameNextTime = True;
 	//	fprintf(stderr, "\trecording\n");//#####
-	if ((fFrameCount++)%fScale == 0) {
+	if ((fFrameCount++)%fScale == 0 && fUseSavedFrameNextTime) {
 	  // A frame is due now.
 	  fFrameCount = 1; // reset to avoid overflow
 	  if (fDirection > 0) {
@@ -131,7 +140,7 @@ void MPEG2TransportStreamTrickModeFilter::doGetNextFrame() {
 	  fState = SKIPPING_FRAME;
 	}
       } else if (isNonIFrameStart(recordType)) {
-	if ((fFrameCount++)%fScale == 0) {
+	if ((fFrameCount++)%fScale == 0 && fUseSavedFrameNextTime) {
 	  // A frame is due now, so begin delivering the one that we had saved:
 	  // (This relies on the index records having begun with an I-frame.)
 	  fFrameCount = 1; // reset to avoid overflow
@@ -146,7 +155,7 @@ void MPEG2TransportStreamTrickModeFilter::doGetNextFrame() {
 	  fState = SKIPPING_FRAME;
 	}
       } else {
-	// Not the start of a frame, but deliver it, if it's needed: 
+	// Not the start of a frame, but deliver it, if it's needed:
 	if (fState == SAVING_AND_DELIVERING_FRAME) {
 	  //	  fprintf(stderr, "\tdelivering\n");//#####
 	  fDesiredDataPCR = recordPCR; // use this frame's PCR
@@ -166,6 +175,7 @@ void MPEG2TransportStreamTrickModeFilter::doGetNextFrame() {
 	// We've reached the end of the saved frame, so revert to the
 	// original sequence of index records:
 	fNextIndexRecordNum = fSavedSequentialIndexRecordNum;
+	fUseSavedFrameNextTime = KEEP_ORIGINAL_FRAME_RATE;
 	fState = SKIPPING_FRAME;
       } else {
 	// Continue delivering:
@@ -196,7 +206,7 @@ void MPEG2TransportStreamTrickModeFilter::attemptDeliveryToClient() {
     fPresentationTime.tv_usec
       = (unsigned long)((deliveryPCR - fPresentationTime.tv_sec)*1000000.0f);
     //    fprintf(stderr, "#####DGNF9\n");
-    
+
     afterGetting(this);
   } else {
     // Arrange to read the Transport Packet that we want:
@@ -206,11 +216,11 @@ void MPEG2TransportStreamTrickModeFilter::attemptDeliveryToClient() {
 
 void MPEG2TransportStreamTrickModeFilter::seekToTransportPacket(unsigned long tsPacketNum) {
   if (tsPacketNum == fNextTSPacketNum) return; // we're already there
-  
+
   ByteStreamFileSource* tsFile = (ByteStreamFileSource*)fInputSource;
   u_int64_t tsPacketNum64 = (u_int64_t)tsPacketNum;
   tsFile->seekToByteAbsolute(tsPacketNum64*TRANSPORT_PACKET_SIZE);
-  
+
   fNextTSPacketNum = tsPacketNum;
 }
 
@@ -236,10 +246,10 @@ void MPEG2TransportStreamTrickModeFilter::afterGettingFrame1(unsigned frameSize)
     onSourceClosure1();
     return;
   }
-  
+
   fCurrentTSPacketNum = fNextTSPacketNum; // i.e., the one that we just read
-  ++fNextTSPacketNum; 
-  
+  ++fNextTSPacketNum;
+
   // Attempt deliver again:
   attemptDeliveryToClient();
 }

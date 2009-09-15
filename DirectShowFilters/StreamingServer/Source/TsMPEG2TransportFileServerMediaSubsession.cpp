@@ -6,7 +6,7 @@
 #include "TsFileDuration.h"
 #include "TsStreamFileSource.hh" 
 
-extern void Log(const char *fmt, ...) ;
+extern void LogDebug(const char *fmt, ...) ;
 
 TsMPEG2TransportFileServerMediaSubsession* TsMPEG2TransportFileServerMediaSubsession::createNew(UsageEnvironment& env,char const* fileName,Boolean reuseFirstSource) 
 {
@@ -48,7 +48,7 @@ RTPSink* TsMPEG2TransportFileServerMediaSubsession::createNewRTPSink(Groupsock* 
 				  33, 90000, "video", "mp2t",
 				  1, True, False /*no 'M' bit*/);
 }
-void TsMPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* inputSource, float seekNPT)
+void TsMPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* inputSource, double seekNPT)
 {  
 
   
@@ -72,11 +72,11 @@ void TsMPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* i
   DWORD dwTick=GetTickCount();	
   while (fileSizeInitial == fileSizeActual && (GetTickCount() - dwTick <=5000)) // lets exit the loop if filesize isnt increased for 5 secs.	
   {		
-	Log("waiting for TS file to grow ; %d, %d ", (DWORD)fileSizeInitial, (DWORD)fileSizeActual);
+	LogDebug("waiting for TS file to grow ; %d, %d ", (DWORD)fileSizeInitial, (DWORD)fileSizeActual);
 	fileSizeActual = filelength();	
 	Sleep(100);	
   }
-  Log("TS file grown - now ready for the actual seek ; initial size %d, actual size %d, wait(ms) %d", (DWORD)fileSizeInitial, (DWORD)fileSizeActual, (GetTickCount() - dwTick));
+  LogDebug("TS file grown - now ready for the actual seek ; initial size %d, actual size %d, wait(ms) %d", (DWORD)fileSizeInitial, (DWORD)fileSizeActual, (GetTickCount() - dwTick));
 
 
   float pos=seekNPT / fileDuration;
@@ -90,7 +90,7 @@ void TsMPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* i
   
 
   source->seekToByteAbsolute(newPos);
-	Log("ts seekStreamSource %f / %f ->%d", seekNPT,fileDuration, (DWORD)newPos);
+	LogDebug("ts seekStreamSource %f / %f ->%d", seekNPT,fileDuration, (DWORD)newPos);
 }
 
 float TsMPEG2TransportFileServerMediaSubsession::duration() const

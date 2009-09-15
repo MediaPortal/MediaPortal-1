@@ -11,9 +11,9 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // 'Group sockets'
 // Implementation
 
@@ -24,7 +24,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 #ifndef NO_STRSTREAM
 #if (defined(__WIN32__) || defined(_WIN32)) && !defined(__MINGW32__)
-//#include <strstrea.h>
+#include <strstrea.h>
 #else
 #if defined(__GNUC__) && (__GNUC__ > 3 || __GNUC__ == 3 && __GNUC_MINOR__ > 0)
 #include <strstream>
@@ -62,7 +62,7 @@ Boolean OutputSocket::write(netAddressBits address, Port port, u_int8_t ttl,
   if (!writeSocket(env(), socketNum(), destAddr, port, ttl,
 		   buffer, bufferSize))
     return False;
-  
+
   if (sourcePortNum() == 0) {
     // Now that we've sent a packet, we can find out what the
     // kernel chose as our ephemeral source port number:
@@ -74,7 +74,7 @@ Boolean OutputSocket::write(netAddressBits address, Port port, u_int8_t ttl,
       return False;
     }
   }
-  
+
   return True;
 }
 
@@ -120,7 +120,7 @@ Groupsock::Groupsock(UsageEnvironment& env, struct in_addr const& groupAddr,
 	  << env.getResultMsg() << "\n";
     }
   }
-  
+
   // Make sure we can get our source address:
   if (ourIPAddress(env) == 0) {
     if (DebugLevel >= 0) { // this is a fatal error
@@ -128,7 +128,7 @@ Groupsock::Groupsock(UsageEnvironment& env, struct in_addr const& groupAddr,
 	  << env.getResultMsg() << "\n";
     }
   }
-  
+
   if (DebugLevel >= 2) env << *this << ": created\n";
 }
 
@@ -157,7 +157,7 @@ Groupsock::Groupsock(UsageEnvironment& env, struct in_addr const& groupAddr,
       }
     }
   }
-  
+
   if (DebugLevel >= 2) env << *this << ": created\n";
 }
 
@@ -170,7 +170,7 @@ Groupsock::~Groupsock() {
   } else {
     socketLeaveGroup(env(), socketNum(), groupAddress().s_addr);
   }
-  
+
   delete fDests;
 
   if (DebugLevel >= 2) env() << *this << ": deleting\n";
@@ -267,14 +267,17 @@ Boolean Groupsock::output(UsageEnvironment& env, u_int8_t ttlToSend,
     if (!writeSuccess) break;
     statsOutgoing.countPacket(bufferSize);
     statsGroupOutgoing.countPacket(bufferSize);
-    
+
     // Then, forward to our members:
-    int numMembers =
-      outputToAllMembersExcept(interfaceNotToFwdBackTo,
-			       ttlToSend, buffer, bufferSize,
-			       ourIPAddress(env));
-    if (numMembers < 0) break;
-    
+    int numMembers = 0;
+    if (!members().IsEmpty()) {
+      numMembers =
+	outputToAllMembersExcept(interfaceNotToFwdBackTo,
+				 ttlToSend, buffer, bufferSize,
+				 ourIPAddress(env));
+      if (numMembers < 0) break;
+    }
+
     if (DebugLevel >= 3) {
       env << *this << ": wrote " << bufferSize << " bytes, ttl "
 	  << (unsigned)ttlToSend;
@@ -285,7 +288,7 @@ Boolean Groupsock::output(UsageEnvironment& env, u_int8_t ttlToSend,
     }
     return True;
   } while (0);
-  
+
   if (DebugLevel >= 0) { // this is a fatal error
     env.setResultMsg("Groupsock write failed: ", env.getResultMsg());
   }
@@ -297,9 +300,9 @@ Boolean Groupsock::handleRead(unsigned char* buffer, unsigned bufferMaxSize,
 			      struct sockaddr_in& fromAddress) {
   // Read data from the socket, and relay it across any attached tunnels
   //##### later make this code more general - independent of tunnels
-  
+
   bytesRead = 0;
-  
+
   int maxBytesToRead = bufferMaxSize - TunnelEncapsulationTrailerMaxSize;
   int numBytes = readSocket(env(), socketNum(),
 			    buffer, maxBytesToRead, fromAddress);
@@ -310,18 +313,18 @@ Boolean Groupsock::handleRead(unsigned char* buffer, unsigned bufferMaxSize,
     }
     return False;
   }
-  
+
   // If we're a SSM group, make sure the source address matches:
   if (isSSM()
       && fromAddress.sin_addr.s_addr != sourceFilterAddress().s_addr) {
     return True;
   }
-  
+
   // We'll handle this data.
   // Also write it (with the encapsulation trailer) to each member,
   // unless the packet was originally sent by us to begin with.
   bytesRead = numBytes;
-  
+
   int numMembers = 0;
   if (!wasLoopedBackFromUs(env(), fromAddress)) {
     statsIncoming.countPacket(numBytes);
@@ -343,7 +346,7 @@ Boolean Groupsock::handleRead(unsigned char* buffer, unsigned bufferMaxSize,
     }
     env() << "\n";
   }
-  
+
   return True;
 }
 
@@ -360,7 +363,7 @@ Boolean Groupsock::wasLoopedBackFromUs(UsageEnvironment& env,
       return True;
     }
   }
-  
+
   return False;
 }
 
@@ -370,7 +373,7 @@ int Groupsock::outputToAllMembersExcept(DirectedNetInterface* exceptInterface,
 					netAddressBits sourceAddr) {
   // Don't forward TTL-0 packets
   if (ttlToFwd == 0) return 0;
-  
+
   DirectedNetInterfaceSet::Iterator iter(members());
   unsigned numMembers = 0;
   DirectedNetInterface* interf;
@@ -378,7 +381,7 @@ int Groupsock::outputToAllMembersExcept(DirectedNetInterface* exceptInterface,
     // Check whether we've asked to exclude this interface:
     if (interf == exceptInterface)
       continue;
-    
+
     // Check that the packet's source address makes it OK to
     // be relayed across this interface:
     UsageEnvironment& saveEnv = env();
@@ -391,7 +394,7 @@ int Groupsock::outputToAllMembersExcept(DirectedNetInterface* exceptInterface,
 	continue;
       }
     }
-    
+
     if (numMembers == 0) {
       // We know that we're going to forward to at least one
       // member, so fill in the tunnel encapsulation trailer.
@@ -399,7 +402,7 @@ int Groupsock::outputToAllMembersExcept(DirectedNetInterface* exceptInterface,
       TunnelEncapsulationTrailer* trailerInPacket
 	= (TunnelEncapsulationTrailer*)&data[size];
       TunnelEncapsulationTrailer* trailer;
-      
+
       Boolean misaligned = ((unsigned long)trailerInPacket & 3) != 0;
       unsigned trailerOffset;
       u_int8_t tunnelCmd;
@@ -419,29 +422,29 @@ int Groupsock::outputToAllMembersExcept(DirectedNetInterface* exceptInterface,
 	trailer = trailerInPacket;
       }
       trailer += trailerOffset;
-      
+
       if (fDests != NULL) {
 	trailer->address() = fDests->fGroupEId.groupAddress().s_addr;
 	trailer->port() = fDests->fPort; // structure copy, outputs in network order
       }
       trailer->ttl() = ttlToFwd;
       trailer->command() = tunnelCmd;
-      
+
       if (isSSM()) {
 	trailer->auxAddress() = sourceFilterAddress().s_addr;
       }
-      
+
       if (misaligned) {
 	memmove(trailerInPacket, trailer-trailerOffset, trailerSize);
       }
-      
+
       size += trailerSize;
     }
-    
+
     interf->write(data, size);
     ++numMembers;
   }
-  
+
   return numMembers;
 }
 
@@ -474,18 +477,18 @@ static HashTable* getSocketTable(UsageEnvironment& env) {
 static Boolean unsetGroupsockBySocket(Groupsock const* groupsock) {
   do {
     if (groupsock == NULL) break;
-    
+
     int sock = groupsock->socketNum();
     // Make sure "sock" is in bounds:
     if (sock < 0) break;
-    
+
     HashTable* sockets = getSocketTable(groupsock->env());
     if (sockets == NULL) break;
-    
+
     Groupsock* gs = (Groupsock*)sockets->Lookup((char*)(long)sock);
     if (gs == NULL || gs != groupsock) break;
     sockets->Remove((char*)(long)sock);
-    
+
     if (sockets->IsEmpty()) {
       // We can also delete the table (to reclaim space):
       delete sockets;
@@ -494,7 +497,7 @@ static Boolean unsetGroupsockBySocket(Groupsock const* groupsock) {
 
     return True;
   } while (0);
-  
+
   return False;
 }
 
@@ -508,10 +511,10 @@ static Boolean setGroupsockBySocket(UsageEnvironment& env, int sock,
       env.setResultMsg(buf);
       break;
     }
-    
+
     HashTable* sockets = getSocketTable(env);
     if (sockets == NULL) break;
-    
+
     // Make sure we're not replacing an existing Groupsock
     // That shouldn't happen
     Boolean alreadyExists
@@ -524,11 +527,11 @@ static Boolean setGroupsockBySocket(UsageEnvironment& env, int sock,
       env.setResultMsg(buf);
       break;
     }
-    
+
     sockets->Add((char*)(long)sock, groupsock);
     return True;
   } while (0);
-  
+
   return False;
 }
 
@@ -536,13 +539,13 @@ static Groupsock* getGroupsockBySocket(UsageEnvironment& env, int sock) {
   do {
     // Make sure the "sock" parameter is in bounds:
     if (sock < 0) break;
-    
+
     HashTable* sockets = getSocketTable(env);
     if (sockets == NULL) break;
-    
+
     return (Groupsock*)sockets->Lookup((char*)(long)sock);
   } while (0);
-  
+
   return NULL;
 }
 
@@ -561,7 +564,7 @@ GroupsockLookupTable::Fetch(UsageEnvironment& env,
       isNew = True;
     }
   } while (0);
-  
+
   return groupsock;
 }
 
@@ -581,7 +584,7 @@ GroupsockLookupTable::Fetch(UsageEnvironment& env,
       isNew = True;
     }
   } while (0);
-  
+
   return groupsock;
 }
 
@@ -623,14 +626,14 @@ Groupsock* GroupsockLookupTable::AddNew(UsageEnvironment& env,
       sourceFilterAddr.s_addr = sourceFilterAddress;
       groupsock = new Groupsock(env, groupAddr, sourceFilterAddr, port);
     }
-    
+
     if (groupsock == NULL || groupsock->socketNum() < 0) break;
-    
+
     if (!setGroupsockBySocket(env, groupsock->socketNum(), groupsock)) break;
-    
+
     fTable.Add(groupAddress, sourceFilterAddress, port, (void*)groupsock);
   } while (0);
-  
+
   return groupsock;
 }
 

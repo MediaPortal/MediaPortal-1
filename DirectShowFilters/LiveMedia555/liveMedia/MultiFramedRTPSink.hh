@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // RTP sink for a common kind of payload format: Those which pack multiple,
 // complete codec frames (as many as possible) into each RTP packet.
 // C++ header
@@ -56,12 +56,17 @@ protected:
 					 unsigned numBytesInFrame) const;
       // whether this frame can appear in position >1 in a pkt (default: True)
   virtual unsigned specialHeaderSize() const;
-      // returns the size of any special header used (following the RTP header)
+      // returns the size of any special header used (following the RTP header) (default: 0)
   virtual unsigned frameSpecificHeaderSize() const;
       // returns the size of any frame-specific header used (before each frame
-      // within the packet)
+      // within the packet) (default: 0)
+  virtual unsigned computeOverflowForNewFrame(unsigned newFrameSize) const;
+      // returns the number of overflow bytes that would be produced by adding a new
+      // frame of size "newFrameSize" to the current RTP packet.
+      // (By default, this just calls "numOverflowBytes()", but subclasses can redefine
+      // this to (e.g.) impose a granularity upon RTP payload fragments.)
 
-  // Functions that might be called by doSpecialFrameHandling():
+  // Functions that might be called by doSpecialFrameHandling(), or other subclass virtual functions:
   Boolean isFirstPacket() const { return fIsFirstPacket; }
   Boolean isFirstFrameInPacket() const { return fNumFramesUsedSoFar == 0; }
   Boolean curFragmentationOffset() const { return fCurFragmentationOffset; }
@@ -77,12 +82,13 @@ protected:
 				   unsigned bytePosition = 0);
   void setFramePadding(unsigned numPaddingBytes);
   unsigned numFramesUsedSoFar() const { return fNumFramesUsedSoFar; }
-
   unsigned ourMaxPacketSize() const { return fOurMaxPacketSize; }
+
+public: // redefined virtual functions:
+  virtual void stopPlaying();
 
 protected: // redefined virtual functions:
   virtual Boolean continuePlaying();
-  virtual void stopPlaying();
 
 private:
   void buildAndSendPacket(Boolean isFirstPacket);

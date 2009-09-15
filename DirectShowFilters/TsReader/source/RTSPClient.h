@@ -1,7 +1,9 @@
 #pragma once
 
 #include "liveMedia.hh"
+//#include "MPRTSPClient.h"
 #include "BasicUsageEnvironment.hh"
+#include "MPTaskScheduler.h"
 #include "GroupsockHelper.hh"
 
 #include "MemoryBuffer.h"
@@ -14,7 +16,7 @@ public:
   virtual ~CRTSPClient(void);
   bool Initialize();
   bool OpenStream(char* url);
-  bool Play(float fStart);
+  bool Play(double fStart);
   void Stop();
 	bool IsRunning();
 	long Duration();
@@ -68,7 +70,7 @@ public:
 	virtual void ThreadProc();
   bool m_BufferThreadActive;
 	long m_duration;
-	float m_fStart;
+	double m_fStart;
 	char m_url[2048];
 	bool m_bRunning;
   bool m_bPaused;

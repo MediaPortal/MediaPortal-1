@@ -7,7 +7,7 @@ CProgramToTransportStreamRecorder::CProgramToTransportStreamRecorder(void)
 {
 	m_bRunning=false;
 	LogDebug("CProgramToTransportStreamRecorder::ctor");
-	TaskScheduler* scheduler = BasicTaskScheduler::createNew();
+	TaskScheduler* scheduler = MPTaskScheduler::createNew();
 	m_env = BasicUsageEnvironment::createNew(*scheduler);
 	m_outputSink=NULL;
 	m_inputSource=NULL;

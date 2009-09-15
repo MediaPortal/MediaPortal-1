@@ -20,7 +20,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 #include <streams.h>
 #include "MPEG2TstFileServerMediaSubsession.h"
-extern void Log(const char *fmt, ...) ;
+extern void LogDebug(const char *fmt, ...) ;
 
 MPEG2TstFileServerMediaSubsession* MPEG2TstFileServerMediaSubsession::createNew(UsageEnvironment& env,char const* fileName,Boolean reuseFirstSource) 
 {
@@ -30,17 +30,17 @@ MPEG2TstFileServerMediaSubsession* MPEG2TstFileServerMediaSubsession::createNew(
 MPEG2TstFileServerMediaSubsession ::MPEG2TstFileServerMediaSubsession(UsageEnvironment& env, char const* fileName, Boolean reuseFirstSource)
 : FileServerMediaSubsession(env, fileName, reuseFirstSource) 
 {
-  Log("MPEG2TstFileServerMediaSubsession::ctor:%x",this);
+  LogDebug("MPEG2TstFileServerMediaSubsession::ctor:%x",this);
 }
 
 void MPEG2TstFileServerMediaSubsession::OnDelete()
 {
-  Log("MPEG2TstFileServerMediaSubsession::OnDelete:%x",this);
+  LogDebug("MPEG2TstFileServerMediaSubsession::OnDelete:%x",this);
 }
 
 MPEG2TstFileServerMediaSubsession::~MPEG2TstFileServerMediaSubsession() 
 {
-  Log("MPEG2TstFileServerMediaSubsession::dtor:%x",this);
+  LogDebug("MPEG2TstFileServerMediaSubsession::dtor:%x",this);
 }
 
 #define TRANSPORT_PACKET_SIZE 188
@@ -49,7 +49,7 @@ MPEG2TstFileServerMediaSubsession::~MPEG2TstFileServerMediaSubsession()
 
 FramedSource* MPEG2TstFileServerMediaSubsession ::createNewStreamSource(unsigned /*clientSessionId*/, unsigned& estBitrate) 
 {
-  Log("MPEG2TstFileServerMediaSubsession:createNewStreamSource:%x",this);
+  LogDebug("MPEG2TstFileServerMediaSubsession:createNewStreamSource:%x",this);
   estBitrate = 5000; // kbps, estimate
 
   // Create the video source:
@@ -65,7 +65,7 @@ FramedSource* MPEG2TstFileServerMediaSubsession ::createNewStreamSource(unsigned
   MPEG1or2DemuxedElementaryStream* pesSource = demux->newRawPESStream();
   
   // And, from this, a filter that converts to MPEG-2 Transport Stream frames:
-  MPEG2TransportStreamFromPESSource* tsSource= MPEG2TransportStreamFromPESSource::createNew(envir(), pesSource);
+  MPMPEG2TransportStreamFromPESSource* tsSource= MPMPEG2TransportStreamFromPESSource::createNew(envir(), pesSource);
 
   // Create a framer for the Transport Stream:
   MPEG2TransportStreamFramer* framer= MPEG2TransportStreamFramer::createNew(envir(), tsSource);
@@ -80,11 +80,10 @@ RTPSink* MPEG2TstFileServerMediaSubsession ::createNewRTPSink(Groupsock* rtpGrou
 				  1, True, False /*no 'M' bit*/);
 }
 
-void MPEG2TstFileServerMediaSubsession::seekStreamSource(FramedSource* inputSource, float seekNPT)
+void MPEG2TstFileServerMediaSubsession::seekStreamSource(FramedSource* inputSource, double seekNPT)
 {
   MPEG2TransportStreamFramer* framer=(MPEG2TransportStreamFramer*)inputSource;
-  MPEG2TransportStreamFromPESSource*  tsSource=(MPEG2TransportStreamFromPESSource*)framer->inputSource();
-  
+  MPMPEG2TransportStreamFromPESSource*  tsSource=(MPMPEG2TransportStreamFromPESSource*)framer->inputSource();
   MPEG1or2DemuxedElementaryStream* demuxStream= (MPEG1or2DemuxedElementaryStream*)tsSource->InputSource();
   MPEG1or2Demux& demuxer= demuxStream->sourceDemux();
   TsStreamFileSource* source=(TsStreamFileSource*)demuxer.inputSource();
@@ -105,7 +104,7 @@ void MPEG2TstFileServerMediaSubsession::seekStreamSource(FramedSource* inputSour
   __int64 newPos=(__int64) pos;
 
   source->seekToByteAbsolute(newPos);
-	Log("ts seekStreamSource %f / %f ->%d", seekNPT,fileDuration, (DWORD)newPos);
+	LogDebug("ts seekStreamSource %f / %f ->%d", seekNPT,fileDuration, (DWORD)newPos);
   
 }
 float MPEG2TstFileServerMediaSubsession::duration() const

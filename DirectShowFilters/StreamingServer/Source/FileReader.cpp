@@ -26,7 +26,7 @@
 //#include <streams.h>
 #include "FileReader.h"
 #include <stdio.h>
-extern void Log(const char *fmt, ...) ;
+extern void LogDebug(const char *fmt, ...) ;
 FileReader::FileReader() :
 	m_hFile(INVALID_HANDLE_VALUE),
 	m_bReadOnly(FALSE),
@@ -79,7 +79,7 @@ int FileReader::OpenFile()
 	// Is the file already opened
 	if (m_hFile != INVALID_HANDLE_VALUE) 
   {
-    Log("FileReader::OpenFile() already opened");
+    LogDebug("FileReader::OpenFile() already opened");
 		return NOERROR;
 	}
 
@@ -119,12 +119,12 @@ int FileReader::OpenFile()
 	if (Tmo)
 	{
     if (Tmo<4) // 1 failed + 1 succeded is quasi-normal, more is a bit suspicious ( disk drive too slow or problem ? )
-  			Log("FileReader::OpenFile(%s), %d tries to succeed opening %ws.",(LPCSTR)m_fileName, 6-Tmo);
+  			LogDebug("FileReader::OpenFile(%s), %d tries to succeed opening %ws.",(LPCSTR)m_fileName, 6-Tmo);
 	}
 	else
 	{
 		DWORD dwErr = GetLastError();
-    Log("FileReader::OpenFile(%s) failed:%d",(LPCSTR)m_fileName,dwErr);
+    LogDebug("FileReader::OpenFile(%s) failed:%d",(LPCSTR)m_fileName,dwErr);
 		return (int)dwErr;
 	}
 /*
@@ -225,7 +225,7 @@ int FileReader::GetFileSize(__int64 *pStartPosition, __int64 *pLength)
 		dwSizeLow = ::GetFileSize(m_hFile, &dwSizeHigh);
 		if ((dwSizeLow == 0xFFFFFFFF) && (GetLastError() != NO_ERROR ))
 		{
-      Log("FileReader::GetFileSize() failed()");
+      LogDebug("FileReader::GetFileSize() failed()");
 			return E_FAIL;
 		}
 

@@ -11,11 +11,11 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
-// JPEG Video (RFC 2435) RTP Sources 
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// JPEG Video (RFC 2435) RTP Sources
 // C++ header
 
 #ifndef _JPEG_VIDEO_RTP_SOURCE_HH
@@ -32,7 +32,8 @@ public:
   static JPEGVideoRTPSource*
   createNew(UsageEnvironment& env, Groupsock* RTPgs,
 	    unsigned char rtpPayloadFormat = 26,
-	    unsigned rtpPayloadFrequency = 90000);
+	    unsigned rtpPayloadFrequency = 90000,
+	    unsigned defaultWidth = 0, unsigned defaultHeight = 0);
 
 protected:
   virtual ~JPEGVideoRTPSource();
@@ -40,15 +41,19 @@ protected:
 private:
   JPEGVideoRTPSource(UsageEnvironment& env, Groupsock* RTPgs,
 		     unsigned char rtpPayloadFormat,
-		     unsigned rtpTimestampFrequency);
+		     unsigned rtpTimestampFrequency,
+		     unsigned defaultWidth, unsigned defaultHeight);
       // called only by createNew()
+
+  // Image dimensions from the SDP description, if any
+  unsigned fDefaultWidth, fDefaultHeight;
 
 private:
   // redefined virtual functions:
   virtual Boolean processSpecialHeader(BufferedPacket* packet,
                                        unsigned& resultSpecialHeaderSize);
-  
-  virtual char const* MIMEtype() const; 
+
+  virtual char const* MIMEtype() const;
 };
 
 #endif

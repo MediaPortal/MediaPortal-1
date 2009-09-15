@@ -44,6 +44,9 @@ typedef void* packet;
 /* The code from the spec calls drand48(), but we have drand30() instead */
 #define drand48 drand30
 
+/* The code calls "exit()", but we don't want to exit, so make it a noop: */
+#define exit(n) do {} while (0)
+
 #ifndef FALSE
 #define FALSE 0
 #endif

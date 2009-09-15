@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A filter that passes through (unchanged) chunks that contain an integral number
 // of MPEG-2 Transport Stream packets, but returning (in "fDurationInMicroseconds")
 // an updated estimate of the time gap between chunks.
@@ -40,6 +40,8 @@ public:
 
   void changeInputSource(FramedSource* newInputSource) { fInputSource = newInputSource; }
 
+  void clearPIDStatusTable();
+
 protected:
   MPEG2TransportStreamFramer(UsageEnvironment& env, FramedSource* inputSource);
       // called only by createNew()
@@ -64,6 +66,7 @@ private:
   unsigned long fTSPacketCount;
   double fTSPacketDurationEstimate;
   HashTable* fPIDStatusTable;
+  unsigned long fTSPCRCount;
 };
 
 #endif

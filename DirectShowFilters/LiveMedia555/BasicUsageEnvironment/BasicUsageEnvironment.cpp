@@ -11,55 +11,16 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
-// Copyright (c) 1996-2000 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // Basic Usage Environment: for a simple, non-scripted, console application
 // Implementation
 
-#ifndef IMN_PIM
 #include "BasicUsageEnvironment.hh"
 #include <stdio.h>
-#include <shlobj.h>
 
 ////////// BasicUsageEnvironment //////////
-
-void Log(const char *fmt, ...) 
-{
-	va_list ap;
-	va_start(ap,fmt);
-
-	char buffer[1000]; 
-	int tmp;
-	va_start(ap,fmt);
-	tmp=vsprintf(buffer, fmt, ap);
-	va_end(ap); 
-	
-	SYSTEMTIME systemTime;
-	GetLocalTime(&systemTime);
-
-  TCHAR folder[MAX_PATH];
-  TCHAR fileName[MAX_PATH];
-  ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-  sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\streaming server.Log",folder);
-  FILE* fp = fopen(fileName,"a+");
-	if (fp!=NULL)
-	{
-		SYSTEMTIME systemTime;
-		GetLocalTime(&systemTime);
-		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
-			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
-			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
-			buffer);
-		fclose(fp);
-	}
-  char buf[1000];
-	sprintf(buf,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
-		systemTime.wDay, systemTime.wMonth, systemTime.wYear,
-		systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
-		buffer);
-  ::OutputDebugString(buf);
-}
 
 #if defined(__WIN32__) || defined(_WIN32)
 extern "C" int initializeWinsockIfNecessary();
@@ -85,58 +46,34 @@ BasicUsageEnvironment::createNew(TaskScheduler& taskScheduler) {
 }
 
 int BasicUsageEnvironment::getErrno() const {
-#if defined(__WIN32__) || defined(_WIN32)
-#ifndef _WIN32_WCE
-  if (errno == 0) {
-    errno = WSAGetLastError();
-  }
-#endif
-#endif
-#if defined(_WIN32_WCE)
+#if defined(__WIN32__) || defined(_WIN32) || defined(_WIN32_WCE)
   return WSAGetLastError();
 #else
   return errno;
 #endif
 }
 
-UsageEnvironment& BasicUsageEnvironment::operator<<(char const* str) 
-{
-  char buffer[2048];
-	sprintf(buffer, "%s", str);
-  Log(buffer);
+UsageEnvironment& BasicUsageEnvironment::operator<<(char const* str) {
+	fprintf(stderr, "%s", str);
 	return *this;
 }
 
 UsageEnvironment& BasicUsageEnvironment::operator<<(int i) {
-
-  char buffer[2048];
-	sprintf(buffer, "%d", i);
-  Log(buffer);
+	fprintf(stderr, "%d", i);
 	return *this;
 }
 
 UsageEnvironment& BasicUsageEnvironment::operator<<(unsigned u) {
-
-  char buffer[2048];
-	sprintf(buffer, "%u", u);
-  Log(buffer);
+	fprintf(stderr, "%u", u);
 	return *this;
 }
 
 UsageEnvironment& BasicUsageEnvironment::operator<<(double d) {
-
-  char buffer[2048];
-	sprintf(buffer, "%f", d);
-  Log(buffer);
+	fprintf(stderr, "%f", d);
 	return *this;
 }
 
 UsageEnvironment& BasicUsageEnvironment::operator<<(void* p) {
-
-  char buffer[2048];
-	sprintf(buffer, "%p", p);
-  Log(buffer);
+	fprintf(stderr, "%p", p);
 	return *this;
 }
-#endif
-

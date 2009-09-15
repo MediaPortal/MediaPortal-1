@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // Demultiplexer for a MPEG 1 or 2 Program Stream
 // C++ header
 
@@ -79,11 +79,11 @@ public:
 
   void flushInput(); // should be called before any 'seek' on the underlying source
 
-  virtual ~MPEG1or2Demux();
 private:
   MPEG1or2Demux(UsageEnvironment& env,
 		FramedSource* inputSource, Boolean reclaimWhenLastESDies);
       // called only by createNew()
+  virtual ~MPEG1or2Demux();
 
   void registerReadInterest(u_int8_t streamIdTag,
 			    unsigned char* to, unsigned maxSize,

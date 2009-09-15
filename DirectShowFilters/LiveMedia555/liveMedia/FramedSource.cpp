@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // Framed Sources
 // Implementation
 
@@ -77,33 +77,6 @@ void FramedSource::getNextFrame(unsigned char* to, unsigned maxSize,
 
   doGetNextFrame();
 }
-// ##### The following is for backwards-compatibility; remove it eventually:
-#ifdef BACKWARDS_COMPATIBLE_WITH_OLD_AFTER_GETTING_FUNC
-static void bwCompatHackAfterGetting(void* clientData, unsigned frameSize,
-				     unsigned /*numTruncatedBytes*/,
-				     struct timeval presentationTime,
-				     unsigned /*durationInMicroseconds*/) {
-  FramedSource* source = (FramedSource*)clientData;
-  FramedSource::bwCompatAfterGettingFunc* clientAfterGettingFunc
-    = source->fSavedBWCompatAfterGettingFunc;
-  void* afterGettingClientData = source->fSavedBWCompatAfterGettingClientData;
-  if (clientAfterGettingFunc != NULL) {
-    (*clientAfterGettingFunc)(afterGettingClientData, frameSize, presentationTime);
-  }
-}
-void FramedSource::getNextFrame(unsigned char* to, unsigned maxSize,
-				bwCompatAfterGettingFunc* afterGettingFunc,
-				void* afterGettingClientData,
-				onCloseFunc* onCloseFunc,
-				void* onCloseClientData) {
-  fSavedBWCompatAfterGettingFunc = afterGettingFunc;
-  fSavedBWCompatAfterGettingClientData = afterGettingClientData;
-  // Call the regular (new) "getNextFrame()":
-  getNextFrame(to, maxSize, bwCompatHackAfterGetting, this,
-	       onCloseFunc, onCloseClientData);
-}
-#endif
-// ##### End of code for backwards-compatibility.
 
 void FramedSource::afterGetting(FramedSource* source) {
   source->fIsCurrentlyAwaitingData = False;
@@ -143,4 +116,4 @@ void FramedSource::doStopGettingFrames() {
 unsigned FramedSource::maxFrameSize() const {
   // By default, this source has no maximum frame size.
   return 0;
-} 
+}

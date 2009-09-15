@@ -533,7 +533,7 @@ STDMETHODIMP CTsReaderFilter::Pause()
       {
         //not streaming atm
         double startTime=m_seekTime.Millisecs();
-        startTime/=1000.0f;
+        startTime/=1000.0;
 
         //clear buffers
         LogDebug("  -- Pause()  ->start rtsp from %f",startTime);
@@ -656,7 +656,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
 
     m_buffer.Clear();
     m_buffer.Run(true);
-    m_rtspClient.Play(0.0f);
+    m_rtspClient.Play(0.0);
     m_tickCount=GetTickCount();
     m_fileReader = new CMemoryReader(m_buffer);
     m_demultiplexer.SetFileReader(m_fileReader);
@@ -694,7 +694,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     //play
     m_buffer.Clear();
     m_buffer.Run(true);
-    m_rtspClient.Play(0.0f);
+    m_rtspClient.Play(0.0);
     m_tickCount=GetTickCount();
     m_fileReader = new CMemoryReader(m_buffer);
 
@@ -877,11 +877,11 @@ void CTsReaderFilter::Seek(CRefTime& seekTime, bool seekInfile)
     LogDebug("CTsReaderFilter::  Seek->stop rtsp");
     m_rtspClient.Stop();
     double startTime=m_seekTime.Millisecs();
-    startTime/=1000.0f;
-    float milli=m_duration.Duration().Millisecs();
+    startTime/=1000.0;
+    double milli=m_duration.Duration().Millisecs();
     milli/=1000.0;
 
-		if (m_bLiveTv) startTime+=10.0f ; // If liveTv, it's a seek to end, force end of buffer.
+		if (m_bLiveTv) startTime+=10.0 ; // If liveTv, it's a seek to end, force end of buffer.
 
     LogDebug("CTsReaderFilter::  Seek->start client from %f/ %f",startTime,milli);
     //clear the buffers

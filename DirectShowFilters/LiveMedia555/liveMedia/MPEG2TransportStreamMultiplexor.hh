@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A class for generating MPEG-2 Transport Stream from one or more input
 // Elementary Stream data sources
 // C++ header
@@ -29,7 +29,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "MPEG1or2Demux.hh" // for SCR
 #endif
 
-#define PID_TABLE_SIZE 0x200 //@CHANGED
+#define PID_TABLE_SIZE 256
 
 class MPEG2TransportStreamMultiplexor: public FramedSource {
 protected:
@@ -42,13 +42,14 @@ protected:
   void handleNewBuffer(unsigned char* buffer, unsigned bufferSize,
 		       int mpegVersion, MPEG1or2Demux::SCR scr);
   // called by "awaitNewBuffer()"
+  // Note: For MPEG-4 video, set "mpegVersion" to 4; for H.264 video, set "mpegVersion" to 5. 
 
 private:
   // Redefined virtual functions:
   virtual void doGetNextFrame();
 
 private:
-  void deliverDataToClient(int pid, unsigned char* buffer, unsigned bufferSize,
+  void deliverDataToClient(u_int8_t pid, unsigned char* buffer, unsigned bufferSize,
 			   unsigned& startPositionInBuffer);
 
   void deliverPATPacket();
@@ -68,11 +69,12 @@ private:
     unsigned counter;
     u_int8_t streamType; // for use in Program Maps
   } fPIDState[PID_TABLE_SIZE];
-  int fPCR_PID, fCurrentPID;
-      // Note: We map 8-bit stream_ids directly to PIDs 
+  u_int8_t fPCR_PID, fCurrentPID;
+      // Note: We map 8-bit stream_ids directly to PIDs
   MPEG1or2Demux::SCR fPCR;
   unsigned char* fInputBuffer;
   unsigned fInputBufferSize, fInputBufferBytesUsed;
+  Boolean fIsFirstAdaptationField;
 };
 
 #endif

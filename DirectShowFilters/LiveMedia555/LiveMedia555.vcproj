@@ -42,7 +42,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;;./usageenvironment; ./basicusageenvironment; ./groupsock; ./livemedia; ../streamingserver/Source"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;_WIN32;WINNT;__MINGW32__;__GNUC__=4;_DEBUG;_LIB"
+				IgnoreStandardIncludePath="false"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -109,7 +110,7 @@
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;; ./usageenvironment; ./basicusageenvironment; ./groupsock; ./livemedia; ../streamingserver/Source"
-				PreprocessorDefinitions="NDEBUG;_WIN32;_LIB;_CRT_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="NDEBUG;WIN32;_WIN32;__MINGW32__;__GNUC__=4;_LIB;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -428,6 +429,22 @@
 			</File>
 			<File
 				RelativePath=".\liveMedia\DigestAuthentication.hh"
+				>
+			</File>
+			<File
+				RelativePath=".\liveMedia\DVVideoRTPSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\liveMedia\DVVideoRTPSink.hh"
+				>
+			</File>
+			<File
+				RelativePath=".\liveMedia\DVVideoStreamFramer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\liveMedia\DVVideoStreamFramer.hh"
 				>
 			</File>
 			<File
@@ -1063,14 +1080,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\liveMedia\PrioritizedRTPStreamSelector.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\liveMedia\PrioritizedRTPStreamSelector.hh"
-				>
-			</File>
-			<File
 				RelativePath=".\liveMedia\QCELPAudioRTPSource.cpp"
 				>
 			</File>
@@ -1307,10 +1316,34 @@
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath=".\ReadMe.txt"
+		<Filter
+			Name="MediaPortal"
 			>
-		</File>
+			<File
+				RelativePath=".\MediaPortal\MPMPEG2TransportStreamFromPESSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MediaPortal\MPMPEG2TransportStreamFromPESSource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MediaPortal\MPRTSPServer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MediaPortal\MPRTSPServer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MediaPortal\MPTaskScheduler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MediaPortal\MPTaskScheduler.h"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

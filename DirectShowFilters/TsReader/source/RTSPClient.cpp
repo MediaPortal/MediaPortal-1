@@ -3,7 +3,6 @@
 #include "MemorySink.h"
 extern void LogDebug(const char *fmt, ...) ;
 
-extern void Log(const char *fmt, ...) ;
 CRTSPClient::CRTSPClient(CMemoryBuffer& buffer)
 :m_buffer(buffer)
 {
@@ -207,7 +206,7 @@ bool CRTSPClient::Initialize()
 {
 	LogDebug("CRTSPClient::Initialize()");
 	m_duration=7200*1000;
-	TaskScheduler* scheduler = BasicTaskScheduler::createNew();
+	TaskScheduler* scheduler = MPTaskScheduler::createNew();
   m_env = BasicUsageEnvironment::createNew(*scheduler);
 	
   m_ourClient = createClient(*m_env, 0/*verbosityLevel*/, "TSFileSource");
@@ -502,7 +501,7 @@ void CRTSPClient::Continue()
 	if (m_ourClient!=NULL && m_session!=NULL)
 	{
 		RTSPClient* rtspClient=(RTSPClient*)m_ourClient;
-		rtspClient->continueMediaSession(*m_session);
+		rtspClient->playMediaSession(*m_session);
 		StartBufferThread();
     m_bPaused=false;
 		int x=1;
@@ -529,7 +528,7 @@ bool CRTSPClient::Pause()
 	LogDebug("CRTSPClient::Pause() done");
 	return true;
 }
-bool CRTSPClient::Play(float fStart)
+bool CRTSPClient::Play(double fStart)
 {
 	LogDebug("CRTSPClient::Play from %f", fStart);
   m_bPaused=false;

@@ -2,6 +2,7 @@
 
 #include "livemedia.hh"
 #include "BasicUsageEnvironment.hh"
+#include "MPTaskScheduler.h"
 #include "MemoryBuffer.h"
 #include "TSThread.h"
 #include "FileSinkRecorder.h"

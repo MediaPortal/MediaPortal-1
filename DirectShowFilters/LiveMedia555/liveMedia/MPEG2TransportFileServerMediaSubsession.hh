@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A 'ServerMediaSubsession' object that creates new, unicast, "RTPSink"s
 // on demand, from a MPEG-2 Transport Stream file.
 // C++ header
@@ -25,7 +25,6 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #ifndef _FILE_SERVER_MEDIA_SUBSESSION_HH
 #include "FileServerMediaSubsession.hh"
 #endif
-#include "TsStreamFileSource.hh"
 #ifndef _MPEG2_TRANSPORT_STREAM_INDEX_FILE_HH
 #include "MPEG2TransportStreamIndexFile.hh"
 #endif
@@ -46,7 +45,6 @@ protected:
 					  Boolean reuseFirstSource);
       // called only by createNew();
   virtual ~MPEG2TransportFileServerMediaSubsession();
-  virtual float duration() const;
 
 private: // redefined virtual functions
   // Note that because - to implement 'trick play' operations - we're operating on
@@ -59,7 +57,7 @@ private: // redefined virtual functions
                            unsigned short& rtpSeqNum,
                            unsigned& rtpTimestamp);
   virtual void pauseStream(unsigned clientSessionId, void* streamToken);
-  virtual void seekStream(unsigned clientSessionId, void* streamToken, float seekNPT);
+  virtual void seekStream(unsigned clientSessionId, void* streamToken, double seekNPT);
   virtual void setStreamScale(unsigned clientSessionId, void* streamToken, float scale);
   virtual void deleteStream(unsigned clientSessionId, void*& streamToken);
 
@@ -71,13 +69,14 @@ private: // redefined virtual functions
 				    FramedSource* inputSource);
 
   virtual void testScaleFactor(float& scale);
-  virtual void seekStreamSource(FramedSource* inputSource, float seekNPT);
+  virtual float duration() const;
 
 private:
   ClientTrickPlayState* lookupClient(unsigned clientSessionId);
 
+private:
   MPEG2TransportStreamIndexFile* fIndexFile;
-  char m_fileName[MAX_PATH];
+  float fDuration;
   HashTable* fClientSessionHashTable; // indexed by client session id
 };
 

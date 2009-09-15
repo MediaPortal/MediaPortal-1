@@ -11,57 +11,22 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A generic RTSP client
 // Implementation
 
 #include "RTSPClient.hh"
 #include "RTSPCommon.hh"
 #include "Base64.hh"
+#include "Locale.hh"
 #include <GroupsockHelper.hh>
 #include "our_md5.h"
 #ifdef SUPPORT_REAL_RTSP
 #include "../RealRTSP/include/RealRTSP.hh"
 #endif
-
-// Experimental support for temporarily setting the locale (e.g., to POSIX,
-// for parsing or printing floating-point numbers in protocol headers).
-#ifdef USE_LOCALE
-#include <locale.h>
-#else
-#ifndef LC_NUMERIC
-#define LC_NUMERIC 0
-#endif
-#endif
-
-class Locale {
-public:
-  Locale(char const* newLocale, int category = LC_NUMERIC)
-    : fCategory(category) {
-#ifdef USE_LOCALE
-    fPrevLocale = strDup(setlocale(category, NULL));
-    setlocale(category, newLocale);
-#endif
-  }
-
-  virtual ~Locale() {
-#ifdef USE_LOCALE
-    if (fPrevLocale != NULL) {
-      setlocale(fCategory, fPrevLocale);
-      delete[] fPrevLocale;
-    }
-#endif
-  }
-
-private:
-  int fCategory;
-  char* fPrevLocale;
-};
-
-
 
 ////////// RTSPClient //////////
 
@@ -135,7 +100,7 @@ void RTSPClient::setUserAgentString(char const* userAgentStr) {
 
   // Change the existing user agent header string:
   char const* const formatStr = "User-Agent: %s\r\n";
-  unsigned headerSize = strlen(formatStr) + strlen(userAgentStr);
+  unsigned const headerSize = strlen(formatStr) + strlen(userAgentStr) + 1;
   delete[] fUserAgentHeaderStr;
   fUserAgentHeaderStr = new char[headerSize];
   sprintf(fUserAgentHeaderStr, formatStr, userAgentStr);
@@ -181,10 +146,15 @@ void RTSPClient::reset() {
 static char* getLine(char* startOfLine) {
   // returns the start of the next line, or NULL if none
   for (char* ptr = startOfLine; *ptr != '\0'; ++ptr) {
+    // Check for the end of line: \r\n (but also accept \r or \n by itself):
     if (*ptr == '\r' || *ptr == '\n') {
       // We found the end of the line
-      *ptr++ = '\0';
-      if (*ptr == '\n') ++ptr;
+      if (*ptr == '\r') {
+	*ptr++ = '\0';
+	if (*ptr == '\n') ++ptr;
+      } else {
+        *ptr++ = '\0';
+      }
       return ptr;
     }
   }
@@ -193,20 +163,20 @@ static char* getLine(char* startOfLine) {
 }
 
 char* RTSPClient::describeURL(char const* url, Authenticator* authenticator,
-			      Boolean allowKasennaProtocol) {
+			      Boolean allowKasennaProtocol, int timeout) {
   char* cmd = NULL;
   fDescribeStatusCode = 0;
-  do {  
+  do {
     // First, check whether "url" contains a username:password to be used:
     char* username; char* password;
     if (authenticator == NULL
 	&& parseRTSPURLUsernamePassword(url, username, password)) {
-      char* result = describeWithPassword(url, username, password);
+      char* result = describeWithPassword(url, username, password, allowKasennaProtocol, timeout);
       delete[] username; delete[] password; // they were dynamically allocated
       return result;
     }
 
-    if (!openConnectionFromURL(url, authenticator)) break;
+    if (!openConnectionFromURL(url, authenticator, timeout)) break;
 
     // Send the DESCRIBE command:
 
@@ -220,7 +190,7 @@ char* RTSPClient::describeURL(char const* url, Authenticator* authenticator,
       : "Accept: application/sdp\r\n";
 
     // (Later implement more, as specified in the RTSP spec, sec D.1 #####)
-    char* const cmdFmt =
+    char const* const cmdFmt =
       "DESCRIBE %s RTSP/1.0\r\n"
       "CSeq: %d\r\n"
       "%s"
@@ -275,7 +245,6 @@ char* RTSPClient::describeURL(char const* url, Authenticator* authenticator,
     // that we recognize.
     // (We should also check for "Content-type: application/sdp",
     // "Content-location", "CSeq", etc.) #####
-    char* contentBase = new char[fResponseBufferSize]; // ensures enough space
     char* serverType = new char[fResponseBufferSize]; // ensures enough space
     int contentLength = -1;
     char* lineStart;
@@ -293,9 +262,12 @@ char* RTSPClient::describeURL(char const* url, Authenticator* authenticator,
 			       lineStart, "\"");
 	  break;
 	}
-      } else if (sscanf(lineStart, "Content-Base: %s", contentBase) == 1) {
-	if (contentBase[0] != '\0'/*sanity check*/) {
-	  delete[] fBaseURL; fBaseURL = strDup(contentBase);
+      } else if (strncmp(lineStart, "Content-Base:", 13) == 0) {
+	int cbIndex = 13;
+
+	while (lineStart[cbIndex] == ' ' || lineStart[cbIndex] == '\t') ++cbIndex;
+	if (lineStart[cbIndex] != '\0'/*sanity check*/) {
+	  delete[] fBaseURL; fBaseURL = strDup(&lineStart[cbIndex]);
 	}
       } else if (sscanf(lineStart, "Server: %s", serverType) == 1) {
 	if (strncmp(serverType, "Kasenna", 7) == 0) fServerIsKasenna = True;
@@ -303,7 +275,7 @@ char* RTSPClient::describeURL(char const* url, Authenticator* authenticator,
 #ifdef SUPPORT_REAL_RTSP
       } else if (sscanf(lineStart, "ETag: %s", fRealETagStr) == 1) {
 #endif
-      } else if (wantRedirection) { 
+      } else if (wantRedirection) {
 	if (sscanf(lineStart, "Location: %s", redirectionURL) == 1) {
 	  // Try again with this URL
 	  if (fVerbosityLevel >= 1) {
@@ -311,15 +283,15 @@ char* RTSPClient::describeURL(char const* url, Authenticator* authenticator,
 		    << redirectionURL << "\"\n";
 	  }
 	  reset();
-	  char* result = describeURL(redirectionURL);
+	  char* result = describeURL(redirectionURL, authenticator, allowKasennaProtocol, timeout);
 	  delete[] redirectionURL;
 	  delete[] serverType;
+	  delete[] cmd;
 	  return result;
 	}
       }
-    } 
+    }
     delete[] serverType;
-    delete[] contentBase;
 
     // We're now at the end of the response header lines
     if (wantRedirection) {
@@ -364,7 +336,7 @@ char* RTSPClient::describeURL(char const* url, Authenticator* authenticator,
 	  char* ptr = &firstLine[bytesRead];
 	  int bytesRead2 = readSocket(envir(), fInputSocketNum, (unsigned char*)ptr,
 				      numExtraBytesNeeded, fromAddress);
-	  if (bytesRead2 < 0) break;
+	  if (bytesRead2 <= 0) break;
 	  ptr[bytesRead2] = '\0';
 	  if (fVerbosityLevel >= 1) {
 	    envir() << "Read " << bytesRead2 << " extra bytes: "
@@ -403,10 +375,10 @@ char* RTSPClient::describeURL(char const* url, Authenticator* authenticator,
       delete[] fKasennaContentType;
       fKasennaContentType = new char[fResponseBufferSize]; // ensures enough space
       char* currentPos = bodyStart;
-      
+
       while (strcmp(currentWord, "</MediaDescription>") != 0) {
           sscanf(currentPos, "%s", currentWord);
-	  
+
           if (strcmp(currentWord, "VideoPid") == 0) {
 	    currentPos += strlen(currentWord) + 1;
 	    sscanf(currentPos, "%s", currentWord);
@@ -414,7 +386,7 @@ char* RTSPClient::describeURL(char const* url, Authenticator* authenticator,
 	    sscanf(currentPos, "%d", &videoPid);
 	    currentPos += 3;
           }
-	  
+
           if (strcmp(currentWord, "AudioPid") == 0) {
 	    currentPos += strlen(currentWord) + 1;
 	    sscanf(currentPos, "%s", currentWord);
@@ -422,7 +394,7 @@ char* RTSPClient::describeURL(char const* url, Authenticator* authenticator,
 	    sscanf(currentPos, "%d", &audioPid);
 	    currentPos += 3;
           }
-	  
+
           if (strcmp(currentWord, "Duration") == 0) {
 	    currentPos += strlen(currentWord) + 1;
 	    sscanf(currentPos, "%s", currentWord);
@@ -430,7 +402,7 @@ char* RTSPClient::describeURL(char const* url, Authenticator* authenticator,
 	    sscanf(currentPos, "%llu", &mh_duration);
 	    currentPos += 3;
           }
-	  
+
           if (strcmp(currentWord, "TypeSpecificData") == 0) {
 	    currentPos += strlen(currentWord) + 1;
 	    sscanf(currentPos, "%s", currentWord);
@@ -439,24 +411,24 @@ char* RTSPClient::describeURL(char const* url, Authenticator* authenticator,
 	    currentPos += 3;
 	    printf("Kasenna Content Type: %s\n", fKasennaContentType);
           }
-          
+
           currentPos += strlen(currentWord) + 1;
 	}
-      
+
       if (fKasennaContentType != NULL
 	  && strcmp(fKasennaContentType, "PARTNER_41_MPEG-4") == 0) {
-          char* describeSDP = describeURL(url, authenticator, True);
-	  
+          char* describeSDP = describeURL(url, authenticator, True, timeout);
+
 	  delete[] currentWord;
           delete[] cmd;
           return describeSDP;
       }
-      
+
       unsigned char byte1 = fServerAddress & 0x000000ff;
       unsigned char byte2 = (fServerAddress & 0x0000ff00) >>  8;
       unsigned char byte3 = (fServerAddress & 0x00ff0000) >> 16;
       unsigned char byte4 = (fServerAddress & 0xff000000) >> 24;
-      
+
       char const* sdpFmt =
 	"v=0\r\n"
 	"o=NoSpacesAllowed 1 1 IN IP4 %u.%u.%u.%u\r\n"
@@ -479,18 +451,18 @@ char* RTSPClient::describeURL(char const* url, Authenticator* authenticator,
 	      byte1, byte2, byte3, byte4,
 	      mh_duration/1000000,
 	      videoPid);
-      
+
       char* result = strDup(sdpBuf);
       delete[] sdpBuf; delete[] currentWord;
       delete[] cmd;
       return result;
     }
     ////////// END Kasenna BS //////////
-    
+
     delete[] cmd;
     return strDup(bodyStart);
   } while (0);
-  
+
   delete[] cmd;
   if (fDescribeStatusCode == 0) fDescribeStatusCode = 2;
   return NULL;
@@ -498,10 +470,11 @@ char* RTSPClient::describeURL(char const* url, Authenticator* authenticator,
 
 char* RTSPClient
 ::describeWithPassword(char const* url,
-		       char const* username, char const* password) {
+		       char const* username, char const* password,
+		       Boolean allowKasennaProtocol, int timeout) {
   Authenticator authenticator;
   authenticator.setUsernameAndPassword(username, password);
-  char* describeResult = describeURL(url, &authenticator);
+  char* describeResult = describeURL(url, &authenticator, allowKasennaProtocol, timeout);
   if (describeResult != NULL) {
     // We are already authorized
     return describeResult;
@@ -514,7 +487,7 @@ char* RTSPClient
   }
 
   // Try again:
-  describeResult = describeURL(url, &authenticator);
+  describeResult = describeURL(url, &authenticator, allowKasennaProtocol, timeout);
   if (describeResult != NULL) {
     // The authenticator worked, so use it in future requests:
     fCurrentAuthenticator = authenticator;
@@ -525,7 +498,8 @@ char* RTSPClient
 
 char* RTSPClient::sendOptionsCmd(char const* url,
 				 char* username, char* password,
-				 Authenticator* authenticator) {
+				 Authenticator* authenticator,
+				 int timeout) {
   char* result = NULL;
   char* cmd = NULL;
   Boolean haveAllocatedAuthenticator = False;
@@ -535,9 +509,9 @@ char* RTSPClient::sendOptionsCmd(char const* url,
       // (and no username,password pair was supplied separately):
       if (username == NULL && password == NULL
 	  && parseRTSPURLUsernamePassword(url, username, password)) {
-	Authenticator authenticator;
-	authenticator.setUsernameAndPassword(username, password);
-	result = sendOptionsCmd(url, username, password, &authenticator);
+	Authenticator newAuthenticator;
+	newAuthenticator.setUsernameAndPassword(username, password);
+	result = sendOptionsCmd(url, username, password, &newAuthenticator, timeout);
 	delete[] username; delete[] password; // they were dynamically allocated
 	break;
       } else if (username != NULL && password != NULL) {
@@ -546,7 +520,7 @@ char* RTSPClient::sendOptionsCmd(char const* url,
 	haveAllocatedAuthenticator = True;
 	authenticator->setUsernameAndPassword(username, password);
 
-	result = sendOptionsCmd(url, username, password, authenticator);
+	result = sendOptionsCmd(url, username, password, authenticator, timeout);
 	if (result != NULL) break; // We are already authorized
 
 	// The "realm" field should have been filled in:
@@ -558,7 +532,7 @@ char* RTSPClient::sendOptionsCmd(char const* url,
       }
     }
 
-    if (!openConnectionFromURL(url, authenticator)) break;
+    if (!openConnectionFromURL(url, authenticator, timeout)) break;
 
     // Send the OPTIONS command:
 
@@ -566,7 +540,7 @@ char* RTSPClient::sendOptionsCmd(char const* url,
     char* authenticatorStr
       = createAuthenticatorString(authenticator, "OPTIONS", url);
 
-    char* const cmdFmt =
+    char const* const cmdFmt =
       "OPTIONS %s RTSP/1.0\r\n"
       "CSeq: %d\r\n"
       "%s"
@@ -635,22 +609,29 @@ static Boolean isAbsoluteURL(char const* url) {
   return False;
 }
 
+char const* RTSPClient::sessionURL(MediaSession const& session) const {
+  char const* url = session.controlPath();
+  if (url == NULL || strcmp(url, "*") == 0) url = fBaseURL;
+
+  return url;
+}
+
 void RTSPClient::constructSubsessionURL(MediaSubsession const& subsession,
 					char const*& prefix,
 					char const*& separator,
 					char const*& suffix) {
   // Figure out what the URL describing "subsession" will look like.
   // The URL is returned in three parts: prefix; separator; suffix
-  //##### NOTE: This code doesn't really do the right thing if "fBaseURL"
+  //##### NOTE: This code doesn't really do the right thing if "sessionURL()"
   // doesn't end with a "/", and "subsession.controlPath()" is relative.
-  // The right thing would have been to truncate "fBaseURL" back to the
+  // The right thing would have been to truncate "sessionURL()" back to the
   // rightmost "/", and then add "subsession.controlPath()".
   // In practice, though, each "DESCRIBE" response typically contains
-  // a "Content-Base:" header that consists of "fBaseURL" followed by
+  // a "Content-Base:" header that consists of "sessionURL()" followed by
   // a "/", in which case this code ends up giving the correct result.
   // However, we should really fix this code to do the right thing, and
   // also check for and use the "Content-Base:" header appropriately. #####
-  prefix = fBaseURL;
+  prefix = sessionURL(subsession.parentSession());
   if (prefix == NULL) prefix = "";
 
   suffix = subsession.controlPath();
@@ -666,10 +647,11 @@ void RTSPClient::constructSubsessionURL(MediaSubsession const& subsession,
 
 Boolean RTSPClient::announceSDPDescription(char const* url,
 					   char const* sdpDescription,
-					   Authenticator* authenticator) {
+					   Authenticator* authenticator,
+					   int timeout) {
   char* cmd = NULL;
   do {
-    if (!openConnectionFromURL(url, authenticator)) break;
+    if (!openConnectionFromURL(url, authenticator, timeout)) break;
 
     // Send the ANNOUNCE command:
 
@@ -678,7 +660,7 @@ Boolean RTSPClient::announceSDPDescription(char const* url,
     char* authenticatorStr
       = createAuthenticatorString(authenticator, "ANNOUNCE", url);
 
-    char* const cmdFmt =
+    char const* const cmdFmt =
       "ANNOUNCE %s RTSP/1.0\r\n"
       "CSeq: %d\r\n"
       "Content-Type: application/sdp\r\n"
@@ -727,10 +709,10 @@ Boolean RTSPClient::announceSDPDescription(char const* url,
 
 Boolean RTSPClient
 ::announceWithPassword(char const* url, char const* sdpDescription,
-		       char const* username, char const* password) {
+		       char const* username, char const* password, int timeout) {
   Authenticator authenticator;
   authenticator.setUsernameAndPassword(username, password);
-  if (announceSDPDescription(url, sdpDescription, &authenticator)) {
+  if (announceSDPDescription(url, sdpDescription, &authenticator, timeout)) {
     // We are already authorized
     return True;
   }
@@ -743,7 +725,7 @@ Boolean RTSPClient
 
   // Try again:
   Boolean secondTrySuccess
-    = announceSDPDescription(url, sdpDescription, &authenticator);
+    = announceSDPDescription(url, sdpDescription, &authenticator, timeout);
 
   if (secondTrySuccess) {
     // The authenticator worked, so use it in future requests:
@@ -783,7 +765,7 @@ Boolean RTSPClient::setupMediaSubsession(MediaSubsession& subsession,
       sessionStr = new char[20+strlen(fLastSessionId)];
       sprintf(sessionStr, "Session: %s\r\n", fLastSessionId);
     } else {
-      sessionStr = "";
+      sessionStr = strDup("");
     }
 
     char* transportStr = NULL;
@@ -857,7 +839,7 @@ Boolean RTSPClient::setupMediaSubsession(MediaSubsession& subsession,
 
     char const *prefix, *separator, *suffix;
     constructSubsessionURL(subsession, prefix, separator, suffix);
-    char* transportFmt;
+    char const* transportFmt;
 
     if (strcmp(subsession.protocolName(), "UDP") == 0) {
       char const* setupFmt = "SETUP %s%s RTSP/1.0\r\n";
@@ -889,7 +871,7 @@ Boolean RTSPClient::setupMediaSubsession(MediaSubsession& subsession,
 	portTypeStr = ";interleaved";
 	rtpNumber = fTCPStreamIdCount++;
 	rtcpNumber = fTCPStreamIdCount++;
-      } else { // normal RTP streaming      
+      } else { // normal RTP streaming
 	unsigned connectionAddress = subsession.connectionEndpointAddress();
 	Boolean requestMulticastStreaming = IsMulticastAddress(connectionAddress)
 	  || (connectionAddress == 0 && forceMulticastOnUnspecified);
@@ -898,6 +880,7 @@ Boolean RTSPClient::setupMediaSubsession(MediaSubsession& subsession,
 	rtpNumber = subsession.clientPortNum();
 	if (rtpNumber == 0) {
 	  envir().setResultMsg("Client port number unknown\n");
+	  delete[] authenticatorStr; delete[] sessionStr; delete[] setupStr;
 	  break;
 	}
 	rtcpNumber = rtpNumber + 1;
@@ -911,7 +894,7 @@ Boolean RTSPClient::setupMediaSubsession(MediaSubsession& subsession,
     }
 
     // (Later implement more, as specified in the RTSP spec, sec D.1 #####)
-    char* const cmdFmt =
+    char const* const cmdFmt =
       "%s"
       "CSeq: %d\r\n"
       "%s"
@@ -935,9 +918,7 @@ Boolean RTSPClient::setupMediaSubsession(MediaSubsession& subsession,
 	    sessionStr,
 	    authenticatorStr,
 	    fUserAgentHeaderStr);
-    delete[] authenticatorStr;
-    if (sessionStr[0] != '\0') delete[] sessionStr;
-    delete[] setupStr; delete[] transportStr;
+    delete[] authenticatorStr; delete[] sessionStr; delete[] setupStr; delete[] transportStr;
 
     // And then send it:
     if (!sendRequest(cmd, "SETUP")) break;
@@ -952,6 +933,7 @@ Boolean RTSPClient::setupMediaSubsession(MediaSubsession& subsession,
     // For now, ignore other headers.
     char* lineStart;
     char* sessionId = new char[fResponseBufferSize]; // ensures we have enough space
+    unsigned cLength = 0;
     while (1) {
       lineStart = nextLineStart;
       if (lineStart == NULL) break;
@@ -985,12 +967,24 @@ Boolean RTSPClient::setupMediaSubsession(MediaSubsession& subsession,
 	subsession.rtcpChannelId = rtcpChannelId;
 	continue;
       }
-    } 
+
+      // Also check for a "Content-Length:" header.  Some weird servers include this
+      // in the RTSP "SETUP" response.
+      if (sscanf(lineStart, "Content-Length: %d", &cLength) == 1) continue;
+    }
     delete[] sessionId;
 
     if (subsession.sessionId == NULL) {
       envir().setResultMsg("\"Session:\" header is missing in the response");
       break;
+    }
+
+    // If we saw a "Content-Length:" header in the response, then discard whatever
+    // included data it refers to:
+    if (cLength > 0) {
+      char* dummyBuf = new char[cLength];
+      getResponse1(dummyBuf, cLength);
+      delete[] dummyBuf;
     }
 
     if (streamUsingTCP) {
@@ -1005,8 +999,10 @@ Boolean RTSPClient::setupMediaSubsession(MediaSubsession& subsession,
     } else {
       // Normal case.
       // Set the RTP and RTCP sockets' destination address and port
-      // from the information in the SETUP response: 
-      subsession.setDestinations(fServerAddress);
+      // from the information in the SETUP response (if present):
+      netAddressBits destAddress = subsession.connectionEndpointAddress();
+      if (destAddress == 0) destAddress = fServerAddress;
+      subsession.setDestinations(destAddress);
     }
 
     delete[] cmd;
@@ -1023,114 +1019,35 @@ static char* createScaleString(float scale, float currentScale) {
     // This is the default value; we don't need a "Scale:" header:
     buf[0] = '\0';
   } else {
-    Locale("POSIX");
+    Locale l("C", LC_NUMERIC);
     sprintf(buf, "Scale: %f\r\n", scale);
   }
 
   return strDup(buf);
 }
-      
-static char* createRangeString(float start, float end) {
+
+static char* createRangeString(double start, double end) {
   char buf[100];
   if (start < 0) {
     // We're resuming from a PAUSE; there's no "Range:" header at all
     buf[0] = '\0';
   } else if (end < 0) {
     // There's no end time:
-    Locale("POSIX");
+    Locale l("C", LC_NUMERIC);
     sprintf(buf, "Range: npt=%.3f-\r\n", start);
   } else {
     // There's both a start and an end time; include them both in the "Range:" hdr
-    Locale("POSIX");
+    Locale l("C", LC_NUMERIC);
     sprintf(buf, "Range: npt=%.3f-%.3f\r\n", start, end);
   }
 
   return strDup(buf);
 }
-      
+
 static char const* NoSessionErr = "No RTSP session is currently in progress\n";
 
-Boolean RTSPClient::continueMediaSession(MediaSession& session)
-{
-#ifdef SUPPORT_REAL_RTSP
-  if (session.isRealNetworksRDT) {
-    // This is a RealNetworks stream; set the "Subscribe" parameter before proceeding:
-    char* streamRuleString = RealGetSubscribeRuleString(&session);
-    setMediaSessionParameter(session, "Subscribe", streamRuleString);
-    delete[] streamRuleString;
-  }
-#endif
-  char* cmd = NULL;
-  do {
-    // First, make sure that we have a RTSP session in progress
-    if (fLastSessionId == NULL) {
-      envir().setResultMsg(NoSessionErr);
-      break;
-    }
-
-    // Send the PLAY command:
-
-    // First, construct an authenticator string:
-    char* authenticatorStr
-      = createAuthenticatorString(&fCurrentAuthenticator, "PLAY", fBaseURL);
-
-    char* const cmdFmt =
-      "PLAY %s RTSP/1.0\r\n"
-      "CSeq: %d\r\n"
-      "Session: %s\r\n"
-      "%s"
-      "%s"
-      "\r\n";
-
-    unsigned cmdSize = strlen(cmdFmt)
-      + strlen(fBaseURL)
-      + 20 /* max int len */
-      + strlen(fLastSessionId)
-      + strlen(authenticatorStr)
-      + fUserAgentHeaderStrSize;
-    cmd = new char[cmdSize];
-    sprintf(cmd, cmdFmt,
-	    fBaseURL,
-	    ++fCSeq,
-	    fLastSessionId,
-	    authenticatorStr,
-	    fUserAgentHeaderStr);
-    delete[] authenticatorStr;
-
-    if (!sendRequest(cmd, "PLAY")) break;
-
-    // Get the response from the server:
-    unsigned bytesRead; unsigned responseCode;
-    char* firstLine; char* nextLineStart;
-    if (!getResponse("PLAY", bytesRead, responseCode, firstLine, nextLineStart)) break;
-
-    // Look for various headers that we understand:
-    char* lineStart;
-    while (1) {
-      lineStart = nextLineStart;
-      if (lineStart == NULL) break;
-
-      nextLineStart = getLine(lineStart);
-
-      if (parseScaleHeader(lineStart, session.scale())) break;
-    }
-
-    if (fTCPStreamIdCount == 0) { // we're not receiving RTP-over-TCP
-      // Arrange to handle incoming requests sent by the server
-      envir().taskScheduler().turnOnBackgroundReadHandling(fInputSocketNum,
-	   (TaskScheduler::BackgroundHandlerProc*)&incomingRequestHandler, this);
-    }
-
-    delete[] cmd;
-    return True;
-  } while (0);
-
-  delete[] cmd;
-  return False;
-}
-
 Boolean RTSPClient::playMediaSession(MediaSession& session,
-				     float start, float end, float scale) {
+				     double start, double end, float scale) {
 #ifdef SUPPORT_REAL_RTSP
   if (session.isRealNetworksRDT) {
     // This is a RealNetworks stream; set the "Subscribe" parameter before proceeding:
@@ -1157,7 +1074,7 @@ Boolean RTSPClient::playMediaSession(MediaSession& session,
     // And then a "Range:" string:
     char* rangeStr = createRangeString(start, end);
 
-    char* const cmdFmt =
+    char const* const cmdFmt =
       "PLAY %s RTSP/1.0\r\n"
       "CSeq: %d\r\n"
       "Session: %s\r\n"
@@ -1167,8 +1084,9 @@ Boolean RTSPClient::playMediaSession(MediaSession& session,
       "%s"
       "\r\n";
 
+    char const* sessURL = sessionURL(session);
     unsigned cmdSize = strlen(cmdFmt)
-      + strlen(fBaseURL)
+      + strlen(sessURL)
       + 20 /* max int len */
       + strlen(fLastSessionId)
       + strlen(scaleStr)
@@ -1177,7 +1095,7 @@ Boolean RTSPClient::playMediaSession(MediaSession& session,
       + fUserAgentHeaderStrSize;
     cmd = new char[cmdSize];
     sprintf(cmd, cmdFmt,
-	    fBaseURL,
+	    sessURL,
 	    ++fCSeq,
 	    fLastSessionId,
 	    scaleStr,
@@ -1203,7 +1121,23 @@ Boolean RTSPClient::playMediaSession(MediaSession& session,
 
       nextLineStart = getLine(lineStart);
 
-      if (parseScaleHeader(lineStart, session.scale())) break;
+      if (parseScaleHeader(lineStart, session.scale())) continue;
+      if (parseRangeHeader(lineStart, session.playStartTime(), session.playEndTime())) continue;
+
+      u_int16_t seqNum; u_int32_t timestamp;
+      if (parseRTPInfoHeader(lineStart, seqNum, timestamp)) {
+	// This is data for our first subsession.  Fill it in, and do the same for our other subsessions:
+	MediaSubsessionIterator iter(session);
+	MediaSubsession* subsession;
+	while ((subsession = iter.next()) != NULL) {
+	  subsession->rtpInfo.seqNum = seqNum;
+	  subsession->rtpInfo.timestamp = timestamp;
+	  subsession->rtpInfo.infoIsNew = True;
+
+	  if (!parseRTPInfoHeader(lineStart, seqNum, timestamp)) break;
+	}
+	continue;
+      }
     }
 
     if (fTCPStreamIdCount == 0) { // we're not receiving RTP-over-TCP
@@ -1221,7 +1155,7 @@ Boolean RTSPClient::playMediaSession(MediaSession& session,
 }
 
 Boolean RTSPClient::playMediaSubsession(MediaSubsession& subsession,
-					float start, float end, float scale,
+					double start, double end, float scale,
 					Boolean hackForDSS) {
   char* cmd = NULL;
   do {
@@ -1241,7 +1175,7 @@ Boolean RTSPClient::playMediaSubsession(MediaSubsession& subsession,
     // And then a "Range:" string:
     char* rangeStr = createRangeString(start, end);
 
-    char* const cmdFmt =
+    char const* const cmdFmt =
       "PLAY %s%s%s RTSP/1.0\r\n"
       "CSeq: %d\r\n"
       "Session: %s\r\n"
@@ -1297,13 +1231,16 @@ Boolean RTSPClient::playMediaSubsession(MediaSubsession& subsession,
 
       nextLineStart = getLine(lineStart);
 
-      if (parseRTPInfoHeader(lineStart,
-			     subsession.rtpInfo.trackId,
-			     subsession.rtpInfo.seqNum,
-			     subsession.rtpInfo.timestamp)) {
+      if (parseScaleHeader(lineStart, subsession.scale())) continue;
+      if (parseRangeHeader(lineStart, subsession._playStartTime(), subsession._playEndTime())) continue;
+
+      u_int16_t seqNum; u_int32_t timestamp;
+      if (parseRTPInfoHeader(lineStart, seqNum, timestamp)) {
+	subsession.rtpInfo.seqNum = seqNum;
+	subsession.rtpInfo.timestamp = timestamp;
+	subsession.rtpInfo.infoIsNew = True;
 	continue;
       }
-      if (parseScaleHeader(lineStart, subsession.scale())) continue;
     }
 
     delete[] cmd;
@@ -1329,7 +1266,8 @@ Boolean RTSPClient::pauseMediaSession(MediaSession& session) {
     char* authenticatorStr
       = createAuthenticatorString(&fCurrentAuthenticator, "PAUSE", fBaseURL);
 
-    char* const cmdFmt =
+    char const* sessURL = sessionURL(session);
+    char const* const cmdFmt =
       "PAUSE %s RTSP/1.0\r\n"
       "CSeq: %d\r\n"
       "Session: %s\r\n"
@@ -1338,14 +1276,14 @@ Boolean RTSPClient::pauseMediaSession(MediaSession& session) {
       "\r\n";
 
     unsigned cmdSize = strlen(cmdFmt)
-      + strlen(fBaseURL)
+      + strlen(sessURL)
       + 20 /* max int len */
       + strlen(fLastSessionId)
       + strlen(authenticatorStr)
       + fUserAgentHeaderStrSize;
     cmd = new char[cmdSize];
     sprintf(cmd, cmdFmt,
-	    fBaseURL,
+	    sessURL,
 	    ++fCSeq,
 	    fLastSessionId,
 	    authenticatorStr,
@@ -1358,63 +1296,7 @@ Boolean RTSPClient::pauseMediaSession(MediaSession& session) {
       // Get the response from the server:
       unsigned bytesRead; unsigned responseCode;
       char* firstLine; char* nextLineStart;
-      //if (!getResponse("PAUSE", bytesRead, responseCode, firstLine, nextLineStart)) break;
-    }
-
-    delete[] cmd;
-    return True;
-  } while (0);
-
-  delete[] cmd;
-  return False;
-}
-Boolean RTSPClient::statsMediaSession(MediaSession& session) 
-{
-  char* cmd = NULL;
-  do {
-    // First, make sure that we have a RTSP session in progress
-    if (fLastSessionId == NULL) {
-      envir().setResultMsg(NoSessionErr);
-      break;
-    }
-
-    // Send the PAUSE command:
-
-    // First, construct an authenticator string:
-    char* authenticatorStr
-      = createAuthenticatorString(&fCurrentAuthenticator, "PAUSE", fBaseURL);
-
-    char* const cmdFmt =
-      "STATS %s RTSP/1.0\r\n"
-      "CSeq: %d\r\n"
-      "Session: %s\r\n"
-      "%s"
-      "%s"
-      "\r\n";
-
-    unsigned cmdSize = strlen(cmdFmt)
-      + strlen(fBaseURL)
-      + 20 /* max int len */
-      + strlen(fLastSessionId)
-      + strlen(authenticatorStr)
-      + fUserAgentHeaderStrSize;
-    cmd = new char[cmdSize];
-    sprintf(cmd, cmdFmt,
-	    fBaseURL,
-	    ++fCSeq,
-	    fLastSessionId,
-	    authenticatorStr,
-	    fUserAgentHeaderStr);
-    delete[] authenticatorStr;
-
-    if (!sendRequest(cmd, "STATS")) break;
-
-    if (fTCPStreamIdCount == 0) 
-		{ // When TCP streaming, don't look for a response
-      // Get the response from the server:
-      unsigned bytesRead; unsigned responseCode;
-      char* firstLine; char* nextLineStart;
-      if (!getResponse("STATS", bytesRead, responseCode, firstLine, nextLineStart)) break;
+      if (!getResponse("PAUSE", bytesRead, responseCode, firstLine, nextLineStart)) break;
     }
 
     delete[] cmd;
@@ -1433,21 +1315,21 @@ Boolean RTSPClient::pauseMediaSubsession(MediaSubsession& subsession) {
       envir().setResultMsg(NoSessionErr);
       break;
     }
-    
+
     // Send the PAUSE command:
-    
+
     // First, construct an authenticator string:
     char* authenticatorStr
       = createAuthenticatorString(&fCurrentAuthenticator, "PAUSE", fBaseURL);
-    
-    char* const cmdFmt =
+
+    char const* const cmdFmt =
       "PAUSE %s%s%s RTSP/1.0\r\n"
       "CSeq: %d\r\n"
       "Session: %s\r\n"
       "%s"
       "%s"
       "\r\n";
-    
+
     char const *prefix, *separator, *suffix;
     constructSubsessionURL(subsession, prefix, separator, suffix);
     if (fServerIsKasenna) separator = suffix = "";
@@ -1466,7 +1348,7 @@ Boolean RTSPClient::pauseMediaSubsession(MediaSubsession& subsession) {
 	    authenticatorStr,
 	    fUserAgentHeaderStr);
     delete[] authenticatorStr;
-    
+
     if (!sendRequest(cmd, "PAUSE")) break;
 
     if (fTCPStreamIdCount == 0) { // When TCP streaming, don't look for a response
@@ -1475,11 +1357,11 @@ Boolean RTSPClient::pauseMediaSubsession(MediaSubsession& subsession) {
       char* firstLine; char* nextLineStart;
       if (!getResponse("PAUSE", bytesRead, responseCode, firstLine, nextLineStart)) break;
     }
-      
+
     delete[] cmd;
     return True;
   } while (0);
-  
+
   delete[] cmd;
   return False;
 }
@@ -1500,7 +1382,7 @@ Boolean RTSPClient::recordMediaSubsession(MediaSubsession& subsession) {
       = createAuthenticatorString(&fCurrentAuthenticator,
 				  "RECORD", fBaseURL);
 
-    char* const cmdFmt =
+    char const* const cmdFmt =
       "RECORD %s%s%s RTSP/1.0\r\n"
       "CSeq: %d\r\n"
       "Session: %s\r\n"
@@ -1560,22 +1442,24 @@ Boolean RTSPClient::setMediaSessionParameter(MediaSession& /*session*/,
       = createAuthenticatorString(&fCurrentAuthenticator,
 				  "SET_PARAMETER", fBaseURL);
 
-    char* const cmdFmt =
+    char const* const cmdFmt =
       "SET_PARAMETER %s RTSP/1.0\r\n"
       "CSeq: %d\r\n"
       "Session: %s\r\n"
       "%s"
       "%s"
-      "%s: %s\r\n"
-      "\r\n";
+      "Content-length: %d\r\n\r\n"
+      "%s: %s\r\n";
 
+    unsigned parameterNameLen = strlen(parameterName);
+    unsigned parameterValueLen = strlen(parameterValue);
     unsigned cmdSize = strlen(cmdFmt)
       + strlen(fBaseURL)
       + 20 /* max int len */
       + strlen(fLastSessionId)
       + strlen(authenticatorStr)
       + fUserAgentHeaderStrSize
-      + strlen(parameterName) + strlen(parameterValue);
+      + parameterNameLen + parameterValueLen;
     cmd = new char[cmdSize];
     sprintf(cmd, cmdFmt,
 	    fBaseURL,
@@ -1583,6 +1467,7 @@ Boolean RTSPClient::setMediaSessionParameter(MediaSession& /*session*/,
 	    fLastSessionId,
 	    authenticatorStr,
 	    fUserAgentHeaderStr,
+	    parameterNameLen + parameterValueLen + 2, // the "+ 2" is for the \r\n after the parameter "name: value"
 	    parameterName, parameterValue);
     delete[] authenticatorStr;
 
@@ -1621,7 +1506,7 @@ Boolean RTSPClient::getMediaSessionParameter(MediaSession& /*session*/,
 				  "GET_PARAMETER", fBaseURL);
 
     if (haveParameterName) {
-      char* const cmdFmt =
+      char const* const cmdFmt =
 	"GET_PARAMETER %s RTSP/1.0\r\n"
 	"CSeq: %d\r\n"
 	"Session: %s\r\n"
@@ -1629,16 +1514,16 @@ Boolean RTSPClient::getMediaSessionParameter(MediaSession& /*session*/,
 	"%s"
 	"Content-type: text/parameters\r\n"
 	"Content-length: %d\r\n\r\n"
-	"%s\r\n"
-	"\r\n";
-      
+	"%s\r\n";
+
+      unsigned parameterNameLen = strlen(parameterName);
       unsigned cmdSize = strlen(cmdFmt)
 	+ strlen(fBaseURL)
 	+ 20 /* max int len */
 	+ strlen(fLastSessionId)
 	+ strlen(authenticatorStr)
 	+ fUserAgentHeaderStrSize
-	+ strlen(parameterName);
+	+ parameterNameLen;
       cmd = new char[cmdSize];
       sprintf(cmd, cmdFmt,
 	      fBaseURL,
@@ -1646,17 +1531,17 @@ Boolean RTSPClient::getMediaSessionParameter(MediaSession& /*session*/,
 	      fLastSessionId,
 	      authenticatorStr,
 	      fUserAgentHeaderStr,
-	      strlen(parameterName)+2,
+	      parameterNameLen + 2, // the "+ 2" is for the \r\n after the parameter name
 	      parameterName);
     } else {
-      char* const cmdFmt =
+      char const* const cmdFmt =
 	"GET_PARAMETER %s RTSP/1.0\r\n"
 	"CSeq: %d\r\n"
 	"Session: %s\r\n"
 	"%s"
 	"%s"
 	"\r\n";
-      
+
       unsigned cmdSize = strlen(cmdFmt)
 	+ strlen(fBaseURL)
 	+ 20 /* max int len */
@@ -1679,7 +1564,7 @@ Boolean RTSPClient::getMediaSessionParameter(MediaSession& /*session*/,
     // This section was copied/modified from the RTSPClient::describeURL func
     unsigned bytesRead; unsigned responseCode;
     char* firstLine; char* nextLineStart;
-    if (!getResponse("GET_PARAMETER", bytesRead, responseCode, firstLine, 
+    if (!getResponse("GET_PARAMETER", bytesRead, responseCode, firstLine,
             nextLineStart, False /*don't check for response code 200*/)) break;
 
     // Inspect the first line to check whether it's a result code that
@@ -1709,12 +1594,12 @@ Boolean RTSPClient::getMediaSessionParameter(MediaSession& /*session*/,
 	  break;
 	}
       }
-    } 
+    }
     delete[] serverType;
 
     // We're now at the end of the response header lines
     if (lineStart == NULL) {
-      envir().setResultMsg("no content following header lines: ", 
+      envir().setResultMsg("no content following header lines: ",
                             fResponseBuffer);
       break;
     }
@@ -1751,7 +1636,7 @@ Boolean RTSPClient::getMediaSessionParameter(MediaSession& /*session*/,
 	  char* ptr = &firstLine[bytesRead];
 	  int bytesRead2 = readSocket(envir(), fInputSocketNum, (unsigned char*)ptr,
 				      numExtraBytesNeeded, fromAddress);
-	  if (bytesRead2 < 0) break;
+	  if (bytesRead2 <= 0) break;
 	  ptr[bytesRead2] = '\0';
 	  if (fVerbosityLevel >= 1) {
 	    envir() << "Read " << bytesRead2 << " extra bytes: "
@@ -1771,7 +1656,7 @@ Boolean RTSPClient::getMediaSessionParameter(MediaSession& /*session*/,
     delete[] cmd;
     return True;
   } while (0);
-  
+
   delete[] cmd;
   return False;
 }
@@ -1792,7 +1677,8 @@ Boolean RTSPClient::teardownMediaSession(MediaSession& session) {
       = createAuthenticatorString(&fCurrentAuthenticator,
 				  "TEARDOWN", fBaseURL);
 
-    char* const cmdFmt =
+    char const* sessURL = sessionURL(session);
+    char const* const cmdFmt =
       "TEARDOWN %s RTSP/1.0\r\n"
       "CSeq: %d\r\n"
       "Session: %s\r\n"
@@ -1801,14 +1687,14 @@ Boolean RTSPClient::teardownMediaSession(MediaSession& session) {
       "\r\n";
 
     unsigned cmdSize = strlen(cmdFmt)
-      + strlen(fBaseURL)
+      + strlen(sessURL)
       + 20 /* max int len */
       + strlen(fLastSessionId)
       + strlen(authenticatorStr)
       + fUserAgentHeaderStrSize;
     cmd = new char[cmdSize];
     sprintf(cmd, cmdFmt,
-	    fBaseURL,
+	    sessURL,
 	    ++fCSeq,
 	    fLastSessionId,
 	    authenticatorStr,
@@ -1821,8 +1707,8 @@ Boolean RTSPClient::teardownMediaSession(MediaSession& session) {
       // Get the response from the server:
       unsigned bytesRead; unsigned responseCode;
       char* firstLine; char* nextLineStart;
-      if (!getResponse("TEARDOWN", bytesRead, responseCode, firstLine, nextLineStart)) break;
-      
+      getResponse("TEARDOWN", bytesRead, responseCode, firstLine, nextLineStart); // ignore the response; from our POV, we're done
+
       // Run through each subsession, deleting its "sessionId":
       MediaSubsessionIterator iter(session);
       MediaSubsession* subsession;
@@ -1834,7 +1720,7 @@ Boolean RTSPClient::teardownMediaSession(MediaSession& session) {
       delete[] fLastSessionId; fLastSessionId = NULL;
       // we're done with this session
     }
-      
+
     delete[] cmd;
     return True;
   } while (0);
@@ -1859,7 +1745,7 @@ Boolean RTSPClient::teardownMediaSubsession(MediaSubsession& subsession) {
       = createAuthenticatorString(&fCurrentAuthenticator,
 				  "TEARDOWN", fBaseURL);
 
-    char* const cmdFmt =
+    char const* const cmdFmt =
       "TEARDOWN %s%s%s RTSP/1.0\r\n"
       "CSeq: %d\r\n"
       "Session: %s\r\n"
@@ -1891,9 +1777,9 @@ Boolean RTSPClient::teardownMediaSubsession(MediaSubsession& subsession) {
       // Get the response from the server:
       unsigned bytesRead; unsigned responseCode;
       char* firstLine; char* nextLineStart;
-      if (!getResponse("TEARDOWN", bytesRead, responseCode, firstLine, nextLineStart)) break;
+      getResponse("TEARDOWN", bytesRead, responseCode, firstLine, nextLineStart); // ignore the response; from our POV, we're done
     }
-      
+
     delete[] (char*)subsession.sessionId;
     subsession.sessionId = NULL;
     // we're done with this session
@@ -1907,7 +1793,7 @@ Boolean RTSPClient::teardownMediaSubsession(MediaSubsession& subsession) {
 }
 
 Boolean RTSPClient
-::openConnectionFromURL(char const* url, Authenticator* authenticator) {
+::openConnectionFromURL(char const* url, Authenticator* authenticator, int timeout) {
   do {
     // Set this as our base URL:
     delete[] fBaseURL; fBaseURL = strDup(url); if (fBaseURL == NULL) break;
@@ -1920,26 +1806,56 @@ Boolean RTSPClient
     if (!parseRTSPURL(envir(), url, destAddress, urlPortNum, &urlSuffix)) break;
     portNumBits destPortNum
       = fTunnelOverHTTPPortNum == 0 ? urlPortNum : fTunnelOverHTTPPortNum;
-    
+
     if (fInputSocketNum < 0) {
       // We don't yet have a TCP socket.  Set one up (blocking) now:
       fInputSocketNum = fOutputSocketNum
 	= setupStreamSocket(envir(), 0, False /* =>blocking */);
       if (fInputSocketNum < 0) break;
-    
+
       // Connect to the remote endpoint:
       fServerAddress = *(unsigned*)(destAddress.data());
       MAKE_SOCKADDR_IN(remoteName, fServerAddress, htons(destPortNum));
+      //Start change for timeout on connect
+
+/*
       if (connect(fInputSocketNum, (struct sockaddr*)&remoteName, sizeof remoteName)
 	  != 0) {
 	envir().setResultErrMsg("connect() failed: ");
 	break;
+*/
+      fd_set set;
+      FD_ZERO(&set);
+      timeval tvout = {0,0};
+      if (timeout > 0) {
+        FD_SET((unsigned)fInputSocketNum, &set);
+        tvout.tv_sec = timeout;
+        tvout.tv_usec = 0;
+        makeSocketNonBlocking(fInputSocketNum);
       }
-      
+      if (connect(fInputSocketNum, (struct sockaddr*) &remoteName, sizeof remoteName) != 0) {
+        if (envir().getErrno() != EINPROGRESS && envir().getErrno() != EWOULDBLOCK) {
+          envir().setResultErrMsg("connect() failed: ");
+          break;
+        }
+	if (timeout > 0 && (select(fInputSocketNum + 1, NULL, &set, NULL, &tvout) <= 0)) {
+          envir().setResultErrMsg("select/connect() failed: ");
+          break;
+        }
+/*
+errno = 0;
+if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &err, &len) < 0 || errno != 0 )
+{
+break;
+}
+*/
+      //End change for timeout on connect
+      }
+
       if (fTunnelOverHTTPPortNum != 0 && !setupHTTPTunneling(urlSuffix, authenticator)) break;
     }
 
-    return True; 
+    return True;
   } while (0);
 
   fDescribeStatusCode = 1;
@@ -2075,7 +1991,7 @@ RTSPClient::createAuthenticatorString(Authenticator const* authenticator,
     // We've been provided a filled-in authenticator, so use it:
     char* authenticatorStr;
     if (authenticator->nonce() != NULL) { // Digest authentication
-      char* const authFmt =
+      char const* const authFmt =
 	"Authorization: Digest username=\"%s\", realm=\"%s\", "
 	"nonce=\"%s\", uri=\"%s\", response=\"%s\"\r\n";
       char const* response = authenticator->computeDigestResponse(cmd, url);
@@ -2088,14 +2004,14 @@ RTSPClient::createAuthenticatorString(Authenticator const* authenticator,
 	      authenticator->nonce(), url, response);
       authenticator->reclaimDigestResponse(response);
     } else { // Basic authentication
-      char* const authFmt = "Authorization: Basic %s\r\n";
+      char const* const authFmt = "Authorization: Basic %s\r\n";
 
       unsigned usernamePasswordLength = strlen(authenticator->username()) + 1 + strlen(authenticator->password());
       char* usernamePassword = new char[usernamePasswordLength+1];
       sprintf(usernamePassword, "%s:%s", authenticator->username(), authenticator->password());
 
       char* response = base64Encode(usernamePassword, usernamePasswordLength);
-      unsigned authBufSize = strlen(authFmt) + strlen(response);
+      unsigned const authBufSize = strlen(authFmt) + strlen(response) + 1;
       authenticatorStr = new char[authBufSize];
       sprintf(authenticatorStr, authFmt, response);
       delete[] response; delete[] usernamePassword;
@@ -2137,7 +2053,7 @@ void RTSPClient::checkForAuthenticationFailure(unsigned responseCode,
       }
       delete[] realm; delete[] nonce;
       if (foundAuthenticateHeader) break;
-    } 
+    }
   }
 }
 
@@ -2190,7 +2106,7 @@ Boolean RTSPClient::getResponse(char const* tag,
     nextLineStart = getLine(firstLine);
     if (!parseResponseCode(firstLine, responseCode)) break;
 
-    
+
     if (responseCode != 200 && checkFor200Response) {
       envir().setResultMsg(tag, ": cannot handle response: ", firstLine);
       break;
@@ -2206,7 +2122,7 @@ Boolean RTSPClient::getResponse(char const* tag,
 unsigned RTSPClient::getResponse1(char*& responseBuffer,
 				  unsigned responseBufferSize) {
   struct sockaddr_in fromAddress;
-  
+
   if (responseBufferSize == 0) return 0; // just in case...
   responseBuffer[0] = '\0'; // ditto
 
@@ -2216,40 +2132,42 @@ unsigned RTSPClient::getResponse1(char*& responseBuffer,
   Boolean success = False;
   while (1) {
     unsigned char firstByte;
-    if (readSocket(envir(), fInputSocketNum, &firstByte, 1, fromAddress)	!= 1) break;
-    if (firstByte != '$') 
-    {
+    struct timeval timeout;
+    timeout.tv_sec = 30; timeout.tv_usec = 0;
+    if (readSocket(envir(), fInputSocketNum, &firstByte, 1, fromAddress, &timeout)
+	!= 1) break;
+    if (firstByte != '$') {
       // Normal case: This is the start of a regular response; use it:
       responseBuffer[0] = firstByte;
       success = True;
       break;
-    } 
-    else 
-    {
+    } else {
       // This is an interleaved packet; read and discard it:
       unsigned char streamChannelId;
-      if (readSocket(envir(), fInputSocketNum, &streamChannelId, 1, fromAddress) 	  != 1) break;
+      if (readSocket(envir(), fInputSocketNum, &streamChannelId, 1, fromAddress)
+	  != 1) break;
 
       unsigned short size;
-      if (readSocketExact(envir(), fInputSocketNum, (unsigned char*)&size, 2,		     fromAddress) != 2) break;
+      if (readSocketExact(envir(), fInputSocketNum, (unsigned char*)&size, 2,
+		     fromAddress) != 2) break;
       size = ntohs(size);
       if (fVerbosityLevel >= 1) {
-	        envir() << "Discarding interleaved RTP or RTCP packet ("
-		        << size << " bytes, channel id "
-		        << streamChannelId << ")\n";
+	envir() << "Discarding interleaved RTP or RTCP packet ("
+		<< size << " bytes, channel id "
+		<< streamChannelId << ")\n";
       }
 
       unsigned char* tmpBuffer = new unsigned char[size];
       if (tmpBuffer == NULL) break;
       unsigned bytesRead = 0;
       unsigned bytesToRead = size;
-      unsigned curBytesRead;
+      int curBytesRead;
       while ((curBytesRead = readSocket(envir(), fInputSocketNum,
 					&tmpBuffer[bytesRead], bytesToRead,
 					fromAddress)) > 0) {
-	        bytesRead += curBytesRead;
-	        if (bytesRead >= size) break;
-	        bytesToRead -= curBytesRead;
+	bytesRead += curBytesRead;
+	if (bytesRead >= size) break;
+	bytesToRead -= curBytesRead;
       }
       delete[] tmpBuffer;
       if (bytesRead != size) break;
@@ -2258,7 +2176,7 @@ unsigned RTSPClient::getResponse1(char*& responseBuffer,
     }
   }
   if (!success) return 0;
-    
+
   // Keep reading data from the socket until we see "\r\n\r\n" (except
   // at the start), or until we fill up our buffer.
   // Don't read any more than this.
@@ -2266,23 +2184,24 @@ unsigned RTSPClient::getResponse1(char*& responseBuffer,
   Boolean haveSeenNonCRLF = False;
   int bytesRead = 1; // because we've already read the first byte
   while (bytesRead < (int)responseBufferSize) {
-    unsigned bytesReadNow
+    int bytesReadNow
       = readSocket(envir(), fInputSocketNum,
 		   (unsigned char*)(responseBuffer+bytesRead),
 		   1, fromAddress);
-    if (bytesReadNow == 0) {
+    if (bytesReadNow <= 0) {
       envir().setResultMsg("RTSP response was truncated");
       break;
     }
     bytesRead += bytesReadNow;
-    
-    // Check whether we have "\r\n\r\n":
+
+    // Check whether we have "\r\n\r\n" (or "\r\r" or "\n\n"):
     char* lastToCheck = responseBuffer+bytesRead-4;
     if (lastToCheck < responseBuffer) continue;
     for (; p <= lastToCheck; ++p) {
       if (haveSeenNonCRLF) {
-	if (*p == '\r' && *(p+1) == '\n' &&
-	    *(p+2) == '\r' && *(p+3) == '\n') {
+	if ((*p == '\r' && *(p+1) == '\n' && *(p+2) == '\r' && *(p+3) == '\n')
+	    || (*(p+2) == '\r' && *(p+3) == '\r')
+	    || (*(p+2) == '\n' && *(p+3) == '\n')) {
 	  responseBuffer[bytesRead] = '\0';
 
 	  // Before returning, trim any \r or \n from the start:
@@ -2299,12 +2218,12 @@ unsigned RTSPClient::getResponse1(char*& responseBuffer,
       }
     }
   }
-  
+
   envir().setResultMsg("We received a response not ending with <CR><LF><CR><LF>");
   return 0;
 }
 
-Boolean RTSPClient::parseResponseCode(char const* line, 
+Boolean RTSPClient::parseResponseCode(char const* line,
 				      unsigned& responseCode) {
   if (sscanf(line, "%*s%u", &responseCode) != 1) {
     envir().setResultMsg("no response code in line: \"", line, "\"");
@@ -2314,7 +2233,7 @@ Boolean RTSPClient::parseResponseCode(char const* line,
   return True;
 }
 
-Boolean RTSPClient::parseTransportResponse(char const* line, 
+Boolean RTSPClient::parseTransportResponse(char const* line,
 					   char*& serverAddressStr,
 					   portNumBits& serverPortNum,
 					   unsigned char& rtpChannelId,
@@ -2386,25 +2305,29 @@ Boolean RTSPClient::parseTransportResponse(char const* line,
   return False;
 }
 
-Boolean RTSPClient::parseRTPInfoHeader(char const* line,
-				       unsigned& trackId,
-				       u_int16_t& seqNum,
-				       u_int32_t& timestamp) {
-  if (_strncasecmp(line, "RTP-Info: ", 10) != 0) return False;
-  line += 10;
-  char const* fields = line;
-  char* field = strDupSize(fields);
-  
-  while (sscanf(fields, "%[^;]", field) == 1) {
-    if (sscanf(field, "url=trackID=%u", &trackId) == 1 ||
-	sscanf(field, "url=trackid=%u", &trackId) == 1 ||
-	sscanf(field, "seq=%hu", &seqNum) == 1 ||
+Boolean RTSPClient::parseRTPInfoHeader(char*& line, u_int16_t& seqNum, u_int32_t& timestamp) {
+  // At this point in the parsing, "line" should begin with either "RTP-Info: " (for the start of the header),
+  // or ",", indicating the RTP-Info parameter list for the 2nd-through-nth subsessions:
+  if (_strncasecmp(line, "RTP-Info: ", 10) == 0) {
+    line += 10;
+  } else if (line[0] == ',') {
+    ++line;
+  } else {
+    return False;
+  }
+
+  // "line" now consists of a ';'-separated list of parameters, ending with ',' or '\0'.
+  char* field = strDupSize(line);
+
+  while (sscanf(line, "%[^;,]", field) == 1) {
+    if (sscanf(field, "seq=%hu", &seqNum) == 1 ||
 	sscanf(field, "rtptime=%u", &timestamp) == 1) {
     }
-    
-    fields += strlen(field);
-    if (fields[0] == '\0') break;
-    ++fields; // skip over the ';'
+
+    line += strlen(field);
+    if (line[0] == '\0' || line[0] == ',') break;
+    // ASSERT: line[0] == ';'
+    ++line; // skip over the ';'
   }
 
   delete[] field;
@@ -2415,14 +2338,14 @@ Boolean RTSPClient::parseScaleHeader(char const* line, float& scale) {
   if (_strncasecmp(line, "Scale: ", 7) != 0) return False;
   line += 7;
 
-  Locale("POSIX");
+  Locale l("C", LC_NUMERIC);
   return sscanf(line, "%f", &scale) == 1;
 }
 
-Boolean RTSPClient::parseGetParameterHeader(char const* line, 
+Boolean RTSPClient::parseGetParameterHeader(char const* line,
                                             const char* param,
                                             char*& value) {
-  if ((param != NULL && param[0] != '\0') && 
+  if ((param != NULL && param[0] != '\0') &&
       (line != NULL && line[0] != '\0')) {
     int param_len = strlen(param);
     int line_len = strlen(line);
@@ -2433,7 +2356,7 @@ Boolean RTSPClient::parseGetParameterHeader(char const* line,
       }
       return False;
     }
-    
+
     // Strip \r\n from the end if it's there.
     if (line[line_len-2] == '\r' && line[line_len-1] == '\n') {
       line_len -= 2;
@@ -2449,7 +2372,7 @@ Boolean RTSPClient::parseGetParameterHeader(char const* line,
         param_len += 2;
       }
     }
-    
+
     // Get the string we want out of the line:
     value = strDup(line+param_len);
     return True;
@@ -2459,6 +2382,8 @@ Boolean RTSPClient::parseGetParameterHeader(char const* line,
 
 Boolean RTSPClient::setupHTTPTunneling(char const* urlSuffix,
 				       Authenticator* authenticator) {
+  // Set up RTSP-over-HTTP tunneling, as described in
+  //     http://developer.apple.com/documentation/QuickTime/QTSS/Concepts/chapter_2_section_14.html
   if (fVerbosityLevel >= 1) {
     envir() << "Requesting RTSP-over-HTTP tunneling (on port "
 	    << fTunnelOverHTTPPortNum << ")\n\n";
@@ -2479,13 +2404,13 @@ Boolean RTSPClient::setupHTTPTunneling(char const* urlSuffix,
     our_MD5Data((unsigned char*)(&seedData), sizeof seedData, sessionCookie);
     // DSS seems to require that the 'session cookie' string be 22 bytes long:
     sessionCookie[23] = '\0';
-    
+
     // Construct an authenticator string:
     char* authenticatorStr
       = createAuthenticatorString(authenticator, "GET", urlSuffix);
 
     // Begin by sending a HTTP "GET", to set up the server->client link:
-    char* const getCmdFmt =
+    char const* const getCmdFmt =
       "GET %s HTTP/1.0\r\n"
       "%s"
       "%s"
@@ -2507,7 +2432,7 @@ Boolean RTSPClient::setupHTTPTunneling(char const* urlSuffix,
 	    sessionCookie);
     delete[] authenticatorStr;
     if (!sendRequest(cmd, "HTTP GET", False/*don't base64-encode*/)) break;
-    
+
     // Get the response from the server:
     unsigned bytesRead; unsigned responseCode;
     char* firstLine; char* nextLineStart;
@@ -2524,7 +2449,7 @@ Boolean RTSPClient::setupHTTPTunneling(char const* urlSuffix,
     // this socket.
     fOutputSocketNum = setupStreamSocket(envir(), 0, False /* =>blocking */);
     if (fOutputSocketNum < 0) break;
-    
+
     // Connect to the remote endpoint:
     MAKE_SOCKADDR_IN(remoteName, fServerAddress, htons(fTunnelOverHTTPPortNum));
     if (connect(fOutputSocketNum,
@@ -2535,7 +2460,7 @@ Boolean RTSPClient::setupHTTPTunneling(char const* urlSuffix,
 
     // Then, send a HTTP "POST", to set up the client->server link:
     authenticatorStr = createAuthenticatorString(authenticator, "POST", urlSuffix);
-    char* const postCmdFmt =
+    char const* const postCmdFmt =
       "POST %s HTTP/1.0\r\n"
       "%s"
       "%s"
@@ -2559,7 +2484,7 @@ Boolean RTSPClient::setupHTTPTunneling(char const* urlSuffix,
 	    sessionCookie);
     delete[] authenticatorStr;
     if (!sendRequest(cmd, "HTTP POST", False/*don't base64-encode*/)) break;
-    
+
     // Note that there's no response to the "POST".
 
     delete[] cmd;
@@ -2581,7 +2506,8 @@ void RTSPClient::incomingRequestHandler1() {
   char* readBuf = fResponseBuffer;
   bytesRead = getResponse1(readBuf, fResponseBufferSize);
   if (bytesRead == 0) {
-    envir().setResultErrMsg("Failed to read response: ");
+    envir().setResultMsg("Failed to read response: Connection was closed by the remote host.");
+    envir().taskScheduler().turnOffBackgroundReadHandling(fInputSocketNum); // because the connection died
     return;
   }
   // Parse the request string into command name and 'CSeq',

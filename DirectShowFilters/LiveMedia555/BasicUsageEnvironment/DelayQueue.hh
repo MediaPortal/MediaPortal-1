@@ -11,9 +11,9 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
- // Copyright (c) 1996-2000, Live Networks, Inc.  All rights reserved
+ // Copyright (c) 1996-2009, Live Networks, Inc.  All rights reserved
 // Delay queue
 // C++ header
 
@@ -46,7 +46,7 @@ public:
   time_base_seconds useconds() {
     return fTv.tv_usec;
   }
-  
+
   int operator>=(Timeval const& arg2) const;
   int operator<=(Timeval const& arg2) const {
     return arg2 >= *this;
@@ -63,16 +63,16 @@ public:
   int operator!=(Timeval const& arg2) const {
     return !(*this == arg2);
   }
-  
+
   void operator+=(class DelayInterval const& arg2);
   void operator-=(class DelayInterval const& arg2);
   // returns ZERO iff arg2 >= arg1
-  
+
 protected:
   Timeval(time_base_seconds seconds, time_base_seconds useconds) {
     fTv.tv_sec = seconds; fTv.tv_usec = useconds;
   }
-  
+
 private:
   time_base_seconds& secs() {
     return (time_base_seconds&)fTv.tv_sec;
@@ -80,7 +80,7 @@ private:
   time_base_seconds& usecs() {
     return (time_base_seconds&)fTv.tv_usec;
   }
-  
+
   struct timeval fTv;
 };
 
@@ -127,9 +127,6 @@ public:
 
 EventTime TimeNow();
 
-DelayInterval TimeRemainingUntil(EventTime const& futureEvent);
-// Returns DELAY_ZERO if "futureEvent" has already occurred.
-
 extern EventTime const THE_END_OF_TIME;
 
 
@@ -145,9 +142,9 @@ public:
 
 protected: // abstract base class
   DelayQueueEntry(DelayInterval delay);
-  
+
   virtual void handleTimeout();
-  
+
 private:
   friend class DelayQueue;
   DelayQueueEntry* fNext;
@@ -164,13 +161,13 @@ class DelayQueue: public DelayQueueEntry {
 public:
   DelayQueue();
   virtual ~DelayQueue();
-  
+
   void addEntry(DelayQueueEntry* newEntry); // returns a token for the entry
   void updateEntry(DelayQueueEntry* entry, DelayInterval newDelay);
   void updateEntry(long tokenToFind, DelayInterval newDelay);
   void removeEntry(DelayQueueEntry* entry); // but doesn't delete it
   DelayQueueEntry* removeEntry(long tokenToFind); // but doesn't delete it
-  
+
   DelayInterval const& timeToNextAlarm();
   void handleAlarm();
 
@@ -178,7 +175,7 @@ private:
   DelayQueueEntry* head() { return fNext; }
   DelayQueueEntry* findEntryByToken(long token);
   void synchronize(); // bring the 'time remaining' fields up-to-date
-  
+
   EventTime fLastSyncTime;
 };
 

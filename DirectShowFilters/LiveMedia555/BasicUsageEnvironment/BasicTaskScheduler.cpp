@@ -11,9 +11,9 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
-// Copyright (c) 1996-2000 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // Basic Usage Environment: for a simple, non-scripted, console application
 // Implementation
 
@@ -26,7 +26,6 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include <sys/select.h>
 #include <unix.h>
 #endif
-extern void Log(const char *fmt, ...) ;
 
 ////////// BasicTaskScheduler //////////
 
@@ -46,48 +45,42 @@ BasicTaskScheduler::~BasicTaskScheduler() {
 #define MILLION 1000000
 #endif
 
-void BasicTaskScheduler::SingleStep(unsigned maxDelayTime) 
-{
+void BasicTaskScheduler::SingleStep(unsigned maxDelayTime) {
   fd_set readSet = fReadSet; // make a copy for this select() call
-  
+
   DelayInterval const& timeToDelay = fDelayQueue.timeToNextAlarm();
   struct timeval tv_timeToDelay;
   tv_timeToDelay.tv_sec = timeToDelay.seconds();
   tv_timeToDelay.tv_usec = timeToDelay.useconds();
-
-  
-  //if ( tv_timeToDelay.tv_sec ==0) tv_timeToDelay.tv_sec=1;
-
   // Very large "tv_sec" values cause select() to fail.
   // Don't make it any larger than 1 million seconds (11.5 days)
   const long MAX_TV_SEC = MILLION;
-  if (tv_timeToDelay.tv_sec > MAX_TV_SEC) 
-  {
+  if (tv_timeToDelay.tv_sec > MAX_TV_SEC) {
     tv_timeToDelay.tv_sec = MAX_TV_SEC;
   }
   // Also check our "maxDelayTime" parameter (if it's > 0):
   if (maxDelayTime > 0 &&
       (tv_timeToDelay.tv_sec > (long)maxDelayTime/MILLION ||
        (tv_timeToDelay.tv_sec == (long)maxDelayTime/MILLION &&
-	      tv_timeToDelay.tv_usec > (long)maxDelayTime%MILLION))) {
+	tv_timeToDelay.tv_usec > (long)maxDelayTime%MILLION))) {
     tv_timeToDelay.tv_sec = maxDelayTime/MILLION;
     tv_timeToDelay.tv_usec = maxDelayTime%MILLION;
   }
-  
-  int selectResult = select(fMaxNumSockets, &readSet, NULL, NULL,  &tv_timeToDelay);
 
+  int selectResult = select(fMaxNumSockets, &readSet, NULL, NULL,
+			    &tv_timeToDelay);
   if (selectResult < 0) {
 #if defined(__WIN32__) || defined(_WIN32)
     int err = WSAGetLastError();
     // For some unknown reason, select() in Windoze sometimes fails with WSAEINVAL if
     // it was called with no entries set in "readSet".  If this happens, ignore it:
     if (err == WSAEINVAL && readSet.fd_count == 0) {
-      err = 0;
+      err = EINTR;
       // To stop this from happening again, create a dummy readable socket:
       int dummySocketNum = socket(AF_INET, SOCK_DGRAM, 0);
       FD_SET((unsigned)dummySocketNum, &fReadSet);
     }
-    if (err != 0) {
+    if (err != EINTR) {
 #else
     if (errno != EINTR && errno != EAGAIN) {
 #endif
@@ -98,10 +91,7 @@ void BasicTaskScheduler::SingleStep(unsigned maxDelayTime)
 	exit(0);
       }
   }
-  
-  // Handle any delayed event that may have come due:
-  fDelayQueue.handleAlarm();
-  
+
   // Call the handler function for one readable socket:
   HandlerIterator iter(*fReadHandlers);
   HandlerDescriptor* handler;
@@ -144,6 +134,10 @@ void BasicTaskScheduler::SingleStep(unsigned maxDelayTime)
     }
     if (handler == NULL) fLastHandledSocketNum = -1;//because we didn't call a handler
   }
+
+  // Also handle any delayed event that may have come due.  (Note that we do this *after* calling a socket
+  // handler, in case the delayed event handler modifies the set of readable socket.)
+  fDelayQueue.handleAlarm();
 }
 
 void BasicTaskScheduler::turnOnBackgroundReadHandling(int socketNum,

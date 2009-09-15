@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "mTunnel" multicast access service
-// Copyright (c) 1996-1998 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // 'Group sockets'
 // C++ header
 
@@ -40,7 +40,7 @@ class OutputSocket: public Socket {
 public:
   OutputSocket(UsageEnvironment& env);
   virtual ~OutputSocket();
-  
+
   Boolean write(netAddressBits address, Port port, u_int8_t ttl,
 		unsigned char* buffer, unsigned bufferSize);
 
@@ -107,21 +107,21 @@ public:
   struct in_addr const& sourceFilterAddress() const {
     return fIncomingGroupEId.sourceFilterAddress();
   }
-  
+
   Boolean isSSM() const {
     return fIncomingGroupEId.isSSM();
   }
-  
+
   u_int8_t ttl() const { return fTTL; }
-  
+
   void multicastSendOnly(); // send, but don't receive any multicast packets
 
   Boolean output(UsageEnvironment& env, u_int8_t ttl,
 		 unsigned char* buffer, unsigned bufferSize,
 		 DirectedNetInterface* interfaceNotToFwdBackTo = NULL);
-  
+
   DirectedNetInterfaceSet& members() { return fMembers; }
-  
+
   Boolean deleteIfNoMembers;
   Boolean isSlave; // for tunneling
 
@@ -133,23 +133,21 @@ public:
   NetInterfaceTrafficStats statsGroupOutgoing; // *not* static
   NetInterfaceTrafficStats statsGroupRelayedIncoming; // *not* static
   NetInterfaceTrafficStats statsGroupRelayedOutgoing; // *not* static
-  
+
   Boolean wasLoopedBackFromUs(UsageEnvironment& env,
 			      struct sockaddr_in& fromAddress);
-  
-  static Groupsock* lookupByName(UsageEnvironment& env, char const* name);
-  
+
 public: // redefined virtual functions
   virtual Boolean handleRead(unsigned char* buffer, unsigned bufferMaxSize,
 			     unsigned& bytesRead,
 			     struct sockaddr_in& fromAddress);
-  
+
 private:
   int outputToAllMembersExcept(DirectedNetInterface* exceptInterface,
 			       u_int8_t ttlToFwd,
 			       unsigned char* data, unsigned size,
 			       netAddressBits sourceAddr);
-  
+
 private:
   GroupEId fIncomingGroupEId;
   destRecord* fDests;
@@ -184,19 +182,19 @@ public:
   class Iterator {
   public:
     Iterator(GroupsockLookupTable& groupsocks);
-    
+
     Groupsock* next(); // NULL iff none
-    
+
   private:
     AddressPortLookupTable::Iterator fIter;
   };
-  
+
 private:
   Groupsock* AddNew(UsageEnvironment& env,
 		    netAddressBits groupAddress,
 		    netAddressBits sourceFilterAddress,
 		    Port port, u_int8_t ttl);
-  
+
 private:
   friend class Iterator;
   AddressPortLookupTable fTable;

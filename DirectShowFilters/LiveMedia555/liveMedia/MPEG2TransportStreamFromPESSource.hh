@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A filter for converting a stream of MPEG PES packets to a MPEG-2 Transport Stream
 // C++ header
 
@@ -33,13 +33,12 @@ public:
   static MPEG2TransportStreamFromPESSource*
   createNew(UsageEnvironment& env, MPEG1or2DemuxedElementaryStream* inputSource);
 
-
-  MPEG1or2DemuxedElementaryStream* InputSource() { return fInputSource;}
 protected:
   MPEG2TransportStreamFromPESSource(UsageEnvironment& env,
 				    MPEG1or2DemuxedElementaryStream* inputSource);
       // called only by createNew()
   virtual ~MPEG2TransportStreamFromPESSource();
+
 private:
   // Redefined virtual functions:
   virtual void doStopGettingFrames();

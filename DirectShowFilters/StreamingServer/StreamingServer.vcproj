@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;;  ..\LiveMedia555\BasicUsageEnvironment;..\LiveMedia555\UsageEnvironment; ..\LiveMedia555\liveMedia; ..\LiveMedia555\groupsock"
+				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;&quot;$(WINDOWS_SDK)Include\&quot;;&quot;$(DXSDK_DIR)Include&quot;;..\LiveMedia555\BasicUsageEnvironment;..\LiveMedia555\UsageEnvironment;..\LiveMedia555\liveMedia;..\LiveMedia555\groupsock;../LiveMedia555/MediaPortal"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -131,8 +131,8 @@
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;; ..\LiveMedia555\BasicUsageEnvironment;..\LiveMedia555\UsageEnvironment; ..\LiveMedia555\liveMedia; ..\LiveMedia555\groupsock"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CRT_SECURE_NO_WARNINGS"
+				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;&quot;$(WINDOWS_SDK)Include\&quot;;&quot;$(DXSDK_DIR)Include&quot;;..\LiveMedia555\BasicUsageEnvironment;..\LiveMedia555\UsageEnvironment;..\LiveMedia555\liveMedia;..\LiveMedia555\groupsock;../LiveMedia555/MediaPortal"
+				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				EnableEnhancedInstructionSet="0"
 				FloatingPointModel="0"
@@ -155,7 +155,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="strmbase.lib livemedia555.lib winmm.lib WSock32.Lib"
+				AdditionalDependencies="strmbase.lib livemedia555.lib winmm.lib wsock32.lib"
 				OutputFile=".\bin\Release\$(ProjectName).dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Release_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;; ..\shared"

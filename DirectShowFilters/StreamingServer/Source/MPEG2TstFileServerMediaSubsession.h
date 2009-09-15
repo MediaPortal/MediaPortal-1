@@ -11,7 +11,7 @@
 #include "ByteStreamFileSource.hh"
 #include "MPEG2TransportStreamFramer.hh"
 #include "MPEG1or2Demux.hh"
-#include "MPEG2TransportStreamFromPESSource.hh"
+#include "MPMPEG2TransportStreamFromPESSource.h"
 #include "TsFileDuration.h"
 #include "TsStreamFileSource.hh"
 
@@ -30,7 +30,7 @@ protected:
 private: // redefined virtual functions
   virtual FramedSource* createNewStreamSource(unsigned clientSessionId,unsigned& estBitrate);
   virtual RTPSink* createNewRTPSink(Groupsock* rtpGroupsock,unsigned char rtpPayloadTypeIfDynamic,FramedSource* inputSource);
-	virtual void seekStreamSource(FramedSource* inputSource, float seekNPT);
+	virtual void seekStreamSource(FramedSource* inputSource, double seekNPT);
   char m_fileName[MAX_PATH];
 };
 

@@ -11,19 +11,12 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
-
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // JPEG Video (RFC 2435) RTP Sources
 // Implementation
-// 09 26 2002 - Initial Implementation : Giom
-// Copyright (c) 1990-2002 Morgan Multimedia  All rights reserved.
-
-// 02/2003: Cleaned up to add the synthesized JPEG header to the start
-// of each incoming frame.
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
 
 #include "JPEGVideoRTPSource.hh"
 
@@ -55,18 +48,21 @@ private: // redefined virtual functions
 JPEGVideoRTPSource*
 JPEGVideoRTPSource::createNew(UsageEnvironment& env, Groupsock* RTPgs,
 			      unsigned char rtpPayloadFormat,
-			      unsigned rtpTimestampFrequency) {
+			      unsigned rtpTimestampFrequency,
+			      unsigned defaultWidth, unsigned defaultHeight) {
   return new JPEGVideoRTPSource(env, RTPgs, rtpPayloadFormat,
-				rtpTimestampFrequency);
+				rtpTimestampFrequency, defaultWidth, defaultHeight);
 }
 
 JPEGVideoRTPSource::JPEGVideoRTPSource(UsageEnvironment& env,
 				       Groupsock* RTPgs,
 				       unsigned char rtpPayloadFormat,
-				       unsigned rtpTimestampFrequency)
+				       unsigned rtpTimestampFrequency,
+				       unsigned defaultWidth, unsigned defaultHeight)
   : MultiFramedRTPSource(env, RTPgs,
 			 rtpPayloadFormat, rtpTimestampFrequency,
-			 new JPEGBufferedPacketFactory) {
+			 new JPEGBufferedPacketFactory),
+    fDefaultWidth(defaultWidth), fDefaultHeight(defaultHeight) {
 }
 
 JPEGVideoRTPSource::~JPEGVideoRTPSource() {
@@ -187,7 +183,7 @@ static void createJPEGHeader(unsigned char* buf, unsigned type,
 
   // MARKER_SOI:
   *ptr++ = 0xFF; *ptr++ = MARKER_SOI;
-  
+
   // MARKER_APP_FIRST:
   *ptr++ = 0xFF; *ptr++ = MARKER_APP_FIRST;
   *ptr++ = 0x00; *ptr++ = 0x10; // size of chunk
@@ -197,14 +193,14 @@ static void createJPEGHeader(unsigned char* buf, unsigned type,
   *ptr++ = 0x00; *ptr++ = 0x01; // Horizontal pixel aspect ratio
   *ptr++ = 0x00; *ptr++ = 0x01; // Vertical pixel aspect ratio
   *ptr++ = 0x00; *ptr++ = 0x00; // no thumbnail
-  
+
   // MARKER_DRI:
   if (dri > 0) {
     *ptr++ = 0xFF; *ptr++ = MARKER_DRI;
     *ptr++ = 0x00; *ptr++ = 0x04; // size of chunk
     *ptr++ = (BYTE)(dri >> 8); *ptr++ = (BYTE)(dri); // restart interval
   }
-  
+
   // MARKER_DQT (luma):
   unsigned tableSize = numQtables == 1 ? qtlen : qtlen/2;
   *ptr++ = 0xFF; *ptr++ = MARKER_DQT;
@@ -213,7 +209,7 @@ static void createJPEGHeader(unsigned char* buf, unsigned type,
   memcpy(ptr, qtables, tableSize);
   qtables += tableSize;
   ptr += tableSize;
-  
+
   if (numQtables > 1) {
     unsigned tableSize = qtlen - qtlen/2;
     // MARKER_DQT (chroma):
@@ -224,7 +220,7 @@ static void createJPEGHeader(unsigned char* buf, unsigned type,
     qtables += tableSize;
     ptr += tableSize;
   }
-  
+
   // MARKER_SOF0:
   *ptr++ = 0xFF; *ptr++ = MARKER_SOF0;
   *ptr++ = 0x00; *ptr++ = 0x11; // size of chunk
@@ -243,7 +239,7 @@ static void createJPEGHeader(unsigned char* buf, unsigned type,
   *ptr++ = 0x03; // id of component
   *ptr++ = 0x11; // sampling ratio (h,v)
   *ptr++ = 0x01; // quant table id
-  
+
   createHuffmanHeader(ptr, lum_dc_codelens, sizeof lum_dc_codelens,
 		      lum_dc_symbols, sizeof lum_dc_symbols, 0, 0);
   createHuffmanHeader(ptr, lum_ac_codelens, sizeof lum_ac_codelens,
@@ -340,8 +336,13 @@ Boolean JPEGVideoRTPSource
   unsigned type = Type & 1;
   unsigned Q = (unsigned)headerStart[5];
   unsigned width = (unsigned)headerStart[6] * 8;
-  if (width == 0) width = 256*8; // special case
   unsigned height = (unsigned)headerStart[7] * 8;
+  if ((width == 0 || height == 0) && fDefaultWidth != 0 && fDefaultHeight != 0) {
+    // Use the default width and height parameters instead:
+    width = fDefaultWidth;
+    height = fDefaultHeight;
+  }
+  if (width == 0) width = 256*8; // special case
   if (height == 0) height = 256*8; // special case
 
   if (Type > 63) {
@@ -386,11 +387,9 @@ Boolean JPEGVideoRTPSource
 
 	if (packetSize < resultSpecialHeaderSize + Length) return False;
 
-	if (qtables) delete [] qtables;
-
 	qtlen = Length;
 	qtables = &headerStart[resultSpecialHeaderSize];
-	
+
 	resultSpecialHeaderSize += Length;
       }
     }
@@ -427,7 +426,7 @@ Boolean JPEGVideoRTPSource
    = fCurrentPacketCompletesFrame = packet->rtpMarkerBit();
 
   return True;
-}    
+}
 
 char const* JPEGVideoRTPSource::MIMEtype() const {
   return "video/JPEG";

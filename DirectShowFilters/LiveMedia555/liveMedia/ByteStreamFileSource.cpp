@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A file source that is a plain byte stream (rather than frames)
 // Implementation
 
@@ -35,18 +35,17 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "ByteStreamFileSource.hh"
 #include "InputFile.hh"
 #include "GroupsockHelper.hh"
-extern void Log(const char *fmt, ...) ;
+
 ////////// ByteStreamFileSource //////////
 
 ByteStreamFileSource*
 ByteStreamFileSource::createNew(UsageEnvironment& env, char const* fileName,
 				unsigned preferredFrameSize,
-				unsigned playTimePerFrame) 
-{
+				unsigned playTimePerFrame) {
   FILE* fid = OpenInputFile(env, fileName);
   if (fid == NULL) return NULL;
 
-  Boolean deleteFidOnClose =True;// fid == stdin ? False : True;
+  Boolean deleteFidOnClose = fid == stdin ? False : True;
   ByteStreamFileSource* newSource
     = new ByteStreamFileSource(env, fid, deleteFidOnClose,
 			       preferredFrameSize, playTimePerFrame);
@@ -84,14 +83,10 @@ ByteStreamFileSource::ByteStreamFileSource(UsageEnvironment& env, FILE* fid,
 					   unsigned playTimePerFrame)
   : FramedFileSource(env, fid), fPreferredFrameSize(preferredFrameSize),
     fPlayTimePerFrame(playTimePerFrame), fLastPlayTime(0), fFileSize(0),
-    fDeleteFidOnClose(deleteFidOnClose), fHaveStartedReading(False) 
-{
-  Log("ByteStreamFileSource ctor");
+    fDeleteFidOnClose(deleteFidOnClose), fHaveStartedReading(False) {
 }
 
-ByteStreamFileSource::~ByteStreamFileSource() 
-{
-  Log("ByteStreamFileSource dtor");
+ByteStreamFileSource::~ByteStreamFileSource() {
   if (fFid == NULL) return;
 
 #ifndef READ_FROM_FILES_SYNCHRONOUSLY
@@ -141,6 +136,10 @@ void ByteStreamFileSource::doReadFromFile() {
     fMaxSize = fPreferredFrameSize;
   }
   fFrameSize = fread(fTo, 1, fMaxSize, fFid);
+  if (fFrameSize == 0) {
+    handleClosure(this);
+    return;
+  }
 
   // Set the 'presentation time':
   if (fPlayTimePerFrame > 0 && fPreferredFrameSize > 0) {

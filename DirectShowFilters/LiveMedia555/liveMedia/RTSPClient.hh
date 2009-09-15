@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A generic RTSP client
 // C++ header
 
@@ -48,31 +48,35 @@ public:
 			      RTSPClient*& resultClient);
 
   char* describeURL(char const* url, Authenticator* authenticator = NULL,
-		    Boolean allowKasennaProtocol = False);
+		    Boolean allowKasennaProtocol = False, int timeout = -1);
       // Issues a RTSP "DESCRIBE" command
       // Returns the SDP description of a session, or NULL if none
       // (This is dynamically allocated, and must later be freed
       //  by the caller - using "delete[]")
   char* describeWithPassword(char const* url,
-			       char const* username, char const* password);
+			     char const* username, char const* password,
+			     Boolean allowKasennaProtocol = False, 
+			     int timeout = -1);
       // Uses "describeURL()" to do a "DESCRIBE" - first
       // without using "password", then (if we get an Unauthorized
       // response) with an authentication response computed from "password"
 
   Boolean announceSDPDescription(char const* url,
 				 char const* sdpDescription,
-				 Authenticator* authenticator = NULL);
+				 Authenticator* authenticator = NULL,
+				 int timeout = -1);
       // Issues a RTSP "ANNOUNCE" command
       // Returns True iff this command succeeds
   Boolean announceWithPassword(char const* url, char const* sdpDescription,
-			       char const* username, char const* password);
+			       char const* username, char const* password, int timeout = -1);
       // Uses "announceSDPDescription()" to do an "ANNOUNCE" - first
       // without using "password", then (if we get an Unauthorized
       // response) with an authentication response computed from "password"
 
   char* sendOptionsCmd(char const* url,
 		       char* username = NULL, char* password = NULL,
-		       Authenticator* authenticator = NULL);
+		       Authenticator* authenticator = NULL,
+		       int timeout = -1);
       // Issues a RTSP "OPTIONS" command
       // Returns a string containing the list of options, or NULL
 
@@ -85,25 +89,23 @@ public:
       // If "forceMulticastOnUnspecified" is True (and "streamUsingTCP" is False),
       // then the client will request a multicast stream if the media address
       // in the original SDP response was unspecified (i.e., 0.0.0.0).
-      // Note, however, that not all servers will support this. 
+      // Note, however, that not all servers will support this.
 
   Boolean playMediaSession(MediaSession& session,
-			   float start = 0.0f, float end = -1.0f,
+			   double start = 0.0f, double end = -1.0f,
 			   float scale = 1.0f);
       // Issues an aggregate RTSP "PLAY" command on "session".
       // Returns True iff this command succeeds
       // (Note: start=-1 means 'resume'; end=-1 means 'play to end')
   Boolean playMediaSubsession(MediaSubsession& subsession,
-			      float start = 0.0f, float end = -1.0f,
+			      double start = 0.0f, double end = -1.0f,
 			      float scale = 1.0f,
 			      Boolean hackForDSS = False);
       // Issues a RTSP "PLAY" command on "subsession".
       // Returns True iff this command succeeds
       // (Note: start=-1 means 'resume'; end=-1 means 'play to end')
 
-	Boolean continueMediaSession(MediaSession& session);
   Boolean pauseMediaSession(MediaSession& session);
-	Boolean statsMediaSession(MediaSession& session) ;
       // Issues an aggregate RTSP "PAUSE" command on "session".
       // Returns True iff this command succeeds
   Boolean pauseMediaSubsession(MediaSubsession& subsession);
@@ -165,7 +167,8 @@ private:
   void reset();
   void resetTCPSockets();
 
-  Boolean openConnectionFromURL(char const* url, Authenticator* authenticator);
+  Boolean openConnectionFromURL(char const* url, Authenticator* authenticator,
+				int timeout = -1);
   char* createAuthenticatorString(Authenticator const* authenticator,
 				  char const* cmd, char const* url);
   static void checkForAuthenticationFailure(unsigned responseCode,
@@ -184,12 +187,12 @@ private:
 				 portNumBits& serverPortNum,
 				 unsigned char& rtpChannelId,
 				 unsigned char& rtcpChannelId);
-  Boolean parseRTPInfoHeader(char const* line, unsigned& trackId,
-			     u_int16_t& seqNum, u_int32_t& timestamp);
+  Boolean parseRTPInfoHeader(char*& line, u_int16_t& seqNum, u_int32_t& timestamp);
   Boolean parseScaleHeader(char const* line, float& scale);
-  Boolean parseGetParameterHeader(char const* line, 
+  Boolean parseGetParameterHeader(char const* line,
                                   const char* param,
                                   char*& value);
+  char const* sessionURL(MediaSession const& session) const;
   void constructSubsessionURL(MediaSubsession const& subsession,
 			      char const*& prefix,
 			      char const*& separator,
@@ -216,7 +219,7 @@ private:
   Authenticator fCurrentAuthenticator;
   unsigned char fTCPStreamIdCount; // used for (optional) RTP/TCP
   char* fLastSessionId;
-  unsigned fSessionTimeoutParameter; // optionally set in response "Session:" headers 
+  unsigned fSessionTimeoutParameter; // optionally set in response "Session:" headers
 #ifdef SUPPORT_REAL_RTSP
   char* fRealChallengeStr;
   char* fRealETagStr;

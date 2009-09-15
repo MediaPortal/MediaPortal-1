@@ -26,7 +26,7 @@
 //#include <streams.h>
 #include "MultiFileReader.h"
 #include <atlbase.h>
-extern void Log(const char *fmt, ...) ;
+extern void LogDebug(const char *fmt, ...) ;
 MultiFileReader::MultiFileReader()
 {
 	m_startPosition = 0;
@@ -159,7 +159,7 @@ int MultiFileReader::Read(BYTE* pbData, ULONG lDataLength, ULONG *dwReadBytes)
 	// If the file has already been closed, don't continue
 	if (m_TSBufferFile.IsFileInvalid())
   {
-    Log("MultiFileReader::Read() failed invalid file()");
+    LogDebug("MultiFileReader::Read() failed invalid file()");
 		return S_FALSE;
   }
 	RefreshTSBufferFile();
@@ -180,7 +180,7 @@ int MultiFileReader::Read(BYTE* pbData, ULONG lDataLength, ULONG *dwReadBytes)
 
 	if(!file)
   {
-    Log("MultiFileReader::Read() failed() no file");
+    LogDebug("MultiFileReader::Read() failed() no file");
 		return S_FALSE;
   }
 	if (m_currentPosition < (file->startPosition + file->length))
@@ -197,7 +197,7 @@ int MultiFileReader::Read(BYTE* pbData, ULONG lDataLength, ULONG *dwReadBytes)
 			{
 				char sz[MAX_PATH+128];
 				sprintf(sz, "Current File Changed to %s", file->filename);
-        Log(sz);
+        LogDebug(sz);
 			}
 		}
 
@@ -259,7 +259,7 @@ int MultiFileReader::RefreshTSBufferFile()
     //printf("MultiFileReader::RefreshTSBufferFile");
 	if (m_TSBufferFile.IsFileInvalid())
   {
-    Log("MultiFileReader::RefreshTSBufferFile->IsFileInvalid");
+    LogDebug("MultiFileReader::RefreshTSBufferFile->IsFileInvalid");
 		return S_FALSE;
   }
 	ULONG bytesRead;
@@ -333,11 +333,11 @@ int MultiFileReader::RefreshTSBufferFile()
  
   if (Loop < 8)
   {
-    Log("MultiFileReader has waited %d times for TSbuffer integrity.", 10-Loop) ;
+    LogDebug("MultiFileReader has waited %d times for TSbuffer integrity.", 10-Loop) ;
 
     if(Error)
     {
-      Log("MultiFileReader has failed for TSbuffer integrity. Error : %x", Error) ;
+      LogDebug("MultiFileReader has failed for TSbuffer integrity. Error : %x", Error) ;
       return E_FAIL ;
     }
   }
@@ -354,7 +354,7 @@ int MultiFileReader::RefreshTSBufferFile()
 		{
 			char sz[512];
 			sprintf(sz, "Files Added %i, Removed %i", filesToAdd, filesToRemove);
-        Log(sz);
+        LogDebug(sz);
 		}
 
 		// Removed files that aren't present anymore.
@@ -366,7 +366,7 @@ int MultiFileReader::RefreshTSBufferFile()
 			{
 				char sz[MAX_PATH+128];
 				sprintf(sz, "Removing file %s", file->filename);
-        Log(sz);
+        LogDebug(sz);
 			}
 			
 			delete file;
@@ -462,7 +462,7 @@ int MultiFileReader::RefreshTSBufferFile()
 			}
 			else
 			{
-        Log("Missing files!!");
+        LogDebug("Missing files!!");
 			}
 		}
 
@@ -475,7 +475,7 @@ int MultiFileReader::RefreshTSBufferFile()
 				char sz[MAX_PATH+128];
 				int nextStPos = nextStartPosition;
 				sprintf(sz, "Adding file %s (%i)", pFilename, nextStPos);
-				Log(sz);
+				LogDebug(sz);
 			}
 
 			file = new MultiFileReaderFile();
@@ -559,7 +559,7 @@ int MultiFileReader::GetFileLength(char* pFilename, __int64 &length)
 		char msg[MAX_PATH];
 		DWORD dwErr = GetLastError();
 		sprintf(msg, "Failed to open file %s : %d", pFilename, dwErr);
-		Log(msg);
+		LogDebug(msg);
 		return (int)(dwErr);
 	}
 	return S_OK;

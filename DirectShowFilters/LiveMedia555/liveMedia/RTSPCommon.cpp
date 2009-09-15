@@ -11,14 +11,17 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // Common routines used by both RTSP clients and servers
 // Implementation
 
 #include "RTSPCommon.hh"
+#include "Locale.hh"
+#include <string.h>
+#include <stdio.h>
 
 Boolean parseRTSPRequestString(char const* reqStr,
 			       unsigned reqStrSize,
@@ -46,11 +49,11 @@ Boolean parseRTSPRequestString(char const* reqStr,
   }
   resultCmdName[i] = '\0';
   if (!parseSucceeded) return False;
-      
+
   // Skip over the prefix of any "rtsp://" or "rtsp:/" URL that follows:
   unsigned j = i+1;
   while (j < reqStrSize && (reqStr[j] == ' ' || reqStr[j] == '\t')) ++j; // skip over any additional white space
-  for (j = i+1; j < reqStrSize-8; ++j) {
+  for (; (int)j < (int)(reqStrSize-8); ++j) {
     if ((reqStr[j] == 'r' || reqStr[j] == 'R')
 	&& (reqStr[j+1] == 't' || reqStr[j+1] == 'T')
 	&& (reqStr[j+2] == 's' || reqStr[j+2] == 'S')
@@ -72,12 +75,12 @@ Boolean parseRTSPRequestString(char const* reqStr,
 
   // Look for the URL suffix (before the following "RTSP/"):
   parseSucceeded = False;
-  for (unsigned k = i+1; k < reqStrSize-5; ++k) {
+  for (unsigned k = i+1; (int)k < (int)(reqStrSize-5); ++k) {
     if (reqStr[k] == 'R' && reqStr[k+1] == 'T' &&
 	reqStr[k+2] == 'S' && reqStr[k+3] == 'P' && reqStr[k+4] == '/') {
       while (--k >= i && reqStr[k] == ' ') {} // go back over all spaces before "RTSP/"
       unsigned k1 = k;
-      while (k1 > i && reqStr[k1] != '/' && reqStr[k1] != ' ') --k1;
+      while (k1 > i && reqStr[k1] != '/') --k1;
       // the URL suffix comes from [k1+1,k]
 
       // Copy "resultURLSuffix":
@@ -87,8 +90,8 @@ Boolean parseRTSPRequestString(char const* reqStr,
       resultURLSuffix[n] = '\0';
 
       // Also look for the URL 'pre-suffix' before this:
-      unsigned k3 = --k1;
-      while (k3 > i && reqStr[k3] != '/' && reqStr[k3] != ' ') --k3;
+      unsigned k3 = (k1 == 0) ? 0 : --k1;
+      while (k3 > i && reqStr[k3] != '/') --k3;
       // the URL pre-suffix comes from [k3+1,k1]
 
       // Copy "resultURLPreSuffix":
@@ -107,7 +110,7 @@ Boolean parseRTSPRequestString(char const* reqStr,
   // Look for "CSeq:", skip whitespace,
   // then read everything up to the next \r or \n as 'CSeq':
   parseSucceeded = False;
-  for (j = i; j < reqStrSize-5; ++j) {
+  for (j = i; (int)j < (int)(reqStrSize-5); ++j) {
     if (reqStr[j] == 'C' && reqStr[j+1] == 'S' && reqStr[j+2] == 'e' &&
 	reqStr[j+3] == 'q' && reqStr[j+4] == ':') {
       j += 5;
@@ -127,6 +130,32 @@ Boolean parseRTSPRequestString(char const* reqStr,
     }
   }
   if (!parseSucceeded) return False;
+
+  return True;
+}
+
+Boolean parseRangeHeader(char const* buf, double& rangeStart, double& rangeEnd) {
+  // First, find "Range:"
+  while (1) {
+    if (*buf == '\0') return False; // not found
+    if (_strncasecmp(buf, "Range: ", 7) == 0) break;
+    ++buf;
+  }
+
+  // Then, run through each of the fields, looking for ones we handle:
+  char const* fields = buf + 7;
+  while (*fields == ' ') ++fields;
+  double start, end;
+  Locale l("C", LC_NUMERIC);
+  if (sscanf(fields, "npt = %lf - %lf", &start, &end) == 2) {
+    rangeStart = start;
+    rangeEnd = end;
+  } else if (sscanf(fields, "npt = %lf -", &start) == 1) {
+    rangeStart = start;
+    rangeEnd = 0.0;
+  } else {
+    return False; // The header is malformed
+  }
 
   return True;
 }

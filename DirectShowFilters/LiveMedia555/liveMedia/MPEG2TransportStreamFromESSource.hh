@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A filter for converting one or more MPEG Elementary Streams
 // to a MPEG-2 Transport Stream
 // C++ header
@@ -31,6 +31,7 @@ public:
   static MPEG2TransportStreamFromESSource* createNew(UsageEnvironment& env);
 
   void addNewVideoSource(FramedSource* inputSource, int mpegVersion);
+      // Note: For MPEG-4 video, set "mpegVersion" to 4; for H.264 video, set "mpegVersion"to 5.
   void addNewAudioSource(FramedSource* inputSource, int mpegVersion);
 
 protected:

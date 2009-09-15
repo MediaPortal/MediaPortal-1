@@ -93,7 +93,8 @@ struct hostent* our_gethostbyname(name)
 }
 #endif
 
-#ifdef USE_SYSTEM_RANDOM
+#ifndef USE_OUR_RANDOM
+/* Use the system-supplied "random()" and "srandom()" functions */
 #include <stdlib.h>
 long our_random() {
 #if defined(__WIN32__) || defined(_WIN32)
@@ -104,12 +105,15 @@ long our_random() {
 }
 void our_srandom(unsigned int x) {
 #if defined(__WIN32__) || defined(_WIN32)
-  return srand(x);
+  srand(x);
 #else
-  return srandom(x);
+  srandom(x);
 #endif
 }
+
 #else
+
+/* Use our own implementation of the "random()" and "srandom()" functions */
 /*
  * random.c:
  *

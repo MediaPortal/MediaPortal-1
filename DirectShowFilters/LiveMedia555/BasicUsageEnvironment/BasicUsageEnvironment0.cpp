@@ -11,9 +11,9 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
-// Copyright (c) 1996-2000 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // Basic Usage Environment: for a simple, non-scripted, console application
 // Implementation
 
@@ -21,7 +21,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include <stdio.h>
 
 ////////// BasicUsageEnvironment //////////
-extern void Log(const char *fmt, ...) ;
+
 BasicUsageEnvironment0::BasicUsageEnvironment0(TaskScheduler& taskScheduler)
   : UsageEnvironment(taskScheduler),
     fBufferMaxSize(RESULT_MSG_BUFFER_MAX) {
@@ -82,8 +82,7 @@ void BasicUsageEnvironment0::appendToResultMsg(MsgString msg) {
   fResultMsgBuffer[fCurBufferSize] = '\0';
 }
 
-void BasicUsageEnvironment0::reportBackgroundError() 
-{
-	Log("%s\n",fResultMsgBuffer);
+void BasicUsageEnvironment0::reportBackgroundError() {
+  fputs(getResultMsg(), stderr);
 }
 

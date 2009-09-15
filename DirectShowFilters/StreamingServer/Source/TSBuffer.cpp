@@ -31,7 +31,7 @@
 #include "global.h"
 #include "entercriticalsection.h"
 
-extern void Log(const char *fmt, ...) ;
+extern void LogDebug(const char *fmt, ...) ;
 CTSBuffer::CTSBuffer()
 {
 	m_pFileReader = NULL;

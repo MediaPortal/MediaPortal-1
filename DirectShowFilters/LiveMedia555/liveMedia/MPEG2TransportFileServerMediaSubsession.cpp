@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A 'ServerMediaSubsession' object that creates new, unicast, "RTPSink"s
 // on demand, from a MPEG-2 Transport Stream file.
 // Implementation
@@ -25,11 +25,6 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "MPEG2TransportStreamTrickModeFilter.hh"
 #include "MPEG2TransportStreamFromESSource.hh"
 #include "MPEG2TransportStreamFramer.hh"
-#include <streams.h>
-#include "TsFileDuration.h"
-
-extern void Log(const char *fmt, ...) ;
-
 
 // We assume that the video - in the original Transport Stream file - is MPEG-2.
 // If, instead, it is MPEG-1, then change the following definition to 1:
@@ -45,7 +40,7 @@ public:
   ClientTrickPlayState(MPEG2TransportStreamIndexFile* indexFile);
 
   // Functions to bring "fNPT", "fTSRecordNum" and "fIxRecordNum" in sync:
-  void updateStateFromNPT(float npt);
+  void updateStateFromNPT(double npt);
   void updateStateOnScaleChange();
   void updateStateOnPlayChange(Boolean reverseToPreviousVSH);
 
@@ -77,13 +72,12 @@ MPEG2TransportFileServerMediaSubsession::createNew(UsageEnvironment& env,
 						   char const* fileName,
 						   char const* indexFileName,
 						   Boolean reuseFirstSource) {
-  MPEG2TransportStreamIndexFile* indexFile
-    = MPEG2TransportStreamIndexFile::createNew(env, indexFileName);
-  if (indexFile != NULL && reuseFirstSource) {
-    // It makes no sense for all clients to use the same source if we also
-    // support trick play.  Fix this:
-    env << "MPEG2TransportFileServerMediaSubsession::createNew(): ignoring \"reuseFirstSource\", because we also have an index file\n";
+  if (indexFileName != NULL && reuseFirstSource) {
+    // It makes no sense to support trick play if all clients use the same source.  Fix this:
+    env << "MPEG2TransportFileServerMediaSubsession::createNew(): ignoring the index file name, because \"reuseFirstSource\" is set\n";
+    indexFileName = NULL;
   }
+  MPEG2TransportStreamIndexFile* indexFile = MPEG2TransportStreamIndexFile::createNew(env, indexFileName);
   return new MPEG2TransportFileServerMediaSubsession(env, fileName, indexFile,
 						     reuseFirstSource);
 }
@@ -94,18 +88,15 @@ MPEG2TransportFileServerMediaSubsession
 					  MPEG2TransportStreamIndexFile* indexFile,
 					  Boolean reuseFirstSource)
   : FileServerMediaSubsession(env, fileName, reuseFirstSource),
-    fIndexFile(indexFile),  fClientSessionHashTable(NULL) {
+    fIndexFile(indexFile), fDuration(0.0), fClientSessionHashTable(NULL) {
   if (fIndexFile != NULL) { // we support 'trick play'
-//    fDuration = fIndexFile->getPlayingDuration();
+    fDuration = fIndexFile->getPlayingDuration();
     fClientSessionHashTable = HashTable::create(ONE_WORD_HASH_KEYS);
   }
-  Log("MPEG2TransportFileServerMediaSubsession:ctor");
 }
 
 MPEG2TransportFileServerMediaSubsession
-::~MPEG2TransportFileServerMediaSubsession() 
-{
-  Log("MPEG2TransportFileServerMediaSubsession:dtor");
+::~MPEG2TransportFileServerMediaSubsession() {
   if (fIndexFile != NULL) { // we support 'trick play'
     Medium::close(fIndexFile);
 
@@ -160,7 +151,7 @@ void MPEG2TransportFileServerMediaSubsession
 }
 
 void MPEG2TransportFileServerMediaSubsession
-::seekStream(unsigned clientSessionId, void* streamToken, float seekNPT) {
+::seekStream(unsigned clientSessionId, void* streamToken, double seekNPT) {
   if (fIndexFile != NULL) { // we support 'trick play'
     ClientTrickPlayState* client = lookupClient(clientSessionId);
     if (client != NULL) {
@@ -205,13 +196,11 @@ FramedSource* MPEG2TransportFileServerMediaSubsession
   // Create the video source:
   unsigned const inputDataChunkSize
     = TRANSPORT_PACKETS_PER_NETWORK_PACKET*TRANSPORT_PACKET_SIZE;
-  //ByteStreamFileSource* fileSource
-  //  = ByteStreamFileSource::createNew(envir(), fFileName, inputDataChunkSize);
-  TsStreamFileSource* fileSource = TsStreamFileSource::createNew(envir(), fFileName, inputDataChunkSize);
+  ByteStreamFileSource* fileSource
+    = ByteStreamFileSource::createNew(envir(), fFileName, inputDataChunkSize);
   if (fileSource == NULL) return NULL;
   fFileSize = fileSource->fileSize();
 
-  strcpy(m_fileName,fFileName);
   // Create a framer for the Transport Stream:
   MPEG2TransportStreamFramer* framer
     = MPEG2TransportStreamFramer::createNew(envir(), fileSource);
@@ -239,7 +228,7 @@ RTPSink* MPEG2TransportFileServerMediaSubsession
 }
 
 void MPEG2TransportFileServerMediaSubsession::testScaleFactor(float& scale) {
-  if (fIndexFile != NULL && duration() > 0.0) {
+  if (fIndexFile != NULL && fDuration > 0.0) {
     // We support any integral scale, other than 0
     int iScale = scale < 0.0 ? (int)(scale - 0.5f) : (int)(scale + 0.5f); // round
     if (iScale == 0) iScale = 1;
@@ -248,14 +237,9 @@ void MPEG2TransportFileServerMediaSubsession::testScaleFactor(float& scale) {
     scale = 1.0f;
   }
 }
-float MPEG2TransportFileServerMediaSubsession::duration() const
-{
-  CTsFileDuration duration;
-  duration.SetFileName((char*)m_fileName);
-  duration.OpenFile();
-  duration.UpdateDuration();
-  duration.CloseFile();
-  return duration.Duration();
+
+float MPEG2TransportFileServerMediaSubsession::duration() const {
+  return fDuration;
 }
 
 ClientTrickPlayState* MPEG2TransportFileServerMediaSubsession
@@ -271,12 +255,12 @@ ClientTrickPlayState::ClientTrickPlayState(MPEG2TransportStreamIndexFile* indexF
     fOriginalTransportStreamSource(NULL),
     fTrickModeFilter(NULL), fTrickPlaySource(NULL),
     fFramer(NULL),
-    fScale(2.0f), fNextScale(1.0f), fNPT(0.0f),
+    fScale(1.0f), fNextScale(1.0f), fNPT(0.0f),
     fTSRecordNum(0), fIxRecordNum(0) {
 }
 
-void ClientTrickPlayState::updateStateFromNPT(float npt) {
-  fNPT = npt;
+void ClientTrickPlayState::updateStateFromNPT(double npt) {
+  fNPT = (float)npt;
   // Map "fNPT" to the corresponding Transport Stream and Index record numbers:
   unsigned long tsRecordNum, ixRecordNum;
   fIndexFile->lookupTSPacketNumFromNPT(fNPT, tsRecordNum, ixRecordNum);
@@ -291,6 +275,8 @@ void ClientTrickPlayState::updateStateFromNPT(float npt) {
     // Note: We assume that we're asked to seek only in normal
     // (i.e., non trick play) mode, so we don't seek within the trick
     // play source (if any).
+
+    fFramer->clearPIDStatusTable();
   }
 }
 
@@ -359,28 +345,4 @@ void ClientTrickPlayState::updateTSRecordNum(){
 void ClientTrickPlayState::reseekOriginalTransportStreamSource() {
   u_int64_t tsRecordNum64 = (u_int64_t)fTSRecordNum;
   fOriginalTransportStreamSource->seekToByteAbsolute(tsRecordNum64*TRANSPORT_PACKET_SIZE);
-}
-
-void MPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* inputSource, float seekNPT)
-{
-  MPEG2TransportStreamFramer* framer=(MPEG2TransportStreamFramer*)inputSource;
-  TsStreamFileSource* source=(TsStreamFileSource*)framer->inputSource();
-  if (seekNPT==0.0f)
-  {
-    source->seekToByteAbsolute(0LL);
-    return;
-  }
-  float fileDuration=duration();
-  if (seekNPT<0) seekNPT=0;
-  if (seekNPT>(fileDuration-0.5f)) seekNPT=(fileDuration-0.5f);
-  if (seekNPT <0) seekNPT=0;
-  float pos=seekNPT / fileDuration;
-  __int64 fileSize=source->fileSize();
-  pos*=fileSize;
-  pos/=188;
-  pos*=188;
-  __int64 newPos=(__int64) pos;
-
-  source->seekToByteAbsolute(newPos);
-	Log("ts seekStreamSource %f / %f ->%d", seekNPT,fileDuration, (DWORD)newPos);
 }

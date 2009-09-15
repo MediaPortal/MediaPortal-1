@@ -11,10 +11,10 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
 // A sink that generates an AVI file from a composite media session
 // Implementation
 
@@ -42,7 +42,7 @@ public:
   unsigned char* dataEnd() { return &fData[fBytesInUse]; }
   unsigned bytesInUse() const { return fBytesInUse; }
   unsigned bytesAvailable() const { return fBufferSize - fBytesInUse; }
-  
+
   void setPresentationTime(struct timeval const& presentationTime) {
     fPresentationTime = presentationTime;
   }
@@ -98,15 +98,18 @@ private:
 
 AVIFileSink::AVIFileSink(UsageEnvironment& env,
 			 MediaSession& inputSession,
-			 FILE* outFid,
+			 char const* outputFileName,
 			 unsigned bufferSize,
 			 unsigned short movieWidth, unsigned short movieHeight,
 			 unsigned movieFPS, Boolean packetLossCompensate)
-  : Medium(env), fInputSession(inputSession), fOutFid(outFid),
+  : Medium(env), fInputSession(inputSession),
     fBufferSize(bufferSize), fPacketLossCompensate(packetLossCompensate),
     fAreCurrentlyBeingPlayed(False), fNumSubsessions(0), fNumBytesWritten(0),
     fHaveCompletedOutputFile(False),
     fMovieWidth(movieWidth), fMovieHeight(movieHeight), fMovieFPS(movieFPS) {
+  fOutFid = OpenOutputFile(env, outputFileName);
+  if (fOutFid == NULL) return;
+
   // Set up I/O state for each input subsession:
   MediaSubsessionIterator iter(fInputSession);
   MediaSubsession* subsession;
@@ -151,11 +154,14 @@ AVIFileSink::~AVIFileSink() {
   MediaSubsession* subsession;
   while ((subsession = iter.next()) != NULL) {
     AVISubsessionIOState* ioState
-      = (AVISubsessionIOState*)(subsession->miscPtr); 
+      = (AVISubsessionIOState*)(subsession->miscPtr);
     if (ioState == NULL) continue;
 
     delete ioState;
   }
+
+  // Finally, close our output file:
+  CloseOutputFile(fOutFid);
 }
 
 AVIFileSink* AVIFileSink
@@ -164,16 +170,15 @@ AVIFileSink* AVIFileSink
 	    unsigned bufferSize,
 	    unsigned short movieWidth, unsigned short movieHeight,
 	    unsigned movieFPS, Boolean packetLossCompensate) {
-  do {
-    FILE* fid = OpenOutputFile(env, outputFileName);
-    if (fid == NULL) break;
+  AVIFileSink* newSink =
+    new AVIFileSink(env, inputSession, outputFileName, bufferSize,
+		    movieWidth, movieHeight, movieFPS, packetLossCompensate);
+  if (newSink == NULL || newSink->fOutFid == NULL) {
+    Medium::close(newSink);
+    return NULL;
+  }
 
-    return new AVIFileSink(env, inputSession, fid, bufferSize,
-			   movieWidth, movieHeight, movieFPS,
-			   packetLossCompensate);
-  } while (0);
-
-  return NULL;
+  return newSink;
 }
 
 Boolean AVIFileSink::startPlaying(afterPlayingFunc* afterFunc,
@@ -194,7 +199,7 @@ Boolean AVIFileSink::startPlaying(afterPlayingFunc* afterFunc,
 Boolean AVIFileSink::continuePlaying() {
   // Run through each of our input session's 'subsessions',
   // asking for a frame from each one:
-  Boolean haveActiveSubsessions = False; 
+  Boolean haveActiveSubsessions = False;
   MediaSubsessionIterator iter(fInputSession);
   MediaSubsession* subsession;
   while ((subsession = iter.next()) != NULL) {
@@ -204,7 +209,7 @@ Boolean AVIFileSink::continuePlaying() {
     if (subsessionSource->isCurrentlyAwaitingData()) continue;
 
     AVISubsessionIOState* ioState
-      = (AVISubsessionIOState*)(subsession->miscPtr); 
+      = (AVISubsessionIOState*)(subsession->miscPtr);
     if (ioState == NULL) continue;
 
     haveActiveSubsessions = True;
@@ -243,7 +248,7 @@ void AVIFileSink::onSourceClosure1() {
   MediaSubsession* subsession;
   while ((subsession = iter.next()) != NULL) {
     AVISubsessionIOState* ioState
-      = (AVISubsessionIOState*)(subsession->miscPtr); 
+      = (AVISubsessionIOState*)(subsession->miscPtr);
     if (ioState == NULL) continue;
 
     if (ioState->fOurSourceIsActive) return; // this source hasn't closed
@@ -290,7 +295,7 @@ void AVIFileSink::completeOutputFile() {
   MediaSubsession* subsession;
   while ((subsession = iter.next()) != NULL) {
     AVISubsessionIOState* ioState
-      = (AVISubsessionIOState*)(subsession->miscPtr); 
+      = (AVISubsessionIOState*)(subsession->miscPtr);
     if (ioState == NULL) continue;
 
     maxBytesPerSecond += ioState->fMaxBytesPerSecond;
@@ -321,7 +326,7 @@ void AVIFileSink::completeOutputFile() {
 AVISubsessionIOState::AVISubsessionIOState(AVIFileSink& sink,
 				     MediaSubsession& subsession)
   : fOurSink(sink), fOurSubsession(subsession),
-    fMaxBytesPerSecond(0), fNumFrames(0) {
+    fMaxBytesPerSecond(0), fIsVideo(False), fIsAudio(False), fIsByteSwappedAudio(False), fNumFrames(0) {
   fBuffer = new SubsessionBuffer(fOurSink.fBufferSize);
   fPrevBuffer = sink.fPacketLossCompensate
     ? new SubsessionBuffer(fOurSink.fBufferSize) : NULL;
@@ -465,7 +470,7 @@ void AVISubsessionIOState::useFrame(SubsessionBuffer& buffer) {
   }
 
   // Write the data into the file:
-  fOurSink.fNumBytesWritten += fOurSink.addWord(fAVISubsessionTag); 
+  fOurSink.fNumBytesWritten += fOurSink.addWord(fAVISubsessionTag);
   fOurSink.fNumBytesWritten += fOurSink.addWord(frameSize);
   fwrite(frameSource, 1, frameSize, fOurSink.fOutFid);
   fOurSink.fNumBytesWritten += frameSize;
@@ -551,7 +556,7 @@ void AVIFileSink::setWord(unsigned filePosn, unsigned size) {
 
 addFileHeader(RIFF,AVI);
     size += addFileHeader_hdrl();
-    size += addFileHeader_movi(); 
+    size += addFileHeader_movi();
     fRIFFSizePosition = headerSizePosn;
     fRIFFSizeValue = size-ignoredSize;
 addFileHeaderEnd;
@@ -584,7 +589,7 @@ addFileHeader(LIST,hdrl);
 
     // Then add another JUNK entry
     ++fJunkNumber;
-    size += addFileHeader_JUNK(); 
+    size += addFileHeader_JUNK();
 addFileHeaderEnd;
 
 #define AVIF_HASINDEX           0x00000010 // Index at end of file?
@@ -612,10 +617,10 @@ addFileHeader1(avih);
 addFileHeaderEnd;
 
 addFileHeader(LIST,strl);
-    size += addFileHeader_strh(); 
-    size += addFileHeader_strf(); 
+    size += addFileHeader_strh();
+    size += addFileHeader_strf();
     fJunkNumber = 0;
-    size += addFileHeader_JUNK(); 
+    size += addFileHeader_JUNK();
 addFileHeaderEnd;
 
 addFileHeader1(strh);

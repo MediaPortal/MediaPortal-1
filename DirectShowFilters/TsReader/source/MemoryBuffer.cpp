@@ -4,12 +4,12 @@
 
 #define MAX_MEMORY_BUFFER_SIZE (1024L*1024L*12L)
 
-extern void Log(const char *fmt, ...) ;
+extern void LogDebug(const char *fmt, ...) ;
 
 CMemoryBuffer::CMemoryBuffer(void)
 :m_event(NULL,FALSE,FALSE,NULL)
 {
-  Log("CMemoryBuffer::ctor");
+  LogDebug("CMemoryBuffer::ctor");
   m_bRunning=true;
   m_BytesInBuffer=0;
   m_pcallback=NULL;
@@ -17,7 +17,7 @@ CMemoryBuffer::CMemoryBuffer(void)
 
 CMemoryBuffer::~CMemoryBuffer()
 {
-  Log("CMemoryBuffer::dtor");
+  LogDebug("CMemoryBuffer::dtor");
   Clear();
 }
 
@@ -27,7 +27,7 @@ bool CMemoryBuffer::IsRunning()
 }
 void CMemoryBuffer::Clear()
 {
-  Log("memorybuffer: Clear() %d",m_Array.size());
+  LogDebug("memorybuffer: Clear() %d",m_Array.size());
 	CAutoLock BufferLock(&m_BufferLock);
 	std::vector<BUFFERITEM *>::iterator it = m_Array.begin();
 	for ( ; it != m_Array.end() ; it++ )
@@ -38,7 +38,7 @@ void CMemoryBuffer::Clear()
 	}
 	m_Array.clear();
   m_BytesInBuffer=0;
-	Log("memorybuffer: Clear() done");
+	LogDebug("memorybuffer: Clear() done");
 }
 
 DWORD CMemoryBuffer::Size()
@@ -47,7 +47,7 @@ DWORD CMemoryBuffer::Size()
 }
 void CMemoryBuffer::Run(bool onOff)
 {
-	Log("memorybuffer: run:%d %d", onOff, m_bRunning);
+	LogDebug("memorybuffer: run:%d %d", onOff, m_bRunning);
   if (m_bRunning!=onOff)
   {
     m_bRunning=onOff;
@@ -56,7 +56,7 @@ void CMemoryBuffer::Run(bool onOff)
 		  Clear();
 	  }
   }
-	Log("memorybuffer: running:%d", onOff);
+	LogDebug("memorybuffer: running:%d", onOff);
 }
 
 DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength)
@@ -79,7 +79,7 @@ DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength)
 	{
 		if(!m_Array.size() || m_Array.size() <= 0)
     {
-			Log("memorybuffer: read:empty buffer\n");
+			LogDebug("memorybuffer: read:empty buffer\n");
 			return 0;
     }
 		BUFFERITEM *item = m_Array.at(0);
@@ -121,7 +121,7 @@ HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength)
     while (m_BytesInBuffer > MAX_MEMORY_BUFFER_SIZE)
     {
       sleep=true;
-		  Log("memorybuffer:put full buffer (%d)",m_BytesInBuffer);
+		  LogDebug("memorybuffer:put full buffer (%d)",m_BytesInBuffer);
 		  BUFFERITEM *item = m_Array.at(0);
       int copyLength=item->nDataLength - item->nOffset;
 
