@@ -65,7 +65,7 @@ namespace TvLibrary.Implementations.DVB
           }
           else
           {
-            Log.Log.Debug("GenericATSC: DVB-S card NOT found!");
+            Log.Log.Debug("GenericATSC: QAM card NOT found!");
             _isGenericATSC = false;
             Dispose();
           }

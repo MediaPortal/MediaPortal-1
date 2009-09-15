@@ -464,7 +464,6 @@ namespace SetupTv.Sections
                     atscChannel.PmtPid = pmtPid;
                     atscChannel.Provider = provider;
                     atscChannel.ServiceId = serviceId;
-                    atscChannel.SymbolRate = symbolrate;
                     atscChannel.TransportId = transportId;
                     atscChannel.AudioPid = audioPid;
                     atscChannel.VideoPid = videoPid;
@@ -706,6 +705,5 @@ namespace SetupTv.Sections
         dlg.Close();
       }
     }
-
   }
 }

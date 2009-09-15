@@ -608,7 +608,6 @@ namespace TvDatabase
             atscChannel.PmtPid = detail.PmtPid;
             atscChannel.Provider = detail.Provider;
             atscChannel.ServiceId = detail.ServiceId;
-            atscChannel.SymbolRate = detail.Symbolrate;
             atscChannel.TransportId = detail.TransportId;
             atscChannel.VideoPid = detail.VideoPid;
             atscChannel.AudioPid = detail.AudioPid;
@@ -735,7 +734,7 @@ namespace TvDatabase
             atscChannel.PmtPid = detail.PmtPid;
             atscChannel.Provider = detail.Provider;
             atscChannel.ServiceId = detail.ServiceId;
-            atscChannel.SymbolRate = detail.Symbolrate;
+            //atscChannel.SymbolRate = detail.Symbolrate;
             atscChannel.TransportId = detail.TransportId;
             atscChannel.AudioPid = detail.AudioPid;
             atscChannel.VideoPid = detail.VideoPid;

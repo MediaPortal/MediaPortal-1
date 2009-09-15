@@ -83,7 +83,6 @@ namespace TvLibrary.Implementations.DVB
       atscChannel.Name = info.service_name;
       atscChannel.LogicalChannelNumber = info.LCN;
       atscChannel.Provider = info.service_provider_name;
-      atscChannel.SymbolRate = tuningChannel.SymbolRate;
       atscChannel.ModulationType = tuningChannel.ModulationType;
       atscChannel.Frequency = tuningChannel.Frequency;
       atscChannel.PhysicalChannel = tuningChannel.PhysicalChannel;

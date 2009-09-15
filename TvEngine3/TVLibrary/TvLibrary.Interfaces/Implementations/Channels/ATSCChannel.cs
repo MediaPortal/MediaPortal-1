@@ -35,9 +35,6 @@ namespace TvLibrary.Channels
     private int _physicalChannel;
     private int _majorChannel;
     private int _minorChannel;
-    private int _symbolRate;
-    //int _videoPid;
-    //int _audioPid;
     private ModulationType _modulation = ModulationType.ModNotSet;
 
     #endregion
@@ -51,10 +48,7 @@ namespace TvLibrary.Channels
     {
       _majorChannel = chan.MajorChannel;
       _minorChannel = chan.MinorChannel;
-      _symbolRate = chan.SymbolRate;
       _physicalChannel = chan.PhysicalChannel;
-      //_audioPid = chan.AudioPid;
-      //_videoPid = chan.VideoPid;
       _modulation = chan.ModulationType;
     }
 
@@ -65,10 +59,7 @@ namespace TvLibrary.Channels
     {
       _majorChannel = -1;
       _minorChannel = -1;
-      _symbolRate = -1;
       _physicalChannel = -1;
-      //_audioPid = -1;
-      //_videoPid = -1;
       _modulation = ModulationType.Mod8Vsb;
     }
 
@@ -109,46 +100,6 @@ namespace TvLibrary.Channels
       get { return _minorChannel; }
       set { _minorChannel = value; }
     }
-
-    /// <summary>
-    /// gets/sets the symbolrate
-    /// </summary>
-    public int SymbolRate
-    {
-      get { return _symbolRate; }
-      set { _symbolRate = value; }
-    }
-
-    /*
-    /// <summary>
-    /// gets/sets the AudioPid
-    /// </summary>
-    public int AudioPid
-    {
-      get
-      {
-        return _audioPid;
-      }
-      set
-      {
-        _audioPid = value;
-      }
-    }
-    /// <summary>
-    /// gets/sets the VideoPid
-    /// </summary>
-    public int VideoPid
-    {
-      get
-      {
-        return _videoPid;
-      }
-      set
-      {
-        _videoPid = value;
-      }
-    }*/
-
     #endregion
 
     /// <summary>
@@ -157,9 +108,7 @@ namespace TvLibrary.Channels
     /// <returns></returns>
     public override string ToString()
     {
-      //return String.Format("ATSC:{0} phys:{1} maj:{2} min:{3} SR:{4} mod:{5} audio pid:{6:X} video pid:{7:X}", base.ToString(), _physicalChannel, _majorChannel, _minorChannel, _symbolRate, _modulation, _audioPid, _videoPid);
-      return String.Format("ATSC:{0} phys:{1} maj:{2} min:{3} SR:{4} mod:{5}", base.ToString(), _physicalChannel,
-                           _majorChannel, _minorChannel, _symbolRate, _modulation);
+      return String.Format("ATSC:{0} phys:{1} maj:{2} min:{3} mod:{4}", base.ToString(), _physicalChannel, _majorChannel, _minorChannel, _modulation);
     }
 
     /// <summary>
@@ -194,12 +143,6 @@ namespace TvLibrary.Channels
       {
         return false;
       }
-      if (ch.SymbolRate != SymbolRate)
-      {
-        return false;
-      }
-      //if (ch.AudioPid != AudioPid) return false;
-      //if (ch.VideoPid != VideoPid) return false;
       return true;
     }
 
@@ -211,9 +154,7 @@ namespace TvLibrary.Channels
     /// </returns>
     public override int GetHashCode()
     {
-      //return base.GetHashCode() ^ _physicalChannel.GetHashCode() ^ _majorChannel.GetHashCode() ^ _minorChannel.GetHashCode() ^ _symbolRate.GetHashCode() ^ _modulation.GetHashCode() ^ _videoPid.GetHashCode() ^ _audioPid.GetHashCode();
-      return base.GetHashCode() ^ _physicalChannel.GetHashCode() ^ _majorChannel.GetHashCode() ^
-             _minorChannel.GetHashCode() ^ _symbolRate.GetHashCode() ^ _modulation.GetHashCode();
+      return base.GetHashCode() ^ _physicalChannel.GetHashCode() ^ _majorChannel.GetHashCode() ^ _minorChannel.GetHashCode() ^ _modulation.GetHashCode();
     }
 
     /// <summary>

@@ -359,7 +359,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("dvb:Submit tunerequest done calling put_TuneRequest");
           if (hr != 0)
           {
-            Log.Log.WriteFile("dvb:SubmitTuneRequest  returns:0x{0:X}", hr);
+            Log.Log.WriteFile("dvb:SubmitTuneRequest  returns:0x{0:X} - {1}{2}", hr, HResult.GetDXErrorString(hr), HResult.GetDXErrorDescription(hr));
             //remove subchannel.
             /*if (newSubChannel)
             {
@@ -370,7 +370,8 @@ namespace TvLibrary.Implementations.DVB
         }
         _lastSignalUpdate = DateTime.MinValue;
         _mapSubChannels[subChannelId].OnAfterTune();
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         if (newSubChannel)
         {
@@ -534,7 +535,6 @@ namespace TvLibrary.Implementations.DVB
       {
         return;
       }
-
       Log.Log.Info("dvb:  RunGraph");
       int hr = ((IMediaControl)_graphBuilder).Run();
       if (hr < 0 || hr > 1)
@@ -542,14 +542,14 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("dvb:  RunGraph returns: 0x{0:X}", hr);
         throw new TvException("Unable to start graph");
       }
-
       //GetTunerSignalStatistics();
       _epgGrabbing = false;
       if (_mapSubChannels.ContainsKey(subChannel))
       {
         if (!LockedInOnSignal())
         {
-          throw new TvExceptionNoSignal("Unable to tune to channel - no signal");
+          Log.Log.WriteFile("Unable to tune to channel - no signal");
+          //throw new TvExceptionNoSignal("Unable to tune to channel - no signal");
         }
         _mapSubChannels[subChannel].OnGraphStarted();
       }
@@ -566,13 +566,11 @@ namespace TvLibrary.Implementations.DVB
       _epgGrabbing = false;
       _isScanning = false;
       FreeAllSubChannels();
-
       if (_mdplugs != null)
       {
         _mdplugs.FreeAllChannels();
       }
       _previousChannel = null;
-
       if (_graphBuilder == null)
         return;
       if (_conditionalAccess.AllowedToStopGraph)

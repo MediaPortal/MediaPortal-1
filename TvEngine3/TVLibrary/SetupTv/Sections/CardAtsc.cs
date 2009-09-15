@@ -51,9 +51,7 @@ namespace SetupTv.Sections
     List<ATSCTuning> _atscChannels = new List<ATSCTuning>();
     bool _isScanning;
     bool _stopScanning;
-
     FileFilters fileFilters;
-
 
     public CardAtsc()
       : this("DVBC")
@@ -204,12 +202,10 @@ namespace SetupTv.Sections
           tuneChannel.ServiceId = -1;
           tuneChannel.MinorChannel = -1;
           tuneChannel.MajorChannel = -1;
-          tuneChannel.SymbolRate = -1;
           if (checkBoxQAM.Checked)
           {
             Log.WriteFile("ATSC tune: QAM checkbox selected... using Modulation 256Qam");
             tuneChannel.PhysicalChannel = index + 1;
-            //tuneChannel.PhysicalChannel = -1;
             tuneChannel.Frequency = _atscChannels[index].frequency;
             tuneChannel.ModulationType = ModulationType.Mod256Qam;
           }
@@ -230,7 +226,7 @@ namespace SetupTv.Sections
           }
           IChannel[] channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
           UpdateStatus();
-          if (channels == null || channels.Length == 0)
+          /*if (channels == null || channels.Length == 0)
           {
             if (checkBoxQAM.Checked)
             {
@@ -242,7 +238,7 @@ namespace SetupTv.Sections
               item.Text = line;
               channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
             }
-          }
+          }*/
           UpdateStatus();
           if (channels == null || channels.Length == 0)
           {
@@ -264,7 +260,6 @@ namespace SetupTv.Sections
           {
             Channel dbChannel;
             ATSCChannel channel = (ATSCChannel)channels[i];
-            //TuningDetail currentDetail = layer.GetAtscChannel(channel);
             TuningDetail currentDetail = layer.GetChannel(channel);
             if (currentDetail != null)
               if (channel.Frequency != currentDetail.Frequency)
@@ -288,12 +283,9 @@ namespace SetupTv.Sections
             }
             dbChannel.IsTv = channel.IsTv;
             dbChannel.IsRadio = channel.IsRadio;
-
             //Over the air ATSC is never scrambled
             dbChannel.FreeToAir = !checkBoxQAM.Checked || channel.FreeToAir;
-
             dbChannel.Persist();
-
             if (dbChannel.IsTv)
             {
               layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
@@ -302,7 +294,6 @@ namespace SetupTv.Sections
             {
               layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.AllChannels);
             }
-
             if (currentDetail == null)
             {
               layer.AddTuningDetails(dbChannel, channel);
@@ -312,7 +303,6 @@ namespace SetupTv.Sections
               //update tuning details...
               TuningDetail td = layer.UpdateTuningDetails(dbChannel, channel, currentDetail);
               td.Persist();
-
             }
             if (channel.IsTv)
             {

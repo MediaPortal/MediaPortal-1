@@ -767,10 +767,8 @@ namespace TvLibrary.Implementations.DVB
       _pmtVersion = -1;
       _pmtPid = pmtPid;
       _pmtRequested = true; // requested
-
       if (_conditionalAccess != null)
         _conditionalAccess.OnRunGraph(serviceId);
-
       Log.Log.Write("subch:{0} set pmt grabber pmt:{1:X} sid:{2:X}", _subChannelId, pmtPid, serviceId);      
       _tsFilterInterface.PmtSetCallBack(_subChannelIndex, this);
       _tsFilterInterface.PmtSetPmtPid(_subChannelIndex, pmtPid, serviceId);
@@ -780,9 +778,7 @@ namespace TvLibrary.Implementations.DVB
         _listenCA = true;
         _tsFilterInterface.CaSetCallBack(_subChannelIndex, this);
         _tsFilterInterface.CaReset(_subChannelIndex);
-
       }
-
       return true;
     }
 
