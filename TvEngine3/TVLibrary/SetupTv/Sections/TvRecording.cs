@@ -215,8 +215,8 @@ namespace SetupTv.Sections
       _formatString[1][3] = @"%title% - %channel%\%title% - %date% - %start%";
       _formatString[1][4] = @"[User custom value]";   // Must be the last one in the array list
 
-      Int32.TryParse(layer.GetSetting("moviesformatindex", (_formatString[0].Length - 1).ToString()).Value, out _formatIndex[0]);
-      Int32.TryParse(layer.GetSetting("seriesformatindex", (_formatString[1].Length - 1).ToString()).Value, out _formatIndex[1]);
+      Int32.TryParse(layer.GetSetting("moviesformatindex", "0").Value, out _formatIndex[0]);
+      Int32.TryParse(layer.GetSetting("seriesformatindex", "0").Value, out _formatIndex[1]);
 
       _customFormat[0] = layer.GetSetting("moviesformat", "").Value;
       _customFormat[1] = layer.GetSetting("seriesformat", "").Value;
