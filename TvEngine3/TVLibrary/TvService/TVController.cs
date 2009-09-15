@@ -492,7 +492,7 @@ namespace TvService
           {
             //there are no other servers so we are the master one.
             Log.Info("Controller: create new server in database");
-            _ourServer = new Server(false, Dns.GetHostName(), 0);
+            _ourServer = new Server(false, Dns.GetHostName(), RtspStreaming.DefaultPort);
             _ourServer.IsMaster = true;
             _isMaster = true;
             _ourServer.Persist();

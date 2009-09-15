@@ -36,7 +36,7 @@ namespace SetupTv.Sections
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.SettingsGroupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.ApplyButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.PortNoNumericTextBox = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
+      this.PortNoNumericUpDown = new System.Windows.Forms.NumericUpDown();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.IpAddressComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -55,6 +55,7 @@ namespace SetupTv.Sections
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.SettingsGroupBox.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.PortNoNumericUpDown)).BeginInit();
       this.ClientsGroupBox.SuspendLayout();
       this.contextMenuStrip1.SuspendLayout();
       this.SuspendLayout();
@@ -100,7 +101,7 @@ namespace SetupTv.Sections
       this.SettingsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.SettingsGroupBox.Controls.Add(this.ApplyButton);
-      this.SettingsGroupBox.Controls.Add(this.PortNoNumericTextBox);
+      this.SettingsGroupBox.Controls.Add(this.PortNoNumericUpDown);
       this.SettingsGroupBox.Controls.Add(this.mpLabel2);
       this.SettingsGroupBox.Controls.Add(this.IpAddressComboBox);
       this.SettingsGroupBox.Controls.Add(this.mpLabel1);
@@ -123,23 +124,36 @@ namespace SetupTv.Sections
       this.ApplyButton.UseVisualStyleBackColor = true;
       this.ApplyButton.Click += new System.EventHandler(this.ApplyButton_Click);
       // 
-      // PortNoNumericTextBox
+      // PortNoNumericUpDown
       // 
-      this.PortNoNumericTextBox.Location = new System.Drawing.Point(6, 76);
-      this.PortNoNumericTextBox.Name = "PortNoNumericTextBox";
-      this.PortNoNumericTextBox.Size = new System.Drawing.Size(100, 20);
-      this.PortNoNumericTextBox.TabIndex = 9;
-      this.PortNoNumericTextBox.Text = "554";
-      this.PortNoNumericTextBox.Value = 554;
+      this.PortNoNumericUpDown.Location = new System.Drawing.Point(6, 76);
+      this.PortNoNumericUpDown.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+      this.PortNoNumericUpDown.Minimum = new decimal(new int[] {
+            554,
+            0,
+            0,
+            0});
+      this.PortNoNumericUpDown.Name = "PortNoNumericUpDown";
+      this.PortNoNumericUpDown.Size = new System.Drawing.Size(100, 20);
+      this.PortNoNumericUpDown.TabIndex = 9;
+      this.PortNoNumericUpDown.Value = new decimal(new int[] {
+            554,
+            0,
+            0,
+            0});
       // 
       // mpLabel2
       // 
       this.mpLabel2.AutoSize = true;
       this.mpLabel2.Location = new System.Drawing.Point(3, 60);
       this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(186, 13);
+      this.mpLabel2.Size = new System.Drawing.Size(307, 13);
       this.mpLabel2.TabIndex = 8;
-      this.mpLabel2.Text = "Port for RTSP streaming (default 554):";
+      this.mpLabel2.Text = "Port for RTSP streaming (valid range: 554 - 65535, default 554):";
       // 
       // IpAddressComboBox
       // 
@@ -273,6 +287,7 @@ namespace SetupTv.Sections
       this.tabPage1.PerformLayout();
       this.SettingsGroupBox.ResumeLayout(false);
       this.SettingsGroupBox.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.PortNoNumericUpDown)).EndInit();
       this.ClientsGroupBox.ResumeLayout(false);
       this.contextMenuStrip1.ResumeLayout(false);
       this.ResumeLayout(false);
@@ -299,7 +314,7 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPGroupBox SettingsGroupBox;
     private MediaPortal.UserInterface.Controls.MPGroupBox ClientsGroupBox;
     private MediaPortal.UserInterface.Controls.MPButton ApplyButton;
-    private MediaPortal.UserInterface.Controls.MPNumericTextBox PortNoNumericTextBox;
+    private System.Windows.Forms.NumericUpDown PortNoNumericUpDown;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
     private MediaPortal.UserInterface.Controls.MPComboBox IpAddressComboBox;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;

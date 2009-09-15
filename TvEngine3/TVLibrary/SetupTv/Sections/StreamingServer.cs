@@ -91,7 +91,8 @@ namespace SetupTv.Sections
         counter++;
       }
       IpAddressComboBox.SelectedIndex = selected;
-      PortNoNumericTextBox.Value = _ourServer.RtspPort;
+      PortNoNumericUpDown.Value = _ourServer.RtspPort;
+      PortNoNumericUpDown.Text = _ourServer.RtspPort.ToString(); // in case value is the same but text is empty
     }
 
     public override void OnSectionDeActivated()
@@ -107,8 +108,8 @@ namespace SetupTv.Sections
       if (_ourServer != null)
       {
         string newHostName = ((IpAddressOption)IpAddressComboBox.SelectedItem).HostName;
-        int newRtspPort = _ourServer.RtspPort;
-        int.TryParse(PortNoNumericTextBox.Text, out newRtspPort);
+        int newRtspPort = (int)PortNoNumericUpDown.Value;
+        //int.TryParse(PortNoNumericUpDown.Text, out newRtspPort);
         if (_ourServer.HostName != newHostName ||
             _ourServer.RtspPort != newRtspPort)
         {
