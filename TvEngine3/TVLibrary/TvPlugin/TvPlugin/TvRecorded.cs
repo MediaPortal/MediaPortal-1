@@ -882,7 +882,6 @@ namespace TvPlugin
                       }
 
                       item.IsFolder = true;
-                      item.Label = rec.Title;  // do not show Episode information for the folders
                       // NO thumbnails for folders please so we can distinguish between single files and folders
                       Utils.SetDefaultIcons(item);
                       item.ThumbnailImage = item.IconImageBig;
@@ -900,7 +899,6 @@ namespace TvPlugin
                 {
                   // Add new list item for this recording
                   //GUIListItem item = BuildItemFromRecording(rec);
-                  it.Label = rec.Title;  // do not show Episode information for the folders
                   itemlist.Add(it);
                 }
                 else
