@@ -562,6 +562,18 @@ STDMETHODIMP CTsReaderFilter::Pause()
         //pause the streaming
         LogDebug("  -- Pause()  ->pause rtsp");
         m_rtspClient.Pause();
+        
+        //query the current position, so it can resume on un-pause at this position
+        //can be required in multiseat with rtsp when changing audio streams 
+        IMediaSeeking * ptrMediaPos;
+        if (SUCCEEDED(GetFilterGraph()->QueryInterface(IID_IMediaSeeking , (void**)&ptrMediaPos) ) )
+        {
+          LONGLONG currentPos;
+          ptrMediaPos->GetCurrentPosition(&currentPos);
+          ptrMediaPos->Release();
+          m_seekTime.m_time=currentPos;
+        }
+        LogDebug("  -- Pause()  ->position: %f", (m_seekTime.Millisecs()/1000.0f));
       }
     }
   else //we are seeking
