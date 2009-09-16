@@ -6,6 +6,7 @@
 #include "MPTaskScheduler.h"
 #include "GroupsockHelper.hh"
 #include "TsStreamFileSource.hh"
+#include "TsFileServerMediaSubsession.h"
 #include "TsMPEG2TransportFileServerMediaSubsession.h" 
 #include "MPEG2TstFileServerMediaSubsession.h" 
 #include "TsMPEG1or2FileServerDemux.h" 
@@ -14,45 +15,38 @@
 #include "MPRTSPServer.h"
 //#include "RTSPOverHTTPServer.hh"
 
+static char logbuffer[2000]; 
+
 void LogDebug(const char *fmt, ...) 
 {
 	va_list ap;
 	va_start(ap,fmt);
 
-	char buffer[1000]; 
 	int tmp;
 	va_start(ap,fmt);
-	tmp=vsprintf(buffer, fmt, ap);
+	tmp=vsprintf(logbuffer, fmt, ap);
 	va_end(ap); 
-	
-	SYSTEMTIME systemTime;
-	GetLocalTime(&systemTime);
 
-  TCHAR folder[MAX_PATH];
-  TCHAR fileName[MAX_PATH];
-  ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-  sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\streaming server.Log",folder);
-  FILE* fp = fopen(fileName,"a+");
+	TCHAR folder[MAX_PATH];
+	TCHAR fileName[MAX_PATH];
+	::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+	sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\streaming server.Log",folder);
+
+	FILE* fp = fopen(fileName,"a+");
 	if (fp!=NULL)
 	{
 		SYSTEMTIME systemTime;
 		GetLocalTime(&systemTime);
-		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
+		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%02.2d %s\n",
 			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
-			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
-			buffer);
+			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,systemTime.wMilliseconds,
+			logbuffer);
 		fclose(fp);
 	}
-  char buf[1000];
-	sprintf(buf,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
-		systemTime.wDay, systemTime.wMonth, systemTime.wYear,
-		systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
-		buffer);
-  ::OutputDebugString(buf);
-}
+};
 
 const char* STREAM_NAME = "testStream";
-const char* STREAM_DESCRIPTION = "Session streamed by \"MediaPortal Tv Server v1.0\"";
+const char* STREAM_DESCRIPTION = "Session streamed by \"MediaPortal Tv Server v1.1 Beta 1\"";
 const char* FILE_NAME = "C:\\temp\\testApp\\live.ts.tsbuffer";
 const int	DEFAULT_RTSP_PORT = 554;
 
@@ -220,7 +214,7 @@ void StreamAddMpegFile(char* streamName, char* fileName)
 		{
 			LogDebug("Stream server: add mpeg-2 ts stream %s filename:%s", streamName,fileName);
 			ServerMediaSession* sms= ServerMediaSession::createNew(*m_env, streamName, streamName,STREAM_DESCRIPTION,false);
-			sms->addSubsession(MPEG2TransportFileServerMediaSubsession::createNew(*m_env, fileName, NULL,false));
+			sms->addSubsession(TsFileServerMediaSubsession::createNew(*m_env, fileName, NULL,false));
 			m_rtspServer->addServerMediaSession(sms);
 			announceStream(m_rtspServer, sms, streamName, fileName);
 		}

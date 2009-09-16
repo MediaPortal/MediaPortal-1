@@ -220,6 +220,10 @@
 				RelativePath=".\Source\StreamingServer.def"
 				>
 			</File>
+			<File
+				RelativePath=".\Source\TsFileServerMediaSubsession.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -244,6 +248,10 @@
 			</File>
 			<File
 				RelativePath=".\Source\MultiFileReader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\TsFileServerMediaSubsession.h"
 				>
 			</File>
 			<File

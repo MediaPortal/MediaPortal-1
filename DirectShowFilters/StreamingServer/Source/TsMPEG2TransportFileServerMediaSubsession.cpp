@@ -79,7 +79,7 @@ void TsMPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* i
   LogDebug("TS file grown - now ready for the actual seek ; initial size %d, actual size %d, wait(ms) %d", (DWORD)fileSizeInitial, (DWORD)fileSizeActual, (GetTickCount() - dwTick));
 
 
-  float pos=seekNPT / fileDuration;
+  double pos=seekNPT / fileDuration;
   __int64 fileSize=source->fileSize();
   pos*=fileSize;
   pos/=188;

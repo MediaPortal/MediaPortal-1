@@ -96,7 +96,7 @@ void MPEG2TstFileServerMediaSubsession::seekStreamSource(FramedSource* inputSour
   if (seekNPT<0) seekNPT=0;
   if (seekNPT>(fileDuration-0.5f)) seekNPT=(fileDuration-0.5f);
   if (seekNPT <0) seekNPT=0;
-  float pos=seekNPT / fileDuration;
+  double pos=seekNPT / fileDuration;
   __int64 fileSize=source->fileSize();
   pos*=fileSize;
   pos/=188;
