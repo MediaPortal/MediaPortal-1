@@ -735,12 +735,30 @@ namespace TvService
     }
     public static ulong GetFreeDiskSpace(string drive)
     {
+      if (drive.StartsWith(@"\"))
+      {
+        return GetFreeShareSpace(drive);
+      }
       ulong freeBytesAvailable = 0;
       ulong totalNumberOfBytes = 0;
       ulong totalNumberOfFreeBytes = 0;
 
       GetDiskFreeSpaceEx(
          drive[0] + @":\",
+         out freeBytesAvailable,
+         out totalNumberOfBytes,
+         out totalNumberOfFreeBytes);
+      return freeBytesAvailable;
+    }
+
+    public static ulong GetFreeShareSpace(string UNCPath)
+    {
+      ulong freeBytesAvailable = 0;
+      ulong totalNumberOfBytes = 0;
+      ulong totalNumberOfFreeBytes = 0;
+      
+      GetDiskFreeSpaceEx(
+         System.IO.Path.GetPathRoot(UNCPath),
          out freeBytesAvailable,
          out totalNumberOfBytes,
          out totalNumberOfFreeBytes);

@@ -318,9 +318,9 @@ namespace TvService
             if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
               return TvResult.CardIsDisabled;
 
-            // Let's verify if hard disk drive has enough free space.
-            string DriveLetter = String.Format("{0}:", fileName[0]);
-            ulong FreeDiskSpace = Utils.GetFreeDiskSpace(DriveLetter);
+            // Let's verify if hard disk drive has enough free space. The function automatically handles both local and UNC paths
+            ulong FreeDiskSpace = Utils.GetFreeDiskSpace(fileName);
+
             TvBusinessLayer layer = new TvBusinessLayer();
             UInt32 MaximumFileSize = UInt32.Parse(layer.GetSetting("timeshiftMaxFileSize", "256").Value); // in MB
             ulong DiskSpaceNeeded = Convert.ToUInt64(MaximumFileSize);
