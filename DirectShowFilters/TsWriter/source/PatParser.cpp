@@ -376,6 +376,40 @@ void CPatParser::OnNewSection(CSection& sections)
 }
 
 //*****************************************************************************
+
+int CPatParser::PATRequest(CSection& sections, int SID)
+{
+  CEnterCriticalSection enter(m_section);
+  if (sections.table_id!=0) 
+  {
+    return -1;
+  }
+  byte* section=sections.Data;
+  int section_length=sections.section_length;
+
+  int loop =(section_length - 9) / 4;
+  for(int i=0; i < loop; i++)
+  {
+    int offset = (8 +(i * 4));
+    int serviceId=((section[offset] /*& 0x1F*/)<<8) + section[offset+1];
+    int pmtPid = ((section[offset+2] & 0x1F)<<8) + section[offset+3];
+    if(serviceId==SID)
+    {
+      if (pmtPid < 0x10 || pmtPid >=0x1fff)
+      {
+        //invalid pmt pid
+        LogDebug("invalid sid:%x pmt:%x", serviceId,pmtPid);
+        return -1;
+      }
+      // pmtPid is good so return it.
+      LogDebug("Found PMT Pid %x for ServiceId - %x",pmtPid,SID);
+      return pmtPid;
+    }
+  }
+  // SID wasn't found in the PAT so the channel has moved.
+  return -1;
+}
+
 void CPatParser::Dump()
 {
   if (m_bDumped) return;

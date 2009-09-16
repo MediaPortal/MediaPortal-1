@@ -52,7 +52,7 @@ public:
 	void	OnTsPacket(byte* tsPacket);
   void  Reset(IChannelScanCallback* callback,bool waitForVCT);
 	void  OnNewSection(CSection& section);
-
+  int PATRequest(CSection& sections, int SID);
   BOOL        IsReady();
   int         Count();
   bool        GetChannel(int index, CChannelInfo& info);

@@ -356,7 +356,7 @@ namespace TvLibrary.Implementations.Analog
     /// Called when the PMT has been received.
     /// </summary>
     /// <returns></returns>
-    public int OnPMTReceived()
+    public int OnPMTReceived(int pmtPid)
     {
       IntPtr pmtMem = Marshal.AllocCoTaskMem(4096);// max. size for pmt
       _pmtLength = _tsFilterInterface.PmtGetPMTData(_subChannelId, pmtMem);

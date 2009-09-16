@@ -816,6 +816,10 @@ namespace TvLibrary.Implementations.DVB
             {
               channel.ModulationType = ModulationType.ModNbc8Psk;
             }
+            if (channel.SymbolRate == 30000)
+            {
+              channel.Pilot = Pilot.Off;
+            }
             Log.Log.WriteFile("Hauppauge DVB-S2 modulation set to:{0}", channel.ModulationType);
             Log.Log.WriteFile("Hauppauge DVB-S2 Pilot set to:{0}", channel.Pilot);
             Log.Log.WriteFile("Hauppauge DVB-S2 RollOff set to:{0}", channel.Rolloff);

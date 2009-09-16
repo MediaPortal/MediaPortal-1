@@ -133,7 +133,6 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int PmtGetPMTData(int handle, IntPtr pmtData);
-
     /// <summary>
     /// Sets the recorder filename for the given sub channel
     /// </summary>

@@ -22,6 +22,8 @@
 #include "..\..\shared\sectiondecoder.h"
 #include "..\..\shared\section.h"
 #include "criticalsection.h"
+#include "PmtParser.h"
+#include "PatParser.h"
 #include "entercriticalsection.h"
 #include "..\..\shared\TsHeader.h"
 
@@ -32,7 +34,7 @@ DEFINE_GUID(IID_IPmtGrabber,0x6e714740, 0x803d, 0x4175, 0xbe, 0xf6, 0x67, 0x24, 
 
 DECLARE_INTERFACE_(IPMTCallback, IUnknown)
 {
-	STDMETHOD(OnPMTReceived)()PURE;
+	STDMETHOD(OnPMTReceived)(THIS_ int pmtPid)PURE;
 };
 
 
@@ -63,6 +65,8 @@ private:
 	int						m_iPmtVersion;
 	int						m_iPmtLength;
 	int						m_iServiceId;
+  bool          GetPMTPid;
   CTsHeader     m_tsHeader;
+  CPatParser  	m_patgrab;
 	CCriticalSection m_section;
 };

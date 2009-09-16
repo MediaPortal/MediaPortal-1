@@ -49,13 +49,25 @@ STDMETHODIMP CPmtGrabber::SetPmtPid( int pmtPid, long serviceId)
 {
 	try
 	{
+    GetPMTPid=false;
 		CEnterCriticalSection enter(m_section);
 		LogDebug("pmtgrabber: grab pmt:%x sid:%x", pmtPid,serviceId);
 		CSectionDecoder::Reset();
+    if (pmtPid==0)
+    {
+      // need to Grab PMT pid
+      LogDebug("PMT Pid is not set, Searching PAT for PMT Pid.");
+      CSectionDecoder::SetPid(0x0);
+      GetPMTPid=true; 
+      m_iServiceId=serviceId;
+    }
+    else
+    {
     	CSectionDecoder::SetPid(pmtPid);
     	m_iPmtVersion=-1;
     	m_iServiceId=serviceId;
     	memset(m_pmtPrevData,0,sizeof(m_pmtPrevData));
+  }
   }
 	catch(...)
 	{
@@ -85,9 +97,27 @@ void CPmtGrabber::OnNewSection(CSection& section)
 {
 	try
 	{
+    int PMTPid;
+    if(GetPMTPid==true)
+	    {
+        PMTPid=m_patgrab.PATRequest(section, m_iServiceId);
+        if (PMTPid!=0)
+        {
+          if (PMTPid==-1)
+          {
+            LogDebug("PMT Pid wasn't found on the PAT. Channel may have moved. Try a new channel search");
+          }
+          else
+          {
+            LogDebug("Got PMT Pid - %x",PMTPid);
+          }
+          SetPmtPid(PMTPid,m_iServiceId);
+          SetPid(PMTPid);
+        }
+        return;			
+      }
 		if (section.table_id!=2) return;
 		//if (section.version_number == m_iPmtVersion) return;
-		
 	  CEnterCriticalSection enter(m_section);
 
 		if (section.section_length<0 || section.section_length>=MAX_SECTION_LENGTH) return;
@@ -112,8 +142,8 @@ void CPmtGrabber::OnNewSection(CSection& section)
 			if (m_pCallback!=NULL && m_iPmtVersion != section.version_number)
 			{
         LogDebug("pmtgrabber: got new pmt version:%d %d, service_id:%d", section.version_number, m_iPmtVersion, serviceId);
-				LogDebug("pmtgrabber: do callback");
-				m_pCallback->OnPMTReceived();
+				LogDebug("pmtgrabber: do callback pid = %x",GetPid());
+				m_pCallback->OnPMTReceived(GetPid());
 			}
 		}
  		m_iPmtVersion=section.version_number;

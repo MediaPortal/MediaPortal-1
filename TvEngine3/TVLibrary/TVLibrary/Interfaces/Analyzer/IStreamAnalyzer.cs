@@ -36,7 +36,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// </summary>
     /// <returns></returns>
     [PreserveSig]
-    int OnPMTReceived();
+    int OnPMTReceived(int pmtPid);
   };
 
   /// <summary>
@@ -56,6 +56,4 @@ namespace TvLibrary.Interfaces.Analyzer
     [PreserveSig]
     int FilterPids(short count, IntPtr pids);
   };
-
-
 }
