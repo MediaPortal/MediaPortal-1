@@ -268,7 +268,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         GUIWindow.Window activeWindow = (GUIWindow.Window) GUIWindowManager.ActiveWindow;
         if (Settings.Instance.ExtensiveLogging)
         {
-          Log.Debug("Active window is {0}", new object[] {activeWindow.ToString()});
+          Log.Debug("Active window is {0}", activeWindow.ToString());
         }
         this.status = Status.Idle;
         if (g_Player.Player != null)
@@ -332,14 +332,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             GUIPropertyManager.SetProperty("#DialogItem", dialogHighlightedItem);
             if (Settings.Instance.ExtensiveLogging)
             {
-              Log.Debug("DIALOG window is {0}: \"{1}\", \"{2}\"",
-                        new object[] {activeWindowEx.ToString(), dialogTitle, dialogHighlightedItem});
+              Log.Debug("DIALOG window is {0}: \"{1}\", \"{2}\"", activeWindowEx.ToString(), dialogTitle, dialogHighlightedItem);
             }
           }
         }
         if (Settings.Instance.ExtensiveLogging)
         {
-          Log.Debug("Detected status is {0}", new object[] {this.status.ToString()});
+          Log.Debug("Detected status is {0}", status.ToString());
         }
         lock (MiniDisplayHelper.StatusMutex)
         {
@@ -437,14 +436,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           {
             try
             {
-              if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
+              // It's not safe to call this method in other states than running, since
+              // it calls the window manager. It might cause a dead lock in other states
+              if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
               {
                 DoWork();
               }
             }
             catch (Exception exception)
             {
-              Log.Debug("MiniDisplay.Run(): CAUGHT EXCEPTION in DoWork() - {0}", new object[] {exception});
+              Log.Debug("MiniDisplay.Run(): CAUGHT EXCEPTION in DoWork() - {0}", exception);
               if (exception.Message.Contains("ThreadAbortException"))
               {
                 this.stopRequested = true;
@@ -452,14 +453,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             }
             try
             {
-              if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
+              // It's not safe to call this method in other states than running, since
+              // it calls the window manager. It might cause a dead lock in other states
+              if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
               {
                 handler.DisplayLines();
               }
             }
             catch (Exception exception2)
             {
-              Log.Debug("MiniDisplay.Run(): CAUGHT EXCEPTION in handler.DisplayLines() - {0}", new object[] {exception2});
+              Log.Debug("MiniDisplay.Run(): CAUGHT EXCEPTION in handler.DisplayLines() - {0}", exception2);
               if (exception2.Message.Contains("ThreadAbortException"))
               {
                 this.stopRequested = true;
@@ -498,7 +501,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
       catch (Exception exception3)
       {
-        Log.Error("MiniDisplay.Run(): CAUGHT EXCEPTION: {0}", new object[] {exception3});
+        Log.Error("MiniDisplay.Run(): CAUGHT EXCEPTION: {0}", exception3);
       }
       if (extensiveLogging)
       {
