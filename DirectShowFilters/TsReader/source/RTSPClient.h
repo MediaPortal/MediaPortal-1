@@ -1,7 +1,6 @@
 #pragma once
 
 #include "liveMedia.hh"
-//#include "MPRTSPClient.h"
 #include "BasicUsageEnvironment.hh"
 #include "MPTaskScheduler.h"
 #include "GroupsockHelper.hh"

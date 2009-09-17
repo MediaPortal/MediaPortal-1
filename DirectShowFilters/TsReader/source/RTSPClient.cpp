@@ -501,7 +501,7 @@ void CRTSPClient::Continue()
 	if (m_ourClient!=NULL && m_session!=NULL)
 	{
 		RTSPClient* rtspClient=(RTSPClient*)m_ourClient;
-		rtspClient->playMediaSession(*m_session);
+		rtspClient->playMediaSession(*m_session,-1.0);
 		StartBufferThread();
     m_bPaused=false;
 		int x=1;
