@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
-
+using Mediaportal.Util;
 using DirectShowLib;
 
 #if !USING_NET11
@@ -816,7 +816,7 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         int hr = NativeMethods.StgCreateDocfile(
-            fileName,
+            FileUtils.MakeFileName(fileName),
             STGM.Create | STGM.Transacted | STGM.ReadWrite | STGM.ShareExclusive,
             0,
             out storage

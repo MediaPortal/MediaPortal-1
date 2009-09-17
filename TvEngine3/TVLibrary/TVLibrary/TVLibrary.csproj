@@ -202,6 +202,10 @@
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TvLibrary.Utils\TvLibrary.Utils.csproj">
+      <Project>{954F9929-7FDA-4F59-88E3-FD2B9A7B6E6E}</Project>
+      <Name>TvLibrary.Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Implementations\Analog\Components\Encoding\" />

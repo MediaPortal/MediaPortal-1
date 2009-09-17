@@ -115,6 +115,7 @@
     <Compile Include="Time\TimeRange.cs" />
     <Compile Include="Time\WorldDateTime.cs" />
     <Compile Include="Time\WorldTimeZone.cs" />
+    <Compile Include="Util\Util.cs" />
     <Compile Include="Web\Check\CheckConnections.cs" />
     <Compile Include="Web\html\MatchTagCollection.cs" />
     <Compile Include="Web\html\HtmlString.cs" />
