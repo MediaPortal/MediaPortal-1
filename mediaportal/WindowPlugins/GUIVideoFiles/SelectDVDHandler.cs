@@ -187,6 +187,7 @@ namespace MediaPortal.GUI.Video
           }
 
           g_Player.PlayDVD(drive + @"\VIDEO_TS\VIDEO_TS.IFO");
+          g_Player.ShowFullScreenWindow();
           if (g_Player.Playing && timeMovieStopped > 0)
           {
             if (g_Player.IsDVD)
