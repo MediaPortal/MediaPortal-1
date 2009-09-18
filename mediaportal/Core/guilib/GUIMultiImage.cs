@@ -96,6 +96,7 @@ namespace MediaPortal.GUI.Library
                          string strTexturePath, uint timePerImage, uint fadeTime, bool randomized, bool loop)
       : base(dwParentID, dwControlId, iPosX, iPosY, dwWidth, dwHeight)
     {
+      FinalizeConstruction();
       m_timePerImage = timePerImage;
       m_fadeTime = fadeTime;
       m_randomized = randomized;
@@ -105,10 +106,7 @@ namespace MediaPortal.GUI.Library
       m_posy = iPosY;
       m_width = dwWidth;
       m_height = dwHeight;
-      //Log.Debug("GUIMultiImage - " + strTexturePath);
       newPath = strTexturePath;
-
-      FinalizeConstruction();
     }
 
     /// <summary>
@@ -123,10 +121,10 @@ namespace MediaPortal.GUI.Library
         m_texturePath = string.Empty;
       }
 
-      if (m_texturePath.Length >= 0)
+      if (m_texturePath.IndexOf("#") >= 0)
       {
-        //Log.Debug("GUIMultiImage - contains property: " + m_texturePath);
         _containsProperty = true;
+        //Log.Debug("GUIMultiImage: contains " + m_texturePath);
       }
 
       m_cachedPath = m_texturePath;
@@ -211,15 +209,12 @@ namespace MediaPortal.GUI.Library
           base.Render(timePassed);
           return;
         }
-        //Log.Debug("GUIMultiImage - LoadDirectory(): " + newPath);
         FreeResources();
         LoadDirectory();
       }
 
-
       if (!_isAllocated)
       {
-        //Log.Debug("GUIMultiImage - not allocated, AllocResources()");
         AllocResources();
       }
 
@@ -230,8 +225,8 @@ namespace MediaPortal.GUI.Library
         Viewport view = new Viewport();
         view.X = m_posx;
         view.Y = m_posy;
-        view.Width = m_posx + m_width;
-        view.Height = m_posy + m_height;
+        view.Width = m_images[m_currentImage].XPosition + m_images[m_currentImage].Width;
+        view.Height = m_images[m_currentImage].YPosition + m_images[m_currentImage].Height;
         view.MinZ = 0.0f;
         view.MaxZ = 1.0f;
         GUIGraphicsContext.DX9Device.Viewport = view;
@@ -294,9 +289,6 @@ namespace MediaPortal.GUI.Library
 
     public override void AllocResources()
     {
-      //Log.Debug("GUIMultiImage - AllocResources() run");
-      _propertyChanged = true;
-
       try
       {
         if (GUIGraphicsContext.DX9Device == null)
@@ -317,6 +309,7 @@ namespace MediaPortal.GUI.Library
         m_Info = 0;
         m_directoryLoaded = false;
         _isAllocated = false;
+        newPath = m_texturePath;
         FreeResources();
         base.AllocResources();
       }
@@ -329,11 +322,34 @@ namespace MediaPortal.GUI.Library
         _isAllocated = true;
       }
 
-      if (newPath != null)
+      if (!m_directoryLoaded)
       {
         LoadDirectory();
       }
 
+      // Randomize or sort our images if necessary
+      if (m_randomized && m_files.Count > 1)
+      {
+        Random_Shuffle(ref m_files);
+      }
+
+      for (int i = 0; i < m_files.Count; i++)
+      {
+        GUIImage pImage = new GUIImage(ParentID, GetID, _positionX, _positionY, _width, _height, m_files[i], 0);
+        m_images.Add(pImage);
+      }
+
+      // Load in the current image, and reset our timer
+      m_imageTimer.StartZero();
+      m_fadeTimer.Stop();
+      m_currentImage = 0;
+      if (m_images.Count == 0)
+      {
+        return;
+      }
+
+      LoadImage(m_currentImage);
+      _isAllocated = true;
     }
 
     public void LoadImage(int image)
@@ -349,8 +365,8 @@ namespace MediaPortal.GUI.Library
       float realWidth = ((float)GUIGraphicsContext.Width / GUIGraphicsContext.SkinSize.Width);
       int m_height2 = (int)(m_height * realHeight);
       int m_width2 = (int)(m_width * realWidth);
-      int newHeight2 = (int)(m_height * realHeight);
-      int newWidth2 = (int)(m_width * realWidth);
+      int newHeight2 = m_height2;
+      int newWidth2 = m_width2;
       int m_posx2 = m_posx;
       int m_posy2 = m_posy;
       int _positionX = 0;
@@ -358,12 +374,12 @@ namespace MediaPortal.GUI.Library
 
       if (m_posx != 0) // No need to try and recalculate positioning if it's 0 anyways
       {
-        m_posx2 = (int)(m_posx * realHeight);
+        m_posx2 = (int)(m_posx * realWidth);
       }
 
       if (m_posy != 0) // No need to try and recalculate positioning if it's 0 anyways
       {
-        m_posy2 = (int)(m_posy * realWidth);
+        m_posy2 = (int)(m_posy * realHeight);
       }
 
       if (m_keepAspectRatio)
@@ -383,6 +399,7 @@ namespace MediaPortal.GUI.Library
           newHeight2 = (int)((float)newWidth2 / aspectRatio);
         }
       }
+
       _positionX = m_posx2 - (int)(newWidth2 - m_width2) / 2;
       _positionY = m_posy2 - (int)(newHeight2 - m_height2) / 2;
       m_images[image].SetPosition(_positionX, _positionY);
@@ -392,8 +409,6 @@ namespace MediaPortal.GUI.Library
 
     private void GUIPropertyManager_OnPropertyChanged(string tag, string tagValue)
     {
-      //Log.Debug("GUIMultiImage - GUIPropertyManager_OnPropertyChanged, tag: " + tag + ", value: " + tagValue + " texture path: " + m_texturePath);
-
       if (!_containsProperty)
       {
         return;
@@ -435,7 +450,10 @@ namespace MediaPortal.GUI.Library
 
     public void LoadDirectory()
     {
-      //Log.Debug("GUIMultiImage - LoadDirectory: " + newPath);
+      if (m_directoryLoaded)
+      {
+        return;
+      }
 
       // Unload any images from our texture bundle first
       m_files.Clear();
@@ -460,7 +478,6 @@ namespace MediaPortal.GUI.Library
           // Try to use the provided folder as an absolute path
           if (Directory.Exists(newPath) && Path.IsPathRooted(newPath))
           {
-            //Log.Debug("GUIMultiImage - absolute path found: " + newPath);
             imageFolder = newPath;
           }
 
@@ -473,7 +490,6 @@ namespace MediaPortal.GUI.Library
             // If the folder doesnt exist, we have an invalid field, exit
             if (!Directory.Exists(imageFolder))
             {
-              //Log.Debug("GUIMultiImage - location " + newPath + "doesn't exist");
               return;
             }
           }
@@ -522,7 +538,7 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
-      LoadImage(m_currentImage);
+      //LoadImage(m_currentImage);
       _isAllocated = true;
 
     }
