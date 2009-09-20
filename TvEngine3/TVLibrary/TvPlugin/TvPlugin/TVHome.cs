@@ -49,6 +49,7 @@ using TvDatabase;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Interfaces;
 using System.Text;
+using System.Net;
 
 #endregion
 
@@ -272,6 +273,13 @@ namespace TvPlugin
       {
         NameValueCollection appSettings = ConfigurationManager.AppSettings;
         appSettings.Set("GentleConfigFile", Config.GetFile(Config.Dir.Config, "gentle.config"));
+
+        //Make sure that we have valid hostname for the TV server
+        SetRemoteControlHostName();
+
+        //Wake up the TV server, if required
+        HandleWakeUpTvServer();
+
         m_navigator = new ChannelNavigator();
         LoadSettings();
         string pluginVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
@@ -291,6 +299,164 @@ namespace TvPlugin
       }
     }
 
+    private static void SetRemoteControlHostName()
+    {
+      string hostName;
+
+      using (Settings xmlreader = new MPSettings())
+      {
+        hostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
+        if (string.IsNullOrEmpty(hostName) || hostName == "localhost")
+        {
+          try
+          {
+            hostName = Dns.GetHostName();
+
+            Log.Info("TVHome: No valid hostname specified in mediaportal.xml!");
+            xmlreader.SetValue("tvservice", "hostname", hostName);
+            hostName = "localhost";
+            Settings.SaveCache();
+          }
+          catch (Exception ex)
+          {
+            Log.Info("TVHome: Error resolving hostname - {0}", ex.Message);
+            return;
+          }
+        }
+      }
+      RemoteControl.HostName = hostName;
+
+      Log.Info("Remote control:master server :{0}", RemoteControl.HostName);
+    }
+
+    private static void HandleWakeUpTvServer()
+    {
+
+      bool isWakeOnLanEnabled;
+      bool isAutoMacAddressEnabled;
+      String macAddress;
+      byte[] hwAddress;
+
+      //Get settings from MediaPortal.xml
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        isWakeOnLanEnabled = xmlreader.GetValueAsBool("tvservice", "isWakeOnLanEnabled", false);
+        isAutoMacAddressEnabled = xmlreader.GetValueAsBool("tvservice", "isAutoMacAddressEnabled", false);
+      }
+
+      //isWakeOnlanEnabled
+      if (isWakeOnLanEnabled)
+      {
+        //Check for multi-seat installation
+        if (!IsSingleSeat())
+        {
+          WakeOnLanManager wakeOnLanManager = new WakeOnLanManager();
+
+          //isAutoMacAddressEnabled
+          if (isAutoMacAddressEnabled)
+          {
+            IPAddress ipAddress = null;
+
+            //Check if we already have a valid IP address stored in RemoteControl.HostName,
+            //otherwise try to resolve the IP address
+            if (!IPAddress.TryParse(RemoteControl.HostName, out ipAddress))
+            {
+              //Get IP address of the TV server
+              try
+              {
+                IPAddress[] ips;
+
+                ips = Dns.GetHostAddresses(RemoteControl.HostName);
+
+                Log.Debug("TVHome: WOL - GetHostAddresses({0}) returns:", RemoteControl.HostName);
+
+                foreach (IPAddress ip in ips)
+                {
+                  Log.Debug("    {0}", ip);
+                }
+
+                //Use first valid IP address
+                ipAddress = ips[0];
+
+              }
+              catch (Exception ex)
+              {
+                Log.Error("TVHome: WOL - Failed GetHostAddress - {0}", ex.Message);
+              }
+            }
+
+            //Check for valid IP address
+            if (ipAddress != null)
+            {
+              //Update the MAC address if possible
+              hwAddress = wakeOnLanManager.GetHardwareAddress(ipAddress);
+
+              if (wakeOnLanManager.IsValidEthernetAddress(hwAddress))
+              {
+                Log.Debug("TVHome: WOL - Valid auto MAC address: {0:x}:{1:x}:{2:x}:{3:x}:{4:x}:{5:x}"
+                  , hwAddress[0], hwAddress[1], hwAddress[2], hwAddress[3], hwAddress[4], hwAddress[5]);
+
+                //Store MAC address
+                macAddress = BitConverter.ToString(hwAddress).Replace("-", ":");
+
+                Log.Debug("TVHome: WOL - Store MAC address: {0}", macAddress);
+
+                using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+                {
+                  xmlwriter.SetValue("tvservice", "macAddress", macAddress);
+                }
+              }
+            }
+          }
+
+          //Use stored MAC address
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+          {
+            macAddress = xmlreader.GetValueAsString("tvservice", "macAddress", null);
+          }
+
+          Log.Debug("TVHome: WOL - Use stored MAC address: {0}", macAddress);
+
+          try
+          {
+            hwAddress = wakeOnLanManager.GetHwAddrBytes(macAddress);
+
+            //Finally, start up the TV server
+            Log.Info("TVHome: WOL - Start the TV server");
+
+            if (wakeOnLanManager.WakeupSystem(hwAddress, RemoteControl.HostName, 10))
+            {
+              Log.Info("TVHome: WOL - The TV server started successfully!");
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Error("TVHome: WOL - Failed to start the TV server - {0}", ex.Message);
+          }
+        }
+      }
+    }
+
+    ///// <summary>
+    ///// Register the remoting service and attaching ciMenuHandler for server events
+    ///// </summary>
+    //public static void RegisterCiMenu(int newCardId)
+    //{
+    //  if (ciMenuHandler == null)
+    //  {
+    //    Log.Debug("CiMenu: PrepareCiMenu");
+    //    ciMenuHandler = new CiMenuHandler();
+    //    // opens remoting and attach local eventhandler to server event, call only once
+    //    RemoteControl.RegisterCiMenuCallbacks(ciMenuHandler);
+    //  }
+    //  // Check if card supports CI menu
+    //  if (newCardId != -1 && RemoteControl.Instance.CiMenuSupported(newCardId))
+    //  {
+    //    // Enable CI menu handling in card
+    //    RemoteControl.Instance.SetCiMenuHandler(newCardId, null);
+    //    Log.Debug("TvPlugin: CiMenuHandler attached to new card {0}", newCardId);
+    //  }
+    //}
     public TVHome()
     {
       GUIGraphicsContext.OnBlackImageRendered += new BlackImageRenderedHandler(OnBlackImageRendered);
@@ -1355,6 +1521,9 @@ namespace TvPlugin
     private void OnResume()
     {
       Log.Debug("TVHome.OnResume()");
+
+      HandleWakeUpTvServer();
+
       _resumed = true;
       _suspended = false;
     }
@@ -1397,9 +1566,8 @@ namespace TvPlugin
             OnResume();
             break;
         }
-        return true;
       }
-      return false;
+      return false; // false = all other processes will handle the msg
     }
 
     private static bool wasPrevWinTVplugin()
@@ -1985,7 +2153,10 @@ namespace TvPlugin
     /// <returns></returns>
     public static bool IsSingleSeat()
     {
-      // Log.Debug("TVHome: IsSingleSeat - RemoteControl.HostName = {0} / Environment.MachineName = {1}", RemoteControl.HostName, Environment.MachineName);
+      //TODO: This method does not handle the fact the RemoteControl.Hostname
+      //could be an IP address and not a hostname.
+      Log.Debug("TvFullScreen: IsSingleSeat - RemoteControl.HostName = {0} / Environment.MachineName = {1}", RemoteControl.HostName, Environment.MachineName);
+      
       return (RemoteControl.HostName.ToLowerInvariant() == Environment.MachineName.ToLowerInvariant());
     }
 

@@ -141,6 +141,12 @@ namespace TvEngine.PowerScheduler
       setting = _layer.GetSetting("PowerSchedulerProcesses", "SetupTv, Configuration");
       textBox1.Text = setting.Value;
 
+      setting = _layer.GetSetting("NetworkMonitorEnabled", "false");
+      checkBox15.Checked = Convert.ToBoolean(setting.Value);
+
+      setting = _layer.GetSetting("NetworkMonitorIdleLimit", "2");
+      numericUpDown5.Value = Convert.ToDecimal(setting.Value);
+
     }
 
     public override void SaveSettings()
@@ -237,6 +243,14 @@ namespace TvEngine.PowerScheduler
 
       setting = _layer.GetSetting("PowerSchedulerProcesses", "SetupTv, Configuration");
       setting.Value = textBox1.Text;
+      setting.Persist();
+
+      setting = _layer.GetSetting("NetworkMonitorEnabled", "false");
+      setting.Value = checkBox15.Checked.ToString();
+      setting.Persist();
+
+      setting = _layer.GetSetting("NetworkMonitorIdleLimit", "2");
+      setting.Value = numericUpDown5.Value.ToString();
       setting.Persist();
     }
 

@@ -168,6 +168,7 @@
     <Compile Include="TVTuningDetails.cs" />
     <Compile Include="TVUtil.cs" />
     <Compile Include="TVZapOSD.cs" />
+    <Compile Include="WakeOnLanManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\TvControl\TvControl.csproj">

@@ -1422,9 +1422,8 @@ namespace MediaPortal.Plugins.Process
             SendPowerSchedulerEvent(PowerSchedulerEventType.EnteringStandby, false);
             break;
         }
-        return true;
       }
-      return false;
+      return false; // false = all other processes will handle the msg
     }
 
     #endregion

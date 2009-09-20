@@ -104,31 +104,6 @@ namespace TvPlugin
       // Load all groups
       //ServiceProvider services = GlobalServiceProvider.Instance;
       Log.Debug("ChannelNavigator: ctor()");
-      string IpAddress;
-
-      using (Settings xmlreader = new MPSettings())
-      {
-        IpAddress = xmlreader.GetValueAsString("tvservice", "hostname", "");
-        if (string.IsNullOrEmpty(IpAddress) || IpAddress == "localhost")
-        {
-          try
-          {
-            IpAddress = Dns.GetHostName();
-
-            Log.Info("TVHome: No valid hostname specified in mediaportal.xml!");
-            xmlreader.SetValue("tvservice", "hostname", IpAddress);
-            IpAddress = "localhost";
-            Settings.SaveCache();
-          }
-          catch (Exception ex)
-          {
-            Log.Info("TVHome: Error resolving hostname - {0}", ex.Message);
-            return;
-          }
-        }
-      }
-      RemoteControl.HostName = IpAddress;
-      Log.Info("Remote control:master server :{0}", RemoteControl.HostName);
 
       ReLoad();
     }

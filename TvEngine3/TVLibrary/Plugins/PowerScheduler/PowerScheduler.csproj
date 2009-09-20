@@ -64,6 +64,7 @@
   </Target>
   -->
   <ItemGroup>
+    <Compile Include="Handlers\ActiveNetworkHandler.cs" />
     <Compile Include="Handlers\ActiveSharesHandler.cs" />
     <Compile Include="Handlers\ActiveStreamsHandler.cs" />
     <Compile Include="Handlers\ControllerActiveHandler.cs" />

@@ -113,6 +113,11 @@ namespace TvEngine.PowerScheduler
       this.groupBox4 = new System.Windows.Forms.GroupBox();
       this.button1 = new System.Windows.Forms.Button();
       this.textBox1 = new System.Windows.Forms.TextBox();
+      this.tabPage5 = new System.Windows.Forms.TabPage();
+      this.groupBox5 = new System.Windows.Forms.GroupBox();
+      this.label11 = new System.Windows.Forms.Label();
+      this.numericUpDown5 = new System.Windows.Forms.NumericUpDown();
+      this.checkBox15 = new System.Windows.Forms.CheckBox();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.lblStandbyHoursDesc = new System.Windows.Forms.Label();
@@ -136,6 +141,9 @@ namespace TvEngine.PowerScheduler
       this.panel1.SuspendLayout();
       this.tabPage4.SuspendLayout();
       this.groupBox4.SuspendLayout();
+      this.tabPage5.SuspendLayout();
+      this.groupBox5.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).BeginInit();
       this.SuspendLayout();
       // 
       // tabControl1
@@ -147,6 +155,7 @@ namespace TvEngine.PowerScheduler
       this.tabControl1.Controls.Add(this.tabPage2);
       this.tabControl1.Controls.Add(this.tabPage3);
       this.tabControl1.Controls.Add(this.tabPage4);
+      this.tabControl1.Controls.Add(this.tabPage5);
       this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -738,6 +747,65 @@ namespace TvEngine.PowerScheduler
       this.textBox1.TabIndex = 0;
       this.textBox1.Text = "SetupTv, Configuration";
       // 
+      // tabPage5
+      // 
+      this.tabPage5.Controls.Add(this.groupBox5);
+      this.tabPage5.Location = new System.Drawing.Point(4, 22);
+      this.tabPage5.Name = "tabPage5";
+      this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPage5.Size = new System.Drawing.Size(459, 362);
+      this.tabPage5.TabIndex = 4;
+      this.tabPage5.Text = "Network Monitor";
+      this.tabPage5.UseVisualStyleBackColor = true;
+      // 
+      // groupBox5
+      // 
+      this.groupBox5.Controls.Add(this.label11);
+      this.groupBox5.Controls.Add(this.numericUpDown5);
+      this.groupBox5.Controls.Add(this.checkBox15);
+      this.groupBox5.Location = new System.Drawing.Point(6, 6);
+      this.groupBox5.Name = "groupBox5";
+      this.groupBox5.Size = new System.Drawing.Size(428, 87);
+      this.groupBox5.TabIndex = 0;
+      this.groupBox5.TabStop = false;
+      this.groupBox5.Text = "Network Monitor Settings";
+      // 
+      // label11
+      // 
+      this.label11.AutoSize = true;
+      this.label11.Location = new System.Drawing.Point(34, 54);
+      this.label11.Name = "label11";
+      this.label11.Size = new System.Drawing.Size(291, 13);
+      this.label11.TabIndex = 2;
+      this.label11.Text = "Minimum transfer rate considered as network activity in KB/s";
+      // 
+      // numericUpDown5
+      // 
+      this.numericUpDown5.Location = new System.Drawing.Point(343, 47);
+      this.numericUpDown5.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+      this.numericUpDown5.Name = "numericUpDown5";
+      this.numericUpDown5.Size = new System.Drawing.Size(58, 20);
+      this.numericUpDown5.TabIndex = 1;
+      this.numericUpDown5.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+      // 
+      // checkBox15
+      // 
+      this.checkBox15.AutoSize = true;
+      this.checkBox15.Location = new System.Drawing.Point(25, 29);
+      this.checkBox15.Name = "checkBox15";
+      this.checkBox15.Size = new System.Drawing.Size(227, 17);
+      this.checkBox15.TabIndex = 0;
+      this.checkBox15.Text = "Prevent standby based on network activity";
+      this.checkBox15.UseVisualStyleBackColor = true;
+      // 
       // toolTip1
       // 
       this.toolTip1.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
@@ -790,6 +858,10 @@ namespace TvEngine.PowerScheduler
       this.tabPage4.ResumeLayout(false);
       this.groupBox4.ResumeLayout(false);
       this.groupBox4.PerformLayout();
+      this.tabPage5.ResumeLayout(false);
+      this.groupBox5.ResumeLayout(false);
+      this.groupBox5.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -811,5 +883,10 @@ namespace TvEngine.PowerScheduler
     private System.Windows.Forms.Label label8;
     private System.Windows.Forms.Label label10;
     private System.Windows.Forms.Label lblStandbyHoursDesc;
+    private System.Windows.Forms.TabPage tabPage5;
+    private System.Windows.Forms.GroupBox groupBox5;
+    private System.Windows.Forms.CheckBox checkBox15;
+    private System.Windows.Forms.NumericUpDown numericUpDown5;
+    private System.Windows.Forms.Label label11;
   }
 }
