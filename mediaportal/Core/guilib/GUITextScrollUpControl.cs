@@ -142,11 +142,7 @@ namespace MediaPortal.GUI.Library
           if (strText != _previousProperty)
           {
             // Reset the scrolling position - e.g. if we switch in TV Guide between various items
-            _yPositionScroll = 0;
-            _scrollOffset = 0.0f;
-            _frameLimiter = 1;
-            _offset = 0;
-            _listItems.Clear();
+            ClearOffsets();
 
             _previousProperty = strText;
             SetText(strText);
@@ -645,6 +641,14 @@ namespace MediaPortal.GUI.Library
     {
       _containsProperty = false;
       _property = "";
+      ClearOffsets();
+    }
+
+    /// <summary>
+    /// Resets the scrolling offsets
+    /// </summary>
+    private void ClearOffsets()
+    {
       _offset = 0;
       _listItems.Clear();
 
@@ -660,14 +664,8 @@ namespace MediaPortal.GUI.Library
       {
         if (_property != value)
         {
-          _property = value;
-          if (_property.IndexOf("#") >= 0)
-          {
-            _containsProperty = true;
-          }
-
-          _offset = 0;
-          _listItems.Clear();
+          Clear();
+          Property = value; // use setter to remove redundant code
           SetText(value);
         }
       }
