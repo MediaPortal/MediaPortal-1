@@ -35,6 +35,7 @@ CSectionDecoder::CSectionDecoder(void)
 	m_pCallback=NULL;
   m_bLog=false;
   m_bCrcCheck=true;
+  m_bGetAllSections=false;
 }
 
 CSectionDecoder::~CSectionDecoder(void)
@@ -72,10 +73,16 @@ void CSectionDecoder::EnableCrcCheck(bool onOff)
 
 void CSectionDecoder::OnTsPacket(byte* tsPacket)
 {
+  // use default method
+  OnTsPacket(tsPacket, false); 
+}
+void CSectionDecoder::OnTsPacket(byte* tsPacket, bool getAllSections)
+{
   if (m_pid < 0) return;
   if (tsPacket==NULL) return;
 
   m_header.Decode(tsPacket);
+  m_bGetAllSections = getAllSections; // watch all pids
   OnTsPacket(m_header,tsPacket);
 }
 
@@ -139,7 +146,7 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
 	try
 	{
 		if (m_pid >= 0x1fff) return;
-		if (header.Pid != m_pid) return;
+		if (header.Pid != m_pid && !m_bGetAllSections) return;
 		if (!header.HasPayload) return;
 
 		int start = header.PayLoadStart;

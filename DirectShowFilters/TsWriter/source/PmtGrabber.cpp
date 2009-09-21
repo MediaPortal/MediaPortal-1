@@ -38,6 +38,8 @@ CPmtGrabber::CPmtGrabber(LPUNKNOWN pUnk, HRESULT *phr)
 	m_pCallback=NULL;
 	m_iPmtVersion=-1;
 	m_iServiceId=0;
+  m_SeenPmtPid=0;
+  m_bLookForAll=false;
 	memset(m_pmtPrevData,0,sizeof(m_pmtPrevData));
 }
 CPmtGrabber::~CPmtGrabber(void)
@@ -49,25 +51,14 @@ STDMETHODIMP CPmtGrabber::SetPmtPid( int pmtPid, long serviceId)
 {
 	try
 	{
-    GetPMTPid=false;
 		CEnterCriticalSection enter(m_section);
-		LogDebug("pmtgrabber: grab pmt:%x sid:%x", pmtPid,serviceId);
 		CSectionDecoder::Reset();
-    if (pmtPid==0)
-    {
-      // need to Grab PMT pid
-      LogDebug("PMT Pid is not set, Searching PAT for PMT Pid.");
-      CSectionDecoder::SetPid(0x0);
-      GetPMTPid=true; 
-      m_iServiceId=serviceId;
-    }
-    else
-    {
-    	CSectionDecoder::SetPid(pmtPid);
-    	m_iPmtVersion=-1;
-    	m_iServiceId=serviceId;
-    	memset(m_pmtPrevData,0,sizeof(m_pmtPrevData));
-  }
+		LogDebug("pmtgrabber: grab pmt:%x sid:%x", pmtPid,serviceId);
+  	CSectionDecoder::SetPid(pmtPid);
+  	m_iPmtVersion=-1;
+  	m_iServiceId=serviceId;
+    m_bLookForAll=true;
+  	memset(m_pmtPrevData,0,sizeof(m_pmtPrevData));
   }
 	catch(...)
 	{
@@ -87,51 +78,34 @@ STDMETHODIMP CPmtGrabber::SetCallBack( IPMTCallback* callback)
 void CPmtGrabber::OnTsPacket(byte* tsPacket)
 {
 	if (m_pCallback==NULL) return;
-  int pid=((tsPacket[1] & 0x1F) <<8)+tsPacket[2];
-  if (pid != GetPid()) return;
+  m_SeenPmtPid=((tsPacket[1] & 0x1F) <<8)+tsPacket[2];
+  if (!m_bLookForAll && m_SeenPmtPid != GetPid()) return; // only check other packets if needed
 	CEnterCriticalSection enter(m_section);
-	CSectionDecoder::OnTsPacket(tsPacket);
+  CSectionDecoder::OnTsPacket(tsPacket, m_bLookForAll); // true to tell decoder passing back all sections to OnNewSection!
 }
 
 void CPmtGrabber::OnNewSection(CSection& section)
 {
 	try
 	{
-    int PMTPid;
-    if(GetPMTPid==true)
-	    {
-        PMTPid=m_patgrab.PATRequest(section, m_iServiceId);
-        if (PMTPid!=0)
-        {
-          if (PMTPid==-1)
-          {
-            LogDebug("PMT Pid wasn't found on the PAT. Channel may have moved. Try a new channel search");
-          }
-          else
-          {
-            LogDebug("Got PMT Pid - %x",PMTPid);
-          }
-          SetPmtPid(PMTPid,m_iServiceId);
-          SetPid(PMTPid);
-        }
-        return;			
-      }
-		if (section.table_id!=2) return;
-		//if (section.version_number == m_iPmtVersion) return;
-	  CEnterCriticalSection enter(m_section);
+    // must be a PMT
+    if (section.table_id!=2) return;
+    CEnterCriticalSection enter(m_section);
 
 		if (section.section_length<0 || section.section_length>=MAX_SECTION_LENGTH) return;
-
-		long serviceId = section.table_id_extension;
+  
+    // check if packet matches serviceid
+    if (m_iServiceId != section.table_id_extension) return;
+    if (m_SeenPmtPid != GetPid())
+    {
+      LogDebug("pmtgrabber: got sid:%x with other pmt:%x", m_iServiceId, m_SeenPmtPid);
+      SetPid(m_SeenPmtPid);
+    }
+     
     if (m_iPmtVersion<0)
-		  LogDebug("pmtgrabber: got pmt %x sid:%x",GetPid(), serviceId);
+		  LogDebug("pmtgrabber: got pmt %x sid:%x",GetPid(), m_iServiceId);
 
-		if (serviceId != m_iServiceId) 
-		{	
-			LogDebug("pmtgrabber: serviceid mismatch %d != %d",serviceId,m_iServiceId);
-			return;
-		}
-
+    m_bLookForAll=false; // seen the requested service/pmt once; no need to parse all further packets
 		m_iPmtLength=section.section_length;
 
 		memcpy(m_pmtData,section.Data,m_iPmtLength);
@@ -141,9 +115,9 @@ void CPmtGrabber::OnNewSection(CSection& section)
       // do a callback each time the version number changes. this also allows switching for "regional channels"
 			if (m_pCallback!=NULL && m_iPmtVersion != section.version_number)
 			{
-        LogDebug("pmtgrabber: got new pmt version:%d %d, service_id:%d", section.version_number, m_iPmtVersion, serviceId);
+        LogDebug("pmtgrabber: got new pmt version:%d %d, service_id:%d", section.version_number, m_iPmtVersion, m_iServiceId);
 				LogDebug("pmtgrabber: do callback pid = %x",GetPid());
-				m_pCallback->OnPMTReceived(GetPid());
+        m_pCallback->OnPMTReceived(GetPid());
 			}
 		}
  		m_iPmtVersion=section.version_number;

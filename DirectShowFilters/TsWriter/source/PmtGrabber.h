@@ -65,8 +65,8 @@ private:
 	int						m_iPmtVersion;
 	int						m_iPmtLength;
 	int						m_iServiceId;
-  bool          GetPMTPid;
+	int						m_SeenPmtPid;
+  bool          m_bLookForAll;
   CTsHeader     m_tsHeader;
-  CPatParser  	m_patgrab;
 	CCriticalSection m_section;
 };
