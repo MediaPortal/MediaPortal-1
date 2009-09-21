@@ -57,7 +57,7 @@ namespace TvLibrary.Implementations.DVB
         foreach (Card dbsCard in server.ReferringCard())
         {
           // only count all KNC cards
-          if (dbsCard.Name.StartsWith("KNC BDA"))
+          if (dbsCard.Name.StartsWith("KNC BDA") || dbsCard.Name.StartsWith("Mystique"))
           {
             deviceids.Add(dbsCard.DevicePath);
           }

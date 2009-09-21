@@ -179,10 +179,22 @@ namespace TvLibrary.Implementations.DVB
 
     #region constants
 
-    const string KNC1DVBSTuner = "KNC BDA DVB-S";
-    const string KNC1DVBS2Tuner = "KNC BDA DVB-S2";
-    const string KNC1DVBCTuner = "KNC BDA DVB-C";
-    const string KNC1DVBTTuner = "KNC BDA DVB-T";
+    private string[] ValidTuners = new string[] { 
+      "KNC BDA DVB-S", 
+      "KNC BDA DVB-S2", 
+      "KNC BDA DVB-C", 
+      "KNC BDA DVB-T",
+
+      "Mystique SaTiX DVB-S",
+      "Mystique SaTiX DVB-S2",
+      "Mystique CaBiX DVB-C2",
+      "Mystique TeRiX DVB-T2",
+
+      "Mystique SaTiX-S",
+      "Mystique SaTiX-S2",
+      "Mystique CaBiX-C2",
+      "Mystique TeRiX-T2"
+    };
 
     #endregion
 
@@ -304,14 +316,15 @@ namespace TvLibrary.Implementations.DVB
 
       FilterInfo info;
       tunerFilter.QueryFilterInfo(out info);
-      if ((info.achName == KNC1DVBSTuner) ||
-          (info.achName == KNC1DVBS2Tuner) ||
-          (info.achName == KNC1DVBTTuner) ||
-          (info.achName == KNC1DVBCTuner))
-      {  
-        m_bIsKNC=true;
+      foreach (String validTuner in ValidTuners)
+      {
+        if (info.achName == validTuner)
+        {
+          m_bIsKNC = true;
+          break;
+        }
       }
-      else
+      if (!m_bIsKNC)
       {
         return;
       }

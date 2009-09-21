@@ -1301,7 +1301,9 @@ namespace TvLibrary.Implementations.DVB
           else
           {
             CiStatus = (DE_CI_STATUS)Marshal.ReadInt16(_ptrDataCiHandler);
+#if DEBUG
             Log.Log.Debug("FireDTV: CI iStatus:{0}" , CiStatus);
+#endif
             if ((CiStatus & DE_CI_STATUS.CI_MMI_REQUEST) != 0)
             {
               Log.Log.Debug("FireDTV: CI menu object available!");

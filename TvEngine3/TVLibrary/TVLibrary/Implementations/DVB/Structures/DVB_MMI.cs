@@ -362,8 +362,9 @@ namespace TvLibrary.Implementations.DVB
       int mmiLength = DVB_MMI.GetLength(MMI, 3 /* bytes for mmi_tag */, out countLengthBytes);
       int mmiOffset = 3 + countLengthBytes; // 3 bytes mmi tag + 1 byte length field ?
 
+#if DEBUG
       Log.Log.Debug("{0}: MMITag:{1}, MMIObjectLength: {2} ({2:X2}), mmiOffset: {3}", m_cardName, uMMITag, mmiLength, mmiOffset);
-
+#endif
       int offset = 0; // starting with 0; reading whole struct from start
       if (uMMITag == DVB_MMI.MMI_TAGS.CLOSE)
       {
@@ -445,6 +446,12 @@ namespace TvLibrary.Implementations.DVB
           nChoices++;
         }
         // when title and choices are ready now, send to client
+#if DEBUG
+        for (int c = 0; c < Choices.Count; c++)
+        {
+          Log.Log.Debug("{0}: {1} : {2}", m_cardName, c, Choices[c]);
+        }
+#endif
         if (m_ciMenuCallback != null)
         {
           m_ciMenuCallback.OnCiMenu(Choices[0], Choices[1], Choices[2], nChoices);
@@ -456,10 +463,6 @@ namespace TvLibrary.Implementations.DVB
         else
         {
           Log.Log.Debug("{0}: OnCiMenu: cannot do callback!", m_cardName);
-          for (int c = 0; c < Choices.Count; c++)
-          {
-            Log.Log.Debug("{0}: {1} : {2}", m_cardName, c, Choices[c]);
-          }
         }
       }
     }
