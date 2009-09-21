@@ -178,6 +178,13 @@ namespace MediaPortal.Configuration.Sections
           }
         }
 
+        // Hide the Music Share Watcher Plugin
+        // It is Enabled / Disabled via the "Auto-Update DB on changes in Shares" flag
+        if (tag.SetupForm.PluginName() == "Music Share Watcher")
+        {
+          continue;
+        }
+
         ListViewItem item;
         if (tag.IsProcess)
         {

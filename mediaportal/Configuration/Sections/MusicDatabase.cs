@@ -237,11 +237,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.groupBoxUseAlbumThumbs);
       this.groupBox1.Controls.Add(this.groupBoxUseForThumbs);
       this.groupBox1.Controls.Add(this.tbPrefixes);
@@ -401,6 +399,7 @@ namespace MediaPortal.Configuration.Sections
       this.monitorSharesCheckBox.TabIndex = 11;
       this.monitorSharesCheckBox.Text = "Auto-update DB on changes in share";
       this.monitorSharesCheckBox.UseVisualStyleBackColor = true;
+      this.monitorSharesCheckBox.CheckedChanged += new System.EventHandler(this.monitorSharesCheckBox_CheckedChanged);
       // 
       // folderAsAlbumCheckBox
       // 
@@ -416,9 +415,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // startButton
       // 
-      this.startButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.startButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.startButton.Location = new System.Drawing.Point(246, 307);
       this.startButton.Name = "startButton";
       this.startButton.Size = new System.Drawing.Size(210, 22);
@@ -440,10 +437,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.fileLabel);
       this.groupBox2.Controls.Add(this.progressBar);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -456,10 +451,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileLabel
       // 
-      this.fileLabel.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.fileLabel.Location = new System.Drawing.Point(16, 23);
       this.fileLabel.Name = "fileLabel";
       this.fileLabel.Size = new System.Drawing.Size(440, 16);
@@ -467,10 +460,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // progressBar
       // 
-      this.progressBar.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBar.Location = new System.Drawing.Point(16, 23);
       this.progressBar.Name = "progressBar";
       this.progressBar.Size = new System.Drawing.Size(440, 16);
@@ -490,6 +481,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxUseForThumbs.PerformLayout();
       this.groupBox2.ResumeLayout(false);
       this.ResumeLayout(false);
+
     }
 
     #endregion
@@ -675,6 +667,26 @@ namespace MediaPortal.Configuration.Sections
       {
         checkBoxAllImages.Checked = false;
         checkBoxAllImages.Enabled = false;
+      }
+    }
+
+    /// <summary>
+    /// When enabled then we need to enable the Music Share Watcher Plugin
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void monitorSharesCheckBox_CheckedChanged(object sender, EventArgs e)
+    {
+      using (Settings xmlwriter = new MPSettings())
+      {
+        if (monitorSharesCheckBox.Checked)
+        {
+          xmlwriter.SetValueAsBool("plugins", "Music Share Watcher", true);
+        }
+        else
+        {
+          xmlwriter.SetValueAsBool("plugins", "Music Share Watcher", false);
+        }
       }
     }
   }
