@@ -63,7 +63,7 @@ public:
   {
     Pid=-1; 
     AudioServiceType=-1; 
-    Lang[0]='U'; Lang[1]='N'; Lang[2]='K'; Lang[4]=0; Lang[5]=0; Lang[6]=0;
+    Lang[0]='U'; Lang[1]='N'; Lang[2]='K'; Lang[3]=0; Lang[4]=0; Lang[5]=0; Lang[6]=0;
   }
   bool operator ==(const AudioPid& other) const
   {

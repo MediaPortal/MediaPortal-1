@@ -138,7 +138,7 @@ void CPidTable::LogPIDs()
   // Log all audio streams
   for(unsigned int i(0) ; i < audioPids.size() ; i++)
   {
-    LogDebug(" audio    pid: %4x language %3s type: %s",
+	  LogDebug(" audio    pid: %4x language: %3s type: %s",
       audioPids[i].Pid, 
       audioPids[i].Lang,
       StreamFormatAsString(audioPids[i].AudioServiceType));
@@ -147,7 +147,7 @@ void CPidTable::LogPIDs()
   // Log all subtitle streams
   for(unsigned int i(0) ; i < subtitlePids.size() ; i++)
   {
-    LogDebug(" Subtitle pid: %4x language %3s type: %s",
+	  LogDebug(" Subtitle pid: %4x language: %3s type: %s",
       subtitlePids[i].Pid, 
       subtitlePids[i].Lang,
       StreamFormatAsString(subtitlePids[i].SubtitleServiceType));  
