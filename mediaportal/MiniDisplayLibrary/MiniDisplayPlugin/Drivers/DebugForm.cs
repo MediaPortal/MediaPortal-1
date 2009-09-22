@@ -62,7 +62,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       try
       {
         this.InitializeComponent();
-        base.Size = new Size(Settings.Instance.GraphicWidth + 6, Settings.Instance.GraphicHeight + 0x18);
         this.DoRefresh();
       }
       catch (Exception exception)
@@ -580,33 +579,35 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void InitializeComponent()
     {
-      this.graphicDisplay = new PictureBox();
-      ((ISupportInitialize) (this.graphicDisplay)).BeginInit();
+      this.graphicDisplay = new System.Windows.Forms.PictureBox();
+      ((System.ComponentModel.ISupportInitialize)(this.graphicDisplay)).BeginInit();
       this.SuspendLayout();
       // 
       // graphicDisplay
       // 
-      this.graphicDisplay.BackColor = Color.Lime;
-      this.graphicDisplay.Dock = DockStyle.Fill;
-      this.graphicDisplay.Location = new Point(0, 0);
+      this.graphicDisplay.BackColor = System.Drawing.Color.Lime;
+      this.graphicDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.graphicDisplay.Location = new System.Drawing.Point(0, 0);
       this.graphicDisplay.Name = "graphicDisplay";
-      this.graphicDisplay.Size = new Size(360, 82);
+      this.graphicDisplay.Size = new System.Drawing.Size(360, 82);
       this.graphicDisplay.TabIndex = 0;
       this.graphicDisplay.TabStop = false;
       this.graphicDisplay.WaitOnLoad = true;
       // 
       // DebugForm
       // 
-      this.AutoScaleDimensions = new SizeF(13F, 21F);
-      this.BackColor = Color.FromArgb(((int) (((byte) (128)))), ((int) (((byte) (255)))), ((int) (((byte) (128)))));
-      this.ClientSize = new Size(360, 82);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 21F);
+      this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+      this.ClientSize = new Size(Settings.Instance.GraphicWidth + 6, Settings.Instance.GraphicHeight + 0x18);
+  
       this.Controls.Add(this.graphicDisplay);
-      this.Font = new Font("Lucida Console", 16F);
+      this.Font = new System.Drawing.Font("Lucida Console", 16F);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
       this.Name = "DebugForm";
       this.Text = "MiniDisplay - Debug (Preview)";
-      this.TopMost = true;
-      ((ISupportInitialize) (this.graphicDisplay)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.graphicDisplay)).EndInit();
       this.ResumeLayout(false);
+
     }
 
     private void InitializeDriver()
