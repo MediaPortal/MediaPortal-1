@@ -298,10 +298,6 @@ namespace MediaPortal.Mixer
       set { lock (this) SetValue(_mixerControlDetailsMute, _isMuted = value); }
     }
 
-    public IntPtr Handle
-    {
-      get { lock (this) return _handle; }
-    }
 
     public int Volume
     {
