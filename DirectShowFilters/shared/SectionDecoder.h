@@ -33,7 +33,6 @@ public:
   ~CSectionDecoder(void);
 	void SetCallBack(ISectionCallback* callback);
 	void OnTsPacket(byte* tsPacket);
-	void OnTsPacket(byte* tsPacket, bool getAllSections);
 	void OnTsPacket(CTsHeader& header,byte* tsPacket);
   void SetPid(int pid);
   int  GetPid();
@@ -55,5 +54,4 @@ private:
 	ISectionCallback* m_pCallback;
   CTsHeader m_header;
   CTsHeader m_headerSection;
-	bool m_bGetAllSections;
 };
