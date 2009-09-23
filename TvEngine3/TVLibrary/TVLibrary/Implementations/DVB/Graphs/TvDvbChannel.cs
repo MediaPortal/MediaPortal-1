@@ -83,6 +83,10 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected MDPlugs _mdplugs;
 
+    /// set to true to enable PAT lookup of PMT
+    private bool alwaysUsePATLookup = System.IO.File.Exists(@"C:\usePATLookup.txt");
+      
+
     #region teletext
     private int _pmtLength;
     private byte[] _pmtData;
@@ -233,81 +237,109 @@ namespace TvLibrary.Implementations.DVB
     }
     private void WaitForPMT()
     {
+      int retryCount = 0;
+      int lookForPid;
       _pmtPid = -1;
       _pmtVersion = -1;
 
       DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
       if (channel != null)
       {
-        if (SetupPmtGrabber(channel.PmtPid, channel.ServiceId)) // pat lookup by sid or PMT pid
+        if (alwaysUsePATLookup)
         {
-          DateTime dtNow = DateTime.Now;
-          int timeoutPMT = _parameters.TimeOutPMT * 1000;
-          Log.Log.Debug("WaitForPMT: Waiting for PMT{0} or SID {1}", _pmtPid, channel.ServiceId);
-          if (_eventPMT.WaitOne(timeoutPMT, true))
+          lookForPid = 0; // PAT
+        }
+        else
+        {
+          lookForPid = channel.PmtPid;
+        }
+        // allow retry to look for PMT in PAT if original one times out
+        while (++retryCount <= 2)
+        {
+          if (SetupPmtGrabber(lookForPid, channel.ServiceId)) // pat lookup by sid or PMT pid
           {
-            TimeSpan ts = DateTime.Now - dtNow;
-            Log.Log.Debug("WaitForPMT: Found PMT after {0} seconds.", ts.TotalSeconds);
-            DateTime dtNowPMT2CAM = DateTime.Now;
-            bool sendPmtToCamDone = false;
-            try
+            DateTime dtNow = DateTime.Now;
+            int timeoutPMT = _parameters.TimeOutPMT * 1000;
+            if (alwaysUsePATLookup)
             {
-              while (ts.TotalMilliseconds < timeoutPMT && !sendPmtToCamDone) //lets keep trying to send pmt2cam and at the same time obey the timelimit specified in timeoutPMT
-              {
-                ts = DateTime.Now - dtNow;
-                bool updatePids;
-                int waitInterval; //ms         
-                sendPmtToCamDone = SendPmtToCam(out updatePids, out waitInterval);
-                if (sendPmtToCamDone)
-                {
-                  if (updatePids)
-                  {
-                    if (_channelInfo != null)
-                    {
-                      SetMpegPidMapping(_channelInfo);
-                      if (_mdplugs != null)
-                        _mdplugs.SetChannel(_subChannelId, _currentChannel, _channelInfo);
-                    }
-                    Log.Log.Info("subch:{0} stop tif", _subChannelId);
-                    if (_filterTIF != null)
-                    {
-                      _filterTIF.Stop();
-                    }
-                  }
-                }
-                else
-                {
-                  Log.Log.Debug("WaitForPMT: waiting for SendPmtToCam {0} seconds.", ts.TotalMilliseconds);
-                  Thread.Sleep(waitInterval);
-                }
-              }
-
-            }
-            catch (Exception ex)
-            {
-              Log.Log.WriteFile("subch:{0}", ex.Message);
-              Log.Log.WriteFile("subch:{0}", ex.Source);
-              Log.Log.WriteFile("subch::{0}", ex.StackTrace);
-            }
-            TimeSpan tsPMT2CAM = DateTime.Now - dtNowPMT2CAM;
-            _listenCA = false;
-            if (!sendPmtToCamDone)
-            {
-              Log.Log.Debug("WaitForPMT: Timed out sending PMT to CAM {0} seconds.", tsPMT2CAM.TotalSeconds);
+              Log.Log.Debug("WaitForPMT: Waiting for SID {0}", channel.ServiceId);
             }
             else
             {
-              Log.Log.Debug("WaitForPMT: sending PMT to CAM took {0} seconds.", tsPMT2CAM.TotalSeconds);
+              Log.Log.Debug("WaitForPMT: Waiting for PMT {0}", _pmtPid);
+            }
+
+            if (_eventPMT.WaitOne(timeoutPMT, true))
+            {
+              TimeSpan ts = DateTime.Now - dtNow;
+              Log.Log.Debug("WaitForPMT: Found PMT after {0} seconds.", ts.TotalSeconds);
+              DateTime dtNowPMT2CAM = DateTime.Now;
+              bool sendPmtToCamDone = false;
+              try
+              {
+                while (ts.TotalMilliseconds < timeoutPMT && !sendPmtToCamDone) //lets keep trying to send pmt2cam and at the same time obey the timelimit specified in timeoutPMT
+                {
+                  ts = DateTime.Now - dtNow;
+                  bool updatePids;
+                  int waitInterval; //ms         
+                  sendPmtToCamDone = SendPmtToCam(out updatePids, out waitInterval);
+                  if (sendPmtToCamDone)
+                  {
+                    if (updatePids)
+                    {
+                      if (_channelInfo != null)
+                      {
+                        SetMpegPidMapping(_channelInfo);
+                        if (_mdplugs != null)
+                          _mdplugs.SetChannel(_subChannelId, _currentChannel, _channelInfo);
+                      }
+                      Log.Log.Info("subch:{0} stop tif", _subChannelId);
+                      if (_filterTIF != null)
+                      {
+                        _filterTIF.Stop();
+                      }
+                    }
+                  }
+                  else
+                  {
+                    Log.Log.Debug("WaitForPMT: waiting for SendPmtToCam {0} seconds.", ts.TotalMilliseconds);
+                    Thread.Sleep(waitInterval);
+                  }
+                }
+
+              }
+              catch (Exception ex)
+              {
+                Log.Log.WriteFile("subch:{0}", ex.Message);
+                Log.Log.WriteFile("subch:{0}", ex.Source);
+                Log.Log.WriteFile("subch::{0}", ex.StackTrace);
+              }
+              TimeSpan tsPMT2CAM = DateTime.Now - dtNowPMT2CAM;
+              _listenCA = false;
+              if (!sendPmtToCamDone)
+              {
+                Log.Log.Debug("WaitForPMT: Timed out sending PMT to CAM {0} seconds.", tsPMT2CAM.TotalSeconds);
+              }
+              else
+              {
+                Log.Log.Debug("WaitForPMT: sending PMT to CAM took {0} seconds.", tsPMT2CAM.TotalSeconds);
+              }
+
+              // PMT was found so exit here
+              break;
+            }
+            else
+            {
+              // Timeout waiting for PMT
+              TimeSpan ts = DateTime.Now - dtNow;
+              Log.Log.Debug("WaitForPMT: Timed out waiting for PMT after {0} seconds. Increase the PMT timeout value?", ts.TotalSeconds);
+              Log.Log.Debug("Setting to 0 to search for new PMT.");
+              lookForPid = 0;
             }
           }
-          else
-          {
-            // Timeout waiting for PMT
-            TimeSpan ts = DateTime.Now - dtNow;
-            Log.Log.Debug("WaitForPMT: Timed out waiting for PMT after {0} seconds. Increase the PMT timeout value?", ts.TotalSeconds);
-          }
-        }
+        } // retry loop
       }
+      
       return;
     }
 
@@ -1193,6 +1225,19 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Debug("Failed SendPmtToCam in callback handler");
           }
         }
+      }
+      // check if PMT has changed, in this case update tuning details
+      DVBBaseChannel CurrentDVBChannel = _currentChannel as DVBBaseChannel;
+      if (pmtPid != CurrentDVBChannel.PmtPid && !alwaysUsePATLookup)
+      {
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Channel dbChannel = layer.GetChannelByTuningDetail(CurrentDVBChannel.NetworkId, CurrentDVBChannel.TransportId, CurrentDVBChannel.ServiceId);
+        TuningDetail currentDetail = layer.GetChannel(CurrentDVBChannel.Provider, CurrentDVBChannel.Name, CurrentDVBChannel.ServiceId);
+        currentDetail.PmtPid = pmtPid;
+        CurrentDVBChannel.PmtPid = pmtPid;
+        TvDatabase.TuningDetail td = layer.UpdateTuningDetails(dbChannel, CurrentDVBChannel, currentDetail);
+        Log.Log.Debug("Updated PMT Pid to {0}!", pmtPid);
+        td.Persist();
       }
       _pmtRequested = false; // once received, reset
       return 0;
