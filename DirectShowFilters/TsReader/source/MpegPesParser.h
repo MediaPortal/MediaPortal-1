@@ -34,28 +34,19 @@
 #include <vector>
 #include <map>
 #include <dvdmedia.h>
+#include "FrameHeaderParser.h"
 
 class CMpegPesParser
 {
 private:
-	bool SequenceFound(byte* tsPacket,int offset,byte marker);
-	int SearchSequence(byte* tsPacket,int offset,byte marker);
+	CFrameHeaderParser hdrParser;
+	bool ParseVideo(byte* tsPacket,bool isMpeg2);
+	bool forceAVC1;
 
-	byte GetNextBit(byte* tsPacket,int &bit) ;
-	int GetNextExpGolomb(byte *tsPacket,int &curBitPos) ;
-	void CMpegPesParser::ScalingListSkip(byte* tsPacket,int &bit,int skip) ;
-
-
-
-	
-	void SetAspectRatio(int aspectRatioIndex,MPEG2VIDEOINFO &mpeg2VideoInfo);
-	void ParseVideoExtensionHeader(byte* tsPacket,int offset,MPEG2VIDEOINFO &mpeg2VideoInfo);
-	bool ParseMpeg2Video(byte* tsPacket,int offset,MPEG2VIDEOINFO &mpeg2VideoInfo);
-	bool ParseH264Video(byte* tsPacket,int offset,MPEG2VIDEOINFO &mpeg2VideoInfo);
-	bool ParseVideo(byte* tsPacket,int offset,MPEG2VIDEOINFO &mpeg2VideoInfo, int videoServiceType);
-
-	int  m_Length ;
 public:
-	bool OnTsPacket(byte* Frame,int Length,MPEG2VIDEOINFO &mpeg2VideoInfo, int videoServiceType);
+	CMpegPesParser();
+	bool OnTsPacket(byte* Frame,int Length,bool isMpeg2);
+	CMediaType pmt;
+	BasicVideoInfo basicVideoInfo;
 };
 

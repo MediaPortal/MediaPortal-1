@@ -254,6 +254,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\FrameHeaderParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\GolombBuffer.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\MediaSeeking.cpp"
 				>
 			</File>
@@ -348,6 +356,14 @@
 			</File>
 			<File
 				RelativePath=".\source\FileReader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\FrameHeaderParser.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\GolombBuffer.h"
 				>
 			</File>
 			<File

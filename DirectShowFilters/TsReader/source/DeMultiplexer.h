@@ -67,7 +67,7 @@ public:
 
   void       GetAudioStreamInfo(int stream,char* szName);
   void       GetAudioStreamType(int stream,CMediaType&  pmt);
-  void       GetVideoStreamType(CMediaType& pmt);
+  void       GetVideoStreamType(CMediaType &pmt);
   int        GetAudioStreamCount();
 
   // TsReader::ISubtitleStream uses these
@@ -123,10 +123,6 @@ private:
 
   vector<struct stAudioStream> m_audioStreams;
   vector<struct stSubtitleStream> m_subtitleStreams;
-  void ResetMpeg2VideoInfo();
-  void GetVideoMedia(CMediaType *pmt);
-  void GetH264Media(CMediaType *pmt);
-  void GetMpeg4Media(CMediaType *pmt);
   int ReadFromFile(bool isAudio, bool isVideo);
   bool m_bEndOfFile;
   HRESULT RenderFilterPin(CBasePin* pin, bool isAudio, bool isVideo);
@@ -140,7 +136,7 @@ private:
   CCritSec m_sectionRead;
   FileReader* m_reader;
   CPatParser m_patParser;
-  CMpegPesParser m_mpegPesParser;
+  CMpegPesParser *m_mpegPesParser;
   CPidTable m_pids;
   vector<CBuffer*> m_vecSubtitleBuffers;
   vector<CBuffer*> m_vecVideoBuffers;
@@ -187,7 +183,6 @@ private:
   bool m_bIframeFound ;
   bool m_bVideoChanging;
 
-  MPEG2VIDEOINFO m_mpeg2VideoInfo;
   bool m_mpegParserTriggerFormatChange;
   bool m_bSetAudioDiscontinuity;
   bool m_bSetVideoDiscontinuity;

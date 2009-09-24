@@ -27,6 +27,10 @@
 //WAVEFORMATEX;
 
 // MPEG2VIDEOINFO
+
+#ifndef MEDIAFORMATS_H
+#define MEDIAFORMATS_H
+
 static BYTE Mpeg2ProgramVideo [] = {
 	0x00, 0x00, 0x00, 0x00,                         //  .hdr.rcSource.left              = 0x00000000
 	0x00, 0x00, 0x00, 0x00,                         //  .hdr.rcSource.top               = 0x00000000
@@ -252,7 +256,55 @@ static BYTE DTSAudioFormat [] = {
 	0x00, 0x00
 };
 // {000000FF-0000-0010-8000-00AA00389B71}
+
+struct WAVEFORMATEX_HDMV_LPCM : public WAVEFORMATEX
+{
+    BYTE channel_conf;
+
+	struct WAVEFORMATEX_HDMV_LPCM()
+	{
+		memset(this, 0, sizeof(*this)); 
+		cbSize = sizeof(WAVEFORMATEX_HDMV_LPCM) - sizeof(WAVEFORMATEX);
+	}
+};
+
+struct WAVEFORMATEXPS2 : public WAVEFORMATEX
+{
+    DWORD dwInterleave;
+
+	struct WAVEFORMATEXPS2()
+	{
+		memset(this, 0, sizeof(*this)); 
+		cbSize = sizeof(WAVEFORMATEXPS2) - sizeof(WAVEFORMATEX);
+	}
+};
+
+#pragma pack(push, 1)
+typedef struct {
+	DWORD dwOffset;	
+	CHAR IsoLang[4]; // three letter lang code + terminating zero
+	WCHAR TrackName[256]; // 256 chars ought to be enough for everyone :)
+} SUBTITLEINFO;
+#pragma pack(pop)
+
+#define WAVE_FORMAT_MP3 0x0055
+#define WAVE_FORMAT_AAC 0x00FF
+#define WAVE_FORMAT_DOLBY_AC3 0x2000
+#define WAVE_FORMAT_DVD_DTS 0x2001
+#define WAVE_FORMAT_PS2_PCM 0xF521
+#define WAVE_FORMAT_PS2_ADPCM 0xF522
+
 static GUID MEDIASUBTYPE_AAC = {0x00000ff, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71};
+static GUID MEDIASUBTYPE_HDMV_LPCM_AUDIO = {0x949f97fd, 0x56f6, 0x4527, 0xb4, 0xae, 0xdd, 0xeb, 0x37, 0x5a, 0xb8, 0xf};
+static GUID MEDIASUBTYPE_HDMVSUB = {0x4eba53e, 0x9330, 0x436c, 0x91, 0x33, 0x55, 0x3e, 0xc8, 0x70, 0x31, 0xdc};
+static GUID MEDIASUBTYPE_SVCD_SUBPICTURE = {0xda5b82ee, 0x6bd2, 0x426f, 0xbf, 0x1e, 0x30, 0x11, 0x2d, 0xa7, 0x8a, 0xe1};
+static GUID MEDIASUBTYPE_CVD_SUBPICTURE = {0x7b57308f, 0x5154, 0x4c36, 0xb9, 0x3, 0x52, 0xfe, 0x76, 0xe1, 0x84, 0xfc};
+//static GUID MEDIASUBTYPE_DTS = {0xe06d8033, 0xdb46, 0x11cf, 0xb4, 0xd1, 0x00, 0x80, 0x05f, 0x6c, 0xbb, 0xea};
+static GUID MEDIATYPE_Subtitle = {0xe487eb08, 0x6b26, 0x4be9, 0x9d, 0xd3, 0x99, 0x34, 0x34, 0xd3, 0x13, 0xfd};
+static GUID MEDIASUBTYPE_PS2_SUB = {0x4f3d3d21, 0x6d7c, 0x4f73, 0xaa, 0x5, 0xe3, 0x97, 0xb5, 0xea, 0xe0, 0xaa};
+
 static GUID MEDIASUBTYPE_LATM_AAC = {0x000001ff, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71};
 static GUID H264_SubType = {0x8D2D71CB, 0x243F, 0x45E3, {0xB2, 0xD8, 0x5F, 0xD7, 0x96, 0x7E, 0xC0, 0x9B}};
 static GUID MPG4_SubType = FOURCCMap(MAKEFOURCC('A','V','C','1')) ;
+
+#endif

@@ -18,6 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #pragma warning(disable:4996)
 #pragma warning(disable:4995)
 #include <streams.h>
@@ -29,7 +30,7 @@
 #include "videoPin.h"
 #include "subtitlePin.h"
 #include "..\..\DVBSubtitle2\Source\IDVBSub.h"
-#include "MediaFormats.h"
+#include "mediaFormats.h"
 #include <cassert>
 
 #define MAX_BUF_SIZE 8000
@@ -79,7 +80,6 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   //ReadAudioIndexFromRegistry();
   m_lastVideoPTS.IsValid=false;
   m_lastAudioPTS.IsValid=false;
-  ResetMpeg2VideoInfo();
   m_mpegParserTriggerFormatChange=false;
   SetVideoChanging(false);
   m_DisableDiscontinuitiesFiltering = false ;
@@ -94,6 +94,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_IframeSample=0x7FFFFFFF00000000LL ;
   m_LastVideoSample=0 ;
   m_LastDataFromRtsp=GetTickCount() ;
+	m_mpegPesParser=new CMpegPesParser();
 }
 
 CDeMultiplexer::~CDeMultiplexer()
@@ -102,15 +103,10 @@ CDeMultiplexer::~CDeMultiplexer()
   delete m_pCurrentVideoBuffer;
   delete m_pCurrentAudioBuffer;
   delete m_pCurrentSubtitleBuffer;
+	delete m_mpegPesParser;
 
   m_subtitleStreams.clear();
   m_audioStreams.clear();
-}
-
-void CDeMultiplexer::ResetMpeg2VideoInfo()
-{
-  memset(&m_mpeg2VideoInfo,0,sizeof(m_mpeg2VideoInfo)) ;
-  m_mpeg2VideoInfo.hdr.dwReserved2=1;
 }
 
 int CDeMultiplexer::GetVideoServiceType()
@@ -124,63 +120,6 @@ int CDeMultiplexer::GetVideoServiceType()
     return SERVICE_TYPE_VIDEO_UNKNOWN;
   }
 }
-
-void CDeMultiplexer::GetVideoMedia(CMediaType *pmt)
-{
-  pmt->InitMediaType();
-  pmt->SetType      (& MEDIATYPE_Video);
-  pmt->SetSubtype   (& MEDIASUBTYPE_MPEG2_VIDEO);
-  pmt->SetFormatType(&FORMAT_MPEG2Video);
-  pmt->SetSampleSize(1);
-  pmt->SetTemporalCompression(FALSE);
-  pmt->SetVariableSize();
-  if (m_mpeg2VideoInfo.hdr.dwReserved2==0)
-    pmt->SetFormat((BYTE*)&m_mpeg2VideoInfo,sizeof(m_mpeg2VideoInfo));
-  else
-    pmt->SetFormat(g_Mpeg2ProgramVideo,sizeof(g_Mpeg2ProgramVideo));
-}
-
-void CDeMultiplexer::GetH264Media(CMediaType *pmt)
-{
-  pmt->InitMediaType();
-  pmt->SetType      (& MEDIATYPE_Video);
-  pmt->SetSubtype   (& H264_SubType);
-  pmt->SetFormatType(&FORMAT_MPEG2Video);
-  pmt->SetSampleSize(1);
-  pmt->SetTemporalCompression(TRUE);
-  pmt->SetVariableSize();
-  if (m_mpeg2VideoInfo.hdr.dwReserved2==0)
-    //causes framesize errors
-  /*{
-    VIDEOINFO vinfo;
-    vinfo.rcSource.left=m_mpeg2VideoInfo.hdr.rcSource.left;
-    vinfo.rcSource.bottom=m_mpeg2VideoInfo.hdr.rcSource.bottom;
-    vinfo.dwBitRate=m_mpeg2VideoInfo.hdr.dwBitRate;
-    pmt->SetFormat((BYTE*)&vinfo,sizeof(vinfo));
-  }
-  else
-    pmt->SetFormat(H264VideoFormat,sizeof(H264VideoFormat));*/
-    pmt->SetFormat((BYTE*)&m_mpeg2VideoInfo,sizeof(m_mpeg2VideoInfo));
-  else
-      pmt->SetFormat(g_Mpeg2ProgramVideo,sizeof(g_Mpeg2ProgramVideo));
-}
-
-void CDeMultiplexer::GetMpeg4Media(CMediaType *pmt)
-{
-  //this is actually H264 and NOT Mpeg4
-  pmt->InitMediaType();
-  pmt->SetType      (& MEDIATYPE_Video);
-  pmt->SetSubtype   (&H264_SubType);
-  pmt->SetFormatType(&FORMAT_MPEG2Video);
-  pmt->SetSampleSize(1);
-  pmt->SetTemporalCompression(TRUE);
-  pmt->SetVariableSize();
-  if (m_mpeg2VideoInfo.hdr.dwReserved2==0)
-    pmt->SetFormat((BYTE*)&m_mpeg2VideoInfo,sizeof(m_mpeg2VideoInfo));
-  else
-    pmt->SetFormat(g_Mpeg2ProgramVideo,sizeof(g_Mpeg2ProgramVideo));
-}
-
 
 void CDeMultiplexer::SetFileReader(FileReader* reader)
 {
@@ -393,30 +332,10 @@ bool CDeMultiplexer::GetSubtitleStreamType(__int32 stream, __int32 &type)
   return S_OK;
 }
 
-void CDeMultiplexer::GetVideoStreamType(CMediaType& pmt)
+void CDeMultiplexer::GetVideoStreamType(CMediaType &pmt)
 {
-  pmt.InitMediaType();
-
-  if( m_pids.videoPids.size() == 0)
-  {
-    return;
-  }
-
-  switch (m_pids.videoPids[0].VideoServiceType)
-  {
-    case SERVICE_TYPE_VIDEO_MPEG1:
-      GetVideoMedia(&pmt);
-    break;
-    case SERVICE_TYPE_VIDEO_MPEG2:
-      GetVideoMedia(&pmt);
-    break;
-    case SERVICE_TYPE_VIDEO_MPEG4:
-      GetMpeg4Media(&pmt);
-    break;
-    case SERVICE_TYPE_VIDEO_H264:
-      GetH264Media(&pmt);
-    break;
-  }
+  if( m_pids.videoPids.size() != 0 && m_mpegPesParser!=NULL)
+		pmt=m_mpegPesParser->pmt;
 }
 
 void CDeMultiplexer::FlushVideo()
@@ -689,7 +608,6 @@ void CDeMultiplexer::Start()
 {
   //reset some values
   m_receivedPackets=0;
-  ResetMpeg2VideoInfo();
   m_mpegParserTriggerFormatChange=false;
   m_bEndOfFile=false;
   m_bHoldAudio=false;
@@ -708,8 +626,7 @@ void CDeMultiplexer::Start()
     {
       // dynamic pins are currently disabled
       #ifdef USE_DYNAMIC_PINS
-      if ((m_mpeg2VideoInfo.hdr.dwReserved2!=0 && m_pids.videoPids.size() > 0 && 
-        m_pids.videoPids[0].Pid>1) && dwBytesProcessed<5000000)
+			if ((!m_mpegPesParser->basicVideoInfo.isValid && m_pids.videoPids.size() > 0 && m_pids.videoPids[0].Pid>1) && dwBytesProcessed<5000000)
       {
         dwBytesProcessed+=BytesRead;
         continue;
@@ -1245,30 +1162,16 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
               }
             }
           }
-//#ifdef TOO
           {
-          int lastVidResX=m_mpeg2VideoInfo.hdr.rcSource.right;
-          int lastVidResY=m_mpeg2VideoInfo.hdr.rcSource.bottom;
-          m_mpegPesParser.OnTsPacket((*it)->Data(),(*it)->Length(),m_mpeg2VideoInfo,m_pids.videoPids[0].VideoServiceType);
-          int streamType=m_mpeg2VideoInfo.hdr.dwReserved1;
-          m_mpeg2VideoInfo.hdr.dwReserved1=0;
-//          LogDebug("DeMultiplexer: %x video format: res=%dx%d aspectRatio=%d:%d bitrate=%d isInterlaced=%d",header.Pid,m_mpeg2VideoInfo.hdr.rcSource.right,m_mpeg2VideoInfo.hdr.rcSource.bottom,m_mpeg2VideoInfo.hdr.dwPictAspectRatioX,m_mpeg2VideoInfo.hdr.dwPictAspectRatioY,m_mpeg2VideoInfo.hdr.dwBitRate,(m_mpeg2VideoInfo.hdr.dwInterlaceFlags & AMINTERLACE_IsInterlaced==AMINTERLACE_IsInterlaced));
-          if (lastVidResX!=m_mpeg2VideoInfo.hdr.rcSource.right || lastVidResY!=m_mpeg2VideoInfo.hdr.rcSource.bottom)
-          {
-            LogDebug("DeMultiplexer: %x video format changed: res=%dx%d aspectRatio=%d:%d bitrate=%d isInterlaced=%d",header.Pid,m_mpeg2VideoInfo.hdr.rcSource.right,m_mpeg2VideoInfo.hdr.rcSource.bottom,m_mpeg2VideoInfo.hdr.dwPictAspectRatioX,m_mpeg2VideoInfo.hdr.dwPictAspectRatioY,m_mpeg2VideoInfo.hdr.dwBitRate,(m_mpeg2VideoInfo.hdr.dwInterlaceFlags & AMINTERLACE_IsInterlaced==AMINTERLACE_IsInterlaced));
+					int lastVidResX=m_mpegPesParser->basicVideoInfo.width;
+					int lastVidResY=m_mpegPesParser->basicVideoInfo.height;
 
-//        {         // Dump of Ts packet that cause the format change.
-//        int i= 0 ;
-//        while(i<188)
-//        {
-//          LogDebug(" %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x ",
-//            tsPacket[0+i], tsPacket[1+i], tsPacket[2+i], tsPacket[3+i],
-//            tsPacket[4+i], tsPacket[5+i], tsPacket[6+i], tsPacket[7+i],
-//            tsPacket[8+i], tsPacket[9+i], tsPacket[10+i], tsPacket[11+i],
-//            tsPacket[12+i], tsPacket[13+i], tsPacket[14+i], tsPacket[15+i]) ;
-//        i+=16 ;
-//        }
-//        }
+          bool parsed=m_mpegPesParser->OnTsPacket((*it)->Data(),(*it)->Length(),(m_pids.videoPids[0].VideoServiceType==SERVICE_TYPE_VIDEO_MPEG2));
+
+					if (lastVidResX!=m_mpegPesParser->basicVideoInfo.width || lastVidResY!=m_mpegPesParser->basicVideoInfo.height)
+          {
+						LogDebug("DeMultiplexer: %x video format changed: res=%dx%d aspectRatio=%d:%d fps=%d isInterlaced=%d",header.Pid,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,m_mpegPesParser->basicVideoInfo.fps,m_mpegPesParser->basicVideoInfo.isInterlaced);
+
             if (m_mpegParserTriggerFormatChange)
             {
               LogDebug("DeMultiplexer: OnMediaFormatChange triggered by mpeg2Parser");
@@ -1277,16 +1180,11 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
               m_mpegParserTriggerFormatChange=false;
             }
             LogDebug("DeMultiplexer: triggering OnVideoFormatChanged");
-            m_filter.OnVideoFormatChanged(streamType,m_mpeg2VideoInfo.hdr.rcSource.right,m_mpeg2VideoInfo.hdr.rcSource.bottom,m_mpeg2VideoInfo.hdr.dwPictAspectRatioX,m_mpeg2VideoInfo.hdr.dwPictAspectRatioY,m_mpeg2VideoInfo.hdr.dwBitRate,(m_mpeg2VideoInfo.hdr.dwInterlaceFlags & AMINTERLACE_IsInterlaced==AMINTERLACE_IsInterlaced));
+						m_filter.OnVideoFormatChanged(m_mpegPesParser->basicVideoInfo.streamType,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,15000000,m_mpegPesParser->basicVideoInfo.isInterlaced);
           }
           else
           {
             if (m_mpegParserTriggerFormatChange && Gop)
-//              m_receivedPackets++;
-//            int packetsToFallBack=FALLBACK_PACKETS_SD;
-//            if (m_pids.videoServiceType!=SERVICE_TYPE_VIDEO_MPEG2)
-//              packetsToFallBack=FALLBACK_PACKETS_HD;
-//            if (m_mpegParserTriggerFormatChange && m_receivedPackets>packetsToFallBack)
             {
               LogDebug("DeMultiplexer: Got GOP after the channel change was detected without correct mpeg header parsing, so we trigger the format change now.");
               m_filter.OnMediaTypeChanged(3);
@@ -1294,7 +1192,7 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
             }
           }
           }
-//#endif
+
           //yes, then move the full PES in main queue.
           while (m_t_vecVideoBuffers.size())
           { 
@@ -1597,7 +1495,6 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     {
       LogDebug("DeMultiplexer: We detected a new media type change which has a video stream, so we let the mpegParser trigger the event");
       m_receivedPackets=0;
-      ResetMpeg2VideoInfo();
       m_mpegParserTriggerFormatChange=true;
       SetVideoChanging(true);
     }
