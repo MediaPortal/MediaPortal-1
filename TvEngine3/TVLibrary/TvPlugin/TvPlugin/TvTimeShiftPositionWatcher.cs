@@ -36,12 +36,20 @@ namespace TvPlugin
         TvBusinessLayer layer = new TvBusinessLayer();
         preRecordInterval = Decimal.Parse(layer.GetSetting("preRecordInterval", "5").Value);
       }
+      if (TVHome.Navigator.Channel == null)
+        return;
+      if (TVHome.Navigator.Channel.CurrentProgram == null)
+        return;
       if ((DateTime.Now.AddMinutes((double)preRecordInterval) >= TVHome.Navigator.Channel.CurrentProgram.EndTime && idLastProgramEndsSoon != TVHome.Navigator.Channel.CurrentProgram.IdProgram) || invalidate)
       {
         User u = TVHome.Card.User;
+        if (u == null)
+          return;
         long bufferId = 0;
         if (RemoteControl.Instance.TimeShiftGetCurrentFilePosition(ref u, ref programTimeShiftStart, ref bufferId))
         {
+          if (u == null || programTimeShiftStart == null || bufferId == null)
+            return;
           programTimeShiftFile = RemoteControl.Instance.TimeShiftFileName(ref u) + bufferId.ToString() + ".ts";
           Log.Info("**");
           Log.Info("**");
