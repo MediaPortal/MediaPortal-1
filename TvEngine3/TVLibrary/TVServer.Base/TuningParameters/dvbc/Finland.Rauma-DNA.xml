@@ -15,6 +15,16 @@
     <ModulationType>Mod128Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
+    <DVBCTuning>
+    <Frequency>314000</Frequency>
+    <ModulationType>Mod128Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+    <DVBCTuning>
+    <Frequency>322000</Frequency>
+    <ModulationType>Mod128Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
   <DVBCTuning>
     <Frequency>338000</Frequency>
     <ModulationType>Mod128Qam</ModulationType>
@@ -38,6 +48,26 @@
   <DVBCTuning>
     <Frequency>370000</Frequency>
     <ModulationType>Mod128Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <Frequency>154000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <Frequency>266000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <Frequency>274000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <Frequency>282000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
