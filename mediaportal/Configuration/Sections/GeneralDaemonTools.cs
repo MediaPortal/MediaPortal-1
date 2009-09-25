@@ -129,21 +129,24 @@ namespace MediaPortal.Configuration.Sections
       else
         rk = Registry.CurrentUser.OpenSubKey(SoftwareKey);
 
-      foreach (string skName in rk.GetValueNames())
+      if (rk != null)
       {
-        try
+        foreach (string skName in rk.GetValueNames())
         {
-          if (skName.ToLower().Contains(Search.ToLower()))
+          try
           {
-            SoftwarePath = rk.GetValue(skName).ToString().Replace("\"", "");
-            SoftwarePath = SoftwarePath.Substring(0, SoftwarePath.LastIndexOf(@"\")) + @"\daemon.exe";
-            break;
+            if (skName.ToLower().Contains(Search.ToLower()))
+            {
+              SoftwarePath = rk.GetValue(skName).ToString().Replace("\"", "");
+              SoftwarePath = SoftwarePath.Substring(0, SoftwarePath.LastIndexOf(@"\")) + @"\daemon.exe";
+              break;
+            }
           }
+          catch (Exception)
+          { }
         }
-        catch (Exception)
-        {}
+        rk.Close();
       }
-      rk.Close();
       return SoftwarePath;
     }
 
