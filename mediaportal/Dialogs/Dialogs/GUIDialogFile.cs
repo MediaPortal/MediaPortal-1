@@ -74,6 +74,7 @@ namespace MediaPortal.Dialogs
     private bool m_bDialogActive = false;
     private bool m_bReload = false;
     private MusicDatabase dbMusic = null;
+    private bool m_preselectDelete = false;
 
     public GUIDialogFile()
     {
@@ -262,6 +263,7 @@ namespace MediaPortal.Dialogs
     public void SetSourceItem(GUIListItem item)
     {
       m_itemSourceItem = item;
+      m_preselectDelete = false;
     }
 
     public void SetSourceDir(string value)
@@ -354,6 +356,11 @@ namespace MediaPortal.Dialogs
                                         null);
         OnMessage(msg);
       }
+    }
+
+    public void PreselectDelete()
+    {
+      m_preselectDelete = true;
     }
 
     private void FileItemMC(GUIListItem item)
@@ -604,6 +611,12 @@ namespace MediaPortal.Dialogs
       {
         ShowErrorDialog(513, item.Path);
         Close();
+        return;
+      }
+      if (m_preselectDelete)
+      {
+        OnDeleteItem(item);
+        m_bReload = true;
         return;
       }
 

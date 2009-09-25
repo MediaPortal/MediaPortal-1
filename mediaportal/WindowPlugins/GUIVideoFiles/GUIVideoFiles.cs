@@ -290,13 +290,13 @@ namespace MediaPortal.GUI.Video
 
       if (action.wID == Action.ActionType.ACTION_DELETE_ITEM)
       {
-        ShowFileMenu();
+        ShowFileMenu(true);
       }
 
       base.OnAction(action);
     }
 
-    private void ShowFileMenu()
+    private void ShowFileMenu(bool preselectDelete)
     {
       // get pincode
       if (_fileMenuPinCode != string.Empty)
@@ -304,12 +304,12 @@ namespace MediaPortal.GUI.Video
         string userCode = string.Empty;
         if (GetUserInputString(ref userCode) && userCode == _fileMenuPinCode)
         {
-          OnShowFileMenu();
+          OnShowFileMenu(preselectDelete);
         }
       }
       else
       {
-        OnShowFileMenu();
+        OnShowFileMenu(preselectDelete);
       }
     }
 
@@ -1793,7 +1793,7 @@ namespace MediaPortal.GUI.Video
 
         case 500: // File menu
           {
-            ShowFileMenu();
+            ShowFileMenu(false);
           }
           break;
 
@@ -1837,7 +1837,7 @@ namespace MediaPortal.GUI.Video
       return keyboard.IsConfirmed;
     }
 
-    private void OnShowFileMenu()
+    private void OnShowFileMenu(bool preselectDelete)
     {
       GUIListItem item = facadeView.SelectedListItem;
       if (item == null)
@@ -1864,6 +1864,8 @@ namespace MediaPortal.GUI.Video
       dlgFile.SetSourceDir(_currentFolder);
       dlgFile.SetDestinationDir(_fileMenuDestinationDir);
       dlgFile.SetDirectoryStructure(_virtualDirectory);
+      if (preselectDelete)
+        dlgFile.PreselectDelete();
       dlgFile.DoModal(GetID);
       _fileMenuDestinationDir = dlgFile.GetDestinationDir();
 
