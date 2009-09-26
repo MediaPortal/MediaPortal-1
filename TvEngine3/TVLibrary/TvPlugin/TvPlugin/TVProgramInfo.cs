@@ -1209,6 +1209,11 @@ namespace TvPlugin
 
     private void OnNotify()
     {
+      if (CurrentProgram == null)
+      {
+        return;
+      }
+
       CurrentProgram.Notify = !CurrentProgram.Notify;
 
       // get the right db instance of current prog before we store it
