@@ -31,7 +31,19 @@
     <String id="30">Октябрь</String>	
     <String id="31">Ноябрь</String>	
     <String id="32">Декабрь</String>	
-    <String id="50" prefix="Мои ">DVD</String>	
+    <String id="50" prefix="Мои ">DVD</String>
+    <String id="60">Ожидание запуска ТВ Службы...</String>
+    <String id="61">Ожидание {0} секунд(ы) перед запуском...</String>
+    <String id="62">Инициализация DirectX...</String>
+    <String id="63">Инициализация устройств ввода...</String>
+    <String id="64">Запуск плагинов...</String>
+    <String id="65">Загрузка файла горячих клавиш...</String>
+    <String id="66">Загрузка языкового файла...</String>
+    <String id="67">Кеширование графики...</String>
+    <String id="68">Загрузка шрифтов...</String>
+    <String id="69">Загрузка скина ({0})...</String>
+    <String id="70">Загрузка плагинов окна...</String>
+    <String id="71">Инициализация менеджера окна...</String>
     <String id="100">Вид: Иконки</String>	
     <String id="101">Вид: Список</String>	
     <String id="102">Сканировать</String>	

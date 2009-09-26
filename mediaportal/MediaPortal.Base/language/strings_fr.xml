@@ -32,6 +32,18 @@
     <String id="31">Novembre</String>
     <String id="32">Décembre</String>
     <String id="50" prefix="Mes ">DVD</String>
+    <String id="60">Attente du démarrage du service télé...</String>
+    <String id="61">Attente {0} seconde(s) avant le démarrage...</String>
+    <String id="62">Initialisation de DirectX...</String>
+    <String id="63">Initialisation des périphériques d'entrée...</String>
+    <String id="64">Démarrage des plugins...</String>
+    <String id="65">Chargement du fichier keymap.xml...</String>
+    <String id="66">Chargement des chaines de caractères...</String>
+    <String id="67">Mise en cache des graphiques...</String>
+    <String id="68">Chargement des polices de caractères...</String>
+    <String id="69">Chargement du skin ({0})...</String>
+    <String id="70">Chargement des plugins intéractifs...</String>
+    <String id="71">Initialisation du gestionnaire de fenêtres...</String>
     <String id="100">Vue : Icônes</String>
     <String id="101">Vue : Liste</String>
     <String id="102">Analyser</String>

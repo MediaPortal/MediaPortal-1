@@ -414,7 +414,7 @@ public class MediaPortalApp : D3DApp, IRender
             Log.Debug("Main: TV service found. Checking status...");
             if (splashScreen != null)
             {
-              splashScreen.SetInformation("Waiting for startup of TV service...");
+              splashScreen.SetInformation(GUILocalizeStrings.Get(60)); // Waiting for startup of TV service...
             }
             if (ctrl.Status == ServiceControllerStatus.StartPending || ctrl.Status == ServiceControllerStatus.Stopped)
             {
@@ -462,7 +462,7 @@ public class MediaPortalApp : D3DApp, IRender
           {
             if (splashScreen != null)
             {
-              splashScreen.SetInformation("Waiting " + i.ToString() + " second(s) before startup...");
+              splashScreen.SetInformation(String.Format(GUILocalizeStrings.Get(61), i.ToString())); // Waiting {0} second(s) before startup...
             }
             Application.DoEvents();
             Thread.Sleep(1000);
@@ -555,7 +555,7 @@ public class MediaPortalApp : D3DApp, IRender
         Application.DoEvents();
         if (splashScreen != null)
         {
-          splashScreen.SetInformation("Initializing DirectX...");
+          splashScreen.SetInformation(GUILocalizeStrings.Get(62)); // Initializing DirectX...
         }
 
         MediaPortalApp app = new MediaPortalApp();
@@ -567,7 +567,7 @@ public class MediaPortalApp : D3DApp, IRender
           // Initialize Input Devices
           if (splashScreen != null)
           {
-            splashScreen.SetInformation("Initializing input devices...");
+            splashScreen.SetInformation(GUILocalizeStrings.Get(63)); // Initializing input devices...
           }
           InputDevices.Init();
           try
@@ -1366,7 +1366,7 @@ public class MediaPortalApp : D3DApp, IRender
     // these styles enable double buffering, which results in no flickering
     Log.Info("Main: Starting up");
     _mouseTimeOutTimer = DateTime.Now;
-    UpdateSplashScreenMessage("Starting plugins...");
+    UpdateSplashScreenMessage(GUILocalizeStrings.Get(64)); // Starting plugins...
     PluginManager.Load();
     PluginManager.Start();
     tMouseClickTimer = new Timer(SystemInformation.DoubleClickTime);
@@ -1565,9 +1565,9 @@ public class MediaPortalApp : D3DApp, IRender
     GUIWindowManager.Clear();
     GUIWaitCursor.Dispose();
     GUITextureManager.Dispose();
-    UpdateSplashScreenMessage("Loading keymap.xml...");
+    UpdateSplashScreenMessage(GUILocalizeStrings.Get(65)); // Loading keymap.xml...
     ActionTranslator.Load();
-    UpdateSplashScreenMessage("Loading strings...");
+    UpdateSplashScreenMessage(GUILocalizeStrings.Get(66)); // Loading strings...
     GUIGraphicsContext.Skin = m_strSkin;
     GUIGraphicsContext.ActiveForm = Handle;
     try
@@ -1579,7 +1579,7 @@ public class MediaPortalApp : D3DApp, IRender
       MessageBox.Show(String.Format("Failed to load your language! Aborting startup...\n\n{0}\nstack:{1}", exl.Message, exl.StackTrace), "Critical error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
       Close();
     }
-    UpdateSplashScreenMessage("Caching graphics...");
+    UpdateSplashScreenMessage(GUILocalizeStrings.Get(67)); // Caching graphics...
     try
     {
       GUITextureManager.Init();
@@ -1590,16 +1590,16 @@ public class MediaPortalApp : D3DApp, IRender
       Close();
     }
     GUIGraphicsContext.Load();
-    UpdateSplashScreenMessage("Loading fonts...");
+    UpdateSplashScreenMessage(GUILocalizeStrings.Get(68)); // Loading fonts...
     GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
-    UpdateSplashScreenMessage(String.Format("Loading skin ({0})...", m_strSkin));
+    UpdateSplashScreenMessage(String.Format(GUILocalizeStrings.Get(69), m_strSkin)); // Loading skin ({0})...
     GUIFontManager.InitializeDeviceObjects();
     Log.Info("Main: Loading {0} skin", m_strSkin);
     GUIWindowManager.Initialize();
-    UpdateSplashScreenMessage("Loading window plugins...");
+    UpdateSplashScreenMessage(GUILocalizeStrings.Get(70)); // Loading window plugins...
     PluginManager.LoadWindowPlugins();
     Log.Info("Main: Loading windowmanager");
-    UpdateSplashScreenMessage("Initializing window manager...");
+    UpdateSplashScreenMessage(GUILocalizeStrings.Get(71)); // Initializing window manager...
     Log.Info("Main: Resizing windowmanager");
     using (Settings xmlreader = new MPSettings())
     {
