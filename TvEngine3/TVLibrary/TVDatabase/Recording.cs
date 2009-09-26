@@ -390,7 +390,7 @@ using TvLibrary.Log;
       }
 
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Recording));
-      sb.AddConstraint(Operator.Like, "filename", "%" + fileName + "%");
+      sb.AddConstraint(Operator.Equals, "fileName", fileName);
 
       SqlStatement stmt = sb.GetStatement(true);
 

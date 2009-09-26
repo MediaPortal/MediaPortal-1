@@ -910,42 +910,33 @@ namespace TvPlugin
 
         case 979: // Play recording from beginning
           {
-            g_Player.Stop(true);
-            if (File.Exists(fileName))
+            Recording recDB = Recording.Retrieve(fileName);
+            if (recDB != null)
             {
+              bool useRTSP = TVHome.UseRTSP();
+              if (useRTSP)
+              {
+                fileName = TVHome.TvServer.GetStreamUrlForFileName(recDB.IdRecording);
+              }
+
+              Log.Info("TvScheduler Play:{0} - using rtsp mode:{1}", fileName, useRTSP);
               if (g_Player.Play(fileName, g_Player.MediaType.Recording))
               {
-                g_Player.SeekAbsolute(0);
-                g_Player.ShowFullScreenWindow();
-                Recording recDB = Recording.Retrieve(fileName);
+                if (Utils.IsVideo(fileName))
+                {
+                  //g_Player.SeekAbsolute(0); //this seek sometimes causes a deadlock in tsreader. original problem still present.
+                  g_Player.ShowFullScreenWindow();
+                }
+
                 TvRecorded.SetActiveRecording(recDB);
+
+                //populates recording metadata to g_player;
+                g_Player.currentFileName = recDB.FileName;
                 g_Player.currentTitle = recDB.Title;
                 g_Player.currentDescription = recDB.Description;
+
                 recDB.TimesWatched++;
                 recDB.Persist();
-              }
-              return;
-            }
-            else
-            {
-              string url = server.GetRtspUrlForFile(fileName);
-              Log.Info("recording url:{0}", url);
-              if (url.Length > 0)
-              {
-                g_Player.Play(url, g_Player.MediaType.Recording);
-
-                if (g_Player.Playing)
-                {
-                  g_Player.SeekAbsolute(0);
-                  g_Player.ShowFullScreenWindow();
-                  Recording recDB = Recording.Retrieve(fileName);
-                  TvRecorded.SetActiveRecording(recDB);
-                  g_Player.currentTitle = recDB.Title;
-                  g_Player.currentDescription = recDB.Description;
-                  recDB.TimesWatched++;
-                  recDB.Persist();
-                  return;
-                }
               }
             }
           }
