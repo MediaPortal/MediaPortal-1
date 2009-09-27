@@ -32,6 +32,18 @@
     <String id="31">Novembre</String>
     <String id="32">Dicembre</String>
     <String id="50" prefix="I miei ">DVD</String>
+    <String id="60">Attesa attivazione del servizio TV...</String>
+    <String id="61">Attesa di {0} secondi prima della partenza...</String>
+    <String id="62">Inizializzazione DirectX...</String>
+    <String id="63">Inizializzazione dispositivi di input...</String>
+    <String id="64">Avviamento plugins...</String>
+    <String id="65">Inizializzazione keymap.xml...</String>
+    <String id="66">Inizializzazione stringhe...</String>
+    <String id="67">Caching elementi grafici...</String>
+    <String id="68">Inizializzazione caratteri...</String>
+    <String id="69">Inizializzazione skin ({0})...</String>
+    <String id="70">Inizializzazione window plugins...</String>
+    <String id="71">Inizializzazione gestore finestre...</String>
     <String id="100">Vista: Icone</String>
     <String id="101">Vista: Elenco</String>
     <String id="102">Aggiorna</String>
