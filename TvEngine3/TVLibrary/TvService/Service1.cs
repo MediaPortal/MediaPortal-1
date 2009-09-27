@@ -148,11 +148,6 @@ namespace TvService
       _controller.Init();
       StartPlugins();
 
-      if (!System.IO.Directory.Exists("pmt"))
-      {
-        System.IO.Directory.CreateDirectory("pmt");
-      }
-
       StartRemoting();
       _started = true;
       Log.Info("TV service: Started");

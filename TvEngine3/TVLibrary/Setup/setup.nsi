@@ -809,7 +809,6 @@ Section Uninstall
   RMDir "$SMPROGRAMS\Team MediaPortal"
 
   ; remove last files and instdir
-  RMDir "$INSTDIR\pmt"
   Delete "$INSTDIR\uninstall-tve3.exe"
   RMDir "$INSTDIR"
 
