@@ -27,19 +27,19 @@
 
 class MPMPEG2TransportStreamFromPESSource: public MPEG2TransportStreamFromPESSource {
 public:
-  static MPMPEG2TransportStreamFromPESSource*
-  createNew(UsageEnvironment& env, MPEG1or2DemuxedElementaryStream* inputSource);
+	static MPMPEG2TransportStreamFromPESSource*
+		createNew(UsageEnvironment& env, MPEG1or2DemuxedElementaryStream* inputSource);
 
 
-  MPEG1or2DemuxedElementaryStream* InputSource() { return fMPInputSource;}
+	MPEG1or2DemuxedElementaryStream* InputSource() { return fMPInputSource;}
 protected:
-  MPMPEG2TransportStreamFromPESSource(UsageEnvironment& env,
-				    MPEG1or2DemuxedElementaryStream* inputSource);
-      // called only by createNew()
-  virtual ~MPMPEG2TransportStreamFromPESSource();
+	MPMPEG2TransportStreamFromPESSource(UsageEnvironment& env,
+		MPEG1or2DemuxedElementaryStream* inputSource);
+	// called only by createNew()
+	virtual ~MPMPEG2TransportStreamFromPESSource();
 
 private:
-  MPEG1or2DemuxedElementaryStream* fMPInputSource;
+	MPEG1or2DemuxedElementaryStream* fMPInputSource;
 };
 
 #endif

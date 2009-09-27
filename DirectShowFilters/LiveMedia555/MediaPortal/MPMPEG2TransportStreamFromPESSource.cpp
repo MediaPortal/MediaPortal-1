@@ -25,21 +25,21 @@ extern void LogDebug(const char *fmt, ...) ;
 
 MPMPEG2TransportStreamFromPESSource* MPMPEG2TransportStreamFromPESSource
 ::createNew(UsageEnvironment& env, MPEG1or2DemuxedElementaryStream* inputSource) {
-  return new MPMPEG2TransportStreamFromPESSource(env, inputSource);
+	return new MPMPEG2TransportStreamFromPESSource(env, inputSource);
 }
 
 MPMPEG2TransportStreamFromPESSource
 ::MPMPEG2TransportStreamFromPESSource(UsageEnvironment& env,
-				    MPEG1or2DemuxedElementaryStream* inputSource)
-					: MPEG2TransportStreamFromPESSource(env,inputSource),
-    fMPInputSource(inputSource) {
-  LogDebug("MPEG2TransportStreamFromPESSource::ctor:%x",this);
+									  MPEG1or2DemuxedElementaryStream* inputSource)
+									  : MPEG2TransportStreamFromPESSource(env,inputSource),
+									  fMPInputSource(inputSource) {
+										  LogDebug("MPEG2TransportStreamFromPESSource::ctor:%x",this);
 }
 
 MPMPEG2TransportStreamFromPESSource::~MPMPEG2TransportStreamFromPESSource() 
 {
 	MPEG2TransportStreamFromPESSource::~MPEG2TransportStreamFromPESSource();
-  LogDebug("MPEG2TransportStreamFromPESSource::dtor:%x",this);
-  fMPInputSource=NULL;
+	LogDebug("MPEG2TransportStreamFromPESSource::dtor:%x",this);
+	fMPInputSource=NULL;
 }
 

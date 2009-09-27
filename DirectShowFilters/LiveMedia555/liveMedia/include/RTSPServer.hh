@@ -141,6 +141,8 @@ protected:
 					 char const* cseq, char const* fullRequestStr);
     virtual void handleCmd_SET_PARAMETER(ServerMediaSubsession* subsession,
 					 char const* cseq, char const* fullRequestStr);
+	// TEAM MEDIAPORTAL MODIFICATION to override the handling in paused conditions
+    virtual void noteLiveness();
   protected:
     UsageEnvironment& envir() { return fOurServer.envir(); }
     void reclaimStreamStates();
@@ -151,7 +153,6 @@ protected:
     Boolean isMulticast() const { return fIsMulticast; }
     static void incomingRequestHandler(void*, int /*mask*/);
     void incomingRequestHandler1();
-    void noteLiveness();
     static void noteClientLiveness(RTSPClientSession* clientSession);
     static void livenessTimeoutTask(RTSPClientSession* clientSession);
   protected:

@@ -29,55 +29,60 @@ using namespace std;
 
 class MPRTSPServer: public RTSPServer {
 public:
-  static MPRTSPServer* createNew(UsageEnvironment& env, Port ourPort = 554,
-			       UserAuthenticationDatabase* authDatabase = NULL,
-			       unsigned reclamationTestSeconds = 45);
+	static MPRTSPServer* createNew(UsageEnvironment& env, Port ourPort = 554,
+		UserAuthenticationDatabase* authDatabase = NULL,
+		unsigned reclamationTestSeconds = 45);
 
 protected:
-  MPRTSPServer(UsageEnvironment& env,
-	     int ourSocket, Port ourPort,
-	     UserAuthenticationDatabase* authDatabase,
-	     unsigned reclamationTestSeconds);
-      // called only by createNew();
-  virtual ~MPRTSPServer();
-  // If you subclass "RTSPClientSession", then you should also redefine this virtual function in order
-  // to create new objects of your subclass:
-  virtual RTSPClientSession*
-  createNewClientSession(unsigned sessionId, int clientSocket, struct sockaddr_in clientAddr);
+	MPRTSPServer(UsageEnvironment& env,
+		int ourSocket, Port ourPort,
+		UserAuthenticationDatabase* authDatabase,
+		unsigned reclamationTestSeconds);
+	// called only by createNew();
+	virtual ~MPRTSPServer();
+	// If you subclass "RTSPClientSession", then you should also redefine this virtual function in order
+	// to create new objects of your subclass:
+	virtual RTSPClientSession*
+		createNewClientSession(unsigned sessionId, int clientSocket, struct sockaddr_in clientAddr);
 
 
 public:
-  // The state of each individual session handled by a RTSP server:
+	// The state of each individual session handled by a RTSP server:
 	class MPRTSPClientSession: public RTSPClientSession {
-  public:
-    MPRTSPClientSession(MPRTSPServer& ourServer, unsigned sessionId,
-		      int clientSocket, struct sockaddr_in clientAddr);
-    virtual ~MPRTSPClientSession();
-	ServerMediaSession* getOurServerMediaSession(){return fOurServerMediaSession;}
-	Boolean IsSessionIsActive() {return fSessionIsActive;}
-	struct sockaddr_in getClientAddr() {return fClientAddr;}
-	LONG getStartDateTime() {return startDateTime;}
-	bool isPaused() {return m_bPaused;}
+	public:
+		MPRTSPClientSession(MPRTSPServer& ourServer, unsigned sessionId,
+			int clientSocket, struct sockaddr_in clientAddr);
+		virtual ~MPRTSPClientSession();
+		ServerMediaSession* getOurServerMediaSession(){return fOurServerMediaSession;}
+		Boolean IsSessionIsActive() {return fSessionIsActive;}
+		struct sockaddr_in getClientAddr() {return fClientAddr;}
+		LONG getStartDateTime() {return startDateTime;}
+		bool isPaused() {return m_bPaused;}
 
 	protected:
-	LONG startDateTime;
-    bool m_bPaused;
-	MPRTSPServer& fOurMPServer;
-		    virtual void handleCmd_PLAY(ServerMediaSubsession* subsession,
-				char const* cseq, char const* fullRequestStr);
-    virtual void handleCmd_PAUSE(ServerMediaSubsession* subsession,
-				 char const* cseq);
+		LONG startDateTime;
+		bool m_bPaused;
+		MPRTSPServer& fOurMPServer;
+		virtual void handleCmd_PLAY(ServerMediaSubsession* subsession,
+			char const* cseq, char const* fullRequestStr);
+		virtual void handleCmd_PAUSE(ServerMediaSubsession* subsession,
+			char const* cseq);
+		static void livenessTimeoutTaskMP(MPRTSPClientSession* clientSession);
+		virtual void noteLiveness();
 
 	};
 
 public:
-    void AddClient(MPRTSPServer::MPRTSPClientSession* client);
-    void RemoveClient(MPRTSPClientSession* client);
+	void AddClient(MPRTSPServer::MPRTSPClientSession* client);
+	void RemoveClient(MPRTSPClientSession* client);
 
-    vector<MPRTSPServer::MPRTSPClientSession*> Clients();
-    typedef vector<MPRTSPServer::MPRTSPClientSession*>::iterator itClients;
-    
-    vector<MPRTSPServer::MPRTSPClientSession*> m_clients;
+	vector<MPRTSPServer::MPRTSPClientSession*> Clients();
+	typedef vector<MPRTSPServer::MPRTSPClientSession*>::iterator itClients;
+
+	vector<MPRTSPServer::MPRTSPClientSession*> m_clients;
+private:
+  unsigned fMPReclamationTestSeconds;
+
 };
 
 #endif

@@ -37,12 +37,12 @@ MPTaskScheduler::~MPTaskScheduler() {
 }
 
 void MPTaskScheduler::doEventLoop(char* watchVariable) {
-  // Repeatedly loop, handling readble sockets and timed events:
-  //for (int i=0; i < 10;++i)
-  {
-//    if (watchVariable != NULL && *watchVariable != 0) break;
-    SingleStep(1000000LL); //delay time is in micro seconds
-  } 
+	// Repeatedly loop, handling readble sockets and timed events:
+	//for (int i=0; i < 10;++i)
+	{
+		//    if (watchVariable != NULL && *watchVariable != 0) break;
+		SingleStep(1000000LL); //delay time is in micro seconds
+	} 
 }
 
 

@@ -27,15 +27,15 @@
 
 class MPTaskScheduler: public BasicTaskScheduler {
 public:
-  static MPTaskScheduler* createNew();
-  virtual ~MPTaskScheduler();
+	static MPTaskScheduler* createNew();
+	virtual ~MPTaskScheduler();
 
 protected:
-  MPTaskScheduler();
-      // called only by "createNew()"
+	MPTaskScheduler();
+	// called only by "createNew()"
 
 protected:
-  virtual void doEventLoop(char* watchVariable);
+	virtual void doEventLoop(char* watchVariable);
 
 };
 
