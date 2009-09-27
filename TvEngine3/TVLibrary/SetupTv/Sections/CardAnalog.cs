@@ -957,6 +957,18 @@ namespace SetupTv.Sections
           item.Text = line;
         }
       }
+      catch (TvExceptionSWEncoderMissing)
+      {
+        Log.Error("analog: DoTvScan error (missing software encoder)");
+        MessageBox.Show("Please install a supported audio/video encoder for your software analog card", "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        Application.Exit();
+      }
+      catch (Exception ex)
+      {
+        Log.Error("analog: DoTvScan error ({0})", ex.StackTrace);
+        MessageBox.Show(string.Format("Generic error: {0}", ex.Message), "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        Application.Exit();
+      }
       finally
       {
         User user = new User();

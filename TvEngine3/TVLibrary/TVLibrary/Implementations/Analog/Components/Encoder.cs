@@ -334,13 +334,13 @@ namespace TvLibrary.Implementations.Analog.Components
         }
         if (!AddAudioCompressor(_graphBuilder))
         {
-          Log.Log.WriteFile("analog:   failed to add audio compressor. you must install a supported audio encoder!");
-          throw new TvExceptionSWEncoderMissing("No audio compressor filter found");
+          Log.Log.WriteFile("analog:   failed to add audio compressor. You must install a supported audio encoder!");
+          throw new TvExceptionSWEncoderMissing("No audio compressor filter found. You must install a supported audio encoder!");
         }
         if (!AddVideoCompressor(_graphBuilder))
         {
-          Log.Log.WriteFile("analog:   failed to add video compressor");
-          throw new TvExceptionSWEncoderMissing("No video compressor filter found. you must install a supported video encoder!");
+          Log.Log.WriteFile("analog:   failed to add video compressor. You must install a supported video encoder!");
+          throw new TvExceptionSWEncoderMissing("No video compressor filter found. You must install a supported video encoder!");
         }
         if (FilterGraphTools.GetFilterName(_filterAudioCompressor).Contains("InterVideo Audio Encoder"))
         {

@@ -244,7 +244,8 @@ namespace TvLibrary.Implementations.Analog.Components
       try
       {
         hr = graphBuilder.AddSourceFilterForMoniker(_tunerDevice.Mon, null, _tunerDevice.Name, out tmp);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         Log.Log.WriteFile("analog: cannot add filter to graph");
         return false;
@@ -362,7 +363,8 @@ namespace TvLibrary.Implementations.Analog.Components
       if (_tuner != null)
       {
         _tuner.ChannelMinMax(out _minChannel, out _maxChannel);
-      } else
+      }
+      else
       {
         _minChannel = 0;
         _maxChannel = 128;
@@ -397,15 +399,23 @@ namespace TvLibrary.Implementations.Analog.Components
       _tunerLocked = false;
       _signalLevel = 0;
       _signalQuality = 0;
-      AMTunerSignalStrength signalStrength;
-      _tuner.SignalPresent(out signalStrength);
-      _tunerLocked = (signalStrength == AMTunerSignalStrength.SignalPresent || signalStrength == AMTunerSignalStrength.HasNoSignalStrength);
+      try
+      {
+        AMTunerSignalStrength signalStrength;
+        _tuner.SignalPresent(out signalStrength);
+        _tunerLocked = (signalStrength == AMTunerSignalStrength.SignalPresent || signalStrength == AMTunerSignalStrength.HasNoSignalStrength);
+      }
+      catch (TvExceptionSWEncoderMissing)
+      {
+        Log.Log.Error("UpdateSignalQuality: unable to perform the check because of a missing audio/video encoder!");
+      }
 
       if (_tunerLocked)
       {
         _signalLevel = 100;
         _signalQuality = 100;
-      } else
+      }
+      else
       {
         _signalLevel = 0;
         _signalQuality = 0;
@@ -434,7 +444,8 @@ namespace TvLibrary.Implementations.Analog.Components
           {
             Log.Log.WriteFile("analog:  set to FM radio");
             _tuner.put_Mode(AMTunerModeType.FMRadio);
-          } else
+          }
+          else
           {
             Log.Log.WriteFile("analog:  set to TV");
             _tuner.put_Mode(AMTunerModeType.TV);
@@ -455,20 +466,23 @@ namespace TvLibrary.Implementations.Analog.Components
           {
             _tuner.put_Channel((int)analogChannel.Frequency, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
           }
-        } else
+        }
+        else
         {
           if (analogChannel.ChannelNumber != _currentChannel.ChannelNumber)
           {
             _tuner.put_Channel(analogChannel.ChannelNumber, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
           }
         }
-      } else
+      }
+      else
       {
         if (analogChannel.IsRadio)
         {
           Log.Log.WriteFile("analog:  set to FM radio");
           _tuner.put_Mode(AMTunerModeType.FMRadio);
-        } else
+        }
+        else
         {
           Log.Log.WriteFile("analog:  set to TV");
           _tuner.put_Mode(AMTunerModeType.TV);
@@ -479,7 +493,8 @@ namespace TvLibrary.Implementations.Analog.Components
         if (analogChannel.IsRadio)
         {
           _tuner.put_Channel((int)analogChannel.Frequency, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
-        } else
+        }
+        else
         {
           _tuner.put_Channel(analogChannel.ChannelNumber, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
         }
