@@ -42,6 +42,16 @@ namespace MediaPortal.GUI.Library
     #endregion
 
     #region Variables
+    #region Const
+    // How often (per second) the caret blinks
+    private const float fCARET_BLINK_RATE = 1.0f;
+
+    // During the blink period, the amount the caret is visible. 0.5 equals
+    // half the time, 0.75 equals 3/4ths of the time, etc.
+    public const float fCARET_ON_RATIO = 0.75f;
+
+    #endregion
+
     #region Skin variables
     [XMLSkinElement("font")]  protected string _fontName = "font14";
     [XMLSkinElement("font2")] protected string _fontName2 = "font13";
@@ -69,6 +79,7 @@ namespace MediaPortal.GUI.Library
     private bool _usingKeyboard = false;
     private bool _needRefresh = false;
     private GUIImage _image;
+    private DateTime _caretTimer = DateTime.Now;
     #endregion
 
     #region Protected Variables
@@ -617,27 +628,30 @@ namespace MediaPortal.GUI.Library
       int posY = _positionY;
       int step = 20;
       GUIGraphicsContext.ScaleVertical(ref step);
-      _font.DrawText(_positionX, posY, _textColor, " 1     2       3", Alignment.ALIGN_LEFT, -1);
+      uint col = GUIGraphicsContext.MergeAlpha((uint)_textColor);
+      uint col2 = GUIGraphicsContext.MergeAlpha((uint)_textColor2);
+
+      _font.DrawText(_positionX, posY, col, " 1     2       3", Alignment.ALIGN_LEFT, -1);
       posY += step;
-      _font2.DrawText(_positionX, posY, _textColor2, "_01   abc    def", Alignment.ALIGN_LEFT, -1);
+      _font2.DrawText(_positionX, posY, col2, "_01   abc    def", Alignment.ALIGN_LEFT, -1);
       posY += step;
 
       posY += step;
-      _font.DrawText(_positionX, posY, _textColor, " 4     5      6", Alignment.ALIGN_LEFT, -1);
+      _font.DrawText(_positionX, posY, col, " 4     5      6", Alignment.ALIGN_LEFT, -1);
       posY += step;
-      _font2.DrawText(_positionX, posY, _textColor2, "ghi   jkl    mno", Alignment.ALIGN_LEFT, -1);
-      posY += step;
-
-      posY += step;
-      _font.DrawText(_positionX, posY, _textColor, " 7     8      9", Alignment.ALIGN_LEFT, -1);
-      posY += step;
-      _font2.DrawText(_positionX, posY, _textColor2, "pqrs tuv wxyz", Alignment.ALIGN_LEFT, -1);
+      _font2.DrawText(_positionX, posY, col2, "ghi   jkl    mno", Alignment.ALIGN_LEFT, -1);
       posY += step;
 
       posY += step;
-      _font.DrawText(_positionX, posY, _textColor, "       0       ", Alignment.ALIGN_LEFT, -1);
+      _font.DrawText(_positionX, posY, col, " 7     8      9", Alignment.ALIGN_LEFT, -1);
       posY += step;
-      _font2.DrawText(_positionX, posY, _textColor2, "     [del]", Alignment.ALIGN_LEFT, -1);
+      _font2.DrawText(_positionX, posY, col2, "pqrs tuv wxyz", Alignment.ALIGN_LEFT, -1);
+      posY += step;
+
+      posY += step;
+      _font.DrawText(_positionX, posY, col, "       0       ", Alignment.ALIGN_LEFT, -1);
+      posY += step;
+      _font2.DrawText(_positionX, posY, col2, "     [del]", Alignment.ALIGN_LEFT, -1);
     }
 
     private void DrawTextBox(float timePassed)
@@ -688,23 +702,24 @@ namespace MediaPortal.GUI.Library
           fCaretWidth += line.Length;
         }
       }
+      uint col = GUIGraphicsContext.MergeAlpha((uint)_textBoxColor);
+      _fontTextBox.DrawText(_xPositionTextBox, _yPositionTextBox, col, line, Alignment.ALIGN_LEFT, -1);
 
-      _fontTextBox.DrawText(_xPositionTextBox, _yPositionTextBox, _textBoxColor, line, Alignment.ALIGN_LEFT, -1);
+      if (Focus)
+      {
+        // Draw blinking caret using line primitives.
+        TimeSpan ts = DateTime.Now - _caretTimer;
+        if ((ts.TotalSeconds % fCARET_BLINK_RATE) < fCARET_ON_RATIO)
+        {
+          line = _lineData.Substring(0, _position);
 
-      /*
-            // Draw blinking caret using line primitives.
-            TimeSpan ts=DateTime.Now-_timerCaret;
-            if(  (ts.TotalSeconds % FCaretBlinkRate ) < FCaretOnRatio )
-            {
-              string strLine=_lineData.Substring( 0, _position );
-
-              float fCaretWidth = 0.0f;
-              float fCaretHeight=0.0f;
-              _fontTextBox.GetTextExtent( strLine, ref fCaretWidth, ref fCaretHeight );
-              if (GUIGraphicsContext.graphics!=null) fCaretWidth+=strLine.Length;
-              _fontTextBox.DrawText( _xPositionTextBox+(int)fCaretWidth, _yPositionTextBox, 0xff202020, "|", GUIControl.Alignment.ALIGN_LEFT, -1 ); 
-            }
-      */
+          float caretWidth = 0.0f;
+          float caretHeight = 0.0f;
+          _fontTextBox.GetTextExtent(line, ref caretWidth, ref caretHeight);
+          int x = _xPositionTextBox + (int) caretWidth;
+          _fontTextBox.DrawText(x, _yPositionTextBox, 0xff202020, "|", GUIControl.Alignment.ALIGN_LEFT, -1);
+        }
+      }
     }
 
     private void InsertChar(char toAdd)
@@ -825,59 +840,76 @@ namespace MediaPortal.GUI.Library
       return true;
     }
 
+    public override bool Focus
+    {
+      get
+      {
+          for (int i = 0; i < 10; i++) i++;
+          return base.Focus;
+      }
+      set
+      {
+         base.Focus = _image.Focus = value;
+      }
+    }
+
     public override void OnAction(Action action)
     {
-      switch (action.wID)
-      {
-        case Action.ActionType.ACTION_MOVE_LEFT:
-          {
-            if (_position > 0)
-            {
-              _position--;
-              _needRefresh = true;
-            }
-            return;
-          }
-        case Action.ActionType.ACTION_MOVE_RIGHT:
-          {
-            if (_position < _lineData.Length)
-            {
-              _position++;
-              _needRefresh = true;
-            }
-            return;
-          }
-
-        case Action.ActionType.ACTION_SELECT_ITEM:
-          {
-            // Enter key or Ok button (not working when clicked outside the box)
-            return;
-          }
-
-        case Action.ActionType.ACTION_KEY_PRESSED:
-          if (action.m_key != null)
-          {
-            // Enter key or OK button
-            if (action.m_key.KeyChar == (int)Keys.Enter)
-            {
-              InsertChar(_currentKey);
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NEW_LINE_ENTERED, WindowId, GetID, ParentID,
-                                              0, 0, null);
-              msg.Label = _lineData;
-              _lineData = "";
-              GUIGraphicsContext.SendMessage(msg);
-              return;
-            }
-
-            if ((action.m_key.KeyChar >= 32) || (action.m_key.KeyChar == (int)Keys.Back))
-            {
-              Press((char)action.m_key.KeyChar);
-              return;
-            }
-          }
-          break;
-      }
       base.OnAction(action);
+      if (Focus)
+      {
+        switch (action.wID)
+        {
+          case Action.ActionType.ACTION_MOVE_LEFT:
+            {
+              if (_position > 0)
+              {
+                _position--;
+                _needRefresh = true;
+              }
+              return;
+            }
+          case Action.ActionType.ACTION_MOVE_RIGHT:
+            {
+              if (_position < _lineData.Length)
+              {
+                _position++;
+                _needRefresh = true;
+              }
+              return;
+            }
+
+          case Action.ActionType.ACTION_SELECT_ITEM:
+            {
+              // Enter key or Ok button (not working when clicked outside the box)
+              return;
+            }
+
+          case Action.ActionType.ACTION_KEY_PRESSED:
+            if (action.m_key != null)
+            {
+              // Enter key or OK button
+              if (action.m_key.KeyChar == (int) Keys.Enter)
+              {
+                InsertChar(_currentKey);
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NEW_LINE_ENTERED, WindowId, GetID,
+                                                ParentID,
+                                                0, 0, null);
+                msg.Label = _lineData;
+                _lineData = "";
+                GUIGraphicsContext.SendMessage(msg);
+                return;
+              }
+
+              if ((action.m_key.KeyChar >= 32) || (action.m_key.KeyChar == (int) Keys.Back))
+              {
+                Press((char) action.m_key.KeyChar);
+                return;
+              }
+            }
+            break;
+        }
+      }
     }
 
     public override bool NeedRefresh()

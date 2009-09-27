@@ -63,56 +63,28 @@
       <type>group</type>
       <description>group element</description>
       <posX>40</posX>
-      <posY>97</posY>
+      <posY>100</posY>
       <layout>StackLayout</layout>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
       <control>
+        <description>Sort by Name/Date/Channel</description>
         <type>sortbutton</type>
         <id>2</id>
         <label>620</label>
         <onleft>10</onleft>
         <onright>10</onright>
-        <onup>17</onup>
-        <ondown>4</ondown>
+        <onup>19</onup>
+        <ondown>20</ondown>
       </control>
       <control>
-        <description>Search by Genres</description>
-        <type>togglebutton</type>
-        <id>4</id>
-        <font>font13</font>
-        <textcolor>ffffffff</textcolor>
-        <colordiffuse>ffffffff</colordiffuse>
-        <label>725</label>
+        <description>View by Title/Genre</description>
+        <type>button</type>
+        <id>20</id>
+        <label>1522</label>
         <onleft>10</onleft>
         <onright>10</onright>
         <onup>2</onup>
-        <ondown>5</ondown>
-      </control>
-      <control>
-        <description>Search by Title</description>
-        <type>togglebutton</type>
-        <id>5</id>
-        <font>font13</font>
-        <textcolor>ffffffff</textcolor>
-        <colordiffuse>ffffffff</colordiffuse>
-        <label>726</label>
-        <onleft>5</onleft>
-        <onright>10</onright>
-        <onup>4</onup>
-        <ondown>6</ondown>
-      </control>
-      <control>
-        <description>Search by Description</description>
-        <type>togglebutton</type>
-        <id>6</id>
-        <label>922</label>
-        <font>font13</font>
-        <textcolor>ffffffff</textcolor>
-        <colordiffuse>ffffffff</colordiffuse>
-        <onleft>6</onleft>
-        <onright>10</onright>
-        <onup>5</onup>
         <ondown>7</ondown>
       </control>
       <control>
@@ -122,7 +94,7 @@
         <label>872</label>
         <onleft>7</onleft>
         <onright>10</onright>
-        <onup>6</onup>
+        <onup>20</onup>
         <ondown>19</ondown>
       </control>
       <control>
@@ -131,30 +103,11 @@
         <id>19</id>
         <label>137</label>
         <onup>7</onup>
-        <ondown>8</ondown>
-	    <onleft>19</onleft>
-        <onright>10</onright>
-      </control>
-      <control>
-        <description>Title button</description>
-        <type>selectbutton</type>
-        <id>8</id>
-        <label>873</label>
-        <onleft>19</onleft>
-        <onright>10</onright>
-        <onup>19</onup>
-        <ondown>9</ondown>
-      </control>
-      <control>
-        <description>Episode button</description>
-        <type>selectbutton</type>
-        <id>9</id>
-        <label>874</label>
-        <onleft>19</onleft>
-        <onright>10</onright>
-        <onup>8</onup>
         <ondown>2</ondown>
+	      <onleft>10</onleft>
+        <onright>10</onright>
       </control>
+      
     </control>
     <control>
       <type>group</type>
@@ -194,7 +147,7 @@
       <type>fadelabel</type>
       <id>13</id>
       <posX>260</posX>
-      <posY>440</posY>
+      <posY>400</posY>
       <width>250</width>
       <label>#TV.Search.Title</label>
       <font>font13</font>
@@ -207,7 +160,7 @@
       <type>label</type>
       <id>16</id>
       <posX>260</posX>
-      <posY>410</posY>
+      <posY>420</posY>
       <label>#TV.Search.Channel</label>
       <align>left</align>
       <font>font13</font>
@@ -220,7 +173,7 @@
       <type>label</type>
       <id>14</id>
       <posX>260</posX>
-      <posY>430</posY>
+      <posY>440</posY>
       <label>#TV.Search.Time</label>
       <align>left</align>
       <font>font13</font>
@@ -233,7 +186,7 @@
       <type>textboxscrollup</type>
       <id>15</id>
       <posX>260</posX>
-      <posY>450</posY>
+      <posY>460</posY>
       <width>430</width>
       <height>65</height>
       <label>#TV.Search.Description</label>
@@ -247,7 +200,7 @@
       <type>label</type>
       <id>17</id>
       <posX>660</posX>
-      <posY>410</posY>
+      <posY>420</posY>
       <label>#TV.Search.Genre</label>
       <align>right</align>
       <font>font13</font>
@@ -255,5 +208,6 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
+	<import>common.videowindow.small.xml</import>	
   </controls>
 </window>

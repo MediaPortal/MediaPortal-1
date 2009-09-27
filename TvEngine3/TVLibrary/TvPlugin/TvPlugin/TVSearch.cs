@@ -57,14 +57,16 @@ namespace TvPlugin
     [SkinControl(16)] protected GUILabelControl lblChannel = null;
     [SkinControl(17)] protected GUILabelControl lblProgramGenre = null;
     [SkinControl(18)] protected GUIImage imgTvLogo = null;
+    [SkinControl(20)] protected GUIButtonControl btnViewBy = null; // is replacing btnSearchByTitle, btnSearchByGenre
+    [SkinControl(21)] protected GUIButtonControl btnSearchDescription = null; // is replacing btnSearchByDescription 
+
 
     private DirectoryHistory history = new DirectoryHistory();
 
     private enum SearchMode
     {
       Genre,
-      Title,
-      Description
+      Title
     }
 
     private enum SortMethod
@@ -77,7 +79,6 @@ namespace TvPlugin
     private SortMethod currentSortMethod = SortMethod.Name;
     private bool sortAscending = true;
     private IList<Schedule> listRecordings;
-    //		int        currentSearchKind=-1;
 
     private SearchMode currentSearchMode = SearchMode.Genre;
     private int currentLevel = 0;
@@ -128,9 +129,6 @@ namespace TvPlugin
         }
       }
 
-      /*switch (action.wID)
-      {
-      }*/
       base.OnAction(action);
     }
 
@@ -147,74 +145,63 @@ namespace TvPlugin
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
-      //currentSearchKind=-1;
       listRecordings = Schedule.ListAll();
 
-      btnShow.RestoreSelection = false;
-      btnEpisode.RestoreSelection = false;
+      if (btnShow != null) btnShow.RestoreSelection = false;
+      if (btnEpisode != null) btnEpisode.RestoreSelection = false;
       if (btnLetter != null)
       {
         btnLetter.RestoreSelection = false;
       }
 
-      btnShow.Clear();
-      btnEpisode.Clear();
+      if (btnShow != null) btnShow.Clear();
+      if (btnEpisode != null) btnEpisode.Clear();
       if (btnLetter != null)
       {
-        btnLetter.AddSubItem("#");
         for (char k = 'A'; k <= 'Z'; k++)
         {
           btnLetter.AddSubItem(k.ToString());
         }
+        //btnLetter.AddSubItem("#");  // => will be everything beside a-z
       }
       Update();
 
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
+      if (btnSearchByDescription != null) btnSearchByDescription.Disabled = true;
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
-      if (control == btnSearchByGenre)
+      if ((control == btnSearchByGenre) || ((control == btnViewBy) && (currentSearchMode == SearchMode.Title)))
       {
-        btnShow.Clear();
-        btnEpisode.Clear();
+        if (btnShow != null) btnShow.Clear();
+        if (btnEpisode != null) btnEpisode.Clear();
         currentSearchMode = SearchMode.Genre;
         currentLevel = 0;
         filterEpisode = String.Empty;
         filterLetter = "";
         filterShow = String.Empty;
-        //currentSearchKind=-1;
         Update();
-        GUIControl.FocusControl(GetID, btnSearchByGenre.GetID);
+        GUIControl.FocusControl(GetID, control.GetID);
       }
-      if (control == btnSearchByTitle)
+      else if ((control == btnSearchByTitle) || ((control == btnViewBy) && (currentSearchMode == SearchMode.Genre)))
       {
-        btnShow.Clear();
-        btnEpisode.Clear();
+        if (btnShow != null) btnShow.Clear();
+        if (btnEpisode != null) btnEpisode.Clear();
         filterEpisode = String.Empty;
         filterShow = String.Empty;
         currentSearchMode = SearchMode.Title;
         currentLevel = 0;
-        //currentSearchKind=-1;
         filterLetter = "A";
         Update();
-        GUIControl.FocusControl(GetID, btnSearchByTitle.GetID);
+        GUIControl.FocusControl(GetID, control.GetID);
       }
-      if (control == btnSearchByDescription)
+      else if (control == btnSearchByDescription)
       {
-        btnShow.Clear();
-        btnEpisode.Clear();
-        filterEpisode = String.Empty;
-        filterShow = String.Empty;
-        currentSearchMode = SearchMode.Description;
-        currentLevel = 0;
-        //currentSearchKind=-1;
-        Update();
-        GUIControl.FocusControl(GetID, btnSearchByDescription.GetID);
+        btnSearchByDescription.Disabled = true;  // no search by description anymore
       }
-
-      if (control == btnSMSInput)
+      else if (control == btnSMSInput)
       {
         VirtualKeyboard keyboard = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
         if (null == keyboard)
@@ -238,8 +225,7 @@ namespace TvPlugin
           Update();
         }
       }
-
-      if (control == btnSortBy)
+      else if (control == btnSortBy)
       {
         switch (currentSortMethod)
         {
@@ -256,11 +242,9 @@ namespace TvPlugin
         Update();
         GUIControl.FocusControl(GetID, btnSortBy.GetID);
       }
-
-      if (control == listView || control == titleView)
+      else if (control == listView || control == titleView)
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, control.GetID, 0, 0,
-                                        null);
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, control.GetID, 0, 0, null);
         OnMessage(msg);
         int iItem = (int) msg.Param1;
         if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
@@ -268,7 +252,7 @@ namespace TvPlugin
           OnClick(iItem);
         }
       }
-      if (control == btnLetter)
+      else if (control == btnLetter)
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, controlId, 0, 0, null);
         OnMessage(msg);
@@ -278,7 +262,7 @@ namespace TvPlugin
         Update();
         GUIControl.FocusControl(GetID, btnLetter.GetID);
       }
-      if (control == btnShow)
+      else if (control == btnShow)
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, controlId, 0, 0, null);
         OnMessage(msg);
@@ -287,13 +271,37 @@ namespace TvPlugin
         Update();
         GUIControl.FocusControl(GetID, btnShow.GetID);
       }
-      if (control == btnEpisode)
+      else if (control == btnEpisode)
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, controlId, 0, 0, null);
         OnMessage(msg);
         filterEpisode = msg.Label;
         Update();
         GUIControl.FocusControl(GetID, btnEpisode.GetID);
+      }
+      else if (control == btnSearchDescription)
+      {
+        VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
+        if (null == keyboard)
+        {
+          return;
+        }
+        String searchterm = string.Empty;
+        keyboard.Reset();
+
+        String tmpFilterLetter = filterLetter;
+        if (tmpFilterLetter.StartsWith("%"))
+        {
+          tmpFilterLetter = tmpFilterLetter.Substring(1); // cut of leading % for display in dialog
+        }
+        keyboard.Text = tmpFilterLetter;
+        keyboard.DoModal(GetID); // show it...
+
+        if (keyboard.IsConfirmed)
+        {
+          filterLetter = "%" + keyboard.Text; // re-add % to perform fulltext search
+          Update();
+        }
       }
     }
 
@@ -319,7 +327,7 @@ namespace TvPlugin
         listView.IsVisible = true;
         titleView.IsVisible = false;
         GUIControl.FocusControl(GetID, listView.GetID);
-        btnEpisode.Disabled = true;
+        if (btnEpisode != null) btnEpisode.Disabled = true;
         if (btnLetter != null)
         {
           btnLetter.Disabled = true;
@@ -328,7 +336,14 @@ namespace TvPlugin
         {
           btnSMSInput.Disabled = true;
         }
-        btnShow.Disabled = true;
+        if (btnShow != null)
+        {
+          btnShow.Disabled = true;
+        }
+        if (btnSearchDescription != null)
+        {
+          btnSearchDescription.Disabled = true;
+        }
         lblProgramDescription.IsVisible = false;
         if (lblProgramGenre != null)
         {
@@ -439,7 +454,7 @@ namespace TvPlugin
             imgTvLogo.IsVisible = false;
           }
         }
-        btnEpisode.Disabled = false;
+        if (btnEpisode != null) btnEpisode.Disabled = false;
         if (btnLetter != null)
         {
           btnLetter.Disabled = false;
@@ -448,7 +463,14 @@ namespace TvPlugin
         {
           btnSMSInput.Disabled = false;
         }
-        btnShow.Disabled = false;
+        if (btnShow != null)
+        {
+          btnShow.Disabled = false;
+        }
+        if (btnSearchDescription != null)
+        {
+          btnSearchDescription.Disabled = false;
+        }
         lblNumberOfItems.YPosition = listView.SpinY;
       }
 
@@ -485,8 +507,9 @@ namespace TvPlugin
             item.Label = "..";
             item.Label2 = String.Empty;
             item.Path = String.Empty;
-            item.IconImage = "defaultFolderBackBig.png";
-            item.IconImageBig = "defaultFolderBackBig.png";
+            Utils.SetDefaultIcons(item);
+            //item.IconImage = "defaultFolderBig.png";
+            //item.IconImageBig = "defaultFolderBig.png";
             listView.Add(item);
             titleView.Add(item);
 
@@ -548,7 +571,7 @@ namespace TvPlugin
               item.Label = program.Title;
               item.Label2 = strTime;
               item.Path = program.Title;
-              item.MusicTag = program;
+              item.TVTag = program;
               item.ItemId = currentItemId;
               currentItemId++;
               bool isSerie;
@@ -580,8 +603,9 @@ namespace TvPlugin
               item.Label = "..";
               item.Label2 = String.Empty;
               item.Path = String.Empty;
-              item.IconImage = "defaultFolderBackBig.png";
-              item.IconImageBig = "defaultFolderBackBig.png";
+              Utils.SetDefaultIcons(item);
+              //item.IconImage = "defaultFolderBig.png";
+              //item.IconImageBig = "defaultFolderBig.png";
               listView.Add(item);
               titleView.Add(item);
             }
@@ -591,7 +615,8 @@ namespace TvPlugin
             {
               if (filterShow == String.Empty)
               {
-                titles = layer.SearchPrograms("");
+                titles = layer.SearchPrograms("%[^a-z]");
+                //titles = layer.SearchPrograms("");
               }
               else
               {
@@ -683,118 +708,7 @@ namespace TvPlugin
                 item.Label2 = strTime;
               }
               item.Path = program.Title;
-              item.MusicTag = program;
-              item.ItemId = currentItemId;
-              currentItemId++;
-              bool isSerie;
-              if (IsRecording(program, out isSerie))
-              {
-                if (isSerie)
-                {
-                  item.PinImage = Thumbs.TvRecordingSeriesIcon;
-                }
-                else
-                {
-                  item.PinImage = Thumbs.TvRecordingIcon;
-                }
-              }
-              Utils.SetDefaultIcons(item);
-              SetChannelLogo(program, ref item);
-              listView.Add(item);
-              titleView.Add(item);
-              itemCount++;
-            }
-          }
-          break;
-
-
-        case SearchMode.Description:
-          {
-            IList<Program> titles = new List<Program>();
-            long start = Utils.datetolong(DateTime.Now);
-            long end = Utils.datetolong(DateTime.Now.AddMonths(1));
-            TvBusinessLayer layer = new TvBusinessLayer();
-
-            if (filterLetter == "#")
-            {
-              if (filterShow == String.Empty)
-              {
-                titles = layer.SearchProgramsByDescription("");
-              }
-              else
-              {
-                titles = layer.SearchProgramsByDescription(filterShow);
-              }
-            }
-            else
-            {
-              if (filterShow == String.Empty)
-              {
-                titles = layer.SearchProgramsByDescription(filterLetter);
-              }
-              else
-              {
-                titles = layer.SearchProgramsByDescription(filterShow);
-              }
-            }
-            foreach (Program program in titles)
-            {
-              if (program.Description.Length == 0)
-              {
-                continue;
-              }
-              if (filterLetter != "#")
-              {
-                bool add = true;
-                foreach (Program prog in programs)
-                {
-                  if (prog.Title == program.Title)
-                  {
-                    add = false;
-                  }
-                }
-                if (!add && filterShow == String.Empty)
-                {
-                  continue;
-                }
-                if (add)
-                {
-                  programs.Add(program);
-                }
-
-                if (filterShow != String.Empty)
-                {
-                  if (program.Title == filterShow)
-                  {
-                    episodes.Add(program);
-                  }
-                }
-              }
-
-              if (filterShow != String.Empty && program.Title != filterShow)
-              {
-                continue;
-              }
-
-              string strTime = String.Format("{0} {1}",
-                                             Utils.GetShortDayString(program.StartTime),
-                                             program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-              if (filterEpisode != String.Empty && strTime != filterEpisode)
-              {
-                continue;
-              }
-
-              strTime = String.Format("{0} {1} - {2}",
-                                      Utils.GetShortDayString(program.StartTime),
-                                      program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                      program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
-              GUIListItem item = new GUIListItem();
-              item.IsFolder = false;
-              item.Label = program.Description;
-              item.Label2 = strTime;
-              item.Path = program.Title;
-              item.MusicTag = program;
+              item.TVTag = program;
               item.ItemId = currentItemId;
               currentItemId++;
               bool isSerie;
@@ -822,7 +736,7 @@ namespace TvPlugin
       //set object count label
       GUIPropertyManager.SetProperty("#itemcount", Utils.GetObjectCountLabel(itemCount));
 
-      btnShow.Clear();
+      if (btnShow != null) btnShow.Clear();
       try
       {
         programs.Sort();
@@ -832,33 +746,40 @@ namespace TvPlugin
       }
       int selItem = 0;
       int count = 0;
-      foreach (Program prog in programs)
+      if (btnShow != null)
       {
-        btnShow.Add(prog.Title.ToString());
-        if (filterShow == prog.Title)
+        foreach (Program prog in programs)
         {
-          selItem = count;
+          btnShow.Add(prog.Title.ToString());
+          if (filterShow == prog.Title)
+          {
+            selItem = count;
+          }
+          count++;
         }
-        count++;
+        GUIControl.SelectItemControl(GetID, btnShow.GetID, selItem);
       }
-      GUIControl.SelectItemControl(GetID, btnShow.GetID, selItem);
 
       selItem = 0;
       count = 0;
-      btnEpisode.Clear();
-      foreach (Program prog in episodes)
+      if (btnEpisode != null)
       {
-        string strTime = String.Format("{0} {1}",
-                                       Utils.GetShortDayString(prog.StartTime),
-                                       prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-        btnEpisode.Add(strTime.ToString());
-        if (filterEpisode == strTime)
+        btnEpisode.Clear();
+
+        foreach (Program prog in episodes)
         {
-          selItem = count;
+          string strTime = String.Format("{0} {1}",
+                                         Utils.GetShortDayString(prog.StartTime),
+                                         prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+          btnEpisode.Add(strTime.ToString());
+          if (filterEpisode == strTime)
+          {
+            selItem = count;
+          }
+          count++;
         }
-        count++;
+        GUIControl.SelectItemControl(GetID, btnEpisode.GetID, selItem);
       }
-      GUIControl.SelectItemControl(GetID, btnEpisode.GetID, selItem);
       OnSort();
 
       string strLine = String.Empty;
@@ -967,8 +888,8 @@ namespace TvPlugin
         return 1;
       }
 
-      Program prog1 = item1.MusicTag as Program;
-      Program prog2 = item2.MusicTag as Program;
+      Program prog1 = item1.TVTag as Program;
+      Program prog2 = item2.TVTag as Program;
 
       int iComp = 0;
       switch (currentSortMethod)
@@ -1075,7 +996,7 @@ namespace TvPlugin
             }
             else
             {
-              Program program = item.MusicTag as Program;
+              Program program = item.TVTag as Program;
               if (filterShow == String.Empty)
               {
                 filterShow = program.Title;
@@ -1095,20 +1016,7 @@ namespace TvPlugin
               Update();
               return;
             }
-            Program program = item.MusicTag as Program;
-            if (filterShow == String.Empty)
-            {
-              filterShow = program.Title;
-              Update();
-              return;
-            }
-            OnRecord(program);
-          }
-          break;
-        case SearchMode.Description:
-          {
-            Program program = item.MusicTag as Program;
-
+            Program program = item.TVTag as Program;
             if (filterShow == String.Empty)
             {
               filterShow = program.Title;
@@ -1289,7 +1197,7 @@ namespace TvPlugin
       Program prog = null;
       if (item != null)
       {
-        prog = item.MusicTag as Program;
+        prog = item.TVTag as Program;
       }
       if (prog == null)
       {
@@ -1350,21 +1258,19 @@ namespace TvPlugin
 
     private void UpdateButtonStates()
     {
-      btnSearchByDescription.Selected = false;
-      btnSearchByTitle.Selected = false;
-      btnSearchByGenre.Selected = false;
+      if (btnSearchByDescription != null) btnSearchByDescription.Selected = false;
+      if (btnSearchByTitle != null) btnSearchByTitle.Selected = false;
+      if (btnSearchByGenre != null) btnSearchByGenre.Selected = false;
 
       if (currentSearchMode == SearchMode.Title)
       {
-        btnSearchByTitle.Selected = true;
-      }
-      if (currentSearchMode == SearchMode.Description)
-      {
-        btnSearchByDescription.Selected = true;
+        if (btnSearchByTitle != null) btnSearchByTitle.Selected = true;
+        if (btnViewBy != null) btnViewBy.Label = GUILocalizeStrings.Get(1521);
       }
       if (currentSearchMode == SearchMode.Genre)
       {
-        btnSearchByGenre.Selected = true;
+        if (btnSearchByGenre != null) btnSearchByGenre.Selected = true;
+        if (btnViewBy != null) btnViewBy.Label = GUILocalizeStrings.Get(1522);
       }
     }
 
