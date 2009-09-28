@@ -521,7 +521,8 @@ Global
 		{F42B1A87-4CC6-4D2F-BDC6-1C90AF52D488}.Debug|x86.Build.0 = Debug|x86
 		{F42B1A87-4CC6-4D2F-BDC6-1C90AF52D488}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F42B1A87-4CC6-4D2F-BDC6-1C90AF52D488}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F42B1A87-4CC6-4D2F-BDC6-1C90AF52D488}.Release|x86.ActiveCfg = Release|Any CPU
+		{F42B1A87-4CC6-4D2F-BDC6-1C90AF52D488}.Release|x86.ActiveCfg = Release|x86
+		{F42B1A87-4CC6-4D2F-BDC6-1C90AF52D488}.Release|x86.Build.0 = Release|x86
 		{F42B1A87-4CC6-4D2F-BDC6-1C90AF52D488}.UseCaptureCardDefinitions|Any CPU.ActiveCfg = Release|Any CPU
 		{F42B1A87-4CC6-4D2F-BDC6-1C90AF52D488}.UseCaptureCardDefinitions|Any CPU.Build.0 = Release|Any CPU
 		{F42B1A87-4CC6-4D2F-BDC6-1C90AF52D488}.UseCaptureCardDefinitions|x86.ActiveCfg = Release|Any CPU
@@ -534,7 +535,8 @@ Global
 		{4458F642-6022-4A3F-996F-E8AA510FB7E8}.Debug|x86.Build.0 = Debug|x86
 		{4458F642-6022-4A3F-996F-E8AA510FB7E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4458F642-6022-4A3F-996F-E8AA510FB7E8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4458F642-6022-4A3F-996F-E8AA510FB7E8}.Release|x86.ActiveCfg = Release|Any CPU
+		{4458F642-6022-4A3F-996F-E8AA510FB7E8}.Release|x86.ActiveCfg = Release|x86
+		{4458F642-6022-4A3F-996F-E8AA510FB7E8}.Release|x86.Build.0 = Release|x86
 		{4458F642-6022-4A3F-996F-E8AA510FB7E8}.UseCaptureCardDefinitions|Any CPU.ActiveCfg = Release|Any CPU
 		{4458F642-6022-4A3F-996F-E8AA510FB7E8}.UseCaptureCardDefinitions|Any CPU.Build.0 = Release|Any CPU
 		{4458F642-6022-4A3F-996F-E8AA510FB7E8}.UseCaptureCardDefinitions|x86.ActiveCfg = Release|Any CPU
@@ -547,7 +549,8 @@ Global
 		{7A626CB9-0660-4F47-B059-7AC7F68EDB0A}.Debug|x86.Build.0 = Debug|x86
 		{7A626CB9-0660-4F47-B059-7AC7F68EDB0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A626CB9-0660-4F47-B059-7AC7F68EDB0A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7A626CB9-0660-4F47-B059-7AC7F68EDB0A}.Release|x86.ActiveCfg = Release|Any CPU
+		{7A626CB9-0660-4F47-B059-7AC7F68EDB0A}.Release|x86.ActiveCfg = Release|x86
+		{7A626CB9-0660-4F47-B059-7AC7F68EDB0A}.Release|x86.Build.0 = Release|x86
 		{7A626CB9-0660-4F47-B059-7AC7F68EDB0A}.UseCaptureCardDefinitions|Any CPU.ActiveCfg = Release|Any CPU
 		{7A626CB9-0660-4F47-B059-7AC7F68EDB0A}.UseCaptureCardDefinitions|Any CPU.Build.0 = Release|Any CPU
 		{7A626CB9-0660-4F47-B059-7AC7F68EDB0A}.UseCaptureCardDefinitions|x86.ActiveCfg = Release|Any CPU
