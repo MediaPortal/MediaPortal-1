@@ -82,17 +82,14 @@ namespace MediaPortal.WebEPG
       for (int i = 0; i < _channelPrograms.Count; ++i)
       {
         Program prog = _channelPrograms[i];
-        if (i + 1 < _channelPrograms.Count)
+        DateTime windowEnd = new DateTime(prog.StartTime.Year, prog.StartTime.Month, prog.StartTime.Day, _timeWindow.End.Hour, _timeWindow.End.Minute, 0);
+        if (windowEnd < prog.StartTime)
         {
-          DateTime windowEnd = new DateTime(prog.StartTime.Year, prog.StartTime.Month, prog.StartTime.Day, _timeWindow.End.Hour, _timeWindow.End.Minute, 0);
-          if (windowEnd < prog.StartTime)
-          {
-            windowEnd.AddDays(1);
-          }
-          if (prog.EndTime > windowEnd)
-          {
-            prog.EndTime = windowEnd;
-          }
+          windowEnd = windowEnd.AddDays(1);
+        }
+        if (prog.EndTime > windowEnd)
+        {
+          prog.EndTime = windowEnd;
         }
       }
     }
