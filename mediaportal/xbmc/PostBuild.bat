@@ -106,6 +106,6 @@ xcopy /y %1\MPInstaller\bin\%2\MPInstaller.* .
 xcopy /y %1\MPInstaller\bin\%2\MPIMaker.* .
 
 REM MPE
-REM xcopy /y %1\MPE\MpeCore\bin\%2\MpeCore.* .
-REM xcopy /y %1\MPE\MpeInstaller\bin\%2\MpeInstaller.* .
-REM xcopy /y %1\MPE\MpeMaker\bin\%2\MpeMaker.* .
+xcopy /y %1\MPE\MpeCore\bin\%2\MpeCore.* .
+xcopy /y %1\MPE\MpeInstaller\bin\%2\MpeInstaller.* .
+xcopy /y %1\MPE\MpeMaker\bin\%2\MpeMaker.* .
