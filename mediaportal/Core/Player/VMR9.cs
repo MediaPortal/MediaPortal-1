@@ -95,6 +95,12 @@ namespace MediaPortal.Player
     [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void EvrDeinit();
 
+    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern unsafe void EVRNotifyRateChange(double pRate);
+
+    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern unsafe void EVRNotifyDVDMenuState(bool pIsInMenu);
+
     #endregion
 
     #region static vars
@@ -503,6 +509,22 @@ namespace MediaPortal.Player
       g_vmr9 = this;
       Log.Debug("VMR9: Renderer successfully added");
       return true;
+    }
+
+    /// <summary>
+    /// Notifies EVR presenter if the DVD menu is active
+    /// </summary>
+    public void EVRSetDVDMenuState(bool isInDVDMenu)
+    {
+      EVRNotifyDVDMenuState(isInDVDMenu);
+    }
+
+    /// <summary>
+    /// Notifies EVR presenter about the playback rate changes
+    /// </summary>
+    public void EVRProvidePlaybackRate(double rate)
+    {
+      EVRNotifyRateChange(rate);
     }
 
     /// <summary>

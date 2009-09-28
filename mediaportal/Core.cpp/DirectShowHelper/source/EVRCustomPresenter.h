@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005-2008 Team MediaPortal
+ *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -41,7 +41,7 @@ class MPEVRCustomPresenter;
 
 enum MP_RENDER_STATE
 {
-	MP_RENDER_STATE_STARTED,
+	MP_RENDER_STATE_STARTED = 1,
 	MP_RENDER_STATE_STOPPED,
 	MP_RENDER_STATE_PAUSED,
 	MP_RENDER_STATE_SHUTDOWN
@@ -216,11 +216,13 @@ public:
   //returns true if there was some input to be processed
   BOOL CheckForInput();
   HRESULT ProcessInputNotify(int* samplesProcessed);
-  void EnableFrameSkipping(bool onOff);
+  void SetFrameSkipping(bool onOff);
+  REFERENCE_TIME GetFrameDuration();
+  void NotifyRateChange( double pRate );
+  void NotifyDVDMenuState( bool pIsInMenu );
 
 protected:
   void UpdateJitterStats();
-  bool IsNextAlreadyDue();
   bool ImmediateCheckForInput();
   void LogStats();
   void ReleaseSurfaces();
@@ -279,16 +281,14 @@ protected:
   UINT      m_iResetToken;
   float     m_fRate;
   long      m_refCount;
-  //int       m_surfaceCount;
   HMONITOR  m_hMonitor;
   int       m_iVideoWidth, m_iVideoHeight;
   int       m_iARX, m_iARY;
   double    m_fps;
-  BOOL      m_bfirstFrame;
-  BOOL      m_bfirstInput;
+  BOOL      m_bFirstInput;
   BOOL      m_bInputAvailable;
   //LONG      m_lInputAvailable;
-  BOOL      m_bendStreaming;
+  BOOL      m_bEndStreaming;
   BOOL      m_bReallocSurfaces;
   BOOL      m_bFlush;
   DWORD     m_dwLastStatLogTime;
@@ -298,8 +298,9 @@ protected:
   DWORD     m_dwVariance;
   int       m_iFramesDrawn, m_iFramesDropped, m_iFramesForStats;
   LONGLONG  m_hnsLastFrameTime, m_hnsTotalDiff;
-  bool      m_enableFrameSkipping;
-  bool	    m_didSkip;
+  bool      m_bFrameSkipping;
+  bool      m_bScrubbing;
+  bool      m_bDVDMenu;
   MP_RENDER_STATE m_state;
 
   double    m_fAvrFps;						// Estimate the real FPS

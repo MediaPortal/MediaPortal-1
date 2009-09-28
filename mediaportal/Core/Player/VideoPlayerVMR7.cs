@@ -872,6 +872,7 @@ namespace MediaPortal.Player
             }
           }
         }
+        VMR9Util.g_vmr9.EVRProvidePlaybackRate((double)value);
         Log.Info("VideoPlayer:SetRate to:{0}", m_speedRate);
       }
     }

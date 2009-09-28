@@ -382,6 +382,8 @@ namespace MediaPortal.Player
         _videoHeight = videoAttr.sourceResolutionY;
 
         _state = PlayState.Playing;
+        VMR9Util.g_vmr9.EVRSetDVDMenuState(false);
+
         _pendingCmd = false;
         Log.Info("DVDPlayer:Started playing()");
         if (_currentFile == string.Empty)
@@ -430,6 +432,7 @@ namespace MediaPortal.Player
           _mediaCtrl = null;
         }
         _state = PlayState.Stopped;
+        VMR9Util.g_vmr9.EVRSetDVDMenuState(false);
 
         _mediaEvt = null;
         _visible = false;
@@ -535,6 +538,8 @@ namespace MediaPortal.Player
           _dvdGraph = null;
         }
         _state = PlayState.Init;
+        VMR9Util.g_vmr9.EVRSetDVDMenuState(false);
+
         GUIGraphicsContext.form.Invalidate(true);
         GUIGraphicsContext.form.Activate();
       }
@@ -870,6 +875,7 @@ namespace MediaPortal.Player
                 case DvdDomain.FirstPlay:
                   Log.Debug("EVT:DVDPlayer:domain=firstplay");
                   _state = PlayState.Playing;
+                  VMR9Util.g_vmr9.EVRSetDVDMenuState(false);
                   break;
                 // The DVD Navigator has completed playback of the title or 
                 // chapter and did not find any other branching instruction for 
@@ -881,13 +887,16 @@ namespace MediaPortal.Player
                 case DvdDomain.VideoManagerMenu:
                   Log.Debug("EVT:DVDPlayer:domain=videomanagermenu (menu)");
                   _state = PlayState.Menu;
+                  VMR9Util.g_vmr9.EVRSetDVDMenuState(true);
                   break;
                 case DvdDomain.VideoTitleSetMenu:
                   Log.Debug("EVT:DVDPlayer:domain=videotitlesetmenu (menu)");
                   _state = PlayState.Menu;
+                  VMR9Util.g_vmr9.EVRSetDVDMenuState(true);
                   break;
                 case DvdDomain.Title:
                   _state = PlayState.Playing;
+                  VMR9Util.g_vmr9.EVRSetDVDMenuState(false);
                   break;
                 default:
                   Log.Debug("EVT:DvdDomChange:{0}", p1);
@@ -1172,6 +1181,7 @@ namespace MediaPortal.Player
           {
             _speed = 1;
           }
+          VMR9Util.g_vmr9.EVRProvidePlaybackRate((double)_speed);
         }
       }
     }

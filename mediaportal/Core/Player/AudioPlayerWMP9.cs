@@ -846,6 +846,7 @@ namespace MediaPortal.Player
           if (value < 0)
           {
             _wmp10Player.Ctlcontrols.currentPosition += (double) value;
+            VMR9Util.g_vmr9.EVRProvidePlaybackRate(1.0);
           }
           else
           {
@@ -856,6 +857,7 @@ namespace MediaPortal.Player
             catch (Exception)
             {
             }
+            VMR9Util.g_vmr9.EVRProvidePlaybackRate((double)value);
           }
         }
       }
