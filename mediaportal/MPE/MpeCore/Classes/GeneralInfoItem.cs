@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace MpeCore.Classes
+{
+    public class GeneralInfoItem
+    {
+        public GeneralInfoItem()
+        {
+            Version=new VersionInfo();
+            Id = Guid.NewGuid().ToString();
+        }
+
+        public string Name { get; set; }
+        public string Id { get; set; }
+        public string Author { get; set; }
+        public string HomePage { get; set; }
+        public string ForumPage { get; set; }
+        public string UpdateUrl { get; set; }
+        public VersionInfo Version { get; set; }
+    }
+}

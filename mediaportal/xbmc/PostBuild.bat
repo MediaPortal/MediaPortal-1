@@ -104,3 +104,8 @@ REM MPInstaller
 xcopy /y %1\MPInstaller\bin\%2\MPInstaller.Library.* .
 xcopy /y %1\MPInstaller\bin\%2\MPInstaller.* .
 xcopy /y %1\MPInstaller\bin\%2\MPIMaker.* .
+
+REM MPE
+xcopy /y %1\MPE\MpeCore\bin\%2\MpeCore.* .
+xcopy /y %1\MPE\MpeInstaller\bin\%2\MpeInstaller.* .
+xcopy /y %1\MPE\MpeMaker\bin\%2\MpeMaker.* .
