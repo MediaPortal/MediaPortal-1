@@ -32,6 +32,18 @@
     <String id="31">november</String>
     <String id="32">desember</String>
     <String id="50" prefix="Mine ">DVDer</String>
+    <String id="60">Venter på at TV Service skal starte...</String>
+    <String id="61">Venter i {0} sekunder før videre start...</String>
+    <String id="62">Initierer DirectX...</String>
+    <String id="63">Initierer inn enheter...</String>
+    <String id="64">Starter tillegg...</String>
+    <String id="65">Laster keymap.xml...</String>
+    <String id="66">Laster språk...</String>
+    <String id="67">Bygger grafikk...</String>
+    <String id="68">Laster fonter...</String>
+    <String id="69">Laster skinn ({0})...</String>
+    <String id="70">Laster tillegg for vindu...</String>
+    <String id="71">Initierer vindu manager...</String>
     <String id="100">Vis: Ikoner</String>
     <String id="101">Vis: Liste</String>
     <String id="102">Skann</String>
@@ -987,6 +999,8 @@
     <String id="1518">Kan ikke lage grafen</String>
     <String id="1519">Ingen støttet software encoder innstallert</String>
     <String id="1520">Ikke nok ledig diskplass</String>
+    <String id="1521">Vis etter tittel</String>
+	<String id="1522">Vis etter sjanger</String>
     <String id="1600">Vil du slå av?</String>
     <String id="1601">Vil du sette den i hvilemodus?</String>
     <String id="1602">Vil du sette den i dvalemodus?</String>
