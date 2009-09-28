@@ -455,8 +455,8 @@ HRESULT MPEVRCustomPresenter::QueryInterface(
   void** ppvObject)
 {
   HRESULT hr = E_NOINTERFACE;
-  Log( "QueryInterface"  );
-  LogIID( riid );
+  //Log( "QueryInterface"  );
+  //LogIID( riid );
   if( ppvObject == NULL ) 
   {
     hr = E_POINTER;
@@ -501,14 +501,14 @@ HRESULT MPEVRCustomPresenter::QueryInterface(
   {
     *ppvObject = static_cast<IMFVideoDisplayControl*>( this );
     AddRef();
-    Log( "QueryInterface:IID_IMFVideoDisplayControl:%x",(*ppvObject) );
+    //Log( "QueryInterface:IID_IMFVideoDisplayControl:%x",(*ppvObject) );
     hr = S_OK;
   } 
   else if( riid == IID_IEVRTrustedVideoPlugin ) 
   {
     *ppvObject = static_cast<IEVRTrustedVideoPlugin*>( this );
     AddRef();
-    Log( "QueryInterface:IID_IEVRTrustedVideoPlugin:%x",(*ppvObject) );
+    //Log( "QueryInterface:IID_IEVRTrustedVideoPlugin:%x",(*ppvObject) );
     hr = S_OK;
   } 
   else if( riid == IID_IMFVideoPositionMapper ) 
@@ -538,13 +538,13 @@ HRESULT MPEVRCustomPresenter::QueryInterface(
 
 ULONG MPEVRCustomPresenter::AddRef()
 {
-  Log("MPEVRCustomPresenter::AddRef()");
+  //Log("MPEVRCustomPresenter::AddRef()");
   return InterlockedIncrement(& m_refCount);
 }
 
 ULONG MPEVRCustomPresenter::Release()
 {
-  Log("MPEVRCustomPresenter::Release()");
+  //Log("MPEVRCustomPresenter::Release()");
   ULONG ret = InterlockedDecrement(& m_refCount);
   if( ret == 0 )
   {
