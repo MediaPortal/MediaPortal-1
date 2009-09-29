@@ -155,7 +155,7 @@ namespace MediaPortal.Util
           m_AudioExtensions.Add(extension.ToLower());
         }
 
-        strTmp = xmlreader.GetValueAsString("movies", "extensions", ".avi,.mpg,.ogm,.mpeg,.mkv,.wmv,.ifo,.qt,.rm,.mov,.sbe,.dvr-ms,.ts,.mp4,.divx");
+        strTmp = xmlreader.GetValueAsString("movies", "extensions", ".avi,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.sbe,.dvr-ms,.ts,.dat,.ifo,.iso");
         tok = new Tokens(strTmp, new[] { ',' });
         foreach (string extension in tok)
         {
