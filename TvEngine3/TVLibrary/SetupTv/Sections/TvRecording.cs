@@ -564,7 +564,10 @@ namespace SetupTv.Sections
           string driveLetter = String.Format("{0}:", card.RecordingFolder[0]);
           if (Utils.getDriveType(driveLetter) == 3)
           {
-            comboBoxDrive.Items.Add(driveLetter);
+            if (!comboBoxDrive.Items.Contains(driveLetter))
+            {
+              comboBoxDrive.Items.Add(driveLetter);
+            }
           }
         }
       }
