@@ -817,7 +817,8 @@ namespace MediaPortal.Player
 
             case EventCode.DvdChapterStart:
               Log.Debug("EVT:DvdChaptStart:{0}", p1);
-              _currChapter = p1;              
+              _currChapter = p1;
+              UpdateDuration();
               break;
 
             case EventCode.DvdTitleChange:
@@ -915,12 +916,17 @@ namespace MediaPortal.Player
       //      Log.Info("DVDEvent done");
     }
 
-    private void UpdateTitle(int title)
+    private void UpdateDuration()
     {
       DvdHMSFTimeCode totaltime = new DvdHMSFTimeCode();
       DvdTimeCodeFlags ulTimeCodeFlags;
       _dvdInfo.GetTotalTitleTime(totaltime, out ulTimeCodeFlags);
       _duration = new TimeSpan(totaltime.bHours, totaltime.bMinutes, totaltime.bSeconds).TotalSeconds;
+    }
+
+    private void UpdateTitle(int title)
+    {
+      UpdateDuration();
 
       _dvdInfo.GetCurrentDomain(out _currDomain);
       if (_currDomain == DvdDomain.Title)
