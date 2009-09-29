@@ -307,7 +307,7 @@ namespace MediaPortal.Configuration.Sections
         shareData.Port = editShare.Port;
         shareData.ActiveConnection = editShare.ActiveConnection;
         shareData.RemoteFolder = editShare.RemoteFolder;
-        shareData.DefaultView = (ShareData.Views) editShare.View;
+        shareData.DefaultView = (ShareData.Views)editShare.View;
 
         AddShare(shareData, currentlyCheckedItem == null);
       }
@@ -358,7 +358,7 @@ namespace MediaPortal.Configuration.Sections
           editShare.LoginName = shareData.LoginName;
           editShare.PassWord = shareData.PassWord;
           editShare.RemoteFolder = shareData.RemoteFolder;
-          editShare.View = (int) shareData.DefaultView;
+          editShare.View = (int)shareData.DefaultView;
 
           DialogResult dialogResult = editShare.ShowDialog(this);
 
@@ -375,7 +375,7 @@ namespace MediaPortal.Configuration.Sections
             shareData.Port = editShare.Port;
             shareData.ActiveConnection = editShare.ActiveConnection;
             shareData.RemoteFolder = editShare.RemoteFolder;
-            shareData.DefaultView = (ShareData.Views) editShare.View;
+            shareData.DefaultView = (ShareData.Views)editShare.View;
 
             selectedItem.Tag = shareData;
 
@@ -477,7 +477,7 @@ namespace MediaPortal.Configuration.Sections
 
       foreach (string drive in drives)
       {
-        if (Util.Utils.getDriveType(drive) == (int) driveType)
+        if (Util.Utils.getDriveType(drive) == (int)driveType)
         {
           bool driveFound = false;
           string driveName = Util.Utils.GetDriveName(drive);
@@ -553,7 +553,7 @@ namespace MediaPortal.Configuration.Sections
 
         case "sharesdata":
           List<ShareData> sharesdata = new List<ShareData>();
-          
+
           foreach (ListViewItem listItem in CurrentShares)
           {
             sharesdata.Add((ShareData)listItem.Tag);
@@ -607,7 +607,7 @@ namespace MediaPortal.Configuration.Sections
           string sharePwdData = xmlreader.GetValueAsString(section, sharePwd, "");
           int sharePortData = xmlreader.GetValueAsInt(section, sharePort, 21);
           string shareRemotePathData = xmlreader.GetValueAsString(section, shareRemotePath, "/");
-          int shareView = xmlreader.GetValueAsInt(section, shareViewPath, (int) ShareData.Views.List);
+          int shareView = xmlreader.GetValueAsInt(section, shareViewPath, (int)ShareData.Views.List);
 
           // For Music Shares, we can indicate, if we want to scan them every time
           bool shareScanData = false;
@@ -617,7 +617,7 @@ namespace MediaPortal.Configuration.Sections
             shareScanData = xmlreader.GetValueAsBool(section, shareScan, true);
           }
 
-          if (shareNameData != null && shareNameData.Length > 0)
+          if (!String.IsNullOrEmpty(shareNameData))
           {
             ShareData newShare = new ShareData(shareNameData, sharePathData, sharePinData);
             newShare.IsRemote = shareTypeData;
@@ -626,7 +626,7 @@ namespace MediaPortal.Configuration.Sections
             newShare.PassWord = sharePwdData;
             newShare.Port = sharePortData;
             newShare.RemoteFolder = shareRemotePathData;
-            newShare.DefaultView = (ShareData.Views) shareView;
+            newShare.DefaultView = (ShareData.Views)shareView;
 
             if (section == "music")
             {
@@ -659,7 +659,6 @@ namespace MediaPortal.Configuration.Sections
           string shareName = String.Format("sharename{0}", index);
           string sharePath = String.Format("sharepath{0}", index);
           string sharePin = String.Format("pincode{0}", index);
-
           string shareType = String.Format("sharetype{0}", index);
           string shareServer = String.Format("shareserver{0}", index);
           string shareLogin = String.Format("sharelogin{0}", index);
@@ -668,62 +667,75 @@ namespace MediaPortal.Configuration.Sections
           string shareRemotePath = String.Format("shareremotepath{0}", index);
           string shareViewPath = String.Format("shareview{0}", index);
 
+          xmlwriter.RemoveEntry(section, shareName);
+          xmlwriter.RemoveEntry(section, sharePath);
+          xmlwriter.RemoveEntry(section, sharePin);
+          xmlwriter.RemoveEntry(section, shareType);
+          xmlwriter.RemoveEntry(section, shareServer);
+          xmlwriter.RemoveEntry(section, shareLogin);
+          xmlwriter.RemoveEntry(section, sharePwd);
+          xmlwriter.RemoveEntry(section, sharePort);
+          xmlwriter.RemoveEntry(section, shareRemotePath);
+          xmlwriter.RemoveEntry(section, shareViewPath);
+
+          if (section == "music")
+          {
+            string shareScan = String.Format("sharescan{0}", index);
+            xmlwriter.RemoveEntry(section, shareScan);
+          }
+
           string shareNameData = string.Empty;
           string sharePathData = string.Empty;
           string sharePinData = string.Empty;
-
           bool shareTypeData = false;
           string shareServerData = string.Empty;
           string shareLoginData = string.Empty;
           string sharePwdData = string.Empty;
           int sharePortData = 21;
           string shareRemotePathData = string.Empty;
-          int shareView = (int) ShareData.Views.List;
-
+          int shareView = (int)ShareData.Views.List;
           bool shareScanData = false;
 
           if (CurrentShares != null && CurrentShares.Count > index)
           {
             ShareData shareData = CurrentShares[index].Tag as ShareData;
 
-            if (shareData != null)
+            if (shareData != null && !String.IsNullOrEmpty(shareData.Name))
             {
               shareNameData = shareData.Name;
               sharePathData = shareData.Folder;
               sharePinData = shareData.PinCode;
-
               shareTypeData = shareData.IsRemote;
               shareServerData = shareData.Server;
               shareLoginData = shareData.LoginName;
               sharePwdData = shareData.PassWord;
               sharePortData = shareData.Port;
               shareRemotePathData = shareData.RemoteFolder;
-              shareView = (int) shareData.DefaultView;
-
+              shareView = (int)shareData.DefaultView;
               shareScanData = shareData.ScanShare;
 
               if (CurrentShares[index] == DefaultShare)
               {
                 defaultShare = shareNameData;
               }
+
+              xmlwriter.SetValue(section, shareName, shareNameData);
+              xmlwriter.SetValue(section, sharePath, sharePathData);
+              xmlwriter.SetValue(section, sharePin, Util.Utils.EncryptPin(sharePinData));
+              xmlwriter.SetValueAsBool(section, shareType, shareTypeData);
+              xmlwriter.SetValue(section, shareServer, shareServerData);
+              xmlwriter.SetValue(section, shareLogin, shareLoginData);
+              xmlwriter.SetValue(section, sharePwd, sharePwdData);
+              xmlwriter.SetValue(section, sharePort, sharePortData.ToString());
+              xmlwriter.SetValue(section, shareRemotePath, shareRemotePathData);
+              xmlwriter.SetValue(section, shareViewPath, shareView);
+
+              if (section == "music")
+              {
+                string shareScan = String.Format("sharescan{0}", index);
+                xmlwriter.SetValueAsBool(section, shareScan, shareScanData);
+              }
             }
-          }
-          xmlwriter.SetValue(section, shareName, shareNameData);
-          xmlwriter.SetValue(section, sharePath, sharePathData);
-          xmlwriter.SetValue(section, sharePin, Util.Utils.EncryptPin(sharePinData));
-
-          xmlwriter.SetValueAsBool(section, shareType, shareTypeData);
-          xmlwriter.SetValue(section, shareServer, shareServerData);
-          xmlwriter.SetValue(section, shareLogin, shareLoginData);
-          xmlwriter.SetValue(section, sharePwd, sharePwdData);
-          xmlwriter.SetValue(section, sharePort, sharePortData.ToString());
-          xmlwriter.SetValue(section, shareRemotePath, shareRemotePathData);
-          xmlwriter.SetValue(section, shareViewPath, shareView);
-
-          if (section == "music")
-          {
-            string shareScan = String.Format("sharescan{0}", index);
-            xmlwriter.SetValueAsBool(section, shareScan, shareScanData);
           }
         }
         xmlwriter.SetValue(section, "default", defaultShare);

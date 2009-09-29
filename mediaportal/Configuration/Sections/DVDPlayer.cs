@@ -302,9 +302,10 @@ namespace MediaPortal.Configuration.Sections
       // useMediaInfo
       // 
       this.useMediaInfo.AutoSize = true;
+      this.useMediaInfo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.useMediaInfo.Location = new System.Drawing.Point(19, 57);
       this.useMediaInfo.Name = "useMediaInfo";
-      this.useMediaInfo.Size = new System.Drawing.Size(303, 17);
+      this.useMediaInfo.Size = new System.Drawing.Size(301, 17);
       this.useMediaInfo.TabIndex = 4;
       this.useMediaInfo.Text = "Use MediaInfo for DVDs. This can slow down playing start!";
       this.useMediaInfo.UseVisualStyleBackColor = true;
