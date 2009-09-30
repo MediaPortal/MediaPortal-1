@@ -820,6 +820,7 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.Scheduled.Time", String.Empty);
       GUIPropertyManager.SetProperty("#TV.Scheduled.Description", String.Empty);
       GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", String.Empty);
 
       string strTime = String.Format("{0} {1} - {2}",
                                      Utils.GetShortDayString(schedule.StartTime),
@@ -830,6 +831,7 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.Scheduled.Time", strTime);
       if (prog != null)
       {
+        GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", prog.ReferencedChannel().DisplayName);
         GUIPropertyManager.SetProperty("#TV.Scheduled.Description", prog.Description);
         GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", prog.Genre);
       }

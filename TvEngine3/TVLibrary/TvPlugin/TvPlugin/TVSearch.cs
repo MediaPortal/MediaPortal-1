@@ -1206,6 +1206,7 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#TV.Search.Time", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Search.Description", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Search.thumb", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.Search.Channel", String.Empty);
         return;
       }
 
@@ -1222,6 +1223,7 @@ namespace TvPlugin
       {
         GUIPropertyManager.SetProperty("#TV.Search.Description", prog.Description);
         GUIPropertyManager.SetProperty("#TV.Search.Genre", prog.Genre);
+        GUIPropertyManager.SetProperty("#TV.Search.Channel", prog.ReferencedChannel().DisplayName);
 
         lblProgramDescription.Label = prog.Description;
         lblProgramDescription.IsVisible = true;

@@ -1768,6 +1768,7 @@ namespace TvPlugin
           GUIPropertyManager.SetProperty("#TV.RecordedTV.Title", "");
           GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre", "");
           GUIPropertyManager.SetProperty("#TV.RecordedTV.Time", "");
+          GUIPropertyManager.SetProperty("#TV.RecordedTV.Channel", "");
           GUIPropertyManager.SetProperty("#TV.RecordedTV.Description", "");
           GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", "");
           return;
@@ -1785,6 +1786,7 @@ namespace TvPlugin
         string strLogo = "";
         if (rec.ReferencedChannel() != null)
         {
+          GUIPropertyManager.SetProperty("#TV.RecordedTV.Channel", rec.ReferencedChannel().DisplayName);
           strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().DisplayName);
         }
         if (File.Exists(strLogo))
