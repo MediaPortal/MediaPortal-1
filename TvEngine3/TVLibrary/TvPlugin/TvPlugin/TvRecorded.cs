@@ -1297,11 +1297,6 @@ namespace TvPlugin
         else
         {
           _currentLabel = pItem.Label;
-          Recording listRec = pItem.TVTag as Recording;
-          if (listRec != null)
-          {
-            _currentLabel = listRec.Title;
-          }
           _rootItem = iItem;
         }
         LoadDirectory();
