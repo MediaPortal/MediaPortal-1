@@ -28,7 +28,23 @@
 !define ___MediaPortalDirectories__NSH___
 
 !include LogicLib.nsh
-!include "${svn_InstallScripts}\include\LoggingMacros.nsh"
+
+!ifndef NO_INSTALL_LOG
+  !include "${svn_InstallScripts}\include\LoggingMacros.nsh"
+!else
+
+  !ifndef LOG_TEXT
+    !define prefixERROR "[ERROR     !!!]   "
+    !define prefixDEBUG "[    DEBUG    ]   "
+    !define prefixINFO  "[         INFO]   "
+
+    !define LOG_TEXT `!insertmacro LOG_TEXT`
+    !macro LOG_TEXT LEVEL TEXT
+        DetailPrint "${prefix${LEVEL}}${TEXT}"
+    !macroend
+  !endif
+
+!endif
 
 
 !AddPluginDir "${svn_InstallScripts}\XML-plugin\Plugin"

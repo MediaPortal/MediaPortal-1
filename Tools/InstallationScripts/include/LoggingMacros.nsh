@@ -45,8 +45,6 @@ _____________________________________________________________________________
 !define prefixDEBUG "[    DEBUG    ]   "
 !define prefixINFO  "[         INFO]   "
 
-!ifndef NO_INSTALL_LOG
-
 !include FileFunc.nsh
 
 Var LogFile
@@ -114,22 +112,5 @@ Var TempInstallLog
   FileWrite $LogFile "${prefix${LEVEL}}${TEXT}$\r$\n"
 
 !macroend
-
-!else #NO_INSTALL_LOG
-
-!define LOG_OPEN `!insertmacro LOG_OPEN`
-!macro LOG_OPEN
-!macroend
-
-!define LOG_CLOSE `!insertmacro LOG_CLOSE`
-!macro LOG_CLOSE
-!macroend
-
-!define LOG_TEXT `!insertmacro LOG_TEXT`
-!macro LOG_TEXT LEVEL TEXT
-      DetailPrint "${prefix${LEVEL}}${TEXT}"
-!macroend
-
-!endif #NO_INSTALL_LOG
 
 !endif # !LoggingMacros_INCLUDED

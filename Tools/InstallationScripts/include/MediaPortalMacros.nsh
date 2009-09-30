@@ -31,17 +31,43 @@
 !define ___COMMON_MP_MACROS__NSH___
 
 
+#---------------------------------------------------------------------------
+# import other header files
+#---------------------------------------------------------------------------
 !include LogicLib.nsh
 !include x64.nsh
-!include "${svn_InstallScripts}\include\WinVerEx.nsh"
 !include "${svn_InstallScripts}\include\LanguageMacros.nsh"
-!include "${svn_InstallScripts}\include\LoggingMacros.nsh"
+
+!ifndef NO_OS_DETECTION
+  !include "${svn_InstallScripts}\include\WinVerEx.nsh"
+  # references to additional plugins, if not used, these won't be included
+  !AddPluginDir "${svn_InstallScripts}\GetVersion-plugin\Plugins"
+!endif
+
+!ifndef NO_INSTALL_LOG
+  !include "${svn_InstallScripts}\include\LoggingMacros.nsh"
+!else
+
+  !ifndef LOG_TEXT
+    !define prefixERROR "[ERROR     !!!]   "
+    !define prefixDEBUG "[    DEBUG    ]   "
+    !define prefixINFO  "[         INFO]   "
+
+    !define LOG_TEXT `!insertmacro LOG_TEXT`
+    !macro LOG_TEXT LEVEL TEXT
+        DetailPrint "${prefix${LEVEL}}${TEXT}"
+    !macroend
+  !endif
+
+!endif
 
 
+#---------------------------------------------------------------------------
+# Default Definitions
+#---------------------------------------------------------------------------
 !ifndef WEB_REQUIREMENTS
   !define WEB_REQUIREMENTS "http://wiki.team-mediaportal.com/GeneralRequirements"
 !endif
-
 
 !ifndef MP_REG_UNINSTALL
   !define MP_REG_UNINSTALL  "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
@@ -49,49 +75,6 @@
 !ifndef TV3_REG_UNINSTALL
   !define TV3_REG_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
 !endif
-
-
-
-
-# references to additional plugins, if not used, these won't be included
-!AddPluginDir "${svn_InstallScripts}\GetVersion-plugin\Plugins"
-
-
-
-#Var AR_SecFlags
-#Var AR_RegFlags
-
-# registry
-# ${MEMENTO_REGISTRY_ROOT}
-# ${MEMENTO_REGISTRY_KEY}
-# ${MEMENTO_REGISTRY_KEY}
-#ReadRegDWORD $AR_RegFlags ${MEMENTO_REGISTRY_ROOT} `${MEMENTO_REGISTRY_KEY}` `MementoSection_${__MementoSectionLastSectionId}`
-
- /*   not needed anymore ----- done by MementoSectionRestore
-!macro InitSection SecName
-    ;This macro reads component installed flag from the registry and
-    ;changes checked state of the section on the components page.
-    ;Input: section index constant name specified in Section command.
-
-    ClearErrors
-    ;Reading component status from registry
-    ReadRegDWORD $AR_RegFlags "${MEMENTO_REGISTRY_ROOT}" "${MEMENTO_REGISTRY_KEY}" "${SecName}"
-    IfErrors "default_${SecName}"
-    
-    ;Status will stay default if registry value not found
-    ;(component was never installed)
-    IntOp $AR_RegFlags $AR_RegFlags & 0x0001  ;Turn off all other bits
-    SectionGetFlags ${${SecName}} $AR_SecFlags  ;Reading default section flags
-    IntOp $AR_SecFlags $AR_SecFlags & 0xFFFE  ;Turn lowest (enabled) bit off
-    IntOp $AR_SecFlags $AR_RegFlags | $AR_SecFlags      ;Change lowest bit
-
-    ;Writing modified flags
-    SectionSetFlags ${${SecName}} $AR_SecFlags
-
-  "default_${SecName}:"
-!macroend
-*/
-
 
 #---------------------------------------------------------------------------
 # SECTION MACROS
@@ -119,7 +102,6 @@
 
   !insertmacro "Remove_${${SecName}}"
 !macroend
-
 
 
 !macro EnableSection SectionName SectionTitle
@@ -328,39 +310,6 @@
 !macroend
 !define VCRedist2008IsInstalled `"" VCRedist2008IsInstalled ""`
 
-!macro _dotNetIsInstalled _a _b _t _f
-  SetRegView 32
-
-  !insertmacro _LOGICLIB_TEMP
-
-  ReadRegStr $4 HKLM "Software\Microsoft\.NETFramework" "InstallRoot"
-  # remove trailing back slash
-  Push $4
-  Exch $EXEDIR
-  Exch $EXEDIR
-  Pop $4
-  # if the root directory doesn't exist .NET is not installed
-  IfFileExists $4 0 `${_f}`
-
-  StrCpy $0 0
-
-  EnumStart:
-
-    EnumRegKey $2 HKLM "Software\Microsoft\.NETFramework\Policy"  $0
-    IntOp $0 $0 + 1
-    StrCmp $2 "" `${_f}`
-
-    StrCpy $1 0
-
-    EnumPolicy:
-
-      EnumRegValue $3 HKLM "Software\Microsoft\.NETFramework\Policy\$2" $1
-      IntOp $1 $1 + 1
-       StrCmp $3 "" EnumStart
-        IfFileExists "$4\$2.$3" `${_t}` EnumPolicy
-!macroend
-!define dotNetIsInstalled `"" dotNetIsInstalled ""`
-
 #**********************************************************************************************************#
 # Get MP infos
 !macro MP_GET_INSTALL_DIR _var
@@ -482,39 +431,9 @@
   Pop $R0
 !macroend
 
-  /*
-; Section flag test
-!macro _MPIsInstalled _a _b _t _f
-  !insertmacro _LOGICLIB_TEMP
 
-  ReadRegStr $MPBaseDir HKLM "${MP_REG_UNINSTALL}" "UninstallString"
-  ${If} $MPBaseDir == ""
-    # this fallback should only be enabled until MediaPortal 1.0 is out
-    ReadRegStr $MPBaseDir HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
-
-#!define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
-#!define TV3_REG_UNINSTALL     "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
-
-    ${If} $MPBaseDir == ""
-        !insertmacro UnselectSection "${SecClient}"
-        ; Make the unselected section read only
-        !insertmacro SetSectionFlag "${SecClient}" 16
-        SectionGetText ${SecClient} $R0
-        SectionSetText ${SecClient} "$R0 ($(TEXT_MP_NOT_INSTALLED))"
-    ${EndIf}
-  ${EndIf}
-    SectionGetFlags `${_b}` $_LOGICLIB_TEMP
-    IntOp $_LOGICLIB_TEMP $_LOGICLIB_TEMP & `${_a}`
-
-    !insertmacro _= $_LOGICLIB_TEMP `${_a}` `${_t}` `${_f}`
-  !macroend
-  
-  #!define MPIsInstalled `${SF_SELECTED} SectionFlagIsSet`
-!define MPIsInstalled "!insertmacro _MPIsInstalled"
-*/
-
-
-
+#**********************************************************************************************************#
+# other MP helper
 !macro SetRights
   ${LOG_TEXT} "INFO" "Setting AccessRights to ProgramData dir and reg keys"
 
@@ -556,7 +475,6 @@
     !insertmacro EnableSection "${SecBackup}" "Backup"
   ${EndIf}
 !macroend
-
 
 !macro BackupConfigDir
   ${LOG_TEXT} "INFO" "Creating backup of configuration dir"
@@ -759,6 +677,8 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
 #---------------------------------------------------------------------------
 #   MediaPortal specific OS SystemCheck
 #---------------------------------------------------------------------------
+!ifndef NO_OS_DETECTION
+
 !macro MediaPortalOperatingSystemCheck
   ${LOG_TEXT} "INFO" ".: Operating System Check :."
 
@@ -896,7 +816,6 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
   ${LOG_TEXT} "INFO" "============================"
 !macroend
 
-
 !if "${PRODUCT_NAME}" == "MediaPortal"
 
 !macro DoPreInstallChecks
@@ -967,6 +886,7 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
 
 !endif
 
+!endif
 
 !endif # !___COMMON_MP_MACROS__NSH___
 
