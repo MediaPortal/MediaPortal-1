@@ -900,5 +900,18 @@ namespace MediaPortal.GUI.Library
       }
       return strLabel;
     }
+    public override int DimColor
+    {
+      get { return _dimColor; }
+      set
+      {
+        _dimColor = value;
+        // Need to pass the dim color to our delegate label if someone tries to set it (e.g., when fadelabel is in a group).
+        if (_labelControl != null)
+        {
+          _labelControl.DimColor = value;
+        }
+      }
+    }
   }
 }
