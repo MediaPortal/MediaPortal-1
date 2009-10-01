@@ -609,7 +609,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               string strLabel = string.Empty;
               string str5 = string.Empty;
               string strThumb = string.Empty;
-              control.GetSelectedItem(ref strLabel, ref str5, ref strThumb);
+              string strIndex = string.Empty;
+              control.GetSelectedItem(ref strLabel, ref str5, ref strThumb, ref strIndex);
               DialogHighlightedItem = strLabel;
             }
             else
@@ -699,7 +700,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               string str7 = string.Empty;
               string str8 = string.Empty;
               string str9 = string.Empty;
-              control.GetSelectedItem(ref str7, ref str8, ref str9);
+              string strIndex = string.Empty;
+              control.GetSelectedItem(ref str7, ref str8, ref str9, ref strIndex);
               DialogHighlightedItem = str7;
             }
             else
@@ -747,7 +749,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               string str10 = string.Empty;
               string str11 = string.Empty;
               string str12 = string.Empty;
-              control.GetSelectedItem(ref str10, ref str11, ref str12);
+              string strIndex = string.Empty;
+              control.GetSelectedItem(ref str10, ref str11, ref str12, ref strIndex);
               DialogHighlightedItem = str10;
             }
             else
@@ -851,7 +854,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               string str = string.Empty;
               string str2 = string.Empty;
               string str3 = string.Empty;
-              control.GetSelectedItem(ref str, ref str2, ref str3);
+              string strIndex = string.Empty;
+              control.GetSelectedItem(ref str, ref str2, ref str3, ref strIndex);
               DialogHighlightedItem = str;
             }
             else

@@ -363,12 +363,14 @@ namespace MediaPortal.GUI.Library
       string strSelected = "";
       string strSelected2 = "";
       string strThumb = "";
-      int item = GetSelectedItem(ref strSelected, ref strSelected2, ref strThumb);
+      string strIndex = "";
+      int item = GetSelectedItem(ref strSelected, ref strSelected2, ref strThumb, ref strIndex);
       if (!GUIWindowManager.IsRouted)
       {
         GUIPropertyManager.SetProperty("#selecteditem", strSelected);
         GUIPropertyManager.SetProperty("#selecteditem2", strSelected2);
         GUIPropertyManager.SetProperty("#selectedthumb", strThumb);
+        GUIPropertyManager.SetProperty("#selectedindex", strIndex);
       }
       if (!IsVisible)
       {
@@ -2444,11 +2446,12 @@ namespace MediaPortal.GUI.Library
       set { _showTexture = value; }
     }
 
-    public int GetSelectedItem(ref string strLabel, ref string strLabel2, ref string strThumbnail)
+    public int GetSelectedItem(ref string strLabel, ref string strLabel2, ref string strThumbnail, ref string strIndex)
     {
       strLabel = "";
       strLabel2 = "";
       strThumbnail = "";
+      strIndex = "";
       int iItem = _offset + _cursorX;
       if (iItem >= 0 && iItem < _listItems.Count)
       {
@@ -2457,6 +2460,15 @@ namespace MediaPortal.GUI.Library
         {
           strLabel = pItem.Label;
           strLabel2 = pItem.Label2;
+          int index = iItem;
+
+          if (_listItems[0].Label != "..")
+            index++;
+          if (pItem.Label == "..")
+            strIndex = "";
+          else
+            strIndex = index.ToString();
+
           if (pItem.IsFolder)
           {
             strLabel = String.Format("{0}{1}{2}", _folderPrefix, pItem.Label, _folderSuffix);
