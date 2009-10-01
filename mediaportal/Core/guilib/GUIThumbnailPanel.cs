@@ -128,6 +128,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("frameNoFocus")] protected string _frameNoFocusName = "";
     [XMLSkinElement("frameFocus")] protected string _frameFocusName = "";
     [XMLSkinElement("showFrame")] protected bool _showFrame = true;
+    [XMLSkinElement("keepaspectratio")] protected bool _keepAspectRatio = true;
     #endregion
 
     protected int _lowItemHeight;
@@ -483,7 +484,7 @@ namespace MediaPortal.GUI.Library
           if (pImage != null)
           {
             pImage.ParentControl = this;
-            pImage.KeepAspectRatio = true;
+            pImage.KeepAspectRatio = _keepAspectRatio;
             pImage.Centered = true;
             pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
             pImage.AllocResources();
@@ -551,7 +552,7 @@ namespace MediaPortal.GUI.Library
                                   _yPositionThumbNail - iOverSized + dwPosY, _thumbNailWidth + 2 * iOverSized,
                                   _thumbNailHeight + 2 * iOverSized, pItem.IconImageBig, 0x0);
             pImage.ParentControl = this;
-            pImage.KeepAspectRatio = true;
+            pImage.KeepAspectRatio = _keepAspectRatio;
             pImage.Centered = true;
             pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
 
