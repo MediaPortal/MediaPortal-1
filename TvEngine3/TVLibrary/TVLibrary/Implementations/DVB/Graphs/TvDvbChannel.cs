@@ -245,7 +245,7 @@ namespace TvLibrary.Implementations.DVB
       DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
       if (channel != null)
       {
-        if (alwaysUsePATLookup)
+        if (alwaysUsePATLookup && channel.PmtPid != -1) // -1 is used for scanning. in this case it must grab PMT's
         {
           lookForPid = 0; // PAT
         }
@@ -262,6 +262,7 @@ namespace TvLibrary.Implementations.DVB
             int timeoutPMT = _parameters.TimeOutPMT * 1000;
             if (alwaysUsePATLookup)
             {
+              Log.Log.Debug("WaitForPMT: Using new way for PMT grabbing via PAT");
               Log.Log.Debug("WaitForPMT: Waiting for SID {0}", channel.ServiceId);
             }
             else
