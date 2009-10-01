@@ -39,6 +39,10 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage_group = new System.Windows.Forms.TabPage();
+            this.label5 = new System.Windows.Forms.Label();
+            this.cmb_parentGroup = new System.Windows.Forms.ComboBox();
+            this.txt_displlayName = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btn_set_path = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
@@ -52,10 +56,6 @@
             this.txt_installpath = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.cmb_installtype = new System.Windows.Forms.ComboBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.txt_displlayName = new System.Windows.Forms.TextBox();
-            this.cmb_parentGroup = new System.Windows.Forms.ComboBox();
-            this.label5 = new System.Windows.Forms.Label();
             this.toolStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage_group.SuspendLayout();
@@ -108,6 +108,7 @@
             this.mnu_remove_group.Name = "mnu_remove_group";
             this.mnu_remove_group.Size = new System.Drawing.Size(23, 22);
             this.mnu_remove_group.Text = "Remove group";
+            this.mnu_remove_group.Click += new System.EventHandler(this.mnu_remove_group_Click);
             // 
             // toolStripButton3
             // 
@@ -132,6 +133,7 @@
             this.mnu_remove_files.Name = "mnu_remove_files";
             this.mnu_remove_files.Size = new System.Drawing.Size(23, 22);
             this.mnu_remove_files.Text = "Remove files";
+            this.mnu_remove_files.Click += new System.EventHandler(this.mnu_remove_files_Click);
             // 
             // openFileDialog1
             // 
@@ -144,7 +146,7 @@
             this.tabControl1.Location = new System.Drawing.Point(377, 35);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(322, 297);
+            this.tabControl1.Size = new System.Drawing.Size(322, 300);
             this.tabControl1.TabIndex = 3;
             // 
             // tabPage_group
@@ -160,10 +162,46 @@
             this.tabPage_group.Location = new System.Drawing.Point(4, 22);
             this.tabPage_group.Name = "tabPage_group";
             this.tabPage_group.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_group.Size = new System.Drawing.Size(314, 271);
+            this.tabPage_group.Size = new System.Drawing.Size(314, 274);
             this.tabPage_group.TabIndex = 0;
             this.tabPage_group.Text = "Group";
             this.tabPage_group.UseVisualStyleBackColor = true;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(6, 127);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(68, 13);
+            this.label5.TabIndex = 7;
+            this.label5.Text = "Parent group";
+            // 
+            // cmb_parentGroup
+            // 
+            this.cmb_parentGroup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmb_parentGroup.FormattingEnabled = true;
+            this.cmb_parentGroup.Location = new System.Drawing.Point(80, 127);
+            this.cmb_parentGroup.Name = "cmb_parentGroup";
+            this.cmb_parentGroup.Size = new System.Drawing.Size(228, 21);
+            this.cmb_parentGroup.TabIndex = 6;
+            this.cmb_parentGroup.SelectedIndexChanged += new System.EventHandler(this.txt_description_TextChanged);
+            // 
+            // txt_displlayName
+            // 
+            this.txt_displlayName.Location = new System.Drawing.Point(6, 19);
+            this.txt_displlayName.Name = "txt_displlayName";
+            this.txt_displlayName.Size = new System.Drawing.Size(302, 20);
+            this.txt_displlayName.TabIndex = 5;
+            this.txt_displlayName.TextChanged += new System.EventHandler(this.txt_description_TextChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(6, 3);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(70, 13);
+            this.label4.TabIndex = 4;
+            this.label4.Text = "Display name";
             // 
             // groupBox1
             // 
@@ -293,42 +331,6 @@
             this.cmb_installtype.Size = new System.Drawing.Size(226, 21);
             this.cmb_installtype.TabIndex = 0;
             this.cmb_installtype.SelectedIndexChanged += new System.EventHandler(this.txt_description_TextChanged);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 3);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(70, 13);
-            this.label4.TabIndex = 4;
-            this.label4.Text = "Display name";
-            // 
-            // txt_displlayName
-            // 
-            this.txt_displlayName.Location = new System.Drawing.Point(6, 19);
-            this.txt_displlayName.Name = "txt_displlayName";
-            this.txt_displlayName.Size = new System.Drawing.Size(302, 20);
-            this.txt_displlayName.TabIndex = 5;
-            this.txt_displlayName.TextChanged += new System.EventHandler(this.txt_description_TextChanged);
-            // 
-            // cmb_parentGroup
-            // 
-            this.cmb_parentGroup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmb_parentGroup.FormattingEnabled = true;
-            this.cmb_parentGroup.Location = new System.Drawing.Point(80, 127);
-            this.cmb_parentGroup.Name = "cmb_parentGroup";
-            this.cmb_parentGroup.Size = new System.Drawing.Size(228, 21);
-            this.cmb_parentGroup.TabIndex = 6;
-            this.cmb_parentGroup.SelectedIndexChanged += new System.EventHandler(this.txt_description_TextChanged);
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 127);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(68, 13);
-            this.label5.TabIndex = 7;
-            this.label5.Text = "Parent group";
             // 
             // FilesGroupsSection
             // 

@@ -46,10 +46,7 @@ namespace MpeMaker.Sections
         {
             listBox_sections.Items.Clear();
             Package = pak;
-            foreach (SectionItem item in Package.Sections.Items )
-            {
-                AddSection(item);
-            }
+            PopulateList();
             if(listBox_sections.Items.Count>0)
             {
                 listBox_sections.SelectedItem = listBox_sections.Items[0];
@@ -59,6 +56,18 @@ namespace MpeMaker.Sections
             foreach (GroupItem groupItem in Package.Groups.Items)
             {
                 cmb_grupvisibility.Items.Add(groupItem.Name);
+            }
+        }
+
+        private void PopulateList()
+        {
+            foreach (SectionItem item in Package.Sections.Items)
+            {
+                AddSection(item);
+            }
+            if (SelectedSection != null)
+            {
+                listBox_sections.SelectedItem = SelectedSection;
             }
         }
 
@@ -72,6 +81,7 @@ namespace MpeMaker.Sections
         private void AddSection(SectionItem item)
         {
             listBox_sections.Items.Add(item);
+           
         }
 
         private void TestToolStripMenuItemClick(object sender, EventArgs e)
@@ -128,6 +138,7 @@ namespace MpeMaker.Sections
             if (e.NewValue == CheckState.Checked)
             {
                 SelectedSection.IncludedGroups.Add((string)list_groups.Items[e.Index]);
+                
             }
             else
             {
@@ -146,7 +157,49 @@ namespace MpeMaker.Sections
 
         private void btn_preview_Click(object sender, EventArgs e)
         {
-            MpeInstaller.SectionPanels[cmb_sectiontype.Text].Preview(Package, SelectedSection);
+            if (MpeInstaller.SectionPanels.ContainsKey(cmb_sectiontype.Text))
+                MpeInstaller.SectionPanels[cmb_sectiontype.Text].Preview(Package, SelectedSection);
+        }
+
+        private void btn_up_Click(object sender, EventArgs e)
+        {
+            if (SelectedSection == null)
+                return;
+            int idx = Package.Sections.Items.IndexOf(SelectedSection);
+            if(idx<1)
+                return;
+            Package.Sections.Items.Remove(SelectedSection);
+            Package.Sections.Items.Insert(idx - 1, SelectedSection);
+            listBox_sections.Items.Clear();
+            PopulateList();
+        }
+
+        private void btn_down_Click(object sender, EventArgs e)
+        {
+            if (SelectedSection == null)
+                return;
+            int idx = Package.Sections.Items.IndexOf(SelectedSection);
+            if (idx > Package.Sections.Items.Count - 2)
+                return;
+            Package.Sections.Items.Remove(SelectedSection);
+            Package.Sections.Items.Insert(idx+1, SelectedSection);
+            listBox_sections.Items.Clear();
+            PopulateList();
+        }
+
+        private void mnu_remove_Click(object sender, EventArgs e)
+        {
+            if (SelectedSection == null)
+                return;
+            if (MessageBox.Show("Do you want to Delete section " + SelectedSection.Name, "", MessageBoxButtons.YesNo) != DialogResult.Yes)
+                return;
+            Package.Sections.Items.Remove(SelectedSection);
+            if (Package.Sections.Items.Count > 0)
+                SelectedSection = Package.Sections.Items[0];
+            else
+                SelectedSection = null;
+            listBox_sections.Items.Clear();
+            PopulateList();
         }
     }
 }

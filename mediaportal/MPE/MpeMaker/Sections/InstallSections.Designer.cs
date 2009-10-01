@@ -38,6 +38,8 @@
             this.list_groups = new System.Windows.Forms.CheckedListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.cmb_grupvisibility = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.txt_guid = new System.Windows.Forms.TextBox();
             this.btn_preview = new System.Windows.Forms.Button();
@@ -46,8 +48,6 @@
             this.cmb_sectiontype = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.txt_name = new System.Windows.Forms.TextBox();
-            this.cmb_grupvisibility = new System.Windows.Forms.ComboBox();
-            this.label5 = new System.Windows.Forms.Label();
             this.toolStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -70,7 +70,7 @@
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(64, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(95, 25);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -91,6 +91,7 @@
             this.mnu_remove.Name = "mnu_remove";
             this.mnu_remove.Size = new System.Drawing.Size(23, 22);
             this.mnu_remove.Text = "toolStripButton1";
+            this.mnu_remove.Click += new System.EventHandler(this.mnu_remove_Click);
             // 
             // btn_up
             // 
@@ -100,6 +101,7 @@
             this.btn_up.Size = new System.Drawing.Size(23, 31);
             this.btn_up.TabIndex = 3;
             this.btn_up.UseVisualStyleBackColor = true;
+            this.btn_up.Click += new System.EventHandler(this.btn_up_Click);
             // 
             // btn_down
             // 
@@ -109,6 +111,7 @@
             this.btn_down.Size = new System.Drawing.Size(23, 31);
             this.btn_down.TabIndex = 4;
             this.btn_down.UseVisualStyleBackColor = true;
+            this.btn_down.Click += new System.EventHandler(this.btn_down_Click);
             // 
             // list_groups
             // 
@@ -145,6 +148,25 @@
             this.groupBox1.Size = new System.Drawing.Size(276, 190);
             this.groupBox1.TabIndex = 7;
             this.groupBox1.TabStop = false;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(6, 97);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(40, 13);
+            this.label5.TabIndex = 9;
+            this.label5.Text = "Visible ";
+            // 
+            // cmb_grupvisibility
+            // 
+            this.cmb_grupvisibility.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmb_grupvisibility.FormattingEnabled = true;
+            this.cmb_grupvisibility.Location = new System.Drawing.Point(88, 94);
+            this.cmb_grupvisibility.Name = "cmb_grupvisibility";
+            this.cmb_grupvisibility.Size = new System.Drawing.Size(182, 21);
+            this.cmb_grupvisibility.TabIndex = 8;
+            this.cmb_grupvisibility.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
             // label4
             // 
@@ -219,25 +241,6 @@
             this.txt_name.Size = new System.Drawing.Size(183, 20);
             this.txt_name.TabIndex = 0;
             this.txt_name.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
-            // 
-            // cmb_grupvisibility
-            // 
-            this.cmb_grupvisibility.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmb_grupvisibility.FormattingEnabled = true;
-            this.cmb_grupvisibility.Location = new System.Drawing.Point(88, 94);
-            this.cmb_grupvisibility.Name = "cmb_grupvisibility";
-            this.cmb_grupvisibility.Size = new System.Drawing.Size(182, 21);
-            this.cmb_grupvisibility.TabIndex = 8;
-            this.cmb_grupvisibility.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 97);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(40, 13);
-            this.label5.TabIndex = 9;
-            this.label5.Text = "Visible ";
             // 
             // InstallSections
             // 

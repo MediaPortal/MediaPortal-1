@@ -36,6 +36,11 @@ namespace MpeMaker.Sections
         {
             Package = pak;
             treeView1.Nodes.Clear();
+            PopulateTreeView();
+        }
+
+        private void PopulateTreeView()
+        {
             foreach (GroupItem group in Package.Groups.Items)
             {
                 TreeNode node = AddGroup(group);
@@ -209,6 +214,30 @@ namespace MpeMaker.Sections
         private void btn_set_path_Click(object sender, EventArgs e)
         {
             SelectedGroup.SetDestinationPath(txt_intall_path.Text);
+        }
+
+        private void mnu_remove_group_Click(object sender, EventArgs e)
+        {
+            if (SelectedGroup == null)
+                return;
+            if (MessageBox.Show("Do you want to Delete group " + SelectedGroup.Name, "", MessageBoxButtons.YesNo) != DialogResult.Yes)
+                return;
+            Package.Groups.Items.Remove(SelectedGroup);
+            treeView1.Nodes.Clear();
+            PopulateTreeView();
+            if (treeView1.Nodes.Count > 0)
+                treeView1.SelectedNode = treeView1.Nodes[0];
+        }
+
+        private void mnu_remove_files_Click(object sender, EventArgs e)
+        {
+            if (SelectedItem == null)
+                return;
+            if (MessageBox.Show("Do you want to Delete file " + SelectedItem.ToString() + " from list ?", "", MessageBoxButtons.YesNo) != DialogResult.Yes)
+                return;
+            SelectedGroup.Files.Items.Remove(SelectedItem);
+            treeView1.Nodes.Clear();
+            PopulateTreeView();
         }
     }
 }

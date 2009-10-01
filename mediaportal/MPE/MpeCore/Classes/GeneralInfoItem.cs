@@ -19,5 +19,8 @@ namespace MpeCore.Classes
         public string ForumPage { get; set; }
         public string UpdateUrl { get; set; }
         public VersionInfo Version { get; set; }
+        public string ExtensionDescription { get; set; }
+        public string VersionDescription { get; set; }
+        public string DevelopmentStatus { get; set; }
     }
 }
