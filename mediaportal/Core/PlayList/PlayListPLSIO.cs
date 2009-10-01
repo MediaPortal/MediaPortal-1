@@ -169,9 +169,9 @@ namespace MediaPortal.Playlists
               fileName = fileName.Substring(0, fileName.Length - 1);
             }
 
-            string tmp = fileName.ToLower();
             PlayListItem newItem = new PlayListItem(infoLine, fileName, duration);
-            if (tmp.IndexOf("http:") < 0 && tmp.IndexOf("mms:") < 0 && tmp.IndexOf("rtp:") < 0)
+            if (fileName.ToLower().StartsWith("http:") || fileName.ToLower().StartsWith("https:") ||
+                fileName.ToLower().StartsWith("mms:") || fileName.ToLower().StartsWith("rtp:"))
             {
               Util.Utils.GetQualifiedFilename(basePath, ref fileName);
               newItem.FileName = fileName;

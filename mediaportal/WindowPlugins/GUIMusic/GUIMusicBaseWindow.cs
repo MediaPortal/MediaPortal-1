@@ -809,7 +809,7 @@ namespace MediaPortal.GUI.Music
         MusicTag tag = new MusicTag();
         tag = song.ToMusicTag();
         playListItem.MusicTag = tag;
-        if (File.Exists(playListItem.FileName))
+        if (File.Exists(playListItem.FileName) || playListItem.Type == PlayListItem.PlayListItemType.AudioStream)
         {
           playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playListItem);
         }
