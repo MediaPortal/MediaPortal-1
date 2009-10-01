@@ -33,6 +33,7 @@ namespace MpeCore.Classes.ZipProvider
                         _tempFileList.Add(tempfil);
                     }
                 }
+                pak.ZipProvider = this;
                 return pak;
 
             }
@@ -51,6 +52,7 @@ namespace MpeCore.Classes.ZipProvider
             FileStream fs = new FileStream(extractLocation, FileMode.Create);
             _zipPackageFile[item.ZipFileName].Extract(fs);
             fs.Close();
+            item.TempFileLocation = extractLocation;
             return true;
         }
 

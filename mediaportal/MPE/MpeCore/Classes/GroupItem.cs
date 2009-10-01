@@ -32,7 +32,7 @@ namespace MpeCore.Classes
             Description = string.Empty;
         }
 
-        public void SetPath(string path)
+        public void SetDestinationPath(string path)
         {
             if(!path.EndsWith(("\\")))
             {

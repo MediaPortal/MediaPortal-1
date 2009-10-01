@@ -22,7 +22,8 @@ namespace MpeInstaller
             {
 
                 MpeCore.MpeInstaller.Init();
-                PackageClass pak = MpeCore.MpeInstaller.ZipProvider.Load(dialog.FileName);
+                PackageClass pak = new PackageClass();
+                pak=pak.ZipProvider.Load(dialog.FileName);
                 pak.StartInstallWizard();
             }
 

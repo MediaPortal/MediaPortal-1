@@ -6,12 +6,17 @@ using System.Text;
 using System.Xml.Serialization;
 
 using MpeCore.Classes;
+using MpeCore.Classes.Events;
+using MpeCore.Classes.ZipProvider;
 
 namespace MpeCore
 {
     public class PackageClass
     {
-        public string Version { get; set; }
+        public delegate void FileInstalledEventHandler(object sender, InstallEventArgs e);
+
+        // Declare the event.
+        public event FileInstalledEventHandler FileInstalled;
 
         public PackageClass()
         {
@@ -20,13 +25,52 @@ namespace MpeCore
             GeneralInfo = new GeneralInfoItem();
             UniqueFileList = new FileItemCollection();
             this.Version = "2.0";
+            ZipProvider = new ZipProviderClass();
         }
 
+        public string Version { get; set; }
         public GroupItemCollection Groups { get; set; }
         public SectionItemCollection Sections { get; set; }
         public GeneralInfoItem GeneralInfo { get; set; }
         public FileItemCollection UniqueFileList { get; set; }
 
+        [XmlIgnore]
+        public ZipProviderClass ZipProvider { get; set; }
+        
+
+
+        public void Install()
+        {
+            foreach (GroupItem groupItem in Groups.Items)
+            {
+                if(groupItem.Checked)
+                {
+                    foreach (FileItem fileItem in groupItem.Files.Items)
+                    {
+                        MpeInstaller.InstallerTypeProviders[fileItem.InstallType].Install(this, fileItem);
+                        if (FileInstalled != null)
+                            FileInstalled(this, new InstallEventArgs());
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the installable file count, based on group settings
+        /// </summary>
+        /// <returns>Number of files to be copyed</returns>
+        public int GetInstallableFileCount()
+        {
+            int i = 0;
+            foreach (GroupItem groupItem in Groups.Items)
+            {
+                if (groupItem.Checked)
+                {
+                    i += groupItem.Files.Items.Count;
+                }
+            }
+            return i;
+        }
 
         public void Reset()
         {

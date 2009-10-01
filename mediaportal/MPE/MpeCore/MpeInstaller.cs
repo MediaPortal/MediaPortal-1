@@ -32,6 +32,8 @@ namespace MpeCore
             SectionPanels.Add("LicenseAgreement", new LicenseAgreement());
             SectionPanels.Add("ImageRadioSelector", new ImageRadioSelector());
             SectionPanels.Add("TreeViewSelector", new TreeViewSelector());
+            SectionPanels.Add("InstallSection", new InstallSection());
+            
         }
     }
 }

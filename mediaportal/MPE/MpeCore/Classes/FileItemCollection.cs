@@ -52,5 +52,28 @@ namespace MpeCore.Classes
             }
             return false;
         }
+
+
+
+        /// <summary>
+        /// Gets the file item identified by the local file name
+        /// </summary>
+        /// <param name="fileName">Name of the file.</param>
+        /// <returns></returns>
+        public FileItem GetByLocalFileName(string fileName)
+        {
+            foreach (FileItem item in Items)
+            {
+                if (item.LocalFileName.CompareTo(fileName) == 0)
+                    return item;
+            }
+            return null;
+        }
+
+        public FileItem GetByLocalFileName(FileItem item)
+        {
+            return GetByLocalFileName(item.LocalFileName);
+        }
+
     }
 }

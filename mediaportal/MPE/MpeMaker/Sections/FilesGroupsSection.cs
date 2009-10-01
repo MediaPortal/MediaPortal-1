@@ -208,7 +208,7 @@ namespace MpeMaker.Sections
 
         private void btn_set_path_Click(object sender, EventArgs e)
         {
-            SelectedGroup.SetPath(txt_intall_path.Text);
+            SelectedGroup.SetDestinationPath(txt_intall_path.Text);
         }
     }
 }

@@ -42,6 +42,7 @@ namespace MpeCore.Classes
             ZipFileName = string.Empty;
             InstallType = "CopyFile";
             SystemFile = false;
+            DestinationFilename = string.Empty;
         }
 
         /// <summary>
@@ -68,23 +69,23 @@ namespace MpeCore.Classes
             set { _zipFileName = value; }
         }
 
-        private string _destinationFilename;
-
         /// <summary>
         /// Gets or sets the destination path and filename were the file will be installed.
         /// </summary>
         /// <value>The destination filename.</value>
-        public string DestinationFilename
+        public string DestinationFilename { get; set; }
+
+
+        /// <summary>
+        /// Gets the expanded destination filename  based on know PathProviders
+        /// </summary>
+        /// <value>The expanded destination filename.</value>
+        public string ExpandedDestinationFilename
         {
             get
             {
-                if (string.IsNullOrEmpty(_destinationFilename) && MpeInstaller.InstallerTypeProviders.ContainsKey(InstallType))
-                {
-                    _destinationFilename = MpeInstaller.InstallerTypeProviders[InstallType].GetInstallPath(this);
-                }
-                return _destinationFilename;
+                return MpeInstaller.InstallerTypeProviders[InstallType].GetInstallPath(this); 
             }
-            set { _destinationFilename = value; }
         }
 
         /// <summary>
