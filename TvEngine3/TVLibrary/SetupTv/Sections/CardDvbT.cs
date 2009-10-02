@@ -399,7 +399,7 @@ namespace SetupTv.Sections
     private void StartScanThread()
     {
       Thread scanThread = new Thread(DoScan);
-      scanThread.Name = "DVB-C scan thread";
+      scanThread.Name = "DVB-T scan thread";
       scanThread.Start();
     }
 
@@ -447,7 +447,8 @@ namespace SetupTv.Sections
 
           Application.DoEvents();
 
-          DVBTChannel tuneChannel = new DVBTChannel(_dvbtChannels[index]); // new DVBCChannel();
+          DVBTTuning curTuning = _dvbtChannels[index];
+          DVBTChannel tuneChannel = new DVBTChannel(curTuning); 
           string line = String.Format("{0}tp- {1}", 1 + index, tuneChannel.TuningInfo.ToString());
           ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
@@ -458,6 +459,21 @@ namespace SetupTv.Sections
           }
 
           IChannel[] channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
+          if (channels == null || channels.Length == 0)
+          {
+            /// try frequency - offset
+            tuneChannel.Frequency = curTuning.Frequency - curTuning.Offset;
+            item.Text = String.Format("{0}tp- {1} {2}MHz ", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
+            channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
+            if (channels == null || channels.Length == 0)
+            {
+              /// try frequency + offset
+              tuneChannel.Frequency = curTuning.Frequency + curTuning.Offset;
+              item.Text = String.Format("{0}tp- {1} {2}MHz ", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
+              channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
+            }
+          } 
+
           UpdateStatus();
 
           if (channels == null || channels.Length == 0)
