@@ -2,7 +2,7 @@
 <window>
   <id>25</id>
   <defaultcontrol>2</defaultcontrol>
-  <allowoverlay>[facadeview.list|facadeview.filmstrip]</allowoverlay>
+  <allowoverlay>[facadeview.filmstrip]</allowoverlay>
   <define>#header.label:#view</define>
   <define>#header.image:videos_logo.png</define>
   <define>#header.hover:-</define>

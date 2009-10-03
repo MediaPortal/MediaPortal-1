@@ -7,7 +7,7 @@
   <define>#header.image:music_logo.png</define>
   <define>#header.hover:-</define>
   <controls>
-    <import>common.window.xml</import>
+    <import>common.window.roundedges.xml</import>
     <import>common.picback.xml</import>
     <import>common.time.xml</import>
     <control>
@@ -238,7 +238,7 @@
     </control>
     </control>
     </control>
-    <import>common.facade.music.xml</import>
+     <import>common.facade.music.roundedges.xml</import>
   <control>
       <id>1</id>
       <type>image</type>
@@ -308,5 +308,24 @@
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
        <animation effect="fade" time="450" reversible="false">visible</animation>
    </control>
+    <control>
+      <description>BG2</description>
+      <type>image</type>
+      <id>1</id>
+      <width>720</width>
+      <height>576</height>
+      <texture>backgroundthumbsview.png</texture>
+      <visible>facadeview.largeicons|facadeview.smallicons</visible>
+    </control>
+    <control>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <type>image</type>
+      <id>1</id>
+      <posX>60</posX>
+      <posY>10</posY>
+      <texture>#header.image</texture>
+      <visible>facadeview.largeicons|facadeview.smallicons</visible>
+    </control>
   </controls>
 </window>
