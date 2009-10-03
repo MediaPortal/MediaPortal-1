@@ -52,11 +52,15 @@
           <textureHeightBig>167</textureHeightBig>
           <thumbPosXBig>5</thumbPosXBig>
           <thumbPosYBig>5</thumbPosYBig>
-          <zoomXPixels>30</zoomXPixels>
-          <zoomYPixels>30</zoomYPixels>
+          <zoomXPixels>40</zoomXPixels>
+          <zoomYPixels>40</zoomYPixels>
           <hideUnfocusTexture>no</hideUnfocusTexture>
           <renderFocusText>no</renderFocusText>
           <renderUnfocusText>yes</renderUnfocusText>
+          <showFrame>true</showFrame>
+		  <frameNoFocus>Thumb_frame_nofocus.png</frameNoFocus>
+		  <frameFocus>Thumb_frame_focus.png</frameFocus>
+		  <font>font9</font>
         </control>
         <control>
           <description>Filmstrip view</description>

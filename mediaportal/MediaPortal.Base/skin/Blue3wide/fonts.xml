@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <fonts>
-  <!-- This file contains all the fonts used by the skin. Each font can be configured seperately and uses the 
-       following format format: 
+  <!-- This file contains all the fonts used by the skin. Each font can be configured seperately and uses the
+       following format format:
 	<font>
 		<name>name of font used in the skin .xml files</name>
 		<filename>name of the font</filename>
@@ -12,6 +12,11 @@
 		<end>end character (numeric) default : 255</end>
 	</font>
   !-->
+   <font>
+    <name>font9</name>
+    <filename>Franklin Gothic Medium</filename>
+    <height>10</height>
+  </font>
   <font>
     <name>font10</name>
     <filename>Franklin Gothic Medium</filename>

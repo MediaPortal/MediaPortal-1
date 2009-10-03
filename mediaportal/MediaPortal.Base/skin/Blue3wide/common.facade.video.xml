@@ -55,6 +55,9 @@
           <hideUnfocusTexture>no</hideUnfocusTexture>
           <renderFocusText>no</renderFocusText>
           <renderUnfocusText>yes</renderUnfocusText>
+          <showFrame>true</showFrame>
+		  <frameNoFocus>icon_empty_nofocus.png</frameNoFocus>
+		  <frameFocus>icon_empty_focus.png</frameFocus>
         </control>
         <control>
           <description>Filmstrip view</description>

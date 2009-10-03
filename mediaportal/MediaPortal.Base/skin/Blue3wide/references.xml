@@ -386,9 +386,9 @@
     <enableFocusZoom>yes</enableFocusZoom>
     <textXOff>0</textXOff>
     <textYOff>0</textYOff>
-    <showFrame>false</showFrame>
-    <frameNoFocus>-</frameNoFocus>
-    <frameFocus>-</frameFocus>
+    <showFrame>true</showFrame>
+	<frameNoFocus>icon_empty_nofocus.png</frameNoFocus>
+	<frameFocus>icon_empty_focus.png</frameFocus>
   </control>
   <control>
     <description>default filmstrip</description>
