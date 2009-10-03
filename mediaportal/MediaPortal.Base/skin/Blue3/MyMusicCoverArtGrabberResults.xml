@@ -89,6 +89,7 @@
       <posX>360</posX>
       <posY>320</posY>
       <label>4516</label>
+      <visible>false</visible>
       <font>font18</font>
       <textcolor>ffffffff</textcolor>
     </control>

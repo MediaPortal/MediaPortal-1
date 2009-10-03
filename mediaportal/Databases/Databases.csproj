@@ -175,6 +175,10 @@
       <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
       <Name>Utils</Name>
     </ProjectReference>
+    <Reference Include="BassRegistration, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\BassRegistration.dll</HintPath>
+    </Reference>
     <Reference Include="CSScriptLibrary, Version=1.9.0.0, Culture=neutral, PublicKeyToken=70fcc3d18c749033">
       <HintPath>..\MediaPortal.Base\CSScriptLibrary.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -224,9 +228,6 @@
     </Compile>
     <Compile Include="Music\Audioscrobbler\AudioscrobblerBase.cs" />
     <Compile Include="Music\Audioscrobbler\AudioscrobblerUtils.cs" />
-    <Compile Include="Music\InternetLookups\AWSECommerceService.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Music\MusicDatabase.cs">
       <SubType>Code</SubType>
     </Compile>

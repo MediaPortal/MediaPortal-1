@@ -34,6 +34,7 @@ namespace MediaPortal.Music.Database
   public class AlbumInfo
   {
     private string m_strAlbum = "";
+    private string m_strAsin = "";
     private string m_strArtist = "";
     private string m_strAlbumArtist = "";
     private string m_strGenre = "";
@@ -54,6 +55,7 @@ namespace MediaPortal.Music.Database
     {
       AlbumInfo newalbum = new AlbumInfo();
       newalbum.Album = Album;
+      newalbum.Asin = Asin;
       newalbum.Artist = Artist;
       newalbum.Genre = Genre;
       newalbum.Image = Image;
@@ -118,6 +120,12 @@ namespace MediaPortal.Music.Database
     {
       get { return m_strAlbum; }
       set { m_strAlbum = value; }
+    }
+
+    public string Asin
+    {
+      get { return m_strAsin; }
+      set { m_strAsin = value; }
     }
 
     public string AlbumArtist

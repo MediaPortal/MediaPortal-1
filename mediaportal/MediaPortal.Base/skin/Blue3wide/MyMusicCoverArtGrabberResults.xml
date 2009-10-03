@@ -91,6 +91,7 @@
       <posX>640</posX>
       <posY>400</posY>
       <label>4516</label>
+	  <visible>false</visible>
       <font>font18</font>
       <textcolor>ffffffff</textcolor>
     </control>
