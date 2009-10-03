@@ -43,6 +43,11 @@ namespace MediaPortal.GUI.Video
   {
     public string ShowSelectDVDDialog(int parentId)
     {
+      return ShowSelectDriveDialog(parentId, true);
+    }
+
+    public string ShowSelectDriveDialog(int parentId, bool DVDonly)
+    {
       Log.Info("SelectDVDHandler: ShowSelectDVDDialog()");
 
       //check if dvd is inserted
@@ -54,8 +59,12 @@ namespace MediaPortal.GUI.Video
         if (Util.Utils.getDriveType(item.Path) == 5) //cd or dvd drive
         {
           string driverLetter = item.Path.Substring(0, 1);
-          string fileName = String.Format(@"{0}:\VIDEO_TS\VIDEO_TS.IFO", driverLetter);
-          if (!File.Exists(fileName))
+          string fileName = DVDonly ? String.Format(@"{0}:\VIDEO_TS\VIDEO_TS.IFO", driverLetter) : String.Format(@"{0}:\", driverLetter);
+          if (DVDonly && !File.Exists(fileName))
+          {
+            rootDrives.RemoveAt(i);
+          }
+          else if (!DVDonly && !Directory.Exists(fileName))
           {
             rootDrives.RemoveAt(i);
           }
@@ -86,7 +95,7 @@ namespace MediaPortal.GUI.Video
             return ritem.Path;
           }
           dlgSel.Reset();
-          dlgSel.SetHeading(196); // Choose movie
+          dlgSel.SetHeading(DVDonly ? 196 : 2201); // Choose movie | select source
           for (int i = 0; i < rootDrives.Count; i++)
           {
             GUIListItem dlgItem = new GUIListItem();
@@ -113,7 +122,7 @@ namespace MediaPortal.GUI.Video
       }
       //no disc in drive...
       GUIDialogOK dlgOk = (GUIDialogOK) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_OK);
-      dlgOk.SetHeading(3); //my videos
+      dlgOk.SetHeading(1020); //information
       dlgOk.SetLine(1, 219); //no disc
       dlgOk.DoModal(parentId);
       Log.Info("SelectDVDHandler: did not find a movie");

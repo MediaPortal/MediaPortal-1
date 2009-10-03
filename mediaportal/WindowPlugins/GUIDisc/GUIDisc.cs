@@ -50,21 +50,24 @@ namespace MediaPortal.GUI.Video
 
     protected override void OnPageLoad()
     {
-      string driveLetter = null;
       GUIWindowManager.ShowPreviousWindow();
-      
-      System.IO.DriveInfo[] drives = System.IO.DriveInfo.GetDrives();
-      foreach (System.IO.DriveInfo drive in drives)
+
+      ISelectDVDHandler selectDVDHandler;
+      if (GlobalServiceProvider.IsRegistered<ISelectDVDHandler>())
       {
-        driveLetter = String.Format("{0}", drive.RootDirectory);
-        if (drive.DriveType == System.IO.DriveType.CDRom && System.IO.Directory.Exists(driveLetter))
-        {
-          if (g_Player.CurrentFile.StartsWith(driveLetter) && g_Player.Playing)
-            return;          
-          break;          
-        }
-      }      
-      MediaPortal.Ripper.AutoPlay.ExamineCD(driveLetter, true);
+        selectDVDHandler = GlobalServiceProvider.Get<ISelectDVDHandler>();
+      }
+      else
+      {
+        selectDVDHandler = new SelectDVDHandler();
+        GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
+      }
+
+      string dvdToPlay = selectDVDHandler.ShowSelectDriveDialog(GetID, false);      
+      if (!String.IsNullOrEmpty(dvdToPlay) && !g_Player.CurrentFile.StartsWith(dvdToPlay) && !g_Player.Playing)
+      {
+        MediaPortal.Ripper.AutoPlay.ExamineCD(dvdToPlay, true);
+      }     
     }    
 
     #region ISetupForm Members
@@ -97,7 +100,7 @@ namespace MediaPortal.GUI.Video
     public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
                         out string strPictureImage)
     {
-      strButtonText = GUILocalizeStrings.Get(208);
+      strButtonText = GUILocalizeStrings.Get(51);
       strButtonImage = string.Empty;
       strButtonImageFocus = string.Empty;
       strPictureImage = @"hover_play disc.png";
