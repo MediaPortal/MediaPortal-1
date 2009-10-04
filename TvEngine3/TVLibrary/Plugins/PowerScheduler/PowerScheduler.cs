@@ -467,7 +467,7 @@ namespace TvEngine.PowerScheduler
     protected void SuspendSystemThread(string source, RestartOptions how, bool force)
     {
       Log.Debug("PowerScheduler: Shutdown thread is running: {0}, force: {1}", how, force);
-
+      
       Log.Debug("PowerScheduler: Informing handlers about UserShutdownNow");
       UserShutdownNow();
 
@@ -476,8 +476,6 @@ namespace TvEngine.PowerScheduler
 
       // test if shutdown is allowed
       bool disallow = DisAllowShutdown;
-
-
 
       Log.Info("PowerScheduler: Source: {0}; shutdown is allowed {1} ; forced: {2}", source, !disallow, force);
 
@@ -490,7 +488,7 @@ namespace TvEngine.PowerScheduler
         }
         return;
       }
-
+      
       SetWakeupTimer();
       if (source == "System")
       {
@@ -989,7 +987,7 @@ namespace TvEngine.PowerScheduler
       _standby = true;
       _timer.Enabled = false;
       _controller.EpgGrabberEnabled = false;
-      SetWakeupTimer();
+      // SetWakeupTimer();   => do not call, because the client standby and wakeup handlers are already unregistered
       DeInitController();
       RunExternalCommand("suspend");
       SendPowerSchedulerEvent(PowerSchedulerEventType.EnteringStandby, false);
