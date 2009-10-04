@@ -37,7 +37,7 @@ namespace MpeCore.Classes.PathProvider
             {
                 if (!string.IsNullOrEmpty(path.Key) && !string.IsNullOrEmpty(path.Value))
                 {
-                    fileName = fileName.Replace(path.Key, path.Value);
+                    fileName = fileName.Replace(path.Value, path.Key);
                 }
             }
             return fileName;

@@ -45,6 +45,11 @@ namespace MpeCore.Classes.ZipProvider
             }
         }
 
+        public DateTime FileDate(FileItem item)
+        {
+            return _zipPackageFile[item.ZipFileName].LastModified;
+        }
+
         public bool Extract(FileItem item, string extractLocation)
         {
             if (File.Exists(item.TempFileLocation))
@@ -52,6 +57,9 @@ namespace MpeCore.Classes.ZipProvider
             FileStream fs = new FileStream(extractLocation, FileMode.Create);
             _zipPackageFile[item.ZipFileName].Extract(fs);
             fs.Close();
+            File.SetCreationTime(extractLocation,FileDate(item));
+            File.SetLastAccessTime(extractLocation, FileDate(item));
+            File.SetLastWriteTime(extractLocation, FileDate(item));
             item.TempFileLocation = extractLocation;
             return true;
         }

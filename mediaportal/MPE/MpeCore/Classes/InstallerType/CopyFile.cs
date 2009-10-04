@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using MpeCore.Interfaces;
-using MpeCore;
+using MpeCore.Classes;
 
 namespace MpeCore.Classes.InstallerType
 {
@@ -20,11 +20,33 @@ namespace MpeCore.Classes.InstallerType
 
         public void Install(PackageClass packageClass, FileItem fileItem)
         {
-            //throw new NotImplementedException();
+            string Destination = fileItem.ExpandedDestinationFilename;
+
             FileItem item = packageClass.UniqueFileList.GetByLocalFileName(fileItem);
-            if(item==null)
+            if (item == null)
                 return;
-            packageClass.ZipProvider.Extract(item, fileItem.ExpandedDestinationFilename);
+
+            if(File.Exists(Destination))
+            {
+                switch (fileItem.UpdateOption)
+                {
+                    case UpdateOptionEnum.NeverOverwrite:
+                        return;
+                    case UpdateOptionEnum.AlwaysOverwrite:
+                        break;
+                    case UpdateOptionEnum.OverwriteIfOlder:
+                        if (File.GetLastWriteTime(Destination) > packageClass.ZipProvider.FileDate(item))
+                            return;
+                        break;
+                }
+            }
+
+            UnInstallItem unInstallItem = packageClass.UnInstallInfo.BackUpFile(item);
+            packageClass.ZipProvider.Extract(item, Destination);
+            FileInfo info = new FileInfo(Destination);
+            unInstallItem.FileDate = info.CreationTimeUtc;
+            unInstallItem.FileSize = info.Length;
+            packageClass.UnInstallInfo.Items.Add(unInstallItem);
         }
 
         public void Uninstall(FileItem fileItem)
@@ -37,12 +59,17 @@ namespace MpeCore.Classes.InstallerType
             return string.Format("Installer{{CopyFile}}\\{{{0}}}-{1}", Guid.NewGuid(), Path.GetFileName(fileItem.LocalFileName));
         }
 
+        /// <summary>
+        /// Transform templated path in a real path based on PathProviders
+        /// </summary>
+        /// <param name="fileItem">The file item.</param>
+        /// <returns></returns>
         public string GetInstallPath(FileItem fileItem)
         {
             string localFile = fileItem.DestinationFilename;
             foreach (var pathProvider in MpeCore.MpeInstaller.PathProviders)
             {
-                localFile = pathProvider.Value.Colapse(localFile);
+                localFile = pathProvider.Value.Expand(localFile);
             }
             //if (!localFile.Contains("%"))
             //    localFile = string.Empty;
@@ -61,6 +88,11 @@ namespace MpeCore.Classes.InstallerType
             {
                 response.Valid = false;
                 response.Message = "No install location specified !";
+            }
+            if (!fileItem.DestinationFilename.Contains("%"))
+            {
+                response.Valid = false;
+                response.Message = "No template in destination path specified !";
             }
             return response;
         }

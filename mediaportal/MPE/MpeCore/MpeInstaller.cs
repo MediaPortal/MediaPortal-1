@@ -35,5 +35,19 @@ namespace MpeCore
             SectionPanels.Add("InstallSection", new InstallSection());
             
         }
+
+        /// <summary>
+        /// Transfor a real path in a template path, based on providers
+        /// </summary>
+        /// <param name="localFile">The location of file.</param>
+        /// <returns></returns>
+        static public string TransformInTemplatePath(string localFile)
+        {
+            foreach (var pathProvider in PathProviders)
+            {
+                localFile = pathProvider.Value.Colapse(localFile);
+            }
+            return localFile;
+        }
     }
 }

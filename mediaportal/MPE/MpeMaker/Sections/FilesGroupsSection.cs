@@ -157,6 +157,7 @@ namespace MpeMaker.Sections
                 tabPage_file.Enabled = true;
                 txt_installpath.Text = file.DestinationFilename;
                 cmb_installtype.Text = file.InstallType;
+                cmb_overwrite.SelectedIndex = (int) file.UpdateOption;
             }
             else
             {
@@ -187,6 +188,7 @@ namespace MpeMaker.Sections
             {
                 SelectedItem.InstallType = cmb_installtype.Text;
                 SelectedItem.DestinationFilename = txt_installpath.Text;
+                SelectedItem.UpdateOption = (UpdateOptionEnum) cmb_parentGroup.SelectedIndex;
             }
         }
 

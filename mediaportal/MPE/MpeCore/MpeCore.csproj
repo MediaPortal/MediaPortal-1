@@ -79,6 +79,9 @@
     <Compile Include="Classes\SectionPanel\TreeViewSelector.Designer.cs">
       <DependentUpon>TreeViewSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="Classes\UnInstallInfoCollection.cs" />
+    <Compile Include="Classes\UnInstallItem.cs" />
+    <Compile Include="Classes\UpdateOptionEnum.cs" />
     <Compile Include="Classes\ValidationResponse.cs" />
     <Compile Include="Classes\GeneralInfoItem.cs" />
     <Compile Include="Classes\InstallerType\CopyFile.cs" />

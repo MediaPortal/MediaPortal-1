@@ -26,6 +26,7 @@ namespace MpeCore
             UniqueFileList = new FileItemCollection();
             this.Version = "2.0";
             ZipProvider = new ZipProviderClass();
+            UnInstallInfo = new UnInstallInfoCollection();
         }
 
         public string Version { get; set; }
@@ -36,11 +37,14 @@ namespace MpeCore
 
         [XmlIgnore]
         public ZipProviderClass ZipProvider { get; set; }
-        
+
+        [XmlIgnore]
+        public UnInstallInfoCollection UnInstallInfo { get; set; }
 
 
         public void Install()
         {
+            UnInstallInfo = new UnInstallInfoCollection(this);
             foreach (GroupItem groupItem in Groups.Items)
             {
                 if(groupItem.Checked)
@@ -53,6 +57,7 @@ namespace MpeCore
                     }
                 }
             }
+            UnInstallInfo.Save();
         }
 
         /// <summary>

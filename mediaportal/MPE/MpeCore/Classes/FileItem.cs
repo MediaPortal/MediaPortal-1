@@ -43,7 +43,10 @@ namespace MpeCore.Classes
             InstallType = "CopyFile";
             SystemFile = false;
             DestinationFilename = string.Empty;
+            UpdateOption = UpdateOptionEnum.OverwriteIfOlder;
         }
+
+        public UpdateOptionEnum UpdateOption { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the local file.
@@ -70,7 +73,7 @@ namespace MpeCore.Classes
         }
 
         /// <summary>
-        /// Gets or sets the destination path and filename were the file will be installed.
+        /// Gets or sets the destination path and filename were the file will be installed.This path should contain teplate 
         /// </summary>
         /// <value>The destination filename.</value>
         public string DestinationFilename { get; set; }

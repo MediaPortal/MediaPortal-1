@@ -56,6 +56,8 @@
             this.txt_installpath = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.cmb_installtype = new System.Windows.Forms.ComboBox();
+            this.cmb_overwrite = new System.Windows.Forms.ComboBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.toolStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage_group.SuspendLayout();
@@ -273,6 +275,8 @@
             // 
             // tabPage_file
             // 
+            this.tabPage_file.Controls.Add(this.label6);
+            this.tabPage_file.Controls.Add(this.cmb_overwrite);
             this.tabPage_file.Controls.Add(this.button1);
             this.tabPage_file.Controls.Add(this.label2);
             this.tabPage_file.Controls.Add(this.txt_installpath);
@@ -281,14 +285,14 @@
             this.tabPage_file.Location = new System.Drawing.Point(4, 22);
             this.tabPage_file.Name = "tabPage_file";
             this.tabPage_file.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_file.Size = new System.Drawing.Size(314, 271);
+            this.tabPage_file.Size = new System.Drawing.Size(314, 274);
             this.tabPage_file.TabIndex = 1;
             this.tabPage_file.Text = "File";
             this.tabPage_file.UseVisualStyleBackColor = true;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(292, 56);
+            this.button1.Location = new System.Drawing.Point(289, 86);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(19, 23);
             this.button1.TabIndex = 4;
@@ -299,7 +303,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(5, 62);
+            this.label2.Location = new System.Drawing.Point(3, 95);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(74, 13);
             this.label2.TabIndex = 3;
@@ -307,9 +311,9 @@
             // 
             // txt_installpath
             // 
-            this.txt_installpath.Location = new System.Drawing.Point(85, 59);
+            this.txt_installpath.Location = new System.Drawing.Point(95, 88);
             this.txt_installpath.Name = "txt_installpath";
-            this.txt_installpath.Size = new System.Drawing.Size(202, 20);
+            this.txt_installpath.Size = new System.Drawing.Size(190, 20);
             this.txt_installpath.TabIndex = 2;
             this.txt_installpath.TextChanged += new System.EventHandler(this.txt_description_TextChanged);
             // 
@@ -326,11 +330,34 @@
             // 
             this.cmb_installtype.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmb_installtype.FormattingEnabled = true;
-            this.cmb_installtype.Location = new System.Drawing.Point(85, 32);
+            this.cmb_installtype.Location = new System.Drawing.Point(95, 32);
             this.cmb_installtype.Name = "cmb_installtype";
-            this.cmb_installtype.Size = new System.Drawing.Size(226, 21);
+            this.cmb_installtype.Size = new System.Drawing.Size(216, 21);
             this.cmb_installtype.TabIndex = 0;
             this.cmb_installtype.SelectedIndexChanged += new System.EventHandler(this.txt_description_TextChanged);
+            // 
+            // cmb_overwrite
+            // 
+            this.cmb_overwrite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmb_overwrite.FormattingEnabled = true;
+            this.cmb_overwrite.Items.AddRange(new object[] {
+            "Newer overwrite",
+            "Always overwrite",
+            "Overwrite if older"});
+            this.cmb_overwrite.Location = new System.Drawing.Point(95, 59);
+            this.cmb_overwrite.Name = "cmb_overwrite";
+            this.cmb_overwrite.Size = new System.Drawing.Size(216, 21);
+            this.cmb_overwrite.TabIndex = 5;
+            this.cmb_overwrite.SelectedIndexChanged += new System.EventHandler(this.txt_description_TextChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(3, 62);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(76, 13);
+            this.label6.TabIndex = 6;
+            this.label6.Text = "Update Option";
             // 
             // FilesGroupsSection
             // 
@@ -384,6 +411,8 @@
         private System.Windows.Forms.ComboBox cmb_parentGroup;
         private System.Windows.Forms.TextBox txt_displlayName;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ComboBox cmb_overwrite;
+        private System.Windows.Forms.Label label6;
 
     }
 }

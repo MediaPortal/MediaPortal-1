@@ -102,6 +102,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "InstallSection";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "InstallSection";
             this.Load += new System.EventHandler(this.InstallSection_Load);
             this.panel1.ResumeLayout(false);
