@@ -9,6 +9,7 @@ xcopy "TvLibrary.Interfaces\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server
 xcopy "TvLibrary.Utils\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\" /R /Y
 xcopy "TvService\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\" /R /Y
 xcopy "Plugins\PowerScheduler\PowerScheduler.Interfaces\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\" /R /Y
+xcopy "Plugins\PowerScheduler\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\Plugins\" /R /Y
 xcopy "Plugins\ServerBlaster\ServerBlaster (Learn)\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\" /R /Y
 xcopy "Plugins\PluginBase\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\" /R /Y
 xcopy "Plugins\ComSkipLauncher\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\Plugins\" /R /Y
