@@ -32,6 +32,7 @@
     <String id="31">november</String>
     <String id="32">desember</String>
     <String id="50" prefix="Mine ">DVDer</String>
+    <String id="51">Spill av disk</String>
     <String id="60">Venter på at TV Service skal starte...</String>
     <String id="61">Venter i {0} sekunder før videre start...</String>
     <String id="62">Initierer DirectX...</String>
