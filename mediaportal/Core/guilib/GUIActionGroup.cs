@@ -279,12 +279,9 @@ namespace MediaPortal.GUI.Library
       //base.Render(timePassed);
       if (!Dimmed)
       {
-        if (_parentWin != null)
+        if (GUIGraphicsContext.Overlay != _isOverlayAllowed)
         {
-          if (_isWinOverlayAllowed != _isOverlayAllowed)
-          {
-            GUIGraphicsContext.Overlay = _parentWin.IsOverlayAllowed = _isOverlayAllowed;
-          }
+          GUIGraphicsContext.Overlay = _parentWin.IsOverlayAllowed = _isOverlayAllowed;
         }
         _imageFocused.Render(timePassed);
         GUIFontManager.Present();
