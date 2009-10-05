@@ -132,24 +132,36 @@ namespace TvLibrary.Implementations
         IFilterGraph2 graphBuilder = (IFilterGraph2)new FilterGraph();
         DsROTEntry rotEntry = new DsROTEntry(graphBuilder);
 
+        Guid networkProviderClsId = Guid.Empty;
+        ITuningSpace tuningSpace = null;
+        ILocator locator = null;
+
         //DVBT
-        Guid networkProviderClsId = typeof(DVBTNetworkProvider).GUID;
-        IBaseFilter networkDVBT = FilterGraphTools.AddFilterFromClsid(graphBuilder, networkProviderClsId, "DVBT Network Provider");
-        ITuningSpace tuningSpace = (ITuningSpace)new DVBTuningSpace();
-        tuningSpace.put_UniqueName("DVBT TuningSpace");
-        tuningSpace.put_FriendlyName("DVBT TuningSpace");
-        tuningSpace.put__NetworkType(typeof(DVBTNetworkProvider).GUID);
-        ((IDVBTuningSpace)tuningSpace).put_SystemType(DVBSystemType.Terrestrial);
-        ILocator locator = (ILocator)new DVBTLocator();
-        locator.put_CarrierFrequency(-1);
-        locator.put_InnerFEC(FECMethod.MethodNotSet);
-        locator.put_InnerFECRate(BinaryConvolutionCodeRate.RateNotSet);
-        locator.put_Modulation(ModulationType.ModNotSet);
-        locator.put_OuterFEC(FECMethod.MethodNotSet);
-        locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
-        locator.put_SymbolRate(-1);
-        tuningSpace.put_DefaultLocator(locator);
-        ((ITuner)networkDVBT).put_TuningSpace(tuningSpace);
+        IBaseFilter networkDVBT = null;
+        try
+        {
+            networkProviderClsId = typeof(DVBTNetworkProvider).GUID;
+            networkDVBT = FilterGraphTools.AddFilterFromClsid(graphBuilder, networkProviderClsId, "DVBT Network Provider");
+            tuningSpace = (ITuningSpace)new DVBTuningSpace();
+            tuningSpace.put_UniqueName("DVBT TuningSpace");
+            tuningSpace.put_FriendlyName("DVBT TuningSpace");
+            tuningSpace.put__NetworkType(typeof(DVBTNetworkProvider).GUID);
+            ((IDVBTuningSpace)tuningSpace).put_SystemType(DVBSystemType.Terrestrial);
+            locator = (ILocator)new DVBTLocator();
+            locator.put_CarrierFrequency(-1);
+            locator.put_InnerFEC(FECMethod.MethodNotSet);
+            locator.put_InnerFECRate(BinaryConvolutionCodeRate.RateNotSet);
+            locator.put_Modulation(ModulationType.ModNotSet);
+            locator.put_OuterFEC(FECMethod.MethodNotSet);
+            locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
+            locator.put_SymbolRate(-1);
+            tuningSpace.put_DefaultLocator(locator);
+            ((ITuner)networkDVBT).put_TuningSpace(tuningSpace);
+        }
+        catch (Exception ex)
+        {
+            Log.Log.Error("DVBT card detection error: {0}", ex.ToString());
+        }
 
         //DVBS
         networkProviderClsId = typeof(DVBSNetworkProvider).GUID;
