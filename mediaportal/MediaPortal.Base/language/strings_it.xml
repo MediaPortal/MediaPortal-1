@@ -32,6 +32,7 @@
     <String id="31">Novembre</String>
     <String id="32">Dicembre</String>
     <String id="50" prefix="I miei ">DVD</String>
+    <String id="51">Riproduci disco</String>
     <String id="60">Attesa attivazione del servizio TV...</String>
     <String id="61">Attesa di {0} secondi prima della partenza...</String>
     <String id="62">Inizializzazione DirectX...</String>
