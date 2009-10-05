@@ -31,6 +31,7 @@ namespace MpeCore.Classes
             InstallType = fileItem.InstallType;
             DestinationFilename = fileItem.DestinationFilename;
             SystemFile = fileItem.SystemFile;
+            UpdateOption = fileItem.UpdateOption;
         }
 
         /// <summary>
@@ -73,7 +74,7 @@ namespace MpeCore.Classes
         }
 
         /// <summary>
-        /// Gets or sets the destination path and filename were the file will be installed.This path should contain teplate 
+        /// Gets or sets the destination path and filename were the file will be installed.This path should contain template 
         /// </summary>
         /// <value>The destination filename.</value>
         public string DestinationFilename { get; set; }

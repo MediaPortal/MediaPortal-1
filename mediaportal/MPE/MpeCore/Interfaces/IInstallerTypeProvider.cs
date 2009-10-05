@@ -12,6 +12,19 @@ namespace MpeCore.Interfaces
         void Install(PackageClass packageClass, FileItem fileItem);
         void Uninstall(FileItem fileItem);
         string GetZipEntry(FileItem fileItem);
+
+        /// <summary>
+        /// Transform real path in a templated path based on PathProviders
+        /// </summary>
+        /// <param name="fileItem">The file item.</param>
+        /// <returns></returns>
+        string GetTemplatePath(FileItem fileItem);
+
+        /// <summary>
+        /// Transform templated path in a real path based on PathProviders
+        /// </summary>
+        /// <param name="fileItem">The file item.</param>
+        /// <returns></returns>
         string GetInstallPath(FileItem fileItem);
         ValidationResponse Validate(FileItem fileItem);
     }

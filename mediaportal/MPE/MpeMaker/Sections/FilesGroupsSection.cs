@@ -21,6 +21,8 @@ namespace MpeMaker.Sections
 
         public FileItem SelectedItem { get; set; }
 
+        private bool _loading = false;
+
         public FilesGroupsSection()
         {
             InitializeComponent();
@@ -121,7 +123,12 @@ namespace MpeMaker.Sections
             {
                 foreach (string item in openFileDialog1.FileNames)
                 {
-                    FileItem fil = new FileItem(item, false);
+                    FileItem fil = GetCommonItem(SelectedGroup); // new FileItem(item, false);
+                    fil.LocalFileName = item;
+                    fil.DestinationFilename = string.IsNullOrEmpty(fil.DestinationFilename)
+                                                  ? MpeInstaller.InstallerTypeProviders[fil.InstallType].GetTemplatePath
+                                                        (fil)
+                                                  : fil.DestinationFilename + "\\" + Path.GetFileName(item);
                     AddFile(selectedNode, fil);
                     ((GroupItem)selectedNode.Tag).Files.Add(fil);
                 }
@@ -130,6 +137,7 @@ namespace MpeMaker.Sections
 
         void SetProperties(TreeNode node)
         {
+            _loading = true;
             var group = GetSelectedGroupNode().Tag as GroupItem;
             var file = node.Tag as FileItem;
             SelectedGroup = null;
@@ -150,21 +158,63 @@ namespace MpeMaker.Sections
                 chk_default.Checked = group.DefaulChecked;
                 txt_displlayName.Text = group.DisplayName;
                 cmb_parentGroup.Text = group.ParentGroup;
+                if(group.Files.Items.Count>0)
+                {
+                    tabPage_file.Enabled = true;
+                }
+                else
+                {
+                    tabPage_file.Enabled = false;
+                }
             }
+
             if (file != null)
             {
                 tabControl1.SelectTab(1);
                 tabPage_file.Enabled = true;
-                txt_installpath.Text = file.DestinationFilename;
-                cmb_installtype.Text = file.InstallType;
-                cmb_overwrite.SelectedIndex = (int) file.UpdateOption;
+                btn_set.Enabled = false;
             }
-            else
+            else if (group != null)
             {
                 tabControl1.SelectTab(0);
+                file = GetCommonItem(group);
+                tabPage_file.Enabled = group.Files.Items.Count > 0;
+                btn_set.Enabled = true;
             }
+
+            if (file != null)
+            {
+                txt_installpath.Text = file.DestinationFilename;
+                cmb_installtype.Text = file.InstallType;
+                cmb_overwrite.SelectedIndex = (int)file.UpdateOption;
+            }
+
             SelectedGroup = group;
             SelectedItem = file;
+            _loading = false;
+        }
+
+        private static FileItem GetCommonItem(GroupItem groupItem)
+        {
+            var resp = new FileItem();
+            if (groupItem.Files.Items.Count > 0)
+            {
+                resp.DestinationFilename = string.IsNullOrEmpty(groupItem.Files.Items[0].DestinationFilename)
+                                               ? ""
+                                               : Path.GetDirectoryName(groupItem.Files.Items[0].DestinationFilename);
+                resp.UpdateOption = groupItem.Files.Items[0].UpdateOption;
+                resp.InstallType = groupItem.Files.Items[0].InstallType;
+                foreach (FileItem item in groupItem.Files.Items)
+                {
+                    if (string.IsNullOrEmpty(item.DestinationFilename) || resp.DestinationFilename != Path.GetDirectoryName(item.DestinationFilename))
+                        resp.DestinationFilename = "";
+                    if (resp.UpdateOption != item.UpdateOption)
+                        resp.UpdateOption = UpdateOptionEnum.OverwriteIfOlder;
+                    if (resp.InstallType != item.InstallType)
+                        resp.InstallType = "CopyFile";
+                }
+            }
+            return resp;
         }
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
@@ -177,6 +227,9 @@ namespace MpeMaker.Sections
 
         private void txt_description_TextChanged(object sender, EventArgs e)
         {
+            if (_loading)
+                return;
+
             if (SelectedGroup != null)
             {
                 SelectedGroup.Description = txt_description.Text;
@@ -197,27 +250,11 @@ namespace MpeMaker.Sections
             PathTemplateSelector dlg = new PathTemplateSelector();
             if (dlg.ShowDialog() == DialogResult.OK)
             {
-                if (txt_intall_path.Text.Contains("%"))
-                    txt_installpath.Text = dlg.Result + "\\" + Path.GetFileName(SelectedItem.LocalFileName);
-                else
-                    txt_installpath.Text = dlg.Result + txt_installpath.Text;
+                txt_installpath.Text = dlg.Result + "\\" + Path.GetFileName(SelectedItem.LocalFileName);
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            PathTemplateSelector dlg = new PathTemplateSelector();
-            if (dlg.ShowDialog() == DialogResult.OK)
-            {
-                txt_intall_path.Text = dlg.Result;
-            }
-        }
-
-        private void btn_set_path_Click(object sender, EventArgs e)
-        {
-            SelectedGroup.SetDestinationPath(txt_intall_path.Text);
-        }
-
+ 
         private void mnu_remove_group_Click(object sender, EventArgs e)
         {
             if (SelectedGroup == null)
@@ -240,6 +277,32 @@ namespace MpeMaker.Sections
             SelectedGroup.Files.Items.Remove(SelectedItem);
             treeView1.Nodes.Clear();
             PopulateTreeView();
+        }
+
+        private void btn_set_Click(object sender, EventArgs e)
+        {
+            foreach (FileItem fileItem in SelectedGroup.Files.Items)
+            {
+                fileItem.InstallType = string.IsNullOrEmpty(SelectedItem.InstallType)
+                                           ? fileItem.InstallType
+                                           : SelectedItem.InstallType;
+                fileItem.UpdateOption = SelectedItem.UpdateOption;
+                fileItem.DestinationFilename = string.IsNullOrEmpty(SelectedItem.DestinationFilename)
+                                                   ? fileItem.DestinationFilename
+                                                   : Path.Combine(SelectedItem.DestinationFilename,
+                                                                  Path.GetFileName(fileItem.LocalFileName));
+
+            }
+        }
+
+        private void mnu_add_folder_Click(object sender, EventArgs e)
+        {
+            TreeNode selectedNode = GetSelectedGroupNode();
+            if (selectedNode == null)
+            {
+                MessageBox.Show("No node selected !");
+                return;
+            }
         }
     }
 }

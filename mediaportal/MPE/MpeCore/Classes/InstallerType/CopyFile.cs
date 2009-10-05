@@ -60,6 +60,23 @@ namespace MpeCore.Classes.InstallerType
         }
 
         /// <summary>
+        /// Transform real path in a templated path based on PathProviders
+        /// </summary>
+        /// <param name="fileItem">The file item.</param>
+        /// <returns></returns>
+        public string GetTemplatePath(FileItem fileItem)
+        {
+            string localFile = fileItem.LocalFileName;
+            foreach (var pathProvider in MpeCore.MpeInstaller.PathProviders)
+            {
+                localFile = pathProvider.Value.Colapse(localFile);
+            }
+            if (!localFile.Contains("%"))
+                localFile = "%Base%\\" + Path.GetFileName(localFile);
+           return localFile;
+        }
+
+        /// <summary>
         /// Transform templated path in a real path based on PathProviders
         /// </summary>
         /// <param name="fileItem">The file item.</param>

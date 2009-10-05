@@ -11,7 +11,6 @@ namespace MpeCore.Classes.SectionPanel
 {
     public partial class LicenseAgreement :Form,  ISectionPanel
     {
-        private ShowModeEnum Mode = ShowModeEnum.Preview;
         private PackageClass Package;
         private SectionResponseEnum _resp = SectionResponseEnum.Cancel;
 
@@ -55,7 +54,7 @@ namespace MpeCore.Classes.SectionPanel
 
         public void Preview(PackageClass packageClass, SectionItem sectionItem)
         {
-            Mode = ShowModeEnum.Preview;
+            //Mode = ShowModeEnum.Preview;
             Package = packageClass;
             Params = sectionItem.Params;
             SetValues();

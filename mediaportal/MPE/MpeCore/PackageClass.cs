@@ -58,6 +58,9 @@ namespace MpeCore
                 }
             }
             UnInstallInfo.Save();
+            MpeInstaller.InstalledExtensions.Add(this);
+            MpeInstaller.KnownExtensions.Add(this);
+            MpeInstaller.Save();
         }
 
         /// <summary>

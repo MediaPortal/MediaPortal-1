@@ -51,6 +51,7 @@
             this.label9 = new System.Windows.Forms.Label();
             this.txt_versiondesc = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
+            this.btn_gen_guid = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -83,7 +84,7 @@
             // 
             this.txt_guid.Location = new System.Drawing.Point(115, 33);
             this.txt_guid.Name = "txt_guid";
-            this.txt_guid.Size = new System.Drawing.Size(229, 20);
+            this.txt_guid.Size = new System.Drawing.Size(207, 20);
             this.txt_guid.TabIndex = 3;
             this.txt_guid.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
@@ -256,10 +257,21 @@
             this.label10.TabIndex = 22;
             this.label10.Text = "This version description";
             // 
+            // btn_gen_guid
+            // 
+            this.btn_gen_guid.Location = new System.Drawing.Point(328, 31);
+            this.btn_gen_guid.Name = "btn_gen_guid";
+            this.btn_gen_guid.Size = new System.Drawing.Size(16, 23);
+            this.btn_gen_guid.TabIndex = 23;
+            this.btn_gen_guid.Text = ".";
+            this.btn_gen_guid.UseVisualStyleBackColor = true;
+            this.btn_gen_guid.Click += new System.EventHandler(this.btn_gen_guid_Click);
+            // 
             // GeneralSection
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.btn_gen_guid);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.txt_versiondesc);
             this.Controls.Add(this.label9);
@@ -316,5 +328,6 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox txt_versiondesc;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Button btn_gen_guid;
     }
 }

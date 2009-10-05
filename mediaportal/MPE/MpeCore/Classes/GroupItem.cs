@@ -22,6 +22,16 @@ namespace MpeCore.Classes
             Description = name;
         }
 
+        public GroupItem(string name, bool b)
+        {
+            Reset();
+            Name = name;
+            DisplayName = name;
+            Description = name;
+            Checked = b;
+            DefaulChecked = b;
+        }
+
         public void Reset()
         {
             DefaulChecked = true;

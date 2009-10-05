@@ -49,6 +49,7 @@
             this.txt_outfile.Name = "txt_outfile";
             this.txt_outfile.Size = new System.Drawing.Size(424, 20);
             this.txt_outfile.TabIndex = 0;
+            this.txt_outfile.TextChanged += new System.EventHandler(this.txt_outfile_TextChanged);
             // 
             // label1
             // 

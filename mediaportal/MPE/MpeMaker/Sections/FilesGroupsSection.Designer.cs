@@ -43,25 +43,22 @@
             this.cmb_parentGroup = new System.Windows.Forms.ComboBox();
             this.txt_displlayName = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.btn_set_path = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.txt_intall_path = new System.Windows.Forms.TextBox();
             this.chk_default = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
             this.txt_description = new System.Windows.Forms.TextBox();
             this.tabPage_file = new System.Windows.Forms.TabPage();
+            this.btn_set = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
+            this.cmb_overwrite = new System.Windows.Forms.ComboBox();
             this.button1 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.txt_installpath = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.cmb_installtype = new System.Windows.Forms.ComboBox();
-            this.cmb_overwrite = new System.Windows.Forms.ComboBox();
-            this.label6 = new System.Windows.Forms.Label();
+            this.mnu_add_folder = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage_group.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             this.tabPage_file.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -83,11 +80,12 @@
             this.mnu_remove_group,
             this.toolStripButton3,
             this.mnu_add_files,
+            this.mnu_add_folder,
             this.mnu_remove_files});
             this.toolStrip1.Location = new System.Drawing.Point(3, 7);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(110, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(164, 25);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -157,7 +155,6 @@
             this.tabPage_group.Controls.Add(this.cmb_parentGroup);
             this.tabPage_group.Controls.Add(this.txt_displlayName);
             this.tabPage_group.Controls.Add(this.label4);
-            this.tabPage_group.Controls.Add(this.groupBox1);
             this.tabPage_group.Controls.Add(this.chk_default);
             this.tabPage_group.Controls.Add(this.label3);
             this.tabPage_group.Controls.Add(this.txt_description);
@@ -205,45 +202,6 @@
             this.label4.TabIndex = 4;
             this.label4.Text = "Display name";
             // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.btn_set_path);
-            this.groupBox1.Controls.Add(this.button2);
-            this.groupBox1.Controls.Add(this.txt_intall_path);
-            this.groupBox1.Location = new System.Drawing.Point(3, 188);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(308, 77);
-            this.groupBox1.TabIndex = 3;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Install path";
-            // 
-            // btn_set_path
-            // 
-            this.btn_set_path.Location = new System.Drawing.Point(12, 46);
-            this.btn_set_path.Name = "btn_set_path";
-            this.btn_set_path.Size = new System.Drawing.Size(75, 23);
-            this.btn_set_path.TabIndex = 2;
-            this.btn_set_path.Text = "Set";
-            this.btn_set_path.UseVisualStyleBackColor = true;
-            this.btn_set_path.Click += new System.EventHandler(this.btn_set_path_Click);
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(280, 20);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(23, 20);
-            this.button2.TabIndex = 1;
-            this.button2.Text = ".";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // txt_intall_path
-            // 
-            this.txt_intall_path.Location = new System.Drawing.Point(12, 20);
-            this.txt_intall_path.Name = "txt_intall_path";
-            this.txt_intall_path.Size = new System.Drawing.Size(262, 20);
-            this.txt_intall_path.TabIndex = 0;
-            // 
             // chk_default
             // 
             this.chk_default.AutoSize = true;
@@ -275,6 +233,7 @@
             // 
             // tabPage_file
             // 
+            this.tabPage_file.Controls.Add(this.btn_set);
             this.tabPage_file.Controls.Add(this.label6);
             this.tabPage_file.Controls.Add(this.cmb_overwrite);
             this.tabPage_file.Controls.Add(this.button1);
@@ -290,6 +249,39 @@
             this.tabPage_file.Text = "File";
             this.tabPage_file.UseVisualStyleBackColor = true;
             // 
+            // btn_set
+            // 
+            this.btn_set.Location = new System.Drawing.Point(233, 245);
+            this.btn_set.Name = "btn_set";
+            this.btn_set.Size = new System.Drawing.Size(75, 23);
+            this.btn_set.TabIndex = 7;
+            this.btn_set.Text = "Set";
+            this.btn_set.UseVisualStyleBackColor = true;
+            this.btn_set.Click += new System.EventHandler(this.btn_set_Click);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(3, 62);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(76, 13);
+            this.label6.TabIndex = 6;
+            this.label6.Text = "Update Option";
+            // 
+            // cmb_overwrite
+            // 
+            this.cmb_overwrite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmb_overwrite.FormattingEnabled = true;
+            this.cmb_overwrite.Items.AddRange(new object[] {
+            "Newer overwrite",
+            "Always overwrite",
+            "Overwrite if older"});
+            this.cmb_overwrite.Location = new System.Drawing.Point(95, 59);
+            this.cmb_overwrite.Name = "cmb_overwrite";
+            this.cmb_overwrite.Size = new System.Drawing.Size(216, 21);
+            this.cmb_overwrite.TabIndex = 5;
+            this.cmb_overwrite.SelectedIndexChanged += new System.EventHandler(this.txt_description_TextChanged);
+            // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(289, 86);
@@ -303,7 +295,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 95);
+            this.label2.Location = new System.Drawing.Point(3, 91);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(74, 13);
             this.label2.TabIndex = 3;
@@ -336,28 +328,16 @@
             this.cmb_installtype.TabIndex = 0;
             this.cmb_installtype.SelectedIndexChanged += new System.EventHandler(this.txt_description_TextChanged);
             // 
-            // cmb_overwrite
+            // mnu_add_folder
             // 
-            this.cmb_overwrite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmb_overwrite.FormattingEnabled = true;
-            this.cmb_overwrite.Items.AddRange(new object[] {
-            "Newer overwrite",
-            "Always overwrite",
-            "Overwrite if older"});
-            this.cmb_overwrite.Location = new System.Drawing.Point(95, 59);
-            this.cmb_overwrite.Name = "cmb_overwrite";
-            this.cmb_overwrite.Size = new System.Drawing.Size(216, 21);
-            this.cmb_overwrite.TabIndex = 5;
-            this.cmb_overwrite.SelectedIndexChanged += new System.EventHandler(this.txt_description_TextChanged);
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(3, 62);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(76, 13);
-            this.label6.TabIndex = 6;
-            this.label6.Text = "Update Option";
+            this.mnu_add_folder.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.mnu_add_folder.Image = ((System.Drawing.Image)(resources.GetObject("mnu_add_folder.Image")));
+            this.mnu_add_folder.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.mnu_add_folder.Name = "mnu_add_folder";
+            this.mnu_add_folder.Size = new System.Drawing.Size(23, 22);
+            this.mnu_add_folder.Text = "toolStripButton1";
+            this.mnu_add_folder.ToolTipText = "Add folder";
+            this.mnu_add_folder.Click += new System.EventHandler(this.mnu_add_folder_Click);
             // 
             // FilesGroupsSection
             // 
@@ -373,8 +353,6 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage_group.ResumeLayout(false);
             this.tabPage_group.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.tabPage_file.ResumeLayout(false);
             this.tabPage_file.PerformLayout();
             this.ResumeLayout(false);
@@ -403,16 +381,14 @@
         private System.Windows.Forms.CheckBox chk_default;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txt_description;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btn_set_path;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.TextBox txt_intall_path;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox cmb_parentGroup;
         private System.Windows.Forms.TextBox txt_displlayName;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox cmb_overwrite;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Button btn_set;
+        private System.Windows.Forms.ToolStripButton mnu_add_folder;
 
     }
 }

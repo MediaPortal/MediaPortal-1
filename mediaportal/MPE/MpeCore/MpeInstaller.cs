@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using MediaPortal.Configuration;
 using MpeCore;
 using MpeCore.Interfaces;
+using MpeCore.Classes;
 using MpeCore.Classes.InstallerType;
 using MpeCore.Classes.PathProvider;
 using MpeCore.Classes.SectionPanel;
@@ -15,6 +17,8 @@ namespace MpeCore
         static public Dictionary<string,IPathProvider> PathProviders { get; set; }
         static public Dictionary<string, ISectionPanel> SectionPanels { get; set; }
         static public ZipProviderClass ZipProvider { get; set; }
+        public static ExtensionCollection InstalledExtensions { get; set; }
+        public static ExtensionCollection KnownExtensions { get; set; }
 
         static public void Init()
         {
@@ -33,7 +37,20 @@ namespace MpeCore
             SectionPanels.Add("ImageRadioSelector", new ImageRadioSelector());
             SectionPanels.Add("TreeViewSelector", new TreeViewSelector());
             SectionPanels.Add("InstallSection", new InstallSection());
-            
+
+            InstalledExtensions =
+                ExtensionCollection.Load(string.Format("{0}\\V2\\InstalledExtensions.xml", Config.GetFolder(Config.Dir.Installer)));
+            KnownExtensions =
+    ExtensionCollection.Load(string.Format("{0}\\V2\\KnownExtensions.xml", Config.GetFolder(Config.Dir.Installer)));
+
+        }
+
+
+        public static void Save()
+        {
+            InstalledExtensions.Save(string.Format("{0}\\V2\\InstalledExtensions.xml", Config.GetFolder(Config.Dir.Installer)));
+            KnownExtensions.Save(string.Format("{0}\\V2\\KnownExtensions.xml", Config.GetFolder(Config.Dir.Installer)));
+
         }
 
         /// <summary>

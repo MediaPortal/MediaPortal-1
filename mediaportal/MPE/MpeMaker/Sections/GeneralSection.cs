@@ -72,6 +72,11 @@ namespace MpeMaker.Sections
             }
         }
 
+        private void btn_gen_guid_Click(object sender, EventArgs e)
+        {
+            txt_guid.Text = Guid.NewGuid().ToString();
+        }
+
 
     }
 }

@@ -60,7 +60,14 @@ namespace MpeMaker.Sections
                 tabControl1.SelectTab(1);
                 return;
             }
+            list_message.Items.Add("Creating package started at : "+DateTime.Now.ToLongTimeString());
             MpeInstaller.ZipProvider.Save(Package, txt_outfile.Text);
+            list_message.Items.Add("Ended at : " + DateTime.Now.ToLongTimeString());
+        }
+
+        private void txt_outfile_TextChanged(object sender, EventArgs e)
+        {
+            Package.GeneralInfo.Location = txt_outfile.Text;
         }
     }
 }

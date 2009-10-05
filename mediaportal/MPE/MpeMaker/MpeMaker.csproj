@@ -131,6 +131,9 @@
     <EmbeddedResource Include="Sections\InstallSections.resx">
       <DependentUpon>InstallSections.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sections\WelcomSection.resx">
+      <DependentUpon>WelcomSection.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -169,6 +172,12 @@
       <DependentUpon>InstallSections.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\ISectionControl.cs" />
+    <Compile Include="Sections\WelcomSection.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\WelcomSection.Designer.cs">
+      <DependentUpon>WelcomSection.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MpeCore\MpeCore.csproj">

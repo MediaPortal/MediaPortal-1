@@ -22,5 +22,7 @@ namespace MpeCore.Classes
         public string ExtensionDescription { get; set; }
         public string VersionDescription { get; set; }
         public string DevelopmentStatus { get; set; }
+        public string OnlineLocation { get; set; }
+        public string Location { get; set; }
     }
 }
