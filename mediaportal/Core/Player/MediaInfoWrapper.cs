@@ -53,17 +53,19 @@ namespace MediaPortal.Player
       }
       bool isTV = Util.Utils.IsLiveTv(strFile);
       bool isRadio = Util.Utils.IsLiveRadio(strFile);
+      bool isRTSP = Util.Utils.IsRTSP(strFile);                //rtsp for live TV and recordings.
       bool isDVD = Util.Utils.IsDVD(strFile);
       bool isVideo = Util.Utils.IsVideo(strFile);
-      bool isAVStream = Util.Utils.IsAVStream(strFile); //rtsp users for live TV and recordings.
+      bool isAVStream = Util.Utils.IsAVStream(strFile);        //other AV streams
 
-      if (isTV || isRadio || isAVStream || (isDVD && !_DVDenabled))
+      //currently disabled for all tv/radio/streaming video
+      if (isTV || isRadio || isRTSP || isAVStream)
       {
         return;
       }
 
-      //currently mediainfo is only used for video related material
-      if (!isDVD && !isVideo)
+      //currently mediainfo is only used for local video related material (if enabled)
+      if ((!isVideo && !isDVD) || (isDVD && !_DVDenabled))
       {
         return;
       }
@@ -76,7 +78,7 @@ namespace MediaPortal.Player
           strFile = Util.DaemonTools.GetVirtualDrive() + @"\VIDEO_TS\VIDEO_TS.IFO";
 
         if (strFile.ToLower().EndsWith(".ifo"))
-        {          
+        {
           string path = Path.GetDirectoryName(strFile);
           string mainTitle = GetLargestFileInDirectory(path, "VTS_*1.VOB");
           string titleSearch = Path.GetFileName(mainTitle);
@@ -94,7 +96,7 @@ namespace MediaPortal.Player
           // get all other info from main title's 1st vob
           strFile = mainTitle;
         }
-        
+
         _mI.Open(strFile);
 
         NumberFormatInfo providerNumber = new NumberFormatInfo();
@@ -120,8 +122,8 @@ namespace MediaPortal.Player
         {
           _videoResolution = "1080I";
         }
-        
-        if(_videoDuration==0)
+
+        if (_videoDuration == 0)
         {
           int.TryParse(_mI.Get(StreamKind.Video, 0, "PlayTime"), out _videoDuration);
         }
@@ -227,7 +229,7 @@ namespace MediaPortal.Player
         }
       }
       catch (Exception e)
-      {        
+      {
         Log.Error("Error while retrieving files for: {0} {1}" + targetDir, e.Message);
       }
       return largestFile;
