@@ -241,7 +241,7 @@ namespace MpeMaker.Sections
             {
                 SelectedItem.InstallType = cmb_installtype.Text;
                 SelectedItem.DestinationFilename = txt_installpath.Text;
-                SelectedItem.UpdateOption = (UpdateOptionEnum) cmb_parentGroup.SelectedIndex;
+                SelectedItem.UpdateOption = (UpdateOptionEnum) cmb_overwrite.SelectedIndex;
             }
         }
 
@@ -302,6 +302,12 @@ namespace MpeMaker.Sections
             {
                 MessageBox.Show("No node selected !");
                 return;
+            }
+            AddFolder2Group dlg = new AddFolder2Group(SelectedGroup);
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                treeView1.Nodes.Clear();
+                PopulateTreeView();
             }
         }
     }

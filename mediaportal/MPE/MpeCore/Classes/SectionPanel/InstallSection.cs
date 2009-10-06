@@ -85,6 +85,10 @@ namespace MpeCore.Classes.SectionPanel
         void packageClass_FileInstalled(object sender, Events.InstallEventArgs e)
         {
             progressBar1.Value++;
+            lbl_curr_file.Text = e.Item.DestinationFilename;
+            Refresh();
+            lbl_curr_file.Refresh();
+            progressBar1.Refresh();
         }
 
         private void SetValues()
@@ -103,17 +107,22 @@ namespace MpeCore.Classes.SectionPanel
 
         private void InstallSection_Load(object sender, EventArgs e)
         {
-            if(Mode==ShowModeEnum.Real)
-            {
-                Package.Install();
-                button_next.Enabled = true;
-            }
+
         }
 
         private void button_next_Click(object sender, EventArgs e)
         {
             _resp = SectionResponseEnum.Next;
             Close();
+        }
+
+        private void InstallSection_Shown(object sender, EventArgs e)
+        {
+            if (Mode == ShowModeEnum.Real)
+            {
+                Package.Install();
+                button_next.Enabled = true;
+            }
         }
     }
 }

@@ -56,7 +56,7 @@ namespace MpeMaker
         private void mnu_save_Click(object sender, EventArgs e)
         {
             if (File.Exists(ProjectFileName))
-                Package.Save(ProjectFileName);
+                Save(ProjectFileName);
             else
             {
                 mnu_saveAs_Click(null, null);
@@ -69,9 +69,16 @@ namespace MpeMaker
             saveFileDialog1.Title = "Save extension installer proiect file";
             if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                Package.Save(saveFileDialog1.FileName);
-                ProjectFileName = saveFileDialog1.FileName;
+                Save(saveFileDialog1.FileName);
             }
+        }
+
+        private void Save( string file)
+        {
+            Package.GenerateRelativePath(Path.GetDirectoryName(file));
+            Package.Save(file);
+            ProjectFileName = file;
+            
         }
 
         private void SetTitle()
@@ -88,6 +95,7 @@ namespace MpeMaker
             if(openFileDialog1.ShowDialog()==DialogResult.OK)
             {
                 Package.Load(openFileDialog1.FileName);
+                Package.GenerateAbsolutePath(Path.GetDirectoryName(openFileDialog1.FileName));
                 ProjectFileName = openFileDialog1.FileName;
                 treeView1.SelectedNode = treeView1.Nodes[0];
                 SetTitle();

@@ -53,7 +53,7 @@ namespace MpeCore
                     {
                         MpeInstaller.InstallerTypeProviders[fileItem.InstallType].Install(this, fileItem);
                         if (FileInstalled != null)
-                            FileInstalled(this, new InstallEventArgs());
+                            FileInstalled(this, new InstallEventArgs(groupItem, fileItem));
                     }
                 }
             }
@@ -93,6 +93,54 @@ namespace MpeCore
             WizardNavigator navigator=new WizardNavigator(this);
             navigator.Navigate();
             return true;
+        }
+
+        public void GenerateRelativePath(string path)
+        {
+            foreach (GroupItem groupItem in Groups.Items)
+            {
+                foreach (FileItem fileItem in groupItem.Files.Items)
+                {
+                    fileItem.LocalFileName = PathUtil.RelativePathTo(path, fileItem.LocalFileName);
+                }
+            }
+
+            foreach (SectionItem sectionItem in Sections.Items)
+            {
+                foreach (SectionParam sectionParam in sectionItem.Params.Items)
+                {
+                    if (sectionParam.ValueType == ValueTypeEnum.File && !string.IsNullOrEmpty(sectionParam.Value))
+                    {
+                        sectionParam.Value = PathUtil.RelativePathTo(path, sectionParam.Value);
+                    }
+                }
+            }
+        }
+
+        public void GenerateAbsolutePath(string path)
+        {
+            foreach (GroupItem groupItem in Groups.Items)
+            {
+                foreach (FileItem fileItem in groupItem.Files.Items)
+                {
+                    if (!Path.IsPathRooted(fileItem.LocalFileName))
+                        fileItem.LocalFileName = Path.Combine(path, fileItem.LocalFileName);
+                }
+            }
+
+            foreach (SectionItem sectionItem in Sections.Items)
+            {
+                foreach (SectionParam sectionParam in sectionItem.Params.Items)
+                {
+                    if (sectionParam.ValueType == ValueTypeEnum.File && !string.IsNullOrEmpty(sectionParam.Value))
+                    {
+                        sectionParam.Value = PathUtil.RelativePathTo(path, sectionParam.Value);
+                        if (!Path.IsPathRooted(sectionParam.Value))
+                            sectionParam.Value = Path.Combine(path, sectionParam.Value);
+
+                    }
+                }
+            }
         }
 
         private void GenerateUniqueFileList()

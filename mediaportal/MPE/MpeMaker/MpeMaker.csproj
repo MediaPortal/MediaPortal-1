@@ -55,6 +55,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dialogs\AddFolder2Group.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\AddFolder2Group.Designer.cs">
+      <DependentUpon>AddFolder2Group.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\GroupEdit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -94,6 +100,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Dialogs\AddFolder2Group.resx">
+      <DependentUpon>AddFolder2Group.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\GroupEdit.resx">
       <DependentUpon>GroupEdit.cs</DependentUpon>
       <SubType>Designer</SubType>

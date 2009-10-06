@@ -35,6 +35,7 @@
             this.button_next = new System.Windows.Forms.Button();
             this.button_cancel = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.lbl_curr_file = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -42,6 +43,7 @@
             // 
             this.panel1.BackColor = System.Drawing.SystemColors.Control;
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.lbl_curr_file);
             this.panel1.Controls.Add(this.progressBar1);
             this.panel1.Location = new System.Drawing.Point(-1, 53);
             this.panel1.Name = "panel1";
@@ -89,6 +91,14 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // lbl_curr_file
+            // 
+            this.lbl_curr_file.AutoSize = true;
+            this.lbl_curr_file.Location = new System.Drawing.Point(12, 45);
+            this.lbl_curr_file.Name = "lbl_curr_file";
+            this.lbl_curr_file.Size = new System.Drawing.Size(0, 13);
+            this.lbl_curr_file.TabIndex = 1;
+            // 
             // InstallSection
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -105,7 +115,9 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "InstallSection";
             this.Load += new System.EventHandler(this.InstallSection_Load);
+            this.Shown += new System.EventHandler(this.InstallSection_Shown);
             this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -118,5 +130,6 @@
         private System.Windows.Forms.Button button_cancel;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Label lbl_curr_file;
     }
 }

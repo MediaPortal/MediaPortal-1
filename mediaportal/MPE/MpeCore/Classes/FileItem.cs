@@ -8,7 +8,7 @@ using MpeCore.Classes;
 namespace MpeCore.Classes
 {
     /// <summary>
-    /// Reprezent a single file item wich is included in package
+    /// Represent a single file item wich is included in package
     /// </summary>
     public class FileItem
     {
@@ -115,8 +115,9 @@ namespace MpeCore.Classes
 
         public override string ToString()
         {
-            return Path.GetFileName(LocalFileName);   
+            if (string.IsNullOrEmpty(DestinationFilename))
+                return Path.GetFileName(LocalFileName);
+            return DestinationFilename;
         }
-	
     }
 }

@@ -75,5 +75,22 @@ namespace MpeCore.Classes
             return GetByLocalFileName(item.LocalFileName);
         }
 
+        /// <summary>
+        /// Gets the specified item by the local filename and destination teplate.
+        /// </summary>
+        /// <param name="fileName">Name of the local file.</param>
+        /// <param name="dest">Destination template</param>
+        /// <returns>If not found return Null</returns>
+        public FileItem Get(string fileName, string dest)
+        {
+            foreach (FileItem item in Items)
+            {
+                if (item.LocalFileName.CompareTo(fileName) == 0 && item.DestinationFilename.CompareTo(dest) == 0)
+                    return item;
+            }
+            return null;
+        }
+
+        
     }
 }

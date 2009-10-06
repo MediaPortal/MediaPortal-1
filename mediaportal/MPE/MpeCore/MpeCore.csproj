@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="Classes\Events\InstallEventArgs.cs" />
     <Compile Include="Classes\ExtensionCollection.cs" />
+    <Compile Include="Classes\PathUtil.cs" />
     <Compile Include="Classes\SectionPanel\ImageRadioSelector.cs">
       <SubType>Form</SubType>
     </Compile>
