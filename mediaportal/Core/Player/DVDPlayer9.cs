@@ -393,10 +393,11 @@ namespace MediaPortal.Player
 
         if (_vmr9 != null)
         {
+          _vmr9.Enable(false);
           _vmr9.Dispose();
+          _vmr9 = null;
         }
-        _vmr9 = null;
-
+        
         if (_videoCodecFilter != null)
         {
           while ((hr = DirectShowUtil.ReleaseComObject(_videoCodecFilter)) > 0)
@@ -405,6 +406,7 @@ namespace MediaPortal.Player
           }
           _videoCodecFilter = null;
         }
+
         if (_audioCodecFilter != null)
         {
           while ((hr = DirectShowUtil.ReleaseComObject(_audioCodecFilter)) > 0)
@@ -432,15 +434,16 @@ namespace MediaPortal.Player
             {
               ;
             }
-          }
-          customFilters[i] = null;
+            customFilters[i] = null;
+          }          
         }
 
         if (_cmdOption != null)
         {
           DirectShowUtil.ReleaseComObject(_cmdOption);
+          _cmdOption = null;
         }
-        _cmdOption = null;
+        
         _pendingCmd = false;
 
         if (_dvdbasefilter != null)
@@ -460,6 +463,7 @@ namespace MediaPortal.Player
           }
           _dvdGraph = null;
         }
+
         if (_line21Decoder != null)
         {
           while ((hr = DirectShowUtil.ReleaseComObject(_line21Decoder)) > 0)
@@ -472,9 +476,9 @@ namespace MediaPortal.Player
         if (_rotEntry != null)
         {
           _rotEntry.Dispose();
+          _rotEntry = null;
         }
-        _rotEntry = null;
-
+        
         if (_graphBuilder != null)
         {
           DirectShowUtil.RemoveFilters(_graphBuilder);
@@ -486,7 +490,6 @@ namespace MediaPortal.Player
         }
 
         _state = PlayState.Init;
-        VMR9Util.g_vmr9.EVRSetDVDMenuState(false);
 
         Log.Info("DVDPlayer9: Disabling DX9 exclusive mode");
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
