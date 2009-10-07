@@ -61,6 +61,7 @@ namespace TvEngine.PowerScheduler.Handlers
 
       // Calculates download and upload speed.
       double monitorInterval = thisSampleTime.Subtract(lastSampleTime).TotalSeconds;
+      lastSampleTime = thisSampleTime;
       long dlSpeed = (long)((dlValue - dlValueOld) / monitorInterval);
       long ulSpeed = (long)((ulValue - ulValueOld) / monitorInterval);
 
