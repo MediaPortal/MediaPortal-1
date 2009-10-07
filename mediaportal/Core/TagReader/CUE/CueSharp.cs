@@ -26,6 +26,7 @@
 using System;
 using System.Text;
 using System.IO;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.TagReader
 {
@@ -166,7 +167,14 @@ namespace MediaPortal.TagReader
 
       cueLines = cueString.Split(lineDelims);
       RemoveEmptyLines(ref cueLines);
-      ParseCue(cueLines);
+      try
+      {
+        ParseCue(cueLines);
+      }
+      catch(Exception ex)
+      {
+        Log.Error("Exception processing CUE File {0}: {1} {2}", cueString, ex.Message, ex.StackTrace);
+      }
     }
 
     /// <summary>
@@ -203,7 +211,14 @@ namespace MediaPortal.TagReader
 
       RemoveEmptyLines(ref cueLines);
 
-      ParseCue(cueLines);
+      try
+      {
+        ParseCue(cueLines);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Exception processing CUE File {0}: {1} {2}", filename, ex.Message, ex.StackTrace);
+      }
     }
 
     #endregion
