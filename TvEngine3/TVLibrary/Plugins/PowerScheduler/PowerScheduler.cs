@@ -1301,6 +1301,7 @@ namespace TvEngine.PowerScheduler
             _currentDisAllowShutdownHandler = handler.HandlerName;
             _currentDisAllowShutdown = true;
             _powerManager.PreventStandby();
+            _lastUserTime = DateTime.Now; // remember this time; avoid immediate shutdown after preventing handler is finished
             return true;
           }
         }
