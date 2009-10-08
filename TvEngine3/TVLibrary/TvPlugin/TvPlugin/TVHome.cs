@@ -117,8 +117,7 @@ namespace TvPlugin
     private static bool _preferAC3 = false;
     private static bool _preferAudioTypeOverLang = false;
     private static bool _autoFullScreen = false;
-    private static bool _autoFullScreenOnly = false;
-    private static bool _resumed = false;
+    private static bool _autoFullScreenOnly = false;    
     private static bool _suspended = false;
     private static bool _showlastactivemodule = false;
     private static bool _showlastactivemoduleFullscreen = false;
@@ -494,7 +493,7 @@ namespace TvPlugin
       while (true)
       {
         Connected = RemoteControl.IsConnected;
-        if (Connected /*&& _resumed */ && !_suspended)
+        if (Connected && !_suspended)
         {
           bool isTS = (Card != null && Card.IsTimeShifting);
           if (Connected && isTS)
@@ -1513,8 +1512,7 @@ namespace TvPlugin
       }
       finally
       {
-        _suspended = true;
-        _resumed = false;
+        _suspended = true;        
       }
     }
 
@@ -1523,8 +1521,7 @@ namespace TvPlugin
       Log.Debug("TVHome.OnResume()");
 
       HandleWakeUpTvServer();
-
-      _resumed = true;
+      
       _suspended = false;
     }
 
@@ -1768,15 +1765,15 @@ namespace TvPlugin
 
       // if using showlastactivemodule feature and last module is fullscreen while returning from powerstate, then do not set fullscreen here (since this is done by the resume last active module feature)
       // we depend on the onresume method, thats why tvplugin now impl. the IPluginReceiver interface.      
-      bool showlastActModFS = (_showlastactivemodule && _showlastactivemoduleFullscreen && _resumed && _autoTurnOnTv);
+      bool showlastActModFS = (_showlastactivemodule && _showlastactivemoduleFullscreen && !_suspended && _autoTurnOnTv);
       bool useDelay = false;
 
-      if (_resumed && !showlastActModFS)
+      if (!_suspended && !showlastActModFS)
       {
         useDelay = true;
         showlastActModFS = false;
       }
-      else if (_resumed)
+      else if (!_suspended)
       {
         showlastActModFS = true;
       }
@@ -1803,8 +1800,8 @@ namespace TvPlugin
         }
       }
 
-      _onPageLoadDone = true;
-      _resumed = false;
+      _onPageLoadDone = true;      
+      _suspended = false;
 
       UpdateGUIonPlaybackStateChange();
       doProcess();
@@ -3221,9 +3218,9 @@ namespace TvPlugin
     private static bool PreTuneChecks(Channel channel, out bool doContinue)
     {
       doContinue = false;
-      if (!_resumed && _suspended && _waitonresume > 0)
+      if (_suspended && _waitonresume > 0)
       {
-        Log.Info("TVHome.ViewChannelAndCheck(): system just woke up...waiting {0} ms. resumed {1}, suspended {2}", _waitonresume, _resumed, _suspended);
+        Log.Info("TVHome.ViewChannelAndCheck(): system just woke up...waiting {0} ms., suspended {2}", _waitonresume, _suspended);
         Thread.Sleep(_waitonresume);
       }
 
