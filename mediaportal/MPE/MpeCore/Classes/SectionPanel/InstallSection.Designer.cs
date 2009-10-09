@@ -29,107 +29,56 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.button_back = new System.Windows.Forms.Button();
-            this.button_next = new System.Windows.Forms.Button();
-            this.button_cancel = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.lbl_curr_file = new System.Windows.Forms.Label();
-            this.panel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // panel1
-            // 
-            this.panel1.BackColor = System.Drawing.SystemColors.Control;
-            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.lbl_curr_file);
-            this.panel1.Controls.Add(this.progressBar1);
-            this.panel1.Location = new System.Drawing.Point(-1, 53);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(503, 240);
-            this.panel1.TabIndex = 22;
-            // 
-            // progressBar1
-            // 
-            this.progressBar1.Location = new System.Drawing.Point(12, 28);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(471, 14);
-            this.progressBar1.TabIndex = 0;
-            // 
-            // button_back
-            // 
-            this.button_back.Enabled = false;
-            this.button_back.Location = new System.Drawing.Point(237, 313);
-            this.button_back.Name = "button_back";
-            this.button_back.Size = new System.Drawing.Size(75, 23);
-            this.button_back.TabIndex = 19;
-            this.button_back.Text = "< Back";
-            this.button_back.UseVisualStyleBackColor = true;
-            // 
-            // button_next
-            // 
-            this.button_next.Location = new System.Drawing.Point(318, 313);
-            this.button_next.Name = "button_next";
-            this.button_next.Size = new System.Drawing.Size(75, 23);
-            this.button_next.TabIndex = 20;
-            this.button_next.Text = "Finish";
-            this.button_next.UseVisualStyleBackColor = true;
-            this.button_next.Click += new System.EventHandler(this.button_next_Click);
-            // 
-            // button_cancel
-            // 
-            this.button_cancel.Enabled = false;
-            this.button_cancel.Location = new System.Drawing.Point(413, 313);
-            this.button_cancel.Name = "button_cancel";
-            this.button_cancel.Size = new System.Drawing.Size(75, 23);
-            this.button_cancel.TabIndex = 21;
-            this.button_cancel.Text = "Cancel";
-            this.button_cancel.UseVisualStyleBackColor = true;
             // 
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(8, 81);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(475, 18);
+            this.progressBar1.TabIndex = 23;
+            // 
             // lbl_curr_file
             // 
             this.lbl_curr_file.AutoSize = true;
-            this.lbl_curr_file.Location = new System.Drawing.Point(12, 45);
+            this.lbl_curr_file.Location = new System.Drawing.Point(12, 102);
             this.lbl_curr_file.Name = "lbl_curr_file";
-            this.lbl_curr_file.Size = new System.Drawing.Size(0, 13);
-            this.lbl_curr_file.TabIndex = 1;
+            this.lbl_curr_file.Size = new System.Drawing.Size(35, 13);
+            this.lbl_curr_file.TabIndex = 24;
+            this.lbl_curr_file.Text = "label1";
             // 
             // InstallSection
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(495, 350);
-            this.Controls.Add(this.panel1);
-            this.Controls.Add(this.button_back);
-            this.Controls.Add(this.button_next);
-            this.Controls.Add(this.button_cancel);
+            this.ControlBox = false;
+            this.Controls.Add(this.lbl_curr_file);
+            this.Controls.Add(this.progressBar1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
             this.Name = "InstallSection";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "InstallSection";
+            this.Text = "Extension Installer for   - 0.0.0.0";
             this.Load += new System.EventHandler(this.InstallSection_Load);
             this.Shown += new System.EventHandler(this.InstallSection_Shown);
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
+            this.Controls.SetChildIndex(this.progressBar1, 0);
+            this.Controls.SetChildIndex(this.lbl_curr_file, 0);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button button_back;
-        private System.Windows.Forms.Button button_next;
-        private System.Windows.Forms.Button button_cancel;
-        private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label lbl_curr_file;
     }
 }

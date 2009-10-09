@@ -27,22 +27,29 @@ namespace MpeCore
             SectionPanels = new Dictionary<string, ISectionPanel>();
             ZipProvider = new ZipProviderClass();
 
-            InstallerTypeProviders.Add("CopyFile",new CopyFile());
+            InstallerTypeProviders.Add("CopyFile", new CopyFile());
 
             PathProviders.Add("MediaPortalPaths", new MediaPortalPaths());
             PathProviders.Add("WindowsPaths", new WindowsPaths());
 
-            SectionPanels.Add("Welcome", new Welcome());
-            SectionPanels.Add("LicenseAgreement", new LicenseAgreement());
-            SectionPanels.Add("ImageRadioSelector", new ImageRadioSelector());
-            SectionPanels.Add("TreeViewSelector", new TreeViewSelector());
-            SectionPanels.Add("InstallSection", new InstallSection());
+            AddSection(new Welcome());
+            AddSection(new LicenseAgreement());
+            AddSection(new ImageRadioSelector());
+            AddSection(new TreeViewSelector());
+            AddSection(new InstallSection());
 
             InstalledExtensions =
-                ExtensionCollection.Load(string.Format("{0}\\V2\\InstalledExtensions.xml", Config.GetFolder(Config.Dir.Installer)));
+                ExtensionCollection.Load(string.Format("{0}\\V2\\InstalledExtensions.xml",
+                                                       Config.GetFolder(Config.Dir.Installer)));
             KnownExtensions =
-    ExtensionCollection.Load(string.Format("{0}\\V2\\KnownExtensions.xml", Config.GetFolder(Config.Dir.Installer)));
+                ExtensionCollection.Load(string.Format("{0}\\V2\\KnownExtensions.xml",
+                                                       Config.GetFolder(Config.Dir.Installer)));
 
+        }
+
+        public static void AddSection(ISectionPanel sp)
+        {
+            SectionPanels.Add(sp.DisplayName, sp);
         }
 
 

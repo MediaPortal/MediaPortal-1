@@ -9,10 +9,10 @@ using MpeCore.Interfaces;
 
 namespace MpeCore.Classes.SectionPanel
 {
-    public partial class LicenseAgreement :Form,  ISectionPanel
+    public partial class LicenseAgreement : BaseHorizontalLayout, ISectionPanel
     {
-        private PackageClass Package;
-        private SectionResponseEnum _resp = SectionResponseEnum.Cancel;
+
+        //private SectionResponseEnum Resp = SectionResponseEnum.Cancel;
 
 
         private const string CONST_TEXT = "License text";
@@ -25,7 +25,6 @@ namespace MpeCore.Classes.SectionPanel
 
         #region ISectionPanel Members
 
-        public SectionParamCollection Params { get; set; }
 
         public bool Unique
         {
@@ -46,10 +45,10 @@ namespace MpeCore.Classes.SectionPanel
 
         public SectionParamCollection GetDefaultParams()
         {
-            SectionParamCollection param = new SectionParamCollection();
-            param.Add(new SectionParam(CONST_TEXT, "", ValueTypeEnum.String, "The text of license agreement"));
-            param.Add(new SectionParam(CONST_TEXT_FILE, "", ValueTypeEnum.File, "The file of license agreement can be RTF file"));
-            return param;
+            SectionParamCollection _param = new SectionParamCollection(Params);
+            _param.Add(new SectionParam(CONST_TEXT, "", ValueTypeEnum.String, "The text of license agreement"));
+            _param.Add(new SectionParam(CONST_TEXT_FILE, "", ValueTypeEnum.File, "The file of license agreement should be RTF file"));
+            return _param;
         }
 
         public void Preview(PackageClass packageClass, SectionItem sectionItem)
@@ -81,27 +80,24 @@ namespace MpeCore.Classes.SectionPanel
             Params = sectionItem.Params;
             SetValues();
             ShowDialog();
-            return _resp;
+            return base.Resp;
         }
 
         #endregion
 
-        private void button_back_Click(object sender, EventArgs e)
+
+        #region ISectionPanel Members
+
+        public string DisplayName
         {
-            _resp = SectionResponseEnum.Back;
-            this.Close();
+            get { return "License Agreement Selector"; }
         }
 
-        private void button_next_Click(object sender, EventArgs e)
+        public string Guid
         {
-            _resp = SectionResponseEnum.Next;
-            this.Close();
+            get { return "{04854407-930E-4c5d-88E8-97CF99878052}"; }
         }
 
-        private void button_cancel_Click(object sender, EventArgs e)
-        {
-            _resp = SectionResponseEnum.Cancel;
-            this.Close();
-        }
+        #endregion
     }
 }

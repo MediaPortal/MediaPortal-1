@@ -10,12 +10,8 @@ using MpeCore.Classes;
 
 namespace MpeCore.Classes.SectionPanel
 {
-    public partial class InstallSection : Form, ISectionPanel
+    public partial class InstallSection : BaseHorizontalLayout, ISectionPanel
     {
-        private ShowModeEnum Mode = ShowModeEnum.Preview;
-        private SectionItem Section = new SectionItem();
-        private PackageClass Package;
-        private SectionResponseEnum _resp = SectionResponseEnum.Cancel;
 
         public InstallSection()
         {
@@ -24,18 +20,6 @@ namespace MpeCore.Classes.SectionPanel
 
         #region ISectionPanel Members
 
-
-        public SectionParamCollection Params
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
 
         public bool Unique
         {
@@ -56,8 +40,7 @@ namespace MpeCore.Classes.SectionPanel
 
         public SectionParamCollection GetDefaultParams()
         {
-            SectionParamCollection param = new SectionParamCollection();
-            return param;
+            return new SectionParamCollection(base.Params);
         }
 
         public void Preview(PackageClass packageClass, SectionItem sectionItem)
@@ -79,7 +62,7 @@ namespace MpeCore.Classes.SectionPanel
             packageClass.FileInstalled += packageClass_FileInstalled;
             SetValues();
             ShowDialog();
-            return _resp;
+            return base.Resp;
         }
 
         void packageClass_FileInstalled(object sender, Events.InstallEventArgs e)
@@ -93,7 +76,8 @@ namespace MpeCore.Classes.SectionPanel
 
         private void SetValues()
         {
-            
+            button_back.Visible = false;
+            button_cancel.Visible = false;
         }
 
         #endregion
@@ -112,17 +96,32 @@ namespace MpeCore.Classes.SectionPanel
 
         private void button_next_Click(object sender, EventArgs e)
         {
-            _resp = SectionResponseEnum.Next;
-            Close();
+            //_resp = SectionResponseEnum.Next;
+            //Close();
         }
 
         private void InstallSection_Shown(object sender, EventArgs e)
         {
+            this.BringToFront();
             if (Mode == ShowModeEnum.Real)
             {
                 Package.Install();
-                button_next.Enabled = true;
+                //this.Close();
             }
         }
+
+        #region ISectionPanel Members
+
+        public string DisplayName
+        {
+            get { return "Install Section"; }
+        }
+
+        public string Guid
+        {
+            get { return "{839F908C-05A5-47ac-8AD4-BE8A7BC44DAE}"; }
+        }
+
+        #endregion
     }
 }

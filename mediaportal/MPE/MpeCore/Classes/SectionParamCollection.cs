@@ -11,6 +11,16 @@ namespace MpeCore.Classes
         {
             Items = new List<SectionParam>();
         }
+
+        public SectionParamCollection(SectionParamCollection collection)
+        {
+            Items = new List<SectionParam>();
+            foreach (SectionParam list in collection.Items)
+            {
+                Add(new SectionParam(list));
+            }
+        }
+
         public List<SectionParam> Items { get; set; }
 
         public void Add(SectionParam sectionParam)

@@ -24,14 +24,11 @@ namespace MpeMaker.Sections
             {
 
                 ToolStripMenuItem testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-                testToolStripMenuItem.Text = panels.Key;
+                testToolStripMenuItem.Text = panels.Value.DisplayName;
                 testToolStripMenuItem.Tag = panels.Value;
                 testToolStripMenuItem.Click += new System.EventHandler(TestToolStripMenuItemClick);
-                this.mnu_add.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[]
-                                                        {
-                                                            testToolStripMenuItem
-                                                        });
-                cmb_sectiontype.Items.Add(panels.Key);
+                mnu_add.DropDownItems.Add(testToolStripMenuItem);
+                cmb_sectiontype.Items.Add(panels.Value.DisplayName);
             }
         }
         
@@ -92,8 +89,8 @@ namespace MpeMaker.Sections
             if (panel == null)
                 return;
             SelectedSection = null;
-            item.Name = panel.Name;
-            item.PanelName = panel.Name;
+            item.Name = panel.DisplayName;
+            item.PanelName = panel.DisplayName;
             item.Params = panel.GetDefaultParams();
             Package.Sections.Add(item);
             AddSection(item);

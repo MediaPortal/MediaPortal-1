@@ -16,7 +16,17 @@ namespace MpeCore.Classes
             Name = string.Empty;
             Value = string.Empty;
             ValueType = ValueTypeEnum.String;
+            Description = string.Empty;
         }
+
+        public SectionParam(SectionParam sectionParam)
+        {
+            Name = sectionParam.Name;
+            Value = sectionParam.Value;
+            ValueType = sectionParam.ValueType;
+            Description = sectionParam.Description;
+        }
+
 
         public SectionParam(string name, string value, ValueTypeEnum valueType, string description)
         {
@@ -25,6 +35,7 @@ namespace MpeCore.Classes
             ValueType = valueType;
             Description = description;
         }
+
         [XmlAttribute]
         public string Name { get; set; }
         public string Value { get; set; }

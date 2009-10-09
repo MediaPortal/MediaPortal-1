@@ -10,12 +10,11 @@ using MpeCore.Classes;
 
 namespace MpeCore.Classes.SectionPanel
 {
-    public partial class ImageRadioSelector : Form, ISectionPanel
+    public partial class ImageRadioSelector : BaseHorizontalLayout, ISectionPanel
     {
-        private ShowModeEnum Mode = ShowModeEnum.Preview;
-        private SectionItem Section = new SectionItem();
-        private PackageClass Package;
-        private SectionResponseEnum _resp = SectionResponseEnum.Cancel;
+
+        //private PackageClass Package;
+        //private SectionResponseEnum _resp = SectionResponseEnum.Cancel;
 
         private const string CONST_IMAGE_1 = "First option Image file";
         private const string CONST_IMAGE_2 = "Second option Image file";
@@ -28,8 +27,6 @@ namespace MpeCore.Classes.SectionPanel
 
         #region ISectionPanel Members
 
-
-        public SectionParamCollection Params { get; set; }
 
         public bool Unique
         {
@@ -68,14 +65,15 @@ namespace MpeCore.Classes.SectionPanel
 
         public SectionParamCollection GetDefaultParams()
         {
-            SectionParamCollection param = new SectionParamCollection();
-            param.Add(new SectionParam(CONST_IMAGE_1, "", ValueTypeEnum.File,
-                                       "The file of first option. Idicated size (225,127)"));
-            param.Add(new SectionParam(CONST_IMAGE_2, "", ValueTypeEnum.File,
-                                       "The file of first option. Idicated size (225,127)"));
-            param.Add(new SectionParam(CONST_TEXT, "", ValueTypeEnum.String,
-                                       "Description of this operation"));
-            return param;
+            SectionParamCollection _param = new SectionParamCollection(Params);
+
+            _param.Add(new SectionParam(CONST_IMAGE_1, "", ValueTypeEnum.File,
+                                             "The file of first option. Idicated size (225,127)"));
+            _param.Add(new SectionParam(CONST_IMAGE_2, "", ValueTypeEnum.File,
+                                             "The file of first option. Idicated size (225,127)"));
+            _param.Add(new SectionParam(CONST_TEXT, "", ValueTypeEnum.String,
+                                             "Description of this operation"));
+            return _param;
         }
 
         public void Preview(PackageClass packageClass, SectionItem sectionItem)
@@ -94,7 +92,7 @@ namespace MpeCore.Classes.SectionPanel
             Section = sectionItem;
             SetValues();
             ShowDialog();
-            return _resp;
+            return base.Resp;
         }
 
         #endregion
@@ -111,23 +109,20 @@ namespace MpeCore.Classes.SectionPanel
             }
         }
 
-        private void button_back_Click(object sender, EventArgs e)
+
+
+        #region ISectionPanel Members
+
+        public string DisplayName
         {
-            _resp = SectionResponseEnum.Back;
-            this.Close();
+            get { return "Image Radio button Section"; }
         }
 
-        private void button_next_Click(object sender, EventArgs e)
+        public string Guid
         {
-            _resp = SectionResponseEnum.Next;
-            this.Close();
+            get { return "{3BD8934A-FEFD-41a7-9F12-B30DABEF556B}"; }
         }
 
-        private void button_cancel_Click(object sender, EventArgs e)
-        {
-            _resp = SectionResponseEnum.Cancel;
-            this.Close();
-        }
-    
+        #endregion
     }
 }

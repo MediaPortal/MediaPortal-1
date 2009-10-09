@@ -9,12 +9,12 @@ using MpeCore.Interfaces;
 
 namespace MpeCore.Classes.SectionPanel
 {
-    public partial class TreeViewSelector : Form, ISectionPanel
+    public partial class TreeViewSelector : BaseHorizontalLayout, ISectionPanel
     {
-        private ShowModeEnum Mode = ShowModeEnum.Preview;
-        private SectionItem Section = new SectionItem();
-        private PackageClass Package;
-        private SectionResponseEnum _resp = SectionResponseEnum.Cancel;
+        //private ShowModeEnum Mode = ShowModeEnum.Preview;
+        //private SectionItem Section = new SectionItem();
+        //private PackageClass Package;
+        //private SectionResponseEnum _resp = SectionResponseEnum.Cancel;
 
         private const string CONST_TEXT = "Description ";
 
@@ -26,8 +26,7 @@ namespace MpeCore.Classes.SectionPanel
         #region ISectionPanel Members
 
 
-        public SectionParamCollection Params { get; set; }
-
+ 
         public bool Unique
         {
             get
@@ -47,10 +46,11 @@ namespace MpeCore.Classes.SectionPanel
 
         public SectionParamCollection GetDefaultParams()
         {
-            SectionParamCollection param = new SectionParamCollection();
-            param.Add(new SectionParam(CONST_TEXT, "", ValueTypeEnum.String,
-                                       "Description of this operation"));
-            return param;
+            SectionParamCollection _param = new SectionParamCollection(Params);
+
+            _param.Add(new SectionParam(CONST_TEXT, "", ValueTypeEnum.String,
+                                             "Description of this operation"));
+            return _param;
         }
 
         public void Preview(PackageClass packageClass, SectionItem sectionItem)
@@ -69,28 +69,11 @@ namespace MpeCore.Classes.SectionPanel
             Section = sectionItem;
             SetValues();
             ShowDialog();
-            return _resp;
+            return base.Resp;
         }
 
         #endregion
 
-        private void button_back_Click(object sender, EventArgs e)
-        {
-            _resp = SectionResponseEnum.Back;
-            this.Close();
-        }
-
-        private void button_next_Click(object sender, EventArgs e)
-        {
-            _resp = SectionResponseEnum.Next;
-            this.Close();
-        }
-
-        private void button_cancel_Click(object sender, EventArgs e)
-        {
-            _resp = SectionResponseEnum.Cancel;
-            this.Close();
-        }
 
         private TreeNode CreateNode(GroupItem item)
         {
@@ -143,5 +126,21 @@ namespace MpeCore.Classes.SectionPanel
             lbl_description.Text = groupItem.Description;
         }
 
+
+
+        #region ISectionPanel Members
+
+        public string DisplayName
+        {
+            get { return "Tree View Selector"; }
+        }
+
+
+        public string Guid
+        {
+            get { return "{1A637F22-CBA1-480a-9B89-3994F8DF1700}"; }
+        }
+
+        #endregion
     }
 }

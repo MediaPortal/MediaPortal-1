@@ -41,6 +41,16 @@ namespace MpeCore.Classes.SectionPanel
             }
         }
 
+        public string Guid
+        {
+            get { return "{DF252CB6-872D-4f61-ABC7-729B12C8C686}"; }
+        }
+
+        public string DisplayName
+        {
+            get { return "Welcome"; }
+        }
+
         public SectionParamCollection Init()
         {
             throw new NotImplementedException();

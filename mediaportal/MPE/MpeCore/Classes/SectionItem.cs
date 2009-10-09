@@ -34,7 +34,7 @@ namespace MpeCore.Classes
 
         public override string ToString()
         {
-            return Name;
+            return PanelName;
         }
     }
 }

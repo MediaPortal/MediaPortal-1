@@ -20,13 +20,13 @@ namespace MpeCore.Classes.InstallerType
 
         public void Install(PackageClass packageClass, FileItem fileItem)
         {
-            string Destination = fileItem.ExpandedDestinationFilename;
+            string destination = fileItem.ExpandedDestinationFilename;
 
             FileItem item = packageClass.UniqueFileList.GetByLocalFileName(fileItem);
             if (item == null)
                 return;
 
-            if(File.Exists(Destination))
+            if(File.Exists(destination))
             {
                 switch (fileItem.UpdateOption)
                 {
@@ -35,15 +35,16 @@ namespace MpeCore.Classes.InstallerType
                     case UpdateOptionEnum.AlwaysOverwrite:
                         break;
                     case UpdateOptionEnum.OverwriteIfOlder:
-                        if (File.GetLastWriteTime(Destination) > packageClass.ZipProvider.FileDate(item))
+                        if (File.GetLastWriteTime(destination) > packageClass.ZipProvider.FileDate(item))
                             return;
                         break;
                 }
             }
-
+            if (!Directory.Exists(Path.GetDirectoryName(destination)))
+                Directory.CreateDirectory(Path.GetDirectoryName(destination));
             UnInstallItem unInstallItem = packageClass.UnInstallInfo.BackUpFile(item);
-            packageClass.ZipProvider.Extract(item, Destination);
-            FileInfo info = new FileInfo(Destination);
+            packageClass.ZipProvider.Extract(item, destination);
+            FileInfo info = new FileInfo(destination);
             unInstallItem.FileDate = info.CreationTimeUtc;
             unInstallItem.FileSize = info.Length;
             packageClass.UnInstallInfo.Items.Add(unInstallItem);

@@ -5,9 +5,10 @@ namespace MpeCore.Interfaces
 {
     public interface ISectionPanel
     {
-        string Name { get; set; }
-        SectionParamCollection Params { get; set; }
-        bool Unique { get; set; }
+        string DisplayName { get; }
+        string Guid { get; }
+
+        //bool Unique { get; set; }
 
         SectionParamCollection Init();
 
