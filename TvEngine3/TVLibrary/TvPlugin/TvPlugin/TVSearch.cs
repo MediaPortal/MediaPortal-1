@@ -222,6 +222,7 @@ namespace TvPlugin
         if (keyboard.IsConfirmed)
         {
           filterLetter = "%" + keyboard.Text; // re-add % to perform fulltext search
+          currentLevel = 0;                   // only search on root level
           Update();
         }
       }
