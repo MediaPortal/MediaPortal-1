@@ -3630,12 +3630,13 @@ namespace TvPlugin
       {
         Log.Debug("CiMenu: PrepareCiMenu");
         ciMenuHandler = new CiMenuHandler();
-        // opens remoting and attach local eventhandler to server event, call only once
-        RemoteControl.RegisterCiMenuCallbacks(ciMenuHandler);
       }
       // Check if card supports CI menu
       if (newCardId != -1 && RemoteControl.Instance.CiMenuSupported(newCardId))
       {
+        // opens remoting and attach local eventhandler to server event, call only once
+        RemoteControl.RegisterCiMenuCallbacks(ciMenuHandler);
+
         // Enable CI menu handling in card
         RemoteControl.Instance.SetCiMenuHandler(newCardId, null);
         Log.Debug("TvPlugin: CiMenuHandler attached to new card {0}", newCardId);
