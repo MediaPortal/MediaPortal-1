@@ -32,6 +32,7 @@
     <String id="31">November</String>
     <String id="32">December</String>
     <String id="50" prefix="My ">DVDs</String>
+    <String id="51">Play disc</String>
     <String id="60">Waiting for startup of TV service...</String>
     <String id="61">Waiting {0} second(s) before startup...</String>
     <String id="62">Initializing DirectX...</String>
