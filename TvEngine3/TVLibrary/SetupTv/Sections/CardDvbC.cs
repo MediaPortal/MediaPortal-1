@@ -396,6 +396,11 @@ namespace SetupTv.Sections
           {
             StartScanThread();
           }
+          else
+          {
+            scanState = ScanState.Done;
+            SetButtonState();
+          }
           break;
 
         case ScanState.Scanning:

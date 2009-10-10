@@ -30,6 +30,10 @@ namespace TvLibrary.Interfaces
       /// Name of group where all DVB-C channels are stored
       /// </summary>
       public static string DVBC = "Digital cable";
+      /// <summary>
+      /// Name of group where all DVB-S channels are stored
+      /// </summary>
+      public static string DVBS = "Digital satellite";
     }
 
     /// <summary>
@@ -53,6 +57,10 @@ namespace TvLibrary.Interfaces
       /// Name of group where all DVB-C channels are stored
       /// </summary>
       public static string DVBC = "Digital cable";
+      /// <summary>
+      /// Name of group where all DVB-S channels are stored
+      /// </summary>
+      public static string DVBS = "Digital satellite";
     }
   }
 }

@@ -40,6 +40,7 @@ namespace SetupTv.Sections
     Initialized,
     Scanning,
     Cancel,
-    Done
+    Done,
+    Updating
   }
 }

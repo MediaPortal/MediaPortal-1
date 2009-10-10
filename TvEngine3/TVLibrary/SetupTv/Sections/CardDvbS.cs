@@ -92,6 +92,23 @@ namespace SetupTv.Sections
       public Pilot Pilot = Pilot.NotSet;
       public RollOff Rolloff = RollOff.NotSet;
 
+      public DVBSChannel toDVBSChannel
+      {
+        get 
+        {
+          DVBSChannel tuneChannel = new DVBSChannel();
+          tuneChannel.Frequency = this.CarrierFrequency;
+          tuneChannel.Polarisation = this.Polarisation;
+          tuneChannel.SymbolRate = this.SymbolRate;
+          tuneChannel.ModulationType = this.Modulation;
+          tuneChannel.InnerFecRate = this.InnerFecRate;
+          //Grab the Pilot & Roll-off settings
+          tuneChannel.Pilot = this.Pilot;
+          tuneChannel.Rolloff = this.Rolloff;
+          return tuneChannel;
+        }
+      }
+
       public int CompareTo(Transponder other)
       {
         if (Polarisation < other.Polarisation)
@@ -124,19 +141,53 @@ namespace SetupTv.Sections
     int _radioChannelsNew;
     int _tvChannelsUpdated;
     int _radioChannelsUpdated;
-    bool _isScanning;
-    private bool _stopScanning;
     bool _enableEvents;
     bool _ignoreCheckBoxCreateGroupsClickEvent;
     User _user;
 
     CI_Menu_Dialog ciMenuDialog; // ci menu dialog object
 
+    ScanState scanState; // scan state
+
+    bool _isScanning
+    {
+      get
+      {
+        return scanState == ScanState.Scanning || scanState == ScanState.Cancel || scanState == ScanState.Updating;
+      }
+    }
+    /// <summary>
+    /// Returns active scan type
+    /// </summary>
+    private ScanTypes ActiveScanType
+    {
+      get
+      {
+        if (checkBoxAdvancedTuning.Checked == false)
+        {
+          return ScanTypes.Predefined;
+        }
+        if (scanPredefProvider.Checked == true)
+        {
+          return ScanTypes.Predefined;
+        }
+        if (scanSingleTransponder.Checked == true)
+        {
+          return ScanTypes.SingleTransponder;
+        }
+        if (scanNIT.Checked == true)
+        {
+          return ScanTypes.NIT;
+        }
+        return ScanTypes.Predefined;
+      }
+    }
+
     #endregion
 
     #region ctors
     public CardDvbS()
-      : this("DVBC")
+      : this("DVBS")
     {
     }
     public CardDvbS(string name)
@@ -483,6 +534,9 @@ namespace SetupTv.Sections
     #region DVB-S scanning tab
     void Init()
     {
+      // set to same positions as progress
+      mpGrpAdvancedTuning.Top = mpGrpScanProgress.Top;
+
       _enableEvents = false;
     
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -497,7 +551,7 @@ namespace SetupTv.Sections
       mpComboBoxPolarisation.Items.Add(Polarisation.NotSet);
       mpComboBoxPolarisation.SelectedIndex = 0;
       mpComboBoxMod.SelectedIndex = 0;
-      mpButtonSaveList.Enabled = (_transponders.Count != 0);
+      //mpButtonSaveList.Enabled = (_transponders.Count != 0);
 
 
       //List<SimpleFileName> satellites = fileFilters.AllFiles;
@@ -550,11 +604,11 @@ namespace SetupTv.Sections
       mpLNB3_CheckedChanged(null, null);
       mpLNB4_CheckedChanged(null, null);
 
-      checkBox2.Checked = (layer.GetSetting("lnbDefault", "true").Value != "true");
+      chkOverrideLNB.Checked = (layer.GetSetting("lnbDefault", "true").Value != "true");
       textBoxLNBLo.Text = layer.GetSetting("LnbLowFrequency", "0").Value;
       textBoxLNBHi.Text = layer.GetSetting("LnbHighFrequency", "0").Value;
       textBoxLNBSwitch.Text = layer.GetSetting("LnbSwitchFrequency", "0").Value;
-      checkBox2_CheckedChanged(null, null);
+      chkOverrideLNB_CheckedChanged(null, null);
 
       checkBoxCreateGroups.Checked = (layer.GetSetting("dvbs" + _cardNumber + "creategroups", "false").Value == "true");
       if (!checkBoxCreateGroups.Checked)
@@ -571,9 +625,11 @@ namespace SetupTv.Sections
       _enableEvents = true;
       mpLNB1_CheckedChanged(null, null);
 
-      chkManualScan.Checked = false;
-      grpManualScan.Enabled = false;
-      chkManualScan.Enabled = true;
+      checkBoxAdvancedTuning.Checked = false;
+      //grpManualScan.Enabled = false;
+      checkBoxAdvancedTuning.Enabled = true;
+
+      scanState = ScanState.Initialized;
     }
 
     public override void OnSectionDeActivated()
@@ -657,9 +713,9 @@ namespace SetupTv.Sections
 
       bool restart = false;
       setting = layer.GetSetting("lnbDefault", "true");
-      if (setting.Value != (checkBox2.Checked ? "false" : "true"))
+      if (setting.Value != (chkOverrideLNB.Checked ? "false" : "true"))
         restart = true;
-      setting.Value = checkBox2.Checked ? "false" : "true";
+      setting.Value = chkOverrideLNB.Checked ? "false" : "true";
       setting.Persist();
 
       setting = layer.GetSetting("LnbLowFrequency", "0");
@@ -709,67 +765,73 @@ namespace SetupTv.Sections
       }
     }
 
+        #region Scan handling
+    private void InitScanProcess()
+    {
+      // once completed reset to new beginning
+      switch (scanState)
+      {
+        case ScanState.Done:
+          scanState = ScanState.Initialized;
+          listViewStatus.Items.Clear();
+          SetButtonState();
+          return;
+
+        case ScanState.Initialized:
+          SaveSettings();
+          TvBusinessLayer layer = new TvBusinessLayer();
+          Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+          if (card.Enabled == false)
+          {
+            MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
+            return;
+          }
+          if (!RemoteControl.Instance.CardPresent(card.IdCard))
+          {
+            MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
+            return;
+          }
+          // Check if the card is locked for scanning.
+          User user;
+          if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
+          {
+            MessageBox.Show(this, "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
+            return;
+          }
+
+          SetButtonState();
+          ShowActiveGroup(1); // force progess visible
+
+          Thread scanThread = new Thread(DoScan);
+          scanThread.Name = "DVB-S scan thread";
+          scanThread.Start();
+          break;
+
+        case ScanState.Scanning:
+          scanState = ScanState.Cancel;
+          SetButtonState();
+          break;
+
+        case ScanState.Cancel:
+          return;
+      }
+    }
+    #endregion
+
+
     private void mpButtonScanTv_Click(object sender, EventArgs e)
     {
-      if (_isScanning == false)
-      {
-        SaveSettings();
-        TvBusinessLayer layer = new TvBusinessLayer();
-        Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-        if (card.Enabled == false)
-        {
-          MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
-          return;
-        }
-        if (!RemoteControl.Instance.CardPresent(card.IdCard))
-        {
-          MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
-          return;
-        }
-        // Check if the card is locked for scanning.
-        User user;
-        if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
-        {
-          MessageBox.Show(this, "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
-          return;
-        }
-
-        Thread scanThread = new Thread(DoScan);
-        scanThread.Name = "DVB-S scan thread";
-        scanThread.Start();
-      }
-      else
-      {
-        _stopScanning = true;
-      }
+      InitScanProcess();
     }
 
     void DoScan()
     {
-      string buttonText = mpButtonScanTv.Text;
       try
       {
-        _isScanning = true;
-        _stopScanning = false;
-        mpButtonScanTv.Text = "Cancel...";
+        scanState = ScanState.Scanning;
+        SetButtonState();
         RemoteControl.Instance.EpgGrabberEnabled = false;
-        mpTransponder1.Enabled = false;
-        mpTransponder2.Enabled = false;
-        mpTransponder3.Enabled = false;
-        mpTransponder4.Enabled = false;
-        mpDisEqc1.Enabled = false;
-        mpDisEqc2.Enabled = false;
-        mpDisEqc3.Enabled = false;
-        mpDisEqc4.Enabled = false;
-        mpLNB1.Enabled = false;
-        mpLNB2.Enabled = false;
-        mpLNB3.Enabled = false;
-        mpLNB4.Enabled = false;
-        mpBand1.Enabled = false;
-        mpBand2.Enabled = false;
-        mpBand3.Enabled = false;
-        mpBand4.Enabled = false;
-        checkEnableDVBS2.Enabled = false;
+        SetAllControlState(false);
 
         listViewStatus.Items.Clear();
         _tvChannelsNew = 0;
@@ -779,17 +841,17 @@ namespace SetupTv.Sections
 
         if (mpLNB1.Checked)
           Scan(1, (BandType)mpBand1.SelectedIndex, (DisEqcType)mpDisEqc1.SelectedIndex, (SatteliteContext)mpTransponder1.SelectedItem);
-        if (_stopScanning)
+        if (scanState == ScanState.Cancel)
           return;
 
         if (mpLNB2.Checked)
           Scan(2, (BandType)mpBand2.SelectedIndex, (DisEqcType)mpDisEqc2.SelectedIndex, (SatteliteContext)mpTransponder2.SelectedItem);
-        if (_stopScanning)
+        if (scanState == ScanState.Cancel)
           return;
 
         if (mpLNB3.Checked)
           Scan(3, (BandType)mpBand3.SelectedIndex, (DisEqcType)mpDisEqc3.SelectedIndex, (SatteliteContext)mpTransponder3.SelectedItem);
-        if (_stopScanning)
+        if (scanState == ScanState.Cancel)
           return;
 
         if (mpLNB4.Checked)
@@ -810,35 +872,40 @@ namespace SetupTv.Sections
         user.CardId = _cardNumber;
         RemoteControl.Instance.StopCard(user);
         RemoteControl.Instance.EpgGrabberEnabled = true;
-        mpTransponder1.Enabled = true;
-        mpTransponder2.Enabled = true;
-        mpTransponder3.Enabled = true;
-        mpTransponder4.Enabled = true;
-        mpDisEqc1.Enabled = true;
-        mpDisEqc2.Enabled = true;
-        mpDisEqc3.Enabled = true;
-        mpDisEqc4.Enabled = true;
-        mpBand1.Enabled = true;
-        mpBand2.Enabled = true;
-        mpBand3.Enabled = true;
-        mpBand4.Enabled = true;
         progressBar1.Value = 100;
-        mpLNB1.Enabled = true;
-        mpLNB2.Enabled = true;
-        mpLNB3.Enabled = true;
-        mpLNB4.Enabled = true;
-        mpButtonScanTv.Text = buttonText;
-        checkEnableDVBS2.Enabled = true;
-        _isScanning = false;
+        SetAllControlState(true);
+        scanState = ScanState.Done;
+        SetButtonState();
       }
+    }
+
+    private void SetAllControlState(bool state)
+    {
+      mpTransponder1.Enabled = state;
+      mpTransponder2.Enabled = state;
+      mpTransponder3.Enabled = state;
+      mpTransponder4.Enabled = state;
+      mpDisEqc1.Enabled = state;
+      mpDisEqc2.Enabled = state;
+      mpDisEqc3.Enabled = state;
+      mpDisEqc4.Enabled = state;
+      mpBand1.Enabled = state;
+      mpBand2.Enabled = state;
+      mpBand3.Enabled = state;
+      mpBand4.Enabled = state;
+      mpLNB1.Enabled = state;
+      mpLNB2.Enabled = state;
+      mpLNB3.Enabled = state;
+      mpLNB4.Enabled = state;
+      checkEnableDVBS2.Enabled = state;
     }
 
     void Scan(int LNB, BandType bandType, DisEqcType disEqc, SatteliteContext context)
     {
-      LoadTransponders(context);
-      if (_transponders.Count == 0)
-        return;
+      // all transponders to scan
+      List<DVBSChannel> _channels = new List<DVBSChannel>();
 
+      // get default sat position from DB
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
 
@@ -856,37 +923,80 @@ namespace SetupTv.Sections
         }
       }
 
+      // what to scan
+      switch (ActiveScanType)
+      {
+        case ScanTypes.Predefined:
+          LoadTransponders(context);
+          foreach (Transponder t in _transponders)
+          {
+            DVBSChannel curChannel = t.toDVBSChannel;
+            curChannel.BandType = bandType;
+            curChannel.SatelliteIndex = position;
+            _channels.Add(curChannel);
+          }
+          break;
+
+        // scan Network Information Table for transponder info
+        case ScanTypes.NIT:
+          _transponders.Clear();
+          DVBSChannel tuneChannel = GetManualTuning();
+
+          listViewStatus.Items.Clear();
+          string line = String.Format("lnb:{0} {1}tp- {2} {3} {4}", LNB, 1 , tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate);
+          ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
+          item.EnsureVisible();
+
+          IChannel[] channels = RemoteControl.Instance.ScanNIT(_cardNumber, tuneChannel);
+          if (channels != null)
+          {
+            for (int i = 0; i < channels.Length; ++i)
+            {
+              DVBSChannel curChannel = (DVBSChannel)channels[i];
+              curChannel.BandType = bandType;
+              curChannel.SatelliteIndex = position;
+              _channels.Add(curChannel);
+              item = listViewStatus.Items.Add(new ListViewItem(curChannel.ToString()));
+              item.EnsureVisible();
+            }
+          }
+
+          ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Scan done, found {0} transponders...", _channels.Count)));
+          lastItem.EnsureVisible();
+          break;
+
+        // scan only single TP
+        case ScanTypes.SingleTransponder:
+          _channels.Add(GetManualTuning());
+          break;
+      }
+      
+      // no channels
+      if (_channels.Count == 0)
+        return;
+      
       User user = new User();
       user.CardId = _cardNumber;
       int scanIndex = 0; // count of really scanned TPs (S2 skipped)
-      for (int index = 0; index < _transponders.Count; ++index)
+      for (int index = 0; index < _channels.Count; ++index)
       {
-        if (_stopScanning)
+        if (scanState == ScanState.Cancel)
           return;
-        float percent = ((float)(index)) / _transponders.Count;
+
+        DVBSChannel tuneChannel = _channels[index];
+        float percent = ((float)(index)) / _channels.Count;
         percent *= 100f;
         if (percent > 100f)
           percent = 100f;
         progressBar1.Value = (int)percent;
 
         // if S2 transponder and not enabled skip it
-        if (_transponders[index].Rolloff != RollOff.NotSet && !checkEnableDVBS2.Checked)
+        if (tuneChannel.Rolloff != RollOff.NotSet && !checkEnableDVBS2.Checked)
         {
           continue;
         }
         
         scanIndex++;
-        DVBSChannel tuneChannel = new DVBSChannel();
-        tuneChannel.Frequency = _transponders[index].CarrierFrequency;
-        tuneChannel.Polarisation = _transponders[index].Polarisation;
-        tuneChannel.SymbolRate = _transponders[index].SymbolRate;
-        tuneChannel.BandType = bandType;
-        tuneChannel.SatelliteIndex = position;
-        tuneChannel.ModulationType = _transponders[index].Modulation;
-        tuneChannel.InnerFecRate = _transponders[index].InnerFecRate;
-        //Grab the Pilot & Roll-off settings
-        tuneChannel.Pilot = _transponders[index].Pilot;
-        tuneChannel.Rolloff = _transponders[index].Rolloff;
 
         if (bandType == BandType.Circular)
         {
@@ -960,6 +1070,7 @@ namespace SetupTv.Sections
           if (dbChannel.IsTv)
           {
             layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
+            layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.DVBS);
             if (checkBoxCreateGroupsSat.Checked)
             {
               layer.AddChannelToGroup(dbChannel, context.Satelite.SatelliteName);
@@ -972,6 +1083,7 @@ namespace SetupTv.Sections
           if (dbChannel.IsRadio)
           {
             layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.AllChannels);
+            layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.DVBS);
             if (checkBoxCreateGroupsSat.Checked)
             {
               layer.AddChannelToRadioGroup(dbChannel, context.Satelite.SatelliteName);
@@ -1027,7 +1139,6 @@ namespace SetupTv.Sections
           item.Text = line;
         }
       }
-      // DatabaseManager.Instance.SaveChanges();
     }
 
     private void CardDvbS_Load(object sender, EventArgs e)
@@ -1442,6 +1553,9 @@ namespace SetupTv.Sections
 
     private void buttonUpdate_Click(object sender, EventArgs e)
     {
+      scanState = ScanState.Updating;
+      SetButtonState();
+      ShowActiveGroup(1);
       listViewStatus.Items.Clear();
       string itemLine = String.Format("Updating satellites...");
       listViewStatus.Items.Add(new ListViewItem(itemLine));
@@ -1453,49 +1567,43 @@ namespace SetupTv.Sections
       }
       itemLine = String.Format("Update finished");
       listViewStatus.Items.Add(new ListViewItem(itemLine));
+      scanState = ScanState.Initialized;
+      SetButtonState();
     }
 
     #region LNB selection tab
-    private void checkBox2_CheckedChanged(object sender, EventArgs e)
+    private void chkOverrideLNB_CheckedChanged(object sender, EventArgs e)
     {
-      textBoxLNBLo.Enabled = checkBox2.Checked;
-      textBoxLNBHi.Enabled = checkBox2.Checked;
-      textBoxLNBSwitch.Enabled = checkBox2.Checked;
+      textBoxLNBLo.Enabled = chkOverrideLNB.Checked;
+      textBoxLNBHi.Enabled = chkOverrideLNB.Checked;
+      textBoxLNBSwitch.Enabled = chkOverrideLNB.Checked;
     }
 
     private void mpLNB1_CheckedChanged(object sender, EventArgs e)
     {
-      mpTransponder1.Enabled = mpLNB1.Checked;
-      mpBand1.Enabled = mpLNB1.Checked;
-      mpDisEqc1.Enabled = mpLNB1.Checked;
+      mpTransponder1.Visible = mpBand1.Visible = mpDisEqc1.Visible = mpLNB1.Checked;
     }
 
     private void mpLNB2_CheckedChanged(object sender, EventArgs e)
     {
-      mpTransponder2.Enabled = mpLNB2.Checked;
-      mpBand2.Enabled = mpLNB2.Checked;
-      mpDisEqc2.Enabled = mpLNB2.Checked;
+      mpTransponder2.Visible = mpBand2.Visible = mpDisEqc2.Visible = mpLNB2.Checked;
     }
 
     private void mpLNB3_CheckedChanged(object sender, EventArgs e)
     {
-      mpTransponder3.Enabled = mpLNB3.Checked;
-      mpBand3.Enabled = mpLNB3.Checked;
-      mpDisEqc3.Enabled = mpLNB3.Checked;
+      mpTransponder3.Visible = mpBand3.Visible = mpDisEqc3.Visible = mpLNB3.Checked;
     }
 
     private void mpLNB4_CheckedChanged(object sender, EventArgs e)
     {
-      mpTransponder4.Enabled = mpLNB4.Checked;
-      mpBand4.Enabled = mpLNB4.Checked;
-      mpDisEqc4.Enabled = mpLNB4.Checked;
+      mpTransponder4.Visible = mpBand4.Visible = mpDisEqc4.Visible = mpLNB4.Checked;
     }
 
     private void mpBand1_SelectedIndexChanged(object sender, EventArgs e)
     {
       if (_enableEvents == false)
         return;
-      if (checkBox2.Checked)
+      if (chkOverrideLNB.Checked)
         return;
       int lof1, lof2, sw;
       ScanParameters p = new ScanParameters();
@@ -1547,76 +1655,95 @@ namespace SetupTv.Sections
 
     private void mpButtonManualScan_Click(object sender, EventArgs e)
     {
-      mpButtonSaveList.Enabled = (_transponders.Count != 0);
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      if (card.Enabled == false)
-      {
-        MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
-        return;
-      }
-      if (!RemoteControl.Instance.CardPresent(card.IdCard))
-      {
-        MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
-        return;
-      }
-      RemoteControl.Instance.EpgGrabberEnabled = false;
-      _transponders.Clear();
-      mpButtonSaveList.Enabled = false;
-      DVBSChannel tuneChannel = GetManualTuning();
 
-      listViewStatus.Items.Clear();
-      string line = String.Format("Scan freq:{0} {1} symbolrate:{2} ...", tuneChannel.Frequency, tuneChannel.ModulationType, tuneChannel.SymbolRate);
-      ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
-      item.EnsureVisible();
-      Application.DoEvents();
-      IChannel[] channels = RemoteControl.Instance.ScanNIT(_cardNumber, tuneChannel);
-      if (channels != null)
-      {
-        for (int i = 0; i < channels.Length; ++i)
-        {
-          Transponder t = ToTransonder(channels[i]);
-
-          _transponders.Add(t);
-          item = listViewStatus.Items.Add(new ListViewItem(t.ToString()));
-          item.EnsureVisible();
-        }
-      }
-
-      ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Scan done, found {0} transponders...", _transponders.Count)));
-      lastItem.EnsureVisible();
-
-      RemoteControl.Instance.EpgGrabberEnabled = true;
-      if (_transponders.Count != 0)
-      {
-        if (DialogResult.Yes == MessageBox.Show(String.Format("Found {0} transponders. Would you like to scan those?", _transponders.Count), "Manual scan results", MessageBoxButtons.YesNo))
-        {
-          String newFile=SaveManualScanList();
-          int index = 0;
-          foreach (object oTs in mpTransponder1.Items)
-          {
-            SatteliteContext sc = (SatteliteContext)oTs;
-            if (sc.SatteliteName ==newFile)
-            {
-              mpTransponder1.SelectedItem = index;
-              break;
-            }
-            index++;
-          }
-          StartScanThread();
-        }
-      }
-      mpButtonSaveList.Enabled = (_transponders.Count != 0);
     }
+
+    #region GUI handling
     /// <summary>
     /// Sets correct button state 
     /// </summary>
     private void SetButtonState()
     {
-      mpButtonScanSingleTP.Enabled = !_isScanning;
-      mpButtonScanNIT.Enabled = !_isScanning;
-      mpButtonSaveList.Enabled = (_transponders.Count != 0) && !_isScanning;
+      //mpComboBoxCountry.Enabled = !_isScanning && ActiveScanType == ScanTypes.Predefined;
+      //mpComboBoxRegion.Enabled = !_isScanning && ActiveScanType == ScanTypes.Predefined;
+      textBoxFreq.Enabled = ActiveScanType != ScanTypes.Predefined;
+      textBoxSymbolRate.Enabled = ActiveScanType != ScanTypes.Predefined;
+      mpComboBoxMod.Enabled = ActiveScanType != ScanTypes.Predefined;
+      mpComboBoxPolarisation.Enabled = ActiveScanType != ScanTypes.Predefined;
+
+      mpButtonScanTv.Enabled = true;
+
+      int forceProgress = 0;
+      switch (scanState)
+      {
+        default:
+        case ScanState.Initialized:
+          mpButtonScanTv.Text = "Scan for channels";
+          break;
+
+        case ScanState.Scanning:
+          mpButtonScanTv.Text = "Cancel...";
+          break;
+
+        case ScanState.Cancel:
+          mpButtonScanTv.Text = "Cancelling...";
+          break;
+
+        case ScanState.Done:
+          mpButtonScanTv.Text = "New scan";
+          forceProgress = 1; // leave window open
+          break;
+        
+        case ScanState.Updating:
+          mpButtonScanTv.Text = "Scan for channels";
+          mpButtonScanTv.Enabled = false;
+          break;
+      }
+
+      ShowActiveGroup(forceProgress);
     }
+
+    /// <summary>
+    /// Show either scan option or progress
+    /// </summary>
+    /// <param name="ForceShowProgress">1 to force progress visible</param>
+    private void ShowActiveGroup(int ForceShowProgress)
+    {
+      if (ForceShowProgress == 1)
+      {
+        mpGrpAdvancedTuning.Visible = false;
+        mpGrpScanProgress.Visible = true;
+        checkBoxAdvancedTuning.Enabled = false;
+        checkEnableDVBS2.Enabled = false;
+        buttonUpdate.Enabled = false;
+      }
+      else
+      {
+        mpGrpAdvancedTuning.Visible = checkBoxAdvancedTuning.Checked && !_isScanning;
+        mpGrpScanProgress.Visible = _isScanning;
+        checkBoxAdvancedTuning.Enabled = !_isScanning;
+        checkEnableDVBS2.Enabled = !_isScanning;
+        buttonUpdate.Enabled = !_isScanning;
+      }
+
+      if (mpGrpAdvancedTuning.Visible)
+      {
+        mpGrpAdvancedTuning.BringToFront();
+      }
+      if (mpGrpScanProgress.Visible)
+      {
+        mpGrpScanProgress.BringToFront();
+      }
+      UpdateZOrder();
+      Application.DoEvents();
+      Thread.Sleep(100);
+    }
+
+    private void UpdateGUIControls(object sender, EventArgs e)
+    {
+      SetButtonState();
+    }
+    #endregion
 
     private void StartScanThread()
     {
@@ -1674,9 +1801,9 @@ namespace SetupTv.Sections
       StartScanThread();
     }
 
-    private void chkManualScan_CheckedChanged(object sender, EventArgs e)
+    private void checkBoxAdvancedTuning_CheckedChanged(object sender, EventArgs e)
     {
-      grpManualScan.Enabled = chkManualScan.Checked;
+      mpGrpAdvancedTuning.Visible = checkBoxAdvancedTuning.Checked;
     }
   }
 }
