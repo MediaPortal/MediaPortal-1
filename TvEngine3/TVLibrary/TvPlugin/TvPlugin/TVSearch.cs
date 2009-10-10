@@ -59,14 +59,14 @@ namespace TvPlugin
     [SkinControl(18)] protected GUIImage imgTvLogo = null;
     [SkinControl(20)] protected GUIButtonControl btnViewBy = null; // is replacing btnSearchByTitle, btnSearchByGenre
     [SkinControl(21)] protected GUIButtonControl btnSearchDescription = null; // is replacing btnSearchByDescription 
-
-
+    
     private DirectoryHistory history = new DirectoryHistory();
 
     private enum SearchMode
     {
       Genre,
-      Title
+      Title,
+      Description
     }
 
     private enum SortMethod
@@ -197,13 +197,11 @@ namespace TvPlugin
         Update();
         GUIControl.FocusControl(GetID, control.GetID);
       }
-      else if (control == btnSearchByDescription)
+      else if (control == btnSearchDescription)
       {
-        btnSearchByDescription.Disabled = true;  // no search by description anymore
-      }
-      else if (control == btnSMSInput)
-      {
-        VirtualKeyboard keyboard = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
+        if (btnShow != null) btnShow.Clear();
+        if (btnEpisode != null) btnEpisode.Clear();
+        VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
         if (null == keyboard)
         {
           return;
@@ -221,9 +219,40 @@ namespace TvPlugin
 
         if (keyboard.IsConfirmed)
         {
+          currentSearchMode = SearchMode.Description;
+          filterLetter = "%" + keyboard.Text; // re-add % to perform fulltext search
+          currentLevel = 0;                   // only search on root level
+          filterEpisode = String.Empty;
+          filterShow = String.Empty;
+          Update();
+        }
+        GUIControl.FocusControl(GetID, btnSearchDescription.GetID);
+      }
+      else if (control == btnSMSInput)
+      {
+        VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
+        if (null == keyboard)
+        {
+          return;
+        }
+        String searchterm = string.Empty;
+        keyboard.Reset();
+
+        String tmpFilterLetter = filterLetter;
+        if (tmpFilterLetter.StartsWith("%"))
+        {
+          tmpFilterLetter = tmpFilterLetter.Substring(1); // cut of leading % for display in dialog
+        }
+        keyboard.Text = tmpFilterLetter;
+        keyboard.DoModal(GetID); // show it...
+
+        if (keyboard.IsConfirmed)
+        {
+          currentSearchMode = SearchMode.Title;
           filterLetter = "%" + keyboard.Text; // re-add % to perform fulltext search
           currentLevel = 0;                   // only search on root level
           filterShow = String.Empty;
+          filterEpisode = String.Empty;
           Update();
         }
       }
@@ -248,7 +277,7 @@ namespace TvPlugin
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, control.GetID, 0, 0, null);
         OnMessage(msg);
-        int iItem = (int) msg.Param1;
+        int iItem = (int)msg.Param1;
         if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
         {
           OnClick(iItem);
@@ -733,6 +762,118 @@ namespace TvPlugin
             }
           }
           break;
+        case SearchMode.Description:
+          {
+            IList<Program> titles = new List<Program>();
+            long start = Utils.datetolong(DateTime.Now);
+            long end = Utils.datetolong(DateTime.Now.AddMonths(1));
+            TvBusinessLayer layer = new TvBusinessLayer();
+
+            if (filterLetter == "#")
+            {
+              if (filterShow == String.Empty)
+              {
+                titles = layer.SearchProgramsByDescription("");
+              }
+              else
+              {
+                titles = layer.SearchProgramsByDescription(filterShow);
+              }
+            }
+            else
+            {
+              if (filterShow == String.Empty)
+              {
+                titles = layer.SearchProgramsByDescription(filterLetter);
+              }
+              else
+              {
+                titles = layer.SearchProgramsByDescription(filterShow);
+              }
+            }
+            foreach (Program program in titles)
+            {
+              if (program.Description.Length == 0)
+              {
+                continue;
+              }
+              if (filterLetter != "#")
+              {
+                bool add = true;
+                foreach (Program prog in programs)
+                {
+                  if (prog.Title == program.Title)
+                  {
+                    add = false;
+                  }
+                }
+                if (!add && filterShow == String.Empty)
+                {
+                  continue;
+                }
+                if (add)
+                {
+                  programs.Add(program);
+                }
+
+                if (filterShow != String.Empty)
+                {
+                  if (program.Title == filterShow)
+                  {
+                    episodes.Add(program);
+                  }
+                }
+              }
+
+              if (filterShow != String.Empty && program.Title != filterShow)
+              {
+                continue;
+              }
+
+              string strTime = String.Format("{0} {1}",
+                                             Utils.GetShortDayString(program.StartTime),
+                                             program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+              if (filterEpisode != String.Empty && strTime != filterEpisode)
+              {
+                continue;
+              }
+
+              strTime = String.Format("{0} {1} - {2}",
+                                      Utils.GetShortDayString(program.StartTime),
+                                      program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                      program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+
+              GUIListItem item = new GUIListItem();
+              item.IsFolder = false;
+              item.Label = program.Title;
+              if (program.StartTime > DateTime.MinValue)
+              {
+                item.Label2 = strTime;
+              }
+              item.Path = program.Title;
+              item.TVTag = program;
+              item.ItemId = currentItemId;
+              currentItemId++;
+              bool isSerie;
+              if (IsRecording(program, out isSerie))
+              {
+                if (isSerie)
+                {
+                  item.PinImage = Thumbs.TvRecordingSeriesIcon;
+                }
+                else
+                {
+                  item.PinImage = Thumbs.TvRecordingIcon;
+                }
+              }
+              Utils.SetDefaultIcons(item);
+              SetChannelLogo(program, ref item);
+              listView.Add(item);
+              titleView.Add(item);
+              itemCount++;
+            }
+          }
+          break;
       }
 
       //set object count label
@@ -1028,6 +1169,19 @@ namespace TvPlugin
             OnRecord(program);
           }
           break;
+        case SearchMode.Description:
+          {
+            Program program = item.MusicTag as Program;
+
+            if (filterShow == String.Empty)
+            {
+              filterShow = program.Title;
+              Update();
+              return;
+            }
+            OnRecord(program);
+          }
+          break;
       }
     }
 
@@ -1263,6 +1417,7 @@ namespace TvPlugin
     private void UpdateButtonStates()
     {
       if (btnSearchByDescription != null) btnSearchByDescription.Selected = false;
+      if (btnSearchDescription != null) btnSearchDescription.Selected = false;
       if (btnSearchByTitle != null) btnSearchByTitle.Selected = false;
       if (btnSearchByGenre != null) btnSearchByGenre.Selected = false;
 
@@ -1275,6 +1430,10 @@ namespace TvPlugin
       {
         if (btnSearchByGenre != null) btnSearchByGenre.Selected = true;
         if (btnViewBy != null) btnViewBy.Label = GUILocalizeStrings.Get(1522);
+      }
+      if (currentSearchMode == SearchMode.Description)
+      {
+        if (btnSearchDescription != null) btnSearchDescription.Selected = true;
       }
     }
 

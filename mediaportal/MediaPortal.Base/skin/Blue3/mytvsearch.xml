@@ -103,11 +103,20 @@
         <id>19</id>
         <label>137</label>
         <onup>7</onup>
-        <ondown>2</ondown>
-	      <onleft>10</onleft>
+        <ondown>21</ondown>
+	    <onleft>10</onleft>
         <onright>10</onright>
       </control>
-      
+     <control>
+        <description>Search Description</description>
+        <type>button</type>
+        <id>21</id>
+        <label>1523</label>
+        <onup>19</onup>
+        <ondown>2</ondown>
+        <onleft>10</onleft>
+        <onright>10</onright>
+      </control> 
     </control>
     <control>
       <type>group</type>

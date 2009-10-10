@@ -63,6 +63,7 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
       <control>
+	    <description>Sort by Name/Date/Channel</description>
         <type>sortbutton</type>
         <id>2</id>
         <posX>70</posX>
@@ -92,7 +93,7 @@
         <ondown>7</ondown>
       </control>
       <control>
-        <description>Letter button</description>
+        <description>Starts with</description>
         <type>selectbutton</type>
         <id>7</id>
         <posX>70</posX>
@@ -106,7 +107,7 @@
         <ondown>19</ondown>
       </control>
       <control>
-        <description>sms input</description>
+        <description>Search</description>
         <type>button</type>
         <id>19</id>
         <posX>70</posX>
@@ -115,35 +116,24 @@
         <height>45</height>
         <label>137</label>
         <onup>7</onup>
-        <ondown>8</ondown>
-        <onleft>19</onleft>
+        <ondown>21</ondown>
+        <onleft>10</onleft>
         <onright>10</onright>
       </control>
-
-      <!--control>
-        <description>sms input</description>
-        <type>smsinput</type>
-        <id>80</id>
-        <textboxXpos>70</textboxXpos>
-        <textboxYpos>400</textboxYpos>
-        <textboxWidth>300</textboxWidth>
-        <textboxHeight>30</textboxHeight>
-        <textboxColor>FFFFFF00</textboxColor>
-        <textboxBgColor>ffffffff</textboxBgColor>
-        <textcolor2>ffAAAAAA</textcolor2>
-        <textboxFont>font13</textboxFont>
-        <posX>100</posX>
-        <posY>440</posY>
-        <width>150</width>
-        <height>100</height>
-        <font>font13</font>
-        <font2>font13</font2>
+      <control>
+        <description>Search Description</description>
+        <type>button</type>
+        <id>21</id>
+        <posX>70</posX>
+        <posY>300</posY>
+        <width>270</width>
+        <height>45</height>
+        <label>1523</label>
+        <onup>19</onup>
+        <ondown>2</ondown>
         <onleft>10</onleft>
-        <onright>60</onright>
-        <onup>3</onup>
-        <ondown>60</ondown>
-      </control-->
-
+        <onright>10</onright>
+      </control>
     </control>
     <control>
       <type>group</type>
