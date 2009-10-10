@@ -24,6 +24,8 @@
 *    http://forums.dvbowners.com/
 */
 
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include <streams.h>
 #include "TSThread.h"
 #include <process.h>

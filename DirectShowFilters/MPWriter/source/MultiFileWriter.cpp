@@ -25,6 +25,8 @@
 
 #pragma warning(disable : 4995)
 #pragma warning(disable : 4996)
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include <streams.h>
 #include "MultiFileWriter.h"
 #include <atlbase.h>

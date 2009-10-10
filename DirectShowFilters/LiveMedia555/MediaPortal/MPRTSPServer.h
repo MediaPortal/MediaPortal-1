@@ -31,7 +31,7 @@ class MPRTSPServer: public RTSPServer {
 public:
 	static MPRTSPServer* createNew(UsageEnvironment& env, Port ourPort = 554,
 		UserAuthenticationDatabase* authDatabase = NULL,
-		unsigned reclamationTestSeconds = 45);
+		unsigned reclamationTestSeconds = 65);
 
 protected:
 	MPRTSPServer(UsageEnvironment& env,

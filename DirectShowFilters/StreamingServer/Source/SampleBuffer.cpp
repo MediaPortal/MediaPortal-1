@@ -23,6 +23,8 @@
 *    http://forums.dvbowners.com/
 */
 
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include <streams.h>
 #include "SampleBuffer.h"
 #include <crtdbg.h>

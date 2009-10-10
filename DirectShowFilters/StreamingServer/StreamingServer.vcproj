@@ -67,7 +67,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="strmbasd.lib winmm.lib livemedia555D.lib WSock32.Lib"
+				AdditionalDependencies="strmbasd.lib winmm.lib livemedia555D.lib WS2_32.Lib"
 				OutputFile=".\bin\Debug\$(ProjectName).dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Debug_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;; ..\shared"
@@ -155,7 +155,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="strmbase.lib livemedia555.lib winmm.lib wsock32.lib"
+				AdditionalDependencies="strmbase.lib livemedia555.lib winmm.lib ws2_32.lib"
 				OutputFile=".\bin\Release\$(ProjectName).dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Release_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;; ..\shared"
@@ -243,11 +243,31 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Source\Global.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Source\MPEG2TstFileServerMediaSubsession.h"
 				>
 			</File>
 			<File
 				RelativePath=".\Source\MultiFileReader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\PidInfo.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\PidParser.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\samplebuffer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\TsFileDuration.h"
 				>
 			</File>
 			<File
@@ -345,6 +365,14 @@
 				</File>
 			</Filter>
 		</Filter>
+		<File
+			RelativePath=".\Source\ReadMe.txt"
+			>
+		</File>
+		<File
+			RelativePath=".\Source\TsStreamFileSource.hh"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

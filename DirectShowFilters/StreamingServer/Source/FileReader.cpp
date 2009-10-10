@@ -23,7 +23,6 @@
 *    http://forums.dvbowners.com/
 */
 
-//#include <streams.h>
 #include "FileReader.h"
 #include <stdio.h>
 extern void LogDebug(const char *fmt, ...) ;

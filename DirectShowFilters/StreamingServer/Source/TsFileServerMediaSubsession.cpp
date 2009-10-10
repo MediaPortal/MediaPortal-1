@@ -19,6 +19,8 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // on demand, from a MPEG-2 Transport Stream file.
 // Implementation
 
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include "TsFileServerMediaSubsession.h"
 #include "SimpleRTPSink.hh"
 #include "ByteStreamFileSource.hh"

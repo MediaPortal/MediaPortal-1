@@ -18,6 +18,8 @@
 *  http://www.gnu.org/copyleft/gpl.html
 *
 */
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include "ChannelScan.h"
 #include "TeletextGrabber.h"
 #include "Hamming.h"

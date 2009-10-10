@@ -1,5 +1,6 @@
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include <streams.h>
-//#include <winsock2.h>
 #include <shlobj.h>
 #include "liveMedia.hh"
 #include "BasicUsageEnvironment.hh"

@@ -18,6 +18,8 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // A 'ServerMediaSubsession' object that creates new, unicast, "RTPSink"s
 // on demand, from a MPEG-2 Transport Stream file.
 // Implementation
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include <streams.h>
 #include "MPEG2TstFileServerMediaSubsession.h"
 extern void LogDebug(const char *fmt, ...) ;

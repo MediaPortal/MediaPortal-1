@@ -82,7 +82,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="strmbase.lib livemedia555.lib winmm.lib wsock32.lib"
+				AdditionalDependencies="strmbase.lib livemedia555.lib winmm.lib ws2_32.lib"
 				OutputFile="bin\Release/MPFileWriter.ax"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

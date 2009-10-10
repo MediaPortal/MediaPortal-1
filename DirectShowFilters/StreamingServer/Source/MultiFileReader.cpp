@@ -23,7 +23,6 @@
 *    http://forums.dvbowners.com/
 */
 
-//#include <streams.h>
 #include "MultiFileReader.h"
 #include <atlbase.h>
 extern void LogDebug(const char *fmt, ...) ;
