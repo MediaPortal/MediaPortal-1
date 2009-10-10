@@ -32,6 +32,7 @@
     <String id="31">November</String>
     <String id="32">Dezember</String>
     <String id="50" prefix="Meine ">DVDs</String>
+    <String id="51">Disc abspielen</String>
     <String id="60">Warte auf den Start des TV-Service...</String>
     <String id="61">Warte {0} Sekunde(n) vor dem Start...</String>
     <String id="62">Initialisiere DirectX...</String>
@@ -999,6 +1000,10 @@
     <String id="1518">Graph konnte nicht erstellt</String>
     <String id="1519">Kein unterstützter Software-Encoder installiert</String>
     <String id="1520">Nicht genügend Festplattenspeicher</String>
+    <String id="1523">Suche Beschreibung</String>
+    <String id="1600">Herunterfahren?</String>
+    <String id="1601">Schlafmodus?</String>
+    <String id="1602">Ruhezustand?</String>
     <String id="1950" prefix="Mein ">Status</String>
     <String id="1951">Festplatte</String>
     <String id="1952">Lüfter</String>
@@ -1410,7 +1415,7 @@
     <String id="9007">Blende:</String>
     <String id="9008">Belichtung:</String>
     <String id="9009">Kamera:</String>
-    <String id="9010">Geräte-Typ:</String>
+    <String id="9010">Hersteller:</String>
     <String id="9011">Kommentar:</String>
     <String id="9100" prefix="Mein">MiniDisplay</String>
     <String id="9101">Das Plugin ist nicht konfiguriert.</String>
