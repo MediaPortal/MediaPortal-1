@@ -1770,10 +1770,6 @@ public class MediaPortalApp : D3DApp, IRender
 	  base.OnResizeEnd(e);
 	}
 
-
-
-
-
   #region Render()
 
   private static bool reentrant = false;
@@ -2120,10 +2116,10 @@ public class MediaPortalApp : D3DApp, IRender
       {
         // record current tv program
         case Action.ActionType.ACTION_RECORD:
-          if ((GUIWindowManager.ActiveWindowEx != (int) GUIWindow.Window.WINDOW_TVGUIDE) &&
-              (GUIWindowManager.ActiveWindowEx != (int) GUIWindow.Window.WINDOW_DIALOG_TVGUIDE))
+          if ((GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindowEx) && GUIWindowManager.ActiveWindowEx != (int)GUIWindow.Window.WINDOW_TVGUIDE) &&
+              (GUIWindowManager.ActiveWindowEx != (int)GUIWindow.Window.WINDOW_DIALOG_TVGUIDE))
           {
-            GUIWindow tvHome = GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_TV);
+            GUIWindow tvHome = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
             if (tvHome != null)
             {
               if (tvHome.GetID != GUIWindowManager.ActiveWindow)
@@ -2139,7 +2135,7 @@ public class MediaPortalApp : D3DApp, IRender
         case Action.ActionType.ACTION_PREV_CHANNEL:
           if (!GUIWindowManager.IsRouted)
           {
-            window = GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_TV);
+            window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
             window.OnAction(action);
             return;
           }
@@ -2149,7 +2145,7 @@ public class MediaPortalApp : D3DApp, IRender
         case Action.ActionType.ACTION_NEXT_CHANNEL:
           if (!GUIWindowManager.IsRouted)
           {
-            window = GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_TV);
+            window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
             window.OnAction(action);
             return;
           }
@@ -2159,12 +2155,12 @@ public class MediaPortalApp : D3DApp, IRender
         case Action.ActionType.ACTION_LAST_VIEWED_CHANNEL: // mPod
           if (!GUIWindowManager.IsRouted)
           {
-            window = GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_TV);
+            window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
             window.OnAction(action);
             return;
           }
           break;
-
+          
         //toggle between directx windowed and exclusive mode
         case Action.ActionType.ACTION_TOGGLE_WINDOWED_FULLSCREEN:
           ToggleFullWindowed();
