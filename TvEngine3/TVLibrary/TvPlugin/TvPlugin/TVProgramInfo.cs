@@ -294,6 +294,7 @@ namespace TvPlugin
       {
         CurrentProgram = null;
         TvBusinessLayer layer = new TvBusinessLayer();
+        // comment: this is not performant, i.e. query 15.000 programs and then start comparing each of them
         IList<Program> programs = layer.GetPrograms(DateTime.Now, DateTime.Now.AddDays(10));
         foreach (Program prog in programs)
         {
@@ -302,6 +303,13 @@ namespace TvPlugin
             CurrentProgram = prog;
             return;
           }
+        }
+        // in case of no forthcoming programs, we need to create a dummy program taken from schedule information
+        // to keep the dialog working at all
+        if (CurrentProgram == null)
+        {
+          CurrentProgram = new Program(value.IdChannel, value.StartTime, value.EndTime, value.ProgramName, "",
+            "", false, DateTime.MinValue, "", "", "", "", 0, "", 0);
         }
       }
     }
@@ -893,6 +901,10 @@ namespace TvPlugin
 
     private void OnRecordProgram(Program program)
     {
+      if (program == null)
+      {
+        return;
+      }
       Log.Debug("TVProgammInfo.OnRecordProgram - programm = {0}", program.ToString());
       Schedule recordingSchedule;
       if (IsRecordingProgram(program, out recordingSchedule, true)) // check if schedule is already existing
