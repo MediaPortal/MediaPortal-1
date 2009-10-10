@@ -46,22 +46,43 @@ namespace MpeCore.Classes
         
         public UnInstallItem BackUpFile(FileItem item)
         {
+            return BackUpFile(item.ExpandedDestinationFilename, item.InstallType);
+        }
+
+        /// <summary>
+        /// Backs up file.
+        /// </summary>
+        /// <param name="dest">The dest.</param>
+        /// <param name="installType">Type of the install.</param>
+        /// <returns></returns>
+        public UnInstallItem BackUpFile(string dest, string installType)
+        {
             UnInstallItem unInstallItem = new UnInstallItem();
-            if (File.Exists(item.ExpandedDestinationFilename)&& !BackUpExist(item.ExpandedDestinationFilename))
+            if (File.Exists(dest) && !BackUpExist(dest))
             {
-                unInstallItem.BackUpFile = string.Format("{0}BackUp\\{1}", LocationFolder, MpeInstaller.TransformInTemplatePath(item.ExpandedDestinationFilename));
+                if (MpeInstaller.TransformInTemplatePath(dest).StartsWith("%"))
+                {
+                    unInstallItem.BackUpFile = string.Format("{0}BackUp\\{1}", LocationFolder,
+                                                             MpeInstaller.TransformInTemplatePath(dest));
+                }
+                else
+                {
+                    unInstallItem.BackUpFile = string.Format("{0}BackUp\\Unknow\\{1}", LocationFolder,
+                                                             Path.GetFileName(dest));
+                }
+
                 string s = Path.GetDirectoryName(unInstallItem.BackUpFile);
                 if (!Directory.Exists(s))
                     Directory.CreateDirectory(s);
-                File.Copy(item.ExpandedDestinationFilename, unInstallItem.BackUpFile, true);
+                File.Copy(dest, unInstallItem.BackUpFile, true);
             }
-            unInstallItem.OriginalFile = item.ExpandedDestinationFilename;
-            unInstallItem.InstallType = item.InstallType;
+            unInstallItem.OriginalFile = dest;
+            unInstallItem.InstallType = installType;
             return unInstallItem;
         }
 
         /// <summary>
-        /// Test if a file alredy have a backup copy
+        /// Test if a file already have a backup copy
         /// </summary>
         /// <param name="fileName">Name of the file.</param>
         /// <returns></returns>
@@ -82,6 +103,8 @@ namespace MpeCore.Classes
 
         public void Save(string fileName)
         {
+            if (!Directory.Exists(Path.GetDirectoryName(fileName)))
+                Directory.CreateDirectory(Path.GetDirectoryName(fileName));
             var serializer = new XmlSerializer(typeof(UnInstallInfoCollection));
             TextWriter writer = new StreamWriter(fileName);
             serializer.Serialize(writer, this);

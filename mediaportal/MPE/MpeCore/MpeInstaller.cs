@@ -27,8 +27,10 @@ namespace MpeCore
             SectionPanels = new Dictionary<string, ISectionPanel>();
             ZipProvider = new ZipProviderClass();
 
-            InstallerTypeProviders.Add("CopyFile", new CopyFile());
 
+            AddInstallType(new CopyFile());
+            AddInstallType(new GenericSkinFile());
+            
             PathProviders.Add("MediaPortalPaths", new MediaPortalPaths());
             PathProviders.Add("WindowsPaths", new WindowsPaths());
 
@@ -52,6 +54,10 @@ namespace MpeCore
             SectionPanels.Add(sp.DisplayName, sp);
         }
 
+        public static void AddInstallType(IInstallerTypeProvider provider)
+        {
+            InstallerTypeProviders.Add(provider.Name, provider);
+        }
 
         public static void Save()
         {
@@ -70,6 +76,20 @@ namespace MpeCore
             foreach (var pathProvider in PathProviders)
             {
                 localFile = pathProvider.Value.Colapse(localFile);
+            }
+            return localFile;
+        }
+
+        /// <summary>
+        /// Transfor a template path in a real system path path, based on providers
+        /// </summary>
+        /// <param name="localFile">The template of file or path.</param>
+        /// <returns></returns>
+        static public string TransformInRealPath(string localFile)
+        {
+            foreach (var pathProvider in PathProviders)
+            {
+                localFile = pathProvider.Value.Expand(localFile);
             }
             return localFile;
         }

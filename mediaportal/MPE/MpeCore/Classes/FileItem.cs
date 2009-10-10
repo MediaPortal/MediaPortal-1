@@ -32,6 +32,8 @@ namespace MpeCore.Classes
             DestinationFilename = fileItem.DestinationFilename;
             SystemFile = fileItem.SystemFile;
             UpdateOption = fileItem.UpdateOption;
+            Param1 = fileItem.Param1;
+            //Param2 = fileItem.Param2;
         }
 
         /// <summary>
@@ -45,8 +47,18 @@ namespace MpeCore.Classes
             SystemFile = false;
             DestinationFilename = string.Empty;
             UpdateOption = UpdateOptionEnum.OverwriteIfOlder;
+            Param1 = string.Empty;
+            //Param2 = string.Empty;
         }
 
+        public string Param1 { get; set; }
+
+        //public string Param2 { get; set; }
+
+        /// <summary>
+        /// Gets or sets the update option.
+        /// </summary>
+        /// <value>The update option.</value>
         public UpdateOptionEnum UpdateOption { get; set; }
 
         /// <summary>

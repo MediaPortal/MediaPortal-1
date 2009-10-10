@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="Classes\Events\InstallEventArgs.cs" />
     <Compile Include="Classes\ExtensionCollection.cs" />
+    <Compile Include="Classes\InstallerType\GenericSkinFile.cs" />
     <Compile Include="Classes\PathUtil.cs" />
     <Compile Include="Classes\SectionPanel\BaseHorizontalLayout.cs">
       <SubType>Form</SubType>

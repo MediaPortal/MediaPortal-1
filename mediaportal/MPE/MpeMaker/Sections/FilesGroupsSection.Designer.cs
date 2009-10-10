@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FilesGroupsSection));
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -35,6 +36,7 @@
             this.mnu_remove_group = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton3 = new System.Windows.Forms.ToolStripSeparator();
             this.mnu_add_files = new System.Windows.Forms.ToolStripButton();
+            this.mnu_add_folder = new System.Windows.Forms.ToolStripButton();
             this.mnu_remove_files = new System.Windows.Forms.ToolStripButton();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -55,7 +57,9 @@
             this.txt_installpath = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.cmb_installtype = new System.Windows.Forms.ComboBox();
-            this.mnu_add_folder = new System.Windows.Forms.ToolStripButton();
+            this.txt_param1 = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.toolStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage_group.SuspendLayout();
@@ -85,7 +89,7 @@
             this.toolStrip1.Location = new System.Drawing.Point(3, 7);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(164, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(133, 25);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -124,6 +128,17 @@
             this.mnu_add_files.Size = new System.Drawing.Size(23, 22);
             this.mnu_add_files.Text = "Add files";
             this.mnu_add_files.Click += new System.EventHandler(this.mnu_add_files_Click);
+            // 
+            // mnu_add_folder
+            // 
+            this.mnu_add_folder.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.mnu_add_folder.Image = ((System.Drawing.Image)(resources.GetObject("mnu_add_folder.Image")));
+            this.mnu_add_folder.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.mnu_add_folder.Name = "mnu_add_folder";
+            this.mnu_add_folder.Size = new System.Drawing.Size(23, 22);
+            this.mnu_add_folder.Text = "toolStripButton1";
+            this.mnu_add_folder.ToolTipText = "Add folder";
+            this.mnu_add_folder.Click += new System.EventHandler(this.mnu_add_folder_Click);
             // 
             // mnu_remove_files
             // 
@@ -233,6 +248,8 @@
             // 
             // tabPage_file
             // 
+            this.tabPage_file.Controls.Add(this.label7);
+            this.tabPage_file.Controls.Add(this.txt_param1);
             this.tabPage_file.Controls.Add(this.btn_set);
             this.tabPage_file.Controls.Add(this.label6);
             this.tabPage_file.Controls.Add(this.cmb_overwrite);
@@ -326,18 +343,25 @@
             this.cmb_installtype.Name = "cmb_installtype";
             this.cmb_installtype.Size = new System.Drawing.Size(216, 21);
             this.cmb_installtype.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.cmb_installtype, "1");
             this.cmb_installtype.SelectedIndexChanged += new System.EventHandler(this.txt_description_TextChanged);
             // 
-            // mnu_add_folder
+            // txt_param1
             // 
-            this.mnu_add_folder.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.mnu_add_folder.Image = ((System.Drawing.Image)(resources.GetObject("mnu_add_folder.Image")));
-            this.mnu_add_folder.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.mnu_add_folder.Name = "mnu_add_folder";
-            this.mnu_add_folder.Size = new System.Drawing.Size(23, 22);
-            this.mnu_add_folder.Text = "toolStripButton1";
-            this.mnu_add_folder.ToolTipText = "Add folder";
-            this.mnu_add_folder.Click += new System.EventHandler(this.mnu_add_folder_Click);
+            this.txt_param1.Location = new System.Drawing.Point(95, 114);
+            this.txt_param1.Name = "txt_param1";
+            this.txt_param1.Size = new System.Drawing.Size(216, 20);
+            this.txt_param1.TabIndex = 8;
+            this.txt_param1.TextChanged += new System.EventHandler(this.txt_description_TextChanged);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(3, 117);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(46, 13);
+            this.label7.TabIndex = 10;
+            this.label7.Text = "Param 1";
             // 
             // FilesGroupsSection
             // 
@@ -389,6 +413,9 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button btn_set;
         private System.Windows.Forms.ToolStripButton mnu_add_folder;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox txt_param1;
+        private System.Windows.Forms.ToolTip toolTip1;
 
     }
 }

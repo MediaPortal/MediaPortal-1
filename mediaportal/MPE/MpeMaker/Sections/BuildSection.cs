@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
 using MpeCore;
 using MpeCore.Classes;
@@ -26,7 +21,7 @@ namespace MpeMaker.Sections
             Package = pak;
         }
 
-        public MpeCore.PackageClass Get()
+        public PackageClass Get()
         {
             throw new NotImplementedException();
         }
@@ -43,9 +38,11 @@ namespace MpeMaker.Sections
 
         private void btn_generate_Click(object sender, EventArgs e)
         {
+            list_error.Items.Clear();
+            list_message.Items.Clear();
             if (string.IsNullOrEmpty(txt_outfile.Text))
                 list_error.Items.Add("No out file is specified");
-            foreach (GroupItem groupItem in this.Package.Groups.Items)
+            foreach (GroupItem groupItem in Package.Groups.Items)
             {
                 foreach (FileItem fileItem in groupItem.Files.Items )
                 {

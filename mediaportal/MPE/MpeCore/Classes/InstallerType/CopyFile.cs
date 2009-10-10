@@ -15,7 +15,7 @@ namespace MpeCore.Classes.InstallerType
 
         public string Description
         {
-            get { return "Copy the file to speified location"; }
+            get { return "Copy the file to specified location"; }
         }
 
         public void Install(PackageClass packageClass, FileItem fileItem)

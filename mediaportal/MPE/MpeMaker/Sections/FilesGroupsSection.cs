@@ -187,6 +187,7 @@ namespace MpeMaker.Sections
                 txt_installpath.Text = file.DestinationFilename;
                 cmb_installtype.Text = file.InstallType;
                 cmb_overwrite.SelectedIndex = (int)file.UpdateOption;
+                txt_param1.Text = file.Param1;
             }
 
             SelectedGroup = group;
@@ -204,14 +205,19 @@ namespace MpeMaker.Sections
                                                : Path.GetDirectoryName(groupItem.Files.Items[0].DestinationFilename);
                 resp.UpdateOption = groupItem.Files.Items[0].UpdateOption;
                 resp.InstallType = groupItem.Files.Items[0].InstallType;
+                resp.Param1 = groupItem.Files.Items[0].Param1;
+
                 foreach (FileItem item in groupItem.Files.Items)
                 {
-                    if (string.IsNullOrEmpty(item.DestinationFilename) || resp.DestinationFilename != Path.GetDirectoryName(item.DestinationFilename))
+                    if (string.IsNullOrEmpty(item.DestinationFilename) ||
+                        resp.DestinationFilename != Path.GetDirectoryName(item.DestinationFilename))
                         resp.DestinationFilename = "";
                     if (resp.UpdateOption != item.UpdateOption)
                         resp.UpdateOption = UpdateOptionEnum.OverwriteIfOlder;
                     if (resp.InstallType != item.InstallType)
                         resp.InstallType = "CopyFile";
+                    if (resp.Param1 != item.Param1)
+                        resp.Param1 = string.Empty;
                 }
             }
             return resp;
@@ -239,9 +245,12 @@ namespace MpeMaker.Sections
             }
             if (SelectedItem != null)
             {
+                toolTip1.SetToolTip(cmb_installtype,
+                                    MpeInstaller.InstallerTypeProviders[cmb_installtype.Text].Description);
                 SelectedItem.InstallType = cmb_installtype.Text;
                 SelectedItem.DestinationFilename = txt_installpath.Text;
                 SelectedItem.UpdateOption = (UpdateOptionEnum) cmb_overwrite.SelectedIndex;
+                SelectedItem.Param1 = txt_param1.Text;
             }
         }
 
@@ -272,7 +281,7 @@ namespace MpeMaker.Sections
         {
             if (SelectedItem == null)
                 return;
-            if (MessageBox.Show("Do you want to Delete file " + SelectedItem.ToString() + " from list ?", "", MessageBoxButtons.YesNo) != DialogResult.Yes)
+            if (MessageBox.Show("Do you want to Delete file " + SelectedItem + " from list ?", "", MessageBoxButtons.YesNo) != DialogResult.Yes)
                 return;
             SelectedGroup.Files.Items.Remove(SelectedItem);
             treeView1.Nodes.Clear();
