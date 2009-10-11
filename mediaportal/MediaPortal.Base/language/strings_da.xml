@@ -32,6 +32,19 @@
     <String id="31">november</String>
     <String id="32">december</String>
     <String id="50">Mine DVDer</String>
+    <String id="51">Afspil disc</String>
+    <String id="60">Venter på at TV service starter...</String>
+    <String id="61">Venter {0} sekund(er) før start...</String>
+    <String id="62">Initialiserer DirectX...</String>
+    <String id="63">Initialiserer indgangs enheder...</String>
+    <String id="64">Starter tilføjelser...</String>
+    <String id="65">Indlæser keymap.xml...</String>
+    <String id="66">Indlæser strenge...</String>
+    <String id="67">Cacherer grafik...</String>
+    <String id="68">Indlæser skrifttyper...</String>
+    <String id="69">Indlæser skin ({0})...</String>
+    <String id="70">Indlæser vindue tilføjelser...</String>
+    <String id="71">Initailiserer vindue manageren...</String>
     <String id="100">Vis: Ikoner</String>
     <String id="101">Vis: Liste</String>
     <String id="102">Scan</String>
@@ -671,6 +684,8 @@
     <String id="780">Vælg optagelsesmetode</String>
     <String id="781">Hurtig optagelse</String>
     <String id="782">Detaljeret optagelse</String>
+    <String id="783">Roter 180°</String>
+    <String id="784">Roter 270°</String>
     <String id="789">Nu: </String>
     <String id="790">Næste: </String>
     <String id="798">lav</String>
@@ -985,6 +1000,9 @@
     <String id="1518">Ude af stand til til at lave diagram</String>
     <String id="1519">Ingen No understøttet software encoder installeret</String>
     <String id="1520">Ikke nok fri plads</String>
+    <String id="1521">Vis efter titel</String>
+    <String id="1522">Vis efter genre</String>
+    <String id="1523">Søg i beskrivelsen</String>
     <String id="1600">Ønsker du at slukke?</String>
     <String id="1601">Ønsker du at afbryde?</String>
     <String id="1602">Ønsker du at gå i dvale?</String>
@@ -1286,6 +1304,7 @@
     <String id="4554">Slå CD info op</String>
     <String id="4555">Aktive playliste</String>
     <String id="4557">Tilføj alle til playliste</String>
+    <String id="4558">For nylig tilføjet</String>
     <String id="5900" prefix="Mine ">Trailere</String>
     <String id="5901">Vis film</String>
     <String id="5902">Hvilke film skal vises?</String>
@@ -1354,6 +1373,11 @@
     <String id="6039">AAC Lyd codec</String>
     <String id="6040">I går</String>
     <String id="6041">To dage siden</String>
+    <String id="6050">Nuværende uge</String>
+    <String id="6060">Nuværende månede</String>
+    <String id="6070">Nuværende år</String>
+    <String id="6080">Sidste år</String>
+    <String id="6090">Ældre</String>
     <String id="8000" prefix="Min ">E-mail</String>
     <String id="8001">Hent post</String>
     <String id="8002">Automatisk kontrol fra</String>
@@ -1656,7 +1680,6 @@
     <String id="100004" prefix="Mine ">Indstillinger</String>
     <String id="100005" prefix="Min ">Musik</String>
     <String id="100006" prefix="Mine ">Film</String>
-    <String id="100007">Systeminformation</String>
     <String id="100008">Indstillinger-&gt;Generel</String>
     <String id="100009">Indstillinger-&gt;Skærm</String>
     <String id="100010">Indstillinger-&gt;Skærm-&gt;GUI Kalibrering</String>
@@ -1679,8 +1702,6 @@
     <String id="100029">Indstillinger-&gt;Generel-&gt;LCD</String>
     <String id="100030" prefix="Min ">Radio</String>
     <String id="100031">Indstillinger-&gt;Skærm-&gt;scroll-hastighed</String>
-    <String id="100032">MSN Messenger</String>
-    <String id="100033">MSN Messenger chat</String>
     <String id="100034" prefix="Mine ">Moduler</String>
     <String id="100035">Simpelt hjem</String>
     <String id="100100">Ja/nej dialog</String>
@@ -1750,7 +1771,6 @@
     <String id="100747">TV søgning</String>
     <String id="100748" prefix="Min ">Programinfo</String>
     <String id="100749" prefix="Mit ">TV/Intet signal</String>
-    <String id="100750" prefix="Mine ">Opskrifter</String>
     <String id="100755" prefix="Min ">Status</String>
     <String id="100756" prefix="Mine ">Statusdetaljer</String>
     <String id="100757" prefix="Mine ">Statusindstillinger</String>
@@ -1759,7 +1779,6 @@
     <String id="100760" prefix="Min ">Brænder</String>
     <String id="100761" prefix="Min ">TV-guide</String>
     <String id="100762" prefix="Min ">Radioguide</String>
-    <String id="100770" prefix="Min ">Explorer</String>
     <String id="100800" prefix="My ">Udvidelser</String>
     <String id="101000">tastatur</String>
     <String id="101002">Virtuelt Standard Tastatur</String>
@@ -1796,10 +1815,6 @@
     <String id="103011" prefix="Min ">TV/Beskæringsopsætning</String>
     <String id="103012">TV modtager detaljer</String>
     <String id="104711" prefix="Min ">Wikipedia</String>
-    <String id="105000">Alarm</String>
-    <String id="105001">Alarm - Alarm detaljer</String>
-    <String id="105002">Alarm - Sovetid</String>
-    <String id="105900" prefix="Mine ">Trailere</String>
     <String id="106666">Strømstyring Venter</String>
     <String id="107700" prefix="Mit ">TV/Tekst TV</String>
     <String id="107701" prefix="Mit ">TV/Tekst TV</String>
@@ -1813,9 +1828,6 @@
     <String id="109004">MiniDisplay - Setup - Equalizer</String>
     <String id="109005">MiniDisplay - Setup - Tastetur</String>
     <String id="109006">MiniDisplay - Setup - fjernbetjeningsstyring</String>
-    <String id="109811" prefix="My ">TV-Series</String>
-    <String id="190478" prefix="My ">Lyrics</String>
-    <String id="196742">MovingPictures</String>
     <String id="200000">Vælg venligst din EPG grabber. Bemærk - hvis dit land ikke er</String>
     <String id="200001">i listen skal du selv levere EPG oplysninger.</String>
     <String id="200002">Du kan nu sammenkæde EPG kanaler med TV kanaler</String>
