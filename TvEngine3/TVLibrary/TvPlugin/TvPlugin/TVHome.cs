@@ -515,7 +515,7 @@ namespace TvPlugin
 #endif
           }
           else if (Connected && !isTS && !_playbackStopped && _onPageLoadDone &&
-                   (!g_Player.IsMusic && !g_Player.IsDVD && !g_Player.IsRadio && !g_Player.IsVideo))
+                   (!g_Player.IsTVRecording && (g_Player.IsTV || g_Player.IsRadio)))
           {
             // check the possible reason why timeshifting has suddenly stopped
             // maybe the server kicked the client b/c a recording on another transponder was due.
@@ -565,10 +565,10 @@ namespace TvPlugin
                 }
                 pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
               }
-              Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);
-              GUIGraphicsContext.OnAction(keyAction);
-              _playbackStopped = true;
             }
+            Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);
+            GUIGraphicsContext.OnAction(keyAction);
+            _playbackStopped = true;
           }
         }
         Thread.Sleep(HEARTBEAT_INTERVAL * 1000); //sleep for 5 secs. before sending heartbeat again
