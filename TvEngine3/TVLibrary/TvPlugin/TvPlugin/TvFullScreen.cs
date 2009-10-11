@@ -1010,7 +1010,8 @@ namespace TvPlugin
             return true;
           }
 
-          server.StopRecordingSchedule(card.RecordingScheduleId);
+          Schedule s = Schedule.Retrieve(card.RecordingScheduleId);
+          TVHome.PromptAndDeleteRecordingSchedule(s.IdSchedule, s.ReferencedChannel().CurrentProgram, false, true);
 
           GUIDialogNotify dlgNotify = (GUIDialogNotify) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_NOTIFY);
           if (dlgNotify == null)
