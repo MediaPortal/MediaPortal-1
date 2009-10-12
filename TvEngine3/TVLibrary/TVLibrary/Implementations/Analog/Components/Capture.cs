@@ -179,7 +179,7 @@ namespace TvLibrary.Implementations.Analog.Components
     {
       get { return _pinVBI != null; }
     }
-    #endregion 
+    #endregion
 
     #region ctor
     /// <summary>
@@ -320,7 +320,7 @@ namespace TvLibrary.Implementations.Analog.Components
           Log.Log.WriteFile("analog: Device: {0} in use?", devices[i].Name);
           continue;
         }
-        if (!videoDeviceName.Equals(devices[i].Name) && !audioDeviceName.Equals(devices[i].Name))
+        if (!videoDeviceName.Equals(devices[i].Name) && (audioDeviceName == null || !audioDeviceName.Equals(devices[i].Name)))
           continue;
         int hr;
         try
@@ -579,7 +579,8 @@ namespace TvLibrary.Implementations.Analog.Components
           _pinVBI = pinVBI;
           return;
         }
-      } catch (COMException ex)
+      }
+      catch (COMException ex)
       {
         if (ex.ErrorCode.Equals(unchecked((Int32)0x80070490)))
         {
@@ -798,19 +799,19 @@ namespace TvLibrary.Implementations.Analog.Components
     {
       if (_streamConfig != null)
       {
-        if(SetFrameRate((long)(10000000d / frameRate)))
+        if (SetFrameRate((long)(10000000d / frameRate)))
         {
           Log.Log.Info("Set Framerate to {0} succeeded", frameRate);
           _frameRate = frameRate;
         }
         BitmapInfoHeader bmiHeader = GetFrameSize();
-        if(bmiHeader!=null)
+        if (bmiHeader != null)
         {
           bmiHeader.Width = imageWidth;
           bmiHeader.Height = imageHeight;
-          if(SetFrameSize(bmiHeader))
+          if (SetFrameSize(bmiHeader))
           {
-            Log.Log.Info("Set Framesize to {0}x{1} succeeded", imageWidth,imageHeight);
+            Log.Log.Info("Set Framesize to {0}x{1} succeeded", imageWidth, imageHeight);
             _imageWidth = imageWidth;
             _imageHeight = imageHeight;
           }
@@ -885,7 +886,7 @@ namespace TvLibrary.Implementations.Analog.Components
           hr = _streamConfig.SetFormat(mediaType);
           if (hr != 0)
           {
-            Log.Log.Info("SetFrameRate:  FAILED to set:{0}",hr);
+            Log.Log.Info("SetFrameRate:  FAILED to set:{0}", hr);
             return false;
           }
         }
@@ -894,7 +895,8 @@ namespace TvLibrary.Implementations.Analog.Components
           Marshal.FreeCoTaskMem(pmt);
         }
         return true;
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         Log.Log.Info("SetFrameRate:  FAILED ");
       }
@@ -977,7 +979,8 @@ namespace TvLibrary.Implementations.Analog.Components
           Marshal.FreeCoTaskMem(pmt);
         }
         return true;
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         Log.Log.Info("SetFrameSize:  FAILED ");
       }
@@ -1002,7 +1005,7 @@ namespace TvLibrary.Implementations.Analog.Components
           int hr = _streamConfig.GetFormat(out mediaType);
           if (hr != 0)
           {
-            Log.Log.Info("GetFrameSize: FAILED to get format - {0}",hr);
+            Log.Log.Info("GetFrameSize: FAILED to get format - {0}", hr);
             Marshal.ThrowExceptionForHR(hr);
             return bmiHeader;
           }
@@ -1037,7 +1040,8 @@ namespace TvLibrary.Implementations.Analog.Components
         {
           Marshal.FreeCoTaskMem(pmt);
         }
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         Log.Log.Info("  VideoCaptureDevice.getStreamConfigSetting() FAILED ");
       }
