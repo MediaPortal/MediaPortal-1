@@ -164,6 +164,10 @@ namespace TvPlugin
         }
         //btnLetter.AddSubItem("#");  // => will be everything beside a-z
       }
+      if (currentSearchMode == SearchMode.Description)
+      {
+        currentSearchMode = SearchMode.Title;
+      }
       Update();
 
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
@@ -173,7 +177,7 @@ namespace TvPlugin
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
-      if ((control == btnSearchByGenre) || ((control == btnViewBy) && (currentSearchMode == SearchMode.Title)))
+      if ((control == btnSearchByGenre) || ((control == btnViewBy) && (currentSearchMode != SearchMode.Genre)))
       {
         if (btnShow != null) btnShow.Clear();
         if (btnEpisode != null) btnEpisode.Clear();
@@ -183,7 +187,6 @@ namespace TvPlugin
         filterLetter = "";
         filterShow = String.Empty;
         Update();
-        GUIControl.FocusControl(GetID, control.GetID);
       }
       else if ((control == btnSearchByTitle) || ((control == btnViewBy) && (currentSearchMode == SearchMode.Genre)))
       {
@@ -195,7 +198,6 @@ namespace TvPlugin
         currentLevel = 0;
         filterLetter = "A";
         Update();
-        GUIControl.FocusControl(GetID, control.GetID);
       }
       else if (control == btnSearchDescription)
       {
@@ -219,14 +221,16 @@ namespace TvPlugin
 
         if (keyboard.IsConfirmed)
         {
-          currentSearchMode = SearchMode.Description;
-          filterLetter = "%" + keyboard.Text; // re-add % to perform fulltext search
-          currentLevel = 0;                   // only search on root level
-          filterEpisode = String.Empty;
-          filterShow = String.Empty;
-          Update();
+          if (keyboard.Text.Length > 0)
+          {
+            currentSearchMode = SearchMode.Description;
+            filterLetter = "%" + keyboard.Text; // re-add % to perform fulltext search
+            currentLevel = 0; // only search on root level
+            filterEpisode = String.Empty;
+            filterShow = String.Empty;
+            Update();
+          }
         }
-        GUIControl.FocusControl(GetID, btnSearchDescription.GetID);
       }
       else if (control == btnSMSInput)
       {
@@ -249,11 +253,19 @@ namespace TvPlugin
         if (keyboard.IsConfirmed)
         {
           currentSearchMode = SearchMode.Title;
-          filterLetter = "%" + keyboard.Text; // re-add % to perform fulltext search
-          currentLevel = 0;                   // only search on root level
+          currentLevel = 0; // only search on root level
           filterShow = String.Empty;
           filterEpisode = String.Empty;
-          Update();
+          if (keyboard.Text.Length > 0)
+          {
+            filterLetter = "%" + keyboard.Text; // re-add % to perform fulltext search
+            Update();
+          }
+          else
+          {  
+            filterLetter = "A";   // do a [Starts with] search
+            Update();
+          }
         }
       }
       else if (control == btnSortBy)
@@ -271,7 +283,6 @@ namespace TvPlugin
             break;
         }
         Update();
-        GUIControl.FocusControl(GetID, btnSortBy.GetID);
       }
       else if (control == listView || control == titleView)
       {
@@ -285,13 +296,13 @@ namespace TvPlugin
       }
       else if (control == btnLetter)
       {
+        currentSearchMode = SearchMode.Title;
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, controlId, 0, 0, null);
         OnMessage(msg);
         filterLetter = msg.Label;
         filterShow = String.Empty;
         filterEpisode = String.Empty;
         Update();
-        GUIControl.FocusControl(GetID, btnLetter.GetID);
       }
       else if (control == btnShow)
       {
@@ -300,7 +311,6 @@ namespace TvPlugin
         filterShow = msg.Label;
         filterEpisode = String.Empty;
         Update();
-        GUIControl.FocusControl(GetID, btnShow.GetID);
       }
       else if (control == btnEpisode)
       {
@@ -308,7 +318,6 @@ namespace TvPlugin
         OnMessage(msg);
         filterEpisode = msg.Label;
         Update();
-        GUIControl.FocusControl(GetID, btnEpisode.GetID);
       }
       else if (control == btnSearchDescription)
       {
@@ -334,6 +343,7 @@ namespace TvPlugin
           Update();
         }
       }
+      GUIControl.FocusControl(GetID, control.GetID);
     }
 
     public override bool OnMessage(GUIMessage message)
@@ -1151,7 +1161,7 @@ namespace TvPlugin
           }
           break;
         case SearchMode.Title:
-          {
+        {
             if (item.Label == ".." && item.IsFolder)
             {
               filterShow = String.Empty;
@@ -1171,14 +1181,13 @@ namespace TvPlugin
           break;
         case SearchMode.Description:
           {
-            Program program = item.MusicTag as Program;
-
-            if (filterShow == String.Empty)
+            Program program = item.TVTag as Program;
+            /*if (filterShow == String.Empty)
             {
               filterShow = program.Title;
               Update();
               return;
-            }
+            }*/
             OnRecord(program);
           }
           break;
