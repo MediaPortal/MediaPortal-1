@@ -101,7 +101,7 @@
         <description>sms input</description>
         <type>button</type>
         <id>19</id>
-        <label>137</label>
+        <label>2051</label>
         <onup>7</onup>
         <ondown>21</ondown>
 	    <onleft>10</onleft>

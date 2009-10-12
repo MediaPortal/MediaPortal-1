@@ -1002,7 +1002,7 @@
     <String id="1520">Not enough free disk space</String>
 	<String id="1521">View by Title</String>
 	<String id="1522">View by Genre</String>
-	<String id="1523">Search Description</String>
+	<String id="1523">Search in Description</String>
     <String id="1600">Do you want to power off?</String>
     <String id="1601">Do you want to suspend?</String>
     <String id="1602">Do you want to hibernate?</String>
