@@ -63,7 +63,7 @@ namespace MediaPortal.Dialogs
       //
       // es. "Do you really want to STOP play LiveTv ?" -> YES I want to STOP
       //
-      if (action.wID == Action.ActionType.ACTION_STOP || action.m_key.KeyChar == 'b')
+      if (action.wID == Action.ActionType.ACTION_STOP || (action.m_key != null) && (action.m_key.KeyChar == 'b'))
       {
         m_bConfirmed = true;
         PageDestroy();
@@ -73,7 +73,7 @@ namespace MediaPortal.Dialogs
       //
       // WARNING: See above comment to understand why PLAY, that is a semantic YES, here is a NO
       //
-      if (action.wID == Action.ActionType.ACTION_PLAY || action.m_key.KeyChar == 'p')
+      if (action.wID == Action.ActionType.ACTION_PLAY || (action.m_key != null) && (action.m_key.KeyChar == 'p'))
       {
         m_bConfirmed = false;
         PageDestroy();
