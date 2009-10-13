@@ -303,7 +303,7 @@ namespace TvLibrary.Implementations.DVB
                   }
                   else
                   {
-                    Log.Log.Debug("WaitForPMT: waiting for SendPmtToCam {0} seconds.", ts.TotalMilliseconds);
+                    Log.Log.Debug("WaitForPMT: waiting for SendPmtToCam {0} ms.", ts.TotalMilliseconds);
                     Thread.Sleep(waitInterval);
                   }
                 }
@@ -773,6 +773,10 @@ namespace TvLibrary.Implementations.DVB
     protected bool SetupPmtGrabber(int pmtPid, int serviceId)
     {
       Log.Log.Info("subch:{0} SetupPmtGrabber:pid {1:X} sid:{2:X}", _subChannelId, pmtPid, serviceId);
+      
+      // reset event before starting to wait
+      _eventPMT.Reset();
+
       if (pmtPid < 0)
         return false;
       if (pmtPid == _pmtPid)
