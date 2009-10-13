@@ -195,6 +195,7 @@ namespace SetupTv.Sections
       _configFile.Info.GrabDays = (int)nMaxGrab.Value;
 
       _configFile.Channels = new List<ChannelMap>();
+      _configFile.RadioChannels = new List<ChannelMap>();
 
       foreach (ChannelMap channel in TvMappings.ChannelMapping.Values)
       {
