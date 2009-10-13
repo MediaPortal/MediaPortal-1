@@ -1000,6 +1000,9 @@
     <String id="1518">Impossible creare il graph</String>
     <String id="1519">Nessun encoder software supportato è installato</String>
     <String id="1520">Spazio libero insufficiente</String>
+    <String id="1521">Filtra per Titolo</String>
+    <String id="1522">Filtra per Genere</String>
+    <String id="1523">Cerca nella Descrizione</String>
     <String id="1600">Si vuole spegnere il sistema ?</String>
     <String id="1601">Si vuole sospendere il sistema ?</String>
     <String id="1602">Si vuole ibernare il sistema ?</String>
