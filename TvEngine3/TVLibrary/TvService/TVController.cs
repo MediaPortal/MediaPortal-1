@@ -2269,7 +2269,7 @@ namespace TvService
 
       try
       {
-        ICardAllocation allocation = CardAllocationFactory.Create(false);
+        AdvancedCardAllocation allocation = new AdvancedCardAllocation();
         TvResult result;
         List<CardDetail> freeCards = allocation.GetAvailableCardsForChannel(_cards, channel, ref user, true, out result, 0);
         if (freeCards.Count == 0)
@@ -2345,7 +2345,7 @@ namespace TvService
       }
       try
       {
-        ICardAllocation allocation = CardAllocationFactory.Create(false);
+        AdvancedCardAllocation allocation = new AdvancedCardAllocation();
         TvResult result;
         List<CardDetail> freeCards = allocation.GetAvailableCardsForChannel(_cards, channel, ref user, true, out result, 0);
         if (freeCards.Count == 0)
@@ -3056,15 +3056,15 @@ namespace TvService
       if (tvChannelList == null || tvChannelList.Count == 0)
         return null;
 
-      Dictionary<int, ChannelState> channelStates = new Dictionary<int, ChannelState>();
-      SimpleCardAllocation allocation = (SimpleCardAllocation)CardAllocationFactory.Create(true);
+      Dictionary<int, ChannelState> channelStatesList = new Dictionary<int, ChannelState>();
+      ChannelStates channelStates = new ChannelStates();
 
-      if (allocation != null)
+      if (channelStates != null)
       {
-        channelStates = allocation.GetChannelStates(_cards, tvChannelList, ref user, true, this);
+        channelStatesList = channelStates.GetChannelStates(_cards, tvChannelList, ref user, true, this);
       }
 
-      return channelStates;
+      return channelStatesList;
     }
 
 
@@ -3086,7 +3086,7 @@ namespace TvService
 
       //User anyUser = new User();
       TvResult viewResult;
-      ICardAllocation allocation = CardAllocationFactory.Create(true);
+      AdvancedCardAllocation allocation = new AdvancedCardAllocation();
       allocation.GetAvailableCardsForChannel(_cards, dbchannel, ref user, true, out viewResult, 0);
       ChannelState chanState = viewResult == TvResult.Succeeded ? ChannelState.tunable : ChannelState.nottunable;
 
@@ -3289,9 +3289,9 @@ namespace TvService
     {
       //System.Diagnostics.Debugger.Launch();
       // this section makes sure that all users are updated in regards to channel states.      
-      SimpleCardAllocation allocation = (SimpleCardAllocation)CardAllocationFactory.Create(true);
+      ChannelStates channelStates = new ChannelStates();
 
-      if (allocation != null)
+      if (channelStates != null)
       {
         TvBusinessLayer layer = new TvBusinessLayer();
         IList<ChannelGroup> groups = ChannelGroup.ListAll();
@@ -3326,7 +3326,7 @@ namespace TvService
           }
         }
 
-        allocation.SetChannelStates(_cards, _tvChannelListGroups, true, this);
+        channelStates.SetChannelStates(_cards, _tvChannelListGroups, true, this);
       }
     }
 

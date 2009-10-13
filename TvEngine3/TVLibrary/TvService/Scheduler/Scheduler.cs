@@ -633,7 +633,7 @@ namespace TvService
       Log.Write("Scheduler: Time to record {0} {1}-{2} {3}", RecDetail.Channel.DisplayName, DateTime.Now.ToShortTimeString(), RecDetail.EndTime.ToShortTimeString(), RecDetail.Schedule.ProgramName);
       TvResult result;
       //get list of all cards we can use todo the recording
-      ICardAllocation allocation = CardAllocationFactory.Create(false);
+      ICardAllocation allocation = new AdvancedCardAllocation(); //CardAllocationFactory.Create(false);
       List<CardDetail> freeCards = allocation.GetAvailableCardsForChannel(_tvController.CardCollection, RecDetail.Channel, ref _user, false, out result, RecDetail.Schedule.RecommendedCard);
       if (freeCards.Count == 0)
         return;
