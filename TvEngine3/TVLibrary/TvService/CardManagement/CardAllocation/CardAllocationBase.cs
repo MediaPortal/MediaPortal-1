@@ -46,16 +46,15 @@ namespace TvService
       if (tvcard.TimeShifter.IsTimeShifting(ref user) && !isRec)
       {
         bool fta = isFTA(tvcard, user);
-        if (!fta)
+        if (fta)
         {
           camDecrypting--;
         }
       }
-      //check if cam is capable of descrambling an extra channel                
-      int dbDecryptLimit = decryptLimit;
-      if (dbDecryptLimit > 0)
+      //check if cam is capable of descrambling an extra channel
+      if (decryptLimit > 0)
       {
-        IsCamAbleToDecrypChannel = (camDecrypting < dbDecryptLimit);
+        IsCamAbleToDecrypChannel = (camDecrypting < decryptLimit);
       }
 
       return (IsCamAbleToDecrypChannel || ch.FreeToAir);                    

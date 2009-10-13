@@ -90,7 +90,7 @@ namespace TvService
         {
           //but we must check if cam can decode the extra channel as well
           //first check if cam is already decrypting this channel          
-          bool isCamAlreadyDecodingChannel = (!IsCamAlreadyDecodingChannel(tvcard, dbChannel));
+          bool isCamAlreadyDecodingChannel = IsCamAlreadyDecodingChannel(tvcard, dbChannel);
                     
           //if the user is already using this card
           //and is watching a scrambled signal
