@@ -138,6 +138,11 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
 {
 	try
 	{
+    if (header.TransportError) 
+    { 
+      m_section.Reset(); // Will force us to wait for new PayloadUnitStart
+      return; 
+    } 
 		if (m_pid >= 0x1fff) return;
 		if (header.Pid != m_pid) return;
 		if (!header.HasPayload) return;
