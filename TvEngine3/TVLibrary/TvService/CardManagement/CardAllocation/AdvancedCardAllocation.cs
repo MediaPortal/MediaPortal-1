@@ -175,9 +175,8 @@ namespace TvService
       return nrOfOtherUsers;
     }
 
-    private int CardPriority(int nrOfOtherUsers, bool sameTransponder, bool canDecrypt, int cardId, int recommendedCardId)
-    {
-      int priority = 0;
+    private int CardPriority(int priority, int nrOfOtherUsers, bool sameTransponder, bool canDecrypt, int cardId, int recommendedCardId)
+    {      
       //if there are other users on this card and we want to switch to another transponder
       //then set this cards priority as very low...
       if (nrOfOtherUsers > 0 && !sameTransponder)
@@ -297,7 +296,7 @@ namespace TvService
 
             //determine how many other users are using this card            
             int nrOfOtherUsers = NumberOfUsersOnCard(cards, user, cardInfo);
-            cardInfo.Priority = CardPriority(nrOfOtherUsers, isSameTransponder, canDecrypt, cardId, recommendedCardId);            
+            cardInfo.Priority = CardPriority(cardInfo.Priority, nrOfOtherUsers, isSameTransponder, canDecrypt, cardId, recommendedCardId);            
 
             Log.Info("Controller:    card:{0} type:{1} is available priority:{2} #users:{3} same transponder:{4}",
                           cardInfo.Id, tvcard.Type, cardInfo.Priority, nrOfOtherUsers, isSameTransponder);

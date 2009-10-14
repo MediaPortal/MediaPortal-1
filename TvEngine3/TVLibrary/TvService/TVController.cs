@@ -3296,6 +3296,7 @@ namespace TvService
         TvBusinessLayer layer = new TvBusinessLayer();
         IList<ChannelGroup> groups = ChannelGroup.ListAll();
 
+        // populating _tvChannelListGroups is only done once as is therefor cached.
         if (_tvChannelListGroups == null)
         {
           foreach (ChannelGroup group in groups)
@@ -3315,8 +3316,7 @@ namespace TvService
 
               foreach (Channel ch in tvChannelList)
               {
-                bool exists = _tvChannelListGroups.Exists(delegate(Channel c) { return c.IdChannel == ch.IdChannel; });
-
+                bool exists = _tvChannelListGroups.Exists(delegate(Channel c) { return c.IdChannel == ch.IdChannel; });                
                 if (!exists)
                 {
                   _tvChannelListGroups.Add(ch);
