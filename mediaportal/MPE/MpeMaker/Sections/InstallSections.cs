@@ -22,13 +22,44 @@ namespace MpeMaker.Sections
             InitializeComponent();
             foreach (var panels in MpeInstaller.SectionPanels)
             {
-
                 ToolStripMenuItem testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
                 testToolStripMenuItem.Text = panels.Value.DisplayName;
                 testToolStripMenuItem.Tag = panels.Value;
-                testToolStripMenuItem.Click += new System.EventHandler(TestToolStripMenuItemClick);
+                testToolStripMenuItem.Click += TestToolStripMenuItemClick;
                 mnu_add.DropDownItems.Add(testToolStripMenuItem);
                 cmb_sectiontype.Items.Add(panels.Value.DisplayName);
+            }
+            foreach (var actionProvider in MpeInstaller.ActionProviders)
+            {
+                ToolStripMenuItem testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+                testToolStripMenuItem.Text = actionProvider.Value.DisplayName;
+                testToolStripMenuItem.Tag = actionProvider.Value;
+                testToolStripMenuItem.Click += testToolStripMenuItem_Click;
+                mnu_action_add.DropDownItems.Add(testToolStripMenuItem);
+                cmb_sectiontype.Items.Add(actionProvider.Value.DisplayName);                
+            }
+        }
+
+        void testToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (SelectedSection == null)
+                return;
+            ToolStripMenuItem menu = sender as ToolStripMenuItem;
+            IActionType type = menu.Tag as IActionType;
+            if (type != null)
+            {
+                ActionItem item = new ActionItem(type.DisplayName);
+                item.Params =
+                    new SectionParamCollection(MpeInstaller.ActionProviders[type.DisplayName].GetDefaultParams());
+                ActionEdit dlg = new ActionEdit(Package, item);
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                    if (SelectedSection != null)
+                    {
+                        SelectedSection.Actons.Items.Add(item);
+                        list_actions.Items.Add(item);
+                    }
+                }
             }
         }
         
@@ -99,7 +130,7 @@ namespace MpeMaker.Sections
 
         private void listBox_sections_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(listBox_sections.SelectedItems.Count>0)
+            if (listBox_sections.SelectedItems.Count > 0)
             {
                 SelectedSection = null;
                 var param = listBox_sections.SelectedItem as SectionItem;
@@ -108,6 +139,8 @@ namespace MpeMaker.Sections
                 cmb_sectiontype.Text = param.PanelName;
                 cmb_grupvisibility.Text = param.ConditionGroup;
                 list_groups.Items.Clear();
+                list_actions.Items.Clear();
+
                 foreach (var s in this.Package.Groups.Items)
                 {
                     if (param.IncludedGroups.Contains(s.Name))
@@ -115,6 +148,12 @@ namespace MpeMaker.Sections
                     else
                         list_groups.Items.Add(s.Name, false);
                 }
+
+                foreach (var acton in param.Actons.Items)
+                {
+                    list_actions.Items.Add(acton);
+                }
+
                 SelectedSection = param;
             }
         }

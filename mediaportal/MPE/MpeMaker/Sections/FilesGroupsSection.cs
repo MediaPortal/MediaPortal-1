@@ -64,7 +64,7 @@ namespace MpeMaker.Sections
 
         private TreeNode AddGroup(GroupItem group)
         {
-            TreeNode node = new TreeNode {Text = group.Name, Tag = group};
+            TreeNode node = new TreeNode {Text = group.Name, Tag = group, ToolTipText = group.DisplayName};
             treeView1.Nodes.Add(node);
             return node;
         }
@@ -242,6 +242,10 @@ namespace MpeMaker.Sections
                 SelectedGroup.DefaulChecked = chk_default.Checked;
                 SelectedGroup.DisplayName = txt_displlayName.Text;
                 SelectedGroup.ParentGroup = cmb_parentGroup.Text;
+                if (treeView1.SelectedNode.Tag as GroupItem != null)
+                {
+                    treeView1.SelectedNode.ToolTipText = txt_displlayName.Text;
+                }
             }
             if (SelectedItem != null)
             {
@@ -251,6 +255,10 @@ namespace MpeMaker.Sections
                 SelectedItem.DestinationFilename = txt_installpath.Text;
                 SelectedItem.UpdateOption = (UpdateOptionEnum) cmb_overwrite.SelectedIndex;
                 SelectedItem.Param1 = txt_param1.Text;
+                if (treeView1.SelectedNode.Tag as FileItem != null)
+                {
+                    treeView1.SelectedNode.Text = txt_installpath.Text;
+                }
             }
         }
 
@@ -279,13 +287,18 @@ namespace MpeMaker.Sections
 
         private void mnu_remove_files_Click(object sender, EventArgs e)
         {
-            if (SelectedItem == null)
+            TreeNode selectedNode = treeView1.SelectedNode;
+            if (selectedNode == null)
                 return;
-            if (MessageBox.Show("Do you want to Delete file " + SelectedItem + " from list ?", "", MessageBoxButtons.YesNo) != DialogResult.Yes)
+            FileItem item = selectedNode.Tag as FileItem;
+            if (item == null)
                 return;
-            SelectedGroup.Files.Items.Remove(SelectedItem);
-            treeView1.Nodes.Clear();
-            PopulateTreeView();
+            if (MessageBox.Show("Do you want to Delete file " + item + " from list ?", "", MessageBoxButtons.YesNo) != DialogResult.Yes)
+                return;
+            SelectedGroup.Files.Items.Remove(item);
+            selectedNode.Remove();
+            //treeView1.Nodes.Clear();
+            //PopulateTreeView();
         }
 
         private void btn_set_Click(object sender, EventArgs e)

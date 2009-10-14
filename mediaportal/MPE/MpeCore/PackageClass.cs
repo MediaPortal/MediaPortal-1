@@ -13,9 +13,8 @@ namespace MpeCore
 {
     public class PackageClass
     {
-        public delegate void FileInstalledEventHandler(object sender, InstallEventArgs e);
 
-        // Declare the event.
+        // Executed when a file item is installed.
         public event FileInstalledEventHandler FileInstalled;
 
         public PackageClass()

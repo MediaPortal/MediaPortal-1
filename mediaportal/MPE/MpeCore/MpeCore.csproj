@@ -58,8 +58,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\ActionItem.cs" />
+    <Compile Include="Classes\ActionItemCollection.cs" />
+    <Compile Include="Classes\Events\FileInstalledEventHandler.cs" />
     <Compile Include="Classes\Events\InstallEventArgs.cs" />
     <Compile Include="Classes\ExtensionCollection.cs" />
+    <Compile Include="Classes\ActionType\InstallFiles.cs" />
     <Compile Include="Classes\InstallerType\GenericSkinFile.cs" />
     <Compile Include="Classes\PathUtil.cs" />
     <Compile Include="Classes\SectionPanel\BaseHorizontalLayout.cs">
@@ -119,6 +123,7 @@
     <Compile Include="Classes\VersionInfo.cs" />
     <Compile Include="Classes\WizardNavigator.cs" />
     <Compile Include="Classes\ZipProvider\ZipProviderClass.cs" />
+    <Compile Include="Interfaces\IActionType.cs" />
     <Compile Include="Interfaces\IInstallerTypeProvider.cs" />
     <Compile Include="Interfaces\IPathProvider.cs" />
     <Compile Include="Interfaces\ISectionPanel.cs" />

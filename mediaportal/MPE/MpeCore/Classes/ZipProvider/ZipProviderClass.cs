@@ -52,8 +52,8 @@ namespace MpeCore.Classes.ZipProvider
 
         public bool Extract(FileItem item, string extractLocation)
         {
-            if (File.Exists(item.TempFileLocation))
-                File.Copy(item.TempFileLocation, extractLocation);
+            //if (File.Exists(item.TempFileLocation))
+            //    File.Copy(item.TempFileLocation, extractLocation, true);
             FileStream fs = new FileStream(extractLocation, FileMode.Create);
             _zipPackageFile[item.ZipFileName].Extract(fs);
             fs.Close();

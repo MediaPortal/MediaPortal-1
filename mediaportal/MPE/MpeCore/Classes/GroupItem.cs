@@ -112,6 +112,6 @@ namespace MpeCore.Classes
         }
 
         public FileItemCollection Files { get; set; }
-
+   
     }
 }

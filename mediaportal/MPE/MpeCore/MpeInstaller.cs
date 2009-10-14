@@ -6,6 +6,7 @@ using MpeCore;
 using MpeCore.Interfaces;
 using MpeCore.Classes;
 using MpeCore.Classes.InstallerType;
+using MpeCore.Classes.ActionType;
 using MpeCore.Classes.PathProvider;
 using MpeCore.Classes.SectionPanel;
 using MpeCore.Classes.ZipProvider;
@@ -16,6 +17,7 @@ namespace MpeCore
         static public Dictionary<string,IInstallerTypeProvider> InstallerTypeProviders { get; set; }
         static public Dictionary<string,IPathProvider> PathProviders { get; set; }
         static public Dictionary<string, ISectionPanel> SectionPanels { get; set; }
+        static public Dictionary<string, IActionType> ActionProviders { get; set; }
         static public ZipProviderClass ZipProvider { get; set; }
         public static ExtensionCollection InstalledExtensions { get; set; }
         public static ExtensionCollection KnownExtensions { get; set; }
@@ -25,6 +27,7 @@ namespace MpeCore
             InstallerTypeProviders = new Dictionary<string, IInstallerTypeProvider>();
             PathProviders = new Dictionary<string, IPathProvider>();
             SectionPanels = new Dictionary<string, ISectionPanel>();
+            ActionProviders = new Dictionary<string, IActionType>();
             ZipProvider = new ZipProviderClass();
 
 
@@ -39,6 +42,8 @@ namespace MpeCore
             AddSection(new ImageRadioSelector());
             AddSection(new TreeViewSelector());
             AddSection(new InstallSection());
+
+            AddActionProvider(new InstallFiles());
 
             InstalledExtensions =
                 ExtensionCollection.Load(string.Format("{0}\\V2\\InstalledExtensions.xml",
@@ -57,6 +62,11 @@ namespace MpeCore
         public static void AddInstallType(IInstallerTypeProvider provider)
         {
             InstallerTypeProviders.Add(provider.Name, provider);
+        }
+
+        public static void AddActionProvider(IActionType ac)
+        {
+            ActionProviders.Add(ac.DisplayName, ac);
         }
 
         public static void Save()

@@ -12,21 +12,25 @@ namespace MpeCore.Classes
             IncludedGroups = new List<string>();
             Guid = System.Guid.NewGuid().ToString();
             ConditionGroup = string.Empty;
+            Actons = new ActionItemCollection();
         }
 
-        public SectionItem(SectionItem obj)
-        {
-            Name = obj.Name;
-            Params = Params;
-            IncludedGroups = obj.IncludedGroups;
-            PanelName = obj.PanelName;
-            ConditionGroup = obj.ConditionGroup;
-        }
+        //public SectionItem(SectionItem obj)
+        //{
+        //    Name = obj.Name;
+        //    Params = obj.Params;
+        //    IncludedGroups = obj.IncludedGroups;
+        //    PanelName = obj.PanelName;
+        //    ConditionGroup = obj.ConditionGroup;
+        //    Actons = obj.Actons;
+        //}
+
         [XmlAttribute]
         public string Guid { get; set; } 
         [XmlAttribute]
         public string Name { get; set; }
         public SectionParamCollection Params { get; set; }
+        public ActionItemCollection Actons { get; set; }
         public List<string> IncludedGroups { get; set; }
         public string PanelName { get; set; }
         [XmlAttribute]
