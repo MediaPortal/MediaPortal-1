@@ -771,6 +771,7 @@ namespace TvPlugin
               GUISpinControl cntlTimeInterval = GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL) as GUISpinControl;
               if (cntlTimeInterval != null)
               {
+                cntlTimeInterval.Reset();
                 for (int i = 1; i <= 4; i++)
                 {
                   cntlTimeInterval.AddLabel(String.Empty, i);
