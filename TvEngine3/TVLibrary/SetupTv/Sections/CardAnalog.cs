@@ -932,16 +932,13 @@ namespace SetupTv.Sections
           layer.AddTuningDetails(dbChannel, channel);
           layer.MapChannelToCard(card, dbChannel, false);
 
-          if (checkBoxCreateGroups.Checked)
+          if (dbChannel.IsTv)
           {
-            if (dbChannel.IsTv)
-            {
-              layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.Analog);
-            }
-            if (dbChannel.IsRadio)
-            {
-              layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.Analog);
-            }
+            layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.Analog);
+          }
+          if (dbChannel.IsRadio)
+          {
+            layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.Analog);
           }
 
           if (exists)
@@ -1138,16 +1135,13 @@ namespace SetupTv.Sections
             dbChannel.FreeToAir = true;
             dbChannel.Persist();
 
-            if (checkBoxCreateGroups.Checked)
+            if (dbChannel.IsTv)
             {
-              if (dbChannel.IsTv)
-              {
-                layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.Analog);
-              }
-              if (dbChannel.IsRadio)
-              {
-                layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.Analog);
-              }
+              layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.Analog);
+            }
+            if (dbChannel.IsRadio)
+            {
+              layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.Analog);
             }
 
             layer.AddTuningDetails(dbChannel, channel);

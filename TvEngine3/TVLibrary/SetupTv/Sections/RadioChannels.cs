@@ -1115,13 +1115,19 @@ namespace SetupTv.Sections
         return;
       }
 
-      bool isAllChannelsGroup = (group.GroupName == TvConstants.TvGroupNames.AllChannels);
+      bool isGlobalChannelsGroup = (
+          group.GroupName == TvConstants.RadioGroupNames.AllChannels ||
+          group.GroupName == TvConstants.RadioGroupNames.Analog ||
+          group.GroupName == TvConstants.RadioGroupNames.DVBC ||
+          group.GroupName == TvConstants.RadioGroupNames.DVBS ||
+          group.GroupName == TvConstants.RadioGroupNames.DVBT
+          );
 
       renameGroupToolStripMenuItem.Tag = tabControl1.TabPages[targetIndex];
       deleteGroupToolStripMenuItem.Tag = renameGroupToolStripMenuItem.Tag;
 
-      renameGroupToolStripMenuItem.Enabled = !isAllChannelsGroup;
-      deleteGroupToolStripMenuItem.Enabled = !isAllChannelsGroup;
+      renameGroupToolStripMenuItem.Enabled = !isGlobalChannelsGroup;
+      deleteGroupToolStripMenuItem.Enabled = !isGlobalChannelsGroup;
 
       pt = tabControl1.PointToScreen(pt);
 
