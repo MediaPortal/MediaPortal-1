@@ -58,6 +58,9 @@
       this.checkBoxAlwaysFillHoles = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.tabControlEpg = new System.Windows.Forms.TabControl();
+      this.checkBoxEnableCRCCheck = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.label1 = new System.Windows.Forms.Label();
+      this.label2 = new System.Windows.Forms.Label();
       this.groupBox9.SuspendLayout();
       this.groupBox2.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEpgRefresh)).BeginInit();
@@ -84,7 +87,7 @@
       this.groupBox9.Controls.Add(this.label29);
       this.groupBox9.Controls.Add(this.edDescriptionTest);
       this.groupBox9.Controls.Add(this.btnTest);
-      this.groupBox9.Location = new System.Drawing.Point(3, 161);
+      this.groupBox9.Location = new System.Drawing.Point(3, 200);
       this.groupBox9.Name = "groupBox9";
       this.groupBox9.Size = new System.Drawing.Size(457, 228);
       this.groupBox9.TabIndex = 41;
@@ -210,7 +213,7 @@
       this.groupBox2.Controls.Add(this.label14);
       this.groupBox2.Controls.Add(this.label8);
       this.groupBox2.Controls.Add(this.label7);
-      this.groupBox2.Location = new System.Drawing.Point(235, 57);
+      this.groupBox2.Location = new System.Drawing.Point(235, 96);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(225, 98);
       this.groupBox2.TabIndex = 40;
@@ -306,7 +309,7 @@
       this.groupBox5.Controls.Add(this.checkBoxEnableEpgWhileTimeshifting);
       this.groupBox5.Controls.Add(this.label22);
       this.groupBox5.Controls.Add(this.label23);
-      this.groupBox5.Location = new System.Drawing.Point(3, 57);
+      this.groupBox5.Location = new System.Drawing.Point(3, 96);
       this.groupBox5.Name = "groupBox5";
       this.groupBox5.Size = new System.Drawing.Size(226, 98);
       this.groupBox5.TabIndex = 39;
@@ -367,11 +370,14 @@
       // 
       this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox7.Controls.Add(this.label2);
+      this.groupBox7.Controls.Add(this.label1);
+      this.groupBox7.Controls.Add(this.checkBoxEnableCRCCheck);
       this.groupBox7.Controls.Add(this.checkBoxAlwaysUpdate);
       this.groupBox7.Controls.Add(this.checkBoxAlwaysFillHoles);
       this.groupBox7.Location = new System.Drawing.Point(3, 3);
       this.groupBox7.Name = "groupBox7";
-      this.groupBox7.Size = new System.Drawing.Size(457, 48);
+      this.groupBox7.Size = new System.Drawing.Size(457, 90);
       this.groupBox7.TabIndex = 38;
       this.groupBox7.TabStop = false;
       this.groupBox7.Text = "General";
@@ -407,7 +413,7 @@
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(466, 391);
+      this.tabPage1.Size = new System.Drawing.Size(466, 435);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "DVB EPG";
       this.tabPage1.UseVisualStyleBackColor = true;
@@ -421,8 +427,39 @@
       this.tabControlEpg.Location = new System.Drawing.Point(0, 0);
       this.tabControlEpg.Name = "tabControlEpg";
       this.tabControlEpg.SelectedIndex = 0;
-      this.tabControlEpg.Size = new System.Drawing.Size(474, 417);
+      this.tabControlEpg.Size = new System.Drawing.Size(474, 461);
       this.tabControlEpg.TabIndex = 1;
+      // 
+      // checkBoxEnableCRCCheck
+      // 
+      this.checkBoxEnableCRCCheck.AutoSize = true;
+      this.checkBoxEnableCRCCheck.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxEnableCRCCheck.Location = new System.Drawing.Point(11, 42);
+      this.checkBoxEnableCRCCheck.Name = "checkBoxEnableCRCCheck";
+      this.checkBoxEnableCRCCheck.Size = new System.Drawing.Size(115, 17);
+      this.checkBoxEnableCRCCheck.TabIndex = 12;
+      this.checkBoxEnableCRCCheck.Text = "Enable CRC check";
+      this.checkBoxEnableCRCCheck.UseVisualStyleBackColor = true;
+      // 
+      // label1
+      // 
+      this.label1.AutoSize = true;
+      this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.label1.Location = new System.Drawing.Point(132, 44);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(211, 13);
+      this.label1.TabIndex = 13;
+      this.label1.Text = "(This will increase stability of EPG grabbing)";
+      // 
+      // label2
+      // 
+      this.label2.AutoSize = true;
+      this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.label2.Location = new System.Drawing.Point(29, 65);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(352, 13);
+      this.label2.TabIndex = 14;
+      this.label2.Text = "If your provider doesn\'t broadcast CRC checksums, you have to disable it";
       // 
       // Epg
       // 
@@ -430,7 +467,7 @@
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControlEpg);
       this.Name = "Epg";
-      this.Size = new System.Drawing.Size(474, 417);
+      this.Size = new System.Drawing.Size(474, 475);
       this.groupBox9.ResumeLayout(false);
       this.groupBox9.PerformLayout();
       this.groupBox2.ResumeLayout(false);
@@ -480,6 +517,9 @@
     private System.Windows.Forms.Button btnTest;
     private System.Windows.Forms.TabPage tabPage1;
     private System.Windows.Forms.TabControl tabControlEpg;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.Label label1;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableCRCCheck;
 
   }
 }

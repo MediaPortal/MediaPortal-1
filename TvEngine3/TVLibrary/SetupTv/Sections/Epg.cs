@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Specialized;
 using TvDatabase;
+using System.IO;
 
 namespace SetupTv.Sections
 {
   public partial class Epg : SectionSettings
   {
+    private string crcSettingsFile = Environment.SpecialFolder.CommonApplicationData + "\\Team MediaPortal\\MediaPortal TV Server\\DisableCRCCheck.txt";
+
     public Epg()
       : this("DVB EPG")
     {
@@ -27,6 +30,7 @@ namespace SetupTv.Sections
       checkBoxAlwaysUpdate.Checked = (layer.GetSetting("generalEPGAlwaysReplace", "no").Value == "yes");
 
       checkBoxEnableEPGWhileIdle.Checked = (layer.GetSetting("idleEPGGrabberEnabled", "yes").Value == "yes");
+      checkBoxEnableCRCCheck.Checked = !File.Exists(crcSettingsFile);
       numericUpDownEpgTimeOut.Value = Convert.ToDecimal(layer.GetSetting("timeoutEPG", "10").Value);
       numericUpDownEpgRefresh.Value = Convert.ToDecimal(layer.GetSetting("timeoutEPGRefresh", "240").Value);
       checkBoxEnableEpgWhileTimeshifting.Checked = (layer.GetSetting("timeshiftingEpgGrabberEnabled", "no").Value == "yes");
@@ -48,6 +52,18 @@ namespace SetupTv.Sections
       s = layer.GetSetting("generalEPGAlwaysReplace", "no");
       s.Value = checkBoxAlwaysUpdate.Checked ? "yes" : "no";
       s.Persist();
+
+      if (checkBoxEnableCRCCheck.Checked)
+        System.IO.File.Delete(crcSettingsFile);
+      else
+      {
+        StreamWriter writer = System.IO.File.CreateText(crcSettingsFile);
+        writer.WriteLine("disabled");
+        writer.Flush();
+        writer.Close();
+        writer.Dispose();
+        writer = null;
+      }
 
       s = layer.GetSetting("idleEPGGrabberEnabled", "yes");
       s.Value = checkBoxEnableEPGWhileIdle.Checked ? "yes" : "no";
