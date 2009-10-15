@@ -25,6 +25,8 @@
 
 
 extern void LogDebug(const char *fmt, ...) ;
+extern bool DisableCRCCheck();
+
 CMhwParser::CMhwParser(void)
 {
   LogDebug("mhw ctor");
@@ -35,14 +37,16 @@ CMhwParser::CMhwParser(void)
   CSectionDecoder* pDecoder= new CSectionDecoder();
   pDecoder->SetPid(PID_MHW1);
 	pDecoder->SetCallBack(this);
-  pDecoder->EnableCrcCheck(false);
+	if (DisableCRCCheck())
+		pDecoder->EnableCrcCheck(false);
  // pDecoder->EnableLogging(true);
   m_vecDecoders.push_back(pDecoder);
 
 	pDecoder= new CSectionDecoder();
   pDecoder->SetPid(PID_MHW2);
 	pDecoder->SetCallBack(this);
-  pDecoder->EnableCrcCheck(false);
+	if (DisableCRCCheck())
+		pDecoder->EnableCrcCheck(false);
  // pDecoder->EnableLogging(true);
   m_vecDecoders.push_back(pDecoder);
 }

@@ -23,10 +23,13 @@
 #include "sdtParser.h"
 
 void LogDebug(const char *fmt, ...) ;
+extern bool DisableCRCCheck();
+
 CSdtParser::CSdtParser(void)
 {
   SetPid(PID_SDT);
-  EnableCrcCheck(false);
+	if (DisableCRCCheck())
+		EnableCrcCheck(false);
   Reset();
   m_pCallback=NULL;
 }

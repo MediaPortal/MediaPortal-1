@@ -81,6 +81,21 @@ void DumpTs(byte* tspacket)
 	fwrite(tspacket,1,188,fp);
 	fclose(fp);
 }
+
+bool DisableCRCCheck()
+{
+  TCHAR folder[MAX_PATH];
+  TCHAR fileName[MAX_PATH];
+  ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+  sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal TV Server\\DisableCRCCheck.txt",folder);
+	FILE *f=fopen(fileName,"r");
+	bool ret=true;
+	if (f==NULL)
+		ret=false;
+	else
+		fclose(f);
+	return ret;
+}
 	
 static char logbuffer[2000]; 
 void LogDebug(const char *fmt, ...) 

@@ -25,13 +25,15 @@
 #include "channelinfo.h"
 
 void LogDebug(const char *fmt, ...) ; 
+extern bool DisableCRCCheck();
 
 CPmtParser::CPmtParser()
 {
 	m_pmtCallback2=NULL;
 	_isFound=false;
 	m_serviceId=-1;
-	EnableCrcCheck(false);
+	if (DisableCRCCheck())
+		EnableCrcCheck(false);
 }
 
 CPmtParser::~CPmtParser(void)

@@ -24,6 +24,8 @@
 
 
 extern void LogDebug(const char *fmt, ...) ;
+extern bool DisableCRCCheck();
+
 CEpgParser::CEpgParser(void)
 {
 	// standard epg
@@ -181,7 +183,8 @@ void CEpgParser::AddSectionDecoder(int pid)
 {
 	CSectionDecoder* pDecoder= new CSectionDecoder();
   pDecoder->SetPid(pid);
-  pDecoder->EnableCrcCheck(false);
+	if (DisableCRCCheck())
+		pDecoder->EnableCrcCheck(false);
 	pDecoder->SetCallBack(this);
   m_vecDecoders.push_back(pDecoder);
 }

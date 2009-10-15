@@ -24,10 +24,13 @@
 
 
 extern void LogDebug(const char *fmt, ...) ;
+extern bool DisableCRCCheck();
+
 CNITDecoder::CNITDecoder(void)
 {
 	SetPid(PID_NIT);
-  EnableCrcCheck(false);
+	if (DisableCRCCheck())
+		EnableCrcCheck(false);
 }
 
 CNITDecoder::~CNITDecoder(void)
