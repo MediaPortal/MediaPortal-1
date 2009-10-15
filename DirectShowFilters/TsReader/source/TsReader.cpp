@@ -41,16 +41,18 @@
 #include <cassert>
 
 static char logFile[MAX_PATH];
-static bool logFileParsed = false;
+static WORD logFileParsed = -1;
 
 void GetLogFile(char *pLog)
 {
-  if(!logFileParsed)
+  SYSTEMTIME systemTime;
+  GetLocalTime(&systemTime);
+  if(logFileParsed != systemTime.wDay)
   {
     TCHAR folder[MAX_PATH];
     ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-    sprintf(logFile,"%s\\Team MediaPortal\\MediaPortal\\Log\\TsReader.log",folder);
-    logFileParsed=true;
+    sprintf(logFile,"%s\\Team MediaPortal\\MediaPortal\\Log\\TsReader-%04.4d-%02.2d-%02.2d.Log",folder, systemTime.wYear, systemTime.wMonth, systemTime.wDay);
+    logFileParsed=systemTime.wDay; // rec
   }
   strcpy(pLog, &logFile[0]);
 }

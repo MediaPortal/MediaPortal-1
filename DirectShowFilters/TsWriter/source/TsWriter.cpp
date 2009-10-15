@@ -29,6 +29,23 @@
 #include "TsWriter.h"
 #include "..\..\shared\tsheader.h"
 
+static char logFile[MAX_PATH];
+static WORD logFileParsed = -1;
+
+void GetLogFile(char *pLog)
+{
+  SYSTEMTIME systemTime;
+  GetLocalTime(&systemTime);
+  if(logFileParsed != systemTime.wDay)
+  {
+    TCHAR folder[MAX_PATH];
+    ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+    sprintf(logFile,"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\TsWriter-%04.4d-%02.2d-%02.2d.Log",folder, systemTime.wYear, systemTime.wMonth, systemTime.wDay);
+    logFileParsed=systemTime.wDay; // rec
+  }
+  strcpy(pLog, &logFile[0]);
+}
+
 // Setup data
 const AMOVIESETUP_MEDIATYPE sudPinTypes =
 {
@@ -79,13 +96,12 @@ void LogDebug(const char *fmt, ...)
 
   TCHAR folder[MAX_PATH];
   TCHAR fileName[MAX_PATH];
-  ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-  sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\TsWriter.Log",folder);
+  GetLogFile(fileName);
 	FILE* fp = fopen(fileName,"a+");
 	if (fp!=NULL)
 	{
-		SYSTEMTIME systemTime;
-		GetLocalTime(&systemTime);
+    SYSTEMTIME systemTime;
+    GetLocalTime(&systemTime);
 		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%02.2d %s\n",
 			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
 			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,systemTime.wMilliseconds,
@@ -327,7 +343,6 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *phr)
 {
   m_id=0;
 
-  DeleteFile("TsWriter.log");
   LogDebug("CMpTs::ctor()");
 		
 	b_dumpRawPakets=false;
