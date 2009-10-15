@@ -78,7 +78,7 @@ namespace TvPlugin
           IList<Recording> recordings = Recording.ListAll();
           for (int i = recordings.Count - 1; i >= 0; i--)
           {
-            string recFileName = GetFileName(recordings[i].FileName);
+            string recFileName = TVUtil.GetFileName(recordings[i].FileName);
             string thumbNail = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded,
                                              Path.ChangeExtension(Utils.SplitFilename(recFileName), null),
                                              Utils.GetThumbExtension());
@@ -1405,7 +1405,7 @@ namespace TvPlugin
           }
         }
       */
-      string fileName = GetFileName(rec.FileName);
+      string fileName = TVUtil.GetFileName(rec.FileName);
 
       bool useRTSP = TVHome.UseRTSP();
       if (useRTSP)
@@ -1427,7 +1427,7 @@ namespace TvPlugin
         }
 
         //populates recording metadata to g_player;
-        g_Player.currentFileName = GetFileName(rec.FileName);
+        g_Player.currentFileName = rec.FileName;
         g_Player.currentTitle = rec.Title;
         g_Player.currentDescription = rec.Description;
 
@@ -1437,36 +1437,6 @@ namespace TvPlugin
         return true;
       }
       return false;
-    }
-
-    private static string GetFileName(string fileName)
-    {
-      bool useRTSP = TVHome.UseRTSP();
-      bool fileExists = File.Exists(fileName);
-
-      if (!fileExists && !useRTSP) //singleseat
-      {
-        if (TVHome.RecordingPath().Length > 0)
-        {
-          string path = Path.GetDirectoryName(fileName);
-          int index = path.IndexOf("\\");
-
-          if (index == -1)
-          {
-            fileName = TVHome.RecordingPath() + "\\" + Path.GetFileName(fileName);
-          }
-          else
-          {
-            fileName = TVHome.RecordingPath() + path.Substring(index) + "\\" + Path.GetFileName(fileName);
-          }
-        }
-        else
-        {
-          fileName = fileName.Replace(":", "");
-          fileName = "\\\\" + RemoteControl.HostName + "\\" + fileName;
-        }
-      }
-      return fileName;
     }
 
     private void OnDeleteRecording(int iItem)

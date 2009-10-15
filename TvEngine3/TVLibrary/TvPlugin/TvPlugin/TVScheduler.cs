@@ -913,6 +913,7 @@ namespace TvPlugin
             Recording recDB = Recording.Retrieve(fileName);
             if (recDB != null)
             {
+              fileName = TVUtil.GetFileName(recDB.FileName);
               bool useRTSP = TVHome.UseRTSP();
               if (useRTSP)
               {

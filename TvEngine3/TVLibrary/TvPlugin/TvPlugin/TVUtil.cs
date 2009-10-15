@@ -24,7 +24,8 @@ using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using TvDatabase;
 using MediaPortal.Profile;
-
+using System.IO;
+using TvControl;
 
 namespace TvPlugin
 {
@@ -322,5 +323,40 @@ namespace TvPlugin
     }
 
     //bool _isSeries = false;
+
+    /// <summary>
+    /// Create File Name
+    /// </summary>
+    /// <param name="fileName"></param>
+    /// <returns></returns>
+    public static string GetFileName(string fileName)
+    {
+      bool useRTSP = TVHome.UseRTSP();
+      bool fileExists = File.Exists(fileName);
+
+      if (!fileExists && !useRTSP) //singleseat
+      {
+        if (TVHome.RecordingPath().Length > 0)
+        {
+          string path = Path.GetDirectoryName(fileName);
+          int index = path.IndexOf("\\");
+
+          if (index == -1)
+          {
+            fileName = TVHome.RecordingPath() + "\\" + Path.GetFileName(fileName);
+          }
+          else
+          {
+            fileName = TVHome.RecordingPath() + path.Substring(index) + "\\" + Path.GetFileName(fileName);
+          }
+        }
+        else
+        {
+          fileName = fileName.Replace(":", "");
+          fileName = "\\\\" + RemoteControl.HostName + "\\" + fileName;
+        }
+      }
+      return fileName;
+    }
   }
 }
