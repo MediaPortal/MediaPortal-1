@@ -7,7 +7,7 @@ namespace SetupTv.Sections
 {
   public partial class Epg : SectionSettings
   {
-    private string crcSettingsFile = Environment.SpecialFolder.CommonApplicationData + "\\Team MediaPortal\\MediaPortal TV Server\\DisableCRCCheck.txt";
+    private string crcSettingsFile = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\Team MediaPortal\\MediaPortal TV Server\\DisableCRCCheck.txt";
 
     public Epg()
       : this("DVB EPG")
