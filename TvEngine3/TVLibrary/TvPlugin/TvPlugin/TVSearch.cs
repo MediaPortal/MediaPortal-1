@@ -495,22 +495,26 @@ namespace TvPlugin
             imgTvLogo.IsVisible = false;
           }
         }
-        if (btnEpisode != null) btnEpisode.Disabled = false;
-        if (btnLetter != null)
+
+        if (currentSearchMode != SearchMode.Genre)
         {
-          btnLetter.Disabled = false;
-        }
-        if (btnSMSInput != null)
-        {
-          btnSMSInput.Disabled = false;
-        }
-        if (btnShow != null)
-        {
-          btnShow.Disabled = false;
-        }
-        if (btnSearchDescription != null)
-        {
-          btnSearchDescription.Disabled = false;
+          if (btnEpisode != null) btnEpisode.Disabled = false;
+          if (btnLetter != null)
+          {
+            btnLetter.Disabled = false;
+          }
+          if (btnSMSInput != null)
+          {
+            btnSMSInput.Disabled = false;
+          }
+          if (btnShow != null)
+          {
+            btnShow.Disabled = false;
+          }
+          if (btnSearchDescription != null)
+          {
+            btnSearchDescription.Disabled = false;
+          }
         }
         lblNumberOfItems.YPosition = listView.SpinY;
       }
