@@ -48,7 +48,7 @@
   <Transponder>
     <CarrierFrequency>3905000</CarrierFrequency>
     <Polarisation>LinearH</Polarisation>
-    <SymbolRate>3250</SymbolRate>
+    <SymbolRate>6100</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>NotSet</Pilot>

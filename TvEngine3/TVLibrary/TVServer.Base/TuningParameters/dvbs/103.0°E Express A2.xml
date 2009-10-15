@@ -3,9 +3,9 @@
   <Transponder>
     <CarrierFrequency>3675000</CarrierFrequency>
     <Polarisation>CircularR</Polarisation>
-    <SymbolRate>31106</SymbolRate>
+    <SymbolRate>33483</SymbolRate>
     <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
+    <InnerFecRate>Rate7_8</InnerFecRate>
     <Pilot>NotSet</Pilot>
     <Rolloff>NotSet</Rolloff>
   </Transponder>
