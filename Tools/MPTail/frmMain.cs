@@ -168,11 +168,15 @@ namespace MPTail
       loggerCollection.Add(tr);
     }
 
+    private String GetTimeStamp()
+    {
+      return DateTime.Now.ToString("-yyyy-MM-dd");
+    }
     private void AddAllLoggers()
     {
       AddLogger(mpLogPath + "MediaPortal.log", MPTabCtrl);
       AddLogger(mpLogPath + "Configuration.log", MPTabCtrl);
-      AddLogger(mpLogPath + "TsReader.log", MPTabCtrl);
+      AddLogger(mpLogPath + "TsReader" + GetTimeStamp() + ".log", MPTabCtrl);
       AddLogger(mpLogPath + "Error.log", MPTabCtrl);
       AddLogger(mpLogPath + "Recorder.log", MPTabCtrl);
       AddLogger(mpLogPath + "EVR.log", MPTabCtrl);
@@ -180,7 +184,7 @@ namespace MPTail
 
       AddLogger(tveLogPath + "TV.log", TVETabCtrl);
       AddLogger(tveLogPath + "Error.log", TVETabCtrl);
-      AddLogger(tveLogPath + "TsWriter.log", TVETabCtrl);
+      AddLogger(tveLogPath + "TsWriter"+GetTimeStamp()+".log", TVETabCtrl);
       AddLogger(tveLogPath + "EPG.log", TVETabCtrl);
       AddLogger(tveLogPath + "Player.log", TVETabCtrl);
       AddLogger(tveLogPath + "Streaming Server.log", TVETabCtrl);
