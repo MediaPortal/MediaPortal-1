@@ -119,11 +119,6 @@ namespace MediaPortal.Player
     protected DvdDomain _currDomain;
     protected IBasicAudio _basicAudio = null;
     protected IMediaPosition _mediaPos = null;
-    protected IBaseFilter _videoCodecFilter = null;
-    protected IBaseFilter _audioCodecFilter = null;
-    protected IBaseFilter _audioRendererFilter = null;
-    protected IBaseFilter[] customFilters; // FlipGer: array for custom directshow filters
-
     private VMR7Util _vmr7 = null;
     protected int _speed = 1;
     protected double _currentTime = 0;
@@ -448,46 +443,7 @@ namespace MediaPortal.Player
         {
           _vmr7.RemoveVMR7();
         }
-        _vmr7 = null;
-
-        if (_videoCodecFilter != null)
-        {
-          while ((hr = DirectShowUtil.ReleaseComObject(_videoCodecFilter)) > 0)
-          {
-            ;
-          }
-          _videoCodecFilter = null;
-        }
-        if (_audioCodecFilter != null)
-        {
-          while ((hr = DirectShowUtil.ReleaseComObject(_audioCodecFilter)) > 0)
-          {
-            ;
-          }
-          _audioCodecFilter = null;
-        }
-
-        if (_audioRendererFilter != null)
-        {
-          while ((hr = DirectShowUtil.ReleaseComObject(_audioRendererFilter)) > 0)
-          {
-            ;
-          }
-          _audioRendererFilter = null;
-        }
-
-        // FlipGer: release custom filters
-        for (int i = 0; i < customFilters.Length; i++)
-        {
-          if (customFilters[i] != null)
-          {
-            while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0)
-            {
-              ;
-            }
-          }
-          customFilters[i] = null;
-        }
+        _vmr7 = null;        
 
         if (_dvdbasefilter != null)
         {
@@ -537,8 +493,7 @@ namespace MediaPortal.Player
           }
           _dvdGraph = null;
         }
-        _state = PlayState.Init;
-        VMR9Util.g_vmr9.EVRSetDVDMenuState(false);
+        _state = PlayState.Init;        
 
         GUIGraphicsContext.form.Invalidate(true);
         GUIGraphicsContext.form.Activate();
@@ -2080,22 +2035,21 @@ namespace MediaPortal.Player
       }
       if (strVideoCodec.Length > 0)
       {
-        _videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
+        DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
       }
       if (strAudioCodec.Length > 0)
       {
-        _audioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
+        DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
       }
       if (strAudiorenderer.Length > 0)
       {
-        _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudiorenderer, false);
+        DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudiorenderer, false);
       }
       // FlipGer: add custom filters to graph
-      customFilters = new IBaseFilter[intFilters];
       string[] arrFilters = strFilters.Split(';');
       for (int i = 0; i < intFilters; i++)
       {
-        customFilters[i] = DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
+        DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
       }
     }
 

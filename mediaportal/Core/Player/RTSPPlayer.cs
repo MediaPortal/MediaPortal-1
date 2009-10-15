@@ -99,13 +99,9 @@ namespace MediaPortal.Player
     protected IBasicVideo2 basicVideo;
 
     /// <summary> interface to single-step video. </summary>
-    protected IBaseFilter videoCodecFilter = null;
-
-    protected IBaseFilter audioCodecFilter = null;
     protected IBaseFilter audioRendererFilter = null;
     protected IBaseFilter _subtitleFilter = null;
     protected SubtitleRenderer dvbSubRenderer = null;
-    protected IBaseFilter[] customFilters; // FlipGer: array for custom directshow filters
     protected IBaseFilter _mpegDemux;
     protected IDirectVobSub vobSub;
     private DateTime elapsedTimer = DateTime.Now;
@@ -235,12 +231,12 @@ namespace MediaPortal.Player
         {
           if (strVideoCodec.Length > 0)
           {
-            videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strVideoCodec);
+            DirectShowUtil.AddFilterToGraph(graphBuilder, strVideoCodec);
           }
         }
         if (strAudioCodec.Length > 0)
         {
-          audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
+          DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
         }
 
         if (enableDvbSubtitles == true)
@@ -259,17 +255,15 @@ namespace MediaPortal.Player
 
         Log.Debug("Is subtitle fitler null? {0}", (_subtitleFilter == null));
         // FlipGer: add custom filters to graph
-        customFilters = new IBaseFilter[intFilters];
         string[] arrFilters = strFilters.Split(';');
         for (int i = 0; i < intFilters; i++)
         {
-          customFilters[i] = DirectShowUtil.AddFilterToGraph(graphBuilder, arrFilters[i]);
+          DirectShowUtil.AddFilterToGraph(graphBuilder, arrFilters[i]);
         }
         if (strAudiorenderer.Length > 0)
         {
           audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder, strAudiorenderer, false);
         }
-
 
         Log.Info("RTSPPlayer: load:{0}", m_strCurrentFile);
         IFileSourceFilter interfaceFile = (IFileSourceFilter) _rtspSource;
@@ -278,7 +272,6 @@ namespace MediaPortal.Player
           Log.Error("RTSPPlayer:Failed to get IFileSourceFilter");
           return false;
         }
-
 
         //Log.Info("RTSPPlayer: open file:{0}",filename);
         hr = interfaceFile.Load(m_strCurrentFile, null);
@@ -438,7 +431,6 @@ namespace MediaPortal.Player
           Vmr9.SetDeinterlaceMode();
         }
 
-
         _mediaCtrl = (IMediaControl) graphBuilder;
         mediaEvt = (IMediaEventEx) graphBuilder;
         _mediaSeeking = (IMediaSeeking) graphBuilder;
@@ -496,44 +488,24 @@ namespace MediaPortal.Player
       Log.Info("RTSPPlayer:cleanup DShow graph");
       try
       {
+        if (_mediaCtrl != null)
+        {
+          hr = _mediaCtrl.StopWhenReady();
+          _mediaCtrl = null;
+        }
+
+        if (mediaEvt != null)
+        {
+          hr = mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
+          mediaEvt = null;
+        }
+
         videoWin = graphBuilder as IVideoWindow;
         if (videoWin != null)
         {
-          videoWin.put_Visible(OABool.False);
-        }
-
-        if (Vmr9 != null)
-        {
-          Log.Info("RTSPPlayer:cleanup vmr9");
-          Vmr9.Enable(false);
-        }
-        if (_mediaCtrl != null)
-        {
-          Log.Info("RTSPPlayer:stop graph");
-          int counter = 0;
-          while (GUIGraphicsContext.InVmr9Render)
-          {
-            counter++;
-            Thread.Sleep(100);
-            if (counter > 100)
-            {
-              break;
-            }
-          }
-          hr = _mediaCtrl.Stop();
-          FilterState state;
-          hr = _mediaCtrl.GetState(10, out state);
-          Log.Info("state:{0} {1:X}", state.ToString(), hr);
-          _mediaCtrl = null;
-        }
-        mediaEvt = null;
-
-
-        if (Vmr9 != null)
-        {
-          Log.Info("RTSPPlayer:dispose vmr9");
-          Vmr9.Dispose();
-          Vmr9 = null;
+          hr = videoWin.put_Visible(OABool.False);
+          hr = videoWin.put_Owner(IntPtr.Zero);
+          videoWin = null;
         }
 
         _mediaSeeking = null;
@@ -541,7 +513,31 @@ namespace MediaPortal.Player
         basicAudio = null;
         basicVideo = null;
         videoWin = null;
+        SubEngine.GetInstance().FreeSubtitles();
 
+        if (graphBuilder != null)
+        {
+          DirectShowUtil.RemoveFilters(graphBuilder);
+          DirectShowUtil.ReleaseComObject(graphBuilder);
+          graphBuilder = null;
+        }
+
+        if (_rotEntry != null)
+        {
+          _rotEntry.Dispose();
+          _rotEntry = null;
+        }
+
+        if (Vmr9 != null)
+        {
+          Vmr9.Enable(false);
+          Vmr9.Dispose();
+          Vmr9 = null;
+        }
+
+        GUIGraphicsContext.form.Invalidate(true);
+        _state = PlayState.Init;
+        
         if (_mpegDemux != null)
         {
           Log.Info("cleanup mpegdemux");
@@ -560,34 +556,6 @@ namespace MediaPortal.Player
           }
           _rtspSource = null;
         }
-        if (videoCodecFilter != null)
-        {
-          Log.Info("cleanup videoCodecFilter");
-          while (DirectShowUtil.ReleaseComObject(videoCodecFilter) > 0)
-          {
-            ;
-          }
-          videoCodecFilter = null;
-        }
-        if (audioCodecFilter != null)
-        {
-          Log.Info("cleanup audioCodecFilter");
-          while (DirectShowUtil.ReleaseComObject(audioCodecFilter) > 0)
-          {
-            ;
-          }
-          audioCodecFilter = null;
-        }
-        if (audioRendererFilter != null)
-        {
-          Log.Info("cleanup audioRendererFilter");
-          while (DirectShowUtil.ReleaseComObject(audioRendererFilter) > 0)
-          {
-            ;
-          }
-          audioRendererFilter = null;
-        }
-
         if (_subtitleFilter != null)
         {
           while ((hr = DirectShowUtil.ReleaseComObject(_subtitleFilter)) > 0)
@@ -602,20 +570,7 @@ namespace MediaPortal.Player
           this.dvbSubRenderer = null;
         }
 
-        // FlipGer: release custom filters
-        for (int i = 0; i < customFilters.Length; i++)
-        {
-          Log.Info("cleanup custom filters");
-          if (customFilters[i] != null)
-          {
-            while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0)
-            {
-              ;
-            }
-          }
-          customFilters[i] = null;
-        }
-
+       
         if (vobSub != null)
         {
           Log.Info("cleanup vobSub");
@@ -625,30 +580,7 @@ namespace MediaPortal.Player
           }
           vobSub = null;
         }
-        //	DsUtils.RemoveFilters(graphBuilder);
-
-        if (_rotEntry != null)
-        {
-          _rotEntry.Dispose();
-        }
-        _rotEntry = null;
-
-        if (graphBuilder != null)
-        {
-          Log.Info("cleanup graphBuilder");
-          while ((hr = DirectShowUtil.ReleaseComObject(graphBuilder)) > 0)
-          {
-            ;
-          }
-          graphBuilder = null;
-        }
-
-        GUIGraphicsContext.form.Invalidate(true);
-        _state = PlayState.Init;
-
-        GC.Collect();
-        Log.Info("cleanup done");
-      }
+       }
       catch (Exception ex)
       {
         Log.Error("RTSPPlayer: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
@@ -691,13 +623,12 @@ namespace MediaPortal.Player
       Log.Info("RTSPPlayer:play {0}", strFile);
       //lock ( typeof(VideoPlayerVMR7) )
       {
-        GC.Collect();
         CloseInterfaces();
-        GC.Collect();
         m_bStarted = false;
         if (!GetInterfaces())
         {
           m_strCurrentFile = "";
+          CloseInterfaces();
           return false;
         }
         int hr = mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);

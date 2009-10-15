@@ -185,18 +185,7 @@ namespace MediaPortal.Player
     protected IVideoWindow videoWin;
 
     /// <summary> interface to get information and control video. </summary>
-    protected IBasicVideo2 basicVideo;
-
-    /// <summary> interface to single-step video. </summary>
-    protected IBaseFilter videoCodecFilter = null;
-
-    protected IBaseFilter h264videoCodecFilter = null;
-    protected IBaseFilter audioCodecFilter = null;
-    protected IBaseFilter aacaudioCodecFilter = null;
-    protected IBaseFilter audioRendererFilter = null;
-    protected IBaseFilter[] customFilters; // FlipGer: array for custom directshow filters
-
-    private DateTime elapsedTimer = DateTime.Now;
+    protected IBasicVideo2 basicVideo;    
 
     /// <summary> audio interface used to control volume. </summary>
     protected IBasicAudio basicAudio;
@@ -209,6 +198,7 @@ namespace MediaPortal.Player
     protected DateTime updateTimer;
     protected FilterStreams FStreams = null;
     protected double[] chapters = null;
+    private DateTime elapsedTimer = DateTime.Now;
 
     protected const string defaultLanguageCulture = "EN";
 
@@ -245,13 +235,12 @@ namespace MediaPortal.Player
       Log.Info("VideoPlayer:play {0}", strFile);
       //lock ( typeof(VideoPlayerVMR7) )
       {
-        GC.Collect();
         CloseInterfaces();
-        GC.Collect();
         m_bStarted = false;
         if (!GetInterfaces())
         {
           m_strCurrentFile = "";
+          CloseInterfaces();
           return false;
         }
         int hr = mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
@@ -947,9 +936,7 @@ namespace MediaPortal.Player
           }
           if (dTime < Duration)
           {
-            Log.Info("seekabs:{0}", dTime);
-            mediaPos.put_CurrentPosition(dTime);
-            Log.Info("seekabs:{0} done", dTime);
+            mediaPos.put_CurrentPosition(dTime);                    
           }
         }
       }

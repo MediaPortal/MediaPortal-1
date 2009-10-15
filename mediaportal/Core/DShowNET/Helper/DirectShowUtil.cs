@@ -1469,7 +1469,15 @@ namespace DShowNET.Helper
           FilterInfo info;
           filter.QueryFilterInfo(out info);
           Log.Debug("Remove filter from graph: {0}", info.achName);
-          hr = graphBuilder.RemoveFilter(filter);
+          try
+          {
+            hr = graphBuilder.RemoveFilter(filter);
+            DsError.ThrowExceptionForHR(hr);            
+          }
+          catch (Exception error)
+          {
+            Log.Error("Remove of filter: {0}, failed with code (HR): {1}, explanation: {2}", info.achName, hr.ToString(), error.Message); 
+          }
           while (ReleaseComObject(filter) > 0) ;
         }
       }

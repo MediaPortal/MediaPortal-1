@@ -138,8 +138,6 @@ namespace MediaPortal.Player
     #region variables
 
     private VMR9Util _vmr9 = null;
-    private IPin _pinAudio = null;
-    private IPin _pinVideo = null;
     protected IBaseFilter _audioSwitcherFilter = null;
     protected IAudioStream _audioStream = null;
     protected ISubtitleStream _subtitleStream = null;
@@ -407,7 +405,7 @@ namespace MediaPortal.Player
           {
             if (strVideoCodec.Length > 0)
             {
-              _videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
+              DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
             }
           }
           catch (Exception ex)
@@ -418,7 +416,7 @@ namespace MediaPortal.Player
           {
             if (strH264VideoCodec.Length > 0 && strH264VideoCodec != strVideoCodec)
             {
-              _h264videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strH264VideoCodec);
+              DirectShowUtil.AddFilterToGraph(_graphBuilder, strH264VideoCodec);
             }
           }
           catch (Exception ex)
@@ -428,11 +426,11 @@ namespace MediaPortal.Player
         }
         if (strAudioCodec.Length > 0)
         {
-          _audioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
+          DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
         }
         if (strAACAudioCodec.Length > 0)
         {
-          _aacaudioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAACAudioCodec);
+          DirectShowUtil.AddFilterToGraph(_graphBuilder, strAACAudioCodec);
         }
         if (strAudioRenderer.Length > 0)
         {
@@ -442,7 +440,7 @@ namespace MediaPortal.Player
         {
           try
           {
-            _subtitleFilter = SubtitleRenderer.GetInstance().AddSubtitleFilter(_graphBuilder);
+            SubtitleRenderer.GetInstance().AddSubtitleFilter(_graphBuilder);
           }
           catch (Exception e)
           {
@@ -450,11 +448,10 @@ namespace MediaPortal.Player
           }
         }
         // FlipGer: add custom filters to graph
-        customFilters = new IBaseFilter[intFilters];
         string[] arrFilters = strFilters.Split(';');
         for (int i = 0; i < intFilters; i++)
         {
-          customFilters[i] = DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
+          DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
         }
 
         #endregion
@@ -716,165 +713,58 @@ namespace MediaPortal.Player
 
     private void Cleanup()
     {
+      if (_graphBuilder == null)
+      {
+        return;
+      } 
       int hr;
       Log.Info("TSReaderPlayer: cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
       try
       {
-        if (_graphBuilder != null)
-        {
-          _videoWin = _graphBuilder as IVideoWindow;
-          if (_videoWin != null)
-          {
-            _videoWin.put_Visible(OABool.False);
-          }
-        }
-        else
-        {
-          Log.Info("TSReaderPlayer: grapbuilder=null");
-        }
-        if (_vmr9 != null)
-        {
-          Log.Info("TSReaderPlayer: vmr9 disable");
-          _vmr9.Enable(false);
-        }
         if (_mediaCtrl != null)
         {
-          int counter = 0;
-          while (GUIGraphicsContext.InVmr9Render)
-          {
-            counter++;
-            Thread.Sleep(100);
-            if (counter > 100)
-            {
-              break;
-            }
-            break;
-          }
-          hr = _mediaCtrl.Stop();
-          FilterState state;
-          hr = _mediaCtrl.GetState(10, out state);
-          Log.Info("state:{0} {1:X}", state.ToString(), hr);
+          hr = _mediaCtrl.StopWhenReady();
           _mediaCtrl = null;
         }
-        _mediaEvt = null;
+
+        if (_mediaEvt != null)
+        {
+          hr = _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
+          _mediaEvt = null;
+        }
+
+        _videoWin = _graphBuilder as IVideoWindow;
+        if (_videoWin != null)
+        {
+          hr = _videoWin.put_Visible(OABool.False);
+          hr = _videoWin.put_Owner(IntPtr.Zero);
+          _videoWin = null;
+        }
+
         _mediaSeeking = null;
-        _videoWin = null;
         _basicAudio = null;
         _basicVideo = null;
-        if (_vmr9 != null)
-        {
-          _vmr9.Dispose();
-          _vmr9 = null;
-        }
-        if (_fileSource != null)
-        {
-          while ((hr = DirectShowUtil.ReleaseComObject(_fileSource)) > 0)
-          {
-            ;
-          }
-          _fileSource = null;
-        }
-        if (_pinAudio != null)
-        {
-          DirectShowUtil.ReleaseComObject(_pinAudio);
-          _pinAudio = null;
-        }
-        if (_pinVideo != null)
-        {
-          DirectShowUtil.ReleaseComObject(_pinVideo);
-          _pinVideo = null;
-        }
-        if (_videoCodecFilter != null)
-        {
-          while ((hr = DirectShowUtil.ReleaseComObject(_videoCodecFilter)) > 0)
-          {
-            ;
-          }
-          _videoCodecFilter = null;
-        }
-        if (_h264videoCodecFilter != null)
-        {
-          while ((hr = DirectShowUtil.ReleaseComObject(_h264videoCodecFilter)) > 0)
-          {
-            ;
-          }
-          _h264videoCodecFilter = null;
-        }
-        if (_audioCodecFilter != null)
-        {
-          while ((hr = DirectShowUtil.ReleaseComObject(_audioCodecFilter)) > 0)
-          {
-            ;
-          }
-          _audioCodecFilter = null;
-        }
-        if (_aacaudioCodecFilter != null)
-        {
-          while ((hr = DirectShowUtil.ReleaseComObject(_aacaudioCodecFilter)) > 0)
-          {
-            ;
-          }
-          _aacaudioCodecFilter = null;
-        }
-        if (_audioRendererFilter != null)
-        {
-          while ((hr = DirectShowUtil.ReleaseComObject(_audioRendererFilter)) > 0)
-          {
-            ;
-          }
-          _audioRendererFilter = null;
-        }
-        if (_subtitleFilter != null)
-        {
-          while ((hr = DirectShowUtil.ReleaseComObject(_subtitleFilter)) > 0)
-          {
-            ;
-          }
-          _subtitleFilter = null;
-          if (this._dvbSubRenderer != null)
-          {
-            this._dvbSubRenderer.SetPlayer(null);
-          }
-          this._dvbSubRenderer = null;
-        }
-        // FlipGer: release custom filters
-        if (customFilters != null)
-        {
-          for (int i = 0; i < customFilters.Length; i++)
-          {
-            if (customFilters[i] != null)
-            {
-              while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0)
-              {
-                ;
-              }
-            }
-            customFilters[i] = null;
-          }
-        }
-        if (_mpegDemux != null)
-        {
-          while ((hr = DirectShowUtil.ReleaseComObject(_mpegDemux)) > 0)
-          {
-            ;
-          }
-          _mpegDemux = null;
-        }
-        //	DsUtils.RemoveFilters(graphBuilder);
-        if (_rotEntry != null)
-        {
-          _rotEntry.Dispose();
-        }
-        _rotEntry = null;
+        
         if (_graphBuilder != null)
         {
           DirectShowUtil.RemoveFilters(_graphBuilder);
-          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0)
-          {
-            ;
-          }
+          DirectShowUtil.ReleaseComObject(_graphBuilder);
           _graphBuilder = null;
         }
+
+        if (_rotEntry != null)
+        {
+          _rotEntry.Dispose();
+          _rotEntry = null;
+        }
+
+        if (_vmr9 != null)
+        {
+          _vmr9.Enable(false);
+          _vmr9.Dispose();
+          _vmr9 = null;
+        }
+
         GUIGraphicsContext.form.Invalidate(true);
         _state = PlayState.Init;
       }
@@ -882,7 +772,10 @@ namespace MediaPortal.Player
       {
         Log.Error("TSReaderPlayer: Exception while cleaning DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
-      Log.Info("TSReaderPlayer: Cleanup done");
+      //switch back to directx windowed mode
+      Log.Info("TSReaderPlayer: Disabling DX9 exclusive mode");
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+      GUIWindowManager.SendMessage(msg);
     }
 
     protected override void OnProcess()

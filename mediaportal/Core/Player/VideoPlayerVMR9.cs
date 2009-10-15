@@ -129,31 +129,31 @@ namespace MediaPortal.Player
           {
             if (strVideoCodec.Length > 0)
             {
-              videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strVideoCodec);
+              DirectShowUtil.AddFilterToGraph(graphBuilder, strVideoCodec);
             }
             if (strAudioCodec.Length > 0)
             {
-              audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
+              DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
             }
           }
           if (extension.Equals(".wmv"))
           {
-            videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "WMVideo Decoder DMO");
-            audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "WMAudio Decoder DMO");
+            DirectShowUtil.AddFilterToGraph(graphBuilder, "WMVideo Decoder DMO");
+            DirectShowUtil.AddFilterToGraph(graphBuilder, "WMAudio Decoder DMO");
           }
           if (extension.Equals(".mp4") || extension.Equals(".mkv"))
           {
             if (strH264VideoCodec.Length > 0)
             {
-              h264videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strH264VideoCodec);
+              DirectShowUtil.AddFilterToGraph(graphBuilder, strH264VideoCodec);
             }
             if (strAudioCodec.Length > 0)
             {
-              audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
+              DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
             }
             if (strAACAudioCodec.Length > 0 && strAACAudioCodec != strAudioCodec)
             {
-              aacaudioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAACAudioCodec);
+              DirectShowUtil.AddFilterToGraph(graphBuilder, strAACAudioCodec);
             }
           }
         }
@@ -241,15 +241,14 @@ namespace MediaPortal.Player
         }
         if (strAudiorenderer.Length > 0)
         {
-          audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder, strAudiorenderer, false);
+          DirectShowUtil.AddAudioRendererToGraph(graphBuilder, strAudiorenderer, false);
         }
         //We now add custom filters after the Audio Renderer as AC3Filter failed to connect otherwise.
-        //FlipGer: add custom filters to graph
-        customFilters = new IBaseFilter[intFilters];
+        //FlipGer: add custom filters to graph        
         string[] arrFilters = strFilters.Split(';');
         for (int i = 0; i < intFilters; i++)
         {
-          customFilters[i] = DirectShowUtil.AddFilterToGraph(graphBuilder, arrFilters[i]);
+          DirectShowUtil.AddFilterToGraph(graphBuilder, arrFilters[i]);
         }
         //Check if the WMAudio Decoder DMO filter is in the graph if so set High Resolution Output > 2 channels
         IBaseFilter baseFilter;
@@ -352,118 +351,56 @@ namespace MediaPortal.Player
       {
         return;
       }
-      int hr;
-      Log.Info("VideoPlayer9:cleanup DShow graph");
+      int hr = 0;
+      Log.Info("VideoPlayer9: Cleanup DShow graph");
       try
-      {
+      {        
+        if (mediaCtrl != null)
+        {          
+          hr = mediaCtrl.StopWhenReady();          
+          mediaCtrl = null;
+        }
+
+        if (mediaEvt != null)
+        {
+          hr = mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
+          mediaEvt = null;
+        }
+        
         videoWin = graphBuilder as IVideoWindow;
         if (videoWin != null)
         {
-          videoWin.put_Visible(OABool.False);
+          hr = videoWin.put_Visible(OABool.False);
+          hr = videoWin.put_Owner(IntPtr.Zero);
+          videoWin = null;
         }
-        if (Vmr9 != null)
-        {
-          Vmr9.Enable(false);
-        }
-        if (mediaCtrl != null)
-        {
-          int counter = 0;
-          while (GUIGraphicsContext.InVmr9Render)
-          {
-            counter++;
-            Thread.Sleep(100);
-            if (counter > 100)
-            {
-              break;
-            }
-          }
-          hr = mediaCtrl.Stop();
-          FilterState state;
-          hr = mediaCtrl.GetState(10, out state);
-          Log.Info("VideoPlayerVMR9: state:{0} {1:X}", state.ToString(), hr);
-          mediaCtrl = null;
-        }
-        mediaEvt = null;
-        if (Vmr9 != null)
-        {
-          Vmr9.Dispose();
-          Vmr9 = null;
-        }
+
         mediaSeek = null;
         mediaPos = null;
         basicAudio = null;
         basicVideo = null;
-        videoWin = null;
-        if (videoCodecFilter != null)
-        {
-          while (DirectShowUtil.ReleaseComObject(videoCodecFilter) > 0)
-          {
-            ;
-          }
-          videoCodecFilter = null;
-        }
-        if (h264videoCodecFilter != null)
-        {
-          while (DirectShowUtil.ReleaseComObject(h264videoCodecFilter) > 0)
-          {
-            ;
-          }
-          h264videoCodecFilter = null;
-        }
-        if (audioCodecFilter != null)
-        {
-          while (DirectShowUtil.ReleaseComObject(audioCodecFilter) > 0)
-          {
-            ;
-          }
-          audioCodecFilter = null;
-        }
-        if (aacaudioCodecFilter != null)
-        {
-          while (DirectShowUtil.ReleaseComObject(aacaudioCodecFilter) > 0)
-          {
-            ;
-          }
-          aacaudioCodecFilter = null;
-        }
-        if (audioRendererFilter != null)
-        {
-          while (DirectShowUtil.ReleaseComObject(audioRendererFilter) > 0)
-          {
-            ;
-          }
-          audioRendererFilter = null;
-        }
-        // FlipGer: release custom filters
-        for (int i = 0; i < customFilters.Length; i++)
-        {
-          if (customFilters[i] != null)
-          {
-            while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0)
-            {
-              ;
-            }
-          }
-          customFilters[i] = null;
-        }
-
         SubEngine.GetInstance().FreeSubtitles();
 
-        //	DsUtils.RemoveFilters(graphBuilder);
+        if (graphBuilder != null)
+        {          
+          DirectShowUtil.RemoveFilters(graphBuilder);
+          DirectShowUtil.ReleaseComObject(graphBuilder);
+          graphBuilder = null;
+        }
+
         if (_rotEntry != null)
         {
           _rotEntry.Dispose();
+          _rotEntry = null;
         }
-        _rotEntry = null;
-        if (graphBuilder != null)
+
+        if (Vmr9 != null)
         {
-          DirectShowUtil.RemoveFilters(graphBuilder);
-          while ((hr = DirectShowUtil.ReleaseComObject(graphBuilder)) > 0)
-          {
-            ;
-          }
-          graphBuilder = null;
+          Vmr9.Enable(false);
+          Vmr9.Dispose();
+          Vmr9 = null;
         }
+
         GUIGraphicsContext.form.Invalidate(true);
         m_state = PlayState.Init;
         

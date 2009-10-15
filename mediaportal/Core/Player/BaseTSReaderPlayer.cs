@@ -147,17 +147,11 @@ namespace MediaPortal.Player
     protected bool _CodecSupportsFastSeeking = true;
     protected bool _usingFastSeeking = false;
     protected IBaseFilter _interfaceTSReader = null;
-    protected IBaseFilter _videoCodecFilter = null;
-    protected IBaseFilter _h264videoCodecFilter = null;
-    protected IBaseFilter _audioCodecFilter = null;
-    protected IBaseFilter _aacaudioCodecFilter = null;
     protected IBaseFilter _audioRendererFilter = null;
-    protected IBaseFilter _subtitleFilter = null;
     protected SubtitleSelector _subSelector = null;
     protected SubtitleRenderer _dvbSubRenderer = null;
     protected AudioSelector _audioSelector = null;
-    protected IBaseFilter[] customFilters; // FlipGer: array for custom directshow filters
-
+    
     /// <summary> control interface. </summary>
     protected IMediaControl _mediaCtrl = null;
 
@@ -173,7 +167,6 @@ namespace MediaPortal.Player
     /// <summary> audio interface used to control volume. </summary>
     protected IBasicAudio _basicAudio = null;
 
-    protected IBaseFilter _mpegDemux;
     private VMR7Util _vmr7 = null;
     private DateTime _elapsedTimer = DateTime.Now;
     private DateTime _FFRWtimer = DateTime.Now;
@@ -436,6 +429,8 @@ namespace MediaPortal.Player
       {
         Log.Error("TSReaderPlayer:GetInterfaces() failed");
         _currentFile = "";
+        CloseInterfaces();
+        ExclusiveMode(false);
         return false;
       }
       _rotEntry = new DsROTEntry((IFilterGraph) _graphBuilder);
@@ -684,8 +679,8 @@ namespace MediaPortal.Player
         _updateTimer = DateTime.Now;
       }
 
-
-      if (false) //IsTimeShifting)
+      /*
+      if (IsTimeShifting)
       {
         if (Speed > 1 && CurrentPosition + 5d >= Duration)
         {
@@ -700,14 +695,14 @@ namespace MediaPortal.Player
           Speed = 1;
           SeekAbsolute(0d);
         }
-          /*
-				if (Speed<0 && CurrentPosition > _lastPosition)
-				{
-					Speed=1;
-					SeekAsolutePercentage(0);
-				}*/
+        
+				//if (Speed<0 && CurrentPosition > _lastPosition)
+				//{
+				//	Speed=1;
+				//	SeekAsolutePercentage(0);
+				//}
       }
-
+      */
 
       _lastPosition = CurrentPosition;
       if (GUIGraphicsContext.VideoWindow.Width <= 10 && GUIGraphicsContext.IsFullScreenVideo == false)
@@ -1636,30 +1631,29 @@ namespace MediaPortal.Player
         }
         if (strVideoCodec.Length > 0)
         {
-          _videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
+          DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
         }
         if (strH264VideoCodec.Length > 0)
         {
-          _h264videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strH264VideoCodec);
+          DirectShowUtil.AddFilterToGraph(_graphBuilder, strH264VideoCodec);
         }
         if (strAudioCodec.Length > 0)
         {
-          _audioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
+          DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
         }
         if (strAACAudioCodec.Length > 0)
         {
-          _aacaudioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAACAudioCodec);
+          DirectShowUtil.AddFilterToGraph(_graphBuilder, strAACAudioCodec);
         }
         if (strAudiorenderer.Length > 0)
         {
           _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudiorenderer, false);
         }
         // FlipGer: add custom filters to graph
-        customFilters = new IBaseFilter[intFilters];
         string[] arrFilters = strFilters.Split(';');
         for (int i = 0; i < intFilters; i++)
         {
-          customFilters[i] = DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
+          DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
         }
 
         DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter) _fileSource);
@@ -1711,13 +1705,12 @@ namespace MediaPortal.Player
         Log.Info("TSReaderPlayer:grapbuilder=null");
         return;
       }
-      Log.Info("TSReaderPlayer:cleanup DShow graph");
+      Log.Info("TSReaderPlayer: Cleanup DShow graph");
       try
       {
         if (_mediaCtrl != null)
         {
           hr = _mediaCtrl.Stop();
-
           _mediaCtrl = null;
         }
         _state = PlayState.Init;
@@ -1728,38 +1721,7 @@ namespace MediaPortal.Player
         _mediaSeeking = null;
         _basicAudio = null;
         _basicVideo = null;
-        if (_videoCodecFilter != null)
-        {
-          while ((hr = DirectShowUtil.ReleaseComObject(_videoCodecFilter)) > 0)
-          {
-            ;
-          }
-          _videoCodecFilter = null;
-        }
-        if (_h264videoCodecFilter != null)
-        {
-          while ((hr = DirectShowUtil.ReleaseComObject(_h264videoCodecFilter)) > 0)
-          {
-            ;
-          }
-          _h264videoCodecFilter = null;
-        }
-        if (_audioCodecFilter != null)
-        {
-          while ((hr = DirectShowUtil.ReleaseComObject(_audioCodecFilter)) > 0)
-          {
-            ;
-          }
-          _audioCodecFilter = null;
-        }
-        if (_aacaudioCodecFilter != null)
-        {
-          while ((hr = DirectShowUtil.ReleaseComObject(_aacaudioCodecFilter)) > 0)
-          {
-            ;
-          }
-          _aacaudioCodecFilter = null;
-        }
+        
         if (_audioRendererFilter != null)
         {
           while ((hr = DirectShowUtil.ReleaseComObject(_audioRendererFilter)) > 0)
@@ -1768,18 +1730,7 @@ namespace MediaPortal.Player
           }
           _audioRendererFilter = null;
         }
-        // FlipGer: release custom filters
-        for (int i = 0; i < customFilters.Length; i++)
-        {
-          if (customFilters[i] != null)
-          {
-            while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0)
-            {
-              ;
-            }
-          }
-          customFilters[i] = null;
-        }
+        
         if (_fileSource != null)
         {
           while ((hr = DirectShowUtil.ReleaseComObject(_fileSource)) > 0)

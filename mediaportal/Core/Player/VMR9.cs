@@ -1107,8 +1107,7 @@ namespace MediaPortal.Player
         GUIGraphicsContext.InVmr9Render = false;
         currentVmr9State = Vmr9PlayState.Playing;
       }
-      int result;
-
+      //int result;
       //if (_vmr9MixerBitmapInterface!= null)
       //	while ( (result=DirectShowUtil.ReleaseComObject(_vmr9MixerBitmapInterface))>0); 
       //result=DirectShowUtil.ReleaseComObject(_vmr9MixerBitmapInterface);
@@ -1119,19 +1118,6 @@ namespace MediaPortal.Player
       //DirectShowUtil.ReleaseComObject(_qualityInterface);
       _qualityInterface = null;
 
-      try
-      {
-        result = _graphBuilderInterface.RemoveFilter(_vmr9Filter);
-        if (result != 0)
-        {
-          Log.Warn("VMR9: RemoveFilter(): {0}", result);
-        }
-      }
-      catch (Exception exr)
-      {
-        Log.Error("VMR9: Error removing filter - {0}", exr.ToString());
-      }
-
       if (GUIGraphicsContext.IsEvr)
       {
         EvrDeinit();
@@ -1140,19 +1126,7 @@ namespace MediaPortal.Player
       {
         Vmr9Deinit();
       }
-
-      try
-      {
-        do
-        {
-          result = DirectShowUtil.ReleaseComObject(_vmr9Filter);
-          Log.Info("VMR9: ReleaseComObject(): {0}", result);
-        } while (result > 0);
-      }
-      catch (Exception exm)
-      {
-        Log.Error("VMR9: Error releasing ComObject - {0}", exm.ToString());
-      }
+      
       _vmr9Filter = null;
       _graphBuilderInterface = null;
       _scene = null;

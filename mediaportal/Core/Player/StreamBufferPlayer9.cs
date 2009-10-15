@@ -267,27 +267,18 @@ namespace MediaPortal.Player
       Log.Info("StreamBufferPlayer9:cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
       try
       {
+        if (_mediaCtrl != null)
+        {
+          hr = _mediaCtrl.StopWhenReady();
+          _mediaCtrl = null;
+        }
+        
         if (_vmr9 != null)
         {
           Log.Info("StreamBufferPlayer9: vmr9 disable");
           _vmr9.Enable(false);
         }
-        int counter = 0;
-        while (GUIGraphicsContext.InVmr9Render)
-        {
-          counter++;
-          Thread.Sleep(100);
-          if (counter > 100)
-          {
-            break;
-          }
-        }
-
-        if (_mediaCtrl != null)
-        {
-          hr = _mediaCtrl.Stop();
-        }
-        _mediaCtrl = null;
+        
         _mediaEvt = null;
         _mediaSeeking = null;
         _mediaSeeking2 = null;
@@ -314,72 +305,28 @@ namespace MediaPortal.Player
 
         m_StreamBufferConfig = null;
 
+        if (_graphBuilder != null)
+        {
+          DirectShowUtil.RemoveFilters(_graphBuilder);
+          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;
+          _graphBuilder = null;
+        }
+        
+        if (_rotEntry != null)
+        {
+          _rotEntry.Dispose();
+          _rotEntry = null;
+        }
+
         if (_vmr9 != null)
         {
           Log.Info("StreamBufferPlayer9: vmr9 dispose");
           _vmr9.Dispose();
           _vmr9 = null;
-        }
-        if (_videoCodecFilter != null)
-        {
-          while ((hr = DirectShowUtil.ReleaseComObject(_videoCodecFilter)) > 0)
-          {
-            ;
-          }
-          _videoCodecFilter = null;
-        }
-        if (_audioCodecFilter != null)
-        {
-          while ((hr = DirectShowUtil.ReleaseComObject(_audioCodecFilter)) > 0)
-          {
-            ;
-          }
-          _audioCodecFilter = null;
-        }
-
-        if (_audioRendererFilter != null)
-        {
-          while ((hr = DirectShowUtil.ReleaseComObject(_audioRendererFilter)) > 0)
-          {
-            ;
-          }
-          _audioRendererFilter = null;
-        }
-
-        // FlipGer: release custom filters
-        for (int i = 0; i < customFilters.Length; i++)
-        {
-          if (customFilters[i] != null)
-          {
-            while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0)
-            {
-              ;
-            }
-          }
-          customFilters[i] = null;
-        }
-        DirectShowUtil.RemoveFilters(_graphBuilder);
-
-        if (_rotEntry != null)
-        {
-          _rotEntry.Dispose();
-        }
-        _rotEntry = null;
-        if (_graphBuilder != null)
-        {
-          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0)
-          {
-            ;
-          }
-          _graphBuilder = null;
-        }
+        }       
 
         GUIGraphicsContext.form.Invalidate(true);
-        _state = PlayState.Init;
-
-        GC.Collect();
-        //GC.Collect();
-        //GC.Collect();
+        _state = PlayState.Init;       
       }
       catch (Exception ex)
       {
