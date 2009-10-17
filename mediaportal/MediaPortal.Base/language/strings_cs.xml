@@ -32,6 +32,19 @@
     <String id="31">Listopad</String>
     <String id="32">Prosinec</String>
     <String id="50">DVD</String>
+    <String id="51">Přehrát disk</String>
+    <String id="60">Čekání na spuštění služby "TV service..."</String>
+    <String id="61">Čekání {0} sekund(s) před spuštěním...</String>
+    <String id="62">Inicializace DirectX...</String>
+    <String id="63">Inicializace vstupních zařízení...</String>
+    <String id="64">Spuštění modulů...</String>
+    <String id="65">Načítání keymap.xml...</String>
+    <String id="66">Načítání řetězců...</String>
+    <String id="67">Cachování grafiky...</String>
+    <String id="68">Načítání fontů...</String>
+    <String id="69">Načítání vzhledu ({0})...</String>
+    <String id="70">Načítání modulů...</String>
+    <String id="71">Inicilizace manažéru...</String>
     <String id="100">Zobrazení: Ikony</String>
     <String id="101">Zobrazení: Seznam</String>
     <String id="102">Skenovat</String>
@@ -333,7 +346,7 @@
     <String id="410">Připojuji se k weather.com</String>
     <String id="411">Získat předpověď pro:</String>
     <String id="412">Data o počasí nejsou dostupná</String>
-    <String id="413">Ručně</String>
+    <String id="413">/ručně/</String>
     <String id="414">Pro toto album není dostupná recenze</String>
     <String id="415">Stahuji náhled...</String>
     <String id="416">Nedostupné</String>
@@ -595,7 +608,7 @@
     <String id="732">Jste si jisti?</String>
     <String id="733">Zobrazení: Filnový pás</String>
     <String id="734">Plakáty:</String>
-    <String id="735">Otočit</String>
+    <String id="735">Otočit doprava (-90°)</String>
     <String id="736">/Bez EPG/</String>
     <String id="737">Zobrazení: Satelitní mapa</String>
     <String id="738">Zobrazení: Teplota</String>
@@ -642,6 +655,8 @@
     <String id="780">Vyberte typ záznamu</String>
     <String id="781">Běžný záznam</String>
     <String id="782">Detailní záznam</String>
+    <String id="783">Otočit vzhůru nohama (180°)</String>
+    <String id="784">Otočit doleva (+90°)</String>
     <String id="789">Nyní: </String>
     <String id="790">Poté: </String>
     <String id="798">nízký</String>
