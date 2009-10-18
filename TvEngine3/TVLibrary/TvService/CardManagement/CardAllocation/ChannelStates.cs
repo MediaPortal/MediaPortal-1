@@ -259,69 +259,72 @@ namespace TvService
 
     private static void CheckTransponderAllUsers(Channel ch, IList<User> allUsers, ITvCardHandler tvcard, int decryptLimit, int cardId, IChannel tuningDetail, bool checkTransponders)
     {           
-      if (tvcard.Tuner.IsTunedToTransponder(tuningDetail) && (tvcard.SupportsSubChannels || (checkTransponders == false)))
-      {
-        //card is in use, but it is tuned to the same transponder.
-        //meaning.. we can use it.
-        if (tvcard.HasCA && decryptLimit > 0) //does the card have a CA module and a CA limit, if yes then proceed to check cam decrypt limit.                
-        {
-          //but we must check if cam can decode the extra channel as well
-          //first check if cam is already decrypting this channel          
-          bool isCamAlreadyDecodingChannel = IsCamAlreadyDecodingChannel(tvcard, ch);          
-
-          //if the user is already using this card
-          //and is watching a scrambled signal
-          //then we must the CAM will always be able to watch the requested channel
-          //since the users zaps
-
+      bool isSameTransponder = tvcard.Tuner.IsTunedToTransponder(tuningDetail) && (tvcard.SupportsSubChannels || (checkTransponders == false));
+      if (isSameTransponder)
+      {                    
+          bool hasCA = tvcard.HasCA;        
           int camDecrypting = tvcard.NumberOfChannelsDecrypting;
           for (int i = 0; i < allUsers.Count; i++)
           {
             User user = allUsers[i];
+
+            bool isOwnerOfCard = tvcard.Users.IsOwner(user);            
 
             //ignore admin users, like scheduler
             if (user.IsAdmin)
             {
               continue;
             }
-            
-            //check if cam is capable of descrambling an extra channel
-            bool isRec = false;
-            bool isCamAbleToDecrypChannel = IsCamAbleToDecrypChannel(user, tvcard, ch, decryptLimit, out isRec);
+
+            if (!isOwnerOfCard)
+            {              
+              if (hasCA && decryptLimit > 0) //does the card have a CA module and a CA limit, if yes then proceed to check cam decrypt limit.                
+              {
+                //but we must check if cam can decode the extra channel as well
+                //first check if cam is already decrypting this channel          
+                bool isCamAlreadyDecodingChannel = IsCamAlreadyDecodingChannel(tvcard, ch);          
+
+                //check if cam is capable of descrambling an extra channel
+                bool isRec = false;
+                bool isCamAbleToDecrypChannel = IsCamAbleToDecrypChannel(user, tvcard, ch, decryptLimit, out isRec);
 
 
-            if (isCamAbleToDecrypChannel || isCamAlreadyDecodingChannel)
-            {
-              //it is.. we can really use this card
-              //Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels",
-              //    cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
-              user = allUsers[i];
-              UpdateChannelStateUser(user, ChannelState.tunable, ch.IdChannel);
-              allUsers[i] = user;
-            }                                      
-            else
-            {
-              //it is not, skip this card
-              //Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels. cam limit reached",
-              //     cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
-              user = allUsers[i];
-              if (tvcard.Users.IsOwner(user))
+                if (isCamAbleToDecrypChannel || isCamAlreadyDecodingChannel)
+                {
+                  //it is.. we can really use this card
+                  //Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels",
+                  //    cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
+                  user = allUsers[i];
+                  UpdateChannelStateUser(user, ChannelState.tunable, ch.IdChannel);
+                  allUsers[i] = user;
+                }
+                else
+                {
+                  //it is not, skip this card
+                  //Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels. cam limit reached",
+                  //     cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
+                  user = allUsers[i];
+                  if (tvcard.Users.IsOwner(user))
+                  {
+                    UpdateChannelStateUser(user, ChannelState.tunable, ch.IdChannel);
+                  }
+                  else
+                  {
+                    UpdateChannelStateUser(user, ChannelState.nottunable, ch.IdChannel);
+                  }
+                  allUsers[i] = user;
+                }
+              }
+              else // no cam present
               {
                 UpdateChannelStateUser(user, ChannelState.tunable, ch.IdChannel);
               }
-              else
-              {
-                UpdateChannelStateUser(user, ChannelState.nottunable, ch.IdChannel);
-              }
-              allUsers[i] = user;                
             }
-          } //foreach allusers end
-          //continue;                      
-        } //end of cam present block              
-        else // no cam present
-        {
-          UpdateChannelStateUsers(allUsers, ChannelState.tunable, ch.IdChannel);
-        }
+            else //in case of cardowner 
+            {
+              UpdateChannelStateUser(user, ChannelState.tunable, ch.IdChannel);
+            }                        
+          } //foreach allusers end                         
       }
       else
       {
