@@ -31,7 +31,7 @@ MPCSUBS_API void SetDefaultStyle(const SubtitleStyle* style, BOOL overrideUserSt
 MPCSUBS_API void SetAdvancedOptions(int subPicsBufferAhead, SIZE textureSize, BOOL pow2tex, BOOL disableAnim);
 
 //load subtitles for video file fn, with given (rendered) graph 
-MPCSUBS_API BOOL LoadSubtitles(IDirect3DDevice9* d3DDev, SIZE size, const wchar_t* fn, IGraphBuilder* pGB);
+MPCSUBS_API BOOL LoadSubtitles(IDirect3DDevice9* d3DDev, SIZE size, const wchar_t* fn, IGraphBuilder* pGB, const wchar_t* paths);
 
 //set sample time (set from EVR presenter, not used in case of vmr9)
 MPCSUBS_API void SetTime(REFERENCE_TIME nsSampleTime);

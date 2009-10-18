@@ -16,7 +16,7 @@ public:
 	CSubManager(IDirect3DDevice9* d3DDev, SIZE size, HRESULT& hr);
 	~CSubManager(void);
 
-	void LoadSubtitlesForFile(const wchar_t* fn, IGraphBuilder* pGB);
+	void LoadSubtitlesForFile(const wchar_t* fn, IGraphBuilder* pGB, const wchar_t* paths);
 
 	int GetCount();
 	BSTR GetLanguage(int i);
@@ -39,7 +39,7 @@ private:
 
 	//load internal subtitles through TextPassThruFilter
 	void LoadInternalSubtitles(IGraphBuilder* pGB);
-	void LoadExternalSubtitles(const wchar_t* fn);
+	void LoadExternalSubtitles(const wchar_t* fn, const wchar_t* paths);
 
 	void UpdateSubtitle();
 	void ApplyStyle(CRenderedTextSubtitle* pRTS);

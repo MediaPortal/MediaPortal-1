@@ -18,7 +18,7 @@ namespace MediaPortal.Player.Subtitles
       bool pow2textures = xmlreader.GetValueAsBool("subtitles", "pow2tex", false);
       string textureSize = xmlreader.GetValueAsString("subtitles", "textureSize", "Medium");
       bool disableAnimation = xmlreader.GetValueAsBool("subtitles", "disableAnimation", true);
-
+     
       int w, h;
       int screenW = GUIGraphicsContext.Width;
       int screenH = GUIGraphicsContext.Height;
@@ -91,9 +91,10 @@ namespace MediaPortal.Player.Subtitles
       }
 
       Size size = new Size(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
+
       return MpcSubtitles.LoadSubtitles(
         DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device),
-        size, filename, graphBuilder);
+        size, filename, graphBuilder, subPaths);
     }
 
     public void FreeSubtitles()
@@ -202,7 +203,7 @@ namespace MediaPortal.Player.Subtitles
 
       //load subtitles for video file filename, with given (rendered) graph 
       [DllImport("mpcSubs.dll", ExactSpelling = true, CharSet = CharSet.Unicode)]
-      public static extern bool LoadSubtitles(IntPtr d3DDev, Size size, string filename, IGraphBuilder graphBuilder);
+      public static extern bool LoadSubtitles(IntPtr d3DDev, Size size, string filename, IGraphBuilder graphBuilder, string paths);
 
       //set sample time (set from EVR presenter, not used in case of vmr9)
       [DllImport("mpcSubs.dll", ExactSpelling = true)]

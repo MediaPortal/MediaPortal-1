@@ -56,6 +56,7 @@ namespace MediaPortal.Player.Subtitles
     protected AutoSaveTypeEnum autoSaveType = AutoSaveTypeEnum.NEVER;
     protected bool posRelativeToFrame = false;
     protected bool overrideASSStyle;
+    protected string subPaths;
 
     public void LoadSettings()
     {
@@ -78,6 +79,7 @@ namespace MediaPortal.Player.Subtitles
 
         posRelativeToFrame = xmlreader.GetValueAsBool("subtitles", "subPosRelative", false);
         overrideASSStyle = xmlreader.GetValueAsBool("subtitles", "subStyleOverride", false);
+        subPaths = xmlreader.GetValueAsString("subtitles", "paths", @".\");
         LoadAdvancedSettings(xmlreader);
       }
     }

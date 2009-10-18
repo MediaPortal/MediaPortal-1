@@ -418,17 +418,64 @@ void CSubManager::InitInternalSubs(IBaseFilter* pBF)
 
 }
 
-void CSubManager::LoadExternalSubtitles(const wchar_t* filename)
+void CSubManager::LoadExternalSubtitles(const wchar_t* filename, const wchar_t* subpaths)
 {
 	m_movieFile = filename;
-	CAtlArray<SubFile> ret;
-	{
-		CAtlArray<CString> paths;
-		paths.Add(_T("."));
-		paths.Add(_T(".\\subtitles"));
-		paths.Add(_T("c:\\subtitles"));
-		GetSubFileNames(m_movieFile, paths, ret);
+	CAtlArray<CString> paths;
+		
+	CString allpaths=subpaths;
+	CString path;
+	int start = 0;
+	int prev = 0;
+		
+	while (start != -1)
+  {
+		start = allpaths.Find(',', start);
+		if(start > 0)
+		{
+		  path=allpaths.Mid(prev,start);
+			paths.Add(path);				
+			int end = allpaths.Find(',', start+1);
+			if(end > start)
+			{  
+				path=allpaths.Mid(start+1,end-start-1);
+			  paths.Add(path);
+				prev = allpaths.Find(',', end+1);
+				if(prev > 0)
+				{
+					start++;
+				  prev = start;
+				}
+				else
+				{
+          path=allpaths.Right(allpaths.GetLength()-end-1);
+          paths.Add(path);
+					start=-1;
+				}
+			}
+			else
+			{
+				path=allpaths.Right(allpaths.GetLength()-start-1);
+				paths.Add(path);
+				start=-1;
+			}			
+		}
+		else if(allpaths.GetLength() > 0)
+		{
+      paths.Add(allpaths);		
+			start=-1;		
+		}	
 	}
+	
+	if(paths.GetCount() <= 0)
+	{
+		paths.Add(_T("."));
+	  paths.Add(_T(".\\subtitles"));
+	  paths.Add(_T("c:\\subtitles"));
+	}
+
+	CAtlArray<SubFile> ret;	
+	GetSubFileNames(m_movieFile, paths, ret);	
 
 	for(size_t i = 0; i < ret.GetCount(); i++)
 	{
@@ -483,7 +530,7 @@ void CSubManager::SaveToDisk()
 	}
 }
 
-void CSubManager::LoadSubtitlesForFile(const wchar_t* fn, IGraphBuilder* pGB)
+void CSubManager::LoadSubtitlesForFile(const wchar_t* fn, IGraphBuilder* pGB, const wchar_t* paths)
 {
 	{//hook vmr
 		CComPtr<IBaseFilter> vmr;
@@ -499,8 +546,8 @@ void CSubManager::LoadSubtitlesForFile(const wchar_t* fn, IGraphBuilder* pGB)
 			HookNewSegmentAndReceive((IPinC*)(IPin*)pPin, (IMemInputPinC*)(IMemInputPin*)pMemInputPin);
 		}
 	}
-	LoadInternalSubtitles(pGB);
-	LoadExternalSubtitles(fn);
+	LoadInternalSubtitles(pGB);	
+	LoadExternalSubtitles(fn, paths);
 	if(GetCount() > 0)
 	{
 		m_iSubtitleSel = 0x80000000; //stream 0, disabled

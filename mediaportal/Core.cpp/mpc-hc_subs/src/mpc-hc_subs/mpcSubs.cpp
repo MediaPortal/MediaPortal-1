@@ -27,7 +27,7 @@ void SetAdvancedOptions(int subPicsBufferAhead, SIZE textureSize, BOOL pow2tex, 
 	g_disableAnim = disableAnim;
 }
 
-BOOL LoadSubtitles(IDirect3DDevice9* d3DDev, SIZE size, const wchar_t* fn, IGraphBuilder* pGB)
+BOOL LoadSubtitles(IDirect3DDevice9* d3DDev, SIZE size, const wchar_t* fn, IGraphBuilder* pGB, const wchar_t* paths)
 {
 	g_subManager.Free();
 	HRESULT hr = S_OK;
@@ -36,8 +36,7 @@ BOOL LoadSubtitles(IDirect3DDevice9* d3DDev, SIZE size, const wchar_t* fn, IGrap
 	{
 		return FALSE;
 	}
-	subManager->LoadSubtitlesForFile(fn, pGB);
-
+	subManager->LoadSubtitlesForFile(fn, pGB, paths);
 	g_subManager.Attach(subManager.Detach());
 	return TRUE;
 }

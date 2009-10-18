@@ -102,6 +102,8 @@ namespace MediaPortal.Configuration.Sections
     private MPTabControl tabControl1;
     private MPComboBox subEnginesCombo;
     private MPLabel mpLabel3;
+    private TextBox subPaths;
+    private Label label2;
     private List<LanguageInfo> ISOLanguagePairs = new List<LanguageInfo>();
 
     //private int 
@@ -182,6 +184,7 @@ namespace MediaPortal.Configuration.Sections
         repeatPlaylistCheckBox.Checked = xmlreader.GetValueAsBool("movies", "repeat", true);
 
         subEnginesCombo.SelectedItem = xmlreader.GetValueAsString("subtitles", "engine", "MPC-HC");
+        subPaths.Text = xmlreader.GetValueAsString("subtitles", "paths", @".\,.\Subtitles\");
         showSubtitlesCheckBox.Checked = xmlreader.GetValueAsBool("subtitles", "enabled", false);
         checkBoxShowWatched.Checked = xmlreader.GetValueAsBool("movies", "markwatched", true);
 
@@ -284,6 +287,8 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("movies", "eachFolderIsMovie", checkBoxEachFolderIsMovie.Checked);
 
         xmlwriter.SetValue("subtitles", "engine", subEnginesCombo.SelectedItem);
+        xmlwriter.SetValue("subtitles", "paths", subPaths.Text);
+
         xmlwriter.SetValueAsBool("subtitles", "enabled", showSubtitlesCheckBox.Checked);
         xmlwriter.SetValue("subtitles", "shadow", shadowDepthUpDown.Value);
         xmlwriter.SetValue("subtitles", "borderWidth", borderWidthUpDown.Value);
@@ -347,6 +352,8 @@ namespace MediaPortal.Configuration.Sections
       this.subEnginesCombo = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.advancedButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.label2 = new System.Windows.Forms.Label();
+      this.subPaths = new System.Windows.Forms.TextBox();
       this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.subPosRelativeCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.saveAlwaysRadioButton = new MediaPortal.UserInterface.Controls.MPRadioButton();
@@ -480,6 +487,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Controls.Add(this.label2);
+      this.mpGroupBox1.Controls.Add(this.subPaths);
       this.mpGroupBox1.Controls.Add(this.mpLabel3);
       this.mpGroupBox1.Controls.Add(this.subPosRelativeCheckBox);
       this.mpGroupBox1.Controls.Add(panel1);
@@ -491,14 +500,30 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(15, 119);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(432, 169);
+      this.mpGroupBox1.Size = new System.Drawing.Size(432, 210);
       this.mpGroupBox1.TabIndex = 0;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Options";
       // 
+      // label2
+      // 
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(13, 68);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(81, 13);
+      this.label2.TabIndex = 17;
+      this.label2.Text = "Subtitle paths: *";
+      // 
+      // subPaths
+      // 
+      this.subPaths.Location = new System.Drawing.Point(100, 65);
+      this.subPaths.Name = "subPaths";
+      this.subPaths.Size = new System.Drawing.Size(309, 20);
+      this.subPaths.TabIndex = 16;
+      // 
       // mpLabel3
       // 
-      this.mpLabel3.Location = new System.Drawing.Point(13, 150);
+      this.mpLabel3.Location = new System.Drawing.Point(13, 183);
       this.mpLabel3.Name = "mpLabel3";
       this.mpLabel3.Size = new System.Drawing.Size(199, 16);
       this.mpLabel3.TabIndex = 15;
@@ -520,7 +545,7 @@ namespace MediaPortal.Configuration.Sections
       panel1.Controls.Add(this.saveAlwaysRadioButton);
       panel1.Controls.Add(this.saveAskRadioButton);
       panel1.Controls.Add(this.saveNeverRadioButton);
-      panel1.Location = new System.Drawing.Point(16, 111);
+      panel1.Location = new System.Drawing.Point(16, 144);
       panel1.Name = "panel1";
       panel1.Size = new System.Drawing.Size(246, 26);
       panel1.TabIndex = 13;
@@ -562,7 +587,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpLabel6
       // 
-      this.mpLabel6.Location = new System.Drawing.Point(13, 92);
+      this.mpLabel6.Location = new System.Drawing.Point(13, 125);
       this.mpLabel6.Name = "mpLabel6";
       this.mpLabel6.Size = new System.Drawing.Size(199, 16);
       this.mpLabel6.TabIndex = 9;
@@ -570,7 +595,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpLabel5
       // 
-      this.mpLabel5.Location = new System.Drawing.Point(196, 68);
+      this.mpLabel5.Location = new System.Drawing.Point(196, 101);
       this.mpLabel5.Name = "mpLabel5";
       this.mpLabel5.Size = new System.Drawing.Size(25, 16);
       this.mpLabel5.TabIndex = 8;
@@ -578,7 +603,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // delayTextBox
       // 
-      this.delayTextBox.Location = new System.Drawing.Point(143, 65);
+      this.delayTextBox.Location = new System.Drawing.Point(143, 98);
       this.delayTextBox.Name = "delayTextBox";
       this.delayTextBox.Size = new System.Drawing.Size(46, 20);
       this.delayTextBox.TabIndex = 7;
@@ -587,7 +612,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpLabel4
       // 
-      this.mpLabel4.Location = new System.Drawing.Point(13, 68);
+      this.mpLabel4.Location = new System.Drawing.Point(13, 101);
       this.mpLabel4.Name = "mpLabel4";
       this.mpLabel4.Size = new System.Drawing.Size(107, 16);
       this.mpLabel4.TabIndex = 6;
