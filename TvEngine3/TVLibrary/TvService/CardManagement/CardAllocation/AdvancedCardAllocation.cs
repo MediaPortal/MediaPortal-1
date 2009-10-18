@@ -82,56 +82,45 @@ namespace TvService
       isSameTransponder = (tvcard.Tuner.IsTunedToTransponder(tuningDetail) && (tvcard.SupportsSubChannels || (!checkTransponders)));
       canDecrypt = false;
 
+      bool isOwnerOfCard = tvcard.Users.IsOwner(user);      
+
       if (isSameTransponder)
-      {
-        //card is in use, but it is tuned to the same transponder.
-        //meaning.. we can use it.
-        if (tvcard.HasCA && decryptLimit > 0) //does the card have a CA module and a CA limit, if yes then proceed to check cam decrypt limit.
+      {        
+        if (!isOwnerOfCard)
         {
-          //but we must check if cam can decode the extra channel as well
-          //first check if cam is already decrypting this channel          
-          bool isCamAlreadyDecodingChannel = IsCamAlreadyDecodingChannel(tvcard, dbChannel);
-                    
-          //if the user is already using this card
-          //and is watching a scrambled signal
-          //then we must the CAM will always be able to watch the requested channel
-          //since the users zaps
-
-          //check if cam is capable of descrambling an extra channel                
-          bool isRec = false;
-          bool isCamAbleToDecrypChannel = IsCamAbleToDecrypChannel(user, tvcard, dbChannel, decryptLimit, out isRec);
-
-          if (isCamAbleToDecrypChannel || isCamAlreadyDecodingChannel)
+            //card is in use, but it is tuned to the same transponder.
+          //meaning.. we can use it.
+          if (tvcard.HasCA && decryptLimit > 0) //does the card have a CA module and a CA limit, if yes then proceed to check cam decrypt limit.
           {
-            Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels",
-                cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, decryptLimit);
-            isSameTransponder = true;
-          }                   
-          else
-          {
-            //it is not, skip this card
-            Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels. cam limit reached",
-                   cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, decryptLimit);
+            //but we must check if cam can decode the extra channel as well
+            //first check if cam is already decrypting this channel          
+            bool isCamAlreadyDecodingChannel = IsCamAlreadyDecodingChannel(tvcard, dbChannel);
+                      
+            //if the user is already using this card
+            //and is watching a scrambled signal
+            //then we must the CAM will always be able to watch the requested channel
+            //since the users zaps
 
+            //check if cam is capable of descrambling an extra channel                
+            bool isRec = false;
+            bool isCamAbleToDecrypChannel = IsCamAbleToDecrypChannel(user, tvcard, dbChannel, decryptLimit, out isRec);
 
-            //allow admin users like the scheduler to use this card anyway                  
-            if (user.IsAdmin)
+            if (isCamAbleToDecrypChannel || isCamAlreadyDecodingChannel)
             {
-              // lets find out what is going on on this transponder
-              // if just one channel is recording, then we dont want to interrupt it.
-              //bool isRec = tvcard.Recorder.IsAnySubChannelRecording;
-
-              if (isRec)
-              {
-                // we are already doing stuff on this transponder, skip it.              
-                checkTransponder = false;
-              }
-            }
+              Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels",
+                  cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, decryptLimit);
+              isSameTransponder = true;
+            }                   
             else
             {
-              checkTransponder = false;
-            }
-          }
+              //it is not, skip this card
+              Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels. cam limit reached",
+                     cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, decryptLimit);
+
+              //allow admin users like the scheduler to use this card anyway       
+              checkTransponder = (!user.IsAdmin || (user.IsAdmin && isRec));              
+            }         
+          }        
         } //end of cam present block              
         else // no cam present
         {
@@ -142,18 +131,11 @@ namespace TvService
       else
       {
         //different transponder, are we the owner of this card?
-        if (!tvcard.Users.IsOwner(user))
-        {
-          //no
-          Log.Info("Controller:    card:{0} type:{1} is tuned to different transponder", cardId, tvcard.Type);
-          if (user.IsAdmin)
-          {
-            //allow admin users like the scheduler to use this card anyway
-          }
-          else
-          {
-            checkTransponder = false;
-          }
+        //allow admin users like the scheduler to use this card anyway
+        if (!isOwnerOfCard && !user.IsAdmin)
+        {          
+          Log.Info("Controller:    card:{0} type:{1} is tuned to different transponder", cardId, tvcard.Type);                    
+          checkTransponder = false;                                
         }
       }
       return checkTransponder;
