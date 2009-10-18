@@ -26,6 +26,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>2.0</OldToolsVersion>
+    <ApplicationManifest>Configuration.exe.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -271,6 +272,12 @@
     </Compile>
     <Compile Include="Sections\Project.designer.cs">
       <DependentUpon>Project.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\ThirdPartyChecks.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\ThirdPartyChecks.Designer.cs">
+      <DependentUpon>ThirdPartyChecks.cs</DependentUpon>
     </Compile>
     <Compile Include="Subdialogs\DlgMpcSubs.cs">
       <SubType>Form</SubType>
@@ -580,6 +587,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>Remote.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sections\ThirdPartyChecks.resx">
+      <DependentUpon>ThirdPartyChecks.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SettingsForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>SettingsForm.cs</DependentUpon>
@@ -809,6 +819,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Configuration.exe.manifest" />
     <None Include="Resources\splashscreen_configuration.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

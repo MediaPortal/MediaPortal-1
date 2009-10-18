@@ -42,8 +42,8 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
-using DVDPlayer=MediaPortal.Configuration.Sections.DVDPlayer;
-using Keys=MediaPortal.Configuration.Sections.Keys;
+using DVDPlayer = MediaPortal.Configuration.Sections.DVDPlayer;
+using Keys = MediaPortal.Configuration.Sections.Keys;
 
 namespace MediaPortal.Configuration
 {
@@ -244,6 +244,7 @@ namespace MediaPortal.Configuration
       AddTabFilters();
       AddTabWeather();
       AddTabPlugins();
+      AddTabThirdPartyChecks();
 
       // reset the last used state
       ToggleSectionVisibility(advancedMode);
@@ -395,7 +396,7 @@ namespace MediaPortal.Configuration
       AddSection(new ConfigPage(filterSection, renderConfig, true));
 
       //Look for Audio Encoders, if exist assume encoders are installed & present config option
-      string[] audioEncoders = new string[] {"InterVideo Audio Encoder"};
+      string[] audioEncoders = new string[] { "InterVideo Audio Encoder" };
       FilterCollection legacyFilters = Filters.LegacyFilters;
       foreach (Filter audioCodec in legacyFilters)
       {
@@ -599,13 +600,24 @@ namespace MediaPortal.Configuration
       // AddSection(new ConfigPage(general, new GeneralCDSpeed(), true));
     }
 
+    private void AddTabThirdPartyChecks()
+    {
+      Log.Info("add third party checks section");
+      if (splashScreen != null)
+      {
+        splashScreen.SetInformation("Adding third party checks section...");
+      }
+      SectionSettings thirdparty = new ThirdPartyChecks();
+      AddSection(new ConfigPage(null, thirdparty, false));
+    }
+
     private void ToggleSectionVisibility(bool aShowAdvancedOptions)
     {
       // using property so setter updates values..
       AdvancedMode = aShowAdvancedOptions;
 
       sectionTree.BeginUpdate();
-      TreeNode currentSelected = (TreeNode) sectionTree.SelectedNode;
+      TreeNode currentSelected = (TreeNode)sectionTree.SelectedNode;
       sectionTree.Nodes.Clear();
 
       foreach (KeyValuePair<string, ConfigPage> singleConfig in settingSections)
@@ -639,7 +651,7 @@ namespace MediaPortal.Configuration
             if (parentPos > -1)
             {
               // Add to the parent node
-              SectionTreeNode parentTreeNode = (SectionTreeNode) sectionTree.Nodes[parentPos];
+              SectionTreeNode parentTreeNode = (SectionTreeNode)sectionTree.Nodes[parentPos];
               parentTreeNode.Nodes.Add(treeNode);
             }
           }
@@ -716,7 +728,7 @@ namespace MediaPortal.Configuration
     private void InitializeComponent()
     {
       System.ComponentModel.ComponentResourceManager resources =
-        new System.ComponentModel.ComponentResourceManager(typeof (SettingsForm));
+        new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
       this.sectionTree = new System.Windows.Forms.TreeView();
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
@@ -791,7 +803,7 @@ namespace MediaPortal.Configuration
       this.headerLabel.Caption = "";
       this.headerLabel.FirstColor = System.Drawing.SystemColors.InactiveCaption;
       this.headerLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular,
-                                                      System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+                                                      System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.headerLabel.LastColor = System.Drawing.Color.WhiteSmoke;
       this.headerLabel.Location = new System.Drawing.Point(216, 28);
       this.headerLabel.Name = "headerLabel";
@@ -801,7 +813,7 @@ namespace MediaPortal.Configuration
       this.headerLabel.TabStop = false;
       this.headerLabel.TextColor = System.Drawing.Color.WhiteSmoke;
       this.headerLabel.TextFont = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular,
-                                                          System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+                                                          System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       // 
       // holderPanel
       // 
@@ -954,7 +966,7 @@ namespace MediaPortal.Configuration
       this.toolStripButtonSwitchAdvanced.CheckOnClick = true;
       this.toolStripButtonSwitchAdvanced.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
       this.toolStripButtonSwitchAdvanced.Image =
-        ((System.Drawing.Image) (resources.GetObject("toolStripButtonSwitchAdvanced.Image")));
+        ((System.Drawing.Image)(resources.GetObject("toolStripButtonSwitchAdvanced.Image")));
       this.toolStripButtonSwitchAdvanced.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.toolStripButtonSwitchAdvanced.Name = "toolStripButtonSwitchAdvanced";
       this.toolStripButtonSwitchAdvanced.Size = new System.Drawing.Size(135, 22);
@@ -1377,9 +1389,9 @@ namespace MediaPortal.Configuration
 
     private bool EnumWindowCallBack(int hwnd, int lParam)
     {
-      IntPtr windowHandle = (IntPtr) hwnd;
+      IntPtr windowHandle = (IntPtr)hwnd;
       StringBuilder sb = new StringBuilder(1024);
-      GetWindowText((int) windowHandle, sb, sb.Capacity);
+      GetWindowText((int)windowHandle, sb, sb.Capacity);
       string window = sb.ToString().ToLower();
       if (window.IndexOf("mediaportal") >= 0 || window.IndexOf("media portal") >= 0)
       {
@@ -1390,7 +1402,7 @@ namespace MediaPortal.Configuration
 
     private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      Process.Start((string) e.Link.LinkData);
+      Process.Start((string)e.Link.LinkData);
     }
 
     private void helpToolStripSplitButton_ButtonClick(object sender, EventArgs e)
