@@ -33,6 +33,7 @@
             this.button_cancel = new System.Windows.Forms.Button();
             this.lbl_desc1 = new System.Windows.Forms.Label();
             this.lbl_desc2 = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // button_back
@@ -43,6 +44,7 @@
             this.button_back.TabIndex = 10;
             this.button_back.Text = "< Back";
             this.button_back.UseVisualStyleBackColor = true;
+            this.button_back.Visible = false;
             this.button_back.Click += new System.EventHandler(this.button_back_Click);
             // 
             // button_next
@@ -100,6 +102,7 @@
             this.Controls.SetChildIndex(this.button_back, 0);
             this.Controls.SetChildIndex(this.lbl_desc1, 0);
             this.Controls.SetChildIndex(this.lbl_desc2, 0);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }

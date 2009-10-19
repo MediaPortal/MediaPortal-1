@@ -15,9 +15,11 @@ namespace MpeMaker.Sections
     {
         private PackageClass _packageClass;
         private ActionItem _actionItem;
+        private bool _loading = false;
 
         public ActionEdit(PackageClass packageClass, ActionItem item)
         {
+            _loading = true;
             _packageClass = packageClass;
             _actionItem = item;
             InitializeComponent();
@@ -31,6 +33,8 @@ namespace MpeMaker.Sections
             if (_actionItem.Params.Items.Count < 1)
                 btn_params.Enabled = false;
             lbl_description.Text = MpeInstaller.ActionProviders[item.ActionType].Description;
+            cmb_execute.SelectedIndex = (int) item.ExecuteLocation;
+            _loading = false;
         }
 
         private void btn_ok_Click(object sender, EventArgs e)
@@ -47,7 +51,10 @@ namespace MpeMaker.Sections
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (_loading)
+                return;
             _actionItem.ConditionGroup = cmb_group.Text;
+            _actionItem.ExecuteLocation = (ActionExecuteLocationEnum) cmb_execute.SelectedIndex; 
         }
 
         private void button1_Click(object sender, EventArgs e)

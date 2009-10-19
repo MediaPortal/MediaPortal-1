@@ -23,7 +23,7 @@ namespace MpeCore
             Sections = new SectionItemCollection();
             GeneralInfo = new GeneralInfoItem();
             UniqueFileList = new FileItemCollection();
-            this.Version = "2.0";
+            Version = "2.0";
             ZipProvider = new ZipProviderClass();
             UnInstallInfo = new UnInstallInfoCollection();
         }
@@ -196,6 +196,17 @@ namespace MpeCore
                 {
                 }
             }
+        }
+
+        public string ReplaceInfo(string str)
+        {
+            str = str.Replace("[Name]", GeneralInfo.Name);
+            str = str.Replace("[Version]", GeneralInfo.Version.ToString());
+            str = str.Replace("[DevelopmentStatus]", GeneralInfo.DevelopmentStatus);
+            str = str.Replace("[Author]", GeneralInfo.Author);
+            str = str.Replace("[Description]", GeneralInfo.ExtensionDescription);
+            str = str.Replace("[VersionDescription]", GeneralInfo.VersionDescription);
+            return str;
         }
     }
 }

@@ -13,7 +13,7 @@ namespace MpeCore.Classes.InstallerType
             get { return "CopyFile"; }
         }
 
-        public string Description
+        public virtual string Description
         {
             get { return "Copy the file to specified location"; }
         }

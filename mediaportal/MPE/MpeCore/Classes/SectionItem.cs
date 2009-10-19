@@ -12,7 +12,8 @@ namespace MpeCore.Classes
             IncludedGroups = new List<string>();
             Guid = System.Guid.NewGuid().ToString();
             ConditionGroup = string.Empty;
-            Actons = new ActionItemCollection();
+            Actions = new ActionItemCollection();
+            WizardButtonsEnum = Classes.WizardButtonsEnum.BackNextCancel;
         }
 
         //public SectionItem(SectionItem obj)
@@ -30,11 +31,13 @@ namespace MpeCore.Classes
         [XmlAttribute]
         public string Name { get; set; }
         public SectionParamCollection Params { get; set; }
-        public ActionItemCollection Actons { get; set; }
+        public ActionItemCollection Actions { get; set; }
         public List<string> IncludedGroups { get; set; }
         public string PanelName { get; set; }
         [XmlAttribute]
         public string ConditionGroup { get; set; }
+
+        public WizardButtonsEnum  WizardButtonsEnum { get; set; }
 
         public override string ToString()
         {

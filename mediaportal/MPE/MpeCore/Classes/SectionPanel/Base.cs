@@ -1,23 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 
 namespace MpeCore.Classes.SectionPanel
 {
-    public partial class Base : Form
+
+    class Base
     {
-        public Base()
+
+        static public void ActionExecute(PackageClass packageClass, SectionItem sectionItem, ActionExecuteLocationEnum locationEnum)
         {
-            InitializeComponent();
+            foreach (ActionItem list in sectionItem.Actions.Items)
+            {
+                if (list.ExecuteLocation != locationEnum)
+                    continue;
+                if (!string.IsNullOrEmpty(list.ConditionGroup) && !packageClass.Groups[list.ConditionGroup].Checked)
+                    continue;
+                MpeInstaller.ActionProviders[list.ActionType].Execute(packageClass, list);
+            }
         }
 
-        private void Base_Load(object sender, EventArgs e)
-        {
-
-        }
     }
 }

@@ -58,10 +58,10 @@ namespace MpeCore.Classes.SectionPanel
             Mode = ShowModeEnum.Real;
             Package = packageClass;
             Section = sectionItem;
-            //progressBar1.Maximum = Package.GetInstallableFileCount();
-            //packageClass.FileInstalled += packageClass_FileInstalled;
             SetValues();
+            Base.ActionExecute(Package, Section, ActionExecuteLocationEnum.BeforPanelShow);
             ShowDialog();
+            Base.ActionExecute(Package, Section, ActionExecuteLocationEnum.AfterPanelHide);
             return base.Resp;
         }
 
@@ -103,11 +103,18 @@ namespace MpeCore.Classes.SectionPanel
         private void InstallSection_Shown(object sender, EventArgs e)
         {
             this.BringToFront();
-            base.button_next.Enabled = false;
+            if (Mode == ShowModeEnum.Real)
+                base.button_next.Enabled = false;
             if (Mode == ShowModeEnum.Real)
             {
-                foreach (var actionItem in Section.Actons.Items)
+                foreach (var actionItem in Section.Actions.Items)
                 {
+                    if (actionItem.ExecuteLocation != ActionExecuteLocationEnum.AfterPanelShow)
+                        continue;
+                    if (!string.IsNullOrEmpty(actionItem.ConditionGroup) && !Package.Groups[actionItem.ConditionGroup].Checked)
+                        continue;
+
+                    progressBar1.Value = progressBar1.Minimum;
                     progressBar1.Maximum = MpeInstaller.ActionProviders[actionItem.ActionType].ItemsCount(Package,
                                                                                                           actionItem);
                     MpeInstaller.ActionProviders[actionItem.ActionType].ItemProcessed += packageClass_FileInstalled;

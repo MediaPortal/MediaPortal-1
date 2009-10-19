@@ -11,13 +11,15 @@ namespace MpeCore.Classes
             Params = new SectionParamCollection();
             ConditionGroup = string.Empty;
             ActionType = string.Empty;
+            ExecuteLocation = ActionExecuteLocationEnum.AfterPanelShow;
         }
 
-        public ActionItem(SectionItem obj)
+        public ActionItem(ActionItem obj)
         {
             Name = obj.Name;
             Params = Params;
             ConditionGroup = obj.ConditionGroup;
+            ExecuteLocation = obj.ExecuteLocation;
         }
 
         public ActionItem(string actionType)
@@ -26,6 +28,7 @@ namespace MpeCore.Classes
             ActionType = actionType;
             Params = new SectionParamCollection();
             ConditionGroup = string.Empty;
+            ExecuteLocation = ActionExecuteLocationEnum.AfterPanelShow;
         }
 
         [XmlAttribute]
@@ -37,6 +40,8 @@ namespace MpeCore.Classes
         public SectionParamCollection Params { get; set; }
         [XmlAttribute]
         public string ConditionGroup { get; set; }
+
+        public ActionExecuteLocationEnum ExecuteLocation { get; set; }
 
         public override string ToString()
         {

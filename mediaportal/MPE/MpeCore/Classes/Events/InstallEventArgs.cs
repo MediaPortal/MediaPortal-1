@@ -11,8 +11,15 @@ namespace MpeCore.Classes.Events
         {
             Group = groupItem;
             Item = fileItem;
+            Description = string.Empty;
         }
 
+        public InstallEventArgs(string description)
+        {
+            Group = new GroupItem();
+            Item = new FileItem();
+            Description = description;
+        }
         /// <summary>
         /// Gets or sets the currently  intalled file item
         /// </summary>
@@ -23,5 +30,7 @@ namespace MpeCore.Classes.Events
         /// </summary>
         /// <value>The group.</value>
         public GroupItem Group { get; set; }
+
+        public string Description { get; set; }
     }
 }

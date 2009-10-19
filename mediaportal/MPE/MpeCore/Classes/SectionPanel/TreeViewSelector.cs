@@ -68,7 +68,10 @@ namespace MpeCore.Classes.SectionPanel
             Package = packageClass;
             Section = sectionItem;
             SetValues();
+            Base.ActionExecute(Package, Section, ActionExecuteLocationEnum.BeforPanelShow);
+            Base.ActionExecute(Package, Section, ActionExecuteLocationEnum.AfterPanelShow);
             ShowDialog();
+            Base.ActionExecute(Package, Section, ActionExecuteLocationEnum.AfterPanelHide);
             return base.Resp;
         }
 

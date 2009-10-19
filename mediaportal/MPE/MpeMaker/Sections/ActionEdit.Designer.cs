@@ -36,6 +36,8 @@
             this.lbl_description = new System.Windows.Forms.Label();
             this.cmb_group = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.cmb_execute = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // btn_ok
@@ -78,7 +80,7 @@
             // 
             // btn_params
             // 
-            this.btn_params.Location = new System.Drawing.Point(121, 110);
+            this.btn_params.Location = new System.Drawing.Point(111, 131);
             this.btn_params.Name = "btn_params";
             this.btn_params.Size = new System.Drawing.Size(75, 23);
             this.btn_params.TabIndex = 4;
@@ -88,9 +90,9 @@
             // 
             // lbl_description
             // 
-            this.lbl_description.Location = new System.Drawing.Point(12, 152);
+            this.lbl_description.Location = new System.Drawing.Point(12, 157);
             this.lbl_description.Name = "lbl_description";
-            this.lbl_description.Size = new System.Drawing.Size(308, 73);
+            this.lbl_description.Size = new System.Drawing.Size(308, 68);
             this.lbl_description.TabIndex = 5;
             this.lbl_description.Text = "label2";
             // 
@@ -98,7 +100,7 @@
             // 
             this.cmb_group.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmb_group.FormattingEnabled = true;
-            this.cmb_group.Location = new System.Drawing.Point(12, 71);
+            this.cmb_group.Location = new System.Drawing.Point(12, 64);
             this.cmb_group.Name = "cmb_group";
             this.cmb_group.Size = new System.Drawing.Size(308, 21);
             this.cmb_group.TabIndex = 6;
@@ -107,17 +109,42 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 55);
+            this.label3.Location = new System.Drawing.Point(12, 48);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(81, 13);
             this.label3.TabIndex = 7;
             this.label3.Text = "Condition group";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(12, 88);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(75, 13);
+            this.label2.TabIndex = 8;
+            this.label2.Text = "Execute when";
+            // 
+            // cmb_execute
+            // 
+            this.cmb_execute.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmb_execute.FormattingEnabled = true;
+            this.cmb_execute.Items.AddRange(new object[] {
+            " Befor Wizard Screen Show",
+            " After Wizard Screen Show",
+            " After Wizard Screen Hide"});
+            this.cmb_execute.Location = new System.Drawing.Point(12, 104);
+            this.cmb_execute.Name = "cmb_execute";
+            this.cmb_execute.Size = new System.Drawing.Size(308, 21);
+            this.cmb_execute.TabIndex = 9;
+            this.cmb_execute.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // ActionEdit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(332, 263);
+            this.Controls.Add(this.cmb_execute);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.cmb_group);
             this.Controls.Add(this.lbl_description);
@@ -147,5 +174,7 @@
         private System.Windows.Forms.Label lbl_description;
         private System.Windows.Forms.ComboBox cmb_group;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ComboBox cmb_execute;
     }
 }

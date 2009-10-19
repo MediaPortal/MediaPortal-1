@@ -23,6 +23,11 @@ namespace MpeCore.Classes
         public string VersionDescription { get; set; }
         public string DevelopmentStatus { get; set; }
         public string OnlineLocation { get; set; }
+
+        /// <summary>
+        /// Gets or sets the location of packed file.
+        /// </summary>
+        /// <value>The location.</value>
         public string Location { get; set; }
     }
 }

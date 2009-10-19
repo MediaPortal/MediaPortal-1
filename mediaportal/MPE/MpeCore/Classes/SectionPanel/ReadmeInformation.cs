@@ -9,17 +9,16 @@ using MpeCore.Interfaces;
 
 namespace MpeCore.Classes.SectionPanel
 {
-    public partial class LicenseAgreement : BaseHorizontalLayout, ISectionPanel
+    public partial class ReadmeInformation : BaseHorizontalLayout, ISectionPanel
     {
 
         //private SectionResponseEnum Resp = SectionResponseEnum.Cancel;
 
 
-        private const string CONST_TEXT = "License text";
-        private const string CONST_TEXT_FILE = "License text file";
-        private const string CONST_Check  = "Checkbox text";
+        private const string CONST_TEXT = "Readme text";
+        private const string CONST_TEXT_FILE = "Rreadme text file";
 
-        public LicenseAgreement()
+        public ReadmeInformation()
         {
             InitializeComponent();
         }
@@ -47,11 +46,10 @@ namespace MpeCore.Classes.SectionPanel
         public SectionParamCollection GetDefaultParams()
         {
             SectionParamCollection _param = new SectionParamCollection(Params);
-            _param.Add(new SectionParam(CONST_TEXT, "", ValueTypeEnum.String, "The text of license agreement"));
-            _param.Add(new SectionParam(CONST_TEXT_FILE, "", ValueTypeEnum.File, "The file of license agreement should be RTF file"));
-            _param[Const_LABEL_BIG].Value = "License Agreement";
-            _param[Const_LABEL_SMALL].Value = "Please read the following license agreement carefully.";
-            _param[CONST_Check].Value = "I accept the terms of the license agreement.";
+            _param.Add(new SectionParam(CONST_TEXT, "", ValueTypeEnum.String, "The readme text"));
+            _param.Add(new SectionParam(CONST_TEXT_FILE, "", ValueTypeEnum.File, "The readme file should be RTF file"));
+            _param[Const_LABEL_BIG].Value = "Readme Information";
+            _param[Const_LABEL_SMALL].Value = "Readme Information for [Name]";
             return _param;
         }
 
@@ -68,11 +66,12 @@ namespace MpeCore.Classes.SectionPanel
         private void SetValues()
         {
             BaseHorizontalLayout_Shown(null, null);
-            base.button_next.Enabled = false;
-            checkBox1.Text = Params[CONST_Check].Value;
             if(File.Exists(Params[CONST_TEXT_FILE].Value) )
             {
-                richTextBox1.LoadFile(Params[CONST_TEXT_FILE].Value);
+                if (Path.GetExtension(Params[CONST_TEXT_FILE].Value).CompareTo(".rtf") == 0)
+                    richTextBox1.LoadFile(Params[CONST_TEXT_FILE].Value, RichTextBoxStreamType.RichText);
+                else
+                    richTextBox1.LoadFile(Params[CONST_TEXT_FILE].Value, RichTextBoxStreamType.PlainText);
             }
             else
             {
@@ -92,7 +91,6 @@ namespace MpeCore.Classes.SectionPanel
             Base.ActionExecute(Package, Section, ActionExecuteLocationEnum.AfterPanelShow);
             ShowDialog();
             Base.ActionExecute(Package, Section, ActionExecuteLocationEnum.AfterPanelHide);
-
             return base.Resp;
         }
 
@@ -103,27 +101,15 @@ namespace MpeCore.Classes.SectionPanel
 
         public string DisplayName
         {
-            get { return "License Agreement Screen"; }
+            get { return "Readme Information"; }
         }
 
         public string Guid
         {
-            get { return "{04854407-930E-4c5d-88E8-97CF99878052}"; }
+            get { return "{D8242EB9-0D28-4e67-B124-08E7B76266D2}"; }
         }
 
         #endregion
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            if(checkBox1.Checked)
-            {
-                base.button_next.Enabled = true;
-            }
-            else
-            {
-                base.button_next.Enabled = false;
-            }
-
-        }
     }
 }

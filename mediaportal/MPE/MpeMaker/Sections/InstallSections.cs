@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using MpeCore;
 using MpeCore.Classes;
@@ -56,7 +51,7 @@ namespace MpeMaker.Sections
                 {
                     if (SelectedSection != null)
                     {
-                        SelectedSection.Actons.Items.Add(item);
+                        SelectedSection.Actions.Items.Add(item);
                         list_actions.Items.Add(item);
                     }
                 }
@@ -140,8 +135,8 @@ namespace MpeMaker.Sections
                 cmb_grupvisibility.Text = param.ConditionGroup;
                 list_groups.Items.Clear();
                 list_actions.Items.Clear();
-
-                foreach (var s in this.Package.Groups.Items)
+                cmb_buttons.SelectedIndex = (int) param.WizardButtonsEnum;
+                foreach (var s in Package.Groups.Items)
                 {
                     if (param.IncludedGroups.Contains(s.Name))
                         list_groups.Items.Add(s.Name, true);
@@ -149,7 +144,7 @@ namespace MpeMaker.Sections
                         list_groups.Items.Add(s.Name, false);
                 }
 
-                foreach (var acton in param.Actons.Items)
+                foreach (var acton in param.Actions.Items)
                 {
                     list_actions.Items.Add(acton);
                 }
@@ -165,6 +160,7 @@ namespace MpeMaker.Sections
             SelectedSection.Name = txt_name.Text;
             SelectedSection.PanelName = cmb_sectiontype.Text;
             SelectedSection.ConditionGroup = cmb_grupvisibility.Text;
+            SelectedSection.WizardButtonsEnum = (WizardButtonsEnum) cmb_buttons.SelectedIndex;
         }
 
         private void list_groups_ItemCheck(object sender, ItemCheckEventArgs e)
@@ -236,6 +232,25 @@ namespace MpeMaker.Sections
                 SelectedSection = null;
             listBox_sections.Items.Clear();
             PopulateList();
+        }
+
+        private void mnu_action_edit_Click(object sender, EventArgs e)
+        {
+            if (list_actions.SelectedItems.Count < 1)
+                return;
+            ActionEdit dlg = new ActionEdit(Package, (ActionItem) list_actions.SelectedItem);
+            dlg.ShowDialog();
+        }
+
+        private void mnu_action_del_Click(object sender, EventArgs e)
+        {
+            if (list_actions.SelectedItems.Count < 1)
+                return;
+            ActionItem item = (ActionItem) list_actions.SelectedItem;
+            if (MessageBox.Show("Do you want to Delete action " + item.Name, "", MessageBoxButtons.YesNo) != DialogResult.Yes)
+                return;
+            SelectedSection.Actions.Items.Remove(item);
+            list_actions.Items.Remove(item);
         }
     }
 }

@@ -32,6 +32,7 @@ namespace MpeCore
 
 
             AddInstallType(new CopyFile());
+            AddInstallType(new CopyFont());
             AddInstallType(new GenericSkinFile());
             
             PathProviders.Add("MediaPortalPaths", new MediaPortalPaths());
@@ -39,11 +40,14 @@ namespace MpeCore
 
             AddSection(new Welcome());
             AddSection(new LicenseAgreement());
+            AddSection(new ReadmeInformation());
             AddSection(new ImageRadioSelector());
             AddSection(new TreeViewSelector());
             AddSection(new InstallSection());
+            AddSection(new Finish());
 
             AddActionProvider(new InstallFiles());
+            AddActionProvider(new ShowMessageBox());
 
             InstalledExtensions =
                 ExtensionCollection.Load(string.Format("{0}\\V2\\InstalledExtensions.xml",

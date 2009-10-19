@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Data;
+using System.IO;
 using MpeCore.Classes;
 using System.Windows.Forms;
 
@@ -26,7 +27,7 @@ namespace MpeMaker.Dialogs
         {
             if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                txt_file.Text = openFileDialog1.FileName;
+                txt_file.Text = Path.GetFullPath(openFileDialog1.FileName);
             }
         }
 

@@ -8,6 +8,7 @@ namespace MpeMaker.Sections
     public partial class BuildSection : UserControl,ISectionControl
     {
         public PackageClass Package { get; set; }
+        private bool _loading = false;
 
         public BuildSection()
         {
@@ -18,7 +19,10 @@ namespace MpeMaker.Sections
 
         public void Set(PackageClass pak)
         {
+            _loading = true;
             Package = pak;
+            txt_outfile.Text = pak.GeneralInfo.Location;
+            _loading = false;
         }
 
         public PackageClass Get()
@@ -57,6 +61,10 @@ namespace MpeMaker.Sections
                 tabControl1.SelectTab(1);
                 return;
             }
+            else
+            {
+                tabControl1.SelectTab(0);                
+            }
             list_message.Items.Add("Creating package started at : "+DateTime.Now.ToLongTimeString());
             MpeInstaller.ZipProvider.Save(Package, txt_outfile.Text);
             list_message.Items.Add("Ended at : " + DateTime.Now.ToLongTimeString());
@@ -64,6 +72,8 @@ namespace MpeMaker.Sections
 
         private void txt_outfile_TextChanged(object sender, EventArgs e)
         {
+            if (_loading)
+                return;
             Package.GeneralInfo.Location = txt_outfile.Text;
         }
     }

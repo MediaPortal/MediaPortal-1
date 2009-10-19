@@ -37,6 +37,8 @@
             this.btn_down = new System.Windows.Forms.Button();
             this.list_groups = new System.Windows.Forms.CheckedListBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.cmb_buttons = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.cmb_grupvisibility = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -52,9 +54,9 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.list_actions = new System.Windows.Forms.ListBox();
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
+            this.mnu_action_add = new System.Windows.Forms.ToolStripDropDownButton();
             this.mnu_action_del = new System.Windows.Forms.ToolStripButton();
             this.mnu_action_edit = new System.Windows.Forms.ToolStripButton();
-            this.mnu_action_add = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -136,6 +138,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.cmb_buttons);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.cmb_grupvisibility);
             this.groupBox1.Controls.Add(this.label4);
@@ -152,6 +156,32 @@
             this.groupBox1.TabIndex = 7;
             this.groupBox1.TabStop = false;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 124);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(43, 13);
+            this.label1.TabIndex = 11;
+            this.label1.Text = "Buttons";
+            // 
+            // cmb_buttons
+            // 
+            this.cmb_buttons.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmb_buttons.FormattingEnabled = true;
+            this.cmb_buttons.Items.AddRange(new object[] {
+            " Back/Next/Cancel ",
+            " Next/Cancel ",
+            " Back/Finish",
+            " Cancel ",
+            " Next ",
+            " Finish "});
+            this.cmb_buttons.Location = new System.Drawing.Point(87, 121);
+            this.cmb_buttons.Name = "cmb_buttons";
+            this.cmb_buttons.Size = new System.Drawing.Size(183, 21);
+            this.cmb_buttons.TabIndex = 10;
+            this.cmb_buttons.SelectedIndexChanged += new System.EventHandler(this.txt_name_TextChanged);
+            // 
             // label5
             // 
             this.label5.AutoSize = true;
@@ -165,9 +195,9 @@
             // 
             this.cmb_grupvisibility.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmb_grupvisibility.FormattingEnabled = true;
-            this.cmb_grupvisibility.Location = new System.Drawing.Point(88, 94);
+            this.cmb_grupvisibility.Location = new System.Drawing.Point(87, 94);
             this.cmb_grupvisibility.Name = "cmb_grupvisibility";
-            this.cmb_grupvisibility.Size = new System.Drawing.Size(182, 21);
+            this.cmb_grupvisibility.Size = new System.Drawing.Size(183, 21);
             this.cmb_grupvisibility.TabIndex = 8;
             this.cmb_grupvisibility.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
@@ -190,7 +220,7 @@
             // 
             // btn_preview
             // 
-            this.btn_preview.Location = new System.Drawing.Point(171, 152);
+            this.btn_preview.Location = new System.Drawing.Point(170, 161);
             this.btn_preview.Name = "btn_preview";
             this.btn_preview.Size = new System.Drawing.Size(75, 23);
             this.btn_preview.TabIndex = 5;
@@ -200,7 +230,7 @@
             // 
             // btn_params
             // 
-            this.btn_params.Location = new System.Drawing.Point(21, 152);
+            this.btn_params.Location = new System.Drawing.Point(20, 161);
             this.btn_params.Name = "btn_params";
             this.btn_params.Size = new System.Drawing.Size(75, 23);
             this.btn_params.TabIndex = 4;
@@ -300,6 +330,16 @@
             this.toolStrip2.TabIndex = 0;
             this.toolStrip2.Text = "toolStrip2";
             // 
+            // mnu_action_add
+            // 
+            this.mnu_action_add.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.mnu_action_add.Image = ((System.Drawing.Image)(resources.GetObject("mnu_action_add.Image")));
+            this.mnu_action_add.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.mnu_action_add.Name = "mnu_action_add";
+            this.mnu_action_add.Size = new System.Drawing.Size(29, 22);
+            this.mnu_action_add.Text = "toolStripButton1";
+            this.mnu_action_add.ToolTipText = "Add action";
+            // 
             // mnu_action_del
             // 
             this.mnu_action_del.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -309,6 +349,7 @@
             this.mnu_action_del.Size = new System.Drawing.Size(23, 22);
             this.mnu_action_del.Text = "toolStripButton2";
             this.mnu_action_del.ToolTipText = "Remove action";
+            this.mnu_action_del.Click += new System.EventHandler(this.mnu_action_del_Click);
             // 
             // mnu_action_edit
             // 
@@ -319,16 +360,7 @@
             this.mnu_action_edit.Size = new System.Drawing.Size(23, 22);
             this.mnu_action_edit.Text = "toolStripButton3";
             this.mnu_action_edit.ToolTipText = "Edit action";
-            // 
-            // mnu_action_add
-            // 
-            this.mnu_action_add.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.mnu_action_add.Image = ((System.Drawing.Image)(resources.GetObject("mnu_action_add.Image")));
-            this.mnu_action_add.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.mnu_action_add.Name = "mnu_action_add";
-            this.mnu_action_add.Size = new System.Drawing.Size(29, 22);
-            this.mnu_action_add.Text = "toolStripButton1";
-            this.mnu_action_add.ToolTipText = "Add action";
+            this.mnu_action_edit.Click += new System.EventHandler(this.mnu_action_edit_Click);
             // 
             // InstallSections
             // 
@@ -386,5 +418,7 @@
         private System.Windows.Forms.ToolStripButton mnu_action_edit;
         private System.Windows.Forms.ListBox list_actions;
         private System.Windows.Forms.ToolStripDropDownButton mnu_action_add;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ComboBox cmb_buttons;
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace MpeCore.Classes.SectionPanel
 {
-    partial class LicenseAgreement
+    partial class ReadmeInformation
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // richTextBox1
@@ -38,41 +37,27 @@
             this.richTextBox1.Location = new System.Drawing.Point(-1, 69);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(499, 203);
+            this.richTextBox1.Size = new System.Drawing.Size(499, 229);
             this.richTextBox1.TabIndex = 14;
             this.richTextBox1.Text = "";
             // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(12, 281);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(233, 17);
-            this.checkBox1.TabIndex = 23;
-            this.checkBox1.Text = "I accept the terms of the license agreement.";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
-            // 
-            // LicenseAgreement
+            // ReadmeInformation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(497, 352);
-            this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.richTextBox1);
-            this.Name = "LicenseAgreement";
+            this.Name = "ReadmeInformation";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Extension Installer for   - 0.0.0.0";
+            //this.Load += new System.EventHandler(this.ReadmeInformation_Load);
             this.Controls.SetChildIndex(this.richTextBox1, 0);
-            this.Controls.SetChildIndex(this.checkBox1, 0);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
         private System.Windows.Forms.RichTextBox richTextBox1;
-        private System.Windows.Forms.CheckBox checkBox1;
     }
 }
