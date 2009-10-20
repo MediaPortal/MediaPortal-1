@@ -3033,39 +3033,63 @@ namespace MediaPortal.Util
 
     public static string TranslateLanguageString(string language)
     {
+      string languageTranslated = "";
       switch (language.ToLower())
       {
         case "undetermined":
-          return GUILocalizeStrings.Get(2599);
+          languageTranslated = GUILocalizeStrings.Get(2599);
+          break;
         case "english":
-          return GUILocalizeStrings.Get(2600);
+          languageTranslated = GUILocalizeStrings.Get(2600);
+          break;
         case "german":
-          return GUILocalizeStrings.Get(2601);
+          languageTranslated = GUILocalizeStrings.Get(2601);
+          break;
         case "french":
-          return GUILocalizeStrings.Get(2602);
+          languageTranslated = GUILocalizeStrings.Get(2602);
+          break;
         case "dutch":
-          return GUILocalizeStrings.Get(2603);
+          languageTranslated = GUILocalizeStrings.Get(2603);
+          break;
         case "norwegian":
-          return GUILocalizeStrings.Get(2604);
+          languageTranslated = GUILocalizeStrings.Get(2604);
+          break;
         case "italian":
-          return GUILocalizeStrings.Get(2605);
+          languageTranslated = GUILocalizeStrings.Get(2605);
+          break;
         case "swedish":
-          return GUILocalizeStrings.Get(2606);
+          languageTranslated = GUILocalizeStrings.Get(2606);
+          break;
         case "spanish":
-          return GUILocalizeStrings.Get(2607);
+          languageTranslated = GUILocalizeStrings.Get(2607);
+          break;
         case "portuguese":
-          return GUILocalizeStrings.Get(2608);
+          languageTranslated = GUILocalizeStrings.Get(2608);
+          break;
         case "danish":
-          return GUILocalizeStrings.Get(2609);
+          languageTranslated = GUILocalizeStrings.Get(2609);
+          break;
         case "polish":
-          return GUILocalizeStrings.Get(2610);
+          languageTranslated = GUILocalizeStrings.Get(2610);
+          break;
         case "czech":
-          return GUILocalizeStrings.Get(2611);
+          languageTranslated = GUILocalizeStrings.Get(2611);
+          break;
         case "hungarian":
-          return GUILocalizeStrings.Get(2612);
+          languageTranslated = GUILocalizeStrings.Get(2612);
+          break;
+        case "russian":
+          languageTranslated = GUILocalizeStrings.Get(2613);
+          break;
+        case "ukrainian":
+          languageTranslated = GUILocalizeStrings.Get(2614);
+          break;
         default:
-          return language;
+          break;
       }
+      if (languageTranslated.Equals(""))
+        languageTranslated = language;
+      return languageTranslated;
     }
 
 

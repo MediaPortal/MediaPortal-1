@@ -304,6 +304,10 @@ namespace MediaPortal.Player
         {
           return "AC3";
         }
+        if (sType.subType == MEDIASUBTYPE_MPEG1_PAYLOAD)
+        {
+          return "Mpeg1";
+        }
         if (sType.subType == MEDIASUBTYPE_MPEG1_AUDIO)
         {
           return "Mpeg1";
@@ -1930,6 +1934,11 @@ namespace MediaPortal.Player
     private static Guid MEDIASUBTYPE_MPEG2_AUDIO
     {
       get { return new Guid("e06d802b-db46-11cf-b4d1-00805f6cbbea"); }
+    }
+
+    private static Guid MEDIASUBTYPE_MPEG1_PAYLOAD
+    {
+      get { return new Guid("e436eb81-524f-11ce-9f53-0020af0ba770"); }
     }
 
     private static Guid MEDIASUBTYPE_MPEG1_AUDIO

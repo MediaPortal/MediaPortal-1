@@ -1170,7 +1170,7 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
-    /// Property to get the name for an audio stream
+    /// Property to get the language for an audio stream
     /// </summary>
     public override string AudioLanguage(int iStream)
     {
@@ -1194,6 +1194,27 @@ namespace MediaPortal.Player
         {
           streamName = language;
         }
+      }
+      return streamName;
+    }
+
+     /// <summary>
+    /// Property to get the name for an audio stream
+    /// </summary>
+    public override string AudioType(int iStream)
+    {
+      string streamName = FStreams.GetStreamInfos(StreamType.Audio, iStream).Name;
+      // remove prefix, which is added by Haali Media Splitter
+      streamName = Regex.Replace(streamName, @"^A: ", "");
+      // Check if returned string contains both language and trackname info
+      // For example Haali Media Splitter returns mkv streams as: "trackname [language]",
+      // where "trackname" is stream's "trackname" property muxed in the mkv.
+      Regex regex = new Regex(@"\[.+\]");
+      Match result = regex.Match(streamName);
+      if (result.Success)
+      {
+        //Get the trackname part by removing the language part from the string.
+        streamName = regex.Replace(streamName, "").Trim();
       }
       return streamName;
     }

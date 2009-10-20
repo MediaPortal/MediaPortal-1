@@ -1267,13 +1267,13 @@ namespace MediaPortal.GUI.Video
       for (int i = 0; i < count; i++)
       {
         string audioType = g_Player.AudioType(i);
-        if (audioType == Strings.Unknown)
+        if (audioType == Strings.Unknown || String.Equals(audioType,""))
         {
           dlg.Add(g_Player.AudioLanguage(i));
         }
         else
         {
-          dlg.Add(String.Format("{0}:{1}", audioType, g_Player.AudioLanguage(i)));
+          dlg.Add(String.Format("{0}:{1}", g_Player.AudioLanguage(i),audioType));
         }
       }
 
