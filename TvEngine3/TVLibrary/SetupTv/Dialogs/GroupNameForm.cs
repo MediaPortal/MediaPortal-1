@@ -19,13 +19,16 @@
  *
  */
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
+using TvDatabase;
 
 namespace SetupTv.Sections
 {
   public partial class GroupNameForm : Form
   {
     string _groupName="new group";
+    List<string> _groupNames;
 
     public GroupNameForm()
     {
@@ -37,6 +40,7 @@ namespace SetupTv.Sections
     {
       Text = "Enter name for new group";
       mpLabel1.Text = "Please enter the name for the new group";
+      GetGroupNames();
     }
 
     public GroupNameForm(string groupName)
@@ -50,6 +54,17 @@ namespace SetupTv.Sections
       _groupName = groupName;
       Text = "Change name for group";
       mpLabel1.Text = "Please enter the new name for the group";
+      GetGroupNames();
+    }
+
+    private void GetGroupNames()
+    {
+      IList<ChannelGroup> groups = ChannelGroup.ListAll();
+      _groupNames = new List<string>();
+      foreach (ChannelGroup group in groups)
+      {
+        _groupNames.Add(group.GroupName);
+      }
     }
 
     private void GroupName_Load(object sender, EventArgs e)
@@ -59,9 +74,16 @@ namespace SetupTv.Sections
 
     private void mpButton1_Click(object sender, EventArgs e)
     {
-      DialogResult = DialogResult.OK;
-      _groupName = mpTextBox1.Text;
-      Close();
+      if (_groupNames.Contains(mpTextBox1.Text))
+      {
+        MessageBox.Show("Group name already exists.");
+      }
+      else
+      {
+        DialogResult = DialogResult.OK;
+        _groupName = mpTextBox1.Text;
+        Close();
+      }
     }
 
     private void mpButton2_Click(object sender, EventArgs e)

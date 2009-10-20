@@ -23,15 +23,17 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using TvControl;
 using TvDatabase;
-using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using Gentle.Framework;
 using SetupControls;
+
 namespace SetupTv.Sections
 {
   public partial class TestService : SectionSettings
   {
     IList<Card> _cards;
+    Dictionary<int, string> _channelNames;
+
     //Player _player;
     public TestService()
       : this("Manual Control")
@@ -78,6 +80,13 @@ namespace SetupTv.Sections
       if (layer.GetSetting("idleEPGGrabberEnabled", "yes").Value != "yes")
       {
         mpButtonReGrabEpg.Enabled = false;
+      }
+
+      _channelNames = new Dictionary<int, string>();
+      IList<Channel> channels = Channel.ListAll();
+      foreach (Channel ch in channels)
+      {
+        _channelNames.Add(ch.IdChannel, ch.DisplayName);
       }
     }
 
@@ -383,11 +392,18 @@ namespace SetupTv.Sections
             item.SubItems[2].Text = tmp;
             tmp = vcard.IsScrambled ? "yes" : "no";
             item.SubItems[4].Text = tmp;
-            item.SubItems[3].Text = vcard.ChannelName;
+            string channelDisplayName;
+            if (_channelNames.TryGetValue(vcard.IdChannel, out channelDisplayName))
+            {
+              item.SubItems[3].Text = channelDisplayName;
+            }
+            else
+            {
+              item.SubItems[3].Text = vcard.ChannelName;
+            }
             item.SubItems[5].Text = usersForCard[i].Name;
             item.SubItems[6].Text = card.Name;
             off++;
-
 
             if (off >= mpListView1.Items.Count)
             {

@@ -91,8 +91,11 @@ namespace SetupTv.Sections
         counter++;
       }
       IpAddressComboBox.SelectedIndex = selected;
-      PortNoNumericUpDown.Value = _ourServer.RtspPort;
-      PortNoNumericUpDown.Text = _ourServer.RtspPort.ToString(); // in case value is the same but text is empty
+      if (_ourServer.RtspPort >= PortNoNumericUpDown.Minimum && _ourServer.RtspPort <= PortNoNumericUpDown.Maximum)
+      {
+        PortNoNumericUpDown.Value = _ourServer.RtspPort;
+        PortNoNumericUpDown.Text = _ourServer.RtspPort.ToString(); // in case value is the same but text is empty
+      }
     }
 
     public override void OnSectionDeActivated()
