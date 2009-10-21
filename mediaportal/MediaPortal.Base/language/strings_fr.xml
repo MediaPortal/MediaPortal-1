@@ -32,6 +32,7 @@
     <String id="31">Novembre</String>
     <String id="32">Décembre</String>
     <String id="50" prefix="Mes ">DVD</String>
+    <String id="51">Lecture disque</String>
     <String id="60">Attente du démarrage du service télé...</String>
     <String id="61">Attente {0} seconde(s) avant le démarrage...</String>
     <String id="62">Initialisation de DirectX...</String>
@@ -999,6 +1000,9 @@
     <String id="1518">Impossible de créer un graphe</String>
     <String id="1519">Pas d'encodeur logiciel supporté d'installé</String>
     <String id="1520">Pas assez d'espace disque disponible</String>
+    <String id="1521">Vue par Titre</String>
+    <String id="1522">Vue par Genre</String>
+    <String id="1523">Cherche dans la description</String>
     <String id="1600">Voulez-vous arrêter ?</String>
     <String id="1601">Voulez-vous mettre en veille ?</String>
     <String id="1602">Voulez-vous mettre en veille prolongée ?</String>
