@@ -40,6 +40,11 @@ namespace MpeCore.Classes.ActionType
             return SectionResponseEnum.Ok;
         }
 
+        public ValidationResponse Validate(PackageClass packageClass, ActionItem actionItem)
+        {
+            return new ValidationResponse();
+        }
+
         void packageClass_FileInstalled(object sender, InstallEventArgs e)
         {
             if (ItemProcessed != null)

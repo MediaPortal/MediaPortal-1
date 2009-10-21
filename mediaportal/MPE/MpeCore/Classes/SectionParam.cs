@@ -7,7 +7,8 @@ namespace MpeCore.Classes
     public enum ValueTypeEnum
     {
         String,
-        File
+        File,
+        Template
     }
     public class SectionParam
     {

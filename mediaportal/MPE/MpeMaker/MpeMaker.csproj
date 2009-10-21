@@ -61,6 +61,12 @@
     <Compile Include="Dialogs\AddFolder2Group.Designer.cs">
       <DependentUpon>AddFolder2Group.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\ParamEditTemplate.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ParamEditTemplate.Designer.cs">
+      <DependentUpon>ParamEditTemplate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\GroupEdit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -102,6 +108,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Dialogs\AddFolder2Group.resx">
       <DependentUpon>AddFolder2Group.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ParamEditTemplate.resx">
+      <DependentUpon>ParamEditTemplate.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\GroupEdit.resx">
       <DependentUpon>GroupEdit.cs</DependentUpon>

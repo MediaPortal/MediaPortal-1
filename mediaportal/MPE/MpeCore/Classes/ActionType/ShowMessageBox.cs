@@ -43,5 +43,10 @@ namespace MpeCore.Classes.ActionType
             MessageBox.Show(actionItem.Params[Const_MESSAGE].Value);
             return SectionResponseEnum.Ok;
         }
+
+        public ValidationResponse Validate(PackageClass packageClass, ActionItem actionItem)
+        {
+            return new ValidationResponse();
+        }
     }
 }

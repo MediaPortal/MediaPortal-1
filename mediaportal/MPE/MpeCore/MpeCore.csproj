@@ -62,6 +62,8 @@
     <Compile Include="Classes\ActionExecuteLocationEnum.cs" />
     <Compile Include="Classes\ActionItem.cs" />
     <Compile Include="Classes\ActionItemCollection.cs" />
+    <Compile Include="Classes\ActionType\ClearSkinCache.cs" />
+    <Compile Include="Classes\ActionType\RunApplication.cs" />
     <Compile Include="Classes\ActionType\ShowMessageBox.cs" />
     <Compile Include="Classes\Events\FileInstalledEventHandler.cs" />
     <Compile Include="Classes\Events\InstallEventArgs.cs" />
