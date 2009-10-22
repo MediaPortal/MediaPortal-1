@@ -43,6 +43,16 @@ namespace MpeCore.Classes
         public ValueTypeEnum ValueType { get; set; }
         public string Description { get; set; }
 
+        /// <summary>
+        /// Gets the value as a real path. 
+        /// This function only usable if the type is Template
+        /// </summary>
+        /// <returns></returns>
+        public string GetValueAsPath()
+        {
+            return MpeInstaller.TransformInRealPath(Value);
+        }
+
         public override string ToString()
         {
             return Name;

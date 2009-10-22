@@ -1,15 +1,17 @@
-﻿using System.Windows.Forms;
+﻿using System.Diagnostics;
+using System;
 using MpeCore.Classes.Events;
 using MpeCore.Classes.SectionPanel;
 using MpeCore.Interfaces;
 
+
 namespace MpeCore.Classes.ActionType
 {
-    class ShowMessageBox : IActionType
+    class KillTask : IActionType
     {
-        private const string Const_MESSAGE = "Message";
+        private const string Const_MESSAGE = "Task name";
         public event FileInstalledEventHandler ItemProcessed;
-        
+
         public int ItemsCount(PackageClass packageClass, ActionItem actionItem)
         {
             return 1;
@@ -17,27 +19,32 @@ namespace MpeCore.Classes.ActionType
 
         public string DisplayName
         {
-            get { return "MessageBox"; }
+            get { return "KillTask"; }
         }
 
         public string Description
         {
-            get { return "Display a message box with specified message"; }
+            get { return "Kill a task with specified name"; }
         }
 
         public SectionParamCollection GetDefaultParams()
         {
             var Params = new SectionParamCollection();
             Params.Add(new SectionParam(Const_MESSAGE, "", ValueTypeEnum.String,
-                                       "Message text to show"));
+                                       "Task name to kill"));
             return Params;
         }
 
         public SectionResponseEnum Execute(PackageClass packageClass, ActionItem actionItem)
         {
             if (ItemProcessed != null)
-                ItemProcessed(this, new InstallEventArgs("Message box"));
-            MessageBox.Show(actionItem.Params[Const_MESSAGE].Value);
+                ItemProcessed(this, new InstallEventArgs("Kill Task"));
+            Process[] prs = Process.GetProcesses();
+            foreach (Process pr in prs)
+            {
+                if (pr.ProcessName.Equals(actionItem.Params[Const_MESSAGE].Value, StringComparison.InvariantCultureIgnoreCase))
+                    pr.Kill();
+            }
             return SectionResponseEnum.Ok;
         }
 

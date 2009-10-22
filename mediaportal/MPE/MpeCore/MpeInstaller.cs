@@ -50,6 +50,8 @@ namespace MpeCore
             AddActionProvider(new ShowMessageBox());
             AddActionProvider(new ClearSkinCache());
             AddActionProvider(new RunApplication());
+            AddActionProvider(new KillTask());
+            AddActionProvider(new CreateShortCut());
 
             InstalledExtensions =
                 ExtensionCollection.Load(string.Format("{0}\\V2\\InstalledExtensions.xml",

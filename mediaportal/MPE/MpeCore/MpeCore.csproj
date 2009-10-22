@@ -47,10 +47,14 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Interop.IWshRuntimeLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\MediaPortal.Base\Interop.IWshRuntimeLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="Ionic.Zip, Version=1.7.2.18, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\MediaPortal.Base\Ionic.Zip.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -63,6 +67,8 @@
     <Compile Include="Classes\ActionItem.cs" />
     <Compile Include="Classes\ActionItemCollection.cs" />
     <Compile Include="Classes\ActionType\ClearSkinCache.cs" />
+    <Compile Include="Classes\ActionType\CreateShortCut.cs" />
+    <Compile Include="Classes\ActionType\KillTask.cs" />
     <Compile Include="Classes\ActionType\RunApplication.cs" />
     <Compile Include="Classes\ActionType\ShowMessageBox.cs" />
     <Compile Include="Classes\Events\FileInstalledEventHandler.cs" />
