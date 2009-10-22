@@ -102,6 +102,8 @@
       <posY>425</posY>
       <width>145</width>
       <height>111</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
       <action>18</action>
       <textureFocus>tv_green_border.png</textureFocus>
       <animation effect="fade" time="250">WindowClose</animation>

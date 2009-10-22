@@ -7,7 +7,7 @@
       <description>play time label</description>
       <type>label</type>
       <id>2</id>
-      <posX>220</posX>
+      <posX>256</posX>
       <posY>490</posY>
       <label>#currentplaytime</label>
       <align>left</align>
@@ -22,7 +22,7 @@
       <id>0</id>
       <posX>49</posX>
 	  <posY>419</posY>
-	  <width>121</width>
+	  <width>161</width>
 	  <height>124</height>
       <texture>Picture_cover.png</texture>
       <centered>yes</centered>
@@ -33,9 +33,9 @@
       <description>music logo</description>
       <type>image</type>
       <id>1</id>
-      <posX>54</posX>
-	  <posY>423</posY>
-	  <width>110</width>
+      <posX>56</posX>
+	  <posY>425</posY>
+	  <width>145</width>
 	  <height>111</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -47,7 +47,7 @@
       <description>play logo</description>
       <type>image</type>
       <id>3</id>
-      <posX>175</posX>
+      <posX>212</posX>
       <posY>460</posY>
       <width>36</width>
 	  <height>42</height>
@@ -59,7 +59,7 @@
       <description>Pause logo</description>
       <type>image</type>
       <id>4</id>
-      <posX>175</posX>
+      <posX>212</posX>
       <posY>460</posY>
       <width>36</width>
 	  <height>42</height>
@@ -71,7 +71,7 @@
       <description>FF logo</description>
       <type>image</type>
       <id>7</id>
-      <posX>175</posX>
+      <posX>212</posX>
       <posY>460</posY>
       <width>36</width>
 	  <height>42</height>
@@ -83,7 +83,7 @@
       <description>RW logo</description>
       <type>image</type>
       <id>8</id>
-      <posX>175</posX>
+      <posX>212</posX>
       <posY>460</posY>
       <width>36</width>
 	  <height>42</height>
@@ -95,7 +95,7 @@
       <description>Gap / Normal Icon</description>
       <type>image</type>
       <id>10</id>
-      <posX>175</posX>
+      <posX>212</posX>
       <posY>511</posY>
       <width>30</width>
       <height>30</height>
@@ -108,7 +108,7 @@
       <description>Gapless Icon</description> 
       <type>image</type>
       <id>11</id>
-      <posX>175</posX>
+      <posX>212</posX>
       <posY>511</posY>
       <width>30</width>
       <height>30</height>
@@ -121,7 +121,7 @@
       <description>Crossfade Icon</description>
       <type>image</type>
       <id>12</id>
-      <posX>175</posX>
+      <posX>212</posX>
       <posY>511</posY>
       <width>30</width>
       <height>30</height>
@@ -148,10 +148,10 @@
       <description>video preview window</description>
       <type>videowindow</type>
       <id>9</id>
-      <posX>54</posX>
-	  <posY>423</posY>
-	  <width>110</width>
-	  <height>111</height>
+      <posX>56</posX>
+      <posY>425</posY>
+	<width>145</width>
+	<height>111</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <action>18</action>
