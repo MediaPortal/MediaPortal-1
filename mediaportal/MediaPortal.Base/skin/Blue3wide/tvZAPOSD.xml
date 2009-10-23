@@ -4,7 +4,7 @@
   <defaultcontrol>213</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
-    <control>
+    <!-- <control>
       <description>background</description>
       <type>image</type>
       <id>0</id>
@@ -103,6 +103,6 @@
       <align>left</align>
       <font>font16</font>
       <textcolor>FFFFFFFF</textcolor>
-    </control>
+    </control>-->
   </controls>
 </window>
