@@ -659,8 +659,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               Log.Info("(IDisplay) iMONLCDg.Setup(): hardware information test - Opening SG_RC.dll");
               if (_IMON.iMONRC_Init(0x77, 0x83, 0x8888))
               {
-                _IMON.iMONRC_ChangeRCSet(0x77);
-                _IMON.iMONRC_ChangeRC6(1);
+                //_IMON.iMONRC_ChangeRCSet(0x77);
+                //_IMON.iMONRC_ChangeRC6(1);
                 long num4 = _IMON.iMONRC_CheckDriverVersion();
                 int num5 = _IMON.iMONRC_GetFirmwareVer();
                 int num6 = _IMON.iMONRC_GetHWType();
@@ -899,7 +899,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public string Description
     {
-      get { return "SoundGraph iMON USB VFD/LCD Plugin v20_05_2009 - build 2"; }
+      get { return "SoundGraph iMON USB VFD/LCD Plugin v21_10_2009 - build 3"; }
     }
 
     public string ErrorMessage
@@ -1395,8 +1395,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             if (_DisplayType == DisplayType.LCD2)
             {
               Log.Info("iMONLCDg.CloseLcd(): sending display shutdown command to LCD2");
-              SendData(-8646911284551352312L);
-              SendData(-8502796096475496448L);
+              SendData(0x8800000000000048L);
+              SendData(0x8A00000000000000L);
             }
             else
             {
@@ -1411,7 +1411,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             if (_DisplayType == DisplayType.LCD2)
             {
               Log.Debug("iMONLCDg.CloseLcd(): sending clock enable command to LCD2");
-              num = 9799832789158199296L;
+              num = 0x8800000000000000L;
             }
             else
             {
@@ -1419,7 +1419,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               num = 0x5000000000000000L;
             }
             num += ((ulong)now.Second) << 0x30;
-            num += ((ulong)now.Minute) << 40;
+            num += ((ulong)now.Minute) << 0x28;
             num += ((ulong)now.Hour) << 0x20;
             num += ((ulong)now.Day) << 0x18;
             num += ((ulong)now.Month) << 0x10;
@@ -1495,16 +1495,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             else
             {
-              SendData(0x21c000000000000L);
-              SendData(2L);
+              SendData(0x021c000000000000L);
+              SendData(0x0000000000000002L);
               SendText3R(" not active ");
             }
           }
           else
           {
             Log.Info("iMONLCDg.CloseLcd(): Shutting down LCD3R display (with clock)!!");
-            SendData(0x21c010000000000L);
-            SendData(2L);
+            SendData(0x021c010000000000L);
+            SendData(0x0000000000000002L);
           }
         }
         _IMON.iMONVFD_Uninit();
@@ -1649,8 +1649,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           EQSettings.EqArray[1 + m] =
             (byte)((EQSettings.EqArray[1 + m] << 4) + EQSettings.EqArray[9 + m]);
         }
-        ulong data = 0x901000000000000L;
-        ulong num9 = 2L;
+        ulong data = 0x0901000000000000L;
+        ulong num9 = 0x0000000000000002L;
         data = data + EQSettings.EqArray[1] << 40;
         data = data + EQSettings.EqArray[2] << 0x20;
         data = data + EQSettings.EqArray[3] << 0x18;
@@ -1659,9 +1659,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         num9 = num9 + EQSettings.EqArray[6] << 40;
         num9 = num9 + EQSettings.EqArray[7] << 0x20;
         num9 = num9 + EQSettings.EqArray[8] << 0x18;
-        SendData(0x200020000000000L);
-        SendData(2L);
-        SendData(0xd0f202020202000L);
+        SendData(0x0200020000000000L);
+        SendData(0x0000000000000002L);
+        SendData(0x0d0f202020202000L);
         SendData(0x2020202020202002L);
         SendData(data);
         SendData(num9);
@@ -1778,7 +1778,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             if (_DisplayType == DisplayType.LCD2)
             {
-              SendData(-8646911284551352312L);
+              SendData(0x8800000000000008L);
             }
             else
             {
@@ -1823,17 +1823,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           _IsDisplayOff = false;
           if (_DisplayType == DisplayType.LCD2)
           {
-            SendData(-8646911284551352256L);
-            SendData(-8646911284551352256L);
-            SendData(-8502796096475496448L);
+            SendData(0x8800000000000040L);
+            SendData(0x8800000000000040L);
+            SendData(0x8a00000000000000L);
             SendData(Command.SetContrast, _ContrastLevel);
-            SendData(-8791026472627208192L);
+            //SendData(0x8600000000000000L);
             SendData(Command.SetIcons);
             SendData(Command.SetLines0);
             SendData(Command.SetLines1);
             SendData(Command.SetLines2);
             ClearDisplay();
-            SendData(-8358680908399640433L);
+            SendData(0x8c0000000000008fL);
           }
           else
           {
@@ -2821,20 +2821,20 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (_DisplayType == DisplayType.LCD2)
             {
-              SendData(-8646911284551352256L);
-              SendData(-8502796096475496448L);
+              SendData(0x8800000000000040L);
+              SendData(0x8a00000000000000L);
               if (_Contrast)
               {
                 Log.Info("iMONLCDg.OpenLcd(): Setting LCD2 contrast level to {0}", new object[] { _ContrastLevel });
                 SendData(Command.SetContrast, _ContrastLevel);
               }
-              SendData(-8791026472627208192L);
+              //SendData(0x8600000000000000L);
               SendData(Command.SetIcons);
               SendData(Command.SetLines0);
               SendData(Command.SetLines1);
               SendData(Command.SetLines2);
               ClearDisplay();
-              SendData(-8358680908399640433L);
+              SendData(0x8c0000000000008fL);
             }
             else
             {
@@ -2855,12 +2855,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             SendData(0x2020202020202004L);
             SendData(0x2020202020202006L);
             SendData(0x20202020ffffff08L);
-            SendData(0x21c020000000000L);
-            SendData(2L);
-            SendData(0x200020000000000L);
-            SendData(2L);
-            SendData(0x21b010000000000L);
-            SendData(2L);
+            SendData(0x021c020000000000L);
+            SendData(0x0000000000000002L);
+            SendData(0x0200020000000000L);
+            SendData(0x0000000000000002L);
+            SendData(0x021b010000000000L);
+            SendData(0x0000000000000002L);
           }
         }
         AdvancedSettings.OnSettingsChanged +=
@@ -3196,8 +3196,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         (ulong)
         ((((((((buffer[8] << 0x38) + (buffer[9] << 0x30)) | (buffer[10] << 40)) | (buffer[11] << 0x20)) |
             (buffer[12] << 0x18)) | (buffer[13] << 0x10)) | (buffer[14] << 8)) | buffer[15]);
-      SendData(0x200020000000000L);
-      SendData(2L);
+      SendData(0x0200020000000000L);
+      SendData(0x0000000000000002L);
       SendData(data);
       SendData(num4);
       if (DoDebug)
