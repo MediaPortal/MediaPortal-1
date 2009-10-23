@@ -37,6 +37,23 @@ namespace MediaPortal.WebEPG
   class DatabaseEPGDataSink
     : IEpgDataSink
   {
+    #region Types
+    
+    struct DateTimeRange
+    {
+      public DateTime Start;
+      public DateTime End;
+
+      public DateTimeRange(DateTime start, DateTime end)
+      {
+        Start = start;
+        End = end;
+      }
+    }
+
+    #endregion
+
+
     #region Variables
 
     bool _deleteOverlapping = false;
@@ -92,6 +109,59 @@ namespace MediaPortal.WebEPG
           prog.EndTime = windowEnd;
         }
       }
+    }
+
+    private List<DateTimeRange> GetGrabbedDateTimeRanges()
+    {
+      List<DateTimeRange> ranges = new List<DateTimeRange>();
+      if (_channelPrograms.Count != 0)
+      {
+        _channelPrograms.SortIfNeeded();
+        // First implementation: scan programs
+        DateTimeRange range = new DateTimeRange(_channelPrograms[0].StartTime, _channelPrograms[0].EndTime);
+        for (int i = 1; i < _channelPrograms.Count; i++)
+        {
+          Program currProg = _channelPrograms[i];
+          if (range.End.Equals(currProg.StartTime))
+          {
+            range.End = currProg.EndTime;
+          }
+          else
+          {
+            ranges.Add(range);
+            range = new DateTimeRange(currProg.StartTime, currProg.EndTime);
+          }
+        }
+        ranges.Add(range);
+        // Alternate implementation: use time window 
+        //DateTimeRange fullRange = new DateTimeRange(_channelPrograms[0].StartTime,
+        //                                            _channelPrograms[_channelPrograms.Count - 1].EndTime);
+        //if (_timeWindow == null)
+        //{
+        //  ranges.Add(fullRange);
+        //}
+        //else
+        //{
+
+        //  range =
+        //    new DateTimeRange(
+        //      new DateTime(fullRange.Start.Year, fullRange.Start.Month, fullRange.Start.Day, _timeWindow.Start.Hour,
+        //                   _timeWindow.Start.Minute, 0),
+        //      new DateTime(fullRange.Start.Year, fullRange.Start.Month, fullRange.Start.Day, _timeWindow.End.Hour,
+        //                   _timeWindow.End.Minute, 0));
+        //  if (range.End<range.Start)
+        //  {
+        //    range.End.AddDays(1);
+        //  }
+        //  while(range.Start < fullRange.End)
+        //  {
+        //    ranges.Add(range);
+        //    range.Start.AddDays(1);
+        //    range.End.AddDays(1);
+        //  }
+        //}
+      }
+      return ranges;
     }
 
     #endregion
@@ -190,7 +260,13 @@ namespace MediaPortal.WebEPG
         sb.AddConstraint(Operator.GreaterThan, "endTime", _channelPrograms[0].StartTime);
         sb.AddConstraint(Operator.LessThan, "startTime", _channelPrograms[_channelPrograms.Count-1].EndTime);
         SqlStatement stmt = sb.GetStatement(true);
-        stmt.Execute();
+        List<DateTimeRange> ranges = GetGrabbedDateTimeRanges();
+        foreach(var range in ranges)
+        {
+          stmt.SetParameter("startTime", range.Start);
+          stmt.SetParameter("endTime", range.End);
+          stmt.Execute();  
+        }
       }
       else
       {
