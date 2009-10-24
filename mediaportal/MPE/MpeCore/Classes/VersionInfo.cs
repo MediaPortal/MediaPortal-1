@@ -18,10 +18,45 @@ namespace MpeCore.Classes
             Revision = "0";
         }
 
-        public string Major { get; set; }
-        public string Minor { get; set; }
-        public string Build { get; set; }
-        public string Revision { get; set; }
+        private string _major;
+        public string Major
+        {
+            get
+            {
+                return string.IsNullOrEmpty(_major) ? "0" : _major;
+            }
+            set { _major = value; }
+        }
+
+        private string _minor;
+        public string Minor
+        {
+            get
+            {
+                return string.IsNullOrEmpty(_minor) ? "0" : _minor;
+            }
+            set { _minor = value; }
+        }
+
+        private string _build;
+        public string Build
+        {
+            get
+            {
+                return string.IsNullOrEmpty(_build) ? "0" : _build;
+            }
+            set { _build = value; }
+        }
+
+        private string _revision;
+        public string Revision
+        {
+            get
+            {
+                return string.IsNullOrEmpty(_revision) ? "0" : _revision;
+            }
+            set { _revision = value; }
+        }
 
         public override string ToString()
         {

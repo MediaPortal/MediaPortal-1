@@ -37,6 +37,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
+            // button_next
+            // 
+            this.button_next.Text = "Next>";
+            // 
             // label1
             // 
             this.label1.Location = new System.Drawing.Point(13, 72);
@@ -51,6 +55,7 @@
             this.pictureBox3.Location = new System.Drawing.Point(259, 153);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(225, 127);
+            this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox3.TabIndex = 26;
             this.pictureBox3.TabStop = false;
             // 
@@ -84,6 +89,7 @@
             this.pictureBox1.Location = new System.Drawing.Point(13, 153);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(225, 127);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 23;
             this.pictureBox1.TabStop = false;
             // 
@@ -100,7 +106,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "ImageRadioSelector";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "ImageRadioSelector";
+            this.Text = "Extension Installer for   - 0.0.0.0";
             this.Controls.SetChildIndex(this.pictureBox1, 0);
             this.Controls.SetChildIndex(this.radioButton1, 0);
             this.Controls.SetChildIndex(this.radioButton2, 0);

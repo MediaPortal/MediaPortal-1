@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using MpeCore;
 using MpeCore.Classes;
@@ -46,6 +47,15 @@ namespace MpeMaker.Sections
             list_message.Items.Clear();
             if (string.IsNullOrEmpty(txt_outfile.Text))
                 list_error.Items.Add("No out file is specified");
+
+            foreach (SectionParam item in Package.GeneralInfo.Params.Items)
+            {
+                if (item.ValueType == ValueTypeEnum.File && !string.IsNullOrEmpty(item.Value) && !File.Exists(item.Value))
+                {
+                    list_error.Items.Add(string.Format("Params ->{0} file not found", item.Name));
+                }
+            }
+
             foreach (GroupItem groupItem in Package.Groups.Items)
             {
                 foreach (FileItem fileItem in groupItem.Files.Items )

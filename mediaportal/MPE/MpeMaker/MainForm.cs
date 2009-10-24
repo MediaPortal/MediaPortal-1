@@ -43,6 +43,9 @@ namespace MpeMaker
             if (panels.ContainsKey(e.Node.Name))
             {
                 splitContainer1.Panel2.Controls.Clear();
+                panels[e.Node.Name].Anchor = (AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Top |
+                                              AnchorStyles.Left);
+                panels[e.Node.Name].Dock = DockStyle.Fill;
                 splitContainer1.Panel2.Controls.Add(panels[e.Node.Name]);
                 ((ISectionControl)panels[e.Node.Name]).Set(Package);
             }

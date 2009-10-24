@@ -67,10 +67,12 @@
             // 
             // listBox_sections
             // 
+            this.listBox_sections.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
             this.listBox_sections.FormattingEnabled = true;
             this.listBox_sections.Location = new System.Drawing.Point(0, 26);
             this.listBox_sections.Name = "listBox_sections";
-            this.listBox_sections.Size = new System.Drawing.Size(192, 394);
+            this.listBox_sections.Size = new System.Drawing.Size(254, 394);
             this.listBox_sections.TabIndex = 0;
             this.listBox_sections.SelectedIndexChanged += new System.EventHandler(this.listBox_sections_SelectedIndexChanged);
             // 
@@ -109,7 +111,7 @@
             // btn_up
             // 
             this.btn_up.Image = ((System.Drawing.Image)(resources.GetObject("btn_up.Image")));
-            this.btn_up.Location = new System.Drawing.Point(198, 170);
+            this.btn_up.Location = new System.Drawing.Point(260, 185);
             this.btn_up.Name = "btn_up";
             this.btn_up.Size = new System.Drawing.Size(23, 31);
             this.btn_up.TabIndex = 3;
@@ -118,8 +120,9 @@
             // 
             // btn_down
             // 
+            this.btn_down.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btn_down.Image = ((System.Drawing.Image)(resources.GetObject("btn_down.Image")));
-            this.btn_down.Location = new System.Drawing.Point(198, 207);
+            this.btn_down.Location = new System.Drawing.Point(260, 222);
             this.btn_down.Name = "btn_down";
             this.btn_down.Size = new System.Drawing.Size(23, 31);
             this.btn_down.TabIndex = 4;
@@ -138,6 +141,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.cmb_buttons);
             this.groupBox1.Controls.Add(this.label5);
@@ -150,9 +155,9 @@
             this.groupBox1.Controls.Add(this.cmb_sectiontype);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.txt_name);
-            this.groupBox1.Location = new System.Drawing.Point(239, 26);
+            this.groupBox1.Location = new System.Drawing.Point(301, 26);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(276, 190);
+            this.groupBox1.Size = new System.Drawing.Size(315, 190);
             this.groupBox1.TabIndex = 7;
             this.groupBox1.TabStop = false;
             // 
@@ -167,6 +172,8 @@
             // 
             // cmb_buttons
             // 
+            this.cmb_buttons.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.cmb_buttons.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmb_buttons.FormattingEnabled = true;
             this.cmb_buttons.Items.AddRange(new object[] {
@@ -178,7 +185,7 @@
             " Finish "});
             this.cmb_buttons.Location = new System.Drawing.Point(87, 121);
             this.cmb_buttons.Name = "cmb_buttons";
-            this.cmb_buttons.Size = new System.Drawing.Size(183, 21);
+            this.cmb_buttons.Size = new System.Drawing.Size(222, 21);
             this.cmb_buttons.TabIndex = 10;
             this.cmb_buttons.SelectedIndexChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
@@ -193,11 +200,13 @@
             // 
             // cmb_grupvisibility
             // 
+            this.cmb_grupvisibility.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.cmb_grupvisibility.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmb_grupvisibility.FormattingEnabled = true;
             this.cmb_grupvisibility.Location = new System.Drawing.Point(87, 94);
             this.cmb_grupvisibility.Name = "cmb_grupvisibility";
-            this.cmb_grupvisibility.Size = new System.Drawing.Size(183, 21);
+            this.cmb_grupvisibility.Size = new System.Drawing.Size(222, 21);
             this.cmb_grupvisibility.TabIndex = 8;
             this.cmb_grupvisibility.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
@@ -212,15 +221,18 @@
             // 
             // txt_guid
             // 
+            this.txt_guid.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.txt_guid.Location = new System.Drawing.Point(87, 13);
             this.txt_guid.Name = "txt_guid";
             this.txt_guid.ReadOnly = true;
-            this.txt_guid.Size = new System.Drawing.Size(183, 20);
+            this.txt_guid.Size = new System.Drawing.Size(222, 20);
             this.txt_guid.TabIndex = 6;
             // 
             // btn_preview
             // 
-            this.btn_preview.Location = new System.Drawing.Point(170, 161);
+            this.btn_preview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_preview.Location = new System.Drawing.Point(219, 161);
             this.btn_preview.Name = "btn_preview";
             this.btn_preview.Size = new System.Drawing.Size(75, 23);
             this.btn_preview.TabIndex = 5;
@@ -249,12 +261,14 @@
             // 
             // cmb_sectiontype
             // 
+            this.cmb_sectiontype.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.cmb_sectiontype.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmb_sectiontype.Enabled = false;
             this.cmb_sectiontype.FormattingEnabled = true;
             this.cmb_sectiontype.Location = new System.Drawing.Point(87, 65);
             this.cmb_sectiontype.Name = "cmb_sectiontype";
-            this.cmb_sectiontype.Size = new System.Drawing.Size(183, 21);
+            this.cmb_sectiontype.Size = new System.Drawing.Size(222, 21);
             this.cmb_sectiontype.TabIndex = 2;
             this.cmb_sectiontype.SelectedIndexChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
@@ -269,17 +283,22 @@
             // 
             // txt_name
             // 
+            this.txt_name.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.txt_name.Location = new System.Drawing.Point(87, 39);
             this.txt_name.Name = "txt_name";
-            this.txt_name.Size = new System.Drawing.Size(183, 20);
+            this.txt_name.Size = new System.Drawing.Size(222, 20);
             this.txt_name.TabIndex = 0;
             this.txt_name.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
             // tabControl1
             // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(239, 222);
+            this.tabControl1.Location = new System.Drawing.Point(301, 222);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(315, 197);
@@ -366,6 +385,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSize = true;
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btn_down);

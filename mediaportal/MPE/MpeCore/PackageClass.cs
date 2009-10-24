@@ -40,7 +40,23 @@ namespace MpeCore
         [XmlIgnore]
         public UnInstallInfoCollection UnInstallInfo { get; set; }
 
+        /// <summary>
+        /// Gets the location folder were stored the backup and the uninstall informations
+        /// </summary>
+        /// <value>The location folder.</value>
+        public string LocationFolder
+        {
+            get
+            {
+                return string.Format("{0}\\V2\\{1}\\{2}\\", MpeInstaller.TransformInRealPath("%Installer%"),
+                                     GeneralInfo.Id, GeneralInfo.Version);
+            }
+        }
 
+        /// <summary>
+        /// Start copy the package file bbased on group settings
+        /// 
+        /// </summary>
         public void Install()
         {
             UnInstallInfo = new UnInstallInfoCollection(this);
@@ -60,6 +76,17 @@ namespace MpeCore
             MpeInstaller.InstalledExtensions.Add(this);
             MpeInstaller.KnownExtensions.Add(this);
             MpeInstaller.Save();
+            DoAdditionalInstallTasks();
+        }
+
+        private void DoAdditionalInstallTasks()
+        {
+            //copy icon file
+            if (!string.IsNullOrEmpty(GeneralInfo.Params[ParamNamesConst.ICON].Value) && File.Exists(GeneralInfo.Params[ParamNamesConst.ICON].Value))
+                File.Copy(GeneralInfo.Params[ParamNamesConst.ICON].Value,
+                          LocationFolder + "icon" + Path.GetExtension(GeneralInfo.Params[ParamNamesConst.ICON].Value));
+            //copy the package file 
+            File.Copy(GeneralInfo.Location, LocationFolder + GeneralInfo.Id + ".mpe2");
         }
 
         /// <summary>
@@ -89,7 +116,7 @@ namespace MpeCore
 
         public bool StartInstallWizard()
         {
-            WizardNavigator navigator=new WizardNavigator(this);
+            WizardNavigator navigator = new WizardNavigator(this);
             navigator.Navigate();
             return true;
         }
@@ -113,7 +140,26 @@ namespace MpeCore
                         sectionParam.Value = PathUtil.RelativePathTo(path, sectionParam.Value);
                     }
                 }
+                foreach (ActionItem actionItem in sectionItem.Actions.Items)
+                {
+                    foreach (SectionParam sectionParam in actionItem.Params.Items)
+                    {
+                        if (sectionParam.ValueType == ValueTypeEnum.File && !string.IsNullOrEmpty(sectionParam.Value))
+                        {
+                            sectionParam.Value = PathUtil.RelativePathTo(path, sectionParam.Value);
+                        }
+                    }
+                }
             }
+
+            foreach (SectionParam sectionParam in GeneralInfo.Params.Items)
+            {
+                if (sectionParam.ValueType == ValueTypeEnum.File && !string.IsNullOrEmpty(sectionParam.Value))
+                {
+                    sectionParam.Value = PathUtil.RelativePathTo(path, sectionParam.Value);
+                }
+            }
+
         }
 
         public void GenerateAbsolutePath(string path)
@@ -133,11 +179,34 @@ namespace MpeCore
                 {
                     if (sectionParam.ValueType == ValueTypeEnum.File && !string.IsNullOrEmpty(sectionParam.Value))
                     {
-                        sectionParam.Value = PathUtil.RelativePathTo(path, sectionParam.Value);
+                        //sectionParam.Value = PathUtil.RelativePathTo(path, sectionParam.Value);
                         if (!Path.IsPathRooted(sectionParam.Value))
                             sectionParam.Value = Path.Combine(path, sectionParam.Value);
 
                     }
+                }
+                foreach (ActionItem actionItem in sectionItem.Actions.Items)
+                {
+                    foreach (SectionParam sectionParam in actionItem.Params.Items)
+                    {
+                        if (sectionParam.ValueType == ValueTypeEnum.File && !string.IsNullOrEmpty(sectionParam.Value))
+                        {
+                            //sectionParam.Value = PathUtil.RelativePathTo(path, sectionParam.Value);
+                            if (!Path.IsPathRooted(sectionParam.Value))
+                                sectionParam.Value = Path.Combine(path, sectionParam.Value);
+
+                        }
+                    }
+                }
+            }
+            
+            foreach (SectionParam sectionParam in GeneralInfo.Params.Items)
+            {
+                if (sectionParam.ValueType == ValueTypeEnum.File && !string.IsNullOrEmpty(sectionParam.Value))
+                {
+                    //sectionParam.Value = PathUtil.RelativePathTo(path, sectionParam.Value);
+                    if (!Path.IsPathRooted(sectionParam.Value))
+                        sectionParam.Value = Path.Combine(path, sectionParam.Value);
                 }
             }
         }
@@ -163,6 +232,65 @@ namespace MpeCore
                         if (!UniqueFileList.ExistLocalFileName(sectionParam.Value))
                             UniqueFileList.Add(new FileItem(sectionParam.Value, true));
                     }
+                }
+                foreach (ActionItem actionItem in sectionItem.Actions.Items)
+                {
+                    foreach (SectionParam sectionParam in actionItem.Params.Items)
+                    {
+                        if (sectionParam.ValueType == ValueTypeEnum.File && !string.IsNullOrEmpty(sectionParam.Value))
+                        {
+                            if (!UniqueFileList.ExistLocalFileName(sectionParam.Value))
+                                UniqueFileList.Add(new FileItem(sectionParam.Value, true));
+                        }
+                    }
+                }
+            }
+
+            foreach (SectionParam sectionParam in GeneralInfo.Params.Items)
+            {
+                if (sectionParam.ValueType == ValueTypeEnum.File && !string.IsNullOrEmpty(sectionParam.Value))
+                {
+                    if (!UniqueFileList.ExistLocalFileName(sectionParam.Value))
+                        UniqueFileList.Add(new FileItem(sectionParam.Value, true));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the system file paths frome extracted unique file list.
+        /// This should caled only if the package is loaded from a zip file
+        /// </summary>
+        public void GetFilePaths()
+        {
+            foreach (SectionItem sectionItem in Sections.Items)
+            {
+                foreach (SectionParam sectionParam in sectionItem.Params.Items)
+                {
+                    if (sectionParam.ValueType == ValueTypeEnum.File && !string.IsNullOrEmpty(sectionParam.Value))
+                    {
+                        if (UniqueFileList.ExistLocalFileName(sectionParam.Value))
+                            sectionParam.Value = UniqueFileList.GetByLocalFileName(sectionParam.Value).TempFileLocation;
+                    }
+                }
+                foreach (ActionItem actionItem in sectionItem.Actions.Items)
+                {
+                    foreach (SectionParam sectionParam in actionItem.Params.Items)
+                    {
+                        if (sectionParam.ValueType == ValueTypeEnum.File && !string.IsNullOrEmpty(sectionParam.Value))
+                        {
+                            if (UniqueFileList.ExistLocalFileName(sectionParam.Value))
+                                sectionParam.Value = UniqueFileList.GetByLocalFileName(sectionParam.Value).TempFileLocation;
+                        }
+                    }
+                }
+            }
+
+            foreach (SectionParam sectionParam in GeneralInfo.Params.Items)
+            {
+                if (sectionParam.ValueType == ValueTypeEnum.File && !string.IsNullOrEmpty(sectionParam.Value))
+                {
+                    if (UniqueFileList.ExistLocalFileName(sectionParam.Value))
+                        sectionParam.Value = UniqueFileList.GetByLocalFileName(sectionParam.Value).TempFileLocation;
                 }
             }
         }

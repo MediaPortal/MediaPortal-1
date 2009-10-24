@@ -10,6 +10,12 @@ namespace MpeCore.Classes.ZipProvider
         private List<string> _tempFileList = new List<string>();
         private ZipFile _zipPackageFile = null;
 
+        /// <summary>
+        /// Loads the specified zipfile.
+        /// 
+        /// </summary>
+        /// <param name="zipfile">The zipfile.</param>
+        /// <returns>if something wrong, return null else the loaded package</returns>
         public PackageClass Load(string zipfile)
         {
             try
@@ -24,16 +30,19 @@ namespace MpeCore.Classes.ZipProvider
                 _tempFileList.Add(tempPackageFile);
                 foreach (FileItem fileItem in pak.UniqueFileList.Items)
                 {
-                    if(fileItem.SystemFile)
+                    if (fileItem.SystemFile)
                     {
                         string tempfil = Path.GetTempFileName();
+                        tempfil = Path.GetDirectoryName(tempfil) + Path.GetFileNameWithoutExtension(tempfil) +
+                                  Path.GetExtension(fileItem.LocalFileName);
                         Extract(fileItem, tempfil);
                         fileItem.TempFileLocation = tempfil;
-                        fileItem.LocalFileName = tempfil;
+                        //fileItem.LocalFileName = tempfil;
                         _tempFileList.Add(tempfil);
                     }
                 }
                 pak.ZipProvider = this;
+                pak.GetFilePaths();
                 return pak;
 
             }

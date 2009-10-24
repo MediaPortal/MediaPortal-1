@@ -8,7 +8,7 @@ namespace MpeCore.Classes
     public class WizardNavigator
     {
         public PackageClass Package { get; set; }
-        private Stack<int> stak = new Stack<int>();
+        private Stack<int> stack = new Stack<int>();
         public SectionResponseEnum Response { get; set; }
 
 
@@ -37,10 +37,10 @@ namespace MpeCore.Classes
                 switch (Response)
                 {
                     case SectionResponseEnum.Back:
-                        pos = stak.Pop();
+                        pos = stack.Pop();
                         break;
                     case SectionResponseEnum.Next:
-                        stak.Push(pos);
+                        stack.Push(pos);
                         pos++;
                         break;
                     case SectionResponseEnum.Cancel:

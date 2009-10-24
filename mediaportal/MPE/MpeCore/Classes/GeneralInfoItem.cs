@@ -4,12 +4,16 @@ using System.Text;
 
 namespace MpeCore.Classes
 {
+
     public class GeneralInfoItem
     {
         public GeneralInfoItem()
         {
             Version=new VersionInfo();
             Id = Guid.NewGuid().ToString();
+            Params=new SectionParamCollection();
+            Params.Add(new SectionParam(ParamNamesConst.ICON,"",ValueTypeEnum.File,"The icon file of the package"));
+            Params.Add(new SectionParam(ParamNamesConst.ONLINE_ICON, "", ValueTypeEnum.String, "The icon file of the package stored online "));
         }
 
         public string Name { get; set; }
@@ -29,5 +33,7 @@ namespace MpeCore.Classes
         /// </summary>
         /// <value>The location.</value>
         public string Location { get; set; }
+
+        public  SectionParamCollection Params { get; set; }
     }
 }

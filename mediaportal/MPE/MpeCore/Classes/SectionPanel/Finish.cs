@@ -88,11 +88,11 @@ namespace MpeCore.Classes.SectionPanel
         public SectionResponseEnum Execute(PackageClass packageClass, SectionItem sectionItem)
         {
             Section = sectionItem;
-            Mode = ShowModeEnum.Real;
             _packageClass = packageClass;
             SetValues();
             Base.ActionExecute(_packageClass, Section, ActionExecuteLocationEnum.BeforPanelShow);
             Base.ActionExecute(_packageClass, Section, ActionExecuteLocationEnum.AfterPanelShow);
+            Mode = ShowModeEnum.Real;
             ShowDialog();
             Base.ActionExecute(_packageClass, Section, ActionExecuteLocationEnum.AfterPanelHide);
             return resp;

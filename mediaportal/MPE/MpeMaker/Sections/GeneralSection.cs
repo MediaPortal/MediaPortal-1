@@ -6,6 +6,7 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using MpeCore;
+using MpeMaker.Dialogs;
 
 namespace MpeMaker.Sections
 {
@@ -69,12 +70,21 @@ namespace MpeMaker.Sections
                 Package.GeneralInfo.UpdateUrl = txt_forum.Text;
                 Package.GeneralInfo.ExtensionDescription = txt_description.Text;
                 Package.GeneralInfo.VersionDescription = txt_versiondesc.Text;
+                Package.GeneralInfo.OnlineLocation = txt_online.Text;
             }
         }
 
         private void btn_gen_guid_Click(object sender, EventArgs e)
         {
             txt_guid.Text = Guid.NewGuid().ToString();
+        }
+
+
+        private void btn_params_Click(object sender, EventArgs e)
+        {
+            ParamEdit dlg = new ParamEdit();
+            dlg.Set(Package.GeneralInfo.Params);
+            dlg.ShowDialog();
         }
 
 

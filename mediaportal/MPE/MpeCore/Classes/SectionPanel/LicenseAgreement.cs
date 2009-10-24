@@ -51,7 +51,7 @@ namespace MpeCore.Classes.SectionPanel
             _param.Add(new SectionParam(CONST_TEXT_FILE, "", ValueTypeEnum.File, "The file of license agreement should be RTF file"));
             _param[Const_LABEL_BIG].Value = "License Agreement";
             _param[Const_LABEL_SMALL].Value = "Please read the following license agreement carefully.";
-            _param[CONST_Check].Value = "I accept the terms of the license agreement.";
+            _param.Add(new SectionParam(CONST_Check, "I accept the terms of the license agreement.", ValueTypeEnum.String, "Text of agree checkbox"));
             return _param;
         }
 

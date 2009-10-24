@@ -77,6 +77,7 @@
     <Compile Include="Classes\ActionType\InstallFiles.cs" />
     <Compile Include="Classes\InstallerType\CopyFont.cs" />
     <Compile Include="Classes\InstallerType\GenericSkinFile.cs" />
+    <Compile Include="Classes\ParamNamesConst.cs" />
     <Compile Include="Classes\PathUtil.cs" />
     <Compile Include="Classes\SectionPanel\Base.cs" />
     <Compile Include="Classes\SectionPanel\BaseHorizontalLayout.cs">

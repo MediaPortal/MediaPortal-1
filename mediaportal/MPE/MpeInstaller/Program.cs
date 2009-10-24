@@ -15,18 +15,7 @@ namespace MpeInstaller
         static void Main()
         {
             Application.SetCompatibleTextRenderingDefault(false);
-
-            OpenFileDialog dialog = new OpenFileDialog();
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-
-                MpeCore.MpeInstaller.Init();
-                PackageClass pak = new PackageClass();
-                pak=pak.ZipProvider.Load(dialog.FileName);
-                pak.StartInstallWizard();
-            }
-
-            //Application.Run(new Form1());
+            Application.Run(new MainForm());
         }
     }
 }

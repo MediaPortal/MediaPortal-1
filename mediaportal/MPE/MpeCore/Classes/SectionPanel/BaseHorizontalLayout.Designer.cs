@@ -33,9 +33,9 @@
             this.button_back = new System.Windows.Forms.Button();
             this.button_next = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.lbl_large = new System.Windows.Forms.Label();
             this.lbl_small = new System.Windows.Forms.Label();
+            this.lbl_large = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -95,31 +95,31 @@
             this.panel2.Size = new System.Drawing.Size(510, 65);
             this.panel2.TabIndex = 0;
             // 
-            // pictureBox1
+            // lbl_small
             // 
-            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.pictureBox1.Location = new System.Drawing.Point(227, -1);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(272, 64);
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
+            this.lbl_small.Location = new System.Drawing.Point(19, 32);
+            this.lbl_small.Name = "lbl_small";
+            this.lbl_small.Size = new System.Drawing.Size(407, 31);
+            this.lbl_small.TabIndex = 2;
+            this.lbl_small.Text = "label1";
             // 
             // lbl_large
             // 
             this.lbl_large.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_large.Location = new System.Drawing.Point(13, 10);
             this.lbl_large.Name = "lbl_large";
-            this.lbl_large.Size = new System.Drawing.Size(208, 22);
+            this.lbl_large.Size = new System.Drawing.Size(413, 22);
             this.lbl_large.TabIndex = 1;
             this.lbl_large.Text = "label1";
             // 
-            // lbl_small
+            // pictureBox1
             // 
-            this.lbl_small.Location = new System.Drawing.Point(19, 32);
-            this.lbl_small.Name = "lbl_small";
-            this.lbl_small.Size = new System.Drawing.Size(202, 31);
-            this.lbl_small.TabIndex = 2;
-            this.lbl_small.Text = "label1";
+            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.pictureBox1.Location = new System.Drawing.Point(432, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(64, 64);
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
             // 
             // BaseHorizontalLayout
             // 
