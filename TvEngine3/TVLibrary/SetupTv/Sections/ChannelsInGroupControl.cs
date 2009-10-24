@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using Gentle.Framework;
 using TvDatabase;
+using TvLibrary.Interfaces;
 using MediaPortal.UserInterface.Controls;
 using TvLibrary.Log;
 
@@ -118,6 +119,9 @@ namespace SetupTv.Sections
               item.SubItems.Add(details[0].ChannelNumber.ToString().PadLeft(3, '0'));
             }
           }
+          bool isAllChannelsGroup = (Group.GroupName == TvConstants.TvGroupNames.AllChannels);
+          removeChannelFromGroup.Enabled = !isAllChannelsGroup;
+          mpButtonDel.Enabled = !isAllChannelsGroup;
         }
       }
       catch (Exception exp)
