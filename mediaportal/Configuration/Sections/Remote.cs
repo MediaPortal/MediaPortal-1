@@ -168,9 +168,8 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox checkBoxCentareaReMapMouseButton;
     private MPCheckBox checkBoxMapJoystick;
     private PictureBox pictureBoxMceVista;
-    private MPGroupBox groupBoxStatus;
-    private Label label1Status;
-    private Label label2Status;
+    private MPGroupBox groupBox_x64;
+    private LinkLabel linkLabel_x64;
     private MPLabel labelFireDTVModel;
 
     #endregion
@@ -415,15 +414,10 @@ namespace MediaPortal.Configuration.Sections
 
         #region FireDTV
 
-        if (Util.Win32API.Check64Bit())
-        {
-          checkBoxFireDTVEnabled.Enabled = false;
-          checkBoxFireDTVExtendedLogging.Enabled = false;
-          buttonFireDTVMapping.Enabled = false;
-          comboBoxFireDTVReceiver.Enabled = false;
-          groupBoxStatus.Visible = true;
-          return;
-        }
+        // Enable wiki link if x64 is detected
+        bool _isx64 = Util.Win32API.Check64Bit();
+        groupBox_x64.Visible = _isx64;
+        linkLabel_x64.Enabled = _isx64;
 
         // Is the FireDTV remote enabled
         checkBoxFireDTVEnabled.Checked = xmlreader.GetValueAsBool("remote", "FireDTV", false);
@@ -617,9 +611,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonCentareaMapping = new MediaPortal.UserInterface.Controls.MPButton();
       this.pictureBoxCentarea = new System.Windows.Forms.PictureBox();
       this.tabPageFireDtv = new MediaPortal.UserInterface.Controls.MPTabPage();
-      this.groupBoxStatus = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.label2Status = new System.Windows.Forms.Label();
-      this.label1Status = new System.Windows.Forms.Label();
+      this.groupBox_x64 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.pictureBox3 = new System.Windows.Forms.PictureBox();
       this.groupBoxFireDTVRecieiverSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.labelFireDTVModel = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -691,6 +683,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpCheckBox1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpCheckBox2 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpButton1 = new MediaPortal.UserInterface.Controls.MPButton();
+      this.linkLabel_x64 = new System.Windows.Forms.LinkLabel();
       this.tabControlRemotes.SuspendLayout();
       this.tabPageMce.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMceVista)).BeginInit();
@@ -704,7 +697,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxCentareaOptions.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCentarea)).BeginInit();
       this.tabPageFireDtv.SuspendLayout();
-      this.groupBoxStatus.SuspendLayout();
+      this.groupBox_x64.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
       this.groupBoxFireDTVRecieiverSettings.SuspendLayout();
       this.groupBoxFireDTVReceiverGeneral.SuspendLayout();
@@ -1018,7 +1011,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageFireDtv
       // 
-      this.tabPageFireDtv.Controls.Add(this.groupBoxStatus);
+      this.tabPageFireDtv.Controls.Add(this.groupBox_x64);
       this.tabPageFireDtv.Controls.Add(this.pictureBox3);
       this.tabPageFireDtv.Controls.Add(this.groupBoxFireDTVRecieiverSettings);
       this.tabPageFireDtv.Controls.Add(this.groupBoxFireDTVReceiverGeneral);
@@ -1029,37 +1022,17 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageFireDtv.Text = "FireDTV";
       this.tabPageFireDtv.UseVisualStyleBackColor = true;
       // 
-      // groupBoxStatus
+      // groupBox_x64
       // 
-      this.groupBoxStatus.Controls.Add(this.label2Status);
-      this.groupBoxStatus.Controls.Add(this.label1Status);
-      this.groupBoxStatus.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxStatus.Location = new System.Drawing.Point(156, 191);
-      this.groupBoxStatus.Name = "groupBoxStatus";
-      this.groupBoxStatus.Size = new System.Drawing.Size(296, 105);
-      this.groupBoxStatus.TabIndex = 5;
-      this.groupBoxStatus.TabStop = false;
-      this.groupBoxStatus.Text = "Status";
-      this.groupBoxStatus.Visible = false;
-      // 
-      // label2Status
-      // 
-      this.label2Status.AutoSize = true;
-      this.label2Status.Location = new System.Drawing.Point(20, 61);
-      this.label2Status.Name = "label2Status";
-      this.label2Status.Size = new System.Drawing.Size(250, 26);
-      this.label2Status.TabIndex = 1;
-      this.label2Status.Text = "Unfortunately x64 driver doesn\'t onor calls from x86 \r\n applications.";
-      // 
-      // label1Status
-      // 
-      this.label1Status.AutoSize = true;
-      this.label1Status.ForeColor = System.Drawing.Color.Red;
-      this.label1Status.Location = new System.Drawing.Point(20, 28);
-      this.label1Status.Name = "label1Status";
-      this.label1Status.Size = new System.Drawing.Size(212, 13);
-      this.label1Status.TabIndex = 0;
-      this.label1Status.Text = "Driver disabled due to architecture limitation";
+      this.groupBox_x64.Controls.Add(this.linkLabel_x64);
+      this.groupBox_x64.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBox_x64.Location = new System.Drawing.Point(156, 191);
+      this.groupBox_x64.Name = "groupBox_x64";
+      this.groupBox_x64.Size = new System.Drawing.Size(296, 105);
+      this.groupBox_x64.TabIndex = 5;
+      this.groupBox_x64.TabStop = false;
+      this.groupBox_x64.Text = "Additional info";
+      this.groupBox_x64.Visible = false;
       // 
       // pictureBox3
       // 
@@ -1882,6 +1855,17 @@ namespace MediaPortal.Configuration.Sections
       this.mpButton1.Text = "Mapping";
       this.mpButton1.UseVisualStyleBackColor = true;
       // 
+      // linkLabel_x64
+      // 
+      this.linkLabel_x64.AutoSize = true;
+      this.linkLabel_x64.Location = new System.Drawing.Point(16, 42);
+      this.linkLabel_x64.Name = "linkLabel_x64";
+      this.linkLabel_x64.Size = new System.Drawing.Size(259, 26);
+      this.linkLabel_x64.TabIndex = 0;
+      this.linkLabel_x64.TabStop = true;
+      this.linkLabel_x64.Text = "Please check wiki to learn how to enable your remote\r\non a x64 operating system";
+      this.linkLabel_x64.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel_x64_LinkClicked);
+      // 
       // Remote
       // 
       this.Controls.Add(this.tabControlRemotes);
@@ -1903,8 +1887,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxCentareaOptions.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCentarea)).EndInit();
       this.tabPageFireDtv.ResumeLayout(false);
-      this.groupBoxStatus.ResumeLayout(false);
-      this.groupBoxStatus.PerformLayout();
+      this.groupBox_x64.ResumeLayout(false);
+      this.groupBox_x64.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
       this.groupBoxFireDTVRecieiverSettings.ResumeLayout(false);
       this.groupBoxFireDTVRecieiverSettings.PerformLayout();
@@ -2193,6 +2177,11 @@ namespace MediaPortal.Configuration.Sections
       comboBoxFireDTVReceiver.Enabled = checkBoxFireDTVEnabled.Checked;
     }
 
+    private void linkLabel_x64_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      Process.Start("http://wiki.team-mediaportal.com/MediaPortal/Configuration/Remote/FireDTV");
+    }
+
     #endregion
 
     #region Form control commands General HID
@@ -2276,5 +2265,6 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #endregion
+
   }
 }
