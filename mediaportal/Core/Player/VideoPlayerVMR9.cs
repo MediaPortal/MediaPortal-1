@@ -354,10 +354,25 @@ namespace MediaPortal.Player
       int hr = 0;
       Log.Info("VideoPlayer9: Cleanup DShow graph");
       try
-      {        
+      { 
         if (mediaCtrl != null)
-        {          
-          hr = mediaCtrl.StopWhenReady();          
+        {
+          int counter = 0;        
+          FilterState state;
+          hr = mediaCtrl.StopWhenReady();
+          hr = mediaCtrl.GetState(10, out state);
+          while (state == FilterState.Running)
+          {
+            Log.Debug("VideoPlayer9: graph still running");
+            Thread.Sleep(100);
+            hr = mediaCtrl.GetState(10, out state);          
+            counter++;
+            if (counter >= 30)
+            {
+              hr = mediaCtrl.Stop();
+              break;
+            }
+          }
           mediaCtrl = null;
         }
 

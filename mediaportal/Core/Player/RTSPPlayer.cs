@@ -490,7 +490,22 @@ namespace MediaPortal.Player
       {
         if (_mediaCtrl != null)
         {
+          int counter = 0;
+          FilterState state;
           hr = _mediaCtrl.StopWhenReady();
+          hr = _mediaCtrl.GetState(10, out state);
+          while (state == FilterState.Running)
+          {
+            Log.Debug("RTSPPlayer: graph still running");
+            Thread.Sleep(100);
+            hr = _mediaCtrl.GetState(10, out state);
+            counter++;
+            if (counter >= 30)
+            {
+              hr = _mediaCtrl.Stop();
+              break;
+            }
+          }
           _mediaCtrl = null;
         }
 

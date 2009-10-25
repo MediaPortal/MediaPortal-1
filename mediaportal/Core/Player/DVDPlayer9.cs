@@ -372,11 +372,28 @@ namespace MediaPortal.Player
       try
       {
         Log.Info("DVDPlayer9: cleanup DShow graph");
+
         if (_mediaCtrl != null)
         {
+          int counter = 0;
+          FilterState state;
           hr = _mediaCtrl.StopWhenReady();
+          hr = _mediaCtrl.GetState(10, out state);
+          while (state == FilterState.Running)
+          {
+            Log.Debug("DVDPlayer9: graph still running");
+            System.Threading.Thread.Sleep(100);
+            hr = _mediaCtrl.GetState(10, out state);
+            counter++;
+            if (counter >= 30)
+            {
+              hr = _mediaCtrl.Stop();
+              break;
+            }
+          }
           _mediaCtrl = null;
         }
+
         _state = PlayState.Stopped;
         VMR9Util.g_vmr9.EVRSetDVDMenuState(false);
 

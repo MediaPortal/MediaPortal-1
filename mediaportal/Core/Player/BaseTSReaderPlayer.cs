@@ -420,14 +420,8 @@ namespace MediaPortal.Player
       _isFullscreen = false;
       _geometry = Geometry.Type.Normal;
       _updateNeeded = true;
-      //if (_fileSource != null)
-      //{
-      //  Log.Info("TSStreamBufferPlayer:replay {0}", strFile);
-      //  IFileSourceFilter interFaceFile = (IFileSourceFilter)_fileSource;
-      //  interFaceFile.Load(strFile, null);
-      //}
-      //else
-      Log.Info("TSReaderPlayer:play {0}", strFile);      
+      
+      Log.Info("TSReaderPlayer:play {0}", strFile);
       _isStarted = false;
       if (!GetInterfaces(strFile))
       {
@@ -437,7 +431,6 @@ namespace MediaPortal.Player
         ExclusiveMode(false);
         return false;
       }
-      _rotEntry = new DsROTEntry((IFilterGraph) _graphBuilder);
       int hr = _mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
       if (hr < 0)
       {
@@ -451,7 +444,7 @@ namespace MediaPortal.Player
       {
         _videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
         _videoWin.put_WindowStyle(
-          (WindowStyle) ((int) WindowStyle.Child + (int) WindowStyle.ClipSiblings + (int) WindowStyle.ClipChildren));
+          (WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipSiblings + (int)WindowStyle.ClipChildren));
         _videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
       }
       if (_basicVideo != null)
@@ -476,47 +469,33 @@ namespace MediaPortal.Player
         ExclusiveMode(false);
         return false;
       }
-      //DsUtils.DumpFilters(_graphBuilder);
-
+      _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
+      hr = _mediaCtrl.Run();
+      if (hr < 0)
+      {
+        Log.Error("TSReaderPlayer: Unable to start playing");
+        _currentFile = "";
+        CloseInterfaces();
+        ExclusiveMode(false);
+        return false;
+      }
+      _interfaceTSReader = _fileSource;
+      _startingUp = _isLive;
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
+      msg.Label = strFile;
+      GUIWindowManager.SendThreadMessage(msg);
+      _state = PlayState.Playing;
       _positionX = GUIGraphicsContext.VideoWindow.X;
       _positionY = GUIGraphicsContext.VideoWindow.Y;
       _width = GUIGraphicsContext.VideoWindow.Width;
       _height = GUIGraphicsContext.VideoWindow.Height;
       _geometry = GUIGraphicsContext.ARType;
       _updateNeeded = true;
-      SetVideoWindow();
-      _interfaceTSReader = _fileSource;
-      _startingUp = _isLive;
-      DirectShowUtil.EnableDeInterlace(_graphBuilder);
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
-      msg.Label = strFile;
-      GUIWindowManager.SendThreadMessage(msg);
-      long dur = 0;
-      _state = PlayState.Playing;
-      if (strFile.ToLower().IndexOf("rtsp:") >= 0)
-      {
-        _mediaCtrl.Run();
-        UpdateCurrentPosition();
-        UpdateDuration();
-        OnInitialized();
-        Log.Info("TSReaderPlayer:running pos:{0} duration:{1} {2}", Duration, CurrentPosition, dur);
-      }
-      else
-      {
-        _mediaSeeking.SetPositions(new DsLong(0), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0),
-                                   AMSeekingSeekingFlags.NoPositioning);
-        _mediaCtrl.Run();
-        _mediaSeeking.SetPositions(new DsLong(0), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0),
-                                   AMSeekingSeekingFlags.NoPositioning);
-        UpdateCurrentPosition();
-        UpdateDuration();
-        OnInitialized();
-        Log.Info("TSReaderPlayer:running pos:{0} duration:{1} {2}", Duration, CurrentPosition, dur);
-      }
-
-      // update the curaudiostream from the current audio stream running in tsreader.
-      // tvplugin might set the initial track to some other index
-      //_curAudioStream = _audioSelector.GetAudioStream();
+      SetVideoWindow();      
+      UpdateCurrentPosition();
+      UpdateDuration();
+      OnInitialized();
+      Log.Info("TSReaderPlayer: position:{0}, duration:{1}", CurrentPosition, Duration);      
       return true;
     }
 
@@ -676,7 +655,7 @@ namespace MediaPortal.Player
       */
       _startingUp = false;
       TimeSpan ts = DateTime.Now - _updateTimer;
-      if (ts.TotalMilliseconds >= 50 || iSpeed != 1)
+      if (ts.TotalMilliseconds >= 500 || iSpeed != 1)
       {
         UpdateCurrentPosition();
         UpdateDuration();

@@ -359,8 +359,7 @@ namespace MediaPortal.Player
       //Log.Info("TSReaderPlayer: build graph");
       try
       {
-        _graphBuilder = (IGraphBuilder)new FilterGraph();
-        _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
+        _graphBuilder = (IGraphBuilder)new FilterGraph();       
 
         #region add vmr9
 
@@ -582,7 +581,7 @@ namespace MediaPortal.Player
 
         _mediaCtrl = (IMediaControl)_graphBuilder;
         _mediaEvt = (IMediaEventEx)_graphBuilder;
-        _mediaSeeking = _graphBuilder as IMediaSeeking;
+        _mediaSeeking = (IMediaSeeking)_graphBuilder;
         if (_mediaSeeking == null)
         {
           Log.Error("Unable to get IMediaSeeking interface#1");
@@ -675,6 +674,7 @@ namespace MediaPortal.Player
               Thread.Sleep(100);
             }
           }
+          DirectShowUtil.EnableDeInterlace(_graphBuilder);
           _vmr9.SetDeinterlaceMode();
         }
         return true;
@@ -723,7 +723,22 @@ namespace MediaPortal.Player
       {
         if (_mediaCtrl != null)
         {
+          int counter = 0;
+          FilterState state;
           hr = _mediaCtrl.StopWhenReady();
+          hr = _mediaCtrl.GetState(10, out state);
+          while (state == FilterState.Running)
+          {
+            Log.Debug("TSReaderPlayer: graph still running");
+            Thread.Sleep(100);
+            hr = _mediaCtrl.GetState(10, out state);
+            counter++;
+            if (counter >= 30)
+            {
+              hr = _mediaCtrl.Stop();
+              break;
+            }
+          }
           _mediaCtrl = null;
         }
 
