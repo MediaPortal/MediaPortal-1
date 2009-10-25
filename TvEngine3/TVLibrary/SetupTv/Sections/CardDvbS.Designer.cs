@@ -699,7 +699,7 @@ namespace SetupTv.Sections
       // textBoxFreq
       // 
       this.textBoxFreq.Location = new System.Drawing.Point(96, 13);
-      this.textBoxFreq.MaxLength = 7;
+      this.textBoxFreq.MaxLength = 8;
       this.textBoxFreq.Name = "textBoxFreq";
       this.textBoxFreq.Size = new System.Drawing.Size(50, 20);
       this.textBoxFreq.TabIndex = 3;
