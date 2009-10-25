@@ -388,6 +388,8 @@ namespace SetupTv.Sections
             this.colGrabEpg});
       this.mpListView1.ContextMenuStrip = this.contextMenuStrip2;
       this.mpListView1.FullRowSelect = true;
+      this.mpListView1.HideSelection = false;
+      this.mpListView1.IsChannelListView = false;
       this.mpListView1.LargeImageList = this.imageList1;
       this.mpListView1.Location = new System.Drawing.Point(6, 85);
       this.mpListView1.Name = "mpListView1";
