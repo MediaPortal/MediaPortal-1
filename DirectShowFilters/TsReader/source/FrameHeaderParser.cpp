@@ -28,6 +28,7 @@
 #include <fourcc.h>
 #include "GolombBuffer.h"
 #include "mediaformats.h"
+#include <wmcodecdsp.h>
 
 extern void LogDebug(const char *fmt, ...) ;
 
@@ -1365,12 +1366,10 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt)
 
 	{
 		int extra = 2+h.spslen-4 + 2+h.ppslen-4;
-
-		pmt->majortype = MEDIATYPE_Video;
-		
-		//pmt->subtype = FOURCCMap('1CVA');
-		pmt->subtype=H264_SubType;
+		pmt->SetType(&MEDIATYPE_Video);
+		pmt->SetSubtype(&MEDIASUBTYPE_H264);
 		pmt->formattype = FORMAT_MPEG2_VIDEO;
+		
 		int len = FIELD_OFFSET(MPEG2VIDEOINFO, dwSequenceHeader) + extra;
 		MPEG2VIDEOINFO* vi = (MPEG2VIDEOINFO*)pmt->AllocFormatBuffer(len);
 		memset(vi, 0, len);
@@ -1381,20 +1380,22 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt)
 		h.arx = ar[i].x;
 		h.ary = ar[i].y;
 		DWORD a = h.arx, b = h.ary;
-    while(a) {DWORD tmp = a; a = b % tmp; b = tmp;}
+        while(a) {DWORD tmp = a; a = b % tmp; b = tmp;}
 		if(b) h.arx /= b, h.ary /= b;
 		vi->hdr.dwPictAspectRatioX = h.arx;
 		vi->hdr.dwPictAspectRatioY = h.ary;
 		vi->hdr.bmiHeader.biSize = sizeof(vi->hdr.bmiHeader);
 		vi->hdr.bmiHeader.biWidth = h.width;
 		vi->hdr.bmiHeader.biHeight = h.height;
-		vi->hdr.bmiHeader.biCompression = '1cva';
+		vi->hdr.bmiHeader.biCompression = '462h';
 		vi->hdr.bmiHeader.biPlanes=1;
 		vi->hdr.bmiHeader.biBitCount=24;
+		vi->hdr.bmiHeader.biClrUsed=0;
 		vi->dwProfile = h.profile;
 		vi->dwFlags = 4; // ?
 		vi->dwLevel = h.level;
 		vi->cbSequenceHeader = extra;
+		vi->dwStartTimeCode=0;
 		BYTE* p = (BYTE*)&vi->dwSequenceHeader[0];
 		*p++ = (h.spslen-4) >> 8;
 		*p++ = (h.spslen-4) & 0xff;

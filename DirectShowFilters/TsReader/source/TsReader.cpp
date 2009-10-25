@@ -453,7 +453,7 @@ STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
   HRESULT hr= CSource::Run(tStart);
 
   FindSubtitleFilter();
-  LogDebug("CTsReaderFilter::Run(%05.2f)  -->done",msec);
+  LogDebug("CTsReaderFilter::Run(%05.2f) state %d -->done",msec,m_State);
   return hr;
 }
 
@@ -577,24 +577,24 @@ STDMETHODIMP CTsReaderFilter::Pause()
         m_rtspClient.Pause();
       }
     }
-  else //we are seeking
-  {
-    IMediaSeeking * ptrMediaPos;
+    else //we are seeking
+    {
+      IMediaSeeking * ptrMediaPos;
 
-        if (SUCCEEDED(GetFilterGraph()->QueryInterface(IID_IMediaSeeking , (void**)&ptrMediaPos) ) )
+      if (SUCCEEDED(GetFilterGraph()->QueryInterface(IID_IMediaSeeking , (void**)&ptrMediaPos) ) )
+      {
+        LONGLONG currentPos;
+        ptrMediaPos->GetCurrentPosition(&currentPos);
+        ptrMediaPos->Release();
+        double clock =currentPos;clock /=10000000.0;
+        float clockEnd=m_duration.EndPcr().ToClock() ;
+        if (clock>=clockEnd && clockEnd>0 )
         {
-          LONGLONG currentPos;
-          ptrMediaPos->GetCurrentPosition(&currentPos);
-          ptrMediaPos->Release();
-          double clock =currentPos;clock /=10000000.0;
-          float clockEnd=m_duration.EndPcr().ToClock() ;
-          if (clock>=clockEnd && clockEnd>0 )
-          {
-            LogDebug("End of rtsp stream...");
-            m_demultiplexer.SetEndOfFile(true);
-          }
+          LogDebug("End of rtsp stream...");
+          m_demultiplexer.SetEndOfFile(true);
         }
-  }
+      }
+    }
   }
   m_demultiplexer.m_LastDataFromRtsp=GetTickCount() ;
 
@@ -605,6 +605,8 @@ STDMETHODIMP CTsReaderFilter::Pause()
     //LogDebug("  CTsReaderFilter::Pause()->start duration thread");
     StartThread();
   }
+
+  LogDebug("CTsReaderFilter::Pause() - END - state = %d", m_State);
   return hr;
 }
 

@@ -68,6 +68,8 @@ protected:
   CRefTime  m_lastSeek;
   bool      m_bInFillBuffer;
   bool      m_bPresentSample;
+
+  FILTER_INFO m_filterInfo;
 };
 
 #endif

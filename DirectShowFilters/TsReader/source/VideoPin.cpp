@@ -28,6 +28,7 @@
 #include "tsreader.h"
 #include "AudioPin.h"
 #include "Videopin.h"
+#include "mediaformats.h"
 
 #define MAX_TIME  86400000L
 extern void LogDebug(const char *fmt, ...) ;
@@ -98,6 +99,30 @@ HRESULT CVideoPin::GetMediaType(CMediaType *pmt)
   //LogDebug("vid:GetMediaType()");
   CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   demux.GetVideoStreamType(*pmt);
+
+  bool CoreAVC = wcscmp(m_filterInfo.achName,L"CoreAVC Video Decoder")==0;
+  bool DivXH264 = wcscmp(m_filterInfo.achName,L"DivX H.264 Decoder")==0;
+
+  if((CoreAVC || DivXH264) && pmt->subtype == MEDIASUBTYPE_H264 )
+  {
+    if(CoreAVC) 
+    {
+      LogDebug("vid:GetMediaType() patching mediatype for CoreAVC Video Decoder");
+    }
+
+    if(DivXH264)
+    {
+      LogDebug("vid:GetMediaType() patching mediatype for DivX H.264 Decoder");
+      pmt->SetFormatType(&FORMAT_VideoInfo);
+    }
+
+    ULONG len = pmt->FormatLength();
+    pmt->subtype = H264_SubType;
+
+    MPEG2VIDEOINFO* vi = (MPEG2VIDEOINFO*)pmt->Format();
+    vi->hdr.bmiHeader.biCompression = '1cva';
+    pmt->SetFormat((BYTE*)vi,len);
+  }
   return S_OK;
 }
 
@@ -141,23 +166,23 @@ HRESULT CVideoPin::CheckConnect(IPin *pReceivePin)
     mpeg2Video=true;
   }
   PIN_INFO pinInfo;
-  FILTER_INFO filterInfo;
+  
   hr=pReceivePin->QueryPinInfo(&pinInfo);
   if (!SUCCEEDED(hr)) return E_FAIL;
   if (pinInfo.pFilter==NULL) return E_FAIL;
-  hr=pinInfo.pFilter->QueryFilterInfo(&filterInfo);
-  filterInfo.pGraph->Release();
+  hr=pinInfo.pFilter->QueryFilterInfo(&m_filterInfo);
+  m_filterInfo.pGraph->Release();
   pinInfo.pFilter->Release();
 
   if (!SUCCEEDED(hr)) return E_FAIL;
   if (mpeg2Video)
   {
     //dont accept FFDShow for mpeg1/2 video playback
-    if (wcscmp(filterInfo.achName,L"ffdshow Video Decoder")==0)
+    if (wcscmp(m_filterInfo.achName,L"ffdshow Video Decoder")==0)
     {
       return E_FAIL;
     }
-    if (wcscmp(filterInfo.achName,L"ffdshow raw video Decoder")==0)
+    if (wcscmp(m_filterInfo.achName,L"ffdshow raw video Decoder")==0)
     {
       return E_FAIL;
     }
