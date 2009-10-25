@@ -361,7 +361,7 @@ namespace MediaPortal.Player
           FilterState state;
           hr = mediaCtrl.StopWhenReady();
           hr = mediaCtrl.GetState(10, out state);
-          while (state == FilterState.Running)
+          while (state == FilterState.Running || GUIGraphicsContext.InVmr9Render)
           {
             Log.Debug("VideoPlayer9: graph still running");
             Thread.Sleep(100);
