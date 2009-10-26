@@ -596,7 +596,7 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\TvBusinessLayer.dll"
   Delete "$INSTDIR\TvLibrary.Interfaces.dll"
   Delete "$INSTDIR\TVLibrary.dll"
-  Delete "$INSTDIR\Germany_Unitymedia_NRW.dvbc"
+  Delete "$INSTDIR\TvLibrary.Utils.dll"
   Delete "$INSTDIR\TvService.exe"
   Delete "$INSTDIR\TvService.exe.config"
   Delete "$INSTDIR\SetupControls.dll"
@@ -610,6 +610,7 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\ttBdaDrvApi_Dll.dll"
   Delete "$INSTDIR\ttdvbacc.dll"
   Delete "$INSTDIR\Ionic.Zip.dll"
+  Delete "$INSTDIR\Interop.SHDocVw.dll"
 
   ; remove Start Menu shortcuts
   Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"
