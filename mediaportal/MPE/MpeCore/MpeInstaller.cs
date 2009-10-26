@@ -36,6 +36,7 @@ namespace MpeCore
             AddInstallType(new GenericSkinFile());
             
             PathProviders.Add("MediaPortalPaths", new MediaPortalPaths());
+            PathProviders.Add("TvServerPaths", new TvServerPaths());
             PathProviders.Add("WindowsPaths", new WindowsPaths());
 
             AddSection(new Welcome());
