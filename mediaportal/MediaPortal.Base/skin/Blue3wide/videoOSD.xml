@@ -263,8 +263,8 @@
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
-      <visible>string.contains(#Play.Current.AudioCodec, MPA2)+Control.IsVisible(989)</visible>
-      <texture>logos\mpa2.png</texture>
+      <visible>[string.contains(#Play.Current.AudioCodec, MP2A)|string.contains(#Play.Current.AudioCodec, MPEG-1 AUDIO LAYER 2)]+Control.IsVisible(989)</visible>
+      <texture>logos\mp2a.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <animation effect="slide" start="0,0" end="0,-100" time="400" reversible="false">visible</animation>
@@ -279,8 +279,8 @@
       <posY>520</posY>
       <width>92</width>
       <height>52</height>
-      <visible>string.contains(#Play.Current.AudioCodec, MPA2)+!Control.IsVisible(989)</visible>
-      <texture>logos\mpa2.png</texture>
+      <visible>[string.contains(#Play.Current.AudioCodec, MP2A)|string.contains(#Play.Current.AudioCodec, MPEG-1 AUDIO LAYER 2)]+!Control.IsVisible(989)</visible>
+      <texture>logos\mp2a.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
