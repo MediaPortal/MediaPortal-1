@@ -24,13 +24,15 @@ namespace MpeMaker
         {
             MpeInstaller.Init();
             InitializeComponent();
+            splitContainer1.Panel1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             Package = new PackageClass();
 
             treeView1.ExpandAll();
             panels.Add("Node0", new WelcomSection());
+            panels.Add("Node2", new GeneralSection());
             panels.Add("Node3", new FilesGroupsSection());
             panels.Add("Node4", new InstallSections());
-            panels.Add("Node2", new GeneralSection());
+            panels.Add("Node5", new RequirementsSection());
             panels.Add("Node6", new BuildSection());
 
             NewProject();

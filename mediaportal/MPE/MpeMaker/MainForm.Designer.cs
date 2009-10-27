@@ -28,17 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.TreeNode treeNode15 = new System.Windows.Forms.TreeNode("Extension Informations");
-            System.Windows.Forms.TreeNode treeNode16 = new System.Windows.Forms.TreeNode("General Informations", new System.Windows.Forms.TreeNode[] {
-            treeNode15});
-            System.Windows.Forms.TreeNode treeNode17 = new System.Windows.Forms.TreeNode("Groups & Files");
-            System.Windows.Forms.TreeNode treeNode18 = new System.Windows.Forms.TreeNode("Install sections");
-            System.Windows.Forms.TreeNode treeNode19 = new System.Windows.Forms.TreeNode("Uninstall sections");
-            System.Windows.Forms.TreeNode treeNode20 = new System.Windows.Forms.TreeNode("Setup", new System.Windows.Forms.TreeNode[] {
-            treeNode17,
-            treeNode18,
-            treeNode19});
-            System.Windows.Forms.TreeNode treeNode21 = new System.Windows.Forms.TreeNode("Build");
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Extension Informations");
+            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("General Informations", new System.Windows.Forms.TreeNode[] {
+            treeNode8});
+            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Groups & Files");
+            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Install sections");
+            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Dependencies");
+            System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("Setup", new System.Windows.Forms.TreeNode[] {
+            treeNode10,
+            treeNode11,
+            treeNode12});
+            System.Windows.Forms.TreeNode treeNode14 = new System.Windows.Forms.TreeNode("Build");
             this.mainMenu = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnu_new = new System.Windows.Forms.ToolStripMenuItem();
@@ -125,33 +125,34 @@
             // 
             // treeView1
             // 
-            this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)));
+            this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.treeView1.HideSelection = false;
             this.treeView1.HotTracking = true;
             this.treeView1.Location = new System.Drawing.Point(3, 3);
             this.treeView1.Name = "treeView1";
-            treeNode15.Name = "Node2";
-            treeNode15.Text = "Extension Informations";
-            treeNode16.Name = "Node0";
-            treeNode16.NodeFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            treeNode16.Text = "General Informations";
-            treeNode17.Name = "Node3";
-            treeNode17.Text = "Groups & Files";
-            treeNode18.Name = "Node4";
-            treeNode18.Text = "Install sections";
-            treeNode19.Name = "Node5";
-            treeNode19.Text = "Uninstall sections";
-            treeNode20.Name = "Node1";
-            treeNode20.NodeFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            treeNode20.Text = "Setup";
-            treeNode21.Name = "Node6";
-            treeNode21.NodeFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            treeNode21.Text = "Build";
+            treeNode8.Name = "Node2";
+            treeNode8.Text = "Extension Informations";
+            treeNode9.Name = "Node0";
+            treeNode9.NodeFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            treeNode9.Text = "General Informations";
+            treeNode10.Name = "Node3";
+            treeNode10.Text = "Groups & Files";
+            treeNode11.Name = "Node4";
+            treeNode11.Text = "Install sections";
+            treeNode12.Name = "Node5";
+            treeNode12.Text = "Dependencies";
+            treeNode13.Name = "Node1";
+            treeNode13.NodeFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            treeNode13.Text = "Setup";
+            treeNode14.Name = "Node6";
+            treeNode14.NodeFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            treeNode14.Text = "Build";
             this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode16,
-            treeNode20,
-            treeNode21});
+            treeNode9,
+            treeNode13,
+            treeNode14});
             this.treeView1.ShowLines = false;
             this.treeView1.ShowPlusMinus = false;
             this.treeView1.Size = new System.Drawing.Size(175, 452);
@@ -163,12 +164,14 @@
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer1.IsSplitterFixed = true;
             this.splitContainer1.Location = new System.Drawing.Point(0, 24);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.BackColor = System.Drawing.SystemColors.ControlDark;
             this.splitContainer1.Panel1.Controls.Add(this.treeView1);
             // 
             // splitContainer1.Panel2

@@ -28,7 +28,6 @@ namespace MpeCore.Classes
             pak.GeneralInfo = packageClass.GeneralInfo;
             foreach (GroupItem groupItem in packageClass.Groups.Items)
             {
-
                 pak.Groups.Items.Add(new GroupItem(groupItem.Name, groupItem.Checked));
             }
             Items.Add(pak);
@@ -54,6 +53,22 @@ namespace MpeCore.Classes
             }
             return null;
         }
+
+        /// <summary>
+        /// Gets the specified id.
+        /// </summary>
+        /// <param name="id">The package GUID.</param>
+        /// <returns>If found a package with specified GUID return the package else NULL</returns>
+        public PackageClass Get(string id)
+        {
+            foreach (PackageClass item in Items)
+            {
+                if (item.GeneralInfo.Id == id )
+                    return item;
+            }
+            return null;
+        }
+
 
         public void Save(string fileName)
         {

@@ -10,6 +10,8 @@ using MpeCore.Classes.ActionType;
 using MpeCore.Classes.PathProvider;
 using MpeCore.Classes.SectionPanel;
 using MpeCore.Classes.ZipProvider;
+using MpeCore.Classes.VersionProvider;
+
 namespace MpeCore
 {
     public static class MpeInstaller
@@ -18,6 +20,7 @@ namespace MpeCore
         static public Dictionary<string,IPathProvider> PathProviders { get; set; }
         static public Dictionary<string, ISectionPanel> SectionPanels { get; set; }
         static public Dictionary<string, IActionType> ActionProviders { get; set; }
+        static public Dictionary<string, IVersionProvider> VersionProviders { get; set; }
         static public ZipProviderClass ZipProvider { get; set; }
         public static ExtensionCollection InstalledExtensions { get; set; }
         public static ExtensionCollection KnownExtensions { get; set; }
@@ -28,6 +31,7 @@ namespace MpeCore
             PathProviders = new Dictionary<string, IPathProvider>();
             SectionPanels = new Dictionary<string, ISectionPanel>();
             ActionProviders = new Dictionary<string, IActionType>();
+            VersionProviders = new Dictionary<string, IVersionProvider>();
             ZipProvider = new ZipProviderClass();
 
 
@@ -54,6 +58,10 @@ namespace MpeCore
             AddActionProvider(new KillTask());
             AddActionProvider(new CreateShortCut());
 
+            AddVersion(new MediaPortalVersion());
+            AddVersion(new TvServerVersion());
+            AddVersion(new ExtensionVersion());
+            
             InstalledExtensions =
                 ExtensionCollection.Load(string.Format("{0}\\V2\\InstalledExtensions.xml",
                                                        Config.GetFolder(Config.Dir.Installer)));
@@ -61,6 +69,11 @@ namespace MpeCore
                 ExtensionCollection.Load(string.Format("{0}\\V2\\KnownExtensions.xml",
                                                        Config.GetFolder(Config.Dir.Installer)));
 
+        }
+
+        public static void AddVersion(IVersionProvider provider)
+        {
+            VersionProviders.Add(provider.DisplayName, provider);
         }
 
         public static void AddSection(ISectionPanel sp)

@@ -84,5 +84,25 @@ namespace MpeCore.Classes
         {
             return this.ToString().CompareTo(obj.ToString());
         }
+
+        public int CompareTo(VersionInfo obj)
+        {
+            if (CompareNumber(Major, obj.Major) != 0)
+                return CompareNumber(Major, obj.Major);
+            if (CompareNumber(Minor, obj.Minor) != 0)
+                return CompareNumber(Minor, obj.Major);
+            if (CompareNumber(Build, obj.Build) != 0)
+                return CompareNumber(Build, obj.Build);
+            return CompareNumber(Revision, obj.Revision);
+        }
+
+        private static int CompareNumber(string s1,string s2)
+        {
+            if (s1 == "*")
+                return 0;
+            if (s2 == "*")
+                return 0;
+            return s1.CompareTo(s2);
+        }
     }
 }

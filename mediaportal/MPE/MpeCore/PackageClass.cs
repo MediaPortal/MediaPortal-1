@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-
+using System.Windows.Forms;
 using System.Xml.Serialization;
 
 using MpeCore.Classes;
@@ -26,14 +26,17 @@ namespace MpeCore
             Version = "2.0";
             ZipProvider = new ZipProviderClass();
             UnInstallInfo = new UnInstallInfoCollection();
+            Dependencies = new DependencyItemCollection();
         }
 
         public string Version { get; set; }
         public GroupItemCollection Groups { get; set; }
         public SectionItemCollection Sections { get; set; }
+        public DependencyItemCollection Dependencies { get; set; }
         public GeneralInfoItem GeneralInfo { get; set; }
         public FileItemCollection UniqueFileList { get; set; }
 
+        
         [XmlIgnore]
         public ZipProviderClass ZipProvider { get; set; }
 
@@ -72,21 +75,48 @@ namespace MpeCore
                     }
                 }
             }
-            UnInstallInfo.Save();
-            MpeInstaller.InstalledExtensions.Add(this);
-            MpeInstaller.KnownExtensions.Add(this);
-            MpeInstaller.Save();
-            DoAdditionalInstallTasks();
+        }
+
+        /// <summary>
+        /// Checks the dependency.
+        /// </summary>
+        /// <param name="silent">if set to <c>true</c> [silent].</param>
+        /// <returns>Return if all dependency met</returns>
+        public bool CheckDependency(bool silent)
+        {
+            foreach (DependencyItem item in Dependencies.Items)
+            {
+                if (!MpeInstaller.VersionProviders[item.Type].Validate(item))
+                {
+                    if (item.WarnOnly)
+                    {
+                        MessageBox.Show(item.Message, "Dependency warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                    else
+                    {
+                        MessageBox.Show(item.Message, "Dependency error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
 
         private void DoAdditionalInstallTasks()
         {
+            if (!Directory.Exists(LocationFolder))
+                Directory.CreateDirectory(LocationFolder);
+            UnInstallInfo.Save();
+            MpeInstaller.InstalledExtensions.Add(this);
+            MpeInstaller.KnownExtensions.Add(this);
+            MpeInstaller.Save();
             //copy icon file
             if (!string.IsNullOrEmpty(GeneralInfo.Params[ParamNamesConst.ICON].Value) && File.Exists(GeneralInfo.Params[ParamNamesConst.ICON].Value))
                 File.Copy(GeneralInfo.Params[ParamNamesConst.ICON].Value,
-                          LocationFolder + "icon" + Path.GetExtension(GeneralInfo.Params[ParamNamesConst.ICON].Value));
+                          LocationFolder + "icon" + Path.GetExtension(GeneralInfo.Params[ParamNamesConst.ICON].Value),
+                          true);
             //copy the package file 
-            File.Copy(GeneralInfo.Location, LocationFolder + GeneralInfo.Id + ".mpe2");
+            File.Copy(GeneralInfo.Location, LocationFolder + GeneralInfo.Id + ".mpe2", true);
         }
 
         /// <summary>
@@ -118,6 +148,7 @@ namespace MpeCore
         {
             WizardNavigator navigator = new WizardNavigator(this);
             navigator.Navigate();
+            DoAdditionalInstallTasks();
             return true;
         }
 
@@ -318,6 +349,7 @@ namespace MpeCore
                     this.Sections = packageClass.Sections;
                     this.GeneralInfo = packageClass.GeneralInfo;
                     this.UniqueFileList = packageClass.UniqueFileList;
+                    this.Dependencies = packageClass.Dependencies;
                     Reset();
                 }
                 catch

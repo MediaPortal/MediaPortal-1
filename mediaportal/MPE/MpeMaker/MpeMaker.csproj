@@ -61,6 +61,12 @@
     <Compile Include="Dialogs\AddFolder2Group.Designer.cs">
       <DependentUpon>AddFolder2Group.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\InstalledExtensionsSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\InstalledExtensionsSelector.Designer.cs">
+      <DependentUpon>InstalledExtensionsSelector.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ParamEditTemplate.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -109,6 +115,9 @@
     <EmbeddedResource Include="Dialogs\AddFolder2Group.resx">
       <DependentUpon>AddFolder2Group.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\InstalledExtensionsSelector.resx">
+      <DependentUpon>InstalledExtensionsSelector.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\ParamEditTemplate.resx">
       <DependentUpon>ParamEditTemplate.cs</DependentUpon>
     </EmbeddedResource>
@@ -151,6 +160,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\InstallSections.resx">
       <DependentUpon>InstallSections.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\RequirementsSection.resx">
+      <DependentUpon>RequirementsSection.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\WelcomSection.resx">
       <DependentUpon>WelcomSection.cs</DependentUpon>
@@ -199,6 +211,12 @@
       <DependentUpon>InstallSections.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\ISectionControl.cs" />
+    <Compile Include="Sections\RequirementsSection.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\RequirementsSection.Designer.cs">
+      <DependentUpon>RequirementsSection.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\WelcomSection.cs">
       <SubType>UserControl</SubType>
     </Compile>

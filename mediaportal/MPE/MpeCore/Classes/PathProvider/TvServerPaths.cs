@@ -14,10 +14,9 @@ namespace MpeCore.Classes.PathProvider
         {
             _paths = new Dictionary<string, string>();
             RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
-            string path = string.Empty;
             if (key != null)
             {
-                path = (string)key.GetValue("InstallPath", null);
+                var path = (string)key.GetValue("InstallPath", "");
                 _paths.Add("%TvServerBase%", path);
                 _paths.Add("%TvServerPlugins%", path + "\\Plugins");
                 key.Close();

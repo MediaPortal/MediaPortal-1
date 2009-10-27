@@ -32,7 +32,10 @@ namespace MpeInstaller
                 MpeCore.MpeInstaller.Init();
                 PackageClass pak = new PackageClass();
                 pak = pak.ZipProvider.Load(dialog.FileName);
-                pak.StartInstallWizard();
+                if (pak.CheckDependency(false))
+                {
+                    pak.StartInstallWizard();
+                }
             }
         }
     }

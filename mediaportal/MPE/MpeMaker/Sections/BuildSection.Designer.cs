@@ -45,9 +45,11 @@
             // 
             // txt_outfile
             // 
+            this.txt_outfile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.txt_outfile.Location = new System.Drawing.Point(13, 24);
             this.txt_outfile.Name = "txt_outfile";
-            this.txt_outfile.Size = new System.Drawing.Size(424, 20);
+            this.txt_outfile.Size = new System.Drawing.Size(658, 20);
             this.txt_outfile.TabIndex = 0;
             this.txt_outfile.TextChanged += new System.EventHandler(this.txt_outfile_TextChanged);
             // 
@@ -62,7 +64,8 @@
             // 
             // btn_browse
             // 
-            this.btn_browse.Location = new System.Drawing.Point(443, 24);
+            this.btn_browse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_browse.Location = new System.Drawing.Point(677, 24);
             this.btn_browse.Name = "btn_browse";
             this.btn_browse.Size = new System.Drawing.Size(34, 20);
             this.btn_browse.TabIndex = 2;
@@ -78,7 +81,7 @@
             this.tabControl1.Location = new System.Drawing.Point(13, 50);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(464, 182);
+            this.tabControl1.Size = new System.Drawing.Size(702, 182);
             this.tabControl1.TabIndex = 3;
             // 
             // tabPage1
@@ -87,7 +90,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 4);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(456, 156);
+            this.tabPage1.Size = new System.Drawing.Size(694, 156);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Messages";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -95,10 +98,12 @@
             // list_message
             // 
             this.list_message.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.list_message.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.list_message.FormattingEnabled = true;
+            this.list_message.ItemHeight = 16;
             this.list_message.Location = new System.Drawing.Point(3, 3);
             this.list_message.Name = "list_message";
-            this.list_message.Size = new System.Drawing.Size(450, 147);
+            this.list_message.Size = new System.Drawing.Size(688, 148);
             this.list_message.TabIndex = 0;
             // 
             // tabPage2
@@ -107,7 +112,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 4);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(456, 156);
+            this.tabPage2.Size = new System.Drawing.Size(694, 156);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Errors";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -115,14 +120,17 @@
             // list_error
             // 
             this.list_error.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.list_error.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.list_error.FormattingEnabled = true;
+            this.list_error.ItemHeight = 16;
             this.list_error.Location = new System.Drawing.Point(3, 3);
             this.list_error.Name = "list_error";
-            this.list_error.Size = new System.Drawing.Size(450, 147);
+            this.list_error.Size = new System.Drawing.Size(688, 148);
             this.list_error.TabIndex = 0;
             // 
             // btn_generate
             // 
+            this.btn_generate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btn_generate.Location = new System.Drawing.Point(13, 238);
             this.btn_generate.Name = "btn_generate";
             this.btn_generate.Size = new System.Drawing.Size(75, 23);

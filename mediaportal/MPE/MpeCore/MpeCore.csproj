@@ -71,6 +71,8 @@
     <Compile Include="Classes\ActionType\KillTask.cs" />
     <Compile Include="Classes\ActionType\RunApplication.cs" />
     <Compile Include="Classes\ActionType\ShowMessageBox.cs" />
+    <Compile Include="Classes\DependencyItemCollection.cs" />
+    <Compile Include="Classes\DependencyItem.cs" />
     <Compile Include="Classes\Events\FileInstalledEventHandler.cs" />
     <Compile Include="Classes\Events\InstallEventArgs.cs" />
     <Compile Include="Classes\ExtensionCollection.cs" />
@@ -148,6 +150,9 @@
     <Compile Include="Classes\SectionParam.cs" />
     <Compile Include="Classes\SectionParamCollection.cs" />
     <Compile Include="Classes\VersionInfo.cs" />
+    <Compile Include="Classes\VersionProvider\ExtensionVersion.cs" />
+    <Compile Include="Classes\VersionProvider\MediaPortalVersion.cs" />
+    <Compile Include="Classes\VersionProvider\TvServerVersion.cs" />
     <Compile Include="Classes\WizardButtonsEnum.cs" />
     <Compile Include="Classes\WizardNavigator.cs" />
     <Compile Include="Classes\ZipProvider\ZipProviderClass.cs" />
@@ -155,6 +160,7 @@
     <Compile Include="Interfaces\IInstallerTypeProvider.cs" />
     <Compile Include="Interfaces\IPathProvider.cs" />
     <Compile Include="Interfaces\ISectionPanel.cs" />
+    <Compile Include="Interfaces\IVersionProvider.cs" />
     <Compile Include="MpeInstaller.cs" />
     <Compile Include="PackageClass.cs" />
     <Compile Include="Classes\FileItem.cs" />
