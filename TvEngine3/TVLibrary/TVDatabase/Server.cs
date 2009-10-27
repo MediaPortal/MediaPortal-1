@@ -15,6 +15,12 @@ namespace TvDatabase
   [TableName("Server")]
   public class Server : Persistent
   {
+    #region Constants
+
+    private const int DEFAULT_RTSP_PORT = 554;
+
+    #endregion
+
     #region Members
 
     private bool isChanged;
@@ -35,7 +41,15 @@ namespace TvDatabase
       isChanged = true;
       this.isMaster = isMaster;
       this.hostName = hostName;
-      this.rtspPort = rtspPort;
+      if (rtspPort == 0)
+      {
+        this.rtspPort = DEFAULT_RTSP_PORT;
+        this.isChanged = true;
+      }
+      else
+      {
+        this.rtspPort = rtspPort;
+      }
     }
 
     /// <summary> 
@@ -48,6 +62,15 @@ namespace TvDatabase
       this.isMaster = isMaster;
       this.hostName = hostName;
       this.rtspPort = rtspPort;
+      if (rtspPort == 0)
+      {
+        this.rtspPort = DEFAULT_RTSP_PORT;
+        this.isChanged = true;
+      }
+      else
+      {
+        this.rtspPort = rtspPort;
+      }
     }
 
     #endregion
@@ -105,7 +128,7 @@ namespace TvDatabase
       set
       {
         isChanged |= rtspPort != value;
-        rtspPort = value;
+        rtspPort = value == 0? DEFAULT_RTSP_PORT : value;
       }
     }
 

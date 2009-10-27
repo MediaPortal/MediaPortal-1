@@ -112,13 +112,23 @@ namespace SetupTv.Sections
       {
         string newHostName = ((IpAddressOption)IpAddressComboBox.SelectedItem).HostName;
         int newRtspPort = (int)PortNoNumericUpDown.Value;
+        bool needRestart = false;
         //int.TryParse(PortNoNumericUpDown.Text, out newRtspPort);
         if (_ourServer.HostName != newHostName ||
             _ourServer.RtspPort != newRtspPort)
         {
           _ourServer.HostName = newHostName;
           _ourServer.RtspPort = newRtspPort;
+          needRestart = true;
+        }
+        if (_ourServer.IsChanged)
+        {
+          // _ourServer may have changed because RtspPort was 0 in DB and was automatically
+          // changed to the default value (554), so we need to persist anyway
           _ourServer.Persist();
+        }
+        if (needRestart)
+        {
           ServiceNeedsToRestart();
         }
       }
