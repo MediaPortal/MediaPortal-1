@@ -655,7 +655,7 @@ namespace MediaPortal.Player
       */
       _startingUp = false;
       TimeSpan ts = DateTime.Now - _updateTimer;
-      if (ts.TotalMilliseconds >= 500 || iSpeed != 1)
+      if (ts.TotalMilliseconds >= 50 || iSpeed != 1)
       {
         UpdateCurrentPosition();
         UpdateDuration();
