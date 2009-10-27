@@ -7,6 +7,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using Mediaportal.Util;
@@ -253,7 +254,8 @@ namespace TvLibrary.Implementations.DVB
 
         int hr = graphBuilder.AddFilter(filter, name);
         DsError.ThrowExceptionForHR(hr);
-      } catch
+      }
+      catch
       {
         if (filter != null)
         {
@@ -343,7 +345,8 @@ namespace TvLibrary.Implementations.DVB
 
         hr = ((IFilterGraph2)graphBuilder).AddSourceFilterForMoniker(moniker, bindCtx, name, out filter);
         DsError.ThrowExceptionForHR(hr);
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Log.WriteFile("Error occured while adding filter by device path: ", ex);
         // An error occur. Just returning null...
@@ -731,7 +734,8 @@ namespace TvLibrary.Implementations.DVB
           try
           {
             DisconnectPins(filters[0]);
-          } catch (Exception ex) { Log.Log.WriteFile("Error while disconnecting all pins: ", ex); }
+          }
+          catch (Exception ex) { Log.Log.WriteFile("Error while disconnecting all pins: ", ex); }
           Marshal.ReleaseComObject(filters[0]);
         }
       }
@@ -755,7 +759,7 @@ namespace TvLibrary.Implementations.DVB
 
       IEnumFilters enumFilters = null;
       System.Collections.ArrayList filtersArray = new System.Collections.ArrayList();
-      
+
       try
       {
         int hr = graphBuilder.EnumFilters(out enumFilters);
@@ -774,7 +778,7 @@ namespace TvLibrary.Implementations.DVB
           filter.QueryFilterInfo(out info);
           Log.Log.Write("Remove filter from graph: {0}", info.achName);
           graphBuilder.RemoveFilter(filter);
-          while(Marshal.ReleaseComObject(filter) > 0) ;
+          while (Marshal.ReleaseComObject(filter) > 0) ;
         }
       }
       catch (Exception)
@@ -788,7 +792,7 @@ namespace TvLibrary.Implementations.DVB
         {
           Marshal.ReleaseComObject(enumFilters);
         }
-      }      
+      }
     }
 
     /// <summary>
@@ -816,7 +820,7 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         int hr = NativeMethods.StgCreateDocfile(
-            FileUtils.MakeFileName(fileName),
+            Path.Combine(Log.Log.GetPathName(), FileUtils.MakeFileName(fileName)),
             STGM.Create | STGM.Transacted | STGM.ReadWrite | STGM.ShareExclusive,
             0,
             out storage
@@ -1190,9 +1194,10 @@ namespace TvLibrary.Implementations.DVB
             Release.ComObject("pindest" + i, pinIn);
             return true;
           }
-        }else
+        }
+        else
         {
-          Release.ComObject("connectedToPin",connectedToPin);
+          Release.ComObject("connectedToPin", connectedToPin);
         }
         Release.ComObject("pindest" + i, pinIn);
       }
@@ -1361,7 +1366,8 @@ namespace TvLibrary.Implementations.DVB
         try
         {
           pinOut.ConnectedTo(out testPin);
-        } catch (Exception ex) { Log.Log.WriteFile("Error while connecting a filter: ", ex); }
+        }
+        catch (Exception ex) { Log.Log.WriteFile("Error while connecting a filter: ", ex); }
         if (testPin != null)
         {
           Release.ComObject("outPin", pinOut);
