@@ -989,5 +989,23 @@ namespace SetupTv
       }
       return AppFound;
     }
+
+    /// <summary>
+    /// Checks whether a given regPath+regValue exist
+    /// </summary>
+    /// <param name="regPath">The main path to search for (e.g. "SOFTWARE\Microsoft\Windows\CurrentVersion\MediaCenter\Service\Recording")</param>
+    /// <param name="regValue">The key to get the value of (e.g. "RecordPath")</param>
+    /// <returns>null is not found, otherwise the value converted to a string</returns>
+    public static string ReturnRegistryValue(string regPath, string regValue)
+    {
+      RegistryKey key = Registry.LocalMachine.OpenSubKey(regPath);
+      if (key != null)
+      {
+        string strKeyValue = key.GetValue(regValue).ToString();
+        key.Close();
+        return strKeyValue;
+      }
+      return String.Empty;
+    }
   }
 }

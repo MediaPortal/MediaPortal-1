@@ -25,17 +25,11 @@
 #region Usings
 
 using System;
-using System.IO;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
-using System.Drawing;
-using System.Threading;
+using System.IO;
 using System.Windows.Forms;
-using Gentle.Framework;
-
 using TvDatabase;
 using TvControl;
-using SetupTv.Dialogs;
 
 #endregion
 
@@ -127,13 +121,14 @@ namespace SetupTv.Sections
       CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
       textBoxTimeShiftFolder.Text = info.card.TimeShiftFolder;
 
-      if (textBoxTimeShiftFolder.Text == "")
+      if (String.IsNullOrEmpty(textBoxTimeShiftFolder.Text))
       {
         textBoxTimeShiftFolder.Text = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
         if (!Directory.Exists(textBoxTimeShiftFolder.Text))
         {
           Directory.CreateDirectory(textBoxTimeShiftFolder.Text);
         }
+        _needRestart = true;
       }
     }
 

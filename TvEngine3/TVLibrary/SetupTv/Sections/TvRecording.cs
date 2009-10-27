@@ -336,11 +336,24 @@ namespace SetupTv.Sections
     {
       CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
       textBoxFolder.Text = info.card.RecordingFolder;
-      if (textBoxFolder.Text == "")
+      if (String.IsNullOrEmpty(textBoxFolder.Text))
       {
-        textBoxFolder.Text = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-        if (!Directory.Exists(textBoxFolder.Text))
-          Directory.CreateDirectory(textBoxFolder.Text);
+        string recPath = Utils.ReturnRegistryValue(@"SOFTWARE\Microsoft\Windows\CurrentVersion\MediaCenter\Service\Recording", "RecordPath");
+        if (String.IsNullOrEmpty(recPath))
+        {
+          int os = OSInfo.OSInfo.OSMajorVersion + OSInfo.OSInfo.OSMinorVersion;
+          recPath = os >= 60
+            //Windows Vista and up
+                      ? Environment.GetEnvironmentVariable("PUBLIC") + "\\Recorded TV"
+            //Windows XP
+                      : Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\Shared Documents\\Recorded TV";
+        }
+        if (!Directory.Exists(recPath))
+        {
+          Directory.CreateDirectory(recPath);
+        }
+        textBoxFolder.Text = recPath;
+        _needRestart = true;
       }
       /*
        * Mantis #0001991: disable mpg recording  (part I: force TS recording format)
