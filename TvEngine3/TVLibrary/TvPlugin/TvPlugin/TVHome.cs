@@ -565,10 +565,10 @@ namespace TvPlugin
                 }
                 pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
               }
+              Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);
+              GUIGraphicsContext.OnAction(keyAction);
+              _playbackStopped = true;
             }
-            Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);
-            GUIGraphicsContext.OnAction(keyAction);
-            _playbackStopped = true;
           }
         }
         Thread.Sleep(HEARTBEAT_INTERVAL * 1000); //sleep for 5 secs. before sending heartbeat again
