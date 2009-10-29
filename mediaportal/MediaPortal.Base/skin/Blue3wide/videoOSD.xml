@@ -74,8 +74,8 @@
       <width>515</width>
       <height>37</height>
       <posX>185</posX>
-      <posY>525</posY>
-      <font>font14</font>
+      <posY>530</posY>
+      <font>font13</font>
       <label>#Play.Current.Title</label>
       <textcolor>white</textcolor>
       <visible>!Control.IsVisible(989)</visible>
@@ -89,8 +89,8 @@
       <width>515</width>
       <height>37</height>
       <posX>185</posX>
-      <posY>525</posY>
-      <font>font14</font>
+      <posY>530</posY>
+      <font>font13</font>
       <label>#Play.Current.Title</label>
       <textcolor>white</textcolor>
       <visible>Control.IsVisible(989)</visible>

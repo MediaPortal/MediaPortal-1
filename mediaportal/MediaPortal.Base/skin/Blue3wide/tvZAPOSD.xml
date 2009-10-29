@@ -1,40 +1,58 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>3007</id>
-  <defaultcontrol>213</defaultcontrol>
+  <defaultcontrol>300</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
     <control>
       <description>background</description>
+      <id>300</id>
       <type>image</type>
-      <id>0</id>
-      <posX>17</posX>
-      <posY>537</posY>
-      <width>1244</width>
-      <height>175</height>
-      <texture>zaposd_background_wide_nothumb.png</texture>
+      <posX>150</posX>
+      <posY>582</posY>
+      <width>1005</width>
+      <height>139</height>
+      <texture>OSD-Smalbackground.png</texture>
+    </control>
+     <control>
+      <description>Stripe</description>
+      <type>image</type>
+      <posX>170</posX>
+      <posY>630</posY>
+      <width>957</width>
+      <height>3</height>
+      <texture>OSD_Stripe.png</texture>
     </control>
     <control>
       <description>TV Logo</description>
       <type>image</type>
-      <id>10</id>
-      <posX>55</posX>
-      <posY>563</posY>
-      <width>177</width>
-      <height>125</height>
+      <id>0</id>
+      <posX>1050</posX>
+      <posY>635</posY>
+      <width>70</width>
+      <height>70</height>
       <texture>#TV.View.thumb</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
     </control>
     <control>
+      <description>progress bar background</description>
+      <type>image</type>
+      <posX>170</posX>
+      <posY>646</posY>
+      <width>831</width>
+      <height>25</height>
+      <texture>osd_progress_background.png</texture>
+    </control>
+    <control>
       <description>Progress Bar</description>
       <type>progress</type>
       <id>1</id>
-      <posX>675</posX>
-      <posY>576</posY>
-      <width>391</width>
-      <height>6</height>
-      <texturebg>osd_progress_background.png</texturebg>
+      <posX>165</posX>
+      <posY>647</posY>
+      <width>822</width>
+      <height>25</height>
+      <texturebg>-</texturebg>
       <visible>yes</visible>
       <label>#TV.View.Percentage</label>
     </control>
@@ -42,30 +60,30 @@
       <description>Start Time Info</description>
       <type>label</type>
       <id>101</id>
-      <posX>568</posX>
-      <posY>570</posY>
+       <posX>205</posX>
+      <posY>691</posY>
       <label>#TV.View.start</label>
-      <align>left</align>
-      <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <align>center</align>
+      <font>font12</font>
+      <textcolor>white</textcolor>
     </control>
     <control>
       <description>End Time Info</description>
       <type>label</type>
       <id>102</id>
-      <posX>1084</posX>
-      <posY>570</posY>
+      <posX>965</posX>
+      <posY>691</posY>
       <label>#TV.View.stop</label>
-      <align>left</align>
-      <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <align>center</align>
+      <font>font12</font>
+      <textcolor>white</textcolor>
     </control>
     <control>
       <description>rec logo</description>
       <type>image</type>
       <id>39</id>
-      <posX>1084</posX>
-      <posY>642</posY>
+      <posX>910</posX>
+      <posY>530</posY>
       <texture>rec.png</texture>
       <colordiffuse>50ffffff</colordiffuse>
     </control>
@@ -75,10 +93,10 @@
       <type>textbox</type>
       <width>900</width>
       <height>37</height>
-      <posX>266</posX>
-      <posY>600</posY>
+      <posX>380</posX>
+      <posY>595</posY>
       <align>left</align>
-      <font>font15</font>
+      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
@@ -87,22 +105,34 @@
       <type>textbox</type>
       <width>900</width>
       <height>37</height>
-      <posX>266</posX>
+      <posX>2266</posX>
       <posY>642</posY>
       <align>left</align>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
       <description>Current channel</description>
       <type>label</type>
       <id>35</id>
-      <posX>259</posX>
-      <posY>565</posY>
+      <width>141</width>
+      <height>37</height>
+      <posX>180</posX>
+      <posY>595</posY>
+      <font>font14</font>
       <label>-</label>
       <align>left</align>
-      <font>font16</font>
       <textcolor>FFFFFFFF</textcolor>
+    </control>
+     <control>
+      <description>Current Time Info</description>
+      <type>label</type>
+      <posX>1125</posX>
+      <posY>597</posY>
+      <label>#time</label>
+      <font>font14</font>
+      <align>right</align>
+      <textcolor>white</textcolor>
     </control>
   </controls>
 </window>

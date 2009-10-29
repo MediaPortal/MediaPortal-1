@@ -129,8 +129,8 @@
       <width>415</width>
       <height>37</height>
       <posX>1435</posX>
-      <posY>525</posY>
-      <font>font14</font>
+      <posY>530</posY>
+      <font>font13</font>
       <label>#TV.View.title</label>
       <textcolor>white</textcolor>
     </control>
@@ -140,8 +140,8 @@
       <width>415</width>
       <height>37</height>
       <posX>225</posX>
-      <posY>525</posY>
-      <font>font14</font>
+      <posY>530</posY>
+      <font>font13</font>
       <label>#TV.View.title</label>
       <textcolor>white</textcolor>
       <visible>!Control.IsVisible(989)</visible>
@@ -154,8 +154,8 @@
       <width>415</width>
       <height>37</height>
       <posX>225</posX>
-      <posY>525</posY>
-      <font>font14</font>
+      <posY>530</posY>
+      <font>font13</font>
       <label>#TV.View.title</label>
       <textcolor>white</textcolor>
       <visible>Control.IsVisible(989)</visible>
