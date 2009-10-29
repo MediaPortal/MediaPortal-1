@@ -32,6 +32,19 @@
     <String id="31">november</String>
     <String id="32">december</String>
     <String id="50" prefix="Mina ">DVD-filmer</String>
+    <String id="51">Spela skiva</String>
+    <String id="60">Väntar på att TV-tjänsten skall starta...</String>
+    <String id="61">Väntar {0} sekunder innan uppstart</String>
+    <String id="62">Initierar DirectX...</String>
+    <String id="63">Initierar inenheter...</String>
+    <String id="64">Startar pluginmoduler...</String>
+    <String id="65">Laddar keymap.xml...</String>
+    <String id="66">Laddar textsträngar...</String>
+    <String id="67">Mellanlagrar grafik...</String>
+    <String id="68">Laddar typsnitt...</String>
+    <String id="69">Laddar skin [{0}]...</String>
+    <String id="70">Laddar fönsterpluginmoduler...</String>
+    <String id="71">Initierar fönsterhanterare...</String>
     <String id="100">Visa: Ikoner</String>
     <String id="101">Visa: Lista</String>
     <String id="102">Skanna</String>
@@ -671,6 +684,8 @@
     <String id="780">Välj typ av inspelning</String>
     <String id="781">Enkel inspelning</String>
     <String id="782">Avancerad inspelning</String>
+    <String id="783">Rotera 180°</String>
+    <String id="784">Rotera 270°</String>
     <String id="789">Nu: </String>
     <String id="790">Nästa: </String>
     <String id="798">Lågt</String>
@@ -985,6 +1000,9 @@
     <String id="1518">Kan inte skapa graf</String>
     <String id="1519">Ingen fungerande mjukvaruavkodare installerad</String>
     <String id="1520">Inte tillräckligt diskutrymme</String>
+    <String id="1521">Visa efter titel</String>
+    <String id="1522">Visa efter genre</String>
+    <String id="1523">Sök i beskrivning</String>
     <String id="1600">Vill du stänga av?</String>
     <String id="1601">Vill du sätta i vänteläge?</String>
     <String id="1602">Vill du sätta i viloläge?</String>
@@ -1286,6 +1304,7 @@
     <String id="4554">Sök CD-info</String>
     <String id="4555">Aktuell spellista</String>
     <String id="4557">Lägg till alla i spellistan</String>
+    <String id="4558">Nyligen tillagd</String>
     <String id="5900" prefix="Mina ">Trailrar</String>
     <String id="5901">Visa filmer</String>
     <String id="5902">Visa vilka filmer?</String>
@@ -1354,6 +1373,11 @@
     <String id="6039">AAC Audio codec</String>
     <String id="6040">Igår</String>
     <String id="6041">För två dagar sedan</String>
+    <String id="6050">Aktuell vecka</String>
+    <String id="6060">Aktuell månad</String>
+    <String id="6070">Aktuellt år</String>
+    <String id="6080">Förra året</String>
+    <String id="6090">Äldre</String>
     <String id="8000" prefix="Min">E-post</String>
     <String id="8001">Kolla brevlådan</String>
     <String id="8002">Autokoll Av</String>
@@ -1656,7 +1680,6 @@
     <String id="100004">Inställningar</String>
     <String id="100005" prefix="Min ">Musik</String>
     <String id="100006" prefix="Mina ">Filmer</String>
-    <String id="100007">Systeminformation</String>
     <String id="100008">Inställningar-&gt;Generella</String>
     <String id="100009">Inställningar-&gt;Skärm</String>
     <String id="100010">Inställningar-&gt;Skärm-&gt;UI Kalibrering</String>
@@ -1679,8 +1702,6 @@
     <String id="100029">Inställningar-&gt;Generella-&gt;LCD</String>
     <String id="100030" prefix="Min">Radio</String>
     <String id="100031">Inställningar-&gt;Skärm-&gt;scroll-hastighet</String>
-    <String id="100032">MSN Messenger</String>
-    <String id="100033">MSN Messenger chat</String>
     <String id="100034" prefix="Mina ">Plugins</String>
     <String id="100035">Basic home</String>
     <String id="100100">ja/nej-dialog</String>
@@ -1750,7 +1771,6 @@
     <String id="100747">Sök TV</String>
     <String id="100748">Programinformation</String>
     <String id="100749">TV/Ingen signal</String>
-    <String id="100750">Recept</String>
     <String id="100755">Status</String>
     <String id="100756">Statusdetaljer</String>
     <String id="100757">Statusinställningar</String>
@@ -1759,7 +1779,6 @@
     <String id="100760" prefix="Min ">Brännare</String>
     <String id="100761" prefix="Min ">TV-tablå</String>
     <String id="100762" prefix="Min ">Radio-tablå</String>
-    <String id="100770" prefix="Min ">Utforskare</String>
     <String id="100800" prefix="Mina">Tillägg</String>
     <String id="101000">tangentbord</String>
     <String id="101002">Virtuellt standardtangentbord</String>
@@ -1796,10 +1815,6 @@
     <String id="103011" prefix="Mina ">TV/Beskärningsinställningar</String>
     <String id="103012">Information om tv-mottagning</String>
     <String id="104711" prefix="Min ">Wikipedia</String>
-    <String id="105000">Alarm</String>
-    <String id="105001">Alarm - Alarm information</String>
-    <String id="105002">Alarm - Sovtid</String>
-    <String id="105900" prefix="Mina ">Trailers</String>
     <String id="106666">Power Scheduler väntar</String>
     <String id="107700" prefix="Min">TV/Text-TV</String>
     <String id="107701" prefix="Min">TV/Text-TV</String>
@@ -1813,9 +1828,6 @@
     <String id="109004">MiniDisplay - Inställningar - Equalizer</String>
     <String id="109005">MiniDisplay - Inställningar - Tangentbord</String>
     <String id="109006">MiniDisplay - Inställningar - Fjärrkontroll</String>
-    <String id="109811" prefix="Mina">TV-serier</String>
-    <String id="190478" prefix="Mina">Texter</String>
-    <String id="196742">Rörliga bilder</String>
     <String id="200000">Var god ange vilken EPG grabber du använder. Om ditt land inte</String>
     <String id="200001">finns på listan måste du tillföra EPG:n manuellt</String>
     <String id="200002">Nu kan du mappa EPG-kanalerna till dina TV-kanaler</String>
