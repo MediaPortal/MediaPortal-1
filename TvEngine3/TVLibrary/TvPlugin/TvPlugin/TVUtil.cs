@@ -75,18 +75,18 @@ namespace TvPlugin
       List<Schedule> recordings = new List<Schedule>();
 
       DateTime dtDay = DateTime.Now;
-      if (rec.ScheduleType == (int) ScheduleRecordingType.Once)
+      if (rec.ScheduleType == (int)ScheduleRecordingType.Once)
       {
         recordings.Add(rec);
         return recordings;
       }
 
-      if (rec.ScheduleType == (int) ScheduleRecordingType.Daily)
+      if (rec.ScheduleType == (int)ScheduleRecordingType.Daily)
       {
         for (int i = 0; i < _days; ++i)
         {
           Schedule recNew = rec.Clone();
-          recNew.ScheduleType = (int) ScheduleRecordingType.Once;
+          recNew.ScheduleType = (int)ScheduleRecordingType.Once;
           recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute,
                                           0);
           if (rec.EndTime.Day > rec.StartTime.Day)
@@ -112,14 +112,14 @@ namespace TvPlugin
         return recordings;
       }
 
-      if (rec.ScheduleType == (int) ScheduleRecordingType.WorkingDays)
+      if (rec.ScheduleType == (int)ScheduleRecordingType.WorkingDays)
       {
         for (int i = 0; i < _days; ++i)
         {
           if (weekEndTool.IsWorkingDay(dtDay.DayOfWeek))
           {
             Schedule recNew = rec.Clone();
-            recNew.ScheduleType = (int) ScheduleRecordingType.Once;
+            recNew.ScheduleType = (int)ScheduleRecordingType.Once;
             recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute,
                                             0);
             if (rec.EndTime.Day > rec.StartTime.Day)
@@ -146,7 +146,7 @@ namespace TvPlugin
         return recordings;
       }
 
-      if (rec.ScheduleType == (int) ScheduleRecordingType.Weekends)
+      if (rec.ScheduleType == (int)ScheduleRecordingType.Weekends)
       {
         IList<Program> progList;
         progList = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(_days), rec.ProgramName, rec.ReferencedChannel());
@@ -156,7 +156,7 @@ namespace TvPlugin
           if ((rec.IsRecordingProgram(prog, false)) && (weekEndTool.IsWeekend(prog.StartTime.DayOfWeek)))
           {
             Schedule recNew = rec.Clone();
-            recNew.ScheduleType = (int) ScheduleRecordingType.Once;
+            recNew.ScheduleType = (int)ScheduleRecordingType.Once;
             recNew.StartTime = prog.StartTime;
             recNew.EndTime = prog.EndTime;
             recNew.Series = true;
@@ -170,14 +170,14 @@ namespace TvPlugin
         }
         return recordings;
       }
-      if (rec.ScheduleType == (int) ScheduleRecordingType.Weekly)
+      if (rec.ScheduleType == (int)ScheduleRecordingType.Weekly)
       {
         for (int i = 0; i < _days; ++i)
         {
           if (dtDay.DayOfWeek == rec.StartTime.DayOfWeek)
           {
             Schedule recNew = rec.Clone();
-            recNew.ScheduleType = (int) ScheduleRecordingType.Once;
+            recNew.ScheduleType = (int)ScheduleRecordingType.Once;
             recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute,
                                             0);
             if (rec.EndTime.Day > rec.StartTime.Day)
@@ -206,7 +206,7 @@ namespace TvPlugin
 
 
       IList<Program> programs;
-      if (rec.ScheduleType == (int) ScheduleRecordingType.EveryTimeOnThisChannel)
+      if (rec.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel)
       {
         Log.Debug("get {0} {1} EveryTimeOnThisChannel", rec.ProgramName, rec.ReferencedChannel().DisplayName);
         programs = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(_days), rec.ProgramName, rec.ReferencedChannel());
@@ -222,7 +222,7 @@ namespace TvPlugin
         if (rec.IsRecordingProgram(prog, false))
         {
           Schedule recNew = rec.Clone();
-          recNew.ScheduleType = (int) ScheduleRecordingType.Once;
+          recNew.ScheduleType = (int)ScheduleRecordingType.Once;
           recNew.IdChannel = prog.IdChannel;
           recNew.StartTime = prog.StartTime;
           recNew.EndTime = prog.EndTime;
@@ -238,7 +238,7 @@ namespace TvPlugin
     }
     public static string GetDisplayTitle(Recording rec)
     {
-      return TitleDisplay(rec.Title,rec.EpisodeName,rec.SeriesNum,rec.EpisodeNum,rec.EpisodePart);
+      return TitleDisplay(rec.Title, rec.EpisodeName, rec.SeriesNum, rec.EpisodeNum, rec.EpisodePart);
     }
     public static string GetDisplayTitle(Program prog)
     {
@@ -282,18 +282,18 @@ namespace TvPlugin
             episodeInfo = episodePart.Trim();
           }
         }
-        if (ShowEpisodeInfo == 2 || ShowEpisodeInfo == 3)
+      }
+      if (ShowEpisodeInfo == 2 || ShowEpisodeInfo == 3)
+      {
+        if (!String.IsNullOrEmpty(episodeName))
         {
-          if (!String.IsNullOrEmpty(episodeName))
+          if (!String.IsNullOrEmpty(episodeInfo))
           {
-            if (!String.IsNullOrEmpty(episodeInfo))
-            {
-              episodeInfo = episodeInfo + " " + episodeName;
-            }
-            else
-            {
-              episodeInfo = episodeName;
-            }
+            episodeInfo = episodeInfo + " " + episodeName;
+          }
+          else
+          {
+            episodeInfo = episodeName;
           }
         }
       }
