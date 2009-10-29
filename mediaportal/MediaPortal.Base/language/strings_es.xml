@@ -7,7 +7,7 @@
     <String id="3" prefix="Mis ">Vídeos</String>
     <String id="4">Guía de TV</String>
     <String id="5">Configuración</String>
-    <String id="6">Falta etiqueta</String>
+    <String id="6">¡Falta etiqueta!</String>
     <String id="7" prefix="Mis ">Archivos</String>
     <String id="8" prefix="Mi ">Tiempo</String>
     <String id="9" prefix="Mis ">Noticias</String>
@@ -32,8 +32,21 @@
     <String id="31">Noviembre</String>
     <String id="32">Diciembre</String>
     <String id="50" prefix="Mis ">DVDs</String>
-    <String id="100">Ver: Iconos</String>
-    <String id="101">Ver: Listas</String>
+    <String id="51">Reproducir disco</String>
+    <String id="60">Esperando inicio del servicio de TV...</String>
+    <String id="61">Esperando {0} segundo(s) antes del inicio...</String>
+    <String id="62">Iniciando DirectX...</String>
+    <String id="63">Iniciando dispositivos de entrada...</String>
+    <String id="64">Iniciando plugins...</String>
+    <String id="65">Cargando keymap.xml...</String>
+    <String id="66">Cargando cadenas...</String>
+    <String id="67">Almacenando gráficos en caché...</String>
+    <String id="68">Cargando fuentes...</String>
+    <String id="69">Cargando skin ({0})...</String>
+    <String id="70">Cargando plugins de pantalla...</String>
+    <String id="71">Iniciando gestor de pantalla...</String>
+    <String id="100">Diseño: Iconos</String>
+    <String id="101">Diseño: Listas</String>
     <String id="102">Escanear</String>
     <String id="103">Ordenar por: Nombre</String>
     <String id="104">Ordenar por: Fecha</String>
@@ -44,7 +57,7 @@
     <String id="109">Crear Miniatura</String>
     <String id="110">Crear Miniaturas</String>
     <String id="111">Atajos</String>
-    <String id="112">PARADO</String>
+    <String id="112">PAUSADO</String>
     <String id="113" prefix="Mis ">Archivos: Fuente</String>
     <String id="114" prefix="Mis ">Archivos: Destino</String>
     <String id="115">Copiar</String>
@@ -987,6 +1000,9 @@
     <String id="1518">No es posible crear gráfica</String>
     <String id="1519">No hay instalado software de codificación soportado</String>
     <String id="1520">No hay suficiente espacio libre en disco</String>
+    <String id="1521">Ver por Título</String>
+    <String id="1522">Ver por Género</String>
+    <String id="1523">Buscar Descripción</String>
     <String id="1600">¿Quiere apagarlo?</String>
     <String id="1601">¿Quiere suspenderlo?</String>
     <String id="1602">¿Quiere hibernarlo?</String>
