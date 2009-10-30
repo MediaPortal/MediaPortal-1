@@ -2977,9 +2977,7 @@ namespace TvPlugin
         TVHome.Navigator.ZapToChannelNumber(channelNr, false);
       }
 
-      //Mantis #0002510: Changing channel using numbers shows a small OSD for 1 sec and then the new one (Blue3Wide) 
-      //                 Fixed removing the following unneeded OSD update
-      //UpdateOSD();
+      UpdateOSD();
       _zapTimeOutTimer = DateTime.Now;
     }
 
