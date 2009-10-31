@@ -315,10 +315,10 @@ namespace TvService
               {
                 Log.Epg("EpgCard: Canceled epg, card is not idle:{0}", _user.CardId);
               }
+              _tvController.AbortEPGGrabbing(_user.CardId);
               _state = EpgState.Idle;
               _user.CardId = -1;
               _currentTransponder.InUse = false;
-              _tvController.AbortEPGGrabbing(_user.CardId);
               return;
             }
           }
