@@ -36,20 +36,26 @@
           <onright>2</onright>
           <itemWidth>72</itemWidth>
           <textureWidth>58</textureWidth>
-          <thumbWidth>44</thumbWidth>
-          <thumbPosX>7</thumbPosX>
+          <thumbWidth>51</thumbWidth>
+          <thumbHeight>73</thumbHeight>
+          <thumbPosX>4</thumbPosX>
+          <thumbPosY>4</thumbPosY>
           <textureWidthBig>85</textureWidthBig>
           <textureHeightBig>116</textureHeightBig>
           <itemWidthBig>108</itemWidthBig>
           <itemHeightBig>138</itemHeightBig>
-          <thumbWidthBig>64</thumbWidthBig>
-          <thumbHeightBig>90</thumbHeightBig>
-          <thumbPosXBig>10</thumbPosXBig>
-           <zoomXPixels>20</zoomXPixels>
+          <thumbWidthBig>77</thumbWidthBig>
+          <thumbHeightBig>106</thumbHeightBig>
+          <thumbPosXBig>5</thumbPosXBig>
+          <thumbPosYBig>5</thumbPosYBig>
+          <zoomXPixels>20</zoomXPixels>
 	      <zoomYPixels>20</zoomYPixels>
 	      <hideUnfocusTexture>no</hideUnfocusTexture>
 	      <renderFocusText>no</renderFocusText>
 	      <renderUnfocusText>yes</renderUnfocusText>
+	      <frameNoFocus>Thumb_frame_video_nofocus.png</frameNoFocus>
+		  <frameFocus>Thumb_frame_video_nofocus.png</frameFocus>
+		  <dimColor>ffffffff</dimColor>
         </control>
         <control>
           <description>Filmstrip view</description>

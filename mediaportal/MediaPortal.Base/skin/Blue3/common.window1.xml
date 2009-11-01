@@ -1,12 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <controls>
-    <control>
+     <control>
       <description>BG</description>
       <type>image</type>
       <id>1</id>
       <width>720</width>
       <height>576</height>
+    </control>
+     <control>
+      <description>BG2</description>
+      <type>image</type>
+      <id>1</id>
+      <width>720</width>
+      <height>576</height>
+      <texture>background2.png</texture>
+      <visible>facadeview.largeicons|facadeview.smallicons</visible>
     </control>
     <control>
       <animation effect="fade" time="250">WindowOpen</animation>
