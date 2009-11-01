@@ -359,7 +359,7 @@ namespace MediaPortal.Player
         {
           int counter = 0;        
           FilterState state;
-          hr = mediaCtrl.StopWhenReady();
+          hr = mediaCtrl.Stop();
           hr = mediaCtrl.GetState(10, out state);
           while (state != FilterState.Stopped || GUIGraphicsContext.InVmr9Render)
           {
@@ -369,7 +369,10 @@ namespace MediaPortal.Player
             counter++;
             if (counter >= 30)
             {
-              hr = mediaCtrl.Stop();
+              if (state != FilterState.Stopped)
+                Log.Debug("VideoPlayer9: graph still running");
+              if (GUIGraphicsContext.InVmr9Render)
+                Log.Debug("VideoPlayer9: in renderer");
               break;
             }
           }

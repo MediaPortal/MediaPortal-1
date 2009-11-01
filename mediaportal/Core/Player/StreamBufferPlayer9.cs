@@ -270,6 +270,24 @@ namespace MediaPortal.Player
         if (_mediaCtrl != null)
         {
           hr = _mediaCtrl.StopWhenReady();
+          int counter = 0;
+          FilterState state;
+          hr = _mediaCtrl.Stop();
+          hr = _mediaCtrl.GetState(10, out state);
+          while (state != FilterState.Stopped || GUIGraphicsContext.InVmr9Render)
+          {
+            System.Threading.Thread.Sleep(100);
+            hr = _mediaCtrl.GetState(10, out state);
+            counter++;
+            if (counter >= 30)
+            {
+              if (state != FilterState.Stopped)
+                Log.Debug("StreamBufferPlayer9: graph still running");
+              if (GUIGraphicsContext.InVmr9Render)
+                Log.Debug("StreamBufferPlayer9: in renderer");
+              break;
+            }
+          }
           _mediaCtrl = null;
         }
         

@@ -377,17 +377,19 @@ namespace MediaPortal.Player
         {
           int counter = 0;
           FilterState state;
-          hr = _mediaCtrl.StopWhenReady();
+          hr = _mediaCtrl.Stop();
           hr = _mediaCtrl.GetState(10, out state);
           while (state != FilterState.Stopped || GUIGraphicsContext.InVmr9Render)
           {
-            Log.Debug("DVDPlayer9: graph still running");
             System.Threading.Thread.Sleep(100);
             hr = _mediaCtrl.GetState(10, out state);
             counter++;
             if (counter >= 30)
             {
-              hr = _mediaCtrl.Stop();
+              if(state != FilterState.Stopped)
+                Log.Debug("DVDPlayer9: graph still running");
+              if (GUIGraphicsContext.InVmr9Render)
+                Log.Debug("DVDPlayer9: in renderer");
               break;
             }
           }

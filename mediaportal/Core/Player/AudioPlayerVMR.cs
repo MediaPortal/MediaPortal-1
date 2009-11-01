@@ -449,7 +449,24 @@ namespace MediaPortal.Player
 
         if (mediaCtrl != null)
         {
-          hr = mediaCtrl.StopWhenReady();
+          int counter = 0;
+          FilterState state;
+          hr = mediaCtrl.Stop();
+          hr = mediaCtrl.GetState(10, out state);
+          while (state != FilterState.Stopped || GUIGraphicsContext.InVmr9Render)
+          {
+            System.Threading.Thread.Sleep(100);
+            hr = mediaCtrl.GetState(10, out state);
+            counter++;
+            if (counter >= 30)
+            {
+              if (state != FilterState.Stopped)
+                Log.Debug("AudioPlayerVMR: graph still running");
+              if (GUIGraphicsContext.InVmr9Render)
+                Log.Debug("AudioPlayerVMR: in renderer");
+              break;
+            }
+          }
           mediaCtrl = null;
         }
 
