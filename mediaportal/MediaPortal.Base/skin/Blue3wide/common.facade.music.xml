@@ -78,6 +78,7 @@
           <hideUnfocusTexture>no</hideUnfocusTexture>
           <renderFocusText>no</renderFocusText>
           <renderUnfocusText>yes</renderUnfocusText>
+          <dimColor>ffffffff</dimColor>
         </control>
         <control>
           <description>Filmstrip view</description>

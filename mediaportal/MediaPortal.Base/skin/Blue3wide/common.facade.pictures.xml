@@ -59,8 +59,9 @@
           <renderUnfocusText>yes</renderUnfocusText>
           <showFrame>true</showFrame>
 		  <frameNoFocus>Thumb_frame_nofocus.png</frameNoFocus>
-		  <frameFocus>Thumb_frame_focus.png</frameFocus>
+		  <frameFocus>Thumb_frame_nofocus.png</frameFocus>
 		  <font>font9</font>
+		  <dimColor>ffffffff</dimColor>
         </control>
         <control>
           <description>Filmstrip view</description>

@@ -43,27 +43,28 @@
           <itemWidth>157</itemWidth>
           <itemHeight>185</itemHeight>
           <textureWidth>97</textureWidth>
-          <textureHeight>147</textureHeight>
-          <thumbWidth>87</thumbWidth>
-          <thumbHeight>137</thumbHeight>
+          <textureHeight>140</textureHeight>
+          <thumbWidth>90</thumbWidth>
+          <thumbHeight>133</thumbHeight>
           <thumbPosX>5</thumbPosX>
-          <thumbPosY>5</thumbPosY>
-          <itemWidthBig>224</itemWidthBig>
-          <itemHeightBig>247</itemHeightBig>
-          <thumbWidthBig>137</thumbWidthBig>
-          <thumbHeightBig>197</thumbHeightBig>
-          <textureWidthBig>149</textureWidthBig>
-          <textureHeightBig>209</textureHeightBig>
-          <thumbPosXBig>5</thumbPosXBig>
-          <thumbPosYBig>5</thumbPosYBig>
+          <thumbPosY>6</thumbPosY>
+          <itemWidthBig>195</itemWidthBig>
+          <itemHeightBig>250</itemHeightBig>
+          <thumbWidthBig>135</thumbWidthBig>
+          <thumbHeightBig>200</thumbHeightBig>
+          <textureWidthBig>150</textureWidthBig>
+          <textureHeightBig>216</textureHeightBig>
+          <thumbPosXBig>10</thumbPosXBig>
+          <thumbPosYBig>8</thumbPosYBig>
           <zoomXPixels>30</zoomXPixels>
           <zoomYPixels>30</zoomYPixels>
           <hideUnfocusTexture>no</hideUnfocusTexture>
           <renderFocusText>no</renderFocusText>
           <renderUnfocusText>yes</renderUnfocusText>
           <showFrame>true</showFrame>
-		  <frameNoFocus>icon_empty_nofocus.png</frameNoFocus>
-		  <frameFocus>icon_empty_focus.png</frameFocus>
+		  <frameNoFocus>Thumb_frame_video_nofocus.png</frameNoFocus>
+		  <frameFocus>Thumb_frame_video_nofocus.png</frameFocus>
+		  <dimColor>ffffffff</dimColor>
         </control>
         <control>
           <description>Filmstrip view</description>

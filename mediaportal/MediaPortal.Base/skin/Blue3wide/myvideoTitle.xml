@@ -499,5 +499,24 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
+     <control>
+      <description>BG2</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1280</width>
+      <height>720</height>
+      <texture>backgroundthumbsview.png</texture>
+      <visible>facadeview.largeicons|facadeview.smallicons</visible>
+    </control>
+    <control>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <type>image</type>
+      <id>1</id>
+      <posX>106</posX>
+      <posY>12</posY>
+      <texture>#header.image</texture>
+      <visible>facadeview.largeicons|facadeview.smallicons</visible>
+    </control>
   </controls>
 </window>

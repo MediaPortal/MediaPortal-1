@@ -7,6 +7,16 @@
       <id>1</id>
       <width>1280</width>
       <height>720</height>
+      <texture>background.png</texture>
+    </control>
+     <control>
+      <description>BG2</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1280</width>
+      <height>720</height>
+      <texture>background2.png</texture>
+      <visible>facadeview.largeicons|facadeview.smallicons</visible>
     </control>
     <control>
       <animation effect="fade" time="250">WindowOpen</animation>
