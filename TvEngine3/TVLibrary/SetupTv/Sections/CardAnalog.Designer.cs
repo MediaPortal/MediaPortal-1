@@ -321,7 +321,8 @@ namespace SetupTv.Sections
       // 
       // mpGrpScanProgress
       // 
-      this.mpGrpScanProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+      this.mpGrpScanProgress.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGrpScanProgress.Controls.Add(this.label1);
       this.mpGrpScanProgress.Controls.Add(this.progressBarQuality);
