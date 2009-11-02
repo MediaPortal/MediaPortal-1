@@ -269,7 +269,6 @@ namespace MediaPortal.Player
       {
         if (_mediaCtrl != null)
         {
-          hr = _mediaCtrl.StopWhenReady();
           int counter = 0;
           FilterState state;
           hr = _mediaCtrl.Stop();
