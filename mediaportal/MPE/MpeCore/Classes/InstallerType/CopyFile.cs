@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using MpeCore.Interfaces;
-using MpeCore.Classes;
 
 namespace MpeCore.Classes.InstallerType
 {
@@ -68,7 +66,7 @@ namespace MpeCore.Classes.InstallerType
         public string GetTemplatePath(FileItem fileItem)
         {
             string localFile = fileItem.LocalFileName;
-            foreach (var pathProvider in MpeCore.MpeInstaller.PathProviders)
+            foreach (var pathProvider in MpeInstaller.PathProviders)
             {
                 localFile = pathProvider.Value.Colapse(localFile);
             }
@@ -85,7 +83,7 @@ namespace MpeCore.Classes.InstallerType
         public string GetInstallPath(FileItem fileItem)
         {
             string localFile = fileItem.DestinationFilename;
-            foreach (var pathProvider in MpeCore.MpeInstaller.PathProviders)
+            foreach (var pathProvider in MpeInstaller.PathProviders)
             {
                 localFile = pathProvider.Value.Expand(localFile);
             }

@@ -102,6 +102,7 @@ namespace MpeCore.Classes
                 return 0;
             if (s2 == "*")
                 return 0;
+            int i = s1.CompareTo(s2);
             return s1.CompareTo(s2);
         }
     }

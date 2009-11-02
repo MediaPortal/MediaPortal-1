@@ -67,6 +67,7 @@
     <Compile Include="Classes\ActionItem.cs" />
     <Compile Include="Classes\ActionItemCollection.cs" />
     <Compile Include="Classes\ActionType\ClearSkinCache.cs" />
+    <Compile Include="Classes\ActionType\CreateFolder.cs" />
     <Compile Include="Classes\ActionType\CreateShortCut.cs" />
     <Compile Include="Classes\ActionType\KillTask.cs" />
     <Compile Include="Classes\ActionType\RunApplication.cs" />

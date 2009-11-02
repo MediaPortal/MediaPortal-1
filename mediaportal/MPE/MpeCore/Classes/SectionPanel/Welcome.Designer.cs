@@ -93,6 +93,7 @@
             this.Controls.Add(this.button_back);
             this.Controls.Add(this.button_next);
             this.Controls.Add(this.button_cancel);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "Welcome";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Installer";

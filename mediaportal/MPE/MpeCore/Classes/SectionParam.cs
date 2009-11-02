@@ -8,7 +8,8 @@ namespace MpeCore.Classes
     {
         String,
         File,
-        Template
+        Template,
+        Bool
     }
     public class SectionParam
     {
@@ -51,6 +52,18 @@ namespace MpeCore.Classes
         public string GetValueAsPath()
         {
             return MpeInstaller.TransformInRealPath(Value);
+        }
+
+        /// <summary>
+        /// Gets the value as bool.
+        /// This function only usable if the type is Bool 
+        /// </summary>
+        /// <returns></returns>
+        public bool GetValueAsBool()
+        {
+            if (this.Value.ToUpper() == "YES")
+                return true;
+            return false;
         }
 
         public override string ToString()

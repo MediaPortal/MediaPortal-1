@@ -67,6 +67,12 @@
     <Compile Include="Dialogs\InstalledExtensionsSelector.Designer.cs">
       <DependentUpon>InstalledExtensionsSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\ParamEditBool.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ParamEditBool.Designer.cs">
+      <DependentUpon>ParamEditBool.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ParamEditTemplate.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -117,6 +123,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\InstalledExtensionsSelector.resx">
       <DependentUpon>InstalledExtensionsSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ParamEditBool.resx">
+      <DependentUpon>ParamEditBool.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\ParamEditTemplate.resx">
       <DependentUpon>ParamEditTemplate.cs</DependentUpon>

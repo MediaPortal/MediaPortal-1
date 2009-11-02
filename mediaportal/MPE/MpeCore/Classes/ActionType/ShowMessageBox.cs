@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using MpeCore.Classes.Events;
 using MpeCore.Classes.SectionPanel;
 using MpeCore.Interfaces;
@@ -44,6 +45,11 @@ namespace MpeCore.Classes.ActionType
         public ValidationResponse Validate(PackageClass packageClass, ActionItem actionItem)
         {
             return new ValidationResponse();
+        }
+
+        public SectionResponseEnum UnInstall(UnInstallItem item)
+        {
+            return SectionResponseEnum.Ok;
         }
     }
 }

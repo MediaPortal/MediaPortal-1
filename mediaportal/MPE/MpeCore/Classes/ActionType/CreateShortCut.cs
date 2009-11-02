@@ -56,6 +56,8 @@ namespace MpeCore.Classes.ActionType
 
             try
             {
+                UnInstallItem unInstallItem = packageClass.UnInstallInfo.BackUpFile(actionItem.Params[Const_Loc].GetValueAsPath(), "CopyFile");
+
                 WshShellClass wshShell = new WshShellClass();
                 // Create the shortcut
 
@@ -71,6 +73,11 @@ namespace MpeCore.Classes.ActionType
 
                 myShortcut.Save();
 
+                FileInfo info = new FileInfo(actionItem.Params[Const_Loc].GetValueAsPath());
+                unInstallItem.FileDate = info.CreationTimeUtc;
+                unInstallItem.FileSize = info.Length;
+                packageClass.UnInstallInfo.Items.Add(unInstallItem);
+
             }
             catch (Exception)
             {
@@ -85,5 +92,9 @@ namespace MpeCore.Classes.ActionType
             return new ValidationResponse();
         }
 
+        public SectionResponseEnum UnInstall(UnInstallItem item)
+        {
+            return SectionResponseEnum.Ok;
+        }
     }
 }

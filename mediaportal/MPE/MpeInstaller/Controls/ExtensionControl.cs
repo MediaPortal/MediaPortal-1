@@ -18,10 +18,14 @@ namespace MpeInstaller.Controls
             InitializeComponent();
             lbl_name.Text = packageClass.GeneralInfo.Name + " " + packageClass.GeneralInfo.Version.ToString();
             lbl_description.Text = packageClass.GeneralInfo.ExtensionDescription;
-            DirectoryInfo di = new DirectoryInfo(packageClass.LocationFolder);
-            FileInfo[] fileInfos = di.GetFiles("icon.*");
-            if (fileInfos.Length > 0)
-                img_logo.LoadAsync(fileInfos[0].FullName);
+            if (Directory.Exists(packageClass.LocationFolder))
+            {
+                DirectoryInfo di = new DirectoryInfo(packageClass.LocationFolder);
+                FileInfo[] fileInfos = di.GetFiles("icon.*");
+                if (fileInfos.Length > 0)
+                    img_logo.LoadAsync(fileInfos[0].FullName);
+            }
+
             Selected = false;
             SelectControl();
         }

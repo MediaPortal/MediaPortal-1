@@ -142,7 +142,7 @@ namespace MpeCore.Classes.SectionPanel
 
         private void Welcome_Load(object sender, EventArgs e)
         {
-
+            this.BringToFront();
         }
 
         private void button_back_Click(object sender, EventArgs e)
