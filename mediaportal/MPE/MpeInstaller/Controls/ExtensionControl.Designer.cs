@@ -56,6 +56,7 @@
             this.btn_uninstall.TabIndex = 1;
             this.btn_uninstall.Text = "Uninstall";
             this.btn_uninstall.UseVisualStyleBackColor = true;
+            this.btn_uninstall.Click += new System.EventHandler(this.btn_uninstall_Click);
             // 
             // img_logo
             // 

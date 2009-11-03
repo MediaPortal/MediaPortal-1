@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using MpeCore;
 using MpeInstaller.Controls;
+using MpeInstaller.Dialogs;
 
 namespace MpeInstaller
 {
@@ -15,12 +16,20 @@ namespace MpeInstaller
         public MainForm()
         {
             InitializeComponent();
+            extensionListControl.UnInstallExtension += extensionListControl_UnInstallExtension;
+        }
+
+        void extensionListControl_UnInstallExtension(object sender, PackageClass packageClass)
+        {
+            UnInstall dlg = new UnInstall();
+            dlg.Execute(packageClass);
+            extensionListControl.Set(MpeCore.MpeInstaller.InstalledExtensions);
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
             MpeCore.MpeInstaller.Init();
-            extensionListControl1.Set(MpeCore.MpeInstaller.InstalledExtensions);
+            extensionListControl.Set(MpeCore.MpeInstaller.InstalledExtensions);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -35,6 +44,7 @@ namespace MpeInstaller
                 if (pak.CheckDependency(false))
                 {
                     pak.StartInstallWizard();
+                    extensionListControl.Set(MpeCore.MpeInstaller.InstalledExtensions);
                 }
             }
         }

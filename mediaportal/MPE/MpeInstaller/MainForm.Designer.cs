@@ -30,9 +30,9 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tab_extensions = new System.Windows.Forms.TabPage();
+            this.extensionListControl = new MpeInstaller.Controls.ExtensionListControl();
             this.tab_options = new System.Windows.Forms.TabPage();
             this.button1 = new System.Windows.Forms.Button();
-            this.extensionListControl1 = new MpeInstaller.Controls.ExtensionListControl();
             this.tabControl1.SuspendLayout();
             this.tab_extensions.SuspendLayout();
             this.tab_options.SuspendLayout();
@@ -51,7 +51,7 @@
             // 
             // tab_extensions
             // 
-            this.tab_extensions.Controls.Add(this.extensionListControl1);
+            this.tab_extensions.Controls.Add(this.extensionListControl);
             this.tab_extensions.Location = new System.Drawing.Point(4, 22);
             this.tab_extensions.Name = "tab_extensions";
             this.tab_extensions.Padding = new System.Windows.Forms.Padding(3);
@@ -59,6 +59,14 @@
             this.tab_extensions.TabIndex = 0;
             this.tab_extensions.Text = "Installed extensions";
             this.tab_extensions.UseVisualStyleBackColor = true;
+            // 
+            // extensionListControl
+            // 
+            this.extensionListControl.Location = new System.Drawing.Point(3, 3);
+            this.extensionListControl.Name = "extensionListControl";
+            this.extensionListControl.SelectedItem = null;
+            this.extensionListControl.Size = new System.Drawing.Size(558, 448);
+            this.extensionListControl.TabIndex = 0;
             // 
             // tab_options
             // 
@@ -80,13 +88,6 @@
             this.button1.Text = "Install local extension";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // extensionListControl1
-            // 
-            this.extensionListControl1.Location = new System.Drawing.Point(3, 3);
-            this.extensionListControl1.Name = "extensionListControl1";
-            this.extensionListControl1.Size = new System.Drawing.Size(558, 448);
-            this.extensionListControl1.TabIndex = 0;
             // 
             // MainForm
             // 
@@ -110,7 +111,7 @@
         private System.Windows.Forms.TabPage tab_extensions;
         private System.Windows.Forms.TabPage tab_options;
         private System.Windows.Forms.Button button1;
-        private MpeInstaller.Controls.ExtensionListControl extensionListControl1;
+        private MpeInstaller.Controls.ExtensionListControl extensionListControl;
     }
 }
 

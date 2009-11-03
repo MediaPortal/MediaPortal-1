@@ -10,7 +10,7 @@ namespace MpeCore.Interfaces
         string Name { get; }
         string Description { get; }
         void Install(PackageClass packageClass, FileItem fileItem);
-        void Uninstall(FileItem fileItem);
+        void Uninstall(PackageClass packageClass, UnInstallItem fileItem);
         string GetZipEntry(FileItem fileItem);
 
         /// <summary>

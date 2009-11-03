@@ -30,6 +30,8 @@ namespace MpeCore.Classes.InstallerType
                 if (item == null)
                     return;
 
+                item.InstallType = "CopyFile";
+
                 if (File.Exists(destination))
                 {
                     switch (fileItem.UpdateOption)
@@ -55,7 +57,7 @@ namespace MpeCore.Classes.InstallerType
             }
         }
 
-        public void Uninstall(FileItem fileItem)
+        public void Uninstall(PackageClass packageClass, UnInstallItem fileItem)
         {
             throw new NotImplementedException();
         }
@@ -101,7 +103,7 @@ namespace MpeCore.Classes.InstallerType
 
         public ValidationResponse Validate(FileItem fileItem)
         {
-            ValidationResponse response = new ValidationResponse();
+            var response = new ValidationResponse();
             if(!File.Exists(fileItem.LocalFileName))
             {
                 response.Valid = false;

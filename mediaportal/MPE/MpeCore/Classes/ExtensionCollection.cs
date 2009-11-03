@@ -33,6 +33,18 @@ namespace MpeCore.Classes
             Items.Add(pak);
         }
 
+        /// <summary>
+        /// Removes the specified package class fromr the list.
+        /// </summary>
+        /// <param name="packageClass">The package class.</param>
+        public void Remove(PackageClass packageClass)
+        {
+            PackageClass pak = Get(packageClass);
+            if ( pak== null)
+                return;
+            Items.Remove(pak);
+        }
+
         public PackageClass Get(PackageClass pak)
         {
             return Get(pak.GeneralInfo.Id, pak.GeneralInfo.Version.ToString());

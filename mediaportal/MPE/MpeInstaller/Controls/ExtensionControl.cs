@@ -7,6 +7,7 @@ using System.IO;
 using System.Windows.Forms;
 using MpeCore;
 using MpeCore.Classes;
+using MpeInstaller.Dialogs;
 
 namespace MpeInstaller.Controls
 {
@@ -25,7 +26,7 @@ namespace MpeInstaller.Controls
                 if (fileInfos.Length > 0)
                     img_logo.LoadAsync(fileInfos[0].FullName);
             }
-
+            Package = packageClass;
             Selected = false;
             SelectControl();
         }
@@ -86,6 +87,14 @@ namespace MpeInstaller.Controls
         private void img_logo_Click(object sender, EventArgs e)
         {
             ExtensionControl_Click(null, null);
+        }
+
+        private void btn_uninstall_Click(object sender, EventArgs e)
+        {
+            ExtensionListControl parent = Parent.Parent as ExtensionListControl;
+            if (parent == null)
+                return;
+            parent.OnUninstallExtension(this);
         }
     }
 }

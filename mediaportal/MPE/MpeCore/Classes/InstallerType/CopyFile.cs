@@ -48,9 +48,23 @@ namespace MpeCore.Classes.InstallerType
             packageClass.UnInstallInfo.Items.Add(unInstallItem);
         }
 
-        public void Uninstall(FileItem fileItem)
+        public void Uninstall(PackageClass packageClass, UnInstallItem fileItem)
         {
-            throw new NotImplementedException();
+            if (!File.Exists(fileItem.OriginalFile))
+                return;
+            FileInfo fi = new FileInfo(fileItem.OriginalFile);
+            if (fileItem.FileDate != fi.CreationTimeUtc || fileItem.FileSize != fi.Length)
+                return;
+            try
+            {
+                File.Delete(fileItem.OriginalFile);
+                if (File.Exists(fileItem.BackUpFile))
+                    File.Move(fileItem.BackUpFile, fileItem.OriginalFile);
+            }
+            catch (Exception )
+            {
+            
+            }
         }
 
         public string GetZipEntry(FileItem fileItem)

@@ -75,7 +75,9 @@
     <Compile Include="Classes\DependencyItemCollection.cs" />
     <Compile Include="Classes\DependencyItem.cs" />
     <Compile Include="Classes\Events\FileInstalledEventHandler.cs" />
+    <Compile Include="Classes\Events\FileUnInstalledEventHandler.cs" />
     <Compile Include="Classes\Events\InstallEventArgs.cs" />
+    <Compile Include="Classes\Events\UnInstallEventArgs.cs" />
     <Compile Include="Classes\ExtensionCollection.cs" />
     <Compile Include="Classes\ActionType\InstallFiles.cs" />
     <Compile Include="Classes\InstallerType\CopyFont.cs" />

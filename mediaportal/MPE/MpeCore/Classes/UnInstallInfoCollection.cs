@@ -111,6 +111,11 @@ namespace MpeCore.Classes
             writer.Close();
         }
 
+        public UnInstallInfoCollection Load()
+        {
+            return Load(LocationFolder + "UninstallInfo.xml");
+        }
+
         public UnInstallInfoCollection Load(string fileName)
         {
             if (File.Exists(fileName))

@@ -67,6 +67,12 @@
     <Compile Include="Controls\ExtensionListControl.Designer.cs">
       <DependentUpon>ExtensionListControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\UnInstall.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\UnInstall.Designer.cs">
+      <DependentUpon>UnInstall.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -80,6 +86,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ExtensionListControl.resx">
       <DependentUpon>ExtensionListControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\UnInstall.resx">
+      <DependentUpon>UnInstall.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

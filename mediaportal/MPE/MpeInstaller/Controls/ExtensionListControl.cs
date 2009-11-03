@@ -12,6 +12,9 @@ namespace MpeInstaller.Controls
 {
     public partial class ExtensionListControl : UserControl
     {
+        public event UnInstallExtensionHandler UnInstallExtension;
+        public delegate void UnInstallExtensionHandler(object sender, PackageClass packageClass);
+
         public ExtensionListControl()
         {
             InitializeComponent();
@@ -22,6 +25,7 @@ namespace MpeInstaller.Controls
 
         public void Set(ExtensionCollection collection)
         {
+            flowLayoutPanel1.Controls.Clear();
             foreach (PackageClass item in collection.Items)
             {
                 flowLayoutPanel1.Controls.Add(new ExtensionControl(item));
@@ -30,7 +34,12 @@ namespace MpeInstaller.Controls
 
         private void flowLayoutPanel1_Click(object sender, EventArgs e)
         {
-       }
+        }
 
+        public void OnUninstallExtension(ExtensionControl control)
+        {
+            if (UnInstallExtension != null)
+                UnInstallExtension(control, control.Package);
+        }
     }
 }

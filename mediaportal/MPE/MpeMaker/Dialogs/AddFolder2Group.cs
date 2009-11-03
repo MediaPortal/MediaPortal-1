@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
 using MpeCore.Classes;
 
@@ -39,8 +34,8 @@ namespace MpeMaker.Dialogs
 
         private void button2_Click(object sender, EventArgs e)
         {
-            DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -89,8 +84,8 @@ namespace MpeMaker.Dialogs
                 }
             }
 
-            DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.OK;
+            Close();
         }
     }
 }

@@ -12,6 +12,7 @@ namespace MpeCore.Classes.ActionType
     {
         private const string Const_Loc = "Folder location";
         private const string Const_Question = "Question on UnInstall";
+        private const string Const_Remove = "Remove on Uninstall";
 
         public event FileInstalledEventHandler ItemProcessed;
         public int ItemsCount(PackageClass packageClass, ActionItem actionItem)
@@ -34,6 +35,9 @@ namespace MpeCore.Classes.ActionType
             var Params = new SectionParamCollection();
             Params.Add(new SectionParam(Const_Loc, "", ValueTypeEnum.Template,
                                        "Location of folder"));
+            Params.Add(new SectionParam(Const_Remove, "", ValueTypeEnum.Bool,
+                           "Remove on UnInstall"));
+
             Params.Add(new SectionParam(Const_Question, "", ValueTypeEnum.String,
                                        "Quetion asked from user when UnInstall.\n With Yes response the folder will be deleted\n If empty no question will be asked and no folder will be deleted"));
             return Params;
@@ -66,9 +70,11 @@ namespace MpeCore.Classes.ActionType
 
         public SectionResponseEnum UnInstall(UnInstallItem item)
         {
+            if (!item.ActionParam[Const_Remove].GetValueAsBool())
+                return SectionResponseEnum.Ok;
             if (!string.IsNullOrEmpty(item.ActionParam[Const_Question].Value))
             {
-                if(MessageBox.Show(item.ActionParam[Const_Question].Value,"Question ",MessageBoxButtons.YesNo)==DialogResult.Yes)
+                if (MessageBox.Show(item.ActionParam[Const_Question].Value, "Question ", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     try
                     {
@@ -79,6 +85,16 @@ namespace MpeCore.Classes.ActionType
                     }
                 }
 
+            }
+            else
+            {
+                try
+                {
+                    Directory.Delete(item.ActionParam[Const_Loc].Value, true);
+                }
+                catch (Exception)
+                {
+                }
             }
             return SectionResponseEnum.Ok;
         }

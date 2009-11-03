@@ -17,6 +17,9 @@ namespace MpeCore
         // Executed when a file item is installed.
         public event FileInstalledEventHandler FileInstalled;
 
+        // Executed when a file item is Uninstalled.
+        public event FileUnInstalledEventHandler FileUnInstalled;
+
         public PackageClass()
         {
             Groups = new GroupItemCollection();
@@ -57,7 +60,7 @@ namespace MpeCore
         }
 
         /// <summary>
-        /// Start copy the package file bbased on group settings
+        /// Start copy the package file based on group settings
         /// 
         /// </summary>
         public void Install()
@@ -78,6 +81,35 @@ namespace MpeCore
         }
 
         /// <summary>
+        /// Do the unistall procces. The unistall file info should be alredy loaded.
+        /// </summary>
+        public void UnInstall()
+        {
+            for (int i = UnInstallInfo.Items.Count-1; i >0; i--)
+            {
+                UnInstallItem item = UnInstallInfo.Items[i];
+                if (string.IsNullOrEmpty(item.ActionType))
+                {
+                    MpeInstaller.InstallerTypeProviders[item.InstallType].Uninstall(this, item);
+                    if (FileUnInstalled != null)
+                        FileUnInstalled(this,
+                                        new UnInstallEventArgs("Removing file " + Path.GetFileName(item.OriginalFile),
+                                                               item));
+                }
+                else
+                {
+                    MpeInstaller.ActionProviders[item.ActionType].UnInstall(item);
+                    if (FileUnInstalled != null)
+                        FileUnInstalled(this,
+                                        new UnInstallEventArgs("Removing action " + item.ActionType,
+                                                               item));
+                }
+            }
+            UnInstallInfo.Items.Clear();
+            DoAdditionalUnInstallTasks();
+        }
+
+        /// <summary>
         /// Checks the dependency.
         /// </summary>
         /// <param name="silent">if set to <c>true</c> [silent].</param>
@@ -90,11 +122,14 @@ namespace MpeCore
                 {
                     if (item.WarnOnly)
                     {
-                        MessageBox.Show(item.Message, "Dependency warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        if (!silent)
+                            MessageBox.Show(item.Message, "Dependency warning", MessageBoxButtons.OK,
+                                            MessageBoxIcon.Warning);
                     }
                     else
                     {
-                        MessageBox.Show(item.Message, "Dependency error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        if (!silent)
+                            MessageBox.Show(item.Message, "Dependency error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return false;
                     }
                 }
@@ -117,6 +152,16 @@ namespace MpeCore
                           true);
             //copy the package file 
             File.Copy(GeneralInfo.Location, LocationFolder + GeneralInfo.Id + ".mpe2", true);
+        }
+
+        private void DoAdditionalUnInstallTasks()
+        {
+            if (!Directory.Exists(LocationFolder))
+                Directory.CreateDirectory(LocationFolder);
+            UnInstallInfo.Save();
+            MpeInstaller.InstalledExtensions.Remove(this);
+            MpeInstaller.Save();
+            //copy icon file
         }
 
         /// <summary>
@@ -144,6 +189,10 @@ namespace MpeCore
             }
         }
 
+        /// <summary>
+        /// Starts the install wizard.
+        /// </summary>
+        /// <returns></returns>
         public bool StartInstallWizard()
         {
             WizardNavigator navigator = new WizardNavigator(this);
@@ -335,15 +384,20 @@ namespace MpeCore
             writer.Close();
         }
 
-        public void Load(string fileName)
+        /// <summary>
+        /// Loads the specified file name.
+        /// </summary>
+        /// <param name="fileName">Name of the file.</param>
+        /// <returns>True if loding was successful else False  </returns>
+        public bool Load(string fileName)
         {
             if (File.Exists(fileName))
             {
                 try
                 {
-                    XmlSerializer serializer = new XmlSerializer(typeof(PackageClass));
+                    XmlSerializer serializer = new XmlSerializer(typeof (PackageClass));
                     FileStream fs = new FileStream(fileName, FileMode.Open);
-                    PackageClass packageClass = (PackageClass)serializer.Deserialize(fs);
+                    PackageClass packageClass = (PackageClass) serializer.Deserialize(fs);
                     fs.Close();
                     this.Groups = packageClass.Groups;
                     this.Sections = packageClass.Sections;
@@ -351,11 +405,14 @@ namespace MpeCore
                     this.UniqueFileList = packageClass.UniqueFileList;
                     this.Dependencies = packageClass.Dependencies;
                     Reset();
+                    return true;
                 }
                 catch
                 {
+                    return false;
                 }
             }
+            return false;
         }
 
         public string ReplaceInfo(string str)

@@ -57,6 +57,7 @@ namespace MpeCore
             AddActionProvider(new RunApplication());
             AddActionProvider(new KillTask());
             AddActionProvider(new CreateShortCut());
+            AddActionProvider(new CreateFolder());
 
             AddVersion(new MediaPortalVersion());
             AddVersion(new TvServerVersion());
