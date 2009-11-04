@@ -249,13 +249,13 @@ namespace TvLibrary.Implementations.DVB
         dvbsLocator.put_InnerFECRate(dvbsChannel.InnerFecRate);
         Log.Log.WriteFile("dvbs:channel FECRate is set to {0}", tuneChannel.InnerFecRate);
         _tuneRequest.put_Locator(locator);
-        //put the Tuner request parameters to the driver
-        ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest,true);
-        //set the DisEqC parameters (Note: moved, some drivers require this to be set AFTER the put TunerRequest
+        //set the DisEqC parameters 
         if (_conditionalAccess != null)
         {
           _conditionalAccess.SendDiseqcCommand(_parameters, dvbsChannel);
         }
+        //put the Tuner request parameters to the driver
+        ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest, true);
         _previousChannel = dvbsChannel;
       }
       else
