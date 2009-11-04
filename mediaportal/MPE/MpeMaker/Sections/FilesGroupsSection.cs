@@ -39,6 +39,8 @@ namespace MpeMaker.Sections
             Package = pak;
             treeView1.Nodes.Clear();
             PopulateTreeView();
+            if (treeView1.Nodes.Count > 0)
+                treeView1.SelectedNode = treeView1.Nodes[0];
         }
 
         private void PopulateTreeView()
@@ -242,7 +244,7 @@ namespace MpeMaker.Sections
                 SelectedGroup.DefaulChecked = chk_default.Checked;
                 SelectedGroup.DisplayName = txt_displlayName.Text;
                 SelectedGroup.ParentGroup = cmb_parentGroup.Text;
-                if (treeView1.SelectedNode.Tag as GroupItem != null)
+                if (treeView1.SelectedNode != null && treeView1.SelectedNode.Tag as GroupItem != null)
                 {
                     treeView1.SelectedNode.ToolTipText = txt_displlayName.Text;
                 }
@@ -255,7 +257,7 @@ namespace MpeMaker.Sections
                 SelectedItem.DestinationFilename = txt_installpath.Text;
                 SelectedItem.UpdateOption = (UpdateOptionEnum) cmb_overwrite.SelectedIndex;
                 SelectedItem.Param1 = txt_param1.Text;
-                if (treeView1.SelectedNode.Tag as FileItem != null)
+                if (treeView1.SelectedNode != null && treeView1.SelectedNode.Tag as FileItem != null)
                 {
                     treeView1.SelectedNode.Text = txt_installpath.Text;
                 }

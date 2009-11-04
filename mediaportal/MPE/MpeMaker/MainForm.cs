@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using MpeCore;
 using MpeCore.Classes;
 using MpeCore.Classes.SectionPanel;
+using MpeCore.Interfaces;
 using MpeMaker.Dialogs;
 using MpeMaker.Sections;
 
@@ -121,6 +122,31 @@ namespace MpeMaker
             ProjectFileName = "";
             Package.Groups.Items.Add(new GroupItem("Default"));
             treeView1.SelectedNode = treeView1.Nodes[0];
+            AddSection("Welcome Screen");
+            Package.Sections.Items[0].WizardButtonsEnum = WizardButtonsEnum.NextCancel;
+            AddSection("Install Section");
+            var item = new ActionItem("InstallFiles")
+                                  {
+                                      Params =
+                                          new SectionParamCollection(
+                                          MpeInstaller.ActionProviders["InstallFiles"].GetDefaultParams())
+                                  };
+            Package.Sections.Items[1].Actions.Add(item);
+            Package.Sections.Items[1].WizardButtonsEnum = WizardButtonsEnum.Next;
+            AddSection("Setup Complete");
+            Package.Sections.Items[2].WizardButtonsEnum = WizardButtonsEnum.Finish;
+        }
+
+        private void AddSection(string name)
+        {
+            SectionItem item = new SectionItem();
+            ISectionPanel panel = MpeInstaller.SectionPanels[name];
+            if (panel == null)
+                return;
+            item.Name = panel.DisplayName;
+            item.PanelName = panel.DisplayName;
+            item.Params = panel.GetDefaultParams();
+            Package.Sections.Add(item);
         }
     }
 }

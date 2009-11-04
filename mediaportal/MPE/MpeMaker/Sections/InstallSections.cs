@@ -104,7 +104,6 @@ namespace MpeMaker.Sections
         private void AddSection(SectionItem item)
         {
             listBox_sections.Items.Add(item);
-           
         }
 
         private void TestToolStripMenuItemClick(object sender, EventArgs e)

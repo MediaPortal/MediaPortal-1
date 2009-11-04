@@ -28,12 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RequirementsSection));
             this.list_versions = new System.Windows.Forms.ListBox();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.mnu_add = new System.Windows.Forms.ToolStripDropDownButton();
             this.mnu_del = new System.Windows.Forms.ToolStripButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.txt_name = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.txt_message = new System.Windows.Forms.TextBox();
             this.chk_warn = new System.Windows.Forms.CheckBox();
@@ -51,9 +55,7 @@
             this.txt_id = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.cmb_type = new System.Windows.Forms.ComboBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.txt_name = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.toolStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -125,6 +127,33 @@
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(6, 66);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(35, 13);
+            this.label4.TabIndex = 11;
+            this.label4.Text = "Name";
+            // 
+            // txt_name
+            // 
+            this.txt_name.Location = new System.Drawing.Point(43, 63);
+            this.txt_name.Name = "txt_name";
+            this.txt_name.Size = new System.Drawing.Size(305, 20);
+            this.txt_name.TabIndex = 10;
+            this.toolTip1.SetToolTip(this.txt_name, "Name of extension");
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(357, 37);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(21, 20);
+            this.button1.TabIndex = 9;
+            this.button1.Text = "...";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // label3
             // 
             this.label3.AutoSize = true;
@@ -145,6 +174,7 @@
             this.txt_message.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.txt_message.Size = new System.Drawing.Size(301, 106);
             this.txt_message.TabIndex = 7;
+            this.toolTip1.SetToolTip(this.txt_message, "The message show if the version condition not met");
             this.txt_message.TextChanged += new System.EventHandler(this.txt_id_TextChanged);
             // 
             // chk_warn
@@ -155,6 +185,8 @@
             this.chk_warn.Size = new System.Drawing.Size(74, 17);
             this.chk_warn.TabIndex = 6;
             this.chk_warn.Text = "Warn only";
+            this.toolTip1.SetToolTip(this.chk_warn, "If cheked only a warning messsage will be displayed\r\nbut the installation will co" +
+                    "ntinue");
             this.chk_warn.UseVisualStyleBackColor = true;
             this.chk_warn.CheckedChanged += new System.EventHandler(this.txt_id_TextChanged);
             // 
@@ -177,6 +209,7 @@
             this.txt_version4_max.Name = "txt_version4_max";
             this.txt_version4_max.Size = new System.Drawing.Size(61, 20);
             this.txt_version4_max.TabIndex = 12;
+            this.toolTip1.SetToolTip(this.txt_version4_max, "Any version number can be replaced with * ");
             this.txt_version4_max.TextChanged += new System.EventHandler(this.txt_id_TextChanged);
             // 
             // txt_version3_max
@@ -185,6 +218,7 @@
             this.txt_version3_max.Name = "txt_version3_max";
             this.txt_version3_max.Size = new System.Drawing.Size(61, 20);
             this.txt_version3_max.TabIndex = 11;
+            this.toolTip1.SetToolTip(this.txt_version3_max, "Any version number can be replaced with * ");
             this.txt_version3_max.TextChanged += new System.EventHandler(this.txt_id_TextChanged);
             // 
             // txt_version2_max
@@ -193,6 +227,7 @@
             this.txt_version2_max.Name = "txt_version2_max";
             this.txt_version2_max.Size = new System.Drawing.Size(61, 20);
             this.txt_version2_max.TabIndex = 10;
+            this.toolTip1.SetToolTip(this.txt_version2_max, "Any version number can be replaced with * ");
             this.txt_version2_max.TextChanged += new System.EventHandler(this.txt_id_TextChanged);
             // 
             // txt_version1_max
@@ -201,6 +236,7 @@
             this.txt_version1_max.Name = "txt_version1_max";
             this.txt_version1_max.Size = new System.Drawing.Size(61, 20);
             this.txt_version1_max.TabIndex = 9;
+            this.toolTip1.SetToolTip(this.txt_version1_max, "Any version number can be replaced with * ");
             this.txt_version1_max.TextChanged += new System.EventHandler(this.txt_id_TextChanged);
             // 
             // groupBox2
@@ -222,6 +258,7 @@
             this.txt_version4_min.Name = "txt_version4_min";
             this.txt_version4_min.Size = new System.Drawing.Size(61, 20);
             this.txt_version4_min.TabIndex = 12;
+            this.toolTip1.SetToolTip(this.txt_version4_min, "Any version number can be replaced with * ");
             this.txt_version4_min.TextChanged += new System.EventHandler(this.txt_id_TextChanged);
             // 
             // txt_version3_min
@@ -230,6 +267,7 @@
             this.txt_version3_min.Name = "txt_version3_min";
             this.txt_version3_min.Size = new System.Drawing.Size(61, 20);
             this.txt_version3_min.TabIndex = 11;
+            this.toolTip1.SetToolTip(this.txt_version3_min, "Any version number can be replaced with * ");
             this.txt_version3_min.TextChanged += new System.EventHandler(this.txt_id_TextChanged);
             // 
             // txt_version2_min
@@ -238,6 +276,7 @@
             this.txt_version2_min.Name = "txt_version2_min";
             this.txt_version2_min.Size = new System.Drawing.Size(61, 20);
             this.txt_version2_min.TabIndex = 10;
+            this.toolTip1.SetToolTip(this.txt_version2_min, "Any version number can be replaced with * ");
             this.txt_version2_min.TextChanged += new System.EventHandler(this.txt_id_TextChanged);
             // 
             // txt_version1_min
@@ -246,6 +285,7 @@
             this.txt_version1_min.Name = "txt_version1_min";
             this.txt_version1_min.Size = new System.Drawing.Size(61, 20);
             this.txt_version1_min.TabIndex = 9;
+            this.toolTip1.SetToolTip(this.txt_version1_min, "Any version number can be replaced with * ");
             this.txt_version1_min.TextChanged += new System.EventHandler(this.txt_id_TextChanged);
             // 
             // label2
@@ -263,6 +303,7 @@
             this.txt_id.Name = "txt_id";
             this.txt_id.Size = new System.Drawing.Size(305, 20);
             this.txt_id.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.txt_id, "Used only if the type is Extension");
             this.txt_id.TextChanged += new System.EventHandler(this.txt_id_TextChanged);
             // 
             // label1
@@ -284,31 +325,9 @@
             this.cmb_type.TabIndex = 0;
             this.cmb_type.SelectedIndexChanged += new System.EventHandler(this.txt_id_TextChanged);
             // 
-            // button1
+            // toolTip1
             // 
-            this.button1.Location = new System.Drawing.Point(357, 37);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(21, 20);
-            this.button1.TabIndex = 9;
-            this.button1.Text = "...";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // txt_name
-            // 
-            this.txt_name.Location = new System.Drawing.Point(43, 63);
-            this.txt_name.Name = "txt_name";
-            this.txt_name.Size = new System.Drawing.Size(305, 20);
-            this.txt_name.TabIndex = 10;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 66);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(35, 13);
-            this.label4.TabIndex = 11;
-            this.label4.Text = "Name";
+            this.toolTip1.IsBalloon = true;
             // 
             // RequirementsSection
             // 
@@ -360,5 +379,6 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox txt_name;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
