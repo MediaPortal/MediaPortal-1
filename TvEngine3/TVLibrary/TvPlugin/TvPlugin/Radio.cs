@@ -1105,6 +1105,8 @@ namespace TvPlugin
       if (channel.IsWebstream())
       {
         g_Player.PlayAudioStream(GetPlayPath(channel));
+
+        GUIPropertyManager.SetProperty("#Play.Current.Title", item.Label);
       }
       else
       {
