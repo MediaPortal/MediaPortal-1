@@ -3143,7 +3143,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       var pixelArray = new byte[0xc0];
       for (int i = 0; i < Math.Min(0x10, Line1.Length); i++)
       {
-        char charID = Line1[i];
+        byte charID = Encoding.Default.GetBytes(Line1)[i];
         for (int k = 5; k >= 0; k--)
         {
           if ((k + num) < 0x60)
@@ -3158,7 +3158,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       num = 0x60;
       for (int j = 0; j < Math.Min(0x10, Line2.Length); j++)
       {
-        char ch2 = Line2[j];
+        byte ch2 = Encoding.Default.GetBytes(Line2)[j];
         for (int m = 5; m >= 0; m--)
         {
           if ((m + num) < 0xc0)
