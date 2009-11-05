@@ -71,7 +71,7 @@ namespace MpeMaker
 
         private void mnu_saveAs_Click(object sender, EventArgs e)
         {
-            saveFileDialog1.Filter = "All files|*.*";
+            saveFileDialog1.Filter = "Mpe project file(*.xmp2)|*.xmp2|All files|*.*";
             saveFileDialog1.Title = "Save extension installer proiect file";
             if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -94,7 +94,7 @@ namespace MpeMaker
 
         private void mnu_open_Click(object sender, EventArgs e)
         {
-            openFileDialog1.Filter = "All files|*.*";
+            openFileDialog1.Filter = "Mpe project file(*.xmp2)|*.xmp2|All files|*.*";
             openFileDialog1.Title = "Open extension installer proiect file";
             openFileDialog1.FileName = ProjectFileName;
             openFileDialog1.Multiselect = false;

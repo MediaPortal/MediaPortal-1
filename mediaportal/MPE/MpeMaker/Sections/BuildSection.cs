@@ -35,6 +35,7 @@ namespace MpeMaker.Sections
 
         private void btn_browse_Click(object sender, EventArgs e)
         {
+            saveFileDialog1.Filter = "Mpe package file(*.mpe2)|*.mpe2|All files|*.*";
             if(saveFileDialog1.ShowDialog()==DialogResult.OK)
             {
                 txt_outfile.Text = saveFileDialog1.FileName;

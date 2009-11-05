@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.txt_name = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -56,6 +57,7 @@
             this.label11 = new System.Windows.Forms.Label();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.btn_params = new System.Windows.Forms.Button();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // label1
@@ -228,6 +230,7 @@
             this.txt_update.Name = "txt_update";
             this.txt_update.Size = new System.Drawing.Size(258, 20);
             this.txt_update.TabIndex = 17;
+            this.toolTip1.SetToolTip(this.txt_update, "Onlie lication if the xml file were the update if is stored");
             this.txt_update.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
             // label8
@@ -298,6 +301,7 @@
             this.txt_online.Name = "txt_online";
             this.txt_online.Size = new System.Drawing.Size(259, 20);
             this.txt_online.TabIndex = 24;
+            this.toolTip1.SetToolTip(this.txt_online, "Online location of the package it self");
             this.txt_online.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
             // label11
@@ -322,6 +326,10 @@
             this.btn_params.Text = "Aditional params";
             this.btn_params.UseVisualStyleBackColor = true;
             this.btn_params.Click += new System.EventHandler(this.btn_params_Click);
+            // 
+            // toolTip1
+            // 
+            this.toolTip1.IsBalloon = true;
             // 
             // GeneralSection
             // 
@@ -393,5 +401,6 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Button btn_params;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }

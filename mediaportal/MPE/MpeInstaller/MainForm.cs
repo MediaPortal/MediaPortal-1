@@ -34,7 +34,10 @@ namespace MpeInstaller
 
         private void button1_Click(object sender, EventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
+            OpenFileDialog dialog = new OpenFileDialog
+                                        {
+                                            Filter = "Mpe package file(*.mpe2)|*.mpe2|All files|*.*"
+                                        };
             if (dialog.ShowDialog() == DialogResult.OK)
             {
 

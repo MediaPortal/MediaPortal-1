@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InstallSections));
             this.listBox_sections = new System.Windows.Forms.ListBox();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -57,6 +58,7 @@
             this.mnu_action_add = new System.Windows.Forms.ToolStripDropDownButton();
             this.mnu_action_del = new System.Windows.Forms.ToolStripButton();
             this.mnu_action_edit = new System.Windows.Forms.ToolStripButton();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.toolStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -137,6 +139,7 @@
             this.list_groups.Name = "list_groups";
             this.list_groups.Size = new System.Drawing.Size(301, 154);
             this.list_groups.TabIndex = 5;
+            this.toolTip1.SetToolTip(this.list_groups, "Check the included group item on this section,\r\nnot all sections need groups. ");
             this.list_groups.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.list_groups_ItemCheck);
             // 
             // groupBox1
@@ -208,6 +211,8 @@
             this.cmb_grupvisibility.Name = "cmb_grupvisibility";
             this.cmb_grupvisibility.Size = new System.Drawing.Size(222, 21);
             this.cmb_grupvisibility.TabIndex = 8;
+            this.toolTip1.SetToolTip(this.cmb_grupvisibility, "If the selected group is checked, the section will be shown\r\nIf no group specifie" +
+                    "d the section always visible");
             this.cmb_grupvisibility.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
             // label4
@@ -335,6 +340,7 @@
             this.list_actions.Name = "list_actions";
             this.list_actions.Size = new System.Drawing.Size(301, 134);
             this.list_actions.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.list_actions, "Atached actions to the section ");
             // 
             // toolStrip2
             // 
@@ -440,5 +446,6 @@
         private System.Windows.Forms.ToolStripDropDownButton mnu_action_add;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox cmb_buttons;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }

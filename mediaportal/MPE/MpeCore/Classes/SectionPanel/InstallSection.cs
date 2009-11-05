@@ -124,6 +124,9 @@ namespace MpeCore.Classes.SectionPanel
                     MpeInstaller.ActionProviders[actionItem.ActionType].ItemProcessed -= packageClass_FileInstalled;
                 }
                 base.button_next.Enabled = true;
+                if (Package.Silent)
+                    Close();
+
                 //Package.Install();
                 ////this.Close();
             }

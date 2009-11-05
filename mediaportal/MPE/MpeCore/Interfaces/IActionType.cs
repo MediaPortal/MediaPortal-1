@@ -22,6 +22,6 @@ namespace MpeCore.Interfaces
         
         ValidationResponse Validate(PackageClass packageClass, ActionItem actionItem);
 
-        SectionResponseEnum UnInstall(UnInstallItem item);
+        SectionResponseEnum UnInstall(PackageClass packageClass, UnInstallItem item);
     }
 }

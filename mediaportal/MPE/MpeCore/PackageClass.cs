@@ -30,6 +30,7 @@ namespace MpeCore
             ZipProvider = new ZipProviderClass();
             UnInstallInfo = new UnInstallInfoCollection();
             Dependencies = new DependencyItemCollection();
+            Silent = false;
         }
 
         public string Version { get; set; }
@@ -46,6 +47,9 @@ namespace MpeCore
         [XmlIgnore]
         public UnInstallInfoCollection UnInstallInfo { get; set; }
 
+        [XmlIgnore]
+        public bool Silent { get; set; }
+        
         /// <summary>
         /// Gets the location folder were stored the backup and the uninstall informations
         /// </summary>
@@ -98,7 +102,7 @@ namespace MpeCore
                 }
                 else
                 {
-                    MpeInstaller.ActionProviders[item.ActionType].UnInstall(item);
+                    MpeInstaller.ActionProviders[item.ActionType].UnInstall(this, item);
                     if (FileUnInstalled != null)
                         FileUnInstalled(this,
                                         new UnInstallEventArgs("Removing action " + item.ActionType,

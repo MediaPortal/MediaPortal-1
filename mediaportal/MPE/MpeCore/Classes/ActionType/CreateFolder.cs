@@ -68,13 +68,13 @@ namespace MpeCore.Classes.ActionType
             return new ValidationResponse();
         }
 
-        public SectionResponseEnum UnInstall(UnInstallItem item)
+        public SectionResponseEnum UnInstall(PackageClass packageClass, UnInstallItem item)
         {
             if (!item.ActionParam[Const_Remove].GetValueAsBool())
                 return SectionResponseEnum.Ok;
             if (!string.IsNullOrEmpty(item.ActionParam[Const_Question].Value))
             {
-                if (MessageBox.Show(item.ActionParam[Const_Question].Value, "Question ", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (!packageClass.Silent && MessageBox.Show(item.ActionParam[Const_Question].Value, "Question ", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     try
                     {

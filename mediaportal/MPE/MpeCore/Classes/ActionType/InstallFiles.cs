@@ -45,7 +45,7 @@ namespace MpeCore.Classes.ActionType
             return new ValidationResponse();
         }
 
-        public SectionResponseEnum UnInstall(UnInstallItem item)
+        public SectionResponseEnum UnInstall(PackageClass packageClass, UnInstallItem item)
         {
             return SectionResponseEnum.Ok;
         }

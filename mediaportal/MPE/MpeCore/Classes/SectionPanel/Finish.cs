@@ -93,7 +93,10 @@ namespace MpeCore.Classes.SectionPanel
             Base.ActionExecute(_packageClass, Section, ActionExecuteLocationEnum.BeforPanelShow);
             Base.ActionExecute(_packageClass, Section, ActionExecuteLocationEnum.AfterPanelShow);
             Mode = ShowModeEnum.Real;
-            ShowDialog();
+            if (!packageClass.Silent)
+                ShowDialog();
+            else
+                resp = SectionResponseEnum.Next;
             Base.ActionExecute(_packageClass, Section, ActionExecuteLocationEnum.AfterPanelHide);
             return resp;
         }
