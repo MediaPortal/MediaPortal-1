@@ -76,7 +76,7 @@
             this.txt_name.Location = new System.Drawing.Point(115, 7);
             this.txt_name.Name = "txt_name";
             this.txt_name.Size = new System.Drawing.Size(258, 20);
-            this.txt_name.TabIndex = 1;
+            this.txt_name.TabIndex = 0;
             this.txt_name.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
             // label2
@@ -95,7 +95,7 @@
             this.txt_guid.Location = new System.Drawing.Point(115, 33);
             this.txt_guid.Name = "txt_guid";
             this.txt_guid.Size = new System.Drawing.Size(236, 20);
-            this.txt_guid.TabIndex = 3;
+            this.txt_guid.TabIndex = 1;
             this.txt_guid.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
             // label3
@@ -112,7 +112,7 @@
             this.txt_version1.Location = new System.Drawing.Point(114, 59);
             this.txt_version1.Name = "txt_version1";
             this.txt_version1.Size = new System.Drawing.Size(61, 20);
-            this.txt_version1.TabIndex = 5;
+            this.txt_version1.TabIndex = 2;
             this.txt_version1.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
             // txt_version2
@@ -120,7 +120,7 @@
             this.txt_version2.Location = new System.Drawing.Point(178, 59);
             this.txt_version2.Name = "txt_version2";
             this.txt_version2.Size = new System.Drawing.Size(61, 20);
-            this.txt_version2.TabIndex = 6;
+            this.txt_version2.TabIndex = 3;
             this.txt_version2.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
             // txt_version3
@@ -128,7 +128,7 @@
             this.txt_version3.Location = new System.Drawing.Point(242, 59);
             this.txt_version3.Name = "txt_version3";
             this.txt_version3.Size = new System.Drawing.Size(61, 20);
-            this.txt_version3.TabIndex = 7;
+            this.txt_version3.TabIndex = 4;
             this.txt_version3.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
             // txt_version4
@@ -136,7 +136,7 @@
             this.txt_version4.Location = new System.Drawing.Point(309, 59);
             this.txt_version4.Name = "txt_version4";
             this.txt_version4.Size = new System.Drawing.Size(61, 20);
-            this.txt_version4.TabIndex = 8;
+            this.txt_version4.TabIndex = 5;
             this.txt_version4.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
             // label4
@@ -155,7 +155,7 @@
             this.txt_author.Location = new System.Drawing.Point(114, 85);
             this.txt_author.Name = "txt_author";
             this.txt_author.Size = new System.Drawing.Size(259, 20);
-            this.txt_author.TabIndex = 10;
+            this.txt_author.TabIndex = 6;
             this.txt_author.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
             // txt_homepage
@@ -165,7 +165,7 @@
             this.txt_homepage.Location = new System.Drawing.Point(115, 139);
             this.txt_homepage.Name = "txt_homepage";
             this.txt_homepage.Size = new System.Drawing.Size(258, 20);
-            this.txt_homepage.TabIndex = 11;
+            this.txt_homepage.TabIndex = 8;
             this.txt_homepage.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
             // cmb_status
@@ -182,7 +182,7 @@
             this.cmb_status.Location = new System.Drawing.Point(115, 111);
             this.cmb_status.Name = "cmb_status";
             this.cmb_status.Size = new System.Drawing.Size(258, 21);
-            this.cmb_status.TabIndex = 12;
+            this.cmb_status.TabIndex = 7;
             this.cmb_status.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
             // label5
@@ -210,7 +210,7 @@
             this.txt_forum.Location = new System.Drawing.Point(115, 165);
             this.txt_forum.Name = "txt_forum";
             this.txt_forum.Size = new System.Drawing.Size(258, 20);
-            this.txt_forum.TabIndex = 15;
+            this.txt_forum.TabIndex = 9;
             this.txt_forum.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
             // label7
@@ -229,7 +229,7 @@
             this.txt_update.Location = new System.Drawing.Point(115, 191);
             this.txt_update.Name = "txt_update";
             this.txt_update.Size = new System.Drawing.Size(258, 20);
-            this.txt_update.TabIndex = 17;
+            this.txt_update.TabIndex = 10;
             this.toolTip1.SetToolTip(this.txt_update, "Onlie lication if the xml file were the update if is stored");
             this.txt_update.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
@@ -249,7 +249,7 @@
             this.txt_description.Multiline = true;
             this.txt_description.Name = "txt_description";
             this.txt_description.Size = new System.Drawing.Size(318, 156);
-            this.txt_description.TabIndex = 19;
+            this.txt_description.TabIndex = 12;
             this.txt_description.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
             // label9
@@ -269,7 +269,7 @@
             this.txt_versiondesc.Multiline = true;
             this.txt_versiondesc.Name = "txt_versiondesc";
             this.txt_versiondesc.Size = new System.Drawing.Size(318, 137);
-            this.txt_versiondesc.TabIndex = 21;
+            this.txt_versiondesc.TabIndex = 13;
             this.txt_versiondesc.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
             // label10
@@ -300,7 +300,7 @@
             this.txt_online.Location = new System.Drawing.Point(114, 217);
             this.txt_online.Name = "txt_online";
             this.txt_online.Size = new System.Drawing.Size(259, 20);
-            this.txt_online.TabIndex = 24;
+            this.txt_online.TabIndex = 11;
             this.toolTip1.SetToolTip(this.txt_online, "Online location of the package it self");
             this.txt_online.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
@@ -322,7 +322,7 @@
             this.btn_params.Location = new System.Drawing.Point(115, 243);
             this.btn_params.Name = "btn_params";
             this.btn_params.Size = new System.Drawing.Size(135, 23);
-            this.btn_params.TabIndex = 31;
+            this.btn_params.TabIndex = 14;
             this.btn_params.Text = "Aditional params";
             this.btn_params.UseVisualStyleBackColor = true;
             this.btn_params.Click += new System.EventHandler(this.btn_params_Click);

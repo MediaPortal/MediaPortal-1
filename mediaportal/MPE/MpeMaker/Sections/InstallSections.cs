@@ -15,14 +15,14 @@ namespace MpeMaker.Sections
         public InstallSections()
         {
             InitializeComponent();
-            foreach (var panels in MpeInstaller.SectionPanels)
+            foreach (var panels in MpeInstaller.SectionPanels.Items)
             {
                 ToolStripMenuItem testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-                testToolStripMenuItem.Text = panels.Value.DisplayName;
-                testToolStripMenuItem.Tag = panels.Value;
+                testToolStripMenuItem.Text = panels.Key;
+                testToolStripMenuItem.Tag = Activator.CreateInstance(panels.Value);
                 testToolStripMenuItem.Click += TestToolStripMenuItemClick;
                 mnu_add.DropDownItems.Add(testToolStripMenuItem);
-                cmb_sectiontype.Items.Add(panels.Value.DisplayName);
+                cmb_sectiontype.Items.Add(panels.Key);
             }
             foreach (var actionProvider in MpeInstaller.ActionProviders)
             {
@@ -188,7 +188,7 @@ namespace MpeMaker.Sections
 
         private void btn_preview_Click(object sender, EventArgs e)
         {
-            if (MpeInstaller.SectionPanels.ContainsKey(cmb_sectiontype.Text))
+            if (MpeInstaller.SectionPanels.Items.ContainsKey(cmb_sectiontype.Text))
                 MpeInstaller.SectionPanels[cmb_sectiontype.Text].Preview(Package, SelectedSection);
         }
 

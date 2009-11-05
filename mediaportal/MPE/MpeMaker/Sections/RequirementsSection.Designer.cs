@@ -82,7 +82,7 @@
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(64, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(95, 25);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -103,6 +103,7 @@
             this.mnu_del.Name = "mnu_del";
             this.mnu_del.Size = new System.Drawing.Size(23, 22);
             this.mnu_del.Text = "toolStripButton2";
+            this.mnu_del.Click += new System.EventHandler(this.mnu_del_Click);
             // 
             // groupBox1
             // 

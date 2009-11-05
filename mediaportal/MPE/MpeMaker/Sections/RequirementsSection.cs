@@ -112,5 +112,18 @@ namespace MpeMaker.Sections
             txt_id.Text = dlg.Result.GeneralInfo.Id;
             txt_name.Text = dlg.Result.GeneralInfo.Name;
         }
+
+        private void mnu_del_Click(object sender, EventArgs e)
+        {
+            if (list_versions.SelectedItems.Count < 1)
+                return;
+            if (SelectedItem == null)
+                return;
+            if (MessageBox.Show("Do you want to dependency " + SelectedItem.Name, "", MessageBoxButtons.YesNo) !=
+                DialogResult.Yes)
+                return;
+            Package.Dependencies.Items.Remove(SelectedItem);
+            list_versions.Items.Remove(list_versions.SelectedItem);
+        }
     }
 }

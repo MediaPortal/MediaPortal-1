@@ -87,13 +87,17 @@ namespace MpeCore.Classes
 
         public int CompareTo(VersionInfo obj)
         {
-            if (CompareNumber(Major, obj.Major) != 0)
-                return CompareNumber(Major, obj.Major);
-            if (CompareNumber(Minor, obj.Minor) != 0)
-                return CompareNumber(Minor, obj.Major);
-            if (CompareNumber(Build, obj.Build) != 0)
-                return CompareNumber(Build, obj.Build);
-            return CompareNumber(Revision, obj.Revision);
+            int i1 = CompareNumber(Major, obj.Major);
+            int i2 = CompareNumber(Minor, obj.Minor);
+            int i3 = CompareNumber(Build, obj.Build);
+            int i4 = CompareNumber(Revision, obj.Revision);
+            if (i1 != 0)
+                return i1;
+            if (i2 != 0)
+                return i2;
+            if (i3 != 0)
+                return i3;
+            return i4;
         }
 
         private static int CompareNumber(string s1,string s2)

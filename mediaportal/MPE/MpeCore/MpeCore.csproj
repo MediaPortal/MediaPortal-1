@@ -69,6 +69,7 @@
     <Compile Include="Classes\ActionType\ClearSkinCache.cs" />
     <Compile Include="Classes\ActionType\CreateFolder.cs" />
     <Compile Include="Classes\ActionType\CreateShortCut.cs" />
+    <Compile Include="Classes\ActionType\ExtensionInstaller.cs" />
     <Compile Include="Classes\ActionType\KillTask.cs" />
     <Compile Include="Classes\ActionType\RunApplication.cs" />
     <Compile Include="Classes\ActionType\ShowMessageBox.cs" />
@@ -85,6 +86,7 @@
     <Compile Include="Classes\ParamNamesConst.cs" />
     <Compile Include="Classes\PathProvider\TvServerPaths.cs" />
     <Compile Include="Classes\PathUtil.cs" />
+    <Compile Include="Classes\ProviderHelpers\SectionProviderHelper.cs" />
     <Compile Include="Classes\SectionPanel\Base.cs" />
     <Compile Include="Classes\SectionPanel\BaseHorizontalLayout.cs">
       <SubType>Form</SubType>

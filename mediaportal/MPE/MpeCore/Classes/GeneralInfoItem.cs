@@ -12,8 +12,8 @@ namespace MpeCore.Classes
             Version=new VersionInfo();
             Id = Guid.NewGuid().ToString();
             Params=new SectionParamCollection();
-            Params.Add(new SectionParam(ParamNamesConst.ICON,"",ValueTypeEnum.File,"The icon file of the package"));
-            Params.Add(new SectionParam(ParamNamesConst.ONLINE_ICON, "", ValueTypeEnum.String, "The icon file of the package stored online "));
+            Params.Add(new SectionParam(ParamNamesConst.ICON,"",ValueTypeEnum.File,"The icon file of the package (jpg,png,bmp)"));
+            Params.Add(new SectionParam(ParamNamesConst.ONLINE_ICON, "", ValueTypeEnum.String, "The icon file of the package stored online (jpg,png,bmp)"));
         }
 
         public string Name { get; set; }

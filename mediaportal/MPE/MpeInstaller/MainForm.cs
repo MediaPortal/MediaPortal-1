@@ -6,6 +6,9 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using MpeCore;
+using MpeCore.Classes;
+using MpeCore.Interfaces;
+using MpeCore.Classes.SectionPanel;
 using MpeInstaller.Controls;
 using MpeInstaller.Dialogs;
 
@@ -22,7 +25,7 @@ namespace MpeInstaller
         void extensionListControl_UnInstallExtension(object sender, PackageClass packageClass)
         {
             UnInstall dlg = new UnInstall();
-            dlg.Execute(packageClass);
+            dlg.Execute(packageClass, false);
             extensionListControl.Set(MpeCore.MpeInstaller.InstalledExtensions);
         }
 
@@ -44,8 +47,16 @@ namespace MpeInstaller
                 MpeCore.MpeInstaller.Init();
                 PackageClass pak = new PackageClass();
                 pak = pak.ZipProvider.Load(dialog.FileName);
+                PackageClass installedPak = MpeCore.MpeInstaller.InstalledExtensions.Get(pak.GeneralInfo.Id);
                 if (pak.CheckDependency(false))
                 {
+                    if (installedPak != null)
+                    {
+                        if (MessageBox.Show("This extension already have a installed version. \n Do you want to continue ? ", "Install extension", MessageBoxButtons.YesNo) != DialogResult.Yes)
+                            return;
+                        UnInstall dlg = new UnInstall();
+                        dlg.Execute(installedPak, true);
+                    }
                     pak.StartInstallWizard();
                     extensionListControl.Set(MpeCore.MpeInstaller.InstalledExtensions);
                 }

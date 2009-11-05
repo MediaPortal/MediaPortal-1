@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using MediaPortal.Configuration;
 using MpeCore;
+using MpeCore.Classes.ProviderHelpers;
 using MpeCore.Interfaces;
 using MpeCore.Classes;
 using MpeCore.Classes.InstallerType;
@@ -18,7 +19,7 @@ namespace MpeCore
     {
         static public Dictionary<string,IInstallerTypeProvider> InstallerTypeProviders { get; set; }
         static public Dictionary<string,IPathProvider> PathProviders { get; set; }
-        static public Dictionary<string, ISectionPanel> SectionPanels { get; set; }
+        static public SectionProviderHelper SectionPanels { get; set; }
         static public Dictionary<string, IActionType> ActionProviders { get; set; }
         static public Dictionary<string, IVersionProvider> VersionProviders { get; set; }
         static public ZipProviderClass ZipProvider { get; set; }
@@ -29,7 +30,7 @@ namespace MpeCore
         {
             InstallerTypeProviders = new Dictionary<string, IInstallerTypeProvider>();
             PathProviders = new Dictionary<string, IPathProvider>();
-            SectionPanels = new Dictionary<string, ISectionPanel>();
+            SectionPanels = new SectionProviderHelper();
             ActionProviders = new Dictionary<string, IActionType>();
             VersionProviders = new Dictionary<string, IVersionProvider>();
             ZipProvider = new ZipProviderClass();
@@ -58,6 +59,7 @@ namespace MpeCore
             AddActionProvider(new KillTask());
             AddActionProvider(new CreateShortCut());
             AddActionProvider(new CreateFolder());
+            AddActionProvider(new ExtensionInstaller());
 
             AddVersion(new MediaPortalVersion());
             AddVersion(new TvServerVersion());
