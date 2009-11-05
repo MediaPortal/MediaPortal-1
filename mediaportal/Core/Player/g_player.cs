@@ -2630,7 +2630,7 @@ namespace MediaPortal.Player
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CODEC_MISSING, 0, 0, 0, 0, 0, null);
         msg.Label = string.Format("{0}: {1}", GUILocalizeStrings.Get(1451), Path.GetFileName(FileName));
         msg.Label2 = string.IsNullOrEmpty(_mediaInfo.VideoCodec) ? string.Empty : string.Format("Video codec: {0}", _mediaInfo.VideoCodec);
-        msg.Label3 = string.Format("Audio codec: {0}", _mediaInfo.AudioCodec);
+        msg.Label3 = string.IsNullOrEmpty(_mediaInfo.AudioCodec) ? string.Empty : string.Format("Audio codec: {0}", _mediaInfo.AudioCodec);
         GUIGraphicsContext.SendMessage(msg);
       }
       catch (Exception ex)

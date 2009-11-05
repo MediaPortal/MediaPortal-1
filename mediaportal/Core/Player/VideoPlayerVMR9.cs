@@ -41,7 +41,7 @@ namespace MediaPortal.Player
 {
   public class VideoPlayerVMR9 : VideoPlayerVMR7
   {
-    private VMR9Util Vmr9 = null;
+    protected VMR9Util Vmr9 = null;
 
     public VideoPlayerVMR9()
     {
@@ -345,7 +345,7 @@ namespace MediaPortal.Player
       Cleanup();
     }
 
-    private void Cleanup()
+    protected void Cleanup()
     {
       if (graphBuilder == null)
       {
