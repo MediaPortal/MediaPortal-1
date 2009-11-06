@@ -62,6 +62,9 @@
             // 
             // extensionListControl
             // 
+            this.extensionListControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.extensionListControl.Location = new System.Drawing.Point(3, 3);
             this.extensionListControl.Name = "extensionListControl";
             this.extensionListControl.SelectedItem = null;
@@ -95,6 +98,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(572, 480);
             this.Controls.Add(this.tabControl1);
+            this.MaximizeBox = false;
             this.Name = "MainForm";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.MainForm_Load);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Data;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using MpeCore;
@@ -69,7 +70,7 @@ namespace MpeMaker.Sections
                 Package.GeneralInfo.DevelopmentStatus = cmb_status.Text;
                 Package.GeneralInfo.HomePage = txt_homepage.Text;
                 Package.GeneralInfo.ForumPage = txt_forum.Text;
-                Package.GeneralInfo.UpdateUrl = txt_forum.Text;
+                Package.GeneralInfo.UpdateUrl = txt_update.Text;
                 Package.GeneralInfo.ExtensionDescription = txt_description.Text;
                 Package.GeneralInfo.VersionDescription = txt_versiondesc.Text;
                 Package.GeneralInfo.OnlineLocation = txt_online.Text;
@@ -78,7 +79,8 @@ namespace MpeMaker.Sections
 
         private void RefreshIcon()
         {
-            img_logo.LoadAsync(Package.GeneralInfo.Params[ParamNamesConst.ICON].Value);
+            if (File.Exists(Package.GeneralInfo.Params[ParamNamesConst.ICON].Value))
+                img_logo.LoadAsync(Package.GeneralInfo.Params[ParamNamesConst.ICON].Value);
         }
 
         private void btn_gen_guid_Click(object sender, EventArgs e)

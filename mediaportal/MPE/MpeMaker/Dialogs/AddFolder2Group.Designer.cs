@@ -30,7 +30,6 @@
         {
             this.txt_folder = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.txt_template = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.chk_recurs = new System.Windows.Forms.CheckBox();
             this.add_folder = new System.Windows.Forms.Button();
@@ -38,6 +37,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.txt_template = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // txt_folder
@@ -55,13 +55,6 @@
             this.label1.Size = new System.Drawing.Size(36, 13);
             this.label1.TabIndex = 1;
             this.label1.Text = "Folder";
-            // 
-            // txt_template
-            // 
-            this.txt_template.Location = new System.Drawing.Point(12, 63);
-            this.txt_template.Name = "txt_template";
-            this.txt_template.Size = new System.Drawing.Size(361, 20);
-            this.txt_template.TabIndex = 2;
             // 
             // label2
             // 
@@ -124,17 +117,27 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
+            // txt_template
+            // 
+            this.txt_template.FormattingEnabled = true;
+            this.txt_template.Items.AddRange(new object[] {
+            "%Skin%\\[DEFAULT]\\"});
+            this.txt_template.Location = new System.Drawing.Point(12, 62);
+            this.txt_template.Name = "txt_template";
+            this.txt_template.Size = new System.Drawing.Size(361, 21);
+            this.txt_template.TabIndex = 9;
+            // 
             // AddFolder2Group
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(416, 155);
+            this.Controls.Add(this.txt_template);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.btn_add_template);
             this.Controls.Add(this.add_folder);
             this.Controls.Add(this.chk_recurs);
-            this.Controls.Add(this.txt_template);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txt_folder);
             this.Controls.Add(this.label2);
@@ -153,7 +156,6 @@
 
         private System.Windows.Forms.TextBox txt_folder;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txt_template;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox chk_recurs;
         private System.Windows.Forms.Button add_folder;
@@ -161,5 +163,6 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private System.Windows.Forms.ComboBox txt_template;
     }
 }

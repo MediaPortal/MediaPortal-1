@@ -337,6 +337,8 @@ namespace MpeCore
                     {
                         if (!UniqueFileList.ExistLocalFileName(sectionParam.Value))
                             UniqueFileList.Add(new FileItem(sectionParam.Value, true));
+                        else
+                            UniqueFileList.GetByLocalFileName(sectionParam.Value).SystemFile = true;
                     }
                 }
                 foreach (ActionItem actionItem in sectionItem.Actions.Items)
@@ -347,6 +349,8 @@ namespace MpeCore
                         {
                             if (!UniqueFileList.ExistLocalFileName(sectionParam.Value))
                                 UniqueFileList.Add(new FileItem(sectionParam.Value, true));
+                            else
+                               UniqueFileList.GetByLocalFileName(sectionParam.Value).SystemFile = true;
                         }
                     }
                 }
@@ -358,6 +362,8 @@ namespace MpeCore
                 {
                     if (!UniqueFileList.ExistLocalFileName(sectionParam.Value))
                         UniqueFileList.Add(new FileItem(sectionParam.Value, true));
+                    else
+                        UniqueFileList.GetByLocalFileName(sectionParam.Value).SystemFile = true;
                 }
             }
         }

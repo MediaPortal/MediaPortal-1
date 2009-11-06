@@ -38,6 +38,11 @@ namespace MpeInstaller
                 MpeCore.MpeInstaller.Init();
                 PackageClass pak = new PackageClass();
                 pak = pak.ZipProvider.Load(dialog.FileName);
+                if (pak == null)
+                {
+                    MessageBox.Show("Wrong file format !");
+                    return;
+                }
                 PackageClass installedPak = MpeCore.MpeInstaller.InstalledExtensions.Get(pak.GeneralInfo.Id);
                 if (pak.CheckDependency(false))
                 {

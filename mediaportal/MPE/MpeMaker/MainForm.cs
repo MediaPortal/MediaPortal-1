@@ -98,9 +98,15 @@ namespace MpeMaker
             openFileDialog1.Title = "Open extension installer proiect file";
             openFileDialog1.FileName = ProjectFileName;
             openFileDialog1.Multiselect = false;
-            if(openFileDialog1.ShowDialog()==DialogResult.OK)
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                Package.Load(openFileDialog1.FileName);
+                PackageClass pak = new PackageClass();
+                if (!pak.Load(openFileDialog1.FileName))
+                {
+                    MessageBox.Show("Error loading package proiect");
+                    return;
+                }
+                Package = pak;
                 Package.GenerateAbsolutePath(Path.GetDirectoryName(openFileDialog1.FileName));
                 ProjectFileName = openFileDialog1.FileName;
                 treeView1.SelectedNode = treeView1.Nodes[0];

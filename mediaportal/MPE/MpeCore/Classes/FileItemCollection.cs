@@ -25,7 +25,6 @@ namespace MpeCore.Classes
         public void Add(FileItem item)
         {
             Items.Add(item);
-           
         }
 
         /// <summary>
