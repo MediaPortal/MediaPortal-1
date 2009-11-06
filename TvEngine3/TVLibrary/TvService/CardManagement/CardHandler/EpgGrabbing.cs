@@ -234,7 +234,10 @@ namespace TvService
         context.Remove(user);
         if (context.ContainsUsersForSubchannel(user.SubChannel) == false)
         {
-          _cardHandler.Card.FreeSubChannel(user.SubChannel);
+          if (user.SubChannel > -1)
+          {
+            _cardHandler.Card.FreeSubChannel(user.SubChannel);
+          }
         }
       }
       else
