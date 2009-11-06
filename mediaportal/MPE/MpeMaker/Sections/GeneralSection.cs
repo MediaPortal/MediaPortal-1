@@ -43,6 +43,7 @@ namespace MpeMaker.Sections
             txt_homepage.Text = pak.GeneralInfo.HomePage;
             txt_forum.Text = pak.GeneralInfo.ForumPage;
             txt_update.Text = pak.GeneralInfo.UpdateUrl;
+            txt_online.Text = pak.GeneralInfo.OnlineLocation;
             txt_description.Text = pak.GeneralInfo.ExtensionDescription;
             txt_versiondesc.Text = pak.GeneralInfo.VersionDescription;
             Package = pak;

@@ -67,6 +67,12 @@
     <Compile Include="Controls\ExtensionListControl.Designer.cs">
       <DependentUpon>ExtensionListControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\DownloadFile.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\DownloadFile.Designer.cs">
+      <DependentUpon>DownloadFile.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\UnInstall.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -87,6 +93,9 @@
     <EmbeddedResource Include="Controls\ExtensionListControl.resx">
       <DependentUpon>ExtensionListControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\DownloadFile.resx">
+      <DependentUpon>DownloadFile.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\UnInstall.resx">
       <DependentUpon>UnInstall.cs</DependentUpon>
     </EmbeddedResource>
@@ -101,6 +110,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -117,6 +127,9 @@
       <Project>{4458F642-6022-4A3F-996F-E8AA510FB7E8}</Project>
       <Name>MpeCore</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\software-update-available.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

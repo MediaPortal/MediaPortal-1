@@ -35,6 +35,8 @@ namespace MpeMaker
             panels.Add("Node4", new InstallSections());
             panels.Add("Node5", new RequirementsSection());
             panels.Add("Node6", new BuildSection());
+            panels.Add("Node7", new ToolsUpdateXml());
+
 
             NewProject();
 

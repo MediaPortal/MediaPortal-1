@@ -28,10 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.lbl_name = new System.Windows.Forms.Label();
             this.btn_uninstall = new System.Windows.Forms.Button();
-            this.img_logo = new System.Windows.Forms.PictureBox();
             this.lbl_description = new System.Windows.Forms.Label();
+            this.lbl_version = new System.Windows.Forms.Label();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.img_update = new System.Windows.Forms.PictureBox();
+            this.img_logo = new System.Windows.Forms.PictureBox();
+            this.btn_update = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.img_update)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_logo)).BeginInit();
             this.SuspendLayout();
             // 
@@ -39,24 +45,61 @@
             // 
             this.lbl_name.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_name.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lbl_name.Location = new System.Drawing.Point(3, 0);
+            this.lbl_name.Location = new System.Drawing.Point(5, 3);
             this.lbl_name.Name = "lbl_name";
-            this.lbl_name.Size = new System.Drawing.Size(544, 18);
+            this.lbl_name.Size = new System.Drawing.Size(435, 18);
             this.lbl_name.TabIndex = 0;
             this.lbl_name.Text = "label1";
             this.lbl_name.Click += new System.EventHandler(this.lbl_name_Click);
             // 
             // btn_uninstall
             // 
+            this.btn_uninstall.BackColor = System.Drawing.SystemColors.ButtonFace;
             this.btn_uninstall.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.btn_uninstall.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btn_uninstall.Location = new System.Drawing.Point(6, 97);
+            this.btn_uninstall.Location = new System.Drawing.Point(75, 91);
             this.btn_uninstall.Name = "btn_uninstall";
             this.btn_uninstall.Size = new System.Drawing.Size(75, 23);
             this.btn_uninstall.TabIndex = 1;
             this.btn_uninstall.Text = "Uninstall";
-            this.btn_uninstall.UseVisualStyleBackColor = true;
+            this.btn_uninstall.UseVisualStyleBackColor = false;
             this.btn_uninstall.Click += new System.EventHandler(this.btn_uninstall_Click);
+            // 
+            // lbl_description
+            // 
+            this.lbl_description.Location = new System.Drawing.Point(113, 21);
+            this.lbl_description.Name = "lbl_description";
+            this.lbl_description.Size = new System.Drawing.Size(432, 64);
+            this.lbl_description.TabIndex = 3;
+            this.lbl_description.Text = "label1";
+            this.lbl_description.Click += new System.EventHandler(this.lbl_description_Click);
+            // 
+            // lbl_version
+            // 
+            this.lbl_version.AutoSize = true;
+            this.lbl_version.Location = new System.Drawing.Point(498, 0);
+            this.lbl_version.Name = "lbl_version";
+            this.lbl_version.Size = new System.Drawing.Size(35, 13);
+            this.lbl_version.TabIndex = 4;
+            this.lbl_version.Text = "label1";
+            this.lbl_version.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.lbl_version.Click += new System.EventHandler(this.lbl_version_Click);
+            // 
+            // toolTip1
+            // 
+            this.toolTip1.IsBalloon = true;
+            // 
+            // img_update
+            // 
+            this.img_update.BackColor = System.Drawing.Color.Transparent;
+            this.img_update.Image = global::MpeInstaller.Properties.Resources.software_update_available;
+            this.img_update.Location = new System.Drawing.Point(75, 53);
+            this.img_update.Name = "img_update";
+            this.img_update.Size = new System.Drawing.Size(32, 32);
+            this.img_update.TabIndex = 5;
+            this.img_update.TabStop = false;
+            this.toolTip1.SetToolTip(this.img_update, "New update available ");
+            this.img_update.Click += new System.EventHandler(this.img_update_Click);
             // 
             // img_logo
             // 
@@ -68,14 +111,18 @@
             this.img_logo.TabStop = false;
             this.img_logo.Click += new System.EventHandler(this.img_logo_Click);
             // 
-            // lbl_description
+            // btn_update
             // 
-            this.lbl_description.Location = new System.Drawing.Point(113, 21);
-            this.lbl_description.Name = "lbl_description";
-            this.lbl_description.Size = new System.Drawing.Size(432, 64);
-            this.lbl_description.TabIndex = 3;
-            this.lbl_description.Text = "label1";
-            this.lbl_description.Click += new System.EventHandler(this.lbl_description_Click);
+            this.btn_update.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.btn_update.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.btn_update.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btn_update.Location = new System.Drawing.Point(156, 91);
+            this.btn_update.Name = "btn_update";
+            this.btn_update.Size = new System.Drawing.Size(75, 23);
+            this.btn_update.TabIndex = 6;
+            this.btn_update.Text = "Update";
+            this.btn_update.UseVisualStyleBackColor = false;
+            this.btn_update.Click += new System.EventHandler(this.btn_update_Click);
             // 
             // ExtensionControl
             // 
@@ -83,6 +130,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Controls.Add(this.btn_update);
+            this.Controls.Add(this.img_update);
+            this.Controls.Add(this.lbl_version);
             this.Controls.Add(this.lbl_description);
             this.Controls.Add(this.img_logo);
             this.Controls.Add(this.btn_uninstall);
@@ -91,8 +141,10 @@
             this.Name = "ExtensionControl";
             this.Size = new System.Drawing.Size(548, 123);
             this.Click += new System.EventHandler(this.ExtensionControl_Click);
+            ((System.ComponentModel.ISupportInitialize)(this.img_update)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_logo)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -102,5 +154,9 @@
         private System.Windows.Forms.Button btn_uninstall;
         private System.Windows.Forms.PictureBox img_logo;
         private System.Windows.Forms.Label lbl_description;
+        private System.Windows.Forms.Label lbl_version;
+        private System.Windows.Forms.PictureBox img_update;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Button btn_update;
     }
 }

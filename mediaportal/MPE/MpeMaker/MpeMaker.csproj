@@ -173,6 +173,9 @@
     <EmbeddedResource Include="Sections\RequirementsSection.resx">
       <DependentUpon>RequirementsSection.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sections\ToolsUpdateXml.resx">
+      <DependentUpon>ToolsUpdateXml.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\WelcomSection.resx">
       <DependentUpon>WelcomSection.cs</DependentUpon>
     </EmbeddedResource>
@@ -225,6 +228,12 @@
     </Compile>
     <Compile Include="Sections\RequirementsSection.Designer.cs">
       <DependentUpon>RequirementsSection.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\ToolsUpdateXml.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\ToolsUpdateXml.Designer.cs">
+      <DependentUpon>ToolsUpdateXml.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\WelcomSection.cs">
       <SubType>UserControl</SubType>

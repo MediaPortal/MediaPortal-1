@@ -17,7 +17,10 @@ namespace MpeCore
         // Executed when a file item is installed.
         public event FileInstalledEventHandler FileInstalled;
 
-        // Executed when a file item is Uninstalled.
+
+        /// <summary>
+        /// Occurs when a file item is Uninstalled.
+        /// </summary>
         public event FileUnInstalledEventHandler FileUnInstalled;
 
         public PackageClass()

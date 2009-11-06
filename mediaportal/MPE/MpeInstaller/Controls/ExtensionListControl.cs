@@ -15,6 +15,11 @@ namespace MpeInstaller.Controls
         public event UnInstallExtensionHandler UnInstallExtension;
         public delegate void UnInstallExtensionHandler(object sender, PackageClass packageClass);
 
+        public event UpdateExtensionHandler UpdateExtension;
+
+        public delegate void UpdateExtensionHandler(
+            object sender, PackageClass packageClass, PackageClass newpackageClass);
+
         public ExtensionListControl()
         {
             InitializeComponent();
@@ -40,6 +45,12 @@ namespace MpeInstaller.Controls
         {
             if (UnInstallExtension != null)
                 UnInstallExtension(control, control.Package);
+        }
+
+        public void OnUpdateExtension(ExtensionControl control)
+        {
+            if (UpdateExtension != null)
+                UpdateExtension(control, control.Package, control.UpdatePackage);
         }
     }
 }

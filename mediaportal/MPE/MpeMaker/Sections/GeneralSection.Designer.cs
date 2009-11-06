@@ -246,6 +246,7 @@
             // 
             // txt_description
             // 
+            this.txt_description.AcceptsReturn = true;
             this.txt_description.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txt_description.Location = new System.Drawing.Point(379, 29);
             this.txt_description.Multiline = true;
@@ -266,6 +267,7 @@
             // 
             // txt_versiondesc
             // 
+            this.txt_versiondesc.AcceptsReturn = true;
             this.txt_versiondesc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txt_versiondesc.Location = new System.Drawing.Point(379, 210);
             this.txt_versiondesc.Multiline = true;

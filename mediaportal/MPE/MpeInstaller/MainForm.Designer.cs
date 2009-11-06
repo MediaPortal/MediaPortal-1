@@ -33,6 +33,7 @@
             this.extensionListControl = new MpeInstaller.Controls.ExtensionListControl();
             this.tab_options = new System.Windows.Forms.TabPage();
             this.button1 = new System.Windows.Forms.Button();
+            this.btn_online_update = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tab_extensions.SuspendLayout();
             this.tab_options.SuspendLayout();
@@ -73,6 +74,7 @@
             // 
             // tab_options
             // 
+            this.tab_options.Controls.Add(this.btn_online_update);
             this.tab_options.Controls.Add(this.button1);
             this.tab_options.Location = new System.Drawing.Point(4, 22);
             this.tab_options.Name = "tab_options";
@@ -91,6 +93,16 @@
             this.button1.Text = "Install local extension";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // btn_online_update
+            // 
+            this.btn_online_update.Location = new System.Drawing.Point(8, 35);
+            this.btn_online_update.Name = "btn_online_update";
+            this.btn_online_update.Size = new System.Drawing.Size(243, 23);
+            this.btn_online_update.TabIndex = 1;
+            this.btn_online_update.Text = "Download online update info";
+            this.btn_online_update.UseVisualStyleBackColor = true;
+            this.btn_online_update.Click += new System.EventHandler(this.btn_online_update_Click);
             // 
             // MainForm
             // 
@@ -116,6 +128,7 @@
         private System.Windows.Forms.TabPage tab_options;
         private System.Windows.Forms.Button button1;
         private MpeInstaller.Controls.ExtensionListControl extensionListControl;
+        private System.Windows.Forms.Button btn_online_update;
     }
 }
 
