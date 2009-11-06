@@ -6,6 +6,7 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using MpeCore;
+using MpeCore.Classes;
 using MpeMaker.Dialogs;
 
 namespace MpeMaker.Sections
@@ -44,6 +45,7 @@ namespace MpeMaker.Sections
             txt_description.Text = pak.GeneralInfo.ExtensionDescription;
             txt_versiondesc.Text = pak.GeneralInfo.VersionDescription;
             Package = pak;
+            RefreshIcon();
         }
 
         public PackageClass Get()
@@ -74,6 +76,11 @@ namespace MpeMaker.Sections
             }
         }
 
+        private void RefreshIcon()
+        {
+            img_logo.LoadAsync(Package.GeneralInfo.Params[ParamNamesConst.ICON].Value);
+        }
+
         private void btn_gen_guid_Click(object sender, EventArgs e)
         {
             txt_guid.Text = Guid.NewGuid().ToString();
@@ -85,6 +92,7 @@ namespace MpeMaker.Sections
             ParamEdit dlg = new ParamEdit();
             dlg.Set(Package.GeneralInfo.Params);
             dlg.ShowDialog();
+            RefreshIcon();
         }
 
 

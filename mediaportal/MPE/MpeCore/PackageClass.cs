@@ -63,6 +63,23 @@ namespace MpeCore
             }
         }
 
+
+
+        /// <summary>
+        /// Copies the defaul group check from  another package
+        /// </summary>
+        /// <param name="packageClass">The package class.</param>
+        public void CopyGroupCheck(PackageClass packageClass)
+        {
+            foreach (GroupItem groupItem in Groups.Items)
+            {
+                GroupItem item = packageClass.Groups[groupItem.Name];
+                if (item == null)
+                    continue;
+                groupItem.Checked = item.DefaulChecked;
+            }
+        }
+
         /// <summary>
         /// Start copy the package file based on group settings
         /// 
@@ -141,21 +158,27 @@ namespace MpeCore
             return true;
         }
 
+
         private void DoAdditionalInstallTasks()
         {
             if (!Directory.Exists(LocationFolder))
                 Directory.CreateDirectory(LocationFolder);
             UnInstallInfo.Save();
-            MpeInstaller.InstalledExtensions.Add(this);
-            MpeInstaller.KnownExtensions.Add(this);
-            MpeInstaller.Save();
             //copy icon file
             if (!string.IsNullOrEmpty(GeneralInfo.Params[ParamNamesConst.ICON].Value) && File.Exists(GeneralInfo.Params[ParamNamesConst.ICON].Value))
                 File.Copy(GeneralInfo.Params[ParamNamesConst.ICON].Value,
                           LocationFolder + "icon" + Path.GetExtension(GeneralInfo.Params[ParamNamesConst.ICON].Value),
                           true);
             //copy the package file 
-            File.Copy(GeneralInfo.Location, LocationFolder + GeneralInfo.Id + ".mpe2", true);
+            string newlocation = LocationFolder + GeneralInfo.Id + ".mpe2";
+            if (newlocation.CompareTo(GeneralInfo.Location) != 0)
+            {
+                File.Copy(GeneralInfo.Location, newlocation, true);
+                GeneralInfo.Location = newlocation;
+            }
+            MpeInstaller.InstalledExtensions.Add(this);
+            MpeInstaller.KnownExtensions.Add(this);
+            MpeInstaller.Save();
         }
 
         private void DoAdditionalUnInstallTasks()
@@ -165,7 +188,6 @@ namespace MpeCore
             UnInstallInfo.Save();
             MpeInstaller.InstalledExtensions.Remove(this);
             MpeInstaller.Save();
-            //copy icon file
         }
 
         /// <summary>

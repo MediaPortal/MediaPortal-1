@@ -63,6 +63,7 @@ namespace MpeCore.Classes.ActionType
                 if (installedPak.UnInstallInfo == null)
                     installedPak.UnInstallInfo = new UnInstallInfoCollection();
                 installedPak.UnInstall();
+                pak.CopyGroupCheck(installedPak);
             }
             if (actionItem.Params[Const_Silent].GetValueAsBool())
             {

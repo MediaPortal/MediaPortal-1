@@ -43,6 +43,7 @@ namespace MpeCore.Classes.ZipProvider
                 }
                 pak.ZipProvider = this;
                 pak.GetFilePaths();
+                pak.GeneralInfo.Location = zipfile;
                 return pak;
 
             }

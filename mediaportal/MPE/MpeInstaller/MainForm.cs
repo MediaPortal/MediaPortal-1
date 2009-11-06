@@ -1,15 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using MpeCore;
-using MpeCore.Classes;
-using MpeCore.Interfaces;
-using MpeCore.Classes.SectionPanel;
-using MpeInstaller.Controls;
 using MpeInstaller.Dialogs;
 
 namespace MpeInstaller
@@ -52,13 +43,16 @@ namespace MpeInstaller
                 {
                     if (installedPak != null)
                     {
-                        if (MessageBox.Show("This extension already have a installed version. \n Do you want to continue ? ", "Install extension", MessageBoxButtons.YesNo) != DialogResult.Yes)
+                        if (MessageBox.Show("This extension already have a installed version. \n This will be uninstalled first. \n Do you want to continue ? ", "Install extension", MessageBoxButtons.YesNo,MessageBoxIcon.Exclamation) != DialogResult.Yes)
                             return;
                         UnInstall dlg = new UnInstall();
                         dlg.Execute(installedPak, true);
+                        pak.CopyGroupCheck(installedPak);
                     }
+                    this.Hide();
                     pak.StartInstallWizard();
                     extensionListControl.Set(MpeCore.MpeInstaller.InstalledExtensions);
+                    this.Show();
                 }
             }
         }

@@ -74,10 +74,9 @@ namespace MpeCore.Classes.SectionPanel
             {
                 lbl_curr_file.Text = e.Item.DestinationFilename;
             }
-
-            Refresh();
             lbl_curr_file.Refresh();
             progressBar1.Refresh();
+            Refresh();
         }
 
         private void SetValues()
@@ -123,12 +122,10 @@ namespace MpeCore.Classes.SectionPanel
                     MpeInstaller.ActionProviders[actionItem.ActionType].Execute(Package, actionItem);
                     MpeInstaller.ActionProviders[actionItem.ActionType].ItemProcessed -= packageClass_FileInstalled;
                 }
-                base.button_next.Enabled = true;
+                lbl_curr_file.Text = "Done";
                 if (Package.Silent)
                     Close();
-
-                //Package.Install();
-                ////this.Close();
+                base.button_next.Enabled = true;
             }
         }
 

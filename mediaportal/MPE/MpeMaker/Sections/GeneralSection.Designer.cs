@@ -58,6 +58,8 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.btn_params = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.img_logo = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.img_logo)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -331,11 +333,22 @@
             // 
             this.toolTip1.IsBalloon = true;
             // 
+            // img_logo
+            // 
+            this.img_logo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.img_logo.Location = new System.Drawing.Point(309, 283);
+            this.img_logo.Name = "img_logo";
+            this.img_logo.Size = new System.Drawing.Size(64, 64);
+            this.img_logo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.img_logo.TabIndex = 26;
+            this.img_logo.TabStop = false;
+            // 
             // GeneralSection
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
+            this.Controls.Add(this.img_logo);
             this.Controls.Add(this.btn_params);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.txt_online);
@@ -364,8 +377,9 @@
             this.Controls.Add(this.txt_name);
             this.Controls.Add(this.label1);
             this.Name = "GeneralSection";
-            this.Size = new System.Drawing.Size(700, 368);
+            this.Size = new System.Drawing.Size(700, 371);
             this.Load += new System.EventHandler(this.GeneralSection_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.img_logo)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -402,5 +416,6 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Button btn_params;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.PictureBox img_logo;
     }
 }
