@@ -15,6 +15,27 @@ namespace MpeCore.Classes
 
         public List<PackageClass> Items { get; set; }
 
+
+        /// <summary>
+        /// Gets the unique list of extensions with hightess version
+        /// </summary>
+        /// <returns></returns>
+        public ExtensionCollection GetUniqueList()
+        {
+            List<string> ids = new List<string>();
+            foreach (PackageClass item in Items)
+            {
+                if (!ids.Contains(item.GeneralInfo.Id))
+                    ids.Add(item.GeneralInfo.Id);
+            }
+            var collection = new ExtensionCollection();
+            foreach (string id in ids)
+            {
+                collection.Add(Get(id));
+            }
+            return collection;
+        }
+
         /// <summary>
         /// Gets a list with unique update urls
         /// </summary>
@@ -120,6 +141,24 @@ namespace MpeCore.Classes
                 }
             }
             return ret;
+        }
+
+        /// <summary>
+        /// Gets a list of extensions with same ids
+        /// </summary>
+        /// <param name="id">The id.</param>
+        /// <returns></returns>
+        public ExtensionCollection GetList(string id)
+        {
+            ExtensionCollection resp = new ExtensionCollection();
+            foreach (PackageClass item in Items)
+            {
+                if (item.GeneralInfo.Id == id)
+                {
+                    resp.Add(item);
+                }
+            }
+            return resp;
         }
 
         /// <summary>

@@ -73,5 +73,12 @@ namespace MpeInstaller.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        internal static System.Drawing.Bitmap system_software_update {
+            get {
+                object obj = ResourceManager.GetObject("system-software-update", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

@@ -30,18 +30,22 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tab_extensions = new System.Windows.Forms.TabPage();
-            this.extensionListControl = new MpeInstaller.Controls.ExtensionListControl();
             this.tab_options = new System.Windows.Forms.TabPage();
             this.btn_online_update = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
+            this.tab_known = new System.Windows.Forms.TabPage();
+            this.extensionListControl = new MpeInstaller.Controls.ExtensionListControl();
+            this.extensionListContro_all = new MpeInstaller.Controls.ExtensionListControl();
             this.tabControl1.SuspendLayout();
             this.tab_extensions.SuspendLayout();
             this.tab_options.SuspendLayout();
+            this.tab_known.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tab_extensions);
+            this.tabControl1.Controls.Add(this.tab_known);
             this.tabControl1.Controls.Add(this.tab_options);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
@@ -60,17 +64,6 @@
             this.tab_extensions.TabIndex = 0;
             this.tab_extensions.Text = "Installed extensions";
             this.tab_extensions.UseVisualStyleBackColor = true;
-            // 
-            // extensionListControl
-            // 
-            this.extensionListControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.extensionListControl.Location = new System.Drawing.Point(3, 3);
-            this.extensionListControl.Name = "extensionListControl";
-            this.extensionListControl.SelectedItem = null;
-            this.extensionListControl.Size = new System.Drawing.Size(558, 448);
-            this.extensionListControl.TabIndex = 0;
             // 
             // tab_options
             // 
@@ -104,6 +97,39 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // tab_known
+            // 
+            this.tab_known.Controls.Add(this.extensionListContro_all);
+            this.tab_known.Location = new System.Drawing.Point(4, 22);
+            this.tab_known.Name = "tab_known";
+            this.tab_known.Padding = new System.Windows.Forms.Padding(3);
+            this.tab_known.Size = new System.Drawing.Size(564, 454);
+            this.tab_known.TabIndex = 2;
+            this.tab_known.Text = "Known extensions";
+            this.tab_known.UseVisualStyleBackColor = true;
+            // 
+            // extensionListControl
+            // 
+            this.extensionListControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.extensionListControl.Location = new System.Drawing.Point(3, 3);
+            this.extensionListControl.Name = "extensionListControl";
+            this.extensionListControl.SelectedItem = null;
+            this.extensionListControl.Size = new System.Drawing.Size(558, 448);
+            this.extensionListControl.TabIndex = 0;
+            // 
+            // extensionListContro_all
+            // 
+            this.extensionListContro_all.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.extensionListContro_all.Location = new System.Drawing.Point(3, 3);
+            this.extensionListContro_all.Name = "extensionListContro_all";
+            this.extensionListContro_all.SelectedItem = null;
+            this.extensionListContro_all.Size = new System.Drawing.Size(558, 448);
+            this.extensionListContro_all.TabIndex = 0;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -113,11 +139,12 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.Name = "MainForm";
-            this.Text = "Form1";
+            this.Text = "Media Portal Extension Installer";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.tabControl1.ResumeLayout(false);
             this.tab_extensions.ResumeLayout(false);
             this.tab_options.ResumeLayout(false);
+            this.tab_known.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -130,6 +157,8 @@
         private System.Windows.Forms.Button button1;
         private MpeInstaller.Controls.ExtensionListControl extensionListControl;
         private System.Windows.Forms.Button btn_online_update;
+        private System.Windows.Forms.TabPage tab_known;
+        private MpeInstaller.Controls.ExtensionListControl extensionListContro_all;
     }
 }
 

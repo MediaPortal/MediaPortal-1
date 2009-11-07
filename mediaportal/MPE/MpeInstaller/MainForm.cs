@@ -17,6 +17,42 @@ namespace MpeInstaller
             extensionListControl.UnInstallExtension += extensionListControl_UnInstallExtension;
             extensionListControl.UpdateExtension += extensionListControl_UpdateExtension;
             extensionListControl.ConfigureExtension += extensionListControl_ConfigureExtension;
+            extensionListControl.InstallExtension += extensionListControl_InstallExtension;
+            extensionListContro_all.UnInstallExtension += extensionListControl_UnInstallExtension;
+            extensionListContro_all.UpdateExtension += extensionListControl_UpdateExtension;
+            extensionListContro_all.ConfigureExtension += extensionListControl_ConfigureExtension;
+            extensionListContro_all.InstallExtension += extensionListControl_InstallExtension;
+        }
+
+        void extensionListControl_InstallExtension(object sender, PackageClass packageClass)
+        {
+            string newPackageLoacation = GetPackageLocation(packageClass);
+            if (!File.Exists(newPackageLoacation))
+            {
+                MessageBox.Show("Can't locate the installer package. Install aborted");
+                return;
+            }
+            PackageClass pak = new PackageClass();
+            pak = pak.ZipProvider.Load(newPackageLoacation);
+            if (!pak.CheckDependency(false))
+            {
+                MessageBox.Show("Dependency check error ! Install aborted!");
+                return;
+            }
+
+            if (MessageBox.Show("This operation will install extension " + packageClass.GeneralInfo.Name + " version " + pak.GeneralInfo.Version + " \n Do you want to continue ? ", "Install extension", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) != DialogResult.Yes)
+                return;
+            this.Hide();
+            packageClass = MpeCore.MpeInstaller.InstalledExtensions.Get(packageClass.GeneralInfo.Id);
+            if (packageClass != null)
+            {
+                UnInstall dlg = new UnInstall();
+                dlg.Execute(packageClass, true);
+                pak.CopyGroupCheck(packageClass);
+            }
+            pak.StartInstallWizard();
+            RefreshLists();
+            this.Show();
         }
 
         void extensionListControl_ConfigureExtension(object sender, PackageClass packageClass)
@@ -42,21 +78,27 @@ namespace MpeInstaller
             }
         }
 
-        void extensionListControl_UpdateExtension(object sender, PackageClass packageClass, PackageClass newpackageClass)
+        private string GetPackageLocation(PackageClass packageClass)
         {
-            string newPackageLoacation = newpackageClass.GeneralInfo.Location;
-            if(!File.Exists(newPackageLoacation))
+            string newPackageLoacation = packageClass.GeneralInfo.Location;
+            if (!File.Exists(newPackageLoacation))
             {
-                newPackageLoacation = newpackageClass.LocationFolder + newpackageClass.GeneralInfo.Id + ".mpe2";
-                if(!File.Exists(newPackageLoacation))
+                newPackageLoacation = packageClass.LocationFolder + packageClass.GeneralInfo.Id + ".mpe2";
+                if (!File.Exists(newPackageLoacation))
                 {
-                    if (!string.IsNullOrEmpty(newpackageClass.GeneralInfo.OnlineLocation))
+                    if (!string.IsNullOrEmpty(packageClass.GeneralInfo.OnlineLocation))
                     {
                         newPackageLoacation = Path.GetTempFileName();
-                        new DownloadFile(newpackageClass.GeneralInfo.OnlineLocation, newPackageLoacation);
+                        new DownloadFile(packageClass.GeneralInfo.OnlineLocation, newPackageLoacation);
                     }
                 }
             }
+            return newPackageLoacation;
+        }
+
+        void extensionListControl_UpdateExtension(object sender, PackageClass packageClass, PackageClass newpackageClass)
+        {
+            string newPackageLoacation = GetPackageLocation(newpackageClass);
             if (!File.Exists(newPackageLoacation))
             {
                 MessageBox.Show("Can't locate the installer package. Update aborted");
@@ -83,22 +125,28 @@ namespace MpeInstaller
             pak.CopyGroupCheck(packageClass);
             pak.Silent = true;
             pak.StartInstallWizard();
-            extensionListControl.Set(MpeCore.MpeInstaller.InstalledExtensions);
+            RefreshLists();
             this.Show();
 
+        }
+
+        void RefreshLists()
+        {
+            extensionListControl.Set(MpeCore.MpeInstaller.InstalledExtensions);
+            extensionListContro_all.Set(MpeCore.MpeInstaller.KnownExtensions.GetUniqueList());
         }
 
         void extensionListControl_UnInstallExtension(object sender, PackageClass packageClass)
         {
             UnInstall dlg = new UnInstall();
             dlg.Execute(packageClass, false);
-            extensionListControl.Set(MpeCore.MpeInstaller.InstalledExtensions);
+            RefreshLists();
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
             MpeCore.MpeInstaller.Init();
-            extensionListControl.Set(MpeCore.MpeInstaller.InstalledExtensions);
+            RefreshLists();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -131,7 +179,7 @@ namespace MpeInstaller
                     }
                     this.Hide();
                     pak.StartInstallWizard();
-                    extensionListControl.Set(MpeCore.MpeInstaller.InstalledExtensions);
+                    RefreshLists();
                     this.Show();
                 }
                 else
@@ -165,7 +213,7 @@ namespace MpeInstaller
                 }
             }
             MpeCore.MpeInstaller.Save();
-            extensionListControl.Set(MpeCore.MpeInstaller.InstalledExtensions);
+            RefreshLists();
         }
     }
 }

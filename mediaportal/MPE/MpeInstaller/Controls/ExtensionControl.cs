@@ -28,8 +28,15 @@ namespace MpeInstaller.Controls
                 if (fileInfos.Length > 0)
                     img_logo.LoadAsync(fileInfos[0].FullName);
             }
-            Package = packageClass;
-            
+            Package = MpeCore.MpeInstaller.InstalledExtensions.Get(packageClass);
+            if (Package == null)
+            {
+                Package = packageClass;
+                btn_conf.Visible = false;
+                btn_update.Visible = false;
+                btn_uninstall.Visible = false;
+            }
+            PopulateInstallBtn();
             btn_conf.Enabled = !string.IsNullOrEmpty(Package.GeneralInfo.Params[ParamNamesConst.CONFIG].GetValueAsPath());
 
             UpdatePackage = MpeCore.MpeInstaller.KnownExtensions.GetUpdate(Package);
@@ -53,6 +60,36 @@ namespace MpeInstaller.Controls
             }
             Selected = false;
             SelectControl();
+        }
+
+        private void PopulateInstallBtn()
+        {
+            ExtensionCollection collection = MpeCore.MpeInstaller.KnownExtensions.GetList(Package.GeneralInfo.Id);
+            collection.Add(Package);
+            foreach (PackageClass item in collection.GetList(Package.GeneralInfo.Id).Items)
+            {
+                ToolStripMenuItem testToolStripMenuItem = new ToolStripMenuItem();
+                testToolStripMenuItem.Text = string.Format("Version - {0}", item.GeneralInfo.Version);
+                PackageClass pak = MpeCore.MpeInstaller.InstalledExtensions.Get(Package.GeneralInfo.Id);
+                if (pak != null && item.GeneralInfo.Version.CompareTo(pak.GeneralInfo.Version) == 0)
+                {
+                    testToolStripMenuItem.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold,
+                                                          GraphicsUnit.Point, ((byte) (0)));
+                }
+                testToolStripMenuItem.ToolTipText = item.GeneralInfo.VersionDescription;
+                testToolStripMenuItem.Tag = item;
+                testToolStripMenuItem.Click += new EventHandler(testToolStripMenuItem_Click);
+                btn_install.DropDownItems.Add(testToolStripMenuItem);
+            }
+        }
+
+        void testToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem menu = sender as ToolStripMenuItem;
+            ExtensionListControl parent = Parent.Parent as ExtensionListControl;
+            if (parent == null)
+                return;
+            parent.OnInstallExtension(this, menu.Tag as PackageClass);
         }
 
         private bool _selected;

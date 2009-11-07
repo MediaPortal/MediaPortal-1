@@ -23,6 +23,8 @@ namespace MpeInstaller.Controls
         public event ConfigureExtensionHandler ConfigureExtension;
         public delegate void ConfigureExtensionHandler(object sender, PackageClass packageClass);
 
+        public event InstallExtensionHandler InstallExtension;
+        public delegate void InstallExtensionHandler(object sender, PackageClass packageClass);
 
         public ExtensionListControl()
         {
@@ -62,6 +64,12 @@ namespace MpeInstaller.Controls
         {
             if (ConfigureExtension != null)
                 ConfigureExtension(control, control.Package);
+        }
+
+        public void OnInstallExtension(ExtensionControl control,PackageClass pak)
+        {
+            if (InstallExtension != null)
+                InstallExtension(control, pak);
         }
 
     }

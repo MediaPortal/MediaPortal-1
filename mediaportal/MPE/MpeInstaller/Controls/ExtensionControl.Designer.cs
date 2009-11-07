@@ -40,9 +40,12 @@
             this.img_logo = new System.Windows.Forms.PictureBox();
             this.btn_more_info = new System.Windows.Forms.Button();
             this.btn_conf = new System.Windows.Forms.Button();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.btn_install = new System.Windows.Forms.ToolStripDropDownButton();
             ((System.ComponentModel.ISupportInitialize)(this.img_dep)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_update)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_logo)).BeginInit();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // lbl_name
@@ -162,12 +165,37 @@
             this.btn_conf.UseVisualStyleBackColor = true;
             this.btn_conf.Click += new System.EventHandler(this.btn_conf_Click);
             // 
+            // toolStrip1
+            // 
+            this.toolStrip1.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btn_install});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 91);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(99, 25);
+            this.toolStrip1.TabIndex = 10;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
+            // btn_install
+            // 
+            this.btn_install.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.btn_install.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btn_install.Image = global::MpeInstaller.Properties.Resources.system_software_update;
+            this.btn_install.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btn_install.Name = "btn_install";
+            this.btn_install.Size = new System.Drawing.Size(65, 22);
+            this.btn_install.Text = "Install";
+            this.btn_install.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // ExtensionControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.btn_conf);
             this.Controls.Add(this.btn_more_info);
             this.Controls.Add(this.img_dep);
@@ -185,6 +213,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.img_dep)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_update)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_logo)).EndInit();
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -203,5 +233,7 @@
         private System.Windows.Forms.PictureBox img_dep;
         private System.Windows.Forms.Button btn_more_info;
         private System.Windows.Forms.Button btn_conf;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripDropDownButton btn_install;
     }
 }
