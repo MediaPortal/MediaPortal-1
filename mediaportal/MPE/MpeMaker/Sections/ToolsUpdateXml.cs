@@ -52,5 +52,34 @@ namespace MpeMaker.Sections
         {
             throw new NotImplementedException();
         }
+
+        private void btn_browse1_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                txt_list1.Text = saveFileDialog1.FileName;
+            }
+        }
+
+        private void btn_browse2_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                txt_list2.Text = saveFileDialog1.FileName;
+            }
+        }
+
+        private void add_list_Click(object sender, EventArgs e)
+        {
+            string xmlFile = txt_list1.Text;
+            ExtensionCollection list = new ExtensionCollection();
+            ExtensionCollection list2 = new ExtensionCollection();
+            if (File.Exists(xmlFile))
+                list = ExtensionCollection.Load(xmlFile);
+            if (File.Exists(txt_list2.Text))
+                list2 = ExtensionCollection.Load(txt_list2.Text);
+            list.Add(list2);
+            list.Save(xmlFile);
+        }
     }
 }

@@ -215,5 +215,13 @@ namespace MpeInstaller
             MpeCore.MpeInstaller.Save();
             RefreshLists();
         }
+
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
+            if (MpeCore.MpeInstaller.InstalledExtensions.Items.Count > 0 && MessageBox.Show("Do you want to update the extension list ?", "Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                btn_online_update_Click(sender, e);
+            }
+        }
     }
 }

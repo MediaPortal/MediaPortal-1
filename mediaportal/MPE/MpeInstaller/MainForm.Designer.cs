@@ -141,6 +141,7 @@
             this.Name = "MainForm";
             this.Text = "Media Portal Extension Installer";
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.Shown += new System.EventHandler(this.MainForm_Shown);
             this.tabControl1.ResumeLayout(false);
             this.tab_extensions.ResumeLayout(false);
             this.tab_options.ResumeLayout(false);

@@ -110,9 +110,9 @@ namespace MpeInstaller.Controls
         {
             BackColor = _selected ? SystemColors.GradientInactiveCaption : Color.White; 
             BorderStyle = _selected ? BorderStyle.FixedSingle : BorderStyle.FixedSingle;
-            lbl_description.ForeColor = _selected ? SystemColors.ButtonFace : Color.Black;
-            lbl_name.ForeColor = _selected ? SystemColors.ButtonFace : Color.Black;
-            lbl_version.ForeColor = _selected ? SystemColors.ButtonFace : Color.Black;
+            lbl_description.ForeColor = _selected ? Color.Blue : Color.Black;
+            lbl_name.ForeColor = _selected ? Color.Blue : Color.Black;
+            lbl_version.ForeColor = _selected ? Color.Blue : Color.Black;
             Height = _selected ? 123 : 90;
 
             if (Parent == null)
