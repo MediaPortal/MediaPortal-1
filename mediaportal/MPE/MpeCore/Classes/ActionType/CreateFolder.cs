@@ -65,6 +65,15 @@ namespace MpeCore.Classes.ActionType
 
         public ValidationResponse Validate(PackageClass packageClass, ActionItem actionItem)
         {
+            if (!string.IsNullOrEmpty(actionItem.ConditionGroup) && packageClass.Groups[actionItem.ConditionGroup] == null)
+                return new ValidationResponse()
+                {
+                    Message = actionItem.Name + " condition group not found " + actionItem.ConditionGroup,
+                    Valid = false
+                };
+            if (string.IsNullOrEmpty(actionItem.Params[Const_Loc].Value))
+                return new ValidationResponse()
+                           {Message = "[CreateFolder] no destnation folder specified !", Valid = false}; 
             return new ValidationResponse();
         }
 

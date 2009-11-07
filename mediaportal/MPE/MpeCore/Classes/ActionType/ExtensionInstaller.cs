@@ -77,6 +77,13 @@ namespace MpeCore.Classes.ActionType
         {
             if (!File.Exists(actionItem.Params[Const_Loc].Value))
                 return new ValidationResponse() { Valid = false, Message = " [Install Extension] File not found " + actionItem.Params[Const_Loc].Value };
+            if (!string.IsNullOrEmpty(actionItem.ConditionGroup) && packageClass.Groups[actionItem.ConditionGroup] == null)
+                return new ValidationResponse()
+                {
+                    Message = actionItem.Name + " condition group not found " + actionItem.ConditionGroup,
+                    Valid = false
+                }; 
+
             return new ValidationResponse();
         }
 

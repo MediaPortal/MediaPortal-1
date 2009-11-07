@@ -42,6 +42,13 @@ namespace MpeCore.Classes.ActionType
 
         public ValidationResponse Validate(PackageClass packageClass, ActionItem actionItem)
         {
+            if (!string.IsNullOrEmpty(actionItem.ConditionGroup) && packageClass.Groups[actionItem.ConditionGroup] == null)
+                return new ValidationResponse()
+                {
+                    Message = actionItem.Name + " condition group not found " + actionItem.ConditionGroup,
+                    Valid = false
+                }; 
+
             return new ValidationResponse();
         }
 
