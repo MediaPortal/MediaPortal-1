@@ -236,7 +236,7 @@ namespace MpeCore
             {
                 foreach (FileItem fileItem in groupItem.Files.Items)
                 {
-                    fileItem.LocalFileName = PathUtil.RelativePathTo(path, fileItem.LocalFileName);
+                    fileItem.LocalFileName = Util.RelativePathTo(path, fileItem.LocalFileName);
                 }
             }
 
@@ -246,7 +246,7 @@ namespace MpeCore
                 {
                     if (sectionParam.ValueType == ValueTypeEnum.File && !string.IsNullOrEmpty(sectionParam.Value))
                     {
-                        sectionParam.Value = PathUtil.RelativePathTo(path, sectionParam.Value);
+                        sectionParam.Value = Util.RelativePathTo(path, sectionParam.Value);
                     }
                 }
                 foreach (ActionItem actionItem in sectionItem.Actions.Items)
@@ -255,7 +255,7 @@ namespace MpeCore
                     {
                         if (sectionParam.ValueType == ValueTypeEnum.File && !string.IsNullOrEmpty(sectionParam.Value))
                         {
-                            sectionParam.Value = PathUtil.RelativePathTo(path, sectionParam.Value);
+                            sectionParam.Value = Util.RelativePathTo(path, sectionParam.Value);
                         }
                     }
                 }
@@ -265,7 +265,7 @@ namespace MpeCore
             {
                 if (sectionParam.ValueType == ValueTypeEnum.File && !string.IsNullOrEmpty(sectionParam.Value))
                 {
-                    sectionParam.Value = PathUtil.RelativePathTo(path, sectionParam.Value);
+                    sectionParam.Value = Util.RelativePathTo(path, sectionParam.Value);
                 }
             }
 
@@ -439,6 +439,12 @@ namespace MpeCore
                     this.GeneralInfo = packageClass.GeneralInfo;
                     this.UniqueFileList = packageClass.UniqueFileList;
                     this.Dependencies = packageClass.Dependencies;
+                    var pak = new PackageClass();
+                    foreach (SectionParam item in pak.GeneralInfo.Params.Items)
+                    {
+                        if (!GeneralInfo.Params.Contain(item.Name))
+                            GeneralInfo.Params.Add(item);
+                    }
                     Reset();
                     return true;
                 }

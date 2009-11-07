@@ -35,7 +35,22 @@ namespace MpeCore.Classes
                 return GetItem(indexName);
             }
         }
-        
+
+        /// <summary>
+        /// Contains the specified name.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <returns></returns>
+        public bool Contain(string name)
+        {
+            foreach (SectionParam sectionParam in Items)
+            {
+                if (sectionParam.Name.CompareTo(name) == 0)
+                    return true;
+            }
+           return false;
+        }
+
         private  SectionParam GetItem(string item)
         {
             foreach (SectionParam sectionParam in Items)

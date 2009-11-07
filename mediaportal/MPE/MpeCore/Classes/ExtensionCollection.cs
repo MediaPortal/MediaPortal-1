@@ -58,6 +58,8 @@ namespace MpeCore.Classes
             {
                 pak.Groups.Items.Add(new GroupItem(groupItem.Name, groupItem.Checked));
             }
+            pak.Dependencies = packageClass.Dependencies;
+            pak.Version = packageClass.Version;
             Items.Add(pak);
         }
 

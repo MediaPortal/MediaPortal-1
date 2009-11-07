@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using MpeCore;
@@ -15,6 +16,30 @@ namespace MpeInstaller
             InitializeComponent();
             extensionListControl.UnInstallExtension += extensionListControl_UnInstallExtension;
             extensionListControl.UpdateExtension += extensionListControl_UpdateExtension;
+            extensionListControl.ConfigureExtension += extensionListControl_ConfigureExtension;
+        }
+
+        void extensionListControl_ConfigureExtension(object sender, PackageClass packageClass)
+        {
+            string conf_str = packageClass.GeneralInfo.Params[ParamNamesConst.CONFIG].GetValueAsPath();
+            if (string.IsNullOrEmpty(conf_str))
+                return;
+            try
+            {
+                if (Path.GetExtension(conf_str).ToUpper() == ".DLL")
+                {
+                    Util.LoadPlugins(conf_str);
+                }
+                else
+                {
+                    Process.Start(conf_str);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error : " + ex.Message);
+            }
         }
 
         void extensionListControl_UpdateExtension(object sender, PackageClass packageClass, PackageClass newpackageClass)
@@ -108,6 +133,10 @@ namespace MpeInstaller
                     pak.StartInstallWizard();
                     extensionListControl.Set(MpeCore.MpeInstaller.InstalledExtensions);
                     this.Show();
+                }
+                else
+                {
+                    MessageBox.Show("Installation aborted, some of the dependency not found !");
                 }
             }
         }

@@ -27,7 +27,7 @@ namespace MpeCore.Classes.ActionType
 
         public SectionParamCollection GetDefaultParams()
         {
-            return new SectionParamCollection(); ;
+            return new SectionParamCollection(); 
         }
 
         public SectionResponseEnum Execute(PackageClass packageClass, ActionItem actionItem)
@@ -54,7 +54,7 @@ namespace MpeCore.Classes.ActionType
         public ValidationResponse Validate(PackageClass packageClass, ActionItem actionItem)
         {
             if (!string.IsNullOrEmpty(actionItem.ConditionGroup) && packageClass.Groups[actionItem.ConditionGroup] == null)
-                return new ValidationResponse()
+                return new ValidationResponse
                            {
                                Message = actionItem.Name + " condition group not found " + actionItem.ConditionGroup,
                                Valid = false

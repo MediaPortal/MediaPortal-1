@@ -14,6 +14,8 @@ namespace MpeCore.Classes
             Params=new SectionParamCollection();
             Params.Add(new SectionParam(ParamNamesConst.ICON,"",ValueTypeEnum.File,"The icon file of the package (jpg,png,bmp)"));
             Params.Add(new SectionParam(ParamNamesConst.ONLINE_ICON, "", ValueTypeEnum.String, "The icon file of the package stored online (jpg,png,bmp)"));
+            Params.Add(new SectionParam(ParamNamesConst.CONFIG, "", ValueTypeEnum.Template,
+                                        "The file used to configure the extension.\n If have .exe extension the will be executed\n If have .dll extension used like MP plugin configuration"));
         }
 
         public string Name { get; set; }

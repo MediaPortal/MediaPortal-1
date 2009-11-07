@@ -29,6 +29,9 @@ namespace MpeInstaller.Controls
                     img_logo.LoadAsync(fileInfos[0].FullName);
             }
             Package = packageClass;
+            
+            btn_conf.Enabled = !string.IsNullOrEmpty(Package.GeneralInfo.Params[ParamNamesConst.CONFIG].GetValueAsPath());
+
             UpdatePackage = MpeCore.MpeInstaller.KnownExtensions.GetUpdate(Package);
             if (UpdatePackage != null)
             {
@@ -39,6 +42,14 @@ namespace MpeInstaller.Controls
             {
                 btn_update.Visible = false;
                 img_update.Visible = false;
+            }
+            if(!Package.CheckDependency(true))
+            {
+                img_dep.Visible = true;
+            }
+            else
+            {
+                img_dep.Visible = false;
             }
             Selected = false;
             SelectControl();
@@ -127,6 +138,19 @@ namespace MpeInstaller.Controls
             if (parent == null)
                 return;
             parent.OnUpdateExtension(this);
+        }
+
+        private void img_dep_Click(object sender, EventArgs e)
+        {
+            ExtensionControl_Click(null, null);
+        }
+
+        private void btn_conf_Click(object sender, EventArgs e)
+        {
+            ExtensionListControl parent = Parent.Parent as ExtensionListControl;
+            if (parent == null)
+                return;
+            parent.OnConfigureExtension(this);
         }
     }
 }

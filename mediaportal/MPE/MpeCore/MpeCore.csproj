@@ -85,7 +85,7 @@
     <Compile Include="Classes\InstallerType\GenericSkinFile.cs" />
     <Compile Include="Classes\ParamNamesConst.cs" />
     <Compile Include="Classes\PathProvider\TvServerPaths.cs" />
-    <Compile Include="Classes\PathUtil.cs" />
+    <Compile Include="Classes\Util.cs" />
     <Compile Include="Classes\ProviderHelpers\SectionProviderHelper.cs" />
     <Compile Include="Classes\SectionPanel\Base.cs" />
     <Compile Include="Classes\SectionPanel\BaseHorizontalLayout.cs">
