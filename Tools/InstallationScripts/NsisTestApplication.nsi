@@ -24,7 +24,9 @@
 #endregion
 
 
-# DEFINES
+#---------------------------------------------------------------------------
+# DEVELOPMENT ENVIRONMENT
+#---------------------------------------------------------------------------
 !define svn_ROOT "..\.."
 !define svn_MP "${svn_ROOT}\mediaportal"
 !define svn_TVServer "${svn_ROOT}\TvEngine3\TVLibrary"
@@ -32,10 +34,37 @@
 !define svn_InstallScripts "${svn_ROOT}\Tools\InstallationScripts"
 
 
+#---------------------------------------------------------------------------
+# INCLUDE FILES
+#---------------------------------------------------------------------------
+!include MUI2.nsh
+#!include "x64.nsh"
+#!include Sections.nsh
+#!include LogicLib.nsh
+#!include Library.nsh
+#!include FileFunc.nsh
+#!include Memento.nsh
+
+!include "${svn_InstallScripts}\include\*"
 
 
-; TEST APP FOR MP STUFF
+#---------------------------------------------------------------------------
+# INSTALLER INTERFACE settings
+#---------------------------------------------------------------------------
+!define MUI_COMPONENTSPAGE_SMALLDESC
+!define MUI_FINISHPAGE_NOAUTOCLOSE
 
+
+#---------------------------------------------------------------------------
+# INSTALLER INTERFACE
+#---------------------------------------------------------------------------
+!insertmacro MUI_PAGE_COMPONENTS
+!insertmacro MUI_PAGE_INSTFILES
+
+
+#---------------------------------------------------------------------------
+# INSTALLER ATTRIBUTES
+#---------------------------------------------------------------------------
 ; The name of the installer
 Name "test-helpmacros"
 
@@ -49,30 +78,11 @@ InstallDir $DESKTOP\Example1
 RequestExecutionLevel user
 ShowInstDetails show
 
-;--------------------------------
 
-#!define INSTALL_LOG_FILE "$DESKTOP\install_$(^Name).log"
+#---------------------------------------------------------------------------
+#---------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 
-!include MUI2.nsh
-#!include "x64.nsh"
-#!include Sections.nsh
-#!include LogicLib.nsh
-#!include Library.nsh
-#!include FileFunc.nsh
-#!include Memento.nsh
-
-
-!include "${svn_InstallScripts}\include\*"
-
-;--------------------------------
-
-!define MUI_COMPONENTSPAGE_SMALLDESC
-!define MUI_FINISHPAGE_NOAUTOCLOSE
-
-!insertmacro MUI_PAGE_COMPONENTS
-!insertmacro MUI_PAGE_INSTFILES
-
-;--------------------------------
 
 SectionGroup "run nsis installed"
 
@@ -184,10 +194,10 @@ SectionEnd
 
 Section /o "OS, .Net and VCRedist Tests"
 
-  !insertmacro MediaPortalOperatingSystemCheck 0
-  !insertmacro MediaPortalAdminCheck 0
-  !insertmacro MediaPortalVCRedistCheck 0
-  !insertmacro MediaPortalNetFrameworkCheck 0
+  !insertmacro MediaPortalOperatingSystemCheck
+  !insertmacro MediaPortalAdminCheck
+  !insertmacro MediaPortalVCRedistCheck
+  !insertmacro MediaPortalNetFrameworkCheck
 
 SectionEnd
 
