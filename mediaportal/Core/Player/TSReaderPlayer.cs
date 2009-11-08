@@ -314,7 +314,7 @@ namespace MediaPortal.Player
         strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
         strAudioCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
         strH264VideoCodec = xmlreader.GetValueAsString("movieplayer", "h264videocodec", "");
-
+        strAACAudioCodec = xmlreader.GetValueAsString("movieplayer", "aacaudiocodec", "");
         strAudioRenderer = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
         enableDVBBitmapSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
         enableDVBTtxtSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
