@@ -51,6 +51,7 @@ namespace MpeCore
             AddSection(new TreeViewSelector());
             AddSection(new InstallSection());
             AddSection(new Finish());
+            AddSection(new GroupCheck());
 
             AddActionProvider(new InstallFiles());
             AddActionProvider(new ShowMessageBox());

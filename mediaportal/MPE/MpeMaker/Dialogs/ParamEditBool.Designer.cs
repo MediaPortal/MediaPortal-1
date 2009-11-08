@@ -37,10 +37,10 @@
             this.radio_Yes.AutoSize = true;
             this.radio_Yes.Location = new System.Drawing.Point(120, 31);
             this.radio_Yes.Name = "radio_Yes";
-            this.radio_Yes.Size = new System.Drawing.Size(43, 17);
+            this.radio_Yes.Size = new System.Drawing.Size(74, 17);
             this.radio_Yes.TabIndex = 0;
             this.radio_Yes.TabStop = true;
-            this.radio_Yes.Text = "Yes";
+            this.radio_Yes.Text = "Yes (True)";
             this.radio_Yes.UseVisualStyleBackColor = true;
             this.radio_Yes.CheckedChanged += new System.EventHandler(this.radio_No_CheckedChanged);
             // 
@@ -49,10 +49,10 @@
             this.radio_No.AutoSize = true;
             this.radio_No.Location = new System.Drawing.Point(120, 68);
             this.radio_No.Name = "radio_No";
-            this.radio_No.Size = new System.Drawing.Size(39, 17);
+            this.radio_No.Size = new System.Drawing.Size(73, 17);
             this.radio_No.TabIndex = 1;
             this.radio_No.TabStop = true;
-            this.radio_No.Text = "No";
+            this.radio_No.Text = "No (False)";
             this.radio_No.UseVisualStyleBackColor = true;
             this.radio_No.CheckedChanged += new System.EventHandler(this.radio_No_CheckedChanged);
             // 
