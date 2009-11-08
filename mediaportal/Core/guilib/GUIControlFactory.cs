@@ -395,7 +395,6 @@ namespace MediaPortal.GUI.Library
 
           if (styleNode != null)
           {
-            Log.Info("Styling");
             UpdateControlWithXmlData(control, typeOfControlToCreate, styleNode, defines);
           }
         }
