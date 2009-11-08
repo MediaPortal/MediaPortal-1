@@ -23,6 +23,7 @@ namespace MpeMaker.Sections
             _loading = true;
             Package = pak;
             txt_outfile.Text = pak.GeneralInfo.Location;
+            lbl_file.Text = Package.ReplaceInfo(txt_outfile.Text);
             _loading = false;
         }
 
@@ -92,12 +93,20 @@ namespace MpeMaker.Sections
                 tabControl1.SelectTab(0);                
             }
             list_message.Items.Add("Creating package started at : "+DateTime.Now.ToLongTimeString());
-            MpeInstaller.ZipProvider.Save(Package, txt_outfile.Text);
+            list_message.Refresh();
+            Refresh();
+            MpeInstaller.ZipProvider.Save(Package, Package.ReplaceInfo(txt_outfile.Text));
             list_message.Items.Add("Ended at : " + DateTime.Now.ToLongTimeString());
         }
 
+        /// <summary>
+        /// Handles the TextChanged event of the txt_outfile control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         private void txt_outfile_TextChanged(object sender, EventArgs e)
         {
+            lbl_file.Text = Package.ReplaceInfo(txt_outfile.Text);
             if (_loading)
                 return;
             Package.GeneralInfo.Location = txt_outfile.Text;

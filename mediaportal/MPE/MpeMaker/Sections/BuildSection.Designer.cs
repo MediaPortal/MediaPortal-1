@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.txt_outfile = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.btn_browse = new System.Windows.Forms.Button();
@@ -38,6 +39,8 @@
             this.list_error = new System.Windows.Forms.ListBox();
             this.btn_generate = new System.Windows.Forms.Button();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.lbl_file = new System.Windows.Forms.Label();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -51,6 +54,7 @@
             this.txt_outfile.Name = "txt_outfile";
             this.txt_outfile.Size = new System.Drawing.Size(648, 20);
             this.txt_outfile.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.txt_outfile, "You can use in name :\r\n[Name]\r\n[Version]\r\n[DevelopmentStatus]\r\n[Author]\r\n");
             this.txt_outfile.TextChanged += new System.EventHandler(this.txt_outfile_TextChanged);
             // 
             // label1
@@ -81,10 +85,10 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(13, 50);
+            this.tabControl1.Location = new System.Drawing.Point(13, 73);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(688, 182);
+            this.tabControl1.Size = new System.Drawing.Size(688, 159);
             this.tabControl1.TabIndex = 3;
             // 
             // tabPage1
@@ -93,7 +97,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 4);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(680, 156);
+            this.tabPage1.Size = new System.Drawing.Size(680, 133);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Messages";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -106,7 +110,7 @@
             this.list_message.ItemHeight = 16;
             this.list_message.Location = new System.Drawing.Point(3, 3);
             this.list_message.Name = "list_message";
-            this.list_message.Size = new System.Drawing.Size(674, 148);
+            this.list_message.Size = new System.Drawing.Size(674, 116);
             this.list_message.TabIndex = 0;
             // 
             // tabPage2
@@ -142,10 +146,20 @@
             this.btn_generate.UseVisualStyleBackColor = true;
             this.btn_generate.Click += new System.EventHandler(this.btn_generate_Click);
             // 
+            // lbl_file
+            // 
+            this.lbl_file.AutoSize = true;
+            this.lbl_file.Location = new System.Drawing.Point(14, 47);
+            this.lbl_file.Name = "lbl_file";
+            this.lbl_file.Size = new System.Drawing.Size(35, 13);
+            this.lbl_file.TabIndex = 5;
+            this.lbl_file.Text = "label2";
+            // 
             // BuildSection
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.lbl_file);
             this.Controls.Add(this.btn_generate);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.btn_browse);
@@ -173,5 +187,7 @@
         private System.Windows.Forms.ListBox list_error;
         private System.Windows.Forms.Button btn_generate;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.Label lbl_file;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
