@@ -31,7 +31,7 @@ using System.Runtime.CompilerServices;
 using MediaPortal.Configuration;
 using MediaPortal.ServiceImplementations;
 using MediaPortal.Profile;
-
+using MediaPortal.Services;
 
 namespace MediaPortal.Util
 {
@@ -98,6 +98,13 @@ namespace MediaPortal.Util
       if (!LeaveShareThumb && !aCacheThumb)
       {
         Log.Warn("VideoThumbCreator: No share thumbs wanted by config option AND no caching wanted - where should the thumb go then? Aborting..");
+        return false;
+      }
+
+      IVideoThumbBlacklist blacklist = GlobalServiceProvider.Get<IVideoThumbBlacklist>();
+      if (blacklist != null && blacklist.Contains(aVideoPath))
+      {
+        Log.Debug("Skipped creating thumbnail for {0}, it has been blacklisted because last attempt failed", aVideoPath);
         return false;
       }
 
@@ -204,7 +211,36 @@ namespace MediaPortal.Util
       {
         Log.Error("VideoThumbCreator: Thumbnail generation failed - {0}!", ex.ToString());
       }
-      return File.Exists(aThumbPath);
+      if (File.Exists(aThumbPath))
+      {
+        return true;
+      }
+      else
+      {
+        if (blacklist != null)
+        {
+          blacklist.Add(aVideoPath);
+        }
+        return false;
+      }
+    }
+
+    public static string GetThumbExtractorVersion()
+    {
+      try
+      {
+        //System.Diagnostics.FileVersionInfo newVersion = System.Diagnostics.FileVersionInfo.GetVersionInfo(ExtractorPath);
+        //return newVersion.FileVersion;
+        // mtn.exe has no version info, so let's use "time modified" instead
+        FileInfo fi = new FileInfo(ExtractorPath);
+        return fi.LastWriteTimeUtc.ToString("s"); // use culture invariant format
+      }
+      catch (Exception ex)
+      {
+        Log.Error("GetThumbExtractorVersion failed:");
+        Log.Error(ex);
+        return "";
+      }
     }
 
     #endregion

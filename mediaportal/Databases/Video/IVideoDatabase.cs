@@ -23,6 +23,7 @@
 
 #endregion
 
+using System;
 using System.Collections;
 using SQLite.NET;
 
@@ -86,6 +87,11 @@ namespace MediaPortal.Video.Database
     void SetActorInfo(int idActor, IMDBActor actor);
     void AddActorInfoMovie(int idActor, IMDBActor.IMDBActorMovie movie);
     IMDBActor GetActorInfo(int idActor);
+    bool IsVideoThumbBlacklisted(string path);
+    int VideoThumbBlacklist(string path, DateTime expiresOn);
+    bool VideoThumbRemoveFromBlacklist(string path);
+    void RemoveExpiredVideoThumbBlacklistEntries();
+    void RemoveAllVideoThumbBlacklistEntries();
     SQLiteResultSet GetResults(string sql);
   }
 }

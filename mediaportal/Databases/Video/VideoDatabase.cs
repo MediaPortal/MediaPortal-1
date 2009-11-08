@@ -23,6 +23,7 @@
 
 #endregion
 
+using System;
 using System.Collections;
 using MediaPortal.Database;
 using SQLite.NET;
@@ -323,6 +324,31 @@ namespace MediaPortal.Video.Database
     public static SQLiteResultSet GetResults(string sql)
     {
       return _database.GetResults(sql);
+    }
+
+    public static bool IsVideoThumbBlacklisted(string path)
+    {
+      return _database.IsVideoThumbBlacklisted(path);
+    }
+
+    public static int VideoThumbBlacklist(string path, DateTime expiresOn)
+    {
+      return _database.VideoThumbBlacklist(path, expiresOn);
+    }
+
+    public static bool VideoThumbRemoveFromBlacklist(string path)
+    {
+      return _database.VideoThumbRemoveFromBlacklist(path);
+    }
+
+    public static void RemoveExpiredVideoThumbBlacklistEntries()
+    {
+      _database.RemoveExpiredVideoThumbBlacklistEntries();
+    }
+
+    public static void RemoveAllVideoThumbBlacklistEntries()
+    {
+      _database.RemoveAllVideoThumbBlacklistEntries();
     }
   }
 }

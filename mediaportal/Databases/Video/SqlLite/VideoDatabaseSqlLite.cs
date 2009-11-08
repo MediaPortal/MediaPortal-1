@@ -119,6 +119,8 @@ namespace MediaPortal.Video.Database
                                "CREATE TABLE actorinfo ( idActor integer, dateofbirth text, placeofbirth text, minibio text, biography text)");
       DatabaseUtility.AddTable(m_db, "actorinfomovies",
                                "CREATE TABLE actorinfomovies ( idActor integer, idDirector integer, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer, role text)");
+      DatabaseUtility.AddTable(m_db, "VideoThumbBList",
+                                     "CREATE TABLE VideoThumbBList ( idVideoThumbBList integer primary key, strPath text, strExpires text, strFileDate text, strFileSize text)");
 
       DatabaseUtility.AddIndex(m_db, "idxactorinfo_idActor",
                                "CREATE INDEX idxactorinfo_idActor ON actorinfo(idActor ASC)");
@@ -144,6 +146,10 @@ namespace MediaPortal.Video.Database
       DatabaseUtility.AddIndex(m_db, "idxmovieinfo_strTitle",
                                "CREATE INDEX idxmovieinfo_strTitle ON movieinfo(strTitle ASC)");
       DatabaseUtility.AddIndex(m_db, "idxpath_strPath", "CREATE INDEX idxpath_strPath ON path(strPath ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxVideoThumbBList_strPath",
+                               "CREATE INDEX idxVideoThumbBList_strPath ON VideoThumbBList(strPath ASC, strExpires ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxVideoThumbBList_strExpires",
+                               "CREATE INDEX idxVideoThumbBList_strExpires ON VideoThumbBList(strExpires ASC)");
 
       return true;
     }
@@ -2267,6 +2273,170 @@ namespace MediaPortal.Video.Database
         Open();
       }
       return null;
+    }
+
+    #endregion
+
+    #region Video thumbnail blacklisting
+
+    public bool IsVideoThumbBlacklisted(string path)
+    {
+      try
+      {
+        if (null == m_db)
+        {
+          return false;
+        }
+        string strSQL;
+        FileInfo fileInfo = new FileInfo(path);
+        if (!fileInfo.Exists)
+        {
+          return false;
+        }
+
+        path = path.Trim();
+        DatabaseUtility.RemoveInvalidChars(ref path);
+
+        SQLiteResultSet results;
+        strSQL = String.Format("select idVideoThumbBList from VideoThumbBList where strPath = '{0}' and strExpires > '{1:yyyyMMdd}' and strFileDate = '{2:s}' and strFileSize = '{3}'", path, DateTime.Now, fileInfo.LastWriteTimeUtc, fileInfo.Length);
+        results = m_db.Execute(strSQL);
+        if (results.Rows.Count != 0)
+        {
+          return true;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return false;
+    }
+
+    public int VideoThumbBlacklist(string path, DateTime expiresOn)
+    {
+      try
+      {
+        if (null == m_db)
+        {
+          return -1;
+        }
+        string strSQL;
+        FileInfo fileInfo = new FileInfo(path);
+        if (!fileInfo.Exists)
+        {
+          return -1;
+        }
+
+        path = path.Trim();
+        DatabaseUtility.RemoveInvalidChars(ref path);
+
+        SQLiteResultSet results;
+        strSQL = String.Format("select idVideoThumbBList from VideoThumbBList where strPath = '{0}'", path);
+        results = m_db.Execute(strSQL);
+        if (results.Rows.Count == 0)
+        {
+          // doesnt exists, add it
+          strSQL = String.Format("insert into VideoThumbBList (idVideoThumbBList, strPath, strExpires, strFileDate, strFileSize) values( NULL, '{0}', '{1:yyyyMMdd}', '{2:s}', '{3}')",
+                                 path, expiresOn, fileInfo.LastWriteTimeUtc, fileInfo.Length);
+          m_db.Execute(strSQL);
+          int Id = m_db.LastInsertID();
+          RemoveExpiredVideoThumbBlacklistEntries();
+          return Id;
+        }
+        else
+        {
+          int Id = -1;
+          Int32.TryParse(DatabaseUtility.Get(results, 0, "idVideoThumbBList"), out Id);
+          if (Id != -1)
+          {
+            strSQL = String.Format("update VideoThumbBList set strExpires='{1:yyyyMMdd}', strFileDate='{2:s}', strFileSize='{3}' where idVideoThumbBList={0}",
+                                   Id, expiresOn, fileInfo.LastWriteTimeUtc, fileInfo.Length);
+            m_db.Execute(strSQL);
+          }
+          return Id;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return -1;
+    }
+
+    public bool VideoThumbRemoveFromBlacklist(string path)
+    {
+      try
+      {
+        if (null == m_db)
+        {
+          return false;
+        }
+        string strSQL;
+
+        path = path.Trim();
+        DatabaseUtility.RemoveInvalidChars(ref path);
+
+        SQLiteResultSet results;
+        strSQL = String.Format("select idVideoThumbBList from VideoThumbBList where strPath = '{0}'", path);
+        results = m_db.Execute(strSQL);
+        if (results.Rows.Count != 0)
+        {
+          int Id = -1;
+          Int32.TryParse(DatabaseUtility.Get(results, 0, "idVideoThumbBList"), out Id);
+          if (Id != -1)
+          {
+            strSQL = String.Format("delete from VideoThumbBList where idVideoThumbBList={0}", Id);
+            m_db.Execute(strSQL);
+            return true;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return false;
+    }
+
+    public void RemoveExpiredVideoThumbBlacklistEntries()
+    {
+      try
+      {
+        if (null == m_db)
+        {
+          return;
+        }
+        string strSQL;
+
+        strSQL = String.Format("delete from VideoThumbBList where strExpires <= '{0:yyyyMMdd}'", DateTime.Now);
+        m_db.Execute(strSQL);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    public void RemoveAllVideoThumbBlacklistEntries()
+    {
+      try
+      {
+        if (null == m_db)
+        {
+          return;
+        }
+
+        m_db.Execute("delete from VideoThumbBList");
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
     }
 
     #endregion

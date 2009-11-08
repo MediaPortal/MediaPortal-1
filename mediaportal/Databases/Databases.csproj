@@ -284,6 +284,7 @@
     </Compile>
     <Compile Include="Video\IVideoDatabase.cs" />
     <Compile Include="Video\VideoDatabase.cs" />
+    <Compile Include="Video\VideoThumbBlacklistDBImpl.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Video\Ado\" />

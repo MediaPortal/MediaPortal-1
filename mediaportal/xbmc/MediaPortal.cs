@@ -54,6 +54,7 @@ using MediaPortal.RedEyeIR;
 using MediaPortal.Ripper;
 using MediaPortal.SerialIR;
 using MediaPortal.Util;
+using MediaPortal.Services;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.Win32;
@@ -1418,6 +1419,9 @@ public class MediaPortalApp : D3DApp, IRender
           SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, 0, 0, SPIF_SENDWININICHANGE);
         }
       }
+
+      GlobalServiceProvider.Add<IVideoThumbBlacklist>(new MediaPortal.Video.Database.VideoThumbBlacklistDBImpl());
+      Utils.CheckThumbExtractorVersion();
     }
     catch (Exception ex)
     {

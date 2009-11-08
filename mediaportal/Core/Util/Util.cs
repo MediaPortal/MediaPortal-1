@@ -47,6 +47,7 @@ using Microsoft.Win32;
 using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
 using MediaPortal.Configuration;
+using MediaPortal.Services;
 
 namespace MediaPortal.Util
 {
@@ -718,6 +719,13 @@ namespace MediaPortal.Util
         return;
       }
 
+      IVideoThumbBlacklist blacklist = GlobalServiceProvider.Get<IVideoThumbBlacklist>();
+      if (blacklist != null && blacklist.Contains(path))
+      {
+        Log.Debug("Skipped creating thumbnail for {0}, it has been blacklisted because last attempt failed", path);
+        return;
+      }
+
       Image thumb = null;
       try
       {
@@ -765,6 +773,39 @@ namespace MediaPortal.Util
       {
         if (thumb != null)
           thumb.Dispose();
+        if (!File.Exists(strThumb) && blacklist != null)
+        {
+          blacklist.Add(path);
+        }
+      }
+    }
+
+    public static void CheckThumbExtractorVersion()
+    {
+      try
+      {
+        using (Profile.Settings xmlreader = new Profile.MPSettings())
+        {
+          if (!xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true))
+            return;
+
+          string lastVersion = xmlreader.GetValueAsString("thumbnails", "extractorversion", "");
+          string newVersion = VideoThumbCreator.GetThumbExtractorVersion();
+          if (newVersion != lastVersion)
+          {
+            IVideoThumbBlacklist blacklist = GlobalServiceProvider.Get<IVideoThumbBlacklist>();
+            if (blacklist != null)
+            {
+              blacklist.Clear();
+            }
+            xmlreader.SetValue("thumbnails", "extractorversion", newVersion);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("CheckThumbExtractorVersion failed:");
+        Log.Error(ex);
       }
     }
 
