@@ -150,7 +150,7 @@ namespace MediaPortal.GUI.Video
       if (g_Player.IsDVD)
       {
         key1 = "dvdplayer";
-        key2 = String.Empty;
+        key2 = "dvdplayer";
       }
       if (g_Player.IsTVRecording || g_Player.CurrentFile.EndsWith(".ts"))
       {
