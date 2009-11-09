@@ -161,6 +161,49 @@ namespace MpeCore
             return true;
         }
 
+        /// <summary>
+        /// Validates the package.
+        /// </summary>
+        /// <returns>The package is valid if a zero length list returned, else return list of errors</returns>
+        public List<string> ValidatePackage()
+        {
+            List<string> respList = new List<string>();
+            foreach (SectionParam item in GeneralInfo.Params.Items)
+            {
+                if (item.ValueType == ValueTypeEnum.File && !string.IsNullOrEmpty(item.Value) && !File.Exists(item.Value))
+                {
+                    respList.Add(string.Format("Params ->{0} file not found", item.Name));
+                }
+            }
+
+            foreach (GroupItem groupItem in Groups.Items)
+            {
+                foreach (FileItem fileItem in groupItem.Files.Items)
+                {
+                    ValidationResponse resp =
+                        MpeInstaller.InstallerTypeProviders[fileItem.InstallType].Validate(fileItem);
+                    if (!resp.Valid)
+                        respList.Add(string.Format("[{0}][{1}] - {2}", groupItem.Name, fileItem, resp.Message));
+                }
+            }
+
+            foreach (SectionItem sectionItem in Sections.Items)
+            {
+                if (!string.IsNullOrEmpty(sectionItem.ConditionGroup) && Groups[sectionItem.ConditionGroup] == null)
+                    respList.Add(string.Format("[{0}] condition group not found [{1}]", sectionItem.Name, sectionItem.ConditionGroup));
+                foreach (ActionItem actionItem in sectionItem.Actions.Items)
+                {
+                    ValidationResponse resp = MpeInstaller.ActionProviders[actionItem.ActionType].Validate(this,
+                                                                                                           actionItem);
+                    if (!resp.Valid)
+                        respList.Add(string.Format("[{0}][{1}] - {2}", sectionItem.Name, actionItem.Name, resp.Message));
+
+                }
+            }
+
+            return respList;
+        }
+
 
         private void DoAdditionalInstallTasks()
         {

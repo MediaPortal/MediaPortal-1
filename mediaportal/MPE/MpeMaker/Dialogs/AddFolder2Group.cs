@@ -58,7 +58,7 @@ namespace MpeMaker.Dialogs
                 return;
             }
 
-            DirectoryInfo di = new DirectoryInfo(folderBrowserDialog1.SelectedPath);
+            DirectoryInfo di = new DirectoryInfo(txt_folder.Text);
             FileInfo[] fileList;
             fileList = chk_recurs.Checked ? di.GetFiles("*.*", SearchOption.AllDirectories) : di.GetFiles("*.*", SearchOption.TopDirectoryOnly);
             string dir = txt_folder.Text;

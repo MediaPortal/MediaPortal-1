@@ -78,6 +78,8 @@ namespace MpeCore.Classes.ZipProvider
         {
             string temfile = Path.GetTempFileName();
             pak.Save(temfile);
+            if (!Directory.Exists(Path.GetDirectoryName(filename)))
+                Directory.CreateDirectory(Path.GetDirectoryName(filename));
             using (ZipFile zip = new ZipFile())
             {
                 zip.AddFile(temfile).FileName = "MediaPortalExtension.xml";

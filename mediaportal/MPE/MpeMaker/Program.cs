@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using MpeMaker.Classes;
 
 namespace MpeMaker
 {
@@ -10,11 +11,18 @@ namespace MpeMaker
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            if (args.Length > 0)
+            {
+                MainForm dlg = new MainForm(new ProgramArguments(args));
+                if(!dlg.IsDisposed)
+                    Application.Run(dlg);
+            }
+            else
+                Application.Run(new MainForm());
         }
     }
 }

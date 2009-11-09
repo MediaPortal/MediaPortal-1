@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\ProgramArguments.cs" />
     <Compile Include="Dialogs\AddFolder2Group.cs">
       <SubType>Form</SubType>
     </Compile>

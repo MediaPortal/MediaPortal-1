@@ -58,6 +58,20 @@ namespace MpeCore.Classes
             set { _revision = value; }
         }
 
+        public static VersionInfo Pharse(string s)
+        {
+            VersionInfo ver = new VersionInfo();
+            string[] vers = s.Split('.');
+            if (vers.Length > 3)
+            {
+                ver.Major = vers[0];
+                ver.Minor = vers[1];
+                ver.Build = vers[2];
+                ver.Revision = vers[3];
+            }
+            return ver;
+        }
+
         public override string ToString()
         {
             return Major + "." + Minor + "." + Build + "." + Revision;

@@ -12,6 +12,7 @@ using MpeCore.Classes.SectionPanel;
 using MpeCore.Interfaces;
 using MpeMaker.Dialogs;
 using MpeMaker.Sections;
+using MpeMaker.Classes;
 
 namespace MpeMaker
 {
@@ -25,9 +26,51 @@ namespace MpeMaker
         {
             MpeInstaller.Init();
             InitializeComponent();
-            splitContainer1.Panel1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             Package = new PackageClass();
+            Init();
+            NewProject();
+        }
 
+        public MainForm(ProgramArguments arguments)
+        {
+            MpeInstaller.Init();
+            InitializeComponent();
+            Package = new PackageClass();
+            Init();
+            NewProject();
+            if (File.Exists(arguments.ProjectFile))
+            {
+                if(LoadProject(arguments.ProjectFile))
+                {
+                    if (arguments.SetVersion)
+                        Package.GeneralInfo.Version = arguments.Version;
+                    if(arguments.Build)
+                    {
+                        if (string.IsNullOrEmpty(Package.GeneralInfo.Location))
+                            MessageBox.Show("No out file is specified");
+                        List<string> list = Package.ValidatePackage();
+                        if(Package.ValidatePackage().Count>0)
+                        {
+                            MessageBox.Show("Error in package");
+                            Close();
+                            return;
+                        }
+                        MpeInstaller.ZipProvider.Save(Package, Package.ReplaceInfo(Package.GeneralInfo.Location));
+                        Close();
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Project file not specified or not found !");
+            }
+        }
+
+
+        private void Init()
+        {
+            splitContainer1.Panel1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             treeView1.ExpandAll();
             panels.Add("Node0", new WelcomSection());
             panels.Add("Node2", new GeneralSection());
@@ -36,12 +79,7 @@ namespace MpeMaker
             panels.Add("Node5", new RequirementsSection());
             panels.Add("Node6", new BuildSection());
             panels.Add("Node7", new ToolsUpdateXml());
-
-
-            NewProject();
-
         }
-
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
@@ -97,23 +135,29 @@ namespace MpeMaker
         private void mnu_open_Click(object sender, EventArgs e)
         {
             openFileDialog1.Filter = "Mpe project file(*.xmp2)|*.xmp2|All files|*.*";
-            openFileDialog1.Title = "Open extension installer proiect file";
+            openFileDialog1.Title = "Open extension installer project file";
             openFileDialog1.FileName = ProjectFileName;
             openFileDialog1.Multiselect = false;
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                PackageClass pak = new PackageClass();
-                if (!pak.Load(openFileDialog1.FileName))
-                {
-                    MessageBox.Show("Error loading package proiect");
-                    return;
-                }
-                Package = pak;
-                Package.GenerateAbsolutePath(Path.GetDirectoryName(openFileDialog1.FileName));
-                ProjectFileName = openFileDialog1.FileName;
-                treeView1.SelectedNode = treeView1.Nodes[0];
-                SetTitle();
+                LoadProject(openFileDialog1.FileName);
             }
+        }
+
+        private bool LoadProject(string filename)
+        {
+            PackageClass pak = new PackageClass();
+            if (!pak.Load(filename))
+            {
+                MessageBox.Show("Error loading package project");
+                return false;
+            }
+            Package = pak;
+            Package.GenerateAbsolutePath(Path.GetDirectoryName(filename));
+            ProjectFileName = openFileDialog1.FileName;
+            treeView1.SelectedNode = treeView1.Nodes[0];
+            SetTitle();
+            return true;
         }
 
         private void mnu_new_Click(object sender, EventArgs e)

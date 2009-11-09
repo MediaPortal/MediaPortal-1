@@ -49,38 +49,10 @@ namespace MpeMaker.Sections
             list_message.Items.Clear();
             if (string.IsNullOrEmpty(txt_outfile.Text))
                 list_error.Items.Add("No out file is specified");
-
-            foreach (SectionParam item in Package.GeneralInfo.Params.Items)
+            
+            foreach (string s in Package.ValidatePackage())
             {
-                if (item.ValueType == ValueTypeEnum.File && !string.IsNullOrEmpty(item.Value) && !File.Exists(item.Value))
-                {
-                    list_error.Items.Add(string.Format("Params ->{0} file not found", item.Name));
-                }
-            }
-
-            foreach (GroupItem groupItem in Package.Groups.Items)
-            {
-                foreach (FileItem fileItem in groupItem.Files.Items )
-                {
-                    ValidationResponse resp =
-                        MpeInstaller.InstallerTypeProviders[fileItem.InstallType].Validate(fileItem);
-                    if (!resp.Valid)
-                        list_error.Items.Add(string.Format("[{0}][{1}] - {2}", groupItem.Name, fileItem, resp.Message));
-                }
-            }
-
-            foreach (SectionItem sectionItem in Package.Sections.Items)
-            {
-              if(!string.IsNullOrEmpty(sectionItem.ConditionGroup) && Package.Groups[sectionItem.ConditionGroup]==null)
-                  list_error.Items.Add(string.Format("[{0}] condition group not found [{1}]", sectionItem.Name, sectionItem.ConditionGroup));
-                foreach (ActionItem actionItem in sectionItem.Actions.Items)
-                {
-                    ValidationResponse resp = MpeInstaller.ActionProviders[actionItem.ActionType].Validate(Package,
-                                                                                                           actionItem);
-                    if (!resp.Valid)
-                        list_error.Items.Add(string.Format("[{0}][{1}] - {2}", sectionItem.Name, actionItem.Name, resp.Message));
-  
-                }
+                list_error.Items.Add(s);
             }
 
             if(list_error.Items.Count>0)

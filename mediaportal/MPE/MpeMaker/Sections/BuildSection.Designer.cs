@@ -119,7 +119,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 4);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(680, 156);
+            this.tabPage2.Size = new System.Drawing.Size(680, 133);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Errors";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -132,7 +132,7 @@
             this.list_error.ItemHeight = 16;
             this.list_error.Location = new System.Drawing.Point(3, 3);
             this.list_error.Name = "list_error";
-            this.list_error.Size = new System.Drawing.Size(674, 148);
+            this.list_error.Size = new System.Drawing.Size(674, 116);
             this.list_error.TabIndex = 0;
             // 
             // btn_generate

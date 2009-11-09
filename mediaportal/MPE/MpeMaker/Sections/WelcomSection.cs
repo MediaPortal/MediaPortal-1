@@ -36,5 +36,17 @@ namespace MpeMaker.Sections
         {
             throw new NotImplementedException();
         }
+
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start("http://wiki.team-mediaportal.com/MpeMaker");
+            }
+            catch (Exception)
+            {
+            }
+
+        }
     }
 }
