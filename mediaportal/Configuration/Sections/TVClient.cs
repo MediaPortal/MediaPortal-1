@@ -612,9 +612,9 @@ namespace MediaPortal.Configuration.Sections
       this.cbShowChannelStateIcons.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbShowChannelStateIcons.Location = new System.Drawing.Point(22, 19);
       this.cbShowChannelStateIcons.Name = "cbShowChannelStateIcons";
-      this.cbShowChannelStateIcons.Size = new System.Drawing.Size(290, 17);
+      this.cbShowChannelStateIcons.Size = new System.Drawing.Size(308, 17);
       this.cbShowChannelStateIcons.TabIndex = 0;
-      this.cbShowChannelStateIcons.Text = "Show channel state icons in Mini Guide (on supp. skins))";
+      this.cbShowChannelStateIcons.Text = "Show channel state icons in Mini Guide (on supported skins)";
       this.cbShowChannelStateIcons.UseVisualStyleBackColor = true;
       // 
       // labelShowEpisodeinfo
