@@ -39,7 +39,16 @@ namespace MpeCore.Classes.InstallerType
                 }
             }
             if (!Directory.Exists(Path.GetDirectoryName(destination)))
-                Directory.CreateDirectory(Path.GetDirectoryName(destination));
+            {
+                string dirname = Path.GetDirectoryName(destination);
+                Directory.CreateDirectory(dirname);
+                if (!dirname.EndsWith("\\"))
+                    dirname += "\\";
+                UnInstallItem unI= new UnInstallItem();
+                unI.OriginalFile = dirname;
+                unI.InstallType = "CopyFile";
+                packageClass.UnInstallInfo.Items.Add(unI);
+            }
             UnInstallItem unInstallItem = packageClass.UnInstallInfo.BackUpFile(item);
             packageClass.ZipProvider.Extract(item, destination);
             FileInfo info = new FileInfo(destination);
@@ -48,22 +57,43 @@ namespace MpeCore.Classes.InstallerType
             packageClass.UnInstallInfo.Items.Add(unInstallItem);
         }
 
+        
         public void Uninstall(PackageClass packageClass, UnInstallItem fileItem)
         {
-            if (!File.Exists(fileItem.OriginalFile))
-                return;
-            FileInfo fi = new FileInfo(fileItem.OriginalFile);
-            if (fileItem.FileDate != fi.CreationTimeUtc || fileItem.FileSize != fi.Length)
-                return;
-            try
+            if (fileItem.OriginalFile.EndsWith("\\"))
             {
-                File.Delete(fileItem.OriginalFile);
-                if (File.Exists(fileItem.BackUpFile))
-                    File.Move(fileItem.BackUpFile, fileItem.OriginalFile);
+                try
+                {
+                    DirectoryInfo di = new DirectoryInfo(fileItem.OriginalFile);
+                    FileInfo[] fileList = di.GetFiles("*.*", SearchOption.AllDirectories);
+                    if (fileList.Length == 0)
+                    {
+                        Directory.Delete(fileItem.OriginalFile, true);
+                    }
+                }
+                catch (Exception)
+                {
+
+                }
+
             }
-            catch (Exception )
+            else
             {
-            
+                if (!File.Exists(fileItem.OriginalFile))
+                    return;
+                FileInfo fi = new FileInfo(fileItem.OriginalFile);
+                if (fileItem.FileDate != fi.CreationTimeUtc || fileItem.FileSize != fi.Length)
+                    return;
+                try
+                {
+                    File.Delete(fileItem.OriginalFile);
+                    if (File.Exists(fileItem.BackUpFile))
+                        File.Move(fileItem.BackUpFile, fileItem.OriginalFile);
+                }
+                catch (Exception)
+                {
+
+                }
             }
         }
 

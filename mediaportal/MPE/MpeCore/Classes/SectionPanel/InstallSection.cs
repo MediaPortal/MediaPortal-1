@@ -48,6 +48,7 @@ namespace MpeCore.Classes.SectionPanel
             Mode = ShowModeEnum.Preview;
             Section = sectionItem;
             Package = packageClass;
+            ControlBox = true;
             SetValues();
             timer1.Enabled = true;
             ShowDialog();
@@ -58,6 +59,7 @@ namespace MpeCore.Classes.SectionPanel
             Mode = ShowModeEnum.Real;
             Package = packageClass;
             Section = sectionItem;
+            ControlBox = false;
             SetValues();
             Base.ActionExecute(Package, Section, ActionExecuteLocationEnum.BeforPanelShow);
             ShowDialog();
@@ -107,7 +109,8 @@ namespace MpeCore.Classes.SectionPanel
             if (Mode == ShowModeEnum.Real)
             {
                 base.button_next.Enabled = false;
-
+                base.button_back.Visible = false;
+                base.button_cancel.Visible = false;
                 foreach (var actionItem in Section.Actions.Items)
                 {
                     if (actionItem.ExecuteLocation != ActionExecuteLocationEnum.AfterPanelShow)

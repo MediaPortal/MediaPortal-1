@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Forms;
 using MpeCore.Classes.SectionPanel;
 
 namespace MpeCore.Classes
@@ -44,7 +45,17 @@ namespace MpeCore.Classes
                         pos++;
                         break;
                     case SectionResponseEnum.Cancel:
-                        break;
+                        if (
+                            MessageBox.Show(
+                                "Are you want to quit " + Package.GeneralInfo.Name + " - " + Package.GeneralInfo.Version +
+                                " setup ? ", "Install extension", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) !=
+                            DialogResult.Yes)
+                            continue;
+                        bool sil = Package.Silent;
+                        Package.Silent = true;
+                        Package.UnInstall();
+                        Package.Silent = sil;
+                        return SectionResponseEnum.Cancel;
                     case SectionResponseEnum.Ok:
                         break;
                     case SectionResponseEnum.Error:

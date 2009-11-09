@@ -4,9 +4,9 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Serialization;
-
 using MpeCore.Classes;
 using MpeCore.Classes.Events;
+using MpeCore.Classes.SectionPanel;
 using MpeCore.Classes.ZipProvider;
 
 namespace MpeCore
@@ -268,8 +268,8 @@ namespace MpeCore
         public bool StartInstallWizard()
         {
             WizardNavigator navigator = new WizardNavigator(this);
-            navigator.Navigate();
-            DoAdditionalInstallTasks();
+            if (navigator.Navigate() == SectionResponseEnum.Ok)
+                DoAdditionalInstallTasks();
             return true;
         }
 
