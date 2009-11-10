@@ -420,6 +420,7 @@ namespace SetupTv.Sections
       if (menuItem.Tag == null)
       {
         GroupNameForm dlg = new GroupNameForm();
+        dlg.IsRadio = true;
         if (dlg.ShowDialog(this) != DialogResult.OK)
         {
           return;
@@ -896,6 +897,8 @@ namespace SetupTv.Sections
 	  private void mpButtonAddGroup_Click(object sender, EventArgs e)
 	  {
       GroupNameForm dlg = new GroupNameForm();
+      dlg.IsRadio = true;
+
       if (dlg.ShowDialog(this) != DialogResult.OK)
       {
         return;
@@ -911,6 +914,7 @@ namespace SetupTv.Sections
     private void mpButtonRenameGroup_Click(object sender, EventArgs e)
     {
       GroupSelectionForm dlgGrpSel = new GroupSelectionForm();
+      dlgGrpSel.Selection = GroupSelectionForm.SelectionType.ForRenaming;
 
       if (dlgGrpSel.ShowDialog(typeof(RadioChannelGroup), this) != DialogResult.OK)
       {
@@ -1115,18 +1119,22 @@ namespace SetupTv.Sections
         return;
       }
 
+      bool isFixedGroupName = (
+          group.GroupName == TvConstants.TvGroupNames.AllChannels ||
+          group.GroupName == TvConstants.TvGroupNames.Analog ||
+          group.GroupName == TvConstants.TvGroupNames.DVBC ||
+          group.GroupName == TvConstants.TvGroupNames.DVBS ||
+          group.GroupName == TvConstants.TvGroupNames.DVBT
+          );
+
       bool isGlobalChannelsGroup = (
-          group.GroupName == TvConstants.RadioGroupNames.AllChannels /*||
-          group.GroupName == TvConstants.RadioGroupNames.Analog ||
-          group.GroupName == TvConstants.RadioGroupNames.DVBC ||
-          group.GroupName == TvConstants.RadioGroupNames.DVBS ||
-          group.GroupName == TvConstants.RadioGroupNames.DVBT*/
+          group.GroupName == TvConstants.TvGroupNames.AllChannels
           );
 
       renameGroupToolStripMenuItem.Tag = tabControl1.TabPages[targetIndex];
       deleteGroupToolStripMenuItem.Tag = renameGroupToolStripMenuItem.Tag;
 
-      renameGroupToolStripMenuItem.Enabled = !isGlobalChannelsGroup;
+      renameGroupToolStripMenuItem.Enabled = !isFixedGroupName;
       deleteGroupToolStripMenuItem.Enabled = !isGlobalChannelsGroup;
 
       pt = tabControl1.PointToScreen(pt);

@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using TvDatabase;
 using TvLibrary.Log;
+using TvLibrary.Interfaces;
 
 namespace SetupTv.Sections
 {
@@ -30,6 +31,20 @@ namespace SetupTv.Sections
   {
     string _preselectedGroupName = string.Empty;
     List<object> _groups = new List<object>();
+
+    private SelectionType _SelectionType = SelectionType.ForDeleting;
+
+    public enum SelectionType
+    {
+      ForDeleting,
+      ForRenaming
+    }
+
+    public SelectionType Selection 
+    {
+      get { return _SelectionType; }
+      set { _SelectionType = value; }
+    }
 
     public GroupSelectionForm()
     {
@@ -76,7 +91,19 @@ namespace SetupTv.Sections
         IList<ChannelGroup> tmp = ChannelGroup.ListAll();
         foreach (ChannelGroup group in tmp)
         {
-          if (group.GroupName != TvLibrary.Interfaces.TvConstants.TvGroupNames.AllChannels)
+          bool isFixedGroupName = (
+                group.GroupName == TvConstants.TvGroupNames.AllChannels ||
+                (
+                  _SelectionType == SelectionType.ForRenaming && 
+                  (
+                    group.GroupName == TvConstants.TvGroupNames.Analog ||
+                    group.GroupName == TvConstants.TvGroupNames.DVBC ||
+                    group.GroupName == TvConstants.TvGroupNames.DVBS ||
+                    group.GroupName == TvConstants.TvGroupNames.DVBT)
+                  )
+                );
+
+          if (!isFixedGroupName)
           {
             _groups.Add(group);
           }
@@ -87,7 +114,19 @@ namespace SetupTv.Sections
         IList<RadioChannelGroup> tmp = RadioChannelGroup.ListAll();
         foreach (RadioChannelGroup group in tmp)
         {
-          if (group.GroupName != TvLibrary.Interfaces.TvConstants.RadioGroupNames.AllChannels)
+          bool isFixedGroupName = (
+                group.GroupName == TvConstants.RadioGroupNames.AllChannels ||
+                (
+                  _SelectionType == SelectionType.ForRenaming &&
+                  (
+                    group.GroupName == TvConstants.RadioGroupNames.Analog ||
+                    group.GroupName == TvConstants.RadioGroupNames.DVBC ||
+                    group.GroupName == TvConstants.RadioGroupNames.DVBS ||
+                    group.GroupName == TvConstants.RadioGroupNames.DVBT)
+                  )
+                );
+
+          if (!isFixedGroupName)
           {
             _groups.Add(group);
           }

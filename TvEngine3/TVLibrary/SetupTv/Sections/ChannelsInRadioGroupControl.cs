@@ -176,9 +176,9 @@ namespace SetupTv.Sections
         {
           channel = (Channel)sourceItem.Tag;
         }
-        else if (sourceItem.Tag is GroupMap)
+        else if (sourceItem.Tag is RadioGroupMap)
         {
-          channel = layer.GetChannel(((GroupMap)sourceItem.Tag).IdChannel);
+          channel = layer.GetChannel(((RadioGroupMap)sourceItem.Tag).IdChannel);
         }
         else
         {
@@ -235,6 +235,7 @@ namespace SetupTv.Sections
       if (menuItem.Tag == null)
       {
         GroupNameForm dlg = new GroupNameForm();
+        dlg.IsRadio = true;
 
         if (dlg.ShowDialog(this) != DialogResult.OK)
         {
@@ -260,9 +261,9 @@ namespace SetupTv.Sections
       for (int i = 0; i < indexes.Count; ++i)
       {
         ListViewItem item = listView1.Items[indexes[i]];
-        GroupMap map = (GroupMap)item.Tag;
+        RadioGroupMap map = (RadioGroupMap)item.Tag;
         Channel channel = map.ReferencedChannel();
-        layer.AddChannelToGroup(channel, group.GroupName);
+        layer.AddChannelToRadioGroup(channel, group.GroupName);
       }
     }
 

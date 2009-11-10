@@ -30,12 +30,33 @@ namespace SetupTv.Sections
     string _groupName="new group";
     List<string> _groupNames;
 
+    private bool _isRadio = false;
+
+    /// <summary>
+    /// Switch for Tv / Radio groups
+    /// </summary>
+    public bool IsRadio
+    {
+      get { return _isRadio; }
+      set 
+      { 
+        _isRadio = value;
+        GetGroupNames();
+      }
+    }
+
     public GroupNameForm()
     {
       InitializeComponent();
       InitNew();
     }
 
+    public GroupNameForm(bool isRadio)
+    {
+      _isRadio = isRadio;
+      InitializeComponent();
+      InitNew();
+    }
     private void InitNew()
     {
       Text = "Enter name for new group";
@@ -59,11 +80,23 @@ namespace SetupTv.Sections
 
     private void GetGroupNames()
     {
-      IList<ChannelGroup> groups = ChannelGroup.ListAll();
-      _groupNames = new List<string>();
-      foreach (ChannelGroup group in groups)
+      if (_isRadio)
       {
-        _groupNames.Add(group.GroupName);
+        IList<RadioChannelGroup> groups = RadioChannelGroup.ListAll();
+        _groupNames = new List<string>();
+        foreach (RadioChannelGroup group in groups)
+        {
+          _groupNames.Add(group.GroupName);
+        }
+      }
+      else
+      {
+        IList<ChannelGroup> groups = ChannelGroup.ListAll();
+        _groupNames = new List<string>();
+        foreach (ChannelGroup group in groups)
+        {
+          _groupNames.Add(group.GroupName);
+        }
       }
     }
 
