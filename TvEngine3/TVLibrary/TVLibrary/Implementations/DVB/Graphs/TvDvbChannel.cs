@@ -950,9 +950,16 @@ namespace TvLibrary.Implementations.DVB
 
           _graphState = GraphState.Recording;
         }
-        else if (IsTimeShifting)
+        else
         {
-          SetTimeShiftPids();
+          if (IsTimeShifting)
+          {
+            SetTimeShiftPids();
+          }
+          if (IsRecording)
+          {
+            SetRecorderPids();
+          }
         }
       }
       catch (Exception ex)
