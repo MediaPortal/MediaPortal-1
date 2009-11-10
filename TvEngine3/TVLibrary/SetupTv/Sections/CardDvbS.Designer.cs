@@ -41,6 +41,8 @@ namespace SetupTv.Sections
       this.checkBoxCreateGroups = new System.Windows.Forms.CheckBox();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.mpLabel9 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.checkBoxCreateSignalGroup = new System.Windows.Forms.CheckBox();
       this.mpLNB1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.buttonUpdate = new System.Windows.Forms.Button();
       this.mpTransponder4 = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -190,7 +192,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonScanTv
       // 
-      this.mpButtonScanTv.Location = new System.Drawing.Point(322, 147);
+      this.mpButtonScanTv.Location = new System.Drawing.Point(322, 153);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
       this.mpButtonScanTv.Size = new System.Drawing.Size(112, 23);
       this.mpButtonScanTv.TabIndex = 1;
@@ -231,11 +233,11 @@ namespace SetupTv.Sections
       // checkBoxCreateGroups
       // 
       this.checkBoxCreateGroups.AutoSize = true;
-      this.checkBoxCreateGroups.Location = new System.Drawing.Point(188, 130);
+      this.checkBoxCreateGroups.Location = new System.Drawing.Point(213, 134);
       this.checkBoxCreateGroups.Name = "checkBoxCreateGroups";
-      this.checkBoxCreateGroups.Size = new System.Drawing.Size(175, 17);
+      this.checkBoxCreateGroups.Size = new System.Drawing.Size(91, 17);
       this.checkBoxCreateGroups.TabIndex = 0;
-      this.checkBoxCreateGroups.Text = "Create groups for each provider";
+      this.checkBoxCreateGroups.Text = "each provider";
       this.checkBoxCreateGroups.UseVisualStyleBackColor = true;
       // 
       // tabControl1
@@ -256,6 +258,8 @@ namespace SetupTv.Sections
       // tabPage1
       // 
       this.tabPage1.BackColor = System.Drawing.SystemColors.Control;
+      this.tabPage1.Controls.Add(this.mpLabel9);
+      this.tabPage1.Controls.Add(this.checkBoxCreateSignalGroup);
       this.tabPage1.Controls.Add(this.mpLNB1);
       this.tabPage1.Controls.Add(this.buttonUpdate);
       this.tabPage1.Controls.Add(this.mpTransponder4);
@@ -291,6 +295,25 @@ namespace SetupTv.Sections
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Scanning";
       // 
+      // mpLabel9
+      // 
+      this.mpLabel9.AutoSize = true;
+      this.mpLabel9.Location = new System.Drawing.Point(10, 134);
+      this.mpLabel9.Name = "mpLabel9";
+      this.mpLabel9.Size = new System.Drawing.Size(88, 13);
+      this.mpLabel9.TabIndex = 136;
+      this.mpLabel9.Text = "Create groups for";
+      // 
+      // checkBoxCreateSignalGroup
+      // 
+      this.checkBoxCreateSignalGroup.AutoSize = true;
+      this.checkBoxCreateSignalGroup.Location = new System.Drawing.Point(329, 134);
+      this.checkBoxCreateSignalGroup.Name = "checkBoxCreateSignalGroup";
+      this.checkBoxCreateSignalGroup.Size = new System.Drawing.Size(105, 17);
+      this.checkBoxCreateSignalGroup.TabIndex = 70;
+      this.checkBoxCreateSignalGroup.Text = "\"Digital Satellite\"";
+      this.checkBoxCreateSignalGroup.UseVisualStyleBackColor = true;
+      // 
       // mpLNB1
       // 
       this.mpLNB1.AutoSize = true;
@@ -307,7 +330,7 @@ namespace SetupTv.Sections
       // 
       // buttonUpdate
       // 
-      this.buttonUpdate.Location = new System.Drawing.Point(322, 173);
+      this.buttonUpdate.Location = new System.Drawing.Point(322, 179);
       this.buttonUpdate.Name = "buttonUpdate";
       this.buttonUpdate.Size = new System.Drawing.Size(112, 23);
       this.buttonUpdate.TabIndex = 16;
@@ -571,11 +594,11 @@ namespace SetupTv.Sections
       // checkBoxCreateGroupsSat
       // 
       this.checkBoxCreateGroupsSat.AutoSize = true;
-      this.checkBoxCreateGroupsSat.Location = new System.Drawing.Point(10, 130);
+      this.checkBoxCreateGroupsSat.Location = new System.Drawing.Point(118, 134);
       this.checkBoxCreateGroupsSat.Name = "checkBoxCreateGroupsSat";
-      this.checkBoxCreateGroupsSat.Size = new System.Drawing.Size(172, 17);
+      this.checkBoxCreateGroupsSat.Size = new System.Drawing.Size(88, 17);
       this.checkBoxCreateGroupsSat.TabIndex = 69;
-      this.checkBoxCreateGroupsSat.Text = "Create groups for each satellite";
+      this.checkBoxCreateGroupsSat.Text = "each satellite";
       this.checkBoxCreateGroupsSat.UseVisualStyleBackColor = true;
       // 
       // mpGrpAdvancedTuning
@@ -1486,5 +1509,7 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel6;
     private System.Windows.Forms.Button button1;
     private MediaPortal.UserInterface.Controls.MPCheckBox mpLNB1;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel9;
+    private System.Windows.Forms.CheckBox checkBoxCreateSignalGroup;
   }
 }

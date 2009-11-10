@@ -128,10 +128,9 @@ namespace SetupTv.Sections
 
     private void RefreshTabs()
     {
-      while (tabControl1.TabPages.Count > 1)
-      {
-        tabControl1.TabPages.RemoveAt(1);
-      }
+      // bugfix for tab removal, RemoveAt fails sometimes
+      tabControl1.TabPages.Clear();
+      tabControl1.TabPages.Add(tabPage1);
 
       IList<ChannelGroup> groups = ChannelGroup.ListAll();
 
@@ -1136,11 +1135,11 @@ namespace SetupTv.Sections
       }
 
       bool isGlobalChannelsGroup = (
-          group.GroupName == TvConstants.TvGroupNames.AllChannels ||
+          group.GroupName == TvConstants.TvGroupNames.AllChannels /*||
           group.GroupName == TvConstants.TvGroupNames.Analog ||
           group.GroupName == TvConstants.TvGroupNames.DVBC ||
           group.GroupName == TvConstants.TvGroupNames.DVBS ||
-          group.GroupName == TvConstants.TvGroupNames.DVBT
+          group.GroupName == TvConstants.TvGroupNames.DVBT*/
           );
 
       renameGroupToolStripMenuItem.Tag = tabControl1.TabPages[targetIndex];

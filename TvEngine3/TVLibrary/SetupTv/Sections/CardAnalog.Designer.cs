@@ -132,6 +132,7 @@ namespace SetupTv.Sections
       this.lowPlayback = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.portablePlayback = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.defaultPlayback = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.checkBoxCreateSignalGroup = new System.Windows.Forms.CheckBox();
       this.mpTabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.mpGrpScanProgress.SuspendLayout();
@@ -274,7 +275,7 @@ namespace SetupTv.Sections
       // checkBoxNoMerge
       // 
       this.checkBoxNoMerge.AutoSize = true;
-      this.checkBoxNoMerge.Location = new System.Drawing.Point(20, 106);
+      this.checkBoxNoMerge.Location = new System.Drawing.Point(17, 123);
       this.checkBoxNoMerge.Name = "checkBoxNoMerge";
       this.checkBoxNoMerge.Size = new System.Drawing.Size(208, 17);
       this.checkBoxNoMerge.TabIndex = 15;
@@ -301,6 +302,7 @@ namespace SetupTv.Sections
       // tabPage1
       // 
       this.tabPage1.BackColor = System.Drawing.SystemColors.Control;
+      this.tabPage1.Controls.Add(this.checkBoxCreateSignalGroup);
       this.tabPage1.Controls.Add(this.mpGrpScanProgress);
       this.tabPage1.Controls.Add(this.mpLabel1);
       this.tabPage1.Controls.Add(this.checkBoxNoMerge);
@@ -1305,6 +1307,16 @@ namespace SetupTv.Sections
       this.defaultPlayback.TabStop = true;
       this.defaultPlayback.UseVisualStyleBackColor = true;
       // 
+      // checkBoxCreateSignalGroup
+      // 
+      this.checkBoxCreateSignalGroup.AutoSize = true;
+      this.checkBoxCreateSignalGroup.Location = new System.Drawing.Point(17, 106);
+      this.checkBoxCreateSignalGroup.Name = "checkBoxCreateSignalGroup";
+      this.checkBoxCreateSignalGroup.Size = new System.Drawing.Size(133, 17);
+      this.checkBoxCreateSignalGroup.TabIndex = 35;
+      this.checkBoxCreateSignalGroup.Text = "Create \"Analog\" group";
+      this.checkBoxCreateSignalGroup.UseVisualStyleBackColor = true;
+      // 
       // CardAnalog
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1449,5 +1461,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Button defaultValuesButton;
     private System.Windows.Forms.Label label31;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGrpScanProgress;
+    private System.Windows.Forms.CheckBox checkBoxCreateSignalGroup;
   }
 }

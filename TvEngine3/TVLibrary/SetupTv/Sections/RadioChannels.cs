@@ -123,10 +123,9 @@ namespace SetupTv.Sections
 
     private void RefreshTabs()
     {
-      while (tabControl1.TabPages.Count > 1)
-      {
-        tabControl1.TabPages.RemoveAt(1);
-      }
+      // bugfix for tab removal, RemoveAt fails sometimes
+      tabControl1.TabPages.Clear();
+      tabControl1.TabPages.Add(tabPage1);
 
       IList<RadioChannelGroup> groups = RadioChannelGroup.ListAll();
 
@@ -786,6 +785,7 @@ namespace SetupTv.Sections
         Channel channel = new Channel(item.Description, true, false, 0, Schedule.MinSchedule, false, Schedule.MinSchedule, 10000, true, "", true, item.Description);
         channel.Persist();
         layer.AddWebStreamTuningDetails(channel, item.FileName, 0);
+        layer.AddChannelToRadioGroup(channel, TvConstants.RadioGroupNames.AllChannels);
         iInserted++;
       }
       MessageBox.Show("Imported " + iInserted + " new channels from playlist");
@@ -1116,11 +1116,11 @@ namespace SetupTv.Sections
       }
 
       bool isGlobalChannelsGroup = (
-          group.GroupName == TvConstants.RadioGroupNames.AllChannels ||
+          group.GroupName == TvConstants.RadioGroupNames.AllChannels /*||
           group.GroupName == TvConstants.RadioGroupNames.Analog ||
           group.GroupName == TvConstants.RadioGroupNames.DVBC ||
           group.GroupName == TvConstants.RadioGroupNames.DVBS ||
-          group.GroupName == TvConstants.RadioGroupNames.DVBT
+          group.GroupName == TvConstants.RadioGroupNames.DVBT*/
           );
 
       renameGroupToolStripMenuItem.Tag = tabControl1.TabPages[targetIndex];

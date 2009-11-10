@@ -611,10 +611,8 @@ namespace SetupTv.Sections
       chkOverrideLNB_CheckedChanged(null, null);
 
       checkBoxCreateGroups.Checked = (layer.GetSetting("dvbs" + _cardNumber + "creategroups", "false").Value == "true");
-      if (!checkBoxCreateGroups.Checked)
-      {
-        checkBoxCreateGroupsSat.Checked = (layer.GetSetting("dvbs" + _cardNumber + "creategroupssat", "false").Value == "true");
-      }
+      checkBoxCreateGroupsSat.Checked = (layer.GetSetting("dvbs" + _cardNumber + "creategroupssat", "false").Value == "true");
+      checkBoxCreateSignalGroup.Checked = (layer.GetSetting("dvbs" + _cardNumber + "createsignalgroup", "false").Value == "true");
 
       checkEnableDVBS2.Checked = (layer.GetSetting("dvbs" + _cardNumber + "enabledvbs2", "false").Value == "true");
       if (!checkEnableDVBS2.Checked)
@@ -652,6 +650,10 @@ namespace SetupTv.Sections
 
       setting = layer.GetSetting("dvbs" + _cardNumber + "creategroupssat", "false");
       setting.Value = checkBoxCreateGroupsSat.Checked ? "true" : "false";
+      setting.Persist();
+
+      setting = layer.GetSetting("dvbs" + _cardNumber + "createsignalgroup", "false");
+      setting.Value = checkBoxCreateSignalGroup.Checked ? "true" : "false";
       setting.Persist();
 
       setting = layer.GetSetting("dvbs" + _cardNumber + "SatteliteContext1", "0");
@@ -1070,7 +1072,10 @@ namespace SetupTv.Sections
           if (dbChannel.IsTv)
           {
             layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
-            layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.DVBS);
+            if (checkBoxCreateSignalGroup.Checked)
+            {
+              layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.DVBS);
+            }
             if (checkBoxCreateGroupsSat.Checked)
             {
               layer.AddChannelToGroup(dbChannel, context.Satelite.SatelliteName);
@@ -1083,7 +1088,10 @@ namespace SetupTv.Sections
           if (dbChannel.IsRadio)
           {
             layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.AllChannels);
-            layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.DVBS);
+            if (checkBoxCreateSignalGroup.Checked)
+            {
+              layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.DVBS);
+            }
             if (checkBoxCreateGroupsSat.Checked)
             {
               layer.AddChannelToRadioGroup(dbChannel, context.Satelite.SatelliteName);

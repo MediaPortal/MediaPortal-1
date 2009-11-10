@@ -249,6 +249,7 @@ namespace SetupTv.Sections
       textBoxBandwidth.Text = layer.GetSetting("dvbt" + _cardNumber + "Bandwidth", "8").Value;
 
       checkBoxCreateGroups.Checked = (layer.GetSetting("dvbt" + _cardNumber + "creategroups", "false").Value == "true");
+      checkBoxCreateSignalGroup.Checked = (layer.GetSetting("dvbt" + _cardNumber + "createsignalgroup", "false").Value == "true");
     }
 
     /// <summary>
@@ -275,6 +276,10 @@ namespace SetupTv.Sections
 
       setting = layer.GetSetting("dvbt" + _cardNumber + "creategroups", "false");
       setting.Value = checkBoxCreateGroups.Checked ? "true" : "false";
+      setting.Persist();
+
+      setting = layer.GetSetting("dvbt" + _cardNumber + "createsignalgroup", "false");
+      setting.Value = checkBoxCreateSignalGroup.Checked ? "true" : "false";
       setting.Persist();
     }
 
@@ -532,7 +537,10 @@ namespace SetupTv.Sections
             if (dbChannel.IsTv)
             {
               layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
-              layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.DVBT);
+              if (checkBoxCreateSignalGroup.Checked)
+              {
+                layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.DVBT);
+              }
               if (checkBoxCreateGroups.Checked)
               {
                 layer.AddChannelToGroup(dbChannel, channel.Provider);
@@ -541,7 +549,10 @@ namespace SetupTv.Sections
             if (dbChannel.IsRadio)
             {
               layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.AllChannels);
-              layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.DVBT);
+              if (checkBoxCreateSignalGroup.Checked)
+              {
+                layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.DVBT);
+              }
               if (checkBoxCreateGroups.Checked)
               {
                 layer.AddChannelToRadioGroup(dbChannel, channel.Provider);

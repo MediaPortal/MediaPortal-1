@@ -92,6 +92,8 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       mpComboBoxCountry.SelectedIndex = Int32.Parse(layer.GetSetting("analog" + _cardNumber + "Country", "0").Value);
       mpComboBoxSource.SelectedIndex = Int32.Parse(layer.GetSetting("analog" + _cardNumber + "Source", "0").Value);
+      checkBoxCreateSignalGroup.Checked = (layer.GetSetting("analog" + _cardNumber + "createsignalgroup", "false").Value == "true");
+
       _cardName = RemoteControl.Instance.CardName(_cardNumber);
       _devicePath = RemoteControl.Instance.CardDevice(_cardNumber);
       if (!String.IsNullOrEmpty(_cardName) && !String.IsNullOrEmpty(_devicePath))
@@ -623,6 +625,11 @@ namespace SetupTv.Sections
       setting = layer.GetSetting("analog" + _cardNumber + "Source", "0");
       setting.Value = mpComboBoxSource.SelectedIndex.ToString();
       setting.Persist();
+
+      setting = layer.GetSetting("analog" + _cardNumber + "createsignalgroup", "false");
+      setting.Value = checkBoxCreateSignalGroup.Checked ? "true" : "false";
+      setting.Persist();
+
       UpdateConfiguration();
       Configuration.writeConfiguration(_configuration);
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
@@ -934,11 +941,19 @@ namespace SetupTv.Sections
 
           if (dbChannel.IsTv)
           {
-            layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.Analog);
+            layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
+            if (checkBoxCreateSignalGroup.Checked)
+            {
+              layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.Analog);
+            }
           }
           if (dbChannel.IsRadio)
           {
-            layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.Analog);
+            layer.AddChannelToGroup(dbChannel, TvConstants.RadioGroupNames.AllChannels);
+            if (checkBoxCreateSignalGroup.Checked)
+            {
+              layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.Analog);
+            }
           }
 
           if (exists)

@@ -26,6 +26,7 @@ using TvLibrary.Implementations;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using TvLibrary.Channels;
+using TvLibrary.Interfaces;
 
 namespace SetupTv.Sections
 {
@@ -79,6 +80,8 @@ namespace SetupTv.Sections
       }
       if (_newChannel)
       {
+        TvBusinessLayer layer = new TvBusinessLayer();
+
         if (textBoxName.Text.Length == 0)
         {
           MessageBox.Show("Please enter a name for this channel");
@@ -91,8 +94,16 @@ namespace SetupTv.Sections
         _channel.IsRadio = !_isTv;
         _channel.Persist();
 
+        if (_isTv)
+        {
+          layer.AddChannelToGroup(_channel, TvConstants.TvGroupNames.AllChannels);
+        }
+        else
+        {
+          layer.AddChannelToRadioGroup(_channel, TvConstants.RadioGroupNames.AllChannels);
+        }
+
         //Analog
-        TvBusinessLayer layer = new TvBusinessLayer();
         if (textBoxChannel.Text.Length != 0)
         {
           if (comboBoxCountry.SelectedIndex >= 0 && comboBoxVideoSource.SelectedIndex >= 0)
