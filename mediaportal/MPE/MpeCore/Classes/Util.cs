@@ -62,7 +62,7 @@ namespace MpeCore.Classes
             }
             catch (Exception unknownException)
             {
-                MessageBox.Show("Exception in plugin loading :{0}", unknownException.Message);
+                MessageBox.Show(string.Format("Exception in plugin loading :{0}", unknownException.Message));
             }
         }
 

@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 using MpeCore;
 using MpeCore.Classes;
 using MpeInstaller.Dialogs;
+using MpeInstaller.Classes;
 
 namespace MpeInstaller
 {
@@ -64,7 +66,18 @@ namespace MpeInstaller
             {
                 if (Path.GetExtension(conf_str).ToUpper() == ".DLL")
                 {
-                    Util.LoadPlugins(conf_str);
+                    string assemblyFileName = conf_str;
+                    AppDomainSetup setup = new AppDomainSetup();
+                    setup.ApplicationBase = AppDomain.CurrentDomain.BaseDirectory;
+                    setup.PrivateBinPath = Path.GetDirectoryName(assemblyFileName); 
+                    setup.ApplicationName = Path.GetFileName(Assembly.GetExecutingAssembly().Location);
+                    setup.ShadowCopyFiles = "true";
+                    setup.ShadowCopyDirectories = Path.GetDirectoryName(assemblyFileName);
+                    AppDomain appDomain = AppDomain.CreateDomain("pluginDomain", null, setup);
+
+                    PluginLoader remoteExecutor = (PluginLoader)appDomain.CreateInstanceFromAndUnwrap(Assembly.GetExecutingAssembly().Location, typeof(PluginLoader).ToString());
+                    remoteExecutor.Load(conf_str);
+                    AppDomain.Unload(appDomain);
                 }
                 else
                 {

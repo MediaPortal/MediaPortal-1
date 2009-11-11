@@ -127,7 +127,10 @@ namespace MpeCore.Classes.SectionPanel
                 }
                 lbl_curr_file.Text = "Done";
                 if (Package.Silent)
+                {
+                    Resp = SectionResponseEnum.Ok;
                     Close();
+                }
                 base.button_next.Enabled = true;
             }
         }

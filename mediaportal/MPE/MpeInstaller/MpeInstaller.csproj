@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\PluginLoader.cs" />
     <Compile Include="Controls\ExtensionControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
