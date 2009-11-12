@@ -117,7 +117,7 @@ namespace SetupTv.Sections
     public override void OnSectionActivated()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
-      textBoxFolder.Text = layer.GetSetting("xmlTv", System.IO.Directory.GetCurrentDirectory()).Value;
+      textBoxFolder.Text = layer.GetSetting("xmlTv", XmlTvImporter.DefaultOutputFolder).Value;
       checkBox1.Checked = layer.GetSetting("xmlTvUseTimeZone", "false").Value == "true";
       cbImportXML.Checked = layer.GetSetting("xmlTvImportXML", "true").Value == "true";
       cbImportLST.Checked = layer.GetSetting("xmlTvImportLST", "false").Value == "true";
@@ -444,7 +444,7 @@ namespace SetupTv.Sections
     {
       List<Channel> listChannels = new List<Channel>();
       TvBusinessLayer layer = new TvBusinessLayer();
-      string folder = layer.GetSetting("xmlTv", System.IO.Directory.GetCurrentDirectory()).Value;
+      string folder = layer.GetSetting("xmlTv", XmlTvImporter.DefaultOutputFolder).Value;
       string selFolder = textBoxFolder.Text;
 
       // use the folder set in the gui if it doesn't match the one set in the database
@@ -749,7 +749,7 @@ namespace SetupTv.Sections
     private void buttonExport_Click(object sender, EventArgs e)
     {
       TvBusinessLayer layer = new TvBusinessLayer();
-      string folder = layer.GetSetting("xmlTv", System.IO.Directory.GetCurrentDirectory()).Value;
+      string folder = layer.GetSetting("xmlTv", XmlTvImporter.DefaultOutputFolder).Value;
       string selFolder = textBoxFolder.Text;
 
       // use the folder set in the gui if it doesn't match the one set in the database

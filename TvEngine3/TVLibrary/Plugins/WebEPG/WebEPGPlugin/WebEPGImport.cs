@@ -246,7 +246,8 @@ namespace TvEngine
             }
             if (xmltvDirectory == string.Empty)
             {
-              xmltvDirectory = layer.GetSetting("xmlTv", System.IO.Directory.GetCurrentDirectory()).Value;
+              // Do not use XmlTvImporter.DefaultOutputFolder to avoid reference to XmlTvImport
+              xmltvDirectory = layer.GetSetting("xmlTv", Log.GetPathName() + @"\xmltv").Value;
             }
             Log.Info("Writing to tvguide.xml in {0}", xmltvDirectory);
             // Open XMLTV output file

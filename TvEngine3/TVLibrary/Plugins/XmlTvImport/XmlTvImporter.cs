@@ -110,6 +110,15 @@ namespace TvEngine
         return true;
       }
     }
+
+    public static readonly string DefaultOutputFolder
+    {
+      get
+      {
+        return Log.GetPathName() + @"\xmltv";
+      }
+    }
+
     #endregion    
 
     #region public methods
@@ -525,7 +534,7 @@ namespace TvEngine
       DateTime now = DateTime.Now;
       if (now.Hour == remoteScheduleTime.Hour && now.Minute == remoteScheduleTime.Minute)
       {
-        string folder = layer.GetSetting("xmlTv", System.IO.Directory.GetCurrentDirectory()).Value;
+        string folder = layer.GetSetting("xmlTv", DefaultOutputFolder).Value;
         string URL = layer.GetSetting("xmlTvRemoteURL", "").Value;
         RetrieveRemoteFile(folder, URL);
       }
@@ -542,7 +551,7 @@ namespace TvEngine
       FileStream streamIn = null;
       StreamReader fileIn = null;
       TvBusinessLayer layer = new TvBusinessLayer();
-      string folder = layer.GetSetting("xmlTv", System.IO.Directory.GetCurrentDirectory()).Value;
+      string folder = layer.GetSetting("xmlTv", DefaultOutputFolder).Value;
       DateTime lastTime;
 
       try
@@ -628,7 +637,7 @@ namespace TvEngine
         return;
 
       TvBusinessLayer layer = new TvBusinessLayer();
-      string folder = layer.GetSetting("xmlTv", System.IO.Directory.GetCurrentDirectory()).Value;
+      string folder = layer.GetSetting("xmlTv", DefaultOutputFolder).Value;
 
       Thread.Sleep(500); // give time to the external prog to close file handle
 
@@ -745,7 +754,7 @@ namespace TvEngine
 
         Setting setting;
         TvBusinessLayer layer = new TvBusinessLayer();
-        string folder = layer.GetSetting("xmlTv", System.IO.Directory.GetCurrentDirectory()).Value;
+        string folder = layer.GetSetting("xmlTv", DefaultOutputFolder).Value;
 
         int numChannels = 0, numPrograms = 0;
         string errors = "";

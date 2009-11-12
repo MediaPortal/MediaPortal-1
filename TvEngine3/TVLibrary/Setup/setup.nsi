@@ -416,6 +416,9 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ; WebEPG Grabbers Directory
   SetOutPath "${COMMON_APPDATA}\WebEPG"
   File /r /x .svn "${TVSERVER.BASE}\WebEPG\*"
+  ; XMLTV Data Directory
+  SetOutPath "${COMMON_APPDATA}\xmltv"
+  File /r /x .svn "${TVSERVER.BASE}\xmltv\*"
 
   ; The Plugin Directory
   SetOutPath "$INSTDIR\Plugins"
@@ -563,6 +566,8 @@ ${MementoSectionEnd}
   ; Remove WebEPG subdirs (grabbers & channels)
   RMDir /r "${COMMON_APPDATA}\WebEPG\channels"
   RMDir /r "${COMMON_APPDATA}\WebEPG\grabbers"
+  ; Remove XMLTV data dir
+  Delete "${COMMON_APPDATA}\xmltv\xmltv.dtd"
 
   ; Remove Plugins
   Delete "$INSTDIR\Plugins\ComSkipLauncher.dll"
