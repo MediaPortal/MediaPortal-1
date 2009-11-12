@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using csscript;
+using MediaPortal.Profile;
 using MpeCore.Classes;
 using MpeInstaller.Classes.CSScriptLibrary;
 using ComInterfaceType=System.Runtime.InteropServices.ComInterfaceType;
@@ -15,7 +16,7 @@ using System.Runtime.InteropServices;
 
 namespace MpeInstaller.Classes
 {
-    public class PluginLoader : MarshalByRefObject
+    public class PluginLoader : MarshalByRefObject, IDisposable
     {
         public PluginLoader()
         {
@@ -42,6 +43,15 @@ namespace MpeInstaller.Classes
             }
 
             return retval;
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        /// <filterpriority>2</filterpriority>
+        public void Dispose()
+        {
+            Settings.SaveCache();
         }
     }
 

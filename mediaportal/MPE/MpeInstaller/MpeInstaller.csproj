@@ -124,6 +124,14 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Core\Core.csproj">
+      <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Utils\Utils.csproj">
+      <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MpeCore\MpeCore.csproj">
       <Project>{4458F642-6022-4A3F-996F-E8AA510FB7E8}</Project>
       <Name>MpeCore</Name>

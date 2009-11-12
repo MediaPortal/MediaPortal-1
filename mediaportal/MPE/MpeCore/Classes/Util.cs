@@ -50,6 +50,7 @@ namespace MpeCore.Classes
                                     {
                                         pluginForm.ShowPlugin();
                                     }
+                                    
                                 }
                             }
                             catch (Exception setupFormException)

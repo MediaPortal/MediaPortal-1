@@ -77,6 +77,8 @@ namespace MpeInstaller
 
                     PluginLoader remoteExecutor = (PluginLoader)appDomain.CreateInstanceFromAndUnwrap(Assembly.GetExecutingAssembly().Location, typeof(PluginLoader).ToString());
                     remoteExecutor.Load(conf_str);
+                    remoteExecutor.Dispose();
+                    
                     AppDomain.Unload(appDomain);
                 }
                 else
