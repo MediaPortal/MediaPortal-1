@@ -257,14 +257,16 @@ namespace MediaPortal.WebEPG
         // Remove programs from DB ending after the first imported program
         SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Program));
         sb.AddConstraint(Operator.In, "idChannel", _currentChannels, "IdChannel");
-        sb.AddConstraint(Operator.GreaterThan, "endTime", _channelPrograms[0].StartTime);
-        sb.AddConstraint(Operator.LessThan, "startTime", _channelPrograms[_channelPrograms.Count-1].EndTime);
+        sb.AddConstraint(string.Format("((endTime > {0}rangeStart{1} AND startTime < {0}rangeEnd{1}) OR (startTime = endTime AND startTime BETWEEN {0}rangeStart{1} AND {0}rangeEnd{1}))", sb.ParameterPrefix, sb.ParameterSuffix));
+        sb.AddParameter("rangeStart", typeof(DateTime));
+        sb.AddParameter("rangeEnd", typeof(DateTime));
         SqlStatement stmt = sb.GetStatement(true);
         List<DateTimeRange> ranges = GetGrabbedDateTimeRanges();
         foreach(var range in ranges)
         {
-          stmt.SetParameter("startTime", range.Start);
-          stmt.SetParameter("endTime", range.End);
+          Log.Info("Removing programs between {0} and {1}", range.Start, range.End);
+          stmt.SetParameter("rangeStart", range.Start);
+          stmt.SetParameter("rangeEnd", range.End);
           stmt.Execute();  
         }
       }
