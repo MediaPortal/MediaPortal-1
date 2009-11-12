@@ -1,46 +1,79 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="el" availableDays="7" timezone="GTB Standard Time" version="2.1" />
+  <Info language="el" availableDays="4" timezone="GTB Standard Time" version="2.1" />
   <Channels>
-    <Channel id="mega-tv-gr" siteId="262" />
-    <Channel id="antenna.gr" siteId="263" />
-    <Channel id="et1@ert.gr" siteId="259" />
-    <Channel id="net@ert.gr" siteId="261" />
-    <Channel id="alphatv.gr" siteId="265" />
-    <Channel id="et3@ert.gr" siteId="260" />
-    <Channel id="star.gr" siteId="264" />
-    <Channel id="alter.gr" siteId="266" />
-    <Channel id="mad.tv" siteId="277" />
-    <Channel id="skytv.gr" siteId="278" />
-    <Channel id="cine+@ert.gr" siteId="283" />
-    <Channel id="sport+@ert.gr" siteId="282" />
-    <Channel id="prisma+@ert.gr" siteId="281" />
+    <Channel id="et1@ert.gr" siteId="3" />
+    <Channel id="et3@ert.gr" siteId="4" />
+    <Channel id="net@ert.gr" siteId="5" />
+    <Channel id="mega-tv-gr" siteId="6" />
+    <Channel id="antenna.gr" siteId="7" />
+    <Channel id="star.gr" siteId="8" />
+    <Channel id="alphatv.gr" siteId="9" />
+    <Channel id="alter.gr" siteId="10" />
+    <Channel id="mad.tv" siteId="19" />
+    <Channel id="skytv.gr" siteId="25" />
+    <Channel id="cine+@ert.gr" siteId="29" />
+    <Channel id="sport+@ert.gr" siteId="28" />
+    <Channel id="prisma+@ert.gr" siteId="27" />
+
+    <Channel id="foxlife@on.gr" siteId="44" />>
+
+    <Channel id="vouli.gr" siteId="26" />>
+    <Channel id="extra-tv.gr" siteId="15" />>
+    <Channel id="mtv.gr" siteId="43" />>
+    <Channel id="travel@nova.gr" siteId="24" />>
+
+    <Channel id="national-geographic@nova.gr" siteId="23" />>
+    <Channel id="animal-planet@nova.gr" siteId="21" />>
+    <Channel id="cinema1@nova.gr" siteId="30" />>
+    <Channel id="cinema2@nova.gr" siteId="31" />>
+    <Channel id="cinema3@nova.gr" siteId="39" />>
+    <Channel id="sports1@nova.gr" siteId="33" />>
+
+    <Channel id="sports2@nova.gr" siteId="34" />>
+    <Channel id="sports3@nova.gr" siteId="35" />>
+    <Channel id="sports4@nova.gr" siteId="36" />>
+    <Channel id="sports5@nova.gr" siteId="37" />>
+    <Channel id="sports6@nova.gr" siteId="38" />>
+    <Channel id="sports7@nova.gr" siteId="32" />>
+    <Channel id="supersport@nova.gr" siteId="17" />>
+    <Channel id="supersport2@nova.gr" siteId="18" />>
+    <Channel id="filmnet@nova.gr" siteId="11" />>
+
+    <Channel id="filmnet2@nova.gr" siteId="12" />>
+    <Channel id="eurosport1@ert.gr" siteId="41" />>
+    <Channel id="eurosport2@nova.gr" siteId="42" />>
+    <Channel id="history-channel@nova.gr" siteId="40" />>
+    <Channel id="ktv@nova.gr" siteId="20" />>
+    <Channel id="tempo@nova.gr" siteId="13" />>
+    <Channel id="cartoon-network@nova.gr" siteId="14" />>
+    <Channel id="discovery-channel@nova.gr" siteId="22" />>
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.in.gr/TV/results.asp?dtmDate=[YYYY]-[MM]-[DD]&amp;lngChannelID=[ID]" post="" external="false" encoding="" />
+    <Site url="http://entertainment.in.gr/tv/search.asp?key=&amp;cat=-1&amp;chan=[ID]&amp;date=[DAY_OFFSET]" post="" external="false" encoding="" />
+    <Search startOffset="4" />
     <Html>
-      <Template name="default" start="&gt;Αποτελέσματα Αναζήτησης&lt;" end="&lt;!-- start bottom section --&gt;">
+      <Template name="default" start="&lt;table class=&quot;tv-p&quot;&gt;" end="&lt;/table&gt;">
         <SectionTemplate tags="T">
           <TemplateText>
-	&lt;tr&gt;
-	&lt;td&gt;&lt;#START&gt;&lt;/td&gt;
-	&lt;td&gt;&lt;a&gt;&lt;#TITLE&gt;&lt;/a&gt;&lt;/td&gt;
-	&lt;td&gt;&lt;#GENRE&gt;&lt;/td&gt;
-	&lt;/tr&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;#START&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;a&gt;&lt;#TITLE&gt;&lt;/a&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;#GENRE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
           </TemplateText>
         </SectionTemplate>
       </Template>
-      <Template name="Details" start="&lt;table cellspacing=&quote;0&quote; cellpadding=&quote;7&quote; class=&quote;channel&quote;&gt;" end="&lt;td valign=&quote;top&quote; class=&quote;rightcontent&quote;&gt;">
-        <SectionTemplate tags="T">
+      <Template name="Details" start="&lt;div vlass=&quote;text-content&quote;&gt;" end="&lt;hr&gt;">
+        <SectionTemplate tags="DP">
           <TemplateText>
-&lt;tr&gt;&lt;td&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;&lt;/tr&gt;
+            &lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;p&gt;&lt;#DESCRIPTION&gt;&lt;/p&gt;
           </TemplateText>
         </SectionTemplate>
       </Template>
       <Sublinks>
-        <Sublink search="strCRC" template="Details" />
+        <Sublink search="ent_tv_show" template="Details" />
       </Sublinks>
     </Html>
   </Listing>
