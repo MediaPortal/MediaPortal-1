@@ -99,29 +99,76 @@ HRESULT CVideoPin::GetMediaType(CMediaType *pmt)
   //LogDebug("vid:GetMediaType()");
   CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   demux.GetVideoStreamType(*pmt);
+  
+  bool CoreAVC = false; 
+  bool DivXH264 = false;
+  bool CyberlinkH264 = false; 
 
-  bool CoreAVC = wcscmp(m_filterInfo.achName,L"CoreAVC Video Decoder")==0;
-  bool DivXH264 = wcscmp(m_filterInfo.achName,L"DivX H.264 Decoder")==0;
-
-  if((CoreAVC || DivXH264) && pmt->subtype == MEDIASUBTYPE_H264 )
+  // We need to find the filters manually as CheckConnect is not called before the 
+  // first GetMediaType call is issues. We don't know where the filter is going to be
+  // connected :(
+  IEnumFilters * piEnumFilters = NULL;
+  if (m_pTsReaderFilter->GetFilterGraph() && SUCCEEDED(m_pTsReaderFilter->GetFilterGraph()->EnumFilters(&piEnumFilters)))
   {
+    IBaseFilter * pFilter;
+    while (piEnumFilters->Next(1, &pFilter, 0) == NOERROR )
+    {
+      FILTER_INFO filterInfo;
+      if (pFilter->QueryFilterInfo(&filterInfo) == S_OK)
+      {
+        if (!wcsicmp(L"DivX H.264 Decoder", filterInfo.achName))
+        {
+          DivXH264 = true;
+        }
+        if (!wcsicmp(L"CoreAVC Video Decoder", filterInfo.achName))
+        {
+          CoreAVC = true;
+        }
+        if (!wcsncmp(m_filterInfo.achName,L"CyberLink H.264/AVC", 19))
+        {
+          CyberlinkH264 = true;
+        }
+        filterInfo.pGraph->Release();
+      }
+      pFilter->Release();
+      pFilter = NULL;
+    }
+    piEnumFilters->Release();
+  }  
+
+  // Hacking the media type to work with selected decoders
+  if((CoreAVC || DivXH264 || CyberlinkH264) && pmt->subtype == MEDIASUBTYPE_H264 )
+  {
+    ULONG len = pmt->FormatLength();
+    MPEG2VIDEOINFO* vi = (MPEG2VIDEOINFO*)pmt->Format();
+    
     if(CoreAVC) 
     {
-      LogDebug("vid:GetMediaType() patching mediatype for CoreAVC Video Decoder");
+      LogDebug("vid:GetMediaType() patching mediatype for CoreAVC Video Decoder");         
+      pmt->subtype = H264_SubType;
+      vi->hdr.bmiHeader.biCompression = '1cva';
+      pmt->SetFormat((BYTE*)vi,len);
+      return S_OK;
     }
+
+    /*if(CyberlinkH264)
+    {
+      LogDebug("vid:GetMediaType() patching mediatype for CyberLink  H.264/AVC Video Decoder - version 2");
+      //pmt->subtype=H264_SubType;
+      pmt->subtype = H264_SubType;
+      vi->hdr.bmiHeader.biCompression = '1cva';
+      pmt->SetFormat((BYTE*)vi,len);
+      return S_OK;
+    }*/
 
     if(DivXH264)
     {
       LogDebug("vid:GetMediaType() patching mediatype for DivX H.264 Decoder");
-      pmt->SetFormatType(&FORMAT_VideoInfo);
+      pmt->subtype = MPG4_SubType;
+      vi->hdr.bmiHeader.biCompression = '1cva';
+      vi->dwFlags = 0;
+      pmt->SetFormat((BYTE*)vi,len);
     }
-
-    ULONG len = pmt->FormatLength();
-    pmt->subtype = H264_SubType;
-
-    MPEG2VIDEOINFO* vi = (MPEG2VIDEOINFO*)pmt->Format();
-    vi->hdr.bmiHeader.biCompression = '1cva';
-    pmt->SetFormat((BYTE*)vi,len);
   }
   return S_OK;
 }
