@@ -202,7 +202,7 @@
       <posX>190</posX>
       <posY>438</posY>
       <width>350</width>
-      <label>#TV.Guide.Title</label>
+      <label>#TV.Guide.CompositeTitle</label>
       <font>font14</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>

@@ -173,7 +173,7 @@
       <posY>523</posY>
       <width>622</width>
       <font>font14</font>
-      <label>#TV.Guide.Title</label>
+      <label>#TV.Guide.CompositeTitle</label>
     </control>
     <control>
       <description>Current program time</description>

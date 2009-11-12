@@ -284,6 +284,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.propertyList.Add("#TV.View.remaining");
       this.propertyList.Add("#TV.View.genre");
       this.propertyList.Add("#TV.View.title");
+      this.propertyList.Add("#TV.View.compositetitle");
       this.propertyList.Add("#TV.View.description");
       this.propertyList.Add("#TV.View.Percentage");
       this.propertyList.Add("#TV.Next.start");
@@ -294,6 +295,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.propertyList.Add("#TV.Guide.Day");
       this.propertyList.Add("#TV.Guide.thumb");
       this.propertyList.Add("#TV.Guide.Title");
+      this.propertyList.Add("#TV.Guide.CompositeTitle");
       this.propertyList.Add("#TV.Guide.Time");
       this.propertyList.Add("#TV.Guide.Duration");
       this.propertyList.Add("#TV.Guide.TimeFromNow");
@@ -380,6 +382,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.propertyList.Add("#Play.Next.Thumb");
       this.propertyList.Add("#Play.Next.File");
       this.propertyList.Add("#Play.Next.Title");
+      this.propertyList.Add("#Play.Next.CompositeTitle");
       this.propertyList.Add("#Play.Next.Genre");
       this.propertyList.Add("#Play.Next.Comment");
       this.propertyList.Add("#Play.Next.Artist");

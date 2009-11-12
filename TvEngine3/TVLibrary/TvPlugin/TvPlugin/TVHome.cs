@@ -2633,7 +2633,8 @@ namespace TvPlugin
             GUIPropertyManager.SetProperty("#TV.View.remaining",
                                            Utils.SecondsToHMSString(current.EndTime - current.StartTime));
             GUIPropertyManager.SetProperty("#TV.View.genre", current.Genre);
-            GUIPropertyManager.SetProperty("#TV.View.title", TVUtil.GetDisplayTitle(current));
+            GUIPropertyManager.SetProperty("#TV.View.title", current.Title);
+            GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(current));
             GUIPropertyManager.SetProperty("#TV.View.description", current.Description);
             GUIPropertyManager.SetProperty("#TV.View.subtitle", current.EpisodeName);
             GUIPropertyManager.SetProperty("#TV.View.episode", current.EpisodeNumber);
@@ -2658,7 +2659,8 @@ namespace TvPlugin
                                            next.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
             GUIPropertyManager.SetProperty("#TV.Next.remaining", Utils.SecondsToHMSString(next.EndTime - next.StartTime));
             GUIPropertyManager.SetProperty("#TV.Next.genre", next.Genre);
-            GUIPropertyManager.SetProperty("#TV.Next.title", TVUtil.GetDisplayTitle(next));
+            GUIPropertyManager.SetProperty("#TV.Next.title", next.Title);
+            GUIPropertyManager.SetProperty("#TV.Next.compositetitle", TVUtil.GetDisplayTitle(next));
             GUIPropertyManager.SetProperty("#TV.Next.description", next.Description);
             GUIPropertyManager.SetProperty("#TV.Next.subtitle", next.EpisodeName);
             GUIPropertyManager.SetProperty("#TV.Next.episode", next.EpisodeNumber);

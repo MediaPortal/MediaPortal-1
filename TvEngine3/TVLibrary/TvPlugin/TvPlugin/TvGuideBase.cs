@@ -904,9 +904,9 @@ namespace TvPlugin
     public override void Process()
     {
       TVHome.UpdateProgressPercentageBar();
-      
+
       OnKeyTimeout();
-      
+
       //if we did a manual rec. on the tvguide directly, then we have to wait for it to start and the update the GUI.
       if (_recordingExpected != null)
       {
@@ -1387,6 +1387,7 @@ namespace TvPlugin
       if (_cursorY == 0 || _currentProgram == null)
       {
         GUIPropertyManager.SetProperty("#TV.Guide.Title", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.Guide.CompositeTitle", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Guide.Time", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Guide.Description", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Guide.Genre", String.Empty);
@@ -1414,6 +1415,7 @@ namespace TvPlugin
                                        _currentProgram.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
         GUIPropertyManager.SetProperty("#TV.Guide.Title", _currentProgram.Title);
+        GUIPropertyManager.SetProperty("#TV.Guide.CompositeTitle", TVUtil.GetDisplayTitle(_currentProgram));
         GUIPropertyManager.SetProperty("#TV.Guide.Time", strTime);
         GUIPropertyManager.SetProperty("#TV.Guide.Description", _currentProgram.Description);
         GUIPropertyManager.SetProperty("#TV.Guide.Genre", _currentProgram.Genre);
@@ -1421,29 +1423,7 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#TV.Guide.TimeFromNow", GetStartTimeFromNow(_currentProgram));
         GUIPropertyManager.SetProperty("#TV.Guide.Episode", _currentProgram.EpisodeNumber);
         GUIPropertyManager.SetProperty("#TV.Guide.SubTitle", _currentProgram.EpisodeName);
-        ///@
-        /*
-        if (_currentProgram.Episode == "-") GUIPropertyManager.SetProperty("#TV.Guide.EpisodeName", String.Empty);
-        else GUIPropertyManager.SetProperty("#TV.Guide.EpisodeName", _currentProgram.Episode);
-        if (_currentProgram.SeriesNum == "-") GUIPropertyManager.SetProperty("#TV.Guide.SeriesNumber", String.Empty);
-        else GUIPropertyManager.SetProperty("#TV.Guide.SeriesNumber", _currentProgram.SeriesNum);
-        if (_currentProgram.EpisodeNum == "-") GUIPropertyManager.SetProperty("#TV.Guide.EpisodeNumber", String.Empty);
-        else GUIPropertyManager.SetProperty("#TV.Guide.EpisodeNumber", _currentProgram.EpisodeNum);
-        if (_currentProgram.EpisodePart == "-") GUIPropertyManager.SetProperty("#TV.Guide.EpisodePart", String.Empty);
-        else GUIPropertyManager.SetProperty("#TV.Guide.EpisodePart", _currentProgram.EpisodePart);
-        if (_currentProgram.Date == "-") GUIPropertyManager.SetProperty("#TV.Guide.Date", String.Empty);
-        else GUIPropertyManager.SetProperty("#TV.Guide.Date", _currentProgram.Date);
-        if (_currentProgram.StarRating == "-") GUIPropertyManager.SetProperty("#TV.Guide.StarRating", String.Empty);
-        else GUIPropertyManager.SetProperty("#TV.Guide.StarRating", _currentProgram.StarRating);
-        if (_currentProgram.Classification == "-") GUIPropertyManager.SetProperty("#TV.Guide.Classification", String.Empty);
-        else GUIPropertyManager.SetProperty("#TV.Guide.Classification", _currentProgram.Classification);
-        GUIPropertyManager.SetProperty("#TV.Guide.EpisodeDetail", _currentProgram.EpisodeDetails);
-        if (!System.IO.File.Exists(strLogo))
-        {
-          strLogo = "defaultVideoBig.png";
-        }
-        GUIPropertyManager.SetProperty("#TV.Guide.thumb", strLogo);
-         */
+
         _currentStartTime = Utils.datetolong(_currentProgram.StartTime);
         _currentEndTime = Utils.datetolong(_currentProgram.EndTime);
         _currentTitle = _currentProgram.Title;
@@ -1594,7 +1574,7 @@ namespace TvPlugin
         channelLabel = new GUILabelControl(GetID, (int)Controls.SINGLE_CHANNEL_LABEL,
                                            channelImage.XPosition + 44,
                                            channelImage.YPosition + 10,
-                                           300, 40, "font16", channel.DisplayName, 4294967295, GUIControl.Alignment.Left,GUIControl.VAlignment.Top,
+                                           300, 40, "font16", channel.DisplayName, 4294967295, GUIControl.Alignment.Left, GUIControl.VAlignment.Top,
                                            true, 0, 0, 0xFF000000);
         channelLabel.AllocResources();
         GUIControl temp = channelLabel;
@@ -1784,24 +1764,16 @@ namespace TvPlugin
         img.FontName1 = "font13";
         img.TextColor1 = 0xffffffff;
 
-        string strTimeSingle = String.Empty;
-        string strTime = String.Empty;
+        img.Label1 = TVUtil.GetDisplayTitle(program);
 
-        img.Label1 = program.Title;
-        //if (program.StartTime != 0)
+        string strTimeSingle = String.Format("{0}",
+                                      program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+
+        if (program.StartTime.DayOfYear != _viewingTime.DayOfYear)
         {
-          strTimeSingle = String.Format("{0}",
-                                        program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
-          strTime = String.Format("{0}-{1}",
-                                  program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                  program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
-          if (program.StartTime.DayOfYear != _viewingTime.DayOfYear)
-          {
-            img.Label1 = String.Format("{0} {1}", Utils.GetShortDayString(program.StartTime), program.Title);
-          }
+          img.Label1 = String.Format("{0} {1}", Utils.GetShortDayString(program.StartTime), TVUtil.GetDisplayTitle(program));
         }
+
         GUILabelControl labelTemplate;
         if (program.IsRunningAt(dt))
         {
@@ -2496,7 +2468,7 @@ namespace TvPlugin
         }
         return;
       }
-      
+
       // not on tvguide button
       if (_cursorY > 0)
       {
@@ -3280,7 +3252,7 @@ namespace TvPlugin
                 if (g_Player.Playing)
                 {
                   if (isPlayingTV) GUIWindowManager.CloseCurrentWindow();
-                  g_Player.ShowFullScreenWindow();                  
+                  g_Player.ShowFullScreenWindow();
                 }
               }
             }

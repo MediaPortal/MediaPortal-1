@@ -156,7 +156,7 @@
       <posX>515</posX>
       <posY>518</posY>
       <width>533</width>
-      <label>#TV.View.title</label>
+      <label>#TV.View.compositetitle</label>
       <font>font13</font>
       <textcolor>White</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>

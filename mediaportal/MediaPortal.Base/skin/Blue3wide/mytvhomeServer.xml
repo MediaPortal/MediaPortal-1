@@ -169,7 +169,7 @@
       <posX>515</posX>
       <posY>531</posY>
       <width>622</width>
-      <label>#TV.View.title</label>
+      <label>#TV.View.compositetitle</label>
       <font>font13</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>

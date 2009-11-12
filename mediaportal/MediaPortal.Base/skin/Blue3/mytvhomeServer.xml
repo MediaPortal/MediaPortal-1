@@ -184,7 +184,7 @@
       <posX>290</posX>
       <posY>425</posY>
       <width>350</width>
-      <label>#TV.View.title</label>
+      <label>#TV.View.compositetitle</label>
       <font>font13</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>

@@ -110,6 +110,7 @@ namespace MediaPortal.GUI.Library
       _properties["#TV.View.remaining"] = string.Empty;
       _properties["#TV.View.genre"] = string.Empty;
       _properties["#TV.View.title"] = string.Empty;
+      _properties["#TV.View.compositetitle"] = string.Empty;
       _properties["#TV.View.description"] = string.Empty;
       _properties["#TV.View.Percentage"] = string.Empty;
 
@@ -117,11 +118,13 @@ namespace MediaPortal.GUI.Library
       _properties["#TV.Next.stop"] = string.Empty;
       _properties["#TV.Next.genre"] = string.Empty;
       _properties["#TV.Next.title"] = string.Empty;
+      _properties["#TV.Next.compositetitle"] = string.Empty;
       _properties["#TV.Next.description"] = string.Empty;
 
       _properties["#TV.Guide.Day"] = string.Empty;
       _properties["#TV.Guide.thumb"] = string.Empty;
       _properties["#TV.Guide.Title"] = string.Empty;
+      _properties["#TV.Guide.CompositeTitle"] = string.Empty;
       _properties["#TV.Guide.Time"] = string.Empty;
       _properties["#TV.Guide.Duration"] = string.Empty;
       _properties["#TV.Guide.TimeFromNow"] = string.Empty;
