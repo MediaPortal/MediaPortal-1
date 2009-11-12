@@ -18,7 +18,7 @@
           <height>460</height>
           <onleft>2</onleft>
           <onright>2</onright>
-          <scrollOffset>2</scrollOffset>                   
+          <scrollOffset>2</scrollOffset>
           <PinIconWidth>35</PinIconWidth>
           <PinIconHeight>25</PinIconHeight>
           <PinIconXOff>49</PinIconXOff>
@@ -27,10 +27,6 @@
           <itemHeight>32</itemHeight>
           <IconXOff>12</IconXOff>
           <IconYOff>4</IconYOff>
-          <textXOff>48</textXOff>
-          <textYOff>3</textYOff>
-          <textXOff2>0</textXOff2>
-          <textYOff2>5</textYOff2>
           <font2>font11</font2>
           <keepaspectratio>yes</keepaspectratio>
         </control>
@@ -44,11 +40,12 @@
           <width>775</width>
           <height>460</height>
           <font>font13</font>
-          <font2>font13</font2>
+          <font2>font10</font2>
           <selectedColor>80000000</selectedColor>
           <textcolor>ffffffff</textcolor>
           <selectedColor2>ffffffff</selectedColor2>
           <textcolor2>ffffffff</textcolor2>
+          <textXOff>46</textXOff>
           <textXOff2>746</textXOff2>
           <textXOff3>108</textXOff3>
           <textYOff2>35</textYOff2>
