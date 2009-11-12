@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using Ionic.Zip;
 using MpeCore;
 using MpeCore.Classes;
 using MpeInstaller.Dialogs;
@@ -14,6 +15,22 @@ namespace MpeInstaller
     public partial class MainForm : Form
     {
         public MainForm()
+        {
+            Init();
+        }
+
+        public MainForm(ProgramArguments args)
+        {
+            Init();
+            if(File.Exists(args.PackageFile))
+            {
+                InstallFile(args.PackageFile, args.Silent);
+                this.Close();
+                return;
+            }
+        }
+
+        private void Init()
         {
             InitializeComponent();
             extensionListControl.UnInstallExtension += extensionListControl_UnInstallExtension;
@@ -168,40 +185,70 @@ namespace MpeInstaller
         {
             OpenFileDialog dialog = new OpenFileDialog
                                         {
-                                            Filter = "Mpe package file(*.mpe2)|*.mpe2|All files|*.*"
+                                            Filter = "Mpe package file(*.mpe1)|*.mpe1|All files|*.*"
                                         };
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-
-                MpeCore.MpeInstaller.Init();
-                PackageClass pak = new PackageClass();
-                pak = pak.ZipProvider.Load(dialog.FileName);
-                if (pak == null)
-                {
-                    MessageBox.Show("Wrong file format !");
-                    return;
-                }
-                PackageClass installedPak = MpeCore.MpeInstaller.InstalledExtensions.Get(pak.GeneralInfo.Id);
-                if (pak.CheckDependency(false))
-                {
-                    if (installedPak != null)
-                    {
-                        if (MessageBox.Show("This extension already have a installed version. \n This will be uninstalled first. \n Do you want to continue ? ", "Install extension", MessageBoxButtons.YesNo,MessageBoxIcon.Exclamation) != DialogResult.Yes)
-                            return;
-                        UnInstall dlg = new UnInstall();
-                        dlg.Execute(installedPak, true);
-                        pak.CopyGroupCheck(installedPak);
-                    }
-                    this.Hide();
-                    pak.StartInstallWizard();
-                    RefreshLists();
-                    this.Show();
-                }
-                else
-                {
-                    MessageBox.Show("Installation aborted, some of the dependency not found !");
-                }
+                InstallFile(dialog.FileName, false);
             }
+        }
+
+        private bool IsOldFormat(string zipfile)
+        {
+            try
+            {
+                ZipFile _zipPackageFile = ZipFile.Read(zipfile);
+                if (_zipPackageFile.EntryFileNames.Contains("instaler.xmp"))
+                    return true;
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public void InstallFile(string file, bool silent)
+        {
+            if (IsOldFormat(file))
+            {
+                if (!silent)
+                    MessageBox.Show("This is a old format file. MpiInstaller will be used to install it! ");
+                Process.Start("MpInstaller.exe", file);
+                return;
+            }
+            MpeCore.MpeInstaller.Init();
+            PackageClass pak = new PackageClass();
+            pak = pak.ZipProvider.Load(file);
+            if (pak == null)
+            {
+                if (!silent)
+                    MessageBox.Show("Wrong file format !");
+                return;
+            }
+            PackageClass installedPak = MpeCore.MpeInstaller.InstalledExtensions.Get(pak.GeneralInfo.Id);
+            if (pak.CheckDependency(false))
+            {
+                if (installedPak != null)
+                {
+                    if (!silent)
+                        if (MessageBox.Show("This extension already have a installed version. \n This will be uninstalled first. \n Do you want to continue ? ", "Install extension", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) != DialogResult.Yes)
+                            return;
+                    UnInstall dlg = new UnInstall();
+                    dlg.Execute(installedPak, true);
+                    pak.CopyGroupCheck(installedPak);
+                }
+                this.Hide();
+                pak.Silent = silent;
+                pak.StartInstallWizard();
+                RefreshLists();
+                this.Show();
+            }
+            else
+            {
+                if (!silent)
+                    MessageBox.Show("Installation aborted, some of the dependency not found !");
+            }            
         }
 
         private void btn_online_update_Click(object sender, EventArgs e)

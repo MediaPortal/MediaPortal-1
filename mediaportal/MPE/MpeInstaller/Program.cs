@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using MpeCore;
 using MpeCore.Classes;
+using MpeInstaller.Classes;
 
 namespace MpeInstaller
 {
@@ -12,11 +13,18 @@ namespace MpeInstaller
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            if (args.Length > 0)
+            {
+                MainForm dlg = new MainForm(new ProgramArguments(args));
+                if (!dlg.IsDisposed)
+                    Application.Run(dlg);
+            }
+            else
+                Application.Run(new MainForm());
         }
     }
 }
