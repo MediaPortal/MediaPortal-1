@@ -47,6 +47,10 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CSScriptLibrary, Version=1.9.0.0, Culture=neutral, PublicKeyToken=70fcc3d18c749033">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\MediaPortal.Base\CSScriptLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
@@ -62,6 +66,12 @@
     <Compile Include="Dialogs\AddFolder2Group.Designer.cs">
       <DependentUpon>AddFolder2Group.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\EditScript.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\EditScript.Designer.cs">
+      <DependentUpon>EditScript.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\InstalledExtensionsSelector.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -73,6 +83,12 @@
     </Compile>
     <Compile Include="Dialogs\ParamEditBool.Designer.cs">
       <DependentUpon>ParamEditBool.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ParamEditScript.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ParamEditScript.Designer.cs">
+      <DependentUpon>ParamEditScript.cs</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\ParamEditTemplate.cs">
       <SubType>UserControl</SubType>
@@ -122,11 +138,17 @@
     <EmbeddedResource Include="Dialogs\AddFolder2Group.resx">
       <DependentUpon>AddFolder2Group.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\EditScript.resx">
+      <DependentUpon>EditScript.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\InstalledExtensionsSelector.resx">
       <DependentUpon>InstalledExtensionsSelector.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\ParamEditBool.resx">
       <DependentUpon>ParamEditBool.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ParamEditScript.resx">
+      <DependentUpon>ParamEditScript.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\ParamEditTemplate.resx">
       <DependentUpon>ParamEditTemplate.cs</DependentUpon>

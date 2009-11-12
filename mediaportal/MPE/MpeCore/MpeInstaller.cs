@@ -52,6 +52,7 @@ namespace MpeCore
             AddSection(new InstallSection());
             AddSection(new Finish());
             AddSection(new GroupCheck());
+            AddSection(new GroupCheckScript());
 
             AddActionProvider(new InstallFiles());
             AddActionProvider(new ShowMessageBox());

@@ -22,6 +22,7 @@ namespace MpeMaker.Dialogs
             Panels.Add(ValueTypeEnum.String, new ParamEditString());
             Panels.Add(ValueTypeEnum.Template, new ParamEditTemplate());
             Panels.Add(ValueTypeEnum.Bool, new ParamEditBool());
+            Panels.Add(ValueTypeEnum.Script, new ParamEditScript());
         }
 
 

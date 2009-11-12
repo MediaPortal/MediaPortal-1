@@ -46,6 +46,8 @@ namespace MpeMaker.Sections
             txt_online.Text = pak.GeneralInfo.OnlineLocation;
             txt_description.Text = pak.GeneralInfo.ExtensionDescription;
             txt_versiondesc.Text = pak.GeneralInfo.VersionDescription;
+            txt_tags.Text = pak.GeneralInfo.Tags;
+            date_release.Value = pak.GeneralInfo.ReleaseDate;
             Package = pak;
             RefreshIcon();
         }
@@ -75,6 +77,8 @@ namespace MpeMaker.Sections
                 Package.GeneralInfo.ExtensionDescription = txt_description.Text;
                 Package.GeneralInfo.VersionDescription = txt_versiondesc.Text;
                 Package.GeneralInfo.OnlineLocation = txt_online.Text;
+                Package.GeneralInfo.Tags = txt_tags.Text;
+                Package.GeneralInfo.ReleaseDate = date_release.Value;
             }
         }
 

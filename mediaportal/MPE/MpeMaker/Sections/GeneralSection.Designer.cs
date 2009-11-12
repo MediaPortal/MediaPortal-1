@@ -59,6 +59,10 @@
             this.btn_params = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.img_logo = new System.Windows.Forms.PictureBox();
+            this.date_release = new System.Windows.Forms.DateTimePicker();
+            this.label12 = new System.Windows.Forms.Label();
+            this.txt_tags = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.img_logo)).BeginInit();
             this.SuspendLayout();
             // 
@@ -248,11 +252,12 @@
             // 
             this.txt_description.AcceptsReturn = true;
             this.txt_description.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txt_description.Location = new System.Drawing.Point(379, 29);
+            this.txt_description.Location = new System.Drawing.Point(379, 26);
             this.txt_description.Multiline = true;
             this.txt_description.Name = "txt_description";
-            this.txt_description.Size = new System.Drawing.Size(318, 156);
-            this.txt_description.TabIndex = 12;
+            this.txt_description.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.txt_description.Size = new System.Drawing.Size(318, 211);
+            this.txt_description.TabIndex = 14;
             this.txt_description.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
             // label9
@@ -268,19 +273,21 @@
             // txt_versiondesc
             // 
             this.txt_versiondesc.AcceptsReturn = true;
-            this.txt_versiondesc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txt_versiondesc.Location = new System.Drawing.Point(379, 210);
+            this.txt_versiondesc.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txt_versiondesc.Location = new System.Drawing.Point(379, 268);
             this.txt_versiondesc.Multiline = true;
             this.txt_versiondesc.Name = "txt_versiondesc";
+            this.txt_versiondesc.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.txt_versiondesc.Size = new System.Drawing.Size(318, 137);
-            this.txt_versiondesc.TabIndex = 13;
+            this.txt_versiondesc.TabIndex = 15;
             this.txt_versiondesc.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
             // label10
             // 
-            this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(376, 194);
+            this.label10.Location = new System.Drawing.Point(379, 247);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(118, 13);
             this.label10.TabIndex = 22;
@@ -323,10 +330,11 @@
             // 
             // btn_params
             // 
-            this.btn_params.Location = new System.Drawing.Point(115, 243);
+            this.btn_params.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btn_params.Location = new System.Drawing.Point(115, 411);
             this.btn_params.Name = "btn_params";
             this.btn_params.Size = new System.Drawing.Size(135, 23);
-            this.btn_params.TabIndex = 14;
+            this.btn_params.TabIndex = 16;
             this.btn_params.Text = "Aditional params";
             this.btn_params.UseVisualStyleBackColor = true;
             this.btn_params.Click += new System.EventHandler(this.btn_params_Click);
@@ -337,19 +345,60 @@
             // 
             // img_logo
             // 
-            this.img_logo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.img_logo.Location = new System.Drawing.Point(309, 283);
+            this.img_logo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.img_logo.Location = new System.Drawing.Point(3, 370);
             this.img_logo.Name = "img_logo";
             this.img_logo.Size = new System.Drawing.Size(64, 64);
             this.img_logo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.img_logo.TabIndex = 26;
             this.img_logo.TabStop = false;
             // 
+            // date_release
+            // 
+            this.date_release.Location = new System.Drawing.Point(114, 243);
+            this.date_release.Name = "date_release";
+            this.date_release.Size = new System.Drawing.Size(259, 20);
+            this.date_release.TabIndex = 12;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(13, 247);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(70, 13);
+            this.label12.TabIndex = 28;
+            this.label12.Text = "Release date";
+            // 
+            // txt_tags
+            // 
+            this.txt_tags.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
+            this.txt_tags.CharacterCasing = System.Windows.Forms.CharacterCasing.Lower;
+            this.txt_tags.Location = new System.Drawing.Point(114, 269);
+            this.txt_tags.Multiline = true;
+            this.txt_tags.Name = "txt_tags";
+            this.txt_tags.Size = new System.Drawing.Size(259, 136);
+            this.txt_tags.TabIndex = 13;
+            this.toolTip1.SetToolTip(this.txt_tags, "Tags separated by \",\"");
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(13, 272);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(31, 13);
+            this.label13.TabIndex = 30;
+            this.label13.Text = "Tags";
+            // 
             // GeneralSection
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
+            this.Controls.Add(this.label13);
+            this.Controls.Add(this.txt_tags);
+            this.Controls.Add(this.label12);
+            this.Controls.Add(this.date_release);
             this.Controls.Add(this.img_logo);
             this.Controls.Add(this.btn_params);
             this.Controls.Add(this.label11);
@@ -379,7 +428,7 @@
             this.Controls.Add(this.txt_name);
             this.Controls.Add(this.label1);
             this.Name = "GeneralSection";
-            this.Size = new System.Drawing.Size(700, 371);
+            this.Size = new System.Drawing.Size(700, 437);
             this.Load += new System.EventHandler(this.GeneralSection_Load);
             ((System.ComponentModel.ISupportInitialize)(this.img_logo)).EndInit();
             this.ResumeLayout(false);
@@ -419,5 +468,9 @@
         private System.Windows.Forms.Button btn_params;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.PictureBox img_logo;
+        private System.Windows.Forms.DateTimePicker date_release;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.TextBox txt_tags;
+        private System.Windows.Forms.Label label13;
     }
 }

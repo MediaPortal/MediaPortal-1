@@ -9,7 +9,8 @@ namespace MpeCore.Classes
         String,
         File,
         Template,
-        Bool
+        Bool,
+        Script
     }
     public class SectionParam
     {

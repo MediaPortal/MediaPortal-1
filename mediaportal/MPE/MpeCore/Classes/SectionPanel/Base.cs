@@ -4,8 +4,7 @@ using System.Text;
 
 namespace MpeCore.Classes.SectionPanel
 {
-
-    class Base
+    public class Base
     {
 
         static public void ActionExecute(PackageClass packageClass, SectionItem sectionItem, ActionExecuteLocationEnum locationEnum)

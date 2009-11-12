@@ -47,6 +47,10 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CSScriptLibrary, Version=1.9.0.0, Culture=neutral, PublicKeyToken=70fcc3d18c749033">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\MediaPortal.Base\CSScriptLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="Interop.IWshRuntimeLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\MediaPortal.Base\Interop.IWshRuntimeLibrary.dll</HintPath>
@@ -86,6 +90,7 @@
     <Compile Include="Classes\ParamNamesConst.cs" />
     <Compile Include="Classes\PathProvider\TvServerPaths.cs" />
     <Compile Include="Classes\SectionPanel\GroupCheck.cs" />
+    <Compile Include="Classes\SectionPanel\GroupCheckScript.cs" />
     <Compile Include="Classes\Util.cs" />
     <Compile Include="Classes\ProviderHelpers\SectionProviderHelper.cs" />
     <Compile Include="Classes\SectionPanel\Base.cs" />

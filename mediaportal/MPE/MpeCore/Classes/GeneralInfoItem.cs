@@ -9,8 +9,10 @@ namespace MpeCore.Classes
     {
         public GeneralInfoItem()
         {
-            Version=new VersionInfo();
+            Version = new VersionInfo();
             Id = Guid.NewGuid().ToString();
+            ReleaseDate = DateTime.Now;
+            Tags = string.Empty;
             Params=new SectionParamCollection();
             Params.Add(new SectionParam(ParamNamesConst.ICON,"",ValueTypeEnum.File,"The icon file of the package (jpg,png,bmp)"));
             Params.Add(new SectionParam(ParamNamesConst.ONLINE_ICON, "", ValueTypeEnum.String, "The icon file of the package stored online (jpg,png,bmp)"));
@@ -29,6 +31,8 @@ namespace MpeCore.Classes
         public string VersionDescription { get; set; }
         public string DevelopmentStatus { get; set; }
         public string OnlineLocation { get; set; }
+        public DateTime ReleaseDate { get; set; }
+        public string Tags { get; set; }
 
         /// <summary>
         /// Gets or sets the location of packed file.
