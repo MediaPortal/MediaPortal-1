@@ -685,7 +685,7 @@ namespace MediaPortal.Visualization
             }
           }
 
-          CurrentTrackTag = (MusicTag)curPlaylistItem.MusicTag;
+          CurrentTrackTag = curPlaylistItem.MusicTag != null ? (MusicTag)curPlaylistItem.MusicTag : TagReader.TagReader.ReadTag(curPlaylistItem.FileName);
 
           // Make sure that Status Overlay gets displayed for new tracks
           CurrentFrame = 0;
