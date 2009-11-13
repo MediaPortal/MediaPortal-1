@@ -111,7 +111,7 @@ namespace TvEngine
       }
     }
 
-    public static readonly string DefaultOutputFolder
+    public static string DefaultOutputFolder
     {
       get
       {
