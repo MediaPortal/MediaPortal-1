@@ -292,7 +292,7 @@ namespace TvLibrary.Implementations.DVB
                       {
                         SetMpegPidMapping(_channelInfo);
                         if (_mdplugs != null)
-                          _mdplugs.SetChannel(_subChannelId, _currentChannel, _channelInfo);
+                          _mdplugs.SetChannel(_currentChannel, _channelInfo, false);
                       }
                       Log.Log.Info("subch:{0} stop tif", _subChannelId);
                       if (_filterTIF != null)
@@ -1228,7 +1228,7 @@ namespace TvLibrary.Implementations.DVB
               {
                 SetMpegPidMapping(_channelInfo);
                 if (_mdplugs != null)
-                  _mdplugs.SetChannel(_subChannelId, _currentChannel, _channelInfo);
+                  _mdplugs.SetChannel( _currentChannel, _channelInfo, true);
               }
             }
           }

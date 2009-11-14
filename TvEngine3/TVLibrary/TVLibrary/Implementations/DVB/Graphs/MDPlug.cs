@@ -381,13 +381,14 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Sends the current channel to the mdapifilter
     /// </summary>    
-    public void SetChannel(int SubCh, IChannel currentChannel, ChannelInfo channelInfo)
+    public void SetChannel(IChannel currentChannel, ChannelInfo channelInfo, bool update)
     {
       MDPlug[] plugins = getPlugins();
+      MDPlug myPlugin = null;
 
       if (plugins == null || plugins.Length == 0)
       {
-        Log.Log.Info("mdplug: SetChannel no MD plugins has been defined for channel {0} subch {1}.", currentChannel.Name, SubCh);
+        Log.Log.Info("mdplug: SetChannel no MD plugins has been defined for card folder {0}.", _cardFolder);
         return;
       }
 
@@ -395,22 +396,37 @@ namespace TvLibrary.Implementations.DVB
       {
         if (plugin.IsDecodingChannel(currentChannel))
         {
-          // Increment usage counter of this slot.
-          plugin.IncrementDecodingCounter();
-          Log.Log.Info("mdplug: SetChannel already decoding channel {0} subch {1}.", currentChannel.Name, SubCh);
-          return;
+          myPlugin = plugin;
+          break;
         }
       }
 
-      int slotNumber;
-      MDPlug freePlugin = FindFreeSlot(plugins, currentChannel, out slotNumber);
-      if (freePlugin == null)
+      if (update)
       {
-        Log.Log.Info("mdplug: SetChannel no free slots available for channel {0} (try increase limit).", currentChannel.Name);
-        return;
+        // PMT is updated, do not increase ref count
+        if (myPlugin != null)
+        {
+          Log.Log.Info("mdplug: SetChannel update channel {0}.", currentChannel.Name);
+          myPlugin.SetChannel(currentChannel, channelInfo);
+          return;
+        }
+        else
+        {
+          Log.Log.Info("mdplug: SetChannel update channel, channel not found. {0}.", currentChannel.Name);
+          return;
+        }
+      }
+      else
+      {
+        if (myPlugin != null)
+        {
+          // Increment usage counter of this slot.
+          myPlugin.IncrementDecodingCounter();
+          Log.Log.Info("mdplug: SetChannel already decoding channel {0}. Increment counter", currentChannel.Name);
+          return;
+        } // else not found allocate new slot
       }
 
-      Log.Log.Info("mdplug: SetChannel nr of currently decoding channels {0}.", CalculateSlotsInUse(plugins));
       int idx = 1;
       foreach (MDPlug plugin in plugins)
       {
@@ -422,6 +438,16 @@ namespace TvLibrary.Implementations.DVB
         idx++;
       }
 
+      int slotNumber;
+      MDPlug freePlugin = FindFreeSlot(plugins, currentChannel, out slotNumber);
+      if (freePlugin == null)
+      {
+        Log.Log.Info("mdplug: SetChannel no free slots available for channel {0} (try increase limit).", currentChannel.Name);
+        return;
+      }
+
+      Log.Log.Info("mdplug: SetChannel nr of currently decoding channels {0}.", CalculateSlotsInUse(plugins));
+ 
       Log.Log.Info("mdplug: SetChannel starting decryption on channel '{0}' using plugin slot {1} of {2} avail.", currentChannel.Name, slotNumber, plugins.Length);
 
       freePlugin.SetChannel(currentChannel, channelInfo);
@@ -435,7 +461,7 @@ namespace TvLibrary.Implementations.DVB
         if (plugin.GetDecodingChannel() == null)
         {
           return plugin;
-      }
+        }
         slotNumber++;
       }
       return null;
@@ -850,6 +876,7 @@ namespace TvLibrary.Implementations.DVB
         if (forceFree
             || _decodingCounter <= 0)
         {
+          Log.Log.Info("mdplug: usage counter for channel '{0}' is zero", _decodingChannel.Name);
           _decodingChannel = null;
           _decodingCounter = 0;
         }
@@ -1032,11 +1059,28 @@ namespace TvLibrary.Implementations.DVB
           bool found = false;
           for (int j = 0; j < count; ++j)
           {
-            if (emmList[i].ProviderId == _mDPlugTProg82.CA_System82[j].Provider_Id && emmList[i].CaId == _mDPlugTProg82.CA_System82[j].CA_Typ)
+            if (emmList[i].CaId == _mDPlugTProg82.CA_System82[j].CA_Typ)
             {
-              found = true;
-              _mDPlugTProg82.CA_System82[j].EMM = (ushort)emmList[i].Pid;
-              break;
+              if (emmList[i].CaId == 0x500) // Via access 
+              {
+                // When checking match, and caid is via access then we should not check lower 4 bits 
+                // provider id 0x23208 is the same as 0x23200 (Boxer) if we do not do it then ECM & EMM will not match 
+                if ((emmList[i].ProviderId & 0xFFFFF0) == (_mDPlugTProg82.CA_System82[j].Provider_Id & 0xFFFFF0))
+                {
+                  found = true;
+                  _mDPlugTProg82.CA_System82[j].EMM = (ushort)emmList[i].Pid;
+                  break;
+                }
+              }
+              else
+              {
+                if (emmList[i].ProviderId == _mDPlugTProg82.CA_System82[j].Provider_Id)
+                {
+                  found = true;
+                  _mDPlugTProg82.CA_System82[j].EMM = (ushort)emmList[i].Pid;
+                  break;
+                }
+              }
             }
           }
           if (!found)
