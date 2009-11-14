@@ -1401,16 +1401,10 @@ namespace MediaPortal.GUI.Library
           Log.Debug("WindowManager: unroute to {0}:{1}->{2}:{3}",
                     _routedWindow, _routedWindow.GetID, GetWindow(ActiveWindow), ActiveWindow);
         }
-        if (_currentWindowName != string.Empty && _routedWindow != null)
-        {
-          GUIPropertyManager.SetProperty("#currentmodule", _currentWindowName);
-        }
-        else
-        {
-          //System.Diagnostics.Debugger.Launch();
-          GUIPropertyManager.SetProperty("#currentmodule", GetWindow(ActiveWindow).GetModuleName());
-          GUIPropertyManager.SetProperty("#currentmoduleid", Convert.ToString(ActiveWindow));
-        }
+		if (_currentWindowName != string.Empty && _routedWindow != null)
+		{
+		  GUIPropertyManager.SetProperty("#currentmodule", _currentWindowName);
+		}
 
         _routedWindow = null;
         _shouldRefresh = true;

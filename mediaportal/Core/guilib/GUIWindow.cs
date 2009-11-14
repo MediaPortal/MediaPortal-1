@@ -1609,11 +1609,7 @@ namespace MediaPortal.GUI.Library
               // Cleanup and free resources
             case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
               {
-                OnPageDestroy(message.Param1);
-                if (_previousWindowId != (int) Window.WINDOW_INVALID)
-                {
-                  GUIPropertyManager.SetProperty("#currentmodule", GUIWindowManager.GetWindow(_previousWindowId).GetModuleName());
-                }
+                OnPageDestroy(message.Param1);                
 
                 Log.Debug("Window: {0} deinit", this.ToString());
                 FreeResources();
