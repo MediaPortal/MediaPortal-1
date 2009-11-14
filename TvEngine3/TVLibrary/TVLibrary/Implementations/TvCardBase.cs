@@ -722,7 +722,7 @@ namespace TvLibrary.Implementations
     /// </summary>
     protected void FreeAllSubChannels()
     {
-      Log.Log.Info("tvcard:FreeAllSubChannels:");
+      Log.Log.Info("tvcard:FreeAllSubChannels");
       Dictionary<int, BaseSubChannel>.Enumerator en = _mapSubChannels.GetEnumerator();
       while (en.MoveNext())
       {

@@ -267,7 +267,7 @@ namespace TvLibrary.Implementations.DVB
             }
             else
             {
-              Log.Log.Debug("WaitForPMT: Waiting for PMT {0}", _pmtPid);
+              Log.Log.Debug("WaitForPMT: Waiting for PMT {0:X}", _pmtPid);
             }
 
             if (_eventPMT.WaitOne(timeoutPMT, true))
@@ -387,11 +387,11 @@ namespace TvLibrary.Implementations.DVB
 
       if (GraphRunning())
       {
+        Log.Log.WriteFile("subch:{0} Graph already running - WaitForPMT", _subChannelId);        
         WaitForPMT();
       }
       else
       {
-        Log.Log.WriteFile("subch:{0} Graph already running - skip WaitForPMT", _subChannelId);
         if (_teletextDecoder != null)
           _teletextDecoder.ClearBuffer();
 
@@ -1212,7 +1212,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_eventPMT != null)
       {
-        Log.Log.WriteFile("subch:{0} OnPMTReceived() pmt:{3} ran:{1} dynamic:{2}", _subChannelId, GraphRunning(), !_pmtRequested, pmtPid);
+        Log.Log.WriteFile("subch:{0} OnPMTReceived() pmt:{3:X} ran:{1} dynamic:{2}", _subChannelId, GraphRunning(), !_pmtRequested, pmtPid);
         _eventPMT.Set();
         // PMT callback is done on each new PMT version
         // check if the arrived PMT was _NOT_ requested (WaitForPMT), than it means dynamical change
@@ -1248,7 +1248,7 @@ namespace TvLibrary.Implementations.DVB
         currentDetail.PmtPid = pmtPid;
         CurrentDVBChannel.PmtPid = pmtPid;
         TvDatabase.TuningDetail td = layer.UpdateTuningDetails(dbChannel, CurrentDVBChannel, currentDetail);
-        Log.Log.Debug("Updated PMT Pid to {0}!", pmtPid);
+        Log.Log.Debug("Updated PMT Pid to {0:X}!", pmtPid);
         td.Persist();
       }
       _pmtRequested = false; // once received, reset

@@ -583,7 +583,6 @@ namespace TvLibrary.Implementations.DVB
           return;
         }
         Log.Log.WriteFile("dvb:StopGraph");
-        //hr = (_graphBuilder as IMediaControl).StopWhenReady();
         int hr = ((IMediaControl)_graphBuilder).Stop();
         if (hr < 0 || hr > 1)
         {
@@ -1396,10 +1395,9 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected void Decompose()
     {
-      if (_graphBuilder == null)
+      if (_graphBuilder == null || !CheckThreadId())
         return;
-      if (!CheckThreadId())
-        return;
+      
       Log.Log.WriteFile("dvb:Decompose");
       if (_epgGrabbing)
       {
@@ -1410,12 +1408,26 @@ namespace TvLibrary.Implementations.DVB
         }
         _epgGrabbing = false;
       }
-
+      
       FreeAllSubChannels();
-      //_graphRunning = false;
       Log.Log.WriteFile("  stop");
       // Decompose the graph
-      ((IMediaControl)_graphBuilder).StopWhenReady();
+
+      int counter = 0, hr = 0;
+      FilterState state = FilterState.Running;
+      hr = ((IMediaControl)_graphBuilder).Stop();
+      while (state != FilterState.Stopped)
+      {
+        System.Threading.Thread.Sleep(100);
+        hr = ((IMediaControl)_graphBuilder).GetState(10, out state);
+        counter++;
+        if (counter >= 30)
+        {
+          if (state != FilterState.Stopped)
+            Log.Log.Error("dvb:graph still running");
+          break;
+        }
+      }
 
       //In case MDPlugs exists then close and release them
       if (_mdplugs != null)
@@ -1431,8 +1443,6 @@ namespace TvLibrary.Implementations.DVB
         _conditionalAccess = null;
       }
 
-      //Log.Log.WriteFile("  remove all filters");
-      //FilterGraphTools.RemoveAllFilters(_graphBuilder);
       Log.Log.WriteFile("  free...");
       _interfaceChannelScan = null;
       _interfaceEpgGrabber = null;
@@ -1457,32 +1467,21 @@ namespace TvLibrary.Implementations.DVB
         Release.ComObject("_infTeeSecond filter", _infTeeSecond);
         _infTeeSecond = null;
       }
-      if (_filterMpeg2DemuxTif != null)
-      {
-        Release.ComObject("TIF MPEG2 demux filter", _filterMpeg2DemuxTif);
-        _filterMpeg2DemuxTif = null;
-      }
       if (_filterTuner != null)
       {
-        while (Marshal.ReleaseComObject(_filterTuner) > 0)
-        {
-        }
+        while (Marshal.ReleaseComObject(_filterTuner) > 0) ;
         _filterTuner = null;
       }
       if (_filterCapture != null)
       {
-        while (Marshal.ReleaseComObject(_filterCapture) > 0)
-        {
-        }
+        while (Marshal.ReleaseComObject(_filterCapture) > 0) ;
         _filterCapture = null;
       }
       if (_filterWinTvUsb != null)
       {
         Log.Log.Info("  Stopping WinTVCI module");
         winTvCiHandler.Shutdown();
-        while (Marshal.ReleaseComObject(_filterWinTvUsb) > 0)
-        {
-        }
+        while (Marshal.ReleaseComObject(_filterWinTvUsb) > 0) ;
         _filterWinTvUsb = null;
       }
       if (_filterTIF != null)
@@ -1509,6 +1508,7 @@ namespace TvLibrary.Implementations.DVB
       if (_rotEntry != null)
       {
         _rotEntry.Dispose();
+        _rotEntry = null;
       }
       if (_capBuilder != null)
       {
@@ -1542,9 +1542,7 @@ namespace TvLibrary.Implementations.DVB
         for (int i = 0; i < _tunerStatistics.Count; i++)
         {
           IBDA_SignalStatistics stat = _tunerStatistics[i];
-          while (Marshal.ReleaseComObject(stat) > 0)
-          {
-          }
+          while (Marshal.ReleaseComObject(stat) > 0) ;
         }
         _tunerStatistics.Clear();
       }
