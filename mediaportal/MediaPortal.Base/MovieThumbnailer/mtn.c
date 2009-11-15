@@ -2731,7 +2731,7 @@ void usage()
 void my_signal_handler(int sig)
 {
     signal(SIGSEGV, my_signal_handler); // reset the signal handler for SIGSEGV
-    abort();
+    exit(-1);
 }
 
 int main(int argc, char *argv[])
