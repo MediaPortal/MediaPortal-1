@@ -369,7 +369,7 @@ namespace MPLanguageTool
         case frmMain.StringsType.MovingPictures:
           writer = new StreamWriter(xml, false, Encoding.UTF8);
           writer.Write("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n");
-          writer.Write("<!-- MP-TV-Series translation file -->\n");
+          writer.Write("<!-- Moving Pictures translation file -->\n");
           writer.Write("<!-- " + LanguageNAME + " -->\n");
           writer.Write("<!-- Note: English is the fallback for any strings not found in other languages -->\n");
           writer.Write("  <strings>\n");
@@ -379,7 +379,7 @@ namespace MPLanguageTool
         case frmMain.StringsType.TvSeries:
           writer = new StreamWriter(xml, false, Encoding.UTF8);
           writer.Write("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n");
-          writer.Write("<!-- Moving Pictures translation file -->\n");
+          writer.Write("<!-- MP-TV-Series translation file -->\n");
           writer.Write("<!-- " + LanguageNAME + " -->\n");
           writer.Write("<!-- Note: English is the fallback for any strings not found in other languages -->\n");
           writer.Write("  <strings>\n");
