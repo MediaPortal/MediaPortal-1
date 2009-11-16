@@ -987,7 +987,7 @@ namespace TvEngine.PowerScheduler
       _standby = true;
       _timer.Enabled = false;
       _controller.EpgGrabberEnabled = false;
-      // SetWakeupTimer();   => do not call, because the client standby and wakeup handlers are already unregistered
+      SetWakeupTimer();
       DeInitController();
       RunExternalCommand("suspend");
       SendPowerSchedulerEvent(PowerSchedulerEventType.EnteringStandby, false);
