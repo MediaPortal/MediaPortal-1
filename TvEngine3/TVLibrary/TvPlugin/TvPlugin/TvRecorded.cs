@@ -82,7 +82,7 @@ namespace TvPlugin
             string thumbNail = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded,
                                              Path.ChangeExtension(Utils.SplitFilename(recFileName), null),
                                              Utils.GetThumbExtension());
-            if (!File.Exists(thumbNail))
+            if (!File.Exists(thumbNail) && (/*TVHome.IsSingleSeat() || */!TVHome.UseRTSP()))
             {
               //Log.Info("RecordedTV: No thumbnail found at {0} for recording {1} - grabbing from file now", thumbNail, rec.FileName);
 
