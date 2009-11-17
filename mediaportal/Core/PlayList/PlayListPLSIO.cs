@@ -173,9 +173,13 @@ namespace MediaPortal.Playlists
             if (fileName.ToLower().StartsWith("http:") || fileName.ToLower().StartsWith("https:") ||
                 fileName.ToLower().StartsWith("mms:") || fileName.ToLower().StartsWith("rtp:"))
             {
+              newItem.Type = PlayListItem.PlayListItemType.AudioStream;
+            }
+            else
+            {
               Util.Utils.GetQualifiedFilename(basePath, ref fileName);
               newItem.FileName = fileName;
-              newItem.Type = PlayListItem.PlayListItemType.AudioStream;
+              newItem.Type = PlayListItem.PlayListItemType.Audio;
             }
             playlist.Add(newItem);
             fileName = "";
