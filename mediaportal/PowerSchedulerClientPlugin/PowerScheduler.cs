@@ -1282,6 +1282,8 @@ namespace MediaPortal.Plugins.Process
 
       if (_settings.GetSetting("SingleSeat").Get<bool>())
       {
+        // sync problem => give the TV-Server time to run SetWakeupTimer(); before client disconnects
+        System.Threading.Thread.Sleep(200);  
         if (_remotingTag != 0)
         {
           LogVerbose("PSClientPlugin: unregister handlers with tvservice with tag {0}", _remotingTag);
