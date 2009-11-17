@@ -240,6 +240,13 @@ namespace TvLibrary.Implementations
           string name = devices[i].Name ?? "unknown";
           name = name.ToLowerInvariant();
           Log.Log.WriteFile("Found card:{0}", name);
+          //silicondust work-around for dvb type detection issue.
+          if (name.Contains("silicondust hdhomerun tuner"))
+          {
+            Log.Log.WriteFile("silicondust hdhomerun detected - using old detection method");
+            //use the old manual method
+            genericNP = false;
+          }
           IBaseFilter tmp;
           graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, name, out tmp);
           //Use the Microsoft Network Provider method first but only if available
@@ -253,34 +260,34 @@ namespace TvLibrary.Implementations
               _providerType = networkDVB as ITunerCap;
               int ulcNetworkTypesMax = 5;
               int pulcNetworkTypes;
-              Guid[] lpDeinterlaceModes = new Guid[ulcNetworkTypesMax];
-              int hr = _providerType.get_SupportedNetworkTypes(ulcNetworkTypesMax, out pulcNetworkTypes, lpDeinterlaceModes);
+              Guid[] pguidNetworkTypes = new Guid[ulcNetworkTypesMax];
+              int hr = _providerType.get_SupportedNetworkTypes(ulcNetworkTypesMax, out pulcNetworkTypes, pguidNetworkTypes);
               for (int n = 0; n < pulcNetworkTypes; n++)
               {
-                Log.Log.Debug("Detecting type by MSNP {0}: {1}", n, lpDeinterlaceModes[n]);
+                Log.Log.Debug("Detecting type by MSNP {0}: {1}", n, pguidNetworkTypes[n]);
                 //test the first found guid to determine the DVB card type
-                if (lpDeinterlaceModes[n] == (typeof(DVBTNetworkProvider).GUID))
+                if (pguidNetworkTypes[n] == (typeof(DVBTNetworkProvider).GUID))
                 {
                   Log.Log.WriteFile("Detected DVB-T* card:{0}", name);
                   TvCardDVBT dvbtCard = new TvCardDVBT(_epgEvents, devices[i]);
                   _cards.Add(dvbtCard);
                   connected = true;
                 }
-                else if (lpDeinterlaceModes[n] == (typeof(DVBSNetworkProvider).GUID))
+                else if (pguidNetworkTypes[n] == (typeof(DVBSNetworkProvider).GUID))
                 {
                   Log.Log.WriteFile("Detected DVB-S* card:{0}", name);
                   TvCardDVBS dvbsCard = new TvCardDVBS(_epgEvents, devices[i]);
                   _cards.Add(dvbsCard);
                   connected = true;
                 }
-                else if (lpDeinterlaceModes[n] == (typeof(DVBCNetworkProvider).GUID))
+                else if (pguidNetworkTypes[n] == (typeof(DVBCNetworkProvider).GUID))
                 {
                   Log.Log.WriteFile("Detected DVB-C* card:{0}", name);
                   TvCardDVBC dvbcCard = new TvCardDVBC(_epgEvents, devices[i]);
                   _cards.Add(dvbcCard);
                   connected = true;
                 }
-                else if (lpDeinterlaceModes[n] == (typeof(ATSCNetworkProvider).GUID))
+                else if (pguidNetworkTypes[n] == (typeof(ATSCNetworkProvider).GUID))
                 {
                   Log.Log.WriteFile("Detected ATSC* card:{0}", name);
                   TvCardATSC dvbsCard = new TvCardATSC(_epgEvents, devices[i]);
