@@ -1059,28 +1059,12 @@ namespace TvLibrary.Implementations.DVB
           bool found = false;
           for (int j = 0; j < count; ++j)
           {
-            if (emmList[i].CaId == _mDPlugTProg82.CA_System82[j].CA_Typ)
+            if ((emmList[i].CaId == _mDPlugTProg82.CA_System82[j].CA_Typ) &&
+                (emmList[i].ProviderId == _mDPlugTProg82.CA_System82[j].Provider_Id))
             {
-              if (emmList[i].CaId == 0x500) // Via access 
-              {
-                // When checking match, and caid is via access then we should not check lower 4 bits 
-                // provider id 0x23208 is the same as 0x23200 (Boxer) if we do not do it then ECM & EMM will not match 
-                if ((emmList[i].ProviderId & 0xFFFFF0) == (_mDPlugTProg82.CA_System82[j].Provider_Id & 0xFFFFF0))
-                {
-                  found = true;
-                  _mDPlugTProg82.CA_System82[j].EMM = (ushort)emmList[i].Pid;
-                  break;
-                }
-              }
-              else
-              {
-                if (emmList[i].ProviderId == _mDPlugTProg82.CA_System82[j].Provider_Id)
-                {
-                  found = true;
-                  _mDPlugTProg82.CA_System82[j].EMM = (ushort)emmList[i].Pid;
-                  break;
-                }
-              }
+              found = true;
+              _mDPlugTProg82.CA_System82[j].EMM = (ushort)emmList[i].Pid;
+              break;
             }
           }
           if (!found)

@@ -304,6 +304,12 @@ namespace TvLibrary.Implementations.DVB.Structures
                 if (tagInd == 0x14)
                 {
                   ecm.ProviderId = (descriptor[offset + 2] << 16) + (descriptor[offset + 3] << 8) + descriptor[offset + 4];
+                  // Some providers sends wrong information in provider id (Boxer),
+                  // so reset lower 4 bits for Via Access
+                  if (ecm.CaId == 0x500)
+                  {
+                    ecm.ProviderId = ecm.ProviderId & 0xFFFFF0;
+                  }
                 }
               }
               offset += (tagLen + 2);
