@@ -14,6 +14,13 @@ namespace MpeMaker.Dialogs
             _groupItem = groupItem;
         }
 
+        public AddFolder2Group(GroupItem groupItem, string folder)
+        {
+            InitializeComponent();
+            _groupItem = groupItem;
+            txt_folder.Text = folder;
+        }
+
         private void add_folder_Click(object sender, EventArgs e)
         {
             folderBrowserDialog1.SelectedPath = txt_folder.Text;

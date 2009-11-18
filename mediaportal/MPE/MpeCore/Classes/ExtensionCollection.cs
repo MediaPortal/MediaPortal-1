@@ -40,9 +40,8 @@ namespace MpeCore.Classes
         /// Gets a list with unique update urls
         /// </summary>
         /// <returns></returns>
-        public List<string> GetUpdateUrls()
+        public List<string> GetUpdateUrls(List<string> urls)
         {
-            List<string> urls = new List<string>();
             foreach (PackageClass item in Items)
             {
                 if (string.IsNullOrEmpty(item.GeneralInfo.UpdateUrl))

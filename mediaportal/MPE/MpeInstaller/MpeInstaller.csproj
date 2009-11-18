@@ -12,6 +12,7 @@
     <AssemblyName>MpeInstaller</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <ApplicationIcon>MPI MediaPortal Installer.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -150,6 +151,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Icons\system-software-update.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="MPI MediaPortal Installer.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

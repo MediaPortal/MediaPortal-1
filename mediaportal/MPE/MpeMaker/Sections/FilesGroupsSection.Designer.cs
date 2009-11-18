@@ -41,6 +41,7 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage_group = new System.Windows.Forms.TabPage();
+            this.label8 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.cmb_parentGroup = new System.Windows.Forms.ComboBox();
             this.txt_displlayName = new System.Windows.Forms.TextBox();
@@ -68,6 +69,7 @@
             // 
             // treeView1
             // 
+            this.treeView1.AllowDrop = true;
             this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)));
             this.treeView1.HideSelection = false;
@@ -76,7 +78,10 @@
             this.treeView1.ShowNodeToolTips = true;
             this.treeView1.Size = new System.Drawing.Size(371, 390);
             this.treeView1.TabIndex = 1;
+            this.treeView1.DragDrop += new System.Windows.Forms.DragEventHandler(this.treeView1_DragDrop);
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
+            this.treeView1.DragEnter += new System.Windows.Forms.DragEventHandler(this.treeView1_DragEnter);
+            this.treeView1.DragOver += new System.Windows.Forms.DragEventHandler(this.treeView1_DragOver);
             // 
             // toolStrip1
             // 
@@ -171,6 +176,7 @@
             // 
             // tabPage_group
             // 
+            this.tabPage_group.Controls.Add(this.label8);
             this.tabPage_group.Controls.Add(this.label5);
             this.tabPage_group.Controls.Add(this.cmb_parentGroup);
             this.tabPage_group.Controls.Add(this.txt_displlayName);
@@ -185,6 +191,15 @@
             this.tabPage_group.TabIndex = 0;
             this.tabPage_group.Text = "Group";
             this.tabPage_group.UseVisualStyleBackColor = true;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(72, 254);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(35, 13);
+            this.label8.TabIndex = 8;
+            this.label8.Text = "label8";
             // 
             // label5
             // 
@@ -439,6 +454,7 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox txt_param1;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Label label8;
 
     }
 }

@@ -83,7 +83,11 @@ namespace MpeMaker.Sections
 
         private TreeNode GetSelectedGroupNode()
         {
-            TreeNode selectedNode = treeView1.SelectedNode;
+            return GetGroupNode(treeView1.SelectedNode);
+        }
+
+        private TreeNode GetGroupNode(TreeNode selectedNode)
+        {
             if (selectedNode == null)
                 return null;
             if (selectedNode.Tag.GetType() != typeof(GroupItem))
@@ -95,6 +99,7 @@ namespace MpeMaker.Sections
                 return null;
             }
             return selectedNode;
+            
         }
 
         private void mnu_add_group_Click(object sender, EventArgs e)
@@ -123,18 +128,29 @@ namespace MpeMaker.Sections
             openFileDialog1.Multiselect = true;
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                foreach (string item in openFileDialog1.FileNames)
-                {
-                    FileItem fil = GetCommonItem(SelectedGroup); // new FileItem(item, false);
-                    fil.LocalFileName = item;
-                    fil.DestinationFilename = string.IsNullOrEmpty(fil.DestinationFilename)
-                                                  ? MpeInstaller.InstallerTypeProviders[fil.InstallType].GetTemplatePath
-                                                        (fil)
-                                                  : fil.DestinationFilename + "\\" + Path.GetFileName(item);
-                    AddFile(selectedNode, fil);
-                    ((GroupItem)selectedNode.Tag).Files.Add(fil);
-                }
+                AddFiles(openFileDialog1.FileNames);
             }
+        }
+
+        private void AddFiles(string[] files)
+        {
+            TreeNode selectedNode = GetSelectedGroupNode();
+            if (selectedNode == null) return;
+
+            foreach (string item in files)
+            {
+                if (!File.Exists(item))
+                    continue;
+                FileItem fil = GetCommonItem(SelectedGroup); // new FileItem(item, false);
+                fil.LocalFileName = item;
+                fil.DestinationFilename = string.IsNullOrEmpty(fil.DestinationFilename)
+                                              ? MpeInstaller.InstallerTypeProviders[fil.InstallType].GetTemplatePath
+                                                    (fil)
+                                              : fil.DestinationFilename + "\\" + Path.GetFileName(item);
+                AddFile(selectedNode, fil);
+                ((GroupItem)selectedNode.Tag).Files.Add(fil);
+            }
+            
         }
 
         void SetProperties(TreeNode node)
@@ -334,5 +350,41 @@ namespace MpeMaker.Sections
                 PopulateTreeView();
             }
         }
+
+        private void treeView1_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop, false) == true)
+                e.Effect = DragDropEffects.All;
+        }
+
+        private void treeView1_DragOver(object sender, DragEventArgs e)
+        {
+            label8.Text = string.Format("{0} - {1}", e.X, e.Y);
+            Point pt = treeView1.PointToClient(new Point(e.X, e.Y));
+            TreeNode targetNode = treeView1.GetNodeAt(pt);
+            if (targetNode != null)
+            {
+                treeView1.SelectedNode = GetGroupNode(targetNode);
+            }
+        }
+
+        private void treeView1_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if(Directory.Exists(files[0]))
+            {
+                AddFolder2Group dlg = new AddFolder2Group(SelectedGroup, files[0]);
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                    treeView1.Nodes.Clear();
+                    PopulateTreeView();
+                    return;
+                }
+            }
+            if (files.Length > 0)
+                AddFiles(files);
+        }
+
+
     }
 }

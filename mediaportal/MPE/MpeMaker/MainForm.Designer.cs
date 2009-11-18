@@ -42,6 +42,7 @@
             System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Generate update xml");
             System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Tools", new System.Windows.Forms.TreeNode[] {
             treeNode8});
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.mainMenu = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnu_new = new System.Windows.Forms.ToolStripMenuItem();
@@ -197,6 +198,7 @@
             this.ClientSize = new System.Drawing.Size(893, 479);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.mainMenu);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.Text = "MpeMaker";
             this.mainMenu.ResumeLayout(false);

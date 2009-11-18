@@ -254,7 +254,8 @@ namespace MpeInstaller
 
         private void btn_online_update_Click(object sender, EventArgs e)
         {
-            List<string> onlineFiles = MpeCore.MpeInstaller.InstalledExtensions.GetUpdateUrls();
+            List<string> onlineFiles = MpeCore.MpeInstaller.InstalledExtensions.GetUpdateUrls(new List<string>());
+            onlineFiles = MpeCore.MpeInstaller.KnownExtensions.GetUpdateUrls(onlineFiles);
             if(onlineFiles.Count<1)
             {
                 MessageBox.Show("No online update was found !");
