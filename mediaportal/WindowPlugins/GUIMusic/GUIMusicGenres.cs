@@ -426,6 +426,20 @@ namespace MediaPortal.GUI.Music
           btnSortBy.FreeResources();
         }
       }
+
+      // When we return from Fullscreen Music (the Visualisation screen), the page is reloaded again
+      // The currently playing item will not be focused. 
+      // So we check here, if we have something playing and will focus the item
+      if (g_Player.Playing && g_Player.IsMusic)
+      {
+        int currentItem = playlistPlayer.CurrentSong;
+        PlayListItem item = playlistPlayer.GetCurrentItem();
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS, 0, 0, 0, currentItem, 0, null);
+        msg.Label = item.FileName;
+        GUIGraphicsContext.SendMessage(msg);
+      }
+
+
     }
 
     protected override void OnPageDestroy(int newWindowId)
