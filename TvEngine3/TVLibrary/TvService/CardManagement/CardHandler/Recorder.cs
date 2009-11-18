@@ -39,6 +39,7 @@ namespace TvService
     readonly int _waitForTimeshifting = 15; // seconds
     ManualResetEvent _eventAudio; // gets signaled when audio PID is seen
     ManualResetEvent _eventVideo; // gets signaled when video PID is seen
+    ITvSubChannel _subchannel; // the active sub channel to record
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Recording"/> class.
@@ -115,6 +116,9 @@ namespace TvService
           ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
           if (subchannel == null)
             return TvResult.UnknownChannel;
+
+          _subchannel = subchannel;
+
           //gibman 
           // RecordingFormat 0 = ts
           // RecordingFormat 1 = mpeg
@@ -487,7 +491,8 @@ namespace TvService
 
       if (_cardHandler.Card.SubChannels.Length <= 0)
         return false;
-      IChannel channel = _cardHandler.Card.SubChannels[0].CurrentChannel;
+
+      IChannel channel = _subchannel.CurrentChannel;
       bool isRadio = channel.IsRadio;
 
       _eventVideo.Reset();

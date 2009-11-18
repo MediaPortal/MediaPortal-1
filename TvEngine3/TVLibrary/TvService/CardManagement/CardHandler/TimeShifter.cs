@@ -40,6 +40,7 @@ namespace TvService
 
     ManualResetEvent _eventAudio; // gets signaled when audio PID is seen
     ManualResetEvent _eventVideo; // gets signaled when video PID is seen
+    ITvSubChannel _subchannel; // the active sub channel to record
     bool _eventsReady;
 
     readonly ChannelLinkageGrabber _linkageGrabber;
@@ -348,6 +349,11 @@ namespace TvService
           context.GetUser(ref user);
           ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
 
+          if (subchannel == null)
+            return TvResult.UnknownChannel;
+
+          _subchannel = subchannel;
+
           Log.Write("card: CAM enabled : {0}", _cardHandler.HasCA);
 
           if (subchannel is TvDvbChannel)
@@ -373,8 +379,6 @@ namespace TvService
             _eventsReady = true;
           }
 
-          if (subchannel == null)
-            return TvResult.UnknownChannel;
           bool isScrambled;
           if (subchannel.IsTimeShifting)
           {
@@ -615,7 +619,8 @@ namespace TvService
 
       if (_cardHandler.Card.SubChannels.Length <= 0)
         return false;
-      IChannel channel = _cardHandler.Card.SubChannels[0].CurrentChannel;
+
+      IChannel channel = _subchannel.CurrentChannel;
       bool isRadio = channel.IsRadio;
 
       if (isRadio)
