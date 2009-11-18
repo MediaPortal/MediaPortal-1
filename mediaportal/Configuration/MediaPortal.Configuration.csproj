@@ -512,9 +512,6 @@
     <Compile Include="Sections\PictureShares.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\Plugins.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Sections\PluginsNew.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -784,9 +781,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Pictures.resx">
       <DependentUpon>Pictures.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Plugins.resx">
-      <DependentUpon>Plugins.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\PluginsNew.resx">
       <SubType>Designer</SubType>
