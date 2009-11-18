@@ -328,7 +328,7 @@ namespace MediaPortal.Configuration.Sections
                   tag.Type = win.GetType().ToString();
                   tag.IsProcess = false;
                   tag.IsWindow = true;
-                  Log.Debug("PluginsNew: {0} is a window plugin but does not implement ISetupForm", tag.Type);
+                  Log.Debug("PluginsNew: {0}, window plugin, does not implement \"ISetupForm\" and \"GUIWindow\" in the same class", tag.Type);
                   break;
                 }
               }
