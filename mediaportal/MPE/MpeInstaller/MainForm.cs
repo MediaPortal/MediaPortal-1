@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using Ionic.Zip;
+using MediaPortal.Configuration;
 using MpeCore;
 using MpeCore.Classes;
 using MpeInstaller.Dialogs;
@@ -280,10 +281,34 @@ namespace MpeInstaller
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
-            if (MpeCore.MpeInstaller.InstalledExtensions.Items.Count > 0 && MessageBox.Show("Do you want to update the extension list ?", "Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            string file = string.Format("{0}\\V2\\KnownExtensions.xml", Config.GetFolder(Config.Dir.Installer));
+            DateTime d = File.GetLastWriteTime(file);
+            int i = File.GetLastWriteTime(file).Subtract(DateTime.Now).Days;
+            if (File.Exists(file))
             {
-                btn_online_update_Click(sender, e);
+                if (File.GetLastWriteTime(file).Subtract(DateTime.Now).Days > 7 &&
+                    MpeCore.MpeInstaller.InstalledExtensions.Items.Count > 0 &&
+                    MessageBox.Show("Do you want to update the extension list ?", "Update", MessageBoxButtons.YesNo,
+                                    MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    btn_online_update_Click(sender, e);
+                }
             }
+        }
+
+
+
+        private void MainForm_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop, false) == true)
+                e.Effect = DragDropEffects.All;
+        }
+
+        private void MainForm_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[]) e.Data.GetData(DataFormats.FileDrop);
+            if (files.Length > 0)
+                InstallFile(files[0], false);
         }
     }
 }

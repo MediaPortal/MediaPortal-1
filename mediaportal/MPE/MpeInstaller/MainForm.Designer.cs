@@ -30,20 +30,21 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tab_extensions = new System.Windows.Forms.TabPage();
+            this.extensionListControl = new MpeInstaller.Controls.ExtensionListControl();
+            this.tab_known = new System.Windows.Forms.TabPage();
+            this.extensionListContro_all = new MpeInstaller.Controls.ExtensionListControl();
             this.tab_options = new System.Windows.Forms.TabPage();
             this.btn_online_update = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
-            this.tab_known = new System.Windows.Forms.TabPage();
-            this.extensionListControl = new MpeInstaller.Controls.ExtensionListControl();
-            this.extensionListContro_all = new MpeInstaller.Controls.ExtensionListControl();
             this.tabControl1.SuspendLayout();
             this.tab_extensions.SuspendLayout();
-            this.tab_options.SuspendLayout();
             this.tab_known.SuspendLayout();
+            this.tab_options.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
             // 
+            this.tabControl1.AllowDrop = true;
             this.tabControl1.Controls.Add(this.tab_extensions);
             this.tabControl1.Controls.Add(this.tab_known);
             this.tabControl1.Controls.Add(this.tab_options);
@@ -65,37 +66,19 @@
             this.tab_extensions.Text = "Installed extensions";
             this.tab_extensions.UseVisualStyleBackColor = true;
             // 
-            // tab_options
+            // extensionListControl
             // 
-            this.tab_options.Controls.Add(this.btn_online_update);
-            this.tab_options.Controls.Add(this.button1);
-            this.tab_options.Location = new System.Drawing.Point(4, 22);
-            this.tab_options.Name = "tab_options";
-            this.tab_options.Padding = new System.Windows.Forms.Padding(3);
-            this.tab_options.Size = new System.Drawing.Size(564, 454);
-            this.tab_options.TabIndex = 1;
-            this.tab_options.Text = "Options";
-            this.tab_options.UseVisualStyleBackColor = true;
-            // 
-            // btn_online_update
-            // 
-            this.btn_online_update.Location = new System.Drawing.Point(8, 35);
-            this.btn_online_update.Name = "btn_online_update";
-            this.btn_online_update.Size = new System.Drawing.Size(243, 23);
-            this.btn_online_update.TabIndex = 1;
-            this.btn_online_update.Text = "Download online update info";
-            this.btn_online_update.UseVisualStyleBackColor = true;
-            this.btn_online_update.Click += new System.EventHandler(this.btn_online_update_Click);
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(8, 6);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(243, 23);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Install local extension";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.extensionListControl.AllowDrop = true;
+            this.extensionListControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.extensionListControl.Location = new System.Drawing.Point(3, 3);
+            this.extensionListControl.Name = "extensionListControl";
+            this.extensionListControl.SelectedItem = null;
+            this.extensionListControl.Size = new System.Drawing.Size(558, 448);
+            this.extensionListControl.TabIndex = 0;
+            this.extensionListControl.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
+            this.extensionListControl.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
             // 
             // tab_known
             // 
@@ -108,19 +91,9 @@
             this.tab_known.Text = "Known extensions";
             this.tab_known.UseVisualStyleBackColor = true;
             // 
-            // extensionListControl
-            // 
-            this.extensionListControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.extensionListControl.Location = new System.Drawing.Point(3, 3);
-            this.extensionListControl.Name = "extensionListControl";
-            this.extensionListControl.SelectedItem = null;
-            this.extensionListControl.Size = new System.Drawing.Size(558, 448);
-            this.extensionListControl.TabIndex = 0;
-            // 
             // extensionListContro_all
             // 
+            this.extensionListContro_all.AllowDrop = true;
             this.extensionListContro_all.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
@@ -129,9 +102,53 @@
             this.extensionListContro_all.SelectedItem = null;
             this.extensionListContro_all.Size = new System.Drawing.Size(558, 448);
             this.extensionListContro_all.TabIndex = 0;
+            this.extensionListContro_all.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
+            this.extensionListContro_all.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
+            // 
+            // tab_options
+            // 
+            this.tab_options.AllowDrop = true;
+            this.tab_options.Controls.Add(this.btn_online_update);
+            this.tab_options.Controls.Add(this.button1);
+            this.tab_options.Location = new System.Drawing.Point(4, 22);
+            this.tab_options.Name = "tab_options";
+            this.tab_options.Padding = new System.Windows.Forms.Padding(3);
+            this.tab_options.Size = new System.Drawing.Size(564, 454);
+            this.tab_options.TabIndex = 1;
+            this.tab_options.Text = "Options";
+            this.tab_options.UseVisualStyleBackColor = true;
+            this.tab_options.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
+            this.tab_options.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
+            // 
+            // btn_online_update
+            // 
+            this.btn_online_update.AllowDrop = true;
+            this.btn_online_update.Location = new System.Drawing.Point(8, 35);
+            this.btn_online_update.Name = "btn_online_update";
+            this.btn_online_update.Size = new System.Drawing.Size(243, 23);
+            this.btn_online_update.TabIndex = 1;
+            this.btn_online_update.Text = "Download online update info";
+            this.btn_online_update.UseVisualStyleBackColor = true;
+            this.btn_online_update.Click += new System.EventHandler(this.btn_online_update_Click);
+            this.btn_online_update.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
+            this.btn_online_update.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
+            // 
+            // button1
+            // 
+            this.button1.AllowDrop = true;
+            this.button1.Location = new System.Drawing.Point(8, 6);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(243, 23);
+            this.button1.TabIndex = 0;
+            this.button1.Text = "Install local extension";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
+            this.button1.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
             // 
             // MainForm
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(572, 480);
@@ -142,10 +159,12 @@
             this.Text = "Media Portal Extension Installer";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.Shown += new System.EventHandler(this.MainForm_Shown);
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
             this.tabControl1.ResumeLayout(false);
             this.tab_extensions.ResumeLayout(false);
-            this.tab_options.ResumeLayout(false);
             this.tab_known.ResumeLayout(false);
+            this.tab_options.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

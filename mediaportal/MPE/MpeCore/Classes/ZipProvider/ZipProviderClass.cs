@@ -5,7 +5,7 @@ using Ionic.Zip;
 
 namespace MpeCore.Classes.ZipProvider
 {
-    public class ZipProviderClass
+    public class ZipProviderClass:IDisposable
     {
         private List<string> _tempFileList = new List<string>();
         private ZipFile _zipPackageFile = null;
@@ -110,5 +110,14 @@ namespace MpeCore.Classes.ZipProvider
                 }
             }
         }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            Clear();
+        }
+
+        #endregion
     }
 }
