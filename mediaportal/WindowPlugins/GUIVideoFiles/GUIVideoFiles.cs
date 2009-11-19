@@ -245,7 +245,7 @@ namespace MediaPortal.GUI.Video
         }
       }
 
-      if (_currentFolder.Length > 0)
+      if (_currentFolder.Length > 0 && !_virtualDirectory.IsRemote(_currentFolder))
       {
         DirectoryInfo dirInfo = new DirectoryInfo(_currentFolder);
 
