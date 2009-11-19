@@ -721,27 +721,21 @@ namespace MediaPortal.Player
     {
       switch (action.wID)
       {
-        case Action.ActionType.ACTION_FORWARD:
-        case Action.ActionType.ACTION_MUSIC_FORWARD:
+        case Action.ActionType.ACTION_MOVE_RIGHT:
           {
-            if (g_Player.IsMusic)
+            if (g_Player.IsMusic && (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW || GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC))
             {
               g_Player.SeekStep(true);
-              string strStatus = g_Player.GetStepDescription();
             }
-            //Console.WriteLine(strStatus);
             break;
           }
 
-        case Action.ActionType.ACTION_REWIND:
-        case Action.ActionType.ACTION_MUSIC_REWIND:
+        case Action.ActionType.ACTION_MOVE_LEFT:
           {
-            if (g_Player.IsMusic)
+            if (g_Player.IsMusic && (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW || GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC))
             {
               g_Player.SeekStep(false);
-              string strStatus = g_Player.GetStepDescription();
             }
-            //Console.WriteLine(strStatus);
             break;
           }
         case Action.ActionType.ACTION_TOGGLE_MUSIC_GAP:
