@@ -77,6 +77,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DebugSettings.cs" />
     <Compile Include="DeviceSorter.cs" />
     <Compile Include="Implementations\Analog\Components\Capture.cs" />
     <Compile Include="Implementations\Analog\Components\TeletextComponent.cs" />

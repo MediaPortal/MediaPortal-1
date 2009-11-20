@@ -591,7 +591,7 @@ namespace TvLibrary.Implementations.DVB
         }
         _conditionalAccess.OnStopGraph();
         // *** this should be removed when solution for graph start problem exists
-          if (System.IO.File.Exists(@"c:\resetgraph.txt"))
+          if (DebugSettings.ResetGraph)
             Decompose();
           else
             _graphState = GraphState.Created;

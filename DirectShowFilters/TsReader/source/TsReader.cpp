@@ -31,6 +31,7 @@
 #include <streams.h>
 #include <initguid.h>
 #include <shlobj.h>
+#include <tchar.h>
 #include "tsreader.h"
 #include "audiopin.h"
 #include "videopin.h"
@@ -38,10 +39,13 @@
 #include "teletextpin.h"
 #include "tsfileSeek.h"
 #include "memoryreader.h"
+#include "..\..\shared\DebugSettings.h"
 #include <cassert>
 
 static char logFile[MAX_PATH];
 static WORD logFileParsed = -1;
+
+DEFINE_MP_DEBUG_SETTING(DoNotAllowSlowMotionDuringZapping)
 
 void GetLogFile(char *pLog)
 {
@@ -192,15 +196,13 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
   // Set default filtering mode (normal), if not overriden externaly (see ITSReader::SetRelaxedMode)
   m_demultiplexer.m_DisableDiscontinuitiesFiltering=false ;
   
-  HANDLE hTest=CreateFile("C:\\DoNotAllowSlowMotionDuringZapping.txt",(DWORD) GENERIC_READ,0,0,(DWORD) OPEN_EXISTING,0,NULL);
-  if (hTest==INVALID_HANDLE_VALUE)
+  if(!DoNotAllowSlowMotionDuringZapping())
   {
     LogDebug("Slow motion video allowed during zapping");
     m_pAudioPin->m_EnableSlowMotionOnZapping=true;
   }
   else
   {
-    CloseHandle(hTest);
     LogDebug("No slow motion video allowed during zapping");
     m_pAudioPin->m_EnableSlowMotionOnZapping=false;
   }

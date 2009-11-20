@@ -128,6 +128,12 @@
       <DependentUpon>GroupSelectionForm.cs</DependentUpon>
     </Compile>
     <Compile Include="HelpSystem.cs" />
+    <Compile Include="Sections\DebugOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\DebugOptions.Designer.cs">
+      <DependentUpon>DebugOptions.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\CardDvbIP.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -590,6 +596,9 @@
     <Content Include="images\icon.computer.gif" />
     <EmbeddedResource Include="47_upgrade_mysql_database.sql" />
     <EmbeddedResource Include="47_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="Sections\DebugOptions.resx">
+      <DependentUpon>DebugOptions.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\Epg.resx">
       <DependentUpon>Epg.cs</DependentUpon>
     </EmbeddedResource>

@@ -49,9 +49,16 @@ namespace SetupTv
     private TvBusinessLayer layer;
     private Servers servers;
     private TvCards cardPage;
+    private bool showAdvancedSettings;
 
     public SetupTvSettingsForm()
+      : this(false)
     {
+    }
+
+    public SetupTvSettingsForm(bool ShowAdvancedSettings)
+    {
+      showAdvancedSettings = ShowAdvancedSettings;
       try
       {
         Init();
@@ -180,7 +187,10 @@ namespace SetupTv
             }
           }
         }
-
+        if (showAdvancedSettings)
+        {
+          AddSection(new DebugOptions());
+        }
         AddSection(new ImportExport());
         AddSection(new ThirdPartyChecks());
 

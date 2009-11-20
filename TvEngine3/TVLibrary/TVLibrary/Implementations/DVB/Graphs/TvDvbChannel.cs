@@ -84,7 +84,7 @@ namespace TvLibrary.Implementations.DVB
     protected MDPlugs _mdplugs;
 
     /// set to true to enable PAT lookup of PMT
-    private bool alwaysUsePATLookup = System.IO.File.Exists(@"C:\usePATLookup.txt");
+    private bool alwaysUsePATLookup = DebugSettings.UsePATLookup;
       
 
     #region teletext

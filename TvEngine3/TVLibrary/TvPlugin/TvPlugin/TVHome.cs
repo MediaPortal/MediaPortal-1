@@ -892,7 +892,7 @@ namespace TvPlugin
 
     public static bool UseRTSP()
     {
-      bool useRtsp = File.Exists("c:\\usertsp.txt");
+      bool useRtsp = DebugSettings.UseRTSP;
 
       if (!useRtsp)
       {

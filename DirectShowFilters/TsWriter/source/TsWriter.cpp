@@ -26,8 +26,10 @@
 #include <streams.h>
 #include <initguid.h>
 #include <shlobj.h>
+#include <tchar.h>
 #include "TsWriter.h"
 #include "..\..\shared\tsheader.h"
+#include "..\..\shared\DebugSettings.h"
 
 static char logFile[MAX_PATH];
 static WORD logFileParsed = -1;
@@ -82,21 +84,9 @@ void DumpTs(byte* tspacket)
 	fclose(fp);
 }
 
-bool DisableCRCCheck()
-{
-  TCHAR folder[MAX_PATH];
-  TCHAR fileName[MAX_PATH];
-  ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-  sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal TV Server\\DisableCRCCheck.txt",folder);
-	FILE *f=fopen(fileName,"r");
-	bool ret=true;
-	if (f==NULL)
-		ret=false;
-	else
-		fclose(f);
-	return ret;
-}
-	
+DEFINE_TVE_DEBUG_SETTING(DisableCRCCheck)
+DEFINE_TVE_DEBUG_SETTING(DumpRawTS)
+
 static char logbuffer[2000]; 
 void LogDebug(const char *fmt, ...) 
 {
@@ -693,10 +683,8 @@ STDMETHODIMP CMpTs:: TimeShiftSetTimeShiftingFileName( int handle, char* pszFile
   if (pChannel==NULL) return S_OK;
   
   b_dumpRawPakets=false;
-  HANDLE hTest=CreateFile("C:\\dumprawts.txt",(DWORD) GENERIC_READ,0,0,(DWORD) OPEN_EXISTING,0,NULL);
-  if (hTest!=INVALID_HANDLE_VALUE)
+  if (DumpRawTS());
   {
-    CloseHandle(hTest);
 	  b_dumpRawPakets=true;
 	  string fileName=pszFileName;
 	  fileName=fileName.substr(0, fileName.rfind("\\"));

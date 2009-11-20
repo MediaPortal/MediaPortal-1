@@ -5,6 +5,7 @@ using TvControl;
 using TvDatabase;
 using System.IO;
 using MediaPortal.GUI.Library;
+using MediaPortal.Configuration;
 
 namespace TvPlugin
 {
@@ -20,7 +21,7 @@ namespace TvPlugin
     {
       if (isEnabled==0)
       {
-        if (File.Exists("c:\\EnableRecordingFromTimeshift.txt"))
+        if (DebugSettings.EnableRecordingFromTimeshift)
           isEnabled = 1;
         else
           isEnabled = -1;

@@ -54,6 +54,7 @@ namespace SetupTv
   public class Startup
   {
     static StartupMode startupMode = StartupMode.Normal;
+    static bool debugOptions = false;
 
     readonly string sectionsConfiguration = String.Empty;
 
@@ -75,7 +76,7 @@ namespace SetupTv
       switch (startupMode)
       {
         case StartupMode.Normal:
-          applicationForm = new SetupTvSettingsForm();
+          applicationForm = new SetupTvSettingsForm(debugOptions);
           break;
 
         case StartupMode.Wizard:
@@ -83,7 +84,7 @@ namespace SetupTv
           break;
 
         case StartupMode.DbCleanup:
-          applicationForm = new SetupTvSettingsForm();
+          applicationForm = new SetupTvSettingsForm(debugOptions);
           break;
       }
 
@@ -154,6 +155,10 @@ namespace SetupTv
         if (param == "--configure-db" || param == "-c" || param == @"/c")
         {
           startupMode = StartupMode.DbConfig;
+        }
+        if (param == "--DebugOptions")
+        {
+          debugOptions = true;
         }
         if (param == "--DeployMode")
         {

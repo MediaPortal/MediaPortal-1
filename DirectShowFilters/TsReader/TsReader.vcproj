@@ -458,6 +458,14 @@
 				RelativePath=".\source\WaitEvent.h"
 				>
 			</File>
+			<Filter
+				Name="SHARED"
+				>
+				<File
+					RelativePath="..\shared\DebugSettings.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>
