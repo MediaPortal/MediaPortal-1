@@ -188,9 +188,10 @@ __int64 _stdcall cMulDiv64(__int64 operant, __int64 multiplier, __int64 divider)
 
 static LONGLONG GetCurrentTimestamp()
 {
-  CAutoLock lock(&lock);
   if( !g_bTimerInitializer ) 
   {
+    CAutoLock lock(&lock);
+    
     DWORD_PTR oldmask = SetThreadAffinityMask(GetCurrentThread(), 0);
     g_bQPCAvail = QueryPerformanceFrequency((LARGE_INTEGER*)&g_lPerfFrequency);
     SetThreadAffinityMask(GetCurrentThread(), oldmask);
@@ -204,7 +205,7 @@ static LONGLONG GetCurrentTimestamp()
   {
     // http://msdn.microsoft.com/en-us/library/ms644904(VS.85).aspx
     // Use always the same CPU core (should help with broken BIOS and/or HAL)
-    DWORD_PTR oldmask = SetThreadAffinityMask(GetCurrentThread(), 0);
+    DWORD_PTR oldmask = SetThreadAffinityMask(GetCurrentThread(), 1);
 
     ULARGE_INTEGER tics;
     QueryPerformanceCounter((LARGE_INTEGER*)&tics);
