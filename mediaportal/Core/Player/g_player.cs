@@ -106,14 +106,10 @@ namespace MediaPortal.Player
     #region events
 
     public delegate void StoppedHandler(MediaType type, int stoptime, string filename);
-
     public delegate void EndedHandler(MediaType type, string filename);
-
-    public delegate void StartedHandler(MediaType type, string filename);
-
-    public delegate void AudioTracksReadyHandler();
-
+    public delegate void StartedHandler(MediaType type, string filename);        
     public delegate void ChangedHandler(MediaType type, int stoptime, string filename);
+    public delegate void AudioTracksReadyHandler();
 
     // when a user is already playing a file without stopping the user selects another file for playback.
     // in this case we do not receive the onstopped event.
@@ -618,7 +614,10 @@ namespace MediaPortal.Player
         if (!keepExclusiveModeOn && !keepTimeShifting)
         {
           RefreshRateChanger.AdaptRefreshRate();
-        }
+        }        
+        
+        if (!String.IsNullOrEmpty(Util.DaemonTools.GetVirtualDrive()))
+          Util.DaemonTools.UnMount();
       }
     }
 
@@ -1177,6 +1176,18 @@ namespace MediaPortal.Player
           return false;
         }
 
+        string extension = Path.GetExtension(strFile).ToLower();
+        bool isImageFile = Util.VirtualDirectory.IsImageFile(extension);
+        if (isImageFile)
+        { 
+          if (!File.Exists(Util.DaemonTools.GetVirtualDrive() + @"\VIDEO_TS\VIDEO_TS.IFO"))
+          {
+            _currentFilePlaying = strFile;
+            MediaPortal.Ripper.AutoPlay.ExamineCD(Util.DaemonTools.GetVirtualDrive(), true);
+            return true;
+          }
+        }
+
         if (Util.Utils.IsDVD(strFile))
         {
           ChangeDriveSpeed(strFile, DriveType.CD);
@@ -1247,16 +1258,12 @@ namespace MediaPortal.Player
         Log.Info("g_Player.Play({0} {1})", strFile, type);
         if (!Util.Utils.IsAVStream(strFile) && Util.Utils.IsVideo(strFile))
         {
-          string extension = Path.GetExtension(strFile).ToLower();
-          bool isImageFile = Util.VirtualDirectory.IsImageFile(extension);
-          
           if (!Util.Utils.IsRTSP(strFile) && extension != ".ts") // do not play recorded tv with external player
           {
             using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
             {
-              bool bInternal, bInternalDVD;
-              bInternal = xmlreader.GetValueAsBool("movieplayer", "internal", true);
-              bInternalDVD = xmlreader.GetValueAsBool("dvdplayer", "internal", true);
+              bool bInternal = xmlreader.GetValueAsBool("movieplayer", "internal", true);
+              bool bInternalDVD = xmlreader.GetValueAsBool("dvdplayer", "internal", true);
 
               if ((!bInternalDVD && (extension == ".ifo" || extension == ".vob" || isImageFile)) || (!bInternal && (extension != ".ifo" && extension != ".vob" && !isImageFile))) // external player used
               {

@@ -327,9 +327,6 @@ namespace MediaPortal.Player
 
     private void Cleanup()
     {
-      if (Util.DaemonTools.IsMounted(_currentFile))
-        Util.DaemonTools.UnMount();
-      
       if (_graphBuilder == null)
       {
         return;

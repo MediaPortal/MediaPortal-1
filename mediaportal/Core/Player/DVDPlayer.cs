@@ -408,10 +408,7 @@ namespace MediaPortal.Player
 
     /// <summary> do cleanup and release DirectShow. </summary>
     protected virtual void CloseInterfaces()
-    {
-      if (Util.DaemonTools.IsMounted(_currentFile))
-        Util.DaemonTools.UnMount();
-      
+    {      
       if (_graphBuilder == null)
       {
         return;
