@@ -64,7 +64,7 @@ namespace TvLibrary.Hardware
     /// <summary>
     /// Get name of device
     /// </summary>
-    /// <param name="idx">idx - device index (0 <= idx < FindDevices())</param>
+    /// <param name="idx">idx - device index (0 &lt;= idx &lt; FindDevices())</param>
     /// <returns>string with device name or NULL (on failure). Do not modify or free memory used by this string!</returns>
     [DllImport("TeVii.dll", EntryPoint = "GetDeviceName", CharSet=CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
     public static extern IntPtr GetDeviceName(int idx);
@@ -72,7 +72,7 @@ namespace TvLibrary.Hardware
     /// <summary>
     /// Get device path
     /// </summary>
-    /// <param name="idx">idx - device index (0 <= idx < FindDevices())</param>
+    /// <param name="idx">idx - device index (0 lt;= idx &lt; FindDevices())</param>
     /// <returns>string with device path or NULL (on failure). Do not modify or free memory used by this string!</returns>
     [DllImport("TeVii.dll", EntryPoint = "GetDevicePath", CharSet=CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
     public static extern IntPtr GetDevicePath(int idx);
@@ -85,7 +85,7 @@ namespace TvLibrary.Hardware
     /// Open device. Application may open several devices simultaneously. 
     /// They will be distinguished by idx parameter.
     /// </summary>
-    /// <param name="idx">idx - device index (0 <= idx < FindDevices())</param>
+    /// <param name="idx">idx - device index (0 &lt;= idx &lt; FindDevices())</param>
     /// <param name="func">func - capture function which will receive stream.</param>
     /// <param name="lParam">lParam - application defined parameter which will be passed to capture function</param>
     /// <returns>non-zero on success</returns>
@@ -95,7 +95,7 @@ namespace TvLibrary.Hardware
     /// <summary>
     /// Close Device
     /// </summary>
-    /// <param name="idx">idx - device index of previously opened device (0 <= idx < FindDevices())</param>
+    /// <param name="idx">idx - device index of previously opened device (0 &lt;= idx &lt; FindDevices())</param>
     /// <returns> non-zero on success</returns>
     [DllImport("TeVii.dll", EntryPoint = "CloseDevice", CharSet=CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
     public static extern Int32 CloseDevice(int idx);
@@ -103,7 +103,7 @@ namespace TvLibrary.Hardware
     /// <summary>
     /// Tune to transponder
     /// </summary>
-    /// <param name="idx">idx - device index of previously opened device (0 <= idx < FindDevices())</param>
+    /// <param name="idx">idx - device index of previously opened device (0 &lt;= idx &lt; FindDevices())</param>
     /// <param name="Freq">Freq - frequency in kHz, for example: 12450000 (12.45 GHz)</param>
     /// <param name="SymbRate">SymbRate - Symbol rate in sps, for example: 27500000 (27500 Ksps)</param>
     /// <param name="LOF"></param>
@@ -118,7 +118,7 @@ namespace TvLibrary.Hardware
     /// <summary>
     /// Get signal status
     /// </summary>
-    /// <param name="idx">idx - device index of previously opened device (0 <= idx < FindDevices())</param>
+    /// <param name="idx">idx - device index of previously opened device (0 &lt;= idx &lt; FindDevices())</param>
     /// <param name="IsLocked">isLocked - non-zero if signal is present</param>
     /// <param name="Strength">Strength - 0..100 signal strength</param>
     /// <param name="Quality">Quality - 0..100 signal quality</param>
@@ -129,7 +129,7 @@ namespace TvLibrary.Hardware
     /// <summary>
     /// Send DiSEqC message
     /// </summary>
-    /// <param name="idx">idx - device index of previously opened device (0 <= idx < FindDevices())</param>
+    /// <param name="idx">idx - device index of previously opened device (0 &lt;= idx &lt; FindDevices())</param>
     /// <param name="Data"></param>
     /// <param name="Len">Data,Len - buffer with DiSEqC command</param>
     /// <param name="Repeats">Repeats - repeat DiSEqC message n times. 0 means send one time</param>
@@ -141,7 +141,7 @@ namespace TvLibrary.Hardware
     /// <summary>
     /// Set the remote control
     /// </summary>
-    /// <param name="idx">idx - device index of previously opened device (0 <= idx < FindDevices())</param>
+    /// <param name="idx">idx - device index of previously opened device (0 &lt;= idx &lt; FindDevices())</param>
     /// <param name="lpCallback">lpCallback - application defined procedure to receive keys. NULL to disable RC.</param>
     /// <param name="lParam">lParam - application defined parameter which will be passed to callback function</param>
     /// <returns>non-zero on success</returns>
@@ -151,6 +151,11 @@ namespace TvLibrary.Hardware
 
     #region enums
 
+#pragma warning disable 1591
+
+    /// <summary>
+    /// Enum for FEC values
+    /// </summary>
     public enum TFEC
     {
 	    TFEC_AUTO,
@@ -170,6 +175,9 @@ namespace TvLibrary.Hardware
 	    TFEC_9_10
     };
 
+    /// <summary>
+    /// Enum for modulations
+    /// </summary>
     public enum TMOD
     {
 	    TMOD_AUTO,
@@ -190,12 +198,17 @@ namespace TvLibrary.Hardware
 	    TMOD_TURBO_16PSK
     };
 
+    /// <summary>
+    /// Enum for Polarization
+    /// </summary>
     public enum TPolarization
     {
 	    TPol_None,
 	    TPol_Vertical,
 	    TPol_Horizontal
     };
+
+#pragma warning restore 1591
     #endregion
 
     #region variables
@@ -253,11 +266,18 @@ namespace TvLibrary.Hardware
 
     #region IHardwareProvider Member
 
+    /// <summary>
+    /// Init Hardware Provider
+    /// </summary>
+    /// <param name="tunerFilter"></param>
     public void Init(IBaseFilter tunerFilter)
     {
       // TeVii doesn't care about tunerFilters
     }
 
+    /// <summary>
+    /// GET or SET the DeviceIndex for/after detection 
+    /// </summary>
     public int DeviceIndex
     {
       get
@@ -269,6 +289,9 @@ namespace TvLibrary.Hardware
         m_iDeviceIndex = value;
       }
     }
+    /// <summary>
+    /// Provider Name
+    /// </summary>
     public String Provider
     {
       get
@@ -277,6 +300,9 @@ namespace TvLibrary.Hardware
       }
     }
 
+    /// <summary>
+    /// GET or SET the DevicePath for detection 
+    /// </summary>
     public String DevicePath
     {
       get
@@ -289,11 +315,17 @@ namespace TvLibrary.Hardware
       }
     }
 
+    /// <summary>
+    /// Loading Priority
+    /// </summary>
     public int Priority
     {
       get { return 10; }
     }
 
+    /// <summary>
+    /// Checks for suitable hardware and opens it
+    /// </summary>
     public void CheckAndOpen()
     {
       Int32 numberDevices=FindDevices();
@@ -336,6 +368,9 @@ namespace TvLibrary.Hardware
       Log.Log.Debug("TeVii: card {0} successful opened", m_iDeviceIndex);
     }
 
+    /// <summary>
+    /// return true if hardware supported
+    /// </summary>
     public bool IsSupported
     {
       get { return m_bIsTeVii; }
@@ -422,6 +457,11 @@ namespace TvLibrary.Hardware
       SendDiSEqCCommand(ucMessage);
     }
 
+    /// <summary>
+    /// Send DiSEqC Command
+    /// </summary>
+    /// <param name="diSEqC">byte[] with commands</param>
+    /// <returns>true if successful</returns>
     public bool SendDiSEqCCommand(byte[] diSEqC)
     {
       int res = SendDiSEqC(m_iDeviceIndex, diSEqC, diSEqC.Length, 0, 0);
@@ -435,6 +475,11 @@ namespace TvLibrary.Hardware
       return true;
     }
 
+    /// <summary>
+    /// Read command
+    /// </summary>
+    /// <param name="reply"></param>
+    /// <returns></returns>
     public bool ReadDiSEqCCommand(out byte[] reply)
     {
       Log.Log.Debug("ReadDiSEqCCommand not supported");
