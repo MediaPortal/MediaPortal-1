@@ -99,6 +99,7 @@
     <Compile Include="Implementations\DVB\ConditionalAccess\ConditionalAccessContext.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\ProfRed\ProfRed.cs" />
     <Compile Include="Implementations\DVB\DisEqC\ConexantBDA.cs" />
+    <Compile Include="Implementations\DVB\DisEqC\TeVii.cs" />
     <Compile Include="Implementations\DVB\QAM\GenericATSC.cs" />
     <Compile Include="Implementations\DVB\DisEqC\GenericBDAS.cs" />
     <Compile Include="Implementations\DVB\DisEqC\GenPixBDA.cs" />

@@ -26,6 +26,7 @@ using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Interfaces;
 using DirectShowLib.BDA;
 using TvDatabase;
+using TvLibrary.Hardware;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -56,6 +57,7 @@ namespace TvLibrary.Implementations.DVB
     readonly ViXSATSC _isvixsatsc;
     readonly ConexantBDA _conexant;
     readonly GenPixBDA _genpix;
+    readonly TeVii _TeVii;
 
     private readonly ICiMenuActions _ciMenu;
     /// <summary>
@@ -192,6 +194,29 @@ namespace TvLibrary.Implementations.DVB
               return;
           }
           _profred = null;
+
+          // TeVii support
+          _TeVii = new TeVii();
+          _TeVii.Init(tunerFilter);
+          _TeVii.DevicePath = card.DevicePath;
+          Log.Log.WriteFile("Check for {0}", _TeVii.Provider);
+          _TeVii.CheckAndOpen();
+          if (_TeVii.IsSupported)
+          {
+            _diSEqCMotor = new DiSEqCMotor(_TeVii);
+            Log.Log.WriteFile("Check for Hauppauge WinTV CI");
+            if (winTvUsbCiFilter != null)
+            {
+              Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
+              _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
+            }
+            return;
+          }
+          else
+          {
+            _TeVii.Dispose();
+            _TeVii = null;
+          }
 
           Log.Log.WriteFile("Check for Conexant based card");
           _conexant = new ConexantBDA(tunerFilter);
@@ -684,12 +709,17 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_profred != null)
         {
-            _profred.SendDiseqCommand(parameters, channel);
-            System.Threading.Thread.Sleep(100);
+          _profred.SendDiseqCommand(parameters, channel);
+          System.Threading.Thread.Sleep(100);
         }
         if (_genpix != null)
         {
           _genpix.SendDiseqCommand(parameters, channel);
+          System.Threading.Thread.Sleep(100);
+        }
+        if (_TeVii!= null)
+        {
+          _TeVii.SendDiseqCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
       }
@@ -1052,6 +1082,10 @@ namespace TvLibrary.Implementations.DVB
       if (_twinhan != null)
       {
         _twinhan.Dispose();
+      }
+      if (_TeVii != null)
+      {
+        _TeVii.Dispose();
       }
     }
     #endregion

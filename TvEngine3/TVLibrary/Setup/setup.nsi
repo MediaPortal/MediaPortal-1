@@ -462,6 +462,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\KNCBDACTRL.dll"
   File "${TVSERVER.BASE}\ttBdaDrvApi_Dll.dll"
   File "${TVSERVER.BASE}\ttdvbacc.dll"
+  File "${TVSERVER.BASE}\tevii.dll"
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
 
   File "${svn_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
@@ -614,6 +615,7 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\StreamingServer.dll"
   Delete "$INSTDIR\ttBdaDrvApi_Dll.dll"
   Delete "$INSTDIR\ttdvbacc.dll"
+  Delete "$INSTDIR\tevii.dll"
   Delete "$INSTDIR\Ionic.Zip.dll"
   Delete "$INSTDIR\Interop.SHDocVw.dll"
 

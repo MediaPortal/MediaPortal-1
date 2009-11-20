@@ -64,6 +64,7 @@
     <Compile Include="ChannelLinkage\LinkedChannel.cs" />
     <Compile Include="ChannelLinkage\PortalChannel.cs" />
     <Compile Include="DvbTextConverter.cs" />
+    <Compile Include="HardwareProviders\IHardwareProvider.cs" />
     <Compile Include="Implementations\Analog\Configuration.cs" />
     <Compile Include="Implementations\Analog\GraphComponents\Capture.cs" />
     <Compile Include="Implementations\Analog\GraphComponents\Crossbar.cs" />
