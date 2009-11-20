@@ -71,7 +71,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     public FiltersInterVideoEncoder()
-      : this("InterVideo Encoder Filters")
+      : this("InterVideo Encoder")
     {
     }
 

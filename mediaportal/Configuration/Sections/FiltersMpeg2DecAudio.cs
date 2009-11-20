@@ -68,7 +68,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     public FiltersMPEG2DecAudio()
-      : this("MPC - MPA Decoder Filter")
+      : this("MPC - MPA Decoder")
     {
     }
 

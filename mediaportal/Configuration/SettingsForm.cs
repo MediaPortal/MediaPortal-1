@@ -309,7 +309,14 @@ namespace MediaPortal.Configuration
       }
 
       FiltersSection filterSection = new FiltersSection();
-      AddSection(new ConfigPage(null, filterSection, true));
+      AddSection(new ConfigPage(null, filterSection, false));
+
+      //Log.Info("  add Video codec section");
+      //AddSection(new ConfigPage(filterSection, new MovieCodec(), false));
+      //Log.Info("  add DVD codec section");
+      //AddSection(new ConfigPage(filterSection, new DVDCodec(), false));
+      //Log.Info("  add TV codec section");
+      //AddSection(new ConfigPage(filterSection, new TVCodec(), false));
 
       ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
       if (availableAudioFilters.Count > 0)
@@ -317,6 +324,19 @@ namespace MediaPortal.Configuration
         if (splashScreen != null)
         {
           splashScreen.SetInformation("Adding audio filters...");
+        }
+
+        ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.LATMAAC);
+        if (availableAACAudioFilters.Count > 0)
+        {
+          foreach (string filter in availableAACAudioFilters)
+          {
+            if (filter.Equals("MONOGRAM AAC Decoder"))
+            {
+              FiltersMonogramAACDecoder monogramConfig = new FiltersMonogramAACDecoder();
+              AddSection(new ConfigPage(filterSection, monogramConfig, true));
+            }
+          }
         }
 
         foreach (string filter in availableAudioFilters)
@@ -336,28 +356,15 @@ namespace MediaPortal.Configuration
             FiltersPowerDVDDecoder pdvdConfig = new FiltersPowerDVDDecoder();
             AddSection(new ConfigPage(filterSection, pdvdConfig, true));
           }
-          if (filter.Equals("MPC - MPA Decoder Filter"))
-          {
-            FiltersMPEG2DecAudio mpaConfig = new FiltersMPEG2DecAudio();
-            AddSection(new ConfigPage(filterSection, mpaConfig, false));
-          }
           if (filter.Equals("DScaler Audio Decoder"))
           {
             FiltersDScalerAudio dscalerConfig = new FiltersDScalerAudio();
             AddSection(new ConfigPage(filterSection, dscalerConfig, true));
           }
-        }
-
-        ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.LATMAAC);
-        if (availableAACAudioFilters.Count > 0)
-        {
-          foreach (string filter in availableAACAudioFilters)
+          if (filter.Equals("MPC - MPA Decoder Filter"))
           {
-            if (filter.Equals("MONOGRAM AAC Decoder"))
-            {
-              FiltersMonogramAACDecoder monogramConfig = new FiltersMonogramAACDecoder();
-              AddSection(new ConfigPage(filterSection, monogramConfig, true));
-            }
+            FiltersMPEG2DecAudio mpaConfig = new FiltersMPEG2DecAudio();
+            AddSection(new ConfigPage(filterSection, mpaConfig, true));
           }
         }
       }
@@ -392,8 +399,8 @@ namespace MediaPortal.Configuration
 
 
       //Add section for video renderer configuration
-      FiltersVideoRenderer renderConfig = new FiltersVideoRenderer();
-      AddSection(new ConfigPage(filterSection, renderConfig, true));
+      //FiltersVideoRenderer renderConfig = new FiltersVideoRenderer();
+      //AddSection(new ConfigPage(filterSection, renderConfig, true));
 
       //Look for Audio Encoders, if exist assume encoders are installed & present config option
       string[] audioEncoders = new string[] { "InterVideo Audio Encoder" };
@@ -442,17 +449,19 @@ namespace MediaPortal.Configuration
       if (UseTvServer)
       {
         //add television section
-        Log.Info("add television section");
+        Log.Info("add tv section");
         if (splashScreen != null)
         {
           splashScreen.SetInformation("Adding television section...");
         }
 
-        SectionSettings television = new Television();
+        SectionSettings television = new TV();
         AddSection(new ConfigPage(null, television, false));
 
         Log.Info("  add tv client section");
         AddSection(new ConfigPage(television, new TVClient(), false));
+        Log.Info("  add tv zoom section");
+        AddSection(new ConfigPage(television, new TVZoom(), false));
         Log.Info("  add tv postprocessing section");
         AddSection(new ConfigPage(television, new TVPostProcessing(), true));
         Log.Info("  add tv teletext section");
@@ -529,7 +538,8 @@ namespace MediaPortal.Configuration
       AddSection(new ConfigPage(movie, movieDbConfig, false));
       Log.Info("  add video player section");
       AddSection(new ConfigPage(movie, new MoviePlayer(), false));
-
+      Log.Info("  add video zoom section");
+      AddSection(new ConfigPage(movie, new MovieZoom(), false));
       Log.Info("  add video extensions section");
       AddSection(new ConfigPage(movie, new MovieExtensions(), true));
       Log.Info("  add video views section");
@@ -550,11 +560,10 @@ namespace MediaPortal.Configuration
       SectionSettings dvd = new DVD();
       AddSection(new ConfigPage(null, dvd, false));
 
-      Log.Info("  add DVD codec section");
-      AddSection(new ConfigPage(dvd, new DVDCodec(), false));
-
       Log.Info("  add DVD player section");
       AddSection(new ConfigPage(dvd, new DVDPlayer(), true));
+      Log.Info("  add DVD zoom section");
+      AddSection(new ConfigPage(dvd, new DVDZoom(), true));
       Log.Info("  add DVD postprocessing section");
       AddSection(new ConfigPage(dvd, new DVDPostProcessing(), true));
     }

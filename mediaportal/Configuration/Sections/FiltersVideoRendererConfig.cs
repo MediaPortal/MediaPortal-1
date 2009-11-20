@@ -6,6 +6,8 @@ namespace MediaPortal.Configuration.Sections
 {
   public partial class FiltersVideoRenderer : SectionSettings
   {
+    bool _init = false;
+
     public FiltersVideoRenderer()
       : this("Video Renderer Settings")
     {
@@ -20,42 +22,48 @@ namespace MediaPortal.Configuration.Sections
     public override void LoadSettings()
     {
       base.LoadSettings();
-      using (Settings xmlreader = new MPSettings())
+      if (_init == false)
       {
-        //VMR9 settings
-        checkboxMpNonsquare.Checked = xmlreader.GetValueAsBool("general", "nonsquare", true);
-        // http://msdn2.microsoft.com/en-us/library/ms787438(VS.85).aspx
-        checkboxDXEclusive.Checked = xmlreader.GetValueAsBool("general", "exclusivemode", true);
-        mpVMR9FilterMethod.Text = xmlreader.GetValueAsString("general", "dx9filteringmode", "Gaussian Quad Filtering");
-        // http://msdn2.microsoft.com/en-us/library/ms788066.aspx
-        checkBoxVMRWebStreams.Checked = xmlreader.GetValueAsBool("general", "usevrm9forwebstreams", true);
-        checkBoxDecimateMask.Checked = xmlreader.GetValueAsBool("general", "dx9decimatemask", false);
-        // http://msdn2.microsoft.com/en-us/library/ms787452(VS.85).aspx
-
-        bool ValueEVR = false;
-
-        try
+        using (Settings xmlreader = new MPSettings())
         {
-          //EVR - VMR9 selection
-          int ver = (OSInfo.OSInfo.OSMajorVersion * 10) + OSInfo.OSInfo.OSMinorVersion;
-          ValueEVR = ver >= 60 ? true : false;
-        }
-        catch (Exception ex)
-        {
-          Log.Error("FilterVideoRendererConfig: Os detection unsuccessful - {0}", ex.Message);
-        }
+          //VMR9 settings
+          checkboxMpNonsquare.Checked = xmlreader.GetValueAsBool("general", "nonsquare", true);
+          // http://msdn2.microsoft.com/en-us/library/ms787438(VS.85).aspx
+          checkboxDXEclusive.Checked = xmlreader.GetValueAsBool("general", "exclusivemode", true);
+          mpVMR9FilterMethod.Text = xmlreader.GetValueAsString("general", "dx9filteringmode", "Gaussian Quad Filtering");
+          // http://msdn2.microsoft.com/en-us/library/ms788066.aspx
+          checkBoxVMRWebStreams.Checked = xmlreader.GetValueAsBool("general", "usevrm9forwebstreams", true);
+          checkBoxDecimateMask.Checked = xmlreader.GetValueAsBool("general", "dx9decimatemask", false);
+          // http://msdn2.microsoft.com/en-us/library/ms787452(VS.85).aspx
 
-        radioButtonEVR.Checked = xmlreader.GetValueAsBool("general", "useEVRenderer", ValueEVR);
+          bool ValueEVR = false;
+
+          try
+          {
+            //EVR - VMR9 selection
+            int ver = (OSInfo.OSInfo.OSMajorVersion * 10) + OSInfo.OSInfo.OSMinorVersion;
+            ValueEVR = ver >= 60 ? true : false;
+          }
+          catch (Exception ex)
+          {
+            Log.Error("FilterVideoRendererConfig: Os detection unsuccessful - {0}", ex.Message);
+          }
+
+          radioButtonEVR.Checked = xmlreader.GetValueAsBool("general", "useEVRenderer", ValueEVR);
+        }
+        _init = true;
       }
     }
 
-    //public override void OnSectionActivated()
-    //{
-    //  base.OnSectionActivated();
-    //}
+    public override void OnSectionActivated()
+    {
+      base.OnSectionActivated();
+      LoadSettings();
+    }
 
     public override void SaveSettings()
     {
+      if (_init == false) return;
       using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("general", "nonsquare", checkboxMpNonsquare.Checked);

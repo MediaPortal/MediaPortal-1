@@ -66,7 +66,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     public FiltersPureVideoDecoder()
-      : this("NVIDIA PureVideo Decoder Settings")
+      : this("NVIDIA PureVideo Decoder")
     {
     }
 

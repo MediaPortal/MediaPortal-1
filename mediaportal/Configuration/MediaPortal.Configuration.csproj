@@ -240,6 +240,12 @@
     <Compile Include="Sections\BaseViews.Designer.cs">
       <DependentUpon>BaseViews.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\DVDZoom.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\DVDZoom.Designer.cs">
+      <DependentUpon>DVDZoom.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\GeneralDynamicRefreshRate.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -255,11 +261,23 @@
     <Compile Include="Sections\GeneralScreensaver.Designer.cs">
       <DependentUpon>GeneralScreensaver.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\MovieCodec.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\MovieCodec.Designer.cs">
+      <DependentUpon>MovieCodec.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\MovieDatabase.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\MovieDatabase.Designer.cs">
       <DependentUpon>MovieDatabase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\MovieZoom.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\MovieZoom.Designer.cs">
+      <DependentUpon>MovieZoom.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\PictureThumbs.cs">
       <SubType>UserControl</SubType>
@@ -278,6 +296,18 @@
     </Compile>
     <Compile Include="Sections\ThirdPartyChecks.Designer.cs">
       <DependentUpon>ThirdPartyChecks.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\TVCodec.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\TVCodec.Designer.cs">
+      <DependentUpon>TVCodec.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\TVZoom.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\TVZoom.Designer.cs">
+      <DependentUpon>TVZoom.cs</DependentUpon>
     </Compile>
     <Compile Include="Subdialogs\DlgMpcSubs.cs">
       <SubType>Form</SubType>
@@ -521,7 +551,7 @@
     <Compile Include="Sections\Remote.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\Television.cs">
+    <Compile Include="Sections\TV.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\TVPostProcessing.cs">
@@ -557,6 +587,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>BaseViews.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sections\DVDZoom.resx">
+      <DependentUpon>DVDZoom.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\GeneralDynamicRefreshRate.resx">
       <SubType>Designer</SubType>
       <DependentUpon>GeneralDynamicRefreshRate.cs</DependentUpon>
@@ -569,12 +603,21 @@
       <DependentUpon>GeneralScreensaver.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sections\MovieCodec.resx">
+      <DependentUpon>MovieCodec.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\MovieDatabase.resx">
       <DependentUpon>MovieDatabase.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sections\MovieZoom.resx">
+      <DependentUpon>MovieZoom.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\PictureThumbs.resx">
       <DependentUpon>PictureThumbs.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Project.resx">
       <DependentUpon>Project.cs</DependentUpon>
@@ -586,6 +629,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\ThirdPartyChecks.resx">
       <DependentUpon>ThirdPartyChecks.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\TVCodec.resx">
+      <DependentUpon>TVCodec.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\TVZoom.resx">
+      <DependentUpon>TVZoom.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="SettingsForm.resx">
       <SubType>Designer</SubType>
@@ -750,30 +802,39 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Subdialogs\DlgMovieList.resx">
       <DependentUpon>DlgMovieList.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\DVD.resx">
       <DependentUpon>DVD.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\DVDCodec.resx">
       <DependentUpon>DVDCodec.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\DVDPlayer.resx">
       <DependentUpon>DVDPlayer.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Filters.resx">
       <DependentUpon>Filters.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\MoviePlayer.resx">
       <DependentUpon>MoviePlayer.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Movies.resx">
       <DependentUpon>Movies.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Music.resx">
       <DependentUpon>Music.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\MusicDatabase.resx">
       <DependentUpon>MusicDatabase.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\MusicSort.resx">
       <DependentUpon>MusicSort.cs</DependentUpon>
@@ -781,16 +842,19 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Pictures.resx">
       <DependentUpon>Pictures.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\PluginsNew.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PluginsNew.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Television.resx">
-      <DependentUpon>Television.cs</DependentUpon>
+    <EmbeddedResource Include="Sections\TV.resx">
+      <DependentUpon>TV.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Weather.resx">
       <DependentUpon>Weather.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\RemoteWinLirc.resx">
       <DependentUpon>RemoteWinLirc.cs</DependentUpon>

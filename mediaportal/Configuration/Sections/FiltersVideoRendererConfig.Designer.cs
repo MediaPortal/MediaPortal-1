@@ -59,6 +59,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.radioButtonEVR);
       this.mpGroupBox1.Controls.Add(this.radioButtonVMR9);
       this.mpGroupBox1.Controls.Add(this.labelEVRHint);
@@ -70,9 +72,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.label1);
       this.mpGroupBox1.Controls.Add(this.checkboxMpNonsquare);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(0, 0);
+      this.mpGroupBox1.Location = new System.Drawing.Point(3, 3);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(459, 381);
+      this.mpGroupBox1.Size = new System.Drawing.Size(466, 323);
       this.mpGroupBox1.TabIndex = 1;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Video Renderer - Advanced settings";
@@ -117,7 +119,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.checkBoxDecimateMask.AutoSize = true;
       this.checkBoxDecimateMask.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxDecimateMask.Location = new System.Drawing.Point(56, 116);
+      this.checkBoxDecimateMask.Location = new System.Drawing.Point(43, 129);
       this.checkBoxDecimateMask.Name = "checkBoxDecimateMask";
       this.checkBoxDecimateMask.Size = new System.Drawing.Size(397, 17);
       this.checkBoxDecimateMask.TabIndex = 8;
@@ -128,7 +130,7 @@ namespace MediaPortal.Configuration.Sections
       // labelFilteringHint
       // 
       this.labelFilteringHint.AutoSize = true;
-      this.labelFilteringHint.Location = new System.Drawing.Point(187, 142);
+      this.labelFilteringHint.Location = new System.Drawing.Point(187, 155);
       this.labelFilteringHint.Name = "labelFilteringHint";
       this.labelFilteringHint.Size = new System.Drawing.Size(224, 13);
       this.labelFilteringHint.TabIndex = 7;
@@ -173,7 +175,7 @@ namespace MediaPortal.Configuration.Sections
             "Anisotropic Filtering",
             "Pyrimidal Quad Filtering",
             "Gaussian Quad Filtering"});
-      this.mpVMR9FilterMethod.Location = new System.Drawing.Point(43, 139);
+      this.mpVMR9FilterMethod.Location = new System.Drawing.Point(43, 152);
       this.mpVMR9FilterMethod.Name = "mpVMR9FilterMethod";
       this.mpVMR9FilterMethod.Size = new System.Drawing.Size(138, 21);
       this.mpVMR9FilterMethod.TabIndex = 2;
@@ -193,7 +195,7 @@ namespace MediaPortal.Configuration.Sections
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.mpGroupBox1);
       this.Name = "FiltersVideoRenderer";
-      this.Size = new System.Drawing.Size(459, 384);
+      this.Size = new System.Drawing.Size(472, 391);
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
       this.ResumeLayout(false);

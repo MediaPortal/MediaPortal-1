@@ -46,7 +46,7 @@ namespace MediaPortal.Configuration.Sections
     public int pluginVersion;
 
     public TVTeletext()
-      : this("Teletext")
+      : this("TV Teletext")
     {
     }
 

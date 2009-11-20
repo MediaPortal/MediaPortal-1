@@ -56,7 +56,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     public FiltersPowerDVDDecoder()
-      : this("PowerDVD Decoder Settings")
+      : this("PowerDVD Decoder")
     {
     }
 

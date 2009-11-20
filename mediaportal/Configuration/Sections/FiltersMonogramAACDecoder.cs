@@ -50,7 +50,7 @@ namespace MediaPortal.Configuration.Sections
     /// Sets Monogram AAC decoder output & volume settings
     /// </summary>
     public FiltersMonogramAACDecoder()
-      : this("Monogram AAC Decoder Settings")
+      : this("Monogram AAC Decoder")
     {
     }
 

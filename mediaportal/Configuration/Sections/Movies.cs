@@ -24,13 +24,11 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
-using MediaPortal.Utils;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
@@ -54,19 +52,9 @@ namespace MediaPortal.Configuration.Sections
     private readonly string m_strDefaultSubtitleLanguageISO = "EN";
     private readonly string m_strDefaultAudioLanguageISO = "EN";
     private MPTabPage tabPage1;
-    private MPGroupBox gAllowedModes;
-    private MPCheckBox cbAllowNormal;
-    private MPCheckBox cbAllowZoom149;
-    private MPCheckBox cbAllowOriginal;
-    private MPCheckBox cbAllowZoom;
-    private MPCheckBox cbAllowLetterbox;
-    private MPCheckBox cbAllowStretch;
-    private MPCheckBox cbAllowNonLinearStretch;
     private MPGroupBox groupBox1;
     private MPCheckBox checkBoxEachFolderIsMovie;
     private MPCheckBox checkBoxShowWatched;
-    private MPComboBox defaultZoomModeComboBox;
-    private MPLabel label1;
     private MPButton fileNameButton;
     private MPTextBox folderNameTextBox;
     private MPCheckBox repeatPlaylistCheckBox;
@@ -128,38 +116,13 @@ namespace MediaPortal.Configuration.Sections
 
       Util.Utils.PopulateLanguagesToComboBox(defaultSubtitleLanguageComboBox, curCultureTwoLetter);
       Util.Utils.PopulateLanguagesToComboBox(defaultAudioLanguageComboBox, curCultureTwoLetter);
-      //
-      // Load all available aspect ratio
-      //
-      defaultZoomModeComboBox.Items.Clear();
-      foreach (Geometry.Type item in Enum.GetValues(typeof(Geometry.Type)))
-      {
-        defaultZoomModeComboBox.Items.Add(Util.Utils.GetAspectRatio(item));
-      }
-      //
-      // Change aspect ratio labels to the current core proj description
-      //
-      cbAllowNormal.Text = Util.Utils.GetAspectRatio(Geometry.Type.Normal);
-      cbAllowOriginal.Text = Util.Utils.GetAspectRatio(Geometry.Type.Original);
-      cbAllowZoom.Text = Util.Utils.GetAspectRatio(Geometry.Type.Zoom);
-      cbAllowZoom149.Text = Util.Utils.GetAspectRatio(Geometry.Type.Zoom14to9);
-      cbAllowStretch.Text = Util.Utils.GetAspectRatio(Geometry.Type.Stretch);
-      cbAllowNonLinearStretch.Text = Util.Utils.GetAspectRatio(Geometry.Type.NonLinearStretch);
-      cbAllowLetterbox.Text = Util.Utils.GetAspectRatio(Geometry.Type.LetterBox43);
+      
     }
 
     public override void LoadSettings()
     {
       using (Settings xmlreader = new MPSettings())
       {
-        cbAllowNormal.Checked = xmlreader.GetValueAsBool("movies", "allowarnormal", true);
-        cbAllowOriginal.Checked = xmlreader.GetValueAsBool("movies", "allowaroriginal", true);
-        cbAllowZoom.Checked = xmlreader.GetValueAsBool("movies", "allowarzoom", true);
-        cbAllowZoom149.Checked = xmlreader.GetValueAsBool("movies", "allowarzoom149", true);
-        cbAllowStretch.Checked = xmlreader.GetValueAsBool("movies", "allowarstretch", true);
-        cbAllowNonLinearStretch.Checked = xmlreader.GetValueAsBool("movies", "allowarnonlinear", true);
-        cbAllowLetterbox.Checked = xmlreader.GetValueAsBool("movies", "allowarletterbox", true);
-
         checkBoxEachFolderIsMovie.Checked = xmlreader.GetValueAsBool("movies", "eachFolderIsMovie", false);
 
         string playListFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
@@ -239,29 +202,6 @@ namespace MediaPortal.Configuration.Sections
         subStyleOverrideCheckBox.Checked = xmlreader.GetValueAsBool("subtitles", "subStyleOverride", false);
         subPosRelativeCheckBox.Checked = xmlreader.GetValueAsBool("subtitles", "subPosRelative", false);
 
-        //
-        // Load all available aspect ratio
-        //
-        defaultZoomModeComboBox.Items.Clear();
-        foreach (Geometry.Type item in Enum.GetValues(typeof(Geometry.Type)))
-        {
-          defaultZoomModeComboBox.Items.Add(Util.Utils.GetAspectRatio(item));
-        }
-
-        //
-        // Set default aspect ratio
-        //
-        string defaultAspectRatio = xmlreader.GetValueAsString("movieplayer", "defaultar", defaultZoomModeComboBox.Items[0].ToString());
-        foreach (Geometry.Type item in Enum.GetValues(typeof(Geometry.Type)))
-        {
-          string currentAspectRatio = Util.Utils.GetAspectRatio(item);
-          if (defaultAspectRatio == currentAspectRatio)
-          {
-            defaultZoomModeComboBox.SelectedItem = currentAspectRatio;
-            break;
-          }
-        }
-
         try
         {
           CultureInfo ci = new CultureInfo(xmlreader.GetValueAsString("movieplayer", "audiolanguage", m_strDefaultAudioLanguageISO));
@@ -314,16 +254,6 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValueAsBool("subtitles", "subStyleOverride", subStyleOverrideCheckBox.Checked);
         xmlwriter.SetValueAsBool("subtitles", "subPosRelative", subPosRelativeCheckBox.Checked);
-
-        xmlwriter.SetValue("movieplayer", "defaultar", defaultZoomModeComboBox.SelectedItem);
-
-        xmlwriter.SetValueAsBool("movies", "allowarnormal", cbAllowNormal.Checked);
-        xmlwriter.SetValueAsBool("movies", "allowaroriginal", cbAllowOriginal.Checked);
-        xmlwriter.SetValueAsBool("movies", "allowarzoom", cbAllowZoom.Checked);
-        xmlwriter.SetValueAsBool("movies", "allowarzoom149", cbAllowZoom149.Checked);
-        xmlwriter.SetValueAsBool("movies", "allowarstretch", cbAllowStretch.Checked);
-        xmlwriter.SetValueAsBool("movies", "allowarnonlinear", cbAllowNonLinearStretch.Checked);
-        xmlwriter.SetValueAsBool("movies", "allowarletterbox", cbAllowLetterbox.Checked);
 
         foreach (CultureInfo ci in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
         {
@@ -378,19 +308,9 @@ namespace MediaPortal.Configuration.Sections
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
       this.fontDialog = new System.Windows.Forms.FontDialog();
       this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
-      this.gAllowedModes = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.cbAllowNormal = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.cbAllowZoom149 = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.cbAllowOriginal = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.cbAllowZoom = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.cbAllowLetterbox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.cbAllowStretch = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.cbAllowNonLinearStretch = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxEachFolderIsMovie = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxShowWatched = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.defaultZoomModeComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.fileNameButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.folderNameTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.repeatPlaylistCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -416,7 +336,6 @@ namespace MediaPortal.Configuration.Sections
       ((System.ComponentModel.ISupportInitialize)(this.borderWidthUpDown)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.shadowDepthUpDown)).BeginInit();
       this.tabPage1.SuspendLayout();
-      this.gAllowedModes.SuspendLayout();
       this.groupBox1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.mpTabPage1.SuspendLayout();
@@ -771,7 +690,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPage1
       // 
-      this.tabPage1.Controls.Add(this.gAllowedModes);
       this.tabPage1.Controls.Add(this.groupBox1);
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
@@ -780,108 +698,12 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1.Text = "General";
       this.tabPage1.UseVisualStyleBackColor = true;
       // 
-      // gAllowedModes
-      // 
-      this.gAllowedModes.Controls.Add(this.cbAllowNormal);
-      this.gAllowedModes.Controls.Add(this.cbAllowZoom149);
-      this.gAllowedModes.Controls.Add(this.cbAllowOriginal);
-      this.gAllowedModes.Controls.Add(this.cbAllowZoom);
-      this.gAllowedModes.Controls.Add(this.cbAllowLetterbox);
-      this.gAllowedModes.Controls.Add(this.cbAllowStretch);
-      this.gAllowedModes.Controls.Add(this.cbAllowNonLinearStretch);
-      this.gAllowedModes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.gAllowedModes.Location = new System.Drawing.Point(16, 190);
-      this.gAllowedModes.Name = "gAllowedModes";
-      this.gAllowedModes.Size = new System.Drawing.Size(186, 189);
-      this.gAllowedModes.TabIndex = 1;
-      this.gAllowedModes.TabStop = false;
-      this.gAllowedModes.Text = "Allowed zoom modes";
-      // 
-      // cbAllowNormal
-      // 
-      this.cbAllowNormal.AutoSize = true;
-      this.cbAllowNormal.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbAllowNormal.Location = new System.Drawing.Point(15, 22);
-      this.cbAllowNormal.Name = "cbAllowNormal";
-      this.cbAllowNormal.Size = new System.Drawing.Size(151, 17);
-      this.cbAllowNormal.TabIndex = 0;
-      this.cbAllowNormal.Text = "Normal (aspect auto mode)";
-      this.cbAllowNormal.UseVisualStyleBackColor = true;
-      // 
-      // cbAllowZoom149
-      // 
-      this.cbAllowZoom149.AutoSize = true;
-      this.cbAllowZoom149.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbAllowZoom149.Location = new System.Drawing.Point(15, 91);
-      this.cbAllowZoom149.Name = "cbAllowZoom149";
-      this.cbAllowZoom149.Size = new System.Drawing.Size(73, 17);
-      this.cbAllowZoom149.TabIndex = 3;
-      this.cbAllowZoom149.Text = "14:9 zoom";
-      this.cbAllowZoom149.UseVisualStyleBackColor = true;
-      // 
-      // cbAllowOriginal
-      // 
-      this.cbAllowOriginal.AutoSize = true;
-      this.cbAllowOriginal.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbAllowOriginal.Location = new System.Drawing.Point(15, 45);
-      this.cbAllowOriginal.Name = "cbAllowOriginal";
-      this.cbAllowOriginal.Size = new System.Drawing.Size(126, 17);
-      this.cbAllowOriginal.TabIndex = 1;
-      this.cbAllowOriginal.Text = "Original source format";
-      this.cbAllowOriginal.UseVisualStyleBackColor = true;
-      // 
-      // cbAllowZoom
-      // 
-      this.cbAllowZoom.AutoSize = true;
-      this.cbAllowZoom.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbAllowZoom.Location = new System.Drawing.Point(15, 68);
-      this.cbAllowZoom.Name = "cbAllowZoom";
-      this.cbAllowZoom.Size = new System.Drawing.Size(51, 17);
-      this.cbAllowZoom.TabIndex = 2;
-      this.cbAllowZoom.Text = "Zoom";
-      this.cbAllowZoom.UseVisualStyleBackColor = true;
-      // 
-      // cbAllowLetterbox
-      // 
-      this.cbAllowLetterbox.AutoSize = true;
-      this.cbAllowLetterbox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbAllowLetterbox.Location = new System.Drawing.Point(15, 160);
-      this.cbAllowLetterbox.Name = "cbAllowLetterbox";
-      this.cbAllowLetterbox.Size = new System.Drawing.Size(86, 17);
-      this.cbAllowLetterbox.TabIndex = 6;
-      this.cbAllowLetterbox.Text = "4:3 Letterbox";
-      this.cbAllowLetterbox.UseVisualStyleBackColor = true;
-      // 
-      // cbAllowStretch
-      // 
-      this.cbAllowStretch.AutoSize = true;
-      this.cbAllowStretch.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbAllowStretch.Location = new System.Drawing.Point(15, 114);
-      this.cbAllowStretch.Name = "cbAllowStretch";
-      this.cbAllowStretch.Size = new System.Drawing.Size(107, 17);
-      this.cbAllowStretch.TabIndex = 4;
-      this.cbAllowStretch.Text = "Fullscreen stretch";
-      this.cbAllowStretch.UseVisualStyleBackColor = true;
-      // 
-      // cbAllowNonLinearStretch
-      // 
-      this.cbAllowNonLinearStretch.AutoSize = true;
-      this.cbAllowNonLinearStretch.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbAllowNonLinearStretch.Location = new System.Drawing.Point(15, 137);
-      this.cbAllowNonLinearStretch.Name = "cbAllowNonLinearStretch";
-      this.cbAllowNonLinearStretch.Size = new System.Drawing.Size(140, 17);
-      this.cbAllowNonLinearStretch.TabIndex = 5;
-      this.cbAllowNonLinearStretch.Text = "Non-linear stretch && crop";
-      this.cbAllowNonLinearStretch.UseVisualStyleBackColor = true;
-      // 
       // groupBox1
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.checkBoxEachFolderIsMovie);
       this.groupBox1.Controls.Add(this.checkBoxShowWatched);
-      this.groupBox1.Controls.Add(this.defaultZoomModeComboBox);
-      this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.fileNameButton);
       this.groupBox1.Controls.Add(this.folderNameTextBox);
       this.groupBox1.Controls.Add(this.repeatPlaylistCheckBox);
@@ -889,7 +711,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(16, 16);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(432, 168);
+      this.groupBox1.Size = new System.Drawing.Size(432, 150);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
@@ -898,7 +720,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.checkBoxEachFolderIsMovie.AutoSize = true;
       this.checkBoxEachFolderIsMovie.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxEachFolderIsMovie.Location = new System.Drawing.Point(19, 139);
+      this.checkBoxEachFolderIsMovie.Location = new System.Drawing.Point(19, 112);
       this.checkBoxEachFolderIsMovie.Name = "checkBoxEachFolderIsMovie";
       this.checkBoxEachFolderIsMovie.Size = new System.Drawing.Size(181, 17);
       this.checkBoxEachFolderIsMovie.TabIndex = 7;
@@ -911,36 +733,17 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxShowWatched.Checked = true;
       this.checkBoxShowWatched.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxShowWatched.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxShowWatched.Location = new System.Drawing.Point(19, 116);
+      this.checkBoxShowWatched.Location = new System.Drawing.Point(19, 89);
       this.checkBoxShowWatched.Name = "checkBoxShowWatched";
       this.checkBoxShowWatched.Size = new System.Drawing.Size(381, 17);
       this.checkBoxShowWatched.TabIndex = 6;
       this.checkBoxShowWatched.Text = "Mark every already watched file (deactivate for performance with many files)";
       this.checkBoxShowWatched.UseVisualStyleBackColor = true;
       // 
-      // defaultZoomModeComboBox
-      // 
-      this.defaultZoomModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.defaultZoomModeComboBox.BorderColor = System.Drawing.Color.Empty;
-      this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.defaultZoomModeComboBox.Location = new System.Drawing.Point(136, 24);
-      this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
-      this.defaultZoomModeComboBox.Size = new System.Drawing.Size(280, 21);
-      this.defaultZoomModeComboBox.TabIndex = 1;
-      // 
-      // label1
-      // 
-      this.label1.Location = new System.Drawing.Point(16, 28);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(120, 16);
-      this.label1.TabIndex = 0;
-      this.label1.Text = "Default zoom mode:";
-      // 
       // fileNameButton
       // 
       this.fileNameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.fileNameButton.Location = new System.Drawing.Point(344, 61);
+      this.fileNameButton.Location = new System.Drawing.Point(339, 28);
       this.fileNameButton.Name = "fileNameButton";
       this.fileNameButton.Size = new System.Drawing.Size(72, 22);
       this.fileNameButton.TabIndex = 4;
@@ -953,7 +756,7 @@ namespace MediaPortal.Configuration.Sections
       this.folderNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.folderNameTextBox.BorderColor = System.Drawing.Color.Empty;
-      this.folderNameTextBox.Location = new System.Drawing.Point(136, 63);
+      this.folderNameTextBox.Location = new System.Drawing.Point(133, 28);
       this.folderNameTextBox.Name = "folderNameTextBox";
       this.folderNameTextBox.Size = new System.Drawing.Size(200, 20);
       this.folderNameTextBox.TabIndex = 3;
@@ -962,7 +765,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.repeatPlaylistCheckBox.AutoSize = true;
       this.repeatPlaylistCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.repeatPlaylistCheckBox.Location = new System.Drawing.Point(19, 93);
+      this.repeatPlaylistCheckBox.Location = new System.Drawing.Point(19, 66);
       this.repeatPlaylistCheckBox.Name = "repeatPlaylistCheckBox";
       this.repeatPlaylistCheckBox.Size = new System.Drawing.Size(152, 17);
       this.repeatPlaylistCheckBox.TabIndex = 5;
@@ -971,7 +774,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // folderNameLabel
       // 
-      this.folderNameLabel.Location = new System.Drawing.Point(16, 66);
+      this.folderNameLabel.Location = new System.Drawing.Point(16, 32);
       this.folderNameLabel.Name = "folderNameLabel";
       this.folderNameLabel.Size = new System.Drawing.Size(80, 16);
       this.folderNameLabel.TabIndex = 2;
@@ -1075,8 +878,6 @@ namespace MediaPortal.Configuration.Sections
       ((System.ComponentModel.ISupportInitialize)(this.borderWidthUpDown)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.shadowDepthUpDown)).EndInit();
       this.tabPage1.ResumeLayout(false);
-      this.gAllowedModes.ResumeLayout(false);
-      this.gAllowedModes.PerformLayout();
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.tabControl1.ResumeLayout(false);

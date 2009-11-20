@@ -52,7 +52,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     public FiltersWinDVD7Decoder()
-      : this("WinDVD 7 Decoder Filters")
+      : this("WinDVD 7 Decoder")
     {
     }
 
