@@ -1141,7 +1141,20 @@ namespace SetupTv.Sections
           item.EnsureVisible();
           User user = new User();
           user.CardId = _cardNumber;
-          RemoteControl.Instance.Tune(ref user, channel, -1);
+          TvResult tuneResult = RemoteControl.Instance.Tune(ref user, channel, -1);
+          if (tuneResult == TvResult.SWEncoderMissing)
+          {
+            Log.Error("analog: DoTvScan error (missing software encoder)");
+            MessageBox.Show("Please install a supported audio/video encoder for your software analog card", "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            break;
+          }
+          if (tuneResult == TvResult.GraphBuildingFailed)
+          {
+            Log.Error("analog: DoTvScan error (missing software encoder)");
+            MessageBox.Show("The graph building. Mostly your card is not supported by TvServer. Please create a report in our forum",
+              "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            break;
+          }
           UpdateStatus();
           Thread.Sleep(2000);
           if (SignalStrength(sensitivity) == 100)
