@@ -898,26 +898,26 @@ namespace TvPlugin
                                 if (add)
                                 {
                                     // Add new list item for this recording
-                                    //GUIListItem item = BuildItemFromRecording(rec);
                                     itemlist.Add(it);
                                 }
                                 else
                                 {
-                                    //  if (IsRecordingActual(rec))
-                                    //  {
-                                    //    for (int i = 0; i < itemlist.Count; i++)
-                                    //    {
-                                    //      if (itemlist[i].Label.Equals(rec.Title, StringComparison.InvariantCultureIgnoreCase) &&
-                                    //          itemlist[i].IsFolder)
-                                    //      {
-                                    //        it.IsFolder = true;
-                                    //        Utils.SetDefaultIcons(it);
-                                    //        itemlist.RemoveAt(i);
-                                    //        itemlist.Insert(i, it);
-                                    //        break;
-                                    //      }
-                                    //    }
-                                    //  }
+                                  if (IsRecordingActual(rec))
+                                  {
+                                    for (int i = 0; i < itemlist.Count; i++)
+                                    {
+                                      if (itemlist[i].IsFolder &&
+                                         (TVUtil.GetDisplayTitle(rec).Equals(itemlist[i].Label, StringComparison.InvariantCultureIgnoreCase) ||
+                                         (itemlist[i].Label.Equals(rec.Title, StringComparison.InvariantCultureIgnoreCase))))
+                                      {
+                                        it.IsFolder = true;
+                                        Utils.SetDefaultIcons(it);
+                                        itemlist.RemoveAt(i);
+                                        itemlist.Insert(i, it);
+                                        break;
+                                      }
+                                    }
+                                  }
                                 }
                             }
                         }
