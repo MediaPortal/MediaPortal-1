@@ -192,7 +192,8 @@ namespace MediaPortal.Player
     ChangeDisplaySettingsEx([In] string lpszDeviceName, [In] DEVMODE_Display
     lpDevMode, [In] IntPtr hwnd, [In] ChangeDisplaySettings_Flags dwFlags, [In]IntPtr lParam);
 
-    public static void Win32_SetRefreshRate(uint monitorIndex,uint refreshRate)
+
+    public static void Win32_SetRefreshRate(uint monitorIndex, uint refreshRate)
     {
       Win32.DISPLAY_DEVICE displayDevice = new Win32.DISPLAY_DEVICE();
       int result = Win32.EnumDisplayDevices(null, monitorIndex, displayDevice, 0);
@@ -203,25 +204,34 @@ namespace MediaPortal.Player
         devMode.dmFields = Win32.DEVMODE_Fields.DM_DISPLAYFREQUENCY;
         devMode.dmDisplayFrequency = refreshRate;
         Win32.ChangeDisplaySettings_Result r = Win32.ChangeDisplaySettingsEx(displayDevice.DeviceName, devMode, IntPtr.Zero, Win32.ChangeDisplaySettings_Flags.None, IntPtr.Zero);
-        Log.Debug("CycleRefreshRate: result {0} for refresh rate change ({1}hz)", r, refreshRate);
+        Log.Debug("CycleRefreshRate: result {0} for refresh rate change {1}Hz", r, refreshRate);
       }
       else
       {
-        Log.Error("CycleRefreshRate: unable to change refresh rate ({0}hz) for monitor {1}", refreshRate, monitorIndex);
+        Log.Error("CycleRefreshRate: unable to change refresh rate {0}Hz for monitor {1}", refreshRate, monitorIndex);
       }
     }
-    public static void CycleRefreshRate(uint monitorIndex, uint refreshRate)
+
+
+    public static void CycleRefreshRate(uint monitorIndex, double refreshRate)
     {
 
       if (Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Minor == 1) // Are we running Windows 7?
       {
-        if (W7RefreshRateHelper.SetRefreshRate(monitorIndex,refreshRate))
-          Log.Debug("CycleRefreshRate: successfully changed refresh rate to ({0}hz)", refreshRate);
+        if (W7RefreshRateHelper.SetRefreshRate(monitorIndex, refreshRate))
+        {
+          double newRefreshRate = W7RefreshRateHelper.GetRefreshRate(monitorIndex);
+          Log.Debug("CycleRefreshRate: successfully changed refresh rate to {0}Hz ({1}Hz requested)", newRefreshRate.ToString("#.###"), refreshRate);
+        }
         else
-          Log.Error("CycleRefreshRate: unable to change refresh rate ({0}hz) for monitor {1}", refreshRate, monitorIndex);
+        {
+          Log.Error("CycleRefreshRate: unable to change refresh rate {0}Hz for monitor {1}", refreshRate, monitorIndex);
+        }
       }
       else
-        Win32_SetRefreshRate(monitorIndex, refreshRate);
+      {
+        Win32_SetRefreshRate(monitorIndex, (uint)refreshRate);
+      }
     }
   }
 
@@ -649,7 +659,7 @@ namespace MediaPortal.Player
         if (newExtCmd.Length == 0)
         {
           Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: using internal win32 method for changing refreshrate. current is {0}hz, desired is {1}", currentRR, newRR);
-          Win32.CycleRefreshRate((uint)currentScreenNr, (uint)newRR);
+          Win32.CycleRefreshRate((uint)currentScreenNr, newRR);
           NotifyRefreshRateChanged(newRRDescription, (strFile.Length > 0));
         }
         else if (RunExternalJob(newExtCmd, strFile, type, deviceReset) && newRR != currentRR)
