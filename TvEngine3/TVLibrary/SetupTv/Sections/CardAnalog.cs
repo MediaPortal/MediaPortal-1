@@ -856,7 +856,20 @@ namespace SetupTv.Sections
         temp.Country = countries.Countries[mpComboBoxCountry.SelectedIndex];
         temp.IsRadio = false;
         temp.IsTv = true;
-        RemoteControl.Instance.Tune(ref user, temp, -1);
+        TvResult tuneResult = RemoteControl.Instance.Tune(ref user, temp, -1);
+        if (tuneResult == TvResult.SWEncoderMissing)
+        {
+          Log.Error("analog: DoTvScan error (missing software encoder)");
+          MessageBox.Show("Please install a supported audio/video encoder for your software analog card", "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          return;
+        }
+        if (tuneResult == TvResult.GraphBuildingFailed)
+        {
+          Log.Error("analog: DoTvScan error (missing software encoder)");
+          MessageBox.Show("The graph building. Mostly your card is not supported by TvServer. Please create a report in our forum",
+            "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          return;
+        }
         if (string.IsNullOrEmpty(_configuration.Graph.Capture.Name))
         {
           _configuration = Configuration.readConfiguration(_cardNumber, _cardName, _devicePath);
@@ -864,7 +877,7 @@ namespace SetupTv.Sections
         }
         int minChannel = RemoteControl.Instance.MinChannel(_cardNumber);
         int maxChannel = RemoteControl.Instance.MaxChannel(_cardNumber);
-        if (maxChannel < 0)
+        if (maxChannel <= 0)
         {
           maxChannel = mpComboBoxSource.SelectedIndex == 0 ? 69 : 125;
         }
@@ -973,13 +986,16 @@ namespace SetupTv.Sections
       {
         Log.Error("analog: DoTvScan error (missing software encoder)");
         MessageBox.Show("Please install a supported audio/video encoder for your software analog card", "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        Application.Exit();
+      }
+      catch (TvExceptionGraphBuildingFailed)
+      {
+        Log.Error("analog: DoTvScan error (missing software encoder)");
+        MessageBox.Show("The graph building. Mostly your card is not supported by TvServer. Please create a report in our forum", "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
       catch (Exception ex)
       {
         Log.Error("analog: DoTvScan error ({0})", ex.StackTrace);
         MessageBox.Show(string.Format("Generic error: {0}", ex.Message), "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        Application.Exit();
       }
       finally
       {

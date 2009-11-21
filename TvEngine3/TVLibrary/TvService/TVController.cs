@@ -3148,8 +3148,18 @@ namespace TvService
     public bool SupportsQualityControl(int cardId)
     {
       if (ValidateTvControllerParams(cardId))
+      {
         return false;
-      return _cards[cardId].Card.SupportsQualityControl;
+      }
+      bool result;
+      try
+      {
+        result = _cards[cardId].Card.SupportsQualityControl;
+      }catch
+      {
+        return false;
+      }
+      return result;
     }
     /// <summary>
     /// Indicates if bit rate modes are supported
