@@ -60,6 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\ApplicationSettings.cs" />
     <Compile Include="Classes\PluginLoader.cs" />
     <Compile Include="Classes\ProgramArguments.cs" />
     <Compile Include="Controls\ExtensionControl.cs">
@@ -79,6 +80,12 @@
     </Compile>
     <Compile Include="Dialogs\DownloadFile.Designer.cs">
       <DependentUpon>DownloadFile.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\InfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\InfoForm.Designer.cs">
+      <DependentUpon>InfoForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\UnInstall.cs">
       <SubType>Form</SubType>
@@ -102,6 +109,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\DownloadFile.resx">
       <DependentUpon>DownloadFile.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\InfoForm.resx">
+      <DependentUpon>InfoForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\UnInstall.resx">
       <DependentUpon>UnInstall.cs</DependentUpon>

@@ -71,12 +71,19 @@ namespace MpeCore.Classes.SectionPanel
         {
             progressBar1.Value++;
             if (!string.IsNullOrEmpty(e.Description))
+            {
                 lbl_curr_file.Text = e.Description;
+                lst_changes.Items.Add(e.Description);
+            }
             else
             {
                 lbl_curr_file.Text = e.Item.DestinationFilename;
+                lst_changes.Items.Add(e.Item.ExpandedDestinationFilename);
             }
+            if (lst_changes.Items.Count > 1)
+                lst_changes.SetSelected(lst_changes.Items.Count - 1, true);
             lbl_curr_file.Refresh();
+            lst_changes.Refresh();
             progressBar1.Refresh();
             Refresh();
         }
@@ -131,7 +138,10 @@ namespace MpeCore.Classes.SectionPanel
                     Resp = SectionResponseEnum.Ok;
                     Close();
                 }
-                base.button_next.Enabled = true;
+                lst_changes.Items.Add("");
+                lst_changes.Items.Add("Done");
+                lst_changes.SetSelected(lst_changes.Items.Count - 1, true);
+                button_next.Enabled = true;
             }
         }
 

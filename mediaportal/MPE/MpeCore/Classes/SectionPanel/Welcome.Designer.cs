@@ -41,7 +41,7 @@
             this.button_back.Location = new System.Drawing.Point(238, 321);
             this.button_back.Name = "button_back";
             this.button_back.Size = new System.Drawing.Size(75, 23);
-            this.button_back.TabIndex = 10;
+            this.button_back.TabIndex = 1;
             this.button_back.Text = "< Back";
             this.button_back.UseVisualStyleBackColor = true;
             this.button_back.Visible = false;
@@ -52,7 +52,7 @@
             this.button_next.Location = new System.Drawing.Point(319, 321);
             this.button_next.Name = "button_next";
             this.button_next.Size = new System.Drawing.Size(75, 23);
-            this.button_next.TabIndex = 11;
+            this.button_next.TabIndex = 0;
             this.button_next.Text = "Next >";
             this.button_next.UseVisualStyleBackColor = true;
             this.button_next.Click += new System.EventHandler(this.button_next_Click);
@@ -62,7 +62,7 @@
             this.button_cancel.Location = new System.Drawing.Point(414, 321);
             this.button_cancel.Name = "button_cancel";
             this.button_cancel.Size = new System.Drawing.Size(75, 23);
-            this.button_cancel.TabIndex = 12;
+            this.button_cancel.TabIndex = 2;
             this.button_cancel.Text = "Cancel";
             this.button_cancel.UseVisualStyleBackColor = true;
             this.button_cancel.Click += new System.EventHandler(this.button_cancel_Click);
@@ -85,6 +85,7 @@
             // 
             // Welcome
             // 
+            this.AcceptButton = this.button_next;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(497, 356);
