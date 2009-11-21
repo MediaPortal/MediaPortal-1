@@ -475,7 +475,7 @@ CBuffer* CDeMultiplexer::GetSubtitle()
 CBuffer* CDeMultiplexer::GetVideo()
 {
   //if there is no video pid, then simply return NULL
-  if ((m_pids.videoPids[0].Pid==0) || IsVideoChanging())
+  if ((m_vecVideoBuffers.size()>0 && m_pids.videoPids[0].Pid==0) || IsVideoChanging())
   {
     ReadFromFile(false,true);
     return NULL;
@@ -1165,7 +1165,8 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
             }
           }
           {
-					int lastVidResX=m_mpegPesParser->basicVideoInfo.width;
+					
+          int lastVidResX=m_mpegPesParser->basicVideoInfo.width;
 					int lastVidResY=m_mpegPesParser->basicVideoInfo.height;
 
           bool parsed=m_mpegPesParser->OnTsPacket((*it)->Data(),(*it)->Length(),(m_pids.videoPids[0].VideoServiceType==SERVICE_TYPE_VIDEO_MPEG2));
@@ -1411,7 +1412,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   {
     m_duration.SetVideoPid(m_pids.PcrPid);
   }
-  else if (m_pids.videoPids[0].Pid>0x1)
+  else if (m_pids.videoPids.size() > 0 && m_pids.videoPids[0].Pid>0x1)
   {
     m_duration.SetVideoPid(m_pids.videoPids[0].Pid);
   }
@@ -1424,8 +1425,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     audio.language[0]=m_pids.audioPids[i].Lang[0];
     audio.language[1]=m_pids.audioPids[i].Lang[1];
     audio.language[2]=m_pids.audioPids[i].Lang[2];
-	//audio.language[3] = 0;0
-	audio.language[3]=m_pids.audioPids[i].Lang[3];
+    audio.language[3]=m_pids.audioPids[i].Lang[3];
     audio.language[4]=m_pids.audioPids[i].Lang[4];
     audio.language[5]=m_pids.audioPids[i].Lang[5];
     audio.language[6]=0;
@@ -1433,12 +1433,6 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     m_audioStreams.push_back(audio);
   }
 
-/*
-  if (m_iAudioStream>=m_audioStreams.size())
-  {
-    m_iAudioStream=0;
-  }
-*/
   m_subtitleStreams.clear();
   
   for(int i(0) ; i < m_pids.subtitlePids.size() ; i++)
@@ -1526,11 +1520,12 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     m_filter.OnRequestAudioChange();
   }
 
-
-  if( pSubUpdateCallback != NULL){
+  if( pSubUpdateCallback != NULL)
+  {
     int bitmap_index = -1;
     (*pSubUpdateCallback)(m_subtitleStreams.size(),(m_subtitleStreams.size() > 0 ? &m_subtitleStreams[0] : NULL),&bitmap_index);
-    if(bitmap_index >= 0){
+    if(bitmap_index >= 0)
+    {
       LogDebug("Calling SetSubtitleStream from OnNewChannel:  %i", bitmap_index);
       SetSubtitleStream(bitmap_index);
     }
@@ -1563,13 +1558,16 @@ HRESULT CDeMultiplexer::DoStop()
     {
       hr = pMediaControl->Stop();
       pMediaControl->Release();
-    } else {
+    } 
+    else 
+    {
       LogDebug("Could not get IMediaControl interface");
     }
 
     Info.pGraph->Release();
 
-    if (FAILED(hr)) {
+    if (FAILED(hr)) 
+    {
       LogDebug("Stopping graph failed with 0x%x", hr);
       return S_OK;
     }
