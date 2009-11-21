@@ -475,7 +475,7 @@ CBuffer* CDeMultiplexer::GetSubtitle()
 CBuffer* CDeMultiplexer::GetVideo()
 {
   //if there is no video pid, then simply return NULL
-  if ((m_vecVideoBuffers.size()>0 && m_pids.videoPids[0].Pid==0) || IsVideoChanging())
+  if ((m_pids.videoPids.size() > 0 && m_pids.videoPids[0].Pid==0) || IsVideoChanging())
   {
     ReadFromFile(false,true);
     return NULL;
