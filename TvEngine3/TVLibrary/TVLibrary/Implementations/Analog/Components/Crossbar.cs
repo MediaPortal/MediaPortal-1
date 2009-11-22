@@ -447,7 +447,7 @@ namespace TvLibrary.Implementations.Analog.Components
       for (int i = 0; i < inputs; ++i)
       {
         _crossBarFilter.get_CrossbarPinInfo(true, i, out relatedPinIndex, out connectorType);
-        Log.Log.Write(" crossbar pin:{0} type:{1}", i, connectorType);
+        Log.Log.WriteFile(" crossbar pin:{0} type:{1}, related:{2}", i, connectorType,relatedPinIndex);
         switch (connectorType)
         {
           case PhysicalConnectorType.Audio_Tuner:
@@ -588,34 +588,42 @@ namespace TvLibrary.Implementations.Analog.Components
     {
       if (_currentChannel != null)
       {
-        bool updateRequired = false;
-        if(_currentChannel.VideoSource != channel.VideoSource && _videoPinMap.ContainsKey(channel.VideoSource))
+        bool updateRequired = _currentChannel.IsTv == channel.IsTv;
+        if(updateRequired || (_currentChannel.VideoSource != channel.VideoSource && _videoPinMap.ContainsKey(channel.VideoSource)))
         {
           _crossBarFilter.Route(_videoOutPinIndex, _videoPinMap[channel.VideoSource]);
           updateRequired = true;
         }
-        if(updateRequired || _currentChannel.AudioSource!= channel.AudioSource)
+        if (_audioOutPinIndex == -1)
+        {
+          return;
+        }
+        if (updateRequired || _currentChannel.AudioSource != channel.AudioSource)
         {
           if (channel.AudioSource == AnalogChannel.AudioInputType.Automatic && _videoPinRelatedAudioMap.ContainsKey(channel.VideoSource))
           {
             _crossBarFilter.Route(_audioOutPinIndex, _videoPinRelatedAudioMap[channel.VideoSource]);
-          } else if (_audioPinMap.ContainsKey(channel.AudioSource))
+          }
+          else if (_audioPinMap.ContainsKey(channel.AudioSource))
           {
             _crossBarFilter.Route(_audioOutPinIndex, _audioPinMap[channel.AudioSource]);
           }
         }
       } else
       {
-        _crossBarFilter.Route(_videoOutPinIndex, _videoPinMap[channel.VideoSource]);
+        if (_videoPinMap.ContainsKey(channel.VideoSource))
+        {
+          _crossBarFilter.Route(_videoOutPinIndex, _videoPinMap[channel.VideoSource]);
+        }
         if (_audioOutPinIndex == -1)
         {
           return;
         }
-        if (channel.AudioSource == AnalogChannel.AudioInputType.Automatic)
+        if (channel.AudioSource == AnalogChannel.AudioInputType.Automatic && _videoPinRelatedAudioMap.ContainsKey(channel.VideoSource))
         {
           _crossBarFilter.Route(_audioOutPinIndex, _videoPinRelatedAudioMap[channel.VideoSource]);
         }
-        else
+        else if (_audioPinMap.ContainsKey(channel.AudioSource))
         {
           _crossBarFilter.Route(_audioOutPinIndex, _audioPinMap[channel.AudioSource]);
         }
