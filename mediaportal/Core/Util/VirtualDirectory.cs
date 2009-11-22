@@ -1486,81 +1486,107 @@ namespace MediaPortal.Util
     {
       try
       {
-        DirectoryInfo di = new DirectoryInfo(aDirectory + @"\");
-        FileSystemInfo[] fsysi = di.GetFileSystemInfos();
+        Win32API.WIN32_FIND_DATA fd = new Win32API.WIN32_FIND_DATA();
+        fd.cFileName = new String(' ', 256);
+        fd.cAlternate = new String(' ', 14);
+        // http://msdn.microsoft.com/en-us/library/aa364418%28VS.85%29.aspx
+        IntPtr handle = Win32API.FindFirstFile(aDirectory + @"\*.*", out fd);
 
-        for (int i = 0; i < fsysi.Length; i++)
+        int count = 0;
+        do
         {
-          GUIListItem item;
-          string FileName = fsysi[i].FullName;
-
-          if (fsysi[i] is DirectoryInfo)
+          try
           {
-            string strPath = FileName.Substring(aDirectory.Length + 1);
+            count++;
 
-            // Skip hidden folders
-            if ((!Directory.Exists(FileName) || (File.GetAttributes(FileName) & FileAttributes.Hidden) == FileAttributes.Hidden))
+            if (fd.cFileName == "." || fd.cFileName == "..")
+            {
               continue;
-            
-            item = new GUIListItem(strPath, "", FileName, true, new FileInformation(FileName, true));
-            
-            Utils.SetDefaultIcons(item);
-            int pin;
-            if (!IsProtectedShare(item.Path, out pin))
-            {
-              Utils.SetThumbnails(ref item);
-            }
-            aItemsList.Add(item);
-          }
-          else
-          {
-            string extension = Path.GetExtension(FileName);
-            if (aHasRedbookDetails)
-            {
-              extension = ".cda";
-              FileName = string.Format("{0}\\Track{1:00}.cda", aDirectory, i + 1);
             }
 
-            if (IsImageFile(extension))
+            GUIListItem item;
+            string FileName = aDirectory + @"\" + fd.cFileName;
+
+            long ftCreationTime = (((long)fd.ftCreationTime.dwHighDateTime) << 32) + fd.ftCreationTime.dwLowDateTime;
+            long ftLastWriteTime = (((long)fd.ftLastWriteTime.dwHighDateTime) << 32) + fd.ftLastWriteTime.dwLowDateTime;
+
+            FileInformation fi = new FileInformation();
+
+            fi.CreationTime = DateTime.FromFileTimeUtc(ftCreationTime);
+            fi.ModificationTime = DateTime.FromFileTimeUtc(ftLastWriteTime);
+            fi.Length = (((long)fd.nFileSizeHigh) << 32) + fd.nFileSizeLow;
+
+            if ((fd.dwFileAttributes & FileAttributes.Directory) == FileAttributes.Directory)
             {
-              if (DaemonTools.IsEnabled && !IsValidExtension(FileName))
+              string strPath = FileName.Substring(aDirectory.Length + 1);
+              fi.Name = fd.cFileName;
+              item = new GUIListItem(strPath, "", FileName, true, fi);
+
+              Utils.SetDefaultIcons(item);
+
+              int pin;
+              if (!IsProtectedShare(item.Path, out pin))
               {
-                item = new GUIListItem(Path.GetFileName(FileName), "", FileName, true, null);
+                Utils.SetThumbnails(ref item);
+              }
+              aItemsList.Add(item);
+            }
+            else
+            {
+              string extension = Path.GetExtension(FileName);
+              if (aHasRedbookDetails)
+              {
+                extension = ".cda";
+                FileName = string.Format("{0}\\Track{1:00}.cda", aDirectory, count);
+              }
+
+              if (IsImageFile(extension))
+              {
+                if (DaemonTools.IsEnabled && !IsValidExtension(FileName))
+                {
+                  item = new GUIListItem(Path.GetFileName(FileName), "", FileName, true, null);
+
+                  Utils.SetDefaultIcons(item);
+                  Utils.SetThumbnails(ref item);
+                  aItemsList.Add(item);
+                  continue;
+                }
+              }
+              if (IsValidExtension(FileName))
+              {
+                // Skip hidden files
+                if (!aHasRedbookDetails && (File.GetAttributes(FileName) & FileAttributes.Hidden) == FileAttributes.Hidden)
+                  continue;
+
+                if (!aHasRedbookDetails)
+                  fi = new FileInformation(FileName, false);
+                else
+                {
+                  fi = new FileInformation();
+                  fi.CreationTime = DateTime.Now;
+                  fi.Length = 0;
+                }
+
+                item = new GUIListItem(Utils.GetFilename(FileName), "", FileName, false, fi);
 
                 Utils.SetDefaultIcons(item);
                 Utils.SetThumbnails(ref item);
                 aItemsList.Add(item);
-                continue;
               }
-            }
-            if (IsValidExtension(FileName))
-            {
-              // Skip hidden files
-              if (!aHasRedbookDetails && (File.GetAttributes(FileName) & FileAttributes.Hidden) == FileAttributes.Hidden)
-                continue;
-
-              FileInformation fi;
-              if (!aHasRedbookDetails)
-                fi = new FileInformation(FileName, false);
-              else
-              {
-                fi = new FileInformation();
-                fi.CreationTime = DateTime.Now;
-                fi.Length = 0;
-              }
-
-              item = new GUIListItem(Utils.GetFilename(FileName), "", FileName, false, fi);
-
-              Utils.SetDefaultIcons(item);
-              Utils.SetThumbnails(ref item);
-              aItemsList.Add(item);
             }
           }
+          catch (Exception exi)
+          {
+            Log.Error("VirtualDirectory: Could not fetch folder contents for {0}: {1}", aDirectory, exi.Message);
+          }
         }
+        while (Win32API.FindNextFile(handle, ref fd) != 0);
+
+        Win32API.FindClose(handle);
       }
       catch (Exception ex)
       {
-        Log.Error("VirtualDirectory: Could not fetch folder contents for {0}: {1}", aDirectory, ex.Message);
+        Log.Error("VirtualDirectory: Could not browse folder {0}: {1}", aDirectory, ex.Message);
       }
     }
 
