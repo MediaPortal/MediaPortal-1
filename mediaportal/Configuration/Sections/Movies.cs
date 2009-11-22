@@ -154,13 +154,13 @@ namespace MediaPortal.Configuration.Sections
         try
         {
           CultureInfo ci = new CultureInfo(xmlreader.GetValueAsString("subtitles", "language", m_strDefaultSubtitleLanguageISO));
-          defaultSubtitleLanguageComboBox.SelectedItem = ci.EnglishName;
+          defaultSubtitleLanguageComboBox.SelectedItem = !ci.IsNeutralCulture ? ci.Parent.EnglishName : ci.EnglishName;
         }
         catch (Exception ex)
         {
           CultureInfo ci = new CultureInfo(m_strDefaultSubtitleLanguageISO);
           Log.Error("LoadSettings - failed to load default subtitle language, using {0} - {1} ", ci.EnglishName, ex);
-          defaultSubtitleLanguageComboBox.SelectedItem = !ci.IsNeutralCulture ? ci.Parent.EnglishName : ci.EnglishName;
+          defaultSubtitleLanguageComboBox.SelectedItem = ci.EnglishName;
         }
 
         shadowDepthUpDown.Value = xmlreader.GetValueAsInt("subtitles", "shadow", 3);
