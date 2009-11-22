@@ -116,7 +116,7 @@ namespace MediaPortal.Configuration.Sections
 
       Util.Utils.PopulateLanguagesToComboBox(defaultSubtitleLanguageComboBox, curCultureTwoLetter);
       Util.Utils.PopulateLanguagesToComboBox(defaultAudioLanguageComboBox, curCultureTwoLetter);
-      
+
     }
 
     public override void LoadSettings()
@@ -160,7 +160,7 @@ namespace MediaPortal.Configuration.Sections
         {
           CultureInfo ci = new CultureInfo(m_strDefaultSubtitleLanguageISO);
           Log.Error("LoadSettings - failed to load default subtitle language, using {0} - {1} ", ci.EnglishName, ex);
-          defaultSubtitleLanguageComboBox.SelectedItem = ci.EnglishName;
+          defaultSubtitleLanguageComboBox.SelectedItem = !ci.IsNeutralCulture ? ci.Parent.EnglishName : ci.EnglishName;
         }
 
         shadowDepthUpDown.Value = xmlreader.GetValueAsInt("subtitles", "shadow", 3);
@@ -205,7 +205,7 @@ namespace MediaPortal.Configuration.Sections
         try
         {
           CultureInfo ci = new CultureInfo(xmlreader.GetValueAsString("movieplayer", "audiolanguage", m_strDefaultAudioLanguageISO));
-          defaultAudioLanguageComboBox.SelectedItem = ci.EnglishName;
+          defaultAudioLanguageComboBox.SelectedItem = !ci.IsNeutralCulture ? ci.Parent.EnglishName : ci.EnglishName;
         }
         catch (Exception ex)
         {
