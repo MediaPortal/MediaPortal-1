@@ -65,10 +65,8 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
 
       // Populate combo box with languages
-      string curCultureName = CultureInfo.CurrentCulture.Name;
       string curCultureTwoLetter = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
-
-      m_strDefaultRegionLanguage = curCultureName;
+      m_strDefaultRegionLanguage = CultureInfo.CurrentCulture.IsNeutralCulture ? CultureInfo.CurrentCulture.EnglishName : CultureInfo.CurrentCulture.Parent.EnglishName;
 
       Util.Utils.PopulateLanguagesToComboBox(defaultSubtitleLanguageComboBox, curCultureTwoLetter);
       Util.Utils.PopulateLanguagesToComboBox(defaultAudioLanguageComboBox, curCultureTwoLetter);
@@ -99,13 +97,13 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlreader = new MPSettings())
       {
-        defaultAudioLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("dvdplayer", "audiolanguage",
-                                                                               m_strDefaultRegionLanguage);
+        defaultAudioLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("dvdplayer", "audiolanguage", 
+                                                                                m_strDefaultRegionLanguage);
         defaultSubtitleLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("dvdplayer", "subtitlelanguage",
                                                                                   m_strDefaultRegionLanguage);
 
         showSubtitlesCheckBox.Checked = xmlreader.GetValueAsBool("dvdplayer", "showsubtitles", false);
-        
+
         string autoPlayText = xmlreader.GetValueAsString("dvdplayer", "autoplay", "Ask");
         switch (autoPlayText)
         {
@@ -133,7 +131,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("dvdplayer", "subtitlelanguage", defaultSubtitleLanguageComboBox.Text);
 
         xmlwriter.SetValueAsBool("dvdplayer", "showsubtitles", showSubtitlesCheckBox.Checked);
-        
+
         string autoPlayText;
 
         if (autoPlayComboBox.Text == autoPlayOptions[1])
