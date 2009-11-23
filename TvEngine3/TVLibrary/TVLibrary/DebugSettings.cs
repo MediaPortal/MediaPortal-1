@@ -84,27 +84,39 @@ namespace TvLibrary
     }
 
     /// <summary>
-    /// Returns true if the graph should be reset after it is stopped
+    /// When true, the graph should be reset after it is stopped
     /// </summary>
     static public bool ResetGraph
     {
-      get { return GetSetting("ResetGraph");  }
+      get { return GetSetting("ResetGraph"); }
+      set { SetSetting("ResetGraph", value); }
     }
 
     /// <summary>
-    /// Returns true if TSWriter should always use PAT lookup
+    /// When true, TSWriter should always use PAT lookup
     /// </summary>
     static public bool UsePATLookup
     {
       get { return GetSetting("UsePATLookup"); }
+      set { SetSetting("UsePATLookup", value); }
     }
 
     /// <summary>
-    /// Returns true if CRC checks should be disabled for DVB TS packets
+    /// When true, the raw timeshifted TS will be dumped to a file
+    /// </summary>
+    static public bool DumpRawTS
+    {
+      get { return GetSetting("DisableCRCCheck"); }
+      set { SetSetting("DisableCRCCheck", value); }
+    }
+
+    /// <summary>
+    /// When true, CRC checks should be disabled for DVB TS packets
     /// </summary>
     static public bool DisableCRCCheck
     {
       get { return GetSetting("DisableCRCCheck"); }
+      set { SetSetting("DisableCRCCheck", value); }
     }
   }
 }
