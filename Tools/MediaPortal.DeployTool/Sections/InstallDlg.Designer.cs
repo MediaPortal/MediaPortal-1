@@ -38,16 +38,12 @@ namespace MediaPortal.DeployTool.Sections
         this.iconsList = new System.Windows.Forms.ImageList(this.components);
         this.SuspendLayout();
         // 
-        // labelSectionHeader
-        // 
-        this.labelSectionHeader.Location = new System.Drawing.Point(5, 4);
-        // 
         // labelHeading
         // 
         this.labelHeading.AutoSize = true;
         this.labelHeading.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.labelHeading.ForeColor = System.Drawing.Color.White;
-        this.labelHeading.Location = new System.Drawing.Point(5, 30);
+        this.labelHeading.Location = new System.Drawing.Point(4, 30);
         this.labelHeading.Name = "labelHeading";
         this.labelHeading.Size = new System.Drawing.Size(452, 13);
         this.labelHeading.TabIndex = 11;
@@ -62,9 +58,9 @@ namespace MediaPortal.DeployTool.Sections
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3});
-        this.listView.Location = new System.Drawing.Point(10, 55);
+        this.listView.Location = new System.Drawing.Point(9, 55);
         this.listView.Name = "listView";
-        this.listView.Size = new System.Drawing.Size(638, 184);
+        this.listView.Size = new System.Drawing.Size(642, 184);
         this.listView.TabIndex = 15;
         this.listView.UseCompatibleStateImageBehavior = false;
         this.listView.View = System.Windows.Forms.View.Details;
@@ -91,14 +87,13 @@ namespace MediaPortal.DeployTool.Sections
         // 
         // InstallDlg
         // 
-        this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 13F);
+        this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
         this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_empty;
         this.Controls.Add(this.listView);
         this.Controls.Add(this.labelHeading);
-        this.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.Name = "InstallDlg";
-        this.Size = new System.Drawing.Size(666, 241);
+        this.Size = new System.Drawing.Size(666, 250);
         this.ParentChanged += new System.EventHandler(this.RequirementsDlg_ParentChanged);
         this.Controls.SetChildIndex(this.labelSectionHeader, 0);
         this.Controls.SetChildIndex(this.labelHeading, 0);

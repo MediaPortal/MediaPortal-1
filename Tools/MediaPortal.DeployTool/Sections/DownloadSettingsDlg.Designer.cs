@@ -144,7 +144,7 @@ namespace MediaPortal.DeployTool.Sections
         this.Controls.Add(this.rb64bit);
         this.Controls.Add(this.rb32bit);
         this.Name = "DownloadSettingsDlg";
-        this.Size = new System.Drawing.Size(669, 251);
+        this.Size = new System.Drawing.Size(666, 250);
         this.Controls.SetChildIndex(this.rb32bit, 0);
         this.Controls.SetChildIndex(this.rb64bit, 0);
         this.Controls.SetChildIndex(this.listViewLang, 0);
