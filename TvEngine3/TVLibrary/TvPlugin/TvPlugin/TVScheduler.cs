@@ -831,8 +831,8 @@ namespace TvPlugin
       }
       VirtualCard card;
       TvServer server = new TvServer();
-
-      bool isRec = TVHome.IsRecordingSchedule(rec, null, out card);
+      
+      bool isRec = Schedule.IsScheduleRecording(rec.IdSchedule); //TVHome.IsRecordingSchedule(rec, null, out card);
 
       if (isRec)
       {
@@ -852,12 +852,16 @@ namespace TvPlugin
         return;
       }
 
-      bool isSchedRec = TVHome.IsRecordingSchedule(rec, null, out card);
+      bool isSchedRec = TvDatabase.Schedule.IsScheduleRecording(rec.IdSchedule); //TVHome.IsRecordingSchedule(rec, null, out card);
 
       string fileName = "";
       if (isSchedRec)
       {
-        fileName = card.RecordingFileName;
+        bool isCardRec = server.IsRecording(rec.ReferencedChannel().Name, out card);
+        if (isCardRec && card != null)
+        {
+          fileName = card.RecordingFileName;
+        }
       }
       Log.Info("recording fname:{0}", fileName);
       switch (dlg.SelectedId)
@@ -878,7 +882,8 @@ namespace TvPlugin
         case 981: //Cancel this show
           {
             Program prgFromSchedule = Program.RetrieveByTitleAndTimes(rec.ProgramName, rec.StartTime, rec.EndTime);
-            bool res = TVHome.PromptAndDeleteRecordingSchedule(rec.IdSchedule, prgFromSchedule, false, false);
+            rec.StartTime = prgFromSchedule.StartTime;
+            bool res = TVHome.PromptAndDeleteRecordingSchedule(rec.IdSchedule, /*prgFromSchedule,*/ false, false);
             if (res)
             {
               LoadDirectory();
@@ -892,7 +897,8 @@ namespace TvPlugin
         case 618: // delete entire recording
           {
             Program prgFromSchedule = Program.RetrieveByTitleAndTimes(rec.ProgramName, rec.StartTime, rec.EndTime);
-            bool res = TVHome.PromptAndDeleteRecordingSchedule(rec.IdSchedule, prgFromSchedule, true, false);
+            rec.StartTime = prgFromSchedule.StartTime;
+            bool res = TVHome.PromptAndDeleteRecordingSchedule(rec.IdSchedule, /*prgFromSchedule,*/ true, false);
             if (res)
             {
               if (showSeries && !item.IsFolder)

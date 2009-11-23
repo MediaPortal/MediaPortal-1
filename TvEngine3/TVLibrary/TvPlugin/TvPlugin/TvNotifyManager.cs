@@ -46,18 +46,14 @@ namespace TvPlugin
     // flag indicating that notifies have been added/changed/removed
     private static bool _notifiesListChanged;
     private static bool _enableTVNotification;
-    private static bool _enableRecNotification;
-    //private static bool _enableNotifyOnRecFailed;
+    private static bool _enableRecNotification;    
     private static bool _busy;
     private int _preNotifyConfig;
     //list of all notifies (alert me n minutes before program starts)
-    private IList _notifiesList;
-    private IList _notifiedRecordings;
-    //private IList _notifiedRecordingsStarted;
-    // private IList _notifiedRecordingsFailed;
-
-    private static Dictionary<int, Recording> _actualRecordings;
-    private static Dictionary<int, Schedule> _notifiedRecordingsStarted;
+    private IList<Program> _notifiesList;
+    private IList _notifiedRecordings;    
+    
+    private static IList<Recording> _actualRecordings;    
 
     private User _dummyuser;
 
@@ -82,8 +78,7 @@ namespace TvPlugin
       _timer.Enabled = true;
       _timer.Tick += new EventHandler(_timer_Tick);
 
-      _notifiedRecordings = new ArrayList();
-      _notifiedRecordingsStarted = new Dictionary<int, Schedule>();
+      _notifiedRecordings = new ArrayList();      
     }
 
     public static bool RecordingNotificationEnabled
@@ -112,10 +107,10 @@ namespace TvPlugin
       Recording stoppedRec = null;
       IList<Recording> recordings = Recording.ListAllActive();
       bool found = false;
-      foreach (KeyValuePair<int, Recording> pair in _actualRecordings)
+      //foreach (KeyValuePair<int, Recording> pair in _actualRecordings)
+      foreach (Recording actRec in _actualRecordings)
       {
-        Recording actRec = (Recording) pair.Value;
-
+        //Recording actRec = (Recording) pair.Value;
         foreach (Recording rec in recordings)
         {
           if (rec.IdRecording == actRec.IdRecording)
@@ -147,15 +142,15 @@ namespace TvPlugin
       IList<Recording> recordings = Recording.ListAllActive();
       if (_actualRecordings == null)
       {
-        _actualRecordings = new Dictionary<int, Recording>();
+        _actualRecordings = new List<Recording>();//new Dictionary<int, Recording>();
       }
       foreach (Recording rec in recordings)
       {
-        if (!_actualRecordings.ContainsKey(rec.IdRecording))
+        if (!_actualRecordings.Contains(rec))        
         {
           if (TvRecorded.IsRecordingActual(rec))
           {
-            _actualRecordings.Add(rec.IdRecording, rec);
+            _actualRecordings.Add(rec);
             newRecAdded = rec;
           }
         }
@@ -164,17 +159,8 @@ namespace TvPlugin
     }
 
     private static void UpdateActiveRecordings()
-    {
-      _actualRecordings = new Dictionary<int, Recording>();
-
-      IList<Recording> recordings = Recording.ListAllActive();
-      foreach (Recording rec in recordings)
-      {
-        if (TvRecorded.IsRecordingActual(rec))
-        {
-          _actualRecordings.Add(rec.IdRecording, rec);
-        }
-      }
+    {      
+      _actualRecordings = Recording.ListAllActive();            
     }
 
     private void LoadNotifies()
@@ -182,12 +168,8 @@ namespace TvPlugin
       try
       {
         Log.Info("TvNotify:LoadNotifies");
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
-        sb.AddConstraint(Operator.Equals, "notify", 1);
-        SqlStatement stmt = sb.GetStatement(true);
-        _notifiesList = ObjectFactory.GetCollection(typeof (Program), stmt.Execute());
-        _notifiedRecordings.Clear();
-        _notifiedRecordingsStarted.Clear();
+        _notifiesList = Program.RetrieveAllNotifications();                
+        _notifiedRecordings.Clear();        
 
         if (_notifiesList != null)
         {
@@ -357,36 +339,31 @@ namespace TvPlugin
 
           Recording newRecording = AddActiveRecordings();
 
-          if (newRecording != null)
+          if (newRecording != null && newRecording.IsRecording)
           {
-            IList<Schedule> schedules = Schedule.RetrieveByTitleAndTimesInterval(newRecording.Title,
-                                                                          newRecording.StartTime.AddHours(-4),
-                                                                          newRecording.StartTime,
-                                                                          newRecording.IdChannel);
+            Schedule parentSchedule = newRecording.ReferencedSchedule();
 
-            Schedule schedule = null;
-            if (schedules != null && schedules.Count > 0)
+            if (parentSchedule != null && parentSchedule.IdSchedule > 0)
             {
-              schedule = schedules[0];
+              string endTime = string.Empty;
+              if (parentSchedule != null)
+              {
+                endTime = parentSchedule.EndTime.AddMinutes(parentSchedule.PostRecordInterval).ToString("t",
+                                                                                            CultureInfo.CurrentCulture.
+                                                                                              DateTimeFormat);
+              }
+              string text = String.Format("{0} {1}-{2}",
+                                   newRecording.Title,
+                                   newRecording.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                   endTime);
+              //Recording started
+              TvTimeShiftPositionWatcher.InitiateBufferFilesCopyProcess(newRecording.FileName);
+              if (!Notify(GUILocalizeStrings.Get(1446), text, newRecording.ReferencedChannel().DisplayName))
+              {
+                _actualRecordings.Remove(newRecording);
+              }
+              return;
             }
-            string endTime = string.Empty;
-            if (schedule != null)
-            {
-              endTime = schedule.EndTime.AddMinutes(schedule.PostRecordInterval).ToString("t",
-                                                                                          CultureInfo.CurrentCulture.
-                                                                                            DateTimeFormat);
-            }
-            string text = String.Format("{0} {1}-{2}",
-                                 newRecording.Title,
-                                 newRecording.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                 endTime);
-            //Recording started
-            TvTimeShiftPositionWatcher.InitiateBufferFilesCopyProcess(newRecording.FileName);
-            if (!Notify(GUILocalizeStrings.Get(1446), text, newRecording.ReferencedChannel().DisplayName))
-            {
-              _actualRecordings.Remove(newRecording.IdRecording);
-            }
-            return;
           }
           //check if rec. has ended.                
           //AddActiveRecordings();
@@ -424,7 +401,7 @@ namespace TvPlugin
             //Recording stopped:                    
             if (!Notify(GUILocalizeStrings.Get(1447), text, stoppedRec.ReferencedChannel().DisplayName))
             {
-              _actualRecordings.Add(stoppedRec.IdRecording, stoppedRec);
+              _actualRecordings.Add(stoppedRec);
             }
             return; //we do not want to show any more notifications.
           }

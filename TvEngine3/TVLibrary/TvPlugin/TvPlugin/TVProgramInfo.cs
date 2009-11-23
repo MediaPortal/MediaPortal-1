@@ -309,7 +309,7 @@ namespace TvPlugin
         if (CurrentProgram == null)
         {
           CurrentProgram = new Program(value.IdChannel, value.StartTime, value.EndTime, value.ProgramName, "",
-            "", false, DateTime.MinValue, "", "", "", "", 0, "", 0);
+            "", Program.ProgramState.None, DateTime.MinValue, "", "", "", "", 0, "", 0);
         }
       }
     }
@@ -327,7 +327,7 @@ namespace TvPlugin
     }
 
     private static bool IsRecordingProgram(Program program, out Schedule recordingSchedule, bool filterCanceledRecordings)
-    {
+    {      
       recordingSchedule = null;
       IList<Schedule> schedules = Schedule.ListAll();
       foreach (Schedule schedule in schedules)
@@ -354,7 +354,7 @@ namespace TvPlugin
           return true;
         }
       }
-      return false;
+      return false;     
     }
 
     #endregion
@@ -921,7 +921,7 @@ namespace TvPlugin
           Schedule schedFromDB = Schedule.Retrieve(card.RecordingScheduleId);
           if (schedFromDB.IsManual)
           {
-            TVHome.PromptAndDeleteRecordingSchedule(card.RecordingScheduleId, null, false, false);
+            TVHome.PromptAndDeleteRecordingSchedule(card.RecordingScheduleId, false, false);
           }
           else
           {
@@ -946,7 +946,8 @@ namespace TvPlugin
 
       if (schedule.ScheduleType == (int)ScheduleRecordingType.Once)
       {
-        TVHome.PromptAndDeleteRecordingSchedule(schedule.IdSchedule, program, false, false);
+        TVHome.PromptAndDeleteRecordingSchedule(schedule.IdSchedule, false, false);
+        Program.ResetPendingState(program.IdProgram);        
         return;
       }
 
@@ -984,7 +985,9 @@ namespace TvPlugin
             break;
         }
 
-        TVHome.PromptAndDeleteRecordingSchedule(schedule.IdSchedule, program, deleteEntireSched, false);
+        schedule.StartTime = program.StartTime;
+        TVHome.PromptAndDeleteRecordingSchedule(schedule.IdSchedule, deleteEntireSched, false);
+        Program.ResetPendingState(program.IdProgram);        
       }
     }
 
@@ -1002,8 +1005,11 @@ namespace TvPlugin
         //schedule = Schedule.Retrieve(schedule.IdSchedule); // get the correct informations
         if (schedule.IsSerieIsCanceled(program.StartTime))
         {
-          saveSchedule = schedule;
-          schedule = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
+          //lets delete the cancelled schedule.
+
+          saveSchedule = schedule;          
+          schedule = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);          
+
           schedule.PreRecordInterval = saveSchedule.PreRecordInterval;
           schedule.PostRecordInterval = saveSchedule.PostRecordInterval;
           schedule.ScheduleType = (int)ScheduleRecordingType.Once; // needed for layer.GetConflictingSchedules(...)
@@ -1058,7 +1064,7 @@ namespace TvPlugin
                 {
                   Program prog =
                     new Program(conflict.IdChannel, conflict.StartTime, conflict.EndTime, conflict.ProgramName, "-", "-",
-                                false,
+                                Program.ProgramState.None,
                                 DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1, string.Empty, -1);
                   CancelProgram(prog, Schedule.Retrieve(conflict.IdSchedule));
                 }
@@ -1087,9 +1093,8 @@ namespace TvPlugin
       if (saveSchedule != null)
       {
         Log.Debug("TVProgramInfo.CreateProgram - UnCancleSerie at {0}", program.StartTime);
-        //saveSchedule.UnCancelSerie(program.StartTime);
-        saveSchedule.UnCancelSerie();
-
+        saveSchedule.UnCancelSerie(program.StartTime);
+        //saveSchedule.UnCancelSerie();
         saveSchedule.Persist();
       }
       else
@@ -1120,7 +1125,7 @@ namespace TvPlugin
             }
           }
         }
-      }
+      }      
       server.OnNewSchedule();
     }
 

@@ -55,7 +55,7 @@ namespace TvPlugin
 
     private const int MaxDaysInGuide = 30;
     private const int RowID = 1000;
-    private const int ColID = 10;
+    private const int ColID = 10;    
 
     private const int GUIDE_COMPONENTID_START = 50000;
     // Start for numbering IDs of automaticaly generated TVguide components for channels and programs
@@ -125,6 +125,7 @@ namespace TvPlugin
     private int _totalProgramCount = 0;
     private int _singleChannelNumber = 0;
     private bool _showChannelLogos = false;
+    private TvServer _server = null;
 
     /// List<TVNotify> _notifyList = new List<TVNotify>();
     private int _backupCursorX = 0;
@@ -198,7 +199,7 @@ namespace TvPlugin
       _colorList.Add(Color.OldLace);
       _colorList.Add(Color.PowderBlue);
       _colorList.Add(Color.SpringGreen);
-      _colorList.Add(Color.LightSalmon);
+      _colorList.Add(Color.LightSalmon);      
     }
 
     #endregion
@@ -258,6 +259,7 @@ namespace TvPlugin
 
     protected void Initialize()
     {
+      _server = new TvServer();
     }
 
 
@@ -914,9 +916,8 @@ namespace TvPlugin
         if (ts.TotalMilliseconds > 1000)
         {
           _updateTimerRecExpected = DateTime.Now;
-          VirtualCard card;
-          TvServer server = new TvServer();
-          if (server.IsRecording(_recordingExpected.Name, out card))
+          VirtualCard card;          
+          if (_server.IsRecording(_recordingExpected.Name, out card))
           {
             _recordingExpected = null;
             GetChannels(true);
@@ -1430,27 +1431,10 @@ namespace TvPlugin
         _currentTime = strTime;
         _currentChannel = strChannel;
 
-        bool bSeries = false;
-        bool bConflict = false;
-        if (_recordingList != null)
-        {
-          foreach (Schedule record in _recordingList)
-          {
-            if (record.IsRecordingProgram(_currentProgram, true))
-            {
-              if (record.ReferringConflicts().Count != 0)
-              {
-                bConflict = true;
-              }
-              if ((ScheduleRecordingType)record.ScheduleType != ScheduleRecordingType.Once)
-              {
-                bSeries = true;
-              }
-              bRecording = true;
-              break;
-            }
-          }
-        }
+        bool bSeries = _currentProgram.IsRecordingSeries || _currentProgram.IsRecordingSeriesPending;
+        bool bConflict = _currentProgram.HasConflict;
+        bRecording = bSeries || (_currentProgram.IsRecording || _currentProgram.IsRecordingOncePending);
+
         if (bRecording)
         {
           GUIImage img = (GUIImage)GetControl((int)Controls.IMG_REC_PIN);
@@ -1668,7 +1652,7 @@ namespace TvPlugin
           // bugfix for 0 items
           if (programs.Count == 0)
           {
-            program = new Program(channel.IdChannel, _viewingTime, _viewingTime, "-", string.Empty, string.Empty, false,
+            program = new Program(channel.IdChannel, _viewingTime, _viewingTime, "-", string.Empty, string.Empty, Program.ProgramState.None,
                                   DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1, string.Empty, -1);
           }
           else
@@ -1676,12 +1660,12 @@ namespace TvPlugin
             program = (Program)programs[programs.Count - 1];
             if (program.EndTime.DayOfYear == _viewingTime.DayOfYear)
             {
-              program = new Program(channel.IdChannel, program.EndTime, program.EndTime, "-", "-", "-", false,
+              program = new Program(channel.IdChannel, program.EndTime, program.EndTime, "-", "-", "-", Program.ProgramState.None,
                                     DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1, string.Empty, -1);
             }
             else
             {
-              program = new Program(channel.IdChannel, _viewingTime, _viewingTime, "-", "-", "-", false,
+              program = new Program(channel.IdChannel, _viewingTime, _viewingTime, "-", "-", "-", Program.ProgramState.None,
                                     DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1, string.Empty, -1);
             }
           }
@@ -1723,25 +1707,10 @@ namespace TvPlugin
         }
         img.RenderLeft = false;
         img.RenderRight = false;
-        bool bRecording = false;
-        bool bSeries = false;
-        bool bConflict = false;
-        foreach (Schedule record in _recordingList)
-        {
-          if (record.IsRecordingProgram(program, true))
-          {
-            if (record.ReferringConflicts().Count != 0)
-            {
-              bConflict = true;
-            }
-            if ((ScheduleRecordingType)record.ScheduleType != ScheduleRecordingType.Once)
-            {
-              bSeries = true;
-            }
-            bRecording = true;
-            break;
-          }
-        }
+
+        bool bSeries = (program.IsRecordingSeries || program.IsRecordingSeriesPending);
+        bool bConflict = program.HasConflict;
+        bool bRecording = bSeries || (program.IsRecording || program.IsRecordingOncePending);               
 
         img.Data = program;
         img.ColourDiffuse = GetColorForGenre(program.Genre);
@@ -1869,6 +1838,18 @@ namespace TvPlugin
       }
     } //void RenderSingleChannel(Channel channel)
 
+    private bool IsRecordingNoEPG(string channelName)
+    {
+      VirtualCard vc = null;
+      _server.IsRecording(channelName, out vc);
+
+      if (vc != null)
+      {
+        return vc.IsRecording;
+      }
+      return false;
+    }
+
     private void RenderChannel(ref Dictionary<int, List<Program>> mapPrograms, int iChannel, Channel channel,
                                long iStart, long iEnd, bool selectCurrentShow)
     {
@@ -1921,39 +1902,44 @@ namespace TvPlugin
       }
 
 
-      List<Program> programs = new List<Program>();
+      List<Program> programs = null;
       if (mapPrograms.ContainsKey(channel.IdChannel))
       {
         programs = mapPrograms[channel.IdChannel];
       }
       //TvBusinessLayer layer = new TvBusinessLayer();
       //programs = layer.GetPrograms(channel, Utils.longtodate(iStart), Utils.longtodate(iEnd));
-      bool noEPG = (programs.Count == 0);
+      bool noEPG = (programs == null || programs.Count == 0);
       if (noEPG)
       {
         DateTime dt = Utils.longtodate(iEnd);
         //dt=dt.AddMinutes(_timePerBlock);
         long iProgEnd = Utils.datetolong(dt);
         Program prog = new Program(channel.IdChannel, Utils.longtodate(iStart), Utils.longtodate(iProgEnd),
-                                   GUILocalizeStrings.Get(736), "", "", false, DateTime.MinValue, string.Empty,
+                                   GUILocalizeStrings.Get(736), "", "", Program.ProgramState.None, DateTime.MinValue, string.Empty,
                                    string.Empty, string.Empty, string.Empty, -1, string.Empty, -1);
+        if (programs == null)
+        {
+          programs = new List<Program>();
+        }
         programs.Add(prog);
       }
 
-      if (programs.Count > 0)
+      if (programs != null && programs.Count > 0)
       {
         int iProgram = 0;
         int iPreviousEndXPos = 0;
 
         foreach (Program program in programs)
         {
-          string strTitle = TVUtil.GetDisplayTitle(program);
-          bool bStartsBefore = false;
-          bool bEndsAfter = false;
           if (Utils.datetolong(program.EndTime) <= iStart)
           {
             continue;
           }
+
+          string strTitle = TVUtil.GetDisplayTitle(program);
+          bool bStartsBefore = false;
+          bool bEndsAfter = false;          
           if (Utils.datetolong(program.StartTime) < iStart)
           {
             bStartsBefore = true;
@@ -1983,50 +1969,16 @@ namespace TvPlugin
           bool bRecording = false;
           bool bConflict = false;
 
-          foreach (Schedule record in _recordingList)
+          bConflict = program.HasConflict;
+          bSeries = (program.IsRecordingSeries || program.IsRecordingSeriesPending);
+          bRecording = bSeries || (program.IsRecording || program.IsRecordingOncePending);
+          bool bManual = program.IsRecordingManual;
+
+          if (noEPG && !bRecording)
           {
-            bool isRecPrg = false;
-            if ((channel.IdChannel == record.ReferencedChannel().IdChannel) ||
-                (record.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnEveryChannel))
-            {
-              if (noEPG)
-              {
-                VirtualCard card;
-                isRecPrg = (TVHome.IsRecordingSchedule(record, null, out card));
-              }
-              else
-              {
-                if (record.IsManual) //do we have a manually started recording ?
-                {
-                  Schedule manual = record.Clone();
-                  manual.ProgramName = program.Title;
-                  manual.EndTime = program.EndTime;
-                  manual.StartTime = program.StartTime;
-                  isRecPrg = manual.IsRecordingProgram(program, true);
-                }
-                else
-                {
-                  isRecPrg = record.IsRecordingProgram(program, true);
-                }
-              }
-            }
-
-            if (isRecPrg)
-            {
-              if (record.ReferringConflicts().Count != 0)
-              {
-                bConflict = true;
-              }
-              bool isOnce = ((ScheduleRecordingType)record.ScheduleType == ScheduleRecordingType.Once);
-              if (!isOnce)
-              {
-                bSeries = true;
-              }
-              bRecording = true;
-              break;
-            }
+            bRecording = IsRecordingNoEPG(channel.Name);
           }
-
+          
           int iStartXPos = 0;
           int iEndXPos = 0;
           for (int iBlok = 0; iBlok < _numberOfBlocks; iBlok++)
@@ -2482,7 +2434,7 @@ namespace TvPlugin
     /// </summary>
     /// <param name="updateScreen"></param>
     private void SetBestMatchingProgram(bool updateScreen, bool DirectionIsDown)
-    {
+    {      
       // if cursor is on a program in guide, try to find the "best time matching" program in new channel
       int iCurY = _cursorX;
       int iCurOff = _channelOffset;
@@ -2586,15 +2538,12 @@ namespace TvPlugin
       }
       if (updateScreen)
       {
+        Correct();
         if (iCurOff == _channelOffset)
-        {
-          Correct();
+        {          
           UpdateCurrentProgram();
           return;
-        }
-
-        Correct();
-        Update(false);
+        }                
         SetFocus();
       }
     }
@@ -2904,13 +2853,27 @@ namespace TvPlugin
 
         dlg.AddLocalizedString(939); // Switch mode
 
+        bool isRecordingNoEPG = false;
 
         if (_currentProgram != null && _currentChannel.Length > 0 && _currentTitle.Length > 0)
         {
-          if (!_currentRecOrNotify)
+          if  (_currentProgram.IdProgram == 0) // no EPG program recording., only allow to stop it.
+          {
+            isRecordingNoEPG = IsRecordingNoEPG(_currentProgram.ReferencedChannel().Name);
+            if (isRecordingNoEPG)
+            {
+              dlg.AddLocalizedString(629); // stop non EPG Recording
+            }
+            else
+            {
+              dlg.AddLocalizedString(264); // start non EPG Recording                        
+            }            
+          }
+          else if (!_currentRecOrNotify)
           {
             dlg.AddLocalizedString(264); // Record
           }
+          
           else
           {
             dlg.AddLocalizedString(637); // Edit Recording
@@ -2952,11 +2915,25 @@ namespace TvPlugin
 
           case 939: // switch mode
             OnSwitchMode();
+            break;          
+          case 629: //stop recording
+            Schedule schedule = Schedule.FindNoEPGSchedule(_currentProgram.ReferencedChannel().Name);
+            TVHome.PromptAndDeleteRecordingSchedule(schedule.IdSchedule, true, false);
+            Update(true);//remove RED marker
             break;
 
           case 637: // edit recording
           case 264: // record
-            OnRecordContext();
+            if (_currentProgram.IdProgram == 0)
+            {
+              TVHome.StartRecordingSchedule(_currentProgram.ReferencedChannel(), true);
+              _currentProgram.IsRecordingOncePending = true;
+              Update(true);//remove RED marker
+            }
+            else
+            {
+              OnRecordContext();
+            }
             break;
         }
       }
@@ -3036,8 +3013,7 @@ namespace TvPlugin
       }
       if (isItemSelected)
       {
-        if (_currentProgram.IsRunningAt(DateTime.Now) ||
-            _currentProgram.EndTime <= DateTime.Now)
+        if (_currentProgram.IsRunningAt(DateTime.Now) || _currentProgram.EndTime <= DateTime.Now)
         {
           //view this channel
           if (g_Player.Playing && g_Player.IsTVRecording)
@@ -3046,147 +3022,111 @@ namespace TvPlugin
           }
           try
           {
-            if (TVHome.TvServer.IsAnyCardRecording())
+            string fileName = "";
+            bool isRec = _currentProgram.IsRecording;
+            bool isRecNOepg = IsRecordingNoEPG(_currentProgram.ReferencedChannel().Name);
+
+            Schedule schedule = null;
+            if (isRecNOepg)
+            {
+              schedule = Schedule.FindNoEPGSchedule(_currentProgram.ReferencedChannel().Name);
+            }
+            else if (isRec)
             {
               // If you select the program which is currently recording open a dialog to ask if you want to see it from the beginning
-              // imagine a sports event where you do not want to see the live point to be spoiled
+              // imagine a sports event where you do not want to see the live point to be spoiled           
+              schedule = Schedule.RetrieveOnce(_currentProgram.ReferencedChannel().IdChannel, _currentProgram.Title, _currentProgram.StartTime, _currentProgram.EndTime);
+            }
 
-              // here a check is needed of _currentTitle == Recorder.CurrentTVRecording.Title
-              bool recMatchFound = false;
-              foreach (Schedule rec in _recordingList)
+            if (schedule != null)
+            {
+              Recording rec = null;
+              rec = Recording.ActiveRecording(schedule.IdSchedule);
+              if (rec != null)
               {
-                VirtualCard card = null;
+                fileName = rec.FileName;
+              }
+            }
 
-                //first lets find out if we have any EPG data on the selected item or not.
-                IList<Program> prgList = Program.RetrieveByTitleAndTimesInterval(_currentProgram.Title,
-                                                                                 _currentProgram.StartTime,
-                                                                                 _currentProgram.EndTime);
-                bool isRec = false;
+            if (!string.IsNullOrEmpty (fileName)) //are we really recording ?
+            {                                          
+              
+              Log.Info("TVGuide: clicked on a currently running recording");
+              GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+              if (dlg == null)
+              {
+                return;
+              }
 
-                if (rec.IdChannel == _currentProgram.IdChannel)
+              dlg.Reset();
+              dlg.SetHeading(_currentProgram.Title);
+              dlg.AddLocalizedString(979); //Play recording from beginning
+              dlg.AddLocalizedString(980); //Play recording from live point
+              dlg.DoModal(GetID);
+
+              if (dlg.SelectedLabel == -1)
+              {
+                return;
+              }
+              if (_recordingList != null)
+              {
+                Log.Debug("TVGuide: Found current program {0} in recording list", _currentTitle);
+                switch (dlg.SelectedId)
                 {
-                  if (prgList != null && prgList.Count > 0)
-                  {
-                    isRec = TVHome.IsRecordingSchedule(rec, _currentProgram, out card);
-                  }
-                  else
-                  {
-                    isRec = TVHome.IsRecordingSchedule(rec, null, out card);
-                  }
-                }
-
-                if (isRec)
-                {
-                  recMatchFound = true;
-
-                  TvServer server = new TvServer();
-                  string fileName = "";
-
-                  if (card != null)
-                  {
-                    fileName = card.RecordingFileName;
-                  }
-                  Log.Info("TVGuide: clicked on a currently running recording");
-                  GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
-                  if (dlg == null)
-                  {
-                    return;
-                  }
-
-                  dlg.Reset();
-                  dlg.SetHeading(_currentProgram.Title);
-                  dlg.AddLocalizedString(979); //Play recording from beginning
-                  dlg.AddLocalizedString(980); //Play recording from live point
-                  dlg.DoModal(GetID);
-
-                  if (dlg.SelectedLabel == -1)
-                  {
-                    return;
-                  }
-                  if (_recordingList != null)
-                  {
-                    Log.Debug("TVGuide: Found current program {0} in recording list", _currentTitle);
-                    switch (dlg.SelectedId)
+                  case 979: // Play recording from beginning 
                     {
-                      case 979: // Play recording from beginning 
+                      Recording recDB = Recording.Retrieve(fileName);
+                      if (recDB != null)
+                      {
+                        fileName = TVUtil.GetFileName(recDB.FileName);
+                        bool useRTSP = TVHome.UseRTSP();
+                        if (useRTSP)
                         {
-                          Recording recDB = Recording.Retrieve(fileName);
-                          if (recDB != null)
-                          {
-                            fileName = TVUtil.GetFileName(recDB.FileName);
-                            bool useRTSP = TVHome.UseRTSP();
-                            if (useRTSP)
-                            {
-                              fileName = TVHome.TvServer.GetStreamUrlForFileName(recDB.IdRecording);
-                            }
-
-                            Log.Info("TvScheduler Play:{0} - using rtsp mode:{1}", fileName, useRTSP);
-                            if (g_Player.Play(fileName, g_Player.MediaType.Recording))
-                            {
-                              if (Utils.IsVideo(fileName))
-                              {
-                                //g_Player.SeekAbsolute(0); //this seek sometimes causes a deadlock in tsreader. original problem still present.
-                                g_Player.ShowFullScreenWindow();
-                              }
-
-                              TvRecorded.SetActiveRecording(recDB);
-
-                              //populates recording metadata to g_player;
-                              g_Player.currentFileName = recDB.FileName;
-                              g_Player.currentTitle = recDB.Title;
-                              g_Player.currentDescription = recDB.Description;
-
-                              recDB.TimesWatched++;
-                              recDB.Persist();
-                            }
-                          }
+                          fileName = TVHome.TvServer.GetStreamUrlForFileName(recDB.IdRecording);
                         }
-                        return;
 
-                      case 980: // Play recording from live point
+                        Log.Info("TvScheduler Play:{0} - using rtsp mode:{1}", fileName, useRTSP);
+                        if (g_Player.Play(fileName, g_Player.MediaType.Recording))
                         {
-                          TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
-                          if (g_Player.Playing)
+                          if (Utils.IsVideo(fileName))
                           {
+                            //g_Player.SeekAbsolute(0); //this seek sometimes causes a deadlock in tsreader. original problem still present.
                             g_Player.ShowFullScreenWindow();
                           }
-                          /*
-                          g_Player.Stop();
-                          if (System.IO.File.Exists(fileName))
-                          {
-                            g_Player.Play(fileName, g_Player.MediaType.Recording);
-                            g_Player.SeekAbsolute(g_Player.Duration);
-                            g_Player.ShowFullScreenWindow();
-                            return;
-                          }
-                          else
-                          {
-                            string url = server.GetRtspUrlForFile(fileName);
-                            Log.Info("recording url:{0}", url);
-                            if (url.Length > 0)
-                            {
-                              g_Player.Play(url, g_Player.MediaType.Recording);
 
-                              if (g_Player.Playing)
-                              {
-                                g_Player.SeekAbsolute(g_Player.Duration);
-                                g_Player.SeekAbsolute(g_Player.Duration);
-                                g_Player.ShowFullScreenWindow();
-                                return;
-                              }
-                            }
-                          }*/
+                          TvRecorded.SetActiveRecording(recDB);
+
+                          //populates recording metadata to g_player;
+                          g_Player.currentFileName = recDB.FileName;
+                          g_Player.currentTitle = recDB.Title;
+                          g_Player.currentDescription = recDB.Description;
+
+                          recDB.TimesWatched++;
+                          recDB.Persist();
                         }
-                        return;
+                      }
                     }
-                  }
-                  else
-                  {
-                    Log.Info("EPG: _recordingList was not available");
-                  }
+                    return;
+
+                  case 980: // Play recording from live point
+                    {
+                      TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
+                      if (g_Player.Playing)
+                      {
+                        g_Player.ShowFullScreenWindow();
+                      }                      
+                    }
+                    return;
                 }
               }
-              if (recMatchFound == false)
+              else
+              {
+                Log.Info("EPG: _recordingList was not available");
+              }
+
+            
+
+              if (string.IsNullOrEmpty (fileName))
               {
                 TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
                 if (g_Player.Playing)
@@ -3195,7 +3135,7 @@ namespace TvPlugin
                 }
               }
             }
-            else
+            else //not recording
             {
               // clicked the show we're currently watching
               if (TVHome.Navigator.CurrentChannel == _currentChannel && g_Player.Playing)
@@ -3253,9 +3193,9 @@ namespace TvPlugin
                 {
                   if (isPlayingTV) GUIWindowManager.CloseCurrentWindow();
                   g_Player.ShowFullScreenWindow();
-                }
+                }              
               }
-            }
+            } //end of not recording
           }
           finally
           {

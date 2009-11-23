@@ -786,7 +786,7 @@ namespace TvEngine
               description += "Ton: " + audioFormat;
           }
 
-          Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre, false, OnAirDate, String.Empty, String.Empty, episode, String.Empty, EPGStarRating, classification, Convert.ToInt32(classification));
+          Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre, Program.ProgramState.None, OnAirDate, String.Empty, String.Empty, episode, String.Empty, EPGStarRating, classification, Convert.ToInt32(classification));
           if (useGentlePersist)
             prog.Persist();
 

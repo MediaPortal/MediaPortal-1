@@ -56,10 +56,14 @@ namespace TvDatabase
   {
     #region vars
 
+    private Thread _resetProgramStatesThread = null;
+
     private readonly object SingleInsert = new object();
+    private readonly object SingleProgramStateUpdate = new object();
 
     // maximum hours to keep old program info
     private int _EpgKeepDuration = 0;
+    private DateTime _lastProgramUpdate = DateTime.MinValue; //when was the last time we changed anything in the program table ?
 
     public int EpgKeepDuration
     {
@@ -1565,13 +1569,15 @@ namespace TvDatabase
       {
         DataRow prog = dataSet.Tables[0].Rows[i];
 
-        Program p = new Program(Convert.ToInt32(prog["idChannel"]),
+        Program p = new Program(
+                                Convert.ToInt32(prog["idProgram"]),
+                                Convert.ToInt32(prog["idChannel"]),
                                 Convert.ToDateTime(prog["startTime"]),
                                 Convert.ToDateTime(prog["endTime"]),
                                 Convert.ToString(prog["title"]),
                                 Convert.ToString(prog["description"]),
-                                Convert.ToString(prog["genre"]),
-                                Convert.ToBoolean(prog["notify"]),
+                                Convert.ToString(prog["genre"]),                                
+                                (Program.ProgramState) Convert.ToInt32(prog["state"]),
                                 Convert.ToDateTime(prog["originalAirDate"]),
                                 Convert.ToString(prog["seriesNum"]),
                                 Convert.ToString(prog["episodeNum"]),
@@ -2057,7 +2063,7 @@ namespace TvDatabase
         param.ProgramList = aProgramList;
         param.ConnectString = defaultConnectString;
         param.SleepTime = sleepTime;
-        Thread importThread;
+        Thread importThread;               
 
         // TODO: /!\ Temporarily turn of index rebuilding and other stuff that would speed up bulk inserts
         switch (provider)
@@ -2088,12 +2094,56 @@ namespace TvDatabase
       }
     }
 
+    public void StartResetProgramStatesThread(ThreadPriority aThreadPriority)
+    {
+      if (_resetProgramStatesThread == null || !_resetProgramStatesThread.IsAlive)
+      {        
+        _resetProgramStatesThread = new Thread(ProgramStatesThread);
+        _resetProgramStatesThread.Priority = aThreadPriority;
+        _resetProgramStatesThread.Name = "Program states thread";
+        _resetProgramStatesThread.IsBackground = true;
+        _resetProgramStatesThread.Start();
+      }            
+    }
+
+    private void ProgramStatesThread()
+    {
+      lock (SingleProgramStateUpdate)
+      {
+        if (_lastProgramUpdate == DateTime.MinValue)
+        {
+          return;
+        }        
+
+        while (true)
+        {
+          System.TimeSpan ts = DateTime.Now - _lastProgramUpdate;
+
+          Log.Info("BusinessLayer: ProgramStatesThread waiting...{0} sec", ts.TotalSeconds);
+
+          if (ts.TotalSeconds >= 60) //if more than 60 secs. has passed since last update to the program table, then lets do the program states
+          {
+            Log.Info("BusinessLayer: ProgramStatesThread - done waiting. calling SynchProgramStatesForAll");
+            _lastProgramUpdate = DateTime.MinValue;
+            Schedule.SynchProgramStatesForAll();
+            return;
+          }
+          else
+          {
+            Thread.Sleep(1000);
+          }          
+        }
+      }
+    }
+
     private void ImportMySqlThread(object aImportParam)
     {
       lock (SingleInsert)
       {
         ImportParams MyParams = (ImportParams)aImportParam;
         InsertMySql(MyParams);
+        _lastProgramUpdate = DateTime.Now;
+        StartResetProgramStatesThread(ThreadPriority.BelowNormal);
       }
     }
 
@@ -2103,6 +2153,8 @@ namespace TvDatabase
       {
         ImportParams MyParams = (ImportParams)aImportParam;
         InsertSqlServer(MyParams);
+        _lastProgramUpdate = DateTime.Now;
+        StartResetProgramStatesThread(ThreadPriority.BelowNormal);
       }
     }
 
@@ -2182,7 +2234,7 @@ namespace TvDatabase
           connection.Open();
           transact = connection.BeginTransaction();
           ExecuteMySqlCommand(aImportParam.ProgramList, connection, transact, aImportParam.SleepTime);
-          transact.Commit();
+          transact.Commit();          
           //OptimizeMySql("Program");
         }
       }
@@ -2213,7 +2265,8 @@ namespace TvDatabase
           connection.Open();
           transact = connection.BeginTransaction();
           ExecuteSqlServerCommand(aImportParam.ProgramList, connection, transact, aImportParam.SleepTime);
-          transact.Commit();
+          transact.Commit();    
+      
         }
       }
       catch (Exception ex)
@@ -2245,7 +2298,7 @@ namespace TvDatabase
       List<Program> currentInserts = new List<Program>(aProgramList);
 
       sqlCmd.CommandText =
-        "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, notify, parentalRating, episodeName, episodePart) VALUES (?idChannel, ?startTime, ?endTime, ?title, ?description, ?seriesNum, ?episodeNum, ?genre, ?originalAirDate, ?classification, ?starRating, ?notify, ?parentalRating, ?episodeName, ?episodePart)";
+        "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, state, parentalRating, episodeName, episodePart) VALUES (?idChannel, ?startTime, ?endTime, ?title, ?description, ?seriesNum, ?episodeNum, ?genre, ?originalAirDate, ?classification, ?starRating, ?state, ?parentalRating, ?episodeName, ?episodePart)";
 
       sqlCmd.Parameters.Add("?idChannel", MySqlDbType.Int32);
       sqlCmd.Parameters.Add("?startTime", MySqlDbType.Datetime);
@@ -2258,7 +2311,7 @@ namespace TvDatabase
       sqlCmd.Parameters.Add("?originalAirDate", MySqlDbType.Datetime);
       sqlCmd.Parameters.Add("?classification", MySqlDbType.VarChar);
       sqlCmd.Parameters.Add("?starRating", MySqlDbType.Int32);
-      sqlCmd.Parameters.Add("?notify", MySqlDbType.Bit);
+      sqlCmd.Parameters.Add("?state", MySqlDbType.Int32);
       sqlCmd.Parameters.Add("?parentalRating", MySqlDbType.Int32);
       sqlCmd.Parameters.Add("?episodeName", MySqlDbType.Text);
       sqlCmd.Parameters.Add("?episodePart", MySqlDbType.Text);
@@ -2288,7 +2341,7 @@ namespace TvDatabase
         sqlCmd.Parameters["?originalAirDate"].Value = prog.OriginalAirDate;
         sqlCmd.Parameters["?classification"].Value = prog.Classification;
         sqlCmd.Parameters["?starRating"].Value = prog.StarRating;
-        sqlCmd.Parameters["?notify"].Value = prog.Notify;
+        sqlCmd.Parameters["?state"].Value = 0;// prog.Notify;
         sqlCmd.Parameters["?parentalRating"].Value = prog.ParentalRating;
         sqlCmd.Parameters["?episodeName"].Value = prog.EpisodeName;
         sqlCmd.Parameters["?episodePart"].Value = prog.EpisodePart;
@@ -2337,7 +2390,7 @@ namespace TvDatabase
       List<Program> currentInserts = new List<Program>(aProgramList);
 
       sqlCmd.CommandText =
-        "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, notify, parentalRating, episodeName, episodePart) VALUES (@idChannel, @startTime, @endTime, @title, @description, @seriesNum, @episodeNum, @genre, @originalAirDate, @classification, @starRating, @notify, @parentalRating, @episodeName, @episodePart)";
+        "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, state, parentalRating, episodeName, episodePart) VALUES (@idChannel, @startTime, @endTime, @title, @description, @seriesNum, @episodeNum, @genre, @originalAirDate, @classification, @starRating, @state, @parentalRating, @episodeName, @episodePart)";
 
       sqlCmd.Parameters.Add("idChannel", SqlDbType.Int);
       sqlCmd.Parameters.Add("startTime", SqlDbType.DateTime);
@@ -2350,7 +2403,7 @@ namespace TvDatabase
       sqlCmd.Parameters.Add("originalAirDate", SqlDbType.DateTime);
       sqlCmd.Parameters.Add("classification", SqlDbType.VarChar);
       sqlCmd.Parameters.Add("starRating", SqlDbType.Int);
-      sqlCmd.Parameters.Add("notify", SqlDbType.Bit);
+      sqlCmd.Parameters.Add("state", SqlDbType.Int);
       sqlCmd.Parameters.Add("parentalRating", SqlDbType.Int);
       sqlCmd.Parameters.Add("episodeName", SqlDbType.VarChar);
       sqlCmd.Parameters.Add("episodePart", SqlDbType.VarChar);
@@ -2379,7 +2432,7 @@ namespace TvDatabase
         sqlCmd.Parameters["originalAirDate"].Value = prog.OriginalAirDate;
         sqlCmd.Parameters["classification"].Value = prog.Classification;
         sqlCmd.Parameters["starRating"].Value = prog.StarRating;
-        sqlCmd.Parameters["notify"].Value = prog.Notify;
+        sqlCmd.Parameters["state"].Value = 0;// prog.Notify;
         sqlCmd.Parameters["parentalRating"].Value = prog.ParentalRating;
         sqlCmd.Parameters["episodeName"].Value = prog.EpisodeName;
         sqlCmd.Parameters["episodePart"].Value = prog.EpisodePart;

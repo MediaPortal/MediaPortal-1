@@ -1222,7 +1222,7 @@ namespace TvPlugin
         }
         else
         {
-          program = new Program(channel.IdChannel, DateTime.Now, DateTime.Now, "-", "-", "-", false, DateTime.MinValue,
+          program = new Program(channel.IdChannel, DateTime.Now, DateTime.Now, "-", "-", "-", Program.ProgramState.None, DateTime.MinValue,
                                 string.Empty, string.Empty, string.Empty, string.Empty, -1, string.Empty, -1);
         }
 
@@ -1416,7 +1416,7 @@ namespace TvPlugin
         //dt=dt.AddMinutes(_timePerBlock);
         long iProgEnd = Utils.datetolong(dt);
         Program prog = new Program(channel.IdChannel, Utils.longtodate(iStart), Utils.longtodate(iProgEnd),
-                                   GUILocalizeStrings.Get(736), "", "", false, DateTime.MinValue, string.Empty,
+                                   GUILocalizeStrings.Get(736), "", "", Program.ProgramState.None, DateTime.MinValue, string.Empty,
                                    string.Empty, string.Empty, string.Empty, -1, string.Empty, -1);
         programs.Add(prog);
       }

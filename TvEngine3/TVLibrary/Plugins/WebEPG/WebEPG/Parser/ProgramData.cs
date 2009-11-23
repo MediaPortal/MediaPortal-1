@@ -311,7 +311,7 @@ namespace MediaPortal.WebEPG.Parser
     {
       WorldDateTime endTime = (_endTime == null)? _startTime : _endTime;
       Program program = new Program(dbIdChannel, _startTime.ToLocalTime(), endTime.ToLocalTime(), _title, _description, _genre, 
-                                    false, System.Data.SqlTypes.SqlDateTime.MinValue.Value, String.Empty, String.Empty,
+                                    Program.ProgramState.None, System.Data.SqlTypes.SqlDateTime.MinValue.Value, String.Empty, String.Empty,
                                     _subTitle, String.Empty, -1, String.Empty, 0);
       if (_episode > 0)
       {

@@ -61,7 +61,7 @@ namespace TvService
       _channel = channel;
       _endTime = endTime;
       _program = null;
-      _isSerie = isSerie;
+      _isSerie = isSerie;      
 
       TvDatabase.Program _current = schedule.ReferencedChannel().CurrentProgram; // current running program
       TvDatabase.Program _next = schedule.ReferencedChannel().NextProgram; // next running one
@@ -100,7 +100,7 @@ namespace TvService
       //no program? then treat this as a manual recording
       if (_program == null)
       {
-        _program = new TvDatabase.Program(0, DateTime.Now, endTime, "manual", "", "", false, System.Data.SqlTypes.SqlDateTime.MinValue.Value, string.Empty, string.Empty, string.Empty, string.Empty, -1, string.Empty, 0);
+        _program = new TvDatabase.Program(0, DateTime.Now, endTime, "manual", "", "", TvDatabase.Program.ProgramState.None, System.Data.SqlTypes.SqlDateTime.MinValue.Value, string.Empty, string.Empty, string.Empty, string.Empty, -1, string.Empty, 0);
       }
     }
     #endregion

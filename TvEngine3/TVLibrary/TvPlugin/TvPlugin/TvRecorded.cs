@@ -734,7 +734,7 @@ namespace TvPlugin
         {
             try
             {
-                Program ParamProg = new Program(rec.IdChannel, rec.StartTime, rec.EndTime, rec.Title, rec.Description, rec.Genre, false, DateTime.MinValue, String.Empty, String.Empty, String.Empty, String.Empty, 0, String.Empty, 0);
+              Program ParamProg = new Program(rec.IdChannel, rec.StartTime, rec.EndTime, rec.Title, rec.Description, rec.Genre, Program.ProgramState.None, DateTime.MinValue, String.Empty, String.Empty, String.Empty, String.Empty, 0, String.Empty, 0);
                 TVProgramInfo.CurrentProgram = ParamProg;
                 GUIWindowManager.ActivateWindow((int)Window.WINDOW_TV_PROGRAM_INFO);
             }
@@ -1007,61 +1007,7 @@ namespace TvPlugin
 
         public static bool IsRecordingActual(Recording aRecording)
         {
-            TimeSpan tsRecording = (aRecording.EndTime - aRecording.StartTime);
-            DateTime now = DateTime.Now;
-
-            bool recStartEndSame = (tsRecording.TotalSeconds == 0);
-
-            if (recStartEndSame)
-            {
-                TvServer server = new TvServer();
-                VirtualCard card;
-                if (aRecording.ReferencedChannel() == null)
-                {
-                    return false;
-                }
-                bool isRec = server.IsRecording(aRecording.ReferencedChannel().Name, out card);
-
-                if (isRec)
-                {
-                    if (aRecording.IsManual)
-                    {
-                        return true;
-                    }
-
-                    IList prgList = (IList)Program.RetrieveByTitle(aRecording.Title);
-
-                    if (prgList.Count > 0)
-                    {
-                        if (card.RecordingScheduleId > 0)
-                        {
-                            Schedule sched = Schedule.Retrieve(card.RecordingScheduleId);
-
-                            foreach (Program prg in prgList)
-                            {
-                                if (sched.IsManual)
-                                {
-                                    TimeSpan ts = now - aRecording.EndTime;
-                                    if (aRecording.StartTime <= prg.EndTime && ts.TotalHours < 24)
-                                    // if endtime is over 24 hrs old, then we do not consider it as a currently rec. program
-                                    {
-                                        return true;
-                                    }
-                                }
-                                else if (sched.IsRecordingProgram(prg, false))
-                                {
-                                    return true;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
-            return false;
+          return aRecording.IsRecording;
         }
 
         private GUIListItem BuildItemFromRecording(Recording aRecording)
@@ -1493,40 +1439,11 @@ namespace TvPlugin
                     return;
                 }
 
-                IList<Schedule> schedulesList = Schedule.ListAll();
-                if (schedulesList != null)
+                TvDatabase.Schedule sched =  rec.ReferencedSchedule();
+                if (sched != null)
                 {
-                    if (rec != null)
-                    {
-                        foreach (Schedule s in schedulesList)
-                        {
-                            if (s.ReferencedChannel().IdChannel == rec.ReferencedChannel().IdChannel)
-                            {
-                                TimeSpan ts = s.StartTime - rec.StartTime;
-
-                                ScheduleRecordingType scheduleType = (ScheduleRecordingType)s.ScheduleType;
-
-                                bool isManual = (scheduleType == ScheduleRecordingType.Once);
-
-                                if ((ts.Minutes == 0 && isManual) || (s.ProgramName.Equals(rec.Title) && isManual) || (isManual))
-                                {
-                                    VirtualCard card;
-
-                                    if (!server.IsRecording(rec.ReferencedChannel().Name, out card))
-                                    {
-                                        return;
-                                    }
-                                    if (isRecPlaying)
-                                    {
-                                        g_Player.Stop();
-                                    }
-                                    TVHome.PromptAndDeleteRecordingSchedule(s.IdSchedule, null, false, true);
-                                    activeRecDeleted = true;
-                                }
-                            }
-                        }
-                    }
-                }
+                  TVHome.PromptAndDeleteRecordingSchedule(sched.IdSchedule, false, true);        
+                }      
             }
             else
             {

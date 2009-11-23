@@ -641,6 +641,27 @@ namespace TvDatabase
       }
     }
 
+    public static IList<Channel> ListAllByName(string name)
+    {
+           
+      //select * from 'foreigntable'
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
+
+      // where foreigntable.foreignkey = ourprimarykey
+      sb.AddConstraint(Operator.Equals, "name", name);
+
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+
+      // execute the statement/query and create a collection of User instances from the result set
+      return ObjectFactory.GetCollection<Channel>(stmt.Execute());
+
+      // TODO In the end, a GentleList should be returned instead of an arraylist
+      //return new GentleList( typeof(CanceledSchedule), this );
+    
+    }
+
     public Program GetProgramAt(DateTime date)
     {
       //IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);

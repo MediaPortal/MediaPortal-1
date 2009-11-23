@@ -674,86 +674,7 @@ namespace TvPlugin
         server.OnNewSchedule();
       }
     }
-
-    public static bool IsRecordingSchedule(Schedule rec, Program prg, out VirtualCard card)
-    {
-      TvServer server = new TvServer();
-
-      if (prg != null)
-      {
-        if (prg.IdChannel != rec.IdChannel)
-        {
-          card = null;
-          return false;
-        }
-      }
-
-      bool isRec = false;
-      bool isCardRec = server.IsRecording(rec.ReferencedChannel().Name, out card);
-
-      if (!isCardRec)
-      {
-        return false;
-      }
-      Schedule schedDB = Schedule.Retrieve(rec.IdSchedule);
-      if (prg == null)
-      {
-        prg = Program.RetrieveByTitleAndTimes(schedDB.ProgramName, schedDB.StartTime, schedDB.EndTime);
-      }
-      bool typeOnce = (schedDB.ScheduleType == (int)ScheduleRecordingType.Once);
-      bool isSchedSetupForRec = false;
-      bool isSchedRec = false;
-
-      int schedId2CheckIfRec = schedDB.IdSchedule;
-      if (!typeOnce)
-      {
-        Schedule assocSchedule = Schedule.RetrieveOnce(schedDB.IdChannel, schedDB.ProgramName, schedDB.StartTime,
-                                                       schedDB.EndTime);
-        if (assocSchedule != null)
-        {
-          schedId2CheckIfRec = assocSchedule.IdSchedule;
-          isSchedSetupForRec = assocSchedule.IsRecordingProgram(prg, false);
-          //check if we currently recoding this schedule 
-        }
-        else
-        {
-          isSchedSetupForRec = schedDB.IsRecordingProgram(prg, false); //check if we currently recoding this schedule 
-        }
-      }
-      else
-      {
-        if (prg == null)
-        {
-          isSchedSetupForRec = (isCardRec && isSchedRec);
-        }
-        else
-        {
-          isSchedSetupForRec = schedDB.IsRecordingProgram(prg, false); //check if we currently recoding this schedule 
-        }
-      }
-
-      isSchedRec = server.IsRecordingSchedule(schedId2CheckIfRec, out card);
-
-      if (typeOnce) //if we have a once rec. that has no EPG, then go ahead
-      {
-        if (prg == null)
-        {
-          isRec = (isCardRec && isSchedRec);
-        }
-        else
-        {
-          isRec = (isCardRec && isSchedRec && isSchedSetupForRec);
-        }
-      }
-      else
-      {
-        isRec = (isCardRec && isSchedRec && isSchedSetupForRec);
-      }
-
-
-      return isRec;
-    }
-
+ 
     /// <summary>
     /// Deletes a single or a complete schedule.
     /// The user is being prompted if the schedule is currently recording.
@@ -764,45 +685,40 @@ namespace TvPlugin
     /// <param name="deleteEntireSchedule">true if the complete schedule is to be removed.</param>
     /// <param name="supressPrompt">true if no prompt is needed.</param>
     /// <returns>true if the schedule was deleted, otherwise false</returns>
-    public static bool PromptAndDeleteRecordingSchedule(int scheduleId, Program program, bool deleteEntireSchedule,
+    public static bool PromptAndDeleteRecordingSchedule(int scheduleId, bool deleteEntireSchedule,
                                                         bool supressPrompt)
     {
       if (scheduleId < 1)
       {
         return false;
       }
-      Schedule s = Schedule.Retrieve(scheduleId); //always have the correct version from DB.
-      if (s == null)
+      Schedule schedule = Schedule.Retrieve(scheduleId); //always have the correct version from DB.      
+
+      if (schedule == null)
       {
         return false;
-      }
-      TvServer server = new TvServer();
-      Program prg2Use = program;
-      Schedule assocSchedule = null;
-      bool typeOnce = (s.ScheduleType == (int)ScheduleRecordingType.Once);
+      }     
+      
+      bool isRec = TvDatabase.Schedule.IsScheduleRecording(schedule.IdSchedule);
+      bool confirmed = true;
 
-      VirtualCard card;
+      Schedule parentSchedule = schedule.ReferencedSchedule();
 
-      int schedId2CheckIfRec = s.IdSchedule;
-      if (!typeOnce)
+      bool isOnce = true;
+
+      if (parentSchedule == null)
       {
-        assocSchedule = Schedule.RetrieveOnce(s.IdChannel, s.ProgramName, s.StartTime, s.EndTime);
-        if (assocSchedule != null)
+        parentSchedule = schedule;
+        Schedule spawn = Schedule.RetrieveSpawnedSchedule(parentSchedule.IdSchedule, parentSchedule.StartTime);
+        if (spawn != null)
         {
-          if (deleteEntireSchedule)
-          {
-            prg2Use = assocSchedule.ReferencedChannel().CurrentProgram;
-          }
+          schedule = spawn;
         }
       }
 
-      if (s.IsManual)
-      {
-        prg2Use = null;
-      }
+      isOnce = (parentSchedule.ScheduleType == (int)ScheduleRecordingType.Once);    
 
-      bool isRec = IsRecordingSchedule(s, prg2Use, out card);
-      bool confirmed = true;
+      TvServer server = new TvServer();
 
       if (isRec)
       {
@@ -825,66 +741,33 @@ namespace TvPlugin
 
       if (confirmed)
       {
-        if (deleteEntireSchedule || s.IsManual) //delete the entire schedule
-        {
-          if (isRec)
-          {
-            if (assocSchedule != null)
-            {
-              server.StopRecordingSchedule(assocSchedule.IdSchedule);
-              if (s != null)
-              {
-                s.Delete();
-              }
-            }
-            else
-            {
-              server.StopRecordingSchedule(s.IdSchedule);
-            }
-          }
-          else if (s != null)
-          {
-            s.Delete();
-          }
-          server.OnNewSchedule();
-        }
-        else //delete only a single show, keep the schedule
-        {
-          if (isRec)
-          {
-            if (assocSchedule != null)
-            {
-              server.StopRecordingSchedule(assocSchedule.IdSchedule);
-            }
-            else
-            {
-              server.StopRecordingSchedule(s.IdSchedule);
-            }
-          }
 
-          if (typeOnce)
-          {
-            Schedule parentSeriesSchedule = Schedule.RetrieveSeries(s.ReferencedChannel().IdChannel, s.ProgramName);
-            if (parentSeriesSchedule != null)
-            {
-              CanceledSchedule canceledSchedule = new CanceledSchedule(parentSeriesSchedule.IdSchedule,
-                                                                       program.StartTime);
-              canceledSchedule.Persist();
-            }
-
-            if (!isRec && s != null)
-            {
-              s.Delete();
-            }
-            server.OnNewSchedule();
-          }
-          else
-          {
-            CanceledSchedule canceledSchedule = new CanceledSchedule(s.IdSchedule, program.StartTime);
-            canceledSchedule.Persist();
-            server.OnNewSchedule();
-          }
+        //create the cancelled schedule to prevent the schedule from restarting again.
+        // we only create cancelled recordings on series type schedules
+        if (!isOnce)
+        {
+          CanceledSchedule canceledSchedule = new CanceledSchedule(parentSchedule.IdSchedule,
+                                                                   schedule.StartTime);
+          canceledSchedule.Persist();
         }
+
+        //is the schedule recording, then stop it now.
+        if (isRec)
+        {
+          server.StopRecordingSchedule(schedule.IdSchedule);
+        }
+
+        //delete the entire schedule ?
+        if (deleteEntireSchedule && parentSchedule != null)
+        {
+          parentSchedule.Delete();
+        }
+        else if (!isRec && schedule != null && isOnce)
+        {
+          schedule.Delete();
+        }        
+                
+        server.OnNewSchedule();                    
         return true;
       }
       return false;
@@ -1428,7 +1311,10 @@ namespace TvPlugin
       else
       {
         Schedule s = Schedule.Retrieve(card.RecordingScheduleId);
-        PromptAndDeleteRecordingSchedule(s.IdSchedule, s.ReferencedChannel().CurrentProgram, false, true);
+        if (s != null)
+        {          
+          PromptAndDeleteRecordingSchedule(s.IdSchedule, false, true);
+        }
         return false;
       }
       return false;
@@ -2170,156 +2056,66 @@ namespace TvPlugin
       }
 
       dlg.Reset();
-      dlg.SetHeading(200052); // Active Recordings
-      int selected = 0;
+      dlg.SetHeading(200052); // Active Recordings      
 
-      IList<Card> cards = TvDatabase.Card.ListAll();
-      List<Channel> channels = new List<Channel>();
-      int count = 0;
-      TvServer server = new TvServer();
-      List<User> _users = new List<User>();
-
-      List<Schedule> recordingSchedules = new List<Schedule>();
-
-      foreach (Card card in cards)
+      IList<Recording> activeRecordings = Recording.ListAllActive();            
+      if (activeRecordings != null && activeRecordings.Count > 0)
       {
-        if (card.Enabled == false)
-        {
-          continue;
+        foreach (Recording activeRecording in activeRecordings)
+        {                              
+          GUIListItem item = new GUIListItem();
+          string channelName = activeRecording.ReferencedChannel().DisplayName;
+          string programTitle = activeRecording.Title.Trim(); // default is current EPG info
+          
+          item.Label = channelName;
+          item.Label2 = programTitle;
+          
+          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channelName);
+          if (!File.Exists(strLogo))
+          {
+            strLogo = "defaultVideoBig.png";
+          }
+
+          item.IconImage = strLogo;
+          item.IconImageBig = strLogo;
+          item.PinImage = "";
+          dlg.Add(item);
         }
-        if (!RemoteControl.Instance.CardPresent(card.IdCard))
-        {
-          continue;
-        }
-        User[] users = RemoteControl.Instance.GetUsersForCard(card.IdCard);
-        if (users == null)
+
+        dlg.SelectedLabel = activeRecordings.Count;
+
+        dlg.DoModal(this.GetID);
+        if (dlg.SelectedLabel < 0)
         {
           return;
         }
-        for (int i = 0; i < users.Length; ++i)
+
+        if (dlg.SelectedLabel < 0 || (dlg.SelectedLabel-1 > activeRecordings.Count))
         {
-          User user = users[i];
-          if (card.IdCard != user.CardId)
-          {
-            continue;
-          }
-          bool isRecording;
-          VirtualCard tvcard = new VirtualCard(user, RemoteControl.HostName);
-          isRecording = tvcard.IsRecording;
-
-          if (isRecording)
-          {
-            int idChannel = tvcard.IdChannel;
-            user = tvcard.User;
-            if (!user.IsAdmin)
-            {
-              continue; // a scheduler user is always an admin 
-            }
-            Channel ch = Channel.Retrieve(idChannel);
-            channels.Add(ch);
-            GUIListItem item = new GUIListItem();
-            string channelName = ch.DisplayName;
-            string programTitle = "";
-            if (ch.CurrentProgram != null)
-            {
-              programTitle = ch.CurrentProgram.Title.Trim(); // default is current EPG info
-            }
-
-
-            //retrive the EPG info from when the rec. was started.
-            IList<Schedule> schedulesList = Schedule.ListAll();
-            if (schedulesList != null)
-            {
-              Schedule rec = Schedule.Retrieve(tvcard.RecordingScheduleId);
-
-              if (rec == null)
-              {
-                foreach (Schedule s in schedulesList)
-                {
-                  if (TvServer.IsRecordingSchedule(s.IdSchedule, out tvcard))
-                  {
-                    rec = Schedule.Retrieve(tvcard.RecordingScheduleId);
-                    break;
-                  }
-                }
-              }
-
-
-              if (rec != null)
-              {
-                foreach (Schedule s in schedulesList)
-                {
-                  ScheduleRecordingType scheduleType = (ScheduleRecordingType)s.ScheduleType;
-                  bool isManual = (scheduleType == ScheduleRecordingType.Once);
-
-                  if (isManual && s.ReferencedChannel().IdChannel == rec.ReferencedChannel().IdChannel &&
-                      s.StartTime == rec.StartTime)
-                  {
-                    programTitle = s.ProgramName.Trim();
-                    recordingSchedules.Add(s);
-                    break;
-                  }
-                }
-              }
-            }
-
-            int totalLength = channelName.Length + programTitle.Length;
-            //scrolling would be better than truncating the string, but scrolling only seems to work on label1, not label2 ???
-            if (totalLength > 30)
-            {
-              programTitle = programTitle.Substring(0, 30 - channelName.Length);
-            }
-
-            item.Label = channelName;
-            item.Label2 = programTitle;
-
-            string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.DisplayName);
-            if (!File.Exists(strLogo))
-            {
-              strLogo = "defaultVideoBig.png";
-            }
-
-            item.IconImage = strLogo;
-            item.IconImageBig = strLogo;
-            item.PinImage = "";
-
-            dlg.Add(item);
-            _users.Add(user);
-            if (Card != null && Card.IdChannel == idChannel)
-            {
-              selected = count;
-            }
-            count++;
-          }
+          return;
         }
-      }
-      if (channels.Count == 0)
-      {
-        GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
-        if (pDlgOK != null)
+
+        Recording selectedRecording = activeRecordings[dlg.SelectedLabel];        
+        Schedule parentSchedule = selectedRecording.ReferencedSchedule();
+        if (parentSchedule == null || parentSchedule.IdSchedule < 1)
         {
-          pDlgOK.SetHeading(200052); //my tv
-          pDlgOK.SetLine(1, GUILocalizeStrings.Get(200053)); // No Active recordings
-          pDlgOK.SetLine(2, "");
-          pDlgOK.DoModal(this.GetID);
+          return;
         }
-        return;
-      }
-      dlg.SelectedLabel = selected;
-      dlg.DoModal(this.GetID);
-      if (dlg.SelectedLabel < 0)
-      {
-        return;
-      }
 
-      if (recordingSchedules.Count == 0)
-      {
-        return;
+        PromptAndDeleteRecordingSchedule(parentSchedule.IdSchedule, false, false);
+        OnActiveRecordings(); //keep on showing the list until --> 1) user leaves menu, 2) no more active recordings
       }
-      Schedule sched = recordingSchedules[dlg.SelectedLabel];
-      Program prg2use = Program.RetrieveByTitleAndTimes(sched.ProgramName, sched.StartTime, sched.EndTime);
-      PromptAndDeleteRecordingSchedule(sched.IdSchedule, prg2use, false, false);
-      OnActiveRecordings(); //keep on showing the list until --> 1) user leaves menu, 2) no more active recordings
+      else
+      {
+          GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+          if (pDlgOK != null)
+          {
+            pDlgOK.SetHeading(200052); //my tv
+            pDlgOK.SetLine(1, GUILocalizeStrings.Get(200053)); // No Active recordings
+            pDlgOK.SetLine(2, "");
+            pDlgOK.DoModal(this.GetID);
+          }        
+      }    
     }
 
     private void OnActiveStreams()

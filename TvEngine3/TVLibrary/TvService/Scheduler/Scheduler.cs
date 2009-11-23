@@ -107,7 +107,11 @@ namespace TvService
     public void Start()
     {
       Log.Write("Scheduler: started");
-      _controller = RemoteControl.Instance;
+      _controller = RemoteControl.Instance;      
+
+      //ResetEPGprogramStateData();
+      ResetRecordingStates();
+
       _recordingsInProgressList = new List<RecordingDetail>();
       IList<Schedule> schedules = Schedule.ListAll();
       Log.Write("Scheduler: loaded {0} schedules", schedules.Count);
@@ -130,6 +134,9 @@ namespace TvService
       Log.Write("Scheduler: stopped");
       _timer.Enabled = false;
 
+      //ResetEPGprogramStateData();
+      ResetRecordingStates();
+
       _episodeManagement = null;
       _recordingsInProgressList = new List<RecordingDetail>();
       HandleSleepMode();
@@ -139,6 +146,16 @@ namespace TvService
     #endregion
 
     #region private members
+
+    /*private static void ResetEPGprogramStateData()
+    {
+      TvDatabase.Program.ResetStates();
+    }*/
+
+    private static void ResetRecordingStates()
+    {
+      Recording.ResetActiveRecordings();
+    }
 
     /// <summary>
     /// Timer callback which gets fired every 30 seconds
@@ -583,6 +600,7 @@ namespace TvService
                   newSchedule.EndTime = current.EndTime;
                   newSchedule.ScheduleType = 0; // type Once
                   newSchedule.Series = true;
+                  newSchedule.IdParentSchedule = schedule.IdSchedule;
                   newSchedule.Persist();
                   return false; // 'once typed' created schedule will be used instead at next call of IsTimeToRecord()
                 }
@@ -608,6 +626,7 @@ namespace TvService
               newSchedule.StartTime = program.StartTime;
               newSchedule.EndTime = program.EndTime;
               newSchedule.ScheduleType = 0; // type Once
+              newSchedule.IdParentSchedule = schedule.IdSchedule;
               newSchedule.Series = true;
               newSchedule.Persist();
               return false; // 'once typed' created schedule will be used instead at next call of IsTimeToRecord()
@@ -775,10 +794,21 @@ namespace TvService
         RecDetail.RecordingStartDateTime = DateTime.Now;
         int idServer = RecDetail.CardInfo.Card.IdServer;
         Log.Debug(String.Format("Scheduler: adding new row in db for title=\"{0}\" of type=\"{1}\"", RecDetail.Program.Title, RecDetail.Schedule.ScheduleType));
-        RecDetail.Recording = new Recording(RecDetail.Schedule.IdChannel, RecDetail.RecordingStartDateTime, DateTime.Now, RecDetail.Program.Title,
+        RecDetail.Recording = new Recording(RecDetail.Schedule.IdChannel, RecDetail.Schedule.IdSchedule, true, RecDetail.RecordingStartDateTime, DateTime.Now, RecDetail.Program.Title,
                             RecDetail.Program.Description, RecDetail.Program.Genre, RecDetail.FileName, RecDetail.Schedule.KeepMethod,
                             RecDetail.Schedule.KeepDate, 0, idServer, RecDetail.Program.EpisodeName, RecDetail.Program.SeriesNum, RecDetail.Program.EpisodeNum, RecDetail.Program.EpisodePart);
         RecDetail.Recording.Persist();
+        
+
+        if (RecDetail.Program.IdProgram > 0)
+        {
+          RecDetail.Program.IsRecordingOnce = true;
+          RecDetail.Program.IsRecordingSeries = RecDetail.Schedule.Series;          
+          RecDetail.Program.IsRecordingManual = RecDetail.Schedule.IsManual;
+          RecDetail.Program.IsRecordingOncePending = false;
+          RecDetail.Program.IsRecordingSeriesPending = false;
+          RecDetail.Program.Persist();
+        }
 
         _recordingsInProgressList.Add(RecDetail);
 
@@ -843,7 +873,18 @@ namespace TvService
         {
           recording.Recording.Refresh();
           recording.Recording.EndTime = DateTime.Now;
+          recording.Recording.IsRecording = false;
           recording.Recording.Persist();
+
+          if (recording.Program.IdProgram > 0)
+          {
+            recording.Program.IsRecordingManual = false;            
+            recording.Program.IsRecordingSeries = false;
+            recording.Program.IsRecordingOnce = false;
+            recording.Program.IsRecordingOncePending = false;
+            recording.Program.IsRecordingSeriesPending = false;
+            recording.Program.Persist();
+          }
 
           if ((ScheduleRecordingType)recording.Schedule.ScheduleType == ScheduleRecordingType.Once)
           {

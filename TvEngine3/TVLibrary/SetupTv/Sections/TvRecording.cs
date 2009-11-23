@@ -924,6 +924,8 @@ namespace SetupTv.Sections
           aTag.endTime = GetRecordingEndTime(physicalFile);
         }
         tagRec = new Recording(GetChannelIdByDisplayName(aTag.channelName),
+                                         -1,
+                                         false,
                                          aTag.startTime,
                                          aTag.endTime,
                                          aTag.title,

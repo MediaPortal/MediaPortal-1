@@ -34,6 +34,8 @@ namespace TvEngine
     TvBusinessLayer cmLayer = new TvBusinessLayer();
     IList<Schedule> _schedules = Schedule.ListAll();
     IList<Card> _cards = Card.ListAll();
+
+    IList<Program> _conflictingPrograms;
     #endregion
 
     #region properties
@@ -91,6 +93,7 @@ namespace TvEngine
     public void Start(IController controller)
     {
       Log.WriteFile("plugin: ConflictsManager started");
+      _conflictingPrograms = new List<Program>();
       ITvServerEvent events = GlobalServiceProvider.Instance.Get<ITvServerEvent>();
       events.OnTvServerEvent += new TvServerEventHandler(events_OnTvServerEvent);
     }
@@ -101,6 +104,9 @@ namespace TvEngine
     public void Stop()
     {
       Log.WriteFile("plugin: ConflictsManager stopped");
+      ClearConflictTable();
+      ClearConflictPrograms();
+      
 
       if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
       {
@@ -148,6 +154,7 @@ namespace TvEngine
       TimeSpan ts;
       // hmm... 
       ClearConflictTable();
+      ClearConflictPrograms();
       // Gets schedules from db
       IList<Schedule> scheduleList = Schedule.ListAll();
       IList<Schedule> scheduleListToParse = new List<Schedule>();
@@ -199,6 +206,16 @@ namespace TvEngine
     #endregion
 
     #region private members
+    
+    private void ClearConflictPrograms ()
+    {
+      foreach (Program prg in _conflictingPrograms)
+      {
+        prg.HasConflict = false;
+        prg.Persist();
+      }
+      _conflictingPrograms.Clear();
+    }
 
     /// <summary>
     /// Removes all records in Table : Conflict
@@ -207,7 +224,7 @@ namespace TvEngine
     {
       // clears all conflicts in db
       IList<Conflict> conflictList = Conflict.ListAll();
-      foreach (Conflict aconflict in conflictList) aconflict.Remove();
+      foreach (Conflict aconflict in conflictList) aconflict.Remove();      
     }
 
     private void Init()
@@ -304,6 +321,15 @@ namespace TvEngine
 						new Conflict(schedule.IdSchedule, lastOverlappingSchedule.IdSchedule, schedule.IdChannel, schedule.StartTime);
 					newConflict.IdCard = lastBusyCard;
 					newConflict.Persist();
+
+          Program prg = Program.RetrieveByTitleTimesAndChannel(schedule.ProgramName, schedule.StartTime, schedule.EndTime, schedule.IdChannel);
+
+          if (prg != null)
+          {
+            prg.HasConflict = true;
+            prg.Persist();
+            _conflictingPrograms.Add(prg);
+          }
 				}
 			}
 

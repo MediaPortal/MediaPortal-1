@@ -1270,7 +1270,7 @@ namespace TvPlugin
                 {
                   //delete specific series
                   Schedule sched = Schedule.Retrieve(rec1.IdSchedule);
-                  TVHome.PromptAndDeleteRecordingSchedule(sched.IdSchedule, sched.ReferencedChannel().CurrentProgram,
+                  TVHome.PromptAndDeleteRecordingSchedule(sched.IdSchedule, /*sched.ReferencedChannel().CurrentProgram,*/
                                                           false, false);
 
                   //TVHome.DeleteRecordingSchedule(Schedule.Retrieve(rec1.IdSchedule));

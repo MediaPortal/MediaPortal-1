@@ -656,7 +656,7 @@ namespace TvEngine
                           continue;
                         }
 
-                        Program prog = new Program(chan.IdChannel, longtodate(startDate), longtodate(stopDate), title, description, category, false, System.Data.SqlTypes.SqlDateTime.MinValue.Value, seriesNum, episodeNum, episodeName, episodePart, starRating, classification, -1);
+                        Program prog = new Program(chan.IdChannel, longtodate(startDate), longtodate(stopDate), title, description, category, Program.ProgramState.None, System.Data.SqlTypes.SqlDateTime.MinValue.Value, seriesNum, episodeNum, episodeName, episodePart, starRating, classification, -1);
                         channelPrograms.programs.Add(prog);
                         programIndex++;
                         //prog.Description = ConvertHTMLToAnsi(strDescription);
@@ -813,7 +813,8 @@ namespace TvEngine
       }
 
       Programs.Clear();
-      Programs = null;
+      Programs = null;      
+
       _isImporting = false;
       //      TVDatabase.SupressEvents = false;
       if (xmlReader != null)

@@ -25,7 +25,7 @@ namespace TvDatabase
     [TableColumn("title", NotNull = true)] private string title;
     [TableColumn("description", NotNull = true)] private string description;
     [TableColumn("genre", NotNull = true)] private string genre;
-    [TableColumn("notify", NotNull = true)] private bool notify;
+    [TableColumn("state", NotNull = true)] private int state;
     [TableColumn("originalAirDate", NotNull = true)] private DateTime originalAirDate;
     [TableColumn("seriesNum", NotNull = true)] private string seriesNum;
     [TableColumn("episodeNum", NotNull = true)] private string episodeNum;
@@ -37,23 +37,40 @@ namespace TvDatabase
 
     #endregion
 
+    #region public enum
+
+    [Flags]
+    public enum ProgramState
+    {
+      None = 0,
+      Notify = 1,
+      RecordOnce = 2,
+      RecordSeries = 4,
+      RecordManual = 8,
+      Conflict = 16,
+      RecordOncePending = 32, // used to indicate recording icon on tvguide, even though it hasnt begun yet.
+      RecordSeriesPending = 64 // used to indicate recording icon on tvguide, even though it hasnt begun yet.
+    }
+
+    #endregion
+
     #region Constructors
 
     /// <summary> 
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
     /// </summary> 
     public Program(int idChannel, DateTime startTime, DateTime endTime, string title, string description, string genre,
-                   bool notify, DateTime originalAirDate, string seriesNum, string episodeNum, string episodeName, string episodePart, int starRating,
+                   ProgramState state, DateTime originalAirDate, string seriesNum, string episodeNum, string episodeName, string episodePart, int starRating,
                    string classification, int parentalRating)
     {
-      isChanged = true;
+      isChanged = true;      
       this.idChannel = idChannel;
       this.startTime = startTime;
       this.endTime = endTime;
       this.title = title;
       this.description = description;
-      this.genre = genre;
-      this.notify = notify;
+      this.genre = genre;      
+      this.state = (int) state;
       this.originalAirDate = originalAirDate;
       this.seriesNum = seriesNum;
       this.episodeNum = episodeNum;
@@ -69,7 +86,7 @@ namespace TvDatabase
     /// construct objects from retrieved rows. 
     /// </summary> 
     public Program(int idProgram, int idChannel, DateTime startTime, DateTime endTime, string title, string description,
-                   string genre, bool notify, DateTime originalAirDate, string seriesNum, string episodeNum, string episodeName, string episodePart,
+                   string genre, ProgramState state, DateTime originalAirDate, string seriesNum, string episodeNum, string episodeName, string episodePart,
                    int starRating, string classification, int parentalRating)
     {
       this.idProgram = idProgram;
@@ -78,8 +95,8 @@ namespace TvDatabase
       this.endTime = endTime;
       this.title = title;
       this.description = description;
-      this.genre = genre;
-      this.notify = notify;
+      this.genre = genre;      
+      this.state = (int)state;
       this.originalAirDate = originalAirDate;
       this.seriesNum = seriesNum;
       this.episodeNum = episodeNum;
@@ -193,13 +210,172 @@ namespace TvDatabase
     /// </summary>
     public bool Notify
     {
-      get { return notify; }
+      get { return ((state & (int)ProgramState.Notify) == (int)ProgramState.Notify); }
       set
       {
-        isChanged |= notify != value;
-        notify = value;
+        ProgramState newState = (ProgramState)state;
+        if (!value && (state & (int)ProgramState.Notify) == (int)ProgramState.Notify) // remove the notify bit flag if present
+        {
+          newState ^= ProgramState.Notify;          
+        }
+        if (value) //add the notify bit flag
+        {
+          newState |= ProgramState.Notify;          
+        }
+
+        isChanged |= (int)state != (int)newState;
+        state = (int)newState;
       }
     }
+
+    /// <summary>
+    /// Property relating to database column conflict
+    /// </summary>
+    public bool HasConflict
+    {
+      get { return ((state & (int)ProgramState.Conflict) == (int)ProgramState.Conflict); }
+      set
+      {
+        ProgramState newState = (ProgramState)state;
+        if (!value && (state & (int)ProgramState.Conflict) == (int)ProgramState.Conflict) // remove the Conflict bit flag if present
+        {
+          newState ^= ProgramState.Conflict;
+        }
+        if (value) //add the Conflict bit flag
+        {
+          newState |= ProgramState.Conflict;
+        }
+
+        isChanged |= (int)state != (int)newState;
+        state = (int)newState;
+      }
+    }
+
+    /// <summary>
+    /// Property relating to database column IsRecording
+    /// </summary>
+    public bool IsRecording
+    {
+      get { return (IsRecordingSeries || IsRecordingManual || IsRecordingOnce); }     
+    }
+
+    /// <summary>
+    /// Property relating to database column IsRecordingOnce
+    /// </summary>
+    public bool IsRecordingOnce
+    {
+      get { return ((state & (int)ProgramState.RecordOnce) == (int)ProgramState.RecordOnce); }
+      set
+      {
+        ProgramState newState = (ProgramState)state;
+        if (!value && (state & (int)ProgramState.RecordOnce) == (int)ProgramState.RecordOnce) // remove the Record bit flag if present                        
+        {
+          newState ^= ProgramState.RecordOnce;
+        }
+        if (value) //add the Record bit flag
+        {
+          newState |= ProgramState.RecordOnce;
+        }
+
+        isChanged |= (int)state != (int)newState;
+        state = (int)newState;
+      }
+    }
+
+
+    /// <summary>
+    /// Property relating to database column IsRecordingSeriesPending
+    /// </summary>
+    public bool IsRecordingSeriesPending
+    {
+      get { return ((state & (int)ProgramState.RecordSeriesPending) == (int)ProgramState.RecordSeriesPending); }
+      set
+      {
+        ProgramState newState = (ProgramState)state;
+        if (!value && (state & (int)ProgramState.RecordSeriesPending) == (int)ProgramState.RecordSeriesPending) // remove the Record bit flag if present                
+        {
+          newState ^= ProgramState.RecordSeriesPending;
+        }
+        if (value) //add the Record bit flag
+        {
+          newState |= ProgramState.RecordSeriesPending;
+        }
+
+        isChanged |= (int)state != (int)newState;
+        state = (int)newState;
+      }
+    }
+
+    /// <summary>
+    /// Property relating to database column IsRecordingOncePending
+    /// </summary>
+    public bool IsRecordingOncePending
+    {
+      get { return ((state & (int)ProgramState.RecordOncePending) == (int)ProgramState.RecordOncePending); }
+      set
+      {
+        ProgramState newState = (ProgramState)state;
+        if (!value && (state & (int)ProgramState.RecordOncePending) == (int)ProgramState.RecordOncePending) // remove the Record bit flag if present        
+        {
+          newState ^= ProgramState.RecordOncePending;
+        }
+        if (value) //add the Record bit flag
+        {
+          newState |= ProgramState.RecordOncePending;
+        }
+
+        isChanged |= (int)state != (int)newState;
+        state = (int)newState;
+      }
+    }
+    
+    /// <summary>
+    /// Property relating to database column IsRecordingManual
+    /// </summary>
+    public bool IsRecordingManual
+    {
+      get { return ((state & (int)ProgramState.RecordManual) == (int)ProgramState.RecordManual); }
+      set
+      {
+        ProgramState newState = (ProgramState)state;
+        if (!value && (state & (int)ProgramState.RecordManual) == (int)ProgramState.RecordManual) // remove the Record bit flag if present
+        {
+          newState ^= ProgramState.RecordManual;
+        }
+        if (value) //add the Record bit flag
+        {
+          newState |= ProgramState.RecordManual;
+        }
+
+        isChanged |= (int)state != (int)newState;
+        state = (int)newState;
+      }
+    }
+
+
+    /// <summary>
+    /// Property relating to database column isRecording
+    /// </summary>
+    public bool IsRecordingSeries
+    {
+      get { return ((state & (int)ProgramState.RecordSeries) == (int)ProgramState.RecordSeries); }
+      set
+      {
+        ProgramState newState = (ProgramState)state;
+        if (!value && (state & (int)ProgramState.RecordSeries) == (int)ProgramState.RecordSeries) // remove the RecordSeries bit flag if present
+        {
+          newState ^= ProgramState.RecordSeries;
+        }
+        if (value) //add the RecordSeries bit flag
+        {
+          newState |= ProgramState.RecordSeries;
+        }
+
+        isChanged |= (int)state != (int)newState;
+        state = (int)newState;
+      }
+    }
+
 
     /// <summary>
     /// The original air date of the program
@@ -319,6 +495,85 @@ namespace TvDatabase
 
     #region Storage and Retrieval
 
+    #region SQL constraint helpers
+
+    private static void AddTimeRangeConstraint(SqlBuilder sb, string startField, string endField, string startParam, string endParam, bool crossMidnight)
+    {
+      string provider = ProviderFactory.GetDefaultProvider().Name.ToLowerInvariant();
+      switch (provider)
+      {
+        case "mysql":
+          if (crossMidnight)
+          {
+            // If time range [s, e] crosses midnight (i.e. e<s), both startTime and endTime must not be in the range (e, s)
+            sb.AddConstraint(
+              string.Format(
+                  "(EXTRACT(HOUR_SECOND FROM {0}) >= EXTRACT(HOUR_SECOND FROM ?{1})" +
+                "OR EXTRACT(HOUR_SECOND FROM {0}) =< EXTRACT(HOUR_SECOND FROM ?{2}))",
+                startField, startParam, endParam));
+            if (!string.IsNullOrEmpty(endField))
+            {
+              sb.AddConstraint(
+                string.Format(
+                    "(EXTRACT(HOUR_SECOND FROM {0}) >= EXTRACT(HOUR_SECOND FROM ?{1})" +
+                  "OR EXTRACT(HOUR_SECOND FROM {0}) =< EXTRACT(HOUR_SECOND FROM ?{2}))",
+                  endField, startParam, endParam));
+            }
+          }
+          else
+          {
+            sb.AddConstraint(string.Format("EXTRACT(HOUR_SECOND FROM {0}) >= EXTRACT(HOUR_SECOND FROM ?{1})", startField, startParam));
+            if (!string.IsNullOrEmpty(endField))
+            {
+              sb.AddConstraint(string.Format("EXTRACT(HOUR_SECOND FROM {0}) <= EXTRACT(HOUR_SECOND FROM ?{1})", endField, endParam));
+            }
+          }
+          break;
+        case "mssql":
+          if (crossMidnight)
+          {
+            sb.AddConstraint(
+              string.Format(
+                  "({0} >= CAST(FLOOR(CAST({0} AS float)) + CAST(@{1} AS float) - FLOOR(CAST(@{1} AS float)))" +
+                "OR {0} <= CAST(FLOOR(CAST({0} AS float)) + CAST(@{2} AS float) - FLOOR(CAST(@{2} AS float))))",
+                startField, startParam, endParam));
+            if (!string.IsNullOrEmpty(endField))
+            {
+              sb.AddConstraint(
+                string.Format(
+                    "({0} >= CAST(FLOOR(CAST({0} AS float)) + CAST(@{1} AS float) - FLOOR(CAST(@{1} AS float)))" +
+                  "OR {0} <= CAST(FLOOR(CAST({0} AS float)) + CAST(@{2} AS float) - FLOOR(CAST(@{2} AS float))))",
+                  endField, startParam, endParam));
+            }
+          }
+          else
+          {
+            sb.AddConstraint(string.Format("{0} >= CAST(FLOOR(CAST({0} AS float)) + CAST(@{1} AS float) - FLOOR(CAST(@{1} AS float)))", startField, startParam));
+            if (!string.IsNullOrEmpty(endField))
+            {
+              sb.AddConstraint(string.Format("{0} <= CAST(FLOOR(CAST({0} AS float)) + CAST(@{1} AS float) - FLOOR(CAST(@{1} AS float)))", endField, endParam));
+            }
+          }
+          break;
+      }
+    }
+
+    private static void AddWeekdayConstraint(SqlBuilder sb, string timeField, string days)
+    {
+      string provider = ProviderFactory.GetDefaultProvider().Name.ToLowerInvariant();
+      switch (provider)
+      {
+        case "mysql":
+          sb.AddConstraint(string.Format("DAYOFWEEK({0}) in ({1})", timeField, days));
+          break;
+        case "mssql":
+          sb.AddConstraint(string.Format("DATEPART(dw, {0}) in ({1})", timeField, days));
+          break;
+      }
+    }
+
+    #endregion 
+
     /// <summary>
     /// Static method to retrieve all instances that are stored in the database in one call
     /// </summary>
@@ -377,6 +632,136 @@ namespace TvDatabase
       //return new GentleList( typeof(ChannelMap), this );
     }
 
+    public static Program RetrieveOnce(string title, DateTime startTime, DateTime endTime, int channelId)
+    {
+      return RetrieveByTitleTimesAndChannel(title, startTime, endTime, channelId);
+    }
+
+    public static IList<Program> RetrieveDaily(string title, DateTime startTime, DateTime endTime, int channelId)
+    {
+      //TODO : make optimized SQL that only returns the records we need, no more no less. remember to check the calling method.
+      //IList<Program> prgs = Program.RetrieveListByTitleTimesAndChannel(title, startTime, DateTime.MaxValue, channelId);
+      //return prgs;            
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+
+      // where foreigntable.foreignkey = ourprimarykey
+      sb.AddConstraint(Operator.Equals, "Title", title);
+      sb.AddConstraint(Operator.GreaterThanOrEquals, "startTime", startTime);
+      sb.AddConstraint(Operator.Equals, "idChannel", channelId);
+      sb.AddParameter("pStartTime", typeof(DateTime));
+      sb.AddParameter("pEndTime", typeof(DateTime));
+      AddTimeRangeConstraint(sb, "startTime", "endTime", "pStartTime", "pEndTime", (endTime.Day != startTime.Day));
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+      stmt.SetParameter("pStartTime", startTime);
+      stmt.SetParameter("pEndTime", endTime);
+      // execute the statement/query and create a collection of User instances from the result set
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());            
+    }
+
+    public static IList<Program> RetrieveEveryTimeOnEveryChannel(string title, DateTime startTime, DateTime endTime)
+    {
+      //TODO : make optimized SQL that only returns the records we need, no more no less. remember to check the calling method.
+      IList<Program> prgs = Program.RetrieveByTitleAndTimesInterval(title, startTime, DateTime.MaxValue);
+      return prgs;            
+    }
+
+    public static IList<Program> RetrieveEveryTimeOnThisChannel(string title, DateTime startTime, DateTime endTime, int channelId)
+    {
+      //TODO : make optimized SQL that only returns the records we need, no more no less. remember to check the calling method.
+
+      //select * from 'foreigntable'
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+
+      // where foreigntable.foreignkey = ourprimarykey
+      sb.AddConstraint(Operator.Equals, "Title", title);
+      sb.AddConstraint(Operator.GreaterThanOrEquals, "startTime", startTime);
+      sb.AddConstraint(Operator.LessThanOrEquals, "endTime", endTime);
+      sb.AddConstraint(Operator.Equals, "idChannel", channelId);
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+
+      // execute the statement/query and create a collection of User instances from the result set
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());            
+    }
+
+    public static IList<Program> RetrieveWeekends(string title, DateTime startTime, DateTime endTime, int channelId)
+    {
+      //TODO : make optimized SQL that only returns the records we need, no more no less. remember to check the calling method.
+      //IList<Program> prgs = Program.RetrieveListByTitleTimesAndChannel(title, startTime, DateTime.MaxValue, channelId);
+      //return prgs;
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+
+      // where foreigntable.foreignkey = ourprimarykey
+      sb.AddConstraint(Operator.Equals, "Title", title);
+      sb.AddConstraint(Operator.GreaterThanOrEquals, "startTime", startTime);
+      //sb.AddConstraint(Operator.LessThanOrEquals, "endTime", endTime);
+      sb.AddConstraint(Operator.Equals, "idChannel", channelId);
+      sb.AddParameter("pStartTime", typeof(DateTime));
+      sb.AddParameter("pEndTime", typeof(DateTime));
+      AddTimeRangeConstraint(sb, "startTime", "endTime", "pStartTime", "pEndTime", (endTime.Day != startTime.Day));
+      AddWeekdayConstraint(sb, "startTime", "1,7");
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+      stmt.SetParameter("pStartTime", startTime);
+      stmt.SetParameter("pEndTime", endTime);
+      // execute the statement/query and create a collection of User instances from the result set
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
+    }
+
+    public static IList<Program> RetrieveWeekly(string title, DateTime startTime, DateTime endTime, int channelId)
+    {
+      //TODO : make optimized SQL that only returns the records we need, no more no less. remember to check the calling method.
+      //IList<Program> prgs = Program.RetrieveListByTitleTimesAndChannel(title, startTime, DateTime.MaxValue, channelId);
+      //return prgs;
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+
+      // where foreigntable.foreignkey = ourprimarykey
+      sb.AddConstraint(Operator.Equals, "Title", title);
+      sb.AddConstraint(Operator.GreaterThanOrEquals, "startTime", startTime);
+      //sb.AddConstraint(Operator.LessThanOrEquals, "endTime", endTime);
+      sb.AddConstraint(Operator.Equals, "idChannel", channelId);
+      sb.AddParameter("pStartTime", typeof(DateTime));
+      sb.AddParameter("pEndTime", typeof(DateTime));
+      AddTimeRangeConstraint(sb, "startTime", "endTime", "pStartTime", "pEndTime", (endTime.Day != startTime.Day));
+      AddWeekdayConstraint(sb, "startTime", ((int)startTime.DayOfWeek+1).ToString());
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+      stmt.SetParameter("pStartTime", startTime);
+      stmt.SetParameter("pEndTime", endTime);
+      // execute the statement/query and create a collection of User instances from the result set
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
+    }
+
+    public static IList<Program> RetrieveWorkingDays(string title, DateTime startTime, DateTime endTime, int channelId)
+    {
+      //TODO : make optimized SQL that only returns the records we need, no more no less. remember to check the calling method.
+      //IList<Program> prgs = Program.RetrieveListByTitleTimesAndChannel(title, startTime, DateTime.MaxValue, channelId);
+      //return prgs;
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+
+      // where foreigntable.foreignkey = ourprimarykey
+      sb.AddConstraint(Operator.Equals, "Title", title);
+      sb.AddConstraint(Operator.GreaterThanOrEquals, "startTime", startTime);
+      //sb.AddConstraint(Operator.LessThanOrEquals, "endTime", endTime);
+      sb.AddConstraint(Operator.Equals, "idChannel", channelId);
+      sb.AddParameter("pStartTime", typeof(DateTime));
+      sb.AddParameter("pEndTime", typeof(DateTime));
+      AddTimeRangeConstraint(sb, "startTime", "endTime", "pStartTime", "pEndTime", (endTime.Day != startTime.Day));
+      AddWeekdayConstraint(sb, "startTime", "2,3,4,5,6");
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+      stmt.SetParameter("pStartTime", startTime);
+      stmt.SetParameter("pEndTime", endTime);
+      // execute the statement/query and create a collection of User instances from the result set
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
+    }
+                  
     /// <summary>
     /// Retreives the first found instance of a Program given its Title,Start and End Times and referenced channel
     /// </summary>
@@ -413,6 +798,135 @@ namespace TvDatabase
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(ChannelMap), this );
+    }
+
+    /// <summary>
+    /// Retreives the first found instance of a Program given its Title,Start and End Times and referenced channel
+    /// </summary>
+    /// <param name="title">Title we wanna look for</param>
+    /// <param name="startTime">StartTime</param>
+    /// <param name="endTime">EndTime</param>
+    /// <param name="channelId">Referenced Channel id</param>
+    /// <returns></returns>
+    public static IList<Program> RetrieveListByTitleTimesAndChannel(string title, DateTime startTime, DateTime endTime, int channelId)
+    {
+      //select * from 'foreigntable'
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+
+      // where foreigntable.foreignkey = ourprimarykey
+      sb.AddConstraint(Operator.Equals, "Title", title);
+      sb.AddConstraint(Operator.Equals, "startTime", startTime);
+      sb.AddConstraint(Operator.Equals, "endTime", endTime);
+      sb.AddConstraint(Operator.Equals, "idChannel", channelId);
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+
+      // execute the statement/query and create a collection of User instances from the result set
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());      
+    }
+
+    public static void ResetPendingState(int idProgram)
+    {
+      Program prg = Program.Retrieve(idProgram);
+
+      if (prg != null)
+      {
+        prg.IsRecordingOncePending = false;
+        prg.IsRecordingSeriesPending = false;
+      }
+      prg.Persist();
+    }
+
+    public static void SetSingleStateSeriesPending(DateTime startTime, int idChannel, string title)
+    {
+      //select * from 'foreigntable'
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+
+      // where foreigntable.foreignkey = ourprimarykey
+      sb.AddConstraint(Operator.Equals, "Title", title);
+      sb.AddConstraint(Operator.Equals, "startTime", startTime);
+      sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
+
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+
+      IList<Program> result = ObjectFactory.GetCollection<Program>(stmt.Execute());
+
+      if (result == null || result.Count == 0)
+      {
+        return;
+      }
+
+      Program prg = result[0];
+      prg.IsRecordingOncePending = false;
+      prg.IsRecordingSeriesPending = true;
+      prg.Persist();
+    }
+
+    public static void ResetSingleState(DateTime startTime, int idChannel, string title)
+    {
+      //select * from 'foreigntable'
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+
+      // where foreigntable.foreignkey = ourprimarykey
+      sb.AddConstraint(Operator.Equals, "Title", title);
+      sb.AddConstraint(Operator.Equals, "startTime", startTime);
+      sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
+
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+
+      IList<Program> result = ObjectFactory.GetCollection<Program>(stmt.Execute());
+
+      if (result == null || result.Count == 0)
+      {
+        return;
+      }
+
+      Program prg = result[0];
+      prg.IsRecordingOncePending = false;
+      prg.IsRecordingSeriesPending = false;
+      prg.Persist();
+    }
+    /*
+    /// <summary>
+    /// Static method to retrieve all instances that are stored in the database in one call
+    /// </summary>    
+    public static void ResetStates()
+    {
+
+      IList<Program> presentNotifications  = Program.RetrieveAllNotifications();
+
+      //reset recording states, but keep the notify state if present
+      //SqlBuilder sb = new SqlBuilder(StatementType.Update, typeof(Program));
+      //sb.AddConstraint(Operator.GreaterThan, "state", (int)ProgramState.None);                              
+
+      //SqlStatement stmt = sb.GetStatement();
+
+      foreach (Program prg in presentNotifications)
+      {        
+        prg.IsRecordingManual = false;
+        prg.IsRecordingSeries = false;
+        prg.IsRecordingOncePending = false;
+        prg.IsRecordingSeriesPending = false;
+        prg.Persist();
+      }      
+    }
+    */
+    public static IList<Program> RetrieveAllNotifications()
+    {
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));      
+      //sb.AddConstraint("state % 2 <> 0"); //odd state numbers are notifications      
+      string notify = Convert.ToString((int)ProgramState.Notify);
+      sb.AddConstraint("state & " + notify + " = " + notify); 
+
+      SqlStatement stmt = sb.GetStatement(true);
+
+      // execute the statement/query and create a collection of User instances from the result set      
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
     /// <summary>
@@ -509,7 +1023,7 @@ namespace TvDatabase
       {
         try
         {
-          base.Persist();
+          base.Persist();          
         }
         catch (Exception ex)
         {
@@ -595,7 +1109,7 @@ namespace TvDatabase
 
     public Program Clone()
     {
-      Program p = new Program(idChannel, StartTime, EndTime, Title, Description, Genre, Notify, OriginalAirDate,
+      Program p = new Program(idProgram, idChannel, StartTime, EndTime, Title, Description, Genre, (ProgramState)state, OriginalAirDate,
                               SeriesNum, EpisodeNum, EpisodeName, EpisodePart, StarRating, Classification, parentalRating);
       return p;
     }

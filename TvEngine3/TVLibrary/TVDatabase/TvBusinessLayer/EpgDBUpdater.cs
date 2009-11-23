@@ -231,6 +231,11 @@ namespace TvDatabase
       dbChannel.LastGrabTime = DateTime.Now;
       dbChannel.EpgHasGaps = hasGaps;
       dbChannel.Persist();
+
+      _layer.StartResetProgramStatesThread(System.Threading.ThreadPriority.Lowest);
+
+      Schedule.SynchProgramStatesForAll();
+
       Log.Epg("- Inserted {0} epg entries for channel {1}", iInserted, dbChannel.DisplayName);
     }
 
@@ -422,7 +427,7 @@ namespace TvDatabase
       description = EvalTemplate(_descriptionTemplate, values);
       if (dbProg == null)
       {
-        dbProg = new Program(dbChannel.IdChannel, ep.StartTime, ep.EndTime, title, description, genre, false,
+        dbProg = new Program(dbChannel.IdChannel, ep.StartTime, ep.EndTime, title, description, genre, Program.ProgramState.None, 
                              SqlDateTime.MinValue.Value, string.Empty, string.Empty, string.Empty, string.Empty, starRating, classification,
                              parentRating);
       }

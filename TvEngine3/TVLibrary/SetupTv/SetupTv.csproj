@@ -617,6 +617,8 @@
     <Content Include="images\icon.tv_fta.png" />
     <Content Include="images\icon.tv_scrambled.png" />
     <None Include="images\icon.up.png" />
+    <EmbeddedResource Include="49_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="49_upgrade_sqlserver_database.sql" />
     <Content Include="images\icon.user.ico" />
     <Content Include="images\logo.MePo.png" />
     <Content Include="images\logo.MSSQL.gif" />
