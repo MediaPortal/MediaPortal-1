@@ -13,7 +13,7 @@
     <Channel id="MTV Italia" siteId="73" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://spettacolo.alice.it/guidatv/cgi/index.cgi?tipo=3&amp;channel=[ID]&amp;day=[DD]/[MM]/[YYYY]" post="" external="false" encoding="" />
+    <Site url="http://spettacolo.virgilio.it/guidatv/cgi/index.cgi?tipo=3&amp;channel=[ID]&amp;day=[DD]/[MM]/[YYYY]" post="" external="false" encoding="" />
     <Html>
       <Template name="default">
         <SectionTemplate tags="TDA">
