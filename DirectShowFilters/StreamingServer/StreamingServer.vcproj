@@ -213,17 +213,73 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Source\MPEG2TstFileServerMediaSubsession.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Source\StreamingServer.def"
 				>
 			</File>
-			<File
-				RelativePath=".\Source\TsFileServerMediaSubsession.cpp"
+			<Filter
+				Name="FileReader"
 				>
-			</File>
+				<File
+					RelativePath=".\Source\FileReader.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\MultiFileReader.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Transport"
+				>
+				<File
+					RelativePath=".\Source\TsMPEG2TransportFileServerMediaSubsession.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\TsMPEG2TransportStreamFramer.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\TsStreamFileSource.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="TsFileSource"
+				>
+				<File
+					RelativePath=".\Source\PidInfo.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PidParser.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\SampleBuffer.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\TSBuffer.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\TSBuffer.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\TsFileDuration.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\TSThread.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\TSThread.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -238,54 +294,58 @@
 				RelativePath=".\Source\EnterCriticalSection.h"
 				>
 			</File>
-			<File
-				RelativePath=".\Source\FileReader.h"
+			<Filter
+				Name="FileReader"
 				>
-			</File>
-			<File
-				RelativePath=".\Source\Global.h"
+				<File
+					RelativePath=".\Source\FileReader.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\MultiFileReader.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="TsFileSource"
 				>
-			</File>
-			<File
-				RelativePath=".\Source\MPEG2TstFileServerMediaSubsession.h"
+				<File
+					RelativePath=".\Source\Global.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PidInfo.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PidParser.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\samplebuffer.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\TsFileDuration.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Transport"
 				>
-			</File>
-			<File
-				RelativePath=".\Source\MultiFileReader.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\PidInfo.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\PidParser.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\samplebuffer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\TsFileDuration.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\TsFileServerMediaSubsession.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\TsMPEG1or2DemuxedServerMediaSubsession.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\TsMPEG1or2FileServerDemux.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\TsMPEG2TransportFileServerMediaSubsession.h"
-				>
-			</File>
+				<File
+					RelativePath=".\Source\TsMPEG2TransportFileServerMediaSubsession.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\TsMPEG2TransportStreamFramer.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\TsStreamFileSource.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"
@@ -293,84 +353,8 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 		</Filter>
-		<Filter
-			Name="TsFileSource"
-			>
-			<File
-				RelativePath=".\Source\PidInfo.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\PidParser.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\SampleBuffer.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\TSBuffer.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\TSBuffer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\TsFileDuration.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\TsStreamFileSource.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\TSThread.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\TSThread.h"
-				>
-			</File>
-			<Filter
-				Name="Transport"
-				>
-				<File
-					RelativePath=".\Source\TsMPEG2TransportFileServerMediaSubsession.cpp"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="Program"
-				>
-				<File
-					RelativePath=".\Source\TsMPEG1or2DemuxedServerMediaSubsession.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Source\TsMPEG1or2FileServerDemux.cpp"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="FileReader"
-				>
-				<File
-					RelativePath=".\Source\FileReader.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Source\MultiFileReader.cpp"
-					>
-				</File>
-			</Filter>
-		</Filter>
 		<File
 			RelativePath=".\Source\ReadMe.txt"
-			>
-		</File>
-		<File
-			RelativePath=".\Source\TsStreamFileSource.hh"
 			>
 		</File>
 	</Files>

@@ -82,9 +82,9 @@ HRESULT PidParser::ParsePinMode(__int64 fileStartPointer)
 	}
 
 	//Store file pointer so we can reset it before leaving this method
-	FileReader *pFileReader = m_pFileReader->CreateFileReader(); //new FileReader();
-	char fileName[MAX_PATH];
-	m_pFileReader->GetFileName((char*)&fileName);
+	FileReader *pFileReader = new FileReader; //new FileReader();
+	LPOLESTR fileName;
+	m_pFileReader->GetFileName(&fileName);
 	pFileReader->SetFileName(fileName);
 
 	hr = pFileReader->OpenFile();
@@ -183,9 +183,9 @@ HRESULT PidParser::ParseFromFile(__int64 fileStartPointer)
 
 
 	//Store file pointer so we can reset it before leaving this method
-	FileReader *pFileReader = m_pFileReader->CreateFileReader(); //new FileReader();
-	char fileName[MAX_PATH];
-	m_pFileReader->GetFileName((char*)&fileName);
+	FileReader *pFileReader = new FileReader; //new FileReader();
+	LPOLESTR fileName;
+	m_pFileReader->GetFileName(&fileName);
 	pFileReader->SetFileName(fileName);
 
 	hr = pFileReader->OpenFile();

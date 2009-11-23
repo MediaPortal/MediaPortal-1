@@ -12,15 +12,15 @@ using namespace Mediaportal;
 
 CCriticalSection::CCriticalSection()
 {
-  ::InitializeCriticalSection( &m_cs );
+	::InitializeCriticalSection( &m_cs );
 }
 
 CCriticalSection::~CCriticalSection()
 {
-  ::DeleteCriticalSection( &m_cs );
+	::DeleteCriticalSection( &m_cs );
 }
 
 CCriticalSection::operator LPCRITICAL_SECTION()
 {
-  return &m_cs;
+	return &m_cs;
 }

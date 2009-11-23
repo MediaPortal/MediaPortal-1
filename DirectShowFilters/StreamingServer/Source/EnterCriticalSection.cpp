@@ -14,48 +14,48 @@ CEnterCriticalSection::CEnterCriticalSection(CCriticalSection& cs)
 : m_cs( cs )
 , m_bIsOwner( false )
 {
-  Enter();
+	Enter();
 }
 
 CEnterCriticalSection::CEnterCriticalSection(const CCriticalSection& cs)
 : m_cs( const_cast<CCriticalSection&>(cs) )
 , m_bIsOwner( false )
 {
-  Enter();
+	Enter();
 }
 
 CEnterCriticalSection::~CEnterCriticalSection()
 {
-  Leave();
+	Leave();
 }
 
 bool CEnterCriticalSection::IsOwner() const
 {
-  return m_bIsOwner;
+	return m_bIsOwner;
 }
 
 bool CEnterCriticalSection::Enter()
 {
-  // Test if we already own the critical section
-  if ( true == m_bIsOwner )
-  {
-    return true;
-  }
+	// Test if we already own the critical section
+	if ( true == m_bIsOwner )
+	{
+		return true;
+	}
 
-  // Blocking call
-  ::EnterCriticalSection( m_cs );
-  m_bIsOwner = true;
+	// Blocking call
+	::EnterCriticalSection( m_cs );
+	m_bIsOwner = true;
 
-  return m_bIsOwner;
+	return m_bIsOwner;
 }
 
 void CEnterCriticalSection::Leave()
 {
-  if ( false == m_bIsOwner )
-  {
-    return;
-  }
+	if ( false == m_bIsOwner )
+	{
+		return;
+	}
 
-  ::LeaveCriticalSection( m_cs );
-  m_bIsOwner = false;
+	::LeaveCriticalSection( m_cs );
+	m_bIsOwner = false;
 }

@@ -43,7 +43,9 @@ int CTsFileDuration::OpenFile()
   {
     m_pFileReader = new FileReader();
   }
-  m_pFileReader->SetFileName(m_pFileName);
+  WCHAR           wFileName[1024];
+  MultiByteToWideChar(CP_ACP,0,m_pFileName,-1,wFileName,1024);
+  m_pFileReader->SetFileName(wFileName);
   m_pFileReader->OpenFile();
   m_pPidParser = new PidParser(&m_sampleBuffer,m_pFileReader);
   m_pPidParser->set_ProgPinMode(0);

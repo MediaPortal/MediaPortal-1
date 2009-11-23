@@ -1,6 +1,7 @@
 /**
 *  MultiFileReader.h
 *  Copyright (C) 2005      nate
+*  Copyright (C) 2006      bear
 *
 *  This file is part of TSFileSource, a directshow push source filter that
 *  provides an MPEG transport stream output.
@@ -32,7 +33,7 @@
 class MultiFileReaderFile
 {
 public:
-	char filename[1024];
+	LPWSTR filename;
 	__int64 startPosition;
 	__int64 length;
 	long filePositionId;
@@ -45,23 +46,24 @@ public:
 	MultiFileReader();
 	virtual ~MultiFileReader();
 
-	virtual FileReader* CreateFileReader();
 
-	virtual int GetFileName(char *lpszFileName);
-	virtual int SetFileName(char *pszFileName);
-	virtual int OpenFile();
-	virtual int CloseFile();
-	virtual int Read(BYTE* pbData, ULONG lDataLength, ULONG *dwReadBytes);
-	virtual int Read(BYTE* pbData, ULONG lDataLength, ULONG *dwReadBytes, __int64 llDistanceToMove, DWORD dwMoveMethod);
-	virtual int get_ReadOnly(WORD *ReadOnly);
-	virtual int set_DelayMode(WORD DelayMode);
-	virtual int get_DelayMode(WORD *DelayMode);
-	virtual int get_ReaderMode(WORD *ReaderMode);
+	virtual HRESULT GetFileName(LPOLESTR *lpszFileName);
+	virtual HRESULT SetFileName(LPCOLESTR pszFileName);
+	virtual HRESULT OpenFile();
+	virtual HRESULT CloseFile();
+	virtual HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes);
+	virtual HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, __int64 llDistanceToMove, DWORD dwMoveMethod);
+	virtual HRESULT get_ReadOnly(WORD *ReadOnly);
+	virtual HRESULT set_DelayMode(WORD DelayMode);
+	virtual HRESULT get_DelayMode(WORD *DelayMode);
+	virtual HRESULT get_ReaderMode(WORD *ReaderMode);
 	virtual DWORD setFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod);
 	virtual __int64 getFilePointer();
+	virtual __int64 getBufferPointer();
+	virtual void setBufferPointer();
 
 	//TODO: GetFileSize should go since get_FileSize should do the same thing.
-	virtual int GetFileSize(__int64 *pStartPosition, __int64 *pLength);
+	virtual HRESULT GetFileSize(__int64 *pStartPosition, __int64 *pLength);
 
 	virtual BOOL IsFileInvalid();
 
@@ -70,14 +72,16 @@ public:
 	virtual __int64 GetFileSize();
 
 protected:
-	int RefreshTSBufferFile();
-	int GetFileLength(char* pFilename, __int64 &length);
+	HRESULT RefreshTSBufferFile();
+	HRESULT GetFileLength(LPWSTR pFilename, __int64 &length);
   void RefreshFileSize();
 
+//	SharedMemory* m_pSharedMemory;
 	FileReader m_TSBufferFile;
 	__int64 m_startPosition;
 	__int64 m_endPosition;
 	__int64 m_currentPosition;
+	__int64 m_llBufferPointer;	
 	long m_filesAdded;
 	long m_filesRemoved;
 
@@ -87,6 +91,7 @@ protected:
 	long	 m_TSFileId;
 	BOOL     m_bReadOnly;
 	BOOL     m_bDelay;
+	BOOL     m_bDebugOutput;
   __int64  m_cachedFileSize;
 
 };

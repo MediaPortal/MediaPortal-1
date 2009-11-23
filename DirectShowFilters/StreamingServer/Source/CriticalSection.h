@@ -16,27 +16,27 @@
 
 namespace Mediaportal
 {
-  // Wrapper for critical section struct
-  class CCriticalSection
-  {
-  public:
-    // Constructor
-    // Initializes the critical section struct
-	  CCriticalSection();
-    // Destructor
-	  virtual ~CCriticalSection();
+	// Wrapper for critical section struct
+	class CCriticalSection
+	{
+	public:
+		// Constructor
+		// Initializes the critical section struct
+		CCriticalSection();
+		// Destructor
+		virtual ~CCriticalSection();
 
-    // Conversion operator
-    operator LPCRITICAL_SECTION();
+		// Conversion operator
+		operator LPCRITICAL_SECTION();
 
-  private:
-    // Copy constructor is disabled
-    CCriticalSection(const CCriticalSection& src);
-    // operator= is disabled
-    CCriticalSection& operator=(const CCriticalSection& src);
+	private:
+		// Copy constructor is disabled
+		CCriticalSection(const CCriticalSection& src);
+		// operator= is disabled
+		CCriticalSection& operator=(const CCriticalSection& src);
 
-    CRITICAL_SECTION    m_cs;
-  };
+		CRITICAL_SECTION    m_cs;
+	};
 }
 
 #endif // !defined(AFX_CRITICALSECTION_H__3B3A15BD_92D5_4044_8D69_5E1B8F15F369__INCLUDED_)
