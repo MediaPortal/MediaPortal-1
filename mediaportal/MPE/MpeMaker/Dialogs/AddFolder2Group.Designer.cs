@@ -38,6 +38,12 @@
             this.button2 = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.txt_template = new System.Windows.Forms.ComboBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.txt_param1 = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.cmb_overwrite = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.cmb_installtype = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // txt_folder
@@ -99,7 +105,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(255, 120);
+            this.button1.Location = new System.Drawing.Point(130, 213);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 7;
@@ -109,7 +115,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(336, 120);
+            this.button2.Location = new System.Drawing.Point(211, 213);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 8;
@@ -127,11 +133,79 @@
             this.txt_template.Size = new System.Drawing.Size(361, 21);
             this.txt_template.TabIndex = 9;
             // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(12, 173);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(46, 13);
+            this.label7.TabIndex = 19;
+            this.label7.Text = "Param 1";
+            // 
+            // txt_param1
+            // 
+            this.txt_param1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txt_param1.Location = new System.Drawing.Point(104, 170);
+            this.txt_param1.Name = "txt_param1";
+            this.txt_param1.Size = new System.Drawing.Size(269, 20);
+            this.txt_param1.TabIndex = 18;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(12, 146);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(76, 13);
+            this.label6.TabIndex = 17;
+            this.label6.Text = "Update Option";
+            // 
+            // cmb_overwrite
+            // 
+            this.cmb_overwrite.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmb_overwrite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmb_overwrite.FormattingEnabled = true;
+            this.cmb_overwrite.Items.AddRange(new object[] {
+            "Newer overwrite",
+            "Always overwrite",
+            "Overwrite if older"});
+            this.cmb_overwrite.Location = new System.Drawing.Point(104, 143);
+            this.cmb_overwrite.Name = "cmb_overwrite";
+            this.cmb_overwrite.Size = new System.Drawing.Size(269, 21);
+            this.cmb_overwrite.TabIndex = 16;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(12, 119);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(57, 13);
+            this.label4.TabIndex = 12;
+            this.label4.Text = "Install type";
+            // 
+            // cmb_installtype
+            // 
+            this.cmb_installtype.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmb_installtype.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmb_installtype.FormattingEnabled = true;
+            this.cmb_installtype.Location = new System.Drawing.Point(104, 116);
+            this.cmb_installtype.Name = "cmb_installtype";
+            this.cmb_installtype.Size = new System.Drawing.Size(269, 21);
+            this.cmb_installtype.TabIndex = 11;
+            // 
             // AddFolder2Group
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(416, 155);
+            this.ClientSize = new System.Drawing.Size(416, 249);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.txt_param1);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.cmb_overwrite);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.cmb_installtype);
             this.Controls.Add(this.txt_template);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
@@ -164,5 +238,11 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.ComboBox txt_template;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox txt_param1;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.ComboBox cmb_overwrite;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ComboBox cmb_installtype;
     }
 }

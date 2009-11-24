@@ -79,6 +79,12 @@
     <Compile Include="Dialogs\InstalledExtensionsSelector.Designer.cs">
       <DependentUpon>InstalledExtensionsSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\NewFileSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\NewFileSelector.Designer.cs">
+      <DependentUpon>NewFileSelector.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ParamEditBool.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -145,6 +151,9 @@
     <EmbeddedResource Include="Dialogs\InstalledExtensionsSelector.resx">
       <DependentUpon>InstalledExtensionsSelector.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\NewFileSelector.resx">
+      <DependentUpon>NewFileSelector.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\ParamEditBool.resx">
       <DependentUpon>ParamEditBool.cs</DependentUpon>
     </EmbeddedResource>
@@ -203,9 +212,13 @@
     <EmbeddedResource Include="Sections\WelcomSection.resx">
       <DependentUpon>WelcomSection.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Wizards\Skin_wizard\WizardSkinSelect.resx">
+      <DependentUpon>WizardSkinSelect.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -265,6 +278,14 @@
     <Compile Include="Sections\WelcomSection.Designer.cs">
       <DependentUpon>WelcomSection.cs</DependentUpon>
     </Compile>
+    <Compile Include="Wizards\IWizard.cs" />
+    <Compile Include="Wizards\NewSkin.cs" />
+    <Compile Include="Wizards\Skin_wizard\WizardSkinSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Wizards\Skin_wizard\WizardSkinSelect.Designer.cs">
+      <DependentUpon>WizardSkinSelect.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MpeCore\MpeCore.csproj">
@@ -273,6 +294,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Icons\go-next.png" />
     <Content Include="MPI MediaPortal Installer.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

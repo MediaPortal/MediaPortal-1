@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using MpeCore.Classes;
 using MpeCore.Classes.Events;
+using MpeCore.Classes.Project;
 using MpeCore.Classes.SectionPanel;
 using MpeCore.Classes.ZipProvider;
 
@@ -33,6 +34,7 @@ namespace MpeCore
             ZipProvider = new ZipProviderClass();
             UnInstallInfo = new UnInstallInfoCollection();
             Dependencies = new DependencyItemCollection();
+            ProjectSettings = new ProjectSettings();
             Silent = false;
         }
 
@@ -42,7 +44,7 @@ namespace MpeCore
         public DependencyItemCollection Dependencies { get; set; }
         public GeneralInfoItem GeneralInfo { get; set; }
         public FileItemCollection UniqueFileList { get; set; }
-
+        public ProjectSettings ProjectSettings { get; set; }
         
         [XmlIgnore]
         public ZipProviderClass ZipProvider { get; set; }
@@ -311,7 +313,11 @@ namespace MpeCore
                     sectionParam.Value = Util.RelativePathTo(path, sectionParam.Value);
                 }
             }
-
+            
+            foreach (FolderGroup folderGroup in ProjectSettings.FolderGroups)
+            {
+                folderGroup.Folder = Util.RelativePathTo(path, folderGroup.Folder);
+            }
         }
 
         public void GenerateAbsolutePath(string path)
@@ -361,6 +367,13 @@ namespace MpeCore
                         sectionParam.Value = Path.Combine(path, sectionParam.Value);
                 }
             }
+
+            foreach (FolderGroup folderGroup in ProjectSettings.FolderGroups)
+            {
+                if (!Path.IsPathRooted(folderGroup.Folder))
+                    folderGroup.Folder = Path.Combine(path, folderGroup.Folder);
+            }
+
         }
 
         private void GenerateUniqueFileList()
@@ -482,6 +495,7 @@ namespace MpeCore
                     this.GeneralInfo = packageClass.GeneralInfo;
                     this.UniqueFileList = packageClass.UniqueFileList;
                     this.Dependencies = packageClass.Dependencies;
+                    this.ProjectSettings = packageClass.ProjectSettings;
                     var pak = new PackageClass();
                     foreach (SectionParam item in pak.GeneralInfo.Params.Items)
                     {

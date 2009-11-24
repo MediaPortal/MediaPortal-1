@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using MpeCore;
 using MpeCore.Classes;
+using MpeCore.Classes.Project;
 using MpeCore.Classes.SectionPanel;
 using MpeCore.Interfaces;
 using MpeMaker.Dialogs;
@@ -119,12 +120,12 @@ namespace MpeMaker
             }
         }
 
-        private void Save( string file)
+        private void Save(string file)
         {
             Package.GenerateRelativePath(Path.GetDirectoryName(file));
             Package.Save(file);
+            Package.GenerateAbsolutePath(Path.GetDirectoryName(file));
             ProjectFileName = file;
-            
         }
 
         private void SetTitle()
@@ -142,6 +143,8 @@ namespace MpeMaker
             {
                 LoadProject(openFileDialog1.FileName);
             }
+            ProjectFileName = openFileDialog1.FileName;
+            SetTitle();
         }
 
         private bool LoadProject(string filename)
@@ -154,6 +157,10 @@ namespace MpeMaker
             }
             Package = pak;
             Package.GenerateAbsolutePath(Path.GetDirectoryName(filename));
+            foreach (FolderGroup folderGroup in Package.ProjectSettings.FolderGroups)
+            {
+                ProjectSettings.UpdateFiles(Package, folderGroup);
+            }
             ProjectFileName = openFileDialog1.FileName;
             treeView1.SelectedNode = treeView1.Nodes[0];
             SetTitle();
@@ -162,7 +169,7 @@ namespace MpeMaker
 
         private void mnu_new_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("All not saved changes will be lost, \n Do you want to continue ?", "New proiect", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show("All not saved changes will be lost, \n Do you want to continue ?", "New project", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 NewProject();
             }
@@ -170,35 +177,16 @@ namespace MpeMaker
 
         private void NewProject()
         {
-            Package = new PackageClass();
-            ProjectFileName = "";
-            Package.Groups.Items.Add(new GroupItem("Default"));
-            treeView1.SelectedNode = treeView1.Nodes[0];
-            AddSection("Welcome Screen");
-            Package.Sections.Items[0].WizardButtonsEnum = WizardButtonsEnum.NextCancel;
-            AddSection("Install Section");
-            var item = new ActionItem("InstallFiles")
-                                  {
-                                      Params =
-                                          new SectionParamCollection(
-                                          MpeInstaller.ActionProviders["InstallFiles"].GetDefaultParams())
-                                  };
-            Package.Sections.Items[1].Actions.Add(item);
-            Package.Sections.Items[1].WizardButtonsEnum = WizardButtonsEnum.Next;
-            AddSection("Setup Complete");
-            Package.Sections.Items[2].WizardButtonsEnum = WizardButtonsEnum.Finish;
+            NewFileSelector newf = new NewFileSelector(Package);
+            if (newf.ShowDialog() == DialogResult.OK)
+            {
+                ProjectFileName = "";
+                treeView1.SelectedNode = treeView1.Nodes[0];
+                Package = newf.Package;
+                SetTitle();
+            }
         }
 
-        private void AddSection(string name)
-        {
-            SectionItem item = new SectionItem();
-            ISectionPanel panel = MpeInstaller.SectionPanels[name];
-            if (panel == null)
-                return;
-            item.Name = panel.DisplayName;
-            item.PanelName = panel.DisplayName;
-            item.Params = panel.GetDefaultParams();
-            Package.Sections.Add(item);
-        }
+
     }
 }

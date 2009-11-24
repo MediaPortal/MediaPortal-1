@@ -1,24 +1,41 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using MpeCore;
 using MpeCore.Classes;
+using MpeCore.Classes.Project;
 
 namespace MpeMaker.Dialogs
 {
     public partial class AddFolder2Group : Form
     {
         private GroupItem _groupItem;
-        public AddFolder2Group(GroupItem groupItem)
+        private PackageClass Package; 
+
+        public AddFolder2Group(PackageClass packageClass, GroupItem groupItem)
         {
-            InitializeComponent();
+            Init();
             _groupItem = groupItem;
+            Package= packageClass;
         }
 
-        public AddFolder2Group(GroupItem groupItem, string folder)
+        public AddFolder2Group(PackageClass packageClass, GroupItem groupItem, string folder)
         {
-            InitializeComponent();
+            Init();
             _groupItem = groupItem;
             txt_folder.Text = folder;
+            Package = packageClass;
+        }
+
+        private void Init()
+        {
+            InitializeComponent();
+            foreach (var keyValuePair in MpeInstaller.InstallerTypeProviders)
+            {
+                cmb_installtype.Items.Add(keyValuePair.Key);
+            }
+            cmb_installtype.SelectedIndex = 0;
+            cmb_overwrite.SelectedIndex = 2;
         }
 
         private void add_folder_Click(object sender, EventArgs e)
@@ -65,31 +82,19 @@ namespace MpeMaker.Dialogs
                 return;
             }
 
-            DirectoryInfo di = new DirectoryInfo(txt_folder.Text);
-            FileInfo[] fileList;
-            fileList = chk_recurs.Checked ? di.GetFiles("*.*", SearchOption.AllDirectories) : di.GetFiles("*.*", SearchOption.TopDirectoryOnly);
-            string dir = txt_folder.Text;
-            string templ = txt_template.Text;
-            if (!dir.EndsWith("\\"))
-            {
-                dir += "\\";
-            }
-            if (!templ.EndsWith("\\"))
-            {
-               templ += "\\";
-            }
+            FolderGroup group = new FolderGroup
+                                    {
+                                        DestinationFilename = txt_template.Text,
+                                        Folder = txt_folder.Text,
+                                        InstallType = cmb_installtype.Text,
+                                        UpdateOption = (UpdateOptionEnum)cmb_overwrite.SelectedIndex,
+                                        Param1 = txt_param1.Text,
+                                        Recursive = chk_recurs.Checked,
+                                        Group = _groupItem.Name
+                                    };
 
-            foreach (FileInfo f in fileList)
-            {
-                if (!f.DirectoryName.Contains(".svn"))
-                {
-                    FileItem fileItem = new FileItem(f.FullName, false);
-                    fileItem.DestinationFilename = f.FullName.Replace(dir, templ);
-                    if (_groupItem.Files.Get(f.FullName, fileItem.DestinationFilename) != null)
-                        continue;
-                    _groupItem.Files.Add(fileItem);
-                }
-            }
+            Package.ProjectSettings.Add(group);
+            ProjectSettings.UpdateFiles(Package, group);
 
             DialogResult = DialogResult.OK;
             Close();

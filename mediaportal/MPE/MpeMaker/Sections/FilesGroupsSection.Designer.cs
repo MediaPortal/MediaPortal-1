@@ -41,7 +41,6 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage_group = new System.Windows.Forms.TabPage();
-            this.label8 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.cmb_parentGroup = new System.Windows.Forms.ComboBox();
             this.txt_displlayName = new System.Windows.Forms.TextBox();
@@ -61,6 +60,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.cmb_installtype = new System.Windows.Forms.ComboBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.list_folder = new System.Windows.Forms.ListBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.toolStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage_group.SuspendLayout();
@@ -177,6 +178,7 @@
             // tabPage_group
             // 
             this.tabPage_group.Controls.Add(this.label8);
+            this.tabPage_group.Controls.Add(this.list_folder);
             this.tabPage_group.Controls.Add(this.label5);
             this.tabPage_group.Controls.Add(this.cmb_parentGroup);
             this.tabPage_group.Controls.Add(this.txt_displlayName);
@@ -191,15 +193,6 @@
             this.tabPage_group.TabIndex = 0;
             this.tabPage_group.Text = "Group";
             this.tabPage_group.UseVisualStyleBackColor = true;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(72, 254);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(35, 13);
-            this.label8.TabIndex = 8;
-            this.label8.Text = "label8";
             // 
             // label5
             // 
@@ -399,6 +392,25 @@
             this.toolTip1.SetToolTip(this.cmb_installtype, "1");
             this.cmb_installtype.SelectedIndexChanged += new System.EventHandler(this.txt_description_TextChanged);
             // 
+            // list_folder
+            // 
+            this.list_folder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.list_folder.FormattingEnabled = true;
+            this.list_folder.Location = new System.Drawing.Point(6, 201);
+            this.list_folder.Name = "list_folder";
+            this.list_folder.Size = new System.Drawing.Size(302, 82);
+            this.list_folder.TabIndex = 8;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(6, 185);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(81, 13);
+            this.label8.TabIndex = 9;
+            this.label8.Text = "Atached folders";
+            // 
             // FilesGroupsSection
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -455,6 +467,7 @@
         private System.Windows.Forms.TextBox txt_param1;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.ListBox list_folder;
 
     }
 }

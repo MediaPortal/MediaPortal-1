@@ -89,6 +89,8 @@
     <Compile Include="Classes\InstallerType\GenericSkinFile.cs" />
     <Compile Include="Classes\ParamNamesConst.cs" />
     <Compile Include="Classes\PathProvider\TvServerPaths.cs" />
+    <Compile Include="Classes\Project\FolderGroup.cs" />
+    <Compile Include="Classes\Project\ProjectSettings.cs" />
     <Compile Include="Classes\SectionPanel\GroupCheck.cs" />
     <Compile Include="Classes\SectionPanel\GroupCheckScript.cs" />
     <Compile Include="Classes\Util.cs" />

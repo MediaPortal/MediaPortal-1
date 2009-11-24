@@ -33,6 +33,7 @@ namespace MpeCore.Classes
             SystemFile = fileItem.SystemFile;
             UpdateOption = fileItem.UpdateOption;
             Param1 = fileItem.Param1;
+            Modified = fileItem.Modified;
             //Param2 = fileItem.Param2;
         }
 
@@ -48,6 +49,7 @@ namespace MpeCore.Classes
             DestinationFilename = string.Empty;
             UpdateOption = UpdateOptionEnum.OverwriteIfOlder;
             Param1 = string.Empty;
+            Modified = true;
             //Param2 = string.Empty;
         }
 
@@ -118,6 +120,12 @@ namespace MpeCore.Classes
         [XmlAttribute]
         public bool SystemFile { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="FileItem"/> is modified.
+        /// </summary>
+        /// <value><c>true</c> if modified; otherwise, <c>false</c>.</value>
+        [XmlAttribute]
+        public bool Modified { get; set; }
         /// <summary>
         /// Gets or sets the temp file location. This property have value if the item is extracted in a temporally location
         /// </summary>

@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows.Forms;
 using MpeCore;
 using MpeCore.Classes;
+using MpeCore.Classes.Project;
 
 namespace MpeMaker.Sections
 {
@@ -47,6 +48,11 @@ namespace MpeMaker.Sections
         {
             list_error.Items.Clear();
             list_message.Items.Clear();
+            foreach (FolderGroup folderGroup in Package.ProjectSettings.FolderGroups)
+            {
+                ProjectSettings.UpdateFiles(Package, folderGroup);
+            }
+
             if (string.IsNullOrEmpty(txt_outfile.Text))
                 list_error.Items.Add("No out file is specified");
             

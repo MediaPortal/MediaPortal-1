@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using MpeCore;
 using MpeCore.Classes;
+using MpeCore.Classes.Project;
 using MpeCore.Interfaces;
 using MpeMaker.Dialogs;
 
@@ -41,7 +42,9 @@ namespace MpeMaker.Sections
             PopulateTreeView();
             if (treeView1.Nodes.Count > 0)
                 treeView1.SelectedNode = treeView1.Nodes[0];
+
         }
+
 
         private void PopulateTreeView()
         {
@@ -184,6 +187,12 @@ namespace MpeMaker.Sections
                 {
                     tabPage_file.Enabled = false;
                 }
+                
+                list_folder.Items.Clear();
+                foreach (FolderGroup folderGroup in Package.ProjectSettings.GetFolderGroups(group.Name))
+                {
+                    list_folder.Items.Add(folderGroup);
+                }
             }
 
             if (file != null)
@@ -273,6 +282,7 @@ namespace MpeMaker.Sections
                 SelectedItem.DestinationFilename = txt_installpath.Text;
                 SelectedItem.UpdateOption = (UpdateOptionEnum) cmb_overwrite.SelectedIndex;
                 SelectedItem.Param1 = txt_param1.Text;
+                SelectedItem.Modified = true;
                 if (treeView1.SelectedNode != null && treeView1.SelectedNode.Tag as FileItem != null)
                 {
                     treeView1.SelectedNode.Text = txt_installpath.Text;
@@ -298,10 +308,12 @@ namespace MpeMaker.Sections
                 return;
             Package.Groups.Items.Remove(SelectedGroup);
             treeView1.Nodes.Clear();
+            Package.ProjectSettings.RemoveFolderGroup(SelectedGroup.Name);
             PopulateTreeView();
             if (treeView1.Nodes.Count > 0)
                 treeView1.SelectedNode = treeView1.Nodes[0];
         }
+
 
         private void mnu_remove_files_Click(object sender, EventArgs e)
         {
@@ -343,7 +355,7 @@ namespace MpeMaker.Sections
                 MessageBox.Show("No node selected !");
                 return;
             }
-            AddFolder2Group dlg = new AddFolder2Group(SelectedGroup);
+            AddFolder2Group dlg = new AddFolder2Group(Package, SelectedGroup);
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 treeView1.Nodes.Clear();
@@ -359,7 +371,6 @@ namespace MpeMaker.Sections
 
         private void treeView1_DragOver(object sender, DragEventArgs e)
         {
-            label8.Text = string.Format("{0} - {1}", e.X, e.Y);
             Point pt = treeView1.PointToClient(new Point(e.X, e.Y));
             TreeNode targetNode = treeView1.GetNodeAt(pt);
             if (targetNode != null)
@@ -373,7 +384,7 @@ namespace MpeMaker.Sections
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             if(Directory.Exists(files[0]))
             {
-                AddFolder2Group dlg = new AddFolder2Group(SelectedGroup, files[0]);
+                AddFolder2Group dlg = new AddFolder2Group(Package, SelectedGroup, files[0]);
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
                     treeView1.Nodes.Clear();
