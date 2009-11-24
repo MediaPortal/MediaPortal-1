@@ -5,12 +5,24 @@
     <Channel id="Rai 1" siteId="1" />
     <Channel id="Rai 2" siteId="3" />
     <Channel id="Rai 3" siteId="16" />
+    <Channel id="Rai 4" siteId="161" />
     <Channel id="Canale 5" siteId="22" />
     <Channel id="Italia 1" siteId="23" />
     <Channel id="Rete 4" siteId="24" />
     <Channel id="La7" siteId="75" />
     <Channel id="All Music" siteId="72" />
     <Channel id="MTV Italia" siteId="73" />
+    <Channel id="Facile TV" siteId="159" />
+    <Channel id="Coming soon tv" siteId="147" />
+    <Channel id="Rai News 24" siteId="155" />
+    <Channel id="BBC World" siteId="66" />
+    <Channel id="Boing" siteId="144" />
+    <Channel id="Sport Italia" siteId="160" />
+    <Channel id="Rai Sport Più" siteId="156" />
+    <Channel id="Sportitalia 24" siteId="158" />
+    <Channel id="France 24 (French)" siteId="150" />
+    <Channel id="Iris" siteId="151" />
+    <Channel id="Rai Gulp" siteId="154" />
   </Channels>
   <Listing type="Html">
     <Site url="http://spettacolo.virgilio.it/guidatv/cgi/index.cgi?tipo=3&amp;channel=[ID]&amp;day=[DD]/[MM]/[YYYY]" post="" external="false" encoding="" />
