@@ -23,6 +23,8 @@
 
 #endregion
 
+using System;
+using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 
 namespace MediaPortal.Configuration.Sections
@@ -48,6 +50,29 @@ namespace MediaPortal.Configuration.Sections
         pixelRatioCheckBox.Checked = xmlreader.GetValueAsBool("dvdplayer", "pixelratiocorrection", false);
         aspectRatioComboBox.Text = xmlreader.GetValueAsString("dvdplayer", "armode", "Follow stream");
         displayModeComboBox.Text = xmlreader.GetValueAsString("dvdplayer", "displaymode", "Default");
+
+        //
+        // Load all available aspect ratio
+        //
+        defaultZoomModeComboBox.Items.Clear();
+        foreach (Geometry.Type item in Enum.GetValues(typeof(Geometry.Type)))
+        {
+          defaultZoomModeComboBox.Items.Add(Util.Utils.GetAspectRatio(item));
+        }
+
+        //
+        // Set default aspect ratio
+        //
+        string defaultAspectRatio = xmlreader.GetValueAsString("dvdplayer", "defaultar", defaultZoomModeComboBox.Items[0].ToString());
+        foreach (Geometry.Type item in Enum.GetValues(typeof(Geometry.Type)))
+        {
+          string currentAspectRatio = Util.Utils.GetAspectRatio(item);
+          if (defaultAspectRatio == currentAspectRatio)
+          {
+            defaultZoomModeComboBox.SelectedItem = currentAspectRatio;
+            break;
+          }
+        }
       }
     }
 
@@ -61,6 +86,8 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("dvdplayer", "pixelratiocorrection", pixelRatioCheckBox.Checked);
         xmlwriter.SetValue("dvdplayer", "armode", aspectRatioComboBox.Text);
         xmlwriter.SetValue("dvdplayer", "displaymode", displayModeComboBox.Text);
+
+        xmlwriter.SetValue("dvdplayer", "defaultar", defaultZoomModeComboBox.SelectedItem);
       }
     }
 

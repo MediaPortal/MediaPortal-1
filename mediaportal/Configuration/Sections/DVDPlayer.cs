@@ -47,9 +47,7 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox internalPlayerCheckBox;
     private OpenFileDialog openFileDialog;
     private MPGroupBox mpGroupBox3;
-    private MPComboBox defaultZoomModeComboBox;
     private CheckBox useMediaInfo;
-    private MPLabel label6;
 
     public DVDPlayer()
       : this("DVD Player")
@@ -79,29 +77,7 @@ namespace MediaPortal.Configuration.Sections
         //
         internalPlayerCheckBox.Checked = xmlreader.GetValueAsBool("dvdplayer", "internal", true);
         internalPlayerCheckBox.Checked = !internalPlayerCheckBox.Checked;
-        
-        //
-        // Load all available aspect ratio
-        //
-        defaultZoomModeComboBox.Items.Clear();
-        foreach (Geometry.Type item in Enum.GetValues(typeof(Geometry.Type)))
-        {
-          defaultZoomModeComboBox.Items.Add(Util.Utils.GetAspectRatio(item));
-        }
 
-        //
-        // Set default aspect ratio
-        //
-        string defaultAspectRatio = xmlreader.GetValueAsString("dvdplayer", "defaultar", defaultZoomModeComboBox.Items[0].ToString());    
-        foreach (Geometry.Type item in Enum.GetValues(typeof(Geometry.Type)))
-        {
-          string currentAspectRatio = Util.Utils.GetAspectRatio(item);
-          if (defaultAspectRatio == currentAspectRatio)
-          {
-            defaultZoomModeComboBox.SelectedItem = currentAspectRatio;
-            break;
-          }
-        }
       }
     }
 
@@ -117,8 +93,6 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValueAsBool("dvdplayer", "internal", !internalPlayerCheckBox.Checked);
         xmlwriter.SetValueAsBool("dvdplayer", "mediainfoused", useMediaInfo.Checked);
-
-        xmlwriter.SetValue("dvdplayer", "defaultar", defaultZoomModeComboBox.SelectedItem);
       }
     }
 
@@ -149,8 +123,6 @@ namespace MediaPortal.Configuration.Sections
       this.fileNameButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.fileNameTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.defaultZoomModeComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.button2 = new MediaPortal.UserInterface.Controls.MPButton();
       this.textBox1 = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -184,7 +156,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.fileNameTextBox);
       this.mpGroupBox1.Controls.Add(this.label1);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(0, 90);
+      this.mpGroupBox1.Location = new System.Drawing.Point(0, 73);
       this.mpGroupBox1.Name = "mpGroupBox1";
       this.mpGroupBox1.Size = new System.Drawing.Size(472, 104);
       this.mpGroupBox1.TabIndex = 1;
@@ -249,25 +221,6 @@ namespace MediaPortal.Configuration.Sections
       this.label1.TabIndex = 1;
       this.label1.Text = "Path/Filename:";
       // 
-      // defaultZoomModeComboBox
-      // 
-      this.defaultZoomModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.defaultZoomModeComboBox.BorderColor = System.Drawing.Color.Empty;
-      this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 25);
-      this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
-      this.defaultZoomModeComboBox.Size = new System.Drawing.Size(288, 21);
-      this.defaultZoomModeComboBox.TabIndex = 3;
-      // 
-      // label6
-      // 
-      this.label6.Location = new System.Drawing.Point(16, 28);
-      this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(112, 16);
-      this.label6.TabIndex = 2;
-      this.label6.Text = "Default zoom mode:";
-      // 
       // button2
       // 
       this.button2.Location = new System.Drawing.Point(0, 0);
@@ -289,12 +242,10 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox3.Controls.Add(this.useMediaInfo);
-      this.mpGroupBox3.Controls.Add(this.label6);
-      this.mpGroupBox3.Controls.Add(this.defaultZoomModeComboBox);
       this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox3.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox3.Name = "mpGroupBox3";
-      this.mpGroupBox3.Size = new System.Drawing.Size(472, 84);
+      this.mpGroupBox3.Size = new System.Drawing.Size(472, 67);
       this.mpGroupBox3.TabIndex = 0;
       this.mpGroupBox3.TabStop = false;
       this.mpGroupBox3.Text = "Settings";
@@ -303,7 +254,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.useMediaInfo.AutoSize = true;
       this.useMediaInfo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.useMediaInfo.Location = new System.Drawing.Point(19, 57);
+      this.useMediaInfo.Location = new System.Drawing.Point(19, 30);
       this.useMediaInfo.Name = "useMediaInfo";
       this.useMediaInfo.Size = new System.Drawing.Size(301, 17);
       this.useMediaInfo.TabIndex = 4;
