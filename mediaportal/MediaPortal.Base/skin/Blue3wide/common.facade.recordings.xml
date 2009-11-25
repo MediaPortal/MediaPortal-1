@@ -19,9 +19,12 @@
           <onleft>2</onleft>
           <onright>2</onright>
           <scrollOffset>2</scrollOffset>
+          <!--<textXOff>48</textXOff>-->
+          <textXOff2>726</textXOff2>
           <PinIconWidth>35</PinIconWidth>
           <PinIconHeight>25</PinIconHeight>
-          <PinIconXOff>49</PinIconXOff>
+          <!--<PinIconXOff>49</PinIconXOff>-->
+          <PinIconXOff>726</PinIconXOff>
           <PinIconYOff>11</PinIconYOff>
           <itemWidth>32</itemWidth>
           <itemHeight>32</itemHeight>
@@ -45,9 +48,8 @@
           <textcolor>ffffffff</textcolor>
           <selectedColor2>ffffffff</selectedColor2>
           <textcolor2>ffffffff</textcolor2>
-          <textXOff>46</textXOff>
           <textXOff2>746</textXOff2>
-          <textXOff3>108</textXOff3>
+          <textXOff3>69</textXOff3>
           <textYOff2>35</textYOff2>
           <itemWidth>50</itemWidth>
           <itemHeight>50</itemHeight>
@@ -55,8 +57,8 @@
           <IconYOff>12</IconYOff>
           <PinIconWidth>35</PinIconWidth>
           <PinIconHeight>20</PinIconHeight>
-          <PinIconXOff>69</PinIconXOff>
-          <PinIconYOff>41</PinIconYOff>
+          <PinIconXOff>707</PinIconXOff>
+          <PinIconYOff>11</PinIconYOff>
           <spaceBetweenItems>5</spaceBetweenItems>
           <textureHeight>72</textureHeight>
           <scrollOffset>1</scrollOffset>
