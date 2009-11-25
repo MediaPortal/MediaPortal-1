@@ -22,24 +22,27 @@
 
 #endregion
 
-using System.Collections.Generic;
-using MediaPortal.Core.MediaManagement;
+using MediaPortal.Core.Settings;
 
-namespace MediaPortal.Core.Services.MediaManagement
+namespace MediaPortal.UI.ServerCommunication.Settings
 {
-  public enum ImportJobType
+  public class FrontendServerSettings
   {
-    Import,
-    Refresh
-  }
+    protected string _frontendServerSystemId = null;
+    protected string _friendlyName = null;
 
-  public struct ImportJob
-  {
-    public ImportJobType JobType;
-    public ResourcePath Path;
-    public ICollection<string> MediaCategories;
-    public bool IncludeSubdirectories;
-    public IMediaLibraryCallback MediaLibraryCallback;
-    public IImportResultCallback ResultCallback;
+    [Setting(SettingScope.Global)]
+    public string FrontendServerSystemId
+    {
+      get { return _frontendServerSystemId; }
+      set { _frontendServerSystemId = value; }
+    }
+
+    [Setting(SettingScope.Global)]
+    public string FriendlyName
+    {
+      get { return _friendlyName; }
+      set { _friendlyName = value; }
+    }
   }
 }

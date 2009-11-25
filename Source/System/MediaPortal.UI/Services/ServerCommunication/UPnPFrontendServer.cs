@@ -22,24 +22,32 @@
 
 #endregion
 
-using System.Collections.Generic;
-using MediaPortal.Core.MediaManagement;
+using UPnP.Infrastructure.Dv;
 
-namespace MediaPortal.Core.Services.MediaManagement
+namespace MediaPortal.UI.Services.ServerCommunication
 {
-  public enum ImportJobType
+  /// <summary>
+  /// Encapsulates the MediaPortal-II UPnP frontend server device.
+  /// </summary>
+  public class UPnPFrontendServer : UPnPServer
   {
-    Import,
-    Refresh
-  }
+    public const int SSDP_ADVERTISMENT_INTERVAL = 1800;
 
-  public struct ImportJob
-  {
-    public ImportJobType JobType;
-    public ResourcePath Path;
-    public ICollection<string> MediaCategories;
-    public bool IncludeSubdirectories;
-    public IMediaLibraryCallback MediaLibraryCallback;
-    public IImportResultCallback ResultCallback;
+    public UPnPFrontendServer(string frontendServerSystemId)
+    {
+      AddRootDevice(new MP2FrontendServerDevice(frontendServerSystemId));
+      // TODO: add UPnP standard MediaRenderer device: it's not implemented yet
+      //AddRootDevice(new UPnPMediaRendererDevice(...));
+    }
+
+    public void Start()
+    {
+      Bind(SSDP_ADVERTISMENT_INTERVAL);
+    }
+
+    public void Stop()
+    {
+      Close();
+    }
   }
 }

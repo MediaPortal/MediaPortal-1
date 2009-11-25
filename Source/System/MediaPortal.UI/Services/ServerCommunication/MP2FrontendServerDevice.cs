@@ -22,24 +22,18 @@
 
 #endregion
 
-using System.Collections.Generic;
-using MediaPortal.Core.MediaManagement;
+using MediaPortal.Core.UPnP;
+using UPnP.Infrastructure.Dv.DeviceTree;
 
-namespace MediaPortal.Core.Services.MediaManagement
+namespace MediaPortal.UI.Services.ServerCommunication
 {
-  public enum ImportJobType
+  public class MP2FrontendServerDevice : DvDevice
   {
-    Import,
-    Refresh
-  }
-
-  public struct ImportJob
-  {
-    public ImportJobType JobType;
-    public ResourcePath Path;
-    public ICollection<string> MediaCategories;
-    public bool IncludeSubdirectories;
-    public IMediaLibraryCallback MediaLibraryCallback;
-    public IImportResultCallback ResultCallback;
+    public MP2FrontendServerDevice(string deviceUuid) : base(
+        UPnPTypesAndIds.FRONTEND_SERVER_DEVICE_TYPE, UPnPTypesAndIds.FRONTEND_SERVER_DEVICE_TYPE_VERSION, deviceUuid,
+        new LocalizedUPnPDeviceInformation())
+    {
+      AddService(new UPnPClientControllerServiceImpl());
+    }
   }
 }

@@ -22,24 +22,16 @@
 
 #endregion
 
-using System.Collections.Generic;
-using MediaPortal.Core.MediaManagement;
-
-namespace MediaPortal.Core.Services.MediaManagement
+namespace MediaPortal.UI.FrontendServer
 {
-  public enum ImportJobType
+  /// <summary>
+  /// Control interface for the frontend's server components - UPnP, ...
+  /// </summary>
+  public interface IFrontendServer
   {
-    Import,
-    Refresh
-  }
+    void Startup();
+    void Shutdown();
 
-  public struct ImportJob
-  {
-    public ImportJobType JobType;
-    public ResourcePath Path;
-    public ICollection<string> MediaCategories;
-    public bool IncludeSubdirectories;
-    public IMediaLibraryCallback MediaLibraryCallback;
-    public IImportResultCallback ResultCallback;
+    string LocalSystemId { get; }
   }
 }

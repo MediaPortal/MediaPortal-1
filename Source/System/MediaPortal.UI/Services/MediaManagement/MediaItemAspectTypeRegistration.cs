@@ -49,7 +49,7 @@ namespace MediaPortal.UI.Services.MediaManagement
       if (_locallyKnownMediaItemAspectTypes.ContainsKey(miam.AspectId))
         return;
       IServerConnectionManager serverConnectionManager = ServiceScope.Get<IServerConnectionManager>();
-      UPnPContentDirectoryService cds = serverConnectionManager == null ? null :
+      UPnPContentDirectoryServiceProxy cds = serverConnectionManager == null ? null :
           serverConnectionManager.ContentDirectoryService;
       if (cds != null)
         cds.AddMediaItemAspectStorage(miam);

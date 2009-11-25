@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using MediaPortal.Core.General;
 using MediaPortal.Core.MediaManagement;
+using MediaPortal.Core.MediaManagement.MLQueries;
 using MediaPortal.Utilities;
 using MediaPortal.Utilities.Exceptions;
 using UPnP.Infrastructure.CP.DeviceTree;
@@ -47,14 +48,22 @@ namespace MediaPortal.UI.ServerCommunication
   /// <summary>
   /// Encapsulates the MediaPortal-II UPnP client's proxy for the ContentDirectory service.
   /// </summary>
-  public class UPnPContentDirectoryService
+  public class UPnPContentDirectoryServiceProxy
   {
     protected CpService _serviceStub;
 
-    public UPnPContentDirectoryService(CpService serviceStub)
+    public UPnPContentDirectoryServiceProxy(CpService serviceStub)
     {
       _serviceStub = serviceStub;
       _serviceStub.SubscribeStateVariables();
+    }
+
+    protected CpAction GetAction(string actionName)
+    {
+      CpAction result;
+      if (!_serviceStub.Actions.TryGetValue(actionName, out result))
+        throw new FatalException("Method '{0}' is not present in the connected MP-II ContentDirectoryService", actionName);
+      return result;
     }
 
     // We could also provide the asynchronous counterparts of the following methods... do we need them?
@@ -62,9 +71,7 @@ namespace MediaPortal.UI.ServerCommunication
     // Shares management
     public void RegisterShare(Share share)
     {
-      CpAction action;
-      if (!_serviceStub.Actions.TryGetValue("RegisterShare", out action))
-        throw new FatalException("Method 'RegisterShare' is not present in the connected MP-II UPnP server");
+      CpAction action = GetAction("RegisterShare");
       IList<object> inParameters = new List<object>
         {
             share
@@ -74,9 +81,7 @@ namespace MediaPortal.UI.ServerCommunication
 
     public void RemoveShare(Guid shareId)
     {
-      CpAction action;
-      if (!_serviceStub.Actions.TryGetValue("RemoveShare", out action))
-        throw new FatalException("Method 'RemoveShare' is not present in the connected MP-II UPnP server");
+      CpAction action = GetAction("RemoveShare");
       IList<object> inParameters = new List<object> {shareId.ToString("B")};
       action.InvokeAction(inParameters);
     }
@@ -84,9 +89,7 @@ namespace MediaPortal.UI.ServerCommunication
     public int UpdateShare(Guid shareId, ResourcePath baseResourcePath, string shareName,
         IEnumerable<string> mediaCategories, RelocationMode relocationMode)
     {
-      CpAction action;
-      if (!_serviceStub.Actions.TryGetValue("UpdateShare", out action))
-        throw new FatalException("Method 'UpdateShare' is not present in the connected MP-II UPnP server");
+      CpAction action = GetAction("UpdateShare");
       IList<object> inParameters = new List<object>
         {
             shareId.ToString("B"),
@@ -113,9 +116,7 @@ namespace MediaPortal.UI.ServerCommunication
 
     public ICollection<Share> GetShares(SystemName system, SharesFilter sharesFilter)
     {
-      CpAction action;
-      if (!_serviceStub.Actions.TryGetValue("GetShares", out action))
-        throw new FatalException("Method 'GetShares' is not present in the connected MP-II UPnP server");
+      CpAction action = GetAction("GetShares");
       IList<object> inParameters = new List<object> {system.HostName};
       String sharesFilterStr;
       switch (sharesFilter)
@@ -136,9 +137,7 @@ namespace MediaPortal.UI.ServerCommunication
 
     public Share GetShare(Guid shareId)
     {
-      CpAction action;
-      if (!_serviceStub.Actions.TryGetValue("GetShare", out action))
-        throw new FatalException("Method 'GetShare' is not present in the connected MP-II UPnP server");
+      CpAction action = GetAction("GetShare");
       IList<object> inParameters = new List<object> {shareId.ToString("B")};
       IList<object> outParameters = action.InvokeAction(inParameters);
       return (Share) outParameters[0];
@@ -147,27 +146,21 @@ namespace MediaPortal.UI.ServerCommunication
     // Media item aspect storage management
     public void AddMediaItemAspectStorage(MediaItemAspectMetadata miam)
     {
-      CpAction action;
-      if (!_serviceStub.Actions.TryGetValue("AddMediaItemAspectStorage", out action))
-        throw new FatalException("Method 'AddMediaItemAspectStorage' is not present in the connected MP-II UPnP server");
+      CpAction action = GetAction("AddMediaItemAspectStorage");
       IList<object> inParameters = new List<object> {miam};
       action.InvokeAction(inParameters);
     }
 
     public void RemoveMediaItemAspectStorage(Guid aspectId)
     {
-      CpAction action;
-      if (!_serviceStub.Actions.TryGetValue("RemoveMediaItemAspectStorage", out action))
-        throw new FatalException("Method 'RemoveMediaItemAspectStorage' is not present in the connected MP-II UPnP server");
+      CpAction action = GetAction("RemoveMediaItemAspectStorage");
       IList<object> inParameters = new List<object> {aspectId.ToString("B")};
       action.InvokeAction(inParameters);
     }
 
     public ICollection<Guid> GetAllManagedMediaItemAspectMetadataIds()
     {
-      CpAction action;
-      if (!_serviceStub.Actions.TryGetValue("GetAllManagedMediaItemAspectMetadataIds", out action))
-        throw new FatalException("Method 'GetAllManagedMediaItemAspectMetadataIds' is not present in the connected MP-II UPnP server");
+      CpAction action = GetAction("GetAllManagedMediaItemAspectMetadataIds");
       IList<object> inParameters = new List<object>();
       IList<object> outParameters = action.InvokeAction(inParameters);
       string miaTypeIDs = (string) outParameters[0];
@@ -179,12 +172,50 @@ namespace MediaPortal.UI.ServerCommunication
 
     public MediaItemAspectMetadata GetMediaItemAspectMetadata(Guid miamId)
     {
-      CpAction action;
-      if (!_serviceStub.Actions.TryGetValue("GetMediaItemAspectMetadata", out action))
-        throw new FatalException("Method 'GetMediaItemAspectMetadata' is not present in the connected MP-II UPnP server");
+      CpAction action = GetAction("GetMediaItemAspectMetadata");
       IList<object> inParameters = new List<object> {miamId.ToString("B")};
       IList<object> outParameters = action.InvokeAction(inParameters);
       return (MediaItemAspectMetadata) outParameters[0];
+    }
+
+    public IList<MediaItem> Search(MediaItemQuery query)
+    {
+      CpAction action = GetAction("Search");
+      IList<object> inParameters = new List<object> {query};
+      IList<object> outParameters = action.InvokeAction(inParameters);
+      return (IList<MediaItem>) outParameters[0];
+    }
+
+    public ICollection<MediaItem> Browse(SystemName system, ResourcePath path,
+        IEnumerable<Guid> necessaryMIATypes, IEnumerable<Guid> optionalMIATypes)
+    {
+      CpAction action = GetAction("Browse");
+      IList<object> inParameters = new List<object> {system, path, necessaryMIATypes, optionalMIATypes};
+      IList<object> outParameters = action.InvokeAction(inParameters);
+      return (ICollection<MediaItem>) outParameters[0];
+    }
+
+    public HomogenousCollection GetDistinctAssociatedValues(Guid aspectId, string attributeName, IFilter filter)
+    {
+      CpAction action = GetAction("GetDistinctAssociatedValues");
+      IList<object> inParameters = new List<object> {aspectId, attributeName, filter};
+      IList<object> outParameters = action.InvokeAction(inParameters);
+      return (HomogenousCollection) outParameters[0];
+    }
+
+    public void AddOrUpdateMediaItem(SystemName system, ResourcePath path,
+        IEnumerable<MediaItemAspect> mediaItemAspects)
+    {
+      CpAction action = GetAction("AddOrUpdateMediaItem");
+      IList<object> inParameters = new List<object> {system, path, mediaItemAspects};
+      action.InvokeAction(inParameters);
+    }
+
+    public void DeleteMediaItemOrPath(SystemName system, ResourcePath path)
+    {
+      CpAction action = GetAction("DeleteMediaItemOrPath");
+      IList<object> inParameters = new List<object> {system, path};
+      action.InvokeAction(inParameters);
     }
 
     // TODO: State variables, if present
