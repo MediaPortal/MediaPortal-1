@@ -60,7 +60,7 @@ namespace MediaPortal.Core.MediaManagement
     #region Protected fields
 
     protected Guid _shareId;
-    protected string _sytsemId;
+    protected string _systemId;
     protected ResourcePath _baseResourcePath;
     protected string _name;
     protected HashSet<string> _mediaCategories;
@@ -257,7 +257,7 @@ namespace MediaPortal.Core.MediaManagement
     /// For internal use of the XML serialization system only.
     /// </summary>
     [XmlElement("SystemId", IsNullable = false)]
-    public SystemName XML_SystemId
+    public string XML_SystemId
     {
       get { return _systemId; }
       set { _systemId = value; }

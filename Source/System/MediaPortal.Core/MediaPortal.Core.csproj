@@ -187,6 +187,7 @@
     <Compile Include="Runtime\SystemMessaging.cs" />
     <Compile Include="Runtime\ISystemStateService.cs" />
     <Compile Include="Services\Runtime\SystemStateService.cs" />
+    <Compile Include="System\ISystemResolver.cs" />
     <Compile Include="TaskScheduler\ITaskScheduler.cs" />
     <Compile Include="TaskScheduler\Task.cs" />
     <Compile Include="TaskScheduler\TaskSchedulerMessaging.cs" />

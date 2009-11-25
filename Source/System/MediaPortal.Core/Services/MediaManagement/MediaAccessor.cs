@@ -353,9 +353,9 @@ namespace MediaPortal.Core.Services.MediaManagement
       if (item == null || !item.Aspects.ContainsKey(ProviderResourceAspect.ASPECT_ID))
         return null;
       MediaItemAspect providerAspect = item[ProviderResourceAspect.ASPECT_ID];
-      string hostName = (string) providerAspect[ProviderResourceAspect.ATTR_SOURCE_COMPUTER];
+      string systemId = (string) providerAspect[ProviderResourceAspect.ATTR_SYSTEM_ID];
       string resourceAccessorPath = (string) providerAspect[ProviderResourceAspect.ATTR_RESOURCE_ACCESSOR_PATH];
-      return new ResourceLocator(new SystemName(hostName), ResourcePath.Deserialize(resourceAccessorPath));
+      return new ResourceLocator(systemName, ResourcePath.Deserialize(resourceAccessorPath));
     }
 
     #endregion
