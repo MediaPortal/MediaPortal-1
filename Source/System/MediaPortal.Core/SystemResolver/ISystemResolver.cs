@@ -22,19 +22,14 @@
 
 #endregion
 
-using MediaPortal.Core.Settings;
+using MediaPortal.Core.General;
 
-namespace MediaPortal.UI.ServerCommunication.Settings
+namespace MediaPortal.Core.SystemResolver
 {
-  public class FrontendServerSettings
+  public interface ISystemResolver
   {
-    protected string _friendlyName = null;
+    string LocalSystemId { get; }
 
-    [Setting(SettingScope.Global)]
-    public string FriendlyName
-    {
-      get { return _friendlyName; }
-      set { _friendlyName = value; }
-    }
+    SystemName GetSystemNameForSytemId(string sytemId);
   }
 }

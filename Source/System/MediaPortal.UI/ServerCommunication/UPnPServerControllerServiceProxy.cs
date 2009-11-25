@@ -23,6 +23,7 @@
 #endregion
 
 using System.Collections.Generic;
+using MediaPortal.Core.General;
 using MediaPortal.Utilities.Exceptions;
 using UPnP.Infrastructure.CP.DeviceTree;
 
@@ -66,6 +67,16 @@ namespace MediaPortal.UI.ServerCommunication
     {
       CpAction action = GetAction("DetachClient");
       action.InvokeAction(new List<object> {clientSystemId});
+    }
+
+    public SystemName GetSystemNameForSystemId(string systemId)
+    {
+      CpAction action = GetAction("GetSystemNameForSytemId");
+      IList<object> outParams = action.InvokeAction(new List<object> {systemId});
+      string hostName = (string) outParams[0];
+      if (string.IsNullOrEmpty(hostName))
+        return null;
+      return new SystemName(hostName);
     }
 
     // TODO: State variables, if present

@@ -22,19 +22,28 @@
 
 #endregion
 
-using MediaPortal.Core.Settings;
+using MediaPortal.Core;
+using MediaPortal.Core.General;
+using MediaPortal.Core.Services.SystemResolver;
+using MediaPortal.UI.ServerCommunication;
 
-namespace MediaPortal.UI.ServerCommunication.Settings
+namespace MediaPortal.UI.Services.System
 {
-  public class FrontendServerSettings
+  public class SystemResolver : SystemResolverBase
   {
-    protected string _friendlyName = null;
+    #region ISystemResolver implementation
 
-    [Setting(SettingScope.Global)]
-    public string FriendlyName
+    public override SystemName GetSystemNameForSytemId(string systemId)
     {
-      get { return _friendlyName; }
-      set { _friendlyName = value; }
+      if (systemId == _localSystemId)
+        return SystemName.GetLocalSystemName();
+      IServerConnectionManager serverConnectionManager = ServiceScope.Get<IServerConnectionManager>();
+      UPnPServerControllerServiceProxy scs = serverConnectionManager.ServerControllerService;
+      if (scs == null)
+        return null;
+      return scs.GetSystemNameForSystemId(systemId);
     }
+
+    #endregion
   }
 }

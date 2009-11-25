@@ -137,6 +137,7 @@
     <Compile Include="Services\Shares\LocalSharesManagement.cs" />
     <Compile Include="Services\Shares\SharesMessaging.cs" />
     <Compile Include="Services\Shares\Settings\SharesSettings.cs" />
+    <Compile Include="Services\System\SystemResolver.cs" />
     <Compile Include="Services\ThumbnailGenerator\Database\Thumb.cs" />
     <Compile Include="Services\ThumbnailGenerator\Database\ThumbDatabase.cs" />
     <Compile Include="Services\ThumbnailGenerator\Database\ThumbDatabaseCache.cs" />

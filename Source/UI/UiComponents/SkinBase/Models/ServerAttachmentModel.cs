@@ -397,7 +397,7 @@ namespace UiComponents.SkinBase.Models
       }
       else if (newContext.WorkflowState.StateId == DETACH_FROM_SERVER_STATE)
       {
-        if (string.IsNullOrEmpty(scm.HomeServerUUID))
+        if (string.IsNullOrEmpty(scm.HomeServerSystemId))
           return false;
       }
       return true;

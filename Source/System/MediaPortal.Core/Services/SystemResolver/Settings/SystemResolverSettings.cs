@@ -22,14 +22,19 @@
 
 #endregion
 
-using MediaPortal.Core.General;
+using MediaPortal.Core.Settings;
 
-namespace MediaPortal.Core.System
+namespace MediaPortal.Core.Services.SystemResolver.Settings
 {
-  public interface ISystemResolver
+  public class SystemResolverSettings
   {
-    string LocalSystemId { get; }
-
-    SystemName GetSystemNameForSytemId(string sytemId);
+    protected string _systemId = null;
+    
+    [Setting(SettingScope.Global)]
+    public string SystemId
+    {
+      get { return _systemId; }
+      set { _systemId = value; }
+    }
   }
 }

@@ -28,6 +28,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using MediaPortal.Core.SystemResolver;
 
 namespace MediaPortal.Core.MediaManagement
 {
@@ -116,6 +117,22 @@ namespace MediaPortal.Core.MediaManagement
         IEnumerable<string> mediaCategories)
     {
       return new Share(Guid.NewGuid(), systemId, baseResourcePath, name, mediaCategories);
+    }
+
+    /// <summary>
+    /// Creates a new local share. This will create a new share ID and call the constructor with it.
+    /// </summary>
+    /// <param name="baseResourcePath">Description of the resource provider chain for the share's base directory.</param>
+    /// <param name="name">Name of the share. This name will be shown at the GUI. The string might be
+    /// localized using a "[[Section-Name].[String-Name]]" syntax, for example "[Media.MyMusic]".</param>
+    /// <param name="mediaCategories">Media content categories of this share. If set, the category
+    /// describes the desired contents of this share. If set to <c>null</c>, this share has no explicit
+    /// media categories, i.e. it is a general share.</param>
+    /// <returns>Created <see cref="Share"/> with a new share id.</returns>
+    public static Share CreateNewLocalShare(ResourcePath baseResourcePath, string name, IEnumerable<string> mediaCategories)
+    {
+      ISystemResolver systemResolver = ServiceScope.Get<ISystemResolver>();
+      return CreateNewShare(systemResolver.LocalSystemId, baseResourcePath, name, mediaCategories);
     }
 
     /// <summary>

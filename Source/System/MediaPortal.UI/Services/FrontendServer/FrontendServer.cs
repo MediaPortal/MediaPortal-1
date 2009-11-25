@@ -23,10 +23,9 @@
 #endregion
 
 using System;
-using MediaPortal.Core.Settings;
+using MediaPortal.Core.SystemResolver;
 using MediaPortal.UI.FrontendServer;
 using MediaPortal.Core;
-using MediaPortal.UI.ServerCommunication.Settings;
 using MediaPortal.UI.Services.ServerCommunication;
 using UPnP.Infrastructure;
 using ILogger=MediaPortal.Core.Logging.ILogger;
@@ -109,18 +108,8 @@ namespace MediaPortal.UI.Services.FrontendServer
       Configuration.PRODUCT_VERSION = MP2SERVER_DEVICEVERSION;
       Configuration.LOGGER = new UPnPLoggerDelegate();
 
-      ISettingsManager settingsManager = ServiceScope.Get<ISettingsManager>();
-      FrontendServerSettings settings = settingsManager.Load<FrontendServerSettings>();
-      if (string.IsNullOrEmpty(settings.FrontendServerSystemId))
-      {
-        // Create a new id for our new mediacenter device
-        _frontendServerSystemId = Guid.NewGuid().ToString("D");
-        settings.FrontendServerSystemId = _frontendServerSystemId;
-        settingsManager.Save(settings);
-      }
-      else
-        _frontendServerSystemId = settings.FrontendServerSystemId;
-      _upnpServer = new UPnPFrontendServer(_frontendServerSystemId);
+      ISystemResolver systemResolver = ServiceScope.Get<ISystemResolver>();
+      _upnpServer = new UPnPFrontendServer(systemResolver.LocalSystemId);
     }
 
     public void Dispose()
