@@ -22,6 +22,11 @@ namespace MpeCore.Classes
             Description = name;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GroupItem"/> class.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="b">if set to <c>true</c> the group is checked [b].</param>
         public GroupItem(string name, bool b)
         {
             Reset();

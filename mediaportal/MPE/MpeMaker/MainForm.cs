@@ -141,7 +141,11 @@ namespace MpeMaker
             openFileDialog1.Multiselect = false;
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                LoadProject(openFileDialog1.FileName);
+                if(!LoadProject(openFileDialog1.FileName))
+                {
+                    MessageBox.Show("Wrong project file format !");
+                    return;
+                }
             }
             ProjectFileName = openFileDialog1.FileName;
             SetTitle();

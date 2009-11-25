@@ -29,6 +29,7 @@ namespace MpeMaker.Dialogs
 
         private void btn_ok_Click(object sender, EventArgs e)
         {
+            this.Hide();
             switch (listView1.SelectedIndices[0])
             {
                 case 0:
@@ -50,9 +51,9 @@ namespace MpeMaker.Dialogs
         {
             Package = new PackageClass();
             Package.Groups.Items.Add(new GroupItem("Default"));
-            AddSection("Welcome Screen");
+            Package.Sections.Add("Welcome Screen");
             Package.Sections.Items[0].WizardButtonsEnum = WizardButtonsEnum.NextCancel;
-            AddSection("Install Section");
+            Package.Sections.Add("Install Section");
             var item = new ActionItem("InstallFiles")
             {
                 Params =
@@ -61,21 +62,8 @@ namespace MpeMaker.Dialogs
             };
             Package.Sections.Items[1].Actions.Add(item);
             Package.Sections.Items[1].WizardButtonsEnum = WizardButtonsEnum.Next;
-            AddSection("Setup Complete");
+            Package.Sections.Add("Setup Complete");
             Package.Sections.Items[2].WizardButtonsEnum = WizardButtonsEnum.Finish;   
-        }
-
-
-        private void AddSection(string name)
-        {
-            SectionItem item = new SectionItem();
-            ISectionPanel panel = MpeInstaller.SectionPanels[name];
-            if (panel == null)
-                return;
-            item.Name = panel.DisplayName;
-            item.PanelName = panel.DisplayName;
-            item.Params = panel.GetDefaultParams();
-            Package.Sections.Add(item);
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)

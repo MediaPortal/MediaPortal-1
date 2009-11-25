@@ -34,32 +34,50 @@
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.label1 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.btn_browse_font = new System.Windows.Forms.Button();
+            this.btn_browse_font1 = new System.Windows.Forms.Button();
+            this.btn_browse_font2 = new System.Windows.Forms.Button();
+            this.btn_browse_font3 = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.btn_next1 = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.btn_next2 = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.txt_font3 = new System.Windows.Forms.TextBox();
+            this.txt_font2 = new System.Windows.Forms.TextBox();
             this.btn_next3 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.txt_skin_font = new System.Windows.Forms.TextBox();
+            this.txt_font1 = new System.Windows.Forms.TextBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.btn_next4 = new System.Windows.Forms.Button();
             this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.btn_done = new System.Windows.Forms.Button();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.txt_author = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.txt_version4 = new System.Windows.Forms.TextBox();
+            this.txt_version3 = new System.Windows.Forms.TextBox();
+            this.txt_version2 = new System.Windows.Forms.TextBox();
+            this.txt_version1 = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.txt_name = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
+            this.tabPage5.SuspendLayout();
             this.SuspendLayout();
             // 
             // txt_skinpath
             // 
             this.txt_skinpath.AllowDrop = true;
-            this.txt_skinpath.Enabled = false;
             this.txt_skinpath.Location = new System.Drawing.Point(6, 39);
             this.txt_skinpath.Name = "txt_skinpath";
+            this.txt_skinpath.ReadOnly = true;
             this.txt_skinpath.Size = new System.Drawing.Size(436, 24);
             this.txt_skinpath.TabIndex = 5;
             this.toolTip1.SetToolTip(this.txt_skinpath, "Folder of the skin, can use drag&drop+");
@@ -87,23 +105,47 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(6, 18);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(78, 18);
+            this.label1.Size = new System.Drawing.Size(316, 18);
             this.label1.TabIndex = 7;
-            this.label1.Text = "Skin folder";
+            this.label1.Text = "Skin folder (Use Drag&&Drop or Browse button)";
             this.toolTip1.SetToolTip(this.label1, "Folder of the skin, can use drag&drop+");
             // 
-            // btn_browse_font
+            // btn_browse_font1
             // 
-            this.btn_browse_font.Location = new System.Drawing.Point(450, 38);
-            this.btn_browse_font.Name = "btn_browse_font";
-            this.btn_browse_font.Size = new System.Drawing.Size(75, 26);
-            this.btn_browse_font.TabIndex = 12;
-            this.btn_browse_font.Text = "Browse";
-            this.toolTip1.SetToolTip(this.btn_browse_font, "Folder of the skin, can use drag&drop+");
-            this.btn_browse_font.UseVisualStyleBackColor = true;
+            this.btn_browse_font1.Location = new System.Drawing.Point(450, 40);
+            this.btn_browse_font1.Name = "btn_browse_font1";
+            this.btn_browse_font1.Size = new System.Drawing.Size(75, 26);
+            this.btn_browse_font1.TabIndex = 12;
+            this.btn_browse_font1.Text = "Browse";
+            this.toolTip1.SetToolTip(this.btn_browse_font1, "Folder of the skin, can use drag&drop+");
+            this.btn_browse_font1.UseVisualStyleBackColor = true;
+            this.btn_browse_font1.Click += new System.EventHandler(this.btn_browse_font1_Click);
+            // 
+            // btn_browse_font2
+            // 
+            this.btn_browse_font2.Location = new System.Drawing.Point(450, 102);
+            this.btn_browse_font2.Name = "btn_browse_font2";
+            this.btn_browse_font2.Size = new System.Drawing.Size(75, 26);
+            this.btn_browse_font2.TabIndex = 16;
+            this.btn_browse_font2.Text = "Browse";
+            this.toolTip1.SetToolTip(this.btn_browse_font2, "Folder of the skin, can use drag&drop+");
+            this.btn_browse_font2.UseVisualStyleBackColor = true;
+            this.btn_browse_font2.Click += new System.EventHandler(this.btn_browse_font1_Click);
+            // 
+            // btn_browse_font3
+            // 
+            this.btn_browse_font3.Location = new System.Drawing.Point(450, 165);
+            this.btn_browse_font3.Name = "btn_browse_font3";
+            this.btn_browse_font3.Size = new System.Drawing.Size(75, 26);
+            this.btn_browse_font3.TabIndex = 18;
+            this.btn_browse_font3.Text = "Browse";
+            this.toolTip1.SetToolTip(this.btn_browse_font3, "Folder of the skin, can use drag&drop+");
+            this.btn_browse_font3.UseVisualStyleBackColor = true;
+            this.btn_browse_font3.Click += new System.EventHandler(this.btn_browse_font1_Click);
             // 
             // tabControl1
             // 
+            this.tabControl1.AllowDrop = true;
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
@@ -119,6 +161,15 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.txt_author);
+            this.tabPage1.Controls.Add(this.label5);
+            this.tabPage1.Controls.Add(this.txt_version4);
+            this.tabPage1.Controls.Add(this.txt_version3);
+            this.tabPage1.Controls.Add(this.txt_version2);
+            this.tabPage1.Controls.Add(this.txt_version1);
+            this.tabPage1.Controls.Add(this.label6);
+            this.tabPage1.Controls.Add(this.txt_name);
+            this.tabPage1.Controls.Add(this.label7);
             this.tabPage1.Controls.Add(this.btn_next1);
             this.tabPage1.Location = new System.Drawing.Point(4, 27);
             this.tabPage1.Name = "tabPage1";
@@ -140,6 +191,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.AllowDrop = true;
             this.tabPage2.Controls.Add(this.btn_next2);
             this.tabPage2.Controls.Add(this.label1);
             this.tabPage2.Controls.Add(this.txt_skinpath);
@@ -151,6 +203,7 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "2.Skin";
             this.tabPage2.UseVisualStyleBackColor = true;
+            this.tabPage2.DragEnter += new System.Windows.Forms.DragEventHandler(this.txt_skinpath_DragEnter);
             // 
             // btn_next2
             // 
@@ -164,16 +217,63 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.AllowDrop = true;
+            this.tabPage3.Controls.Add(this.label4);
+            this.tabPage3.Controls.Add(this.label3);
+            this.tabPage3.Controls.Add(this.btn_browse_font3);
+            this.tabPage3.Controls.Add(this.txt_font3);
+            this.tabPage3.Controls.Add(this.btn_browse_font2);
+            this.tabPage3.Controls.Add(this.txt_font2);
             this.tabPage3.Controls.Add(this.btn_next3);
             this.tabPage3.Controls.Add(this.label2);
-            this.tabPage3.Controls.Add(this.btn_browse_font);
-            this.tabPage3.Controls.Add(this.txt_skin_font);
+            this.tabPage3.Controls.Add(this.btn_browse_font1);
+            this.tabPage3.Controls.Add(this.txt_font1);
             this.tabPage3.Location = new System.Drawing.Point(4, 27);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Size = new System.Drawing.Size(533, 296);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "3.Font";
             this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(8, 144);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(101, 18);
+            this.label4.TabIndex = 20;
+            this.label4.Text = "Font font file 3";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(8, 81);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(101, 18);
+            this.label3.TabIndex = 19;
+            this.label3.Text = "Font font file 2";
+            // 
+            // txt_font3
+            // 
+            this.txt_font3.AllowDrop = true;
+            this.txt_font3.Location = new System.Drawing.Point(8, 165);
+            this.txt_font3.Name = "txt_font3";
+            this.txt_font3.ReadOnly = true;
+            this.txt_font3.Size = new System.Drawing.Size(436, 24);
+            this.txt_font3.TabIndex = 17;
+            this.txt_font3.DragDrop += new System.Windows.Forms.DragEventHandler(this.txt_skin_folder_DragDrop);
+            this.txt_font3.DragEnter += new System.Windows.Forms.DragEventHandler(this.txt_skin_folder_DragEnter);
+            // 
+            // txt_font2
+            // 
+            this.txt_font2.AllowDrop = true;
+            this.txt_font2.Location = new System.Drawing.Point(8, 102);
+            this.txt_font2.Name = "txt_font2";
+            this.txt_font2.ReadOnly = true;
+            this.txt_font2.Size = new System.Drawing.Size(436, 24);
+            this.txt_font2.TabIndex = 15;
+            this.txt_font2.DragDrop += new System.Windows.Forms.DragEventHandler(this.txt_skin_folder_DragDrop);
+            this.txt_font2.DragEnter += new System.Windows.Forms.DragEventHandler(this.txt_skin_folder_DragEnter);
             // 
             // btn_next3
             // 
@@ -190,19 +290,20 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(8, 19);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(79, 18);
+            this.label2.Size = new System.Drawing.Size(101, 18);
             this.label2.TabIndex = 13;
-            this.label2.Text = "Font folder";
+            this.label2.Text = "Font font file 1";
             // 
-            // txt_skin_font
+            // txt_font1
             // 
-            this.txt_skin_font.AllowDrop = true;
-            this.txt_skin_font.Location = new System.Drawing.Point(8, 40);
-            this.txt_skin_font.Name = "txt_skin_font";
-            this.txt_skin_font.Size = new System.Drawing.Size(436, 24);
-            this.txt_skin_font.TabIndex = 11;
-            this.txt_skin_font.DragDrop += new System.Windows.Forms.DragEventHandler(this.txt_skin_folder_DragDrop);
-            this.txt_skin_font.DragEnter += new System.Windows.Forms.DragEventHandler(this.txt_skin_folder_DragEnter);
+            this.txt_font1.AllowDrop = true;
+            this.txt_font1.Location = new System.Drawing.Point(8, 40);
+            this.txt_font1.Name = "txt_font1";
+            this.txt_font1.ReadOnly = true;
+            this.txt_font1.Size = new System.Drawing.Size(436, 24);
+            this.txt_font1.TabIndex = 11;
+            this.txt_font1.DragDrop += new System.Windows.Forms.DragEventHandler(this.txt_skin_folder_DragDrop);
+            this.txt_font1.DragEnter += new System.Windows.Forms.DragEventHandler(this.txt_skin_folder_DragEnter);
             // 
             // tabPage4
             // 
@@ -226,6 +327,7 @@
             // 
             // tabPage5
             // 
+            this.tabPage5.Controls.Add(this.btn_done);
             this.tabPage5.Location = new System.Drawing.Point(4, 27);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Size = new System.Drawing.Size(533, 296);
@@ -233,23 +335,116 @@
             this.tabPage5.Text = "5.Done";
             this.tabPage5.UseVisualStyleBackColor = true;
             // 
+            // btn_done
+            // 
+            this.btn_done.Location = new System.Drawing.Point(450, 241);
+            this.btn_done.Name = "btn_done";
+            this.btn_done.Size = new System.Drawing.Size(75, 47);
+            this.btn_done.TabIndex = 0;
+            this.btn_done.Text = "Done";
+            this.btn_done.UseVisualStyleBackColor = true;
+            this.btn_done.Click += new System.EventHandler(this.btn_done_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
+            // txt_author
+            // 
+            this.txt_author.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txt_author.Location = new System.Drawing.Point(146, 152);
+            this.txt_author.Name = "txt_author";
+            this.txt_author.Size = new System.Drawing.Size(258, 24);
+            this.txt_author.TabIndex = 17;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(33, 158);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(51, 18);
+            this.label5.TabIndex = 18;
+            this.label5.Text = "Author";
+            // 
+            // txt_version4
+            // 
+            this.txt_version4.Location = new System.Drawing.Point(341, 98);
+            this.txt_version4.Name = "txt_version4";
+            this.txt_version4.Size = new System.Drawing.Size(61, 24);
+            this.txt_version4.TabIndex = 16;
+            // 
+            // txt_version3
+            // 
+            this.txt_version3.Location = new System.Drawing.Point(274, 98);
+            this.txt_version3.Name = "txt_version3";
+            this.txt_version3.Size = new System.Drawing.Size(61, 24);
+            this.txt_version3.TabIndex = 15;
+            // 
+            // txt_version2
+            // 
+            this.txt_version2.Location = new System.Drawing.Point(210, 98);
+            this.txt_version2.Name = "txt_version2";
+            this.txt_version2.Size = new System.Drawing.Size(61, 24);
+            this.txt_version2.TabIndex = 13;
+            // 
+            // txt_version1
+            // 
+            this.txt_version1.Location = new System.Drawing.Point(146, 98);
+            this.txt_version1.Name = "txt_version1";
+            this.txt_version1.Size = new System.Drawing.Size(61, 24);
+            this.txt_version1.TabIndex = 12;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(33, 101);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(58, 18);
+            this.label6.TabIndex = 14;
+            this.label6.Text = "Version";
+            // 
+            // txt_name
+            // 
+            this.txt_name.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txt_name.Location = new System.Drawing.Point(146, 46);
+            this.txt_name.Name = "txt_name";
+            this.txt_name.Size = new System.Drawing.Size(258, 24);
+            this.txt_name.TabIndex = 10;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(26, 46);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(78, 18);
+            this.label7.TabIndex = 11;
+            this.label7.Text = "Skin name";
+            // 
             // WizardSkinSelect
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(541, 327);
             this.Controls.Add(this.tabControl1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "WizardSkinSelect";
-            this.Text = "WizardSkinSelect";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "New Skin Extension Package";
+            this.TopMost = true;
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
             this.tabPage4.ResumeLayout(false);
+            this.tabPage5.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -267,12 +462,29 @@
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.Button btn_next1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button btn_browse_font;
-        private System.Windows.Forms.TextBox txt_skin_font;
+        private System.Windows.Forms.Button btn_browse_font1;
+        private System.Windows.Forms.TextBox txt_font1;
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.TabPage tabPage5;
         private System.Windows.Forms.Button btn_next2;
         private System.Windows.Forms.Button btn_next3;
         private System.Windows.Forms.Button btn_next4;
+        private System.Windows.Forms.Button btn_done;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button btn_browse_font3;
+        private System.Windows.Forms.TextBox txt_font3;
+        private System.Windows.Forms.Button btn_browse_font2;
+        private System.Windows.Forms.TextBox txt_font2;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.TextBox txt_author;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox txt_version4;
+        private System.Windows.Forms.TextBox txt_version3;
+        private System.Windows.Forms.TextBox txt_version2;
+        private System.Windows.Forms.TextBox txt_version1;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox txt_name;
+        private System.Windows.Forms.Label label7;
     }
 }

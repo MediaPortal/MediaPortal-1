@@ -58,6 +58,8 @@ namespace MpeCore.Classes.Project
 
         public static void UpdateFiles(PackageClass packageClass, FolderGroup folderGroup)
         {
+            if (string.IsNullOrEmpty(folderGroup.Folder))
+                return;
             GroupItem _groupItem = packageClass.Groups[folderGroup.Group];
             DirectoryInfo di = new DirectoryInfo(folderGroup.Folder);
             FileInfo[] fileList;
