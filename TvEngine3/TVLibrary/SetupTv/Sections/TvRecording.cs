@@ -1027,12 +1027,24 @@ namespace SetupTv.Sections
       try
       {
         SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
-        sb.AddConstraint(Operator.Like, "displayName", "%" + aChannelName + "%");
+        sb.AddConstraint(Operator.Equals, "displayName", aChannelName);
         sb.SetRowLimit(1);
         SqlStatement stmt = sb.GetStatement(true);
         IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
         if (channels.Count > 0)
+        {
           channelId = (channels[0]).IdChannel;
+        }
+        else
+        {
+          sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+          sb.AddConstraint(Operator.Like, "displayName", "%" + aChannelName + "%");
+          sb.SetRowLimit(1);
+          stmt = sb.GetStatement(true);
+          channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
+          if (channels.Count > 0)
+            channelId = (channels[0]).IdChannel;
+        }        
       }
       catch (Exception ex)
       {
