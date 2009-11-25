@@ -22,22 +22,23 @@
 
 #endregion
 
-using MediaPortal.Backend.ImporterScheduler;
-using MediaPortal.Core.MediaManagement;
+using MediaPortal.Backend.ClientCommunication;
+using MediaPortal.Core;
+using MediaPortal.Core.General;
+using MediaPortal.Core.Services.SystemResolver;
 
-namespace MediaPortal.Backend.Services.ImporterScheduler
+namespace MediaPortal.Backend.Services.SystemResolver
 {
-  public class ImporterScheduler : IImporterScheduler
+  public class SystemResolver : SystemResolverBase
   {
-    #region IImporterScheduler implementation
+    #region ISystemResolver implementation
 
-    public void InvalidatePath(string systemId, ResourcePath path)
+    public override SystemName GetSystemNameForSystemId(string systemId)
     {
-      // TODO
-      //weiter:
-      //- Alle Media-Items unter gegebener Location auf dirty setzen
-      //- Import einplanen (persistent - wenn Server beendet wird, Import fortsetzen (ist es notwendig, dass ImporterWorker_ und
-      //  diese Klasse miteinander über jedes importierte Verzeichnis kommunizieren?)
+      if (systemId == _localSystemId)
+        return SystemName.GetLocalSystemName();
+      IClientManager clientManager = ServiceScope.Get<IClientManager>();
+      return clientManager.GetSystemNameForSystemId(systemId);
     }
 
     #endregion

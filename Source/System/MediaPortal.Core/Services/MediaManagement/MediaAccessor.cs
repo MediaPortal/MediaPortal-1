@@ -349,7 +349,7 @@ namespace MediaPortal.Core.Services.MediaManagement
       string systemId = (string) providerAspect[ProviderResourceAspect.ATTR_SYSTEM_ID];
       string resourceAccessorPath = (string) providerAspect[ProviderResourceAspect.ATTR_RESOURCE_ACCESSOR_PATH];
       ISystemResolver systemResolver = ServiceScope.Get<ISystemResolver>();
-      SystemName systemName = systemResolver.GetSystemNameForSytemId(systemId);
+      SystemName systemName = systemResolver.GetSystemNameForSystemId(systemId);
       if (systemName == null)
         throw new ArgumentException(string.Format("Media item cannot be located, system ID '{0}' cannot be resolved", systemId));
       return new ResourceLocator(systemName, ResourcePath.Deserialize(resourceAccessorPath));

@@ -30,6 +30,6 @@ namespace MediaPortal.Core.SystemResolver
   {
     string LocalSystemId { get; }
 
-    SystemName GetSystemNameForSytemId(string sytemId);
+    SystemName GetSystemNameForSystemId(string sytemId);
   }
 }

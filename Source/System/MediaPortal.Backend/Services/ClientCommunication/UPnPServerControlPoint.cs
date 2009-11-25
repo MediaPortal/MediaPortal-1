@@ -31,7 +31,6 @@ using MediaPortal.Core;
 using MediaPortal.Core.General;
 using MediaPortal.Core.Logging;
 using MediaPortal.Core.UPnP;
-using MediaPortal.UI.ServerCommunication;
 using UPnP.Infrastructure.CP;
 using UPnP.Infrastructure.Utils;
 
@@ -163,7 +162,7 @@ namespace MediaPortal.Backend.Services.ClientCommunication
         }
         catch (Exception e)
         {
-          ServiceScope.Get<ILogger>().Info("UPnPServerControlPoint: Error while disconnecting from client '{0}'", systemId);
+          ServiceScope.Get<ILogger>().Info("UPnPServerControlPoint: Error while disconnecting from client '{0}'", e, systemId);
         }
     }
 
@@ -246,7 +245,7 @@ namespace MediaPortal.Backend.Services.ClientCommunication
         DeviceConnection connection;
         try
         {
-          connection = _controlPoint.Connect(rootDescriptor, deviceUuid, UPnPExtendedDataTypes.ResolveDataType);
+          connection = _controlPoint.Connect(clientDescriptor.UPnPRootDescriptor, deviceUuid, UPnPExtendedDataTypes.ResolveDataType);
         }
         catch (Exception e)
         {

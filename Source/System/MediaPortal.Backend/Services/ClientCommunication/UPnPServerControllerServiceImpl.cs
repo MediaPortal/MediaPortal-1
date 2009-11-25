@@ -25,6 +25,8 @@
 using System.Collections.Generic;
 using MediaPortal.Backend.ClientCommunication;
 using MediaPortal.Core;
+using MediaPortal.Core.General;
+using MediaPortal.Core.SystemResolver;
 using MediaPortal.Core.UPnP;
 using UPnP.Infrastructure.Common;
 using UPnP.Infrastructure.Dv.DeviceTree;
@@ -54,6 +56,13 @@ namespace MediaPortal.Backend.Services.ClientCommunication
           };
       AddStateVariable(A_ARG_TYPE_Bool);
 
+      // Used to transport a system name - contains the hostname string
+      DvStateVariable A_ARG_TYPE_SystemName = new DvStateVariable("A_ARG_TYPE_SystemName", new DvStandardDataType(UPnPStandardDataType.String))
+          {
+            SendEvents = false
+          };
+      AddStateVariable(A_ARG_TYPE_SystemName);
+
       // More state variables go here
 
       DvAction isClientAttachedAction = new DvAction("IsClientAttached", OnIsClientAttached,
@@ -81,6 +90,15 @@ namespace MediaPortal.Backend.Services.ClientCommunication
           });
       AddAction(detachClientAction);
 
+      DvAction getSystemNameForSytemIdAction = new DvAction("GetSystemNameForSystemId", OnGetSystemNameForSytemId,
+          new DvArgument[] {
+            new DvArgument("SystemId", A_ARG_TYPE_SystemId, ArgumentDirection.In),
+          },
+          new DvArgument[] {
+            new DvArgument("SystemName", A_ARG_TYPE_SystemName, ArgumentDirection.Out),
+          });
+      AddAction(getSystemNameForSytemIdAction);
+
       // More actions go here
     }
 
@@ -105,6 +123,14 @@ namespace MediaPortal.Backend.Services.ClientCommunication
       string clientSystemId = (string) inParams[0];
       ServiceScope.Get<IClientManager>().DetachClientAndRemoveShares(clientSystemId);
       outParams = null;
+      return null;
+    }
+
+    static UPnPError OnGetSystemNameForSytemId(DvAction action, IList<object> inParams, out IList<object> outParams)
+    {
+      string systemId = (string) inParams[0];
+      SystemName result = ServiceScope.Get<ISystemResolver>().GetSystemNameForSystemId(systemId);
+      outParams = new List<object> {result == null ? null : result.HostName};
       return null;
     }
   }

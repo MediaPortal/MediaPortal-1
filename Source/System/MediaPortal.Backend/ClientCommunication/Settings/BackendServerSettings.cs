@@ -28,15 +28,7 @@ namespace MediaPortal.Backend.ClientCommunication.Settings
 {
   public class BackendServerSettings
   {
-    protected string _backendServerSystemId = null;
     protected string _friendlyName = null;
-
-    [Setting(SettingScope.Global)]
-    public string BackendServerSystemId
-    {
-      get { return _backendServerSystemId; }
-      set { _backendServerSystemId = value; }
-    }
 
     [Setting(SettingScope.Global)]
     public string FriendlyName

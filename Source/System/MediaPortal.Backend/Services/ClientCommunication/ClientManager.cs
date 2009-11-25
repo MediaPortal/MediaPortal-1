@@ -25,7 +25,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using MediaPortal.Backend.BackendServer;
 using MediaPortal.Backend.ClientCommunication;
 using MediaPortal.Backend.ClientCommunication.Settings;
 using MediaPortal.Backend.Database;
@@ -34,6 +33,7 @@ using MediaPortal.Core;
 using MediaPortal.Core.General;
 using MediaPortal.Core.Logging;
 using MediaPortal.Core.Settings;
+using MediaPortal.Core.SystemResolver;
 using MediaPortal.Core.Threading;
 using MediaPortal.Utilities.Exceptions;
 
@@ -77,8 +77,8 @@ namespace MediaPortal.Backend.Services.ClientCommunication
       if (connection != null)
       {
         string homeServer = connection.ClientControllerService.GetHomeServer();
-        IBackendServer backendServer = ServiceScope.Get<IBackendServer>();
-        if (homeServer != backendServer.BackendServerSystemId)
+        ISystemResolver systemResolver = ServiceScope.Get<ISystemResolver>();
+        if (homeServer != systemResolver.LocalSystemId)
           DetachClientAndRemoveShares(clientSystemId);
       }
     }
@@ -177,6 +177,14 @@ namespace MediaPortal.Backend.Services.ClientCommunication
       }
       // Last action: Remove the client from the collection of attached clients and disconnect the client connection, if connected
       _controlPoint.RemoveAttachedClient(clientSystemId);
+    }
+
+    public SystemName GetSystemNameForSystemId(string systemId)
+    {
+      ClientConnection connection = _controlPoint.GetClientConnection(systemId);
+      if (connection == null)
+        return null;
+      return connection.Descriptor.System;
     }
 
     #endregion

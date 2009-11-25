@@ -24,7 +24,6 @@
 
 using System;
 using MediaPortal.Core.UPnP;
-using MediaPortal.UI.ServerCommunication;
 using MediaPortal.Utilities.Exceptions;
 using UPnP.Infrastructure.CP;
 using UPnP.Infrastructure.CP.DeviceTree;

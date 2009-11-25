@@ -22,7 +22,6 @@
 
 #endregion
 
-using MediaPortal.Core.General;
 using MediaPortal.Core.MediaManagement;
 
 namespace MediaPortal.Backend.ImporterScheduler
@@ -30,11 +29,11 @@ namespace MediaPortal.Backend.ImporterScheduler
   public interface IImporterScheduler
   {
     /// <summary>
-    /// Invalidates all media items in the given <paramref name="path"/> at the given <paramref name="nativeSystem"/>.
+    /// Invalidates all media items in the given <paramref name="path"/> in the system with the given <paramref name="systemId"/>.
     /// The given location will be scheduled to be reimported as soon as possible.
     /// </summary>
-    /// <param name="nativeSystem">System where the given <paramref name="path"/> is located.</param>
+    /// <param name="systemId">System where the given <paramref name="path"/> is located.</param>
     /// <param name="path">Path to the media items to invalidate.</param>
-    void InvalidatePath(SystemName nativeSystem, ResourcePath path);
+    void InvalidatePath(string systemId, ResourcePath path);
   }
 }

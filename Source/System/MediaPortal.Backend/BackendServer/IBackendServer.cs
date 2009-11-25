@@ -31,8 +31,6 @@ namespace MediaPortal.Backend.BackendServer
   /// </summary>
   public interface IBackendServer
   {
-    string BackendServerSystemId { get; }
-
     void Startup();
     void Shutdown();
 

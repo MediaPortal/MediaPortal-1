@@ -23,6 +23,7 @@
 #endregion
 
 using System.Collections.Generic;
+using MediaPortal.Core.General;
 
 namespace MediaPortal.Backend.ClientCommunication
 {
@@ -54,5 +55,7 @@ namespace MediaPortal.Backend.ClientCommunication
 
     void AttachClient(string clientSystemId);
     void DetachClientAndRemoveShares(string clientSystemId);
+
+    SystemName GetSystemNameForSystemId(string systemId);
   }
 }

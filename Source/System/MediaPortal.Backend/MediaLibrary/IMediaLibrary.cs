@@ -92,7 +92,7 @@ namespace MediaPortal.Backend.MediaLibrary
     #region Media import
 
     /// <summary>
-    /// Adds or updates the media item specified by its location (<paramref name="clientId"/> and <paramref name="path"/>).
+    /// Adds or updates the media item specified by its location (<paramref name="systemId"/> and <paramref name="path"/>).
     /// </summary>
     /// <param name="systemId">The ID of the system where the media item to be updated is located.</param>
     /// <param name="path">The path at the given system of the media item to be updated.</param>
@@ -101,7 +101,7 @@ namespace MediaPortal.Backend.MediaLibrary
 
     /// <summary>
     /// Deletes all media items and directories from the media library which are located at the client with the given
-    /// <paramref name="clientId"/> and the specified <paramref name="path"/>.
+    /// <paramref name="systemId"/> and the specified <paramref name="path"/>.
     /// </summary>
     /// <param name="systemId">ID of the system whose media item or directory should be deleted.</param>
     /// <param name="path">The path of the media item or directory at the system of the given client to be deleted.
@@ -151,8 +151,8 @@ namespace MediaPortal.Backend.MediaLibrary
     /// <summary>
     /// Removes the share with the specified id.
     /// </summary>
-    /// <param name="shareIds">Id of the share to be removed.</param>
-    void RemoveShares(Guid shareId);
+    /// <param name="shareId">Id of the share to be removed.</param>
+    void RemoveShare(Guid shareId);
 
     /// <summary>
     /// Removes all shares with the specified native <paramref name="systemId"/>.
@@ -183,9 +183,8 @@ namespace MediaPortal.Backend.MediaLibrary
     /// </summary>
     /// <param name="systemId">Filters the returned shares by system. If <c>null</c>, the returned set isn't filtered
     /// by system.</param>
-    /// <param name="onlyConnectedShares">If set to <c>true</c>, only shares of connected clients will be returned.</param>
     /// <returns>Mapping of share's GUIDs to shares.</returns>
-    IDictionary<Guid, Share> GetShares(string systemId, bool onlyConnectedShares);
+    IDictionary<Guid, Share> GetShares(string systemId);
 
     /// <summary>
     /// Returns the share descriptor for the share with the specified <paramref name="shareId"/>.
