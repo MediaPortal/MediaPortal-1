@@ -101,7 +101,6 @@ namespace MediaPortal.UI.Services.FrontendServer
     }
 
     protected readonly UPnPFrontendServer _upnpServer;
-    protected string _frontendServerSystemId;
 
     public FrontendServer()
     {
@@ -118,11 +117,6 @@ namespace MediaPortal.UI.Services.FrontendServer
     }
 
     #region IBackendServer implementation
-
-    public string LocalSystemId
-    {
-      get { return _frontendServerSystemId; }
-    }
 
     public void Startup()
     {

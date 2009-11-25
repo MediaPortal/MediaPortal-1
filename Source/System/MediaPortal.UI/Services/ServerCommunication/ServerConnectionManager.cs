@@ -30,8 +30,8 @@ using MediaPortal.Core.Logging;
 using MediaPortal.Core.MediaManagement;
 using MediaPortal.Core.Messaging;
 using MediaPortal.Core.Settings;
+using MediaPortal.Core.SystemResolver;
 using MediaPortal.Core.Threading;
-using MediaPortal.UI.FrontendServer;
 using MediaPortal.UI.ServerCommunication;
 using MediaPortal.UI.ServerCommunication.Settings;
 using MediaPortal.UI.Services.Shares;
@@ -164,12 +164,13 @@ namespace MediaPortal.UI.Services.ServerCommunication
     protected void SynchronizeDataWithServer()
     {
       UPnPServerControllerServiceProxy serverControllerService = ServerControllerService;
-      IFrontendServer frontendServer = ServiceScope.Get<IFrontendServer>();
+      ISystemResolver systemResolver = ServiceScope.Get<ISystemResolver>();
       if (serverControllerService != null)
         try
         {
-          if (!serverControllerService.IsClientAttached(frontendServer.LocalSystemId))
-            serverControllerService.AttachClient(frontendServer.LocalSystemId);
+          string localSystemId = systemResolver.LocalSystemId;
+          if (!serverControllerService.IsClientAttached(localSystemId))
+            serverControllerService.AttachClient(localSystemId);
         }
         catch (Exception e)
         {
@@ -183,7 +184,7 @@ namespace MediaPortal.UI.Services.ServerCommunication
         {
           ServiceScope.Get<ILogger>().Info("ServerConnectionManager: Synchronizing shares with home server");
           IDictionary<Guid, Share> serverShares = new Dictionary<Guid, Share>();
-          foreach (Share share in contentDirectoryService.GetShares(SystemName.GetLocalSystemName(), SharesFilter.All))
+          foreach (Share share in contentDirectoryService.GetShares(systemResolver.LocalSystemId, SharesFilter.All))
             serverShares.Add(share.ShareId, share);
           IDictionary<Guid, Share> localShares = ServiceScope.Get<ILocalSharesManagement>().Shares;
           foreach (Share localShare in localShares.Values)
@@ -310,11 +311,11 @@ namespace MediaPortal.UI.Services.ServerCommunication
     {
       ServiceScope.Get<ILogger>().Info("ServerConnectionManager: Detaching from home server");
       UPnPServerControllerServiceProxy serverControllerService = ServerControllerService;
-      IFrontendServer frontendServer = ServiceScope.Get<IFrontendServer>();
+      ISystemResolver systemResolver = ServiceScope.Get<ISystemResolver>();
       if (serverControllerService != null)
         try
         {
-          serverControllerService.DetachClient(frontendServer.LocalSystemId);
+          serverControllerService.DetachClient(systemResolver.LocalSystemId);
         }
         catch (Exception e)
         {

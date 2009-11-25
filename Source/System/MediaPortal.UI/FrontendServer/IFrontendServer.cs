@@ -31,7 +31,5 @@ namespace MediaPortal.UI.FrontendServer
   {
     void Startup();
     void Shutdown();
-
-    string LocalSystemId { get; }
   }
 }

@@ -24,8 +24,8 @@
 
 using System.Collections.Generic;
 using MediaPortal.Core;
-using MediaPortal.Core.General;
 using MediaPortal.Core.MediaManagement;
+using MediaPortal.Core.SystemResolver;
 using MediaPortal.UI.ServerCommunication;
 using MediaPortal.Utilities.Exceptions;
 
@@ -34,12 +34,12 @@ namespace MediaPortal.UI.Services.ServerCommunication
   public class ImportResultCallback : IImportResultCallback
   {
     protected UPnPContentDirectoryServiceProxy _cds;
-    protected SystemName _localSystem;
+    protected string _localSystemId;
 
     public ImportResultCallback()
     {
       _cds = ServiceScope.Get<IServerConnectionManager>().ContentDirectoryService;
-      _localSystem = SystemName.GetLocalSystemName();
+      _localSystemId = ServiceScope.Get<ISystemResolver>().LocalSystemId;
     }
 
     #region IImportResultCallback implementation
@@ -63,14 +63,14 @@ namespace MediaPortal.UI.Services.ServerCommunication
     {
       if (_cds == null)
         throw new IllegalCallException("The MediaPortal server is not connected");
-      _cds.AddOrUpdateMediaItem(_localSystem, path, updatedAspects);
+      _cds.AddOrUpdateMediaItem(_localSystemId, path, updatedAspects);
     }
 
     public void DeleteMediaItem(ResourcePath path)
     {
       if (_cds == null)
         throw new IllegalCallException("The MediaPortal server is not connected");
-      _cds.DeleteMediaItemOrPath(_localSystem, path);
+      _cds.DeleteMediaItemOrPath(_localSystemId, path);
     }
 
     #endregion

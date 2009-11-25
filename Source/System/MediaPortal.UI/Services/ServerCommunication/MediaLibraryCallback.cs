@@ -25,8 +25,8 @@
 using System;
 using System.Collections.Generic;
 using MediaPortal.Core;
-using MediaPortal.Core.General;
 using MediaPortal.Core.MediaManagement;
+using MediaPortal.Core.SystemResolver;
 using MediaPortal.UI.ServerCommunication;
 using MediaPortal.Utilities.Exceptions;
 
@@ -35,12 +35,12 @@ namespace MediaPortal.UI.Services.ServerCommunication
   public class MediaLibraryCallback : IMediaLibraryCallback
   {
     protected UPnPContentDirectoryServiceProxy _cds;
-    protected SystemName _localSystem;
+    protected string _localSystemId;
 
     public MediaLibraryCallback()
     {
       _cds = ServiceScope.Get<IServerConnectionManager>().ContentDirectoryService;
-      _localSystem = SystemName.GetLocalSystemName();
+      _localSystemId = ServiceScope.Get<ISystemResolver>().LocalSystemId;
     }
 
     #region IMediaLibraryCallback implementation
@@ -49,7 +49,7 @@ namespace MediaPortal.UI.Services.ServerCommunication
     {
       if (_cds == null)
         throw new IllegalCallException("The MediaPortal server is not connected");
-      return _cds.Browse(_localSystem, path, necessaryRequestedMIATypeIDs, optionalRequestedMIATypeIDs);
+      return _cds.Browse(_localSystemId, path, necessaryRequestedMIATypeIDs, optionalRequestedMIATypeIDs);
     }
 
     #endregion
