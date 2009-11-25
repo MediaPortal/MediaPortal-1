@@ -404,7 +404,7 @@ namespace WindowPlugins.GUISettings.TV
       string defaultSubtitleLanguage = "";
       using (Settings xmlreader = new MPSettings())
       {
-        defaultSubtitleLanguage = xmlreader.GetValueAsString("subtitles", "language", "English");
+        defaultSubtitleLanguage = xmlreader.GetValueAsString("subtitles", "language", "EN");
       }
       GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
@@ -423,7 +423,7 @@ namespace WindowPlugins.GUISettings.TV
         for (int i = 0; i < cultures.Count; ++i)
         {
           CultureInfo info = (CultureInfo) cultures[i];
-          if (info.EnglishName.Equals(defaultSubtitleLanguage))
+          if (info.Name.Equals(defaultSubtitleLanguage))
           {
             selected = i;
           }
@@ -438,7 +438,7 @@ namespace WindowPlugins.GUISettings.TV
         using (Settings xmlwriter = new MPSettings())
         {
           CultureInfo info = (CultureInfo) cultures[dlg.SelectedLabel];
-          xmlwriter.SetValue("subtitles", "language", info.EnglishName);
+          xmlwriter.SetValue("subtitles", "language", info.Name);
         }
       }
     }
@@ -448,7 +448,7 @@ namespace WindowPlugins.GUISettings.TV
       string defaultAudioLanguage = "";
       using (Settings xmlreader = new MPSettings())
       {
-        defaultAudioLanguage = xmlreader.GetValueAsString("movieplayer", "audiolanguage", "English");
+        defaultAudioLanguage = xmlreader.GetValueAsString("movieplayer", "audiolanguage", "EN");
       }
       GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
@@ -467,7 +467,7 @@ namespace WindowPlugins.GUISettings.TV
         for (int i = 0; i < cultures.Count; ++i)
         {
           CultureInfo info = (CultureInfo) cultures[i];
-          if (info.EnglishName.Equals(defaultAudioLanguage))
+          if (info.Name.Equals(defaultAudioLanguage))
           {
             selected = i;
           }
@@ -482,7 +482,7 @@ namespace WindowPlugins.GUISettings.TV
         using (Settings xmlwriter = new MPSettings())
         {
           CultureInfo info = (CultureInfo) cultures[dlg.SelectedLabel];
-          xmlwriter.SetValue("movieplayer", "audiolanguage", info.EnglishName);
+          xmlwriter.SetValue("movieplayer", "audiolanguage", info.Name);
         }
       }
     }
