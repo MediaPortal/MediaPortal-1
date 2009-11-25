@@ -114,10 +114,10 @@ namespace MediaPortal.UI.ServerCommunication
       return (int) outParameters[0];
     }
 
-    public ICollection<Share> GetShares(SystemName system, SharesFilter sharesFilter)
+    public ICollection<Share> GetShares(string systemId, SharesFilter sharesFilter)
     {
       CpAction action = GetAction("GetShares");
-      IList<object> inParameters = new List<object> {system.HostName};
+      IList<object> inParameters = new List<object> {systemId};
       String sharesFilterStr;
       switch (sharesFilter)
       {
@@ -186,11 +186,11 @@ namespace MediaPortal.UI.ServerCommunication
       return (IList<MediaItem>) outParameters[0];
     }
 
-    public ICollection<MediaItem> Browse(SystemName system, ResourcePath path,
+    public ICollection<MediaItem> Browse(string systemId, ResourcePath path,
         IEnumerable<Guid> necessaryMIATypes, IEnumerable<Guid> optionalMIATypes)
     {
       CpAction action = GetAction("Browse");
-      IList<object> inParameters = new List<object> {system, path, necessaryMIATypes, optionalMIATypes};
+      IList<object> inParameters = new List<object> {systemId, path, necessaryMIATypes, optionalMIATypes};
       IList<object> outParameters = action.InvokeAction(inParameters);
       return (ICollection<MediaItem>) outParameters[0];
     }
@@ -203,18 +203,18 @@ namespace MediaPortal.UI.ServerCommunication
       return (HomogenousCollection) outParameters[0];
     }
 
-    public void AddOrUpdateMediaItem(SystemName system, ResourcePath path,
+    public void AddOrUpdateMediaItem(string systemId, ResourcePath path,
         IEnumerable<MediaItemAspect> mediaItemAspects)
     {
       CpAction action = GetAction("AddOrUpdateMediaItem");
-      IList<object> inParameters = new List<object> {system, path, mediaItemAspects};
+      IList<object> inParameters = new List<object> {systemId, path, mediaItemAspects};
       action.InvokeAction(inParameters);
     }
 
-    public void DeleteMediaItemOrPath(SystemName system, ResourcePath path)
+    public void DeleteMediaItemOrPath(string systemId, ResourcePath path)
     {
       CpAction action = GetAction("DeleteMediaItemOrPath");
-      IList<object> inParameters = new List<object> {system, path};
+      IList<object> inParameters = new List<object> {systemId, path};
       action.InvokeAction(inParameters);
     }
 
