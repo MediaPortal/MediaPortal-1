@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using MediaPortal.Backend.ImporterScheduler;
 using MediaPortal.Core;
 using MediaPortal.Core.General;
 using MediaPortal.Core.MediaManagement;
@@ -35,7 +36,7 @@ using MediaPortal.Utilities.UPnP;
 using UPnP.Infrastructure.Common;
 using UPnP.Infrastructure.Dv.DeviceTree;
 
-namespace MediaPortal.Backend.ClientCommunication
+namespace MediaPortal.Backend.Services.ClientCommunication
 {
   /// <summary>
   /// Provides the UPnP service for the MediaPortal-II content directory.
@@ -45,13 +46,11 @@ namespace MediaPortal.Backend.ClientCommunication
   /// different data structure for media items, so it isn't compatible with the standard ContentDirectory service. It also
   /// provides special actions to manage shares and media item aspect metadata schemas.
   /// </remarks>
-  public class UPnPContentDirectoryService : DvService
+  public class UPnPContentDirectoryServiceImpl : DvService
   {
-    public const string SERVICE_TYPE = "schemas-team-mediaportal-com:service:ContentDirectory";
-    public const int SERVICE_TYPE_VERSION = 1;
-    public const string SERVICE_ID = "urn:team-mediaportal-com:serviceId:ContentDirectory";
-
-    public UPnPContentDirectoryService() : base(SERVICE_TYPE, SERVICE_TYPE_VERSION, SERVICE_ID)
+    public UPnPContentDirectoryServiceImpl() : base(
+        UPnPTypesAndIds.CONTENT_DIRECTORY_SERVICE_TYPE, UPnPTypesAndIds.CONTENT_DIRECTORY_SERVICE_TYPE_VERSION,
+        UPnPTypesAndIds.CONTENT_DIRECTORY_SERVICE_ID)
     {
       // Used for several parameters and result values
       DvStateVariable A_ARG_TYPE_Count = new DvStateVariable("A_ARG_TYPE_Count", new DvStandardDataType(UPnPStandardDataType.Int))
@@ -81,8 +80,8 @@ namespace MediaPortal.Backend.ClientCommunication
           };
       AddStateVariable(A_ARG_TYPE_SystemName);
 
-      // Used to transport a provider path expression
-      DvStateVariable A_ARG_TYPE_ResourcePath = new DvStateVariable("A_ARG_TYPE_ProviderPath", new DvStandardDataType(UPnPStandardDataType.String))
+      // Used to transport a resource path expression
+      DvStateVariable A_ARG_TYPE_ResourcePath = new DvStateVariable("A_ARG_TYPE_ResourcePath", new DvStandardDataType(UPnPStandardDataType.String))
           {
             SendEvents = false
           };
@@ -167,7 +166,7 @@ namespace MediaPortal.Backend.ClientCommunication
         };
       AddStateVariable(A_ARG_TYPE_MediaItemAttributeValues);
 
-      // Used to transport a collection of media item aspects for a media item specified elsewhere
+      // Used to transport an enumeration of media item aspects for a media item specified elsewhere
       DvStateVariable A_ARG_TYPE_MediaItemAspects = new DvStateVariable("A_ARG_TYPE_MediaItemAspects", new DvExtendedDataType(UPnPExtendedDataTypes.DtMediaItemAspects))
         {
             SendEvents = false,
@@ -321,6 +320,8 @@ namespace MediaPortal.Backend.ClientCommunication
     {
       Share share = (Share) inParams[0];
       ServiceScope.Get<IMediaLibrary>().RegisterShare(share);
+      IImporterScheduler importerScheduler = ServiceScope.Get<IImporterScheduler>();
+      importerScheduler.InvalidatePath(share.NativeSystem, share.BaseResourcePath);
       outParams = null;
       return null;
     }
@@ -357,9 +358,11 @@ namespace MediaPortal.Backend.ClientCommunication
       Share oldShare = mediaLibrary.GetShare(shareId);
       int numAffected = mediaLibrary.UpdateShare(
           shareId, oldShare.NativeSystem, baseResourcePath, shareName, mediaCategories, relocationMode);
-      // TODO
-      //if (relocationMode == RelocationMode.Remove)
-      //  ... schedule reimport of new diretory ...
+      if (relocationMode == RelocationMode.Remove)
+      {
+        IImporterScheduler importerScheduler = ServiceScope.Get<IImporterScheduler>();
+        importerScheduler.InvalidatePath(oldShare.NativeSystem, baseResourcePath);
+      }
       outParams = new List<object> {numAffected};
       return null;
     }
@@ -468,7 +471,7 @@ namespace MediaPortal.Backend.ClientCommunication
     {
       SystemName system = (SystemName) inParams[0];
       ResourcePath path = ResourcePath.Deserialize((string) inParams[1]);
-      ICollection<MediaItemAspect> mediaItemAspects = (ICollection<MediaItemAspect>) inParams[2];
+      IEnumerable<MediaItemAspect> mediaItemAspects = (IEnumerable<MediaItemAspect>) inParams[2];
       ServiceScope.Get<IMediaLibrary>().AddOrUpdateMediaItem(system, path, mediaItemAspects);
       outParams = null;
       return null;

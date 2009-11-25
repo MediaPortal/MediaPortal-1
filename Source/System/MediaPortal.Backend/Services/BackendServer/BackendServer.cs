@@ -27,8 +27,10 @@ using System.Net;
 using HttpServer;
 using HttpServer.HttpModules;
 using MediaPortal.Backend.BackendServer;
-using MediaPortal.Backend.ClientCommunication;
+using MediaPortal.Backend.ClientCommunication.Settings;
+using MediaPortal.Backend.Services.ClientCommunication;
 using MediaPortal.Core;
+using MediaPortal.Core.Settings;
 using UPnP.Infrastructure;
 using ILogger=MediaPortal.Core.Logging.ILogger;
 using UPnPLogger = UPnP.Infrastructure.ILogger;
@@ -104,6 +106,7 @@ namespace MediaPortal.Backend.Services.BackendServer
 
     protected readonly HttpServer.HttpServer _httpServer;
     protected readonly UPnPBackendServer _upnpServer;
+    protected string _backendServerSystemId;
 
     internal class HttpLogWriter : ILogWriter
     {
@@ -140,7 +143,19 @@ namespace MediaPortal.Backend.Services.BackendServer
       _httpServer = new HttpServer.HttpServer(new HttpLogWriter());
       Configuration.PRODUCT_VERSION = MP2SERVER_DEVICEVERSION;
       Configuration.LOGGER = new UPnPLoggerDelegate();
-      _upnpServer = new UPnPBackendServer();
+
+      ISettingsManager settingsManager = ServiceScope.Get<ISettingsManager>();
+      BackendServerSettings settings = settingsManager.Load<BackendServerSettings>();
+      if (string.IsNullOrEmpty(settings.BackendServerSystemId))
+      {
+        // Create a new id for our new mediacenter device
+        settings.BackendServerSystemId = _backendServerSystemId = Guid.NewGuid().ToString("D");
+        settingsManager.Save(settings);
+      }
+      else
+        _backendServerSystemId = settings.BackendServerSystemId;
+
+      _upnpServer = new UPnPBackendServer(_backendServerSystemId);
     }
 
     public void Dispose()
@@ -149,6 +164,11 @@ namespace MediaPortal.Backend.Services.BackendServer
     }
 
     #region IBackendServer implementation
+
+    public string BackendServerSystemId
+    {
+      get { return _backendServerSystemId; }
+    }
 
     public void Startup()
     {

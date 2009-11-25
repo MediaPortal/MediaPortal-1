@@ -22,34 +22,19 @@
 
 #endregion
 
-using HttpServer.HttpModules;
+using MediaPortal.Core.General;
+using MediaPortal.Core.MediaManagement;
 
-namespace MediaPortal.Backend.BackendServer
+namespace MediaPortal.Backend.ImporterScheduler
 {
-  /// <summary>
-  /// Control interface for the backend's server components - HTTP, UPnP, ...
-  /// </summary>
-  public interface IBackendServer
+  public interface IImporterScheduler
   {
-    string BackendServerSystemId { get; }
-
-    void Startup();
-    void Shutdown();
-
     /// <summary>
-    /// Adds a new HTTP module to the backend HTTP server.
+    /// Invalidates all media items in the given <paramref name="path"/> at the given <paramref name="nativeSystem"/>.
+    /// The given location will be scheduled to be reimported as soon as possible.
     /// </summary>
-    /// <remarks>
-    /// The HTTP module approach is implemented by our <see cref="HttpServer.HttpServer"/> and fits very well into
-    /// the MediaPortal concept: Plugins simply can add a module to the HTTP server.
-    /// </remarks>
-    /// <param name="module"></param>
-    void AddHttpModule(HttpModule module);
-
-    /// <summary>
-    /// Removes an HTTP module from the backend HTTP server.
-    /// </summary>
-    /// <param name="module">Module to remove.</param>
-    void RemoveHttpModule(HttpModule module);
+    /// <param name="nativeSystem">System where the given <paramref name="path"/> is located.</param>
+    /// <param name="path">Path to the media items to invalidate.</param>
+    void InvalidatePath(SystemName nativeSystem, ResourcePath path);
   }
 }

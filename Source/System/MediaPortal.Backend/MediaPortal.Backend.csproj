@@ -49,15 +49,31 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BackendServer\IBackendServer.cs" />
+    <Compile Include="ClientCommunication\ClientDescriptor.cs" />
+    <Compile Include="ClientCommunication\ClientManagerMessaging.cs" />
+    <Compile Include="ClientCommunication\IClientManager.cs" />
+    <Compile Include="ClientCommunication\Settings\ClientConnectionSettings.cs" />
+    <Compile Include="ClientCommunication\UPnPClientControllerServiceProxy.cs" />
     <Compile Include="Database\DatabaseSubSchemaManager.cs" />
     <Compile Include="Database\IDatabaseManager.cs" />
     <Compile Include="Database\ISQLDatabase.cs" />
     <Compile Include="Exceptions\Exceptions.cs" />
+    <Compile Include="ImporterScheduler\IImporterScheduler.cs" />
     <Compile Include="MediaLibrary\IMediaLibrary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BackendExtension.cs" />
     <Compile Include="Services\BackendServer\BackendServer.cs" />
+    <Compile Include="ClientCommunication\ClientConnection.cs" />
+    <Compile Include="Services\ClientCommunication\ClientManager.cs" />
+    <Compile Include="Services\ClientCommunication\ClientManager_SubSchema.cs" />
+    <Compile Include="Services\ClientCommunication\LocalizedUPnPDeviceInformation.cs" />
+    <Compile Include="Services\ClientCommunication\MP2BackendServerDevice.cs" />
+    <Compile Include="Services\ClientCommunication\UPnPBackendServer.cs" />
+    <Compile Include="Services\ClientCommunication\UPnPContentDirectoryServiceImpl.cs" />
+    <Compile Include="Services\ClientCommunication\UPnPServerControllerServiceImpl.cs" />
+    <Compile Include="Services\ClientCommunication\UPnPServerControlPoint.cs" />
     <Compile Include="Services\Database\SqlScriptPreprocessor.cs" />
+    <Compile Include="Services\ImporterScheduler\ImporterScheduler.cs" />
     <Compile Include="Services\MediaLibrary\QueryEngine\CompiledDistinctAttributeValueQuery.cs" />
     <Compile Include="Services\MediaLibrary\QueryEngine\CompiledFilter.cs" />
     <Compile Include="Services\MediaLibrary\QueryEngine\CompiledMediaItemQuery.cs" />
@@ -68,10 +84,6 @@
     <Compile Include="Services\MediaLibrary\QueryEngine\MainQueryBuilder.cs" />
     <Compile Include="Services\MediaLibrary\QueryEngine\TableQueryData.cs" />
     <Compile Include="ClientCommunication\Settings\BackendServerSettings.cs" />
-    <Compile Include="ClientCommunication\MP2BackendServerDevice.cs" />
-    <Compile Include="ClientCommunication\UPnPContentDirectoryService.cs" />
-    <Compile Include="ClientCommunication\UPnPBackendServer.cs" />
-    <Compile Include="ClientCommunication\LocalizedUPnPDeviceInformation.cs" />
     <Compile Include="Services\Database\DatabaseManager.cs" />
     <Compile Include="Services\Database\MediaPortal_Basis_SubSchema.cs" />
     <Compile Include="Services\Database\SQLUtils.cs" />

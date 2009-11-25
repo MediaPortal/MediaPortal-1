@@ -22,34 +22,37 @@
 
 #endregion
 
-using HttpServer.HttpModules;
+using System.Collections.Generic;
 
-namespace MediaPortal.Backend.BackendServer
+namespace MediaPortal.Backend.ClientCommunication
 {
   /// <summary>
-  /// Control interface for the backend's server components - HTTP, UPnP, ...
+  /// Manages the UPnP connection to all attached clients.
   /// </summary>
-  public interface IBackendServer
+  public interface IClientManager
   {
-    string BackendServerSystemId { get; }
-
+    /// <summary>
+    /// Starts the UPnP subsystem and searches all attached clients.
+    /// </summary>
     void Startup();
+
+    /// <summary>
+    /// Shuts the UPnP subsystem down.
+    /// </summary>
     void Shutdown();
 
     /// <summary>
-    /// Adds a new HTTP module to the backend HTTP server.
+    /// Gets a collection of descriptor objects for all connected MediaPortal clients. This is a subset of
+    /// <see cref="AttachedClientsSystemIds"/>, i.e. only attached clients are contained in this collection.
     /// </summary>
-    /// <remarks>
-    /// The HTTP module approach is implemented by our <see cref="HttpServer.HttpServer"/> and fits very well into
-    /// the MediaPortal concept: Plugins simply can add a module to the HTTP server.
-    /// </remarks>
-    /// <param name="module"></param>
-    void AddHttpModule(HttpModule module);
+    ICollection<ClientConnection> ConnectedClients { get; }
 
     /// <summary>
-    /// Removes an HTTP module from the backend HTTP server.
+    /// Gets a collection of UUIDs of all MediaPortal clients which are attached to this server.
     /// </summary>
-    /// <param name="module">Module to remove.</param>
-    void RemoveHttpModule(HttpModule module);
+    ICollection<string> AttachedClientsSystemIds { get; }
+
+    void AttachClient(string clientSystemId);
+    void DetachClientAndRemoveShares(string clientSystemId);
   }
 }

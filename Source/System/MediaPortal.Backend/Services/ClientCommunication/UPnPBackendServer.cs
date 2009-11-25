@@ -22,13 +22,9 @@
 
 #endregion
 
-using System;
-using MediaPortal.Core;
-using MediaPortal.Core.Settings;
-using MediaPortal.Backend.ClientCommunication.Settings;
 using UPnP.Infrastructure.Dv;
 
-namespace MediaPortal.Backend.ClientCommunication
+namespace MediaPortal.Backend.Services.ClientCommunication
 {
   /// <summary>
   /// Encapsulates the MediaPortal-II UPnP backend server device.
@@ -37,21 +33,9 @@ namespace MediaPortal.Backend.ClientCommunication
   {
     public const int SSDP_ADVERTISMENT_INTERVAL = 1800;
 
-    public UPnPBackendServer()
+    public UPnPBackendServer(string backendServerSystemId)
     {
-      ISettingsManager settingsManager = ServiceScope.Get<ISettingsManager>();
-      BackendServerSettings settings = settingsManager.Load<BackendServerSettings>();
-      Guid deviceId;
-      if (settings.MediaServerDeviceId.HasValue)
-        deviceId = settings.MediaServerDeviceId.Value;
-      else
-      {
-        // Create a new id for our new mediacenter device
-        deviceId = Guid.NewGuid();
-        settings.MediaServerDeviceId = deviceId;
-        settingsManager.Save(settings);
-      }
-      AddRootDevice(new MP2BackendServerDevice(deviceId.ToString("D")));
+      AddRootDevice(new MP2BackendServerDevice(backendServerSystemId));
       // TODO: add UPnP standard MediaServer device: it's not implemented yet
       //AddRootDevice(new UPnPMediaServerDevice(...));
     }

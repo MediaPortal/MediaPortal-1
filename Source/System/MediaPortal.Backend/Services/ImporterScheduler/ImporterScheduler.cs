@@ -22,27 +22,24 @@
 
 #endregion
 
-using MediaPortal.Core.Settings;
+using MediaPortal.Backend.ImporterScheduler;
+using MediaPortal.Core.General;
+using MediaPortal.Core.MediaManagement;
 
-namespace MediaPortal.Backend.ClientCommunication.Settings
+namespace MediaPortal.Backend.Services.ImporterScheduler
 {
-  public class BackendServerSettings
+  public class ImporterScheduler : IImporterScheduler
   {
-    protected string _backendServerSystemId = null;
-    protected string _friendlyName = null;
+    #region IImporterScheduler implementation
 
-    [Setting(SettingScope.Global)]
-    public string BackendServerSystemId
+    public void InvalidatePath(SystemName nativeSystem, ResourcePath path)
     {
-      get { return _backendServerSystemId; }
-      set { _backendServerSystemId = value; }
+      weiter:
+      - Alle Media-Items unter gegebener Location auf dirty setzen
+      - Import einplanen (persistent - wenn Server beendet wird, Import fortsetzen (ist es notwendig, dass ImporterWorker_ und
+        diese Klasse miteinander über jedes importierte Verzeichnis kommunizieren?)
     }
 
-    [Setting(SettingScope.Global)]
-    public string FriendlyName
-    {
-      get { return _friendlyName; }
-      set { _friendlyName = value; }
-    }
+    #endregion
   }
 }

@@ -22,34 +22,23 @@
 
 #endregion
 
-using HttpServer.HttpModules;
+using System.Collections.Generic;
+using MediaPortal.Core.Settings;
 
-namespace MediaPortal.Backend.BackendServer
+namespace MediaPortal.Backend.ClientCommunication.Settings
 {
-  /// <summary>
-  /// Control interface for the backend's server components - HTTP, UPnP, ...
-  /// </summary>
-  public interface IBackendServer
+  public class ClientConnectionSettings
   {
-    string BackendServerSystemId { get; }
-
-    void Startup();
-    void Shutdown();
+    protected List<string> _attachedClients = new List<string>();
 
     /// <summary>
-    /// Adds a new HTTP module to the backend HTTP server.
+    /// UUIDs of all attached clients.
     /// </summary>
-    /// <remarks>
-    /// The HTTP module approach is implemented by our <see cref="HttpServer.HttpServer"/> and fits very well into
-    /// the MediaPortal concept: Plugins simply can add a module to the HTTP server.
-    /// </remarks>
-    /// <param name="module"></param>
-    void AddHttpModule(HttpModule module);
-
-    /// <summary>
-    /// Removes an HTTP module from the backend HTTP server.
-    /// </summary>
-    /// <param name="module">Module to remove.</param>
-    void RemoveHttpModule(HttpModule module);
+    [Setting(SettingScope.Global)]
+    public List<string> AttachedClients
+    {
+      get { return _attachedClients; }
+      set { _attachedClients = value; }
+    }
   }
 }
