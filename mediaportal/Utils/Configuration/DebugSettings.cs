@@ -64,6 +64,11 @@ namespace MediaPortal.Configuration
       string settingPath = SettingPath(setting);
       try
       {
+        if (File.Exists(settingPath) == enabled)
+        {
+          return;
+        }
+
         if (enabled)
         {
           if (!Directory.Exists(SettingsPath))
