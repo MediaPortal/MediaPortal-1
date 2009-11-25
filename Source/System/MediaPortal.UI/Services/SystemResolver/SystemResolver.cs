@@ -27,7 +27,7 @@ using MediaPortal.Core.General;
 using MediaPortal.Core.Services.SystemResolver;
 using MediaPortal.UI.ServerCommunication;
 
-namespace MediaPortal.UI.Services.System
+namespace MediaPortal.UI.Services.SystemResolver
 {
   public class SystemResolver : SystemResolverBase
   {

@@ -31,7 +31,7 @@ using MediaPortal.UI.FrontendServer;
 using MediaPortal.UI.Presentation.Players;
 using MediaPortal.UI.Presentation.Workflow;
 using MediaPortal.UI.ServerCommunication;
-using MediaPortal.UI.Services.System;
+using MediaPortal.UI.Services.SystemResolver;
 using MediaPortal.UI.Shares;
 using MediaPortal.UI.Thumbnails;
 using MediaPortal.UI.UserManagement;
