@@ -94,7 +94,7 @@ namespace SetupTv.Sections
 
       public DVBSChannel toDVBSChannel
       {
-        get 
+        get
         {
           DVBSChannel tuneChannel = new DVBSChannel();
           tuneChannel.Frequency = this.CarrierFrequency;
@@ -538,7 +538,7 @@ namespace SetupTv.Sections
       mpGrpAdvancedTuning.Top = mpGrpScanProgress.Top;
 
       _enableEvents = false;
-    
+
       TvBusinessLayer layer = new TvBusinessLayer();
       int idx = 0;
 
@@ -562,9 +562,9 @@ namespace SetupTv.Sections
       MPCheckBox[] mpLNBs = new MPCheckBox[] { mpLNB1, mpLNB2, mpLNB3, mpLNB4 };
       MPComboBox curBox;
       MPCheckBox curCheck;
-      for(int ctlIndex= 0; ctlIndex<4; ctlIndex++)
+      for (int ctlIndex = 0; ctlIndex < 4; ctlIndex++)
       {
-        idx=ctlIndex+1;
+        idx = ctlIndex + 1;
         curBox = mpTrans[ctlIndex];
         curBox.Items.Clear();
         foreach (SatteliteContext ts in satellites)
@@ -627,6 +627,8 @@ namespace SetupTv.Sections
       //grpManualScan.Enabled = false;
       checkBoxAdvancedTuning.Enabled = true;
 
+      checkBoxCreateSignalGroup.Text = "\"" + TvConstants.TvGroupNames.DVBS + "\"";
+      
       scanState = ScanState.Initialized;
     }
 
@@ -767,7 +769,7 @@ namespace SetupTv.Sections
       }
     }
 
-        #region Scan handling
+    #region Scan handling
     private void InitScanProcess()
     {
       // once completed reset to new beginning
@@ -945,7 +947,7 @@ namespace SetupTv.Sections
           DVBSChannel tuneChannel = GetManualTuning();
 
           listViewStatus.Items.Clear();
-          string line = String.Format("lnb:{0} {1}tp- {2} {3} {4}", LNB, 1 , tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate);
+          string line = String.Format("lnb:{0} {1}tp- {2} {3} {4}", LNB, 1, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate);
           ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
 
@@ -972,11 +974,11 @@ namespace SetupTv.Sections
           _channels.Add(GetManualTuning());
           break;
       }
-      
+
       // no channels
       if (_channels.Count == 0)
         return;
-      
+
       User user = new User();
       user.CardId = _cardNumber;
       int scanIndex = 0; // count of really scanned TPs (S2 skipped)
@@ -997,7 +999,7 @@ namespace SetupTv.Sections
         {
           continue;
         }
-        
+
         scanIndex++;
 
         if (bandType == BandType.Circular)
@@ -1701,7 +1703,7 @@ namespace SetupTv.Sections
           mpButtonScanTv.Text = "New scan";
           forceProgress = 1; // leave window open
           break;
-        
+
         case ScanState.Updating:
           mpButtonScanTv.Text = "Scan for channels";
           mpButtonScanTv.Enabled = false;

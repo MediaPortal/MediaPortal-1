@@ -93,6 +93,7 @@ namespace SetupTv.Sections
       mpComboBoxCountry.SelectedIndex = Int32.Parse(layer.GetSetting("analog" + _cardNumber + "Country", "0").Value);
       mpComboBoxSource.SelectedIndex = Int32.Parse(layer.GetSetting("analog" + _cardNumber + "Source", "0").Value);
       checkBoxCreateSignalGroup.Checked = (layer.GetSetting("analog" + _cardNumber + "createsignalgroup", "false").Value == "true");
+      checkBoxCreateSignalGroup.Text = "Create \"" + TvConstants.TvGroupNames.Analog + "\" group";
 
       _cardName = RemoteControl.Instance.CardName(_cardNumber);
       _devicePath = RemoteControl.Instance.CardDevice(_cardNumber);

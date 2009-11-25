@@ -145,6 +145,8 @@ namespace SetupTv.Sections
 
       buttonText = mpButtonScanTv.Text;
 
+      checkBoxCreateSignalGroup.Text = "Create \"" + TvConstants.TvGroupNames.DVBT + "\" group";
+
       scanState = ScanState.Initialized;
     }
 
