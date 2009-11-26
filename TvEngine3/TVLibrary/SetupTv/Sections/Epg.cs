@@ -31,7 +31,7 @@ namespace SetupTv.Sections
       checkBoxAlwaysUpdate.Checked = (layer.GetSetting("generalEPGAlwaysReplace", "no").Value == "yes");
 
       checkBoxEnableEPGWhileIdle.Checked = (layer.GetSetting("idleEPGGrabberEnabled", "yes").Value == "yes");
-      checkBoxEnableCRCCheck.Checked = DebugSettings.DisableCRCCheck;
+      checkBoxEnableCRCCheck.Checked = !DebugSettings.DisableCRCCheck;
       numericUpDownEpgTimeOut.Value = Convert.ToDecimal(layer.GetSetting("timeoutEPG", "10").Value);
       numericUpDownEpgRefresh.Value = Convert.ToDecimal(layer.GetSetting("timeoutEPGRefresh", "240").Value);
       checkBoxEnableEpgWhileTimeshifting.Checked = (layer.GetSetting("timeshiftingEpgGrabberEnabled", "no").Value == "yes");
@@ -54,7 +54,7 @@ namespace SetupTv.Sections
       s.Value = checkBoxAlwaysUpdate.Checked ? "yes" : "no";
       s.Persist();
 
-      DebugSettings.DisableCRCCheck = checkBoxEnableCRCCheck.Checked;
+      DebugSettings.DisableCRCCheck = !checkBoxEnableCRCCheck.Checked;
 
       s = layer.GetSetting("idleEPGGrabberEnabled", "yes");
       s.Value = checkBoxEnableEPGWhileIdle.Checked ? "yes" : "no";
