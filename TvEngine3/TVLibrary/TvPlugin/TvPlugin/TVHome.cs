@@ -975,6 +975,20 @@ namespace TvPlugin
       return false;
     }
 
+    public static List<string> PreferredLanguages
+    {
+     set { _preferredLanguages = value; }
+    }
+
+    public static bool PreferAC3
+    {
+      set { _preferAC3 = value; }
+    }
+
+    public static bool PreferAudioTypeOverLang
+    {
+      set { _preferAudioTypeOverLang = value; }
+    }        
 
     public static bool UserChannelChanged
     {
@@ -2604,16 +2618,25 @@ namespace TvPlugin
       Navigator.ZapToPreviousChannel(false);
     }
 
+    /// <summary>
+    /// unit test enabled method. please respect this.
+    /// run and/or modify the unit tests accordingly.
+    /// </summary>
     public static int GetPreferedAudioStreamIndex(out eAudioDualMonoMode dualMonoMode) // also used from tvrecorded class
     {
       int idxFirstAc3 = -1; // the index of the first avail. ac3 found
       int idxFirstmpeg = -1; // the index of the first avail. mpg found
-      int idxLangAc3 = -1; // the index of ac3 found based on lang. pref
-      int idxLangmpeg = -1; // the index of mpg found based on lang. pref   
+      int idxStreamIndexAc3 = -1; // the streamindex of ac3 found based on lang. pref
+      int idxStreamIndexmpeg = -1; // the streamindex of mpg found based on lang. pref   
       int idx = -1; // the chosen audio index we return
+      int idxLangPriAc3 = -1; // the lang priority of ac3 found based on lang. pref
+      int idxLangPrimpeg = -1; // the lang priority of mpg found based on lang. pref   
       string langSel = ""; // find audio based on this language.
       string ac3BasedOnLang = ""; // for debugging, what lang. in prefs. where used to choose the ac3 audio track ?
       string mpegBasedOnLang = ""; // for debugging, what lang. in prefs. where used to choose the mpeg audio track ?
+
+      bool dualMonoModeEnabled = (g_Player.GetAudioDualMonoMode() != eAudioDualMonoMode.UNSUPPORTED);
+
       dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
 
       IAudioStream[] streams;
@@ -2669,7 +2692,12 @@ namespace TvPlugin
       }
       Log.Debug("Audio streams avail: {0}", streams.Length);
 
-      if (streams.Length == 1)
+      if (
+          (streams.Length == 1) &&
+          (!dualMonoModeEnabled ||
+          dualMonoModeEnabled && streams[0].Language.Length < 6
+          )
+        )
       {
         Log.Info("Audio stream: switching to preferred AC3/MPEG audio stream 0 (only 1 track avail.)");
         return 0;
@@ -2698,7 +2726,7 @@ namespace TvPlugin
         //now find the ones based on LANG prefs.
         if (_preferredLanguages != null)
         {
-          if (g_Player.GetAudioDualMonoMode() != eAudioDualMonoMode.UNSUPPORTED && streams[i].Language.Length == 6)
+          if (dualMonoModeEnabled && streams[i].Language.Length == 6)
           {
             string leftAudioLang = streams[i].Language.Substring(0, 3);
             string rightAudioLang = streams[i].Language.Substring(3, 3);
@@ -2708,7 +2736,7 @@ namespace TvPlugin
             {
               dualMonoMode = eAudioDualMonoMode.LEFT_MONO;
               mpegBasedOnLang = leftAudioLang;
-              idxLangmpeg = i;
+              idxStreamIndexmpeg = i;
               priority = indexLeft;
             }
 
@@ -2717,40 +2745,45 @@ namespace TvPlugin
             {
               dualMonoMode = eAudioDualMonoMode.RIGHT_MONO;
               mpegBasedOnLang = rightAudioLang;
-              idxLangmpeg = i;
+              idxStreamIndexmpeg = i;
               priority = indexRight;
             }
           }
           else
           {
-            int index = _preferredLanguages.IndexOf(streams[i].Language);
+            // lower value means higher priority
+            int lang_priority = _preferredLanguages.IndexOf(streams[i].Language);
             langSel = streams[i].Language;
-            //Log.Debug(streams[i].Language + " Pref index " + index);
-            Log.Debug("Stream {0} lang {1}, preffered index {2}", i, langSel, index);
+            Log.Debug("Stream {0} lang {1}, lang priority index {2}", i, langSel, lang_priority);
 
-            if (index >= 0 && index < priority)
+            // is the stream language preferred?
+            if (lang_priority >= 0)
             {
-              // is the audio track an AC3/AC3plus track?
-              if (streams[i].StreamType == AudioStreamType.AC3 ||
-                  streams[i].StreamType == AudioStreamType.EAC3) 
+              // has the stream a higher priority than an old one or is this the first AC3 stream with lang pri (idxLangPriAc3 == -1) (AC3)
+              if ((streams[i].StreamType == AudioStreamType.AC3 ||
+                  streams[i].StreamType == AudioStreamType.EAC3) && (idxLangPriAc3 == -1 || lang_priority < idxLangPriAc3))
               {
-                idxLangAc3 = i;
+                Log.Debug("Setting AC3 pref");
+                idxStreamIndexAc3 = i;
+                idxLangPriAc3 = lang_priority;
                 ac3BasedOnLang = langSel;
               }
-              else //audiotrack is mpeg
+              // has the stream a higher priority than an old one or is this the first mpeg stream with lang pri (idxLangPrimpeg == -1) (mpeg)
+              else if (idxLangPrimpeg == -1 || lang_priority < idxLangPrimpeg)
               {
-                idxLangmpeg = i;
+                Log.Debug("Setting mpeg pref");
+                idxStreamIndexmpeg = i;
+                idxLangPrimpeg = lang_priority;
                 mpegBasedOnLang = langSel;
               }
-              Log.Debug("Setting as pref");
-              priority = index;
             }
           }
         }
-        if (idxFirstAc3 > -1 && idxFirstmpeg > -1 && idxLangAc3 > -1 && idxLangmpeg > -1)
-        {
-          break;
-        }
+        // don't break here - perhaps there is a stream with a higher lang priority 
+        // if (idxFirstAc3 > -1 && idxFirstmpeg > -1 && idxLangAc3 > -1 && idxLangmpeg > -1)
+        // {
+        //  break;
+        //}
       }
 
       if (_preferAC3)
@@ -2758,16 +2791,16 @@ namespace TvPlugin
         if (_preferredLanguages != null)
         {
           //did we find an ac3 track that matches our LANG prefs ?
-          if (idxLangAc3 > -1)
+          if (idxStreamIndexAc3 > -1)
           {
-            idx = idxLangAc3;
+            idx = idxStreamIndexAc3;
             Log.Info("Audio stream: switching to preferred AC3 audio stream {0}, based on LANG {1}", idx, ac3BasedOnLang);
           }
           //if not, did we even find an ac3 track ?
           else if (idxFirstAc3 > -1)
           {
             //we did find an AC3 track, but not based on LANG - should we choose this or the mpeg track which is based on LANG.
-            if (_preferAudioTypeOverLang || (idxLangmpeg == -1 && _preferAudioTypeOverLang))
+            if (_preferAudioTypeOverLang || (idxStreamIndexmpeg == -1 && _preferAudioTypeOverLang))
             {
               idx = idxFirstAc3;
               Log.Info(
@@ -2804,9 +2837,9 @@ namespace TvPlugin
         if (_preferredLanguages != null)
         {
           //did we find a mpeg track that matches our LANG prefs ?
-          if (idxLangmpeg > -1)
+          if (idxStreamIndexmpeg > -1)
           {
-            idx = idxLangmpeg;
+            idx = idxStreamIndexmpeg;
             Log.Info("Audio stream: switching to preferred MPEG audio stream {0}, based on LANG {1}", idx,
                      mpegBasedOnLang);
           }
@@ -2814,20 +2847,17 @@ namespace TvPlugin
           else if (idxFirstmpeg > -1)
           {
             //we did find a AC3 track, but not based on LANG - should we choose this or the mpeg track which is based on LANG.
-            if (_preferAudioTypeOverLang || (idxLangAc3 == -1 && _preferAudioTypeOverLang))
+            if (_preferAudioTypeOverLang || (idxStreamIndexAc3 == -1 && _preferAudioTypeOverLang))
             {
               idx = idxFirstmpeg;
               Log.Info(
                 "Audio stream: switching to preferred MPEG audio stream {0}, NOT based on LANG (none avail. matching {1})",
                 idx, mpegBasedOnLang);
             }
-            else
+            else if (idxStreamIndexAc3 > -1)
             {
-              if (idxLangAc3 > -1)
-              {
-                idx = idxLangAc3;
+                idx = idxStreamIndexAc3;
                 Log.Info("Audio stream: ignoring MPEG audio stream {0}", idx);
-              }
             }
           }
         }
@@ -2841,7 +2871,7 @@ namespace TvPlugin
       if (idx == -1)
       {
         idx = 0;
-        Log.Info("Audio stream: switching to preferred AC3/MPEG audio stream {0}", idx);
+        Log.Info("Audio stream: no preferred stream found - switching to audio stream 0");
       }
 
       return idx;
