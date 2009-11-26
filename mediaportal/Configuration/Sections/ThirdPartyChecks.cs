@@ -36,6 +36,7 @@ namespace MediaPortal.Configuration.Sections
           mpButtonMCS.Text = "Re-enable services";
           mpButtonMCS.Visible = true;
           mpButtonMCS.Enabled = true;
+          mpGroupBoxWarningMce.Visible = false;
           break;
         case McsPolicyStatus.ServicesStopped:
           mpLabelStatusMCS.Text = "services stopped";
@@ -43,12 +44,14 @@ namespace MediaPortal.Configuration.Sections
           mpButtonMCS.Text = "Enable policy to prevent services startup";
           mpButtonMCS.Visible = true;
           mpButtonMCS.Enabled = true;
+          mpGroupBoxWarningMce.Visible = true;
           break;
         case McsPolicyStatus.NotAMceSystem:
           mpLabelStatusMCS.Text = "services not installed";
           mpLabelStatusMCS.ForeColor = System.Drawing.Color.Green;
           mpButtonMCS.Visible = false;
           mpButtonMCS.Enabled = false;
+          mpGroupBoxWarningMce.Visible = false;
           break;
         default:
           mpLabelStatusMCS.Text = "services running";
@@ -56,6 +59,7 @@ namespace MediaPortal.Configuration.Sections
           mpButtonMCS.Text = "Enable policy to prevent services startup";
           mpButtonMCS.Visible = true;
           mpButtonMCS.Enabled = true;
+          mpGroupBoxWarningMce.Visible = true;
           break;
       }
     }

@@ -27,7 +27,10 @@
       this.mpButtonMCS = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpLabelStatusMCS = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabelStatus1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpGroupBoxWarningMce = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpLabelWarningMce = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBoxMCS.SuspendLayout();
+      this.mpGroupBoxWarningMce.SuspendLayout();
       this.SuspendLayout();
       // 
       // mpGroupBoxMCS
@@ -72,15 +75,40 @@
       this.mpLabelStatus1.TabIndex = 0;
       this.mpLabelStatus1.Text = "Status:";
       // 
+      // mpGroupBoxWarningMce
+      // 
+      this.mpGroupBoxWarningMce.Controls.Add(this.mpLabelWarningMce);
+      this.mpGroupBoxWarningMce.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBoxWarningMce.Location = new System.Drawing.Point(12, 153);
+      this.mpGroupBoxWarningMce.Name = "mpGroupBoxWarningMce";
+      this.mpGroupBoxWarningMce.Size = new System.Drawing.Size(445, 112);
+      this.mpGroupBoxWarningMce.TabIndex = 1;
+      this.mpGroupBoxWarningMce.TabStop = false;
+      this.mpGroupBoxWarningMce.Text = "Note for MCE remote users";
+      // 
+      // mpLabelWarningMce
+      // 
+      this.mpLabelWarningMce.AutoSize = true;
+      this.mpLabelWarningMce.Location = new System.Drawing.Point(28, 43);
+      this.mpLabelWarningMce.Name = "mpLabelWarningMce";
+      this.mpLabelWarningMce.Size = new System.Drawing.Size(395, 52);
+      this.mpLabelWarningMce.TabIndex = 0;
+      this.mpLabelWarningMce.Text = "If you want to use full functionality of MCE remote, please enable the above poli" +
+          "cy.\r\n\r\nPlease remember that for starting MP with the so called GreenButton you n" +
+          "eed a \r\n3rd party tool.";
+      // 
       // ThirdPartyChecks
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.mpGroupBoxWarningMce);
       this.Controls.Add(this.mpGroupBoxMCS);
       this.Name = "ThirdPartyChecks";
       this.Size = new System.Drawing.Size(472, 408);
       this.mpGroupBoxMCS.ResumeLayout(false);
       this.mpGroupBoxMCS.PerformLayout();
+      this.mpGroupBoxWarningMce.ResumeLayout(false);
+      this.mpGroupBoxWarningMce.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -91,5 +119,7 @@
     private MediaPortal.UserInterface.Controls.MPLabel mpLabelStatus1;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabelStatusMCS;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonMCS;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBoxWarningMce;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabelWarningMce;
   }
 }
