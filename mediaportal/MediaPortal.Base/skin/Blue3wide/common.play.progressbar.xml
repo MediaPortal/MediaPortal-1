@@ -40,7 +40,7 @@
       <posX>180</posX>
       <posY>595</posY>
       <font>font14</font>
-      <label>#TV.View.channel</label>
+      <label>#Play.Current.Title</label>
       <textcolor>white</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
