@@ -120,7 +120,7 @@ namespace MpeMaker.Wizards.Skin_wizard
                                                   Revision = txt_version4.Text
                                               };
             string fontName = Path.GetFileName(txt_skinpath.Text);
-            //--skin folder 
+            #region Skin 
             GroupItem skinGroup = new GroupItem("Skin files");
             FolderGroup skinfoldergroup = new FolderGroup()
                                               {
@@ -135,8 +135,8 @@ namespace MpeMaker.Wizards.Skin_wizard
             Package.Groups.Add(skinGroup);
             Package.ProjectSettings.Add(skinfoldergroup);
             ProjectSettings.UpdateFiles(Package, skinfoldergroup);
-            //-------------
-            //fonts-------
+            #endregion
+            #region fonts 
             if (!string.IsNullOrEmpty(txt_font1.Text + txt_font2.Text + txt_font3.Text))
             {
                 GroupItem fontGroup = new GroupItem("Font files");
@@ -145,7 +145,7 @@ namespace MpeMaker.Wizards.Skin_wizard
                     FileItem fileitem = new FileItem
                                             {
                                                 DestinationFilename =
-                                                    "%Skin%\\" + fontName + "\\Fonts" + Path.GetFileName(txt_font1.Text),
+                                                    "%Skin%\\" + fontName + "\\Fonts\\" + Path.GetFileName(txt_font1.Text),
                                                 InstallType = "CopyFont",
                                                 LocalFileName = Path.GetFullPath(txt_font1.Text)
                                             };
@@ -157,7 +157,7 @@ namespace MpeMaker.Wizards.Skin_wizard
                     FileItem fileitem = new FileItem
                                             {
                                                 DestinationFilename =
-                                                    "%Skin%\\" + fontName + "\\Fonts" + Path.GetFileName(txt_font2.Text),
+                                                    "%Skin%\\" + fontName + "\\Fonts\\" + Path.GetFileName(txt_font2.Text),
                                                 InstallType = "CopyFont",
                                                 LocalFileName = Path.GetFullPath(txt_font2.Text)
                                             };
@@ -169,7 +169,7 @@ namespace MpeMaker.Wizards.Skin_wizard
                     FileItem fileitem = new FileItem
                                             {
                                                 DestinationFilename =
-                                                    "%Skin%\\" + fontName + "\\Fonts" + Path.GetFileName(txt_font3.Text),
+                                                    "%Skin%\\" + fontName + "\\Fonts\\" + Path.GetFileName(txt_font3.Text),
                                                 InstallType = "CopyFont",
                                                 LocalFileName = Path.GetFullPath(txt_font3.Text)
                                             };
@@ -178,8 +178,51 @@ namespace MpeMaker.Wizards.Skin_wizard
 
                 Package.Groups.Add(fontGroup);
             }
-            //-----------
-            //-- install sections
+            #endregion
+            #region dlls %Plugins%
+            if (!string.IsNullOrEmpty(txt_plugin_procces.Text + txt_plugin_window.Text + txt_plugin_exe.Text))
+            {
+                GroupItem dllGroup = new GroupItem("Plugin files");
+                if (!string.IsNullOrEmpty(txt_plugin_procces.Text) && File.Exists(txt_plugin_procces.Text))
+                {
+                    FileItem fileitem = new FileItem
+                                            {
+                                                DestinationFilename =
+                                                    "%Plugins%\\process\\" + Path.GetFileName(txt_plugin_procces.Text),
+                                                InstallType = "CopyFile",
+                                                LocalFileName = Path.GetFullPath(txt_plugin_procces.Text)
+                                            };
+                    dllGroup.Files.Add(fileitem);
+                }
+
+                if (!string.IsNullOrEmpty(txt_plugin_window.Text) && File.Exists(txt_plugin_window.Text))
+                {
+                    FileItem fileitem = new FileItem
+                                            {
+                                                DestinationFilename =
+                                                    "%Plugins%\\Windows\\" + Path.GetFileName(txt_plugin_window.Text),
+                                                InstallType = "CopyFile",
+                                                LocalFileName = Path.GetFullPath(txt_plugin_window.Text)
+                                            };
+                    dllGroup.Files.Add(fileitem);
+                }
+
+                if (!string.IsNullOrEmpty(txt_plugin_exe.Text) && File.Exists(txt_plugin_exe.Text))
+                {
+                    FileItem fileitem = new FileItem
+                    {
+                        DestinationFilename =
+                            "%Base%\\" + Path.GetFileName(txt_plugin_exe.Text),
+                        InstallType = "CopyFile",
+                        LocalFileName = Path.GetFullPath(txt_plugin_exe.Text)
+                    };
+                    dllGroup.Files.Add(fileitem);
+                }
+
+                Package.Groups.Add(dllGroup);
+            }
+            #endregion
+            #region install sections
             Package.Sections.Add("Welcome Screen").WizardButtonsEnum = WizardButtonsEnum.NextCancel;
             Package.Sections.Add("Install Section").WizardButtonsEnum = WizardButtonsEnum.Next;
             var item = new ActionItem("InstallFiles")
@@ -190,7 +233,27 @@ namespace MpeMaker.Wizards.Skin_wizard
             };
             Package.Sections.Items[1].Actions.Add(item);
             Package.Sections.Add("Setup Complete").WizardButtonsEnum = WizardButtonsEnum.Finish; 
-            //------------------
+            #endregion
+            #region config
+            if (radioButton1.Checked && File.Exists(txt_plugin_procces.Text))
+                Package.GeneralInfo.Params[ParamNamesConst.CONFIG].Value = "%Plugins%\\process\\" +
+                                                                           Path.GetFileName(txt_plugin_procces.Text);
+            if (radioButton1.Checked && File.Exists(txt_plugin_window.Text))
+                Package.GeneralInfo.Params[ParamNamesConst.CONFIG].Value = "%Plugins%\\Windows\\" +
+                                                                           Path.GetFileName(txt_plugin_window.Text);
+            if (radioButton1.Checked && File.Exists(txt_plugin_exe.Text))
+                Package.GeneralInfo.Params[ParamNamesConst.CONFIG].Value = "%Base%\\" +
+                                                                           Path.GetFileName(txt_plugin_exe.Text);
+            if (File.Exists(txt_ico.Text))
+            {
+                string icofile = Path.GetFullPath(txt_ico.Text);
+                Package.GeneralInfo.Params[ParamNamesConst.ICON].Value = icofile;
+                Package.Sections.Items[0].Params[ParamNamesConst.SECTION_ICON].Value = icofile;
+                Package.Sections.Items[1].Params[ParamNamesConst.SECTION_ICON].Value = icofile;
+                Package.Sections.Items[2].Params[ParamNamesConst.SECTION_ICON].Value = icofile;
+            }
+            Package.GeneralInfo.Location = txt_mpe_folder.Text + "\\" + Package.GeneralInfo.Name + ".mpe1";
+            #endregion
             Close();
         }
 
@@ -209,7 +272,75 @@ namespace MpeMaker.Wizards.Skin_wizard
             }
         }
 
+        private void btn_brows_dll1_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.Filter = "Plugin file (*.dll)|*.dll|Executable (*.exe)|*.exe|All files(*.*)|*.*";
+            openFileDialog1.Multiselect = false;
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                if (sender == btn_brows_dll1)
+                    txt_plugin_procces.Text = openFileDialog1.FileName;
+                if (sender == btn_brows_dll2)
+                    txt_plugin_window.Text = openFileDialog1.FileName;
+                if (sender == btn_brows_dll3)
+                    txt_plugin_exe.Text = openFileDialog1.FileName;
 
+            }
+        }
+
+        private void txt_plugin_procces_DragDrop(object sender, DragEventArgs e)
+        {
+            string file = "";
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files.Length > 0)
+            {
+                file = files[0];
+            }
+            if (sender == txt_plugin_procces)
+                txt_plugin_procces.Text = file;
+            if (sender == txt_plugin_window)
+                txt_plugin_window.Text = file;
+            if (sender == txt_plugin_exe)
+                txt_plugin_exe.Text = file;
+        }
+
+        private void btn_browse_ico_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.Filter = "Image Files(*.BMP;*.JPG;*.PNG)|*.BMP;*.JPG;*.PNG|All files (*.*)|*.*";
+            openFileDialog1.Multiselect = false;
+            if(openFileDialog1.ShowDialog()==DialogResult.OK)
+            {
+                txt_ico.Text = openFileDialog1.FileName;
+            }
+        }
+
+        private void txt_ico_DragDrop(object sender, DragEventArgs e)
+        {
+            string file = "";
+            string[] files = (string[]) e.Data.GetData(DataFormats.FileDrop);
+            if (files.Length > 0)
+            {
+                file = files[0];
+            }
+            txt_ico.Text = file;
+        }
+
+        private void txt_skinpath_TextChanged(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txt_name.Text))
+                txt_name.Text = Path.GetFileName(txt_skinpath.Text);
+            if (string.IsNullOrEmpty(txt_mpe_folder.Text))
+                txt_mpe_folder.Text = Path.GetDirectoryName(txt_skinpath.Text);
+        }
+
+        private void btn_browse_folder_Click(object sender, EventArgs e)
+        {
+            folderBrowserDialog1.SelectedPath = txt_mpe_folder.Text;
+            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+            {
+                txt_mpe_folder.Text = folderBrowserDialog1.SelectedPath;
+            }
+        }
 
     }
 }

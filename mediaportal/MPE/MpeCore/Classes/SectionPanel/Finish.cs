@@ -73,6 +73,8 @@ namespace MpeCore.Classes.SectionPanel
             SectionParamCollection param = new SectionParamCollection();
             param.Add(new SectionParam(CONST_TEXT1, "The Extension Installer Wizard has successfully installed [Name].", ValueTypeEnum.String, ""));
             param.Add(new SectionParam(CONST_IMAGE, "", ValueTypeEnum.File, ""));
+            param.Add(new SectionParam(ParamNamesConst.SECTION_ICON, "", ValueTypeEnum.File,
+               "Image in upper right part"));
             return param;
         }
 

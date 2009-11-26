@@ -66,6 +66,8 @@ namespace MpeCore.Classes.SectionPanel
 "It is recommended that you close all other applications before continuing.\n"+
 "Click Next to continue or Cancel to exit Setup.", ValueTypeEnum.String, ""));
             param.Add(new SectionParam(CONST_IMAGE, "", ValueTypeEnum.File, ""));
+            param.Add(new SectionParam(ParamNamesConst.SECTION_ICON, "", ValueTypeEnum.File,
+               "Image in upper right part"));
             return param;
         }
 

@@ -39,6 +39,15 @@
             this.btn_browse_font3 = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.txt_author = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.txt_version4 = new System.Windows.Forms.TextBox();
+            this.txt_version3 = new System.Windows.Forms.TextBox();
+            this.txt_version2 = new System.Windows.Forms.TextBox();
+            this.txt_version1 = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.txt_name = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.btn_next1 = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.btn_next2 = new System.Windows.Forms.Button();
@@ -55,15 +64,24 @@
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.btn_done = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.txt_author = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.txt_version4 = new System.Windows.Forms.TextBox();
-            this.txt_version3 = new System.Windows.Forms.TextBox();
-            this.txt_version2 = new System.Windows.Forms.TextBox();
-            this.txt_version1 = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.txt_name = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.btn_brows_dll3 = new System.Windows.Forms.Button();
+            this.txt_plugin_exe = new System.Windows.Forms.TextBox();
+            this.btn_brows_dll2 = new System.Windows.Forms.Button();
+            this.txt_plugin_window = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.btn_brows_dll1 = new System.Windows.Forms.Button();
+            this.txt_plugin_procces = new System.Windows.Forms.TextBox();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.radioButton3 = new System.Windows.Forms.RadioButton();
+            this.label11 = new System.Windows.Forms.Label();
+            this.btn_browse_ico = new System.Windows.Forms.Button();
+            this.txt_ico = new System.Windows.Forms.TextBox();
+            this.txt_mpe_folder = new System.Windows.Forms.TextBox();
+            this.btn_browse_folder = new System.Windows.Forms.Button();
+            this.label12 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -81,6 +99,7 @@
             this.txt_skinpath.Size = new System.Drawing.Size(436, 24);
             this.txt_skinpath.TabIndex = 5;
             this.toolTip1.SetToolTip(this.txt_skinpath, "Folder of the skin, can use drag&drop+");
+            this.txt_skinpath.TextChanged += new System.EventHandler(this.txt_skinpath_TextChanged);
             this.txt_skinpath.DragDrop += new System.Windows.Forms.DragEventHandler(this.txt_skinpath_DragDrop);
             this.txt_skinpath.DragEnter += new System.Windows.Forms.DragEventHandler(this.txt_skinpath_DragEnter);
             // 
@@ -161,6 +180,9 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.label11);
+            this.tabPage1.Controls.Add(this.btn_browse_ico);
+            this.tabPage1.Controls.Add(this.txt_ico);
             this.tabPage1.Controls.Add(this.txt_author);
             this.tabPage1.Controls.Add(this.label5);
             this.tabPage1.Controls.Add(this.txt_version4);
@@ -178,6 +200,79 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "1.Welcome";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // txt_author
+            // 
+            this.txt_author.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txt_author.Location = new System.Drawing.Point(144, 138);
+            this.txt_author.Name = "txt_author";
+            this.txt_author.Size = new System.Drawing.Size(258, 24);
+            this.txt_author.TabIndex = 17;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(31, 144);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(51, 18);
+            this.label5.TabIndex = 18;
+            this.label5.Text = "Author";
+            // 
+            // txt_version4
+            // 
+            this.txt_version4.Location = new System.Drawing.Point(341, 92);
+            this.txt_version4.Name = "txt_version4";
+            this.txt_version4.Size = new System.Drawing.Size(61, 24);
+            this.txt_version4.TabIndex = 16;
+            // 
+            // txt_version3
+            // 
+            this.txt_version3.Location = new System.Drawing.Point(274, 92);
+            this.txt_version3.Name = "txt_version3";
+            this.txt_version3.Size = new System.Drawing.Size(61, 24);
+            this.txt_version3.TabIndex = 15;
+            // 
+            // txt_version2
+            // 
+            this.txt_version2.Location = new System.Drawing.Point(210, 92);
+            this.txt_version2.Name = "txt_version2";
+            this.txt_version2.Size = new System.Drawing.Size(61, 24);
+            this.txt_version2.TabIndex = 13;
+            // 
+            // txt_version1
+            // 
+            this.txt_version1.Location = new System.Drawing.Point(146, 92);
+            this.txt_version1.Name = "txt_version1";
+            this.txt_version1.Size = new System.Drawing.Size(61, 24);
+            this.txt_version1.TabIndex = 12;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(33, 95);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(58, 18);
+            this.label6.TabIndex = 14;
+            this.label6.Text = "Version";
+            // 
+            // txt_name
+            // 
+            this.txt_name.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txt_name.Location = new System.Drawing.Point(146, 46);
+            this.txt_name.Name = "txt_name";
+            this.txt_name.Size = new System.Drawing.Size(258, 24);
+            this.txt_name.TabIndex = 10;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(26, 46);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(78, 18);
+            this.label7.TabIndex = 11;
+            this.label7.Text = "Skin name";
             // 
             // btn_next1
             // 
@@ -307,6 +402,18 @@
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.radioButton3);
+            this.tabPage4.Controls.Add(this.radioButton2);
+            this.tabPage4.Controls.Add(this.radioButton1);
+            this.tabPage4.Controls.Add(this.label8);
+            this.tabPage4.Controls.Add(this.label9);
+            this.tabPage4.Controls.Add(this.btn_brows_dll3);
+            this.tabPage4.Controls.Add(this.txt_plugin_exe);
+            this.tabPage4.Controls.Add(this.btn_brows_dll2);
+            this.tabPage4.Controls.Add(this.txt_plugin_window);
+            this.tabPage4.Controls.Add(this.label10);
+            this.tabPage4.Controls.Add(this.btn_brows_dll1);
+            this.tabPage4.Controls.Add(this.txt_plugin_procces);
             this.tabPage4.Controls.Add(this.btn_next4);
             this.tabPage4.Location = new System.Drawing.Point(4, 27);
             this.tabPage4.Name = "tabPage4";
@@ -327,6 +434,9 @@
             // 
             // tabPage5
             // 
+            this.tabPage5.Controls.Add(this.label12);
+            this.tabPage5.Controls.Add(this.btn_browse_folder);
+            this.tabPage5.Controls.Add(this.txt_mpe_folder);
             this.tabPage5.Controls.Add(this.btn_done);
             this.tabPage5.Location = new System.Drawing.Point(4, 27);
             this.tabPage5.Name = "tabPage5";
@@ -349,78 +459,189 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
-            // txt_author
+            // label8
             // 
-            this.txt_author.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.txt_author.Location = new System.Drawing.Point(146, 152);
-            this.txt_author.Name = "txt_author";
-            this.txt_author.Size = new System.Drawing.Size(258, 24);
-            this.txt_author.TabIndex = 17;
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(8, 171);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(80, 18);
+            this.label8.TabIndex = 29;
+            this.label8.Text = "Executable";
             // 
-            // label5
+            // label9
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(33, 158);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(51, 18);
-            this.label5.TabIndex = 18;
-            this.label5.Text = "Author";
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(8, 98);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(104, 18);
+            this.label9.TabIndex = 28;
+            this.label9.Text = "Window plugin";
             // 
-            // txt_version4
+            // btn_brows_dll3
             // 
-            this.txt_version4.Location = new System.Drawing.Point(341, 98);
-            this.txt_version4.Name = "txt_version4";
-            this.txt_version4.Size = new System.Drawing.Size(61, 24);
-            this.txt_version4.TabIndex = 16;
+            this.btn_brows_dll3.Location = new System.Drawing.Point(450, 192);
+            this.btn_brows_dll3.Name = "btn_brows_dll3";
+            this.btn_brows_dll3.Size = new System.Drawing.Size(75, 26);
+            this.btn_brows_dll3.TabIndex = 27;
+            this.btn_brows_dll3.Text = "Browse";
+            this.toolTip1.SetToolTip(this.btn_brows_dll3, "Folder of the skin, can use drag&drop+");
+            this.btn_brows_dll3.UseVisualStyleBackColor = true;
+            this.btn_brows_dll3.Click += new System.EventHandler(this.btn_brows_dll1_Click);
             // 
-            // txt_version3
+            // txt_plugin_exe
             // 
-            this.txt_version3.Location = new System.Drawing.Point(274, 98);
-            this.txt_version3.Name = "txt_version3";
-            this.txt_version3.Size = new System.Drawing.Size(61, 24);
-            this.txt_version3.TabIndex = 15;
+            this.txt_plugin_exe.AllowDrop = true;
+            this.txt_plugin_exe.Location = new System.Drawing.Point(8, 192);
+            this.txt_plugin_exe.Name = "txt_plugin_exe";
+            this.txt_plugin_exe.ReadOnly = true;
+            this.txt_plugin_exe.Size = new System.Drawing.Size(436, 24);
+            this.txt_plugin_exe.TabIndex = 26;
+            this.txt_plugin_exe.DragDrop += new System.Windows.Forms.DragEventHandler(this.txt_plugin_procces_DragDrop);
+            this.txt_plugin_exe.DragEnter += new System.Windows.Forms.DragEventHandler(this.txt_skin_folder_DragEnter);
             // 
-            // txt_version2
+            // btn_brows_dll2
             // 
-            this.txt_version2.Location = new System.Drawing.Point(210, 98);
-            this.txt_version2.Name = "txt_version2";
-            this.txt_version2.Size = new System.Drawing.Size(61, 24);
-            this.txt_version2.TabIndex = 13;
+            this.btn_brows_dll2.Location = new System.Drawing.Point(450, 119);
+            this.btn_brows_dll2.Name = "btn_brows_dll2";
+            this.btn_brows_dll2.Size = new System.Drawing.Size(75, 26);
+            this.btn_brows_dll2.TabIndex = 25;
+            this.btn_brows_dll2.Text = "Browse";
+            this.toolTip1.SetToolTip(this.btn_brows_dll2, "Folder of the skin, can use drag&drop+");
+            this.btn_brows_dll2.UseVisualStyleBackColor = true;
+            this.btn_brows_dll2.Click += new System.EventHandler(this.btn_brows_dll1_Click);
             // 
-            // txt_version1
+            // txt_plugin_window
             // 
-            this.txt_version1.Location = new System.Drawing.Point(146, 98);
-            this.txt_version1.Name = "txt_version1";
-            this.txt_version1.Size = new System.Drawing.Size(61, 24);
-            this.txt_version1.TabIndex = 12;
+            this.txt_plugin_window.AllowDrop = true;
+            this.txt_plugin_window.Location = new System.Drawing.Point(8, 119);
+            this.txt_plugin_window.Name = "txt_plugin_window";
+            this.txt_plugin_window.ReadOnly = true;
+            this.txt_plugin_window.Size = new System.Drawing.Size(436, 24);
+            this.txt_plugin_window.TabIndex = 24;
+            this.txt_plugin_window.DragDrop += new System.Windows.Forms.DragEventHandler(this.txt_plugin_procces_DragDrop);
+            this.txt_plugin_window.DragEnter += new System.Windows.Forms.DragEventHandler(this.txt_skin_folder_DragEnter);
             // 
-            // label6
+            // label10
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(33, 101);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(58, 18);
-            this.label6.TabIndex = 14;
-            this.label6.Text = "Version";
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(8, 26);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(110, 18);
+            this.label10.TabIndex = 23;
+            this.label10.Text = "Process plugin ";
             // 
-            // txt_name
+            // btn_brows_dll1
             // 
-            this.txt_name.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.txt_name.Location = new System.Drawing.Point(146, 46);
-            this.txt_name.Name = "txt_name";
-            this.txt_name.Size = new System.Drawing.Size(258, 24);
-            this.txt_name.TabIndex = 10;
+            this.btn_brows_dll1.Location = new System.Drawing.Point(450, 47);
+            this.btn_brows_dll1.Name = "btn_brows_dll1";
+            this.btn_brows_dll1.Size = new System.Drawing.Size(75, 26);
+            this.btn_brows_dll1.TabIndex = 22;
+            this.btn_brows_dll1.Text = "Browse";
+            this.toolTip1.SetToolTip(this.btn_brows_dll1, "Folder of the skin, can use drag&drop+");
+            this.btn_brows_dll1.UseVisualStyleBackColor = true;
+            this.btn_brows_dll1.Click += new System.EventHandler(this.btn_brows_dll1_Click);
             // 
-            // label7
+            // txt_plugin_procces
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(26, 46);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(78, 18);
-            this.label7.TabIndex = 11;
-            this.label7.Text = "Skin name";
+            this.txt_plugin_procces.AllowDrop = true;
+            this.txt_plugin_procces.Location = new System.Drawing.Point(8, 47);
+            this.txt_plugin_procces.Name = "txt_plugin_procces";
+            this.txt_plugin_procces.ReadOnly = true;
+            this.txt_plugin_procces.Size = new System.Drawing.Size(436, 24);
+            this.txt_plugin_procces.TabIndex = 21;
+            this.txt_plugin_procces.DragDrop += new System.Windows.Forms.DragEventHandler(this.txt_plugin_procces_DragDrop);
+            this.txt_plugin_procces.DragEnter += new System.Windows.Forms.DragEventHandler(this.txt_skin_folder_DragEnter);
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.Location = new System.Drawing.Point(385, 19);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(140, 22);
+            this.radioButton1.TabIndex = 30;
+            this.radioButton1.TabStop = true;
+            this.radioButton1.Text = "Use for configure";
+            this.radioButton1.UseVisualStyleBackColor = true;
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Location = new System.Drawing.Point(385, 91);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(140, 22);
+            this.radioButton2.TabIndex = 31;
+            this.radioButton2.TabStop = true;
+            this.radioButton2.Text = "Use for configure";
+            this.radioButton2.UseVisualStyleBackColor = true;
+            // 
+            // radioButton3
+            // 
+            this.radioButton3.AutoSize = true;
+            this.radioButton3.Location = new System.Drawing.Point(385, 164);
+            this.radioButton3.Name = "radioButton3";
+            this.radioButton3.Size = new System.Drawing.Size(140, 22);
+            this.radioButton3.TabIndex = 32;
+            this.radioButton3.TabStop = true;
+            this.radioButton3.Text = "Use for configure";
+            this.radioButton3.UseVisualStyleBackColor = true;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(8, 176);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(152, 18);
+            this.label11.TabIndex = 21;
+            this.label11.Text = "Icon file (bmp,jpg,png)";
+            // 
+            // btn_browse_ico
+            // 
+            this.btn_browse_ico.Location = new System.Drawing.Point(450, 197);
+            this.btn_browse_ico.Name = "btn_browse_ico";
+            this.btn_browse_ico.Size = new System.Drawing.Size(75, 26);
+            this.btn_browse_ico.TabIndex = 20;
+            this.btn_browse_ico.Text = "Browse";
+            this.toolTip1.SetToolTip(this.btn_browse_ico, "Folder of the skin, can use drag&drop+");
+            this.btn_browse_ico.UseVisualStyleBackColor = true;
+            this.btn_browse_ico.Click += new System.EventHandler(this.btn_browse_ico_Click);
+            // 
+            // txt_ico
+            // 
+            this.txt_ico.AllowDrop = true;
+            this.txt_ico.Location = new System.Drawing.Point(8, 197);
+            this.txt_ico.Name = "txt_ico";
+            this.txt_ico.ReadOnly = true;
+            this.txt_ico.Size = new System.Drawing.Size(436, 24);
+            this.txt_ico.TabIndex = 19;
+            this.txt_ico.DragDrop += new System.Windows.Forms.DragEventHandler(this.txt_ico_DragDrop);
+            this.txt_ico.DragEnter += new System.Windows.Forms.DragEventHandler(this.txt_skin_folder_DragEnter);
+            // 
+            // txt_mpe_folder
+            // 
+            this.txt_mpe_folder.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.AllSystemSources;
+            this.txt_mpe_folder.Location = new System.Drawing.Point(52, 61);
+            this.txt_mpe_folder.Name = "txt_mpe_folder";
+            this.txt_mpe_folder.Size = new System.Drawing.Size(342, 24);
+            this.txt_mpe_folder.TabIndex = 1;
+            // 
+            // btn_browse_folder
+            // 
+            this.btn_browse_folder.Location = new System.Drawing.Point(413, 61);
+            this.btn_browse_folder.Name = "btn_browse_folder";
+            this.btn_browse_folder.Size = new System.Drawing.Size(83, 24);
+            this.btn_browse_folder.TabIndex = 2;
+            this.btn_browse_folder.Text = "Browse";
+            this.btn_browse_folder.UseVisualStyleBackColor = true;
+            this.btn_browse_folder.Click += new System.EventHandler(this.btn_browse_folder_Click);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(49, 40);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(281, 18);
+            this.label12.TabIndex = 3;
+            this.label12.Text = "Folder were the package should be saved";
             // 
             // WizardSkinSelect
             // 
@@ -444,7 +665,9 @@
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
             this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
             this.tabPage5.ResumeLayout(false);
+            this.tabPage5.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -486,5 +709,23 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox txt_name;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Button btn_brows_dll3;
+        private System.Windows.Forms.TextBox txt_plugin_exe;
+        private System.Windows.Forms.Button btn_brows_dll2;
+        private System.Windows.Forms.TextBox txt_plugin_window;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Button btn_brows_dll1;
+        private System.Windows.Forms.TextBox txt_plugin_procces;
+        private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.RadioButton radioButton3;
+        private System.Windows.Forms.RadioButton radioButton2;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Button btn_browse_ico;
+        private System.Windows.Forms.TextBox txt_ico;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Button btn_browse_folder;
+        private System.Windows.Forms.TextBox txt_mpe_folder;
     }
 }
