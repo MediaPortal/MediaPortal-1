@@ -245,11 +245,12 @@ namespace MediaPortal.Configuration.Sections
       }
       else
       {
-        for (int i = 0; i < h264videoCodecComboBox.Items.Count; i++)
+        if (h264videoCodecComboBox.Text.Contains(Windows7Codec))
         {
-          string listedCodec = h264videoCodecComboBox.Items[i].ToString();
-          if (listedCodec != Windows7Codec)
+          for (int i = 0; i < h264videoCodecComboBox.Items.Count; i++)
           {
+            string listedCodec = h264videoCodecComboBox.Items[i].ToString();
+            if (listedCodec == Windows7Codec) continue;
             h264videoCodecComboBox.SelectedItem = listedCodec;
             break;
           }
@@ -267,11 +268,12 @@ namespace MediaPortal.Configuration.Sections
       }
       else
       {
-        for (int i = 0; i < videoCodecComboBox.Items.Count; i++)
+        if (videoCodecComboBox.Text.Contains(Windows7Codec))
         {
-          string listedCodec = videoCodecComboBox.Items[i].ToString();
-          if (listedCodec != Windows7Codec)
+          for (int i = 0; i < videoCodecComboBox.Items.Count; i++)
           {
+            string listedCodec = videoCodecComboBox.Items[i].ToString();
+            if (listedCodec == Windows7Codec) continue;
             videoCodecComboBox.SelectedItem = listedCodec;
             break;
           }
