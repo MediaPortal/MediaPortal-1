@@ -248,18 +248,6 @@ namespace MediaPortal.Player
       return (hr == 0);
     }
 
-    protected bool IsVideoFile(string filename)
-    {
-      bool isTimeShiftStream = false;
-      if (filename.ToLower().StartsWith("rtsp://"))
-      {
-        string url = filename.Remove(0, filename.LastIndexOf('/') + 1);
-        isTimeShiftStream = (url.Substring(0, 6) == "stream");
-      }
-      return (filename.ToLower().IndexOf(".tsbuffer") < 0 && filename.ToLower().IndexOf("radio.tsbuffer") < 0 &&
-              !isTimeShiftStream && !IsTV);
-    }
-
     protected void LoadMyTvFilterSettings(ref int intFilters, ref string strFilters, ref string strVideoCodec,
                                           ref string strAudioCodec, ref string strAACAudioCodec,
                                           ref string strH264VideoCodec, ref string strAudioRenderer,
@@ -292,38 +280,7 @@ namespace MediaPortal.Player
         _CodecSupportsFastSeeking = xmlreader.GetValueAsBool("debug", "CodecSupportsFastSeeking", true);
       }
     }
-
-    protected void LoadMyVideosFilterSettings(ref int intFilters, ref string strFilters, ref string strVideoCodec,
-                                              ref string strAudioCodec, ref string strAACAudioCodec,
-                                              ref string strH264VideoCodec, ref string strAudioRenderer,
-                                              ref bool enableDVBBitmapSubtitles, ref bool enableDVBTtxtSubtitles, ref int relaxTsReader)
-    {
-      using (Settings xmlreader = new MPSettings())
-      {
-        // FlipGer: load infos for custom filters
-        int intCount = 0;
-        while (xmlreader.GetValueAsString("movieplayer", "filter" + intCount.ToString(), "undefined") != "undefined")
-        {
-          if (xmlreader.GetValueAsBool("movieplayer", "usefilter" + intCount.ToString(), false))
-          {
-            strFilters += xmlreader.GetValueAsString("movieplayer", "filter" + intCount.ToString(), "undefined") + ";";
-            intFilters++;
-          }
-          intCount++;
-        }
-        strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
-        strAudioCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
-        strH264VideoCodec = xmlreader.GetValueAsString("movieplayer", "h264videocodec", "");
-        strAACAudioCodec = xmlreader.GetValueAsString("movieplayer", "aacaudiocodec", "");
-        strAudioRenderer = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
-        enableDVBBitmapSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
-        enableDVBTtxtSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
-        enableMPAudioSwitcher = xmlreader.GetValueAsBool("movieplayer", "audiodualmono", false);
-        relaxTsReader = (xmlreader.GetValueAsBool("mytv", "relaxTsReader", false) == false ? 0 : 1); // as int for passing through interface
-        _CodecSupportsFastSeeking = xmlreader.GetValueAsBool("debug", "CodecSupportsFastSeeking", true);
-      }
-    }
-
+    
     protected override void OnInitialized()
     {
       Log.Info("TSReaderPlayer: OnInitialized");
@@ -384,19 +341,10 @@ namespace MediaPortal.Player
         string strH264VideoCodec = "";
         int intFilters = 0; // FlipGer: count custom filters
         string strFilters = ""; // FlipGer: collect custom filters
-
-        if (IsVideoFile(filename))
-        {
-          LoadMyVideosFilterSettings(ref intFilters, ref strFilters, ref strVideoCodec, ref strAudioCodec,
-                                     ref strAACAudioCodec, ref strH264VideoCodec, ref strAudioRenderer,
-                                     ref enableDVBBitmapSubtitles, ref enableDVBTtxtSubtitles, ref relaxTsReader);
-        }
-        else
-        {
-          LoadMyTvFilterSettings(ref intFilters, ref strFilters, ref strVideoCodec, ref strAudioCodec,
+        
+        LoadMyTvFilterSettings(ref intFilters, ref strFilters, ref strVideoCodec, ref strAudioCodec,
                                  ref strAACAudioCodec, ref strH264VideoCodec, ref strAudioRenderer,
-                                 ref enableDVBBitmapSubtitles, ref enableDVBTtxtSubtitles, ref relaxTsReader);
-        }
+                                 ref enableDVBBitmapSubtitles, ref enableDVBTtxtSubtitles, ref relaxTsReader);        
 
         if (_isRadio == false)
         {
