@@ -102,6 +102,7 @@ namespace MediaPortal.Configuration.Sections
       this.h264videoCodecComboBox.Name = "h264videoCodecComboBox";
       this.h264videoCodecComboBox.Size = new System.Drawing.Size(282, 21);
       this.h264videoCodecComboBox.TabIndex = 3;
+      this.h264videoCodecComboBox.SelectedIndexChanged += new System.EventHandler(this.h264videoCodecComboBox_SelectedIndexChanged);
       // 
       // labelH264Decoder
       // 
@@ -121,6 +122,7 @@ namespace MediaPortal.Configuration.Sections
       this.videoCodecComboBox.Name = "videoCodecComboBox";
       this.videoCodecComboBox.Size = new System.Drawing.Size(282, 21);
       this.videoCodecComboBox.TabIndex = 1;
+      this.videoCodecComboBox.SelectedIndexChanged += new System.EventHandler(this.videoCodecComboBox_SelectedIndexChanged);
       // 
       // labelMPEG2Decoder
       // 

@@ -29,6 +29,8 @@ namespace MediaPortal.Configuration
 {
   public partial class SectionSettings : UserControl
   {
+    public readonly string Windows7Codec = "Microsoft DTV-DVD Video Decoder";
+
     public SectionSettings()
     {
       this.AutoScroll = true;

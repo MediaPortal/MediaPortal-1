@@ -11,7 +11,7 @@ namespace MediaPortal.Configuration.Sections
   public partial class MovieCodec : SectionSettings
   {
     private bool _init = false;
-
+    
     /// <summary>
     /// 
     /// </summary>
@@ -263,5 +263,50 @@ namespace MediaPortal.Configuration.Sections
       UpdateDecoderSettings();
       Startup._automaticMovieCodec = autoDecoderSettings.Checked;
     }
+
+    private void videoCodecComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      h264videoCodecComboBox.SelectedIndexChanged -= h264videoCodecComboBox_SelectedIndexChanged;
+      if (videoCodecComboBox.Text.Contains(Windows7Codec))
+      {
+        h264videoCodecComboBox.SelectedItem = Windows7Codec;
+      }
+      else
+      {
+        for (int i = 0; i < h264videoCodecComboBox.Items.Count; i++)
+        {
+          string listedCodec = h264videoCodecComboBox.Items[i].ToString();
+          if (listedCodec != Windows7Codec)
+          {
+            h264videoCodecComboBox.SelectedItem = listedCodec;
+            break;
+          }
+        }
+      }
+      h264videoCodecComboBox.SelectedIndexChanged += h264videoCodecComboBox_SelectedIndexChanged;
+    }
+
+    private void h264videoCodecComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      videoCodecComboBox.SelectedIndexChanged -= videoCodecComboBox_SelectedIndexChanged;
+      if (h264videoCodecComboBox.Text.Contains(Windows7Codec))
+      {
+        videoCodecComboBox.SelectedItem = Windows7Codec;
+      }
+      else
+      {
+        for (int i = 0; i < videoCodecComboBox.Items.Count; i++)
+        {
+          string listedCodec = videoCodecComboBox.Items[i].ToString();
+          if (listedCodec != Windows7Codec)
+          {
+            videoCodecComboBox.SelectedItem = listedCodec;
+            break;
+          }
+        }
+      }
+      videoCodecComboBox.SelectedIndexChanged += videoCodecComboBox_SelectedIndexChanged;
+    }
+
   }
 }
