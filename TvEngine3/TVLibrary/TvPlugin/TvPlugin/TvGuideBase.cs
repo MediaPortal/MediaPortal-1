@@ -41,6 +41,7 @@ using MediaPortal.Util;
 using MediaPortal.Video.Database;
 using TvControl;
 using TvDatabase;
+using System.Windows.Media.Animation;
 
 #endregion
 
@@ -59,6 +60,8 @@ namespace TvPlugin
 
     private const int GUIDE_COMPONENTID_START = 50000;
     // Start for numbering IDs of automaticaly generated TVguide components for channels and programs
+
+    protected const int _loopDelay = 100; // wait at the last item this amount of msec until loop to the first item
 
     #endregion
 
@@ -148,6 +151,8 @@ namespace TvPlugin
     // current minimum/maximum indexes
     //private int MaxXIndex; // means rows here (channels)
     private int MinYIndex; // means cols here (programs/time)
+
+    protected double _lastCommandTime = 0;
 
     /// <summary>
     /// Logic to decide if tvgroup button is available and visible
@@ -2265,6 +2270,7 @@ namespace TvPlugin
           SetFocus();
           GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL).Focus = false;
         }
+        _lastCommandTime = AnimationTimer.TickCount;
         return;
       }
 
@@ -2296,6 +2302,7 @@ namespace TvPlugin
           UpdateCurrentProgram();
           SetProperties();
         }
+        _lastCommandTime = AnimationTimer.TickCount;
         return;
       }
 
@@ -2317,12 +2324,19 @@ namespace TvPlugin
             // reached absolute end? 
             if (_channelOffset > 0 && _channelOffset >= _channelList.Count - _cursorX)
             {
-              //_channelOffset -= _channelList.Count;
-              _channelOffset = 0; // set back to top
-              _cursorX = 0;
+              if ((AnimationTimer.TickCount - _lastCommandTime) > _loopDelay)
+              {
+                //_channelOffset -= _channelList.Count;
+                _channelOffset = 0; // set back to top
+                _cursorX = 0;
+              }
+              else
+              {
+                _channelOffset--; // back up, do not roll over if repeated move down
+              }
             }
           }
-          else
+          else if ((AnimationTimer.TickCount - _lastCommandTime) > _loopDelay)
           {
             _cursorX = 0; // set back to top
           }
@@ -2333,6 +2347,7 @@ namespace TvPlugin
           SetFocus();
           SetProperties();
         }
+        _lastCommandTime = AnimationTimer.TickCount;
         return;
       }
 
@@ -2342,6 +2357,7 @@ namespace TvPlugin
         // if cursor is on a program in guide, try to find the "best time matching" program in new channel
         SetBestMatchingProgram(updateScreen, true);
       }
+      _lastCommandTime = AnimationTimer.TickCount;
     }
 
     private void OnUp(bool updateScreen)
@@ -2350,6 +2366,8 @@ namespace TvPlugin
       {
         UnFocus();
       }
+      _lastCommandTime = AnimationTimer.TickCount;
+
       if (!_singleChannelView && _cursorY == -1)
       {
         _cursorX = -1;
@@ -2468,8 +2486,15 @@ namespace TvPlugin
             // switch over to start needed?
             if ((_cursorX + 1 > _channelList.Count) || (_cursorX + _channelOffset + 1 > _channelList.Count))
             {
-              _channelOffset = 0; // set back to top
-              _cursorX = 0;
+              if ((AnimationTimer.TickCount - _lastCommandTime) > _loopDelay)
+              {
+                _channelOffset = 0; // set back to top
+                _cursorX = 0;
+              }
+              else
+              {
+                _channelOffset--; // back up, do not roll over if repeated move down
+              }
             }
             if (updateScreen)
             {
