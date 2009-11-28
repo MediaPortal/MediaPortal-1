@@ -103,11 +103,10 @@ namespace TvPlugin
     private static ChannelNavigator m_navigator;
     private static TVUtil _util;
     private static VirtualCard _card = null;
-    private DateTime _updateTimer = DateTime.Now;
+    private DateTime _updateTimer = DateTime.Now;    
     private static bool _autoTurnOnTv = false;
     private static int _waitonresume = 0;
     public static bool settingsLoaded = false;
-    private DateTime _dtlastTime = DateTime.Now;
     private TvCropManager _cropManager = new TvCropManager();
     private TvNotifyManager _notifyManager = new TvNotifyManager();
     private static List<string> _preferredLanguages;
@@ -489,7 +488,7 @@ namespace TvPlugin
     }
 
     private void HeartBeatTransmitter()
-    {
+    {      
       while (true)
       {
         Connected = RemoteControl.IsConnected;
@@ -901,7 +900,7 @@ namespace TvPlugin
 
         if (_doingHandleServerNotConnected)
         {
-          return !Connected;
+          return false;//we assume we are still not connected
         }
         _doingHandleServerNotConnected = true;
         bool remConnected = RemoteControl.IsConnected;
@@ -1419,7 +1418,6 @@ namespace TvPlugin
     private void OnResume()
     {
       Log.Debug("TVHome.OnResume()");
-
       HandleWakeUpTvServer();
       
       _suspended = false;
@@ -1427,7 +1425,7 @@ namespace TvPlugin
 
     public void Start()
     {
-      Log.Debug("TVHome.Start()");
+      Log.Debug("TVHome.Start()");      
     }
 
     public void Stop()
@@ -1519,7 +1517,7 @@ namespace TvPlugin
       int waits = 0;
       while (true)
       {
-        if (!Connected)
+        if (!RemoteControl.IsConnected)
         {
           if (!_onPageLoadDone)
           {
