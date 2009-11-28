@@ -25,22 +25,17 @@
 using System;
 using System.Collections.Generic;
 using MediaPortal.Core.MediaManagement;
+using MediaPortal.Backend.ClientCommunication;
 using MediaPortal.Utilities;
 using MediaPortal.Utilities.Exceptions;
 using UPnP.Infrastructure.CP.DeviceTree;
 
-namespace MediaPortal.Backend.ClientCommunication
+namespace MediaPortal.Backend.Services.ClientCommunication
 {
-  public enum ImportMode
-  {
-    Import,
-    Refresh
-  }
-
   /// <summary>
   /// Encapsulates the MediaPortal-II UPnP server's proxy for the ClientController service.
   /// </summary>
-  public class UPnPClientControllerServiceProxy
+  public class UPnPClientControllerServiceProxy : IClientController
   {
     protected CpService _serviceStub;
 

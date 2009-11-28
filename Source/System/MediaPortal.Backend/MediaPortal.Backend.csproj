@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -53,7 +53,7 @@
     <Compile Include="ClientCommunication\ClientManagerMessaging.cs" />
     <Compile Include="ClientCommunication\IClientManager.cs" />
     <Compile Include="ClientCommunication\Settings\ClientConnectionSettings.cs" />
-    <Compile Include="ClientCommunication\UPnPClientControllerServiceProxy.cs" />
+    <Compile Include="ClientCommunication\IClientController.cs" />
     <Compile Include="Database\DatabaseSubSchemaManager.cs" />
     <Compile Include="Database\IDatabaseManager.cs" />
     <Compile Include="Database\ISQLDatabase.cs" />
@@ -72,6 +72,7 @@
     <Compile Include="Services\ClientCommunication\UPnPContentDirectoryServiceImpl.cs" />
     <Compile Include="Services\ClientCommunication\UPnPServerControllerServiceImpl.cs" />
     <Compile Include="Services\ClientCommunication\UPnPServerControlPoint.cs" />
+    <Compile Include="Services\ClientCommunication\UPnPClientControllerServiceProxy.cs" />
     <Compile Include="Services\Database\SqlScriptPreprocessor.cs" />
     <Compile Include="Services\ImporterScheduler\ImporterScheduler.cs" />
     <Compile Include="Services\MediaLibrary\QueryEngine\CompiledDistinctAttributeValueQuery.cs" />

@@ -23,6 +23,7 @@
 #endregion
 
 using System;
+using MediaPortal.Backend.Services.ClientCommunication;
 using MediaPortal.Core.UPnP;
 using MediaPortal.Utilities.Exceptions;
 using UPnP.Infrastructure.CP;
@@ -36,7 +37,7 @@ namespace MediaPortal.Backend.ClientCommunication
   {
     protected DeviceConnection _connection;
     protected ClientDescriptor _clientDescriptor;
-    protected UPnPClientControllerServiceProxy _clientControllerService;
+    protected IClientController _clientController;
 
     public ClientConnection(DeviceConnection connection, ClientDescriptor clientDescriptor)
     {
@@ -51,7 +52,7 @@ namespace MediaPortal.Backend.ClientCommunication
               clientDescriptor.MPFrontendServerUUID,
               UPnPTypesAndIds.FRONTEND_SERVER_DEVICE_TYPE, UPnPTypesAndIds.FRONTEND_SERVER_DEVICE_TYPE_VERSION);
         lock (_connection.CPData.SyncObj)
-          _clientControllerService = new UPnPClientControllerServiceProxy(ccsStub);
+          _clientController = new UPnPClientControllerServiceProxy(ccsStub);
         // TODO: other services
       }
       catch (Exception)
@@ -68,9 +69,9 @@ namespace MediaPortal.Backend.ClientCommunication
       get { return _clientDescriptor; }
     }
 
-    public UPnPClientControllerServiceProxy ClientControllerService
+    public IClientController ClientController
     {
-      get { return _clientControllerService; }
+      get { return _clientController; }
     }
 
     public DeviceConnection UnderlayingConnection
@@ -85,7 +86,7 @@ namespace MediaPortal.Backend.ClientCommunication
 
     void OnUPnPDeviceDisconnected(DeviceConnection connection)
     {
-      _clientControllerService = null;
+      _clientController = null;
       InvokeClientDeviceDisconnected(this);
     }
 

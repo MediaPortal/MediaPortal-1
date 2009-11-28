@@ -24,30 +24,20 @@
 
 using System;
 using System.Collections.Generic;
+using MediaPortal.Core.General;
 using MediaPortal.Core.MediaManagement;
 using MediaPortal.Core.MediaManagement.MLQueries;
+using MediaPortal.UI.ServerCommunication;
 using MediaPortal.Utilities;
 using MediaPortal.Utilities.Exceptions;
 using UPnP.Infrastructure.CP.DeviceTree;
 
-namespace MediaPortal.UI.ServerCommunication
+namespace MediaPortal.UI.Services.ServerCommunication
 {
-  public enum RelocationMode
-  {
-    Relocate,
-    ClearAndReImport
-  }
-
-  public enum SharesFilter
-  {
-    All,
-    ConnectedShares
-  }
-
   /// <summary>
   /// Encapsulates the MediaPortal-II UPnP client's proxy for the ContentDirectory service.
   /// </summary>
-  public class UPnPContentDirectoryServiceProxy
+  public class UPnPContentDirectoryServiceProxy : IContentDirectory
   {
     protected CpService _serviceStub;
 
@@ -177,6 +167,7 @@ namespace MediaPortal.UI.ServerCommunication
       return (MediaItemAspectMetadata) outParameters[0];
     }
 
+    // Media query
     public IList<MediaItem> Search(MediaItemQuery query)
     {
       CpAction action = GetAction("Search");
@@ -202,6 +193,7 @@ namespace MediaPortal.UI.ServerCommunication
       return (HomogenousCollection) outParameters[0];
     }
 
+    // Media import
     public void AddOrUpdateMediaItem(string systemId, ResourcePath path,
         IEnumerable<MediaItemAspect> mediaItemAspects)
     {

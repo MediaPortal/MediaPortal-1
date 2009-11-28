@@ -22,28 +22,21 @@
 
 #endregion
 
-using MediaPortal.Core;
+using System.Collections.Generic;
 using MediaPortal.Core.General;
-using MediaPortal.Core.Services.SystemResolver;
-using MediaPortal.UI.ServerCommunication;
+using MediaPortal.Utilities.Exceptions;
+using UPnP.Infrastructure.CP.DeviceTree;
 
-namespace MediaPortal.UI.Services.SystemResolver
+namespace MediaPortal.UI.ServerCommunication
 {
-  public class SystemResolver : SystemResolverBase
+  /// <summary>
+  /// Interface of the MediaPortal-II server's ServerController service.
+  /// </summary>
+  public interface IServerController
   {
-    #region ISystemResolver implementation
-
-    public override SystemName GetSystemNameForSystemId(string systemId)
-    {
-      if (systemId == _localSystemId)
-        return SystemName.GetLocalSystemName();
-      IServerConnectionManager serverConnectionManager = ServiceScope.Get<IServerConnectionManager>();
-      IServerController sc = serverConnectionManager.ServerController;
-      if (sc == null)
-        return null;
-      return sc.GetSystemNameForSystemId(systemId);
-    }
-
-    #endregion
+    bool IsClientAttached(string clientSystemId);
+    void AttachClient(string clientSystemId);
+    void DetachClient(string clientSystemId);
+    SystemName GetSystemNameForSystemId(string systemId);
   }
 }

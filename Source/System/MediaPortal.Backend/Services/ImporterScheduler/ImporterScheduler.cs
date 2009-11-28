@@ -31,13 +31,18 @@ namespace MediaPortal.Backend.Services.ImporterScheduler
   {
     #region IImporterScheduler implementation
 
+    //TODO in general:
+    //- Management of a (persistent) collection of import jobs (with status: running, scheduled)
+    //- If the system shuts down, stop tasks and write them to settings
+    //- If server starts, continue tasks
+    //? method for exchange of an import job with N new sub jobs (called by the client during import)
+    //? method to mark an import job as completed
+    //- What is with recording of TV/Radio/other media?
     public void InvalidatePath(string systemId, ResourcePath path)
     {
-      // TODO
-      //weiter:
-      //- Alle Media-Items unter gegebener Location auf dirty setzen
-      //- Import einplanen (persistent - wenn Server beendet wird, Import fortsetzen (ist es notwendig, dass ImporterWorker_ und
-      //  diese Klasse miteinander über jedes importierte Verzeichnis kommunizieren?)
+      // TODO:
+      //? Set all media items of the given location to dirty
+      //- Schedule given import task
     }
 
     #endregion

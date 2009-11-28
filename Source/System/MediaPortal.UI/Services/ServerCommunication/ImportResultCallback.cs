@@ -33,12 +33,12 @@ namespace MediaPortal.UI.Services.ServerCommunication
 {
   public class ImportResultCallback : IImportResultCallback
   {
-    protected UPnPContentDirectoryServiceProxy _cds;
+    protected IContentDirectory _cds;
     protected string _localSystemId;
 
     public ImportResultCallback()
     {
-      _cds = ServiceScope.Get<IServerConnectionManager>().ContentDirectoryService;
+      _cds = ServiceScope.Get<IServerConnectionManager>().ContentDirectory;
       _localSystemId = ServiceScope.Get<ISystemResolver>().LocalSystemId;
     }
 

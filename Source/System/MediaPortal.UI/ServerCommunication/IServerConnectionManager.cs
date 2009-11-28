@@ -65,13 +65,13 @@ namespace MediaPortal.UI.ServerCommunication
     /// Gets a proxy object to communicate with the MediaPortal server's content directory service.
     /// If the home server is not connected, this value is <c>null</c>.
     /// </summary>
-    UPnPContentDirectoryServiceProxy ContentDirectoryService { get; }
+    IContentDirectory ContentDirectory { get; }
 
     /// <summary>
     /// Gets a proxy object to communicate with the MediaPortal server's server controller service.
     /// If the home server is not connected, this value is <c>null</c>.
     /// </summary>
-    UPnPServerControllerServiceProxy ServerControllerService { get; }
+    IServerController ServerController { get; }
 
     /// <summary>
     /// Starts the UPnP subsystem and tries to connect to the home server, if set.

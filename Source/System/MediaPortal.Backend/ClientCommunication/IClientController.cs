@@ -24,34 +24,25 @@
 
 using System;
 using System.Collections.Generic;
-using MediaPortal.Core;
 using MediaPortal.Core.MediaManagement;
-using MediaPortal.Core.SystemResolver;
-using MediaPortal.UI.ServerCommunication;
+using MediaPortal.Utilities;
 using MediaPortal.Utilities.Exceptions;
+using UPnP.Infrastructure.CP.DeviceTree;
 
-namespace MediaPortal.UI.Services.ServerCommunication
+namespace MediaPortal.Backend.ClientCommunication
 {
-  public class MediaLibraryCallback : IMediaLibraryCallback
+  public enum ImportMode
   {
-    protected IContentDirectory _cd;
-    protected string _localSystemId;
+    Import,
+    Refresh
+  }
 
-    public MediaLibraryCallback()
-    {
-      _cd = ServiceScope.Get<IServerConnectionManager>().ContentDirectory;
-      _localSystemId = ServiceScope.Get<ISystemResolver>().LocalSystemId;
-    }
-
-    #region IMediaLibraryCallback implementation
-
-    public ICollection<MediaItem> Browse(ResourcePath path, IEnumerable<Guid> necessaryRequestedMIATypeIDs, IEnumerable<Guid> optionalRequestedMIATypeIDs)
-    {
-      if (_cd == null)
-        throw new IllegalCallException("The MediaPortal server is not connected");
-      return _cd.Browse(_localSystemId, path, necessaryRequestedMIATypeIDs, optionalRequestedMIATypeIDs);
-    }
-
-    #endregion
+  /// <summary>
+  /// Interface of the MP-II client's ClientController service.
+  /// </summary>
+  public interface IClientController
+  {
+    string GetHomeServer();
+    void ImportLocation(ResourcePath path, IEnumerable<string> mediaCategories, ImportMode importMode);
   }
 }

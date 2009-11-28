@@ -24,15 +24,16 @@
 
 using System.Collections.Generic;
 using MediaPortal.Core.General;
+using MediaPortal.UI.ServerCommunication;
 using MediaPortal.Utilities.Exceptions;
 using UPnP.Infrastructure.CP.DeviceTree;
 
-namespace MediaPortal.UI.ServerCommunication
+namespace MediaPortal.UI.Services.ServerCommunication
 {
   /// <summary>
   /// Encapsulates the MediaPortal-II UPnP client's proxy for the ServerController service.
   /// </summary>
-  public class UPnPServerControllerServiceProxy
+  public class UPnPServerControllerServiceProxy : IServerController
   {
     protected CpService _serviceStub;
 

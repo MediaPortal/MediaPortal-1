@@ -76,7 +76,7 @@ namespace MediaPortal.Backend.Services.ClientCommunication
       ClientConnection connection = _controlPoint.GetClientConnection(clientSystemId);
       if (connection != null)
       {
-        string homeServer = connection.ClientControllerService.GetHomeServer();
+        string homeServer = connection.ClientController.GetHomeServer();
         ISystemResolver systemResolver = ServiceScope.Get<ISystemResolver>();
         if (homeServer != systemResolver.LocalSystemId)
           DetachClientAndRemoveShares(clientSystemId);

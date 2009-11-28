@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -114,7 +114,8 @@
     <Compile Include="ServerCommunication\ServerConnectionMessaging.cs" />
     <Compile Include="ServerCommunication\Settings\FrontendServerSettings.cs" />
     <Compile Include="ServerCommunication\Settings\ServerConnectionSettings.cs" />
-    <Compile Include="ServerCommunication\UPnPServerControllerServiceProxy.cs" />
+    <Compile Include="ServerCommunication\IServerController.cs" />
+    <Compile Include="ServerCommunication\IContentDirectory.cs" />
     <Compile Include="Services\FrontendServer\FrontendServer.cs" />
     <Compile Include="Services\Logging\UiCrashLogger.cs" />
     <Compile Include="Services\Players\Builders\PlayerBuilder.cs" />
@@ -134,6 +135,8 @@
     <Compile Include="Services\ServerCommunication\UPnPClientControlPoint.cs" />
     <Compile Include="Services\ServerCommunication\UPnPFrontendServer.cs" />
     <Compile Include="Services\ServerCommunication\UPnPServerWatcher.cs" />
+    <Compile Include="Services\ServerCommunication\UPnPServerControllerServiceProxy.cs" />
+    <Compile Include="Services\ServerCommunication\UPnPContentDirectoryServiceProxy.cs" />
     <Compile Include="Services\Shares\LocalSharesManagement.cs" />
     <Compile Include="Services\Shares\SharesMessaging.cs" />
     <Compile Include="Services\Shares\Settings\SharesSettings.cs" />
@@ -144,7 +147,6 @@
     <Compile Include="Services\ThumbnailGenerator\ThumbnailBuilder.cs" />
     <Compile Include="Services\ThumbnailGenerator\ThumbnailGenerator.cs" />
     <Compile Include="Services\ThumbnailGenerator\WorkItem.cs" />
-    <Compile Include="ServerCommunication\UPnPContentDirectoryServiceProxy.cs" />
     <Compile Include="Services\UserManagement\Permission.cs" />
     <Compile Include="Services\UserManagement\Role.cs" />
     <Compile Include="Services\UserManagement\User.cs" />

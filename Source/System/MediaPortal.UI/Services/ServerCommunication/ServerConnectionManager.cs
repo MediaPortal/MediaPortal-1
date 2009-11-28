@@ -70,8 +70,8 @@ namespace MediaPortal.UI.Services.ServerCommunication
     {
       if (message.ChannelName == SharesMessaging.CHANNEL)
       {
-        UPnPContentDirectoryServiceProxy cds = ContentDirectoryService;
-        if (cds == null)
+        IContentDirectory cd = ContentDirectory;
+        if (cd == null)
           return;
         ILocalSharesManagement sharesManagement = ServiceScope.Get<ILocalSharesManagement>();
         SharesMessaging.MessageType messageType =
@@ -84,18 +84,18 @@ namespace MediaPortal.UI.Services.ServerCommunication
             shareId = (Guid) message.MessageData[SharesMessaging.SHARE_ID];
             share = sharesManagement.GetShare(shareId);
             if (share != null)
-              cds.RegisterShare(share);
+              cd.RegisterShare(share);
             break;
           case SharesMessaging.MessageType.ShareRemoved:
             shareId = (Guid) message.MessageData[SharesMessaging.SHARE_ID];
-            cds.RemoveShare(shareId);
+            cd.RemoveShare(shareId);
             break;
           case SharesMessaging.MessageType.ShareChanged:
             shareId = (Guid) message.MessageData[SharesMessaging.SHARE_ID];
             RelocationMode relocationMode = (RelocationMode) message.MessageData[SharesMessaging.RELOCATION_MODE];
             share = sharesManagement.GetShare(shareId);
             if (share != null)
-              cds.UpdateShare(shareId, share.BaseResourcePath, share.Name, share.MediaCategories,
+              cd.UpdateShare(shareId, share.BaseResourcePath, share.Name, share.MediaCategories,
                   relocationMode == RelocationMode.Relocate ? UI.ServerCommunication.RelocationMode.Relocate :
                   UI.ServerCommunication.RelocationMode.ClearAndReImport);
             break;
@@ -163,36 +163,35 @@ namespace MediaPortal.UI.Services.ServerCommunication
     /// </summary>
     protected void SynchronizeDataWithServer()
     {
-      UPnPServerControllerServiceProxy serverControllerService = ServerControllerService;
+      IServerController sc = ServerController;
       ISystemResolver systemResolver = ServiceScope.Get<ISystemResolver>();
-      if (serverControllerService != null)
+      if (sc != null)
         try
         {
-          string localSystemId = systemResolver.LocalSystemId;
-          if (!serverControllerService.IsClientAttached(localSystemId))
-            serverControllerService.AttachClient(localSystemId);
+          if (!sc.IsClientAttached(systemResolver.LocalSystemId))
+            sc.AttachClient(systemResolver.LocalSystemId);
         }
         catch (Exception e)
         {
           ServiceScope.Get<ILogger>().Warn("ServerConnectionManager: Error attaching to home server '{0}'", e, HomeServerSystemId);
           return; // As this is a real error case, we don't need to try any other service calls
         }
-      UPnPContentDirectoryServiceProxy contentDirectoryService = ContentDirectoryService;
-      if (contentDirectoryService != null)
+      IContentDirectory cd = ContentDirectory;
+      if (cd != null)
       {
         try
         {
           ServiceScope.Get<ILogger>().Info("ServerConnectionManager: Synchronizing shares with home server");
           IDictionary<Guid, Share> serverShares = new Dictionary<Guid, Share>();
-          foreach (Share share in contentDirectoryService.GetShares(systemResolver.LocalSystemId, SharesFilter.All))
+          foreach (Share share in cd.GetShares(systemResolver.LocalSystemId, SharesFilter.All))
             serverShares.Add(share.ShareId, share);
           IDictionary<Guid, Share> localShares = ServiceScope.Get<ILocalSharesManagement>().Shares;
           foreach (Share localShare in localShares.Values)
             if (!serverShares.ContainsKey(localShare.ShareId))
-              contentDirectoryService.RegisterShare(localShare);
+              cd.RegisterShare(localShare);
           foreach (Guid serverShareId in serverShares.Keys)
             if (!localShares.ContainsKey(serverShareId))
-              contentDirectoryService.RemoveShare(serverShareId);
+              cd.RemoveShare(serverShareId);
         }
         catch (Exception e)
         {
@@ -202,10 +201,10 @@ namespace MediaPortal.UI.Services.ServerCommunication
         {
           IMediaItemAspectTypeRegistration miatr = ServiceScope.Get<IMediaItemAspectTypeRegistration>();
           ServiceScope.Get<ILogger>().Info("ServerConnectionManager: Add unregistered media item aspect types at home server");
-          ICollection<Guid> serverMIATypes = contentDirectoryService.GetAllManagedMediaItemAspectMetadataIds();
+          ICollection<Guid> serverMIATypes = cd.GetAllManagedMediaItemAspectMetadataIds();
           foreach (KeyValuePair<Guid, MediaItemAspectMetadata> localMiaType in miatr.LocallyKnownMediaItemAspectTypes)
             if (!serverMIATypes.Contains(localMiaType.Key))
-              contentDirectoryService.AddMediaItemAspectStorage(localMiaType.Value);
+              cd.AddMediaItemAspectStorage(localMiaType.Value);
         }
         catch (Exception e)
         {
@@ -263,7 +262,7 @@ namespace MediaPortal.UI.Services.ServerCommunication
       }
     }
 
-    public UPnPContentDirectoryServiceProxy ContentDirectoryService
+    public IContentDirectory ContentDirectory
     {
       get
       {
@@ -274,7 +273,7 @@ namespace MediaPortal.UI.Services.ServerCommunication
       }
     }
 
-    public UPnPServerControllerServiceProxy ServerControllerService
+    public IServerController ServerController
     {
       get
       {
@@ -310,12 +309,12 @@ namespace MediaPortal.UI.Services.ServerCommunication
     public void DetachFromHomeServer()
     {
       ServiceScope.Get<ILogger>().Info("ServerConnectionManager: Detaching from home server");
-      UPnPServerControllerServiceProxy serverControllerService = ServerControllerService;
+      IServerController sc = ServerController;
       ISystemResolver systemResolver = ServiceScope.Get<ISystemResolver>();
-      if (serverControllerService != null)
+      if (sc != null)
         try
         {
-          serverControllerService.DetachClient(systemResolver.LocalSystemId);
+          sc.DetachClient(systemResolver.LocalSystemId);
         }
         catch (Exception e)
         {

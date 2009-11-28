@@ -22,7 +22,9 @@
 
 #endregion
 
+using MediaPortal.Backend.ClientCommunication;
 using MediaPortal.Backend.BackendServer;
+using MediaPortal.Backend.ImporterScheduler;
 using MediaPortal.Backend.Services.SystemResolver;
 using MediaPortal.Core;
 using MediaPortal.Core.Logging;
@@ -53,8 +55,14 @@ namespace MediaPortal.Backend
       logger.Debug("BackendExtension: Registering IMediaItemAspectTypeRegistration service");
       ServiceScope.Add<IMediaItemAspectTypeRegistration>(new MediaItemAspectTypeRegistration());
 
+      logger.Debug("BackendExtension: Registering IImporterScheduler service");
+      ServiceScope.Add<IImporterScheduler>(new Services.ImporterScheduler.ImporterScheduler());
+
       logger.Debug("BackendExtension: Registering IBackendServer service");
       ServiceScope.Add<IBackendServer>(new Services.BackendServer.BackendServer());
+
+      logger.Debug("BackendExtension: Registering IClientManager service");
+      ServiceScope.Add<IClientManager>(new Services.ClientCommunication.ClientManager());
     }
 
     /// <summary>
@@ -77,8 +85,14 @@ namespace MediaPortal.Backend
     {
       ILogger logger = ServiceScope.Get<ILogger>();
 
+      logger.Debug("BackendExtension: Removing IClientManager service");
+      ServiceScope.RemoveAndDispose<IClientManager>();
+
       logger.Debug("BackendExtension: Removing IBackendServer service");
       ServiceScope.RemoveAndDispose<IBackendServer>();
+
+      logger.Debug("BackendExtension: Removing IImporterScheduler service");
+      ServiceScope.RemoveAndDispose<IImporterScheduler>();
 
       logger.Debug("BackendExtension: Removing IMediaItemAspectTypeRegistration service");
       ServiceScope.RemoveAndDispose<IMediaItemAspectTypeRegistration>();
