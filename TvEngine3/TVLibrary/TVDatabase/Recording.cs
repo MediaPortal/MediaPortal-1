@@ -458,6 +458,26 @@ namespace TvDatabase
       return ObjectFactory.GetCollection<Recording>(stmt.Execute());
     }
 
+
+    /// <summary>
+    /// Refresh the recording
+    /// </summary>
+    
+    public static Recording Refresh(int id)
+    {
+      // Return null if id is smaller than seed and/or increment for autokey
+      if (id < 1)
+      {
+        return null;
+      }
+      Key key = new Key(typeof(Recording), true, "idRecording", id);
+
+      Recording rec =  Broker.RetrieveInstance<Recording>(key);
+      Broker.Refresh(rec);
+
+      return rec;
+    }    
+
     /// <summary>
     /// Retrieves an entity given it's id.
     /// </summary>
@@ -469,6 +489,7 @@ namespace TvDatabase
         return null;
       }
       Key key = new Key(typeof(Recording), true, "idRecording", id);
+
       return Broker.RetrieveInstance<Recording>(key);
     }    
 
