@@ -1,18 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>3002</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
-    <control> 
+    <control>
       <description>rec logo</description>
       <type>image</type>
       <id>4</id>
-      <posX>20</posX>
-      <posY>10</posY>
+      <posX>21</posX>
+      <posY>17</posY>
       <texture>remote_red.png</texture>
-      <animation effect="fade" time="250">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
   </controls>
 </window>

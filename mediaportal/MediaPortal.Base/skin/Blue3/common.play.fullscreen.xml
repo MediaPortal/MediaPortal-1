@@ -1,51 +1,51 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
     <control>
-      <description>row 1 label</description>
+      <description>row 1 label subtitle</description>
       <type>label</type>
       <id>10</id>
-      <posX>650</posX>
-      <posY>40</posY>
+      <posX>365</posX>
+      <posY>552</posY>
       <label>-</label>
       <align>center</align>
-      <font>font14</font>
-      <textcolor>black</textcolor>
+      <font>font13</font>
+      <textcolor>white</textcolor>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
     <control>
-      <description>row 2 label</description>
+      <description>row 2 label Language</description>
       <type>label</type>
       <id>11</id>
-      <posX>614</posX>
-      <posY>90</posY>
+      <posX>613</posX>
+      <posY>89</posY>
       <label>-</label>
       <align>left</align>
       <font>font13</font>
-      <textcolor>black</textcolor>
+      <textcolor>white</textcolor>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
     <control>
-      <description>row 3 label</description>
+      <description>row 3 label aspectratio</description>
       <type>label</type>
       <id>12</id>
-      <posX>614</posX>
-      <posY>150</posY>
+      <posX>613</posX>
+      <posY>149</posY>
       <label>-</label>
       <align>left</align>
       <font>font13</font>
-      <textcolor>black</textcolor>
+      <textcolor>white</textcolor>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
-
     <!-- common volume gfx -->
     <control>
       <type>image</type>
       <id>500</id>
-      <posX>626</posX>
+      <posX>625</posX>
       <posY>96</posY>
       <texture>volume.states.mute.png</texture>
       <visible>no</visible>
@@ -54,7 +54,7 @@
     <control>
       <type>volumebar</type>
       <id>501</id>
-      <posX>660</posX>
+      <posX>659</posX>
       <posY>60</posY>
       <align>right</align>
       <height>16</height>

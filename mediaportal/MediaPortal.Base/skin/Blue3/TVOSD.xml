@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>3003</id>
   <defaultcontrol>213</defaultcontrol>
@@ -6,19 +7,49 @@
   <define>#play.progressbar.percentage:#TV.View.Percentage</define>
   <define>#play.progressbar.currentplaytime:#TV.View.start</define>
   <define>#play.progressbar.currentremaining:#TV.View.stop</define>
-  <define>#play.osd.background:osd_bg_bottom.png</define>
   <controls>
     <import>common.play.osd.xml</import>
     <control>
       <description>TV Logo</description>
       <type>image</type>
-      <posX>40</posX>
-      <posY>348</posY>
-      <width>50</width>
-      <height>50</height>
+      <id>0</id>
+      <posX>39</posX>
+      <posY>480</posY>
+      <width>45</width>
+      <height>64</height>
       <texture>#TV.View.thumb</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
+      <visible>!Control.IsVisible(989)</visible>
+      <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
+      <animation effect="fade" time="150">windowopen</animation>
+    </control>
+    <control>
+      <description>TV Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>39</posX>
+      <posY>480</posY>
+      <width>45</width>
+      <height>64</height>
+      <texture>#TV.View.thumb</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <visible>Control.IsVisible(989)</visible>
+      <animation effect="slide" start="0,0" end="0,-100" time="400" reversible="false">visible</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
+    </control>
+    <control>
+      <description>progress bar background</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>95</posX>
+      <posY>516</posY>
+      <width>467</width>
+      <height>20</height>
+      <texture>osd_progress_background.png</texture>
+      <visible>window.isosdvisible|player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -26,12 +57,12 @@
       <description>TV Progress Bar</description>
       <type>tvprogress</type>
       <id>101</id>
-      <posX>98</posX>
-      <posY>30</posY>
-      <width>402</width>
+      <posX>87</posX>
+      <posY>517</posY>
+      <width>462</width>
       <height>20</height>
       <toptexture>osd_progress_indicator.png</toptexture>
-      <TextureOffsetY>22</TextureOffsetY>
+      <TextureOffsetY>19</TextureOffsetY>
       <bottomtexture>-</bottomtexture>
       <texturetick>-</texturetick>
       <lefttexture>-</lefttexture>
@@ -39,18 +70,15 @@
       <righttexture>-</righttexture>
       <logotexture>-</logotexture>
       <fillbackgroundtexture>-</fillbackgroundtexture>
-      <fillbgxoff>10</fillbgxoff>
-      <fillbgyoff>10</fillbgyoff>
+      <fillbgxoff>9</fillbgxoff>
+      <fillbgyoff>9</fillbgyoff>
       <filltexture1>osd_progress_mid_red.png</filltexture1>
       <filltexture2>osd_progress_mid.png</filltexture2>
       <filltexture3>osd_progress_mid_orange.png</filltexture3>
-      <fillheight>20</fillheight>
+      <fillheight>14</fillheight>
       <label>#TV.Record.percent1</label>
       <label1>#TV.Record.percent2</label1>
       <label2>#TV.Record.percent3</label2>
-      <startlabel />
-      <endlabel />
-      <toplabel />
       <font>font13</font>
       <textcolor>FF000000</textcolor>
     </control>
@@ -58,76 +86,130 @@
       <description>rec logo</description>
       <type>image</type>
       <id>39</id>
-      <posX>375</posX>
-      <posY>350</posY>
+      <posX>511</posX>
+      <posY>424</posY>
       <texture>rec.png</texture>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>Channel Name</description>
-      <type>textbox</type>
-      <width>310</width>
-      <height>30</height>
-      <posX>110</posX>
-      <posY>340</posY>
+      <type>label</type>
+      <width>79</width>
+      <height>29</height>
+      <posX>39</posX>
+      <posY>424</posY>
       <align>left</align>
       <font>font13</font>
       <label>#TV.View.channel</label>
       <textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <visible>!Control.IsVisible(989)</visible>
+      <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
+      <animation effect="fade" time="150">windowopen</animation>
+    </control>
+    <control>
+      <description>Channel Name</description>
+      <type>label</type>
+      <width>79</width>
+      <height>29</height>
+      <posX>39</posX>
+      <posY>424</posY>
+      <align>left</align>
+      <font>font13</font>
+      <label>#TV.View.channel</label>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>Control.IsVisible(989)</visible>
+      <animation effect="slide" start="0,0" end="0,-100" time="400" reversible="false">visible</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>On tv NOW</description>
       <id>36</id>
       <type>textbox</type>
-      <width>290</width>
-      <height>30</height>
-      <posX>110</posX>
-      <posY>368</posY>
-      <align>left</align>
+      <width>233</width>
+      <height>29</height>
+      <posX>807</posX>
+      <posY>424</posY>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <label>#TV.View.title</label>
+      <textcolor>white</textcolor>
+    </control>
+    <control>
+      <description>TV Now Label</description>
+      <type>label</type>
+      <width>233</width>
+      <height>29</height>
+      <posX>126</posX>
+      <posY>424</posY>
+      <font>font13</font>
+      <label>#TV.View.title</label>
+      <textcolor>white</textcolor>
+      <visible>!Control.IsVisible(989)</visible>
+      <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
+      <animation effect="fade" time="150">windowopen</animation>
+    </control>
+    <control>
+      <description>TV Now Label 2</description>
+      <type>label</type>
+      <width>233</width>
+      <height>29</height>
+      <posX>126</posX>
+      <posY>424</posY>
+      <font>font13</font>
+      <label>#TV.View.title</label>
+      <textcolor>white</textcolor>
+      <visible>Control.IsVisible(989)</visible>
+      <animation effect="slide" start="0,0" end="0,-100" time="400" reversible="false">visible</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>Plot</description>
       <type>textboxscrollup</type>
-      <id>38</id>
-      <posX>110</posX>
-      <posY>400</posY>
-      <width>290</width>
-      <height>108</height>
-      <align>left</align>
+      <posX>126</posX>
+      <posY>456</posY>
+      <width>402</width>
+      <height>52</height>
       <label>#TV.View.description</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <visible>!Control.IsVisible(989)</visible>
+      <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
+      <animation effect="fade" time="800" delay="250" reversible="false">visible</animation>
+    </control>
+    <control>
+      <description>Plot</description>
+      <type>textboxscrollup</type>
+      <posX>126</posX>
+      <posY>376</posY>
+      <width>402</width>
+      <height>129</height>
+      <label>#TV.View.description</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>Control.IsVisible(989)</visible>
+      <animation effect="fade" time="800" delay="250" reversible="false">visible</animation>
+      <animation effect="fade" time="10" delay="0" reversible="false">hidden</animation>
     </control>
     <control>
       <description>On tv NEXT</description>
       <id>37</id>
       <type>textbox</type>
-      <width>290</width>
-      <height>30</height>
-      <posX>110</posX>
-      <posY>518</posY>
-      <align>left</align>
-      <font>font13</font>
+      <posX>180</posX>
+      <posY>538</posY>
+      <width>281</width>
+      <height>19</height>
+      <font>font12</font>
       <textcolor>FFB2D4F5</textcolor>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>Program Button Up</description>
       <type>button</type>
       <id>33</id>
-      <posX>195</posX>
-      <posY>413</posY>
-      <width>20</width>
+      <posX>194</posX>
+      <posY>412</posY>
+      <width>19</width>
       <height>20</height>
       <textureFocus>arrow_round_left_focus.png</textureFocus>
       <textureNoFocus>arrow_round_left_nofocus.png</textureNoFocus>
@@ -137,16 +219,16 @@
       <onup>33</onup>
       <ondown>32</ondown>
       <visible>no</visible>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>Program Button Down</description>
       <type>button</type>
       <id>34</id>
-      <posX>570</posX>
-      <posY>413</posY>
-      <width>20</width>
+      <posX>569</posX>
+      <posY>412</posY>
+      <width>19</width>
       <height>20</height>
       <textureFocus>arrow_round_right_focus.png</textureFocus>
       <textureNoFocus>arrow_round_right_nofocus.png</textureNoFocus>
@@ -156,16 +238,16 @@
       <onup>34</onup>
       <ondown>31</ondown>
       <visible>no</visible>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>Channel Button Up</description>
       <type>button</type>
       <id>31</id>
-      <posX>620</posX>
+      <posX>619</posX>
       <posY>520</posY>
-      <width>20</width>
+      <width>19</width>
       <height>20</height>
       <textureFocus>arrow_round_up_focus.png</textureFocus>
       <textureNoFocus>arrow_round_up_nofocus.png</textureNoFocus>
@@ -175,16 +257,16 @@
       <onup>34</onup>
       <ondown>31</ondown>
       <visible>no</visible>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>Channel Button Down</description>
       <type>button</type>
       <id>32</id>
-      <posX>570</posX>
+      <posX>569</posX>
       <posY>520</posY>
-      <width>20</width>
+      <width>19</width>
       <height>20</height>
       <textureFocus>arrow_round_down_focus.png</textureFocus>
       <textureNoFocus>arrow_round_down_nofocus.png</textureNoFocus>
@@ -194,21 +276,46 @@
       <onup>33</onup>
       <ondown>32</ondown>
       <visible>no</visible>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>Current channel</description>
       <type>label</type>
       <id>35</id>
-      <posX>570</posX>
-      <posY>505</posY>
+      <posX>569</posX>
+      <posY>504</posY>
       <width>90</width>
       <label>-</label>
       <align>left</align>
       <font>font10</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>no</visible>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
+    </control>
+    <control>
+      <description>Current Time Info</description>
+      <type>label</type>
+      <posX>39</posX>
+      <posY>453</posY>
+      <label>#time</label>
+      <font>font13</font>
+      <textcolor>white</textcolor>
+      <visible>!Control.IsVisible(989)</visible>
+      <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Current Time Info</description>
+      <type>label</type>
+      <posX>39</posX>
+      <posY>453</posY>
+      <label>#time</label>
+      <font>font13</font>
+      <textcolor>white</textcolor>
+      <visible>Control.IsVisible(989)</visible>
+      <animation effect="slide" start="0,0" end="0,-100" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>

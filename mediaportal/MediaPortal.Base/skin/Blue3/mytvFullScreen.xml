@@ -1,4 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>602</id>
   <defaultcontrol>13</defaultcontrol>
@@ -13,9 +14,9 @@
       <description>channelname</description>
       <type>label</type>
       <id>14</id>
-      <posX>38</posX>
-      <posY>30</posY>
-      <width>190</width>
+      <posX>37</posX>
+      <posY>29</posY>
+      <width>189</width>
       <label>-</label>
       <align>left</align>
       <font>font13</font>
@@ -23,7 +24,21 @@
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
- <!--  will be removed later if no issues occur
+    <control>
+      <description>TV Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>590</posX>
+      <posY>508</posY>
+      <width>39</width>
+      <height>56</height>
+      <texture>#TV.View.thumb</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <visible>player.rewinding|Control.IsVisible(10)|player.forwarding|player.paused+!window.isosdvisible</visible>
+      <animation effect="fade" time="150">windowopen</animation>
+    </control>
+    <!--  will be removed later if no issues occur
  <control>
       <description>skip steps</description>
       <type>label</type>
@@ -50,18 +65,18 @@
       <colordiffuse>White</colordiffuse>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
-    </control>  
+    </control>
 -->
     <control>
       <description>TV Progress Bar</description>
       <type>tvprogress</type>
       <id>100</id>
-      <posX>98</posX>
-      <posY>30</posY>
-      <width>402</width>
+      <posX>87</posX>
+      <posY>517</posY>
+      <width>462</width>
       <height>20</height>
       <toptexture>osd_progress_indicator.png</toptexture>
-      <TextureOffsetY>22</TextureOffsetY>
+      <TextureOffsetY>19</TextureOffsetY>
       <bottomtexture>-</bottomtexture>
       <texturetick>-</texturetick>
       <lefttexture>-</lefttexture>
@@ -69,36 +84,24 @@
       <righttexture>-</righttexture>
       <logotexture>-</logotexture>
       <fillbackgroundtexture>-</fillbackgroundtexture>
-      <fillbgxoff>10</fillbgxoff>
-      <fillbgyoff>10</fillbgyoff>
+      <fillbgxoff>9</fillbgxoff>
+      <fillbgyoff>9</fillbgyoff>
       <filltexture1>osd_progress_mid_red.png</filltexture1>
       <filltexture2>osd_progress_mid.png</filltexture2>
       <filltexture3>osd_progress_mid_orange.png</filltexture3>
-      <fillheight>20</fillheight>
+      <fillheight>14</fillheight>
       <label>#TV.Record.percent1</label>
       <label1>#TV.Record.percent2</label1>
       <label2>#TV.Record.percent3</label2>
-      <startlabel />
-      <endlabel />
-      <toplabel />
       <font>font13</font>
       <textcolor>FF000000</textcolor>
-    </control>
-    <control>
-      <description>rec logo</description>
-      <type>image</type>
-      <id>39</id>
-      <posX>5</posX>
-      <posY>27</posY>
-      <texture>rec.png</texture>
-      <animation effect="fade" time="250">visiblechange</animation>
     </control>
     <control>
       <description>MSGBox</description>
       <type>button</type>
       <id>2</id>
       <posX>0</posX>
-      <posY>370</posY>
+      <posY>369</posY>
       <width>720</width>
       <height>180</height>
       <label>-</label>
@@ -110,9 +113,9 @@
       <description>MSGBox label 1</description>
       <type>label</type>
       <id>3</id>
-      <posX>50</posX>
+      <posX>49</posX>
       <posY>380</posY>
-      <width>650</width>
+      <width>649</width>
       <label>-</label>
       <align>left</align>
       <font>dingbats</font>
@@ -124,9 +127,9 @@
       <description>MSGBox label 2</description>
       <type>label</type>
       <id>4</id>
-      <posX>50</posX>
+      <posX>49</posX>
       <posY>420</posY>
-      <width>650</width>
+      <width>649</width>
       <label>-</label>
       <align>left</align>
       <font>dingbats</font>
@@ -138,9 +141,9 @@
       <description>MSGBox label 3</description>
       <type>label</type>
       <id>5</id>
-      <posX>50</posX>
+      <posX>49</posX>
       <posY>460</posY>
-      <width>650</width>
+      <width>649</width>
       <label>-</label>
       <align>left</align>
       <font>dingbats</font>
@@ -152,9 +155,9 @@
       <description>MSGBox label 2</description>
       <type>label</type>
       <id>6</id>
-      <posX>50</posX>
+      <posX>49</posX>
       <posY>500</posY>
-      <width>650</width>
+      <width>649</width>
       <label>-</label>
       <align>left</align>
       <font>dingbats</font>

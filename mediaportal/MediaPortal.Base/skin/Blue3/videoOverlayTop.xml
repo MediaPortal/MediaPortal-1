@@ -1,16 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <defaultcontrol>4</defaultcontrol>
   <id>3008</id>
   <controls>
-    <control> 
+    <control>
       <description>Pause logo</description>
       <type>image</type>
       <id>4</id>
-      <posX>212</posX>
-      <posY>460</posY>
-      <width>36</width>
-	  <height>42</height>
+      <posX>169</posX>
+      <posY>472</posY>
+      <width>29</width>
+      <height>41</height>
       <texture>logo_pause.png</texture>
       <visible>player.paused</visible>
     </control>
@@ -18,10 +19,10 @@
       <description>FF logo</description>
       <type>image</type>
       <id>5</id>
-      <posX>212</posX>
-      <posY>460</posY>
-      <width>36</width>
-	  <height>42</height>
+      <posX>169</posX>
+      <posY>472</posY>
+      <width>29</width>
+      <height>41</height>
       <texture>logo_fastforward.png</texture>
       <visible>player.forwarding</visible>
     </control>
@@ -29,10 +30,10 @@
       <description>RW logo</description>
       <type>image</type>
       <id>6</id>
-      <posX>10</posX>
-      <posY>460</posY>
-      <width>36</width>
-	  <height>42</height>
+      <posX>169</posX>
+      <posY>472</posY>
+      <width>29</width>
+      <height>41</height>
       <texture>logo_rewind.png</texture>
       <visible>player.rewinding</visible>
     </control>
