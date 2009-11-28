@@ -95,6 +95,7 @@ void CDvbUtil::getString468A(BYTE *buf, int bufLen, char *text, int textLen)
 {
   BYTE c;
   WORD w;
+
 	int bufIndex = 0, textIndex = 0;
 
   if (buf == NULL) return;
@@ -107,12 +108,11 @@ void CDvbUtil::getString468A(BYTE *buf, int bufLen, char *text, int textLen)
   c = buf[bufIndex++];
   if (c != 0x11)
   {
-    // process 1 byte characters
-    text[textIndex++] = c;
-    text[textIndex] = 0;
+    bufIndex--; // need to start from 1st byte
+    // check for character coding info byte
     if (c == 0x10)
     {
-      // three byre encoding
+      // three byte encoding
       if (textLen >= 3)
       {
         text[textIndex++] = 0x10;
@@ -127,9 +127,12 @@ void CDvbUtil::getString468A(BYTE *buf, int bufLen, char *text, int textLen)
     {
       c = buf[bufIndex++];
       if (c == 0x8A)
+      {
         c = '\r';
-      else if (((c >= 0x00) && (c <= 0x1F)) || ((c >= 0x80) && (c < 0x9F)))
-        c = 0;
+      }
+      else if (((c > 0x05) && (c <= 0x1F)) || ((c >= 0x80) && (c < 0x9F))) //0x1-0x5 = choose character set, must keep this byte!
+        c = 0; // ignore
+
       if (c != 0)
         text[textIndex++] = c;
     }
@@ -146,7 +149,7 @@ void CDvbUtil::getString468A(BYTE *buf, int bufLen, char *text, int textLen)
       w |= buf[bufIndex++];
       if (w == 0xE08A)
         w = '\r';
-      else if (((w >= 0x00) && (w <= 0x1F)) || ((w >= 0xE080) && (w < 0xE09F)))
+      else if (((w > 0x05) && (w <= 0x1F)) || ((w >= 0xE080) && (w < 0xE09F)))
         w = 0;
       if (w != 0)
       {
