@@ -25,7 +25,7 @@ namespace MpeInstaller.Classes
 
         public void Save()
         {
-            string filename = string.Format("{0}\\V2\\InstallerSettings.xml", Config.GetFolder(Config.Dir.Installer));
+            string filename = string.Format("{0}\\InstallerSettings.xml", MpeCore.MpeInstaller.BaseFolder);
             var serializer = new XmlSerializer(typeof(ApplicationSettings));
             TextWriter writer = new StreamWriter(filename);
             serializer.Serialize(writer, this);
@@ -35,7 +35,7 @@ namespace MpeInstaller.Classes
         public static ApplicationSettings Load()
         {
             ApplicationSettings apls = new ApplicationSettings();
-            string filename = string.Format("{0}\\V2\\InstallerSettings.xml", Config.GetFolder(Config.Dir.Installer));
+            string filename = string.Format("{0}\\InstallerSettings.xml", MpeCore.MpeInstaller.BaseFolder);
 
             if (File.Exists(filename))
             {

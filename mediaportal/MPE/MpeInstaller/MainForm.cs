@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using System.Windows.Forms;
 using Ionic.Zip;
 using MediaPortal.Configuration;
@@ -27,19 +28,103 @@ namespace MpeInstaller
         public MainForm(ProgramArguments args)
         {
             Init();
-            if(File.Exists(args.PackageFile))
+            try
             {
-                InstallFile(args.PackageFile, args.Silent);
-                this.Close();
-                return;
+                if (File.Exists(args.PackageFile))
+                {
+                    _settings.DoUpdateInStartUp = false;
+                    InstallFile(args.PackageFile, args.Silent);
+                    this.Close();
+                    return;
+                }
+                if (args.Update)
+                {
+                    _settings.DoUpdateInStartUp = false;
+                    RefreshLists();
+                    DoUpdateAll();
+                    this.Close();
+                    return;
+                }
+                if (args.MpQueue)
+                {
+                    _settings.DoUpdateInStartUp = false;
+                    ExecuteMpQueue();
+                    this.Close();
+                    return;
+                }
+
             }
-            if(args.Update)
+            catch (Exception ex)
             {
-                RefreshLists();
-                DoUpdateAll();
-                this.Close();
-                return;
+                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.StackTrace);
             }
+        }
+
+        public void ExecuteMpQueue()
+        {
+            Process[] prs = Process.GetProcesses();
+            foreach (Process pr in prs)
+            {
+                if (pr.ProcessName.Equals("MediaPortal", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    pr.CloseMainWindow();
+                    pr.Close();
+                    Thread.Sleep(500);
+                }
+            }
+            prs = Process.GetProcesses();
+            foreach (Process pr in prs)
+            {
+                if (pr.ProcessName.Equals("MediaPortal", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    try
+                    {
+                        Thread.Sleep(5000);
+                        pr.Kill();
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                }
+            }
+            ExecuteQueue();
+            Process.Start(Config.GetFile(Config.Dir.Base, "MediaPortal.exe"));
+        }
+
+        public void ExecuteQueue()
+        {
+            //UpdateList(true);
+            QueueCommandCollection collection = QueueCommandCollection.Load();
+            foreach (QueueCommand item in collection.Items)
+            {
+                switch (item.CommandEnum)
+                {
+                    case CommandEnum.Install:
+                        {
+                            PackageClass packageClass = MpeCore.MpeInstaller.KnownExtensions.Get(item.TargetId,
+                                                                                                     item.TargetVersion.
+                                                                                                         ToString());
+                            string newPackageLoacation = GetPackageLocation(packageClass);
+                            InstallFile(newPackageLoacation, true);
+                        }
+                        break;
+                    case CommandEnum.Uninstall:
+                        {
+                            PackageClass packageClass = MpeCore.MpeInstaller.InstalledExtensions.Get(item.TargetId);
+                            if (packageClass == null)
+                                continue;
+                            UnInstall dlg = new UnInstall();
+                            dlg.Execute(packageClass, true);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+            collection.Items.Clear();
+            collection.Save();
         }
 
         public void Init()
@@ -260,6 +345,13 @@ namespace MpeInstaller
 
         public void InstallFile(string file, bool silent)
         {
+            if (!File.Exists(file))
+            {
+                if (!silent)
+                    MessageBox.Show("File not found !");
+                return;
+            }
+
             if (IsOldFormat(file))
             {
                 if (!silent)

@@ -19,9 +19,12 @@ namespace MpeInstaller.Classes
                     Silent = true;
                 if (s.StartsWith("/U"))
                     Update = true;
+                if (s.StartsWith("/MPQUEUE"))
+                    MpQueue = true;
             }
         }
 
+        public bool MpQueue { get; set; }
         public string PackageFile { get; set; }
         public bool Silent { get; set; }
         public bool Update { get; set; }

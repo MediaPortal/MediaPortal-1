@@ -98,11 +98,23 @@ namespace MpeCore
 
         public static void Save()
         {
-            InstalledExtensions.Save(string.Format("{0}\\V2\\InstalledExtensions.xml", Config.GetFolder(Config.Dir.Installer)));
-            KnownExtensions.Save(string.Format("{0}\\V2\\KnownExtensions.xml", Config.GetFolder(Config.Dir.Installer)));
+            InstalledExtensions.Save(string.Format("{0}\\InstalledExtensions.xml", BaseFolder));
+            KnownExtensions.Save(string.Format("{0}\\KnownExtensions.xml", BaseFolder));
 
         }
 
+        /// <summary>
+        /// Gets the folder were the installation information are store .
+        /// Same like %Installer%
+        /// </summary>
+        /// <value>The base folder.</value>
+        public static string BaseFolder
+        {
+            get
+            {
+                return string.Format("{0}\\V2", Config.GetFolder(Config.Dir.Installer));
+            }
+        }
         /// <summary>
         /// Transfor a real path in a template path, based on providers
         /// </summary>

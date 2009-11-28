@@ -37,7 +37,7 @@ namespace MpeCore.Classes.InstallerType
                     switch (fileItem.UpdateOption)
                     {
                         case UpdateOptionEnum.NeverOverwrite:
-                            return;
+                            continue;
                         case UpdateOptionEnum.AlwaysOverwrite:
                             break;
                         case UpdateOptionEnum.OverwriteIfOlder:

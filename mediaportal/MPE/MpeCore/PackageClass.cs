@@ -56,7 +56,7 @@ namespace MpeCore
         public bool Silent { get; set; }
         
         /// <summary>
-        /// Gets the location folder were stored the backup and the uninstall informations
+        /// Gets the location folder were stored the backup and the uninstall informations. Ended with \
         /// </summary>
         /// <value>The location folder.</value>
         public string LocationFolder
