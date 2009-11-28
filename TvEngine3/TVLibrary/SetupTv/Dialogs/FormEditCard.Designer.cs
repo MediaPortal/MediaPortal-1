@@ -42,10 +42,14 @@ namespace SetupTv.Sections
       this.checkBoxAllowEpgGrab = new System.Windows.Forms.CheckBox();
       this.checkBoxPreloadCard = new System.Windows.Forms.CheckBox();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
+      this.groupBox4 = new System.Windows.Forms.GroupBox();
+      this.lblProvider = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.comboBoxNetProvider = new MediaPortal.UserInterface.Controls.MPComboBox();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDecryptLimit)).BeginInit();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBox3.SuspendLayout();
+      this.groupBox4.SuspendLayout();
       this.SuspendLayout();
       // 
       // label1
@@ -79,7 +83,7 @@ namespace SetupTv.Sections
       // mpButtonSave
       // 
       this.mpButtonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonSave.Location = new System.Drawing.Point(166, 316);
+      this.mpButtonSave.Location = new System.Drawing.Point(225, 384);
       this.mpButtonSave.Name = "mpButtonSave";
       this.mpButtonSave.Size = new System.Drawing.Size(75, 23);
       this.mpButtonSave.TabIndex = 1;
@@ -104,7 +108,7 @@ namespace SetupTv.Sections
       // 
       this.mpButtonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.mpButtonCancel.Location = new System.Drawing.Point(247, 316);
+      this.mpButtonCancel.Location = new System.Drawing.Point(306, 384);
       this.mpButtonCancel.Name = "mpButtonCancel";
       this.mpButtonCancel.Size = new System.Drawing.Size(75, 23);
       this.mpButtonCancel.TabIndex = 6;
@@ -123,7 +127,7 @@ namespace SetupTv.Sections
       this.groupBox1.Controls.Add(this.numericUpDownDecryptLimit);
       this.groupBox1.Location = new System.Drawing.Point(12, 12);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(310, 189);
+      this.groupBox1.Size = new System.Drawing.Size(369, 176);
       this.groupBox1.TabIndex = 7;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "CAM Setup";
@@ -164,9 +168,9 @@ namespace SetupTv.Sections
       // groupBox2
       // 
       this.groupBox2.Controls.Add(this.checkBoxAllowEpgGrab);
-      this.groupBox2.Location = new System.Drawing.Point(12, 207);
+      this.groupBox2.Location = new System.Drawing.Point(12, 194);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(310, 44);
+      this.groupBox2.Size = new System.Drawing.Size(369, 44);
       this.groupBox2.TabIndex = 8;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Grab EPG";
@@ -196,12 +200,42 @@ namespace SetupTv.Sections
       // groupBox3
       // 
       this.groupBox3.Controls.Add(this.checkBoxPreloadCard);
-      this.groupBox3.Location = new System.Drawing.Point(12, 257);
+      this.groupBox3.Location = new System.Drawing.Point(12, 244);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(310, 44);
+      this.groupBox3.Size = new System.Drawing.Size(369, 45);
       this.groupBox3.TabIndex = 9;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Preload Card";
+      // 
+      // groupBox4
+      // 
+      this.groupBox4.Controls.Add(this.lblProvider);
+      this.groupBox4.Controls.Add(this.comboBoxNetProvider);
+      this.groupBox4.Location = new System.Drawing.Point(12, 295);
+      this.groupBox4.Name = "groupBox4";
+      this.groupBox4.Size = new System.Drawing.Size(369, 83);
+      this.groupBox4.TabIndex = 10;
+      this.groupBox4.TabStop = false;
+      this.groupBox4.Text = "Preferred network provider";
+      // 
+      // lblProvider
+      // 
+      this.lblProvider.AutoSize = true;
+      this.lblProvider.Location = new System.Drawing.Point(14, 20);
+      this.lblProvider.Name = "lblProvider";
+      this.lblProvider.Size = new System.Drawing.Size(337, 26);
+      this.lblProvider.TabIndex = 1;
+      this.lblProvider.Text = "Note: Generic Provider is recommended. Change this only if you have \r\nproblems (s" +
+          "canning, tuning ...)";
+      // 
+      // comboBoxNetProvider
+      // 
+      this.comboBoxNetProvider.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxNetProvider.FormattingEnabled = true;
+      this.comboBoxNetProvider.Location = new System.Drawing.Point(14, 56);
+      this.comboBoxNetProvider.Name = "comboBoxNetProvider";
+      this.comboBoxNetProvider.Size = new System.Drawing.Size(334, 21);
+      this.comboBoxNetProvider.TabIndex = 0;
       // 
       // FormEditCard
       // 
@@ -209,7 +243,8 @@ namespace SetupTv.Sections
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.CancelButton = this.mpButtonCancel;
-      this.ClientSize = new System.Drawing.Size(334, 351);
+      this.ClientSize = new System.Drawing.Size(393, 420);
+      this.Controls.Add(this.groupBox4);
       this.Controls.Add(this.groupBox3);
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.groupBox1);
@@ -229,6 +264,8 @@ namespace SetupTv.Sections
       this.groupBox2.PerformLayout();
       this.groupBox3.ResumeLayout(false);
       this.groupBox3.PerformLayout();
+      this.groupBox4.ResumeLayout(false);
+      this.groupBox4.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -241,13 +278,16 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPButton mpButtonSave;
     private System.Windows.Forms.NumericUpDown numericUpDownDecryptLimit;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonCancel;
-      private System.Windows.Forms.GroupBox groupBox1;
-      private System.Windows.Forms.GroupBox groupBox2;
-      private System.Windows.Forms.CheckBox checkBoxAllowEpgGrab;
+    private System.Windows.Forms.GroupBox groupBox1;
+    private System.Windows.Forms.GroupBox groupBox2;
+    private System.Windows.Forms.CheckBox checkBoxAllowEpgGrab;
     private System.Windows.Forms.CheckBox checkBoxPreloadCard;
     private System.Windows.Forms.GroupBox groupBox3;
     private System.Windows.Forms.CheckBox checkBoxCAMenabled;
     private MediaPortal.UserInterface.Controls.MPLabel label5;
     private MediaPortal.UserInterface.Controls.MPComboBox ComboBoxCamType;
+    private System.Windows.Forms.GroupBox groupBox4;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxNetProvider;
+    private MediaPortal.UserInterface.Controls.MPLabel lblProvider;
   }
 }

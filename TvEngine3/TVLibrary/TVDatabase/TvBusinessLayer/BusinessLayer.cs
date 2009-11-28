@@ -97,7 +97,7 @@ namespace TvDatabase
       // Card(devicePath, name, priority, grabEPG, lastEpgGrab, recordingFolder, idServer, enabled, camType, timeshiftingFolder, recordingFormat, decryptLimit)
       //
       Card newCard = new Card(devicePath, name, 1, true, new DateTime(2000, 1, 1), "", server.IdServer, true, 0, "", 0,
-                              0);
+                              0,(int)TvDatabase.DbNetworkProvider.Generic);
       newCard.Persist();
       return newCard;
     }

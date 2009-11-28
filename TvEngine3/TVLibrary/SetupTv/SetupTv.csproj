@@ -598,15 +598,20 @@
     <EmbeddedResource Include="47_upgrade_sqlserver_database.sql" />
     <EmbeddedResource Include="Sections\DebugOptions.resx">
       <DependentUpon>DebugOptions.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Epg.resx">
       <DependentUpon>Epg.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\ThirdPartyChecks.resx">
       <DependentUpon>ThirdPartyChecks.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="48_upgrade_sqlserver_database.sql" />
     <EmbeddedResource Include="48_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="50_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="50_upgrade_sqlserver_database.sql" />
     <None Include="images\icon.down.png" />
     <Content Include="images\icon.mpConfig.ico" />
     <Content Include="images\icon.radio_fta.png" />

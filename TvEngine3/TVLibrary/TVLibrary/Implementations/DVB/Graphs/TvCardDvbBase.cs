@@ -355,7 +355,7 @@ namespace TvLibrary.Implementations.DVB
         if (performTune)
         {
           Log.Log.WriteFile("dvb:Submit tunerequest calling put_TuneRequest");
-          int hr = ((ITuner) _filterNetworkProvider).put_TuneRequest(tuneRequest);
+          int hr = ((ITuner)_filterNetworkProvider).put_TuneRequest(tuneRequest);
           Log.Log.WriteFile("dvb:Submit tunerequest done calling put_TuneRequest");
           if (hr != 0)
           {
@@ -487,7 +487,8 @@ namespace TvLibrary.Implementations.DVB
             {
               break;
             }
-          } catch (COMException)
+          }
+          catch (COMException)
           {
             //            Log.Log.WriteFile("get_SignalLocked() locked :{0}", ex);
           }
@@ -591,17 +592,17 @@ namespace TvLibrary.Implementations.DVB
         }
         _conditionalAccess.OnStopGraph();
         // *** this should be removed when solution for graph start problem exists
-          if (DebugSettings.ResetGraph)
-            Decompose();
-          else
-            _graphState = GraphState.Created;
+        if (DebugSettings.ResetGraph)
+          Decompose();
+        else
+          _graphState = GraphState.Created;
         // ***
       }
       else
       {
         Log.Log.WriteFile("dvb:StopGraph - conditionalAccess.AllowedToStopGraph = false");
         _graphState = GraphState.Created;
-      }      
+      }
     }
 
     /// <summary>
@@ -612,42 +613,74 @@ namespace TvLibrary.Implementations.DVB
       _isATSC = false;
       _managedThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
       Log.Log.WriteFile("dvb:AddNetworkProviderFilter");
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Card c = layer.GetCardByDevicePath(DevicePath);
+      // generic network provider Guid.
       Guid genProviderClsId = new Guid("{B2F3A67C-29DA-4C78-8831-091ED509A475}");
       // First test if the Generic Network Provider is available (only on MCE 2005 + Update Rollup 2)
-      if (FilterGraphTools.IsThisComObjectInstalled(genProviderClsId))
+      // only if it is used in db, we need to change it
+      // This check is because, "Genric network provider" is default value in Db
+      // And we need to check if it's even installed.
+      // If not, Then it must be changed automatically, to Network provider
+      // based on Card type. It prevents users to run into problems
+      // If Generic network provider is not available in Os.
+      if (((TvDatabase.DbNetworkProvider)c.netProvider) == TvDatabase.DbNetworkProvider.Generic)
       {
-        _filterNetworkProvider = FilterGraphTools.AddFilterFromClsid(_graphBuilder, genProviderClsId, "Generic Network Provider");
-        Log.Log.WriteFile("dvb:Add Generic Network Provider");
-        return;
+        if (!FilterGraphTools.IsThisComObjectInstalled(genProviderClsId))
+        {
+          // it's not and we have it as default
+          // change it per devtype.
+          if (networkProviderClsId == typeof(DVBTNetworkProvider).GUID)
+          {
+            c.netProvider = (int)TvDatabase.DbNetworkProvider.DVBT;
+            c.Persist();
+          }
+          else if (networkProviderClsId == typeof(DVBSNetworkProvider).GUID)
+          {
+            c.netProvider = (int)TvDatabase.DbNetworkProvider.DVBS;
+            c.Persist();
+          }
+          else if (networkProviderClsId == typeof(ATSCNetworkProvider).GUID)
+          {
+            c.netProvider = (int)TvDatabase.DbNetworkProvider.ATSC;
+            c.Persist();
+          }
+          else if (networkProviderClsId == typeof(DVBCNetworkProvider).GUID)
+          {
+            c.netProvider = (int)TvDatabase.DbNetworkProvider.DVBC;
+            c.Persist();
+          }
+        }
       }
-      // Get the network type of the requested Tuning Space
-      if (networkProviderClsId == typeof(DVBTNetworkProvider).GUID)
+
+      // Final selecion for Network provider based on user selection.
+      String NetworkProviderName = String.Empty;
+      switch ((TvDatabase.DbNetworkProvider)c.netProvider)
       {
-        Log.Log.WriteFile("dvb:Add DVBTNetworkProvider");
-        _filterNetworkProvider = FilterGraphTools.AddFilterFromClsid(_graphBuilder, networkProviderClsId, "DVBT Network Provider");
+        case DbNetworkProvider.DVBT:
+          NetworkProviderName = "DVBT Network Provider";
+          break;
+        case DbNetworkProvider.DVBS:
+          NetworkProviderName = "DVBS Network Provider";
+          break;
+        case DbNetworkProvider.DVBC:
+          NetworkProviderName = "DVBC Network Provider";
+          break;
+        case DbNetworkProvider.ATSC:
+          _isATSC = true;
+          NetworkProviderName = "ATSC Network Provider";
+          break;
+        case DbNetworkProvider.Generic:
+          NetworkProviderName = "Generic Network Provider";
+          networkProviderClsId = genProviderClsId;
+          break;
+        default:
+          Log.Log.Error("dvb:This application doesn't support this Tuning Space");
+          // Tuning Space can also describe Analog TV but this application don't support them
+          throw new TvException("This application doesn't support this Tuning Space");
       }
-      else if (networkProviderClsId == typeof(DVBSNetworkProvider).GUID)
-      {
-        Log.Log.WriteFile("dvb:Add DVBSNetworkProvider");
-        _filterNetworkProvider = FilterGraphTools.AddFilterFromClsid(_graphBuilder, networkProviderClsId, "DVBS Network Provider");
-      }
-      else if (networkProviderClsId == typeof(ATSCNetworkProvider).GUID)
-      {
-        _isATSC = true;
-        Log.Log.WriteFile("dvb:Add ATSCNetworkProvider");
-        _filterNetworkProvider = FilterGraphTools.AddFilterFromClsid(_graphBuilder, networkProviderClsId, "ATSC Network Provider");
-      }
-      else if (networkProviderClsId == typeof(DVBCNetworkProvider).GUID)
-      {
-        Log.Log.WriteFile("dvb:Add DVBCNetworkProvider");
-        _filterNetworkProvider = FilterGraphTools.AddFilterFromClsid(_graphBuilder, networkProviderClsId, "DVBC Network Provider");
-      }
-      else
-      {
-        Log.Log.Error("dvb:This application doesn't support this Tuning Space");
-        // Tuning Space can also describe Analog TV but this application don't support them
-        throw new TvException("This application doesn't support this Tuning Space");
-      }
+      Log.Log.WriteFile("dvb:Add {0}", NetworkProviderName);
+      _filterNetworkProvider = FilterGraphTools.AddFilterFromClsid(_graphBuilder, networkProviderClsId, NetworkProviderName);
     }
 
     /// <summary>
@@ -726,7 +759,8 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         hr = _graphBuilder.AddSourceFilterForMoniker(usbWinTvDevice.Mon, null, usbWinTvDevice.Name, out tmpCiFilter);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         Log.Log.Info("dvb:  failed to add WinTv CI filter to graph");
         //cannot add filter to graph...
@@ -874,7 +908,8 @@ namespace TvLibrary.Implementations.DVB
         try
         {
           hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           continue;
         }
@@ -940,7 +975,7 @@ namespace TvLibrary.Implementations.DVB
       //Hauppauge Nova USB2 DVB-T & HDHomeRun workaround.
       if (device.Name != null && (device.Name.Contains("Hauppauge Nova USB2 DVB-T TV Receiver") || device.Name.Contains("Silicondust HDHomeRun Tuner")))
       {
-          skipCaptureFilter = true;
+        skipCaptureFilter = true;
       }
 
       if (false == skipCaptureFilter)
@@ -1013,7 +1048,7 @@ namespace TvLibrary.Implementations.DVB
           int indx2 = devices[i].DevicePath.IndexOf(deviceIdDelimter);
           if (indx1 < 0 || indx2 < 0)
           {
-              continue;
+            continue;
           }
 
           if (device.DevicePath.Remove(indx1) != devices[i].DevicePath.Remove(indx2))
@@ -1027,7 +1062,8 @@ namespace TvLibrary.Implementations.DVB
         try
         {
           hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           continue;
         }
@@ -1261,7 +1297,8 @@ namespace TvLibrary.Implementations.DVB
               Log.Log.Error("    unable to add BDA MPEG2 Transport Information Filter filter:0x{0:X}", hr);
               return;
             }
-          } catch (Exception)
+          }
+          catch (Exception)
           {
             Log.Log.Error("    unable to add BDA MPEG2 Transport Information Filter filter");
           }
@@ -1349,7 +1386,8 @@ namespace TvLibrary.Implementations.DVB
               continue;
             }
             Log.Log.WriteFile("    tif not connected:0x{0:X}", hr);
-          } catch (Exception ex)
+          }
+          catch (Exception ex)
           {
             Log.Log.WriteFile("Error while connecting TIF filter: {0}", ex);
           }
@@ -1397,7 +1435,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_graphBuilder == null || !CheckThreadId())
         return;
-      
+
       Log.Log.WriteFile("dvb:Decompose");
       if (_epgGrabbing)
       {
@@ -1408,7 +1446,7 @@ namespace TvLibrary.Implementations.DVB
         }
         _epgGrabbing = false;
       }
-      
+
       FreeAllSubChannels();
       Log.Log.WriteFile("  stop");
       // Decompose the graph
@@ -1641,10 +1679,12 @@ namespace TvLibrary.Implementations.DVB
             stat.get_SignalLocked(out isLocked);
             isTunerLocked |= isLocked;
             //  Log.Log.Write("   dvb:  #{0} isTunerLocked:{1}", i,isLocked);
-          } catch (COMException)
+          }
+          catch (COMException)
           {
             //            Log.Log.WriteFile("get_SignalLocked() locked :{0}", ex);
-          } catch (Exception ex)
+          }
+          catch (Exception ex)
           {
             Log.Log.WriteFile("get_SignalLocked() locked :{0}", ex);
           }
@@ -1658,10 +1698,12 @@ namespace TvLibrary.Implementations.DVB
             if (quality > 0)
               signalQuality += quality;
             //   Log.Log.Write("   dvb:  #{0} signalQuality:{1}", i, quality);
-          } catch (COMException)
+          }
+          catch (COMException)
           {
             //            Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
-          } catch (Exception ex)
+          }
+          catch (Exception ex)
           {
             Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
           }
@@ -1674,10 +1716,12 @@ namespace TvLibrary.Implementations.DVB
             if (strength > 0)
               signalStrength += strength;
             //    Log.Log.Write("   dvb:  #{0} signalStrength:{1}", i, strength);
-          } catch (COMException)
+          }
+          catch (COMException)
           {
             //            Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
-          } catch (Exception ex)
+          }
+          catch (Exception ex)
           {
             Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
           }
@@ -1837,7 +1881,8 @@ namespace TvLibrary.Implementations.DVB
           }
           _interfaceChannelLinkageScanner.Reset();
           return portalChannels;
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
           Log.Log.Write(ex);
           return new List<PortalChannel>();
@@ -2119,7 +2164,8 @@ namespace TvLibrary.Implementations.DVB
                     epgProgram.Text.Add(epgLangague);
                   }
                   epgChannel.Programs.Add(epgProgram);
-                } catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
                   Log.Log.Write(ex);
                 }
@@ -2134,7 +2180,8 @@ namespace TvLibrary.Implementations.DVB
           // free the epg infos in TsWriter so that the mem used gets released 
           _interfaceEpgGrabber.Reset();
           return epgChannels;
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
           Log.Log.Write(ex);
           return new List<EpgChannel>();

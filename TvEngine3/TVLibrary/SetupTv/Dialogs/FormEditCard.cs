@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using TvDatabase;
+using TvLibrary.Implementations.DVB;
 
 namespace SetupTv.Sections
 {
@@ -83,9 +84,25 @@ namespace SetupTv.Sections
 
       checkBoxPreloadCard.Checked = _card.PreloadCard;
       checkBoxCAMenabled.Checked = _card.CAM;
-
+      
       setCAMLimitVisibility();
       Text += " " + _card.Name;
+
+      // Add Network provider based on card type into combobox
+      if (_cardType == "DvbT") comboBoxNetProvider.Items.Add((TvDatabase.DbNetworkProvider.DVBT));
+      if (_cardType == "DvbS") comboBoxNetProvider.Items.Add((TvDatabase.DbNetworkProvider.DVBS));
+      if (_cardType == "DvbC") comboBoxNetProvider.Items.Add((TvDatabase.DbNetworkProvider.DVBC));
+      if (_cardType == "Atsc") comboBoxNetProvider.Items.Add((TvDatabase.DbNetworkProvider.ATSC));
+
+      // Guid for generic network provider
+      Guid genProviderClsId = new Guid("{B2F3A67C-29DA-4C78-8831-091ED509A475}");
+      // First test if the Generic Network Provider is available (only on Xp MCE 2005 + Update Rollup 2 & Vista Home Premium and Ultimate & Windows 7 Home Premium, Ultimate, Professional, and Enterprise)
+      if (FilterGraphTools.IsThisComObjectInstalled(genProviderClsId))
+      { 
+        // Generic Network provider is available, so add it to selection box.
+        comboBoxNetProvider.Items.Add((TvDatabase.DbNetworkProvider.Generic));
+      }
+      comboBoxNetProvider.SelectedItem = (TvDatabase.DbNetworkProvider)_card.netProvider;
     }
 
     private void mpButtonSave_Click(object sender, EventArgs e)
@@ -99,6 +116,7 @@ namespace SetupTv.Sections
       _card.PreloadCard = checkBoxPreloadCard.Checked;
 
       _card.CAM = checkBoxCAMenabled.Checked;
+      _card.netProvider = (int)comboBoxNetProvider.SelectedItem;
       Close();
     }
 
