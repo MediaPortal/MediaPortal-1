@@ -683,7 +683,7 @@ STDMETHODIMP CMpTs:: TimeShiftSetTimeShiftingFileName( int handle, char* pszFile
   if (pChannel==NULL) return S_OK;
   
   b_dumpRawPakets=false;
-  if (DumpRawTS());
+  if (DumpRawTS())
   {
 	  b_dumpRawPakets=true;
 	  string fileName=pszFileName;
