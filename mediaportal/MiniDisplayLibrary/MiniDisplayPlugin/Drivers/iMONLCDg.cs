@@ -289,7 +289,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private bool _LeaveFrontviewActive;
     private const int _tcols = 0x10;
     private int _trows = 2;
-    private bool _USE_VFD_ICONS = false;
 
     private bool _UsingAntecManager;
     private bool _UsingSoundgraphManager;
@@ -303,31 +302,31 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private bool DVMactive;
     private EQControl EQSettings;
     private string IdleMessage = string.Empty;
-    //private char IMON_CHAR_1_BAR;
-    //private char IMON_CHAR_2_BARS = '\x0001';
-    //private char IMON_CHAR_3_BARS = '\x0002';
-    //private char IMON_CHAR_4_BARS = '\x0003';
-    //private char IMON_CHAR_5_BARS = '\x0004';
-    private char IMON_CHAR_6_BARS = '\x0005';
-    //private char IMON_CHAR_7_BARS = '\x0006';
-    //private char IMON_CHAR_8_BARS = '\a';
-    //private char IMON_VFD_CHAR_ARROW_DOWN = '\x0019';
-    //private char IMON_VFD_CHAR_ARROW_LEFT = '\x001b';
-    //private char IMON_VFD_CHAR_ARROW_RIGHT = '\x001a';
-    //private char IMON_VFD_CHAR_ARROW_UP = '\x0018';
-    //private char IMON_VFD_CHAR_BLOCK_EMPTY = '2';
-    private char IMON_VFD_CHAR_BLOCK_FILLED = '\a';
-    //private char IMON_VFD_CHAR_DBL_TRI_DOWN = '\x0015';
-    //private char IMON_VFD_CHAR_DBL_TRI_UP = '\x0014';
-    //private char IMON_VFD_CHAR_ENTER = '\x0017';
-    //private char IMON_VFD_CHAR_HEART = '\x009d';
-    //private char IMON_VFD_CHAR_HOUSE = '\x007f';
-    private char IMON_VFD_CHAR_PAUSE = '\x00a0';
-    private char IMON_VFD_CHAR_PLAY = '\x0010';
-    private char IMON_VFD_CHAR_RECORD = '\x0016';
-    private char IMON_VFD_CHAR_RPLAY = '\x0011';
-    //private char IMON_VFD_CHAR_TRI_DOWN = '\x001f';
-    //private char IMON_VFD_CHAR_TRI_UP = '\x001e';
+    //private const char IMON_CHAR_1_BAR;
+    //private const char IMON_CHAR_2_BARS = '\x0001';
+    //private const char IMON_CHAR_3_BARS = '\x0002';
+    //private const char IMON_CHAR_4_BARS = '\x0003';
+    //private const char IMON_CHAR_5_BARS = '\x0004';
+    private const char IMON_CHAR_6_BARS = '\x0005';
+    //private const char IMON_CHAR_7_BARS = '\x0006';
+    //private const char IMON_CHAR_8_BARS = '\a';
+    //private const char IMON_VFD_CHAR_ARROW_DOWN = '\x0019';
+    //private const char IMON_VFD_CHAR_ARROW_LEFT = '\x001b';
+    //private const char IMON_VFD_CHAR_ARROW_RIGHT = '\x001a';
+    //private const char IMON_VFD_CHAR_ARROW_UP = '\x0018';
+    //private const char IMON_VFD_CHAR_BLOCK_EMPTY = '2';
+    //private const char IMON_VFD_CHAR_BLOCK_FILLED = '\a';
+    //private const char IMON_VFD_CHAR_DBL_TRI_DOWN = '\x0015';
+    //private const char IMON_VFD_CHAR_DBL_TRI_UP = '\x0014';
+    //private const char IMON_VFD_CHAR_ENTER = '\x0017';
+    //private const char IMON_VFD_CHAR_HEART = '\x009d';
+    //private const char IMON_VFD_CHAR_HOUSE = '\x007f';
+    //private const char IMON_VFD_CHAR_PAUSE = '\x00a0';
+    //private const char IMON_VFD_CHAR_PLAY = '\x0010';
+    //private const char IMON_VFD_CHAR_RECORD = '\x0016';
+    //private const char IMON_VFD_CHAR_RPLAY = '\x0011';
+    //private const char IMON_VFD_CHAR_TRI_DOWN = '\x001f';
+    //private const char IMON_VFD_CHAR_TRI_UP = '\x001e';
     private string imonVFD_DLLFile;
     private int LastProgLevel;
     private DateTime LastSettingsCheck = DateTime.Now;
@@ -407,7 +406,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           proc.WaitForExit(2000);
 
           UIntPtr res = UIntPtr.Zero;
-          int OsVer = (OSInfo.OSInfo.OSMajorVersion * 10) + OSInfo.OSInfo.OSServicePackMinor;
           UIntPtr rKey = new UIntPtr(Convert.ToUInt32(Reg.RegistryRoot.HKLM));
           int lastError;
           int retval = Reg.RegOpenKeyEx(rKey, "SOFTWARE\\IR Server Suite", 0, Convert.ToInt32(RegistryRights.ReadKey), out res);
@@ -573,14 +571,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             Log.Info("(IDisplay) iMONLCDg.SetLine(): called for Line {0} msg: '{1}'",
                       line.ToString(), message);
           }
-          if (_USE_VFD_ICONS & (_DisplayType == DisplayType.VFD))
-          {
-            _lines[line] = Add_VFD_Icons(line, message);
-          }
-          else
-          {
-            _lines[line] = message;
-          }
+          _lines[line] = message;
           if (line == (_trows - 1))
           {
             DisplayLines();
@@ -974,49 +965,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    private string Add_VFD_Icons(int _line, string message)
-    {
-      if (!_USE_VFD_ICONS)
-      {
-        return message;
-      }
-      if (_USE_VFD_ICONS)
-      {
-        return message;
-      }
-      if (!_DisplayType.Equals(DisplayType.VFD))
-      {
-        return message;
-      }
-      string str = message.Length < 0x10 ? message.PadRight(14, ' ') : message.Substring(0, 14);
-      str = str + ' ';
-      if (_line == 0)
-      {
-        if (MPStatus.MP_Is_Idle || !MPStatus.MediaPlayer_Active)
-        {
-          return (str + IMON_VFD_CHAR_BLOCK_FILLED);
-        }
-        if (MPStatus.MediaPlayer_Playing)
-        {
-          if (MPStatus.Media_Speed < 0)
-          {
-            return (str + IMON_VFD_CHAR_RPLAY);
-          }
-          return (str + IMON_VFD_CHAR_PLAY);
-        }
-        if (MPStatus.MediaPlayer_Paused)
-        {
-          str = str + IMON_VFD_CHAR_PAUSE;
-        }
-        return str;
-      }
-      if (MPStatus.Media_IsRecording)
-      {
-        return (str + IMON_VFD_CHAR_RECORD);
-      }
-      return (str + " ");
-    }
-
     private void AdvancedSettings_OnSettingsChanged()
     {
       Log.Info("iMONLCDg.AdvancedSettings_OnSettingsChanged(): RELOADING SETTINGS");
@@ -1105,8 +1053,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       Process[] processesByName;
       Process process;
-      bool flag;
-      bool flag2;
 
       for (int i = 0; i <= _BrandTableLength; i++)
       {
@@ -1117,7 +1063,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         if (key != null)
         {
           Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): The " + curBrand + " " + curApp + " Manager registry subkey found.");
-          flag2 = true;
+          bool flag2 = true;
           if (((int)key.GetValue("RCPlugin", -1)) != 1)
           {
             Log.Info("iMONLCDg.Check_iMON_Manager_Status(): \"RCPlugin\" configuration error.");
@@ -1161,7 +1107,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               }
               Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Stopping " + curBrand + " " + curApp + " Manager");
               processesByName[0].Kill();
-              flag = false;
+              bool flag = false;
               while (!flag)
               {
                 Thread.Sleep(100);
@@ -1209,7 +1155,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Inconsistant state: Forcing shutdown of " + curBrand + " " + curApp + " Manager");
             processesByName[0].Kill();
-            flag = false;
+            bool flag = false;
             while (!flag)
             {
               Thread.Sleep(100);
@@ -1236,7 +1182,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           string curBrand = _BrandTable[i, 0];
           string curApp = _BrandTable[i, 1];
           Process[] processArray = Process.GetProcessesByName(curApp);
-          string processName = string.Empty;
           if (processArray.Length == 0)
           {
             var process2 = new Process();
@@ -1247,7 +1192,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             else
             {
-              processName = _BrandTable[i, 1];
+              string processName = _BrandTable[i, 1];
               process2.StartInfo.WorkingDirectory = strPath;
               process2.StartInfo.FileName = processName + ".exe";
               Log.Info("iMONLCDg.Check_iMON_Manager_Status(): Starting " + curBrand + " " + curApp + " Manager");
@@ -1872,7 +1817,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         string firstLine = "";
         string secondLine = "";
-        char ch = IMON_CHAR_6_BARS;
+        const char ch = IMON_CHAR_6_BARS;
         int num7 = 0x10;
         if (EQSettings._useVUindicators)
         {
@@ -1944,7 +1889,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             if ((m + num2) < 0x60)
             {
               pixelArray[num2 + m] = DisplayOptions.UseCustomFont
-                                       ? BitReverse(CFont.PixelData(0x4c, m))
+                                       ? BitReverse(CustomFont.PixelData(0x4c, m))
                                        : BitReverse(_Font8x5[0x4c, m]);
             }
           }
@@ -1967,11 +1912,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               if (EQSettings.UseVUmeter)
               {
-                pixelArray[num2 + n] = BitReverse(CFont.PixelData(0x52, n));
+                pixelArray[num2 + n] = BitReverse(CustomFont.PixelData(0x52, n));
               }
               else
               {
-                pixelArray[(num2 + 90) + n] = BitReverse(CFont.PixelData(0x52, n));
+                pixelArray[(num2 + 90) + n] = BitReverse(CustomFont.PixelData(0x52, n));
               }
             }
             else if (EQSettings.UseVUmeter)
@@ -2761,7 +2706,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           Process[] processesByName;
           Process process;
-          bool flag;
           int index = _UsingSoundgraphManager ? 0 : 1;
           string curBrand = _BrandTable[index, 0];
           string curApp = _BrandTable[index, 1];
@@ -2779,7 +2723,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               Log.Info("iMONLCDg.RestartFrontview(): Stopping " + curBrand + " " + curApp + " Manager");
               processesByName[0].Kill();
-              flag = false;
+              bool flag = false;
               while (!flag)
               {
                 Thread.Sleep(100);
@@ -2845,14 +2789,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void SendData(iMonCommand.LCD2 command)
     { SendData((ulong)command); }
-
-    private void SendData(iMonCommand.VFD2 command)
-    { SendData((ulong)command); }
-
-    //private void SendData(long data)
-    //{
-    //  SendData((ulong)data);
-    //}
 
     private void SendData(ulong data)
     {
@@ -2935,8 +2871,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (DisplayOptions.UseCustomIcons)
             {
-              PixelArray[k] = CustomLargeIcon.PixelData(_CurrentLargeIcon, k);
-              PixelArray[k + 0x60] = CustomLargeIcon.PixelData(_CurrentLargeIcon, k + 0x10);
+              PixelArray[k] = LargeIcon.PixelData(_CurrentLargeIcon, k);
+              PixelArray[k + 0x60] = LargeIcon.PixelData(_CurrentLargeIcon, k + 0x10);
             }
             else
             {
@@ -3026,7 +2962,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           if ((k + num) < 0x60)
           {
             pixelArray[num + k] = DisplayOptions.UseCustomFont
-                                    ? BitReverse(CFont.PixelData(charID, k))
+                                    ? BitReverse(CustomFont.PixelData(charID, k))
                                     : BitReverse(_Font8x5[charID, k]);
           }
         }
@@ -3040,7 +2976,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if ((m + num) < 0xc0)
           {
-            pixelArray[num + m] = DisplayOptions.UseCustomFont ? BitReverse(CFont.PixelData(ch2, m)) : BitReverse(_Font8x5[ch2, m]);
+            pixelArray[num + m] = DisplayOptions.UseCustomFont ? BitReverse(CustomFont.PixelData(ch2, m)) : BitReverse(_Font8x5[ch2, m]);
           }
         }
         num += 6;
@@ -4066,6 +4002,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         KeypadLightOn = 0x0400000000000004L
       }
 
+      [Flags]
       public enum LCD : ulong
       {
         BacklightOn = 0x5000000000000000L,
@@ -4075,6 +4012,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         ClearAlarm = 0x5100000000000000L,
       }
 
+      [Flags]
       public enum LCD2 : ulong
       {
         BacklightOn = 0x8800000000000000L,
@@ -4191,7 +4129,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         return false;
       }
 
-      public byte PixelData(int CharID, int CharIndex)
+      public static byte PixelData(int CharID, int CharIndex)
       {
         return CstmFont[CharID, CharIndex];
       }
@@ -4433,29 +4371,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private class DisplayType
     {
       public const int LCD = 1;
-      //{
-      //  get { return 1; }
-      //}
-
       public const int LCD2 = 4;
-      //{
-      //  get { return 4; }
-      //}
-
       public const int ThreeRsystems = 3;
-      //{
-      //  get { return 3; }
-      //}
-
       public const int Unsupported = 2;
-      //{
-      //  get { return 2; }
-      //}
-
       public const int VFD = 0;
-      //{
-      //  get { return 0; }
-      //}
 
       public static string TypeName(int DisplayType)
       {
@@ -4666,7 +4585,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         return false;
       }
 
-      public byte PixelData(int IconID, int ByteIndex)
+      public static byte PixelData(int IconID, int ByteIndex)
       {
         return CustomIcons[IconID, ByteIndex];
       }
