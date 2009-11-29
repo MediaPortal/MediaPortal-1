@@ -124,16 +124,16 @@ namespace TvService
     /// </summary>
     event CiMenuCallback IController.OnCiMenu
     {
-      add 
+      add
       {
         s_ciMenu = null;
         s_ciMenu += value;
-        Log.Debug("CiMenu: registered client event for callback"); 
+        Log.Debug("CiMenu: registered client event for callback");
       }
-      remove 
+      remove
       {
         s_ciMenu = null;
-        Log.Debug("CiMenu: unregistered client callback."); 
+        Log.Debug("CiMenu: unregistered client callback.");
       }
     }
     #endregion
@@ -1087,11 +1087,11 @@ namespace TvService
     /// <param name="user">The user.</param>
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
-    public bool TimeShiftGetCurrentFilePosition(ref User user,ref Int64 position,ref long bufferId)
+    public bool TimeShiftGetCurrentFilePosition(ref User user, ref Int64 position, ref long bufferId)
     {
       if (ValidateTvControllerParams(user))
         return false;
-      return _cards[user.CardId].TimeShifter.GetCurrentFilePosition(ref user,ref position,ref bufferId);
+      return _cards[user.CardId].TimeShifter.GetCurrentFilePosition(ref user, ref position, ref bufferId);
     }
 
     /// <summary>
@@ -1452,7 +1452,7 @@ namespace TvService
     /// <param name="position2">end offset in last ts buffer file</param>
     /// <param name="bufferFile2">ts buffer file to stop at</param>
     /// <param name="recordingFile">filename of the recording</param>
-    public void CopyTimeShiftFile(Int64 position1, string bufferFile1, Int64 position2, string bufferFile2,string recordingFile)
+    public void CopyTimeShiftFile(Int64 position1, string bufferFile1, Int64 position2, string bufferFile2, string recordingFile)
     {
       TsCopier copier = new TsCopier(position1, bufferFile1, position2, bufferFile2, recordingFile);
       Thread worker = new Thread(new ThreadStart(copier.DoCopy));
@@ -2025,7 +2025,7 @@ namespace TvService
           {
             RemoteControl.HostName = rec.ReferencedServer().HostName;
             return RemoteControl.Instance.DeleteRecording(rec.IdRecording);
-          } 
+          }
           catch (Exception)
           {
             Log.Error("Controller: unable to connect to slave controller at:{0}", rec.ReferencedServer().HostName);
@@ -2041,7 +2041,7 @@ namespace TvService
           rec.Delete();
           return true;
         }
-      } 
+      }
       catch (Exception)
       {
         Log.Error("Controller: Can't delete recording");
@@ -2068,7 +2068,7 @@ namespace TvService
           {
             RemoteControl.HostName = rec.ReferencedServer().HostName;
             return RemoteControl.Instance.IsRecordingValid(rec.IdRecording);
-          } 
+          }
           catch (Exception)
           {
             Log.Error("Controller: unable to connect to slave controller at:{0}", rec.ReferencedServer().HostName);
@@ -2328,7 +2328,7 @@ namespace TvService
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
-    public TvResult StartTimeShifting(ref User user, int idChannel, out VirtualCard card,bool forceCardId)
+    public TvResult StartTimeShifting(ref User user, int idChannel, out VirtualCard card, bool forceCardId)
     {
       if (user == null)
       {
@@ -2405,7 +2405,7 @@ namespace TvService
 
           CardDetail cardInfo = freeCards[i];
           userCopy.CardId = cardInfo.Id;
-          if(forceCardId && user.CardId != cardInfo.Id)
+          if (forceCardId && user.CardId != cardInfo.Id)
           {
             continue;
           }
@@ -3326,7 +3326,7 @@ namespace TvService
 
               foreach (Channel ch in tvChannelList)
               {
-                bool exists = _tvChannelListGroups.Exists(delegate(Channel c) { return c.IdChannel == ch.IdChannel; });                
+                bool exists = _tvChannelListGroups.Exists(delegate(Channel c) { return c.IdChannel == ch.IdChannel; });
                 if (!exists)
                 {
                   _tvChannelListGroups.Add(ch);
@@ -3557,10 +3557,10 @@ namespace TvService
             {
               Log.Write("Controller:   delete {0}", files[i]);
               File.Delete(files[i]);
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
-              Log.Error("Controller: Error on delete in CleanTimeshiftFiles");
-              Log.Error("{0}", e);
+              Log.Debug("Controller: Error \"{0}\" on delete in CleanTimeshiftFiles", e.Message);
             }
           }
         }
@@ -3593,7 +3593,7 @@ namespace TvService
         {
           OnTvServerEvent(sender, args);
         }
-      } 
+      }
       catch (Exception ex)
       {
         Log.Write(ex);
@@ -3783,7 +3783,7 @@ namespace TvService
         Log.Debug("Error in OnCiMenuChoice: menu choice sent before menu started");
         return 0;
       }
-      curMenu.AddEntry(nChoice+1, lpszText); // choices for display +1 
+      curMenu.AddEntry(nChoice + 1, lpszText); // choices for display +1 
       if (nChoice + 1 == curMenu.NumChoices)
       {
         curMenu.State = CiMenuState.Ready;
