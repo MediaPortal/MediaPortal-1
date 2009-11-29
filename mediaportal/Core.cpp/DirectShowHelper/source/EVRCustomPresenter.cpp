@@ -228,7 +228,7 @@ static LONGLONG GetCurrentTimestamp()
   CAutoLock lock(obj); \
   DWORD diff = GetCurrentTimestamp() - then; \
   if ( diff >= crit ) { \
-  Log("Critical lock time for %s was %d ms", name, diff ); \
+  Log("Critical lock time for %s was %d ms", name, diff / 10000 ); \
   }
 
 // uncomment the //Log to enable extra logging
@@ -449,7 +449,6 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::Invoke(
   return S_OK;
 }
 
-
 // IUnknown
 HRESULT MPEVRCustomPresenter::QueryInterface( 
   REFIID riid,
@@ -585,7 +584,7 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::GetFastestRate(
   /* [out] */ __RPC__out float *pflRate)
 {
   Log("GetFastestRate");
-  float   fMaxRate = 0.0f;
+  float fMaxRate = 0.0f;
 
   // Get the maximum *forward* rate.
   fMaxRate = FLT_MAX;
@@ -664,7 +663,6 @@ HRESULT MPEVRCustomPresenter::InitServicePointers(IMFTopologyServiceLookup *pLoo
     __uuidof(IMFClock),         // Interface to look up
     (void**)&m_pClock,          // Receives the pointer.
     &cCount );                  // Number of pointers
-
 
   if ( FAILED(hr) ) 
   {
@@ -1230,7 +1228,6 @@ HRESULT MPEVRCustomPresenter::RenegotiateMediaOutputType()
       fFoundMediaType = TRUE;
     }
   }
-
   return hr;
 }
 
@@ -1269,7 +1266,7 @@ void MPEVRCustomPresenter::ReturnSample(IMFSample* pSample, BOOL tryNotify)
 {
   //CAutoLock lock(this);
   TIME_LOCK(&m_lockSamples, 50000, "ReturnSample")
-    LOG_TRACE( "Sample returned: now having %d samples", m_iFreeSamples+1);
+  LOG_TRACE( "Sample returned: now having %d samples", m_iFreeSamples+1);
   m_vFreeSamples[m_iFreeSamples++] = pSample;
   if ( m_qScheduledSamples.Count() == 0 ) 
   {
