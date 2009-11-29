@@ -68,9 +68,9 @@ namespace MediaPortal.Configuration.Sections
         {
           if (drive.DriveType == System.IO.DriveType.CDRom)
           {
-            this.comboBoxDrive.Items.Add(String.Format("{0}", drive.RootDirectory)[0]+":");
+            this.comboBoxDrive.Items.Add(String.Format("{0}", drive.RootDirectory)[0] + ":");
           }
-        }        
+        }
       }
       catch (Exception)
       { }
@@ -138,7 +138,10 @@ namespace MediaPortal.Configuration.Sections
             if (skName.ToLower().Contains(Search.ToLower()))
             {
               SoftwarePath = rk.GetValue(skName).ToString().Replace("\"", "");
+              //Old versions of DaemonTools and VirtualCloneDrive
               SoftwarePath = SoftwarePath.Substring(0, SoftwarePath.LastIndexOf(@"\")) + @"\daemon.exe";
+              //New versions of DaemonTools
+              SoftwarePath = SoftwarePath.Substring(0, SoftwarePath.LastIndexOf(@"\")) + @"\DTLite.exe";
               break;
             }
           }
@@ -157,8 +160,8 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("daemon", "enabled", checkBoxDaemonTools.Checked);
         xmlwriter.SetValue("daemon", "path", textBoxDaemonTools.Text);
         xmlwriter.SetValue("daemon", "extensions", textBoxExtensions.Text);
-        xmlwriter.SetValue("daemon", "drive", (string) comboBoxDrive.SelectedItem);
-        xmlwriter.SetValue("daemon", "driveNo", Int32.Parse((string) comboDriveNo.SelectedItem));
+        xmlwriter.SetValue("daemon", "drive", (string)comboBoxDrive.SelectedItem);
+        xmlwriter.SetValue("daemon", "driveNo", Int32.Parse((string)comboDriveNo.SelectedItem));
         xmlwriter.SetValueAsBool("daemon", "askbeforeplaying", checkBoxAskBeforePlaying.Checked);
       }
     }
