@@ -95,6 +95,7 @@
     <Compile Include="Classes\QueueCommandCollection.cs" />
     <Compile Include="Classes\SectionPanel\GroupCheck.cs" />
     <Compile Include="Classes\SectionPanel\GroupCheckScript.cs" />
+    <Compile Include="Classes\TagCollection.cs" />
     <Compile Include="Classes\Util.cs" />
     <Compile Include="Classes\ProviderHelpers\SectionProviderHelper.cs" />
     <Compile Include="Classes\SectionPanel\Base.cs" />

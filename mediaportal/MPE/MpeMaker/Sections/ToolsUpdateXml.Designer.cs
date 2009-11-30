@@ -34,11 +34,11 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btn_browse2 = new System.Windows.Forms.Button();
+            this.txt_list2 = new System.Windows.Forms.TextBox();
             this.btn_browse1 = new System.Windows.Forms.Button();
             this.add_list = new System.Windows.Forms.Button();
             this.txt_list1 = new System.Windows.Forms.TextBox();
-            this.btn_browse2 = new System.Windows.Forms.Button();
-            this.txt_list2 = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -106,7 +106,27 @@
             this.groupBox2.Size = new System.Drawing.Size(670, 110);
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Add a another lis to a list";
+            this.groupBox2.Text = "Add a another list to a list";
+            // 
+            // btn_browse2
+            // 
+            this.btn_browse2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_browse2.Location = new System.Drawing.Point(580, 45);
+            this.btn_browse2.Name = "btn_browse2";
+            this.btn_browse2.Size = new System.Drawing.Size(75, 23);
+            this.btn_browse2.TabIndex = 4;
+            this.btn_browse2.Text = "Browse";
+            this.btn_browse2.UseVisualStyleBackColor = true;
+            this.btn_browse2.Click += new System.EventHandler(this.btn_browse2_Click);
+            // 
+            // txt_list2
+            // 
+            this.txt_list2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txt_list2.Location = new System.Drawing.Point(6, 48);
+            this.txt_list2.Name = "txt_list2";
+            this.txt_list2.Size = new System.Drawing.Size(568, 20);
+            this.txt_list2.TabIndex = 3;
             // 
             // btn_browse1
             // 
@@ -137,26 +157,6 @@
             this.txt_list1.Name = "txt_list1";
             this.txt_list1.Size = new System.Drawing.Size(568, 20);
             this.txt_list1.TabIndex = 0;
-            // 
-            // btn_browse2
-            // 
-            this.btn_browse2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_browse2.Location = new System.Drawing.Point(580, 45);
-            this.btn_browse2.Name = "btn_browse2";
-            this.btn_browse2.Size = new System.Drawing.Size(75, 23);
-            this.btn_browse2.TabIndex = 4;
-            this.btn_browse2.Text = "Browse";
-            this.btn_browse2.UseVisualStyleBackColor = true;
-            this.btn_browse2.Click += new System.EventHandler(this.btn_browse2_Click);
-            // 
-            // txt_list2
-            // 
-            this.txt_list2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.txt_list2.Location = new System.Drawing.Point(6, 48);
-            this.txt_list2.Name = "txt_list2";
-            this.txt_list2.Size = new System.Drawing.Size(568, 20);
-            this.txt_list2.TabIndex = 3;
             // 
             // ToolsUpdateXml
             // 

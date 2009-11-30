@@ -15,7 +15,7 @@ namespace MpeInstaller.Dialogs
     {
         private string Source;
         private string Dest;
-        private WebClient client = new WebClient();    
+        public WebClient Client = new WebClient();    
 
         public DownloadFile()
         {
@@ -30,7 +30,7 @@ namespace MpeInstaller.Dialogs
                 if (File.Exists(Dest))
                 {
                     WaitForNoBusy();
-                    if (!client.IsBusy)
+                    if (!Client.IsBusy)
                     {
                         try
                         {
@@ -56,28 +56,34 @@ namespace MpeInstaller.Dialogs
         public DownloadFile(string source, string dest)
         {
             InitializeComponent();
+            StartDownload(source, dest);
+        }
+
+        public void StartDownload(string source, string dest)
+        {
             Source = source;
             Dest = dest;
-            client.DownloadProgressChanged += client_DownloadProgressChanged;
-            client.DownloadFileCompleted += client_DownloadFileCompleted;
-            client.UseDefaultCredentials = true;
-            client.Proxy.Credentials = CredentialCache.DefaultCredentials;
-            //client.CachePolicy = new RequestCachePolicy();
+            Client.DownloadProgressChanged += client_DownloadProgressChanged;
+            Client.DownloadFileCompleted += client_DownloadFileCompleted;
+            Client.UseDefaultCredentials = true;
+            Client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+            //Client.CachePolicy = new RequestCachePolicy();
 
             progressBar1.Minimum = 0;
             progressBar1.Maximum = 100;
             progressBar1.Value = 0;
             ShowDialog();
+            
         }
 
         private void DownloadFile_Shown(object sender, EventArgs e)
         {
-            client.DownloadFileAsync(new Uri(Source), Dest);
+            Client.DownloadFileAsync(new Uri(Source), Dest);
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            client.CancelAsync();
+            Client.CancelAsync();
             WaitForNoBusy();
             this.Close();
         }
@@ -85,7 +91,7 @@ namespace MpeInstaller.Dialogs
         private void WaitForNoBusy()
         {
             int counter = 0;
-            while (client.IsBusy || counter < 10)
+            while (Client.IsBusy || counter < 10)
             {
                 counter++;
                 Thread.Sleep(100);

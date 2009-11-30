@@ -20,8 +20,8 @@ namespace MpeInstaller
             if (args.Length > 0)
             {
                 MainForm dlg = new MainForm(new ProgramArguments(args));
-                if (!dlg.IsDisposed)
-                    Application.Run(dlg);
+                //if (!dlg.IsDisposed)
+                //    Application.Run(dlg);
             }
             else
                 Application.Run(new MainForm());

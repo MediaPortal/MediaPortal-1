@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -18,6 +19,7 @@ namespace MpeInstaller
     {
 
         private ApplicationSettings _settings = new ApplicationSettings();
+        SplashScreen splashScreen = new SplashScreen();
         private bool _loading = true;
 
         public MainForm()
@@ -48,8 +50,16 @@ namespace MpeInstaller
                 if (args.MpQueue)
                 {
                     _settings.DoUpdateInStartUp = false;
+                    if (args.Splash)
+                    {
+                        splashScreen.SetImg(args.BackGround);
+                        splashScreen.Show();
+                        splashScreen.Update();
+                    }
                     ExecuteMpQueue();
                     this.Close();
+                    if (splashScreen.Visible)
+                        splashScreen.Close();
                     return;
                 }
 
@@ -106,6 +116,9 @@ namespace MpeInstaller
                             PackageClass packageClass = MpeCore.MpeInstaller.KnownExtensions.Get(item.TargetId,
                                                                                                      item.TargetVersion.
                                                                                                          ToString());
+                            if (packageClass == null)
+                                continue;
+                            splashScreen.SetInfo("Installing " + packageClass.GeneralInfo.Name);
                             string newPackageLoacation = GetPackageLocation(packageClass);
                             InstallFile(newPackageLoacation, true);
                         }
@@ -115,6 +128,7 @@ namespace MpeInstaller
                             PackageClass packageClass = MpeCore.MpeInstaller.InstalledExtensions.Get(item.TargetId);
                             if (packageClass == null)
                                 continue;
+                            splashScreen.SetInfo("UnInstalling " + packageClass.GeneralInfo.Name);
                             UnInstall dlg = new UnInstall();
                             dlg.Execute(packageClass, true);
                         }
@@ -226,11 +240,30 @@ namespace MpeInstaller
                     if (!string.IsNullOrEmpty(packageClass.GeneralInfo.OnlineLocation))
                     {
                         newPackageLoacation = Path.GetTempFileName();
-                        new DownloadFile(packageClass.GeneralInfo.OnlineLocation, newPackageLoacation);
+                        DownloadFile dlg = new DownloadFile();
+                        dlg.Client.DownloadProgressChanged += Client_DownloadProgressChanged;
+                        dlg.Client.DownloadFileCompleted += Client_DownloadFileCompleted;
+                        dlg.StartDownload(packageClass.GeneralInfo.OnlineLocation, newPackageLoacation);
                     }
                 }
             }
             return newPackageLoacation;
+        }
+
+        void Client_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        {
+            if (splashScreen.Visible)
+            {
+                splashScreen.ResetProgress();
+            }
+        }
+
+        void Client_DownloadProgressChanged(object sender, System.Net.DownloadProgressChangedEventArgs e)
+        {
+           if(splashScreen.Visible)
+           {
+               splashScreen.SetProgress("Downloading", e.ProgressPercentage);
+           }
         }
 
         void extensionListControl_UpdateExtension(object sender, PackageClass packageClass, PackageClass newpackageClass)
