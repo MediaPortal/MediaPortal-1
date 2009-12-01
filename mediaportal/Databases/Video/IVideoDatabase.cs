@@ -93,5 +93,9 @@ namespace MediaPortal.Video.Database
     void RemoveExpiredVideoThumbBlacklistEntries();
     void RemoveAllVideoThumbBlacklistEntries();
     SQLiteResultSet GetResults(string sql);
+    string DatabaseName
+    {
+      get;
+    }
   }
 }

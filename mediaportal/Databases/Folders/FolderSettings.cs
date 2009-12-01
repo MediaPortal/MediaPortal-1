@@ -34,9 +34,19 @@ namespace MediaPortal.Database
   {
     private static IFolderSettings _database = DatabaseFactory.GetFolderDatabase();
 
+    public static void ReOpen()
+    {
+      Dispose();
+      _database = DatabaseFactory.GetFolderDatabase();
+    }
+
     public static void Dispose()
     {
-      _database.Dispose();
+      if (_database != null)
+      {
+        _database.Dispose();
+      }
+
       _database = null;
     }
 
@@ -76,6 +86,18 @@ namespace MediaPortal.Database
     {
       //bool res = WaitForPath(path);
       _database.GetFolderSetting(path, Key, type, out Value);
+    }
+
+    public static string DatabaseName
+    {
+      get
+      {
+        if (_database != null)
+        {
+          return _database.DatabaseName;
+        }
+        return "";
+      }
     }
   }
 }

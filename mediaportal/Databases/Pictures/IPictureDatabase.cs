@@ -41,5 +41,9 @@ namespace MediaPortal.Picture.Database
     int ListDays(string Month, string Year, ref List<string> Days);
     int ListPicsByDate(string Date, ref List<string> Pics);
     int CountPicsByDate(string Date);
+    string DatabaseName
+    {
+      get;
+    }
   }
 }

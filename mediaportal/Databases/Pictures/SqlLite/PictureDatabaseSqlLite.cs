@@ -544,6 +544,19 @@ namespace MediaPortal.Picture.Database
       }
     }
 
+    public string DatabaseName
+    {
+      get
+      {
+
+        if (m_db != null)
+        {
+          return m_db.DatabaseName;
+        }
+        return "";
+      }
+    }
+
     #region IDisposable Members
 
     public void Dispose()

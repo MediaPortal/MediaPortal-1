@@ -36,13 +36,29 @@ namespace MediaPortal.Video.Database
 
     public static void ReOpen()
     {
+      Dispose();
       _database = DatabaseFactory.GetVideoDatabase();
     }
 
     public static void Dispose()
     {
-      _database.Dispose();
+      if (_database != null)
+      {
+        _database.Dispose();
+      }
       _database = null;
+    }
+
+    public static string DatabaseName
+    {
+      get
+      {
+        if (_database != null)
+        {
+          return _database.DatabaseName;
+        }
+        return "";
+      }
     }
 
     public static int AddFile(int lMovieId, int lPathId, string strFileName)
@@ -350,5 +366,7 @@ namespace MediaPortal.Video.Database
     {
       _database.RemoveAllVideoThumbBlacklistEntries();
     }
+
+    
   }
 }

@@ -27,6 +27,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Runtime.InteropServices;
+using MediaPortal.Database;
 using MediaPortal.GUI.Library;
 
 namespace SQLite.NET
@@ -38,6 +39,9 @@ namespace SQLite.NET
   public class SQLiteClient : IDisposable
   {
     #region imports
+
+    [DllImport("shlwapi.dll")]
+    private static extern bool PathIsNetworkPath(string Path);
 
     [DllImport("sqlite.dll")]
     internal static extern int sqlite3_open16([MarshalAs(UnmanagedType.LPWStr)] string dbname, out IntPtr handle);
@@ -103,10 +107,17 @@ namespace SQLite.NET
     // Fields
     private int busyRetries = 5;
     private int busyRetryDelay = 25;
+    private static int currentWaitCount = 0;
     private IntPtr dbHandle = IntPtr.Zero;
     private string databaseName = string.Empty;
     private string DBName = string.Empty;
     //private long dbHandleAdres=0;
+
+    #endregion
+
+    #region constants
+
+    private const int MAX_WAIT_REMOTE_DB = 60; //secs.
 
     #endregion
 
@@ -180,6 +191,7 @@ namespace SQLite.NET
     static SQLiteClient()
     {
       string libVersion;
+      currentWaitCount = 0;
       IntPtr pName = sqlite3_libversion();
       if (pName != IntPtr.Zero)
       {
@@ -188,56 +200,82 @@ namespace SQLite.NET
       }
     }
 
-    //private static bool WaitForFile(string fileName)
-    //{
-    //  // while waking up from hibernation it can take a while before a network drive is accessible.
-    //  int count = 0;
-    //  bool validFile = false;
-    //  try
-    //  {
-    //    string file = System.IO.Path.GetFileName(fileName);
+    private static bool WaitForFile(string fileName)
+    {
+      // while waking up from hibernation it can take a while before a network drive is accessible.
+      //int count = 0;
+      bool validFile = false;
+      try
+      {
+        string file = System.IO.Path.GetFileName(fileName);
+        
+        validFile = file.Length > 0;
+      }
+      catch (Exception)
+      {
+        validFile = false;
+      }
 
-    //    validFile = file.Length > 0;
-    //  }
-    //  catch (Exception)
-    //  {
-    //    validFile = false;
-    //  }
+      int maxWaitCount = ((MAX_WAIT_REMOTE_DB * 1000) / 250);
 
-    //  if (validFile)
-    //  {
-    //    while (!File.Exists(fileName) && count < 10)
-    //    {
-    //      System.Threading.Thread.Sleep(250);
-    //      count++;
-    //    }
-    //  }
-    //  else
-    //  {
-    //    return true;
-    //  }
+      if (validFile)
+      {
+        while (!File.Exists(fileName) && currentWaitCount < maxWaitCount)
+        {          
+          System.Threading.Thread.Sleep(250);
+          currentWaitCount++;
+          Log.Info("SQLLiteClient: waiting for remote database file {0} for {1} msec", fileName, currentWaitCount * 240);
+        }
+      }
+      else
+      {       
+        return true;
+      }
 
-    //  return (validFile && count < 10);
-    //}
+      if (validFile && currentWaitCount < maxWaitCount)
+      {
+        currentWaitCount = 0;
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
 
     // Methods
 
-    public SQLiteClient(string dbName)
-    {
-      // bool res = WaitForFile(dbName);
+    private void init(string dbName)
+    {      
+      bool isRemotePath = PathIsNetworkPath(dbName);
+      if (isRemotePath)
+      {
+        Log.Info("SQLLiteClient: database is remote {0}",this.DBName);
+        WaitForFile(dbName);
+      }
 
       this.DBName = dbName;
       databaseName = Path.GetFileName(dbName);
       //Log.Info("dbs:open:{0}",databaseName);
       dbHandle = IntPtr.Zero;
 
-      SqliteError err = (SqliteError) sqlite3_open16(dbName, out dbHandle);
+      SqliteError err = (SqliteError)sqlite3_open16(dbName, out dbHandle);
       //Log.Info("dbs:opened:{0} {1} {2:X}",databaseName, err.ToString(),dbHandle.ToInt32());
       if (err != SqliteError.OK)
       {
         throw new SQLiteException(string.Format("Failed to open database, SQLite said: {0} {1}", dbName, err.ToString()));
       }
       //Log.Info("dbs:opened:{0} {1:X}",databaseName, dbHandle.ToInt32());
+    }
+
+    public string DatabaseName
+    {
+      get { return this.DBName; }
+    }
+
+    public SQLiteClient(string dbName)
+    {
+      init(dbName);
     }
 
     public int ChangedRows()
@@ -253,6 +291,8 @@ namespace SQLite.NET
     {
       if (dbHandle != IntPtr.Zero)
       {
+        //System.Diagnostics.Debugger.Launch();
+        //Log.Info("SQLiteClient: Closing database: {0} st {1}", databaseName, Environment.StackTrace);
         Log.Info("SQLiteClient: Closing database: {0}", databaseName);
         try
         {
@@ -279,7 +319,7 @@ namespace SQLite.NET
       throw new SQLiteException(
         String.Format("SQLiteClient: {0} cmd:{1} err:{2} detailed:{3} query:{4}", databaseName, statement,
                       err.ToString(),
-                      errorMsg, sqlQuery), err);
+                      errorMsg, sqlQuery), err);      
     }
 
     public SQLiteResultSet Execute(string query)
@@ -550,6 +590,7 @@ namespace SQLite.NET
     public void Dispose()
     {
       //Log.Info("dbs:{0} Dispose()", databaseName);
+      Close();
     }
 
     #endregion

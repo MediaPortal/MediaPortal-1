@@ -94,6 +94,22 @@ namespace MediaPortal.Music.Database
     {
     }
 
+    public static void ReOpen()
+    {
+      Dispose();
+      Instance.Open();
+
+    }
+
+    public static void Dispose()
+    {
+      if (Instance.MusicDbClient != null)
+      {
+        Instance.MusicDbClient.Dispose();
+      }
+      Instance.MusicDbClient = null;
+    }
+
     #endregion
 
     #region Getters & Setters
@@ -108,6 +124,14 @@ namespace MediaPortal.Music.Database
         }
 
         return MusicDbClient;
+      }
+    }
+
+    public string DatabaseName
+    {
+      get
+      {
+        return DbConnection.DatabaseName;
       }
     }
 

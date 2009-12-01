@@ -33,5 +33,9 @@ namespace Databases.Folders
     void AddFolderSetting(string path, string Key, Type type, object Value);
     void GetFolderSetting(string path, string Key, Type type, out object Value);
     void Dispose();
+    string DatabaseName
+    {
+      get;
+    }
   }
 }

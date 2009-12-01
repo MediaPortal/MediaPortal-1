@@ -42,12 +42,16 @@ namespace MediaPortal.Picture.Database
 
     public static void ReOpen()
     {
+      Dispose();
       _database = DatabaseFactory.GetPictureDatabase();
     }
 
     public static void Dispose()
     {
-      _database.Dispose();
+      if (_database != null)
+      {
+        _database.Dispose();
+      }      
       //_database = null;
     }
 
@@ -104,6 +108,18 @@ namespace MediaPortal.Picture.Database
     public static int CountPicsByDate(string Date)
     {
       return _database.CountPicsByDate(Date);
+    }
+
+    public static string DatabaseName
+    {
+      get
+      {
+        if (_database != null)
+        {
+          return _database.DatabaseName;
+        }
+        return "";
+      }
     }
   }
 }

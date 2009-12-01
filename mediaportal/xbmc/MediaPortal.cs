@@ -1036,48 +1036,86 @@ public class MediaPortalApp : D3DApp, IRender
 
   private static object syncObj = new object();
 
-  // we only dispose the DB connection if the DB path is remote.      
+  // we only reopen the DB connections if the DB path is remote.      
+  // since local db's have no problems.
+  private void ReOpenDBs ()
+  {
+    string dbPath = FolderSettings.DatabaseName;
+    bool isRemotePath = (string.IsNullOrEmpty(dbPath) || PathIsNetworkPath(dbPath));
+    if (isRemotePath)
+    {
+      Log.Info("Main: reopen FolderDatabase3 sqllite database.");
+      FolderSettings.ReOpen();
+    }
+    dbPath = MediaPortal.Picture.Database.PictureDatabase.DatabaseName; 
+    isRemotePath = (string.IsNullOrEmpty(dbPath) || PathIsNetworkPath(dbPath));
+    if (isRemotePath)
+    {
+      Log.Info("Main: reopen PictureDatabase sqllite database.");
+      MediaPortal.Picture.Database.PictureDatabase.ReOpen();
+    }
+    dbPath = MediaPortal.Video.Database.VideoDatabase.DatabaseName;
+    isRemotePath = (string.IsNullOrEmpty(dbPath) || PathIsNetworkPath(dbPath));
+    if (isRemotePath)
+    {
+      Log.Info("Main: reopen VideoDatabaseV5.db3 sqllite database.");
+      MediaPortal.Video.Database.VideoDatabase.ReOpen();
+    }
+
+    dbPath = MediaPortal.Music.Database.MusicDatabase.Instance.DatabaseName;
+    isRemotePath = (string.IsNullOrEmpty(dbPath) || PathIsNetworkPath(dbPath));
+    if (isRemotePath)
+    {
+      Log.Info("Main: reopen MusicDatabase.db3 sqllite database.");      
+      MediaPortal.Music.Database.MusicDatabase.ReOpen();
+    }
+  }
+
+  // we only dispose the DB connections if the DB path is remote.      
   // since local db's have no problems.
   private void DisposeDBs()
   {
-    string dbPath = Config.GetFile(Config.Dir.Database, "FolderDatabase3.db3");
-    bool isRemotePath = PathIsNetworkPath(dbPath);
+    string dbPath = FolderSettings.DatabaseName;
+    bool isRemotePath = (!string.IsNullOrEmpty(dbPath) && PathIsNetworkPath(dbPath));
     if (isRemotePath)
     {
       Log.Info("Main: disposing FolderDatabase3 sqllite database.");
-      DatabaseFactory.GetFolderDatabase().Dispose();
+      FolderSettings.Dispose();
     }
-    dbPath = Config.GetFile(Config.Dir.Database, "PictureDatabase.db3");
-    isRemotePath = PathIsNetworkPath(dbPath);
+
+    dbPath = MediaPortal.Picture.Database.PictureDatabase.DatabaseName;
+    isRemotePath = (!string.IsNullOrEmpty(dbPath) && PathIsNetworkPath(dbPath));
     if (isRemotePath)
     {
       Log.Info("Main: disposing PictureDatabase sqllite database.");
-      DatabaseFactory.GetPictureDatabase().Dispose();
+      MediaPortal.Picture.Database.PictureDatabase.Dispose();
     }
-    dbPath = Config.GetFile(Config.Dir.Database, "VideoDatabaseV5.db3");
-    isRemotePath = PathIsNetworkPath(dbPath);
+
+    dbPath = MediaPortal.Video.Database.VideoDatabase.DatabaseName; 
+    isRemotePath = (!string.IsNullOrEmpty(dbPath) && PathIsNetworkPath(dbPath));
     if (isRemotePath)
     {
       Log.Info("Main: disposing VideoDatabaseV5.db3 sqllite database.");
-      DatabaseFactory.GetVideoDatabase().Dispose();
+      MediaPortal.Video.Database.VideoDatabase.Dispose();
     }
-    //TODO close music and TV db's
-    /*
-    dbPath = Config.GetFile(Config.Dir.Database, "MusicDatabaseV8.db3");
-    isRemotePath = PathIsNetworkPath(dbPath);
+
+    dbPath = MediaPortal.Music.Database.MusicDatabase.Instance.DatabaseName;
+    isRemotePath = (!string.IsNullOrEmpty(dbPath) && PathIsNetworkPath(dbPath));
     if (isRemotePath)
     {
-      Log.Info("Main: disposing MusicDatabaseV8.db3 sqllite database.");      
-      MediaPortal.Database.DatabaseFactory.GetVideoDatabase().Dispose();
-    }
-    dbPath = Config.GetFile(Config.Dir.Database, "TVDatabaseV21.db3");
-    isRemotePath = PathIsNetworkPath(dbPath);
-    if (isRemotePath)
-    {
-      Log.Info("Main: disposing TVDatabaseV21.db3 sqllite database.");
-      MediaPortal.Database.DatabaseFactory.GetVideoDatabase().Dispose();
-    }         
-    */
+      Log.Info("Main: disposing MusicDatabase db3 sqllite database.");
+      MediaPortal.Music.Database.MusicDatabase.Dispose();
+    }   
+  }
+
+  private bool Currentmodulefullscreen ()
+  {
+    bool currentmodulefullscreen = (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
+                                      GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC ||
+                                      GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO ||
+                                      GUIWindowManager.ActiveWindow ==
+                                      (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
+    return currentmodulefullscreen;
   }
 
   //called when windows hibernates or goes into standbye mode
@@ -1091,18 +1129,22 @@ public class MediaPortalApp : D3DApp, IRender
       }
       ignoreContextMenuAction = true;
       _suspended = true;
-      GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING; // this will close all open dialogs
-      SaveLastActiveModule();
+      GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING; // this will close all open dialogs      
+
       Log.Info("Main: Stopping playback");
       if (GUIGraphicsContext.IsPlaying)
       {
+        bool wasFullscreen = Currentmodulefullscreen();
         g_Player.Stop();
         //wait for player to stop before proceeding                
         while (GUIGraphicsContext.IsPlaying)
         {
           Thread.Sleep(100);
-        }
-      }
+        }        
+      }      
+
+      SaveLastActiveModule();
+
       //switch to windowed mode
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false && !windowed)
       {
@@ -1195,6 +1237,8 @@ public class MediaPortalApp : D3DApp, IRender
       }
 
       _onResumeRunning = true;
+
+      ReOpenDBs();
 
       // Systems without DirectX9 Ex have lost graphics device in suspend/hibernate cycle
       if (!GUIGraphicsContext.IsDirectX9ExUsed())
@@ -1437,18 +1481,34 @@ public class MediaPortalApp : D3DApp, IRender
   {
     // persist the currently selected module to XML for later use.
     Log.Debug("Main: SaveLastActiveModule - enabled {0}", showLastActiveModule);
+    bool currentmodulefullscreen = Currentmodulefullscreen();
+    string currentmodulefullscreenstate = GUIPropertyManager.GetProperty("#currentmodulefullscreenstate");
+    string currentmoduleid = GUIPropertyManager.GetProperty("#currentmoduleid");
     if (showLastActiveModule)
     {
       using (Settings xmlreader = new MPSettings())
-      {
-        string currentmoduleid = GUIPropertyManager.GetProperty("#currentmoduleid");
-        bool currentmodulefullscreen = (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
-                                        GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC ||
-                                        GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO ||
-                                        GUIWindowManager.ActiveWindow ==
-                                        (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
-        string currentmodulefullscreenstate = GUIPropertyManager.GetProperty("#currentmodulefullscreenstate");
+      {        
         // if MP was closed/hibernated by the use of remote control, we have to retrieve the fullscreen state in an alternative manner.
+
+        //if currentmoduleid is TV fullscreen, then set currentmoduleid to tvhome.
+        /*switch GUIWindowManager.ActiveWindow
+        {
+          case (int) WINDOW_FULLSCREEN_VIDEO:
+            currentmoduleid = Convert.ToString( (int) GUIWindow.Window.WINDOW_TV);
+            break;
+
+          case (int) WINDOW_FULLSCREEN_VIDEO:
+            currentmoduleid = Convert.ToString( (int) GUIWindow.Window.WINDOW_TV);
+            break;
+        }        
+        */
+
+        if (currentmodulefullscreen)
+        {
+          currentmoduleid = Convert.ToString(GUIWindowManager.GetPreviousActiveWindow());
+        }
+        
+
         if (!currentmodulefullscreen && currentmodulefullscreenstate == "True")
         {
           currentmodulefullscreen = true;
@@ -1496,7 +1556,7 @@ public class MediaPortalApp : D3DApp, IRender
           xmlreader.SetValue(section, "lastfolder", lastFolder);
           Log.Debug("Main: reverting to root folder, pin protected folder was open, SaveLastFolder {0}", lastFolder);
         }
-
+        
         xmlreader.SetValue("general", "lastactivemodule", currentmoduleid);
         xmlreader.SetValueAsBool("general", "lastactivemodulefullscreen", currentmodulefullscreen);
         Log.Debug("Main: SaveLastActiveModule - module {0}", currentmoduleid);
@@ -1509,8 +1569,9 @@ public class MediaPortalApp : D3DApp, IRender
   /// OnExit() Gets called just b4 application stops
   /// </summary>
   protected override void OnExit()
-  {
+  {    
     SaveLastActiveModule();
+
     Log.Info("Main: Exiting");
     JobDispatcher.Term();
     if (usbuirtdevice != null)

@@ -85,7 +85,7 @@ namespace MediaPortal.Video.Database
       if (m_db != null)
       {
         m_db.Close();
-        m_db.Dispose();
+        m_db.Dispose();        
         m_db = null;
       }
     }
@@ -2440,5 +2440,17 @@ namespace MediaPortal.Video.Database
     }
 
     #endregion
+
+    public string DatabaseName
+    {
+      get
+      {
+        if (m_db != null)
+        {
+          return m_db.DatabaseName;
+        }
+        return "";
+      }
+    }
   }
 }

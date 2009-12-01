@@ -702,6 +702,11 @@ namespace MediaPortal.GUI.Library
       ActivateWindow(windowId, true);
     }
 
+    public static int GetPreviousActiveWindow ()
+    {
+      return _previousActiveWindowId;
+    }
+
     public static void ActivateWindow(int windowId)
     {
       ActivateWindow(windowId, false);

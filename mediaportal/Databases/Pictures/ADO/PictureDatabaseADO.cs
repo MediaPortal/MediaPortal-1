@@ -309,5 +309,10 @@ namespace MediaPortal.Picture.Database
     {
       throw (new NotImplementedException("Count Pics by Date not yet implemented for ADO Database"));
     }
+
+    public string DatabaseName
+    {
+      get { return _connection.ConnectionString; }
+    }
   }
 }

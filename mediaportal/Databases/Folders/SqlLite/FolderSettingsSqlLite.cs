@@ -342,5 +342,17 @@ namespace Databases.Folders
         Log.Error(ex);
       }
     }
+
+    public string DatabaseName
+    {
+      get
+      {
+        if (m_db != null)
+        {
+          return m_db.DatabaseName;
+        }
+        return "";
+      }
+    }
   }
 }

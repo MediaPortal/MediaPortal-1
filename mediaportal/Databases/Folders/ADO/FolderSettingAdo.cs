@@ -297,5 +297,10 @@ namespace Databases.Folders.SqlServer
         Log.Error(ex);
       }
     }
+    public string DatabaseName
+    {
+      get { return _connection.ConnectionString; }
+    }
+
   }
 }
