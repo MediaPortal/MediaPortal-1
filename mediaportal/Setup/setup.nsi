@@ -166,17 +166,17 @@ Var frominstall
 # INSTALLER INTERFACE settings
 #---------------------------------------------------------------------------
 !define MUI_ABORTWARNING
-!define MUI_ICON    "Resources\install.ico"
+!define MUI_ICON    "${svn_InstallScripts}\Resources\install.ico"
 !define MUI_UNICON  "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
 
 !define MUI_HEADERIMAGE
-!define MUI_HEADERIMAGE_BITMAP              "Resources\header.bmp"
+!define MUI_HEADERIMAGE_BITMAP              "${svn_InstallScripts}\Resources\header.bmp"
 !if ${VER_BUILD} == 0       # it's an official release
-  !define MUI_WELCOMEFINISHPAGE_BITMAP      "Resources\wizard.bmp"
+  !define MUI_WELCOMEFINISHPAGE_BITMAP      "${svn_InstallScripts}\Resources\wizard-mp.bmp"
 !else                       # it's a svn release
-  !define MUI_WELCOMEFINISHPAGE_BITMAP      "Resources\wizard-svn.bmp"
+  !define MUI_WELCOMEFINISHPAGE_BITMAP      "${svn_InstallScripts}\Resources\wizard-mp-svn.bmp"
 !endif
-!define MUI_UNWELCOMEFINISHPAGE_BITMAP      "Resources\wizard.bmp"
+!define MUI_UNWELCOMEFINISHPAGE_BITMAP      "${svn_InstallScripts}\Resources\wizard-mp.bmp"
 !define MUI_HEADERIMAGE_RIGHT
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
