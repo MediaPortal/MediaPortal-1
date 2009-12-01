@@ -547,7 +547,7 @@ namespace TvService
                   Log.Epg("Tuning finished but EpgGrabber no longer enabled");
                 _tvController.StopGrabbingEpg(_user);
                 _user.CardId = -1;
-                Log.Epg("Epg: card:{0} could not start atsc grabbing", card.IdCard);
+                Log.Epg("Epg: card:{0} could not start dvbt grabbing", card.IdCard);
                 return false;
               }
               _user.CardId = card.IdCard;
