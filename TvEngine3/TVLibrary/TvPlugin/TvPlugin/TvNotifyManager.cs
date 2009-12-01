@@ -70,16 +70,28 @@ namespace TvPlugin
 
       _busy = false;
       _timer = new Timer();
-
+      _timer.Stop();
       // check every 15 seconds for notifies
       _dummyuser = new User();
       _dummyuser.IsAdmin = false;
       _dummyuser.Name = "Free channel checker";
       _timer.Interval = 15000;
       _timer.Enabled = true;
-      _timer.Tick += new EventHandler(_timer_Tick);
+      _timer.Tick += new EventHandler(_timer_Tick);      
 
       _notifiedRecordings = new ArrayList();
+    }
+
+    public void Start()
+    {
+      Log.Info("TvNotify: start");
+      _timer.Start();
+    }
+
+    public void Stop()
+    {
+      Log.Info("TvNotify: stop");
+      _timer.Stop();
     }
 
     public static bool RecordingNotificationEnabled

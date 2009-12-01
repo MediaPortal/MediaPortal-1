@@ -466,6 +466,7 @@ namespace TvPlugin
       GetID = (int)Window.WINDOW_TV;
       Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
 
+      _notifyManager.Start();
       startHeartBeatThread();
     }
 
@@ -480,6 +481,7 @@ namespace TvPlugin
           Card.User.Name = new User().Name;
           Card.StopTimeShifting();
         }
+        _notifyManager.Stop();
         stopHeartBeatThread();
       }
       catch (Exception)
@@ -891,6 +893,8 @@ namespace TvPlugin
     {
       // _doingHandleServerNotConnected is used to avoid multiple calls to this method.
       // the result could be that the dialogue is not shown.
+
+      //System.Diagnostics.Debugger.Launch();
       try
       {
         if (_ServerNotConnectedHandled)
@@ -903,7 +907,20 @@ namespace TvPlugin
           return false;//we assume we are still not connected
         }
         _doingHandleServerNotConnected = true;
-        bool remConnected = RemoteControl.IsConnected;
+
+        int waits = 0;
+        bool remConnected = false;
+        while (MAX_WAIT_FOR_SERVER_CONNECTION >= waits && !remConnected)
+        {
+          remConnected = RemoteControl.IsConnected;
+
+          if (!remConnected)
+          {
+            waits++;
+            Log.Info("tv home onpageload: waiting for TVservice {} sec.", waits);
+            Thread.Sleep(1000); //wait 1 sec
+          }          
+        }
 
         // we just did a successful connect      
         if (remConnected && !Connected)
@@ -939,6 +956,8 @@ namespace TvPlugin
 
           if (pDlgOK != null)
           {
+            //Log.Debug("TVHome: connection to TV server lost st: {0}", Environment.StackTrace);
+
             pDlgOK.Reset();
             pDlgOK.SetHeading(605); //my tv
             pDlgOK.SetLine(1, Navigator.CurrentChannel);
@@ -1404,6 +1423,7 @@ namespace TvPlugin
           Card.User.Name = new User().Name;
           Card.StopTimeShifting();
         }
+        _notifyManager.Stop();
         stopHeartBeatThread();
       }
       catch (Exception)
@@ -1514,35 +1534,22 @@ namespace TvPlugin
 
       btnActiveStreams.Label = GUILocalizeStrings.Get(692);
 
-      int waits = 0;
-      while (true)
+      HandleServerNotConnected();
+
+      if (!RemoteControl.IsConnected)
       {
-        if (!RemoteControl.IsConnected)
+        if (!_onPageLoadDone)
         {
-          if (!_onPageLoadDone)
-          {
-            RemoteControl.Clear();
-            GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
-            return;
-          }
-          else if (waits >= MAX_WAIT_FOR_SERVER_CONNECTION)
-          {
-            HandleServerNotConnected();
+          RemoteControl.Clear();
+          GUIWindowManager.ActivateWindow((int) Window.WINDOW_SETTINGS_TVENGINE);
+          return;
+        }
+        else
+        {          
             UpdateStateOfRecButton();
             UpdateProgressPercentageBar();
             UpdateRecordingIndicator();
-            return;
-          }
-
-          waits++;
-          Log.Info("tv home onpageload: waiting for TVservice {} sec.", waits);
-          Thread.Sleep(1000); //wait 1 sec
-          //GUIWaitCursor.Hide();          
-        }
-        else
-        {
-          Log.Info("tv home onpageload: done waiting for TVservice.");
-          break;
+            return;          
         }
       }
 
