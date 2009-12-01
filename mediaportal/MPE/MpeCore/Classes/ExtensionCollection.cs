@@ -62,6 +62,19 @@ namespace MpeCore.Classes
         }
 
 
+        public TagCollection TagList
+        {
+            get
+            {
+                TagCollection collection = new TagCollection();
+                foreach (PackageClass item in Items)
+                {
+                    collection.Add(item.GeneralInfo.TagList);
+                }
+                return collection;
+            }
+        }
+        
         /// <summary>
         /// Adds the specified package class. But without copy all the sructure the GeneralInfo and the group Names
         /// If the package with same version number already exist, will be replaced

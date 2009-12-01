@@ -58,10 +58,10 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.btn_params = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.txt_tags = new System.Windows.Forms.TextBox();
             this.img_logo = new System.Windows.Forms.PictureBox();
             this.date_release = new System.Windows.Forms.DateTimePicker();
             this.label12 = new System.Windows.Forms.Label();
-            this.txt_tags = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.img_logo)).BeginInit();
             this.SuspendLayout();
@@ -280,7 +280,7 @@
             this.txt_versiondesc.Multiline = true;
             this.txt_versiondesc.Name = "txt_versiondesc";
             this.txt_versiondesc.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txt_versiondesc.Size = new System.Drawing.Size(318, 137);
+            this.txt_versiondesc.Size = new System.Drawing.Size(318, 360);
             this.txt_versiondesc.TabIndex = 15;
             this.txt_versiondesc.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
             // 
@@ -331,7 +331,7 @@
             // btn_params
             // 
             this.btn_params.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btn_params.Location = new System.Drawing.Point(115, 411);
+            this.btn_params.Location = new System.Drawing.Point(115, 634);
             this.btn_params.Name = "btn_params";
             this.btn_params.Size = new System.Drawing.Size(135, 23);
             this.btn_params.TabIndex = 16;
@@ -343,10 +343,23 @@
             // 
             this.toolTip1.IsBalloon = true;
             // 
+            // txt_tags
+            // 
+            this.txt_tags.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
+            this.txt_tags.CharacterCasing = System.Windows.Forms.CharacterCasing.Lower;
+            this.txt_tags.Location = new System.Drawing.Point(114, 269);
+            this.txt_tags.Multiline = true;
+            this.txt_tags.Name = "txt_tags";
+            this.txt_tags.Size = new System.Drawing.Size(259, 359);
+            this.txt_tags.TabIndex = 13;
+            this.toolTip1.SetToolTip(this.txt_tags, "Tags separated by \",\"");
+            this.txt_tags.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
+            // 
             // img_logo
             // 
             this.img_logo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.img_logo.Location = new System.Drawing.Point(3, 370);
+            this.img_logo.Location = new System.Drawing.Point(3, 593);
             this.img_logo.Name = "img_logo";
             this.img_logo.Size = new System.Drawing.Size(64, 64);
             this.img_logo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -368,18 +381,6 @@
             this.label12.Size = new System.Drawing.Size(70, 13);
             this.label12.TabIndex = 28;
             this.label12.Text = "Release date";
-            // 
-            // txt_tags
-            // 
-            this.txt_tags.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)));
-            this.txt_tags.CharacterCasing = System.Windows.Forms.CharacterCasing.Lower;
-            this.txt_tags.Location = new System.Drawing.Point(114, 269);
-            this.txt_tags.Multiline = true;
-            this.txt_tags.Name = "txt_tags";
-            this.txt_tags.Size = new System.Drawing.Size(259, 136);
-            this.txt_tags.TabIndex = 13;
-            this.toolTip1.SetToolTip(this.txt_tags, "Tags separated by \",\"");
             // 
             // label13
             // 
@@ -428,7 +429,7 @@
             this.Controls.Add(this.txt_name);
             this.Controls.Add(this.label1);
             this.Name = "GeneralSection";
-            this.Size = new System.Drawing.Size(700, 437);
+            this.Size = new System.Drawing.Size(700, 660);
             this.Load += new System.EventHandler(this.GeneralSection_Load);
             ((System.ComponentModel.ISupportInitialize)(this.img_logo)).EndInit();
             this.ResumeLayout(false);

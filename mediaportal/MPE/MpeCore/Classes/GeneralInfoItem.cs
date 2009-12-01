@@ -41,5 +41,13 @@ namespace MpeCore.Classes
         public string Location { get; set; }
 
         public  SectionParamCollection Params { get; set; }
+
+        public TagCollection TagList
+        {
+            get
+            {
+                return new TagCollection(Tags);
+            }
+        }
     }
 }
