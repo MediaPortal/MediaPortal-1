@@ -2288,11 +2288,20 @@ namespace MediaPortal.Video.Database
           return false;
         }
         string strSQL;
-        FileInfo fileInfo = new FileInfo(path);
-        if (!fileInfo.Exists)
+        FileInfo fileInfo = null;
+        try
+        {
+          fileInfo = new FileInfo(path);
+        }
+        catch
+        {
+          //ignore
+        }
+
+        if (fileInfo == null || !fileInfo.Exists)
         {
           return false;
-        }
+        }      
 
         path = path.Trim();
         DatabaseUtility.RemoveInvalidChars(ref path);
@@ -2322,11 +2331,21 @@ namespace MediaPortal.Video.Database
           return -1;
         }
         string strSQL;
-        FileInfo fileInfo = new FileInfo(path);
-        if (!fileInfo.Exists)
+        FileInfo fileInfo = null;
+
+        try
+        {
+          fileInfo = new FileInfo(path);
+        }
+        catch
+        {
+          //ignore
+        }
+
+        if (fileInfo == null || !fileInfo.Exists)
         {
           return -1;
-        }
+        }          
 
         path = path.Trim();
         DatabaseUtility.RemoveInvalidChars(ref path);
