@@ -2599,11 +2599,12 @@ public class MediaPortalApp : D3DApp, IRender
               if (g_Player.IsMusic && g_Player.Speed != 1) 
               {
                 // Attention: GUIMusicGenre / GUIMusicFiles need to be handled differently. we reset the speed there
-                if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MUSIC_FILES ||
-                  GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MUSIC_GENRE)
+                if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_FILES ||
+                  GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_GENRE)
                 {
-                  g_Player.Speed = 1;
+                  return;
                 }
+                g_Player.Speed = 1;
                 return;
               }
 
