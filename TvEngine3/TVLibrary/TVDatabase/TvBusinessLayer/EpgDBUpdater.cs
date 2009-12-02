@@ -260,7 +260,7 @@ namespace TvDatabase
       {
         Log.Epg("{0}: no channel found for networkid:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X}", _grabberName,
                 dvbChannel.NetworkId, dvbChannel.TransportId, dvbChannel.ServiceId);
-        foreach (EpgProgram ei in epgChannel.Programs)
+        /*foreach (EpgProgram ei in epgChannel.Programs)
         {
           string title = "";
           if (ei.Text.Count > 0)
@@ -268,7 +268,7 @@ namespace TvDatabase
             title = ei.Text[0].Title;
           }
           Log.Epg("                   -> {0}-{1}  {2}", ei.StartTime, ei.EndTime, title);
-        }
+        }*/
         return null;
       }
       //should we store epg for this channel?
