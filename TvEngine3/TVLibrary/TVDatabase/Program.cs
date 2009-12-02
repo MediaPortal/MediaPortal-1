@@ -509,14 +509,14 @@ namespace TvDatabase
             sb.AddConstraint(
               string.Format(
                   "(EXTRACT(HOUR_SECOND FROM {0}) >= EXTRACT(HOUR_SECOND FROM ?{1})" +
-                "OR EXTRACT(HOUR_SECOND FROM {0}) =< EXTRACT(HOUR_SECOND FROM ?{2}))",
+                "OR EXTRACT(HOUR_SECOND FROM {0}) <= EXTRACT(HOUR_SECOND FROM ?{2}))",
                 startField, startParam, endParam));
             if (!string.IsNullOrEmpty(endField))
             {
               sb.AddConstraint(
                 string.Format(
                     "(EXTRACT(HOUR_SECOND FROM {0}) >= EXTRACT(HOUR_SECOND FROM ?{1})" +
-                  "OR EXTRACT(HOUR_SECOND FROM {0}) =< EXTRACT(HOUR_SECOND FROM ?{2}))",
+                  "OR EXTRACT(HOUR_SECOND FROM {0}) <= EXTRACT(HOUR_SECOND FROM ?{2}))",
                   endField, startParam, endParam));
             }
           }
