@@ -54,7 +54,6 @@ _____________________________________________________________________________
 !endif
 !insertmacro LANG_STRING TEXT_MSGBOX_REMOVE_ALL_STUPID      "!!! ATTENTION !!!$\r$\nAgain for those who slept the msgBox before. :($\r$\n$\r$\n$(TEXT_MSGBOX_REMOVE_ALL)"
 
-!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_SVN_NOMP         "MediaPortal is not installed. You need to install this before you can install an svn snapshot."
 !insertmacro LANG_STRING TEXT_MSGBOX_PARAMETER_ERROR        "You have done something wrong!$\r$\nIt is not allowed to use 'noClient' & 'noServer' at the same time."
 
 !insertmacro LANG_STRING TEXT_MSGBOX_ERROR_MP022            "Old MSI-based MediaPortal 0.2.2.0 is still installed. Why didn't you follow the instructions and didn't remove it first? Do that and restart this setup."
@@ -83,6 +82,9 @@ _____________________________________________________________________________
 !insertmacro LANG_STRING TEXT_MSGBOX_ERROR_ON_UNINSTALL               "An error occured while trying to uninstall old version!$\r$\nDo you still want to continue the installation?"
 !insertmacro LANG_STRING TEXT_MSGBOX_ERROR_REBOOT_REQUIRED            "A reboot is required after a previous action. Reboot you system and try it again."
 !insertmacro LANG_STRING TEXT_MSGBOX_ERROR_UPDATE_BUT_NOT_INSTALLED   "${PRODUCT_NAME} is not installed. It is not possible to install this update.$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)"
+
+!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_SVN_NOMP               "${PRODUCT_NAME} v${MIN_INSTALLED_MP_VERSION_TEXT} is not installed. It is required to install this SVN-Snapshot. Please install it first.$\r$\nDo you want to open the download page in your browser now?"
+!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_SVN_WRONG_VERSION      "${PRODUCT_NAME} v${MIN_INSTALLED_MP_VERSION_TEXT} is not installed. It is required to install this SVN-Snapshot. Please install it first.$\r$\nDo you want to open the download page in your browser now?"
 
 
 !insertmacro LANG_STRING UPDATE_ERROR_WRONGEXE                    "updating ${PRODUCT_NAME} is only allowed by starting MediaPortalUpdater!"

@@ -76,6 +76,13 @@
   !define TV3_REG_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
 !endif
 
+; modify your registry and uncomment the following line to test if the svn version check is working
+!define SVN_BUILD
+!define MIN_INSTALLED_MP_VERSION      "1.0.4.0"
+!define MIN_INSTALLED_MP_VERSION_TEXT "v1.1.0 beta1"
+!define WEB_DOWNLOAD_MIN_MP_VERSION   "http://www.team-mediaportal.com/news/global/mediaportal_1.1.0_beta_1_-_released!.html"
+
+
 #---------------------------------------------------------------------------
 # SECTION MACROS
 #---------------------------------------------------------------------------
@@ -816,9 +823,60 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
   ${LOG_TEXT} "INFO" "============================"
 !macroend
 
+!ifdef SVN_BUILD
+!macro MinimumVersionForSVNCheck
+  ${LOG_TEXT} "INFO" ".: MinimumVersionForSVNCheck: Compare installed and minimum version for this SVN snapshot :."
+
+!if "${PRODUCT_NAME}" == "MediaPortal"
+  ${IfNot} ${MPIsInstalled}
+    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_SVN_NOMP)" IDNO +2
+    ExecShell open "${WEB_DOWNLOAD_MIN_MP_VERSION}"
+    Abort
+  ${Else}
+
+    !insertmacro MP_GET_VERSION $R0
+!endif
+
+!if "${PRODUCT_NAME}" == "MediaPortal TV Server / Client"
+  ${IfNot} ${TVServerIsInstalled}
+  ${AndIfNot} ${TVClientIsInstalled}
+    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_SVN_NOMP)" IDNO +2
+    ExecShell open "${WEB_DOWNLOAD_MIN_MP_VERSION}"
+    Abort
+  ${Else}
+
+    !insertmacro TVSERVER_GET_VERSION $R0
+!endif
+
+    ${VersionCompare} $R0 ${MIN_INSTALLED_MP_VERSION} $R0
+    ${If} $R0 == 0
+      ; installed version is EQUAL to min
+    ${ElseIf} $R0 == 1
+      ; installed version is NEWER than min
+    ${ElseIf} $R0 == 2
+      ; installed version is OLDER than min
+      MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_SVN_WRONG_VERSION)" IDNO +2
+      ExecShell open "${WEB_DOWNLOAD_MIN_MP_VERSION}"
+      Abort
+    ${Else}
+      ; installed version is: not found
+    ${EndIf}
+
+  ${EndIf}
+
+  ${LOG_TEXT} "INFO" "============================"
+!macroend
+!endif
+
+
 !if "${PRODUCT_NAME}" == "MediaPortal"
 
 !macro DoPreInstallChecks
+
+!ifdef SVN_BUILD
+  ; check if correct MP version ist installed, which is required for this svn snapshot
+  !insertmacro MinimumVersionForSVNCheck
+!endif
 
   ; OS and other common initialization checks are done in the following NSIS header file
   !insertmacro MediaPortalOperatingSystemCheck
@@ -857,6 +915,11 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
 !if "${PRODUCT_NAME}" == "MediaPortal TV Server / Client"
 
 !macro DoPreInstallChecks
+
+!ifdef SVN_BUILD
+  ; check if correct MP version ist installed, which is required for this svn snapshot
+  !insertmacro MinimumVersionForSVNCheck
+!endif
 
   ; OS and other common initialization checks are done in the following NSIS header file
   !insertmacro MediaPortalOperatingSystemCheck
