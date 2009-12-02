@@ -486,27 +486,30 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_SELECT_ITEM:
           {
-            if (_autoZapMode)
+            if (!g_Player.IsTVRecording)
             {
-              StopAutoZap();
-            }
-            else if (_zapOsdVisible)
-            {
-              TVHome.Navigator.ZapNow();
-            }
-            else
-            {
-              TvMiniGuide miniGuide = (TvMiniGuide) GUIWindowManager.GetWindow((int) Window.WINDOW_MINI_GUIDE);
-              _isDialogVisible = true;
-              miniGuide.AutoZap = true;
-              miniGuide.DoModal(GetID);
-              _isDialogVisible = false;
+              if (_autoZapMode)
+              {
+                StopAutoZap();
+              }
+              else if (_zapOsdVisible)
+              {
+                TVHome.Navigator.ZapNow();
+              }
+              else
+              {
+                TvMiniGuide miniGuide = (TvMiniGuide) GUIWindowManager.GetWindow((int) Window.WINDOW_MINI_GUIDE);
+                _isDialogVisible = true;
+                miniGuide.AutoZap = true;
+                miniGuide.DoModal(GetID);
+                _isDialogVisible = false;
 
-              // LastChannel has been moved to "0"
-              //if (!GUIWindowManager.IsRouted)
-              //{
-              //  GUITVHome.OnLastViewedChannel();
-              //}
+                // LastChannel has been moved to "0"
+                //if (!GUIWindowManager.IsRouted)
+                //{
+                //  GUITVHome.OnLastViewedChannel();
+                //}
+              }
             }
           }
           break;
@@ -525,7 +528,7 @@ namespace TvPlugin
               _zapTimeOutTimer = DateTime.Now;
             }
 
-            if (!_zapOsdVisible)
+            if (!_zapOsdVisible && !g_Player.IsTVRecording)
             {
               if (!_useVMR9Zap)
               {
@@ -1570,27 +1573,34 @@ namespace TvPlugin
       dlg.Reset();
       dlg.SetHeading(924); // menu
 
-      if (GUIGraphicsContext.DBLClickAsRightClick)
+      if (!g_Player.IsTVRecording && GUIGraphicsContext.DBLClickAsRightClick)
       {
         dlg.AddLocalizedString(10104); // TV MiniEPG
       }
 
       //dlg.AddLocalizedString(915); // TV Channels
-      dlg.AddLocalizedString(4); // TV Guide
+      if (!g_Player.IsTVRecording)
+      {
+        dlg.AddLocalizedString(4); // TV Guide}
+      }
 
       TvBusinessLayer layer = new TvBusinessLayer();
-      IList<ChannelLinkageMap> linkages = layer.GetLinkagesForChannel(TVHome.Navigator.Channel);
-      if (linkages != null)
+      IList<ChannelLinkageMap> linkages = null;
+      if (!g_Player.IsTVRecording)
       {
-        if (linkages.Count > 0)
+        linkages = layer.GetLinkagesForChannel(TVHome.Navigator.Channel);
+        if (linkages != null)
         {
-          dlg.AddLocalizedString(200042); // Linked Channels
+          if (linkages.Count > 0)
+          {
+            dlg.AddLocalizedString(200042); // Linked Channels
+          }
         }
       }
 
-      /*if (TVHome.Navigator.Groups.Count > 1)
+    /*if (TVHome.Navigator.Groups.Count > 1)
         dlg.AddLocalizedString(971); // Group*/
-      if (TVHome.Card.HasTeletext && !g_Player.IsTVRecording)
+      if (!g_Player.IsTVRecording && TVHome.Card.HasTeletext)
       {
         dlg.AddLocalizedString(1441); // Fullscreen teletext
       }
@@ -1622,36 +1632,37 @@ namespace TvPlugin
       {
         dlg.AddLocalizedString(100748); // Program Information
       }
-      if (File.Exists(GUIGraphicsContext.Skin + @"\mytvtuningdetails.xml") && !g_Player.IsTVRecording)
+      if (!g_Player.IsTVRecording && File.Exists(GUIGraphicsContext.Skin + @"\mytvtuningdetails.xml"))
       {
         dlg.AddLocalizedString(200041); // tuning details
       }
-
-      VirtualCard vc;
+      
       TvServer server = new TvServer();
-      if (server.IsRecording(TVHome.Navigator.Channel.Name, out vc))
+      if (!g_Player.IsTVRecording)
       {
-        dlg.AddLocalizedString(265); //stop rec.
-      }
-      else
-      {
-        dlg.AddLocalizedString(601); //Record Now        
-      }
+        VirtualCard vc;
+        if (server.IsRecording(TVHome.Navigator.Channel.Name, out vc))
+        {
+          dlg.AddLocalizedString(265); //stop rec.
+        }
+        else
+        {
+          dlg.AddLocalizedString(601); //Record Now        
+        }
+      }      
 
-      dlg.AddLocalizedString(970); // Previous window
-
-      if (TVHome.Card.CiMenuSupported())
+      if (TVHome.Card.CiMenuSupported() && !g_Player.IsTVRecording)
         dlg.AddLocalizedString(2700); // CI Menu supported
 
       //dlg.AddLocalizedString(6008); // Sort TvChannel
 
-      if (TVHome.Card.IsOwner() && !TVHome.Card.IsRecording && TVHome.Card.SupportsQualityControl() &&
-          !g_Player.IsTVRecording)
+      if (!g_Player.IsTVRecording && TVHome.Card.IsOwner() && !TVHome.Card.IsRecording && TVHome.Card.SupportsQualityControl())
       {
         dlg.AddLocalizedString(882);
       }
 
       dlg.AddLocalizedString(368); // IMDB
+      dlg.AddLocalizedString(970); // Previous window
 
       _isDialogVisible = true;
 
@@ -2804,6 +2815,11 @@ namespace TvPlugin
 
     public void OnKeyCode(char chKey)
     {
+      if (g_Player.IsTVRecording)
+      {
+        return;
+      }
+
       if (_isDialogVisible)
       {
         return;
@@ -2944,6 +2960,12 @@ namespace TvPlugin
     private void OnPageDown()
     {
       // Switch to the next channel group and tune to the first channel in the group
+
+      if (g_Player.IsTVRecording)
+      {
+        return;
+      }
+
       TVHome.Navigator.ZapToPreviousGroup(true);
       _groupVisible = true;
       _groupTimeOutTimer = DateTime.Now;
@@ -2955,7 +2977,12 @@ namespace TvPlugin
 
     private void OnPageUp()
     {
-      // Switch to the next channel group and tune to the first channel in the group
+      if (g_Player.IsTVRecording)
+      {     
+        return;
+      }
+
+    // Switch to the next channel group and tune to the first channel in the group
       TVHome.Navigator.ZapToNextGroup(true);
       _groupVisible = true;
       _groupTimeOutTimer = DateTime.Now;
@@ -2967,6 +2994,12 @@ namespace TvPlugin
 
     private void ChangeChannelNr(int channelNr)
     {
+
+      if (g_Player.IsTVRecording)
+      {
+        return;
+      }
+
       Log.Debug("ChangeChannelNr()");
       if (_byIndex == true)
       {
@@ -2983,6 +3016,11 @@ namespace TvPlugin
 
     public void ZapPreviousChannel()
     {
+
+      if (g_Player.IsTVRecording)
+      {
+        return;
+      }
       Log.Debug("ZapPreviousChannel()");
       TVHome.Navigator.ZapToPreviousChannel(true);
       _zapTimeOutTimer = DateTime.Now;
@@ -2996,6 +3034,12 @@ namespace TvPlugin
 
     public void ZapNextChannel()
     {
+
+      if (g_Player.IsTVRecording)
+      {
+        return;
+      }
+
       Log.Debug("ZapNextChannel()");
       TVHome.Navigator.ZapToNextChannel(true);
       _zapTimeOutTimer = DateTime.Now;
@@ -3009,6 +3053,12 @@ namespace TvPlugin
 
     public void StartAutoZap()
     {
+
+      if (g_Player.IsTVRecording)
+      {
+        return;
+      }
+
       Log.Debug("TVFullscreen: Start autozap mode");
       _autoZapMode = true;
       _autoZapTimer.Elapsed += new ElapsedEventHandler(_autoZapTimer_Elapsed);

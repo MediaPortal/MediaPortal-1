@@ -1421,14 +1421,7 @@ namespace TvPlugin
       if (g_Player.IsTVRecording)
       {
         Recording rec = TvRecorded.ActiveRecording();
-        if (rec != null)
-        {
-          return rec.ReferencedChannel().DisplayName;
-        }
-        else
-        {
-          return "";
-        }
+        return TvRecorded.GetRecordingDisplayName(rec);        
       }
       else
       {
@@ -1550,6 +1543,7 @@ namespace TvPlugin
 
           //remaining = "0";                    
           tbOnTvNow.Label = title;
+          GUIPropertyManager.SetProperty("#TV.View.compositetitle", title);
           GUIPropertyManager.SetProperty("#TV.View.start", startTime);
           GUIPropertyManager.SetProperty("#TV.View.stop", endTime);
 
@@ -1610,8 +1604,7 @@ namespace TvPlugin
           Log.Info("OSD.SetRecorderStatus = {0}", imgRecIcon.Visible);
         }
       }
-    }
-
+    }    
 
     private void UpdateProgressBar()
     {
@@ -1690,7 +1683,8 @@ namespace TvPlugin
           long duration = (long)(g_Player.Duration);
           endTime = Utils.SecondsToHMSString((int)duration);
 
-          channelDisplayName = rec.ReferencedChannel().DisplayName + " (" + GUILocalizeStrings.Get(604) + ")";
+
+          channelDisplayName = TvRecorded.GetRecordingDisplayName(rec) + " (" + GUILocalizeStrings.Get(604) + ")";
           genre = rec.Genre;
 
           double fPercent;

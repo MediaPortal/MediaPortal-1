@@ -82,7 +82,7 @@ namespace TvPlugin
                         string thumbNail = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded,
                                                          Path.ChangeExtension(Utils.SplitFilename(recFileName), null),
                                                          Utils.GetThumbExtension());
-                        if (!File.Exists(thumbNail) && (/*TVHome.IsSingleSeat() || */!TVHome.UseRTSP()))
+                        if ((!TVHome.UseRTSP()) && !File.Exists(thumbNail))
                         {
                             //Log.Info("RecordedTV: No thumbnail found at {0} for recording {1} - grabbing from file now", thumbNail, rec.FileName);
 
@@ -274,8 +274,9 @@ namespace TvPlugin
                 m_bSortAscending = xmlreader.GetValueAsBool("tvrecorded", "sortascending", true);
                 _deleteWatchedShows = xmlreader.GetValueAsBool("capture", "deletewatchedshows", false);
                 _createRecordedThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
-            }
-            thumbworker = null;
+            }                        
+
+          thumbworker = null;
         }
 
         private void SaveSettings()
@@ -413,8 +414,7 @@ namespace TvPlugin
         }
 
         protected override void OnPageLoad()
-        {
-
+        {            
             base.OnPageLoad();
             DeleteInvalidRecordings();
 
@@ -422,6 +422,8 @@ namespace TvPlugin
             {
                 btnCompress.Visible = false;
             }
+
+            TVHome.HandleServerNotConnected();
 
             LoadSettings();
             LoadDirectory();
@@ -433,13 +435,22 @@ namespace TvPlugin
             GUIControl.SelectItemControl(GetID, facadeView.GetID, _iSelectedItem);
 
             btnSortBy.SortChanged += new SortEventHandler(SortChanged);
-
+//System.Diagnostics.Debugger.Launch();
             if (thumbworker == null)
-            {
-                if (_createRecordedThumbs)
+            {              
+              if (_createRecordedThumbs)
+              {
+                _createRecordedThumbs = (!TVHome.UseRTSP());
+
+                if (!_createRecordedThumbs)
                 {
-                    thumbworker = new RecordingThumbCacher();
+                  Log.Info("GUIRecordedTV: skipping thumbworker thread - RTSP mode is in use");
                 }
+                else
+                {
+                  thumbworker = new RecordingThumbCacher();
+                }                
+              }
             }
             else
             {
@@ -689,27 +700,6 @@ namespace TvPlugin
         #region Private methods
 
         /// <summary>
-        /// This function replaces g_player.ShowFullScreenWindowTV
-        /// </summary>
-        ///<returns></returns>
-        private static bool ShowFullScreenWindowTVHandler()
-        {
-            if (g_Player.IsTVRecording)
-            {
-                // watching TV
-                if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_TVFULLSCREEN)
-                {
-                    return true;
-                }
-                Log.Info("TVRecorded: ShowFullScreenWindow switching to fullscreen tv");
-                GUIWindowManager.ActivateWindow((int)Window.WINDOW_TVFULLSCREEN);
-                GUIGraphicsContext.IsFullScreenVideo = true;
-                return true;
-            }
-            return g_Player.ShowFullScreenWindowTVDefault();
-        }
-
-        /// <summary>
         /// This function replaces g_player.ShowFullScreenWindowVideo
         /// </summary>
         ///<returns></returns>
@@ -949,7 +939,7 @@ namespace TvPlugin
                                   TVUtil.GetDisplayTitle(rec).Equals(_currentLabel, StringComparison.InvariantCultureIgnoreCase);
                                 break;
                             case DBView.Channel:
-                                addToList = rec.ReferencedChannel().DisplayName.Equals(_currentLabel, StringComparison.InvariantCultureIgnoreCase);
+                                addToList = GetRecordingDisplayName(rec).Equals(_currentLabel, StringComparison.InvariantCultureIgnoreCase);
                                 break;
                             case DBView.Genre:
                                 addToList = rec.Genre.Equals(_currentLabel, StringComparison.InvariantCultureIgnoreCase);
@@ -1003,6 +993,23 @@ namespace TvPlugin
 
             OnSort();
             UpdateProperties();
+        }
+
+        public static string GetRecordingDisplayName(Recording rec)
+        {
+          if (rec == null)
+          {
+            return "";
+          }
+
+          Channel ch = rec.ReferencedChannel();
+
+          if (ch == null)
+          {
+            return "";
+          }
+
+          return ch.DisplayName;
         }
 
         public static bool IsRecordingActual(Recording aRecording)
@@ -1213,7 +1220,7 @@ namespace TvPlugin
                         item1.Label2 = GUILocalizeStrings.Get(2014); // unknown
                         try
                         {
-                            string Channel = rec.ReferencedChannel().DisplayName;
+                            string Channel = GetRecordingDisplayName(rec);
                             if (!String.IsNullOrEmpty(Channel))
                             {
                                 item1.Label2 = Channel;
@@ -1294,11 +1301,7 @@ namespace TvPlugin
                     return false;
                 }
                 dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
-                string chName = "";
-                if (rec.ReferencedChannel() != null)
-                {
-                    chName = rec.ReferencedChannel().DisplayName;
-                }
+                string chName = GetRecordingDisplayName(rec);                
                 dlgYesNo.SetLine(1, chName);
                 dlgYesNo.SetLine(2, rec.Title);
                 dlgYesNo.SetLine(3, GUILocalizeStrings.Get(936) + " " + Utils.SecondsToHMSString(rec.StopTime));
@@ -1455,12 +1458,7 @@ namespace TvPlugin
                 {
                     dlgYesNo.SetHeading(GUILocalizeStrings.Get(820));
                 }
-                string chName = "";
-
-                if (rec.ReferencedChannel() != null)
-                {
-                    chName = rec.ReferencedChannel().DisplayName;
-                }
+                string chName = GetRecordingDisplayName(rec);                
 
                 dlgYesNo.SetLine(1, chName);
                 dlgYesNo.SetLine(2, rec.Title);
@@ -1677,11 +1675,10 @@ namespace TvPlugin
                 GUIPropertyManager.SetProperty("#TV.RecordedTV.Description", rec.Description);
 
                 string strLogo = "";
-                if (rec.ReferencedChannel() != null)
-                {
-                    GUIPropertyManager.SetProperty("#TV.RecordedTV.Channel", rec.ReferencedChannel().DisplayName);
-                    strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().DisplayName);
-                }
+                
+                GUIPropertyManager.SetProperty("#TV.RecordedTV.Channel", GetRecordingDisplayName(rec));
+                strLogo = Utils.GetCoverArt(Thumbs.TVChannel, GetRecordingDisplayName(rec));
+                
                 if (File.Exists(strLogo))
                 {
                     GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", strLogo);

@@ -234,8 +234,9 @@ namespace TvPlugin
 
       dtNow = DateTime.Now.AddDays(day);
       rec.StartTime = new DateTime(dtNow.Year, dtNow.Month, dtNow.Day, hour, minute, 0, 0);
-      rec.EndTime = rec.StartTime.AddMinutes(duration);
+      rec.EndTime = rec.StartTime.AddMinutes(duration);      
       rec.ProgramName = GUILocalizeStrings.Get(413) + " (" + rec.ReferencedChannel().DisplayName + ")";
+              
       rec.Persist();
       TvServer server = new TvServer();
       server.OnNewSchedule();

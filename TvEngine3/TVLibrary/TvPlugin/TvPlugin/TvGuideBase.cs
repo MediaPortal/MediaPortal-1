@@ -664,6 +664,7 @@ namespace TvPlugin
             {
               if (TVHome.HandleServerNotConnected())
               {
+                Log.Debug("TvGuideBase: not connected to server, returning!");
                 return false;
               }
 

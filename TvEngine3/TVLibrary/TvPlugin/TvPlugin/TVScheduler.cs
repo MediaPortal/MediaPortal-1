@@ -154,13 +154,16 @@ namespace TvPlugin
     }
 
     protected override void OnPageLoad()
-    {
+    {      
+
       base.OnPageLoad();
       if (btnPriorities != null)
       {
         btnPriorities.Visible = false;
       }
       //@      ConflictManager.OnConflictsUpdated += new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
+
+      TVHome.HandleServerNotConnected();      
 
       LoadSettings();
       needUpdate = false;
@@ -727,8 +730,8 @@ namespace TvPlugin
               strType = GUILocalizeStrings.Get(649);
               item.Label2 = String.Format("{0} {1} {2}", strType, day, strTime);
               break;
-            case (int) ScheduleRecordingType.EveryTimeOnThisChannel:
-              item.Label2 = GUILocalizeStrings.Get(650, new object[] {rec.ReferencedChannel().DisplayName});
+            case (int) ScheduleRecordingType.EveryTimeOnThisChannel:              
+              item.Label2 = GUILocalizeStrings.Get(650, new object[] { rec.ReferencedChannel().DisplayName });
               break;
             case (int) ScheduleRecordingType.EveryTimeOnEveryChannel:
               item.Label2 = GUILocalizeStrings.Get(651);
@@ -1111,7 +1114,7 @@ namespace TvPlugin
         foreach (Channel chan in channels)
         {
           dlg.Items.Add(chan.DisplayName);
-        }
+        }        
         dlg.Channel = rec.ReferencedChannel().DisplayName;
         dlg.StartDateTime = rec.StartTime;
         dlg.EndDateTime = rec.EndTime;

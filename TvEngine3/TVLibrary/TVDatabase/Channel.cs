@@ -365,7 +365,7 @@ namespace TvDatabase
         return null;
       }
       Key key = new Key(typeof (Channel), true, "idChannel", id);
-      return Broker.RetrieveInstance<Channel>(key);
+      return Broker.TryRetrieveInstance<Channel>(key);
     }
 
     /// <summary>

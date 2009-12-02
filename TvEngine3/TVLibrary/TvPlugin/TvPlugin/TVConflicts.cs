@@ -311,8 +311,8 @@ namespace TvPlugin
             item.Label2 = String.Format("{0} {1} {2}", strType, day, strTime);
             break;
           case (int) ScheduleRecordingType.EveryTimeOnThisChannel:
-            item.Label = rec.ProgramName;
-            item.Label2 = GUILocalizeStrings.Get(650, new object[] {rec.ReferencedChannel().DisplayName});
+            item.Label = rec.ProgramName;            
+            item.Label2 = GUILocalizeStrings.Get(650, new object[] { rec.ReferencedChannel().DisplayName });
             break;
           case (int) ScheduleRecordingType.EveryTimeOnEveryChannel:
             item.Label = rec.ProgramName;

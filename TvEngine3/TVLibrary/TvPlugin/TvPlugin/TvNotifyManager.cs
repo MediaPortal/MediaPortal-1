@@ -392,7 +392,7 @@ namespace TvPlugin
                                DateTime.Now.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
         }
         //Recording stopped:                            
-        Notify(GUILocalizeStrings.Get(1447), textPrg, stoppedRec.ReferencedChannel().DisplayName);
+        Notify(GUILocalizeStrings.Get(1447), textPrg, TvRecorded.GetRecordingDisplayName(stoppedRec));
         _actualRecordings.Remove(stoppedRec);
 
         return; //we do not want to show any more notifications.        

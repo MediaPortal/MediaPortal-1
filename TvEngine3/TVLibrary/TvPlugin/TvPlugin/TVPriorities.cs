@@ -228,7 +228,7 @@ namespace TvPlugin
         }
         GUIListItem item = new GUIListItem();
         item.Label = String.Format("{0}.{1}", total, rec.ProgramName);
-        item.TVTag = rec;
+        item.TVTag = rec;        
         string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().DisplayName);
         if (!File.Exists(strLogo))
         {
@@ -801,7 +801,7 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Title", rec.ProgramName);
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre", "");
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Time", strTime);
-      GUIPropertyManager.SetProperty("#TV.RecordedTV.Description", "");
+      GUIPropertyManager.SetProperty("#TV.RecordedTV.Description", "");      
       string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().DisplayName);
       if (File.Exists(strLogo))
       {

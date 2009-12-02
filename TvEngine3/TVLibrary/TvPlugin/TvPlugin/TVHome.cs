@@ -98,6 +98,7 @@ namespace TvPlugin
     }
 
     //heartbeat related stuff
+    private static bool? _isSingleSeat = null; //nullable
     private Thread heartBeatTransmitterThread = null;
     private static DateTime _updateProgressTimer = DateTime.MinValue;
     private static ChannelNavigator m_navigator;
@@ -779,9 +780,8 @@ namespace TvPlugin
       bool useRtsp = DebugSettings.UseRTSP;
 
       if (!useRtsp)
-      {
-        bool isSingleSeat = IsSingleSeat();
-        if (!isSingleSeat)
+      {        
+        if (IsSingleSeat())
         {
           if (!settingsLoaded)
           {
@@ -789,9 +789,9 @@ namespace TvPlugin
           }
           useRtsp = _usertsp;
         }
-        else
+        else //multiseat user, default is RTSP mode
         {
-          useRtsp = false;
+          useRtsp = true;
         }
       }
       return useRtsp;
@@ -889,6 +889,7 @@ namespace TvPlugin
       }
     }
 
+
     public static bool HandleServerNotConnected()
     {
       // _doingHandleServerNotConnected is used to avoid multiple calls to this method.
@@ -896,18 +897,7 @@ namespace TvPlugin
 
       //System.Diagnostics.Debugger.Launch();
       try
-      {
-        if (_ServerNotConnectedHandled)
-        {
-          return true; //still not connected
-        }
-
-        if (_doingHandleServerNotConnected)
-        {
-          return false;//we assume we are still not connected
-        }
-        _doingHandleServerNotConnected = true;
-
+      {        
         int waits = 0;
         bool remConnected = false;
         while (MAX_WAIT_FOR_SERVER_CONNECTION >= waits && !remConnected)
@@ -921,6 +911,18 @@ namespace TvPlugin
             Thread.Sleep(1000); //wait 1 sec
           }          
         }
+
+        if (_ServerNotConnectedHandled)
+        {
+          return true; //still not connected
+        }        
+
+        if (_doingHandleServerNotConnected)
+        {
+          return false;//we assume we are still not connected
+        }
+        _doingHandleServerNotConnected = true;
+
 
         // we just did a successful connect      
         if (remConnected && !Connected)
@@ -946,9 +948,7 @@ namespace TvPlugin
             GUIMessage initMsgTV = null;
             initMsgTV = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int)Window.WINDOW_TV, 0, 0, 0, 0,
                                        null);
-            GUIWindowManager.SendThreadMessage(initMsgTV);
-
-            _doingHandleServerNotConnected = false;
+            GUIWindowManager.SendThreadMessage(initMsgTV);            
             return true;
           }
           _ServerNotConnectedHandled = true;
@@ -974,16 +974,23 @@ namespace TvPlugin
             // show the dialog asynch.
             // this fixes a hang situation that would happen when resuming TV with showlastactivemodule
             showDlgThread.Start(pDlgOK);
-          }
-          _doingHandleServerNotConnected = false;
+          }          
           return true;
+        }
+        else
+        {
+          bool gentleConnected = WaitForGentleConnection();          
+
+          if (!gentleConnected)           
+          {
+            return true;
+          }
         }
       }
       catch (Exception e)
       {
         //we assume that server is disconnected.
-        Log.Error("TVHome.HandleServerNotConnected caused an error {0},{1}", e.Message, e.StackTrace);
-        _doingHandleServerNotConnected = false;
+        Log.Error("TVHome.HandleServerNotConnected caused an error {0},{1}", e.Message, e.StackTrace);        
         return true;
       }
       finally
@@ -991,6 +998,39 @@ namespace TvPlugin
         _doingHandleServerNotConnected = false;
       }
       return false;
+    }
+
+    private static bool WaitForGentleConnection ()
+    {
+      // lets try one more time - seems like the gentle framework is not properly initialized when coming out of standby/hibernation.                    
+      // lets wait 10 secs before giving up.
+      bool success = false;
+    
+      int count = 0;
+      while (!success && count <= 100 ) //10sec max
+      {
+        try
+        {
+          IList<Card> cards = TvDatabase.Card.ListAll();
+          success = true;
+        }
+        catch (Exception)
+        {
+          count++;
+          success = false;
+          Log.Debug("TVHome: waiting for gentle.net DB connection {0} msec", (100*count));            
+          Thread.Sleep(100);
+        }          
+      }
+
+      if (!success)
+      {
+        RemoteControl.Clear();
+        GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
+        //GUIWaitCursor.Hide();          
+      }
+      
+      return success;
     }
 
     public static List<string> PreferredLanguages
@@ -1425,6 +1465,7 @@ namespace TvPlugin
         }
         _notifyManager.Stop();
         stopHeartBeatThread();
+        _ServerNotConnectedHandled = false;
       }
       catch (Exception)
       {
@@ -1533,7 +1574,7 @@ namespace TvPlugin
       }
 
       btnActiveStreams.Label = GUILocalizeStrings.Get(692);
-
+//System.Diagnostics.Debugger.Launch();
       HandleServerNotConnected();
 
       if (!RemoteControl.IsConnected)
@@ -1551,7 +1592,7 @@ namespace TvPlugin
             UpdateRecordingIndicator();
             return;          
         }
-      }
+      }      
 
       try
       {
@@ -1562,51 +1603,7 @@ namespace TvPlugin
         RemoteControl.Clear();
       }
 
-      try
-      {
-        IList<Card> cards = TvDatabase.Card.ListAll();
-      }
-      catch (Exception)
-      {
-        // lets try one more time - seems like the gentle framework is not properly initialized when coming out of standby/hibernation.        
-        if (RemoteControl.IsConnected)
-        {
-          //lets wait 10 secs before giving up.
-          DateTime now = DateTime.Now;
-          TimeSpan ts = now - DateTime.Now;
-          bool success = false;
-
-          while (ts.TotalSeconds > -10 && !success)
-          {
-            try
-            {
-              IList<Card> cards = TvDatabase.Card.ListAll();
-              success = true;
-            }
-            catch (Exception)
-            {
-              success = false;
-            }
-            ts = now - DateTime.Now;
-          }
-
-          if (!success)
-          {
-            RemoteControl.Clear();
-            GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
-            //GUIWaitCursor.Hide();
-            return;
-          }
-        }
-        else
-        {
-          RemoteControl.Clear();
-          GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
-          //GUIWaitCursor.Hide();
-          return;
-        }
-      }
-
+      
       //stop the old recorder.
       //DatabaseManager.Instance.DefaultQueryStrategy = QueryStrategy.DataSourceOnly;
       GUIMessage msgStopRecorder = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP, 0, 0, 0, 0, 0, null);
@@ -2034,7 +2031,7 @@ namespace TvPlugin
     /// <returns></returns>
     private static bool ShowFullScreenWindowTVHandler()
     {
-      if (g_Player.IsTV && Card.IsTimeShifting)
+      if ((g_Player.IsTV && Card.IsTimeShifting) || g_Player.IsTVRecording)
       {
         // watching TV
         if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_TVFULLSCREEN)
@@ -2056,10 +2053,19 @@ namespace TvPlugin
     public static bool IsSingleSeat()
     {
       //TODO: This method does not handle the fact the RemoteControl.Hostname
-      //could be an IP address and not a hostname.
-      Log.Debug("TvFullScreen: IsSingleSeat - RemoteControl.HostName = {0} / Environment.MachineName = {1}", RemoteControl.HostName, Environment.MachineName);
-      
-      return (RemoteControl.HostName.ToLowerInvariant() == Environment.MachineName.ToLowerInvariant());
+      //could be an IP address and not a hostname.      
+      if (!_isSingleSeat.HasValue)
+      {
+        //we only want to bother the RemoteControl interface once, then we will cache the value for later usage.
+        Log.Debug("TVHome: IsSingleSeat - RemoteControl.HostName = {0} / Environment.MachineName = {1}", RemoteControl.HostName, Environment.MachineName);
+        _isSingleSeat = (RemoteControl.HostName.ToLowerInvariant() == Environment.MachineName.ToLowerInvariant());
+      }
+
+      if (_isSingleSeat.HasValue)
+      {
+        return (bool) _isSingleSeat;
+      }
+      return true; //default assumption is singleseat
     }
 
     public static void UpdateTimeShift()
@@ -2570,11 +2576,7 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#TV.Record.percent3", "0");
 
         Recording rec = TvRecorded.ActiveRecording();
-        string displayName = "";
-        if (rec != null && rec.ReferencedChannel() != null)
-        {
-          displayName = rec.ReferencedChannel().DisplayName;
-        }
+        string displayName = TvRecorded.GetRecordingDisplayName(rec);        
 
         GUIPropertyManager.SetProperty("#TV.View.channel", displayName + " (" + GUILocalizeStrings.Get(604) + ")");
         GUIPropertyManager.SetProperty("#TV.View.title", g_Player.currentTitle);
