@@ -2595,6 +2595,18 @@ public class MediaPortalApp : D3DApp, IRender
           case Action.ActionType.ACTION_MUSIC_PLAY:
             if (!g_Player.IsTV || !GUIGraphicsContext.IsFullScreenVideo)
             {
+              // Don't start playing from the beginning if we press play to return to normal speed
+              if (g_Player.IsMusic && g_Player.Speed != 1) 
+              {
+                // Attention: GUIMusicGenre / GUIMusicFiles need to be handled differently. we reset the speed there
+                if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MUSIC_FILES ||
+                  GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MUSIC_GENRE)
+                {
+                  g_Player.Speed = 1;
+                }
+                return;
+              }
+
               g_Player.StepNow();
               g_Player.Speed = 1;
               if (g_Player.Paused)
