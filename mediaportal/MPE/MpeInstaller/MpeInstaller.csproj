@@ -13,6 +13,7 @@
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ApplicationIcon>MPI MediaPortal Installer.ico</ApplicationIcon>
+    <ApplicationManifest>MpeInstaller.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -170,6 +171,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Icons\system-software-update.png" />
+    <None Include="MpeInstaller.manifest" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="MPI MediaPortal Installer.ico" />

@@ -113,6 +113,7 @@ namespace MpeInstaller.Controls
             lbl_description.ForeColor = _selected ? Color.Blue : Color.Black;
             lbl_name.ForeColor = _selected ? Color.Blue : Color.Black;
             lbl_version.ForeColor = _selected ? Color.Blue : Color.Black;
+            AutoSize = _selected;
             Height = _selected ? 123 : 90;
 
             if (Parent == null)

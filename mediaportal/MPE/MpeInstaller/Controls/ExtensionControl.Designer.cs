@@ -34,9 +34,9 @@
             this.lbl_description = new System.Windows.Forms.Label();
             this.lbl_version = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.btn_update = new System.Windows.Forms.Button();
             this.img_dep = new System.Windows.Forms.PictureBox();
             this.img_update = new System.Windows.Forms.PictureBox();
+            this.btn_update = new System.Windows.Forms.Button();
             this.img_logo = new System.Windows.Forms.PictureBox();
             this.btn_more_info = new System.Windows.Forms.Button();
             this.btn_conf = new System.Windows.Forms.Button();
@@ -96,19 +96,6 @@
             // 
             this.toolTip1.IsBalloon = true;
             // 
-            // btn_update
-            // 
-            this.btn_update.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.btn_update.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btn_update.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btn_update.Location = new System.Drawing.Point(72, 91);
-            this.btn_update.Name = "btn_update";
-            this.btn_update.Size = new System.Drawing.Size(75, 23);
-            this.btn_update.TabIndex = 6;
-            this.btn_update.Text = "Update";
-            this.btn_update.UseVisualStyleBackColor = false;
-            this.btn_update.Click += new System.EventHandler(this.btn_update_Click);
-            // 
             // img_dep
             // 
             this.img_dep.BackColor = System.Drawing.Color.Transparent;
@@ -133,6 +120,19 @@
             this.img_update.TabStop = false;
             this.toolTip1.SetToolTip(this.img_update, "New update available ");
             this.img_update.Click += new System.EventHandler(this.img_update_Click);
+            // 
+            // btn_update
+            // 
+            this.btn_update.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.btn_update.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.btn_update.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btn_update.Location = new System.Drawing.Point(72, 91);
+            this.btn_update.Name = "btn_update";
+            this.btn_update.Size = new System.Drawing.Size(75, 23);
+            this.btn_update.TabIndex = 6;
+            this.btn_update.Text = "Update";
+            this.btn_update.UseVisualStyleBackColor = false;
+            this.btn_update.Click += new System.EventHandler(this.btn_update_Click);
             // 
             // img_logo
             // 
@@ -174,7 +174,7 @@
             this.btn_install});
             this.toolStrip1.Location = new System.Drawing.Point(0, 91);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(99, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(68, 25);
             this.toolStrip1.TabIndex = 10;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -191,8 +191,8 @@
             // 
             // ExtensionControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Controls.Add(this.toolStrip1);

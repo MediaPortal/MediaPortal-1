@@ -101,7 +101,7 @@ namespace MpeInstaller
             }
             ExecuteQueue();
             Process.Start(Config.GetFile(Config.Dir.Base, "MediaPortal.exe"));
-            Thread.Sleep(3000);
+            Thread.Sleep(5000);
         }
 
         public void ExecuteQueue()

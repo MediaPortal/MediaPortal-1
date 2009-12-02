@@ -33,17 +33,17 @@
             this.tab_extensions = new System.Windows.Forms.TabPage();
             this.tab_known = new System.Windows.Forms.TabPage();
             this.tab_options = new System.Windows.Forms.TabPage();
+            this.button2 = new System.Windows.Forms.Button();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chk_updateExtension = new System.Windows.Forms.CheckBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.numeric_Days = new System.Windows.Forms.NumericUpDown();
+            this.chk_update = new System.Windows.Forms.CheckBox();
             this.btn_online_update = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.chk_update = new System.Windows.Forms.CheckBox();
-            this.numeric_Days = new System.Windows.Forms.NumericUpDown();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.chk_updateExtension = new System.Windows.Forms.CheckBox();
             this.extensionListControl = new MpeInstaller.Controls.ExtensionListControl();
             this.extensionListContro_all = new MpeInstaller.Controls.ExtensionListControl();
-            this.button2 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tab_extensions.SuspendLayout();
             this.tab_known.SuspendLayout();
@@ -104,6 +104,85 @@
             this.tab_options.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
             this.tab_options.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
             // 
+            // button2
+            // 
+            this.button2.AllowDrop = true;
+            this.button2.Location = new System.Drawing.Point(327, 6);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(243, 23);
+            this.button2.TabIndex = 3;
+            this.button2.Text = "Update all extensions";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.chk_updateExtension);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.numeric_Days);
+            this.groupBox1.Controls.Add(this.chk_update);
+            this.groupBox1.Location = new System.Drawing.Point(8, 76);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(562, 67);
+            this.groupBox1.TabIndex = 2;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Startup";
+            this.groupBox1.UseCompatibleTextRendering = true;
+            // 
+            // chk_updateExtension
+            // 
+            this.chk_updateExtension.AutoSize = true;
+            this.chk_updateExtension.Location = new System.Drawing.Point(6, 42);
+            this.chk_updateExtension.Name = "chk_updateExtension";
+            this.chk_updateExtension.Size = new System.Drawing.Size(155, 17);
+            this.chk_updateExtension.TabIndex = 4;
+            this.chk_updateExtension.Text = "Update installed extensions";
+            this.chk_updateExtension.UseVisualStyleBackColor = true;
+            this.chk_updateExtension.CheckedChanged += new System.EventHandler(this.chk_update_CheckedChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(249, 20);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(29, 13);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "days";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(163, 20);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(34, 13);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Every";
+            // 
+            // numeric_Days
+            // 
+            this.numeric_Days.Location = new System.Drawing.Point(204, 16);
+            this.numeric_Days.Maximum = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            this.numeric_Days.Name = "numeric_Days";
+            this.numeric_Days.Size = new System.Drawing.Size(39, 20);
+            this.numeric_Days.TabIndex = 1;
+            this.numeric_Days.ValueChanged += new System.EventHandler(this.chk_update_CheckedChanged);
+            // 
+            // chk_update
+            // 
+            this.chk_update.AutoSize = true;
+            this.chk_update.Location = new System.Drawing.Point(6, 19);
+            this.chk_update.Name = "chk_update";
+            this.chk_update.Size = new System.Drawing.Size(149, 17);
+            this.chk_update.TabIndex = 0;
+            this.chk_update.Text = "Get update info on startup";
+            this.chk_update.UseVisualStyleBackColor = true;
+            this.chk_update.CheckedChanged += new System.EventHandler(this.chk_update_CheckedChanged);
+            // 
             // btn_online_update
             // 
             this.btn_online_update.AllowDrop = true;
@@ -130,80 +209,13 @@
             this.button1.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
             this.button1.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
             // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.chk_updateExtension);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.numeric_Days);
-            this.groupBox1.Controls.Add(this.chk_update);
-            this.groupBox1.Location = new System.Drawing.Point(8, 76);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(562, 67);
-            this.groupBox1.TabIndex = 2;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Startup";
-            this.groupBox1.UseCompatibleTextRendering = true;
-            // 
-            // chk_update
-            // 
-            this.chk_update.AutoSize = true;
-            this.chk_update.Location = new System.Drawing.Point(6, 19);
-            this.chk_update.Name = "chk_update";
-            this.chk_update.Size = new System.Drawing.Size(149, 17);
-            this.chk_update.TabIndex = 0;
-            this.chk_update.Text = "Get update info on startup";
-            this.chk_update.UseVisualStyleBackColor = true;
-            this.chk_update.CheckedChanged += new System.EventHandler(this.chk_update_CheckedChanged);
-            // 
-            // numeric_Days
-            // 
-            this.numeric_Days.Location = new System.Drawing.Point(204, 16);
-            this.numeric_Days.Maximum = new decimal(new int[] {
-            30,
-            0,
-            0,
-            0});
-            this.numeric_Days.Name = "numeric_Days";
-            this.numeric_Days.Size = new System.Drawing.Size(39, 20);
-            this.numeric_Days.TabIndex = 1;
-            this.numeric_Days.ValueChanged += new System.EventHandler(this.chk_update_CheckedChanged);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(163, 20);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(34, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Every";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(249, 20);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(29, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "days";
-            // 
-            // chk_updateExtension
-            // 
-            this.chk_updateExtension.AutoSize = true;
-            this.chk_updateExtension.Location = new System.Drawing.Point(6, 42);
-            this.chk_updateExtension.Name = "chk_updateExtension";
-            this.chk_updateExtension.Size = new System.Drawing.Size(155, 17);
-            this.chk_updateExtension.TabIndex = 4;
-            this.chk_updateExtension.Text = "Update installed extensions";
-            this.chk_updateExtension.UseVisualStyleBackColor = true;
-            this.chk_updateExtension.CheckedChanged += new System.EventHandler(this.chk_update_CheckedChanged);
-            // 
             // extensionListControl
             // 
             this.extensionListControl.AllowDrop = true;
             this.extensionListControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.extensionListControl.AutoSize = true;
             this.extensionListControl.Location = new System.Drawing.Point(3, 3);
             this.extensionListControl.Name = "extensionListControl";
             this.extensionListControl.SelectedItem = null;
@@ -226,22 +238,12 @@
             this.extensionListContro_all.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
             this.extensionListContro_all.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
             // 
-            // button2
-            // 
-            this.button2.AllowDrop = true;
-            this.button2.Location = new System.Drawing.Point(327, 6);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(243, 23);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "Update all extensions";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
             // MainForm
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(586, 480);
             this.Controls.Add(this.tabControl1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -256,6 +258,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.tabControl1.ResumeLayout(false);
             this.tab_extensions.ResumeLayout(false);
+            this.tab_extensions.PerformLayout();
             this.tab_known.ResumeLayout(false);
             this.tab_options.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
