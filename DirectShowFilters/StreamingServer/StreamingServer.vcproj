@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;&quot;$(WINDOWS_SDK)Include\&quot;;&quot;$(DXSDK_DIR)Include&quot;;..\LiveMedia555\BasicUsageEnvironment/include;..\LiveMedia555\UsageEnvironment/include;../LiveMedia555/liveMedia;..\LiveMedia555\liveMedia/include;..\LiveMedia555\groupsock/include;../LiveMedia555/MediaPortal"
+				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;&quot;$(WINDOWS_SDK)Include\&quot;;&quot;$(DXSDK_DIR)Include&quot;;..\LiveMedia555\BasicUsageEnvironment/include;..\LiveMedia555\UsageEnvironment/include;../LiveMedia555/liveMedia;..\LiveMedia555\liveMedia/include;..\LiveMedia555\groupsock/include;../LiveMedia555/MediaPortal;../shared"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -67,10 +67,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="strmbasd.lib winmm.lib livemedia555D.lib WS2_32.Lib"
+				AdditionalDependencies="DvbCoreUtilsD.lib strmbasd.lib winmm.lib livemedia555D.lib WS2_32.Lib"
 				OutputFile=".\bin\Debug\$(ProjectName).dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Debug_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;; ..\shared"
+				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Debug_MBCS&quot;;&quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;;..\shared"
 				GenerateManifest="true"
 				IgnoreDefaultLibraryNames="libcmtd.lib"
 				ModuleDefinitionFile="Source\StreamingServer.def"
@@ -131,7 +131,7 @@
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;&quot;$(WINDOWS_SDK)Include\&quot;;&quot;$(DXSDK_DIR)Include&quot;;..\LiveMedia555\BasicUsageEnvironment/include;..\LiveMedia555\UsageEnvironment/include;..\LiveMedia555\liveMedia;..\LiveMedia555\liveMedia/include;..\LiveMedia555\groupsock/include;../LiveMedia555/MediaPortal"
+				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;&quot;$(WINDOWS_SDK)Include\&quot;;&quot;$(DXSDK_DIR)Include&quot;;..\LiveMedia555\BasicUsageEnvironment/include;..\LiveMedia555\UsageEnvironment/include;..\LiveMedia555\liveMedia;..\LiveMedia555\liveMedia/include;..\LiveMedia555\groupsock/include;../LiveMedia555/MediaPortal;../shared"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				EnableEnhancedInstructionSet="0"
@@ -155,7 +155,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="strmbase.lib livemedia555.lib winmm.lib ws2_32.lib"
+				AdditionalDependencies="DvbCoreUtils.lib strmbase.lib livemedia555.lib winmm.lib ws2_32.lib"
 				OutputFile=".\bin\Release\$(ProjectName).dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Release_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;; ..\shared"
@@ -216,6 +216,14 @@
 				RelativePath=".\Source\StreamingServer.def"
 				>
 			</File>
+			<File
+				RelativePath=".\Source\TSBuffer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\TsDuration.cpp"
+				>
+			</File>
 			<Filter
 				Name="FileReader"
 				>
@@ -247,38 +255,6 @@
 			<Filter
 				Name="TsFileSource"
 				>
-				<File
-					RelativePath=".\Source\PidInfo.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Source\PidParser.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Source\SampleBuffer.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Source\TSBuffer.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Source\TSBuffer.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Source\TsFileDuration.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Source\TSThread.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Source\TSThread.h"
-					>
-				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -292,6 +268,14 @@
 			</File>
 			<File
 				RelativePath=".\Source\EnterCriticalSection.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\TSBuffer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\TsDuration.h"
 				>
 			</File>
 			<Filter
@@ -309,26 +293,6 @@
 			<Filter
 				Name="TsFileSource"
 				>
-				<File
-					RelativePath=".\Source\Global.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Source\PidInfo.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Source\PidParser.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Source\samplebuffer.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Source\TsFileDuration.h"
-					>
-				</File>
 			</Filter>
 			<Filter
 				Name="Transport"
