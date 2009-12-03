@@ -71,8 +71,9 @@ _____________________________________________________________________________
 !insertmacro LANG_STRING TEXT_MSGBOX_ERROR_WIN                    "Your operating system is not supported by ${PRODUCT_NAME}.$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
 !insertmacro LANG_STRING TEXT_MSGBOX_ERROR_WIN_NOT_RECOMMENDED    "Your operating system is not recommended by ${PRODUCT_NAME}.$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
 !insertmacro LANG_STRING TEXT_MSGBOX_ERROR_ADMIN                  "You need administration rights to install ${PRODUCT_NAME}.$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)"
-!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_VCREDIST_2005          "Microsoft Visual C++ 2005 SP1 Redistributable Package (x86) is not installed.$\r$\nIt is a requirement for ${PRODUCT_NAME}.$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
-!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_VCREDIST_2008          "Microsoft Visual C++ 2008 SP1 Redistributable Package (x86) is not installed.$\r$\nIt is a requirement for ${PRODUCT_NAME}.$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
+!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_VCREDIST_2008              "Microsoft Visual C++ 2008 SP1 Redistributable Package (x86) is not installed.$\r$\nIt is a requirement for ${PRODUCT_NAME}.$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
+!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_VCREDIST_2008_AND_Update   "Microsoft Visual C++ 2008 SP1 Redistributable Package (x86) and an update for it are not installed.$\r$\nBoth are a requirement for ${PRODUCT_NAME}.$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
+!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_VCREDIST_2008_Update       "An  update  for Microsoft Visual C++ 2008 SP1 Redistributable Package (x86) is not installed.$\r$\nIt is a requirement for ${PRODUCT_NAME}.$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
 !insertmacro LANG_STRING TEXT_MSGBOX_ERROR_DOTNET20               "Microsoft .Net Framework 2.0 SP2 is not installed.$\r$\nIt is a requirement for ${PRODUCT_NAME}.$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
 !insertmacro LANG_STRING TEXT_MSGBOX_ERROR_DOTNET20_SP            "Microsoft .Net Framework 2.0 is installed.$\r$\nBut Service Pack 2 is a requirement for ${PRODUCT_NAME}.$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
 !insertmacro LANG_STRING TEXT_MSGBOX_ERROR_DOTNET35               "Microsoft .Net Framework 3.5 SP1 is not installed.$\r$\nIt is a requirement for ${PRODUCT_NAME}.$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
@@ -83,8 +84,8 @@ _____________________________________________________________________________
 !insertmacro LANG_STRING TEXT_MSGBOX_ERROR_REBOOT_REQUIRED            "A reboot is required after a previous action. Reboot you system and try it again."
 !insertmacro LANG_STRING TEXT_MSGBOX_ERROR_UPDATE_BUT_NOT_INSTALLED   "${PRODUCT_NAME} is not installed. It is not possible to install this update.$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)"
 
-!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_SVN_NOMP               "${PRODUCT_NAME} v${MIN_INSTALLED_MP_VERSION_TEXT} is not installed. It is required to install this SVN-Snapshot. Please install it first.$\r$\nDo you want to open the download page in your browser now?"
-!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_SVN_WRONG_VERSION      "${PRODUCT_NAME} v${MIN_INSTALLED_MP_VERSION_TEXT} is not installed. It is required to install this SVN-Snapshot. Please install it first.$\r$\nDo you want to open the download page in your browser now?"
+!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_SVN_NOMP               "${PRODUCT_NAME} ${MIN_INSTALLED_MP_VERSION_TEXT} is not installed. It is required to install this SVN-Snapshot. Please install it first.$\r$\nDo you want to open the download page in your browser now?"
+!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_SVN_WRONG_VERSION      "${PRODUCT_NAME} ${MIN_INSTALLED_MP_VERSION_TEXT} is not installed. It is required to install this SVN-Snapshot. Please install it first.$\r$\nDo you want to open the download page in your browser now?"
 
 
 !insertmacro LANG_STRING UPDATE_ERROR_WRONGEXE                    "updating ${PRODUCT_NAME} is only allowed by starting MediaPortalUpdater!"
