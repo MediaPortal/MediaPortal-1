@@ -263,22 +263,6 @@
 
 !macro _VCRedist2008IsInstalled _a _b _t _f
 
-  IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc90.atl_1fc8b3b9a1e18e3b_9.0.30729.1_none_e29d1181971ae11e.manifest" 0 +2
-  IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.1_none_e163563597edeada.manifest" 0 +4
-  IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc90.mfc_1fc8b3b9a1e18e3b_9.0.30729.1_none_dcc7eae99ad0d9cf.manifest" 0 +3
-  Goto `${_t}`
-
-  IfFileExists "$WINDIR\WinSxS\Manifests\x86_Microsoft.VC90.ATL_1fc8b3b9a1e18e3b_9.0.30729.1_x-ww_d01483b2.manifest" 0 +4
-  IfFileExists "$WINDIR\WinSxS\Manifests\x86_Microsoft.VC90.CRT_1fc8b3b9a1e18e3b_9.0.30729.1_x-ww_6f74963e.manifest" 0 +3
-  IfFileExists "$WINDIR\WinSxS\Manifests\x86_Microsoft.VC90.MFC_1fc8b3b9a1e18e3b_9.0.30729.1_x-ww_405b0943.manifest" 0 +2
-  Goto `${_t}`
-
-  Goto `${_f}`
-!macroend
-!define VCRedist2008IsInstalled `"" VCRedist2008IsInstalled ""`
-
-!macro _VCRedist2008UpdateIsInstalled _a _b _t _f
-
   IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc90.atl_1fc8b3b9a1e18e3b_9.0.30729.4148_none_51ca66a2bbe76806.manifest" 0 +2
   IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.4148_none_5090ab56bcba71c2.manifest" 0 +4
   IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc90.mfc_1fc8b3b9a1e18e3b_9.0.30729.4148_none_4bf5400abf9d60b7.manifest" 0 +3
@@ -291,7 +275,7 @@
 
   Goto `${_f}`
 !macroend
-!define VCRedist2008UpdateIsInstalled `"" VCRedist2008UpdateIsInstalled ""`
+!define VCRedist2008IsInstalled `"" VCRedist2008IsInstalled ""`
 
 #**********************************************************************************************************#
 # Get MP infos
@@ -781,11 +765,6 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
 
   ; check if VC Redist 2008 SP1 is installed
   ${IfNot} ${VCRedist2008IsInstalled}
-  ${AndIfNot} ${VCRedist2008UpdateIsInstalled}
-    !insertmacro ShowMissingComponent "     - Microsoft Visual C++ 2008 SP1 Redistributable Package (x86)$\r$\n     - Microsoft Visual C++ 2008 Service Pack 1 Redistributable Package ATL Security Update"
-  ${ElseIfNot} ${VCRedist2008IsInstalled}
-    !insertmacro ShowMissingComponent "     - Microsoft Visual C++ 2008 SP1 Redistributable Package (x86)"
-  ${ElseIfNot} ${VCRedist2008UpdateIsInstalled}
     !insertmacro ShowMissingComponent "     - Microsoft Visual C++ 2008 Service Pack 1 Redistributable Package ATL Security Update"
   ${EndIf}
 
