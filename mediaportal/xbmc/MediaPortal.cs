@@ -234,14 +234,6 @@ public class MediaPortalApp : D3DApp, IRender
         return;
       }
 
-      if ((File.Exists(Config.GetFile(Config.Dir.Installer, "queue.xml"))))
-      {
-        //test if exist mpi installer queue
-        Log.Info("MPI queue not empty, Launching MPI installer tool .... ");
-        Process.Start(Config.GetFile(Config.Dir.Base, "MPInstaller.exe"), @"/queue");
-        return;
-      }
-
       bool autoHideTaskbar = true;
       bool watchdogEnabled = true;
       bool restartOnError = false;
