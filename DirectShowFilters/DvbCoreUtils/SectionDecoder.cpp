@@ -194,7 +194,13 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
       }
       if (m_section.SectionComplete() && m_section.section_length > 0)
       {
-				DWORD crc=crc32((char*)m_section.Data,m_section.section_length+3);
+				DWORD crc=0;
+        
+        // Only long syntax (section_syntax_indicator == 1) has a CRC
+        // Short syntax may have CRC e.g. TOT, but that is part of the specific section
+        if (m_section.section_syntax_indicator == 1)
+          crc=crc32((char*)m_section.Data,m_section.section_length+3);
+
 				if (crc==0 || (m_bCrcCheck==false))
 				{
 					OnNewSection(m_section);
