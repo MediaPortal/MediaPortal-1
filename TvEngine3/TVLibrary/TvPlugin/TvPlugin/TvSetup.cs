@@ -320,6 +320,9 @@ namespace TvPlugin
               pDlgOK.SetLine(3, "");
               pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
             }
+            //goto TV home, even directly fullscreen if configured this way.
+            GUIWindowManager.ActivateWindow((int)Window.WINDOW_TV, true);
+
             return;
           }
           RemoteControl.Clear();

@@ -662,11 +662,11 @@ namespace TvPlugin
 
           case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
             {
-              if (TVHome.HandleServerNotConnected())
+              /*if (TVHome.HandleServerNotConnected())
               {
                 Log.Debug("TvGuideBase: not connected to server, returning!");
                 return false;
-              }
+              }*/
 
               GUIPropertyManager.SetProperty("#itemcount", string.Empty);
               GUIPropertyManager.SetProperty("#selecteditem", string.Empty);

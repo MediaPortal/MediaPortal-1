@@ -112,7 +112,14 @@ namespace TvPlugin
     {
       try
       {
+        //System.Diagnostics.Debugger.Launch();
         string connectionString, provider;
+        //TVHome.HandleServerNotConnected();
+        if (!TVHome.Connected)
+        {
+          return;
+        }
+
         RemoteControl.Instance.GetDatabaseConnectionString(out connectionString, out provider);
 
         try
@@ -452,7 +459,8 @@ namespace TvPlugin
       int id;
 
 
-      if (!TVHome.HandleServerNotConnected())
+      //if (!TVHome.HandleServerNotConnected())
+      if (TVHome.Connected)
       {
         if (TVHome.Card.IsTimeShifting || TVHome.Card.IsRecording)
         {

@@ -27,7 +27,9 @@ using System.Runtime.Remoting.Channels;
 using System.Collections;
 using System.Runtime.Remoting.Channels.Tcp;
 using System.Runtime.Serialization.Formatters;
-
+using System.Runtime.Remoting;
+using System.Runtime.Remoting.Messaging;
+using System.Runtime.Remoting.Channels;
 // Reverted mantis #1409: using System.Collections;
 
 namespace TvControl
@@ -37,48 +39,45 @@ namespace TvControl
   /// </summary>
   public class RemoteControl
   {
+    #region consts
+
+    private const int MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION = 5; //seconds
+
+    #endregion
+
+    #region delegates / events
+
+    public delegate void RemotingDisconnectedDelegate();
+    public delegate void RemotingConnectedDelegate(bool recovered);
+    private delegate bool SynchIsConnectedDelegate();
+    private delegate bool AsynchIsConnectedDelegate();
+
+    public static event RemotingDisconnectedDelegate OnRemotingDisconnected;
+    public static event RemotingConnectedDelegate OnRemotingConnected;
+
+    #endregion
+
+    #region private members
+    
+    private static bool _firstFailure = true;
+    private static ManualResetEvent _isRemotingConnectedResetEvt;
+    private static bool _isRemotingConnected = false;
     private static IController _tvControl;
     private static string _hostName = System.Net.Dns.GetHostName();
-    private static TcpChannel CallbackChannel; // callback channel
+    private static TcpChannel _callbackChannel; // callback channel
+    
+
     // Reverted mantis #1409: private static uint _timeOut = 45000; // specified in ms (currently all remoting calls are aborted if processing takes more than 45 sec)
+    
+    #endregion        
 
-    /// <summary>
-    /// Registers a remoting channel for allowing callback from server to client
-    /// </summary>
-    private static void RegisterChannel()
-    {
-      try {
-        if (CallbackChannel == null)
-        {
-          Log.Debug("RemoteControl: RegisterChannel first called in Domain {0} for thread {1} with id {2}", AppDomain.CurrentDomain.FriendlyName, Thread.CurrentThread.Name, Thread.CurrentThread.ManagedThreadId);
-          
-          //turn off customErrors to receive full exception messages
-          RemotingConfiguration.CustomErrorsMode = CustomErrorsModes.Off;
-
-          // Creating a custom formatter for a TcpChannel sink chain.
-          BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
-          provider.TypeFilterLevel                   = TypeFilterLevel.Full; // needed for passing objref!
-          IDictionary channelProperties              = new Hashtable(); // Creating the IDictionary to set the port on the channel instance.
-          channelProperties.Add("port", 0);         // "0" chooses one available port
-
-          // Pass the properties for the port setting and the server provider in the server chain argument. (Client remains null here.)
-          CallbackChannel = new TcpChannel(channelProperties, null, provider);
-          ChannelServices.RegisterChannel(CallbackChannel, false);
-        }
-      }
-      catch (RemotingException) { }
-      catch (System.Net.Sockets.SocketException) { }
-      catch (Exception e) 
-      {
-        Log.Error(e.ToString());
-      }
-    }
-
+    #region public static methods
     /// <summary>
     /// Registers Ci Menu Callbackhandler in TvPlugin, connects to a server side event
     /// </summary>
     public static void RegisterCiMenuCallbacks(CiMenuCallbackSink sink)
     {
+      RefreshRemotingConnectionStatusASynch();
       // Define sink for events
       RemotingConfiguration.RegisterWellKnownServiceType(
           typeof(CiMenuCallbackSink),
@@ -123,10 +122,17 @@ namespace TvControl
     {
       get
       {
+       // System.Diagnostics.Debugger.Launch();                
+        bool conn = false;
         try
         {
           if (_tvControl != null)
-          {
+          {            
+            RefreshRemotingConnectionStatusASynch();
+           
+            if (!_isRemotingConnected)
+              return null;
+
             return _tvControl;
           }
 
@@ -146,14 +152,16 @@ namespace TvControl
           //          }
           //#endif    
 
-          // register remoting channel
+          // register remoting channel          
           RegisterChannel();
-
+                    
           _tvControl =
             (IController)
-            Activator.GetObject(typeof (IController), String.Format("tcp://{0}:31456/TvControl", _hostName));
+            Activator.GetObject(typeof (IController), String.Format("tcp://{0}:31456/TvControl", _hostName));                    
 
-          // int card = _tvControl.Cards;
+          RefreshRemotingConnectionStatusASynch();
+          if (!_isRemotingConnected)
+            return null;          
           return _tvControl;
         }
         catch (RemotingTimeoutException exrt)
@@ -171,6 +179,9 @@ namespace TvControl
               (IController)
               Activator.GetObject(typeof (IController), String.Format("tcp://{0}:31456/TvControl", _hostName));
 
+            RefreshRemotingConnectionStatusASynch();
+            if (!_isRemotingConnected)
+              return null;    
             // int card = _tvControl.Cards;
             return _tvControl;
           }
@@ -179,11 +190,7 @@ namespace TvControl
           {
             Log.Error("RemoteControl: Error getting server Instance - {0}", ex.Message);
           }
-        }
-          //   catch (RemotingException exr)
-          //   {
-          //     Log.Error("RemoteControl: Error getting server Instance - {0}", exr.Message);
-          //   }
+        }          
         catch (Exception exg)
         {
           Log.Error("RemoteControl: Error getting server Instance - {0}", exg.Message);
@@ -194,35 +201,125 @@ namespace TvControl
     }
 
     /// <summary>
-    /// Gets a value indicating whether this instance is connected with the tv server
-    /// </summary>
-    /// <value>
-    /// 	<c>true</c> if this instance is connected; otherwise, <c>false</c>.
-    /// </value>
-    public static bool IsConnected
-    {
-      get
-      {
-        try
-        {
-          int id = Instance.Cards;
-
-          return id >= 0;
-        }
-        catch (Exception)
-        {
-          Log.Error("RemoteControl - Error checking connection state");
-        }
-        return false;
-      }
-    }
-
-    /// <summary>
     /// Clears this instance.
     /// </summary>
     public static void Clear()
     {
       _tvControl = null;
+      _isRemotingConnected = false;
     }
+
+    #endregion
+    
+    #region private static methods
+
+    [OneWayAttribute]
+    private static void IsConnectedAsyncCallBack(IAsyncResult ar)
+    {      
+      AsynchIsConnectedDelegate rem = (AsynchIsConnectedDelegate)((AsyncResult)ar).AsyncDelegate;      
+      return;
+    }    
+
+    private static void RefreshRemotingConnectionStatusASynch()
+    {               
+      try
+      {
+        if (_tvControl == null)
+        {
+          _isRemotingConnected = false;
+          return;
+        }
+
+        bool oldState = _isRemotingConnected;
+
+        _isRemotingConnectedResetEvt = new ManualResetEvent(false); //block
+
+        SynchIsConnectedDelegate remoteSyncDel = new SynchIsConnectedDelegate(IsRemotingConnected);
+        AsyncCallback remoteCallback = new AsyncCallback(IsConnectedAsyncCallBack);
+        AsynchIsConnectedDelegate remoteDel = new AsynchIsConnectedDelegate(IsRemotingConnected);
+        
+        IAsyncResult remAr = remoteDel.BeginInvoke(remoteCallback, null);
+
+        int timeout = 250;
+        if (_firstFailure)
+        {
+          timeout = MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION * 1000; ;
+        }
+
+        _isRemotingConnected = remAr.AsyncWaitHandle.WaitOne(timeout);
+
+        // TODO: cancel the callbacks, since they are too late.
+
+        if (!_isRemotingConnected)
+        {
+          _firstFailure = false;
+          if (OnRemotingDisconnected != null) //raise event
+          {
+            OnRemotingDisconnected();
+          }                    
+        }
+        else
+        {
+          _firstFailure = true;
+          bool recovered = (!oldState);
+          OnRemotingConnected(recovered);
+        }
+      }
+      catch
+      {
+        //ignore
+      }
+    }
+
+
+    /// <summary>
+    /// Registers a remoting channel for allowing callback from server to client
+    /// </summary>    
+    private static void RegisterChannel()
+    {
+      try
+      {
+        if (_callbackChannel == null)
+        {
+          Log.Debug("RemoteControl: RegisterChannel first called in Domain {0} for thread {1} with id {2}", AppDomain.CurrentDomain.FriendlyName, Thread.CurrentThread.Name, Thread.CurrentThread.ManagedThreadId);
+
+          //turn off customErrors to receive full exception messages
+          RemotingConfiguration.CustomErrorsMode = CustomErrorsModes.Off;
+
+          // Creating a custom formatter for a TcpChannel sink chain.
+          BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
+          provider.TypeFilterLevel = TypeFilterLevel.Full; // needed for passing objref!
+          IDictionary channelProperties = new Hashtable(); // Creating the IDictionary to set the port on the channel instance.
+          channelProperties.Add("port", 0);         // "0" chooses one available port
+
+          // Pass the properties for the port setting and the server provider in the server chain argument. (Client remains null here.)
+          _callbackChannel = new TcpChannel(channelProperties, null, provider);
+          ChannelServices.RegisterChannel(_callbackChannel, false);
+        }
+      }
+      catch (RemotingException) { }
+      catch (System.Net.Sockets.SocketException) { }
+      catch (Exception e)
+      {
+        Log.Error(e.ToString());
+      }
+    }
+
+
+    private static bool IsRemotingConnected()
+    {      
+      try
+      {
+        int id = _tvControl.Cards;
+        return id >= 0;
+      }
+      catch (Exception)
+      {
+        Log.Error("RemoteControl - Error checking connection state");
+      }
+      return false;
+    }
+
+    #endregion
   }
 }

@@ -143,9 +143,14 @@ namespace TvPlugin
     }
 
     protected override void OnPageLoad()
-    {      
+    {
+      /*if (TVHome.HandleServerNotConnected())
+      {
+        return;
+      }*/
+
       base.OnPageLoad();
-      TVHome.HandleServerNotConnected();
+
       listRecordings = Schedule.ListAll();
 
       if (btnShow != null) btnShow.RestoreSelection = false;

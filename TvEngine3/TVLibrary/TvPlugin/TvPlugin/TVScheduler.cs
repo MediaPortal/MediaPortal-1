@@ -154,18 +154,21 @@ namespace TvPlugin
     }
 
     protected override void OnPageLoad()
-    {      
+    {
+
+      /*if (TVHome.HandleServerNotConnected())
+      {
+        return;
+      }*/
 
       base.OnPageLoad();
       if (btnPriorities != null)
       {
         btnPriorities.Visible = false;
       }
-      //@      ConflictManager.OnConflictsUpdated += new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
+      //@      ConflictManager.OnConflictsUpdated += new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);      
 
-      TVHome.HandleServerNotConnected();      
-
-      LoadSettings();
+    LoadSettings();
       needUpdate = false;
       selectedItem = null;
       LoadDirectory();

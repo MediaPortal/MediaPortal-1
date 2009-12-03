@@ -414,16 +414,20 @@ namespace TvPlugin
         }
 
         protected override void OnPageLoad()
-        {            
+        {
+          /*
+            if (TVHome.HandleServerNotConnected())
+            {
+              return;
+            }*/
+
             base.OnPageLoad();
             DeleteInvalidRecordings();
 
             if (btnCompress != null)
             {
                 btnCompress.Visible = false;
-            }
-
-            TVHome.HandleServerNotConnected();
+            }            
 
             LoadSettings();
             LoadDirectory();
@@ -1595,17 +1599,13 @@ namespace TvPlugin
 
         private void DeleteInvalidRecordings()
         {
-            IList<Recording> itemlist = Recording.ListAll();
+            IList<Recording> itemlist = Recording.ListAllActive();
             TvServer server = new TvServer();
             bool foundInvalidRecording = false;
             foreach (Recording rec in itemlist)
             {
-                if (!server.IsRecordingValid(rec.IdRecording))
-                {
-                    server.DeleteRecording(rec.IdRecording);
-                    foundInvalidRecording = true;
-
-                }
+              server.DeleteRecording(rec.IdRecording);
+              foundInvalidRecording = true;                
             }
             if (foundInvalidRecording)
             {

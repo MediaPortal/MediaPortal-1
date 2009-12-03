@@ -128,7 +128,7 @@ namespace TvPlugin
     private static bool _doingHandleServerNotConnected = false;
     private static bool _doingChannelChange = false;
     private static bool _ServerNotConnectedHandled = false;
-    private static bool _ServerLastStatusOK = true;
+    //private static bool _ServerLastStatusOK = true;
 
     private static ManualResetEvent _waitForBlackScreen = null;
     private static ManualResetEvent _waitForVideoReceived = null;
@@ -262,6 +262,10 @@ namespace TvPlugin
 
     static TVHome()
     {
+      Connected = true;
+      RemoteControl.OnRemotingDisconnected += new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
+      RemoteControl.OnRemotingConnected += new RemoteControl.RemotingConnectedDelegate(RemoteControl_OnRemotingConnected);
+
       GUIGraphicsContext.OnBlackImageRendered += new BlackImageRenderedHandler(OnBlackImageRendered);
       GUIGraphicsContext.OnVideoReceived += new VideoReceivedHandler(OnVideoReceived);
 
@@ -296,7 +300,7 @@ namespace TvPlugin
       {
         Log.Error("TVHome: Error occured in constructor: {0}", ex.Message);
       }
-    }
+    }    
 
     private static void SetRemoteControlHostName()
     {
@@ -458,6 +462,8 @@ namespace TvPlugin
     //}
     public TVHome()
     {
+      //System.Diagnostics.Debugger.Launch();
+
       GUIGraphicsContext.OnBlackImageRendered += new BlackImageRenderedHandler(OnBlackImageRendered);
       _waitForBlackScreen = new ManualResetEvent(false);
       _waitForVideoReceived = new ManualResetEvent(false);
@@ -469,6 +475,26 @@ namespace TvPlugin
 
       _notifyManager.Start();
       startHeartBeatThread();
+    }
+
+    private static void RemoteControl_OnRemotingConnected(bool recovered)
+    {
+      Log.Debug("TVHome: OnRemotingConnected, recovered from a disconnection {}", recovered);
+      Connected = true;
+      //_ServerLastStatusOK = true;
+      if (recovered)
+      {        
+        GUIMessage initMsg = null;
+        initMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int) Window.WINDOW_TV_OVERLAY, 0, 0, 0, 0, null);
+        GUIWindowManager.SendThreadMessage(initMsg);
+      }
+    }
+
+    private static void RemoteControl_OnRemotingDisconnected()
+    {
+      Log.Debug("TVHome: OnRemotingDisconnected");
+      Connected = false;
+      HandleServerNotConnected();
     }
 
     #region Private methods
@@ -494,7 +520,7 @@ namespace TvPlugin
     {      
       while (true)
       {
-        Connected = RemoteControl.IsConnected;
+        //Connected = IsRemotingConnected();
         if (Connected && !_suspended)
         {
           bool isTS = (Card != null && Card.IsTimeShifting);
@@ -889,69 +915,45 @@ namespace TvPlugin
       }
     }
 
+    private static  void RefreshConnectionState()
+    {
+      IController iController = RemoteControl.Instance; //calling instance will make sure the state is refreshed.
+    }
 
     public static bool HandleServerNotConnected()
-    {
+    {      
       // _doingHandleServerNotConnected is used to avoid multiple calls to this method.
       // the result could be that the dialogue is not shown.
 
-      //System.Diagnostics.Debugger.Launch();
+      if (_ServerNotConnectedHandled)
+      {
+        return true; //still not connected
+      }
+
+      if (_doingHandleServerNotConnected)
+      {
+        return false;//we assume we are still not connected
+      }
+
+      _doingHandleServerNotConnected = true;
+
       try
-      {        
-        int waits = 0;
-        bool remConnected = false;
-        while (MAX_WAIT_FOR_SERVER_CONNECTION >= waits && !remConnected)
-        {
-          remConnected = RemoteControl.IsConnected;
-
-          if (!remConnected)
-          {
-            waits++;
-            Log.Info("tv home onpageload: waiting for TVservice {} sec.", waits);
-            Thread.Sleep(1000); //wait 1 sec
-          }          
-        }
-
-        if (_ServerNotConnectedHandled)
-        {
-          return true; //still not connected
-        }        
-
-        if (_doingHandleServerNotConnected)
-        {
-          return false;//we assume we are still not connected
-        }
-        _doingHandleServerNotConnected = true;
-
-
-        // we just did a successful connect      
-        if (remConnected && !Connected)
-        {
-          _ServerLastStatusOK = true;
-          GUIMessage initMsg = null;
-          initMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int)Window.WINDOW_TV_OVERLAY, 0, 0, 0,
-                                   0, null);
-          GUIWindowManager.SendThreadMessage(initMsg);
-        }
-
-        Connected = remConnected;
-
+      {                
         if (!Connected)
-        {
-          _ServerLastStatusOK = false; // to enable TV connect button again
+        {          
+          //_ServerLastStatusOK = false; // to enable TV connect button again
 
-          Card.User.Name = new User().Name;
+          //Card.User.Name = new User().Name;
+          g_Player.Stop();
 
           if (g_Player.FullScreen)
-          {
-            g_Player.Stop();
+          {            
             GUIMessage initMsgTV = null;
             initMsgTV = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int)Window.WINDOW_TV, 0, 0, 0, 0,
                                        null);
             GUIWindowManager.SendThreadMessage(initMsgTV);            
             return true;
-          }
-          _ServerNotConnectedHandled = true;
+          }          
           GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
 
           if (pDlgOK != null)
@@ -960,7 +962,14 @@ namespace TvPlugin
 
             pDlgOK.Reset();
             pDlgOK.SetHeading(605); //my tv
-            pDlgOK.SetLine(1, Navigator.CurrentChannel);
+            if (Navigator != null && Navigator.CurrentChannel != null)
+            {
+              pDlgOK.SetLine(1, Navigator.CurrentChannel);
+            }
+            else
+            {
+              pDlgOK.SetLine(1, "");
+            }
             pDlgOK.SetLine(2, GUILocalizeStrings.Get(1510)); //Connection to TV server lost
 
             if (OnShowDlgCompleted == null)
@@ -994,7 +1003,7 @@ namespace TvPlugin
         return true;
       }
       finally
-      {
+      {         
         _doingHandleServerNotConnected = false;
       }
       return false;
@@ -1465,6 +1474,7 @@ namespace TvPlugin
         }
         _notifyManager.Stop();
         stopHeartBeatThread();
+        Connected = false;
         _ServerNotConnectedHandled = false;
       }
       catch (Exception)
@@ -1562,6 +1572,10 @@ namespace TvPlugin
 
     protected override void OnPageLoad()
     {
+     // Log.Info("tv home RefreshConnectionState b4:{0}", Connected);
+      //RefreshConnectionState();
+      //Log.Info("tv home RefreshConnectionState after:{0}", Connected);
+
       // when suspending MP while watching fullscreen TV, the player is stopped ok, but it returns to tvhome, which starts timeshifting.
       // this could lead the tv server timeshifting even though client is asleep.
       // although we have to make sure that resuming again activates TV, this is done by checking previous window ID.      
@@ -1574,10 +1588,8 @@ namespace TvPlugin
       }
 
       btnActiveStreams.Label = GUILocalizeStrings.Get(692);
-//System.Diagnostics.Debugger.Launch();
-      HandleServerNotConnected();
 
-      if (!RemoteControl.IsConnected)
+      if (!Connected)
       {
         if (!_onPageLoadDone)
         {
@@ -1801,13 +1813,23 @@ namespace TvPlugin
       Stopwatch benchClock = null;
       benchClock = Stopwatch.StartNew();
 
-      if (HandleServerNotConnected() && _ServerLastStatusOK)
+      RefreshConnectionState();
+
+      if (!Connected)
+      {
+        UpdateStateOfRecButton();
+        UpdateRecordingIndicator();
+        UpdateGUIonPlaybackStateChange();
+        return;
+      }
+
+      /*if (_ServerLastStatusOK)      
       {
         UpdateStateOfRecButton();
         UpdateProgressPercentageBar();
         UpdateRecordingIndicator();
         return;
-      }
+      }*/
 
       if (control == btnActiveStreams)
       {
@@ -1987,7 +2009,7 @@ namespace TvPlugin
     }
 
     private void UpdateGUIonPlaybackStateChange()
-    {
+    {      
       bool isTimeShiftingTV = (Connected && Card.IsTimeShifting && g_Player.IsTV);
 
       if (btnTvOnOff.Selected != isTimeShiftingTV)
@@ -2919,7 +2941,7 @@ namespace TvPlugin
           break;
         case TvResult.UnknownError:
           // this error can also happen if we have no connection to the server.
-          if (!Connected || !RemoteControl.IsConnected)
+          if (!Connected)// || !IsRemotingConnected())
           {
             TextID = 1510;
           }
@@ -2948,7 +2970,7 @@ namespace TvPlugin
           break;
         default:
           // this error can also happen if we have no connection to the server.
-          if (!Connected || !RemoteControl.IsConnected)
+          if (!Connected)// || !IsRemotingConnected())
           {
             TextID = 1510;
           }
@@ -3144,6 +3166,11 @@ namespace TvPlugin
     {
       bool checkResult;
       bool doContinue;
+
+      if (!Connected)
+      {
+        return false;
+      }
 
       _status.Clear();
 
@@ -3365,7 +3392,7 @@ namespace TvPlugin
       string timeshiftFileName = Card.TimeShiftFileName;
       Log.Info("tvhome:file:{0}", timeshiftFileName);
 
-      IChannel channel = Card.Channel;
+      TvLibrary.Interfaces.IChannel channel = Card.Channel;
       if (channel == null)
       {
         Log.Info("tvhome:startplay channel=null");
