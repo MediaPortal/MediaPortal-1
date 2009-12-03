@@ -462,8 +462,6 @@ namespace TvPlugin
     //}
     public TVHome()
     {
-      //System.Diagnostics.Debugger.Launch();
-
       GUIGraphicsContext.OnBlackImageRendered += new BlackImageRenderedHandler(OnBlackImageRendered);
       _waitForBlackScreen = new ManualResetEvent(false);
       _waitForVideoReceived = new ManualResetEvent(false);
@@ -1009,7 +1007,7 @@ namespace TvPlugin
       return false;
     }
 
-    private static bool WaitForGentleConnection ()
+    public static bool WaitForGentleConnection ()
     {
       // lets try one more time - seems like the gentle framework is not properly initialized when coming out of standby/hibernation.                    
       // lets wait 10 secs before giving up.

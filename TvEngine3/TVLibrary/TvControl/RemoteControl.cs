@@ -305,6 +305,11 @@ namespace TvControl
       }
     }
 
+    public static bool IsConnected
+    {
+      get { return IsRemotingConnected(); }
+    }
+
 
     private static bool IsRemotingConnected()
     {      

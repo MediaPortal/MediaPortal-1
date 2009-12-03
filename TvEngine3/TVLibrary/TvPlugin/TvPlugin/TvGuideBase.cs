@@ -661,12 +661,8 @@ namespace TvPlugin
             }
 
           case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-            {
-              /*if (TVHome.HandleServerNotConnected())
-              {
-                Log.Debug("TvGuideBase: not connected to server, returning!");
-                return false;
-              }*/
+            {              
+              TVHome.WaitForGentleConnection();
 
               GUIPropertyManager.SetProperty("#itemcount", string.Empty);
               GUIPropertyManager.SetProperty("#selecteditem", string.Empty);

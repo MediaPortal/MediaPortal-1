@@ -155,11 +155,7 @@ namespace TvPlugin
 
     protected override void OnPageLoad()
     {
-
-      /*if (TVHome.HandleServerNotConnected())
-      {
-        return;
-      }*/
+      TVHome.WaitForGentleConnection();
 
       base.OnPageLoad();
       if (btnPriorities != null)

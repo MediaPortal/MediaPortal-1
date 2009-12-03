@@ -414,12 +414,8 @@ namespace TvPlugin
         }
 
         protected override void OnPageLoad()
-        {
-          /*
-            if (TVHome.HandleServerNotConnected())
-            {
-              return;
-            }*/
+        {          
+            TVHome.WaitForGentleConnection();
 
             base.OnPageLoad();
             DeleteInvalidRecordings();
@@ -439,7 +435,6 @@ namespace TvPlugin
             GUIControl.SelectItemControl(GetID, facadeView.GetID, _iSelectedItem);
 
             btnSortBy.SortChanged += new SortEventHandler(SortChanged);
-//System.Diagnostics.Debugger.Launch();
             if (thumbworker == null)
             {              
               if (_createRecordedThumbs)
