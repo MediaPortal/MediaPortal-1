@@ -662,6 +662,20 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
 #---------------------------------------------------------------------------
 !ifndef NO_OS_DETECTION
 
+!macro ShowMissingComponent MISSING_COMPONENTS
+
+    ExecShell open "${WEB_REQUIREMENTS}"
+    StrCpy $0 ""
+    StrCpy $0 "$0$(MISSING_COMPONENT_INTRO)$\r$\n"
+    StrCpy $0 "$0$(MISSING_COMPONENT_INSTALL)$\r$\n$\r$\n"
+    StrCpy $0 "$0${MISSING_COMPONENTS}$\r$\n$\r$\n"
+    StrCpy $0 "$0$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n"
+    StrCpy $0 "$0$(TEXT_MISSING_COMPONENT_MORE_INFO)"
+    MessageBox MB_OK|MB_ICONSTOP "$0"
+    Abort
+
+!macroend
+
 !macro MediaPortalOperatingSystemCheck
   ${LOG_TEXT} "INFO" ".: Operating System Check :."
 
@@ -768,17 +782,11 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
   ; check if VC Redist 2008 SP1 is installed
   ${IfNot} ${VCRedist2008IsInstalled}
   ${AndIfNot} ${VCRedist2008UpdateIsInstalled}
-    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_VCREDIST_2008_AND_Update)" IDNO +2
-    ExecShell open "${WEB_REQUIREMENTS}"
-    Abort
+    !insertmacro ShowMissingComponent "     - Microsoft Visual C++ 2008 SP1 Redistributable Package (x86)$\r$\n     - Microsoft Visual C++ 2008 Service Pack 1 Redistributable Package ATL Security Update"
   ${ElseIfNot} ${VCRedist2008IsInstalled}
-    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_VCREDIST_2008)" IDNO +2
-    ExecShell open "${WEB_REQUIREMENTS}"
-    Abort
+    !insertmacro ShowMissingComponent "     - Microsoft Visual C++ 2008 SP1 Redistributable Package (x86)"
   ${ElseIfNot} ${VCRedist2008UpdateIsInstalled}
-    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_VCREDIST_2008_Update)" IDNO +2
-    ExecShell open "${WEB_REQUIREMENTS}"
-    Abort
+    !insertmacro ShowMissingComponent "     - Microsoft Visual C++ 2008 Service Pack 1 Redistributable Package ATL Security Update"
   ${EndIf}
 
   ${LOG_TEXT} "INFO" "============================"
@@ -796,13 +804,8 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
   ${LOG_TEXT} "INFO" ".Net 3.5 ServicePack: $1"
 
   ${If} $0 != 1  ; if no 3.5
-    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_DOTNET35)" IDNO +2
-    ExecShell open "${WEB_REQUIREMENTS}"
-    Abort
-  ${ElseIf} $1 < 1  ; if 3.5, but no sp1
-    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_DOTNET35_SP)" IDNO +2
-    ExecShell open "${WEB_REQUIREMENTS}"
-    Abort
+  ${OrIf} $1 < 1  ; if 3.5, but no sp1
+    !insertmacro ShowMissingComponent "     - Microsoft .NET Framework 3.5 Service Pack 1"
   ${EndIf}
 
   ${LOG_TEXT} "INFO" "============================"

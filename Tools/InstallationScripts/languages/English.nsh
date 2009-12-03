@@ -65,8 +65,13 @@ _____________________________________________________________________________
 
 
 # Texts for requirement checks
-!insertmacro LANG_STRING TEXT_MSGBOX_INSTALLATION_CANCELD         "Installation will be canceled."
+!insertmacro LANG_STRING INSTALLATION_CANCELED                    "Installation will be canceled."
+!insertmacro LANG_STRING TEXT_MSGBOX_INSTALLATION_CANCELD         "$(INSTALLATION_CANCELED)"
 !insertmacro LANG_STRING TEXT_MSGBOX_MORE_INFO                    "Do you want to get more information about it?"
+
+!insertmacro LANG_STRING MISSING_COMPONENT_INTRO                  "Some components are missing on your system to install ${PRODUCT_NAME}."
+!insertmacro LANG_STRING MISSING_COMPONENT_INSTALL                "Please install the following components:"
+!insertmacro LANG_STRING MISSING_COMPONENT_MORE_INFO              "You can find more information and download links in MediaPortal Wiki, which will is opened now."
 
 !insertmacro LANG_STRING TEXT_MSGBOX_ERROR_WIN                    "Your operating system is not supported by ${PRODUCT_NAME}.$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
 !insertmacro LANG_STRING TEXT_MSGBOX_ERROR_WIN_NOT_RECOMMENDED    "Your operating system is not recommended by ${PRODUCT_NAME}.$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
