@@ -23,6 +23,9 @@
     <Channel id="animalplanethd.com" siteId="animalhd" />
     <Channel id="bbcprime.com" siteId="bbcprime" />
     <Channel id="bbcworld.com" siteId="bbcworld" />
+    <Channel id="bbcknow@bbc.co.uk" siteId="bbcknow" />
+    <Channel id="bbcentertainment.com" siteId="bbcenter" />
+    <Channel id="bbclifestyle.com" siteId="bbclife" />
     <Channel id="bbchd@bbc.co.uk" siteId="bbchd" />
     <Channel id="action@canalplus.no" siteId="canplaction" />
     <Channel id="comedy@canalplus.no" siteId="canplcomedy" />
