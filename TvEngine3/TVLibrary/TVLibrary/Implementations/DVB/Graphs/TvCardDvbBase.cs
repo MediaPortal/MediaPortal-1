@@ -549,8 +549,8 @@ namespace TvLibrary.Implementations.DVB
       {
         if (!LockedInOnSignal())
         {
-          Log.Log.WriteFile("Unable to tune to channel - no signal");
-          //throw new TvExceptionNoSignal("Unable to tune to channel - no signal");
+          //Log.Log.WriteFile("Unable to tune to channel - no signal");
+          throw new TvExceptionNoSignal("Unable to tune to channel - no signal");
         }
         _mapSubChannels[subChannel].OnGraphStarted();
       }
