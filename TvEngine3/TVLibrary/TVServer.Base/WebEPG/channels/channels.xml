@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <profile>
   <section name="ChannelInfo">
-    <entry name="TotalChannels">1415</entry>
+    <entry name="TotalChannels">1417</entry>
   </section>
   <section name="0">
     <entry name="ChannelID">1@betv.be</entry>
@@ -5662,6 +5662,14 @@
   <section name="1414">
     <entry name="ChannelID">sf@canalplus.se</entry>
     <entry name="FullName">SF-kanalen</entry>
+  </section>
+  <section name="1415">
+    <entry name="ChannelID">silverhd.no</entry>
+    <entry name="FullName">Silver HD</entry>
+  </section>
+  <section name="1416">
+    <entry name="ChannelID">hd@rush.no</entry>
+    <entry name="FullName">Rush HD</entry>
   </section>
   <section name=".svn">
     <entry name="TotalChannels">0</entry>
