@@ -212,7 +212,11 @@ namespace MpeInstaller
                     setup.ShadowCopyDirectories = Path.GetDirectoryName(assemblyFileName);
                     AppDomain appDomain = AppDomain.CreateDomain("pluginDomain", null, setup);
 
-                    PluginLoader remoteExecutor = (PluginLoader)appDomain.CreateInstanceFromAndUnwrap(Assembly.GetExecutingAssembly().Location, typeof(PluginLoader).ToString());
+                    PluginLoader remoteExecutor =
+                        (PluginLoader)
+                        appDomain.CreateInstanceFromAndUnwrap(
+                            Assembly.GetAssembly(typeof (MpeCore.MpeInstaller)).Location,
+                            typeof (PluginLoader).ToString());
                     remoteExecutor.Load(conf_str);
                     remoteExecutor.Dispose();
                     

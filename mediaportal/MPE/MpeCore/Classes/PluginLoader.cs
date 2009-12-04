@@ -7,14 +7,15 @@ using System.Windows.Forms;
 using csscript;
 using MediaPortal.Profile;
 using MpeCore.Classes;
-using MpeInstaller.Classes.CSScriptLibrary;
+//using MpeInstaller.Classes.CSScriptLibrary;
+using MpeCore.Classes.CSScriptLibrary;
 using ComInterfaceType=System.Runtime.InteropServices.ComInterfaceType;
 using LayoutKind=System.Runtime.InteropServices.LayoutKind;
 using UnmanagedType=System.Runtime.InteropServices.UnmanagedType;
 using System.Runtime.InteropServices;
 
 
-namespace MpeInstaller.Classes
+namespace MpeCore.Classes
 {
     public class PluginLoader : MarshalByRefObject, IDisposable
     {
@@ -51,7 +52,7 @@ namespace MpeInstaller.Classes
         /// <filterpriority>2</filterpriority>
         public void Dispose()
         {
-            Settings.SaveCache();
+            MediaPortal.Profile.Settings.SaveCache();
         }
     }
 

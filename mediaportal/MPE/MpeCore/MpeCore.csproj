@@ -71,6 +71,7 @@
     <Compile Include="Classes\ActionItem.cs" />
     <Compile Include="Classes\ActionItemCollection.cs" />
     <Compile Include="Classes\ActionType\ClearSkinCache.cs" />
+    <Compile Include="Classes\ActionType\ConfigurePlugin.cs" />
     <Compile Include="Classes\ActionType\CreateFolder.cs" />
     <Compile Include="Classes\ActionType\CreateShortCut.cs" />
     <Compile Include="Classes\ActionType\ExtensionInstaller.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="Classes\InstallerType\GenericSkinFile.cs" />
     <Compile Include="Classes\ParamNamesConst.cs" />
     <Compile Include="Classes\PathProvider\TvServerPaths.cs" />
+    <Compile Include="Classes\PluginLoader.cs" />
     <Compile Include="Classes\Project\FolderGroup.cs" />
     <Compile Include="Classes\Project\ProjectSettings.cs" />
     <Compile Include="Classes\QueueCommand.cs" />

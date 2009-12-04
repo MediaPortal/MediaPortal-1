@@ -295,6 +295,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Icons\go-next.png" />
+    <None Include="Icons\list-add.png" />
+    <None Include="Icons\list-remove.png" />
     <Content Include="MPI MediaPortal Installer.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

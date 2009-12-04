@@ -24,11 +24,14 @@ namespace MpeMaker.Sections
                 mnu_add.DropDownItems.Add(testToolStripMenuItem);
                 cmb_sectiontype.Items.Add(panels.Key);
             }
+
             foreach (var actionProvider in MpeInstaller.ActionProviders)
             {
-                ToolStripMenuItem testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-                testToolStripMenuItem.Text = actionProvider.Value.DisplayName;
-                testToolStripMenuItem.Tag = actionProvider.Value;
+                ToolStripMenuItem testToolStripMenuItem = new ToolStripMenuItem
+                                                              {
+                                                                  Text = actionProvider.Value.DisplayName,
+                                                                  Tag = actionProvider.Value
+                                                              };
                 testToolStripMenuItem.Click += testToolStripMenuItem_Click;
                 mnu_action_add.DropDownItems.Add(testToolStripMenuItem);
                 cmb_sectiontype.Items.Add(actionProvider.Value.DisplayName);                
@@ -76,9 +79,11 @@ namespace MpeMaker.Sections
             }
             cmb_grupvisibility.Items.Clear();
             cmb_grupvisibility.Items.Add(string.Empty);
+            mnu_groulist.Items.Clear();
             foreach (GroupItem groupItem in Package.Groups.Items)
             {
                 cmb_grupvisibility.Items.Add(groupItem.Name);
+                mnu_groulist.Items.Add(groupItem.Name);
             }
         }
 
@@ -138,9 +143,7 @@ namespace MpeMaker.Sections
                 foreach (var s in Package.Groups.Items)
                 {
                     if (param.IncludedGroups.Contains(s.Name))
-                        list_groups.Items.Add(s.Name, true);
-                    else
-                        list_groups.Items.Add(s.Name, false);
+                        list_groups.Items.Add(s.Name);
                 }
 
                 foreach (var acton in param.Actions.Items)
@@ -245,11 +248,63 @@ namespace MpeMaker.Sections
         {
             if (list_actions.SelectedItems.Count < 1)
                 return;
-            ActionItem item = (ActionItem) list_actions.SelectedItem;
+            var item = (ActionItem) list_actions.SelectedItem;
             if (MessageBox.Show("Do you want to Delete action " + item.Name, "", MessageBoxButtons.YesNo) != DialogResult.Yes)
                 return;
             SelectedSection.Actions.Items.Remove(item);
             list_actions.Items.Remove(item);
+        }
+
+        private void mnu_group_add_Click(object sender, EventArgs e)
+        {
+            if (mnu_groulist.SelectedItem != null && !SelectedSection.IncludedGroups.Contains(mnu_groulist.SelectedItem.ToString()))
+            {
+                list_groups.Items.Add(mnu_groulist.SelectedItem);
+                SelectedSection.IncludedGroups.Add(mnu_groulist.SelectedItem.ToString());
+            }
+        }
+
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            if (list_groups.SelectedItems.Count > 0)
+            {
+                SelectedSection.IncludedGroups.Remove((string) list_groups.SelectedItem);
+                list_groups.Items.Remove(list_groups.SelectedItem);
+            }
+        }
+
+        private void btn_group_up_Click(object sender, EventArgs e)
+        {
+            if (list_groups.SelectedItem == null)
+                return;
+            int idx = SelectedSection.IncludedGroups.IndexOf(list_groups.SelectedItem.ToString());
+            if (idx < 1)
+                return;
+            SelectedSection.IncludedGroups.Remove(list_groups.SelectedItem.ToString());
+            SelectedSection.IncludedGroups.Insert(idx - 1, list_groups.SelectedItem.ToString());
+            list_groups.Items.Clear();
+            foreach (string s in SelectedSection.IncludedGroups)
+            {
+                list_groups.Items.Add(s);
+            }
+            list_groups.SelectedIndex = idx - 1;
+        }
+
+        private void btn_group_down_Click(object sender, EventArgs e)
+        {
+            if (list_groups.SelectedItem == null)
+                return;
+            int idx = SelectedSection.IncludedGroups.IndexOf(list_groups.SelectedItem.ToString());
+            if (idx > SelectedSection.IncludedGroups.Count - 2)
+                return;
+            SelectedSection.IncludedGroups.Remove(list_groups.SelectedItem.ToString());
+            SelectedSection.IncludedGroups.Insert(idx + 1, list_groups.SelectedItem.ToString());
+            list_groups.Items.Clear();
+            foreach (string s in SelectedSection.IncludedGroups)
+            {
+                list_groups.Items.Add(s);
+            }
+            list_groups.SelectedIndex = idx + 1;
         }
     }
 }

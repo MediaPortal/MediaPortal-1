@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using MpeCore;
 using MpeCore.Classes;
+using MpeCore.Classes.Project;
 using MpeCore.Interfaces;
 using MpeMaker.Wizards;
 
@@ -36,6 +38,9 @@ namespace MpeMaker.Dialogs
                     New();
                     break;
                 case 1:
+                    Open();
+                    break;
+                case 2:
                     Package = NewSkin.Get(Package);
                     break;
                 default:
@@ -64,6 +69,27 @@ namespace MpeMaker.Dialogs
             Package.Sections.Items[1].WizardButtonsEnum = WizardButtonsEnum.Next;
             Package.Sections.Add("Setup Complete");
             Package.Sections.Items[2].WizardButtonsEnum = WizardButtonsEnum.Finish;   
+        }
+
+        private void Open()
+        {
+            openFileDialog1.Filter = "Mpe project file(*.xmp2)|*.xmp2|All files|*.*";
+            openFileDialog1.Title = "Open extension installer project file";
+            openFileDialog1.Multiselect = false;
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                PackageClass pak = new PackageClass();
+                if (!pak.Load(openFileDialog1.FileName))
+                {
+                    MessageBox.Show("Error loading package project");
+                }
+                Package = pak;
+                Package.GenerateAbsolutePath(Path.GetDirectoryName(openFileDialog1.FileName));
+                foreach (FolderGroup folderGroup in Package.ProjectSettings.FolderGroups)
+                {
+                    ProjectSettings.UpdateFiles(Package, folderGroup);
+                }
+            }
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)

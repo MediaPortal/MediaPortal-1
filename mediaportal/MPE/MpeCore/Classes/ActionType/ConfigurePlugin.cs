@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 using MpeCore.Classes.Events;
 using MpeCore.Classes.SectionPanel;
 using MpeCore.Interfaces;
 
+
 namespace MpeCore.Classes.ActionType
 {
-    class RunApplication : IActionType
+    class ConfigurePlugin : IActionType
     {
-        private const string Const_APP = "Path to application";
-        private const string Const_Params = "Parameters to application";
-
+        private const string Const_APP = "Path to plugin";
+  
         public event FileInstalledEventHandler ItemProcessed;
 
         public int ItemsCount(PackageClass packageClass, ActionItem actionItem)
@@ -22,7 +23,7 @@ namespace MpeCore.Classes.ActionType
 
         public string DisplayName
         {
-            get { return "RunApplication"; }
+            get { return "ConfigurePlugin"; }
         }
 
         public string Description
@@ -34,9 +35,7 @@ namespace MpeCore.Classes.ActionType
         {
             var Params = new SectionParamCollection();
             Params.Add(new SectionParam(Const_APP, "", ValueTypeEnum.Template,
-                                        "Path to the application like \n %Base%\\MediaPortal.exe"));
-            Params.Add(new SectionParam(Const_Params, "", ValueTypeEnum.String,
-                            "Command line parameters"));
+                                        "Path to the plugin like \n %Plugins%\\Windows\\plugin.dll"));
             return Params;
         }
 
@@ -44,23 +43,32 @@ namespace MpeCore.Classes.ActionType
         {
             try
             {
-                if(!string.IsNullOrEmpty(actionItem.Params[Const_Params].Value))
+                if (!packageClass.Silent && File.Exists(MpeInstaller.TransformInRealPath(actionItem.Params[Const_APP].Value)))
                 {
-                    Process.Start(MpeInstaller.TransformInRealPath(actionItem.Params[Const_APP].Value), actionItem.Params[Const_Params].Value);
-                }
-                else
-                {
-                    Process.Start(MpeInstaller.TransformInRealPath(actionItem.Params[Const_APP].Value));
+                    string assemblyFileName = MpeInstaller.TransformInRealPath(actionItem.Params[Const_APP].Value);
+                    AppDomainSetup setup = new AppDomainSetup();
+                    setup.ApplicationBase = AppDomain.CurrentDomain.BaseDirectory;
+                    setup.PrivateBinPath = Path.GetDirectoryName(assemblyFileName);
+                    setup.ApplicationName = Path.GetFileName(Assembly.GetExecutingAssembly().Location);
+                    setup.ShadowCopyFiles = "true";
+                    setup.ShadowCopyDirectories = Path.GetDirectoryName(assemblyFileName);
+                    AppDomain appDomain = AppDomain.CreateDomain("pluginDomain", null, setup);
+
+                    PluginLoader remoteExecutor = (PluginLoader)appDomain.CreateInstanceFromAndUnwrap(Assembly.GetExecutingAssembly().Location, typeof(PluginLoader).ToString());
+                    remoteExecutor.Load(assemblyFileName);
+                    remoteExecutor.Dispose();
+
+                    AppDomain.Unload(appDomain);
                 }
             }
             catch (Exception)
             {
                 if (ItemProcessed != null)
-                    ItemProcessed(this, new InstallEventArgs("Error tos start application"));
+                    ItemProcessed(this, new InstallEventArgs("Error to configure plugin"));
                 return SectionResponseEnum.Ok;
-                }
+            }
             if (ItemProcessed != null)
-                ItemProcessed(this, new InstallEventArgs("Application start done"));
+                ItemProcessed(this, new InstallEventArgs("Plugin configuration donne"));
             return SectionResponseEnum.Ok;
         }
 

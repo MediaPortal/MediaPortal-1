@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using MediaPortal.Configuration;
-using MpeCore;
 using MpeCore.Classes.ProviderHelpers;
 using MpeCore.Interfaces;
 using MpeCore.Classes;
@@ -62,6 +59,7 @@ namespace MpeCore
             AddActionProvider(new CreateShortCut());
             AddActionProvider(new CreateFolder());
             AddActionProvider(new ExtensionInstaller());
+            AddActionProvider(new ConfigurePlugin());
 
             AddVersion(new MediaPortalVersion());
             AddVersion(new TvServerVersion());

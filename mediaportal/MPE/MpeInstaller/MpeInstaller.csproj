@@ -62,7 +62,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\ApplicationSettings.cs" />
-    <Compile Include="Classes\PluginLoader.cs" />
     <Compile Include="Classes\ProgramArguments.cs" />
     <Compile Include="Controls\ExtensionControl.cs">
       <SubType>UserControl</SubType>

@@ -34,9 +34,7 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.mnu_add = new System.Windows.Forms.ToolStripDropDownButton();
             this.mnu_remove = new System.Windows.Forms.ToolStripButton();
-            this.btn_up = new System.Windows.Forms.Button();
-            this.btn_down = new System.Windows.Forms.Button();
-            this.list_groups = new System.Windows.Forms.CheckedListBox();
+            this.list_groups = new System.Windows.Forms.ListBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
             this.cmb_buttons = new System.Windows.Forms.ComboBox();
@@ -52,6 +50,10 @@
             this.txt_name = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.mnu_group_remove = new System.Windows.Forms.ToolStrip();
+            this.mnu_groulist = new System.Windows.Forms.ToolStripComboBox();
+            this.mnu_group_add = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.list_actions = new System.Windows.Forms.ListBox();
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
@@ -59,10 +61,15 @@
             this.mnu_action_del = new System.Windows.Forms.ToolStripButton();
             this.mnu_action_edit = new System.Windows.Forms.ToolStripButton();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.btn_down = new System.Windows.Forms.Button();
+            this.btn_up = new System.Windows.Forms.Button();
+            this.btn_group_down = new System.Windows.Forms.Button();
+            this.btn_group_up = new System.Windows.Forms.Button();
             this.toolStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.mnu_group_remove.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.toolStrip2.SuspendLayout();
             this.SuspendLayout();
@@ -110,37 +117,17 @@
             this.mnu_remove.Text = "toolStripButton1";
             this.mnu_remove.Click += new System.EventHandler(this.mnu_remove_Click);
             // 
-            // btn_up
-            // 
-            this.btn_up.Image = ((System.Drawing.Image)(resources.GetObject("btn_up.Image")));
-            this.btn_up.Location = new System.Drawing.Point(260, 185);
-            this.btn_up.Name = "btn_up";
-            this.btn_up.Size = new System.Drawing.Size(23, 31);
-            this.btn_up.TabIndex = 3;
-            this.btn_up.UseVisualStyleBackColor = true;
-            this.btn_up.Click += new System.EventHandler(this.btn_up_Click);
-            // 
-            // btn_down
-            // 
-            this.btn_down.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btn_down.Image = ((System.Drawing.Image)(resources.GetObject("btn_down.Image")));
-            this.btn_down.Location = new System.Drawing.Point(260, 222);
-            this.btn_down.Name = "btn_down";
-            this.btn_down.Size = new System.Drawing.Size(23, 31);
-            this.btn_down.TabIndex = 4;
-            this.btn_down.UseVisualStyleBackColor = true;
-            this.btn_down.Click += new System.EventHandler(this.btn_down_Click);
-            // 
             // list_groups
             // 
-            this.list_groups.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.list_groups.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.list_groups.FormattingEnabled = true;
-            this.list_groups.Location = new System.Drawing.Point(3, 3);
+            this.list_groups.Location = new System.Drawing.Point(3, 33);
             this.list_groups.Name = "list_groups";
-            this.list_groups.Size = new System.Drawing.Size(301, 154);
+            this.list_groups.Size = new System.Drawing.Size(272, 134);
             this.list_groups.TabIndex = 5;
             this.toolTip1.SetToolTip(this.list_groups, "Check the included group item on this section,\r\nnot all sections need groups. ");
-            this.list_groups.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.list_groups_ItemCheck);
             // 
             // groupBox1
             // 
@@ -311,6 +298,9 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.btn_group_down);
+            this.tabPage1.Controls.Add(this.btn_group_up);
+            this.tabPage1.Controls.Add(this.mnu_group_remove);
             this.tabPage1.Controls.Add(this.list_groups);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
@@ -319,6 +309,45 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Groups";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // mnu_group_remove
+            // 
+            this.mnu_group_remove.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnu_groulist,
+            this.mnu_group_add,
+            this.toolStripButton2});
+            this.mnu_group_remove.Location = new System.Drawing.Point(3, 3);
+            this.mnu_group_remove.Name = "mnu_group_remove";
+            this.mnu_group_remove.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.mnu_group_remove.Size = new System.Drawing.Size(301, 25);
+            this.mnu_group_remove.TabIndex = 6;
+            this.mnu_group_remove.Text = "toolStrip3";
+            // 
+            // mnu_groulist
+            // 
+            this.mnu_groulist.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.mnu_groulist.Name = "mnu_groulist";
+            this.mnu_groulist.Size = new System.Drawing.Size(200, 25);
+            // 
+            // mnu_group_add
+            // 
+            this.mnu_group_add.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.mnu_group_add.Image = global::MpeMaker.Properties.Resources.list_add;
+            this.mnu_group_add.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.mnu_group_add.Name = "mnu_group_add";
+            this.mnu_group_add.Size = new System.Drawing.Size(23, 22);
+            this.mnu_group_add.Text = "toolStripButton1";
+            this.mnu_group_add.Click += new System.EventHandler(this.mnu_group_add_Click);
+            // 
+            // toolStripButton2
+            // 
+            this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton2.Image = global::MpeMaker.Properties.Resources.list_remove;
+            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton2.Name = "toolStripButton2";
+            this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton2.Text = "toolStripButton2";
+            this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
             // 
             // tabPage2
             // 
@@ -387,6 +416,49 @@
             this.mnu_action_edit.ToolTipText = "Edit action";
             this.mnu_action_edit.Click += new System.EventHandler(this.mnu_action_edit_Click);
             // 
+            // btn_down
+            // 
+            this.btn_down.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btn_down.Image = ((System.Drawing.Image)(resources.GetObject("btn_down.Image")));
+            this.btn_down.Location = new System.Drawing.Point(260, 222);
+            this.btn_down.Name = "btn_down";
+            this.btn_down.Size = new System.Drawing.Size(23, 31);
+            this.btn_down.TabIndex = 4;
+            this.btn_down.UseVisualStyleBackColor = true;
+            this.btn_down.Click += new System.EventHandler(this.btn_down_Click);
+            // 
+            // btn_up
+            // 
+            this.btn_up.Image = ((System.Drawing.Image)(resources.GetObject("btn_up.Image")));
+            this.btn_up.Location = new System.Drawing.Point(260, 185);
+            this.btn_up.Name = "btn_up";
+            this.btn_up.Size = new System.Drawing.Size(23, 31);
+            this.btn_up.TabIndex = 3;
+            this.btn_up.UseVisualStyleBackColor = true;
+            this.btn_up.Click += new System.EventHandler(this.btn_up_Click);
+            // 
+            // btn_group_down
+            // 
+            this.btn_group_down.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_group_down.Image = ((System.Drawing.Image)(resources.GetObject("btn_group_down.Image")));
+            this.btn_group_down.Location = new System.Drawing.Point(278, 99);
+            this.btn_group_down.Name = "btn_group_down";
+            this.btn_group_down.Size = new System.Drawing.Size(23, 31);
+            this.btn_group_down.TabIndex = 8;
+            this.btn_group_down.UseVisualStyleBackColor = true;
+            this.btn_group_down.Click += new System.EventHandler(this.btn_group_down_Click);
+            // 
+            // btn_group_up
+            // 
+            this.btn_group_up.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_group_up.Image = ((System.Drawing.Image)(resources.GetObject("btn_group_up.Image")));
+            this.btn_group_up.Location = new System.Drawing.Point(278, 62);
+            this.btn_group_up.Name = "btn_group_up";
+            this.btn_group_up.Size = new System.Drawing.Size(23, 31);
+            this.btn_group_up.TabIndex = 7;
+            this.btn_group_up.UseVisualStyleBackColor = true;
+            this.btn_group_up.Click += new System.EventHandler(this.btn_group_up_Click);
+            // 
             // InstallSections
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -407,6 +479,9 @@
             this.groupBox1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            this.mnu_group_remove.ResumeLayout(false);
+            this.mnu_group_remove.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             this.toolStrip2.ResumeLayout(false);
@@ -423,7 +498,6 @@
         private System.Windows.Forms.ToolStripButton mnu_remove;
         private System.Windows.Forms.Button btn_up;
         private System.Windows.Forms.Button btn_down;
-        private System.Windows.Forms.CheckedListBox list_groups;
         private System.Windows.Forms.ToolStripDropDownButton mnu_add;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label2;
@@ -447,5 +521,12 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox cmb_buttons;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.ToolStrip mnu_group_remove;
+        private System.Windows.Forms.ToolStripComboBox mnu_groulist;
+        private System.Windows.Forms.ToolStripButton mnu_group_add;
+        private System.Windows.Forms.ToolStripButton toolStripButton2;
+        private System.Windows.Forms.ListBox list_groups;
+        private System.Windows.Forms.Button btn_group_down;
+        private System.Windows.Forms.Button btn_group_up;
     }
 }

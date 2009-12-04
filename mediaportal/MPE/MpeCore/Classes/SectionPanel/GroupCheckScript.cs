@@ -66,7 +66,7 @@ namespace MpeCore.Classes.SectionPanel
             {
                 Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 AsmHelper script =
-                    new AsmHelper(CSScriptLibrary.CSScript.LoadCode(sectionItem.Params[Const_script].Value,
+                    new AsmHelper(CSScript.LoadCode(sectionItem.Params[Const_script].Value,
                                                                     Path.GetTempFileName(), true));
                 state = (bool)script.Invoke("Script.GetState", packageClass, sectionItem);
                 MessageBox.Show("Result of script : " + state.ToString());
@@ -85,7 +85,7 @@ namespace MpeCore.Classes.SectionPanel
             try
             {
                 AsmHelper script =
-                    new AsmHelper(CSScriptLibrary.CSScript.LoadCode(sectionItem.Params[Const_script].Value,
+                    new AsmHelper(CSScript.LoadCode(sectionItem.Params[Const_script].Value,
                                                                     Path.GetTempFileName(), true));
                 state = (bool)script.Invoke("Script.GetState", packageClass, sectionItem);
             }
