@@ -36,7 +36,6 @@
 #---------------------------------------------------------------------------
 !include LogicLib.nsh
 !include x64.nsh
-!include "${svn_InstallScripts}\include\LanguageMacros.nsh"
 
 !ifndef NO_OS_DETECTION
   !include "${svn_InstallScripts}\include\WinVerEx.nsh"
