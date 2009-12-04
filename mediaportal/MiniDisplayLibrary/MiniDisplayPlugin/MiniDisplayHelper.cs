@@ -166,44 +166,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     public static void GetSystemVolume(ref SystemStatus CurrentStatus)
     {
-      CurrentStatus.SystemVolumeLevel = -1;
+
       try
       {
-        if (!CurrentStatus.IsMuted)
-        {
-          try
-          {
-            CurrentStatus.SystemVolumeLevel = AudioMixerHelper.GetVolume();
-          }
-          catch
-          {
-          }
-          if (CurrentStatus.SystemVolumeLevel < 0)
-          {
-            try
-            {
-              CurrentStatus.SystemVolumeLevel = VolumeHandler.Instance.Volume;
-            }
-            catch
-            {
-            }
-          }
-          if (CurrentStatus.SystemVolumeLevel >= 0)
-          {
-            return;
-          }
-          try
-          {
-            CurrentStatus.SystemVolumeLevel = g_Player.Volume;
-            return;
-          }
-          catch
-          {
-            CurrentStatus.SystemVolumeLevel = 0;
-            return;
-          }
-        }
-        CurrentStatus.SystemVolumeLevel = 0;
+         CurrentStatus.SystemVolumeLevel = VolumeHandler.Instance.Volume;
+         CurrentStatus.IsMuted = VolumeHandler.Instance.IsMuted;
       }
       catch
       {
