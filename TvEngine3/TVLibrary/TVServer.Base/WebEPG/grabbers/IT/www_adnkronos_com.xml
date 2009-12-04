@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="it" availableDays="7" timezone="" version="2.1.0" />
+  <Info language="it" availableDays="7" timezone="W. Europe Standard Time" version="2.1.0" />
   <Channels>
     <Channel id="raiuno.rai.it" siteId="0" />
     <Channel id="raidue.rai.it" siteId="1" />
@@ -12,7 +12,7 @@
     <Channel id="mtv.it" siteId="7" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.adnkronos.com/Pages/GuidaTv2/index.php?codCanale=[ID]&amp;codDay=[DAY_OFFSET]" post="" external="false" encoding="" />
+    <Site url="http://www.adnkronos.com/Pages/GuidaTvGmc/index.php?codCanale=[ID]&amp;codDay=[DAY_OFFSET]" post="" external="false" encoding="" />
     <Html>
       <Template name="default" start = "Guida Tv">
         <SectionTemplate tags="TD">
@@ -22,7 +22,10 @@
 		&lt;DIV&gt;&lt;#START&gt;&lt;/DIV&gt;
 		&lt;DIV&gt;&lt;#GENRE&gt;&lt;/DIV&gt;
 		&lt;/TD&gt;
-		&lt;TD&gt;&lt;DIV&gt;&lt;#TITLE&gt;&lt;/DIV&gt;&lt;DIV&gt;&lt;#DESCRIPTION&gt;&lt;/DIV&gt;&lt;/TD&gt;
+		&lt;TD&gt;
+		&lt;DIV&gt;&lt;#TITLE&gt;&lt;/DIV&gt;
+		&lt;DIV&gt;&lt;#DESCRIPTION&gt;&lt;/DIV&gt;
+		&lt;/TD&gt;
 		&lt;/TR&gt;
 	</TemplateText>
         </SectionTemplate>
