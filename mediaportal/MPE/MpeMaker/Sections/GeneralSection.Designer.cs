@@ -119,7 +119,9 @@
             this.txt_version1.Name = "txt_version1";
             this.txt_version1.Size = new System.Drawing.Size(61, 20);
             this.txt_version1.TabIndex = 2;
+            this.txt_version1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.txt_version1.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
+            this.txt_version1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_version1_KeyDown);
             // 
             // txt_version2
             // 
@@ -127,7 +129,9 @@
             this.txt_version2.Name = "txt_version2";
             this.txt_version2.Size = new System.Drawing.Size(61, 20);
             this.txt_version2.TabIndex = 3;
+            this.txt_version2.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.txt_version2.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
+            this.txt_version2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_version1_KeyDown);
             // 
             // txt_version3
             // 
@@ -135,7 +139,9 @@
             this.txt_version3.Name = "txt_version3";
             this.txt_version3.Size = new System.Drawing.Size(61, 20);
             this.txt_version3.TabIndex = 4;
+            this.txt_version3.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.txt_version3.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
+            this.txt_version3.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_version1_KeyDown);
             // 
             // txt_version4
             // 
@@ -143,7 +149,9 @@
             this.txt_version4.Name = "txt_version4";
             this.txt_version4.Size = new System.Drawing.Size(61, 20);
             this.txt_version4.TabIndex = 5;
+            this.txt_version4.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.txt_version4.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
+            this.txt_version4.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_version1_KeyDown);
             // 
             // label4
             // 

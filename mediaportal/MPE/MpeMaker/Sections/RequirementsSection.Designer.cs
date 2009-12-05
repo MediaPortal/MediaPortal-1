@@ -82,7 +82,7 @@
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(95, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(64, 25);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -211,8 +211,10 @@
             this.txt_version4_max.Name = "txt_version4_max";
             this.txt_version4_max.Size = new System.Drawing.Size(61, 20);
             this.txt_version4_max.TabIndex = 12;
+            this.txt_version4_max.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip1.SetToolTip(this.txt_version4_max, "Any version number can be replaced with * ");
             this.txt_version4_max.TextChanged += new System.EventHandler(this.txt_id_TextChanged);
+            this.txt_version4_max.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_version1_min_KeyDown);
             // 
             // txt_version3_max
             // 
@@ -220,8 +222,10 @@
             this.txt_version3_max.Name = "txt_version3_max";
             this.txt_version3_max.Size = new System.Drawing.Size(61, 20);
             this.txt_version3_max.TabIndex = 11;
+            this.txt_version3_max.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip1.SetToolTip(this.txt_version3_max, "Any version number can be replaced with * ");
             this.txt_version3_max.TextChanged += new System.EventHandler(this.txt_id_TextChanged);
+            this.txt_version3_max.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_version1_min_KeyDown);
             // 
             // txt_version2_max
             // 
@@ -229,8 +233,10 @@
             this.txt_version2_max.Name = "txt_version2_max";
             this.txt_version2_max.Size = new System.Drawing.Size(61, 20);
             this.txt_version2_max.TabIndex = 10;
+            this.txt_version2_max.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip1.SetToolTip(this.txt_version2_max, "Any version number can be replaced with * ");
             this.txt_version2_max.TextChanged += new System.EventHandler(this.txt_id_TextChanged);
+            this.txt_version2_max.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_version1_min_KeyDown);
             // 
             // txt_version1_max
             // 
@@ -238,8 +244,10 @@
             this.txt_version1_max.Name = "txt_version1_max";
             this.txt_version1_max.Size = new System.Drawing.Size(61, 20);
             this.txt_version1_max.TabIndex = 9;
+            this.txt_version1_max.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip1.SetToolTip(this.txt_version1_max, "Any version number can be replaced with * ");
             this.txt_version1_max.TextChanged += new System.EventHandler(this.txt_id_TextChanged);
+            this.txt_version1_max.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_version1_min_KeyDown);
             // 
             // groupBox2
             // 
@@ -260,8 +268,10 @@
             this.txt_version4_min.Name = "txt_version4_min";
             this.txt_version4_min.Size = new System.Drawing.Size(61, 20);
             this.txt_version4_min.TabIndex = 12;
+            this.txt_version4_min.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip1.SetToolTip(this.txt_version4_min, "Any version number can be replaced with * ");
             this.txt_version4_min.TextChanged += new System.EventHandler(this.txt_id_TextChanged);
+            this.txt_version4_min.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_version1_min_KeyDown);
             // 
             // txt_version3_min
             // 
@@ -269,8 +279,10 @@
             this.txt_version3_min.Name = "txt_version3_min";
             this.txt_version3_min.Size = new System.Drawing.Size(61, 20);
             this.txt_version3_min.TabIndex = 11;
+            this.txt_version3_min.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip1.SetToolTip(this.txt_version3_min, "Any version number can be replaced with * ");
             this.txt_version3_min.TextChanged += new System.EventHandler(this.txt_id_TextChanged);
+            this.txt_version3_min.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_version1_min_KeyDown);
             // 
             // txt_version2_min
             // 
@@ -278,8 +290,10 @@
             this.txt_version2_min.Name = "txt_version2_min";
             this.txt_version2_min.Size = new System.Drawing.Size(61, 20);
             this.txt_version2_min.TabIndex = 10;
+            this.txt_version2_min.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip1.SetToolTip(this.txt_version2_min, "Any version number can be replaced with * ");
             this.txt_version2_min.TextChanged += new System.EventHandler(this.txt_id_TextChanged);
+            this.txt_version2_min.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_version1_min_KeyDown);
             // 
             // txt_version1_min
             // 
@@ -287,8 +301,10 @@
             this.txt_version1_min.Name = "txt_version1_min";
             this.txt_version1_min.Size = new System.Drawing.Size(61, 20);
             this.txt_version1_min.TabIndex = 9;
+            this.txt_version1_min.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip1.SetToolTip(this.txt_version1_min, "Any version number can be replaced with * ");
             this.txt_version1_min.TextChanged += new System.EventHandler(this.txt_id_TextChanged);
+            this.txt_version1_min.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_version1_min_KeyDown);
             // 
             // label2
             // 

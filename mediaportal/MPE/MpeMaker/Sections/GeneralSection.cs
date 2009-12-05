@@ -102,6 +102,46 @@ namespace MpeMaker.Sections
             RefreshIcon();
         }
 
+        private void txt_version1_KeyDown(object sender, KeyEventArgs e)
+        {
+            bool result = true;
+
+            bool numericKeys = (
+                ((e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9) ||
+                (e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.NumPad9))
+                && e.Modifiers != Keys.Shift);
+
+            bool ctrlA = e.KeyCode == Keys.A && e.Modifiers == Keys.Control;
+
+            bool editKeys = (
+                (e.KeyCode == Keys.Z && e.Modifiers == Keys.Control) ||
+                (e.KeyCode == Keys.X && e.Modifiers == Keys.Control) ||
+                (e.KeyCode == Keys.C && e.Modifiers == Keys.Control) ||
+                (e.KeyCode == Keys.V && e.Modifiers == Keys.Control) ||
+                e.KeyCode == Keys.Delete ||
+                e.KeyCode == Keys.Back);
+
+            bool navigationKeys = (
+                e.KeyCode == Keys.Up ||
+                e.KeyCode == Keys.Right ||
+                e.KeyCode == Keys.Down ||
+                e.KeyCode == Keys.Left ||
+                e.KeyCode == Keys.Home ||
+                e.KeyCode == Keys.End);
+
+            if (!(numericKeys || editKeys || navigationKeys))
+            {
+                result = false;
+            }
+            if (!result) // If not valid key then suppress and handle.
+            {
+                e.SuppressKeyPress = true;
+                e.Handled = true;
+            }
+            else
+                base.OnKeyDown(e);
+        }
+
 
     }
 }
