@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Data;
 using System.IO;
@@ -36,6 +37,10 @@ namespace MpeInstaller.Controls
                 btn_update.Visible = false;
                 btn_uninstall.Visible = false;
             }
+            
+            btn_home.Visible = !string.IsNullOrEmpty(Package.GeneralInfo.HomePage);
+            btn_forum.Visible = !string.IsNullOrEmpty(Package.GeneralInfo.ForumPage);
+            
             PopulateInstallBtn();
             btn_conf.Enabled = !string.IsNullOrEmpty(Package.GeneralInfo.Params[ParamNamesConst.CONFIG].GetValueAsPath());
 
@@ -189,6 +194,28 @@ namespace MpeInstaller.Controls
             if (parent == null)
                 return;
             parent.OnConfigureExtension(this);
+        }
+
+        private void btn_forum_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Process.Start(Package.GeneralInfo.ForumPage);
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private void btn_home_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Process.Start(Package.GeneralInfo.HomePage);
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 }

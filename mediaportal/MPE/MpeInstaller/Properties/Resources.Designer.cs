@@ -60,6 +60,20 @@ namespace MpeInstaller.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap internet_group_chat {
+            get {
+                object obj = ResourceManager.GetObject("internet-group-chat", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap internet_web_browser {
+            get {
+                object obj = ResourceManager.GetObject("internet-web-browser", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap software_update_available {
             get {
                 object obj = ResourceManager.GetObject("software-update-available", resourceCulture);

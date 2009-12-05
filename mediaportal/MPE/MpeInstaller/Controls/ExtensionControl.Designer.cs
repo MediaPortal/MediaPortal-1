@@ -34,18 +34,20 @@
             this.lbl_description = new System.Windows.Forms.Label();
             this.lbl_version = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.img_dep = new System.Windows.Forms.PictureBox();
-            this.img_update = new System.Windows.Forms.PictureBox();
             this.btn_update = new System.Windows.Forms.Button();
-            this.img_logo = new System.Windows.Forms.PictureBox();
             this.btn_more_info = new System.Windows.Forms.Button();
             this.btn_conf = new System.Windows.Forms.Button();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.btn_home = new System.Windows.Forms.Button();
+            this.btn_forum = new System.Windows.Forms.Button();
             this.btn_install = new System.Windows.Forms.ToolStripDropDownButton();
+            this.img_dep = new System.Windows.Forms.PictureBox();
+            this.img_update = new System.Windows.Forms.PictureBox();
+            this.img_logo = new System.Windows.Forms.PictureBox();
+            this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.img_dep)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_update)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_logo)).BeginInit();
-            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // lbl_name
@@ -76,7 +78,7 @@
             // 
             this.lbl_description.Location = new System.Drawing.Point(113, 21);
             this.lbl_description.Name = "lbl_description";
-            this.lbl_description.Size = new System.Drawing.Size(432, 64);
+            this.lbl_description.Size = new System.Drawing.Size(382, 64);
             this.lbl_description.TabIndex = 3;
             this.lbl_description.Text = "label1";
             this.lbl_description.Click += new System.EventHandler(this.lbl_description_Click);
@@ -84,7 +86,7 @@
             // lbl_version
             // 
             this.lbl_version.AutoSize = true;
-            this.lbl_version.Location = new System.Drawing.Point(498, 0);
+            this.lbl_version.Location = new System.Drawing.Point(460, 3);
             this.lbl_version.Name = "lbl_version";
             this.lbl_version.Size = new System.Drawing.Size(35, 13);
             this.lbl_version.TabIndex = 4;
@@ -95,6 +97,85 @@
             // toolTip1
             // 
             this.toolTip1.IsBalloon = true;
+            // 
+            // btn_update
+            // 
+            this.btn_update.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.btn_update.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.btn_update.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btn_update.Location = new System.Drawing.Point(72, 91);
+            this.btn_update.Name = "btn_update";
+            this.btn_update.Size = new System.Drawing.Size(75, 23);
+            this.btn_update.TabIndex = 6;
+            this.btn_update.Text = "Update";
+            this.btn_update.UseVisualStyleBackColor = false;
+            this.btn_update.Click += new System.EventHandler(this.btn_update_Click);
+            // 
+            // btn_more_info
+            // 
+            this.btn_more_info.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.btn_more_info.Location = new System.Drawing.Point(237, 91);
+            this.btn_more_info.Name = "btn_more_info";
+            this.btn_more_info.Size = new System.Drawing.Size(75, 23);
+            this.btn_more_info.TabIndex = 8;
+            this.btn_more_info.Text = "More info.";
+            this.btn_more_info.UseVisualStyleBackColor = true;
+            this.btn_more_info.Visible = false;
+            // 
+            // btn_conf
+            // 
+            this.btn_conf.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.btn_conf.Location = new System.Drawing.Point(318, 91);
+            this.btn_conf.Name = "btn_conf";
+            this.btn_conf.Size = new System.Drawing.Size(75, 23);
+            this.btn_conf.TabIndex = 9;
+            this.btn_conf.Text = "Configure";
+            this.btn_conf.UseVisualStyleBackColor = true;
+            this.btn_conf.Click += new System.EventHandler(this.btn_conf_Click);
+            // 
+            // toolStrip1
+            // 
+            this.toolStrip1.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btn_install});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 91);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(68, 25);
+            this.toolStrip1.TabIndex = 10;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
+            // btn_home
+            // 
+            this.btn_home.Image = global::MpeInstaller.Properties.Resources.internet_web_browser;
+            this.btn_home.Location = new System.Drawing.Point(507, 47);
+            this.btn_home.Name = "btn_home";
+            this.btn_home.Size = new System.Drawing.Size(38, 38);
+            this.btn_home.TabIndex = 12;
+            this.btn_home.UseVisualStyleBackColor = true;
+            this.btn_home.Click += new System.EventHandler(this.btn_home_Click);
+            // 
+            // btn_forum
+            // 
+            this.btn_forum.Image = global::MpeInstaller.Properties.Resources.internet_group_chat;
+            this.btn_forum.Location = new System.Drawing.Point(507, 3);
+            this.btn_forum.Name = "btn_forum";
+            this.btn_forum.Size = new System.Drawing.Size(38, 38);
+            this.btn_forum.TabIndex = 11;
+            this.btn_forum.UseVisualStyleBackColor = true;
+            this.btn_forum.Click += new System.EventHandler(this.btn_forum_Click);
+            // 
+            // btn_install
+            // 
+            this.btn_install.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.btn_install.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btn_install.Image = global::MpeInstaller.Properties.Resources.system_software_update;
+            this.btn_install.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btn_install.Name = "btn_install";
+            this.btn_install.Size = new System.Drawing.Size(65, 22);
+            this.btn_install.Text = "Install";
+            this.btn_install.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // img_dep
             // 
@@ -121,19 +202,6 @@
             this.toolTip1.SetToolTip(this.img_update, "New update available ");
             this.img_update.Click += new System.EventHandler(this.img_update_Click);
             // 
-            // btn_update
-            // 
-            this.btn_update.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.btn_update.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btn_update.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btn_update.Location = new System.Drawing.Point(72, 91);
-            this.btn_update.Name = "btn_update";
-            this.btn_update.Size = new System.Drawing.Size(75, 23);
-            this.btn_update.TabIndex = 6;
-            this.btn_update.Text = "Update";
-            this.btn_update.UseVisualStyleBackColor = false;
-            this.btn_update.Click += new System.EventHandler(this.btn_update_Click);
-            // 
             // img_logo
             // 
             this.img_logo.Location = new System.Drawing.Point(6, 21);
@@ -144,57 +212,14 @@
             this.img_logo.TabStop = false;
             this.img_logo.Click += new System.EventHandler(this.img_logo_Click);
             // 
-            // btn_more_info
-            // 
-            this.btn_more_info.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btn_more_info.Location = new System.Drawing.Point(237, 91);
-            this.btn_more_info.Name = "btn_more_info";
-            this.btn_more_info.Size = new System.Drawing.Size(75, 23);
-            this.btn_more_info.TabIndex = 8;
-            this.btn_more_info.Text = "More info.";
-            this.btn_more_info.UseVisualStyleBackColor = true;
-            // 
-            // btn_conf
-            // 
-            this.btn_conf.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btn_conf.Location = new System.Drawing.Point(318, 91);
-            this.btn_conf.Name = "btn_conf";
-            this.btn_conf.Size = new System.Drawing.Size(75, 23);
-            this.btn_conf.TabIndex = 9;
-            this.btn_conf.Text = "Configure";
-            this.btn_conf.UseVisualStyleBackColor = true;
-            this.btn_conf.Click += new System.EventHandler(this.btn_conf_Click);
-            // 
-            // toolStrip1
-            // 
-            this.toolStrip1.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
-            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btn_install});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 91);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(68, 25);
-            this.toolStrip1.TabIndex = 10;
-            this.toolStrip1.Text = "toolStrip1";
-            // 
-            // btn_install
-            // 
-            this.btn_install.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.btn_install.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btn_install.Image = global::MpeInstaller.Properties.Resources.system_software_update;
-            this.btn_install.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btn_install.Name = "btn_install";
-            this.btn_install.Size = new System.Drawing.Size(65, 22);
-            this.btn_install.Text = "Install";
-            this.btn_install.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
             // ExtensionControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Controls.Add(this.btn_home);
+            this.Controls.Add(this.btn_forum);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.btn_conf);
             this.Controls.Add(this.btn_more_info);
@@ -210,11 +235,11 @@
             this.Name = "ExtensionControl";
             this.Size = new System.Drawing.Size(548, 123);
             this.Click += new System.EventHandler(this.ExtensionControl_Click);
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.img_dep)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_update)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_logo)).EndInit();
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -235,5 +260,7 @@
         private System.Windows.Forms.Button btn_conf;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripDropDownButton btn_install;
+        private System.Windows.Forms.Button btn_forum;
+        private System.Windows.Forms.Button btn_home;
     }
 }

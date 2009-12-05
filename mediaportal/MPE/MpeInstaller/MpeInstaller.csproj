@@ -173,6 +173,8 @@
     <None Include="MpeInstaller.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Icons\internet-group-chat.png" />
+    <None Include="Icons\internet-web-browser.png" />
     <Content Include="MPI MediaPortal Installer.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

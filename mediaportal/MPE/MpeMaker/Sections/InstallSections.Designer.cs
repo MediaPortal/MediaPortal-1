@@ -50,6 +50,8 @@
             this.txt_name = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.btn_group_down = new System.Windows.Forms.Button();
+            this.btn_group_up = new System.Windows.Forms.Button();
             this.mnu_group_remove = new System.Windows.Forms.ToolStrip();
             this.mnu_groulist = new System.Windows.Forms.ToolStripComboBox();
             this.mnu_group_add = new System.Windows.Forms.ToolStripButton();
@@ -63,8 +65,6 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btn_down = new System.Windows.Forms.Button();
             this.btn_up = new System.Windows.Forms.Button();
-            this.btn_group_down = new System.Windows.Forms.Button();
-            this.btn_group_up = new System.Windows.Forms.Button();
             this.toolStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -310,6 +310,28 @@
             this.tabPage1.Text = "Groups";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // btn_group_down
+            // 
+            this.btn_group_down.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_group_down.Image = ((System.Drawing.Image)(resources.GetObject("btn_group_down.Image")));
+            this.btn_group_down.Location = new System.Drawing.Point(278, 99);
+            this.btn_group_down.Name = "btn_group_down";
+            this.btn_group_down.Size = new System.Drawing.Size(23, 31);
+            this.btn_group_down.TabIndex = 8;
+            this.btn_group_down.UseVisualStyleBackColor = true;
+            this.btn_group_down.Click += new System.EventHandler(this.btn_group_down_Click);
+            // 
+            // btn_group_up
+            // 
+            this.btn_group_up.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_group_up.Image = ((System.Drawing.Image)(resources.GetObject("btn_group_up.Image")));
+            this.btn_group_up.Location = new System.Drawing.Point(278, 62);
+            this.btn_group_up.Name = "btn_group_up";
+            this.btn_group_up.Size = new System.Drawing.Size(23, 31);
+            this.btn_group_up.TabIndex = 7;
+            this.btn_group_up.UseVisualStyleBackColor = true;
+            this.btn_group_up.Click += new System.EventHandler(this.btn_group_up_Click);
+            // 
             // mnu_group_remove
             // 
             this.mnu_group_remove.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -436,28 +458,6 @@
             this.btn_up.TabIndex = 3;
             this.btn_up.UseVisualStyleBackColor = true;
             this.btn_up.Click += new System.EventHandler(this.btn_up_Click);
-            // 
-            // btn_group_down
-            // 
-            this.btn_group_down.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_group_down.Image = ((System.Drawing.Image)(resources.GetObject("btn_group_down.Image")));
-            this.btn_group_down.Location = new System.Drawing.Point(278, 99);
-            this.btn_group_down.Name = "btn_group_down";
-            this.btn_group_down.Size = new System.Drawing.Size(23, 31);
-            this.btn_group_down.TabIndex = 8;
-            this.btn_group_down.UseVisualStyleBackColor = true;
-            this.btn_group_down.Click += new System.EventHandler(this.btn_group_down_Click);
-            // 
-            // btn_group_up
-            // 
-            this.btn_group_up.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_group_up.Image = ((System.Drawing.Image)(resources.GetObject("btn_group_up.Image")));
-            this.btn_group_up.Location = new System.Drawing.Point(278, 62);
-            this.btn_group_up.Name = "btn_group_up";
-            this.btn_group_up.Size = new System.Drawing.Size(23, 31);
-            this.btn_group_up.TabIndex = 7;
-            this.btn_group_up.UseVisualStyleBackColor = true;
-            this.btn_group_up.Click += new System.EventHandler(this.btn_group_up_Click);
             // 
             // InstallSections
             // 
