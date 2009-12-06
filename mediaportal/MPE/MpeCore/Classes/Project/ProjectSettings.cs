@@ -8,7 +8,7 @@ namespace MpeCore.Classes.Project
     public class ProjectSettings
     {
         public List<FolderGroup> FolderGroups { get; set; }
-
+        public string ProjectFilename { get; set; }
 
         public ProjectSettings()
         {

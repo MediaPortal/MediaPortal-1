@@ -24,11 +24,6 @@ namespace MpeMaker.Dialogs
             listView1.Items[0].Selected = true;
         }
 
-        private void btn_cancel_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
         private void btn_ok_Click(object sender, EventArgs e)
         {
             this.Hide();
@@ -89,12 +84,19 @@ namespace MpeMaker.Dialogs
                 {
                     ProjectSettings.UpdateFiles(Package, folderGroup);
                 }
+                Package.ProjectSettings.ProjectFilename = openFileDialog1.FileName;
             }
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
             btn_ok.Enabled = listView1.SelectedItems.Count > 0;
+        }
+
+        private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (listView1.SelectedItems.Count > 0)
+                btn_ok_Click(sender, null);
         }
     }
 }

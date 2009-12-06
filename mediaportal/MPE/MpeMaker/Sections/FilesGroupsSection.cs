@@ -69,7 +69,14 @@ namespace MpeMaker.Sections
 
         private TreeNode AddGroup(GroupItem group)
         {
-            TreeNode node = new TreeNode {Text = group.Name, Tag = group, ToolTipText = group.DisplayName};
+            TreeNode node = new TreeNode
+                                {
+                                    Text = group.Name,
+                                    Tag = group,
+                                    ToolTipText = group.DisplayName,
+                                    ImageIndex = 2,
+                                    SelectedImageIndex = 2
+                                };
             treeView1.Nodes.Add(node);
             return node;
         }
@@ -80,6 +87,8 @@ namespace MpeMaker.Sections
             TreeNode newnode = new TreeNode();
             newnode.Text = file.ToString();
             newnode.Tag = file;
+            newnode.ImageIndex = File.Exists(Path.GetFullPath(file.LocalFileName)) ? 0 : 1;
+            newnode.SelectedImageIndex = File.Exists(Path.GetFullPath(file.LocalFileName)) ? 0 : 1; 
             newnode.ToolTipText = Path.GetFullPath(file.LocalFileName);
             node.Nodes.Add(newnode);
         }

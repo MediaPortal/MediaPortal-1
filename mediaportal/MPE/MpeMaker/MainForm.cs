@@ -38,7 +38,7 @@ namespace MpeMaker
             InitializeComponent();
             Package = new PackageClass();
             Init();
-            NewProject();
+            //NewProject();
             if (File.Exists(arguments.ProjectFile))
             {
                 if(LoadProject(arguments.ProjectFile))
@@ -126,6 +126,7 @@ namespace MpeMaker
             Package.Save(file);
             Package.GenerateAbsolutePath(Path.GetDirectoryName(file));
             ProjectFileName = file;
+            SetTitle();
         }
 
         private void SetTitle()
@@ -165,7 +166,7 @@ namespace MpeMaker
             {
                 ProjectSettings.UpdateFiles(Package, folderGroup);
             }
-            ProjectFileName = openFileDialog1.FileName;
+            ProjectFileName = filename;
             treeView1.SelectedNode = treeView1.Nodes[0];
             SetTitle();
             return true;
@@ -184,9 +185,9 @@ namespace MpeMaker
             NewFileSelector newf = new NewFileSelector(Package);
             if (newf.ShowDialog() == DialogResult.OK)
             {
-                ProjectFileName = "";
                 treeView1.SelectedNode = treeView1.Nodes[0];
                 Package = newf.Package;
+                ProjectFileName = Package.ProjectSettings.ProjectFilename;
                 SetTitle();
             }
         }
