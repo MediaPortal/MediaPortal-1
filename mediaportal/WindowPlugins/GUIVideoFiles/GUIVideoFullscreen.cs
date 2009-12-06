@@ -107,7 +107,6 @@ namespace MediaPortal.GUI.Video
     private bool _IsDialogVisible = false;
     private bool _needToClearScreen = false;
     private bool _isVolumeVisible = false;
-    private bool _isMuted = false;
     private bool _isForbiddenVisible = false;
     private GUIDialogMenu dlg;
     private GUIVideoOSD _osdWindow = null;
@@ -418,12 +417,6 @@ namespace MediaPortal.GUI.Video
 
       switch (action.wID)
       {
-        case Action.ActionType.ACTION_VOLUME_MUTE:
-          // change only on message 
-          base.OnAction(action);
-          _isMuted = VolumeHandler.Instance.IsMuted;
-          return;
-
         // previous : play previous song from playlist
         case Action.ActionType.ACTION_PREV_ITEM:
           {
@@ -1073,8 +1066,7 @@ namespace MediaPortal.GUI.Video
             _vmr7UpdateTimer = DateTime.Now;
             _IsDialogVisible = false;
             _needToClearScreen = false;
-            _isMuted = VolumeHandler.Instance.IsMuted;
-            _isVolumeVisible = _isMuted;
+            _isVolumeVisible = false;
             _isForbiddenVisible = false;
             NotifyDialogVisible = false;
             _notifyTVTimeout = 15;
@@ -1092,7 +1084,7 @@ namespace MediaPortal.GUI.Video
             _needToClearScreen = true;
             UpdateGUI();
             GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Osd);
-            RenderVolume(_isVolumeVisible);
+            RenderVolume(false);
             RenderForbidden(false);
             if (!screenState.Paused)
             {
@@ -1736,7 +1728,7 @@ namespace MediaPortal.GUI.Video
       {
         TimeSpan ts = DateTime.Now - _volumeTimer;
         // mantis 0002467: Keep Mute Icon on screen if muting is ON 
-        if (ts.TotalSeconds >= 3 && !_isMuted)
+        if (ts.TotalSeconds >= 3 && !VolumeHandler.Instance.IsMuted)
         {
           RenderVolume(false);
         }

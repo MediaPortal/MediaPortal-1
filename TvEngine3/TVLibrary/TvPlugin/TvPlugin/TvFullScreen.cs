@@ -142,7 +142,6 @@ namespace TvPlugin
     private FullScreenState _screenState = new FullScreenState();
 
     private bool _isVolumeVisible = false;
-    private bool _isMuted = false;
     private DateTime _volumeTimer = DateTime.MinValue;
     private bool _isStartingTSForRecording = false;
     private bool _autoZapMode = false;
@@ -483,12 +482,6 @@ namespace TvPlugin
       //Log.DebugFile(Log.LogType.Error, "action:{0}",action.wID);
       switch (action.wID)
       {
-        case Action.ActionType.ACTION_VOLUME_MUTE:
-          // change only on message 
-          base.OnAction(action);
-          _isMuted = VolumeHandler.Instance.IsMuted;
-          return;
-
         case Action.ActionType.ACTION_MOUSE_DOUBLECLICK:
 
         case Action.ActionType.ACTION_SELECT_ITEM:
@@ -1508,16 +1501,12 @@ namespace TvPlugin
             _dialogYesNoVisible = false;
             _bottomDialogMenuVisible = false;
             _statusTimeOutTimer = DateTime.Now;
-
-            _isMuted = VolumeHandler.Instance.IsMuted;
-            _isVolumeVisible = _isMuted;
-
             //imgVolumeBar.Current = VolumeHandler.Instance.Step;
 						//imgVolumeBar.Maximum = VolumeHandler.Instance.StepMax;
 						
 						ResetAllControls(); // make sure the controls are positioned relevant to the OSD Y offset
 						
-						RenderVolume(_isVolumeVisible);
+						RenderVolume(false);
             ScreenStateChanged();
             UpdateGUI();
 
@@ -2537,7 +2526,7 @@ namespace TvPlugin
       {
         TimeSpan ts = DateTime.Now - _volumeTimer;
         // mantis 0002467: Keep Mute Icon on screen if muting is ON 
-        if (ts.TotalSeconds >= 3 && !_isMuted)
+        if (ts.TotalSeconds >= 3 && !VolumeHandler.Instance.IsMuted)
         {
           RenderVolume(false);
         }
