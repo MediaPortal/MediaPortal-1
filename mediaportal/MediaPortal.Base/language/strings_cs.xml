@@ -117,7 +117,7 @@
     <String id="169">Rozlišení</String>
     <String id="170">Album:</String>
     <String id="171">Interpret:</String>
-    <String id="172">Datum uvolnění:</String>
+    <String id="172">Datum vydání:</String>
     <String id="173">Hodnocení:</String>
     <String id="174">Žánr:</String>
     <String id="175">Tóny:</String>
@@ -148,7 +148,7 @@
     <String id="200">Scénář:</String>
     <String id="201">Rok:</String>
     <String id="202">Otagovaný řádek:</String>
-    <String id="203">Plot outline:</String>
+    <String id="203">Náhled děje:</String>
     <String id="204">Hodnocení:</String>
     <String id="205">Hlasů:</String>
     <String id="206">Hrají:</String>
@@ -281,7 +281,7 @@
     <String id="341">Přehrát DVD</String>
     <String id="342">Filmy</String>
     <String id="343">Nastavit framerate</String>
-    <String id="344">Herci</String>
+    <String id="344">Herecké obsazení:</String>
     <String id="345">Rok</String>
     <String id="346">Spojovat videa</String>
     <String id="347">Nespojovat videa</String>
