@@ -1451,49 +1451,45 @@ namespace MediaPortal.Player
     //check if the pin connections can be kept, or if a graph rebuilding is necessary!
     private bool GraphNeedsRebuild()
     {
+      bool needsRebuild = false;
       IEnumPins pinEnum;
       int hr = _fileSource.EnumPins(out pinEnum);
       if (hr != 0 || pinEnum == null)
       {
-        return true;
+        needsRebuild = true;
       }
-      IPin[] pins = new IPin[1];
-      int fetched;
-      for (;;)
+
+      if (!needsRebuild)
       {
-        hr = pinEnum.Next(1, pins, out fetched);
-        if (hr != 0 || fetched == 0)
+        IPin[] pins = new IPin[1];
+        int fetched;
+        for (; ; )
         {
-          break;
-        }
-        IPin other;
-        hr = pins[0].ConnectedTo(out other);
-        try
-        {
+          hr = pinEnum.Next(1, pins, out fetched);
+          if (hr != 0 || fetched == 0)
+          {
+            break;
+          }
+          IPin other = null;
+          hr = pins[0].ConnectedTo(out other);
           if (hr == 0 && other != null)
           {
             try
             {
               if (!DirectShowUtil.QueryConnect(pins[0], other))
               {
-                Log.Info("Graph needs a rebuild");
-                return true;
+                needsRebuild = true;
               }
+              DirectShowUtil.ReleaseComObject(other);  
             }
-            finally
-            {
-              DirectShowUtil.ReleaseComObject(other);
-            }
+            catch { }
           }
-        }
-        finally
-        {
-          DirectShowUtil.ReleaseComObject(pins[0]);
-        }
+          DirectShowUtil.ReleaseComObject(pins[0]);        
+        }        
       }
       DirectShowUtil.ReleaseComObject(pinEnum);
-      Log.Info("Graph doesn't need a rebuild");
-      return false;
+      Log.Info("Graph needs a rebuild: {0}", needsRebuild ? "True" : "False");
+      return needsRebuild;
     }
 
     public void DoGraphRebuild()
@@ -1555,7 +1551,7 @@ namespace MediaPortal.Player
             }
           }
           hr = _mediaCtrl.Run();
-          if (hr == 0)
+          if (hr < 0 || hr > 1) // 0 = started, 1 = starting to play
           {
             Log.Info("Reconfigure graph done");
           }
