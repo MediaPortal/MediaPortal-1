@@ -1897,6 +1897,14 @@ namespace MediaPortal.Player
       IPin pPin = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, pinName);
       _graphBuilder.Reconnect(pPin);
       DirectShowUtil.ReleaseComObject(pPin);
+
+      // Reconnect connection between video decoder and video renderer as well
+      if (pinName == "Video")
+      {
+        IPin decoderPin = VMR9Util.g_vmr9.PinConnectedTo;
+        _graphBuilder.Reconnect(decoderPin);
+        DirectShowUtil.ReleaseComObject(decoderPin);
+      }
     }
 
     #endregion
