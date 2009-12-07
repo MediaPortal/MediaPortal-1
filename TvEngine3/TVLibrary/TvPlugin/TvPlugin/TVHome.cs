@@ -807,15 +807,15 @@ namespace TvPlugin
       {        
         if (IsSingleSeat())
         {
+          useRtsp = false;
+        }
+        else //multiseat user, default is RTSP mode
+        {
           if (!settingsLoaded)
           {
             LoadSettings();
           }
-          useRtsp = _usertsp;
-        }
-        else //multiseat user, default is RTSP mode
-        {
-          useRtsp = true;
+          useRtsp = _usertsp;          
         }
       }
       return useRtsp;

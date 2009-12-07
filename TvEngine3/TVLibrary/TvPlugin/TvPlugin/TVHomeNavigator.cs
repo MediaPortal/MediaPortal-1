@@ -111,10 +111,8 @@ namespace TvPlugin
     public void ReLoad()
     {
       try
-      {
-        //System.Diagnostics.Debugger.Launch();
-        string connectionString, provider;
-        //TVHome.HandleServerNotConnected();
+      {        
+        string connectionString, provider;        
         if (!TVHome.Connected)
         {
           return;
@@ -456,10 +454,7 @@ namespace TvPlugin
     {
       Channel newChannel = null;
       //if current card is watching tv then use that channel
-      int id;
-
-
-      //if (!TVHome.HandleServerNotConnected())
+      int id;      
       if (TVHome.Connected)
       {
         if (TVHome.Card.IsTimeShifting || TVHome.Card.IsRecording)
