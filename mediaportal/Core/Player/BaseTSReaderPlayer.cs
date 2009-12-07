@@ -1554,8 +1554,15 @@ namespace MediaPortal.Player
                 break;
             }
           }
-          _mediaCtrl.Run();
-          Log.Info("Reconfigure graph done");
+          hr = _mediaCtrl.Run();
+          if (hr == 0)
+          {
+            Log.Info("Reconfigure graph done");
+          }
+          else 
+          {
+            Log.Error("Error starting graph: ({0:x})", hr);
+          }
           return;
         }
       }
