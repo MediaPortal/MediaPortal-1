@@ -2606,7 +2606,8 @@ public class MediaPortalApp : D3DApp, IRender
 
               g_Player.StepNow();
               g_Player.Speed = 1;
-              if (g_Player.Paused)
+              // Bass Player can handle the Pause State itself
+              if (g_Player.Paused && !(g_Player.IsMusic && BassMusicPlayer.IsDefaultMusicPlayer))
               {
                 g_Player.Pause();
               }
