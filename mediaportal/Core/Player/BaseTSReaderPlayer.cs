@@ -1553,11 +1553,11 @@ namespace MediaPortal.Player
           hr = _mediaCtrl.Run();
           if (hr < 0 || hr > 1) // 0 = started, 1 = starting to play
           {
-            Log.Info("Reconfigure graph done");
+            Log.Error("Error starting graph: ({0:x})", hr);
           }
           else 
           {
-            Log.Error("Error starting graph: ({0:x})", hr);
+            Log.Info("Reconfigure graph done");
           }
           return;
         }
