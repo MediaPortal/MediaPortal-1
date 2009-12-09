@@ -653,7 +653,7 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
     StrCpy $0 "$0$(MISSING_COMPONENT_INSTALL)$\r$\n$\r$\n"
     StrCpy $0 "$0${MISSING_COMPONENTS}$\r$\n$\r$\n"
     StrCpy $0 "$0$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n"
-    StrCpy $0 "$0$(TEXT_MISSING_COMPONENT_MORE_INFO)"
+    StrCpy $0 "$0$(MISSING_COMPONENT_MORE_INFO)"
     MessageBox MB_OK|MB_ICONSTOP "$0"
     Abort
 
