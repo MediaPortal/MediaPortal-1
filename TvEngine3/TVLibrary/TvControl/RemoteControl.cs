@@ -255,14 +255,22 @@ namespace TvControl
           _firstFailure = false;
           if (OnRemotingDisconnected != null) //raise event
           {
+            Log.Info("RemoteControl - Disconnected");
             OnRemotingDisconnected();
           }                    
         }
         else
         {
-          _firstFailure = true;
-          bool recovered = (!oldState);
-          OnRemotingConnected(recovered);
+          if (OnRemotingConnected != null)
+          {
+            _firstFailure = true;
+            bool recovered = (!oldState);
+            if (recovered)
+            {
+              Log.Info("RemoteControl - Reconnected");
+            }
+            OnRemotingConnected(recovered);
+          }          
         }
       }
       catch
@@ -320,7 +328,7 @@ namespace TvControl
       }
       catch (Exception)
       {
-        Log.Error("RemoteControl - Error checking connection state");
+        //ignore
       }
       return false;
     }
