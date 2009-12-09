@@ -572,7 +572,8 @@
     <Compile Include="SettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ConfigSplashScreen.cs" />
+    <Compile Include="ConfigSplashScreen.cs">
+    </Compile>
     <Compile Include="Startup.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -582,6 +583,10 @@
     <Compile Include="WeatherChannel.cs">
       <SubType>Code</SubType>
     </Compile>
+    <EmbeddedResource Include="ConfigSplashScreen.resx">
+      <DependentUpon>ConfigSplashScreen.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\BaseShares.resx">
       <SubType>Designer</SubType>
       <DependentUpon>BaseShares.cs</DependentUpon>
@@ -876,6 +881,7 @@
     <Content Include="Resources\icon_folder.png" />
     <Content Include="Resources\icon_help.png" />
     <Content Include="Resources\icon_refresh.png" />
+    <None Include="Resources\mplogo.png" />
     <None Include="Resources\remote.MceVista.png" />
     <None Include="Resources\remote.Mce2004.png" />
     <None Include="Resources\remote.Mce2005TT.png" />

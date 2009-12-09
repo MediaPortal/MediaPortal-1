@@ -190,8 +190,8 @@ namespace MediaPortal
       //frmFull.pbBackground.Image = new System.Drawing.Bitmap(GetBackgroundImagePath());
       frmFull.RetrieveSplashScreenInfo();
 
-      frmFull.Left = (Screen.PrimaryScreen.Bounds.Width/2 - frmFull.Width/2) + 1;
-      frmFull.Top = (Screen.PrimaryScreen.Bounds.Height/2 - frmFull.Height/2) + 1;
+      frmFull.Left = (Screen.PrimaryScreen.Bounds.Width / 2 - frmFull.Width / 2) + 1;
+      frmFull.Top = (Screen.PrimaryScreen.Bounds.Height / 2 - frmFull.Height / 2) + 1;
 
       frmFull.lblMain.Parent = frmFull.pbBackground;
       frmFull.lblVersion.Parent = frmFull.lblMain;
@@ -208,7 +208,7 @@ namespace MediaPortal
       bool delayedStopAllowed = false;
       int stopRequestTime = 0;
       while (!delayedStopAllowed && (frmFull.Focused || OutDatedSkinForm != null))
-        //run until stop of splashscreen is requested
+      //run until stop of splashscreen is requested
       {
         if (stopRequested && stopRequestTime == 0) // store the current time when stop of the splashscreen is requested
         {
@@ -216,7 +216,7 @@ namespace MediaPortal
           frmFull.TopMost = false; // allow the splashscreen to be overlayed by other windows (like the mp main screen)
         }
         if (AllowWindowOverlayRequested == true && OutDatedSkinForm != null)
-          // Allow other Windows to Overlay the splashscreen
+        // Allow other Windows to Overlay the splashscreen
         {
           if (OutDatedSkinForm.Visible) // prepare everything to let the Outdated skin message appear
           {
@@ -253,8 +253,6 @@ namespace MediaPortal
       frmFull.Close();
       frmFull = null;
     }
-
-
     /// <summary>
     /// Summary description for SplashScreen.
     /// </summary>
@@ -264,7 +262,6 @@ namespace MediaPortal
       private Label versionLabel;
       private Label cvsLabel;
       private Label informationLabel;
-      private PictureBox pictureBox1;
 
       /// <summary>
       /// Required designer variable.
@@ -354,107 +351,84 @@ namespace MediaPortal
         this.informationLabel = new System.Windows.Forms.Label();
         this.versionLabel = new System.Windows.Forms.Label();
         this.cvsLabel = new System.Windows.Forms.Label();
-        this.pictureBox1 = new System.Windows.Forms.PictureBox();
         this.panel1.SuspendLayout();
-        ((System.ComponentModel.ISupportInitialize) (this.pictureBox1)).BeginInit();
         this.SuspendLayout();
         // 
         // panel1
         // 
-        this.panel1.BackColor = System.Drawing.Color.White;
-        this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+        this.panel1.BackColor = System.Drawing.Color.Transparent;
+        this.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
         this.panel1.Controls.Add(this.informationLabel);
         this.panel1.Controls.Add(this.versionLabel);
         this.panel1.Controls.Add(this.cvsLabel);
-        this.panel1.Controls.Add(this.pictureBox1);
         this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
         this.panel1.Location = new System.Drawing.Point(0, 0);
         this.panel1.Name = "panel1";
-        this.panel1.Size = new System.Drawing.Size(390, 126);
+        this.panel1.Size = new System.Drawing.Size(399, 175);
         this.panel1.TabIndex = 0;
         // 
         // informationLabel
         // 
-        this.informationLabel.Anchor =
-          ((System.Windows.Forms.AnchorStyles)
-           (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-             | System.Windows.Forms.AnchorStyles.Right)));
+        this.informationLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                    | System.Windows.Forms.AnchorStyles.Right)));
         this.informationLabel.BackColor = System.Drawing.Color.Transparent;
-        this.informationLabel.Font =
-          new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                                  ((byte) (0)));
-        this.informationLabel.Location = new System.Drawing.Point(15, 99);
+        this.informationLabel.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.informationLabel.ForeColor = System.Drawing.Color.White;
+        this.informationLabel.Location = new System.Drawing.Point(11, 138);
         this.informationLabel.Name = "informationLabel";
-        this.informationLabel.Size = new System.Drawing.Size(358, 16);
+        this.informationLabel.Size = new System.Drawing.Size(377, 16);
         this.informationLabel.TabIndex = 4;
         this.informationLabel.Text = "Information";
         this.informationLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
         // 
         // versionLabel
         // 
-        this.versionLabel.Anchor =
-          ((System.Windows.Forms.AnchorStyles)
-           (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-             | System.Windows.Forms.AnchorStyles.Right)));
+        this.versionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                    | System.Windows.Forms.AnchorStyles.Right)));
         this.versionLabel.BackColor = System.Drawing.Color.Transparent;
-        this.versionLabel.Font =
-          new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                                  ((byte) (0)));
-        this.versionLabel.Location = new System.Drawing.Point(267, 79);
+        this.versionLabel.Font = new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.versionLabel.ForeColor = System.Drawing.Color.White;
+        this.versionLabel.Location = new System.Drawing.Point(277, 113);
         this.versionLabel.Name = "versionLabel";
-        this.versionLabel.Size = new System.Drawing.Size(100, 16);
+        this.versionLabel.Size = new System.Drawing.Size(111, 16);
         this.versionLabel.TabIndex = 5;
-        this.versionLabel.Text = "";
         this.versionLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
         // 
         // cvsLabel
         // 
-        this.cvsLabel.Anchor =
-          ((System.Windows.Forms.AnchorStyles)
-           (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-             | System.Windows.Forms.AnchorStyles.Right)));
+        this.cvsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                    | System.Windows.Forms.AnchorStyles.Right)));
         this.cvsLabel.BackColor = System.Drawing.Color.Transparent;
-        this.cvsLabel.Font =
-          new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                                  ((byte) (0)));
-        this.cvsLabel.Location = new System.Drawing.Point(24, 79);
+        this.cvsLabel.Font = new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.cvsLabel.Location = new System.Drawing.Point(24, 113);
         this.cvsLabel.Name = "cvsLabel";
-        this.cvsLabel.Size = new System.Drawing.Size(200, 16);
+        this.cvsLabel.Size = new System.Drawing.Size(211, 16);
         this.cvsLabel.TabIndex = 5;
-        this.cvsLabel.Text = "";
-        this.cvsLabel.TextAlign = System.Drawing.ContentAlignment.TopLeft;
         // 
-        // pictureBox1
+        // SplashForm
         // 
-        this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.Top;
-        this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
-        this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-        this.pictureBox1.Image = global::MediaPortal.Properties.Resources.mplogo_new;
-        this.pictureBox1.Location = new System.Drawing.Point(16, 12);
-        this.pictureBox1.Name = "pictureBox1";
-        this.pictureBox1.Size = new System.Drawing.Size(356, 65);
-        this.pictureBox1.TabIndex = 3;
-        this.pictureBox1.TabStop = false;
-        // 
-        // SplashScreen
-        // 
-        this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-        this.ClientSize = new System.Drawing.Size(390, 126);
+        this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+        this.BackgroundImage = global::MediaPortal.Properties.Resources.mplogo;
+        this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+        this.ClientSize = new System.Drawing.Size(399, 175);
         this.Controls.Add(this.panel1);
+        this.DoubleBuffered = true;
         this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
         this.MaximizeBox = false;
-        this.Name = "SplashScreen";
+        this.Name = "SplashForm";
         this.Opacity = 0;
         this.ShowInTaskbar = false;
         this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
         this.Text = "SplashScreen";
         this.TopMost = true;
+        this.TransparencyKey = System.Drawing.Color.FromArgb(0,0,0,0);
         this.panel1.ResumeLayout(false);
-        ((System.ComponentModel.ISupportInitialize) (this.pictureBox1)).EndInit();
         this.ResumeLayout(false);
+
       }
 
       #endregion
     }
   }
+
 }
