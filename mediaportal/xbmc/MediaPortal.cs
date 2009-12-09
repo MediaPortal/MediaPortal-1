@@ -1228,10 +1228,6 @@ public class MediaPortalApp : D3DApp, IRender
         return;
       }
 
-      // Dispose the volume handle to get a fresh handle to the mixer
-      // Otherwise volume does not work for ATI HDMI devices after standby
-      VolumeHandler.Dispose();
-
       _onResumeRunning = true;
 
       ReOpenDBs();
