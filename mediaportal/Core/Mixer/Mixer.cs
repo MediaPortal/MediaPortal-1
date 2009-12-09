@@ -65,6 +65,8 @@ namespace MediaPortal.Mixer
       {
         _mixerControlDetailsMute.Dispose();
       }
+      _mixerEventListener.LineChanged -= new MixerEventHandler(OnLineChanged);
+      _mixerEventListener.ControlChanged -= new MixerEventHandler(OnControlChanged);
 
       Close();
     }
@@ -88,9 +90,9 @@ namespace MediaPortal.Mixer
         {
           _mixerEventListener = new MixerEventListener();
           _mixerEventListener.Start();
-          _mixerEventListener.LineChanged += new MixerEventHandler(OnLineChanged);
-          _mixerEventListener.ControlChanged += new MixerEventHandler(OnControlChanged);
         }
+        _mixerEventListener.LineChanged += new MixerEventHandler(OnLineChanged);
+        _mixerEventListener.ControlChanged += new MixerEventHandler(OnControlChanged);
 
         MixerNativeMethods.MixerControl mc = new MixerNativeMethods.MixerControl();
 
