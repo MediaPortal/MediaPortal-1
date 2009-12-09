@@ -162,7 +162,7 @@ Var frominstall
 #---------------------------------------------------------------------------
 !define MUI_ABORTWARNING
 !define MUI_ICON    "${svn_InstallScripts}\Resources\install.ico"
-!define MUI_UNICON  "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
+!define MUI_UNICON  "${svn_InstallScripts}\Resources\install.ico"
 
 !define MUI_HEADERIMAGE
 !define MUI_HEADERIMAGE_BITMAP              "${svn_InstallScripts}\Resources\header.bmp"
