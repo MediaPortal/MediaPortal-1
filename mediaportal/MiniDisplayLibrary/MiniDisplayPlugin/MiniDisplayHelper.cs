@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using DShowNET.AudioMixer;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
