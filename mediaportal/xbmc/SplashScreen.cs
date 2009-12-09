@@ -410,7 +410,7 @@ namespace MediaPortal
         this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
         this.BackgroundImage = global::MediaPortal.Properties.Resources.mplogo;
         this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-        this.ClientSize = new System.Drawing.Size(399, 175);
+        this.ClientSize = new System.Drawing.Size(400, 172);
         this.Controls.Add(this.panel1);
         this.DoubleBuffered = true;
         this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
