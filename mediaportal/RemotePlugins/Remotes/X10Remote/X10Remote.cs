@@ -95,8 +95,11 @@ namespace MediaPortal.InputDevices
       {
         if (X10Inter == null)
         {
-          X10Inter = new X10Interface();
-          if (X10Inter == null)
+          try
+          {
+            X10Inter = new X10Interface();
+          }
+          catch (COMException)
           {
             Log.Info("X10 debug: Could not get interface");
             _remotefound = false;
