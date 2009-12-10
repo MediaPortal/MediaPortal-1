@@ -120,7 +120,18 @@
   <metadata name="mpMainToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="mpNoRtspInMultiSeatCheckBox.ToolTip" xml:space="preserve">
-    <value>Enable this to use file access even in multi-seat clients. Normally multi-seat clients use RTSP. For this setting to work recordings and timeshift buffers must be accessible from both the server and the client using the same path.</value>
+  <data name="mpLabel1.Text" xml:space="preserve">
+    <value>NOTE:
+If you leave those fields blank then the default folders are used.
+Example:
+
+Local Tv-Server Path                 --&gt;             Default UNC path
+"D:\TVE\TimeShift"                                   "\\servername\D\TVE\TimeShift"
+"C:\Videos\Recording"                              "\\servername\C\Videos\Recording"  
+
+</value>
   </data>
+  <metadata name="folderBrowserDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>154, 17</value>
+  </metadata>
 </root>

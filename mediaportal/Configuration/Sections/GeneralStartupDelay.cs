@@ -19,7 +19,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     public GeneralStartupDelay(string name)
-      : base("Startup Delay")
+      : base(name)
     {
       InitializeComponent();
     }
@@ -33,27 +33,11 @@ namespace MediaPortal.Configuration.Sections
       using (Settings xmlreader = new MPSettings())
       {
         nudDelay.Value = xmlreader.GetValueAsInt("general", "startup delay", 0);
-        //cbWaitForTvService.Checked = xmlreader.GetValueAsBool("general", "wait for tvserver", false);
       }
       //
-      // If TvService exist on local machine, then we are in singleseat
+      // On single seat WaitForTvService is forced enabled !
       //
-      cbWaitForTvService.Checked = false;
-
-      if (Util.Utils.UsingTvServer)
-      {
-        foreach (ServiceController ctrl in ServiceController.GetServices())
-        {
-          if (ctrl.DisplayName == "TVService")
-          {
-            //
-            // On single seat WaitForTvService is forced enabled !
-            //
-            cbWaitForTvService.Checked = true;
-            break;
-          }
-        }
-      }
+      cbWaitForTvService.Checked = Common.IsSingleSeat();
     }
 
     public override void SaveSettings()

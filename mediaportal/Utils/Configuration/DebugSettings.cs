@@ -82,21 +82,11 @@ namespace MediaPortal.Configuration
           File.Delete(settingPath);
         }
       }
-      catch (System.IO.IOException ex)
+      catch (IOException ex)
       {
         Log.Error("Failed to write debug setting '{0}'", setting);
         Log.Error(ex);
       }
-    }
-
-    /// <summary>
-    /// Returns true if the client should always use RTSP 
-    /// to play server streams, even in singleseat setups
-    /// </summary>
-    static public bool UseRTSP
-    {
-      get { return GetSetting("UseRTSP"); }
-      set { SetSetting("UseRTSP", value); }
     }
 
     /// <summary>
