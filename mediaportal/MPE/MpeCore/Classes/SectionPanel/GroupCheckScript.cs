@@ -81,6 +81,7 @@ namespace MpeCore.Classes.SectionPanel
         {
             Base.ActionExecute(packageClass, sectionItem, ActionExecuteLocationEnum.BeforPanelShow);
             Base.ActionExecute(packageClass, sectionItem, ActionExecuteLocationEnum.AfterPanelShow);
+            Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
             bool state = false;
             try
             {
@@ -91,7 +92,8 @@ namespace MpeCore.Classes.SectionPanel
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Eror in script : " + ex.Message);
+                if (!packageClass.Silent)
+                    MessageBox.Show("Eror in script : " + ex.Message);
                 state = false;
             }
 

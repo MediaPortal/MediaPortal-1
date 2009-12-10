@@ -238,7 +238,7 @@
             this.btn_params.Name = "btn_params";
             this.btn_params.Size = new System.Drawing.Size(75, 23);
             this.btn_params.TabIndex = 4;
-            this.btn_params.Text = "Edit params";
+            this.btn_params.Text = "Customize";
             this.btn_params.UseVisualStyleBackColor = true;
             this.btn_params.Click += new System.EventHandler(this.btn_params_Click);
             // 

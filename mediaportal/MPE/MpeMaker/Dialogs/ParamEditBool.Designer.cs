@@ -35,7 +35,7 @@
             // radio_Yes
             // 
             this.radio_Yes.AutoSize = true;
-            this.radio_Yes.Location = new System.Drawing.Point(120, 31);
+            this.radio_Yes.Location = new System.Drawing.Point(173, 53);
             this.radio_Yes.Name = "radio_Yes";
             this.radio_Yes.Size = new System.Drawing.Size(74, 17);
             this.radio_Yes.TabIndex = 0;
@@ -47,7 +47,7 @@
             // radio_No
             // 
             this.radio_No.AutoSize = true;
-            this.radio_No.Location = new System.Drawing.Point(120, 68);
+            this.radio_No.Location = new System.Drawing.Point(174, 90);
             this.radio_No.Name = "radio_No";
             this.radio_No.Size = new System.Drawing.Size(73, 17);
             this.radio_No.TabIndex = 1;
@@ -63,7 +63,7 @@
             this.Controls.Add(this.radio_No);
             this.Controls.Add(this.radio_Yes);
             this.Name = "ParamEditBool";
-            this.Size = new System.Drawing.Size(341, 150);
+            this.Size = new System.Drawing.Size(420, 160);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Data;
 using System.Text;
@@ -29,6 +30,11 @@ namespace MpeMaker.Dialogs
         public void Set(SectionParam param)
         {
             Param = param;
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("http://wiki.team-mediaportal.com/MpeMakerScript");
         }
     }
 }

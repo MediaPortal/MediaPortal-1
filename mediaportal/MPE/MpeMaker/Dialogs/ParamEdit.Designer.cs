@@ -70,7 +70,7 @@
             // 
             this.panel1.Location = new System.Drawing.Point(12, 50);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(417, 159);
+            this.panel1.Size = new System.Drawing.Size(420, 160);
             this.panel1.TabIndex = 7;
             // 
             // ParamEdit
@@ -84,7 +84,7 @@
             this.Controls.Add(this.cmb_params);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "ParamEdit";
-            this.Text = "ParamEdit";
+            this.Text = "Customize ";
             this.ResumeLayout(false);
             this.PerformLayout();
 

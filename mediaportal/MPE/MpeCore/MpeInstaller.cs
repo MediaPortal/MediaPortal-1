@@ -60,6 +60,7 @@ namespace MpeCore
             AddActionProvider(new CreateFolder());
             AddActionProvider(new ExtensionInstaller());
             AddActionProvider(new ConfigurePlugin());
+            AddActionProvider(new Script());
 
             AddVersion(new MediaPortalVersion());
             AddVersion(new TvServerVersion());

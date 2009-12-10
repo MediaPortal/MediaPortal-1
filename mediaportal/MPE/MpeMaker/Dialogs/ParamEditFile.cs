@@ -44,6 +44,14 @@ namespace MpeMaker.Dialogs
         private void txt_file_TextChanged(object sender, EventArgs e)
         {
             Param.Value = txt_file.Text;
+            if (File.Exists(Param.Value) && (Path.GetExtension(Param.Value) == ".png" || Path.GetExtension(Param.Value) == ".jpg" || Path.GetExtension(Param.Value) == ".bmp"))
+            {
+                pictureBox1.LoadAsync(Param.Value);
+            }
+            else
+            {
+                pictureBox1.ImageLocation = "";
+            }
         }
     }
 }

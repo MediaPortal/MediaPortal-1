@@ -77,6 +77,7 @@
     <Compile Include="Classes\ActionType\ExtensionInstaller.cs" />
     <Compile Include="Classes\ActionType\KillTask.cs" />
     <Compile Include="Classes\ActionType\RunApplication.cs" />
+    <Compile Include="Classes\ActionType\Script.cs" />
     <Compile Include="Classes\ActionType\ShowMessageBox.cs" />
     <Compile Include="Classes\DependencyItemCollection.cs" />
     <Compile Include="Classes\DependencyItem.cs" />

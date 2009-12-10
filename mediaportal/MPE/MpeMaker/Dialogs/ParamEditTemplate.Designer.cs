@@ -36,13 +36,13 @@
             // 
             this.textBox1.Location = new System.Drawing.Point(0, 15);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(348, 20);
+            this.textBox1.Size = new System.Drawing.Size(385, 20);
             this.textBox1.TabIndex = 0;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(351, 15);
+            this.button1.Location = new System.Drawing.Point(391, 15);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(26, 20);
             this.button1.TabIndex = 1;
@@ -57,7 +57,7 @@
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox1);
             this.Name = "ParamEditTemplate";
-            this.Size = new System.Drawing.Size(380, 144);
+            this.Size = new System.Drawing.Size(420, 160);
             this.ResumeLayout(false);
             this.PerformLayout();
 

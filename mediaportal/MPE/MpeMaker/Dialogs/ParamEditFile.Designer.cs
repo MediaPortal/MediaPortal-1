@@ -33,6 +33,8 @@
             this.txt_file = new System.Windows.Forms.TextBox();
             this.button2 = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // label2
@@ -46,7 +48,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(354, 23);
+            this.button1.Location = new System.Drawing.Point(388, 23);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(29, 23);
             this.button1.TabIndex = 7;
@@ -59,7 +61,7 @@
             this.txt_file.Location = new System.Drawing.Point(6, 26);
             this.txt_file.Name = "txt_file";
             this.txt_file.ReadOnly = true;
-            this.txt_file.Size = new System.Drawing.Size(342, 20);
+            this.txt_file.Size = new System.Drawing.Size(376, 20);
             this.txt_file.TabIndex = 6;
             this.txt_file.TextChanged += new System.EventHandler(this.txt_file_TextChanged);
             // 
@@ -77,16 +79,27 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Location = new System.Drawing.Point(87, 52);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(329, 107);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 10;
+            this.pictureBox1.TabStop = false;
+            // 
             // ParamEditFile
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.txt_file);
             this.Name = "ParamEditFile";
-            this.Size = new System.Drawing.Size(392, 150);
+            this.Size = new System.Drawing.Size(420, 160);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -99,5 +112,6 @@
         private System.Windows.Forms.TextBox txt_file;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }
