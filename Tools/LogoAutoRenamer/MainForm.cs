@@ -19,7 +19,7 @@ namespace LogoAutoRenamer
       textBoxSrc.Text = curDir + @"\logos src";
       textBoxDst.Text = curDir + @"\logos dst";
       textboxXml.Text = curDir + @"\export.xml";
-      Text = Assembly.GetExecutingAssembly().GetName().Name + " v0.8";
+      Text = Assembly.GetExecutingAssembly().GetName().Name + " v0.9";
     }
 
     private void buttonStart_Click(object sender, EventArgs e)
