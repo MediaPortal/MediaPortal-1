@@ -15,9 +15,10 @@ namespace LogoAutoRenamer
     public MainForm()
     {
       InitializeComponent();
-      textBoxSrc.Text = @"c:\temp\mp\logos src";
-      textBoxDst.Text = @"c:\temp\mp\logos dst";
-      textboxXml.Text = @"c:\temp\mp\export.xml";
+      string curDir = Environment.CurrentDirectory;
+      textBoxSrc.Text = curDir + @"\logos src";
+      textBoxDst.Text = curDir + @"\logos dst";
+      textboxXml.Text = curDir + @"\export.xml";
       Text = Assembly.GetExecutingAssembly().GetName().Name + " v0.8";
     }
 
