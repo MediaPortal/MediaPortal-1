@@ -3402,11 +3402,7 @@ namespace TvPlugin
       if (channel.IsRadio)
       {
         mediaType = g_Player.MediaType.Radio;
-      }
-
-      bool useRTSP = UseRTSP();
-      bool tsFileExists = File.Exists(timeshiftFileName);
-
+      }      
 
       benchClock.Stop();
       Log.Warn("tvhome:startplay.  Phase 1 - {0} ms - Done method initialization",
@@ -3414,33 +3410,9 @@ namespace TvPlugin
       benchClock.Reset();
       benchClock.Start();
 
-      if (!tsFileExists && !useRTSP) //singleseat
-      {
-        if (_timeshiftingpath.Length > 0)
-        {
-          string path = Path.GetDirectoryName(timeshiftFileName);
-          int index = path.LastIndexOf("\\");
+      timeshiftFileName = TVUtil.GetFileNameForTimeshifting();
+      bool useRTSP = UseRTSP();
 
-          if (index == -1)
-          {
-            timeshiftFileName = TimeshiftingPath() + "\\" + Path.GetFileName(timeshiftFileName);
-          }
-          else
-          {
-            timeshiftFileName = TimeshiftingPath() + path.Substring(index) + "\\" + Path.GetFileName(timeshiftFileName);
-          }
-        }
-        else
-        {
-          timeshiftFileName = timeshiftFileName.Replace(":", "");
-          timeshiftFileName = "\\\\" + RemoteControl.HostName + "\\" + timeshiftFileName;
-        }
-      }
-
-      if (useRTSP)
-      {
-        timeshiftFileName = Card.RTSPUrl;
-      }
       Log.Info("tvhome:startplay:{0} - using rtsp mode:{1}", timeshiftFileName, useRTSP);
       g_Player.Play(timeshiftFileName, mediaType);
       benchClock.Stop();

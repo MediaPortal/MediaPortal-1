@@ -78,7 +78,7 @@ namespace TvPlugin
                     IList<Recording> recordings = Recording.ListAll();
                     for (int i = recordings.Count - 1; i >= 0; i--)
                     {
-                        string recFileName = TVUtil.GetFileName(recordings[i].FileName);
+                        string recFileName = TVUtil.GetFileNameForRecording(recordings[i]);
                         string thumbNail = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded,
                                                          Path.ChangeExtension(Utils.SplitFilename(recFileName), null),
                                                          Utils.GetThumbExtension());
@@ -1364,13 +1364,9 @@ namespace TvPlugin
                 }
               }
             */
-            string fileName = TVUtil.GetFileName(rec.FileName);
+            string fileName = TVUtil.GetFileNameForRecording(rec);
 
-            bool useRTSP = TVHome.UseRTSP();
-            if (useRTSP)
-            {
-                fileName = TVHome.TvServer.GetStreamUrlForFileName(rec.IdRecording);
-            }
+            bool useRTSP = TVHome.UseRTSP();            
 
             Log.Info("TvRecorded Play:{0} - using rtsp mode:{1}", fileName, useRTSP);
             if (g_Player.Play(fileName, g_Player.MediaType.Recording))

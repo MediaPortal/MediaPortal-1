@@ -322,40 +322,102 @@ namespace TvPlugin
       return titleDisplay;
     }
 
-    //bool _isSeries = false;
 
     /// <summary>
-    /// Create File Name
+    /// Create Timeshifting filename based on RTSP url, UNC or real path.
     /// </summary>
     /// <param name="fileName"></param>
     /// <returns></returns>
-    public static string GetFileName(string fileName)
+    public static string GetFileNameForTimeshifting()
     {
       bool useRTSP = TVHome.UseRTSP();
-      bool fileExists = File.Exists(fileName);
+      string fileName = "";
 
-      if (!fileExists && !useRTSP) //singleseat
+      if (!useRTSP) //SMB mode
       {
-        if (TVHome.RecordingPath().Length > 0)
+        bool fileExists = File.Exists(TVHome.Card.TimeShiftFileName);
+        if (!fileExists) // fileName does not exist b/c it points to the local folder on the tvserver, which is ofcourse invalid on the tv client.
         {
-          string path = Path.GetDirectoryName(fileName);
-          int index = path.IndexOf("\\");
-
-          if (index == -1)
+          if (TVHome.TimeshiftingPath().Length > 0)
           {
-            fileName = TVHome.RecordingPath() + "\\" + Path.GetFileName(fileName);
+            //use user defined timeshifting folder as either UNC or network drive
+            fileName = Path.GetFileName(TVHome.Card.TimeShiftFileName);
+            fileName = TVHome.TimeshiftingPath() + "\\" + fileName;
           }
-          else
+          else // use automatic UNC path
           {
-            fileName = TVHome.RecordingPath() + path.Substring(index) + "\\" + Path.GetFileName(fileName);
+            fileName = TVHome.Card.TimeShiftFileName.Replace(":", "");
+            fileName = "\\\\" + RemoteControl.HostName + "\\" + fileName;
           }
         }
         else
         {
-          fileName = fileName.Replace(":", "");
-          fileName = "\\\\" + RemoteControl.HostName + "\\" + fileName;
+          fileName = TVHome.Card.TimeShiftFileName;
+        }      
+      }
+      else //RTSP mode, get RTSP url
+      {
+        fileName = TVHome.Card.RTSPUrl;
+      }
+
+      return fileName;
+    }
+
+    /// <summary>
+    /// Create Recording filename based on RTSP url, UNC or real path.
+    /// </summary>
+    /// <param name="fileName"></param>
+    /// <returns></returns>
+    public static string GetFileNameForRecording(Recording rec)
+    {      
+      bool useRTSP = TVHome.UseRTSP();
+      string fileName = "";
+      
+      if (!useRTSP) //SMB mode
+      {
+        bool fileExists = File.Exists(rec.FileName);
+        if (!fileExists) // fileName does not exist b/c it points to the local folder on the tvserver, which is ofcourse invalid on the tv client.
+        {
+          if (TVHome.RecordingPath().Length > 0)
+          {
+            //use user defined recording folder as either UNC or network drive
+            fileName = Path.GetFileName(rec.FileName);
+            string fileNameSimple = TVHome.RecordingPath() + "\\" + fileName;
+
+            fileExists = File.Exists(fileNameSimple);
+
+            if (!fileExists) //maybe file exist in folder, schedules recs often appear in folders, no way to intelligently determine this.
+            {
+              DirectoryInfo dirInfo = Directory.GetParent(rec.FileName);
+
+              if (dirInfo != null)
+              {
+                string parentFolderName = dirInfo.Name;
+                fileName = TVHome.RecordingPath() + "\\" + parentFolderName + "\\" + fileName;
+              }                            
+            }
+            else
+            {
+              fileName = fileNameSimple;
+            }
+
+          }
+          else // use automatic UNC path
+          {
+            fileName = rec.FileName.Replace(":", "");
+            fileName = "\\\\" + RemoteControl.HostName + "\\" + fileName;
+          }
+        }
+        else //file exists, return it.
+        {
+          fileName = rec.FileName;          
         }
       }
+      else //RTSP mode, get RTSP url for file.
+      {
+        fileName = TVHome.TvServer.GetStreamUrlForFileName(rec.IdRecording);
+      }
+
       return fileName;
     }
   }
