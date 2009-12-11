@@ -477,7 +477,7 @@ namespace TvPlugin
 
     private static void RemoteControl_OnRemotingConnected(bool recovered)
     {
-      Log.Debug("TVHome: OnRemotingConnected, recovered from a disconnection {}", recovered);
+      Log.Debug("TVHome: OnRemotingConnected, recovered from a disconnection {0}", recovered);
       Connected = true;
       //_ServerLastStatusOK = true;
       if (recovered)
