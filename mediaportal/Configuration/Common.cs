@@ -23,7 +23,10 @@
 
 #endregion
 
-using System.ServiceProcess;
+using System;
+using System.Net;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 
 namespace MediaPortal.Configuration
 {
@@ -31,17 +34,38 @@ namespace MediaPortal.Configuration
   {
     public static bool IsSingleSeat()
     {
+      bool singleSeat = false;
       if (Util.Utils.UsingTvServer)
       {
-        foreach (ServiceController ctrl in ServiceController.GetServices())
+        string servername;
+        using (Settings xmlreader = new MPSettings())
         {
-          if (ctrl.DisplayName == "TVService")
+          servername = xmlreader.GetValueAsString("tvservice", "hostname", Environment.MachineName);
+        }
+        if (servername.ToLowerInvariant() == Environment.MachineName.ToLowerInvariant())
+        {
+          Log.Debug("Configuration: IsSingleSeat - MPSettings.HostName = {0} / Environment.MachineName = {1}",
+                    servername, Environment.MachineName);
+          singleSeat = true;
+        }
+        else
+        {
+          IPHostEntry ipEntry = Dns.GetHostEntry(Environment.MachineName);
+          IPAddress[] addr = ipEntry.AddressList;
+
+          for (int i = 0; i < addr.Length; i++)
           {
-            return true;
+            if (addr[i].Equals(servername))
+            {
+              Log.Debug("Configuration: IsSingleSeat - MPSettings.HostName = {0} / Dns.GetHostEntry(Environment.MachineName) = {1}",
+                        servername, addr[i]);
+              singleSeat = true;
+              break;
+            }
           }
         }
       }
-      return false;
+      return singleSeat;
     }
   }
 }

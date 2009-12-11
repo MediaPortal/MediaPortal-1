@@ -2059,20 +2059,35 @@ namespace TvPlugin
     /// <returns></returns>
     public static bool IsSingleSeat()
     {
-      //TODO: This method does not handle the fact the RemoteControl.Hostname
-      //could be an IP address and not a hostname.      
       if (!_isSingleSeat.HasValue)
       {
         //we only want to bother the RemoteControl interface once, then we will cache the value for later usage.
-        Log.Debug("TVHome: IsSingleSeat - RemoteControl.HostName = {0} / Environment.MachineName = {1}", RemoteControl.HostName, Environment.MachineName);
-        _isSingleSeat = (RemoteControl.HostName.ToLowerInvariant() == Environment.MachineName.ToLowerInvariant());
-      }
+        _isSingleSeat = false;
+        if (RemoteControl.HostName.ToLowerInvariant() == Environment.MachineName.ToLowerInvariant())
+        {
+          Log.Debug("TVHome: IsSingleSeat - RemoteControl.HostName = {0} / Environment.MachineName = {1}",
+                    RemoteControl.HostName, Environment.MachineName);
+          _isSingleSeat = true;
+        }
+        else
+        {
+          IPHostEntry ipEntry = Dns.GetHostEntry(Environment.MachineName);
+          IPAddress[] addr = ipEntry.AddressList;
 
-      if (_isSingleSeat.HasValue)
-      {
-        return (bool)_isSingleSeat;
+          for (int i = 0; i < addr.Length; i++)
+          {
+            if (addr[i].Equals(RemoteControl.HostName))
+            {
+              Log.Debug(
+                "TVHome: IsSingleSeat - RemoteControl.HostName = {0} / Dns.GetHostEntry(Environment.MachineName) = {1}",
+                RemoteControl.HostName, addr[i]);
+              _isSingleSeat = true;
+              break;
+            }
+          }
+        }
       }
-      return true; //default assumption is singleseat
+      return (bool)_isSingleSeat;
     }
 
     public static void UpdateTimeShift()
