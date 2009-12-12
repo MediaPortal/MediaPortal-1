@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<Language name="Russian" characters="255">
+<Language name="Russian" characters="1105">
   <Section name="unmapped">
     <String id="0" prefix="Мои ">Программы</String>
     <String id="1" prefix="Мои ">Изображения</String>
@@ -7,7 +7,7 @@
     <String id="3" prefix="Мое ">Видео</String>
     <String id="4">Телепрограмма</String>
     <String id="5">Настройка</String>
-    <String id="6">Текст отсутсвует!</String>
+    <String id="6">Текст отсутствует!</String>
     <String id="7" prefix="Мои ">Файлы</String>
     <String id="8" prefix="Моя ">Погода</String>
     <String id="9" prefix="Мои ">RSS</String>
@@ -988,7 +988,7 @@
     <String id="1506">Обнаружена неизвестная ошибка</String>
     <String id="1507">Неизвестный канал</String>
     <String id="1508">Канал не сопоставлен тюнерам</String>
-    <String id="1509">No tuning details for the channel</String>
+    <String id="1509">Нет данных для настройки канала</String>
     <String id="1510">Соединение с ТВ-сервером потеряно</String>
     <String id="1511">Нет активных подключений</String>
     <String id="1512">Включить предыдущий канал?</String>
@@ -1045,7 +1045,7 @@
     <String id="2012">Удалить</String>
     <String id="2013">Избранное</String>
     <String id="2014">Неизвестный</String>
-    <String id="2015"> per Serving</String>
+    <String id="2015">на порцию</String>
     <String id="2016">маленький</String>
     <String id="2017">жидкая унция</String>
     <String id="2018">чашка</String>
@@ -1221,7 +1221,7 @@
     <String id="2515">Изображения</String>
     <String id="2516" prefix="Моя ">Wikipedia</String>
     <String id="2550">Вы действительно хотите ОСТАНОВИТЬ ТВ?</String>
-    <String id="2551">(буфер timeshift потерян)</String>
+    <String id="2551">(буфер timeshift будет потерян)</String>
     <String id="2552">Стоп</String>
     <String id="2553">Играть</String>
     <String id="2599">Не определено</String>
@@ -1238,8 +1238,6 @@
     <String id="2610">Польский</String>
     <String id="2611">Чешский</String>
     <String id="2612">Венгерский</String>
-    <String id="2613">Русский</String>
-    <String id="2614">Украинский</String>
     <String id="2650">Перезагрузка шрифтов - пожалуйста, подождите...</String>
     <String id="2700">Открыть меню CI</String>
     <String id="2997">ч</String>
@@ -1353,7 +1351,7 @@
     <String id="6017">Добавлять записи в базу видео</String>
     <String id="6018">минут перед началом программы</String>
     <String id="6019">минут после завершения программы</String>
-    <String id="6020">Повторят слайдшоу</String>
+    <String id="6020">Повторять слайдшоу</String>
     <String id="6021">Перемешивать слайдшоу</String>
     <String id="6022">Настройка видео</String>
     <String id="6023">Настройка экрана</String>
@@ -1473,7 +1471,7 @@
     <String id="14011">Выберите вариант</String>
     <String id="14012">Неподдерживаемая версия МедиаПортала! (Требуется версия {0})</String>
     <String id="14013">Продолжить?</String>
-    <String id="14014">Обновление он-лфйн информации</String>
+    <String id="14014">Обновление он-лайн информации</String>
     <String id="14015">Обновления</String>
     <String id="14016">Сорт. по: Загружаемости</String>
     <String id="14017">Сорт. по: Рейтингу</String>
@@ -1590,7 +1588,7 @@
     <String id="34011">Запрет</String>
     <String id="34012">Пропустить</String>
     <String id="34013">Режим поиска</String>
-    <String id="34014">Активаировать "Scrobbling"</String>
+    <String id="34014">Активировать "Scrobbling"</String>
     <String id="34015">Перезагрузить настройки</String>
     <String id="34016">Воспроизвести схожего исполнителя</String>
     <String id="34017">Воспроизвести схожие теги</String>
@@ -1601,7 +1599,7 @@
     <String id="34039">Схожие по артисту: </String>
     <String id="34040">Мои рекомендации</String>
     <String id="34041">Перейти к выбранному тегу: </String>
-    <String id="34042"> Не выбран ни один таг</String>
+    <String id="34042">Не выбран ни один таг</String>
     <String id="34043">Личное радио: </String>
     <String id="34044">Любимые треки: </String>
     <String id="34045"> Ни один из друзей не был выбран</String>
@@ -1619,7 +1617,7 @@
     <String id="34061">Ввести имя пользователя...</String>
     <String id="34062">Ввести артиста...</String>
     <String id="34063">Артист не выбран</String>
-    <String id="40001">Ожидание Спящего режима</String>
+    <String id="40001">Ожидание Ждущего режима</String>
     <String id="40002">MediaPortal is unattended but still busy.</String>
     <String id="40003">Когда текущее действие завершится Mediaportal перейдет в Ждущий режим</String>
     <String id="100000">Главная</String>
