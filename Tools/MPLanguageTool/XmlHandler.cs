@@ -333,7 +333,7 @@ namespace MPLanguageTool
         case frmMain.StringsType.MediaPortal_1:
           writer = new StreamWriter(xml, false, Encoding.UTF8);
           writer.Write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-          writer.Write("<Language name=\"" + LanguageNAME + "\" characters=\"255\">\n");
+          writer.Write("<Language name=\"" + LanguageNAME + "\" characters=\"" + getMaxCharsForLanguageID(languageID) + "\">\n");
           writer.Write("  <Section name=\"unmapped\">\n");
           writer.Write("  </Section>\n");
           writer.Write("</Language>\n");
@@ -454,5 +454,38 @@ namespace MPLanguageTool
       }
       doc.Save(xml);
     }
+	
+	private static int getMaxCharsForLanguageID(string languageID)
+	{
+	  int maxChars;
+	   
+      switch (languageID)
+      {
+        case "cs":          //Czech
+        case "hu":          //Hungarian
+          maxChars = 512;
+          break;
+        case "el":          //Greek
+          maxChars = 974;
+          break;
+        case "he":          //Hebrew
+          maxChars = 1456;
+          break;
+        case "pl":          //Polish
+          maxChars = 380;
+          break;
+        case "ru":          //Russian
+          maxChars = 1105;
+          break;
+        case "uk":          //Ukrainian
+          maxChars = 1250;
+          break;
+        default:
+          maxChars = 255;
+          break;
+      }
+
+	  return maxChars;
+	}
   }
 }
