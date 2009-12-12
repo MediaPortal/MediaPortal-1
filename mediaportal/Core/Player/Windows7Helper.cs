@@ -151,6 +151,7 @@ namespace MediaPortal.Player
       numerator = (UInt32)Marshal.ReadInt32(pModeArray,offset+32);
       denominator = (UInt32)Marshal.ReadInt32(pModeArray,offset+36);
       refreshRate = (double)numerator / (double)denominator;
+      Log.Debug("W7RefreshRateHelper.GetRefreshRate: QueryDisplayConfig returned {0}/{0}", numerator, denominator);
 
       // free memory and return refresh rate
       Marshal.FreeHGlobal(pPathArray);
@@ -210,7 +211,7 @@ namespace MediaPortal.Player
       }
   
       // TODO: refactor to private method
-      // set proper numerator and denominator for reresh rate
+      // set proper numerator and denominator for refresh rate
       UInt32 newRefreshRate = (uint)(refreshRate * 1000);
       switch (newRefreshRate)
       {
@@ -267,11 +268,12 @@ namespace MediaPortal.Player
       // adding SDC_ALLOW_CHANGES to flags if validation failed
       if (result != 0)
 	    {
-        Log.Debug("W7RefreshRateHelper.SetDisplayConfig(...): SDC_VALIDATE failed adding SDC_ALLOW_CHANGES");
+        Log.Debug("W7RefreshRateHelper.SetDisplayConfig(...): SDC_VALIDATE of {0}/{1} failed", numerator, denominator);
         flags = SDC_APPLY | SDC_USE_SUPPLIED_DISPLAY_CONFIG | SDC_ALLOW_CHANGES;
 	    } 
       else
 	    {
+        Log.Debug("W7RefreshRateHelper.SetDisplayConfig(...): SDC_VALIDATE of {0}/{1} succesful", numerator, denominator);
         flags = SDC_APPLY | SDC_USE_SUPPLIED_DISPLAY_CONFIG;
 	    } 
 
