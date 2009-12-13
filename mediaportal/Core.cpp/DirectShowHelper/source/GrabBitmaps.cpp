@@ -1,7 +1,6 @@
 /* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *  Author: Agree
- *	http://www.team-mediaportal.com
+ *      Copyright (C) 2005-2009 Team MediaPortal
+ *      http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,9 +18,10 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#include <windows.h>
+
+#pragma warning(disable: 4244 4996)
+
 #include <streams.h>
-#include <stdio.h>
 #include <atlbase.h>
 #pragma include_alias( "dxtrans.h", "qedit.h" )
 #define __IDxtCompositor_INTERFACE_DEFINED__
@@ -29,6 +29,7 @@
 #define __IDxtJpeg_INTERFACE_DEFINED__
 #define __IDxtKey_INTERFACE_DEFINED__
 #include <qedit.h>
+
 // Function prototypes
 int GrabBitmaps(TCHAR * szFile);
 HRESULT GetPin(IBaseFilter * pFilter, PIN_DIRECTION dirrequired,  int iNum, IPin **ppPin);
@@ -37,7 +38,6 @@ IPin *  GetOutPin( IBaseFilter *pFilter, int Num );
 
 // Constants
 #define NUM_FRAMES_TO_GRAB  1
-
 
 
 extern void Log(const char *fmt, ...) ;

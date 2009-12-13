@@ -1,42 +1,29 @@
 /* 
-*	Copyright (C) 2005-2008 Team MediaPortal
-*  Author: Frodo
-*	http://www.team-mediaportal.com
-*
-*  This Program is free software; you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation; either version 2, or (at your option)
-*  any later version.
-*   
-*  This Program is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-*  GNU General Public License for more details.
-*   
-*  You should have received a copy of the GNU General Public License
-*  along with GNU Make; see the file COPYING.  If not, write to
-*  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
-*  http://www.gnu.org/copyleft/gpl.html
-*
-*/
-
-// Windows Header Files:
-#include <windows.h>
+ *      Copyright (C) 2005-2009 Team MediaPortal
+ *      http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+#pragma warning(disable: 4244)
 
 #include <streams.h>
-#include <stdio.h>
 #include <atlbase.h>
-
-#include <mmsystem.h>
-#include <d3d9.h>
 #include <d3dx9.h>
-#include <d3d9types.h>
-#include <strsafe.h>
-#include <dshow.h>
 #include <vmr9.h>
-#include <sbe.h>
-#include <dxva.h>
-#include <dvdmedia.h>
 
 #include "dx9allocatorpresenter.h"
 
@@ -46,19 +33,19 @@ CVMR9AllocatorPresenter::CVMR9AllocatorPresenter(IDirect3DDevice9* direct3dDevic
 : m_refCount(1)
 {
   Log("----------v0.37---------------------------");
-  m_hMonitor=monitor;
-  m_pD3DDev=direct3dDevice;
-  m_pCallback=callback;
-  m_surfaceCount=0;
-  m_UseOffScreenSurface=false;
+  m_hMonitor = monitor;
+  m_pD3DDev = direct3dDevice;
+  m_pCallback = callback;
+  m_surfaceCount = 0;
+  m_UseOffScreenSurface = false;
   m_pSurfaces = NULL;
 }
 
 CVMR9AllocatorPresenter::~CVMR9AllocatorPresenter()
 {
   Log("CVMR9AllocatorPresenter dtor");	
-  m_pIVMRSurfAllocNotify=NULL;
-  m_pD3DDev=NULL;
+  m_pIVMRSurfAllocNotify = NULL;
+  m_pD3DDev = NULL;
 }
 
 void CVMR9AllocatorPresenter::UseOffScreenSurface(bool yesNo)
@@ -77,29 +64,27 @@ HRESULT CVMR9AllocatorPresenter::QueryInterface(
   {
     hr = E_POINTER;
   } 
-  else if( riid == IID_IVMRSurfaceAllocator9 ) 
+  else if (riid == IID_IVMRSurfaceAllocator9) 
   {
-    *ppvObject = static_cast<IVMRSurfaceAllocator9*>( this );
+    *ppvObject = static_cast<IVMRSurfaceAllocator9*>(this);
     AddRef();
     hr = S_OK;
   } 
-  else if( riid == IID_IVMRImagePresenter9 ) 
+  else if (riid == IID_IVMRImagePresenter9) 
   {
-    *ppvObject = static_cast<IVMRImagePresenter9*>( this );
+    *ppvObject = static_cast<IVMRImagePresenter9*>(this);
     AddRef();
     hr = S_OK;
   } 
-  else if( riid == IID_IVMRWindowlessControl9  ) 
+  else if (riid == IID_IVMRWindowlessControl9) 
   {
-    *ppvObject = static_cast<IVMRWindowlessControl9*>( this );
+    *ppvObject = static_cast<IVMRWindowlessControl9*>(this);
     AddRef();
     hr = S_OK;
   } 
-  else if( riid == IID_IUnknown ) 
+  else if (riid == IID_IUnknown) 
   {
-    *ppvObject = 
-      static_cast<IUnknown*>( 
-      static_cast<IVMRSurfaceAllocator9*>( this ) );
+    *ppvObject = static_cast<IUnknown*>(static_cast<IVMRSurfaceAllocator9*>(this));
     AddRef();
     hr = S_OK;    
   }
@@ -109,13 +94,13 @@ HRESULT CVMR9AllocatorPresenter::QueryInterface(
 
 ULONG CVMR9AllocatorPresenter::AddRef()
 {
-  return InterlockedIncrement(& m_refCount);
+  return InterlockedIncrement(&m_refCount);
 }
 
 ULONG CVMR9AllocatorPresenter::Release()
 {
   Log("CVMR9AllocatorPresenter::Release()");
-  ULONG ret = InterlockedDecrement(& m_refCount);
+  ULONG ret = InterlockedDecrement(&m_refCount);
   if( ret == 0 )
   {
     Log("CVMR9AllocatorPresenter::Cleanup()");

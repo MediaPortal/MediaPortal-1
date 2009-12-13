@@ -86,6 +86,7 @@ public class MediaPortalApp : D3DApp, IRender
   private int m_iLastMousePositionY = 0;
   private bool m_bPlayingState = false;
   private bool m_bShowStats = false;
+  private bool m_bShowStatsPrevious = false;
   private Rectangle[] region = new Rectangle[1];
   private int m_ixpos = 50;
   private int m_iFrameCount = 0;
@@ -803,6 +804,23 @@ public class MediaPortalApp : D3DApp, IRender
   private void RenderStats()
   {
     UpdateStats();
+
+    if (GUIGraphicsContext.IsEvr && g_Player.HasVideo)
+    {
+      if (m_bShowStats != m_bShowStatsPrevious)
+      {
+        // notify EVR presenter only when the setting changes
+        VMR9Util.g_vmr9.EnableEVRStatsDrawing(m_bShowStats);
+      }
+      // EVR presenter will draw the stats internaly
+      m_bShowStatsPrevious = m_bShowStats;
+      return;
+    }
+    else
+    {
+      m_bShowStatsPrevious = false;
+    }
+    
     if (m_bShowStats)
     {
       GetStats();

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="DirectShowHelper"
 	ProjectGUID="{7C2419B3-501B-4B10-B3D4-E81BEB16843F}"
 	RootNamespace="dshowhelper"
@@ -21,7 +21,7 @@
 			OutputDirectory=".\obj\Debug"
 			IntermediateDirectory=".\obj\Debug"
 			ConfigurationType="2"
-			UseOfMFC="2"
+			UseOfMFC="0"
 			CharacterSet="2"
 			>
 			<Tool
@@ -218,11 +218,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\source\EVRCustomPresenter.h"
+				RelativePath=".\source\GrabBitmaps.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\source\GrabBitmaps.cpp"
+				RelativePath=".\source\Scheduler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\StatsRenderer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\TimeSource.cpp"
 				>
 			</File>
 		</Filter>
@@ -232,11 +240,35 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\source\callback.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\dshowhelper.h"
 				>
 			</File>
 			<File
 				RelativePath=".\source\DX9AllocatorPresenter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\EVRCustomPresenter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\MyQueue.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\Scheduler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\StatsRenderer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\TimeSource.h"
 				>
 			</File>
 		</Filter>

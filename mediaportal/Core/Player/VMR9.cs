@@ -96,6 +96,12 @@ namespace MediaPortal.Player
     private static extern unsafe void EvrDeinit();
 
     [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern unsafe void EVRDrawStats(bool enable);
+
+    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern unsafe void EVRResetStatCounters();
+
+    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void EVRNotifyRateChange(double pRate);
 
     [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
@@ -509,6 +515,22 @@ namespace MediaPortal.Player
       g_vmr9 = this;
       Log.Debug("VMR9: Renderer successfully added");
       return true;
+    }
+
+    /// <summary>
+    /// Enables EVR internal stats drawing 
+    /// </summary>
+    public void EnableEVRStatsDrawing(bool enable)
+    {
+      EVRDrawStats(enable);
+    }
+
+    /// <summary>
+    /// Resets EVR internal stats
+    /// </summary>
+    public void ResetEVRStats()
+    {
+      EVRResetStatCounters();
     }
 
     /// <summary>

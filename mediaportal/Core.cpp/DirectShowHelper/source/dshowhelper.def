@@ -15,5 +15,8 @@ GrabBitmaps             @10
 AddTeeSinkNameToGraph   @11
 EvrInit                 @12
 EvrDeinit               @13
-EVRNotifyRateChange     @14
-EVRNotifyDVDMenuState   @15
+EVRDrawStats		    @14
+EVRResetStatCounters	@15
+EVRNotifyRateChange     @16
+EVRNotifyDVDMenuState   @17
+

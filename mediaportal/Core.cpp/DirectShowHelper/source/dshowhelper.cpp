@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2005-2009 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *      Copyright (C) 2005-2009 Team MediaPortal
+ *      http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,67 +19,51 @@
  *
  */
 
-#pragma warning(disable: 4995)
-// Windows Header Files:
-#include <windows.h>
+#pragma warning(disable: 4995 4996)
 
 #include <streams.h>
-#include <stdio.h>
 #include <atlbase.h>
-
 #include <shlobj.h>
-#include <mmsystem.h>
-#include <d3d9.h>
 #include <d3dx9.h>
-#include <d3d9types.h>
-#include <strsafe.h>
-#include <dshow.h>
 #include <vmr9.h>
 #include <evr.h>
 #include <sbe.h>
-#include <dxva.h>
 #include <dvdmedia.h>
+#include <map>
 
 #include "dshowhelper.h"
 #include "evrcustomPresenter.h"
 #include "dx9allocatorpresenter.h"
-#include <map>
-#include <comutil.h>
-#include <process.h>
+
 using namespace std;
 
-HMODULE m_hModuleDXVA2 = NULL;
-HMODULE m_hModuleEVR = NULL;
+HMODULE m_hModuleDXVA2  = NULL;
+HMODULE m_hModuleEVR    = NULL;
 HMODULE m_hModuleMFPLAT = NULL;
 
 TDXVA2CreateDirect3DDeviceManager9* m_pDXVA2CreateDirect3DDeviceManager9 = NULL;
-TMFCreateVideoSampleFromSurface* m_pMFCreateVideoSampleFromSurface = NULL;
-TMFCreateVideoMediaType* m_pMFCreateVideoMediaType = NULL;
-TMFCreateMediaType* m_pMFCreateMediaType = NULL;
-BOOL m_bEVRLoaded = false;
+TMFCreateVideoSampleFromSurface*    m_pMFCreateVideoSampleFromSurface    = NULL;
+TMFCreateVideoMediaType*            m_pMFCreateVideoMediaType            = NULL;
+TMFCreateMediaType*                 m_pMFCreateMediaType                 = NULL;
+
+BOOL m_bEVRLoaded    = false;
 char* m_RenderPrefix = "vmr9";
 
-
-
-LPDIRECT3DDEVICE9			    m_pDevice=NULL;
-CVMR9AllocatorPresenter*	m_vmr9Presenter=NULL;
-MPEVRCustomPresenter*	m_evrPresenter=NULL;
-IMFVideoDisplayControl* m_pControl=NULL;
-IBaseFilter*				      m_pVMR9Filter=NULL;
-IVMRSurfaceAllocator9*		m_allocator=NULL;
-
-LONG						          m_iRecordingId=0;
+LPDIRECT3DDEVICE9			    m_pDevice       = NULL;
+CVMR9AllocatorPresenter*	m_vmr9Presenter = NULL;
+MPEVRCustomPresenter*	    m_evrPresenter  = NULL;
+IMFVideoDisplayControl*   m_pControl      = NULL;
+IBaseFilter*				      m_pVMR9Filter   = NULL;
+IVMRSurfaceAllocator9*		m_allocator     = NULL;
+LONG						          m_iRecordingId  = 0;
 
 map<int,IStreamBufferRecordControl*> m_mapRecordControl;
 typedef map<int,IStreamBufferRecordControl*>::iterator imapRecordControl;
 
-
-
-
-#define MY_USER_ID 0x6ABE51
+#define MY_USER_ID  0x6ABE51
 #define MY_USER_ID2 0x6ABE52
 
-#define IsInterlaced(x) ((x) & AMINTERLACE_IsInterlaced)
+#define IsInterlaced(x)  ((x) & AMINTERLACE_IsInterlaced)
 #define IsSingleField(x) ((x) & AMINTERLACE_1FieldPerSample)
 #define IsField1First(x) ((x) & AMINTERLACE_Field1First)
 
@@ -87,14 +71,16 @@ typedef map<int,IStreamBufferRecordControl*>::iterator imapRecordControl;
   const GUID name \
   = { l, w1, w2, { b1, b2,  b3,  b4,  b5,  b6,  b7,  b8 } }
 
+//#define DEFAULT_PRESENTER
 
-INIT_GUID(bobDxvaGuid          ,0x335aa36e, 0x7884, 0x43a4, 0x9c, 0x91, 0x7f, 0x87, 0xfa, 0xf3, 0xe3, 0x7e);
-INIT_GUID(clsidTeeSink         ,0x0A4252A0, 0x7E70, 0x11D0, 0xA5, 0xD6, 0x28, 0xDB, 0x04, 0xC1, 0x00, 0x00);
+INIT_GUID(bobDxvaGuid,  0x335aa36e, 0x7884, 0x43a4, 0x9c, 0x91, 0x7f, 0x87, 0xfa, 0xf3, 0xe3, 0x7e);
+INIT_GUID(clsidTeeSink, 0x0A4252A0, 0x7E70, 0x11D0, 0xA5, 0xD6, 0x28, 0xDB, 0x04, 0xC1, 0x00, 0x00);
+
 
 HRESULT __fastcall UnicodeToAnsi(LPCOLESTR pszW, LPSTR* ppszA)
 {
-
-  ULONG cbAnsi, cCharacters;
+  ULONG cbAnsi;
+  ULONG cCharacters;
   DWORD dwError;
 
   // If input is null then just return the same.
@@ -127,15 +113,16 @@ HRESULT __fastcall UnicodeToAnsi(LPCOLESTR pszW, LPSTR* ppszA)
     return HRESULT_FROM_WIN32(dwError);
   }
   return NOERROR;
-
 }
 
-void LogPath( char* dest, char* name )
+
+void LogPath(char* dest, char* name)
 {
   TCHAR folder[MAX_PATH];
   SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
   sprintf(dest,"%s\\Team Mediaportal\\MediaPortal\\log\\%s.%s",folder,m_RenderPrefix,name);
 }
+
 
 void LogRotate()
 {
@@ -145,21 +132,26 @@ void LogRotate()
   LogPath(bakFileName, "bak");
   remove(bakFileName);
   rename(fileName, bakFileName);
-
 }
+
 
 CCritSec m_qLock;
 std::queue<std::string> m_logQueue;
 BOOL m_bLoggerRunning;
 HANDLE m_hLogger=NULL;
+
 string GetLogLine()
 {
   CAutoLock lock(&m_qLock);
-  if ( m_logQueue.size() == 0 ) return "";
+  if ( m_logQueue.size() == 0 )
+  {
+    return "";
+  }
   string ret = m_logQueue.front();
   m_logQueue.pop();
   return ret;
 }
+
 
 UINT CALLBACK LogThread(void* param)
 {
@@ -173,7 +165,7 @@ UINT CALLBACK LogThread(void* param)
         SYSTEMTIME systemTime;
         GetLocalTime(&systemTime);
         string line = GetLogLine();
-        while ( !line.empty() )
+        while (!line.empty())
         {
           fprintf(fp, "%s", line.c_str());
           line = GetLogLine();
@@ -186,22 +178,25 @@ UINT CALLBACK LogThread(void* param)
   return 0;
 }
 
+
 void StartLogger()
 {
   UINT id;
-  m_hLogger=(HANDLE)_beginthreadex(NULL, 0, LogThread, 0, 0, &id);
+  m_hLogger = (HANDLE)_beginthreadex(NULL, 0, LogThread, 0, 0, &id);
   SetThreadPriority(m_hLogger, THREAD_PRIORITY_BELOW_NORMAL);
 }
 
+
 void StopLogger()
 {
-  if ( m_hLogger )
+  if (m_hLogger)
   {
     m_bLoggerRunning = FALSE;
     WaitForSingleObject(m_hLogger, INFINITE);	
     m_hLogger = NULL;
   }
 }
+
 
 void Log(const char *fmt, ...) 
 {
@@ -210,14 +205,14 @@ void Log(const char *fmt, ...)
   va_start(ap,fmt);
 
   CAutoLock logLock(&lock);
-  if ( !m_hLogger ) {
+  if (!m_hLogger) {
     m_bLoggerRunning = true;
     StartLogger();
   }
   char buffer[1000]; 
   int tmp;
   va_start(ap,fmt);
-  tmp=vsprintf(buffer, fmt, ap);
+  tmp = vsprintf(buffer, fmt, ap);
   va_end(ap); 
 
   SYSTEMTIME systemTime;
@@ -231,8 +226,8 @@ void Log(const char *fmt, ...)
     buffer);
   CAutoLock l(&m_qLock);
   m_logQueue.push((string)msg);
-
 };
+
 
 VMR9_SampleFormat ConvertInterlaceFlags(DWORD dwInterlaceFlags)
 {
@@ -259,6 +254,7 @@ VMR9_SampleFormat ConvertInterlaceFlags(DWORD dwInterlaceFlags)
   }
 }
 
+
 BOOL Vmr9Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filter,DWORD monitor)
 {
   HRESULT hr;
@@ -269,32 +265,42 @@ BOOL Vmr9Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filte
 
   CComQIPtr<IVMRFilterConfig9> pConfig = m_pVMR9Filter;
   if(!pConfig)
-    return FALSE;
-
-  if(FAILED(hr = pConfig->SetRenderingMode(VMR9Mode_Renderless)))
   {
-    Log("Vmr9:Init() SetRenderingMode() failed 0x:%x",hr);
     return FALSE;
   }
-  if(FAILED(hr = pConfig->SetNumberOfStreams(4)))
+
+  hr = pConfig->SetRenderingMode(VMR9Mode_Renderless);
+  if(FAILED(hr))
   {
-    Log("Vmr9:Init() SetNumberOfStreams() failed 0x:%x",hr);
+    Log("Vmr9:Init() SetRenderingMode() failed 0x:%x", hr);
+    return FALSE;
+  }
+
+  hr = pConfig->SetNumberOfStreams(4);
+  if(FAILED(hr))
+  {
+    Log("Vmr9:Init() SetNumberOfStreams() failed 0x:%x", hr);
     return FALSE;
   }
 
   CComQIPtr<IVMRSurfaceAllocatorNotify9> pSAN = m_pVMR9Filter;
   if(!pSAN)
+  {
     return FALSE;
+  }
 
-  m_vmr9Presenter = new CVMR9AllocatorPresenter( m_pDevice, callback,(HMONITOR)monitor) ;
+  m_vmr9Presenter = new CVMR9AllocatorPresenter(m_pDevice, callback,(HMONITOR)monitor) ;
   m_vmr9Presenter->QueryInterface(IID_IVMRSurfaceAllocator9,(void**)&m_allocator);
 
-  if(FAILED(hr = pSAN->AdviseSurfaceAllocator(MY_USER_ID, m_allocator)))
+  hr =  pSAN->AdviseSurfaceAllocator(MY_USER_ID, m_allocator);
+  if(FAILED(hr))
   {
     Log("Vmr9:Init() AdviseSurfaceAllocator() failed 0x:%x",hr);
     return FALSE;
   }
-  if (FAILED(hr = m_allocator->AdviseNotify(pSAN)))
+
+  hr = m_allocator->AdviseNotify(pSAN);
+  if (FAILED(hr))
   {
     Log("Vmr9:Init() AdviseNotify() failed 0x:%x",hr);
     return FALSE;
@@ -318,15 +324,14 @@ void Vmr9Deinit()
       do
       {
         hr=m_vmr9Presenter->Release();
-      } while (hr>0);
+      } while (hr > 0);
 
-      m_vmr9Presenter=NULL;
+      m_vmr9Presenter = NULL;
       Log("Vmr9Deinit:m_vmr9Presenter release:%d", hr);
     }
-    m_vmr9Presenter=NULL;
-
-    m_pDevice=NULL;
-    m_pVMR9Filter=NULL;
+    m_vmr9Presenter = NULL;
+    m_pDevice       = NULL;
+    m_pVMR9Filter   = NULL;
   }
   catch(...)
   {
@@ -336,11 +341,10 @@ void Vmr9Deinit()
 }
 
 
-
 void UnloadEVR()
 {
   Log("Unloading EVR libraries");
-  if (m_hModuleDXVA2!=NULL)
+  if (m_hModuleDXVA2 != NULL)
   {
     Log("Freeing library DXVA2.dll");
     if (!FreeLibrary(m_hModuleDXVA2))
@@ -349,25 +353,26 @@ void UnloadEVR()
     }
     m_hModuleDXVA2 = NULL;
   }
-  if (m_hModuleEVR!=NULL)
+  if (m_hModuleEVR != NULL)
   {
     Log("Freeing lib: EVR.dll");
-    if ( !FreeLibrary(m_hModuleEVR) )
+    if (!FreeLibrary(m_hModuleEVR))
     {
       Log("EVR.dll could not be unloaded");
     }
     m_hModuleEVR = NULL;
   }
-  if (m_hModuleMFPLAT!=NULL)
+  if (m_hModuleMFPLAT != NULL)
   {
     Log("Freeing lib: MFPLAT.dll");
-    if ( !FreeLibrary(m_hModuleMFPLAT) )
+    if (!FreeLibrary(m_hModuleMFPLAT))
     {
       Log("MFPLAT.dll could not be unloaded");
     }
     m_hModuleMFPLAT = NULL;
   }
 }
+
 
 bool LoadEVR()
 {
@@ -377,29 +382,28 @@ bool LoadEVR()
   GetSystemDirectory(systemFolder,sizeof(systemFolder));
   sprintf(mfDLLFileName,"%s\\dxva2.dll", systemFolder);
   m_hModuleDXVA2=LoadLibrary(mfDLLFileName);
-  if (m_hModuleDXVA2!=NULL)
+  if (m_hModuleDXVA2 != NULL)
   {
     Log("Found dxva2.dll");
-    m_pDXVA2CreateDirect3DDeviceManager9=(TDXVA2CreateDirect3DDeviceManager9*)GetProcAddress(m_hModuleDXVA2,"DXVA2CreateDirect3DDeviceManager9");
-    if (m_pDXVA2CreateDirect3DDeviceManager9!=NULL)
+    m_pDXVA2CreateDirect3DDeviceManager9 = (TDXVA2CreateDirect3DDeviceManager9*)GetProcAddress(m_hModuleDXVA2,"DXVA2CreateDirect3DDeviceManager9");
+    if (m_pDXVA2CreateDirect3DDeviceManager9 != NULL)
     {
       Log("Found method DXVA2CreateDirect3DDeviceManager9");
       sprintf(mfDLLFileName,"%s\\evr.dll", systemFolder);
-      m_hModuleEVR=LoadLibrary(mfDLLFileName);
-      m_pMFCreateVideoSampleFromSurface=(TMFCreateVideoSampleFromSurface*)GetProcAddress(m_hModuleEVR,"MFCreateVideoSampleFromSurface");
+      m_hModuleEVR = LoadLibrary(mfDLLFileName);
+      m_pMFCreateVideoSampleFromSurface = (TMFCreateVideoSampleFromSurface*)GetProcAddress(m_hModuleEVR,"MFCreateVideoSampleFromSurface");
 
-      if ( m_pMFCreateVideoSampleFromSurface )
+      if (m_pMFCreateVideoSampleFromSurface)
       {
         Log("Found method MFCreateVideoSampleFromSurface");
-        m_pMFCreateVideoMediaType=(TMFCreateVideoMediaType*)GetProcAddress(m_hModuleEVR,"MFCreateVideoMediaType");
-        if( m_pMFCreateVideoMediaType )
+        m_pMFCreateVideoMediaType = (TMFCreateVideoMediaType*)GetProcAddress(m_hModuleEVR,"MFCreateVideoMediaType");
+        if(m_pMFCreateVideoMediaType)
         {
           Log("Found method MFCreateVideoMediaType");
           sprintf(mfDLLFileName,"%s\\mfplat.dll", systemFolder);
-          m_hModuleMFPLAT=LoadLibrary(mfDLLFileName);
-          m_pMFCreateMediaType=(TMFCreateMediaType*)GetProcAddress(m_hModuleMFPLAT,"MFCreateMediaType");
-
-          if ( m_pMFCreateMediaType )
+          m_hModuleMFPLAT = LoadLibrary(mfDLLFileName);
+          m_pMFCreateMediaType = (TMFCreateMediaType*)GetProcAddress(m_hModuleMFPLAT,"MFCreateMediaType");
+          if (m_pMFCreateMediaType)
           {
             Log("Found method MFCreateMediaType");
             Log("Successfully loaded EVR dlls");
@@ -415,7 +419,7 @@ bool LoadEVR()
 }
 
 
-void DsDumpGraph( IFilterGraph* vmr9Filter )
+void DsDumpGraph(IFilterGraph* vmr9Filter)
 {
   return;
   IEnumFilters* pEnum;
@@ -426,7 +430,8 @@ void DsDumpGraph( IFilterGraph* vmr9Filter )
   ULONG cFetched;
   do {
     pEnum->Next(1, &pFilter, &cFetched);
-    if ( cFetched > 0 ) {
+    if (cFetched > 0 )
+    {
       FILTER_INFO info;
       pFilter->QueryFilterInfo(&info);
       LPSTR astr;
@@ -440,7 +445,7 @@ void DsDumpGraph( IFilterGraph* vmr9Filter )
       do 
       {
         pEnumPins->Next(1, &pPins, &pinsFetched);
-        if ( pinsFetched > 0 )
+        if (pinsFetched > 0)
         {
           PIN_INFO pinInfo;
           pPins->QueryPinInfo(&pinInfo);
@@ -448,7 +453,7 @@ void DsDumpGraph( IFilterGraph* vmr9Filter )
           Log("Found pin: %s", astr);
           CoTaskMemFree(astr);
 
-          if ( SUCCEEDED(pPins->ConnectedTo(&pConnectedPin)) ) 
+          if (SUCCEEDED(pPins->ConnectedTo(&pConnectedPin))) 
           {
             pConnectedPin->QueryPinInfo(&pinInfo);
             UnicodeToAnsi(pinInfo.achName, &astr);
@@ -461,30 +466,32 @@ void DsDumpGraph( IFilterGraph* vmr9Filter )
           } 
           else 
           {
-            Log( "Could not get connected pin!");
+            Log("Could not get connected pin!");
           }
         }
       } 
       while (pinsFetched > 0);
     }
   } 
-  while ( cFetched > 0 );
+  while (cFetched > 0);
 
   pEnum->Release();
   Log("---------------------/DUMPGRAPH----------------");
   //DumpGraph(vmr9Filter, 0);
 }
 
+
 //avoid dependency into MFGetService, aparently only availabe on vista
-HRESULT MyGetService(IUnknown* punkObject, REFGUID guidService,
-                     REFIID riid, LPVOID* ppvObject ) 
+HRESULT MyGetService(IUnknown* punkObject, REFGUID guidService, REFIID riid, LPVOID* ppvObject)
 {
-  if ( ppvObject == NULL ) return E_POINTER;
+  if (ppvObject == NULL)
+  {
+    return E_POINTER;
+  }
   HRESULT hr;
   IMFGetService* pGetService;
-  hr = punkObject->QueryInterface(__uuidof(IMFGetService),
-    (void**)&pGetService);
-  if ( SUCCEEDED(hr) ) 
+  hr = punkObject->QueryInterface(__uuidof(IMFGetService), (void**)&pGetService);
+  if (SUCCEEDED(hr)) 
   {
     hr = pGetService->GetService(guidService, riid, ppvObject);
     SAFE_RELEASE(pGetService);
@@ -492,51 +499,54 @@ HRESULT MyGetService(IUnknown* punkObject, REFGUID guidService,
   return hr;
 }
 
-//#define DEFAULT_PRESENTER
-BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* evrFilter,DWORD monitor)
+
+BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* evrFilter, DWORD monitor)
 {
   HRESULT hr;
   m_RenderPrefix = "evr";
   LogRotate();
   m_bEVRLoaded = LoadEVR();
-  if ( !m_bEVRLoaded ) 
+  if (!m_bEVRLoaded) 
   {
     Log("EVR libraries are not loaded. Cannot init EVR");
     return FALSE;
   }
 
   m_pDevice = (LPDIRECT3DDEVICE9)(dwD3DDevice);
-  m_pVMR9Filter=evrFilter;
+  m_pVMR9Filter = evrFilter;
+
 #ifndef DEFAULT_PRESENTER
+
   CComQIPtr<IMFVideoRenderer> pRenderer = m_pVMR9Filter;
   if (!pRenderer) 
   {
     Log("Could not get IMFVideoRenderer");
     return FALSE;
   }
-  m_evrPresenter = new MPEVRCustomPresenter(callback, m_pDevice, (HMONITOR)monitor);
+  m_evrPresenter = new MPEVRCustomPresenter(callback, m_pDevice, (HMONITOR)monitor, m_pVMR9Filter);
   hr = pRenderer->InitializeRenderer(NULL, m_evrPresenter);
-  if (FAILED(hr) ) {
+  if (FAILED(hr))
+  {
     Log("InitializeRenderer failed: 0x%x", hr);
     return FALSE;
   }
   pRenderer.Release();
+
 #else
   CComPtr<IMFVideoDisplayControl> videoControl;
   MFGetService(evrFilter, MR_VIDEO_RENDER_SERVICE, IID_IMFVideoDisplayControl, (LPVOID*)&videoControl);
   videoControl->SetVideoWindow((HWND)monitor);
-  //videoControl->SetVideoPosition(, 
-
-
 #endif
 
   CComQIPtr<IEVRFilterConfig> pConfig = m_pVMR9Filter;
-  if(!pConfig) 
+  if (!pConfig) 
   {
     Log("Could not get IEVRFilterConfig  interface" );
     return FALSE;
   }
-  if(FAILED(hr = pConfig->SetNumberOfStreams(3)))
+
+  hr = pConfig->SetNumberOfStreams(3);
+  if (FAILED(hr))
   {
     Log("EVR:Init() SetNumberOfStreams() failed 0x:%x",hr);
     return FALSE;
@@ -560,17 +570,17 @@ void EvrDeinit()
     {
       do
       {
-        hr=m_evrPresenter->Release();
-      } while (hr>0);
+        hr = m_evrPresenter->Release();
+      } while (hr > 0);
 
-      m_evrPresenter=NULL;
+      m_evrPresenter = NULL;
       Log("EVRDeinit:m_evrPresenter release:%d", hr);
     }
-    m_evrPresenter=NULL;
+    m_evrPresenter = NULL;
 
     //SAFE_RELEASE(m_pVMR9Filter);
     m_pVMR9Filter = NULL;
-    if ( m_bEVRLoaded )
+    if (m_bEVRLoaded)
     {
       UnloadEVR();
       m_bEVRLoaded = FALSE;
@@ -583,21 +593,36 @@ void EvrDeinit()
   //StopLogger();
 }
 
-void EVRNotifyRateChange( double pRate )
+
+void EVRNotifyRateChange(double pRate)
 {
-  if( m_evrPresenter )
+  if (m_evrPresenter)
   {
-    m_evrPresenter->NotifyRateChange( pRate );
+    m_evrPresenter->NotifyRateChange(pRate);
   }
 }
 
-void EVRNotifyDVDMenuState( bool pIsInMenu )
+
+void EVRNotifyDVDMenuState(bool pIsInMenu)
 {
-  if( m_evrPresenter )
+  if (m_evrPresenter)
   {
-    m_evrPresenter->NotifyDVDMenuState( pIsInMenu );
+    m_evrPresenter->NotifyDVDMenuState(pIsInMenu);
   }
 }
+
+
+void EVRDrawStats(bool enable)
+{
+  m_evrPresenter->EnableDrawStats(enable);
+}
+
+
+void EVRResetStatCounters(bool enable)
+{
+  m_evrPresenter->ResetEVRStatCounters();
+}
+
 
 void Vmr9SetDeinterlaceMode(int mode)
 {
@@ -606,43 +631,60 @@ void Vmr9SetDeinterlaceMode(int mode)
   //2=Weave
   //3=Best
   Log("vmr9:SetDeinterlace() SetDeinterlaceMode(%d)",mode);
-  CComQIPtr<IVMRDeinterlaceControl9> pDeint=m_pVMR9Filter;
+  CComQIPtr<IVMRDeinterlaceControl9> pDeint = m_pVMR9Filter;
   VMR9VideoDesc VideoDesc; 
   DWORD dwNumModes = 0;
   GUID deintMode;
-  int hr;
-  if (mode==0)
+  int hr; 
+  if (mode == 0)
   {
     //off
-    hr=pDeint->SetDeinterlaceMode(0xFFFFFFFF,(LPGUID)&GUID_NULL);
-    if (!SUCCEEDED(hr)) Log("vmr9:SetDeinterlace() failed hr:0x%x",hr);
-    hr=pDeint->GetDeinterlaceMode(0,&deintMode);
-    if (!SUCCEEDED(hr)) Log("vmr9:GetDeinterlaceMode() failed hr:0x%x",hr);
+    hr = pDeint->SetDeinterlaceMode(0xFFFFFFFF,(LPGUID)&GUID_NULL);
+    if (FAILED(hr))
+    {
+      Log("vmr9:SetDeinterlace() failed hr:0x%x", hr);
+    }
+    hr = pDeint->GetDeinterlaceMode(0,&deintMode);
+    if (!FAILED(hr))
+    {
+      Log("vmr9:GetDeinterlaceMode() failed hr:0x%x", hr);
+    }
     Log("vmr9:SetDeinterlace() deinterlace mode OFF: 0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x",
       deintMode.Data1,deintMode.Data2,deintMode.Data3, deintMode.Data4[0], deintMode.Data4[1], deintMode.Data4[2], deintMode.Data4[3], deintMode.Data4[4], deintMode.Data4[5], deintMode.Data4[6], deintMode.Data4[7]);
 
     return ;
   }
-  if (mode==1)
+  if (mode == 1)
   {
     //BOB
-
-    hr=pDeint->SetDeinterlaceMode(0xFFFFFFFF,(LPGUID)&bobDxvaGuid);
-    if (!SUCCEEDED(hr)) Log("vmr9:SetDeinterlace() failed hr:0x%x",hr);
-    hr=pDeint->GetDeinterlaceMode(0,&deintMode);
-    if (!SUCCEEDED(hr)) Log("vmr9:GetDeinterlaceMode() failed hr:0x%x",hr);
+    hr = pDeint->SetDeinterlaceMode(0xFFFFFFFF,(LPGUID)&bobDxvaGuid);
+    if (FAILED(hr))
+    {
+      Log("vmr9:SetDeinterlace() failed hr:0x%x", hr);
+    }
+    hr = pDeint->GetDeinterlaceMode(0,&deintMode);
+    if (FAILED(hr))
+    {
+      Log("vmr9:GetDeinterlaceMode() failed hr:0x%x", hr);
+    }
     Log("vmr9:SetDeinterlace() deinterlace mode BOB: 0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x",
       deintMode.Data1,deintMode.Data2,deintMode.Data3, deintMode.Data4[0], deintMode.Data4[1], deintMode.Data4[2], deintMode.Data4[3], deintMode.Data4[4], deintMode.Data4[5], deintMode.Data4[6], deintMode.Data4[7]);
 
     return ;
   }
-  if (mode==2)
+  if (mode == 2)
   {
     //WEAVE
-    hr=pDeint->SetDeinterlaceMode(0xFFFFFFFF,(LPGUID)&GUID_NULL);
-    if (!SUCCEEDED(hr)) Log("vmr9:SetDeinterlace() failed hr:0x%x",hr);
-    hr=pDeint->GetDeinterlaceMode(0,&deintMode);
-    if (!SUCCEEDED(hr)) Log("vmr9:GetDeinterlaceMode() failed hr:0x%x",hr);
+    hr = pDeint->SetDeinterlaceMode(0xFFFFFFFF,(LPGUID)&GUID_NULL);
+    if (FAILED(hr))
+    {
+      Log("vmr9:SetDeinterlace() failed hr:0x%x", hr);
+    }
+    hr = pDeint->GetDeinterlaceMode(0,&deintMode);
+    if (!FAILED(hr))
+    {
+      Log("vmr9:GetDeinterlaceMode() failed hr:0x%x", hr);
+    }
     Log("vmr9:SetDeinterlace() deinterlace mode WEAVE: 0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x",
       deintMode.Data1,deintMode.Data2,deintMode.Data3, deintMode.Data4[0], deintMode.Data4[1], deintMode.Data4[2], deintMode.Data4[3], deintMode.Data4[4], deintMode.Data4[5], deintMode.Data4[6], deintMode.Data4[7]);
 
@@ -660,7 +702,7 @@ void Vmr9SetDeinterlaceMode(int mode)
   pins[0]->Release();
 
   VIDEOINFOHEADER2* vidInfo2 =(VIDEOINFOHEADER2*)pmt.pbFormat;
-  if (vidInfo2==NULL)
+  if (vidInfo2 == NULL)
   {
     Log("vmr9:SetDeinterlace() VMR9 not connected");
     return ;
@@ -685,84 +727,149 @@ void Vmr9SetDeinterlaceMode(int mode)
   char major[128];
   char subtype[128];
   strcpy(major,"unknown");
-  sprintf(subtype,"unknown (0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x)",
-    pmt.subtype.Data1,pmt.subtype.Data2,pmt.subtype.Data3,
-    pmt.subtype.Data4[0], pmt.subtype.Data4[1], pmt.subtype.Data4[2], pmt.subtype.Data4[3], pmt.subtype.Data4[4], pmt.subtype.Data4[5], pmt.subtype.Data4[6], pmt.subtype.Data4[7]);
-  if (pmt.majortype==MEDIATYPE_AnalogVideo)
-    strcpy(major,"Analog video");
-  if (pmt.majortype==MEDIATYPE_Video)
-    strcpy(major,"video");
-  if (pmt.majortype==MEDIATYPE_Stream)
-    strcpy(major,"stream");
+  sprintf(subtype, "unknown (0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x)",
+    pmt.subtype.Data1,pmt.subtype.Data2,pmt.subtype.Data3, pmt.subtype.Data4[0],
+    pmt.subtype.Data4[1], pmt.subtype.Data4[2], pmt.subtype.Data4[3], pmt.subtype.Data4[4],
+    pmt.subtype.Data4[5],  pmt.subtype.Data4[6], pmt.subtype.Data4[7]);
 
-  if (pmt.subtype==MEDIASUBTYPE_MPEG2_VIDEO)
-    strcpy(subtype,"mpeg2 video");
-  if (pmt.subtype==MEDIASUBTYPE_MPEG1System)
-    strcpy(subtype,"mpeg1 system");
-  if (pmt.subtype==MEDIASUBTYPE_MPEG1VideoCD)
-    strcpy(subtype,"mpeg1 videocd");
+  if (pmt.majortype == MEDIATYPE_AnalogVideo)
+  {
+    strcpy(major, "Analog video");
+  }
+  if (pmt.majortype == MEDIATYPE_Video)
+  {
+    strcpy(major, "video");
+  }
+  if (pmt.majortype == MEDIATYPE_Stream)
+  {
+    strcpy(major, "stream");
+  }
 
-  if (pmt.subtype==MEDIASUBTYPE_MPEG1Packet)
-    strcpy(subtype,"mpeg1 packet");
-  if (pmt.subtype==MEDIASUBTYPE_MPEG1Payload )
-    strcpy(subtype,"mpeg1 payload");
-  if (pmt.subtype==MEDIASUBTYPE_ATSC_SI)
-    strcpy(subtype,"ATSC SI");
-  if (pmt.subtype==MEDIASUBTYPE_DVB_SI)
-    strcpy(subtype,"DVB SI");
-  if (pmt.subtype==MEDIASUBTYPE_MPEG2DATA)
-    strcpy(subtype,"MPEG2 Data");
-  if (pmt.subtype==MEDIASUBTYPE_MPEG2_TRANSPORT)
-    strcpy(subtype,"MPEG2 Transport");
-  if (pmt.subtype==MEDIASUBTYPE_MPEG2_PROGRAM)
-    strcpy(subtype,"MPEG2 Program");
+  if (pmt.subtype == MEDIASUBTYPE_MPEG2_VIDEO)
+  {
+    strcpy(subtype, "mpeg2 video");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_MPEG1System)
+  {
+    strcpy(subtype, "mpeg1 system");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_MPEG1VideoCD)
+  {
+    strcpy(subtype, "mpeg1 videocd");
+  }
 
-  if (pmt.subtype==MEDIASUBTYPE_CLPL)
-    strcpy(subtype,"MEDIASUBTYPE_CLPL");
-  if (pmt.subtype==MEDIASUBTYPE_YUYV)
-    strcpy(subtype,"MEDIASUBTYPE_YUYV");
-  if (pmt.subtype==MEDIASUBTYPE_IYUV)
-    strcpy(subtype,"MEDIASUBTYPE_IYUV");
-  if (pmt.subtype==MEDIASUBTYPE_YVU9)
-    strcpy(subtype,"MEDIASUBTYPE_YVU9");
-  if (pmt.subtype==MEDIASUBTYPE_Y411)
-    strcpy(subtype,"MEDIASUBTYPE_Y411");
-  if (pmt.subtype==MEDIASUBTYPE_Y41P)
-    strcpy(subtype,"MEDIASUBTYPE_Y41P");
-  if (pmt.subtype==MEDIASUBTYPE_YUY2)
-    strcpy(subtype,"MEDIASUBTYPE_YUY2");
-  if (pmt.subtype==MEDIASUBTYPE_YVYU)
-    strcpy(subtype,"MEDIASUBTYPE_YVYU");
-  if (pmt.subtype==MEDIASUBTYPE_UYVY)
-    strcpy(subtype,"MEDIASUBTYPE_UYVY");
-  if (pmt.subtype==MEDIASUBTYPE_Y211)
-    strcpy(subtype,"MEDIASUBTYPE_Y211");
-  if (pmt.subtype==MEDIASUBTYPE_RGB565)
-    strcpy(subtype,"MEDIASUBTYPE_RGB565");
-  if (pmt.subtype==MEDIASUBTYPE_RGB32)
-    strcpy(subtype,"MEDIASUBTYPE_RGB32");
-  if (pmt.subtype==MEDIASUBTYPE_ARGB32)
-    strcpy(subtype,"MEDIASUBTYPE_ARGB32");
-  if (pmt.subtype==MEDIASUBTYPE_RGB555)
-    strcpy(subtype,"MEDIASUBTYPE_RGB555");
-  if (pmt.subtype==MEDIASUBTYPE_RGB24)
-    strcpy(subtype,"MEDIASUBTYPE_RGB24");
-  if (pmt.subtype==MEDIASUBTYPE_AYUV)
-    strcpy(subtype,"MEDIASUBTYPE_AYUV");
-  if (pmt.subtype==MEDIASUBTYPE_YV12)
-    strcpy(subtype,"MEDIASUBTYPE_YV12");
-  if (pmt.subtype==MEDIASUBTYPE_NV12)
-    strcpy(subtype,"MEDIASUBTYPE_NV12");
+  if (pmt.subtype == MEDIASUBTYPE_MPEG1Packet)
+  {
+    strcpy(subtype, "mpeg1 packet");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_MPEG1Payload )
+  {
+    strcpy(subtype, "mpeg1 payload");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_ATSC_SI)
+  {
+    strcpy(subtype, "ATSC SI");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_DVB_SI)
+  {
+    strcpy(subtype, "DVB SI");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_MPEG2DATA)
+  {
+    strcpy(subtype, "MPEG2 Data");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_MPEG2_TRANSPORT)
+  {
+    strcpy(subtype, "MPEG2 Transport");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_MPEG2_PROGRAM)
+  {
+    strcpy(subtype, "MPEG2 Program");
+  }
+
+  if (pmt.subtype == MEDIASUBTYPE_CLPL)
+  {
+    strcpy(subtype, "MEDIASUBTYPE_CLPL");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_YUYV)
+  {
+    strcpy(subtype, "MEDIASUBTYPE_YUYV");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_IYUV)
+  {
+    strcpy(subtype, "MEDIASUBTYPE_IYUV");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_YVU9)
+  {
+    strcpy(subtype, "MEDIASUBTYPE_YVU9");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_Y411)
+  {
+    strcpy(subtype, "MEDIASUBTYPE_Y411");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_Y41P)
+  {
+    strcpy(subtype, "MEDIASUBTYPE_Y41P");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_YUY2)
+  {
+    strcpy(subtype, "MEDIASUBTYPE_YUY2");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_YVYU)
+  {
+    strcpy(subtype, "MEDIASUBTYPE_YVYU");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_UYVY)
+  {
+    strcpy(subtype, "MEDIASUBTYPE_UYVY");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_Y211)
+  {
+    strcpy(subtype, "MEDIASUBTYPE_Y211");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_RGB565)
+  {
+    strcpy(subtype, "MEDIASUBTYPE_RGB565");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_RGB32)
+  {
+    strcpy(subtype, "MEDIASUBTYPE_RGB32");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_ARGB32)
+  {
+    strcpy(subtype, "MEDIASUBTYPE_ARGB32");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_RGB555)
+  {
+    strcpy(subtype, "MEDIASUBTYPE_RGB555");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_RGB24)
+  {
+    strcpy(subtype, "MEDIASUBTYPE_RGB24");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_AYUV)
+  {
+    strcpy(subtype, "MEDIASUBTYPE_AYUV");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_YV12)
+  {
+    strcpy(subtype, "MEDIASUBTYPE_YV12");
+  }
+  if (pmt.subtype == MEDIASUBTYPE_NV12)
+  {
+    strcpy(subtype, "MEDIASUBTYPE_NV12");
+  }
+
   Log("vmr9:SetDeinterlace() major:%s subtype:%s", major,subtype);
   VideoDesc.dwSize = sizeof(VMR9VideoDesc);
-  VideoDesc.dwFourCC=vidInfo2->bmiHeader.biCompression;
-  VideoDesc.dwSampleWidth=vidInfo2->bmiHeader.biWidth;
-  VideoDesc.dwSampleHeight=vidInfo2->bmiHeader.biHeight;
-  VideoDesc.SampleFormat=ConvertInterlaceFlags(vidInfo2->dwInterlaceFlags);
-  VideoDesc.InputSampleFreq.dwDenominator=(DWORD)vidInfo2->AvgTimePerFrame;
-  VideoDesc.InputSampleFreq.dwNumerator=10000000;
-  VideoDesc.OutputFrameFreq.dwDenominator=(DWORD)vidInfo2->AvgTimePerFrame;
-  VideoDesc.OutputFrameFreq.dwNumerator=VideoDesc.InputSampleFreq.dwNumerator;
+  VideoDesc.dwFourCC = vidInfo2->bmiHeader.biCompression;
+  VideoDesc.dwSampleWidth = vidInfo2->bmiHeader.biWidth;
+  VideoDesc.dwSampleHeight = vidInfo2->bmiHeader.biHeight;
+  VideoDesc.SampleFormat = ConvertInterlaceFlags(vidInfo2->dwInterlaceFlags);
+  VideoDesc.InputSampleFreq.dwDenominator = (DWORD)vidInfo2->AvgTimePerFrame;
+  VideoDesc.InputSampleFreq.dwNumerator = 10000000;
+  VideoDesc.OutputFrameFreq.dwDenominator = (DWORD)vidInfo2->AvgTimePerFrame;
+  VideoDesc.OutputFrameFreq.dwNumerator = VideoDesc.InputSampleFreq.dwNumerator;
   if (VideoDesc.SampleFormat != VMR9_SampleProgressiveFrame)
   {
     VideoDesc.OutputFrameFreq.dwNumerator=2*VideoDesc.InputSampleFreq.dwNumerator;
@@ -784,48 +891,50 @@ void Vmr9SetDeinterlaceMode(int mode)
         // Loop through each item and get the capabilities.
         for (DWORD i = 0; i < dwNumModes; i++)
         {
-          hr=pDeint->SetDeinterlaceMode(0xFFFFFFFF,&pModes[0]);
+          hr = pDeint->SetDeinterlaceMode(0xFFFFFFFF,&pModes[0]);
           if (SUCCEEDED(hr)) 
           {
             Log("vmr9:SetDeinterlace() set deinterlace mode:%d",i);
             pDeint->GetDeinterlaceMode(0,&deintMode);
-            if (deintMode.Data1==pModes[0].Data1 &&
-              deintMode.Data2==pModes[0].Data2 &&
-              deintMode.Data3==pModes[0].Data3 &&
-              deintMode.Data4==pModes[0].Data4)
+            if (deintMode.Data1 == pModes[0].Data1 && deintMode.Data2 == pModes[0].Data2 &&
+              deintMode.Data3 == pModes[0].Data3 && deintMode.Data4 == pModes[0].Data4)
             {
               Log("vmr9:SetDeinterlace() succeeded");
             }
             else
               Log("vmr9:SetDeinterlace() deinterlace mode set to: 0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x",
-              deintMode.Data1,deintMode.Data2,deintMode.Data3, deintMode.Data4[0], deintMode.Data4[1], deintMode.Data4[2], deintMode.Data4[3], deintMode.Data4[4], deintMode.Data4[5], deintMode.Data4[6], deintMode.Data4[7]);
+                deintMode.Data1,deintMode.Data2,deintMode.Data3, deintMode.Data4[0], deintMode.Data4[1],
+                deintMode.Data4[2], deintMode.Data4[3], deintMode.Data4[4], deintMode.Data4[5],
+                deintMode.Data4[6], deintMode.Data4[7]);
             break;
           }
           else
-            Log("vmr9:SetDeinterlace() deinterlace mode:%d failed 0x:%x",i,hr);
+            Log("vmr9:SetDeinterlace() deinterlace mode:%d failed 0x:%x", i, hr);
         }
       }
       delete [] pModes;
     }
   }
 }
+
+
 void Vmr9SetDeinterlacePrefs(DWORD dwMethod)
 {
-  int hr;
+  HRESULT hr;
   CComQIPtr<IVMRDeinterlaceControl9> pDeint=m_pVMR9Filter;
   switch (dwMethod)
   {
   case 1:
     Log("vmr9:SetDeinterlace() preference to BOB");
-    hr=pDeint->SetDeinterlacePrefs(DeinterlacePref9_BOB);
+    hr = pDeint->SetDeinterlacePrefs(DeinterlacePref9_BOB);
     break;
   case 2:
     Log("vmr9:SetDeinterlace() preference to Weave");
-    hr=pDeint->SetDeinterlacePrefs(DeinterlacePref9_Weave);
+    hr = pDeint->SetDeinterlacePrefs(DeinterlacePref9_Weave);
     break;
   case 3:
     Log("vmr9:SetDeinterlace() preference to NextBest");
-    hr=pDeint->SetDeinterlacePrefs(DeinterlacePref9_NextBest );
+    hr = pDeint->SetDeinterlacePrefs(DeinterlacePref9_NextBest );
     break;
   }
 }
@@ -846,30 +955,30 @@ bool DvrMsCreate(LONG *id, IBaseFilter* streamBufferSink, LPCWSTR strPath, DWORD
       return false;
     }
     hr=sink->CreateRecorder( strPath,dwRecordingType,&pRecUnk);
-    if (!SUCCEEDED(hr))
+    if (FAILED(hr))
     {
       Log("CStreamBufferRecorder::Create() create recorder failed:%x", hr);
       return false;
     }
 
-    if (pRecUnk==NULL)
+    if (pRecUnk == NULL)
     {
       Log("CStreamBufferRecorder::Create() cannot get recorder failed");
       return false;
     }
     IStreamBufferRecordControl* pRecord;
     pRecUnk->QueryInterface(IID_IStreamBufferRecordControl,(void**)&pRecord);
-    if (pRecord==NULL)
+    if (pRecord == NULL)
     {
       Log("CStreamBufferRecorder::Create() cannot get IStreamBufferRecordControl");
       return false;
     }
-    *id=m_iRecordingId;
+    *id = m_iRecordingId;
     Log("CStreamBufferRecorder::Create() recorder created id:%d", *id);
     m_mapRecordControl[m_iRecordingId]=pRecord;
     m_iRecordingId++;
 
-    Log("CStreamBufferRecorder::Create() done %x",pRecord);	
+    Log("CStreamBufferRecorder::Create() done %x", pRecord);	
   }
   catch(...)
   {
@@ -877,14 +986,19 @@ bool DvrMsCreate(LONG *id, IBaseFilter* streamBufferSink, LPCWSTR strPath, DWORD
   }
   return TRUE;
 }
+
+
 void DvrMsStart(LONG id, ULONG startTime)
 {
   imapRecordControl it = m_mapRecordControl.find(id);
-  if (it==m_mapRecordControl.end()) return;
+  if (it == m_mapRecordControl.end())
+  {
+    return;
+  }
   try
   {
     Log("CStreamBufferRecorder::Start():time:-%d secs in past id:%d", startTime,id);
-    if (it->second==NULL)
+    if (it->second == NULL)
     {
       Log("CStreamBufferRecorder::Start() recorded=null");
       return ;
@@ -894,16 +1008,16 @@ void DvrMsStart(LONG id, ULONG startTime)
     timeStart *= UNITS;
     timeStart *= -1LL;
 
-    int hr=it->second->Start(&timeStart);
-    if (!SUCCEEDED(hr))
+    HRESULT hr = it->second->Start(&timeStart);
+    if (FAILED(hr))
     {
-      Log("CStreamBufferRecorder::Start() start at -%d sec failed:%X", startTime,hr);
-      if (startTime!=0)
+      Log("CStreamBufferRecorder::Start() start at -%d sec failed:%X", startTime, hr);
+      if (startTime != 0)
       {
-        timeStart=0;
+        timeStart = 0;
         Log("CStreamBufferRecorder::Start() start at 0 sec");
-        int hr=it->second->Start(&timeStart);
-        if (!SUCCEEDED(hr))
+        HRESULT hr = it->second->Start(&timeStart);
+        if (FAILED(hr))
         {
           Log("CStreamBufferRecorder::Start() start failed:%x", hr);
           return ;
@@ -914,48 +1028,55 @@ void DvrMsStart(LONG id, ULONG startTime)
     Log("CStreamBufferRecorder::Start(2)");
     HRESULT hrOut;
     BOOL started,stopped;
-    it->second->GetRecordingStatus(&hrOut,&started,&stopped);
-    timeStart/=UNITS;
+    it->second->GetRecordingStatus(&hrOut, &started, &stopped);
+    timeStart /= UNITS;
     Log("CStreamBufferRecorder::Start() start status:%x started:%d stopped:%d at:%d secs", 
       hrOut,started,stopped, (long)timeStart);
     Log("CStreamBufferRecorder::Start() done");
   }
   catch(...)
   {
-    Log("CStreamBufferRecorder::Start()  exception");
+    Log("CStreamBufferRecorder::Start() exception");
   }
 }
+
 
 void DvrMsStop(LONG id)
 {
   imapRecordControl it = m_mapRecordControl.find(id);
-  if (it==m_mapRecordControl.end()) return;
+  if (it == m_mapRecordControl.end())
+  {
+    return;
+  }
   try
   {
     Log("CStreamBufferRecorder::Stop()");
-    if (it->second!=NULL)
+    if (it->second != NULL)
     {
-      int hr=it->second->Stop(0);
-      if (!SUCCEEDED(hr))
+      HRESULT hr = it->second->Stop(0);
+      if (FAILED(hr))
       {
         Log("CStreamBufferRecorder::Stop() failed:%x", hr);
-        hr=it->second->Stop(0);
-        if (!SUCCEEDED(hr))
+        hr = it->second->Stop(0);
+        if (FAILED(hr))
         {
           Log("CStreamBufferRecorder::Stop() failed 2nd time :%x", hr);
           return ;
         }
       }
-      for (int x=0; x < 10;++x)
+      for (int x=0; x < 10; ++x)
       {
         HRESULT hrOut;
         BOOL started,stopped;
-        it->second->GetRecordingStatus(&hrOut,&started,&stopped);
-        Log("CStreamBufferRecorder::Stop() status:%d %x started:%d stopped:%d",x, hrOut,started,stopped);
-        if (stopped!=0) break;
+        it->second->GetRecordingStatus(&hrOut, &started, &stopped);
+        Log("CStreamBufferRecorder::Stop() status:%d %x started:%d stopped:%d", x, hrOut, started, stopped);
+        if (stopped != 0)
+        {
+          break;
+        }
         Sleep(100);
       }
-      while (it->second->Release() >0);
+      while (it->second->Release() > 0);
       m_mapRecordControl.erase(it);
 
     }
@@ -969,11 +1090,7 @@ void DvrMsStop(LONG id)
 }
 
 
-HRESULT CreateKernelFilter(
-                           const GUID &guidCategory, // Filter category.
-                           LPCOLESTR szName,         // The name of the filter.
-                           GUID	  clsid,            // CLSID of the filter
-                           IBaseFilter **ppFilter )  // Receives a pointer to the filter.
+HRESULT CreateKernelFilter(const GUID &guidCategory, LPCOLESTR szName, GUID	clsid, IBaseFilter **ppFilter)
 {
   HRESULT hr;
   ICreateDevEnum *pDevEnum = NULL;
@@ -984,8 +1101,7 @@ HRESULT CreateKernelFilter(
   }
 
   // Create the system device enumerator.
-  hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC,
-    IID_ICreateDevEnum, (void**)&pDevEnum);
+  hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC, IID_ICreateDevEnum, (void**)&pDevEnum);
   if (FAILED(hr))
   {
     return hr;
@@ -1040,10 +1156,12 @@ HRESULT CreateKernelFilter(
   pEnum->Release();
   return (bFound ? hr : E_FAIL);
 }
+
+
 void AddTeeSinkNameToGraph(IGraphBuilder* pGraph, LPCOLESTR szName)
 {
   IBaseFilter* pKernelTee = NULL;
-  int hr = CreateKernelFilter(AM_KSCATEGORY_SPLITTER, szName, clsidTeeSink, &pKernelTee);
+  HRESULT hr = CreateKernelFilter(AM_KSCATEGORY_SPLITTER, szName, clsidTeeSink, &pKernelTee);
   if (SUCCEEDED(hr))
   {
     pGraph->AddFilter(pKernelTee, L"Kernel Tee");
@@ -1051,15 +1169,17 @@ void AddTeeSinkNameToGraph(IGraphBuilder* pGraph, LPCOLESTR szName)
   }
 }
 
+
 void AddTeeSinkToGraph(IGraphBuilder* pGraph)
 {
   AddTeeSinkNameToGraph(pGraph, OLESTR("Tee"));
 }
 
+
 void AddWstCodecToGraph(IGraphBuilder* pGraph)
 {
   IBaseFilter* pWstCodec = NULL;
-  int hr = CreateKernelFilter(AM_KSCATEGORY_VBICODEC, OLESTR("WST"), CLSID_WSTDecoder,&pWstCodec);
+  HRESULT hr = CreateKernelFilter(AM_KSCATEGORY_VBICODEC, OLESTR("WST"), CLSID_WSTDecoder,&pWstCodec);
   if (SUCCEEDED(hr))
   {
     pGraph->AddFilter(pWstCodec, L"WST Codec");
@@ -1067,11 +1187,10 @@ void AddWstCodecToGraph(IGraphBuilder* pGraph)
   }
 }
 
-int processCounter=0;
-int threadCounter=0;
-BOOL APIENTRY DllMain( HANDLE hModule, 
-                      DWORD  ul_reason_for_call, 
-                      LPVOID lpReserved )
+
+int processCounter = 0;
+int threadCounter = 0;
+BOOL APIENTRY DllMain(HANDLE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
 {
   switch (ul_reason_for_call)
   {
