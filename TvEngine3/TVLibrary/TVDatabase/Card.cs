@@ -25,7 +25,7 @@ namespace TvDatabase
   /// Instances of this class represent the properties and methods of a row in the table <b>Card</b>.
   /// </summary>
   [TableName("Card")]
-  public class Card : Persistent
+  public class Card : Persistent, IComparable
   {
     #region Members
 
@@ -340,11 +340,15 @@ namespace TvDatabase
     #region Storage and Retrieval
 
     /// <summary>
-    /// Static method to retrieve all instances that are stored in the database in one call
+    /// Static method to retrieve all instances that are stored in the database in one call.
+    /// The List is sorted by the card's priority.
     /// </summary>
     public static IList<Card> ListAll()
     {
-      return Broker.RetrieveList<Card>();
+      List<Card> allCards = new List<Card>();
+      Broker.RetrieveList<Card>(allCards);
+      allCards.Sort(); // sort list by IComparable implementation, which takes care about priorities
+      return allCards;
     }
 
     /// <summary>
@@ -538,5 +542,20 @@ namespace TvDatabase
 
       Remove();
     }
+
+    #region IComparable Member
+
+    /// <summary>
+    /// Compares Cards by their priority.
+    /// </summary>
+    /// <param name="obj">Card to comapare with</param>
+    /// <returns>Result</returns>
+    public int CompareTo(object obj)
+    {
+      if (obj == null) return 1;
+      return -priority.CompareTo(((Card)obj).priority); //sort by priority member in descending order
+    }
+
+    #endregion
   }
 }
