@@ -42,6 +42,7 @@ namespace TvControl
     #region consts
 
     private const int MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION = 5; //seconds
+    private const int MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION_WOL = 20; //seconds
 
     #endregion
 
@@ -65,6 +66,7 @@ namespace TvControl
     private static IController _tvControl;
     private static string _hostName = System.Net.Dns.GetHostName();
     private static TcpChannel _callbackChannel; // callback channel
+    private static bool _WOL = false;
     
 
     // Reverted mantis #1409: private static uint _timeOut = 45000; // specified in ms (currently all remoting calls are aborted if processing takes more than 45 sec)
@@ -243,7 +245,16 @@ namespace TvControl
         int timeout = 250;
         if (_firstFailure)
         {
-          timeout = MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION * 1000; ;
+          if (_WOL)
+          {
+            //have a slightly longer timeout period for WOL, if the server has just awoken it should be given a longer grace.
+            timeout = MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION_WOL;
+            _WOL = false;
+          }
+          else
+          {
+            timeout = MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION * 1000; ;  
+          }          
         }
 
         _isRemotingConnected = remAr.AsyncWaitHandle.WaitOne(timeout);
@@ -311,13 +322,7 @@ namespace TvControl
       {
         Log.Error(e.ToString());
       }
-    }
-
-    public static bool IsConnected
-    {
-      get { return IsRemotingConnected(); }
-    }
-
+    }   
 
     private static bool IsRemotingConnected()
     {      
@@ -331,6 +336,21 @@ namespace TvControl
         //ignore
       }
       return false;
+    }
+
+    #endregion
+
+    #region public properties
+
+    public static bool IsConnected
+    {
+      get { return IsRemotingConnected(); }
+    }
+
+    public static bool WakeOnLAN
+    {
+      get { return _WOL; }
+      set { _WOL = value; }
     }
 
     #endregion

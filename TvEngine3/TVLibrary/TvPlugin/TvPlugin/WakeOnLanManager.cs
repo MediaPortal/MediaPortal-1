@@ -289,6 +289,9 @@ namespace TvPlugin
         Log.Debug("WOLMgr: Ping {0}", wakeupTarget);
         if (Ping(wakeupTarget, 1000))
         {
+          // we have to make sure the remoting system knows that we have resumed the server by means of WOL.
+          // this will make sure the connection timeout for the remoting framework is increased.
+          TvControl.RemoteControl.WakeOnLAN = true;
           return true;
         }
         Log.Debug("WOLMgr: System {0} still not reachable, waiting...", wakeupTarget);

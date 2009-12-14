@@ -417,7 +417,6 @@ namespace TvPlugin
           using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
           {
             macAddress = xmlreader.GetValueAsString("tvservice", "macAddress", null);
-            hostName = xmlreader.GetValueAsString("tvservice", "hostname", "localhost");
           }
 
           Log.Debug("TVHome: WOL - Use stored MAC address: {0}", macAddress);
@@ -429,7 +428,7 @@ namespace TvPlugin
             //Finally, start up the TV server
             Log.Info("TVHome: WOL - Start the TV server");
 
-            if (wakeOnLanManager.WakeupSystem(hwAddress, hostName, 10))
+            if (wakeOnLanManager.WakeupSystem(hwAddress, RemoteControl.HostName, 10))
             {
               Log.Info("TVHome: WOL - The TV server started successfully!");
             }
