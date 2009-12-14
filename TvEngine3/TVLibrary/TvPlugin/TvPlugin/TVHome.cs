@@ -482,7 +482,7 @@ namespace TvPlugin
       //_ServerLastStatusOK = true;
       if (recovered)
       {
-        Log.Debug("TVHome: OnRemotingConnected, recovered from a disconnection {}", recovered);
+        Log.Debug("TVHome: OnRemotingConnected, recovered from a disconnection {0}", recovered);
         GUIMessage initMsg = null;
         initMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int)Window.WINDOW_TV_OVERLAY, 0, 0, 0, 0, null);
         GUIWindowManager.SendThreadMessage(initMsg);
