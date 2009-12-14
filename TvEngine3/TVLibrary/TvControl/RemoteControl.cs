@@ -248,7 +248,7 @@ namespace TvControl
           if (_WOL)
           {
             //have a slightly longer timeout period for WOL, if the server has just awoken it should be given a longer grace.
-            timeout = MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION_WOL;
+            timeout = MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION_WOL * 1000;
             _WOL = false;
           }
           else
