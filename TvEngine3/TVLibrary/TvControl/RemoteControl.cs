@@ -19,6 +19,9 @@
  *
  */
 using System;
+using System.Diagnostics;
+using System.Net;
+using System.Runtime.CompilerServices;
 using System.Runtime.Remoting;
 using System.Threading;
 using TvLibrary.Interfaces;
@@ -41,8 +44,8 @@ namespace TvControl
   {
     #region consts
 
-    private const int MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION = 5; //seconds
-    private const int MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION_WOL = 20; //seconds
+    private const int MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION = 3; //seconds   
+    private const int MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION_INITIAL = 20; //seconds
 
     #endregion
 
@@ -50,6 +53,7 @@ namespace TvControl
 
     public delegate void RemotingDisconnectedDelegate();
     public delegate void RemotingConnectedDelegate(bool recovered);
+
     private delegate bool SynchIsConnectedDelegate();
     private delegate bool AsynchIsConnectedDelegate();
 
@@ -59,19 +63,27 @@ namespace TvControl
     #endregion
 
     #region private members
-    
+
+    private static bool _doingRefreshRemotingConnectionStatusASynch = false;
     private static bool _firstFailure = true;
-    private static ManualResetEvent _isRemotingConnectedResetEvt;
     private static bool _isRemotingConnected = false;
     private static IController _tvControl;
     private static string _hostName = System.Net.Dns.GetHostName();
-    private static TcpChannel _callbackChannel; // callback channel
-    private static bool _WOL = false;
-    
+    private static TcpChannel _callbackChannel = null; // callback channel
+    private static bool _useIncreasedTimeoutForInitialConnection = true;
 
     // Reverted mantis #1409: private static uint _timeOut = 45000; // specified in ms (currently all remoting calls are aborted if processing takes more than 45 sec)
+
+    #endregion
     
-    #endregion        
+    #region public constructors
+
+    static RemoteControl()
+    {
+      _useIncreasedTimeoutForInitialConnection = true;
+    }
+
+    #endregion
 
     #region public static methods
     /// <summary>
@@ -97,109 +109,6 @@ namespace TvControl
     {
       // Assign the callback from the server to here
       _tvControl.OnCiMenu -= new CiMenuCallback(sink.FireCiMenuCallback);
-    }       
-
-    /// <summary>
-    /// Gets or sets the name the hostname of the master tv-server.
-    /// </summary>
-    /// <value>The name of the host.</value>
-    public static string HostName
-    {
-      get { return _hostName; }
-      set
-      {
-        if (_hostName != value)
-        {
-          _tvControl = null;
-          _hostName = value;
-        }
-      }
-    }
-
-    /// <summary>
-    /// returns an the <see cref="T:TvControl.IController"/> interface to the tv server
-    /// </summary>
-    /// <value>The instance.</value>
-    public static IController Instance
-    {
-      get
-      {
-       // System.Diagnostics.Debugger.Launch();                
-        bool conn = false;
-        try
-        {
-          if (_tvControl != null)
-          {            
-            RefreshRemotingConnectionStatusASynch();
-           
-            if (!_isRemotingConnected)
-              return null;
-
-            return _tvControl;
-          }
-
-          // Reverted mantis #1409: 
-          //#if !DEBUG //only use timeouts when (build=release)
-          //          try
-          //          {
-          //            IDictionary t = new Hashtable();
-          //            t.Add("timeout", _timeOut);
-          //            TcpClientChannel clientChannel = new TcpClientChannel(t, null);
-          //            ChannelServices.RegisterChannel(clientChannel);
-          //          }
-          //          catch (Exception e)
-          //          {
-          //            //Log.Debug("RemoteControl: could not set timeout on Remoting framework - {0}", e.Message);
-          //            //ignore
-          //          }
-          //#endif    
-
-          // register remoting channel          
-          RegisterChannel();
-                    
-          _tvControl =
-            (IController)
-            Activator.GetObject(typeof (IController), String.Format("tcp://{0}:31456/TvControl", _hostName));                    
-
-          RefreshRemotingConnectionStatusASynch();
-          if (!_isRemotingConnected)
-            return null;          
-          return _tvControl;
-        }
-        catch (RemotingTimeoutException exrt)
-        {
-          try
-          {
-            Log.Error("RemoteControl: Timeout getting server Instance; retrying in 5 seconds - {0}", exrt.Message);
-            // maybe the DB wasn't up yet - 2nd try...
-            Thread.Sleep(5000);
-
-            // register remoting channel
-            RegisterChannel();
-
-            _tvControl =
-              (IController)
-              Activator.GetObject(typeof (IController), String.Format("tcp://{0}:31456/TvControl", _hostName));
-
-            RefreshRemotingConnectionStatusASynch();
-            if (!_isRemotingConnected)
-              return null;    
-            // int card = _tvControl.Cards;
-            return _tvControl;
-          }
-            // didn't help - do nothing
-          catch (Exception ex)
-          {
-            Log.Error("RemoteControl: Error getting server Instance - {0}", ex.Message);
-          }
-        }          
-        catch (Exception exg)
-        {
-          Log.Error("RemoteControl: Error getting server Instance - {0}", exg.Message);
-        }
-
-        return _tvControl;
-      }
     }
 
     /// <summary>
@@ -212,20 +121,74 @@ namespace TvControl
     }
 
     #endregion
-    
+
     #region private static methods
 
     [OneWayAttribute]
     private static void IsConnectedAsyncCallBack(IAsyncResult ar)
-    {      
-      AsynchIsConnectedDelegate rem = (AsynchIsConnectedDelegate)((AsyncResult)ar).AsyncDelegate;      
-      return;
+    {
+      IsRemotingConnectedDelegate rem = (IsRemotingConnectedDelegate)((AsyncResult)ar).AsyncDelegate;      
     }    
 
-    private static void RefreshRemotingConnectionStatusASynch()
-    {               
+    private static bool IsRemotingConnected()
+    {
       try
       {
+        int id = _tvControl.Cards;
+        return id >= 0;
+      }
+      catch (Exception e)
+      {
+        int i = 0;
+        //ignore
+      }
+      return false;
+    }
+
+    // The delegate must have the same signature as the method
+    // you want to call asynchronously.    
+    public delegate bool IsRemotingConnectedDelegate();
+
+    private static void CallRemotingAsynch(int timeout)
+    {
+
+      // Create the delegate.
+      IsRemotingConnectedDelegate dlgt = new IsRemotingConnectedDelegate(IsRemotingConnected);
+
+      // Initiate the asychronous call.
+      AsyncCallback remoteCallback = new AsyncCallback(IsConnectedAsyncCallBack);
+      IAsyncResult ar = dlgt.BeginInvoke(remoteCallback, null);
+
+      Thread.Sleep(0);
+
+      // Wait for the WaitHandle to become signaled.
+      Stopwatch s = new Stopwatch();
+      s.Start();
+      bool asynchResult = ar.AsyncWaitHandle.WaitOne(timeout);
+      s.Stop();      
+
+      bool timedOut = (asynchResult == false);
+
+      if (timedOut)
+      {
+        _isRemotingConnected = false;
+      }
+      else
+      {        
+        _isRemotingConnected = dlgt.EndInvoke(ar);
+      }                  
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    private static void RefreshRemotingConnectionStatusASynch()
+    {
+      try
+      {
+        if (_doingRefreshRemotingConnectionStatusASynch)
+          return;
+
+        _doingRefreshRemotingConnectionStatusASynch = true;
+
         if (_tvControl == null)
         {
           _isRemotingConnected = false;
@@ -234,30 +197,35 @@ namespace TvControl
 
         bool oldState = _isRemotingConnected;
 
-        _isRemotingConnectedResetEvt = new ManualResetEvent(false); //block
-
-        SynchIsConnectedDelegate remoteSyncDel = new SynchIsConnectedDelegate(IsRemotingConnected);
-        AsyncCallback remoteCallback = new AsyncCallback(IsConnectedAsyncCallBack);
-        AsynchIsConnectedDelegate remoteDel = new AsynchIsConnectedDelegate(IsRemotingConnected);
-        
-        IAsyncResult remAr = remoteDel.BeginInvoke(remoteCallback, null);
-
         int timeout = 250;
         if (_firstFailure)
         {
-          if (_WOL)
+          timeout = MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION * 1000; ;
+          if (_useIncreasedTimeoutForInitialConnection)
           {
             //have a slightly longer timeout period for WOL, if the server has just awoken it should be given a longer grace.
-            timeout = MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION_WOL * 1000;
-            _WOL = false;
+            int iterations = ((MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION_INITIAL * 1000) / timeout);
+            _useIncreasedTimeoutForInitialConnection = false;
+
+            int count = 0;
+            while (!_isRemotingConnected && count < iterations)
+            {
+              CallRemotingAsynch(timeout);
+              count++;
+            }
           }
           else
-          {
-            timeout = MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION * 1000; ;  
-          }          
+          {            
+            CallRemotingAsynch(timeout);
+          }
+        }
+        else
+        {
+          CallRemotingAsynch(timeout);  
         }
 
-        _isRemotingConnected = remAr.AsyncWaitHandle.WaitOne(timeout);
+        
+
 
         // TODO: cancel the callbacks, since they are too late.
 
@@ -268,7 +236,7 @@ namespace TvControl
           {
             Log.Info("RemoteControl - Disconnected");
             OnRemotingDisconnected();
-          }                    
+          }
         }
         else
         {
@@ -281,12 +249,16 @@ namespace TvControl
               Log.Info("RemoteControl - Reconnected");
             }
             OnRemotingConnected(recovered);
-          }          
+          }
         }
       }
       catch
       {
         //ignore
+      }
+      finally
+      {
+        _doingRefreshRemotingConnectionStatusASynch = false;
       }
     }
 
@@ -322,21 +294,7 @@ namespace TvControl
       {
         Log.Error(e.ToString());
       }
-    }   
-
-    private static bool IsRemotingConnected()
-    {      
-      try
-      {
-        int id = _tvControl.Cards;
-        return id >= 0;
-      }
-      catch (Exception)
-      {
-        //ignore
-      }
-      return false;
-    }
+    }  
 
     #endregion
 
@@ -347,10 +305,117 @@ namespace TvControl
       get { return IsRemotingConnected(); }
     }
 
-    public static bool WakeOnLAN
+    public static bool UseIncreasedTimeoutForInitialConnection
     {
-      get { return _WOL; }
-      set { _WOL = value; }
+      get { return _useIncreasedTimeoutForInitialConnection; }
+      set { _useIncreasedTimeoutForInitialConnection = value; }
+    }
+
+    /// <summary>
+    /// Gets or sets the name the hostname of the master tv-server.
+    /// </summary>
+    /// <value>The name of the host.</value>
+    public static string HostName
+    {
+      get { return _hostName; }
+      set
+      {
+        if (_hostName != value)
+        {
+          _tvControl = null;
+          _hostName = value;
+        }
+      }
+    }
+    
+    /// <summary>
+    /// returns an the <see cref="T:TvControl.IController"/> interface to the tv server
+    /// </summary>
+    /// <value>The instance.</value>
+    public static IController Instance
+    {
+      get
+      {
+        // System.Diagnostics.Debugger.Launch();                
+        bool conn = false;
+        try
+        {
+          if (_tvControl != null)
+          {
+            RefreshRemotingConnectionStatusASynch();
+
+            if (!_isRemotingConnected)
+              return null;
+
+            return _tvControl;
+          }
+
+          // Reverted mantis #1409: 
+          //#if !DEBUG //only use timeouts when (build=release)
+          //          try
+          //          {
+          //            IDictionary t = new Hashtable();
+          //            t.Add("timeout", _timeOut);
+          //            TcpClientChannel clientChannel = new TcpClientChannel(t, null);
+          //            ChannelServices.RegisterChannel(clientChannel);
+          //          }
+          //          catch (Exception e)
+          //          {
+          //            //Log.Debug("RemoteControl: could not set timeout on Remoting framework - {0}", e.Message);
+          //            //ignore
+          //          }
+          //#endif    
+          
+          // register remoting channel          
+          RegisterChannel();
+          
+          _tvControl =
+            (IController)
+            Activator.GetObject(typeof(IController), String.Format("tcp://{0}:31456/TvControl", _hostName));
+          
+          RefreshRemotingConnectionStatusASynch();
+         
+          if (!_isRemotingConnected)
+          {
+            return null;
+          }
+
+          return _tvControl;
+        }
+        catch (RemotingTimeoutException exrt)
+        {
+          try
+          {
+            Log.Error("RemoteControl: Timeout getting server Instance; retrying in 5 seconds - {0}", exrt.Message);
+            // maybe the DB wasn't up yet - 2nd try...
+            Thread.Sleep(5000);
+
+            // register remoting channel
+            RegisterChannel();
+
+            _tvControl =
+              (IController)
+              Activator.GetObject(typeof(IController), String.Format("tcp://{0}:31456/TvControl", _hostName));
+
+            RefreshRemotingConnectionStatusASynch();
+            if (!_isRemotingConnected)
+              return null;
+            // int card = _tvControl.Cards;
+            return _tvControl;
+          }
+          // didn't help - do nothing
+          catch (Exception ex)
+          {
+            Log.Error("RemoteControl: Error getting server Instance - {0}", ex.Message);
+          }
+        }
+        catch (Exception exg)
+        {
+          Log.Error("RemoteControl: Error getting server Instance - {0}", exg.Message);
+        }
+
+        return _tvControl;
+      }
     }
 
     #endregion

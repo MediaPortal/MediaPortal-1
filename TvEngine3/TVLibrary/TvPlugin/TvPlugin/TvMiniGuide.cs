@@ -541,7 +541,7 @@ namespace TvPlugin
           ChannelLogo = Utils.GetCoverArt(Thumbs.TVChannel, CurrentChan.DisplayName);
 
           // if we are watching this channel mark it
-          if (TVHome.Navigator.Channel.IdChannel == CurrentId)
+          if (TVHome.Navigator != null && TVHome.Navigator.Channel != null && TVHome.Navigator.Channel.IdChannel == CurrentId)
           {
             item.IsRemote = true;
             SelectedID = lstChannels.Count;

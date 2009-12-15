@@ -127,8 +127,7 @@ namespace TvPlugin
     private static bool _showChannelStateIcons = true;
     private static bool _doingHandleServerNotConnected = false;
     private static bool _doingChannelChange = false;
-    private static bool _ServerNotConnectedHandled = false;
-    //private static bool _ServerLastStatusOK = true;
+    private static bool _ServerNotConnectedHandled = false;    
 
     private static ManualResetEvent _waitForBlackScreen = null;
     private static ManualResetEvent _waitForVideoReceived = null;
@@ -183,17 +182,13 @@ namespace TvPlugin
 
     #endregion
 
-    #region Events
-
-    private static event ShowDlgSuccessful OnShowDlgCompleted;
+    #region Events    
 
     #endregion
 
     #region delegates
 
-    private delegate void ShowDlgSuccessful(object Dialogue);
-
-    protected delegate void ShowDlgInteractGUI(object Dialogue);
+    private delegate void StopPlayerMainThreadDelegate();    
 
     #endregion
 
@@ -258,11 +253,10 @@ namespace TvPlugin
       return true;
     }
 
-    #endregion
+    #endregion    
 
     static TVHome()
-    {
-      Connected = true;
+    {            
       RemoteControl.OnRemotingDisconnected += new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
       RemoteControl.OnRemotingConnected += new RemoteControl.RemotingConnectedDelegate(RemoteControl_OnRemotingConnected);
 
@@ -280,11 +274,16 @@ namespace TvPlugin
         //Make sure that we have valid hostname for the TV server
         SetRemoteControlHostName();
 
-        //Wake up the TV server, if required
-        HandleWakeUpTvServer();
+        //System.Diagnostics.Debugger.Launch();
+
+        RefreshConnectionState();
 
         m_navigator = new ChannelNavigator();
-        LoadSettings();
+        LoadSettings();        
+
+        //Wake up the TV server, if required
+        //HandleWakeUpTvServer();        
+        
         string pluginVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
         string tvServerVersion = RemoteControl.Instance.GetAssemblyVersion;
         if (pluginVersion != tvServerVersion)
@@ -492,7 +491,7 @@ namespace TvPlugin
     private static void RemoteControl_OnRemotingDisconnected()
     {
       Log.Debug("TVHome: OnRemotingDisconnected");
-      Connected = false;
+      Connected = false;                  
       HandleServerNotConnected();
     }
 
@@ -827,18 +826,7 @@ namespace TvPlugin
     public static bool DoingChannelChange()
     {
       return _doingChannelChange;
-    }
-
-    private static void ShowDlgCompleted(object Dialogue)
-    {
-      try
-      {
-        GUIGraphicsContext.form.Invoke(new ShowDlgInteractGUI(ShowDlgGUI), new object[] { Dialogue });
-      }
-      catch (Exception)
-      {
-      }
-    }
+    }    
 
     private static void ShowDlgGUI(object Dialogue)
     {
@@ -873,7 +861,48 @@ namespace TvPlugin
       }
     }
 
-    public static void ShowDlgThread(object Dialogue)
+    private static void StopPlayerMainThread()
+    {
+      //call g_player.stop only on main thread.
+      if (GUIGraphicsContext.form.InvokeRequired)
+      {
+        StopPlayerMainThreadDelegate d = new StopPlayerMainThreadDelegate(StopPlayerMainThread);
+        GUIGraphicsContext.form.Invoke(d);
+        return;
+      }
+
+      g_Player.Stop();
+    }
+
+    private delegate void ShowDlgAsynchDelegate();
+
+    private static void ShowDlgAsynch ()
+    {
+      //show dialogue only on main thread.
+      if (GUIGraphicsContext.form.InvokeRequired)
+      {
+        ShowDlgAsynchDelegate d = new ShowDlgAsynchDelegate(ShowDlgAsynch);
+        GUIGraphicsContext.form.Invoke(d);
+        return;
+      }
+
+      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+
+      pDlgOK.Reset();
+      pDlgOK.SetHeading(605); //my tv
+      if (Navigator != null && Navigator.CurrentChannel != null)
+      {
+        pDlgOK.SetLine(1, Navigator.CurrentChannel);
+      }
+      else
+      {
+        pDlgOK.SetLine(1, "");
+      }
+      pDlgOK.SetLine(2, GUILocalizeStrings.Get(1510)); //Connection to TV server lost
+      pDlgOK.DoModal(GUIWindowManager.ActiveWindow);            
+    }
+    
+    public static void ShowDlgThread()
     {
       GUIWindow guiWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
 
@@ -890,14 +919,11 @@ namespace TvPlugin
           Thread.Sleep(100);
         }
         count++;
-      }
-
+      }      
+      
       if (guiWindow.WindowLoaded)
       {
-        if (OnShowDlgCompleted != null)
-        {
-          OnShowDlgCompleted(Dialogue);
-        }
+        ShowDlgAsynch();        
       }
     }
 
@@ -930,7 +956,7 @@ namespace TvPlugin
           //_ServerLastStatusOK = false; // to enable TV connect button again
 
           //Card.User.Name = new User().Name;
-          g_Player.Stop();
+          TVHome.StopPlayerMainThread();
 
           if (g_Player.FullScreen)
           {
@@ -940,36 +966,12 @@ namespace TvPlugin
             GUIWindowManager.SendThreadMessage(initMsgTV);
             return true;
           }
-          GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
-
-          if (pDlgOK != null)
-          {
-            //Log.Debug("TVHome: connection to TV server lost st: {0}", Environment.StackTrace);
-
-            pDlgOK.Reset();
-            pDlgOK.SetHeading(605); //my tv
-            if (Navigator != null && Navigator.CurrentChannel != null)
-            {
-              pDlgOK.SetLine(1, Navigator.CurrentChannel);
-            }
-            else
-            {
-              pDlgOK.SetLine(1, "");
-            }
-            pDlgOK.SetLine(2, GUILocalizeStrings.Get(1510)); //Connection to TV server lost
-
-            if (OnShowDlgCompleted == null)
-            {
-              OnShowDlgCompleted += new ShowDlgSuccessful(ShowDlgCompleted);
-            }
-
-            ParameterizedThreadStart pThread = new ParameterizedThreadStart(ShowDlgThread);
-            Thread showDlgThread = new Thread(pThread);
-            showDlgThread.IsBackground = true;
-            // show the dialog asynch.
-            // this fixes a hang situation that would happen when resuming TV with showlastactivemodule
-            showDlgThread.Start(pDlgOK);
-          }
+          
+          Thread showDlgThread = new Thread(ShowDlgThread);
+          showDlgThread.IsBackground = true;
+          // show the dialog asynch.
+          // this fixes a hang situation that would happen when resuming TV with showlastactivemodule
+          showDlgThread.Start();          
           return true;
         }
         else
@@ -1121,7 +1123,7 @@ namespace TvPlugin
       {
         return;
       }
-      settingsLoaded = true;
+      
       using (Settings xmlreader = new MPSettings())
       {
         m_navigator.LoadSettings(xmlreader);
@@ -1162,6 +1164,7 @@ namespace TvPlugin
         _autoFullScreenOnly = xmlreader.GetValueAsBool("mytv", "autofullscreenonly", false);
         _showChannelStateIcons = xmlreader.GetValueAsBool("mytv", "showChannelStateIcons", true);
       }
+      settingsLoaded = true;
     }
 
     private void SaveSettings()
@@ -1568,6 +1571,7 @@ namespace TvPlugin
 
       // disabled currently as pausing the graph stops GUI repainting
       //GUIWaitCursor.Show();
+
       if (GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow).PreviousWindowId != (int)Window.WINDOW_TVFULLSCREEN)
       {
         _playbackStopped = false;
@@ -1936,7 +1940,7 @@ namespace TvPlugin
     }
 
     public override void Process()
-    {
+    {      
       TimeSpan ts = DateTime.Now - _updateTimer;
       if (ts.TotalMilliseconds < 1000)
       {
@@ -1947,7 +1951,7 @@ namespace TvPlugin
       {
         if (g_Player.Playing && !g_Player.FullScreen && g_Player.IsTV)
         {
-          g_Player.Stop();
+          StopPlayerMainThread();
         }
         return;
       }
@@ -3373,7 +3377,7 @@ namespace TvPlugin
     public static ChannelNavigator Navigator
     {
       get { return m_navigator; }
-    }
+    }    
 
     private static void StartPlay()
     {

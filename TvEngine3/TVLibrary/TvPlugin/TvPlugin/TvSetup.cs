@@ -114,7 +114,6 @@ namespace TvPlugin
         try
         {
           int cards = RemoteControl.Instance.Cards;
-          TVHome.Navigator.ReLoad();
         }
         catch (Exception)
         {
@@ -311,7 +310,12 @@ namespace TvPlugin
           GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
           if (tvServerOk && databaseOk && streamingOk)
           {
+            //TVHome.OnPageLoadDone = false;
+            RemoteControl.UseIncreasedTimeoutForInitialConnection = true;
+
             TVHome.Navigator.ReLoad();
+            Settings xmlreader = new MPSettings();
+            TVHome.Navigator.LoadSettings(xmlreader);            
             if (pDlgOK != null)
             {
               pDlgOK.SetHeading(GUILocalizeStrings.Get(605));

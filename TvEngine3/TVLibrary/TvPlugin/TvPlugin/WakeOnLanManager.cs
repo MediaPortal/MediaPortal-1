@@ -291,7 +291,7 @@ namespace TvPlugin
         {
           // we have to make sure the remoting system knows that we have resumed the server by means of WOL.
           // this will make sure the connection timeout for the remoting framework is increased.
-          TvControl.RemoteControl.WakeOnLAN = true;
+          TvControl.RemoteControl.UseIncreasedTimeoutForInitialConnection = true;
           return true;
         }
         Log.Debug("WOLMgr: System {0} still not reachable, waiting...", wakeupTarget);

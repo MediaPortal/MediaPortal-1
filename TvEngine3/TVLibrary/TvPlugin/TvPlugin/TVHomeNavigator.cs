@@ -110,6 +110,7 @@ namespace TvPlugin
 
     public void ReLoad()
     {
+      //System.Diagnostics.Debugger.Launch();
       try
       {        
         string connectionString, provider;        
@@ -492,7 +493,21 @@ namespace TvPlugin
         {
           newChannel = m_currentChannel;
         }
-        if (m_currentChannel.IdChannel != newChannel.IdChannel && newChannel != null)
+
+        int currentChannelId = 0;
+        int newChannelId = 0;
+
+        if (m_currentChannel != null)
+        {
+          currentChannelId = m_currentChannel.IdChannel;
+        }
+
+        if (newChannel != null)
+        {
+          newChannelId = newChannel.IdChannel;
+        }
+
+        if (currentChannelId != newChannelId)
         {
           m_currentChannel = newChannel;
           m_currentChannel.CurrentGroup = CurrentGroup;
