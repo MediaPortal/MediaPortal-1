@@ -127,7 +127,8 @@ namespace TvPlugin
     private static bool _showChannelStateIcons = true;
     private static bool _doingHandleServerNotConnected = false;
     private static bool _doingChannelChange = false;
-    private static bool _ServerNotConnectedHandled = false;    
+    private static bool _ServerNotConnectedHandled = false;
+    private static bool _recoverTV = false;
 
     private static ManualResetEvent _waitForBlackScreen = null;
     private static ManualResetEvent _waitForVideoReceived = null;
@@ -475,22 +476,24 @@ namespace TvPlugin
       startHeartBeatThread();
     }
 
-    private static void RemoteControl_OnRemotingConnected(bool recovered)
+    private static void RemoteControl_OnRemotingConnected()
     {      
+      if(!Connected)
+        Log.Debug("TVHome: OnRemotingConnected, recovered from a disconnection");
       Connected = true;
-      //_ServerLastStatusOK = true;
-      if (recovered)
+      if (_recoverTV)
       {
-        Log.Debug("TVHome: OnRemotingConnected, recovered from a disconnection {0}", recovered);
+        _recoverTV = false;
         GUIMessage initMsg = null;
         initMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int)Window.WINDOW_TV_OVERLAY, 0, 0, 0, 0, null);
         GUIWindowManager.SendThreadMessage(initMsg);
-      }
+      }      
     }
 
     private static void RemoteControl_OnRemotingDisconnected()
     {
-      Log.Debug("TVHome: OnRemotingDisconnected");
+      if(Connected)
+        Log.Debug("TVHome: OnRemotingDisconnected");
       Connected = false;                  
       HandleServerNotConnected();
     }
@@ -886,6 +889,7 @@ namespace TvPlugin
         return;
       }
 
+      _ServerNotConnectedHandled = true;
       GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
 
       pDlgOK.Reset();
@@ -965,8 +969,7 @@ namespace TvPlugin
                                        null);
             GUIWindowManager.SendThreadMessage(initMsgTV);
             return true;
-          }
-          
+          }          
           Thread showDlgThread = new Thread(ShowDlgThread);
           showDlgThread.IsBackground = true;
           // show the dialog asynch.
@@ -1258,7 +1261,7 @@ namespace TvPlugin
       GUIWindow currentWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
 
       if (type == g_Player.MediaType.Radio || type == g_Player.MediaType.TV)
-      {
+      {        
         UpdateGUIonPlaybackStateChange(true);
       }
 
@@ -1290,6 +1293,7 @@ namespace TvPlugin
       //gemx: fix for 0001181: Videoplayback does not work if tvservice.exe is not running 
       if (!Connected)
       {
+        _recoverTV = true;
         return;
       }
       if (Card.IsTimeShifting == false)
@@ -1307,7 +1311,7 @@ namespace TvPlugin
       {
         UpdateGUIonPlaybackStateChange(false);
       }
-
+      _recoverTV = false;
       _playbackStopped = true;
     }
 
@@ -1810,16 +1814,9 @@ namespace TvPlugin
         UpdateStateOfRecButton();
         UpdateRecordingIndicator();
         UpdateGUIonPlaybackStateChange();
+        ShowDlgAsynch();
         return;
-      }
-
-      /*if (_ServerLastStatusOK)      
-      {
-        UpdateStateOfRecButton();
-        UpdateProgressPercentageBar();
-        UpdateRecordingIndicator();
-        return;
-      }*/
+      }      
 
       if (control == btnActiveStreams)
       {
@@ -1942,19 +1939,10 @@ namespace TvPlugin
     public override void Process()
     {      
       TimeSpan ts = DateTime.Now - _updateTimer;
-      if (ts.TotalMilliseconds < 1000)
+      if (ts.TotalMilliseconds < 1000 || !Connected)
       {
         return;
-      }
-      //stop playing non-fullscreen TV here to overcome thread error
-      if (!Connected)
-      {
-        if (g_Player.Playing && !g_Player.FullScreen && g_Player.IsTV)
-        {
-          StopPlayerMainThread();
-        }
-        return;
-      }
+      }      
 
       UpdateRecordingIndicator();
       UpdateStateOfRecButton();

@@ -52,7 +52,7 @@ namespace TvControl
     #region delegates / events
 
     public delegate void RemotingDisconnectedDelegate();
-    public delegate void RemotingConnectedDelegate(bool recovered);
+    public delegate void RemotingConnectedDelegate();
 
     private delegate bool SynchIsConnectedDelegate();
     private delegate bool AsynchIsConnectedDelegate();
@@ -195,8 +195,6 @@ namespace TvControl
           return;
         }
 
-        bool oldState = _isRemotingConnected;
-
         int timeout = 250;
         if (_firstFailure)
         {
@@ -222,10 +220,7 @@ namespace TvControl
         else
         {
           CallRemotingAsynch(timeout);  
-        }
-
-        
-
+        } 
 
         // TODO: cancel the callbacks, since they are too late.
 
@@ -240,15 +235,11 @@ namespace TvControl
         }
         else
         {
+          _firstFailure = true;
           if (OnRemotingConnected != null)
           {
-            _firstFailure = true;
-            bool recovered = (!oldState);
-            if (recovered)
-            {
-              Log.Info("RemoteControl - Reconnected");
-            }
-            OnRemotingConnected(recovered);
+            Log.Info("RemoteControl - Reconnected");
+            OnRemotingConnected();
           }
         }
       }
