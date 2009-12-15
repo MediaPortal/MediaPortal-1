@@ -1997,9 +1997,14 @@ void MPEVRCustomPresenter::CalculateJitter(LONGLONG PerfCounter)
   m_pllRasterSyncOffset[m_nNextJitter] = m_rasterSyncOffset;
 
 	double syncDeviation = ((double)m_pllJitter[m_nNextJitter] - m_fJitterMean) / 10000.0;
-	if (abs(syncDeviation) > (GetDisplayCycle() / 2))
+	
+  if (abs(syncDeviation) > (GetDisplayCycle() / 2))
   {
-    m_uSyncGlitches++;
+    // ignore glitches until enough data has been collected
+    if (m_iFramesDrawn > NB_JITTER)
+    {
+      m_uSyncGlitches++;
+    }
   }
 
 	LONGLONG llJitterSum = 0;
