@@ -75,7 +75,7 @@ namespace TvControl
     // Reverted mantis #1409: private static uint _timeOut = 45000; // specified in ms (currently all remoting calls are aborted if processing takes more than 45 sec)
 
     #endregion
-    
+
     #region public constructors
 
     static RemoteControl()
@@ -127,8 +127,8 @@ namespace TvControl
     [OneWayAttribute]
     private static void IsConnectedAsyncCallBack(IAsyncResult ar)
     {
-      IsRemotingConnectedDelegate rem = (IsRemotingConnectedDelegate)((AsyncResult)ar).AsyncDelegate;      
-    }    
+      IsRemotingConnectedDelegate rem = (IsRemotingConnectedDelegate)((AsyncResult)ar).AsyncDelegate;
+    }
 
     private static bool IsRemotingConnected()
     {
@@ -165,7 +165,7 @@ namespace TvControl
       Stopwatch s = new Stopwatch();
       s.Start();
       bool asynchResult = ar.AsyncWaitHandle.WaitOne(timeout);
-      s.Stop();      
+      s.Stop();
 
       bool timedOut = (asynchResult == false);
 
@@ -174,9 +174,9 @@ namespace TvControl
         _isRemotingConnected = false;
       }
       else
-      {        
+      {
         _isRemotingConnected = dlgt.EndInvoke(ar);
-      }                  
+      }
     }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
@@ -213,14 +213,14 @@ namespace TvControl
             }
           }
           else
-          {            
+          {
             CallRemotingAsynch(timeout);
           }
         }
         else
         {
-          CallRemotingAsynch(timeout);  
-        } 
+          CallRemotingAsynch(timeout);
+        }
 
         // TODO: cancel the callbacks, since they are too late.
 
@@ -254,38 +254,7 @@ namespace TvControl
     }
 
 
-    /// <summary>
-    /// Registers a remoting channel for allowing callback from server to client
-    /// </summary>    
-    private static void RegisterChannel()
-    {
-      try
-      {
-        if (_callbackChannel == null)
-        {
-          Log.Debug("RemoteControl: RegisterChannel first called in Domain {0} for thread {1} with id {2}", AppDomain.CurrentDomain.FriendlyName, Thread.CurrentThread.Name, Thread.CurrentThread.ManagedThreadId);
 
-          //turn off customErrors to receive full exception messages
-          RemotingConfiguration.CustomErrorsMode = CustomErrorsModes.Off;
-
-          // Creating a custom formatter for a TcpChannel sink chain.
-          BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
-          provider.TypeFilterLevel = TypeFilterLevel.Full; // needed for passing objref!
-          IDictionary channelProperties = new Hashtable(); // Creating the IDictionary to set the port on the channel instance.
-          channelProperties.Add("port", 0);         // "0" chooses one available port
-
-          // Pass the properties for the port setting and the server provider in the server chain argument. (Client remains null here.)
-          _callbackChannel = new TcpChannel(channelProperties, null, provider);
-          ChannelServices.RegisterChannel(_callbackChannel, false);
-        }
-      }
-      catch (RemotingException) { }
-      catch (System.Net.Sockets.SocketException) { }
-      catch (Exception e)
-      {
-        Log.Error(e.ToString());
-      }
-    }  
 
     #endregion
 
@@ -318,7 +287,40 @@ namespace TvControl
         }
       }
     }
-    
+
+    /// <summary>
+    /// Registers a remoting channel for allowing callback from server to client
+    /// </summary>    
+    private static void RegisterChannel()
+    {
+      try
+      {
+        if (_callbackChannel == null)
+        {
+          Log.Debug("RemoteControl: RegisterChannel first called in Domain {0} for thread {1} with id {2}", AppDomain.CurrentDomain.FriendlyName, Thread.CurrentThread.Name, Thread.CurrentThread.ManagedThreadId);
+
+          //turn off customErrors to receive full exception messages
+          RemotingConfiguration.CustomErrorsMode = CustomErrorsModes.Off;
+
+          // Creating a custom formatter for a TcpChannel sink chain.
+          BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
+          provider.TypeFilterLevel = TypeFilterLevel.Full; // needed for passing objref!
+          IDictionary channelProperties = new Hashtable(); // Creating the IDictionary to set the port on the channel instance.
+          channelProperties.Add("port", 0);         // "0" chooses one available port
+
+          // Pass the properties for the port setting and the server provider in the server chain argument. (Client remains null here.)
+          _callbackChannel = new TcpChannel(channelProperties, null, provider);
+          ChannelServices.RegisterChannel(_callbackChannel, false);
+        }
+      }
+      catch (RemotingException) { }
+      catch (System.Net.Sockets.SocketException) { }
+      catch (Exception e)
+      {
+        Log.Error(e.ToString());
+      }
+    }
+
     /// <summary>
     /// returns an the <see cref="T:TvControl.IController"/> interface to the tv server
     /// </summary>
@@ -333,10 +335,14 @@ namespace TvControl
         {
           if (_tvControl != null)
           {
-            RefreshRemotingConnectionStatusASynch();
+            //only query state if the caller has subcribed to the disconnect/connect events
+            if (OnRemotingDisconnected != null || OnRemotingConnected != null)
+            {
+              RefreshRemotingConnectionStatusASynch();
 
-            if (!_isRemotingConnected)
-              return null;
+              if (!_isRemotingConnected)
+                return null;
+            }
 
             return _tvControl;
           }
@@ -356,19 +362,22 @@ namespace TvControl
           //            //ignore
           //          }
           //#endif    
-          
+
           // register remoting channel          
           RegisterChannel();
-          
+
           _tvControl =
             (IController)
-            Activator.GetObject(typeof(IController), String.Format("tcp://{0}:31456/TvControl", _hostName));
-          
-          RefreshRemotingConnectionStatusASynch();
-         
-          if (!_isRemotingConnected)
+            Activator.GetObject(typeof(IController), String.Format("tcp://{0}:31456/TvControl", _hostName));//31456
+
+          //only query state if the caller has subcribed to the disconnect/connect events
+          if (OnRemotingDisconnected != null || OnRemotingConnected != null)
           {
-            return null;
+            RefreshRemotingConnectionStatusASynch();
+            if (!_isRemotingConnected)
+            {
+              return null;
+            }
           }
 
           return _tvControl;
