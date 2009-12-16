@@ -463,6 +463,9 @@ namespace TvPlugin
     //}
     public TVHome()
     {
+      RemoteControl.OnRemotingDisconnected += new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
+      RemoteControl.OnRemotingConnected += new RemoteControl.RemotingConnectedDelegate(RemoteControl_OnRemotingConnected);
+
       GUIGraphicsContext.OnBlackImageRendered += new BlackImageRenderedHandler(OnBlackImageRendered);
       _waitForBlackScreen = new ManualResetEvent(false);
       _waitForVideoReceived = new ManualResetEvent(false);
@@ -481,6 +484,7 @@ namespace TvPlugin
       if(!Connected)
         Log.Debug("TVHome: OnRemotingConnected, recovered from a disconnection");
       Connected = true;
+      _ServerNotConnectedHandled = false;
       if (_recoverTV)
       {
         _recoverTV = false;

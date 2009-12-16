@@ -19,20 +19,17 @@
  *
  */
 using System;
+using System.Collections;
 using System.Diagnostics;
-using System.Net;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Channels.Tcp;
+using System.Runtime.Remoting.Messaging;
+using System.Runtime.Serialization.Formatters;
 using System.Threading;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
-using System.Runtime.Remoting.Channels;
-using System.Collections;
-using System.Runtime.Remoting.Channels.Tcp;
-using System.Runtime.Serialization.Formatters;
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Messaging;
-using System.Runtime.Remoting.Channels;
 // Reverted mantis #1409: using System.Collections;
 
 namespace TvControl
@@ -133,14 +130,11 @@ namespace TvControl
     private static bool IsRemotingConnected()
     {
       try
-      {
-        int id = _tvControl.Cards;
-        return id >= 0;
+      {        
+        return _tvControl.Cards >= 0;
       }
-      catch (Exception e)
-      {
-        int i = 0;
-        //ignore
+      catch (Exception)
+      {        
       }
       return false;
     }
@@ -159,14 +153,11 @@ namespace TvControl
       AsyncCallback remoteCallback = new AsyncCallback(IsConnectedAsyncCallBack);
       IAsyncResult ar = dlgt.BeginInvoke(remoteCallback, null);
 
-      Thread.Sleep(0);
+      Thread.Sleep(1);
 
       // Wait for the WaitHandle to become signaled.
-      Stopwatch s = new Stopwatch();
-      s.Start();
       bool asynchResult = ar.AsyncWaitHandle.WaitOne(timeout);
-      s.Stop();
-
+      
       bool timedOut = (asynchResult == false);
 
       if (timedOut)
@@ -330,7 +321,6 @@ namespace TvControl
       get
       {
         // System.Diagnostics.Debugger.Launch();                
-        bool conn = false;
         try
         {
           if (_tvControl != null)
@@ -366,9 +356,7 @@ namespace TvControl
           // register remoting channel          
           RegisterChannel();
 
-          _tvControl =
-            (IController)
-            Activator.GetObject(typeof(IController), String.Format("tcp://{0}:31456/TvControl", _hostName));//31456
+          _tvControl = (IController) Activator.GetObject(typeof(IController), String.Format("tcp://{0}:31456/TvControl", _hostName));
 
           //only query state if the caller has subcribed to the disconnect/connect events
           if (OnRemotingDisconnected != null || OnRemotingConnected != null)
@@ -393,9 +381,7 @@ namespace TvControl
             // register remoting channel
             RegisterChannel();
 
-            _tvControl =
-              (IController)
-              Activator.GetObject(typeof(IController), String.Format("tcp://{0}:31456/TvControl", _hostName));
+            _tvControl = (IController) Activator.GetObject(typeof(IController), String.Format("tcp://{0}:31456/TvControl", _hostName));
 
             RefreshRemotingConnectionStatusASynch();
             if (!_isRemotingConnected)
