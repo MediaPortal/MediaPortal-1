@@ -416,6 +416,12 @@ namespace MediaPortal.GUI.Weather
 
       // Init Daylight clock _geochronGenerator
       _geochronGenerator = new Geochron(GUIGraphicsContext.Skin + @"\Media");
+      int width, height;
+      GUIImage clockImage = (GUIImage) GetControl((int) Controls.CONTROL_IMAGE_SUNCLOCK);
+      _geochronGenerator.getWidthHeight(out width, out height);
+      clockImage.SetMemoryImageSize(width, height);
+      clockImage.FileName = "[weatherImage]";
+
       TimeSpan ts = DateTime.Now - _lastRefreshTime;
       if (ts.TotalMinutes >= _refreshIntercal && _locationCode != string.Empty && !IsRefreshing)
       {
@@ -428,6 +434,8 @@ namespace MediaPortal.GUI.Weather
       SaveSettings();
       base.OnPageDestroy(new_windowId);
       _geochronGenerator = null;
+      GUIImage clockImage = (GUIImage)GetControl((int)Controls.CONTROL_IMAGE_SUNCLOCK);
+      clockImage.RemoveMemoryImageTexture();
     }
 
     public override bool OnMessage(GUIMessage message)
@@ -809,13 +817,15 @@ namespace MediaPortal.GUI.Weather
       GUIImage clockImage = (GUIImage) GetControl((int) Controls.CONTROL_IMAGE_SUNCLOCK);
       lock (clockImage)
       {
-        Bitmap image = _geochronGenerator.update(DateTime.UtcNow);
-        Image img = (Image) image.Clone();
+        Bitmap bitmap;
+
         clockImage.IsVisible = false;
-        clockImage.FileName = "";
-        GUITextureManager.ReleaseTexture("[weatherImage]");
-        clockImage.MemoryImage = img;
-        clockImage.FileName = "[weatherImage]";
+        clockImage.LockMemoryImageTexture(out bitmap);
+        _geochronGenerator.update(ref bitmap, DateTime.UtcNow);
+
+        clockImage.UnLockMemoryImageTexture();
+     
+        
         clockImage.IsVisible = true;
       }
     }

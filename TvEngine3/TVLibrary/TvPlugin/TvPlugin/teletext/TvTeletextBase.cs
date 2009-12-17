@@ -63,7 +63,6 @@ namespace TvPlugin
 
     #region variables
 
-    protected Bitmap bmpTeletextPage;
     protected string inputLine = String.Empty;
     protected int currentPageNumber = 0x100;
     protected int currentSubPageNumber;
@@ -82,6 +81,7 @@ namespace TvPlugin
     protected int _numberOfRequestedUpdates;
     protected bool _rememberLastValues;
     protected int _percentageOfMaximumHeight;
+    protected bool _redrawForeground = true;
 
     #endregion
 
@@ -104,13 +104,7 @@ namespace TvPlugin
     {
       LoadSettings();
       _numberOfRequestedUpdates = 0;
-      // Create an update thread and set it's priority to lowest
-      _updateThreadStop = false;
-      _updateThread = new Thread(UpdatePage);
-      _updateThread.Name = "Teletext Updater";
-      _updateThread.Priority = ThreadPriority.BelowNormal;
-      _updateThread.IsBackground = true;
-      _updateThread.Start();
+
       lblMessage.Label = "";
       lblMessage.Visible = false;
       // Activate teletext grabbing in the server
@@ -130,23 +124,24 @@ namespace TvPlugin
       _renderer.PageSelectText = Convert.ToString(currentPageNumber, 16);
       _renderer.PercentageOfMaximumHeight = _percentageOfMaximumHeight;
 
-      // Initialize the images
-      if (imgTeletextForeground != null)
-      {
-        imgTeletextForeground.ColorKey = Color.HotPink.ToArgb();
-        _renderer.Width = imgTeletextForeground.Width;
-        _renderer.Height = imgTeletextForeground.Height;
-      }
-      if (imgTeletextBackground != null)
-      {
-        imgTeletextBackground.ColorKey = Color.HotPink.ToArgb();
-        _renderer.Width = imgTeletextBackground.Width;
-        _renderer.Height = imgTeletextBackground.Height;
-      }
+      // Create an update thread and set it's priority to lowest
+      _updateThreadStop = false;
+      _updateThread = new Thread(UpdatePage);
+      _updateThread.Name = "Teletext Updater";
+      _updateThread.Priority = ThreadPriority.BelowNormal;
+      _updateThread.IsBackground = true;
+      _updateThread.Start();
+
       // Load the mp logo page into teletext data array
       LoadLogoPage();
       // Request an update
       _numberOfRequestedUpdates++;
+    }
+
+    protected void Join()
+    {
+      _updateThreadStop = true;
+      _updateThread.Join();
     }
 
     /// <summary>
@@ -472,6 +467,18 @@ namespace TvPlugin
     /// </summary>
     protected void UpdatePage()
     {
+      imgTeletextForeground.Centered = false;
+      imgTeletextForeground.KeepAspectRatio = false;
+      imgTeletextForeground.ColorKey = Color.HotPink.ToArgb();
+      imgTeletextForeground.SetMemoryImageSize(_renderer.Width, _renderer.Height);
+      imgTeletextForeground.FileName = "[teletextpage]";
+
+      imgTeletextBackground.Centered = false;
+      imgTeletextBackground.KeepAspectRatio = false;
+      imgTeletextBackground.ColorKey = Color.HotPink.ToArgb();
+      imgTeletextBackground.SetMemoryImageSize(_renderer.Width, _renderer.Height);
+      imgTeletextBackground.FileName = "[teletextpage2]";
+
       // While not stop the thread, continue
       while (!_updateThreadStop)
       {
@@ -484,15 +491,17 @@ namespace TvPlugin
         else
         {
           // Otherwise sleep for 300ms
-          Thread.Sleep(300);
+          Thread.Sleep(100);
         }
       }
+      imgTeletextForeground.RemoveMemoryImageTexture();
+      imgTeletextBackground.RemoveMemoryImageTexture();
     }
 
     /// <summary>
     /// Redraws the images
     /// </summary>
-    protected void Redraw()
+    /*protected void Redraw()
     {
       Log.Info("dvb-teletext redraw()");
       try
@@ -530,6 +539,28 @@ namespace TvPlugin
       {
         Log.Error(ex);
       }
+    }*/
+
+    protected void Redraw()
+    {
+      Bitmap bitmap;
+      if (_redrawForeground)
+      {
+        imgTeletextForeground.IsVisible = false;
+        imgTeletextForeground.LockMemoryImageTexture(out bitmap);
+        _renderer.RenderPage(ref bitmap, receivedPage, receivedPageNumber, receivedSubPageNumber);
+        imgTeletextForeground.UnLockMemoryImageTexture();
+        imgTeletextForeground.IsVisible = true;
+      }
+      else
+      {
+        imgTeletextBackground.IsVisible = false;
+        imgTeletextBackground.LockMemoryImageTexture(out bitmap);
+        _renderer.RenderPage(ref bitmap, receivedPage, receivedPageNumber, receivedSubPageNumber);
+        imgTeletextBackground.UnLockMemoryImageTexture();
+        imgTeletextBackground.IsVisible = true;
+      }
+      _redrawForeground = !_redrawForeground;
     }
 
     /// <summary>
@@ -539,16 +570,17 @@ namespace TvPlugin
     {
       int sub = currentSubPageNumber;
       int maxSubs = TVHome.Card.SubPageCount(currentPageNumber);
+      Log.Info("dvb-teletext: GetNewPage");
+
       // Check if the page is available
       if (maxSubs <= 0)
       {
         if (receivedPage != null && !_waiting)
         {
-          bmpTeletextPage = _renderer.RenderPage(receivedPage, receivedPageNumber, receivedSubPageNumber);
+          Redraw();
           Log.Info("dvb-teletext: received page {0:X} / subpage {1:X}", receivedPageNumber, receivedSubPageNumber);
         }
-        Redraw();
-        return;
+        return;                                                                      
       }
       if (sub >= maxSubs)
       {
@@ -563,7 +595,7 @@ namespace TvPlugin
         receivedPage = page;
         receivedPageNumber = currentPageNumber;
         receivedSubPageNumber = currentSubPageNumber;
-        bmpTeletextPage = _renderer.RenderPage(page, currentPageNumber, sub);
+        Redraw();
         _waiting = false;
         Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
       }
@@ -571,12 +603,11 @@ namespace TvPlugin
       {
         if (receivedPage != null && !_waiting)
         {
-          bmpTeletextPage = _renderer.RenderPage(receivedPage, receivedPageNumber, receivedSubPageNumber);
+          Redraw();
           Log.Info("dvb-teletext: received page {0:X} / subpage {1:X}", receivedPageNumber, receivedSubPageNumber);
         }
         _waiting = true;
       }
-      Redraw();
     }
 
     #endregion

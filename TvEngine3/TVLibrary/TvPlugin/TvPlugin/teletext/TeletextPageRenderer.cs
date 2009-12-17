@@ -38,6 +38,7 @@ namespace TvLibrary.Teletext
     {
       _isRegionalDKorNO = (RegionInfo.CurrentRegion.TwoLetterISORegionName.Equals("DK", StringComparison.InvariantCultureIgnoreCase))
                        || (RegionInfo.CurrentRegion.TwoLetterISORegionName.Equals("NO", StringComparison.InvariantCultureIgnoreCase));
+      Transparent = Color.FromArgb(0, 0, 0, 0);
     }
 
     #endregion
@@ -53,8 +54,6 @@ namespace TvLibrary.Teletext
     //regional stuff
     private readonly bool _isRegionalDKorNO;
 
-    private Bitmap _pageBitmap;
-    private Graphics _renderGraphics;
     private Font _fontTeletext;
 
     private bool _hiddenMode = true;
@@ -63,10 +62,11 @@ namespace TvLibrary.Teletext
 
     private string _selectedPageText = "";
 
-    private int _pageRenderWidth = 1440;
-    private int _pageRenderHeight = 1080;
+    private int _pageRenderWidth = 720;
+    private int _pageRenderHeight = 540;
     private int _percentageOfMaximumHeight = 100;
 
+    private Color Transparent = new Color();
     #endregion
 
     #region enums
@@ -191,11 +191,7 @@ namespace TvLibrary.Teletext
     public int Width
     {
       get { return _pageRenderWidth; }
-      set
-      {
-        _pageRenderWidth = value;
-        Clear();
-      }
+      set { _pageRenderWidth = value;}
     }
 
     /// <summary>
@@ -204,11 +200,7 @@ namespace TvLibrary.Teletext
     public int Height
     {
       get { return _pageRenderHeight; }
-      set
-      {
-        _pageRenderHeight = value;
-        Clear();
-      }
+      set {_pageRenderHeight = value; }
     }
 
     /// <summary>
@@ -282,7 +274,7 @@ namespace TvLibrary.Teletext
     /// <param name="w">width of the font</param>
     /// <param name="h">height of the font</param>
     /// <param name="txtLanguage">Teletext language</param>
-    private void Render(Graphics graph, byte chr, int attrib, ref int x, ref int y, int w, int h, int txtLanguage)
+    private void Render(ref Graphics graph, ref Bitmap pageBitmap, byte chr, int attrib, ref int x, ref int y, int w, int h, int txtLanguage)
     {
       bool charReady;
       char chr2 = '?';
@@ -307,7 +299,7 @@ namespace TvLibrary.Teletext
       // We are in transparent mode and fullscreen. Make beckground transparent
       if (_transparentMode && _fullscreenMode)
       {
-        bgColor = Color.HotPink;
+        bgColor = Transparent;
       }
       Brush backBrush = new SolidBrush(bgColor);
       Brush foreBrush = new SolidBrush(GetColor(fColor));
@@ -534,7 +526,7 @@ namespace TvLibrary.Teletext
             {
               for (int xpos = 0; xpos < w; xpos++)
               {
-                pixelColor[xpos, ypos] = _pageBitmap.GetPixel(xpos + x, ypos + y); // backup old line
+                pixelColor[xpos, ypos] = pageBitmap.GetPixel(xpos + x, ypos + y); // backup old line
               }
             }
             // draw doubleheight
@@ -544,10 +536,10 @@ namespace TvLibrary.Teletext
               {
                 try
                 {
-                  if (y + (ypos*2) + 1 < _pageBitmap.Height)
+                  if (y + (ypos*2) + 1 < pageBitmap.Height)
                   {
-                    _pageBitmap.SetPixel(x + xpos, y + (ypos*2), pixelColor[xpos, ypos]); // backup old line
-                    _pageBitmap.SetPixel(x + xpos, y + (ypos*2) + 1, pixelColor[xpos, ypos]);
+                    pageBitmap.SetPixel(x + xpos, y + (ypos*2), pixelColor[xpos, ypos]); // backup old line
+                    pageBitmap.SetPixel(x + xpos, y + (ypos*2) + 1, pixelColor[xpos, ypos]);
                   }
                 }
                 catch
@@ -574,7 +566,7 @@ namespace TvLibrary.Teletext
     /// </summary>
     /// <param name="colorNumber">Number of the teletext color, referring to the enumeration TextColors </param>
     /// <returns>Corresponding System Color, or black if the value is not defined</returns>
-    private static Color GetColor(int colorNumber)
+    private Color GetColor(int colorNumber)
     {
       switch (colorNumber)
       {
@@ -595,9 +587,9 @@ namespace TvLibrary.Teletext
         case (int) TextColors.Cyan:
           return Color.Cyan;
         case (int) TextColors.Trans1:
-          return Color.HotPink;
+          return Transparent;
         case (int) TextColors.Trans2:
-          return Color.HotPink;
+          return Transparent;
       }
       return Color.Black;
     }
@@ -619,23 +611,12 @@ namespace TvLibrary.Teletext
     /// <summary>
     /// Renders a teletext page to a bitmap
     /// </summary>
+    /// <param name="pageBitmap">The bitmap to render to</param>
     /// <param name="byPage">Teletext page data</param>
     /// <param name="mPage">Pagenumber</param>
     /// <param name="sPage">Subpagenumber</param>
-    /// <returns>Rendered teletext page as bitmap</returns>
-    public Bitmap RenderPage(byte[] byPage, int mPage, int sPage)
+    public void RenderPage(ref Bitmap pageBitmap, byte[] byPage, int mPage, int sPage)
     {
-      // Create Bitmap and set HotPink as the transparent color
-      if (_pageBitmap == null)
-      {
-        _pageBitmap = new Bitmap(_pageRenderWidth, _pageRenderHeight);
-        _pageBitmap.MakeTransparent(Color.HotPink);
-      }
-      if (_renderGraphics == null)
-      {
-        _renderGraphics = Graphics.FromImage(_pageBitmap);
-      }
-
       int col;
       int hold;
       int foreground, background, doubleheight, charset, mosaictype;
@@ -645,6 +626,11 @@ namespace TvLibrary.Teletext
       byte[] pageChars = new byte[31*40];
       int[] pageAttribs = new int[31*40];
       bool row24 = false;
+
+      
+
+      Graphics renderGraphics = Graphics.FromImage(pageBitmap);
+
       // Decode the page data (Hamming 8/4 or odd parity)
       for (int rowNr = 0; rowNr < MAX_ROWS; rowNr++)
       {
@@ -1112,80 +1098,52 @@ namespace TvLibrary.Teletext
       float fntSize = height; //Math.Min(width, height);
       float nPercentage = ((float) _percentageOfMaximumHeight/100);
       _fontTeletext = new Font("Lucida Console", fntSize, FontStyle.Regular, GraphicsUnit.Pixel);
-      float fntHeight = _fontTeletext.GetHeight(_renderGraphics);
+      float fntHeight = _fontTeletext.GetHeight(renderGraphics);
       while (fntHeight > nPercentage*height) // || fntHeight > nPercentage * width)
       {
         fntSize -= 0.1f;
         _fontTeletext = new Font("Lucida Console", fntSize, FontStyle.Bold, GraphicsUnit.Pixel);
-        fntHeight = _fontTeletext.GetHeight(_renderGraphics);
+        fntHeight = _fontTeletext.GetHeight(renderGraphics);
       }
       MediaPortal.GUI.Library.Log.Debug("FONT SIZE OF TELETEXT: " + fntSize);
-      SolidBrush brush = null;
+
       try
       {
         // Select the brush, depending on the page and mode
+        // Draw the base rectangle
         if ((isBoxed || _transparentMode) && _fullscreenMode)
         {
-          brush = new SolidBrush(Color.HotPink);
+          renderGraphics.Clear(Transparent);
         }
         else
         {
-          brush = new SolidBrush(Color.Black);
+          renderGraphics.FillRectangle(new SolidBrush(Color.Black), 0, 0, _pageRenderWidth, _pageRenderHeight);
         }
 
-        // Draw the base rectangle
-        _renderGraphics.FillRectangle(brush, 0, 0, _pageRenderWidth, _pageRenderHeight);
         // Fill the rectangle with the teletext page informations
-        if (_renderGraphics != null && _pageBitmap != null)
+        for (row = 0; row < 25; row++)
         {
-          for (row = 0; row < 25; row++)
+          // If not display a toptext line than abort
+          if (!displayHeaderAndTopText && row == 24)
           {
-            // If not display a toptext line than abort
-            if (!displayHeaderAndTopText && row == 24)
-            {
-              break;
-            }
-            x = 0;
-            // Draw a single point
-            for (col = 0; col < 40; col++)
-            {
-              Render(_renderGraphics, pageChars[row*40 + col], pageAttribs[row*40 + col], ref x, ref y, width, height,
-                     txtLanguage);
-            }
-
-            y += height + (row == 23 ? 2 : 0);
+            break;
           }
+          x = 0;
+          // Draw a single point
+          for (col = 0; col < 40; col++)
+          {
+            Render(ref renderGraphics, ref pageBitmap, pageChars[row * 40 + col], pageAttribs[row * 40 + col], ref x, ref y, width, height,
+                   txtLanguage);
+          }
+
+          y += height + (row == 23 ? 2 : 0);
         }
       }
       finally
       {
-        if (brush != null)
-        {
-          brush.Dispose();
-        }
         _fontTeletext.Dispose();
         _fontTeletext = null;
       }
-      return _pageBitmap;
-      // send the bitmap to the callback
-    }
-
-    /// <summary>
-    /// Clear the bitmap
-    /// </summary>
-    public void Clear()
-    {
-      if (_pageBitmap != null)
-      {
-        _pageBitmap.Dispose();
-      }
-      _pageBitmap = null;
-
-      if (_renderGraphics != null)
-      {
-        _renderGraphics.Dispose();
-      }
-      _renderGraphics = null;
     }
 
     #endregion

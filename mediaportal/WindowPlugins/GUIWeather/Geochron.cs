@@ -51,7 +51,6 @@ namespace MediaPortal.GUI.Weather
 
     private ImageHandler day;
     private ImageHandler night;
-    private ImageHandler blend;
 
     private int n_x;
     private int n_y;
@@ -69,24 +68,22 @@ namespace MediaPortal.GUI.Weather
       this.n_x = dayImage.Width;
       this.n_y = dayImage.Height;
 
-      // Create space for the blended image
-      Bitmap blendedImage = new Bitmap(this.n_x, this.n_y);
-
       // Store the images
       day = new ImageHandler(dayImage);
       night = new ImageHandler(nightImage);
-      blend = new ImageHandler(blendedImage);
+
     }
 
-    public Bitmap update(DateTime time)
+    public void getWidthHeight(out int width, out int height)
     {
-      setBlendedImage(time);
-      return blend.Image;
+      width = n_x;
+      height = n_y;
     }
 
 
-    private void setBlendedImage(DateTime time)
+    public void update(ref Bitmap bitmap, DateTime time)
     {
+      ImageHandler blend = new ImageHandler(bitmap);
       // Lock bitmaps
       day.lockBitmap();
       night.lockBitmap();
@@ -153,7 +150,7 @@ namespace MediaPortal.GUI.Weather
                            (int) (dayG*intFactor + nightG*(1 - intFactor)) << 8 |
                            (int) (dayB*intFactor + nightB*(1 - intFactor));
 
-          this.blend.setPixel(i_x, i_y, blendedRGB);
+          blend.setPixel(i_x, i_y, blendedRGB);
         }
       }
       // Lock bitmaps

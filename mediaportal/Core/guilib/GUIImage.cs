@@ -33,6 +33,7 @@ using System.Windows.Media.Animation;
 using System.Xml;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
+using System.Drawing.Imaging;
 
 namespace MediaPortal.GUI.Library
 {
@@ -137,7 +138,6 @@ namespace MediaPortal.GUI.Library
     private int _packedTextureNo = -1;
     private int _packedDiffuseTextureNo = -1;
     private static bool logtextures = false;
-    private Image memoryImage = null;
     private bool _isFullScreenImage = false;
     private bool _reCalculate = false;
     private bool _allocated = false;
@@ -151,6 +151,9 @@ namespace MediaPortal.GUI.Library
     private int _borderBottom = 0;
     private int _borderPosition = 0;
 
+    private int _memoryImageWidth = 0;
+    private int _memoryImageHeight = 0;
+    private Texture _memoryImageTexture;
     private GUIImage()
     {
     }
@@ -239,12 +242,6 @@ namespace MediaPortal.GUI.Library
       _imageWidth = 0;
       _imageHeight = 0;
       FinalizeConstruction();
-    }
-
-    public Image MemoryImage
-    {
-      get { return memoryImage; }
-      set { memoryImage = value; }
     }
 
     public override void UpdateVisibility()
@@ -710,8 +707,8 @@ namespace MediaPortal.GUI.Library
           int frameCount = 0;
           if (fileName.StartsWith("["))
           {
-            frameCount = GUITextureManager.LoadFromMemory(memoryImage, fileName, m_dwColorKey, m_iRenderWidth,
-                                                          _textureHeight);
+
+            frameCount = GUITextureManager.LoadFromMemory(fileName, m_dwColorKey, _memoryImageWidth, _memoryImageHeight, out _memoryImageTexture);
             if (0 == frameCount)
             {
               continue; // unable to load texture
@@ -1995,6 +1992,37 @@ namespace MediaPortal.GUI.Library
     {
       get { return _repeatBehavior; }
       set { _repeatBehavior = value; }
+    }
+
+    public void SetMemoryImageSize(int width, int height)
+    {
+      _memoryImageWidth = width;
+      _memoryImageHeight = height;
+    }
+
+    public bool LockMemoryImageTexture(out Bitmap bitmap)
+    {
+      int pitch;
+      if (_memoryImageTexture == null)
+      {
+        bitmap = null;
+        return false;
+      }
+      GraphicsStream gs = _memoryImageTexture.LockRectangle(0, LockFlags.Discard, out pitch);
+      bitmap = new Bitmap(_memoryImageWidth, _memoryImageHeight, pitch, PixelFormat.Format32bppArgb, gs.InternalData);
+      return true;
+    }
+
+    public void UnLockMemoryImageTexture()
+    {
+      _memoryImageTexture.UnlockRectangle(0);
+    }
+
+    public void RemoveMemoryImageTexture()
+    {
+      _memoryImageTexture = null;
+      GUITextureManager.ReleaseTexture(_textureFileNameTag);
+      _textureFileNameTag = String.Empty;
     }
 
     protected void LoadAnimation(ref string textureFiles)

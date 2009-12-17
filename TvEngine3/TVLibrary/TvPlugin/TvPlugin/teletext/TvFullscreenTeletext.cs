@@ -57,7 +57,7 @@ namespace TvPlugin
     protected override void OnPageDestroy(int newWindowId)
     {
       SaveSettings();
-      _updateThreadStop = true;
+      Join();
       TVHome.Card.GrabTeletext = false;
       GUILayerManager.UnRegisterLayer(this);
       GUIGraphicsContext.IsFullScreenVideo = _isFullScreenVideo;
@@ -99,15 +99,17 @@ namespace TvPlugin
     {
       // Force the fullscreen video
       GUIGraphicsContext.IsFullScreenVideo = true;
-      // Only the render one of the images, if no update is running
-      if (!_updatingForegroundImage)
+
+      // Only the render one of the images
+      if (!_redrawForeground)
       {
         imgTeletextForeground.Render(timePassed);
       }
-      if (!_updatingBackgroundImage)
+      else
       {
         imgTeletextBackground.Render(timePassed);
       }
+      
     }
 
     #endregion

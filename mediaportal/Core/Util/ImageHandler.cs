@@ -99,11 +99,6 @@ namespace MediaPortal.Util
 			stride = bmData.Stride;
 			scan = bmData.Scan0;
 			pBase = (Byte*) bmData.Scan0.ToPointer();
-
-			stride = (int) width * sizeof(PixelData);
-			if (stride % 4 != 0)
-				stride = 4 * (stride / 4 + 1);
-
 		}
 
 		public void unlockBitmap()

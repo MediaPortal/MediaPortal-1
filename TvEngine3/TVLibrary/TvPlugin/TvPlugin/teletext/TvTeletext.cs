@@ -64,7 +64,7 @@ namespace TvPlugin.teletext
     {
       // Save the settings and then stop the update thread. Also the teletext grabbing
       SaveSettings();
-      _updateThreadStop = true;
+      Join();
       TVHome.Card.GrabTeletext = false;
       base.OnPageDestroy(newWindowId);
     }
@@ -161,6 +161,21 @@ namespace TvPlugin.teletext
     }
 
     #endregion
+
+    public override void Render(float timePassed)
+    {
+      // Render GUI
+      base.Render(timePassed);
+
+      if (!_redrawForeground)
+      {
+        imgTeletextForeground.Render(timePassed);
+      }
+      else
+      {
+        imgTeletextBackground.Render(timePassed);
+      }
+    }
   }
 }
 
