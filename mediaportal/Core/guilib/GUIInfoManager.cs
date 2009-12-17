@@ -1229,6 +1229,10 @@ namespace MediaPortal.GUI.Library
           string strTestKeepCase = strCondition;
           strTestKeepCase = strTestKeepCase.TrimStart(new char[] { ' ' });
           strTestKeepCase = strTestKeepCase.TrimEnd(new char[] { ' ' });
+          if (bNegate)
+          {
+            strTestKeepCase = strTestKeepCase.Remove(0, 1);
+          }
 
           int skinOffset;
           int pos = strTestKeepCase.IndexOf(",");
@@ -1247,6 +1251,10 @@ namespace MediaPortal.GUI.Library
           string strTestKeepCase = strCondition;
           strTestKeepCase = strTestKeepCase.TrimStart(new char[] { ' ' });
           strTestKeepCase = strTestKeepCase.TrimEnd(new char[] { ' ' });
+          if (bNegate)
+          {
+            strTestKeepCase = strTestKeepCase.Remove(0, 1);
+          }
 
           int skinOffset;
           int pos = strTestKeepCase.IndexOf(",");
@@ -1265,6 +1273,10 @@ namespace MediaPortal.GUI.Library
           string strTestKeepCase = strCondition;
           strTestKeepCase = strTestKeepCase.TrimStart(new char[] { ' ' });
           strTestKeepCase = strTestKeepCase.TrimEnd(new char[] { ' ' });
+          if (bNegate)
+          {
+            strTestKeepCase = strTestKeepCase.Remove(0, 1);
+          }
 
           int skinOffset;
           int pos = strTestKeepCase.IndexOf(",");
