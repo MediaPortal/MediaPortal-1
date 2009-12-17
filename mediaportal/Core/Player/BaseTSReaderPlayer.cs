@@ -808,12 +808,15 @@ namespace MediaPortal.Player
       }
       set
       {
+        if (_mediaCtrl == null || _mediaSeeking == null)
+          return;
         if (_state != PlayState.Init)
         {
           bool setRateFailed = false;
           if (_CodecSupportsFastSeeking)
           {
-            VMR9Util.g_vmr9.EVRProvidePlaybackRate((double)value);
+            if(g_Player.IsVideo) // only for video
+              VMR9Util.g_vmr9.EVRProvidePlaybackRate((double)value);
             if (iSpeed != value)
             {
               _usingFastSeeking = true;
