@@ -43,16 +43,7 @@ namespace TvPlugin
   [PluginIcons("TvPlugin.Radio.gif", "TvPlugin.Radio_disabled.gif")]
   public class Radio : GUIInternalWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
-    #region constants
-
-    private const int WM_POWERBROADCAST = 0x0218;
-    private const int PBT_APMQUERYSUSPEND = 0x0000;
-    private const int PBT_APMQUERYSTANDBY = 0x0001;
-    private const int PBT_APMSUSPEND = 0x0004;
-    private const int PBT_APMSTANDBY = 0x0005;
-    private const int PBT_APMRESUMESUSPEND = 0x0007;
-    private const int PBT_APMRESUMESTANDBY = 0x0008;
-
+    #region constants    
     #endregion
 
     #region enums
@@ -75,13 +66,13 @@ namespace TvPlugin
 
     #endregion
 
-    #region Base variabeles
+    #region Base variables
 
     private View currentView = View.List;
     private SortMethod currentSortMethod = SortMethod.Number;
     private bool sortAscending = true;
     private readonly DirectoryHistory directoryHistory = new DirectoryHistory();
-    private string currentFolder;
+    private string currentFolder = null;
     private string lastFolder = "..";
     private int selectedItemIndex = -1;
     private bool hideAllChannelsGroup = false;
@@ -100,182 +91,14 @@ namespace TvPlugin
 
     #endregion
 
-    //heartbeat related stuff
-    private const int HEARTBEAT_INTERVAL = 5; //seconds
-    private Thread heartBeatTransmitterThread;
-
     public Radio()
     {
       GetID = (int) Window.WINDOW_RADIO;
-      LoadSettings();
-      startHeartBeatThread();
-
-      //Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
-      g_Player.PlayBackStopped += g_Player_PlayBackStopped;
-    }
-
-    private void OnSuspend()
-    {
-      Log.Debug("Radio.OnSuspend()");
-
-      try
-      {
-        if (TVHome.Card.IsTimeShifting)
-        {
-          TVHome.Card.User.Name = new User().Name;
-          TVHome.Card.StopTimeShifting();
-        }
-        stopHeartBeatThread();
-      }
-      catch
-      {
-      }
-
-      //_resumed = false;
-    }
-
-    private static void OnResume()
-    {
-      Log.Debug("Radio.OnResume()");
-      // _resumed = true;
-    }
-
-    public bool WndProc(ref Message msg)
-    {
-      if (msg.Msg == WM_POWERBROADCAST)
-      {
-        switch (msg.WParam.ToInt32())
-        {
-          case PBT_APMSTANDBY:
-            Log.Info("Radio.WndProc(): Windows is going to standby");
-            OnSuspend();
-            break;
-          case PBT_APMSUSPEND:
-            Log.Info("Radio.WndProc(): Windows is suspending");
-            OnSuspend();
-            break;
-          case PBT_APMQUERYSUSPEND:
-          case PBT_APMQUERYSTANDBY:
-            Log.Info("Radio.WndProc(): Windows is going into powerstate (hibernation/standby)");
-            break;
-          case PBT_APMRESUMESUSPEND:
-            Log.Info("Radio.WndProc(): Windows has resumed from hibernate mode");
-            OnResume();
-            break;
-          case PBT_APMRESUMESTANDBY:
-            Log.Info("Radio.WndProc(): Windows has resumed from standby mode");
-            OnResume();
-            break;
-        }
-        return true;
-      }
-      return false;
-    }
-
-    /*void Application_ApplicationExit(object sender, EventArgs e)
-    {
-      try
-      {
-        if (TVHome.Card.IsTimeShifting)
-        {
-          if (!TVHome.Card.IsRecording)
-          {
-            TVHome.Card.User.Name = new User().Name;
-            TVHome.Card.StopTimeShifting();
-          }
-        }
-        stopHeartBeatThread();
-      }
-      catch (Exception)
-      {
-      }
-    }*/
-
-
-    private static void HeartBeatTransmitter()
-    {
-      // when debugging we want to disable heartbeats
-
-#if DEBUG
-      return;
-#endif
-
-      while (true)
-      {
-        if (TVHome.Connected && TVHome.Card.IsTimeShifting)
-        {
-          // send heartbeat to tv server each 5 sec.
-          // this way we signal to the server that we are alive thus avoid being kicked.
-          // Log.Debug("Radio: sending HeartBeat signal to server.");
-          try
-          {
-            RemoteControl.Instance.HeartBeat(TVHome.Card.User);
-          }
-          catch (Exception e)
-          {
-            Log.Error("Radio: failed sending HeartBeat signal to server. ({0})", e.Message);
-          }
-        }
-        Thread.Sleep(HEARTBEAT_INTERVAL*1000); //sleep for 5 secs. before sending heartbeat again
-      }
-    }
-
-    private void startHeartBeatThread()
-    {
-      // setup heartbeat transmitter thread.						
-      // thread already running, then leave it.
-      if (heartBeatTransmitterThread != null)
-      {
-        if (heartBeatTransmitterThread.IsAlive)
-        {
-          return;
-        }
-      }
-      Log.Debug("Radio: HeartBeat Transmitter started.");
-      heartBeatTransmitterThread = new Thread(HeartBeatTransmitter);
-      //GEMX 01.04.08: Better debuggin plus IsBackground=true fixes MP not closing correctly if TvService is not running
-      heartBeatTransmitterThread.IsBackground = true;
-      heartBeatTransmitterThread.Name = "TvClient-Radio: HeartBeat transmitter thread";
-      heartBeatTransmitterThread.Start();
-    }
-
-    private void stopHeartBeatThread()
-    {
-      if (heartBeatTransmitterThread != null)
-      {
-        if (heartBeatTransmitterThread.IsAlive)
-        {
-          Log.Debug("Radio: HeartBeat Transmitter stopped.");
-          heartBeatTransmitterThread.Abort();
-        }
-      }
-    }
-
-    private static void g_Player_PlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
-    {
-      if (type == g_Player.MediaType.Radio)
-      {
-        VirtualCard card = TVHome.Card;
-        if (card == null)
-        {
-          return;
-        }
-
-        if (card.IsTimeShifting && card.Channel != null)
-        {
-          if (card.Channel.IsRadio)
-          {
-            card.StopTimeShifting();
-          }
-        }
-      }
     }
 
     public override bool Init()
-    {
-      currentFolder = null;
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\MyRadio.xml");
-      return bResult;
+    {      
+      return Load(GUIGraphicsContext.Skin + @"\MyRadio.xml");
     }
 
     #region Serialisation
