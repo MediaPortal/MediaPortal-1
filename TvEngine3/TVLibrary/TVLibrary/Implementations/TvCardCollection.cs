@@ -27,6 +27,7 @@ using TvLibrary.Implementations.Analog;
 using TvLibrary.Implementations.RadioWebStream;
 using DirectShowLib;
 using DirectShowLib.BDA;
+using Microsoft.Win32;
 
 namespace TvLibrary.Implementations
 {
@@ -237,15 +238,15 @@ namespace TvLibrary.Implementations
         for (int i = 0; i < devices.Length; i++)
         {
           bool connected = false;
+          bool isCablePreferred = false;
           string name = devices[i].Name ?? "unknown";
           name = name.ToLowerInvariant();
           Log.Log.WriteFile("Found card:{0}", name);
-          //silicondust work-around for dvb type detection issue.
+          //silicondust work-around for dvb type detection issue. generic provider would always use dvb-t
           if (name.Contains("silicondust hdhomerun tuner"))
           {
-            Log.Log.WriteFile("silicondust hdhomerun detected - using old detection method");
-            //use the old manual method
-            genericNP = false;
+            isCablePreferred = CheckHDHomerunCablePrefered(name);
+            Log.Log.WriteFile("silicondust hdhomerun detected - prefer cable mode: {0}", isCablePreferred);
           }
           IBaseFilter tmp;
           graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, name, out tmp);
@@ -266,14 +267,14 @@ namespace TvLibrary.Implementations
               {
                 Log.Log.Debug("Detecting type by MSNP {0}: {1}", n, pguidNetworkTypes[n]);
                 //test the first found guid to determine the DVB card type
-                if (pguidNetworkTypes[n] == (typeof(DVBTNetworkProvider).GUID))
+                if (pguidNetworkTypes[n] == (typeof(DVBTNetworkProvider).GUID) && !isCablePreferred)
                 {
                   Log.Log.WriteFile("Detected DVB-T* card:{0}", name);
                   TvCardDVBT dvbtCard = new TvCardDVBT(_epgEvents, devices[i]);
                   _cards.Add(dvbtCard);
                   connected = true;
                 }
-                else if (pguidNetworkTypes[n] == (typeof(DVBSNetworkProvider).GUID))
+                else if (pguidNetworkTypes[n] == (typeof(DVBSNetworkProvider).GUID) && !isCablePreferred)
                 {
                   Log.Log.WriteFile("Detected DVB-S* card:{0}", name);
                   TvCardDVBS dvbsCard = new TvCardDVBS(_epgEvents, devices[i]);
@@ -287,7 +288,7 @@ namespace TvLibrary.Implementations
                   _cards.Add(dvbcCard);
                   connected = true;
                 }
-                else if (pguidNetworkTypes[n] == (typeof(ATSCNetworkProvider).GUID))
+                else if (pguidNetworkTypes[n] == (typeof(ATSCNetworkProvider).GUID) && !isCablePreferred)
                 {
                   Log.Log.WriteFile("Detected ATSC* card:{0}", name);
                   TvCardATSC dvbsCard = new TvCardATSC(_epgEvents, devices[i]);
@@ -368,5 +369,29 @@ namespace TvLibrary.Implementations
         return _cards;
       }
     }
+
+    #region Hardware specific functions
+    
+    private bool CheckHDHomerunCablePrefered(String cardName)
+    {
+      try
+      {
+        // tuner name is referenced in registry: silicondust hdhomerun tuner 1210551e-0
+        //          HKEY_LOCAL_MACHINE\SOFTWARE\Silicondust\HDHomeRun\Tuners\1210551E-0
+        String tunerName = cardName.Replace("silicondust hdhomerun tuner ", "");
+        using (RegistryKey registryKey = Registry.LocalMachine.OpenSubKey(String.Format(@"SOFTWARE\Silicondust\HDHomeRun\Tuners\{0}", tunerName)))
+        {
+          if (registryKey != null)
+          {
+            String source = registryKey.GetValue("Source").ToString();
+            return source == "Digital Cable";
+          }
+        }
+      }
+      catch { }
+      return false;
+    }
+
+    #endregion
   }
 }
