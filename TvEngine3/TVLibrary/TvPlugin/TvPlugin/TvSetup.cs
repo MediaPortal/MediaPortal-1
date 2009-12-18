@@ -114,6 +114,10 @@ namespace TvPlugin
         try
         {
           int cards = RemoteControl.Instance.Cards;
+          // Need to setup the database connection string here
+          // before checking for database connectivity,
+          // otherwhise we will check for the wrong database provider
+          TVHome.Navigator.SetupDatabaseConnection();
         }
         catch (Exception)
         {

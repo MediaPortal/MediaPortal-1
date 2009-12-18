@@ -108,38 +108,43 @@ namespace TvPlugin
       ReLoad();
     }
 
+    public void SetupDatabaseConnection()
+    {
+      string connectionString, provider;
+      if (!TVHome.Connected)
+      {
+        return;
+      }
+
+      RemoteControl.Instance.GetDatabaseConnectionString(out connectionString, out provider);
+
+      try
+      {
+        XmlDocument doc = new XmlDocument();
+        doc.Load(Config.GetFile(Config.Dir.Config, "gentle.config"));
+        XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
+        XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
+        XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
+        node.InnerText = connectionString;
+        nodeProvider.InnerText = provider;
+        doc.Save(Config.GetFile(Config.Dir.Config, "gentle.config"));
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Unable to create/modify gentle.config {0},{1}", ex.Message, ex.StackTrace);
+      }
+
+      Log.Info("ChannelNavigator::Reload()");
+      ProviderFactory.ResetGentle(true);
+      ProviderFactory.SetDefaultProviderConnectionString(connectionString);
+    }
+
     public void ReLoad()
     {
       //System.Diagnostics.Debugger.Launch();
       try
-      {        
-        string connectionString, provider;        
-        if (!TVHome.Connected)
-        {
-          return;
-        }
-
-        RemoteControl.Instance.GetDatabaseConnectionString(out connectionString, out provider);
-
-        try
-        {
-          XmlDocument doc = new XmlDocument();
-          doc.Load(Config.GetFile(Config.Dir.Config, "gentle.config"));
-          XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
-          XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
-          XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
-          node.InnerText = connectionString;
-          nodeProvider.InnerText = provider;
-          doc.Save(Config.GetFile(Config.Dir.Config, "gentle.config"));
-        }
-        catch (Exception ex)
-        {
-          Log.Error("Unable to create/modify gentle.config {0},{1}", ex.Message, ex.StackTrace);
-        }
-
-        Log.Info("ChannelNavigator::Reload()");
-        ProviderFactory.ResetGentle(true);
-        ProviderFactory.SetDefaultProviderConnectionString(connectionString);
+      {
+        SetupDatabaseConnection();
         Log.Info("get channels from database");
         SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
         sb.AddConstraint(Operator.Equals, "isTv", 1);

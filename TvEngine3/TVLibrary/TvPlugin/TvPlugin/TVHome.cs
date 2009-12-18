@@ -1707,13 +1707,15 @@ namespace TvPlugin
       }
     }
 
-    private static void OnResume()
+    private void OnResume()
     {
       Log.Debug("TVHome.OnResume()");
       Connected = false;
       RemoteControl.OnRemotingDisconnected += new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
       RemoteControl.OnRemotingConnected += new RemoteControl.RemotingConnectedDelegate(RemoteControl_OnRemotingConnected);
-      HandleWakeUpTvServer();      
+      HandleWakeUpTvServer();
+      startHeartBeatThread();
+      _notifyManager.Start();
       _suspended = false;
     }
 
