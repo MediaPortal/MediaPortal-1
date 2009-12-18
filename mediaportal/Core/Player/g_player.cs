@@ -582,8 +582,7 @@ namespace MediaPortal.Player
           return;
         }
 
-        // Fix me - causes crash in BaseTSReaderPlayer.cs
-        //_player.Speed = 1;
+        _player.Speed = 1;
         GUIGraphicsContext.ShowBackground = true;
         if (!keepTimeShifting && !keepExclusiveModeOn)
         {
