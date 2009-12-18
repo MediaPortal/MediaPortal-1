@@ -1360,7 +1360,7 @@ namespace TvPlugin
             channel = gm.ReferencedChannel();
           }
         }
-      }
+      }      
 
       if (channel != null)
       {
@@ -1672,9 +1672,9 @@ namespace TvPlugin
         Thread.Sleep(100);
         waits++;
       }
+
       if (!_playbackStopped)
-      {
-        //Log.Debug("TVHome.OnPageLoad(): timeshifting has started - waits: {0}", waits);
+     {      
         g_Player.ShowFullScreenWindow();
       }
     }
@@ -1682,6 +1682,9 @@ namespace TvPlugin
     private void OnSuspend()
     {
       Log.Debug("TVHome.OnSuspend()");
+
+      RemoteControl.OnRemotingDisconnected -= new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
+      RemoteControl.OnRemotingConnected -= new RemoteControl.RemotingConnectedDelegate(RemoteControl_OnRemotingConnected);
 
       try
       {
@@ -1692,7 +1695,7 @@ namespace TvPlugin
         }
         _notifyManager.Stop();
         stopHeartBeatThread();
-        Connected = false;
+        //Connected = false;
         _ServerNotConnectedHandled = false;
       }
       catch (Exception)
@@ -1704,11 +1707,13 @@ namespace TvPlugin
       }
     }
 
-    private void OnResume()
+    private static void OnResume()
     {
       Log.Debug("TVHome.OnResume()");
-      HandleWakeUpTvServer();
-
+      Connected = false;
+      RemoteControl.OnRemotingDisconnected += new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
+      RemoteControl.OnRemotingConnected += new RemoteControl.RemotingConnectedDelegate(RemoteControl_OnRemotingConnected);
+      HandleWakeUpTvServer();      
       _suspended = false;
     }
 
