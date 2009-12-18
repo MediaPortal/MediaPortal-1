@@ -871,7 +871,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public string Description
     {
-      get { return "SoundGraph iMON USB VFD/LCD Plugin v21_10_2009 - build 3"; }
+      get { return "SoundGraph iMON USB VFD/LCD Plugin v29_11_2009"; }
     }
 
     public string ErrorMessage
