@@ -54,7 +54,7 @@ namespace DeployVersionSVN
         {
           string svn = proc.StandardOutput.ReadToEnd();
 
-          Regex tortoiseRegex = new Regex("Update.+ (?<version>[0-9]+)");
+          Regex tortoiseRegex = new Regex("Last committed at revision.+ (?<version>[0-9]+)");
 
           string ver = tortoiseRegex.Match(svn).Groups["version"].Value;
           if (String.IsNullOrEmpty(ver))
