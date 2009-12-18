@@ -97,6 +97,7 @@ namespace MediaPortal.Plugins.Process
     private List<IWakeupHandler> _wakeupHandlers;
     private bool _idle;
     private bool _shutdownInitiated = false;
+    private bool _isSuspendInProgress = false;
 
     /// <summary>
     /// Indicating whether the PowerScheduler is in standby-mode.
@@ -247,6 +248,11 @@ namespace MediaPortal.Plugins.Process
       return _wakeupHandlers.Contains(handler);
     }
 
+    public bool IsSuspendInProgress()
+    {
+      return _isSuspendInProgress; // || RemotePowerControl.Isconnected && RemotePowerControl.Instance.IsSuspendInProgress();
+    }
+
     public void SuspendSystem(string source, bool force)
     {
       switch (_settings.ShutdownMode)
@@ -311,6 +317,7 @@ namespace MediaPortal.Plugins.Process
             string res = xmlwriter.GetValueAsString("psclientplugin", "nextwakeup", DateTime.MaxValue.ToString());
           }
 
+          _isSuspendInProgress = true;
           Log.Debug("PSClientPlugin: Informing handlers about UserShutdownNow");
           UserShutdownNow();
 
@@ -321,6 +328,7 @@ namespace MediaPortal.Plugins.Process
         }
         catch (Exception e)
         {
+          _isSuspendInProgress = false;
           Log.Error("PSClientPlugin: SuspendSystem failed! {0} {1}", e.Message, e.StackTrace);
         }
       }
@@ -372,7 +380,7 @@ namespace MediaPortal.Plugins.Process
     protected void SafeExitWindowsThread(RestartOptions how, bool force, WindowsController.AfterExitWindowsHandler after)
     {
       Log.Debug("PSClientPlugin: Shutdown thread is running: {0}, force: {1}", how, force);
-
+      _isSuspendInProgress = true;
       Log.Debug("PSClientPlugin: Informing handlers about UserShutdownNow");
       UserShutdownNow();
 
@@ -395,6 +403,7 @@ namespace MediaPortal.Plugins.Process
         {
           after(how, force, false);
         }
+        _isSuspendInProgress = false;
         return;
       }
 
@@ -413,6 +422,7 @@ namespace MediaPortal.Plugins.Process
     protected void SafeExitWindowsThreadAfter(RestartOptions how, bool force, bool result,
                                               WindowsController.AfterExitWindowsHandler after)
     {
+      _isSuspendInProgress = false;
       lock (this)
       {
         if (!result)

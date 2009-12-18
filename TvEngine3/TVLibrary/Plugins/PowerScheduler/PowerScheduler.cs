@@ -375,6 +375,16 @@ namespace TvEngine.PowerScheduler
     }
 
     /// <summary>
+    /// Checks if a suspend request is in progress
+    /// </summary>
+    /// <returns>is the system currently trying to suspend?</returns>
+    public bool IsSuspendInProgress()
+    {
+      return _isSuspendInProgress;
+    }
+
+
+    /// <summary>
     /// Used to avoid concurrent suspend requests which could result in a suspend - user resumes - immediately suspends.
     /// </summary>
     private DateTime _ignoreSuspendUntil = DateTime.MinValue;
@@ -467,7 +477,7 @@ namespace TvEngine.PowerScheduler
     protected void SuspendSystemThread(string source, RestartOptions how, bool force)
     {
       Log.Debug("PowerScheduler: Shutdown thread is running: {0}, force: {1}", how, force);
-      
+      _isSuspendInProgress = true;
       Log.Debug("PowerScheduler: Informing handlers about UserShutdownNow");
       UserShutdownNow();
 
@@ -486,6 +496,7 @@ namespace TvEngine.PowerScheduler
           // allow further requests
           _ignoreSuspendUntil = DateTime.MinValue;
         }
+        _isSuspendInProgress = false;
         return;
       }
       
@@ -509,6 +520,8 @@ namespace TvEngine.PowerScheduler
 
     protected void SuspendSystemThreadAfter(RestartOptions how, bool force, bool result)
     {
+      _isSuspendInProgress = false;
+
       lock (this)
       {
         if (!result)
@@ -1232,6 +1245,7 @@ namespace TvEngine.PowerScheduler
     private String _currentDisAllowShutdownHandler = "";
     private bool _denySuspendQuery = true;
     private int _querySuspendFailed = 0;
+    private bool _isSuspendInProgress = false;
 
     public void GetCurrentState(bool refresh, out bool unattended, out bool disAllowShutdown, out String disAllowShutdownHandler, out DateTime nextWakeupTime, out String nextWakeupHandler)
     {

@@ -446,15 +446,6 @@ namespace TvEngine
 
       if (importXML || importLST)
       {
-        // Allow for deleting of all existing programs before adding the new ones. 
-        // Already imported programs might incorrect data depending on the grabber & setup
-        TvBusinessLayer layer = new TvBusinessLayer();
-        if (layer.GetSetting("xmlTvDeleteBeforeImport", "true").Value == "true")
-        {
-          SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Program));
-          SqlStatement stmt = sb.GetStatement();
-          stmt.Execute();
-        }
         ThreadParams tp = new ThreadParams();
         tp._importDate = DateTime.MinValue;
         tp._importLST = importLST;
@@ -711,16 +702,6 @@ namespace TvEngine
         }
       }
 
-      // Allow for deleting of all existing programs before adding the new ones. 
-      // Already imported programs might have incorrect data depending on the grabber & setup
-      // f.e when grabbing programs many days ahead
-      if (layer.GetSetting("xmlTvDeleteBeforeImport", "true").Value == "true")
-      {
-        SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Program));
-        SqlStatement stmt = sb.GetStatement();
-        stmt.Execute();
-      }
-      
       _workerThreadRunning = true;
       ThreadParams param = new ThreadParams();
       param._importXML = importXML;
@@ -750,11 +731,26 @@ namespace TvEngine
 
       try
       {
+        if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>() &&
+            GlobalServiceProvider.Instance.Get<IPowerScheduler>().IsSuspendInProgress())
+        {
+          return;
+        }
         ThreadParams param = (ThreadParams)aparam;
 
         Setting setting;
         TvBusinessLayer layer = new TvBusinessLayer();
         string folder = layer.GetSetting("xmlTv", DefaultOutputFolder).Value;
+
+        // Allow for deleting of all existing programs before adding the new ones. 
+        // Already imported programs might have incorrect data depending on the grabber & setup
+        // f.e when grabbing programs many days ahead
+        if (layer.GetSetting("xmlTvDeleteBeforeImport", "true").Value == "true")
+        {
+          SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Program));
+          SqlStatement stmt = sb.GetStatement();
+          stmt.Execute();
+        }
 
         int numChannels = 0, numPrograms = 0;
         string errors = "";
@@ -834,6 +830,8 @@ namespace TvEngine
         setting = layer.GetSetting("xmlTvLastUpdate", "");
         setting.Value = param._importDate.ToString();
         setting.Persist();
+        Log.Info("Xmltv: waiting for database to finish inserting imported programs.");
+        layer.WaitForInsertPrograms();
       }
       finally
       {

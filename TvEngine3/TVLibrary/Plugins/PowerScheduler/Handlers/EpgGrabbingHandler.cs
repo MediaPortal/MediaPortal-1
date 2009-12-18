@@ -197,6 +197,8 @@ namespace TvEngine.PowerScheduler.Handlers
             GrabberSource s = _extGrabbers[o];
             if (s.Timeout < DateTime.Now)
             {
+              Log.Debug("PowerScheduler: EPG source '{0}' timed out, setting allow-standby = true for this source.",
+                        s.Name);
               // timeout passed, standby is allowed
               s.SetStandbyAllowed(true, 0);
 

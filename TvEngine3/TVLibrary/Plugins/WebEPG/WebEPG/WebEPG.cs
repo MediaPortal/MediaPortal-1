@@ -352,6 +352,8 @@ namespace MediaPortal.EPG
         }
       }
 
+      _status.Status = "Finishing...";
+      if (ShowProgress != null) ShowProgress(_status);
       //xmltv.Close();
       _epgDataSink.Close();
 

@@ -232,7 +232,7 @@ namespace TvDatabase
       dbChannel.EpgHasGaps = hasGaps;
       dbChannel.Persist();
 
-      _layer.StartResetProgramStatesThread(System.Threading.ThreadPriority.Lowest);
+      //_layer.StartResetProgramStatesThread(System.Threading.ThreadPriority.Lowest);
 
       Schedule.SynchProgramStatesForAll();
 

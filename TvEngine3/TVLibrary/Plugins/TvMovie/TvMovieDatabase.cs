@@ -452,7 +452,8 @@ namespace TvEngine
               OnStationsChanged(counter, maximum, display);
             counter++;
 
-            Log.Info("TVMovie: Importing {3} time frame(s) for MP channel [{0}/{1}] - {2}", Convert.ToString(counter), Convert.ToString(maximum), display, Convert.ToString(channelNames.Count));
+            Log.Info("TVMovie: Importing {3} time frame(s) for MP channel [{0}/{1}] - {2}", Convert.ToString(counter),
+                     Convert.ToString(maximum), display, Convert.ToString(channelNames.Count));
 
             _tvmEpgProgs.Clear();
 
@@ -476,6 +477,13 @@ namespace TvEngine
           }
         }
       }
+      if (!useGentle)
+      {
+        Log.Debug("TVMovie: Waiting for database to be updated...");
+        TvBLayer.WaitForInsertPrograms();
+        Log.Debug("TVMovie: Database update finished.");
+      }
+
       if (OnStationsChanged != null)
         OnStationsChanged(maximum, maximum, "Import done");
 

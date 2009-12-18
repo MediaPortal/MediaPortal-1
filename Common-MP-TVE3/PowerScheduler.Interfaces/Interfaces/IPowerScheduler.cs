@@ -119,6 +119,13 @@ namespace TvEngine.PowerScheduler.Interfaces
     void GetCurrentState(bool refresh, out bool unattended, out bool disAllowShutdown,
                          out String disAllowShutdownHandler, out DateTime nextWakeupTime, out String nextWakeupHandler);
 
+
+    /// <summary>
+    /// Checks if a suspend request is in progress
+    /// </summary>
+    /// <returns>is the system currently trying to suspend?</returns>
+    bool IsSuspendInProgress();
+
     /// <summary>
     /// Provides access to PowerScheduler's settings
     /// </summary>

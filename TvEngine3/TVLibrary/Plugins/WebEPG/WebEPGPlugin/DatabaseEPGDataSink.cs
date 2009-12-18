@@ -175,6 +175,9 @@ namespace MediaPortal.WebEPG
 
     void IEpgDataSink.Close()
     {
+      Log.Info("WebEPG: Waiting for database to be updated...");
+      layer.WaitForInsertPrograms();
+      Log.Info("WebEPG: Database update finished.");
     }
 
     void IEpgDataSink.WriteChannel(string id, string name)

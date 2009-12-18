@@ -47,6 +47,7 @@ using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using StatementType = Gentle.Framework.StatementType;
+using ThreadState = System.Threading.ThreadState;
 
 #endregion
 
@@ -54,16 +55,28 @@ namespace TvDatabase
 {
   public class TvBusinessLayer
   {
+    #region delegates
+
+    private delegate void InsertProgramsDelegate(ImportParams aImportParam);
+
+    #endregion
+
+
     #region vars
 
-    private Thread _resetProgramStatesThread = null;
+    private static Thread _insertProgramsThread = null;
 
-    private readonly object SingleInsert = new object();
-    private readonly object SingleProgramStateUpdate = new object();
+    private static Queue<ImportParams> _programInsertsQueue = new Queue<ImportParams>();
+    private static AutoResetEvent _pendingProgramInserts = new AutoResetEvent(false);
+
+    //private Thread _resetProgramStatesThread = null;
+
+    //private readonly object SingleInsert = new object();
+    //private readonly object SingleProgramStateUpdate = new object();
 
     // maximum hours to keep old program info
     private int _EpgKeepDuration = 0;
-    private DateTime _lastProgramUpdate = DateTime.MinValue; //when was the last time we changed anything in the program table ?
+    //private DateTime _lastProgramUpdate = DateTime.MinValue; //when was the last time we changed anything in the program table ?
 
     public int EpgKeepDuration
     {
@@ -97,7 +110,7 @@ namespace TvDatabase
       // Card(devicePath, name, priority, grabEPG, lastEpgGrab, recordingFolder, idServer, enabled, camType, timeshiftingFolder, recordingFormat, decryptLimit)
       //
       Card newCard = new Card(devicePath, name, 1, true, new DateTime(2000, 1, 1), "", server.IdServer, true, 0, "", 0,
-                              0,(int)TvDatabase.DbNetworkProvider.Generic);
+                              0, (int)TvDatabase.DbNetworkProvider.Generic);
       newCard.Persist();
       return newCard;
     }
@@ -1275,15 +1288,15 @@ namespace TvDatabase
 
     public string EscapeSQLString(string original)
     {
-        string provider = ProviderFactory.GetDefaultProvider().Name.ToLowerInvariant();
-        if (provider == "mysql")
-        {
-            return original.Replace("'", "\\'");
-        }
-        else
-        {
-            return original.Replace("'", "''");
-        }
+      string provider = ProviderFactory.GetDefaultProvider().Name.ToLowerInvariant();
+      if (provider == "mysql")
+      {
+        return original.Replace("'", "\\'");
+      }
+      else
+      {
+        return original.Replace("'", "''");
+      }
     }
 
     public void RemoveOldPrograms()
@@ -1576,8 +1589,8 @@ namespace TvDatabase
                                 Convert.ToDateTime(prog["endTime"]),
                                 Convert.ToString(prog["title"]),
                                 Convert.ToString(prog["description"]),
-                                Convert.ToString(prog["genre"]),                                
-                                (Program.ProgramState) Convert.ToInt32(prog["state"]),
+                                Convert.ToString(prog["genre"]),
+                                (Program.ProgramState)Convert.ToInt32(prog["state"]),
                                 Convert.ToDateTime(prog["originalAirDate"]),
                                 Convert.ToString(prog["seriesNum"]),
                                 Convert.ToString(prog["episodeNum"]),
@@ -1771,7 +1784,7 @@ namespace TvDatabase
       SqlSelectCommand.AppendFormat("where endTime > '{0}'", DateTime.Now.ToString(GetDateTimeString(), mmddFormat));
       if (searchCriteria.Length > 0)
       {
-          SqlSelectCommand.AppendFormat("and description like '{0}%' ", EscapeSQLString(searchCriteria));
+        SqlSelectCommand.AppendFormat("and description like '{0}%' ", EscapeSQLString(searchCriteria));
       }
       SqlSelectCommand.Append("and c.visibleInGuide = 1 order by description, startTime");
       SqlStatement stmt = new SqlBuilder(StatementType.Select, typeof(Program)).GetStatement(true);
@@ -1975,9 +1988,9 @@ namespace TvDatabase
           if (nowStart > DateTime.Now)
           {
             NowAndNext p = new NowAndNext(idChannel, SqlDateTime.MinValue.Value, SqlDateTime.MinValue.Value,
-                                          string.Empty, nowTitle, -1, nowidProgram,episodeName,string.Empty,
-                                          seriesNum,string.Empty,episodeNum,string.Empty,
-                                          episodePart,string.Empty);
+                                          string.Empty, nowTitle, -1, nowidProgram, episodeName, string.Empty,
+                                          seriesNum, string.Empty, episodeNum, string.Empty,
+                                          episodePart, string.Empty);
             progList[idChannel] = p;
             continue;
           }
@@ -1994,16 +2007,16 @@ namespace TvDatabase
               string nextEpisodeNum = (string)dataSet.Tables[0].Rows[j + 1]["episodeNum"];
               string nextEpisodePart = (string)dataSet.Tables[0].Rows[j + 1]["episodePart"];
               NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nowTitle, nextTitle, nowidProgram,
-                                            nextidProgram,episodeName,nextEpisodeName,seriesNum,nextSeriesNum,
-                                            episodeNum,nextEpisodeNum,episodePart,nextEpisodePart);
+                                            nextidProgram, episodeName, nextEpisodeName, seriesNum, nextSeriesNum,
+                                            episodeNum, nextEpisodeNum, episodePart, nextEpisodePart);
               progList[idChannel] = p;
             }
             else
             {
               // no "next" info because of holes in EPG data - we want the "now" info nevertheless
               NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nowTitle, string.Empty, nowidProgram, -1,
-                                            string.Empty,string.Empty,string.Empty,string.Empty,string.Empty,
-                                            string.Empty,string.Empty,string.Empty);
+                                            string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
+                                            string.Empty, string.Empty, string.Empty);
               progList[idChannel] = p;
             }
           }
@@ -2018,6 +2031,7 @@ namespace TvDatabase
     {
       public List<Program> ProgramList;
       public string ConnectString;
+      public ThreadPriority Priority;
       public int SleepTime;
     } ;
 
@@ -2034,10 +2048,7 @@ namespace TvDatabase
     {
       try
       {
-        IGentleProvider prov = ProviderFactory.GetDefaultProvider();
-        string provider = prov.Name.ToLowerInvariant();
-        string defaultConnectString = prov.ConnectionString;
-        // Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString;
+
         int sleepTime = 10;
 
         switch (aThreadPriority)
@@ -2061,28 +2072,26 @@ namespace TvDatabase
 
         ImportParams param = new ImportParams();
         param.ProgramList = aProgramList;
-        param.ConnectString = defaultConnectString;
         param.SleepTime = sleepTime;
-        Thread importThread;               
+        param.Priority = aThreadPriority;
 
-        // TODO: /!\ Temporarily turn of index rebuilding and other stuff that would speed up bulk inserts
-        switch (provider)
+
+
+        lock (_programInsertsQueue)
         {
-          case "mysql":
-            importThread = new Thread(ImportMySqlThread);
-            importThread.Priority = aThreadPriority;
-            importThread.Name = "MySQL EPG importer";
-            importThread.Start(param);
-            break;
-          case "sqlserver":
-            importThread = new Thread(ImportSqlServerThread);
-            importThread.Priority = aThreadPriority;
-            importThread.Name = "MSSQL EPG importer";
-            importThread.Start(param);
-            break;
-          default:
-            Log.Info("BusinessLayer: InsertPrograms unknown provider - {0}", provider);
-            break;
+          _programInsertsQueue.Enqueue(param);
+          _pendingProgramInserts.Set();
+
+          if (_insertProgramsThread == null)
+          {
+            _insertProgramsThread = new Thread(InsertProgramsThreadStart)
+                                      {
+                                        Priority = ThreadPriority.Lowest,
+                                        Name = "SQL EPG importer",
+                                        IsBackground = true
+                                      };
+            _insertProgramsThread.Start();
+          }
         }
 
         return aProgramList.Count;
@@ -2094,67 +2103,157 @@ namespace TvDatabase
       }
     }
 
-    public void StartResetProgramStatesThread(ThreadPriority aThreadPriority)
+    public void WaitForInsertPrograms(int millisecondsTimeout)
     {
-      if (_resetProgramStatesThread == null || !_resetProgramStatesThread.IsAlive)
-      {        
-        _resetProgramStatesThread = new Thread(ProgramStatesThread);
-        _resetProgramStatesThread.Priority = aThreadPriority;
-        _resetProgramStatesThread.Name = "Program states thread";
-        _resetProgramStatesThread.IsBackground = true;
-        _resetProgramStatesThread.Start();
-      }            
+      Thread currentInsertThread = _insertProgramsThread;
+      if (currentInsertThread != null && (currentInsertThread.ThreadState & ThreadState.Unstarted) != ThreadState.Unstarted)
+        currentInsertThread.Join(millisecondsTimeout);
     }
 
-    private void ProgramStatesThread()
+    public void WaitForInsertPrograms()
     {
-      lock (SingleProgramStateUpdate)
+      Thread currentInsertThread = _insertProgramsThread;
+      if (currentInsertThread != null && (currentInsertThread.ThreadState & ThreadState.Unstarted) != ThreadState.Unstarted)
+        currentInsertThread.Join();
+    }
+
+    //public void StartResetProgramStatesThread(ThreadPriority aThreadPriority)
+    //{
+    //  if (_resetProgramStatesThread == null || !_resetProgramStatesThread.IsAlive)
+    //  {
+    //    _resetProgramStatesThread = new Thread(ProgramStatesThread);
+    //    _resetProgramStatesThread.Priority = aThreadPriority;
+    //    _resetProgramStatesThread.Name = "Program states thread";
+    //    _resetProgramStatesThread.IsBackground = true;
+    //    _resetProgramStatesThread.Start();
+    //  }
+    //}
+
+    //private void ProgramStatesThread()
+    //{
+    //  lock (SingleProgramStateUpdate)
+    //  {
+    //    if (_lastProgramUpdate == DateTime.MinValue)
+    //    {
+    //      return;
+    //    }
+
+    //    while (true)
+    //    {
+    //      System.TimeSpan ts = DateTime.Now - _lastProgramUpdate;
+
+    //      Log.Info("BusinessLayer: ProgramStatesThread waiting...{0} sec", ts.TotalSeconds);
+
+    //      if (ts.TotalSeconds >= 60) //if more than 60 secs. has passed since last update to the program table, then lets do the program states
+    //      {
+    //        Log.Info("BusinessLayer: ProgramStatesThread - done waiting. calling SynchProgramStatesForAll");
+    //        _lastProgramUpdate = DateTime.MinValue;
+    //        Schedule.SynchProgramStatesForAll();
+    //        return;
+    //      }
+    //      else
+    //      {
+    //        Thread.Sleep(1000);
+    //      }
+    //    }
+    //  }
+    //}
+
+    //private void ImportMySqlThread(object aImportParam)
+    //{
+    //  lock (SingleInsert)
+    //  {
+    //    ImportParams MyParams = (ImportParams)aImportParam;
+    //    InsertMySql(MyParams);
+    //    _lastProgramUpdate = DateTime.Now;
+    //    StartResetProgramStatesThread(ThreadPriority.BelowNormal);
+    //  }
+    //}
+
+    //private void ImportSqlServerThread(object aImportParam)
+    //{
+    //  lock (SingleInsert)
+    //  {
+    //    ImportParams MyParams = (ImportParams)aImportParam;
+    //    InsertSqlServer(MyParams);
+    //    _lastProgramUpdate = DateTime.Now;
+    //    StartResetProgramStatesThread(ThreadPriority.BelowNormal);
+    //  }
+    //}
+
+    private static void InsertProgramsThreadStart()
+    {
+      try
       {
-        if (_lastProgramUpdate == DateTime.MinValue)
+        Log.Debug("BusinessLayer: InsertProgramsThread started");
+
+        IGentleProvider prov = ProviderFactory.GetDefaultProvider();
+        string provider = prov.Name.ToLowerInvariant();
+        string defaultConnectString = prov.ConnectionString;
+        DateTime lastImport = DateTime.Now;
+        InsertProgramsDelegate insertProgams;
+
+        switch (provider)
         {
-          return;
-        }        
+          case "mysql":
+            insertProgams = InsertMySql;
+            break;
+          case "sqlserver":
+            insertProgams = InsertSqlServer;
+            break;
+          default:
+            Log.Info("BusinessLayer: InsertPrograms unknown provider - {0}", provider);
+            return;
+        }
 
         while (true)
         {
-          System.TimeSpan ts = DateTime.Now - _lastProgramUpdate;
-
-          Log.Info("BusinessLayer: ProgramStatesThread waiting...{0} sec", ts.TotalSeconds);
-
-          if (ts.TotalSeconds >= 60) //if more than 60 secs. has passed since last update to the program table, then lets do the program states
+          if (lastImport.AddSeconds(60) < DateTime.Now)
           {
-            Log.Info("BusinessLayer: ProgramStatesThread - done waiting. calling SynchProgramStatesForAll");
-            _lastProgramUpdate = DateTime.MinValue;
+            // Done importing and 60 seconds since last import
+            // Let's update states
             Schedule.SynchProgramStatesForAll();
-            return;
+            // and exit
+            lock (_programInsertsQueue)
+            {
+              //  Has new work been queued in the meantime?
+              if (_programInsertsQueue.Count == 0)
+              {
+                Log.Debug("BusinessLayer: InsertProgramsThread exiting");
+                _insertProgramsThread = null;
+                break;
+              }
+            }
           }
-          else
+
+          _pendingProgramInserts.WaitOne(10000); // Check every 10 secs
+          while (_programInsertsQueue.Count > 0)
           {
-            Thread.Sleep(1000);
-          }          
+            try
+            {
+              ImportParams importParams;
+              lock (_programInsertsQueue)
+              {
+                importParams = _programInsertsQueue.Dequeue();
+              }
+              importParams.ConnectString = defaultConnectString;
+              Thread.CurrentThread.Priority = importParams.Priority;
+              insertProgams(importParams);
+              Log.Debug("BusinessLayer: Inserted {0} programs to the database", importParams.ProgramList.Count);
+              lastImport = DateTime.Now;
+              Thread.CurrentThread.Priority = ThreadPriority.Lowest;
+            }
+            catch (Exception ex)
+            {
+              Log.Error("BusinessLayer: InsertMySQL/InsertMSSQL caused an exception:");
+              Log.Write(ex);
+            }
+          }
         }
       }
-    }
-
-    private void ImportMySqlThread(object aImportParam)
-    {
-      lock (SingleInsert)
+      catch (Exception ex)
       {
-        ImportParams MyParams = (ImportParams)aImportParam;
-        InsertMySql(MyParams);
-        _lastProgramUpdate = DateTime.Now;
-        StartResetProgramStatesThread(ThreadPriority.BelowNormal);
-      }
-    }
-
-    private void ImportSqlServerThread(object aImportParam)
-    {
-      lock (SingleInsert)
-      {
-        ImportParams MyParams = (ImportParams)aImportParam;
-        InsertSqlServer(MyParams);
-        _lastProgramUpdate = DateTime.Now;
-        StartResetProgramStatesThread(ThreadPriority.BelowNormal);
+        Log.Error("BusinessLayer: InsertProgramsThread error - {0}, {1}", ex.Message, ex.StackTrace);
       }
     }
 
@@ -2234,7 +2333,7 @@ namespace TvDatabase
           connection.Open();
           transact = connection.BeginTransaction();
           ExecuteMySqlCommand(aImportParam.ProgramList, connection, transact, aImportParam.SleepTime);
-          transact.Commit();          
+          transact.Commit();
           //OptimizeMySql("Program");
         }
       }
@@ -2265,8 +2364,8 @@ namespace TvDatabase
           connection.Open();
           transact = connection.BeginTransaction();
           ExecuteSqlServerCommand(aImportParam.ProgramList, connection, transact, aImportParam.SleepTime);
-          transact.Commit();    
-      
+          transact.Commit();
+
         }
       }
       catch (Exception ex)
@@ -2663,7 +2762,7 @@ namespace TvDatabase
         return recordings;
       }
 
-      if (rec.ScheduleType == (int) ScheduleRecordingType.WorkingDays)
+      if (rec.ScheduleType == (int)ScheduleRecordingType.WorkingDays)
       {
         WeekEndTool weekEndTool = Setting.GetWeekEndTool();
         for (int i = 0; i < days; ++i)
@@ -2707,7 +2806,7 @@ namespace TvDatabase
         foreach (Program prog in progList)
         {
           if ((rec.IsRecordingProgram(prog, false)) &&
-              (weekEndTool.IsWeekend(prog.StartTime.DayOfWeek)) )
+              (weekEndTool.IsWeekend(prog.StartTime.DayOfWeek)))
           {
             Schedule recNew = rec.Clone();
             recNew.ScheduleType = (int)ScheduleRecordingType.Once;
