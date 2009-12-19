@@ -195,12 +195,15 @@ namespace TvControl
         // TODO: cancel the callbacks, since they are too late.
 
         if (!_isRemotingConnected)
-        {
-          _firstFailure = false;
+        {          
           if (OnRemotingDisconnected != null) //raise event
           {
-            Log.Info("RemoteControl - Disconnected");
-            OnRemotingDisconnected();
+            if (!_firstFailure)
+            {
+              Log.Info("RemoteControl - Disconnected");
+              OnRemotingDisconnected();
+            }
+            _firstFailure = false;
           }
         }
         else
