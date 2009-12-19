@@ -1638,6 +1638,7 @@ namespace MediaPortal.Player
 
       bool doFade = false;
       bool result = true;
+      Speed = 1; // Set playback Speed to normal speed
 
       try
       {

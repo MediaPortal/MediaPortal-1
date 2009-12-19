@@ -582,7 +582,6 @@ namespace MediaPortal.Player
           return;
         }
 
-        _player.Speed = 1;
         GUIGraphicsContext.ShowBackground = true;
         if (!keepTimeShifting && !keepExclusiveModeOn)
         {
