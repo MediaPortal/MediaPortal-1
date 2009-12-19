@@ -234,7 +234,12 @@ namespace TvControl
     public static bool UseIncreasedTimeoutForInitialConnection
     {
       get { return _useIncreasedTimeoutForInitialConnection; }
-      set { _useIncreasedTimeoutForInitialConnection = value; }
+      set
+      {
+        _useIncreasedTimeoutForInitialConnection = value;
+        if(value)
+          _firstFailure = true;
+      }
     }
 
     /// <summary>
