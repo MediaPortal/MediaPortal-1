@@ -166,10 +166,12 @@ namespace TvControl
     /// </returns>
     public bool IsRecording(string channelName, out VirtualCard card)
     {
-      card = null;
+      VirtualCard vc = card = null;
       try
       {
-        return RemoteControl.Instance.IsRecording(channelName, out card);
+        bool result = WaitFor<bool>.Run(VirtualCard.CommandTimeOut, () => RemoteControl.Instance.IsRecording(channelName, out vc));
+        card = vc;
+        return result;
       }
       catch (Exception)
       {
@@ -186,10 +188,7 @@ namespace TvControl
     {
       try
       {
-        if (RemoteControl.Instance.IsAnyCardRecording())
-        {
-          return true;
-        }
+        return WaitFor<bool>.Run(VirtualCard.CommandTimeOut, () => RemoteControl.Instance.IsAnyCardRecording());        
       }
       catch (Exception)
       {

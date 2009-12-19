@@ -41,6 +41,7 @@ namespace TvControl
     private string _timeShiftFolder;
     private int _recordingFormat;
     private User _user;
+    public static readonly int CommandTimeOut = 3000;
 
     #endregion
 
@@ -510,7 +511,7 @@ namespace TvControl
     /// <summary>
     /// Returns if we arecurrently grabbing the epg or not
     /// </summary>
-    /// <returns>true when card is grabbing the epg  otherwise false</returns>
+    /// <returns>true when card is grabbing the epg otherwise false</returns>
     [XmlIgnore]
     public bool IsGrabbingEpg
     {
@@ -547,8 +548,8 @@ namespace TvControl
           //if (User.CardId < 0) return false;
           RemoteControl.HostName = _server;
           //return RemoteControl.Instance.IsRecording(ref _user); //we will never get anything useful out of this, since the rec user is called schedulerxyz and not ex. user.name = htpc
-          VirtualCard vc;
-          bool isRec = RemoteControl.Instance.IsRecording(ChannelName, out vc);
+          VirtualCard vc = null;
+          bool isRec = WaitFor<bool>.Run(CommandTimeOut, () => RemoteControl.Instance.IsRecording(ChannelName, out vc));
           return (isRec && vc.Id == Id && vc.User.IsAdmin);
         }
         catch (Exception)
@@ -634,7 +635,7 @@ namespace TvControl
         }
         return false;
       }
-    }
+    }    
 
     /// <summary>
     /// Returns if card is currently timeshifting or not
@@ -652,7 +653,7 @@ namespace TvControl
             return false;
           }
           RemoteControl.HostName = _server;
-          return RemoteControl.Instance.IsTimeShifting(ref _user);
+          return WaitFor<bool>.Run(CommandTimeOut, () => RemoteControl.Instance.IsTimeShifting(ref _user));          
         }
         catch (Exception)
         {
@@ -1584,5 +1585,5 @@ namespace TvControl
       return false;
     }
     #endregion
-  }
+  }  
 }
