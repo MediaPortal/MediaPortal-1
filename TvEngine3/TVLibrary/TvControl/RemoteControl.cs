@@ -61,7 +61,6 @@ namespace TvControl
     #region private members
 
     private static bool _doingRefreshRemotingConnectionStatusASynch = false;
-    private static bool _firstFailure = true;
     private static bool _isRemotingConnected = false;
     private static IController _tvControl;
     private static string _hostName = System.Net.Dns.GetHostName();
@@ -181,37 +180,21 @@ namespace TvControl
         }
 
         int timeout = 250;
-        if (_firstFailure)
+        if (!_isRemotingConnected)
         {
-          timeout = MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION * 1000; ;
+          timeout = MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION * 1000;
           if (_useIncreasedTimeoutForInitialConnection)
           {
-            //have a slightly longer timeout period for WOL, if the server has just awoken it should be given a longer grace.
-            int iterations = ((MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION_INITIAL * 1000) / timeout);
+            timeout = MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION_INITIAL * 1000;
             _useIncreasedTimeoutForInitialConnection = false;
-
-            int count = 0;
-            while (!_isRemotingConnected && count < iterations)
-            {
-              CallRemotingAsynch(timeout);
-              count++;
-            }
-          }
-          else
-          {
-            CallRemotingAsynch(timeout);
-          }
-        }
-        else
-        {
-          CallRemotingAsynch(timeout);
+          }          
         }
 
+        CallRemotingAsynch(timeout);
         // TODO: cancel the callbacks, since they are too late.
 
         if (!_isRemotingConnected)
         {
-          _firstFailure = false;
           if (OnRemotingDisconnected != null) //raise event
           {
             Log.Info("RemoteControl - Disconnected");
@@ -220,10 +203,9 @@ namespace TvControl
         }
         else
         {
-          _firstFailure = true;
           if (OnRemotingConnected != null)
           {
-            Log.Info("RemoteControl - Reconnected");
+            Log.Info("RemoteControl - Connected");
             OnRemotingConnected();
           }
         }

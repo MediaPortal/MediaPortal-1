@@ -255,9 +255,22 @@ namespace TvPlugin
     }
 
     #endregion    
-
-    static TVHome()
+    
+    public TVHome()
     {
+      GetID = (int)Window.WINDOW_TV;
+    }
+    
+    #region Overrides      
+
+    public override bool Init()
+    {      
+      return Load(GUIGraphicsContext.Skin + @"\mytvhomeServer.xml"); ;
+    }
+
+    public override void OnAdded()
+    {
+      Log.Info("TVHome:OnAdded");
       RemoteControl.OnRemotingDisconnected += new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
       RemoteControl.OnRemotingConnected += new RemoteControl.RemotingConnectedDelegate(RemoteControl_OnRemotingConnected);
 
@@ -266,6 +279,17 @@ namespace TvPlugin
 
       _waitForBlackScreen = new ManualResetEvent(false);
       _waitForVideoReceived = new ManualResetEvent(false);
+
+      Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
+
+      g_Player.PlayBackStarted += new g_Player.StartedHandler(OnPlayBackStarted);
+      g_Player.PlayBackStopped += new g_Player.StoppedHandler(OnPlayBackStopped);
+      g_Player.AudioTracksReady += new g_Player.AudioTracksReadyHandler(OnAudioTracksReady);
+
+      GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
+
+      // replace g_player's ShowFullScreenWindowTV
+      g_Player.ShowFullScreenWindowTV = ShowFullScreenWindowTVHandler;
 
       try
       {
@@ -276,18 +300,18 @@ namespace TvPlugin
         SetRemoteControlHostName();
 
         //Wake up the TV server, if required
-        HandleWakeUpTvServer();   
+        HandleWakeUpTvServer();
 
         //System.Diagnostics.Debugger.Launch();
 
         RefreshConnectionState();
 
         m_navigator = new ChannelNavigator();
-        LoadSettings();                     
-        
+        LoadSettings();
+
         string pluginVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
         string tvServerVersion = RemoteControl.Instance.GetAssemblyVersion;
-           
+
         if (pluginVersion != tvServerVersion)
         {
           string strLine = "TvPlugin and TvServer don't have the same version.\r\n";
@@ -296,352 +320,426 @@ namespace TvPlugin
           Log.Error(strLine);
         }
         else
-          Log.Info("TVHome V" + pluginVersion + ":ctor");   
+          Log.Info("TVHome V" + pluginVersion + ":ctor");
       }
       catch (Exception ex)
       {
-        Log.Error("TVHome: Error occured in constructor: {0}", ex.Message);
+        Log.Error("TVHome: Error occured in Init(): {0}", ex.Message);
       }
-    }
-
-    public TVHome()
-    {
-      GetID = (int)Window.WINDOW_TV;
-
-      Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
       
       _notifyManager.Start();
-      startHeartBeatThread();
+      startHeartBeatThread();      
+    }  
+
+    /// <summary>
+    /// Gets called by the runtime when a  window will be destroyed
+    /// Every window window should override this method and cleanup any resources
+    /// </summary>
+    /// <returns></returns>
+    public override void DeInit()
+    {
+      OnPageDestroy(-1);
     }
 
-    #region Private methods
-    private static void SetRemoteControlHostName()
+    public override bool SupportsDelayedLoad
     {
-      string hostName;
+      get { return false; }
+    }
 
-      using (Settings xmlreader = new MPSettings())
+    public override void OnAction(Action action)
+    {
+      switch (action.wID)
       {
-        hostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
-        if (string.IsNullOrEmpty(hostName) || hostName == "localhost")
-        {
-          try
-          {
-            hostName = Dns.GetHostName();
+        case Action.ActionType.ACTION_RECORD:
+          //record current program on current channel
+          //are we watching tv?                    
+          ManualRecord(Navigator.Channel);
+          break;
 
-            Log.Info("TVHome: No valid hostname specified in mediaportal.xml!");
-            xmlreader.SetValue("tvservice", "hostname", hostName);
-            hostName = "localhost";
-            Settings.SaveCache();
-          }
-          catch (Exception ex)
+        case Action.ActionType.ACTION_PREV_CHANNEL:
+          OnPreviousChannel();
+          break;
+        case Action.ActionType.ACTION_PAGE_DOWN:
+          OnPreviousChannel();
+          break;
+
+        case Action.ActionType.ACTION_NEXT_CHANNEL:
+          OnNextChannel();
+          break;
+        case Action.ActionType.ACTION_PAGE_UP:
+          OnNextChannel();
+          break;
+
+        case Action.ActionType.ACTION_LAST_VIEWED_CHANNEL: // mPod
+          OnLastViewedChannel();
+          break;
+
+        case Action.ActionType.ACTION_PREVIOUS_MENU:
           {
-            Log.Info("TVHome: Error resolving hostname - {0}", ex.Message);
+            // goto home 
+            // are we watching tv & doing timeshifting
+
+            // No, then stop viewing... 
+            //g_Player.Stop();
+            GUIWindowManager.ShowPreviousWindow();
             return;
           }
-        }
-      }
-      RemoteControl.HostName = hostName;
 
-      Log.Info("Remote control:master server :{0}", RemoteControl.HostName);
+        case Action.ActionType.ACTION_KEY_PRESSED:
+          {
+            if ((char)action.m_key.KeyChar == '0')
+            {
+              OnLastViewedChannel();
+            }
+          }
+          break;
+        case Action.ActionType.ACTION_SHOW_GUI:
+          {
+            // If we are in tvhome and TV is currently off and no fullscreen TV then turn ON TV now!
+            if (!g_Player.IsTimeShifting && !g_Player.FullScreen)
+            {
+              OnClicked(8, btnTvOnOff, Action.ActionType.ACTION_MOUSE_CLICK); //8=togglebutton
+            }
+            break;
+          }
+      }
+      base.OnAction(action);
     }
 
-    private static void HandleWakeUpTvServer()
+    protected override void OnPageLoad()
     {
+      // Log.Info("tv home RefreshConnectionState b4:{0}", Connected);
+      //RefreshConnectionState();
+      //Log.Info("tv home RefreshConnectionState after:{0}", Connected);
 
-      bool isWakeOnLanEnabled;
-      bool isAutoMacAddressEnabled;
-      String macAddress;
-      byte[] hwAddress;
+      // when suspending MP while watching fullscreen TV, the player is stopped ok, but it returns to tvhome, which starts timeshifting.
+      // this could lead the tv server timeshifting even though client is asleep.
+      // although we have to make sure that resuming again activates TV, this is done by checking previous window ID.      
 
-      //Get settings from MediaPortal.xml
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      // disabled currently as pausing the graph stops GUI repainting
+      //GUIWaitCursor.Show();
+
+      if (GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow).PreviousWindowId != (int)Window.WINDOW_TVFULLSCREEN)
       {
-        isWakeOnLanEnabled = xmlreader.GetValueAsBool("tvservice", "isWakeOnLanEnabled", false);
-        isAutoMacAddressEnabled = xmlreader.GetValueAsBool("tvservice", "isAutoMacAddressEnabled", false);
+        _playbackStopped = false;
       }
 
-      //isWakeOnlanEnabled
-      if (isWakeOnLanEnabled)
+      btnActiveStreams.Label = GUILocalizeStrings.Get(692);
+
+      if (!Connected)
       {
-        //Check for multi-seat installation
-        if (!IsSingleSeat())
+        if (!_onPageLoadDone)
         {
-          WakeOnLanManager wakeOnLanManager = new WakeOnLanManager();
-
-          //isAutoMacAddressEnabled
-          if (isAutoMacAddressEnabled)
-          {
-            IPAddress ipAddress = null;
-
-            //Check if we already have a valid IP address stored in RemoteControl.HostName,
-            //otherwise try to resolve the IP address
-            if (!IPAddress.TryParse(RemoteControl.HostName, out ipAddress))
-            {
-              //Get IP address of the TV server
-              try
-              {
-                IPAddress[] ips;
-
-                ips = Dns.GetHostAddresses(RemoteControl.HostName);
-
-                Log.Debug("TVHome: WOL - GetHostAddresses({0}) returns:", RemoteControl.HostName);
-
-                foreach (IPAddress ip in ips)
-                {
-                  Log.Debug("    {0}", ip);
-                }
-
-                //Use first valid IP address
-                ipAddress = ips[0];
-
-              }
-              catch (Exception ex)
-              {
-                Log.Error("TVHome: WOL - Failed GetHostAddress - {0}", ex.Message);
-              }
-            }
-
-            //Check for valid IP address
-            if (ipAddress != null)
-            {
-              //Update the MAC address if possible
-              hwAddress = wakeOnLanManager.GetHardwareAddress(ipAddress);
-
-              if (wakeOnLanManager.IsValidEthernetAddress(hwAddress))
-              {
-                Log.Debug("TVHome: WOL - Valid auto MAC address: {0:x}:{1:x}:{2:x}:{3:x}:{4:x}:{5:x}"
-                  , hwAddress[0], hwAddress[1], hwAddress[2], hwAddress[3], hwAddress[4], hwAddress[5]);
-
-                //Store MAC address
-                macAddress = BitConverter.ToString(hwAddress).Replace("-", ":");
-
-                Log.Debug("TVHome: WOL - Store MAC address: {0}", macAddress);
-
-                using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-                {
-                  xmlwriter.SetValue("tvservice", "macAddress", macAddress);
-                }
-              }
-            }
-          }
-
-          //Use stored MAC address
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-          {
-            macAddress = xmlreader.GetValueAsString("tvservice", "macAddress", null);
-          }
-
-          Log.Debug("TVHome: WOL - Use stored MAC address: {0}", macAddress);
-
-          try
-          {
-            hwAddress = wakeOnLanManager.GetHwAddrBytes(macAddress);
-
-            //Finally, start up the TV server
-            Log.Info("TVHome: WOL - Start the TV server");
-
-            if (wakeOnLanManager.WakeupSystem(hwAddress, RemoteControl.HostName, 10))
-            {
-              Log.Info("TVHome: WOL - The TV server started successfully!");
-            }
-          }
-          catch (Exception ex)
-          {
-            Log.Error("TVHome: WOL - Failed to start the TV server - {0}", ex.Message);
-          }
+          RemoteControl.Clear();
+          GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
+          return;
         }
-      }
-    }
-
-    ///// <summary>
-    ///// Register the remoting service and attaching ciMenuHandler for server events
-    ///// </summary>
-    //public static void RegisterCiMenu(int newCardId)
-    //{
-    //  if (ciMenuHandler == null)
-    //  {
-    //    Log.Debug("CiMenu: PrepareCiMenu");
-    //    ciMenuHandler = new CiMenuHandler();
-    //    // opens remoting and attach local eventhandler to server event, call only once
-    //    RemoteControl.RegisterCiMenuCallbacks(ciMenuHandler);
-    //  }
-    //  // Check if card supports CI menu
-    //  if (newCardId != -1 && RemoteControl.Instance.CiMenuSupported(newCardId))
-    //  {
-    //    // Enable CI menu handling in card
-    //    RemoteControl.Instance.SetCiMenuHandler(newCardId, null);
-    //    Log.Debug("TvPlugin: CiMenuHandler attached to new card {0}", newCardId);
-    //  }
-    //}
-    
-    private static void RemoteControl_OnRemotingConnected()
-    {      
-      if(!Connected)
-        Log.Debug("TVHome: OnRemotingConnected, recovered from a disconnection");
-      Connected = true;
-      _ServerNotConnectedHandled = false;
-      if (_recoverTV)
-      {
-        _recoverTV = false;
-        GUIMessage initMsg = null;
-        initMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int)Window.WINDOW_TV_OVERLAY, 0, 0, 0, 0, null);
-        GUIWindowManager.SendThreadMessage(initMsg);
-      }      
-    }
-
-    private static void RemoteControl_OnRemotingDisconnected()
-    {
-      if(Connected)
-        Log.Debug("TVHome: OnRemotingDisconnected");
-      Connected = false;                  
-      HandleServerNotConnected();
-    }
-    
-    private void Application_ApplicationExit(object sender, EventArgs e)
-    {
-      try
-      {
-        if (Card.IsTimeShifting)
+        else
         {
-          Card.User.Name = new User().Name;
-          Card.StopTimeShifting();
-        }
-        _notifyManager.Stop();
-        stopHeartBeatThread();
-      }
-      catch (Exception)
-      {
-      }
-    }
-
-    private void HeartBeatTransmitter()
-    {
-      while (true)
-      {
-        //Connected = IsRemotingConnected();
-        if (Connected && !_suspended)
-        {
-          bool isTS = (Card != null && Card.IsTimeShifting);
-          if (Connected && isTS)
-          {
-            // send heartbeat to tv server each 5 sec.
-            // this way we signal to the server that we are alive thus avoid being kicked.
-            // Log.Debug("TVHome: sending HeartBeat signal to server.");
-
-            // when debugging we want to disable heartbeats
-#if !DEBUG
-            try
-            {
-              RemoteControl.Instance.HeartBeat(Card.User);
-            }
-            catch (Exception e)
-            {
-              Log.Error("TVHome: failed sending HeartBeat signal to server. ({0})", e.Message);
-            }
-#endif
-          }
-          else if (Connected && !isTS && !_playbackStopped && _onPageLoadDone &&
-                   (!g_Player.IsTVRecording && (g_Player.IsTV || g_Player.IsRadio)))
-          {
-            // check the possible reason why timeshifting has suddenly stopped
-            // maybe the server kicked the client b/c a recording on another transponder was due.
-
-            TvStoppedReason result = Card.GetTimeshiftStoppedReason;
-            if (result != TvStoppedReason.UnknownReason)
-            {
-              Log.Debug("TVHome: Timeshifting seems to have stopped - TvStoppedReason:{0}", result);
-              string errMsg = "";
-
-              switch (result)
-              {
-                case TvStoppedReason.HeartBeatTimeOut:
-                  errMsg = GUILocalizeStrings.Get(1515);
-                  break;
-                case TvStoppedReason.KickedByAdmin:
-                  errMsg = GUILocalizeStrings.Get(1514);
-                  break;
-                case TvStoppedReason.RecordingStarted:
-                  errMsg = GUILocalizeStrings.Get(1513);
-                  break;
-                case TvStoppedReason.OwnerChangedTS:
-                  errMsg = GUILocalizeStrings.Get(1517);
-                  break;
-                default:
-                  errMsg = GUILocalizeStrings.Get(1516);
-                  break;
-              }
-
-              GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
-
-              if (pDlgOK != null)
-              {
-                if (GUIWindowManager.ActiveWindow == (int)(int)Window.WINDOW_TVFULLSCREEN)
-                {
-                  GUIWindowManager.ActivateWindow((int)Window.WINDOW_TV, true);
-                }
-
-                pDlgOK.SetHeading(GUILocalizeStrings.Get(605) + " - " + Navigator.CurrentChannel); //my tv
-                errMsg = errMsg.Replace("\\r", "\r");
-                string[] lines = errMsg.Split('\r');
-
-                for (int i = 0; i < lines.Length; i++)
-                {
-                  string line = lines[i];
-                  pDlgOK.SetLine(1 + i, line);
-                }
-                pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
-              }
-              Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);
-              GUIGraphicsContext.OnAction(keyAction);
-              _playbackStopped = true;
-            }
-          }
-        }
-        Thread.Sleep(HEARTBEAT_INTERVAL * 1000); //sleep for 5 secs. before sending heartbeat again
-      }
-    }
-
-    private void startHeartBeatThread()
-    {
-      // setup heartbeat transmitter thread.						
-      // thread already running, then leave it.
-      if (heartBeatTransmitterThread != null)
-      {
-        if (heartBeatTransmitterThread.IsAlive)
-        {
+          UpdateStateOfRecButton();
+          UpdateProgressPercentageBar();
+          UpdateRecordingIndicator();
           return;
         }
       }
-      Log.Debug("TVHome: HeartBeat Transmitter started.");
-      heartBeatTransmitterThread = new Thread(HeartBeatTransmitter);
-      heartBeatTransmitterThread.IsBackground = true;
-      heartBeatTransmitterThread.Name = "TvClient-TvHome: HeartBeat transmitter thread";
-      heartBeatTransmitterThread.Start();
-    }
 
-    private void stopHeartBeatThread()
-    {
-      if (heartBeatTransmitterThread != null)
+      try
       {
-        if (heartBeatTransmitterThread.IsAlive)
+        int cards = RemoteControl.Instance.Cards;
+      }
+      catch (Exception)
+      {
+        RemoteControl.Clear();
+      }
+
+
+      //stop the old recorder.
+      //DatabaseManager.Instance.DefaultQueryStrategy = QueryStrategy.DataSourceOnly;
+      GUIMessage msgStopRecorder = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP, 0, 0, 0, 0, 0, null);
+      GUIWindowManager.SendMessage(msgStopRecorder);
+
+      if (!_onPageLoadDone && m_navigator != null)
+      {
+        m_navigator.ReLoad();
+      }
+
+      if (m_navigator == null)
+      {
+        m_navigator = new ChannelNavigator(); // Create the channel navigator (it will load groups and channels)
+      }
+
+      base.OnPageLoad();
+
+      //set video window position
+      if (videoWindow != null)
+      {
+        GUIGraphicsContext.VideoWindow = new Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width,
+                                                       videoWindow.Height);
+      }
+
+      // start viewing tv... 
+      GUIGraphicsContext.IsFullScreenVideo = false;
+      Channel channel = Navigator.Channel;
+      if (channel == null || channel.IsRadio)
+      {
+        if (Navigator.CurrentGroup != null && Navigator.Groups.Count > 0)
         {
-          Log.Debug("TVHome: HeartBeat Transmitter stopped.");
-          heartBeatTransmitterThread.Abort();
+          Navigator.SetCurrentGroup(Navigator.Groups[0].GroupName);
+          GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.Groups[0].GroupName);
+        }
+        if (Navigator.CurrentGroup != null)
+        {
+          if (Navigator.CurrentGroup.ReferringGroupMap().Count > 0)
+          {
+            GroupMap gm = (GroupMap)Navigator.CurrentGroup.ReferringGroupMap()[0];
+            channel = gm.ReferencedChannel();
+          }
         }
       }
+
+      if (channel != null)
+      {
+        Log.Info("tv home init:{0}", channel.DisplayName);
+        if (_autoTurnOnTv && !_playbackStopped && !wasPrevWinTVplugin())
+        {
+          if (!wasPrevWinTVplugin())
+          {
+            _userChannelChanged = false;
+          }
+
+          ViewChannelAndCheck(channel);
+        }
+
+        GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.CurrentGroup.GroupName);
+        Log.Info("tv home init:{0} done", channel.DisplayName);
+      }
+
+      // if using showlastactivemodule feature and last module is fullscreen while returning from powerstate, then do not set fullscreen here (since this is done by the resume last active module feature)
+      // we depend on the onresume method, thats why tvplugin now impl. the IPluginReceiver interface.      
+      bool showlastActModFS = (_showlastactivemodule && _showlastactivemoduleFullscreen && !_suspended && _autoTurnOnTv);
+      bool useDelay = false;
+
+      if (!_suspended && !showlastActModFS)
+      {
+        useDelay = true;
+        showlastActModFS = false;
+      }
+      else if (!_suspended)
+      {
+        showlastActModFS = true;
+      }
+      if (!showlastActModFS && (g_Player.IsTV || g_Player.IsTVRecording))
+      {
+        if (_autoFullScreen && !g_Player.FullScreen && (!wasPrevWinTVplugin()))
+        {
+          Log.Debug("TVHome.OnPageLoad(): setting autoFullScreen");
+          //if we are resuming from standby with tvhome, we want this in fullscreen, but we need a delay for it to work.
+          if (useDelay)
+          {
+            Thread tvDelayThread = new Thread(TvDelayThread);
+            tvDelayThread.Start();
+          }
+          else //no delay needed here, since this is when the system is being used normally
+          {
+            g_Player.ShowFullScreenWindow();
+          }
+        }
+        else if (_autoFullScreenOnly && !g_Player.FullScreen && (PreviousWindowId == (int)Window.WINDOW_TVFULLSCREEN))
+        {
+          Log.Debug("TVHome.OnPageLoad(): autoFullScreenOnly set, returning to previous window");
+          GUIWindowManager.ShowPreviousWindow();
+        }
+      }
+
+      _onPageLoadDone = true;
+      _suspended = false;
+
+      UpdateGUIonPlaybackStateChange();
+      doProcess();
     }
 
-    #endregion
-
-    #region Overrides
-
-    public override void OnAdded()
+    protected override void OnPageDestroy(int newWindowId)
     {
-      Log.Info("TVHome:OnAdded");
-
-      // replace g_player's ShowFullScreenWindowTV
-      g_Player.ShowFullScreenWindowTV = ShowFullScreenWindowTVHandler;
+      //if we're switching to another plugin
+      if (!GUIGraphicsContext.IsTvWindow(newWindowId))
+      {
+        //and we're not playing which means we dont timeshift tv
+        //g_Player.Stop();
+      }
+      if (Connected)
+      {
+        SaveSettings();
+      }
+      base.OnPageDestroy(newWindowId);
     }
+
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
+    {
+      Stopwatch benchClock = null;
+      benchClock = Stopwatch.StartNew();
+
+      RefreshConnectionState();
+
+      if (!Connected)
+      {
+        UpdateStateOfRecButton();
+        UpdateRecordingIndicator();
+        UpdateGUIonPlaybackStateChange();
+        ShowDlgAsynch();
+        return;
+      }
+
+      if (control == btnActiveStreams)
+      {
+        OnActiveStreams();
+      }
+
+      if (control == btnActiveRecordings && btnActiveRecordings != null)
+      {
+        OnActiveRecordings();
+      }
+
+      if (control == btnTvOnOff)
+      {
+        if (Card.IsTimeShifting && g_Player.IsTV && g_Player.Playing)
+        {
+          //tv off
+          g_Player.Stop();
+          Log.Warn("TVHome.OnClicked(): EndTvOff {0} ms", benchClock.ElapsedMilliseconds.ToString());
+          benchClock.Stop();
+          return;
+        }
+        else
+        {
+          // tv on
+          Log.Info("TVHome:turn tv on {0}", Navigator.CurrentChannel);
+
+          //stop playing anything
+          if (g_Player.Playing)
+          {
+            if (g_Player.IsTV && !g_Player.IsTVRecording)
+            {
+              //already playing tv...
+            }
+            else
+            {
+              Log.Warn("TVHome.OnClicked: Stop Called - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+              g_Player.Stop(true);
+            }
+          }
+        }
+
+        // turn tv on/off        
+        if (Navigator.Channel.IsTv)
+        {
+          ViewChannelAndCheck(Navigator.Channel);
+        }
+        else
+        // current channel seems to be non-tv (radio ?), get latest known tv channel from xml config and use this instead
+        {
+          Settings xmlreader = new MPSettings();
+          string currentchannelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
+          Channel currentChannel = Navigator.GetChannel(currentchannelName);
+          ViewChannelAndCheck(currentChannel);
+        }
+
+        UpdateStateOfRecButton();
+        UpdateGUIonPlaybackStateChange();
+        //UpdateProgressPercentageBar();
+        benchClock.Stop();
+        Log.Warn("TVHome.OnClicked(): Total Time - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+      }
+
+      if (control == btnTeletext)
+      {
+        GUIWindowManager.ActivateWindow((int)Window.WINDOW_TELETEXT);
+        return;
+      }
+
+      if (control == btnRecord)
+      {
+        OnRecord();
+      }
+      if (control == btnChannel)
+      {
+        OnSelectChannel();
+      }
+      base.OnClicked(controlId, control, actionType);
+    }
+
+    public override bool OnMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.PS_ONSTANDBY:
+          RemoteControl.Clear();
+          break;
+        case GUIMessage.MessageType.GUI_MSG_RESUME_TV:
+          {
+            if (_autoTurnOnTv && !wasPrevWinTVplugin())
+            // we only want to resume TV if previous window is NOT a tvplugin based one. (ex. tvguide.)
+            {
+              //restart viewing...  
+              Log.Info("tv home msg resume tv:{0}", Navigator.CurrentChannel);
+              ViewChannel(Navigator.Channel);
+            }
+          }
+          break;
+        case GUIMessage.MessageType.GUI_MSG_RECORDER_VIEW_CHANNEL:
+          Log.Info("tv home msg view chan:{0}", message.Label);
+          {
+            TvBusinessLayer layer = new TvBusinessLayer();
+            Channel ch = layer.GetChannelByName(message.Label);
+            ViewChannel(ch);
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_VIEWING:
+          {
+            Log.Info("tv home msg stop chan:{0}", message.Label);
+            TvBusinessLayer layer = new TvBusinessLayer();
+            Channel ch = layer.GetChannelByName(message.Label);
+            ViewChannel(ch);
+          }
+          break;
+      }
+      return base.OnMessage(message);
+    }
+
+    public override void Process()
+    {
+      TimeSpan ts = DateTime.Now - _updateTimer;
+      if (ts.TotalMilliseconds < 1000 || !Connected)
+      {
+        return;
+      }
+
+      UpdateRecordingIndicator();
+      UpdateStateOfRecButton();
+
+      if (!Card.IsTimeShifting)
+      {
+        UpdateProgressPercentageBar(); // mantis #2218 : TV guide information in TV home screen does not update when program changes if TV is not playing 
+        return;
+      }
+
+      // BAV, 02.03.08: a channel change should not be delayed by rendering.
+      //                by moving thisthe 1 min delays in zapping should be fixed
+      // Let the navigator zap channel if needed
+      if (Navigator.CheckChannelChange())
+      {
+        UpdateGUIonPlaybackStateChange();
+      }
+
+      if (GUIGraphicsContext.InVmr9Render)
+      {
+        return;
+      }
+
+      doProcess();
+
+      _updateTimer = DateTime.Now;
+    } 
 
     public override bool IsTv
     {
@@ -953,9 +1051,7 @@ namespace TvPlugin
       try
       {
         if (!Connected)
-        {
-          //_ServerLastStatusOK = false; // to enable TV connect button again
-
+        {          
           //Card.User.Name = new User().Name;
           TVHome.StopPlayerMainThread();
 
@@ -1180,431 +1276,324 @@ namespace TvPlugin
 
     #endregion
 
-    #region Overrides
-
-    /// <summary>
-    /// Gets called by the runtime when a  window will be destroyed
-    /// Every window window should override this method and cleanup any resources
-    /// </summary>
-    /// <returns></returns>
-    public override void DeInit()
+    #region Private methods
+    private static void SetRemoteControlHostName()
     {
-      OnPageDestroy(-1);
-    }
+      string hostName;
 
-    public override bool SupportsDelayedLoad
-    {
-      get { return false; }
-    }
-
-    public override bool Init()
-    {
-      Log.Info("TVHome:Init");
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvhomeServer.xml");
-      GetID = (int)Window.WINDOW_TV;
-
-      g_Player.PlayBackStarted += new g_Player.StartedHandler(OnPlayBackStarted);
-      g_Player.PlayBackStopped += new g_Player.StoppedHandler(OnPlayBackStopped);
-      g_Player.AudioTracksReady += new g_Player.AudioTracksReadyHandler(OnAudioTracksReady);
-
-      GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
-      return bResult;
-    }
-        
-    public override void OnAction(Action action)
-    {
-      switch (action.wID)
+      using (Settings xmlreader = new MPSettings())
       {
-        case Action.ActionType.ACTION_RECORD:
-          //record current program on current channel
-          //are we watching tv?                    
-          ManualRecord(Navigator.Channel);
-          break;
-
-        case Action.ActionType.ACTION_PREV_CHANNEL:
-          OnPreviousChannel();
-          break;
-        case Action.ActionType.ACTION_PAGE_DOWN:
-          OnPreviousChannel();
-          break;
-
-        case Action.ActionType.ACTION_NEXT_CHANNEL:
-          OnNextChannel();
-          break;
-        case Action.ActionType.ACTION_PAGE_UP:
-          OnNextChannel();
-          break;
-
-        case Action.ActionType.ACTION_LAST_VIEWED_CHANNEL: // mPod
-          OnLastViewedChannel();
-          break;
-
-        case Action.ActionType.ACTION_PREVIOUS_MENU:
+        hostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
+        if (string.IsNullOrEmpty(hostName) || hostName == "localhost")
+        {
+          try
           {
-            // goto home 
-            // are we watching tv & doing timeshifting
+            hostName = Dns.GetHostName();
 
-            // No, then stop viewing... 
-            //g_Player.Stop();
-            GUIWindowManager.ShowPreviousWindow();
+            Log.Info("TVHome: No valid hostname specified in mediaportal.xml!");
+            xmlreader.SetValue("tvservice", "hostname", hostName);
+            hostName = "localhost";
+            Settings.SaveCache();
+          }
+          catch (Exception ex)
+          {
+            Log.Info("TVHome: Error resolving hostname - {0}", ex.Message);
             return;
           }
-
-        case Action.ActionType.ACTION_KEY_PRESSED:
-          {
-            if ((char)action.m_key.KeyChar == '0')
-            {
-              OnLastViewedChannel();
-            }
-          }
-          break;
-        case Action.ActionType.ACTION_SHOW_GUI:
-          {
-            // If we are in tvhome and TV is currently off and no fullscreen TV then turn ON TV now!
-            if (!g_Player.IsTimeShifting && !g_Player.FullScreen)
-            {
-              OnClicked(8, btnTvOnOff, Action.ActionType.ACTION_MOUSE_CLICK); //8=togglebutton
-            }
-            break;
-          }
+        }
       }
-      base.OnAction(action);
+      RemoteControl.HostName = hostName;
+
+      Log.Info("Remote control:master server :{0}", RemoteControl.HostName);
     }
 
-    protected override void OnPageLoad()
+    private static void HandleWakeUpTvServer()
     {
-      // Log.Info("tv home RefreshConnectionState b4:{0}", Connected);
-      //RefreshConnectionState();
-      //Log.Info("tv home RefreshConnectionState after:{0}", Connected);
 
-      // when suspending MP while watching fullscreen TV, the player is stopped ok, but it returns to tvhome, which starts timeshifting.
-      // this could lead the tv server timeshifting even though client is asleep.
-      // although we have to make sure that resuming again activates TV, this is done by checking previous window ID.      
+      bool isWakeOnLanEnabled;
+      bool isAutoMacAddressEnabled;
+      String macAddress;
+      byte[] hwAddress;
 
-      // disabled currently as pausing the graph stops GUI repainting
-      //GUIWaitCursor.Show();
-
-      if (GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow).PreviousWindowId != (int)Window.WINDOW_TVFULLSCREEN)
+      //Get settings from MediaPortal.xml
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        _playbackStopped = false;
+        isWakeOnLanEnabled = xmlreader.GetValueAsBool("tvservice", "isWakeOnLanEnabled", false);
+        isAutoMacAddressEnabled = xmlreader.GetValueAsBool("tvservice", "isAutoMacAddressEnabled", false);
       }
 
-      btnActiveStreams.Label = GUILocalizeStrings.Get(692);
+      //isWakeOnlanEnabled
+      if (isWakeOnLanEnabled)
+      {
+        //Check for multi-seat installation
+        if (!IsSingleSeat())
+        {
+          WakeOnLanManager wakeOnLanManager = new WakeOnLanManager();
 
+          //isAutoMacAddressEnabled
+          if (isAutoMacAddressEnabled)
+          {
+            IPAddress ipAddress = null;
+
+            //Check if we already have a valid IP address stored in RemoteControl.HostName,
+            //otherwise try to resolve the IP address
+            if (!IPAddress.TryParse(RemoteControl.HostName, out ipAddress))
+            {
+              //Get IP address of the TV server
+              try
+              {
+                IPAddress[] ips;
+
+                ips = Dns.GetHostAddresses(RemoteControl.HostName);
+
+                Log.Debug("TVHome: WOL - GetHostAddresses({0}) returns:", RemoteControl.HostName);
+
+                foreach (IPAddress ip in ips)
+                {
+                  Log.Debug("    {0}", ip);
+                }
+
+                //Use first valid IP address
+                ipAddress = ips[0];
+
+              }
+              catch (Exception ex)
+              {
+                Log.Error("TVHome: WOL - Failed GetHostAddress - {0}", ex.Message);
+              }
+            }
+
+            //Check for valid IP address
+            if (ipAddress != null)
+            {
+              //Update the MAC address if possible
+              hwAddress = wakeOnLanManager.GetHardwareAddress(ipAddress);
+
+              if (wakeOnLanManager.IsValidEthernetAddress(hwAddress))
+              {
+                Log.Debug("TVHome: WOL - Valid auto MAC address: {0:x}:{1:x}:{2:x}:{3:x}:{4:x}:{5:x}"
+                  , hwAddress[0], hwAddress[1], hwAddress[2], hwAddress[3], hwAddress[4], hwAddress[5]);
+
+                //Store MAC address
+                macAddress = BitConverter.ToString(hwAddress).Replace("-", ":");
+
+                Log.Debug("TVHome: WOL - Store MAC address: {0}", macAddress);
+
+                using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+                {
+                  xmlwriter.SetValue("tvservice", "macAddress", macAddress);
+                }
+              }
+            }
+          }
+
+          //Use stored MAC address
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+          {
+            macAddress = xmlreader.GetValueAsString("tvservice", "macAddress", null);
+          }
+
+          Log.Debug("TVHome: WOL - Use stored MAC address: {0}", macAddress);
+
+          try
+          {
+            hwAddress = wakeOnLanManager.GetHwAddrBytes(macAddress);
+
+            //Finally, start up the TV server
+            Log.Info("TVHome: WOL - Start the TV server");
+
+            if (wakeOnLanManager.WakeupSystem(hwAddress, RemoteControl.HostName, 10))
+            {
+              Log.Info("TVHome: WOL - The TV server started successfully!");
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Error("TVHome: WOL - Failed to start the TV server - {0}", ex.Message);
+          }
+        }
+      }
+    }
+
+    ///// <summary>
+    ///// Register the remoting service and attaching ciMenuHandler for server events
+    ///// </summary>
+    //public static void RegisterCiMenu(int newCardId)
+    //{
+    //  if (ciMenuHandler == null)
+    //  {
+    //    Log.Debug("CiMenu: PrepareCiMenu");
+    //    ciMenuHandler = new CiMenuHandler();
+    //    // opens remoting and attach local eventhandler to server event, call only once
+    //    RemoteControl.RegisterCiMenuCallbacks(ciMenuHandler);
+    //  }
+    //  // Check if card supports CI menu
+    //  if (newCardId != -1 && RemoteControl.Instance.CiMenuSupported(newCardId))
+    //  {
+    //    // Enable CI menu handling in card
+    //    RemoteControl.Instance.SetCiMenuHandler(newCardId, null);
+    //    Log.Debug("TvPlugin: CiMenuHandler attached to new card {0}", newCardId);
+    //  }
+    //}
+
+    private static void RemoteControl_OnRemotingConnected()
+    {
       if (!Connected)
+        Log.Info("TVHome: OnRemotingConnected, recovered from a disconnection");
+      Connected = true;
+      _ServerNotConnectedHandled = false;
+      if (_recoverTV)
       {
-        if (!_onPageLoadDone)
-        {
-          RemoteControl.Clear();
-          GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
-          return;
-        }
-        else
-        {
-          UpdateStateOfRecButton();
-          UpdateProgressPercentageBar();
-          UpdateRecordingIndicator();
-          return;
-        }
+        _recoverTV = false;
+        GUIMessage initMsg = null;
+        initMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int)Window.WINDOW_TV_OVERLAY, 0, 0, 0, 0, null);
+        GUIWindowManager.SendThreadMessage(initMsg);
       }
+    }
 
+    private static void RemoteControl_OnRemotingDisconnected()
+    {
+      if (Connected)
+        Log.Info("TVHome: OnRemotingDisconnected");
+      Connected = false;
+      HandleServerNotConnected();
+    }
+
+    private void Application_ApplicationExit(object sender, EventArgs e)
+    {
       try
       {
-        int cards = RemoteControl.Instance.Cards;
+        if (Card.IsTimeShifting)
+        {
+          Card.User.Name = new User().Name;
+          Card.StopTimeShifting();
+        }
+        _notifyManager.Stop();
+        stopHeartBeatThread();
       }
       catch (Exception)
       {
-        RemoteControl.Clear();
       }
-
-
-      //stop the old recorder.
-      //DatabaseManager.Instance.DefaultQueryStrategy = QueryStrategy.DataSourceOnly;
-      GUIMessage msgStopRecorder = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP, 0, 0, 0, 0, 0, null);
-      GUIWindowManager.SendMessage(msgStopRecorder);
-
-      if (!_onPageLoadDone && m_navigator != null)
-      {
-        m_navigator.ReLoad();
-      }
-
-      if (m_navigator == null)
-      {
-        m_navigator = new ChannelNavigator(); // Create the channel navigator (it will load groups and channels)
-      }
-
-      base.OnPageLoad();
-
-      //set video window position
-      if (videoWindow != null)
-      {
-        GUIGraphicsContext.VideoWindow = new Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width,
-                                                       videoWindow.Height);
-      }
-
-      // start viewing tv... 
-      GUIGraphicsContext.IsFullScreenVideo = false;
-      Channel channel = Navigator.Channel;
-      if (channel == null || channel.IsRadio)
-      {
-        if (Navigator.CurrentGroup != null && Navigator.Groups.Count > 0)
-        {
-          Navigator.SetCurrentGroup(Navigator.Groups[0].GroupName);
-          GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.Groups[0].GroupName);
-        }
-        if (Navigator.CurrentGroup != null)
-        {
-          if (Navigator.CurrentGroup.ReferringGroupMap().Count > 0)
-          {
-            GroupMap gm = (GroupMap)Navigator.CurrentGroup.ReferringGroupMap()[0];
-            channel = gm.ReferencedChannel();
-          }
-        }
-      }      
-
-      if (channel != null)
-      {
-        Log.Info("tv home init:{0}", channel.DisplayName);
-        if (_autoTurnOnTv && !_playbackStopped && !wasPrevWinTVplugin())
-        {
-          if (!wasPrevWinTVplugin())
-          {
-            _userChannelChanged = false;
-          }
-
-          ViewChannelAndCheck(channel);
-        }
-
-        GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.CurrentGroup.GroupName);
-        Log.Info("tv home init:{0} done", channel.DisplayName);
-      }
-
-      // if using showlastactivemodule feature and last module is fullscreen while returning from powerstate, then do not set fullscreen here (since this is done by the resume last active module feature)
-      // we depend on the onresume method, thats why tvplugin now impl. the IPluginReceiver interface.      
-      bool showlastActModFS = (_showlastactivemodule && _showlastactivemoduleFullscreen && !_suspended && _autoTurnOnTv);
-      bool useDelay = false;
-
-      if (!_suspended && !showlastActModFS)
-      {
-        useDelay = true;
-        showlastActModFS = false;
-      }
-      else if (!_suspended)
-      {
-        showlastActModFS = true;
-      }
-      if (!showlastActModFS && (g_Player.IsTV || g_Player.IsTVRecording))
-      {
-        if (_autoFullScreen && !g_Player.FullScreen && (!wasPrevWinTVplugin()))
-        {
-          Log.Debug("TVHome.OnPageLoad(): setting autoFullScreen");
-          //if we are resuming from standby with tvhome, we want this in fullscreen, but we need a delay for it to work.
-          if (useDelay)
-          {
-            Thread tvDelayThread = new Thread(TvDelayThread);
-            tvDelayThread.Start();
-          }
-          else //no delay needed here, since this is when the system is being used normally
-          {
-            g_Player.ShowFullScreenWindow();
-          }
-        }
-        else if (_autoFullScreenOnly && !g_Player.FullScreen && (PreviousWindowId == (int)Window.WINDOW_TVFULLSCREEN))
-        {
-          Log.Debug("TVHome.OnPageLoad(): autoFullScreenOnly set, returning to previous window");
-          GUIWindowManager.ShowPreviousWindow();
-        }
-      }
-
-      _onPageLoadDone = true;
-      _suspended = false;
-
-      UpdateGUIonPlaybackStateChange();
-      doProcess();
     }
 
-    protected override void OnPageDestroy(int newWindowId)
+    private void HeartBeatTransmitter()
     {
-      //if we're switching to another plugin
-      if (!GUIGraphicsContext.IsTvWindow(newWindowId))
+      while (true)
       {
-        //and we're not playing which means we dont timeshift tv
-        //g_Player.Stop();
+        if (!Connected) // is this needed to update connection status
+          RefreshConnectionState();
+        if (Connected && !_suspended)
+        {
+          bool isTS = (Card != null && Card.IsTimeShifting);
+          if (Connected && isTS)
+          {
+            // send heartbeat to tv server each 5 sec.
+            // this way we signal to the server that we are alive thus avoid being kicked.
+            // Log.Debug("TVHome: sending HeartBeat signal to server.");
+
+            // when debugging we want to disable heartbeats
+#if !DEBUG
+            try
+            {
+              RemoteControl.Instance.HeartBeat(Card.User);
+            }
+            catch (Exception e)
+            {
+              Log.Error("TVHome: failed sending HeartBeat signal to server. ({0})", e.Message);
+            }
+#endif
+          }
+          else if (Connected && !isTS && !_playbackStopped && _onPageLoadDone &&
+                   (!g_Player.IsTVRecording && (g_Player.IsTV || g_Player.IsRadio)))
+          {
+            // check the possible reason why timeshifting has suddenly stopped
+            // maybe the server kicked the client b/c a recording on another transponder was due.
+
+            TvStoppedReason result = Card.GetTimeshiftStoppedReason;
+            if (result != TvStoppedReason.UnknownReason)
+            {
+              Log.Debug("TVHome: Timeshifting seems to have stopped - TvStoppedReason:{0}", result);
+              string errMsg = "";
+
+              switch (result)
+              {
+                case TvStoppedReason.HeartBeatTimeOut:
+                  errMsg = GUILocalizeStrings.Get(1515);
+                  break;
+                case TvStoppedReason.KickedByAdmin:
+                  errMsg = GUILocalizeStrings.Get(1514);
+                  break;
+                case TvStoppedReason.RecordingStarted:
+                  errMsg = GUILocalizeStrings.Get(1513);
+                  break;
+                case TvStoppedReason.OwnerChangedTS:
+                  errMsg = GUILocalizeStrings.Get(1517);
+                  break;
+                default:
+                  errMsg = GUILocalizeStrings.Get(1516);
+                  break;
+              }
+
+              GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+
+              if (pDlgOK != null)
+              {
+                if (GUIWindowManager.ActiveWindow == (int)(int)Window.WINDOW_TVFULLSCREEN)
+                {
+                  GUIWindowManager.ActivateWindow((int)Window.WINDOW_TV, true);
+                }
+
+                pDlgOK.SetHeading(GUILocalizeStrings.Get(605) + " - " + Navigator.CurrentChannel); //my tv
+                errMsg = errMsg.Replace("\\r", "\r");
+                string[] lines = errMsg.Split('\r');
+
+                for (int i = 0; i < lines.Length; i++)
+                {
+                  string line = lines[i];
+                  pDlgOK.SetLine(1 + i, line);
+                }
+                pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
+              }
+              Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);
+              GUIGraphicsContext.OnAction(keyAction);
+              _playbackStopped = true;
+            }
+          }
+        }
+        Thread.Sleep(HEARTBEAT_INTERVAL * 1000); //sleep for 5 secs. before sending heartbeat again
       }
-      if (Connected)
-      {
-        SaveSettings();
-      }
-      base.OnPageDestroy(newWindowId);
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
+    private void startHeartBeatThread()
     {
-      Stopwatch benchClock = null;
-      benchClock = Stopwatch.StartNew();
-
-      RefreshConnectionState();
-
-      if (!Connected)
+      // setup heartbeat transmitter thread.						
+      // thread already running, then leave it.
+      if (heartBeatTransmitterThread != null)
       {
-        UpdateStateOfRecButton();
-        UpdateRecordingIndicator();
-        UpdateGUIonPlaybackStateChange();
-        ShowDlgAsynch();
-        return;
-      }      
-
-      if (control == btnActiveStreams)
-      {
-        OnActiveStreams();
-      }
-
-      if (control == btnActiveRecordings && btnActiveRecordings != null)
-      {
-        OnActiveRecordings();
-      }
-
-      if (control == btnTvOnOff)
-      {
-        if (Card.IsTimeShifting && g_Player.IsTV && g_Player.Playing)
+        if (heartBeatTransmitterThread.IsAlive)
         {
-          //tv off
-          g_Player.Stop();
-          Log.Warn("TVHome.OnClicked(): EndTvOff {0} ms", benchClock.ElapsedMilliseconds.ToString());
-          benchClock.Stop();
           return;
         }
-        else
-        {
-          // tv on
-          Log.Info("TVHome:turn tv on {0}", Navigator.CurrentChannel);
-
-          //stop playing anything
-          if (g_Player.Playing)
-          {
-            if (g_Player.IsTV && !g_Player.IsTVRecording)
-            {
-              //already playing tv...
-            }
-            else
-            {
-              Log.Warn("TVHome.OnClicked: Stop Called - {0} ms", benchClock.ElapsedMilliseconds.ToString());
-              g_Player.Stop(true);
-            }
-          }
-        }
-
-        // turn tv on/off        
-        if (Navigator.Channel.IsTv)
-        {
-          ViewChannelAndCheck(Navigator.Channel);
-        }
-        else
-        // current channel seems to be non-tv (radio ?), get latest known tv channel from xml config and use this instead
-        {
-          Settings xmlreader = new MPSettings();
-          string currentchannelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
-          Channel currentChannel = Navigator.GetChannel(currentchannelName);
-          ViewChannelAndCheck(currentChannel);
-        }
-
-        UpdateStateOfRecButton();
-        UpdateGUIonPlaybackStateChange();
-        //UpdateProgressPercentageBar();
-        benchClock.Stop();
-        Log.Warn("TVHome.OnClicked(): Total Time - {0} ms", benchClock.ElapsedMilliseconds.ToString());
       }
-
-      if (control == btnTeletext)
-      {
-        GUIWindowManager.ActivateWindow((int)Window.WINDOW_TELETEXT);
-        return;
-      }
-
-      if (control == btnRecord)
-      {
-        OnRecord();
-      }
-      if (control == btnChannel)
-      {
-        OnSelectChannel();
-      }
-      base.OnClicked(controlId, control, actionType);
+      Log.Debug("TVHome: HeartBeat Transmitter started.");
+      heartBeatTransmitterThread = new Thread(HeartBeatTransmitter);
+      heartBeatTransmitterThread.IsBackground = true;
+      heartBeatTransmitterThread.Name = "TvClient-TvHome: HeartBeat transmitter thread";
+      heartBeatTransmitterThread.Start();
     }
-    
-    public override bool OnMessage(GUIMessage message)
+
+    private void stopHeartBeatThread()
     {
-      switch (message.Message)
+      if (heartBeatTransmitterThread != null)
       {
-        case GUIMessage.MessageType.PS_ONSTANDBY:
-          RemoteControl.Clear();
-          break;
-        case GUIMessage.MessageType.GUI_MSG_RESUME_TV:
-          {
-            if (_autoTurnOnTv && !wasPrevWinTVplugin())
-            // we only want to resume TV if previous window is NOT a tvplugin based one. (ex. tvguide.)
-            {
-              //restart viewing...  
-              Log.Info("tv home msg resume tv:{0}", Navigator.CurrentChannel);
-              ViewChannel(Navigator.Channel);
-            }
-          }
-          break;
-        case GUIMessage.MessageType.GUI_MSG_RECORDER_VIEW_CHANNEL:
-          Log.Info("tv home msg view chan:{0}", message.Label);
-          {
-            TvBusinessLayer layer = new TvBusinessLayer();
-            Channel ch = layer.GetChannelByName(message.Label);
-            ViewChannel(ch);
-          }
-          break;
-
-        case GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_VIEWING:
-          {
-            Log.Info("tv home msg stop chan:{0}", message.Label);
-            TvBusinessLayer layer = new TvBusinessLayer();
-            Channel ch = layer.GetChannelByName(message.Label);
-            ViewChannel(ch);
-          }
-          break;
+        if (heartBeatTransmitterThread.IsAlive)
+        {
+          Log.Debug("TVHome: HeartBeat Transmitter stopped.");
+          heartBeatTransmitterThread.Abort();
+        }
       }
-      return base.OnMessage(message);
     }
 
-    public override void Process()
-    {      
-      TimeSpan ts = DateTime.Now - _updateTimer;
-      if (ts.TotalMilliseconds < 1000 || !Connected)
-      {
-        return;
-      }      
-
-      UpdateRecordingIndicator();
-      UpdateStateOfRecButton();
-
-      if (!Card.IsTimeShifting)
-      {
-        UpdateProgressPercentageBar(); // mantis #2218 : TV guide information in TV home screen does not update when program changes if TV is not playing 
-        return;
-      }
-
-      // BAV, 02.03.08: a channel change should not be delayed by rendering.
-      //                by moving thisthe 1 min delays in zapping should be fixed
-      // Let the navigator zap channel if needed
-      if (Navigator.CheckChannelChange())
-      {
-        UpdateGUIonPlaybackStateChange();
-      }
-
-      if (GUIGraphicsContext.InVmr9Render)
-      {
-        return;
-      }
-
-      doProcess();
-
-      _updateTimer = DateTime.Now;
-    }
     #endregion
 
     public static void OnSelectGroup()
@@ -2311,7 +2300,7 @@ namespace TvPlugin
     private void UpdateRecordingIndicator()
     {
       DateTime now = DateTime.Now;
-
+      //Log.Debug("updaterec: conn:{0}, rec:{1}", Connected, Card.IsRecording);
       // if we're recording tv, update gui with info
       if (Connected && Card.IsRecording)
       {
