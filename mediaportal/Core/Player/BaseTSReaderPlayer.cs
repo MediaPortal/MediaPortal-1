@@ -151,7 +151,7 @@ namespace MediaPortal.Player
     protected SubtitleSelector _subSelector = null;
     protected SubtitleRenderer _dvbSubRenderer = null;
     protected AudioSelector _audioSelector = null;
-    
+
     /// <summary> control interface. </summary>
     protected IMediaControl _mediaCtrl = null;
 
@@ -420,7 +420,7 @@ namespace MediaPortal.Player
       _isFullscreen = false;
       _geometry = Geometry.Type.Normal;
       _updateNeeded = true;
-      
+
       Log.Info("TSReaderPlayer:play {0}", strFile);
       _isStarted = false;
       if (!GetInterfaces(strFile))
@@ -491,11 +491,11 @@ namespace MediaPortal.Player
       _height = GUIGraphicsContext.VideoWindow.Height;
       _geometry = GUIGraphicsContext.ARType;
       _updateNeeded = true;
-      SetVideoWindow();      
+      SetVideoWindow();
       UpdateCurrentPosition();
       UpdateDuration();
       OnInitialized();
-      Log.Info("TSReaderPlayer: position:{0}, duration:{1}", CurrentPosition, Duration);      
+      Log.Info("TSReaderPlayer: position:{0}, duration:{1}", CurrentPosition, Duration);
       return true;
     }
 
@@ -569,8 +569,8 @@ namespace MediaPortal.Player
       m_geometry.ARType = GUIGraphicsContext.ARType;
       m_geometry.PixelRatio = GUIGraphicsContext.PixelRatio;
       m_geometry.GetWindow(aspectX, aspectY, out rSource, out rDest);
-      rDest.X += (int) x;
-      rDest.Y += (int) y;
+      rDest.X += (int)x;
+      rDest.Y += (int)y;
       Log.Info("overlay: video WxH  : {0}x{1}", _videoWidth, _videoHeight);
       Log.Info("overlay: video AR   : {0}:{1}", aspectX, aspectY);
       Log.Info("overlay: screen WxH : {0}x{1}", nw, nh);
@@ -722,7 +722,7 @@ namespace MediaPortal.Player
       }
       else
       {
-        _lastFrameCounter = 0; 
+        _lastFrameCounter = 0;
         _FFRWtimer = DateTime.Now;
       }
       if (_endOfFileDetected && IsTimeShifting)
@@ -815,7 +815,7 @@ namespace MediaPortal.Player
           bool setRateFailed = false;
           if (_CodecSupportsFastSeeking)
           {
-            if(g_Player.IsVideo) // only for video
+            if (g_Player.IsVideo) // only for video
               VMR9Util.g_vmr9.EVRProvidePlaybackRate((double)value);
             if (iSpeed != value)
             {
@@ -823,7 +823,7 @@ namespace MediaPortal.Player
               int previousSpeed = iSpeed;
               iSpeed = value;
 
-              int hr = _mediaSeeking.SetRate((double) iSpeed);
+              int hr = _mediaSeeking.SetRate((double)iSpeed);
 
               FilterState state;
               _mediaCtrl.GetState(100, out state);
@@ -831,13 +831,13 @@ namespace MediaPortal.Player
               {
                 _mediaCtrl.Run();
               }
-              
+
               Log.Info("VideoPlayer:SetRate to:{0} {1:X}", iSpeed, hr);
               if (hr != 0)
               {
                 IMediaSeeking oldMediaSeek = _graphBuilder as IMediaSeeking;
-                hr = oldMediaSeek.SetRate((double) iSpeed);
-               
+                hr = oldMediaSeek.SetRate((double)iSpeed);
+
                 setRateFailed = true;
                 _usingFastSeeking = false;
                 iSpeed = 0;
@@ -855,9 +855,9 @@ namespace MediaPortal.Player
               }
             }
           }
-          if( !_CodecSupportsFastSeeking || setRateFailed )
+          if (!_CodecSupportsFastSeeking || setRateFailed)
           {
-            switch ((int) value)
+            switch ((int)value)
             {
               case -1:
                 _speedRate = -10000;
@@ -1133,8 +1133,8 @@ namespace MediaPortal.Player
             if (_basicAudio != null)
             {
               // Divide by 100 to get equivalent decibel value. For example, –10,000 is –100 dB. 
-              float fPercent = (float) _volume/100.0f;
-              int iVolume = (int) (5000.0f*fPercent);
+              float fPercent = (float)_volume / 100.0f;
+              int iVolume = (int)(5000.0f * fPercent);
               _basicAudio.put_Volume((iVolume - 5000));
             }
           }
@@ -1207,7 +1207,7 @@ namespace MediaPortal.Player
             fContentEnd = lContentEnd;
 
             dTimeInSecs += fContentStart;
-            long lTime = (long) dTimeInSecs;
+            long lTime = (long)dTimeInSecs;
             Log.Info("set positions");
             if (VMR9Util.g_vmr9 != null)
             {
@@ -1244,9 +1244,9 @@ namespace MediaPortal.Player
         {
           double dCurrentPos = this.CurrentPosition;
           double dDuration = Duration;
-          double fCurPercent = (dCurrentPos/Duration)*100.0d;
-          double fOnePercent = Duration/100.0d;
-          fCurPercent = fCurPercent + (double) iPercentage;
+          double fCurPercent = (dCurrentPos / Duration) * 100.0d;
+          double fOnePercent = Duration / 100.0d;
+          fCurPercent = fCurPercent + (double)iPercentage;
           fCurPercent *= fOnePercent;
           if (fCurPercent < 0.0d)
           {
@@ -1274,8 +1274,8 @@ namespace MediaPortal.Player
           {
             iPercentage = 100;
           }
-          double fPercent = Duration/100.0f;
-          fPercent *= (double) iPercentage;
+          double fPercent = Duration / 100.0f;
+          fPercent *= (double)iPercentage;
           SeekAbsolute(fPercent);
         }
       }
@@ -1434,7 +1434,7 @@ namespace MediaPortal.Player
                                     int bitrate, int isInterlaced)
     {
       _videoFormat.IsValid = true;
-      _videoFormat.streamType = (VideoStreamType) streamType;
+      _videoFormat.streamType = (VideoStreamType)streamType;
       _videoFormat.width = width;
       _videoFormat.height = height;
       _videoFormat.arX = aspectRatioX;
@@ -1462,33 +1462,30 @@ namespace MediaPortal.Player
         needsRebuild = true;
       }
 
-      if (!needsRebuild)
+      IPin[] pins = new IPin[1];
+      while (!needsRebuild)
       {
-        IPin[] pins = new IPin[1];
         int fetched;
-        for (; ; )
+        hr = pinEnum.Next(1, pins, out fetched);
+        if (hr != 0 || fetched == 0)
         {
-          hr = pinEnum.Next(1, pins, out fetched);
-          if (hr != 0 || fetched == 0)
+          break;
+        }
+        IPin other;
+        hr = pins[0].ConnectedTo(out other);
+        if (hr == 0 && other != null)
+        {
+          try
           {
-            break;
-          }
-          IPin other = null;
-          hr = pins[0].ConnectedTo(out other);
-          if (hr == 0 && other != null)
-          {
-            try
+            if (!DirectShowUtil.QueryConnect(pins[0], other))
             {
-              if (!DirectShowUtil.QueryConnect(pins[0], other))
-              {
-                needsRebuild = true;
-              }
-              DirectShowUtil.ReleaseComObject(other);  
+              needsRebuild = true;
             }
-            catch { }
+            DirectShowUtil.ReleaseComObject(other);
           }
-          DirectShowUtil.ReleaseComObject(pins[0]);        
-        }        
+          catch { }
+        }
+        DirectShowUtil.ReleaseComObject(pins[0]);
       }
       DirectShowUtil.ReleaseComObject(pinEnum);
       Log.Info("Graph needs a rebuild: {0}", needsRebuild ? "True" : "False");
@@ -1558,7 +1555,7 @@ namespace MediaPortal.Player
           {
             Log.Error("Error starting graph: ({0:x})", hr);
           }
-          else 
+          else
           {
             Log.Info("Reconfigure graph done");
           }
@@ -1576,16 +1573,16 @@ namespace MediaPortal.Player
       object comobj = null;
       try
       {
-        _graphBuilder = (IGraphBuilder) new FilterGraph();
+        _graphBuilder = (IGraphBuilder)new FilterGraph();
         _vmr7 = new VMR7Util();
         _vmr7.AddVMR7(_graphBuilder);
         TsReader reader = new TsReader();
-        _fileSource = (IBaseFilter) reader;
-        ((ITSReader) reader).SetTsReaderCallback(this);
-        ((ITSReader) reader).SetRequestAudioChangeCallback(this);
-        IBaseFilter filter = (IBaseFilter) _fileSource;
+        _fileSource = (IBaseFilter)reader;
+        ((ITSReader)reader).SetTsReaderCallback(this);
+        ((ITSReader)reader).SetRequestAudioChangeCallback(this);
+        IBaseFilter filter = (IBaseFilter)_fileSource;
         _graphBuilder.AddFilter(filter, "TsReader");
-        IFileSourceFilter interFaceFile = (IFileSourceFilter) _fileSource;
+        IFileSourceFilter interFaceFile = (IFileSourceFilter)_fileSource;
         interFaceFile.Load(filename, null);
         // add preferred video & audio codecs
         string strVideoCodec = "";
@@ -1645,10 +1642,10 @@ namespace MediaPortal.Player
           DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
         }
 
-        DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter) _fileSource);
-        _mediaCtrl = (IMediaControl) _graphBuilder;
+        DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter)_fileSource);
+        _mediaCtrl = (IMediaControl)_graphBuilder;
         _videoWin = _graphBuilder as IVideoWindow;
-        _mediaEvt = (IMediaEventEx) _graphBuilder;
+        _mediaEvt = (IMediaEventEx)_graphBuilder;
         _mediaSeeking = _graphBuilder as IMediaSeeking;
         if (_mediaSeeking == null)
         {
@@ -1710,7 +1707,7 @@ namespace MediaPortal.Player
         _mediaSeeking = null;
         _basicAudio = null;
         _basicVideo = null;
-        
+
         if (_audioRendererFilter != null)
         {
           while ((hr = DirectShowUtil.ReleaseComObject(_audioRendererFilter)) > 0)
@@ -1719,7 +1716,7 @@ namespace MediaPortal.Player
           }
           _audioRendererFilter = null;
         }
-        
+
         if (_fileSource != null)
         {
           while ((hr = DirectShowUtil.ReleaseComObject(_fileSource)) > 0)
@@ -1733,7 +1730,7 @@ namespace MediaPortal.Player
           _vmr7.RemoveVMR7();
         }
         _vmr7 = null;
-        
+
         if (_rotEntry != null)
         {
           _rotEntry.Dispose();
@@ -1748,7 +1745,7 @@ namespace MediaPortal.Player
           }
           _graphBuilder = null;
         }
-        
+
         _state = PlayState.Init;
         GUIGraphicsContext.form.Invalidate(true);
       }
@@ -1822,7 +1819,7 @@ namespace MediaPortal.Player
         return;
       }
       TimeSpan ts = DateTime.Now - _elapsedTimer;
-      if ((ts.TotalMilliseconds < 100) || (ts.TotalMilliseconds < Math.Abs(1000.0f/Speed)) || (VMR9Util.g_vmr9 != null && _lastFrameCounter == VMR9Util.g_vmr9.FreeFrameCounter) && (ts.TotalMilliseconds < 2000))
+      if ((ts.TotalMilliseconds < 100) || (ts.TotalMilliseconds < Math.Abs(1000.0f / Speed)) || (VMR9Util.g_vmr9 != null && _lastFrameCounter == VMR9Util.g_vmr9.FreeFrameCounter) && (ts.TotalMilliseconds < 2000))
       {                                   // Ambass : Normally, 100 mS are enough to present the new frame, but sometimes the PC is thinking...and we launch a new seek
         return;                           // before the StopWhenReady() method has been completed. It results as a kind of mess in the tsReader....
       }                                   // So, it's better to verify a new frame has been pesented.
@@ -1833,17 +1830,17 @@ namespace MediaPortal.Player
         _mediaSeeking.GetPositions(out current, out stop);
 
         //this is the real elapsed time from next seek.
-         DateTime dt = DateTime.Now;
-         ts = dt - _FFRWtimer ;
-         _FFRWtimer = dt ;
+        DateTime dt = DateTime.Now;
+        ts = dt - _FFRWtimer;
+        _FFRWtimer = dt;
 
         //Log.Info(" time from last : {6} {7} {8} earliest:{0} latest:{1} current:{2} stop:{3} speed:{4}, total:{5}",
         //         earliest / 10000000, latest / 10000000, current / 10000000, stop / 10000000, _speedRate, (latest - earliest) / 10000000, (long)ts.TotalMilliseconds, VMR9Util.g_vmr9.FreeFrameCounter, Speed);
 
         // new time = current time + timerinterval * speed
-        long lTimerInterval = (long) ts.TotalMilliseconds;
+        long lTimerInterval = (long)ts.TotalMilliseconds;
 
-        rewind = (long) (current + ((long)(lTimerInterval)*Speed*10000));
+        rewind = (long)(current + ((long)(lTimerInterval) * Speed * 10000));
         int hr;
         pStop = 0;
         // if we end up before the first moment of time then just
@@ -1860,7 +1857,7 @@ namespace MediaPortal.Player
         }
         // if we end up at the end of time then just
         // start @ the end-100msec
-        long margin = (IsTimeShifting) ? 30000000 : 1000000 ;
+        long margin = (IsTimeShifting) ? 30000000 : 1000000;
 
         if ((rewind > (latest - margin)) && (_speedRate > 0))
         {
@@ -1874,7 +1871,7 @@ namespace MediaPortal.Player
         }
         //seek to new moment in time
         //Log.Info(" seek :{0}",rewind/10000000);
-        if (VMR9Util.g_vmr9!=null) _lastFrameCounter = VMR9Util.g_vmr9.FreeFrameCounter;
+        if (VMR9Util.g_vmr9 != null) _lastFrameCounter = VMR9Util.g_vmr9.FreeFrameCounter;
         hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop),
                                         AMSeekingSeekingFlags.NoPositioning);
         //according to ms documentation, this is the prefered way to do seeking
