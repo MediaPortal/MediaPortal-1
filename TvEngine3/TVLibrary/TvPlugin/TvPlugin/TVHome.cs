@@ -105,6 +105,7 @@ namespace TvPlugin
     private static TVUtil _util;
     private static VirtualCard _card = null;
     private DateTime _updateTimer = DateTime.Now;
+    private static DateTime _startTime = DateTime.Now;
     private static bool _autoTurnOnTv = false;
     private static int _waitonresume = 0;
     public static bool settingsLoaded = false;
@@ -129,6 +130,8 @@ namespace TvPlugin
     private static bool _doingChannelChange = false;
     private static bool _ServerNotConnectedHandled = false;
     private static bool _recoverTV = false;
+    private static bool _connected = false;
+    protected static TvServer _server;
 
     private static ManualResetEvent _waitForBlackScreen = null;
     private static ManualResetEvent _waitForVideoReceived = null;
@@ -160,12 +163,8 @@ namespace TvPlugin
     protected GUIVideoControl videoWindow = null;
     [SkinControl(9)]
     protected GUIButtonControl btnActiveStreams = null;
-
     [SkinControl(14)]
-    protected GUIButtonControl btnActiveRecordings = null;
-
-    private static bool _connected = false;
-    protected static TvServer _server;
+    protected GUIButtonControl btnActiveRecordings = null;   
 
     // error handling
     public class ChannelErrorInfo
@@ -173,7 +172,7 @@ namespace TvPlugin
       public Channel FailingChannel;
       public TvResult Result;
       public List<String> Messages = new List<string>();
-    };
+    }
     public static ChannelErrorInfo _lastError = new ChannelErrorInfo();
 
     // CI Menu
@@ -302,17 +301,16 @@ namespace TvPlugin
         //Wake up the TV server, if required
         HandleWakeUpTvServer();
 
+        startHeartBeatThread();
         //System.Diagnostics.Debugger.Launch();
-
-        RefreshConnectionState();
-
+        
         m_navigator = new ChannelNavigator();
         LoadSettings();
 
         string pluginVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
-        string tvServerVersion = RemoteControl.Instance.GetAssemblyVersion;
+        string tvServerVersion = Connected ? RemoteControl.Instance.GetAssemblyVersion : "Unknown";
 
-        if (pluginVersion != tvServerVersion)
+        if (Connected && pluginVersion != tvServerVersion)
         {
           string strLine = "TvPlugin and TvServer don't have the same version.\r\n";
           strLine += "TvServer Version: " + tvServerVersion + "\r\n";
@@ -327,8 +325,7 @@ namespace TvPlugin
         Log.Error("TVHome: Error occured in Init(): {0}", ex.Message);
       }
       
-      _notifyManager.Start();
-      startHeartBeatThread();      
+      _notifyManager.Start();            
     }  
 
     /// <summary>
@@ -1053,7 +1050,8 @@ namespace TvPlugin
         if (!Connected)
         {          
           //Card.User.Name = new User().Name;
-          TVHome.StopPlayerMainThread();
+          if (g_Player.Playing)
+            TVHome.StopPlayerMainThread();
 
           if (g_Player.FullScreen)
           {
@@ -1456,7 +1454,8 @@ namespace TvPlugin
       if (Connected)
         Log.Info("TVHome: OnRemotingDisconnected");
       Connected = false;
-      HandleServerNotConnected();
+      if((DateTime.Now - _startTime).Seconds > 30)
+        HandleServerNotConnected();
     }
 
     private void Application_ApplicationExit(object sender, EventArgs e)
