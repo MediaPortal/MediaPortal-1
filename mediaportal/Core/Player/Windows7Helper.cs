@@ -151,7 +151,7 @@ namespace MediaPortal.Player
       numerator = (UInt32)Marshal.ReadInt32(pModeArray,offset+32);
       denominator = (UInt32)Marshal.ReadInt32(pModeArray,offset+36);
       refreshRate = (double)numerator / (double)denominator;
-      Log.Debug("W7RefreshRateHelper.GetRefreshRate: QueryDisplayConfig returned {0}/{0}", numerator, denominator);
+      Log.Debug("W7RefreshRateHelper.GetRefreshRate: QueryDisplayConfig returned {0}/{1}", numerator, denominator);
 
       // free memory and return refresh rate
       Marshal.FreeHGlobal(pPathArray);
