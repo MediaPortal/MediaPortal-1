@@ -423,18 +423,28 @@ namespace MediaPortal.GUI.Library
       return 0;
     }
 
-    public static int LoadFromMemoryEx(string name, long lColorKey, int iMaxWidth, int iMaxHeight, out Texture texture)
+    public static int LoadFromMemoryEx(Image memoryImage, string name, long lColorKey, out Texture texture)
     {
-      Log.Debug("TextureManagerEx: load from memory: {0} {1} {2}", name, iMaxWidth, iMaxHeight);
+      Log.Debug("TextureManagerEx: load from memory: {0}", name);
       string cacheName = name;
 
       texture = null;
+      for (int i = 0; i < _cache.Count; ++i)
+      {
+        CachedTexture cached = (CachedTexture)_cache[i];
+
+        if (String.Compare(cached.Name, cacheName, true) == 0)
+        {
+          return cached.Frames;
+        }
+      }
+      if (memoryImage == null)
+      {
+        return 0;
+      }
       try
       {
         CachedTexture newCache = new CachedTexture();
-
-        Bitmap bitmap = new Bitmap(iMaxWidth, iMaxHeight, PixelFormat.Format32bppArgb);
-        Image memoryImage = bitmap;
 
         newCache.Name = cacheName;
         newCache.Frames = 1;

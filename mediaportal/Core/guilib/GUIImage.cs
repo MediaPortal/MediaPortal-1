@@ -154,6 +154,9 @@ namespace MediaPortal.GUI.Library
     private int _memoryImageWidth = 0;
     private int _memoryImageHeight = 0;
     private Texture _memoryImageTexture;
+
+    private Image _memoryImage = null;
+
     private GUIImage()
     {
     }
@@ -256,6 +259,11 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public Image MemoryImage
+    {
+      get { return _memoryImage; }
+      set { _memoryImage = value; }
+    }
     /// <summary>
     /// Does any scaling on the inital size\position values to fit them to screen 
     /// resolution. 
@@ -708,7 +716,15 @@ namespace MediaPortal.GUI.Library
           if (fileName.StartsWith("["))
           {
 
-            frameCount = GUITextureManager.LoadFromMemoryEx(fileName, m_dwColorKey, _memoryImageWidth, _memoryImageHeight, out _memoryImageTexture);
+            if (_memoryImageWidth != 0 && _memoryImageHeight != 0)
+            {
+              Bitmap bitmap = new Bitmap(_memoryImageWidth, _memoryImageHeight, PixelFormat.Format32bppArgb);
+              Image memoryImage = bitmap;
+              frameCount = GUITextureManager.LoadFromMemoryEx(memoryImage, fileName, m_dwColorKey, out _memoryImageTexture);
+            }
+            else
+              frameCount = GUITextureManager.LoadFromMemoryEx(_memoryImage, fileName, m_dwColorKey, out _memoryImageTexture);
+
             if (0 == frameCount)
             {
               continue; // unable to load texture
