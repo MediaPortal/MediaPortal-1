@@ -271,9 +271,14 @@ namespace TvPlugin
     {
       int waited = 0;
 
-      Log.Debug("WOLMgr: Ping {0}", wakeupTarget); ;
+      // we have to make sure the remoting system knows that we have resumed the server by means of WOL.
+      // this will make sure the connection timeout for the remoting framework is increased.
+      Log.Debug("WOLMgr: Increasing timeout for RemoteControl");
+      TvControl.RemoteControl.UseIncreasedTimeoutForInitialConnection = true;      
+
+      Log.Debug("WOLMgr: Ping {0}", wakeupTarget);
       if (Ping(wakeupTarget, timeout))
-      {
+      {        
         Log.Debug("WOLMgr: {0} already started", wakeupTarget);
         return true;
       }
@@ -288,10 +293,7 @@ namespace TvPlugin
       {
         Log.Debug("WOLMgr: Ping {0}", wakeupTarget);
         if (Ping(wakeupTarget, 1000))
-        {
-          // we have to make sure the remoting system knows that we have resumed the server by means of WOL.
-          // this will make sure the connection timeout for the remoting framework is increased.
-          TvControl.RemoteControl.UseIncreasedTimeoutForInitialConnection = true;
+        {         
           return true;
         }
         Log.Debug("WOLMgr: System {0} still not reachable, waiting...", wakeupTarget);

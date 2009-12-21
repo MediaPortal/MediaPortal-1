@@ -105,7 +105,6 @@ namespace TvPlugin
     private static TVUtil _util;
     private static VirtualCard _card = null;
     private DateTime _updateTimer = DateTime.Now;
-    private static DateTime _startTime = DateTime.Now;
     private static bool _autoTurnOnTv = false;
     private static int _waitonresume = 0;
     public static bool settingsLoaded = false;
@@ -322,7 +321,7 @@ namespace TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Error("TVHome: Error occured in Init(): {0}", ex.Message);
+        Log.Error("TVHome: Error occured in Init(): {0}, st {1}", ex.Message, Environment.StackTrace);
       }
       
       _notifyManager.Start();            
@@ -1453,9 +1452,8 @@ namespace TvPlugin
     {
       if (Connected)
         Log.Info("TVHome: OnRemotingDisconnected");
-      Connected = false;
-      if((DateTime.Now - _startTime).Seconds > 30)
-        HandleServerNotConnected();
+      Connected = false;      
+      HandleServerNotConnected();
     }
 
     private void Application_ApplicationExit(object sender, EventArgs e)
