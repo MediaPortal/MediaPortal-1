@@ -421,16 +421,16 @@ namespace MediaPortal.Player
 
         TsReader reader = new TsReader();
         _fileSource = (IBaseFilter)reader;
-        ireader = (ITSReader)reader;
-        ireader.SetRelaxedMode(relaxTsReader); // enable/disable continousity filtering
-        ireader.SetTsReaderCallback(this);
-        ireader.SetRequestAudioChangeCallback(this);
+        _ireader = (ITSReader)reader;
+        _ireader.SetRelaxedMode(relaxTsReader); // enable/disable continousity filtering
+        _ireader.SetTsReaderCallback(this);
+        _ireader.SetRequestAudioChangeCallback(this);
         Log.Info("TSReaderPlayer:add TsReader to graph");
         int hr = _graphBuilder.AddFilter((IBaseFilter)_fileSource, "TsReader");
         if (hr != 0)
         {
           Log.Error("TSReaderPlayer:Failed to add TsReader to graph");
-          ireader = null;
+          _ireader = null;
           return false;
         }
 
@@ -709,19 +709,8 @@ namespace MediaPortal.Player
         _mediaSeeking = null;
         _basicAudio = null;
         _basicVideo = null;
-        
-        if (_graphBuilder != null)
-        {
-          DirectShowUtil.RemoveFilters(_graphBuilder);
-          DirectShowUtil.ReleaseComObject(_graphBuilder);
-          _graphBuilder = null;
-        }
-
-        if (_rotEntry != null)
-        {
-          _rotEntry.Dispose();
-          _rotEntry = null;
-        }
+        _ireader = null;
+        _fileSource = null;
 
         if (_vmr9 != null)
         {
@@ -729,6 +718,21 @@ namespace MediaPortal.Player
           _vmr9.Dispose();
           _vmr9 = null;
         }
+
+        if (_graphBuilder != null)
+        {
+          DirectShowUtil.RemoveFilters(_graphBuilder);
+          DirectShowUtil.ReleaseComObject(_graphBuilder);
+          _graphBuilder = null;
+        }
+        
+        if (_rotEntry != null)
+        {
+          _rotEntry.Dispose();
+          _rotEntry = null;
+        }
+
+
 
         GUIGraphicsContext.form.Invalidate(true);
         _state = PlayState.Init;
@@ -887,9 +891,9 @@ namespace MediaPortal.Player
     /// </summary>
     public override void OnZapping(int info)
     {
-      if (ireader != null)
+      if (_ireader != null)
       {
-        ireader.OnZapping(info);
+        _ireader.OnZapping(info);
       }
       Log.Info("TSReaderPlayer: OnZapping :{0}", info);
 

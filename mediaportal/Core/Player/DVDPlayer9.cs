@@ -428,8 +428,15 @@ namespace MediaPortal.Player
         {
           while ((hr = DirectShowUtil.ReleaseComObject(_line21Decoder)) > 0) ;
           _line21Decoder = null;
-        }        
-        
+        }
+
+        if (_vmr9 != null)
+        {
+          _vmr9.Enable(false);
+          _vmr9.Dispose();
+          _vmr9 = null;
+        }
+
         if (_graphBuilder != null)
         {
           DirectShowUtil.RemoveFilters(_graphBuilder);
@@ -443,12 +450,7 @@ namespace MediaPortal.Player
           _rotEntry = null;
         }
 
-        if (_vmr9 != null)
-        {
-          _vmr9.Enable(false);
-          _vmr9.Dispose();
-          _vmr9 = null;
-        }
+
 
         _state = PlayState.Init;
         GUIGraphicsContext.form.Invalidate(true);

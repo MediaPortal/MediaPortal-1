@@ -115,7 +115,7 @@ namespace MediaPortal.Player
 
     #region variables
 
-    protected ITSReader ireader = null;
+    protected ITSReader _ireader = null;
     protected int iSpeed = 1;
     protected IBaseFilter _fileSource = null;
     protected int _curAudioStream = 0;
@@ -610,7 +610,7 @@ namespace MediaPortal.Player
       if (_bMediaTypeChanged)
       {
         DoGraphRebuild();
-        ireader.OnGraphRebuild(iChangedMediaTypes);
+        _ireader.OnGraphRebuild(iChangedMediaTypes);
         _bMediaTypeChanged = false;
       }
       if (_bRequestAudioChange)

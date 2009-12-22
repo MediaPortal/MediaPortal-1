@@ -322,6 +322,13 @@ namespace MediaPortal.Player
 
         m_StreamBufferConfig = null;
 
+        if (_vmr9 != null)
+        {
+          Log.Info("StreamBufferPlayer9: vmr9 dispose");
+          _vmr9.Dispose();
+          _vmr9 = null;
+        }    
+
         if (_graphBuilder != null)
         {
           DirectShowUtil.RemoveFilters(_graphBuilder);
@@ -335,12 +342,7 @@ namespace MediaPortal.Player
           _rotEntry = null;
         }
 
-        if (_vmr9 != null)
-        {
-          Log.Info("StreamBufferPlayer9: vmr9 dispose");
-          _vmr9.Dispose();
-          _vmr9 = null;
-        }       
+   
 
         GUIGraphicsContext.form.Invalidate(true);
         _state = PlayState.Init;       

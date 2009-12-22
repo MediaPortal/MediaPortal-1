@@ -532,6 +532,13 @@ namespace MediaPortal.Player
         videoWin = null;
         SubEngine.GetInstance().FreeSubtitles();
 
+        if (Vmr9 != null)
+        {
+          Vmr9.Enable(false);
+          Vmr9.Dispose();
+          Vmr9 = null;
+        }
+
         if (graphBuilder != null)
         {
           DirectShowUtil.RemoveFilters(graphBuilder);
@@ -545,12 +552,7 @@ namespace MediaPortal.Player
           _rotEntry = null;
         }
 
-        if (Vmr9 != null)
-        {
-          Vmr9.Enable(false);
-          Vmr9.Dispose();
-          Vmr9 = null;
-        }
+
 
         GUIGraphicsContext.form.Invalidate(true);
         _state = PlayState.Init;
