@@ -563,11 +563,8 @@ void EvrDeinit()
     }
     if (m_evrPresenter!=NULL)
     {
-      do
-      {
-        hr = m_evrPresenter->Release();
-      } while (hr > 0);
 
+        hr = m_evrPresenter->Release();
       m_evrPresenter = NULL;
       Log("EVRDeinit:m_evrPresenter release:%d", hr);
     }

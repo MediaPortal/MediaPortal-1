@@ -46,6 +46,7 @@ CVMR9AllocatorPresenter::~CVMR9AllocatorPresenter()
   Log("CVMR9AllocatorPresenter dtor");	
   m_pIVMRSurfAllocNotify = NULL;
   m_pD3DDev = NULL;
+  Log("CVMR9AllocatorPresenter dtor exit");	
 }
 
 void CVMR9AllocatorPresenter::UseOffScreenSurface(bool yesNo)
