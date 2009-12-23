@@ -18,6 +18,10 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#include <afx.h>
+#include <afxwin.h>
+
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <streams.h>
@@ -33,28 +37,51 @@ CBuffer::CBuffer()
 {
   bufferCount++;
   m_bDiscontinuity=false;
-	m_iLength=0;
-	m_pBuffer = new byte[MAX_BUFFER_SIZE];
- // LogDebug("buffers:%d",bufferCount);
+  m_iLength=0;
+  m_pBuffer = new byte[MAX_BUFFER_SIZE];
+  m_iSize = MAX_BUFFER_SIZE;
+  m_iVideoServiceType = -1;
+  //LogDebug("buffers:%d",bufferCount);
+}
+
+CBuffer::CBuffer(unsigned long size)
+{
+  bufferCount++;
+  m_bDiscontinuity=false;
+  m_iLength=0;
+  m_pBuffer = new byte[size];
+  m_iSize = size;
+  //LogDebug("buffers:%d",bufferCount);
 }
 
 CBuffer::~CBuffer()
 {
   bufferCount--;
-	delete [] m_pBuffer;
-	m_pBuffer=NULL;
-	m_iLength=0;
+  delete [] m_pBuffer;
+  m_pBuffer=NULL;
+  m_iLength=0;
 }
-
 
 void CBuffer::SetDiscontinuity()
 {
   m_bDiscontinuity=true;
 }
+
 bool CBuffer::GetDiscontinuity()
 {
   return m_bDiscontinuity;
 }
+
+void CBuffer::SetVideoServiceType(int type)
+{
+  m_iVideoServiceType = type;
+}
+
+int CBuffer::GetVideoServiceType()
+{
+  return m_iVideoServiceType;
+}
+
 ///***************************************************************
 ///returns a CRefTime which contains the current timestamp
 // current timestamp starts at 0 at start of file
@@ -106,18 +133,18 @@ void CBuffer::SetLength(int len)
 ///returns the length in bytes of the PES packet
 int CBuffer::Length()
 {
-	return m_iLength;
+  return m_iLength;
 }
 
 ///***************************************************************
 ///returns the PES packet
 byte* CBuffer::Data()
 {
-	if (m_pBuffer==NULL)
-	{
-		return NULL;
-	}
-	return m_pBuffer;
+  if (m_pBuffer==NULL)
+  {
+    return NULL;
+  }
+  return m_pBuffer;
 }
 
 ///***************************************************************
@@ -144,14 +171,14 @@ void CBuffer::SetPcr(CPcr& firstPcr,CPcr& maxPcr)
 // Adds data contained in pBuffer to this pes packet
 void CBuffer::Add(CBuffer* pBuffer)
 {
-	if(pBuffer && ( MAX_BUFFER_SIZE >= m_iLength + pBuffer->Length()))
+	if(pBuffer && ( m_iSize >= m_iLength + pBuffer->Length()))
   {
     memcpy(&m_pBuffer[m_iLength], pBuffer->Data(), pBuffer->Length());
-	  m_iLength+=pBuffer->Length();
+    m_iLength+=pBuffer->Length();
   }
   else
   {
-    LogDebug("CBuffer::Add CBuffer - sanity check failed! MAX_BUFFER_SIZE %d lenght %d", MAX_BUFFER_SIZE, pBuffer->Length()+m_iLength );
+    LogDebug("CBuffer::Add CBuffer - sanity check failed! MAX_BUFFER_SIZE %d lenght %d", m_iSize, pBuffer->Length()+m_iLength );
     if(pBuffer == NULL)
     {
       LogDebug("  pBuffer was NULL!");
@@ -163,14 +190,14 @@ void CBuffer::Add(CBuffer* pBuffer)
 // Adds data contained to this pes packet
 void CBuffer::Add(byte* data, int len)
 {
-	if((MAX_BUFFER_SIZE >= m_iLength + len ) && data) 
+	if((m_iSize >= m_iLength + len ) && data) 
   {
     memcpy(&m_pBuffer[m_iLength], data, len);
-	  m_iLength+=len;
+    m_iLength+=len;
   }
   else
   {
-    LogDebug("CBuffer::Add - sanity check failed! MAX_BUFFER_SIZE %d lenght %d", MAX_BUFFER_SIZE, m_iLength + len );
+    LogDebug("CBuffer::Add - sanity check failed! MAX_BUFFER_SIZE %d lenght %d", m_iSize, m_iLength + len );
     if(data == NULL)
     {
       LogDebug("  data was NULL!");

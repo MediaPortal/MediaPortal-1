@@ -21,6 +21,8 @@
 
 #pragma warning(disable:4996)
 #pragma warning(disable:4995)
+#include "StdAfx.h"
+
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <streams.h>
@@ -29,8 +31,11 @@
 #include "AudioPin.h"
 #include "Videopin.h"
 #include "mediaformats.h"
+#include <wmcodecdsp.h>
 
 #define MAX_TIME  86400000L
+#define DRIFT_RATE 0.5f
+
 extern void LogDebug(const char *fmt, ...) ;
 
 CVideoPin::CVideoPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCritSec* section) :
@@ -49,12 +54,11 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
     AM_SEEKING_CanGetDuration |
     //AM_SEEKING_CanGetCurrentPos |
     AM_SEEKING_Source;
-  m_bSeeking=false;
+//  m_bSeeking=false;
 }
 
 CVideoPin::~CVideoPin()
 {
-  LogDebug("pin:dtor()");
 }
 
 bool CVideoPin::IsConnected()
@@ -65,23 +69,23 @@ STDMETHODIMP CVideoPin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
 {
   if (riid == IID_IStreamBufferConfigure)
   {
-    LogDebug("vid:IID_IStreamBufferConfigure()");
+    //LogDebug("vid:IID_IStreamBufferConfigure()");
   }
   if (riid == IID_IStreamBufferInitialize)
   {
-    LogDebug("vid:IID_IStreamBufferInitialize()");
+    //LogDebug("vid:IID_IStreamBufferInitialize()");
   }
   if (riid == IID_IStreamBufferMediaSeeking||riid == IID_IStreamBufferMediaSeeking2)
   {
-    LogDebug("vid:IID_IStreamBufferMediaSeeking()");
+    //LogDebug("vid:IID_IStreamBufferMediaSeeking()");
   }
   if (riid == IID_IStreamBufferSource)
   {
-    LogDebug("vid:IID_IStreamBufferSource()");
+    //LogDebug("vid:IID_IStreamBufferSource()");
   }
   if (riid == IID_IStreamBufferDataCounters)
   {
-    LogDebug("vid:IID_IStreamBufferDataCounters()");
+    //LogDebug("vid:IID_IStreamBufferDataCounters()");
   }
   if (riid == IID_IMediaSeeking)
   {
@@ -99,77 +103,7 @@ HRESULT CVideoPin::GetMediaType(CMediaType *pmt)
   //LogDebug("vid:GetMediaType()");
   CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   demux.GetVideoStreamType(*pmt);
-  
-  bool CoreAVC = false; 
-  bool DivXH264 = false;
-  bool CyberlinkH264 = false; 
 
-  // We need to find the filters manually as CheckConnect is not called before the 
-  // first GetMediaType call is issues. We don't know where the filter is going to be
-  // connected :(
-  IEnumFilters * piEnumFilters = NULL;
-  if (m_pTsReaderFilter->GetFilterGraph() && SUCCEEDED(m_pTsReaderFilter->GetFilterGraph()->EnumFilters(&piEnumFilters)))
-  {
-    IBaseFilter * pFilter;
-    while (piEnumFilters->Next(1, &pFilter, 0) == NOERROR )
-    {
-      FILTER_INFO filterInfo;
-      if (pFilter->QueryFilterInfo(&filterInfo) == S_OK)
-      {
-        if (!wcsicmp(L"DivX H.264 Decoder", filterInfo.achName))
-        {
-          DivXH264 = true;
-        }
-        if (!wcsicmp(L"CoreAVC Video Decoder", filterInfo.achName))
-        {
-          CoreAVC = true;
-        }
-        if (!wcsncmp(m_filterInfo.achName,L"CyberLink H.264/AVC", 19))
-        {
-          CyberlinkH264 = true;
-        }
-        filterInfo.pGraph->Release();
-      }
-      pFilter->Release();
-      pFilter = NULL;
-    }
-    piEnumFilters->Release();
-  }  
-
-  // Hacking the media type to work with selected decoders
-  if((CoreAVC || DivXH264 || CyberlinkH264) && pmt->subtype == MEDIASUBTYPE_H264 )
-  {
-    ULONG len = pmt->FormatLength();
-    MPEG2VIDEOINFO* vi = (MPEG2VIDEOINFO*)pmt->Format();
-    
-    if(CoreAVC) 
-    {
-      LogDebug("vid:GetMediaType() patching mediatype for CoreAVC Video Decoder");         
-      pmt->subtype = H264_SubType;
-      vi->hdr.bmiHeader.biCompression = '1cva';
-      pmt->SetFormat((BYTE*)vi,len);
-      return S_OK;
-    }
-
-    /*if(CyberlinkH264)
-    {
-      LogDebug("vid:GetMediaType() patching mediatype for CyberLink  H.264/AVC Video Decoder - version 2");
-      //pmt->subtype=H264_SubType;
-      pmt->subtype = H264_SubType;
-      vi->hdr.bmiHeader.biCompression = '1cva';
-      pmt->SetFormat((BYTE*)vi,len);
-      return S_OK;
-    }*/
-
-    if(DivXH264)
-    {
-      LogDebug("vid:GetMediaType() patching mediatype for DivX H.264 Decoder");
-      pmt->subtype = MPG4_SubType;
-      vi->hdr.bmiHeader.biCompression = '1cva';
-      vi->dwFlags = 0;
-      pmt->SetFormat((BYTE*)vi,len);
-    }
-  }
   return S_OK;
 }
 
@@ -181,10 +115,11 @@ HRESULT CVideoPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES 
 
   if (pRequest->cBuffers == 0)
   {
-    pRequest->cBuffers = 30;
+    pRequest->cBuffers = 1;
   }
 
-  pRequest->cbBuffer = 0x10000;
+  // Would be better if this would be allocated on sample basis
+  pRequest->cbBuffer = 0x1000000;
 
   ALLOCATOR_PROPERTIES Actual;
   hr = pAlloc->SetProperties(pRequest, &Actual);
@@ -195,6 +130,7 @@ HRESULT CVideoPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES 
 
   if (Actual.cbBuffer < pRequest->cbBuffer)
   {
+    LogDebug("vid:DecideBufferSize - failed to get buffer");
     return E_FAIL;
   }
 
@@ -240,8 +176,7 @@ HRESULT CVideoPin::CheckConnect(IPin *pReceivePin)
 }
 HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
 {
-  m_bInFillBuffer=false;
-  LogDebug("vid:CompleteConnect()");
+  //LogDebug("vid:CompleteConnect()");
   HRESULT hr = CBaseOutputPin::CompleteConnect(pReceivePin);
   if (SUCCEEDED(hr))
   {
@@ -266,7 +201,7 @@ HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
     m_pTsReaderFilter->GetDuration(&refTime);
     m_rtDuration=CRefTime(refTime);
   }
-  LogDebug("vid:CompleteConnect() ok");
+  //LogDebug("vid:CompleteConnect() ok");
   return hr;
 }
 
@@ -282,102 +217,165 @@ void CVideoPin::SetDiscontinuity(bool onOff)
   m_bDiscontinuity=onOff;
 }
 
-int ShowBuffer=100 ;
+HRESULT CVideoPin::DoBufferProcessingLoop(void)
+{
+  Command com;
+  OnThreadStartPlay();
+
+  do 
+  {
+    while (!CheckRequest(&com)) 
+    {
+      IMediaSample *pSample;
+      HRESULT hr = GetDeliveryBuffer(&pSample,NULL,NULL,0);
+      if (FAILED(hr)) 
+      {
+        Sleep(1);
+        continue;	// go round again. Perhaps the error will go away
+        // or the allocator is decommited & we will be asked to
+        // exit soon.
+      }
+
+      // Virtual function user will override.
+      hr = FillBuffer(pSample);
+
+      if (hr == S_OK) 
+      {
+        //LogDebug("Vid::DoBufferProcessingLoop() - sample len %d size %d", 
+        //  pSample->GetActualDataLength(), pSample->GetSize());
+        
+        // This is the only change for base class implementation of DoBufferProcessingLoop()
+        // Cyberlink H.264 decoder seems to crash when we provide empty samples for it 
+        if( pSample->GetActualDataLength() > 0)
+        {
+          hr = Deliver(pSample);     
+        }
+		
+        pSample->Release();
+
+        // downstream filter returns S_FALSE if it wants us to
+        // stop or an error if it's reporting an error.
+        if(hr != S_OK)
+        {
+          DbgLog((LOG_TRACE, 2, TEXT("Deliver() returned %08x; stopping"), hr));
+          return S_OK;
+        }
+      } 
+      else if (hr == S_FALSE) 
+      {
+        // derived class wants us to stop pushing data
+        pSample->Release();
+        DeliverEndOfStream();
+        return S_OK;
+      } 
+      else 
+      {
+        // derived class encountered an error
+        pSample->Release();
+        DbgLog((LOG_ERROR, 1, TEXT("Error %08lX from FillBuffer!!!"), hr));
+        DeliverEndOfStream();
+        m_pFilter->NotifyEvent(EC_ERRORABORT, hr, 0);
+        return hr;
+      }
+     // all paths release the sample
+    }
+    // For all commands sent to us there must be a Reply call!
+	  if (com == CMD_RUN || com == CMD_PAUSE) 
+    {
+      Reply(NOERROR);
+	  } 
+    else if (com != CMD_STOP) 
+    {
+      Reply((DWORD) E_UNEXPECTED);
+      DbgLog((LOG_ERROR, 1, TEXT("Unexpected command!!!")));
+	  }
+  } while (com != CMD_STOP);
+
+  return S_FALSE;
+}
+
+int ShowBuffer=100;
 
 HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 {
   try
   {
-    CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
-    CBuffer* buffer=NULL;
-    DWORD m_LastTickCount = GetTickCount() ;
+    CDeMultiplexer& demux = m_pTsReaderFilter->GetDemultiplexer();
+    CBuffer* buffer = NULL;
 
     do
     {
       //get file-duration and set m_rtDuration
       GetDuration(NULL);
 
-      m_bInFillBuffer=true;
-
       //if the filter is currently seeking to a new position
       //or this pin is currently seeking to a new position then
       //we dont try to read any packets, but simply return...
-      if (m_pTsReaderFilter->IsSeeking() || m_bSeeking || m_pTsReaderFilter->IsSeekingToEof())
+      if (m_pTsReaderFilter->IsSeeking() || m_pTsReaderFilter->IsStopping()) //|| m_bSeeking*/ || m_pTsReaderFilter->IsSeekingToEof())
       {
-//        if (ShowBuffer) LogDebug("vid:isseeking:%d %d",m_pTsReaderFilter->IsSeeking() ,m_bSeeking);
-        m_bInFillBuffer=false;
-        Sleep(20);
-        pSample->SetTime(NULL,NULL);
+        //if (ShowBuffer) LogDebug("vid:isseeking:%d %d",m_pTsReaderFilter->IsSeeking() ,m_bSeeking);
+        Sleep(5);
         pSample->SetActualDataLength(0);
-        pSample->SetSyncPoint(FALSE);
-        pSample->SetDiscontinuity(FALSE);  // TRUE seems to hold sometimes the working thread....( ambass )
         return NOERROR;
       }
 
       if (m_pTsReaderFilter->m_bStreamCompensated)
       {
-        //get next buffer from demultiplexer
-        {
-          CAutoLock lock(&m_bufferLock);
-          buffer=demux.GetVideo();
-        }
+        // Get next video buffer from demultiplexer
+        buffer=demux.GetVideo();
       }
 
       //did we reach the end of the file
-      if (demux.EndOfFile() || ((GetTickCount()-m_LastTickCount > 3000) && !m_pTsReaderFilter->IsTimeShifting()))
+      if (demux.EndOfFile())
       {
         LogDebug("vid:set eof");
         pSample->SetTime(NULL,NULL);
         pSample->SetActualDataLength(0);
         pSample->SetSyncPoint(FALSE);
         pSample->SetDiscontinuity(TRUE);
-        m_bInFillBuffer=false;
         return S_FALSE; //S_FALSE will notify the graph that end of file has been reached
       }
 
-      if (buffer==NULL)
+      if (buffer == NULL)
       {
-        m_bInFillBuffer=false;
         Sleep(10);
       }
       else
       {
-        m_LastTickCount = GetTickCount() ;
-        #define PRESENT_DELAY 500000
-        CRefTime RefTime,cRefTime ;
-        bool HasTimestamp ;
+        CRefTime RefTime, cRefTime;
+        bool HasTimestamp;
         //check if it has a timestamp
         if ((HasTimestamp=buffer->MediaTime(RefTime)))
         {
-          CRefTime AddOffset=m_pTsReaderFilter->AddVideoComp ;
-          #define DRIFT_RATE 0.5f     // Try duration of drift recovery 10 times the compensation. ( ie: 10sec for 1 sec compensation )
-          cRefTime = RefTime ;
-          cRefTime -= m_rtStart ;
+          CRefTime AddOffset=m_pTsReaderFilter->AddVideoComp;
+          // Try duration of drift recovery 10 times the compensation. ( ie: 10sec for 1 sec compensation )
+          cRefTime = RefTime;
+          cRefTime -= m_rtStart;
           //adjust the timestamp with the compensation
-          cRefTime -= m_pTsReaderFilter->Compensation ;
-          cRefTime -= AddOffset ;
-          cRefTime -= m_pTsReaderFilter->m_ClockOnStart.m_time ;
+          cRefTime -= m_pTsReaderFilter->Compensation;
+          cRefTime -= AddOffset;
+          cRefTime -= m_pTsReaderFilter->m_ClockOnStart.m_time;
 
-          CRefTime Dur ;
-          Dur = (m_pTsReaderFilter->AddVideoComp.m_time * DRIFT_RATE) ;
+          CRefTime Dur;
+          Dur = (m_pTsReaderFilter->AddVideoComp.m_time * DRIFT_RATE);
 
           if (cRefTime.m_time < (m_pTsReaderFilter->AddVideoComp.m_time * DRIFT_RATE))
           {
             // Ambass : try to stretch video after zapping
-            AddOffset = cRefTime.m_time / DRIFT_RATE ;
-//            LogDebug("%03.3f, %03.3f, %03.3f", (float)AddOffset.Millisecs()/1000.0f,(float)cRefTime.Millisecs()/1000.0f, (float)m_pTsReaderFilter->AddVideoComp.Millisecs()/1000.0f);
-//            m_pTsReaderFilter->AddVideoComp.m_time =0 ;
+            AddOffset = cRefTime.m_time / DRIFT_RATE;
+            // LogDebug("%03.3f, %03.3f, %03.3f", (float)AddOffset.Millisecs()/1000.0f,(float)cRefTime.Millisecs()/1000.0f, (float)m_pTsReaderFilter->AddVideoComp.Millisecs()/1000.0f);
+            // m_pTsReaderFilter->AddVideoComp.m_time =0;
           }
 
-          cRefTime += AddOffset ;
-          cRefTime += m_pTsReaderFilter->m_ClockOnStart.m_time ;
+          cRefTime += AddOffset;
+          cRefTime += m_pTsReaderFilter->m_ClockOnStart.m_time;
 
-          if (cRefTime.m_time >= 0) // + PRESENT_DELAY)
-            Sleep(5) ;
-          m_bPresentSample = true ;
-//          else
-            // Sample is too late.
-//            m_ShowSample = false ;
+          if (cRefTime.m_time >= 0)
+            Sleep(5); // TODO ...to figure out why this is set
+          m_bPresentSample = true;
+          //else
+          // Sample is too late.
+          //m_ShowSample = false ;
        }
 
         if (m_bPresentSample)
@@ -385,11 +383,12 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           //do we need to set the discontinuity flag?
           if (m_bDiscontinuity || buffer->GetDiscontinuity())
           {
-            //ifso, set it
             LogDebug("vid:set discontinuity");
             pSample->SetDiscontinuity(TRUE);
             m_bDiscontinuity=FALSE;
           }
+
+          //LogDebug("vid: video buffer type = %d", buffer->GetVideoServiceType());
 
           if (HasTimestamp)
           {
@@ -399,25 +398,22 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
             pSample->SetTime(&refTime,&refTime);
             if (1)
             {
-              double clock=0 ;
-              if (m_pTsReaderFilter->State() == State_Running)
-                clock = (double)(GetTickCount() - m_pTsReaderFilter->m_lastRun) / 1000.0 ;
+              REFERENCE_TIME RefClock = 0;
+              m_pTsReaderFilter->GetMediaPosition(&RefClock) ;
+              float clock = (double)(RefClock-m_rtStart.m_time)/10000000.0 ;
+              float fTime=(float)cRefTime.Millisecs()/1000.0f - clock ;
 
-              float fTime=(float)cRefTime.Millisecs();
-              fTime/=1000.0f;
-              double fTime3 = fTime - clock ;
+              if (ShowBuffer || fTime < 0.030)
+              {
+                int cntA, cntV;
+                CRefTime firstAudio, lastAudio;
+                CRefTime firstVideo, lastVideo;
+                cntA = demux.GetAudioBufferPts(firstAudio, lastAudio); 
+                cntV = demux.GetVideoBufferPts(firstVideo, lastVideo) + 1;
 
-              if (ShowBuffer || fTime3 < 0.030)
-								{
-				        int cntA,cntV ;
-        				CRefTime firstAudio, lastAudio ;
-        				CRefTime firstVideo, lastVideo ;
-        				cntA = demux.GetAudioBufferPts(firstAudio, lastAudio) ; 
-        				cntV = demux.GetVideoBufferPts(firstVideo, lastVideo) +1 ;
-
-                LogDebug("Vid/Ref : %03.3f, Late %c-frame(%02d), Compensated = %03.3f ( %0.3f A/V buffers=%02d/%02d), Clk : %f, State %d", (float)RefTime.Millisecs()/1000.0f,buffer->GetFrameType(),buffer->GetFrameCount(), (float)cRefTime.Millisecs()/1000.0f, fTime3, cntA,cntV,clock, m_pTsReaderFilter->State());
+                LogDebug("Vid/Ref : %03.3f, Late %c-frame(%02d), Compensated = %03.3f ( %0.3f A/V buffers=%02d/%02d), Clk : %f, State %d", (float)RefTime.Millisecs()/1000.0f,buffer->GetFrameType(),buffer->GetFrameCount(), (float)cRefTime.Millisecs()/1000.0f, fTime, cntA,cntV,clock, m_pTsReaderFilter->State());
 								}
-              if (ShowBuffer) ShowBuffer-- ;
+              if (ShowBuffer) ShowBuffer--;
             }
           }
           else
@@ -426,23 +422,23 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
             pSample->SetTime(NULL,NULL);
             pSample->SetSyncPoint(FALSE);
           }
-
-          //copy buffer in sample
+          
+          // copy buffer into the sample
           BYTE* pSampleBuffer;
           pSample->SetActualDataLength(buffer->Length());
           pSample->GetPointer(&pSampleBuffer);
           memcpy(pSampleBuffer,buffer->Data(),buffer->Length());
-          //delete the buffer and return
+          
+          // delete the buffer
           delete buffer;
         }
         else
         { // Buffer was not displayed because it was out of date, search for next.
           delete buffer;
-          buffer=NULL ;
+          buffer = NULL;
         }
       }
-      m_bInFillBuffer=false;
-    } while (buffer==NULL);
+    } while (buffer == NULL);
     return NOERROR;
   }
 
@@ -450,7 +446,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
   {
     LogDebug("vid:fillbuffer exception");
   }
-  m_bInFillBuffer=false;
   return NOERROR;
 }
 
@@ -462,21 +457,9 @@ HRESULT CVideoPin::OnThreadStartPlay()
   //set discontinuity flag indicating to codec that the new data
   //is not belonging to any previous data
   m_bDiscontinuity=TRUE;
-  m_bInFillBuffer=false;
   m_bPresentSample=false;
 
-  float fStart=(float)m_rtStart.Millisecs();
-  fStart/=1000.0f;
-
-  //tell demuxer to start deliver video packets again
-  CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
-  demux.SetHoldVideo(false);
-
-  m_pTsReaderFilter->SetWaitForSeekToEof(false) ;
-
-	while(demux.IsVideoChanging() && !m_pTsReaderFilter->m_bStopping) Sleep(5) ;
-
-  LogDebug("vid:OnThreadStartPlay(%f) %02.2f %d", fStart,m_dRateSeeking,m_pTsReaderFilter->IsSeekingToEof());
+  LogDebug("vid:OnThreadStartPlay(%f) %02.2f %d", (float)m_rtStart.Millisecs()/1000.0f,m_dRateSeeking,m_pTsReaderFilter->IsSeeking());
 
   //start playing
   DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
@@ -505,6 +488,11 @@ HRESULT CVideoPin::ChangeRate()
   return S_OK;
 }
 
+void CVideoPin::SetStart(CRefTime rtSeek)
+{
+  m_rtStart=rtSeek ;
+}
+
 STDMETHODIMP CVideoPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags)
 {
   return CSourceSeeking::SetPositions(pCurrent, CurrentFlags, pStop,  StopFlags);
@@ -516,117 +504,36 @@ STDMETHODIMP CVideoPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LON
 ///
 void CVideoPin::UpdateFromSeek()
 {
-  CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   CTsDuration tsduration=m_pTsReaderFilter->GetDuration();
-
-  //if (m_rtStart>m_rtDuration)
-  //  m_rtStart=m_rtDuration;
-
-  //there is a bug in directshow causing UpdateFromSeek() to be called multiple times
-  //directly after eachother
-  //for a single seek operation. To 'fix' this we only perform the seeking operation
-  //if we didnt do a seek in the last 5 seconds...
-  if (GetTickCount()-m_seekTimer<5000)
-  {
-    if (m_lastSeek==m_rtStart)
-    {
-      LogDebug("vid:skip seek");
-      return;
-    }
-  }
-  if (demux.IsVideoChanging())
-  {
-    LogDebug("vid:skip seek-2");
-    demux.FlushVideo() ;
-    return;
-	}
 
   //Note that the seek timestamp (m_rtStart) is done in the range
   //from earliest - latest from GetAvailable()
   //We however would like the seek timestamp to be in the range 0-fileduration
-  m_seekTimer=GetTickCount();
-  m_lastSeek=m_rtStart;
-
-  CRefTime rtSeek=m_rtStart;
-  float seekTime=(float)rtSeek.Millisecs();
-  seekTime/=1000.0f;
+  CRefTime rtSeek = m_rtStart;
+  float seekTime = (float)rtSeek.Millisecs();
+  seekTime /= 1000.0f;
 
   //get the earliest timestamp available in the file
-  float earliesTimeStamp= tsduration.StartPcr().ToClock() - tsduration.FirstStartPcr().ToClock();
-  if (earliesTimeStamp<0) earliesTimeStamp=0;
+  float earliesTimeStamp = 0;
+  earliesTimeStamp = tsduration.StartPcr().ToClock() - tsduration.FirstStartPcr().ToClock();
+
+  if (earliesTimeStamp < 0) earliesTimeStamp = 0;
 
   //correct the seek time
-  seekTime-=earliesTimeStamp;
-  if (seekTime<0) seekTime=0;
-  LogDebug("vid seek to %f", seekTime);
+  seekTime -= earliesTimeStamp;
+  if (seekTime < 0) seekTime = 0;
 
-  seekTime*=1000.0f;
+  seekTime *= 1000.0f;
   rtSeek = CRefTime((LONG)seekTime);
 
-  //if another output pin is seeking, then wait until its finished
-  m_bSeeking=true;
-  while (m_pTsReaderFilter->IsSeeking()) Sleep(1);
-
-  //tell demuxer to stop deliver video data and wait until
-  //FillBuffer() finished
-  demux.SetHoldVideo(true);
-  while (m_bInFillBuffer) Sleep(10);
-  CAutoLock lock(&m_bufferLock);
-
-  //if a pin-output thread exists...
-  if (ThreadExists() || !m_pTsReaderFilter->IsStreaming())
+  if (!m_pTsReaderFilter->SeekPreStart(rtSeek,false,true))
   {
-    //normally the audio pin does the acutal seeking
-    //check if its connected. If not, we'll do the seeking
-    if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
-    {
-      //tell the filter we are starting a seek operation
-      m_pTsReaderFilter->SeekStart();
-    }
-
-    //deliver a begin-flush to the codec filter so it stops asking for data
-    HRESULT hr=DeliverBeginFlush();
-
-    //stop the thread
-    Stop();
-    if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
-    {
-      //do the seek..
-      m_pTsReaderFilter->Seek(rtSeek,true);
-    }
-
-    //deliver a end-flush to the codec filter so it will start asking for data again
-    hr=DeliverEndFlush();
-
-    if (!m_pTsReaderFilter->GetAudioPin()-> IsConnected())
-    {
-      //tell filter we're done with seeking
-      m_pTsReaderFilter->SeekDone(rtSeek);
-    }
-
-    //set our start time
-    //m_rtStart=rtSeek;
-
-    //clear flags indiciating that the pin is seeking
-    LogDebug("vid seek done 1  --- %d",m_pTsReaderFilter->IsSeekingToEof());
-    m_bSeeking=false;
-
-    demux.FlushVideo() ;
-
-    // and restart the thread
-    Run();
+      LogDebug("vid:skip seek");
+      return;
   }
-  else
-  {
-    //no thread running? then simply seek to the position
-    m_pTsReaderFilter->Seek(rtSeek,false);
 
-    demux.FlushVideo() ;
-
-    //clear flags indiciating that the pin is seeking
-    LogDebug("vid seek done 2  --- %d",m_pTsReaderFilter->IsSeekingToEof());
-    m_bSeeking=false;
-  }
+  LogDebug("vid: seek done %f/%f",(float)m_rtStart.Millisecs()/1000.0f,(float)m_rtDuration.Millisecs()/1000.0f);
+  return ;
 }
 
 //******************************************************

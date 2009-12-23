@@ -20,7 +20,8 @@
 */
 #pragma warning(disable:4996)
 #pragma warning(disable:4995)
-#include <windows.h>
+#include "StdAfx.h"
+
 #include "PmtParser.h"
 #include "channelinfo.h"
 #include <cassert>
@@ -318,28 +319,32 @@ void CPmtParser::OnNewSection(CSection& section)
             m_pidInfo.subtitlePids.push_back(pid);
           }
         }
-				if (indicator==DESCRIPTOR_REGISTRATION)
-				{
-					if (section.Data[pointer+2]=='H' && section.Data[pointer+3]=='D' && section.Data[pointer+4]=='M' && section.Data[pointer+5]=='V' && stream_type==SERVICE_TYPE_DCII_OR_LPCM)
-					{
-						AudioPid pid;
-						pid.Pid=elementary_PID;
-						pid.AudioServiceType=stream_type;
-						m_pidInfo.audioPids.push_back(pid);
-						lpcm_audio_found=true;
-					}
-				}
+        if (indicator==DESCRIPTOR_REGISTRATION)
+        {
+          if (section.Data[pointer+2]=='H' && 
+              section.Data[pointer+3]=='D' && 
+              section.Data[pointer+4]=='M' && 
+              section.Data[pointer+5]=='V' && 
+              stream_type==SERVICE_TYPE_DCII_OR_LPCM)
+          {
+            AudioPid pid;
+            pid.Pid=elementary_PID;
+            pid.AudioServiceType=stream_type;
+            m_pidInfo.audioPids.push_back(pid);
+            lpcm_audio_found=true;
+          }
+        }
         len2 -= x;
         len1 -= x;
         pointer += x;
-	    }
-			if (stream_type==SERVICE_TYPE_DCII_OR_LPCM && !lpcm_audio_found)
-			{
-				VideoPid pid;
+      }
+      if (stream_type==SERVICE_TYPE_DCII_OR_LPCM && !lpcm_audio_found)
+      {
+        VideoPid pid;
         pid.Pid=elementary_PID;
         pid.VideoServiceType=SERVICE_TYPE_VIDEO_MPEG2;
         m_pidInfo.videoPids.push_back(pid);
-			}
+      }
     }
     if (m_pmtCallback!=NULL)
     {

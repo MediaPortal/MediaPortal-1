@@ -442,6 +442,10 @@ namespace MediaPortal.Player
       {
         AudioTracksReady();
       }
+      else
+      { 
+        CurrentAudioStream = 0;
+      }
     }
 
     //called when current playing file is stopped

@@ -18,6 +18,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#include <afx.h>
+#include <afxwin.h>
+
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <streams.h>
@@ -136,7 +139,7 @@ void CTsFileSeek::Seek(CRefTime refTime)
       if( m_useBinarySearch )
       {
         double diff = fabs( seekTimeStamp - clockFound );
-        LogDebug(" got %f at filepos %x diff %f ( %I64x, %I64x )", clockFound, (DWORD)filePos, diff, binaryMin, binaryMax);
+        //LogDebug(" got %f at filepos %x diff %f ( %I64x, %I64x )", clockFound, (DWORD)filePos, diff, binaryMin, binaryMax);
           
         if( diff < SEEKING_ACCURACY )
         {

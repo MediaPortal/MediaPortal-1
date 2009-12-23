@@ -21,8 +21,10 @@
 #ifndef FRAMEHEADERPARSER_H
 #define FRAMEHEADERPARSER_H
 
+#include "StdAfx.h"
+
 #include <strmif.h>
-#include <mtype.h>
+//#include <mtype.h>
 #include "GolombBuffer.h"
 
 enum mpeg_t {mpegunk, mpeg1, mpeg2};
@@ -307,7 +309,7 @@ struct pshdr
 		__int64 ppspos, ppslen;
 		__int64 AvgTimePerFrame;
 		int arx, ary;
-		BYTE ar:4;
+		BYTE ar;
 		avchdr()
 		{
 			spspos = 0;
@@ -315,6 +317,9 @@ struct pshdr
 			ppspos = 0;
 			ppslen = 0;
 			AvgTimePerFrame = 0;
+      ar = 0;
+      arx = 0;
+      ary = 0;
 		}
 	};
 

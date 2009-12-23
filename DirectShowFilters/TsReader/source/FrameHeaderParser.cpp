@@ -19,6 +19,9 @@
  *
  */
 
+#include "StdAfx.h"
+#include <streams.h>
+
 #include "FrameHeaderParser.h"
 #include <wxdebug.h>
 #include <dvdmedia.h>
@@ -1178,33 +1181,38 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt)
 {
 	while(GetRemaining()>4 && (h.spslen==0 || h.ppslen==0))
 	{
-		// check for NALU startcode
-		DWORD dwStartCode=BitRead(32,true);
-		if (dwStartCode!=0x00000001)
-		{
-			BitRead(8);
-			continue;
-		}
-		
-		// skip the startcode
-		BitRead(32);
+		//// check for NALU startcode
+		//DWORD dwStartCode=BitRead(24,true);
+		//if (dwStartCode!=0x00000001)
+		//{
+		//	BitRead(8);
+		//	continue;
+		//}
+		//
+		//// skip the startcode
+		//BitRead(24);
+    int nal_len = BitRead(32);
+    INT64 next_nal = GetPos()+nal_len;
 		int id=BitRead(8);
 		int nal_type=id & 0x9f;
 
-		if(h.spspos != 0 && h.spslen == 0)
-		{
-			INT64 curpos=GetPos();
-			h.spslen = curpos - h.spspos;
-		}
-		if(h.ppspos != 0 && h.ppslen == 0) 
-		{
-			INT64 curpos=GetPos();
-			h.ppslen = curpos - h.ppspos;
-		}
+		//if(h.spspos != 0 && h.spslen == 0)
+		//{
+		//	INT64 curpos=GetPos();
+		//	h.spslen = curpos - h.spspos;
+		//}
+		//if(h.ppspos != 0 && h.ppslen == 0) 
+		//{
+		//	INT64 curpos=GetPos();
+		//	h.ppslen = curpos - h.ppspos;
+		//}
 
 		// we only want pic param and sequence param sets
-		if (nal_type!=0x7 && nal_type!=0x8)
+		if (nal_type!=0x7 && nal_type!=0x8 || id & 0x60 == 0)
+    {
+      Seek(next_nal);
 			continue;
+    }
 
 		if(nal_type==0x7)
 		{
@@ -1217,10 +1225,11 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt)
 			__int64			time_scale;
 			long			fixed_frame_rate_flag;
 
-			h.spspos = GetPos();
+			h.spspos = GetPos() - 5;
+      h.spslen = next_nal - h.spspos;
 
 			// Manage H264 escape codes (see "remove escapes (very rare 1:2^22)" in ffmpeg h264.c file)
-			ByteRead((BYTE*)SPSTemp, MAX_SPS);
+			ByteRead((BYTE*)SPSTemp, min(MAX_SPS, GetRemaining()));
 			RemoveMpegEscapeCode (SPSBuff, SPSTemp, MAX_SPS);
 
 			h.profile = (BYTE)gb.BitRead(8);
@@ -1293,10 +1302,11 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt)
 			{
 				if (gb.BitRead(1))						// aspect_ratio_info_present_flag
 				{
-					if (255==(BYTE)gb.BitRead(8))		// aspect_ratio_idc)
+          h.ar = (BYTE)gb.BitRead(8); //aspect_ratio_idc
+					if (255 == h.ar)
 					{
-						gb.BitRead(16);				// sar_width
-						gb.BitRead(16);				// sar_height
+						h.arx = gb.BitRead(16);   //sar_width
+						h.ary = gb.BitRead(16);   //sar_height
 					}
 				}
 
@@ -1352,11 +1362,13 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt)
 		}
 		else if(nal_type==0x8)
 		{
-			h.ppspos = GetPos();
+			h.ppspos = GetPos() - 5;
+      h.ppslen = next_nal - h.ppspos;
 		}
 
 		BitByteAlign();
-
+    
+    Seek(next_nal);
 	} // end while main
 
 	if(!h.spspos || !h.spslen || !h.ppspos || !h.ppslen || h.height<300 || h.width<300 || h.AvgTimePerFrame<1000) 
@@ -1367,27 +1379,54 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt)
 	{
 		int extra = 2+h.spslen-4 + 2+h.ppslen-4;
 		pmt->SetType(&MEDIATYPE_Video);
-		pmt->SetSubtype(&MEDIASUBTYPE_H264);
+		//pmt->SetSubtype(&MEDIASUBTYPE_H264);
+    pmt->SetSubtype(&MPG4_SubType);
 		pmt->formattype = FORMAT_MPEG2_VIDEO;
 		
 		int len = FIELD_OFFSET(MPEG2VIDEOINFO, dwSequenceHeader) + extra;
 		MPEG2VIDEOINFO* vi = (MPEG2VIDEOINFO*)pmt->AllocFormatBuffer(len);
 		memset(vi, 0, len);
 		vi->hdr.AvgTimePerFrame = h.AvgTimePerFrame;
-		h.ar=h.width/h.height;
+
+		/*
+    h.ar=h.width/h.height;
 		struct {DWORD x, y;} ar[] = {{h.width,h.height},{4,3},{16,9},{221,100},{h.width,h.height}};
 		int i = min(max(h.ar, 1), 5)-1;
-		h.arx = ar[i].x;
-		h.ary = ar[i].y;
+    */
+    struct {DWORD x, y;} ar[] = {{1,1},{1,1},{12,11},{10,11},{16,11},{40,33},{24,11},{20,11},{32,11},{80,33},{18,11},{15,11},{64,33},{160,99},{1,1},{1,1}};
+    if(h.ar == 255)
+    {
+      // make sure that both are 0 or none
+      if(h.arx == 0 || h.ary == 0)
+        h.arx = h.ary = 0; 
+      // h.arx and h.ary now contain sample aspect ratio
+    }
+    else if(h.ar < 1 || h.ar > 13)
+    {
+      // aspect ratio unspecified or reserved
+      h.ar = 0;
+      h.arx = h.ary = 0;
+    }
+    else 
+    {
+      // use preset aspect ratio
+      h.arx = ar[h.ar].x;
+		  h.ary = ar[h.ar].y;
+    }
+
+    h.arx *= h.width;
+    h.ary *= h.height;
+
 		DWORD a = h.arx, b = h.ary;
-        while(a) {DWORD tmp = a; a = b % tmp; b = tmp;}
+    while(a) {DWORD tmp = a; a = b % tmp; b = tmp;}
 		if(b) h.arx /= b, h.ary /= b;
 		vi->hdr.dwPictAspectRatioX = h.arx;
 		vi->hdr.dwPictAspectRatioY = h.ary;
 		vi->hdr.bmiHeader.biSize = sizeof(vi->hdr.bmiHeader);
 		vi->hdr.bmiHeader.biWidth = h.width;
 		vi->hdr.bmiHeader.biHeight = h.height;
-		vi->hdr.bmiHeader.biCompression = '462h';
+		//vi->hdr.bmiHeader.biCompression = '462h';
+    vi->hdr.bmiHeader.biCompression = '1CVA';
 		vi->hdr.bmiHeader.biPlanes=1;
 		vi->hdr.bmiHeader.biBitCount=24;
 		vi->hdr.bmiHeader.biClrUsed=0;

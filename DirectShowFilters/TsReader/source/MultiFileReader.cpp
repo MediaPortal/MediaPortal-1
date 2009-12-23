@@ -23,7 +23,8 @@
 *  nate can be reached on the forums at
 *    http://forums.dvbowners.com/
 */
-#include <windows.h>
+#include "StdAfx.h"
+
 #include "MultiFileReader.h"
 #include <atlbase.h>
 

@@ -73,6 +73,10 @@ DECLARE_INTERFACE_(ITSReaderAudioChange, IUnknown)
 
       virtual void    STDMETHODCALLTYPE OnGraphRebuild( 
 								int info) = 0;
+
+      virtual void    STDMETHODCALLTYPE SetMediaPosition( 
+								REFERENCE_TIME MediaPos) = 0;
+
 		  //virtual HRESULT STDMETHODCALLTYPE GetVideoFormat(int *width,int *height, int *aspectRatioX,int *aspectRatioY,int *bitrate,int *interlaced) PURE;
   };
 
@@ -105,7 +109,7 @@ public:
   STDMETHODIMP Pause();
   STDMETHODIMP Stop();
 private:
-	// IAMFilterMiscFlags
+  // IAMFilterMiscFlags
   virtual ULONG STDMETHODCALLTYPE		GetMiscFlags();
 
   //IAMStreamSelect
@@ -113,9 +117,9 @@ private:
   STDMETHODIMP Enable(long index, DWORD flags);
   STDMETHODIMP Info( long lIndex,AM_MEDIA_TYPE **ppmt,DWORD *pdwFlags, LCID *plcid, DWORD *pdwGroup, WCHAR **ppszName, IUnknown **ppObject, IUnknown **ppUnk);	
 
-	//IAudioStream
-	//STDMETHODIMP SetAudioStream(__int32 stream);	
-	STDMETHODIMP GetAudioStream(__int32 &stream);
+  //IAudioStream
+  //STDMETHODIMP SetAudioStream(__int32 stream);	
+  STDMETHODIMP GetAudioStream(__int32 &stream);
 
   //ISubtitleStream
   STDMETHODIMP SetSubtitleStream(__int32 stream);
@@ -123,32 +127,34 @@ private:
   STDMETHODIMP GetSubtitleStreamCount(__int32 &count);
   STDMETHODIMP GetCurrentSubtitleStream(__int32 &stream);
   STDMETHODIMP GetSubtitleStreamLanguage(__int32 stream,char* szLanguage);
-	STDMETHODIMP SetSubtitleResetCallback( int (CALLBACK *pSubUpdateCallback)(int count, void* opts, int* select)); 
+  STDMETHODIMP SetSubtitleResetCallback( int (CALLBACK *pSubUpdateCallback)(int count, void* opts, int* select)); 
 
-	//ITeletextSource
-	STDMETHODIMP SetTeletextTSPacketCallBack ( int (CALLBACK *pPacketCallback)(byte*, int));
-	STDMETHODIMP SetTeletextEventCallback (int (CALLBACK *EventCallback)(int,DWORD64) ); 
-	STDMETHODIMP SetTeletextServiceInfoCallback (int (CALLBACK *pServiceInfoCallback)(int,byte,byte,byte,byte) ); 
+  //ITeletextSource
+  STDMETHODIMP SetTeletextTSPacketCallBack ( int (CALLBACK *pPacketCallback)(byte*, int));
+  STDMETHODIMP SetTeletextEventCallback (int (CALLBACK *EventCallback)(int,DWORD64) ); 
+  STDMETHODIMP SetTeletextServiceInfoCallback (int (CALLBACK *pServiceInfoCallback)(int,byte,byte,byte,byte) ); 
 
 public:
-	// ITSReader
-	STDMETHODIMP	  SetGraphCallback(ITSReaderCallback* pCallback);
-	STDMETHODIMP	  SetRequestAudioChangeCallback(ITSReaderAudioChange* pCallback);
+  // ITSReader
+  STDMETHODIMP	  SetGraphCallback(ITSReaderCallback* pCallback);
+  STDMETHODIMP	  SetRequestAudioChangeCallback(ITSReaderAudioChange* pCallback);
   STDMETHODIMP	  SetRelaxedMode(BOOL relaxedReading);
   void STDMETHODCALLTYPE  OnZapping(int info);
   void STDMETHODCALLTYPE  OnGraphRebuild(int info);
-	// IFileSourceFilter
-	STDMETHODIMP    Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);
-	STDMETHODIMP    GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt);
-	STDMETHODIMP    GetDuration(REFERENCE_TIME *dur);
-	double		      GetStartTime();
-	bool            IsSeeking();
+  void STDMETHODCALLTYPE  SetMediaPosition(REFERENCE_TIME MediaPos);
+	
+  // IFileSourceFilter
+  STDMETHODIMP    Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);
+  STDMETHODIMP    GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt);
+  STDMETHODIMP    GetDuration(REFERENCE_TIME *dur);
+  double		      GetStartTime();
   bool            IsFilterRunning();
-	CDeMultiplexer& GetDemultiplexer();
-	void            Seek(CRefTime&  seekTime, bool seekInFile);
+  CDeMultiplexer& GetDemultiplexer();
+  void            Seek(CRefTime&  seekTime, bool seekInFile);
   void            SeekDone(CRefTime& refTime);
   void            SeekStart();
-	double          UpdateDuration();
+  bool            SeekPreStart(CRefTime& rtSeek, bool IsAudio, bool IsVideo);
+  double          UpdateDuration();
   CAudioPin*      GetAudioPin();
   CVideoPin*      GetVideoPin();
   CSubtitlePin*   GetSubtitlePin();
@@ -158,22 +164,31 @@ public:
   FILTER_STATE    State() {return m_State;};
   CRefTime        Compensation;
   CRefTime        AddVideoComp;
-  void				    OnMediaTypeChanged(int mediaTypes);
-  void				    OnRequestAudioChange();
-	void						OnVideoFormatChanged(int streamType,int width,int height,int aspectRatioX,int aspectRatioY,int bitrate,int isInterlaced);
-  bool			      IsStreaming();
+  void            OnMediaTypeChanged(int mediaTypes);
+  void            OnRequestAudioChange();
+  void            OnVideoFormatChanged(int streamType,int width,int height,int aspectRatioX,int aspectRatioY,int bitrate,int isInterlaced);
+  bool            IsStreaming();
 
-	void            SetWaitForSeekToEof(bool onOff) ;
-	bool            IsSeekingToEof() ;
+  bool            IsSeeking();
+  int             SeekingDone();
+  bool		      IsStopping();
+  //bool            IsSeekingToEof();
 
-	DWORD           m_lastPause;
-	bool            m_bStreamCompensated;
-	DWORD           m_lastRun;
-	CRefTime        m_ClockOnStart;
+  DWORD           m_lastPause;
+  bool            m_bStreamCompensated;
+  CRefTime        m_ClockOnStart;
 
-	REFERENCE_TIME  m_RandomCompensation ;
-	bool            m_bLiveTv ;
-	bool            m_bStopping ;
+  REFERENCE_TIME  m_RandomCompensation;
+	REFERENCE_TIME  m_MediaPos ;
+	REFERENCE_TIME  m_BaseTime ;
+	REFERENCE_TIME  m_LastTime ;
+  bool            m_bLiveTv;
+  bool            m_bStopping;
+  int             m_WaitForSeekToEof;
+	void GetTime(REFERENCE_TIME *Time);
+	void GetMediaPosition(REFERENCE_TIME *pMediaTime);
+
+  bool            m_bOnZap ;
 
 protected:
   void ThreadProc();
@@ -182,18 +197,19 @@ private:
   HRESULT AddGraphToRot(IUnknown *pUnkGraph) ;
   HRESULT FindSubtitleFilter();
   void    RemoveGraphFromRot();
-	CAudioPin*	    m_pAudioPin;
-	CVideoPin*	    m_pVideoPin;
-	CSubtitlePin*	  m_pSubtitlePin;
-	WCHAR           m_fileName[1024];
-	CCritSec        m_section;
-	CCritSec        m_CritSecDuration;
-	FileReader*     m_fileReader;
-	FileReader*     m_fileDuration;
+  CAudioPin*	  m_pAudioPin;
+  CVideoPin*	  m_pVideoPin;
+  CSubtitlePin*	  m_pSubtitlePin;
+  WCHAR           m_fileName[1024];
+  CCritSec        m_section;
+  CCritSec        m_CritSecDuration;
+	CCritSec        m_GetTimeLock;
+  FileReader*     m_fileReader;
+  FileReader*     m_fileDuration;
   CTsDuration     m_duration;
   CBaseReferenceClock* m_referenceClock;
-	CDeMultiplexer  m_demultiplexer;
-  bool            m_bSeeking;
+  CDeMultiplexer  m_demultiplexer;
+  //bool            m_bSeeking;
   DWORD           m_dwGraphRegister;
 
   CRTSPClient     m_rtspClient;
@@ -205,9 +221,9 @@ private:
   ITSReaderCallback* m_pCallback;
   ITSReaderAudioChange* m_pRequestAudioCallback;
 
-	bool            m_WaitForSeekToEof ;
-	bool            m_WaitForNewPat ;
-	bool            m_bPauseOnly ;
-	bool            m_bAnalog ;
+  bool            m_bAnalog;
+
+  bool            m_bDoSeek_Audio;
+  bool            m_bDoSeek_Video;
 };
 

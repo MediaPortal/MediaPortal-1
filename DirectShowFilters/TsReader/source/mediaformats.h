@@ -22,9 +22,6 @@
 *  bear can be reached on the forums at
 *    http://forums.dvbowners.com/
 */
-//#include <dvdmedia.h>
-//MPEG2VIDEOINFO;
-//WAVEFORMATEX;
 
 // MPEG2VIDEOINFO
 

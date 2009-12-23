@@ -19,6 +19,10 @@
  *
  */
 #pragma once
+
+#include "StdAfx.h"
+#include <atlbase.h>
+#include <atlcoll.h>
 #include "buffer.h"
 #include "MultiFileReader.h"
 #include "tsDuration.h"
@@ -35,8 +39,25 @@
 #include <map>
 #include <dvdmedia.h>
 #include "MpegPesParser.h"
+
 using namespace std;
 class CTsReaderFilter;
+
+// Used for H.264 video stream demuxing
+class Packet : public CAtlArray<BYTE>
+{
+public:
+	DWORD TrackNumber;
+	BOOL bDiscontinuity, bSyncPoint, bAppendable;
+	static const REFERENCE_TIME INVALID_TIME = _I64_MIN;
+	REFERENCE_TIME rtStart, rtStop;
+	AM_MEDIA_TYPE* pmt;
+	Packet() {pmt = NULL; bDiscontinuity = bAppendable = FALSE;}
+	virtual ~Packet() {if(pmt) DeleteMediaType(pmt);}
+	virtual int GetDataSize() {return GetCount();}
+	void SetData(const void* ptr, DWORD len) {SetCount(len); memcpy(GetData(), ptr, len);}
+};
+
 class CDeMultiplexer : public CPacketSync, public IPatParserCallback
 {
 public:
@@ -55,6 +76,8 @@ public:
   bool       CheckContinuity(int prevCC, CTsHeader& header);
   void       FillAudio(CTsHeader& header, byte* tsPacket);
   void       FillVideo(CTsHeader& header, byte* tsPacket);
+  void       FillVideoH264(CTsHeader& header, byte* tsPacket);
+  void       FillVideoMPEG2(CTsHeader& header, byte* tsPacket);
   void       FillTeletext(CTsHeader& header, byte* tsPacket);
   void       SetEndOfFile(bool bEndOfFile);
   CPidTable  GetPidTable();
@@ -98,10 +121,14 @@ public:
 
   void CallTeletextEventCallback(int eventCode,unsigned long int eventValue);
 
-  void SetVideoChanging(bool onOff) ;
-  bool IsVideoChanging() ;
+  void SetMediaChanging(bool onOff) ;
+  bool IsMediaChanging() ;
   void RequestNewPat(void) ;
   void ClearRequestNewPat(void) ;
+  void ResetPatInfo(void) ;
+  bool IsNewPatReady(void) ;
+  void SetAudioChanging(bool onOff);
+  bool IsAudioChanging(void);
 
   bool m_DisableDiscontinuitiesFiltering ;
   CRefTime  m_IframeSample ;
@@ -119,21 +146,19 @@ private:
     int pid;
     int subtitleType;  // 0=DVB, 1=teletext <-- needs enum
     char language[4];
-  } ;
+  };
 
   vector<struct stAudioStream> m_audioStreams;
   vector<struct stSubtitleStream> m_subtitleStreams;
   int ReadFromFile(bool isAudio, bool isVideo);
   bool m_bEndOfFile;
   HRESULT RenderFilterPin(CBasePin* pin, bool isAudio, bool isVideo);
-  HRESULT DoStart();
-  HRESULT DoStop();
-  HRESULT IsStopped();
-  HRESULT IsPlaying();
   CCritSec m_sectionAudio;
   CCritSec m_sectionVideo;
   CCritSec m_sectionSubtitle;
   CCritSec m_sectionRead;
+  CCritSec m_sectionAudioChanging;
+  CCritSec m_sectionMediaChanging;
   FileReader* m_reader;
   CPatParser m_patParser;
   CMpegPesParser *m_mpegPesParser;
@@ -144,14 +169,14 @@ private:
   vector<CBuffer*> m_vecAudioBuffers;
   vector<CBuffer*> m_t_vecAudioBuffers;
   typedef vector<CBuffer*>::iterator ivecBuffers;
-  int  m_AudioPrevCC ;
-  int  m_VideoPrevCC ;
-  bool m_AudioValidPES ;
-  bool m_VideoValidPES ;
-  CRefTime  m_FirstAudioSample ;
-  CRefTime  m_LastAudioSample ;
-  CRefTime  m_FirstVideoSample ;
-  CRefTime  m_LastVideoSample ;
+  int  m_AudioPrevCC;
+  int  m_VideoPrevCC;
+  bool m_AudioValidPES;
+  bool m_VideoValidPES;
+  CRefTime  m_FirstAudioSample;
+  CRefTime  m_LastAudioSample;
+  CRefTime  m_FirstVideoSample;
+  CRefTime  m_LastVideoSample;
 
   CBuffer* m_pCurrentTeletextBuffer;
   CBuffer* m_pCurrentSubtitleBuffer;
@@ -166,14 +191,13 @@ private:
   unsigned int m_audioPid;
   unsigned int m_currentSubtitlePid;
   unsigned int m_iSubtitleStream;
-  unsigned int m_currentTeletextPid; // Ziphnor
+  unsigned int m_currentTeletextPid; 
 
   unsigned int m_iAudioReadCount;
 
   bool m_bHoldAudio;
   bool m_bHoldVideo;
   bool m_bHoldSubtitle;
-  //bool m_bPreferAC3;
   int m_iAudioIdx;
   int m_iPatVersion;
   int m_ReqPatVersion;
@@ -181,7 +205,12 @@ private:
   int m_receivedPackets;
 
   bool m_bIframeFound ;
-  bool m_bVideoChanging;
+  bool  m_bWaitForMediaChange;
+  DWORD m_tWaitForMediaChange;
+  bool  m_bWaitForAudioSelection;
+  DWORD m_tWaitForAudioSelection;
+
+  bool m_bStarting ;
 
   bool m_mpegParserTriggerFormatChange;
   bool m_bSetAudioDiscontinuity;
@@ -193,5 +222,8 @@ private:
   int (CALLBACK *pTeletextEventCallback)(int,DWORD64);
   int (CALLBACK *pSubUpdateCallback)(int c, void* opts,int* bi);
 
-  // used to sync teletext packets with video
+  // Used only for H.264 stream demuxing
+  CAutoPtr<Packet> m_p;
+  CAutoPtrList<Packet> m_pl;
+  bool m_fHasAccessUnitDelimiters;
 };

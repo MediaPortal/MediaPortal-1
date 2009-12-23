@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2006-2008 Team MediaPortal
+ *	Copyright (C) 2006-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,7 +19,9 @@
  *
  */
 
-#include <windows.h>
+
+#include "StdAfx.h"
+
 #include <xprtdefs.h>
 #include <initguid.h>
 

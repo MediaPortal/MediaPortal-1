@@ -20,8 +20,8 @@
 			OutputDirectory=".\obj\Release"
 			IntermediateDirectory=".\obj\Release"
 			ConfigurationType="2"
-			UseOfMFC="0"
-			UseOfATL="0"
+			UseOfMFC="2"
+			UseOfATL="2"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
 			>
@@ -131,7 +131,8 @@
 			OutputDirectory=".\obj\Debug"
 			IntermediateDirectory=".\obj\Debug"
 			ConfigurationType="2"
-			UseOfMFC="0"
+			UseOfMFC="2"
+			UseOfATL="1"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
 			>
@@ -160,7 +161,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;&quot;$(WINDOWS_SDK)Include\&quot;;&quot;$(DXSDK_DIR)Include&quot;;..\LiveMedia555\BasicUsageEnvironment/include;..\LiveMedia555\groupsock/include;../LiveMedia555/liveMedia;..\LiveMedia555\liveMedia/include;..\LiveMedia555\UsageEnvironment/include;../LiveMedia555/MediaPortal;..\shared;..\streamingserver\Source"
-				PreprocessorDefinitions="DBG=1;DEBUG;_DEBUG;INC_OLE2;STRICT;_WIN32_WINNT=0x0400;WIN32;_WIN32;_MT;_DLL;_X86_=1;WINVER=0x0400;_CRT_SECURE_NO_DEPRECATE"
+				PreprocessorDefinitions="DBG=1;DEBUG;_DEBUG;INC_OLE2;STRICT;_MT;_DLL;_X86_=1;_CRT_SECURE_NO_DEPRECATE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				PrecompiledHeaderFile=".\obj\Debug/FileWriter.pch"
@@ -259,6 +260,10 @@
 			</File>
 			<File
 				RelativePath=".\source\GolombBuffer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\H264Nalu.cpp"
 				>
 			</File>
 			<File
@@ -367,6 +372,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\H264Nalu.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\IAudioStream.h"
 				>
 			</File>
@@ -424,6 +433,10 @@
 			</File>
 			<File
 				RelativePath=".\source\RTSPFileReader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\StdAfx.h"
 				>
 			</File>
 			<File

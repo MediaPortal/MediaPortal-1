@@ -39,6 +39,8 @@ public:
   HRESULT FillBuffer(IMediaSample *pSample);
   HRESULT BreakConnect();
 
+  HRESULT DoBufferProcessingLoop(void);
+
   // CSourceSeeking
   HRESULT ChangeStart();
   HRESULT ChangeStop();
@@ -54,7 +56,6 @@ public:
   bool IsConnected();
   void SetDiscontinuity(bool onOff);
 
-
 protected:
   void      UpdateFromSeek();
   
@@ -62,11 +63,6 @@ protected:
   bool      m_bConnected;
   BOOL      m_bDiscontinuity;
   CCritSec* m_section;
-  CCritSec  m_bufferLock;
-  bool      m_bSeeking;
-  DWORD     m_seekTimer;
-  CRefTime  m_lastSeek;
-  bool      m_bInFillBuffer;
   bool      m_bPresentSample;
 
   FILTER_INFO m_filterInfo;

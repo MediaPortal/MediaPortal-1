@@ -24,8 +24,10 @@
 #ifndef GOLOMBBUFFER_H
 #define GOLOMBBUFFER_H
 
-#include <windows.h>
-#include <wxdebug.h>
+//#include <windows.h>
+#include "StdAfx.h"
+
+//#include <wxdebug.h>
 
 class CGolombBuffer
 {

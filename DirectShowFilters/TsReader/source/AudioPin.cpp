@@ -21,6 +21,9 @@
 
 #pragma warning(disable:4996)
 #pragma warning(disable:4995)
+#include <afx.h>
+#include <afxwin.h>
+
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <streams.h>
@@ -56,7 +59,6 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
   m_section(section)
 {
   m_bConnected=false;
-  m_bInFillBuffer=false;
   m_rtStart=0;
   m_dwSeekingCaps =
     AM_SEEKING_CanSeekAbsolute  |
@@ -66,7 +68,6 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
     AM_SEEKING_CanGetDuration |
     //AM_SEEKING_CanGetCurrentPos |
     AM_SEEKING_Source;
-  m_bSeeking=false;
   m_bSubtitleCompensationSet=false;
 }
 
@@ -161,7 +162,6 @@ HRESULT CAudioPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES 
 
 HRESULT CAudioPin::CompleteConnect(IPin *pReceivePin)
 {
-  m_bInFillBuffer=false;
   LogDebug("aud:CompleteConnect()");
   HRESULT hr = CBaseOutputPin::CompleteConnect(pReceivePin);
   if (SUCCEEDED(hr))
@@ -206,22 +206,18 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
   {
     CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
     CBuffer* buffer=NULL;
-    DWORD m_LastTickCount = GetTickCount();
 
     do
     {
       //get file-duration and set m_rtDuration
       GetDuration(NULL);
 
-      m_bInFillBuffer=true;
-
       //if the filter is currently seeking to a new position
       //or this pin is currently seeking to a new position then
       //we dont try to read any packets, but simply return...
-      if (m_pTsReaderFilter->IsSeeking() || m_bSeeking || m_pTsReaderFilter->IsSeekingToEof())
+      if (m_pTsReaderFilter->IsSeeking() || m_pTsReaderFilter->IsStopping())// /*|| m_bSeeking*/ || m_pTsReaderFilter->IsSeekingToEof())
       {
         //if (ShowBuffer) LogDebug("aud:isseeking");
-        m_bInFillBuffer=false;
         Sleep(20);
         pSample->SetTime(NULL,NULL);
         pSample->SetActualDataLength(0);
@@ -230,31 +226,25 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         return NOERROR;
       }
 
-      {
-        CAutoLock lock(&m_bufferLock);
-        buffer=demux.GetAudio();
-      }
+      buffer=demux.GetAudio();
 
       //did we reach the end of the file
-      if (demux.EndOfFile() || ((GetTickCount()-m_LastTickCount > 3000) && !m_pTsReaderFilter->IsTimeShifting()))
+      if (demux.EndOfFile()) // || ((GetTickCount()-m_LastTickCount > 3000) && !m_pTsReaderFilter->IsTimeShifting()))
       {
         LogDebug("aud:set eof");
         pSample->SetTime(NULL,NULL);
         pSample->SetActualDataLength(0);
         pSample->SetSyncPoint(FALSE);
         pSample->SetDiscontinuity(TRUE);
-        m_bInFillBuffer=false;
         return S_FALSE; //S_FALSE will notify the graph that end of file has been reached
       }
 
       if (buffer==NULL)
       {
-        m_bInFillBuffer=false;
         Sleep(10);
       }
       else
       {
-        m_LastTickCount = GetTickCount();
         int cntA,cntV ;
         CRefTime firstAudio, lastAudio;
         CRefTime firstVideo, lastVideo;
@@ -331,7 +321,10 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           // Apply a margin of 200 mS seems safe to avoid being late.
           if (m_pTsReaderFilter->State() == State_Running)
           {
-            m_pTsReaderFilter->m_ClockOnStart = (GetTickCount() - m_pTsReaderFilter->m_lastRun) * 10000 ;
+            REFERENCE_TIME RefClock = 0;
+            m_pTsReaderFilter->GetMediaPosition(&RefClock) ;
+
+			m_pTsReaderFilter->m_ClockOnStart = RefClock - m_rtStart.m_time ;
             if (m_pTsReaderFilter->m_bLiveTv)
             {
               LogDebug("Elapsed time from pause to Audio/Video ( total zapping time ) : %d mS",GetTickCount()-m_pTsReaderFilter->m_lastPause);
@@ -346,7 +339,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           m_pTsReaderFilter->Compensation.m_time=(BestCompensation.m_time - m_pTsReaderFilter->m_ClockOnStart.m_time) - PRESENT_DELAY ;
           m_pTsReaderFilter->AddVideoComp=AddVideoCompensation ;
 
-          LogDebug("aud:Compensation:%03.3f, Clock on start %03.3f m_rtStart:%d ",(float)m_pTsReaderFilter->Compensation.Millisecs()/1000.0f, m_pTsReaderFilter->m_ClockOnStart.Millisecs()/1000.0f, m_rtStart.Millisecs());
+		  LogDebug("aud:Compensation:%03.3f, Clock on start %03.3f m_rtStart:%d ",(float)m_pTsReaderFilter->Compensation.Millisecs()/1000.0f, m_pTsReaderFilter->m_ClockOnStart.Millisecs()/1000.0f, m_rtStart.Millisecs());
 
           //set flag to false so we dont keep compensating
           m_pTsReaderFilter->m_bStreamCompensated = true;
@@ -406,19 +399,14 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             pSample->SetTime(&refTime,&refTime);
             if (1)
             {
-              double clock=0 ;
-              if (m_pTsReaderFilter->State() == State_Running)
-              {
-                clock = (double)(GetTickCount() - m_pTsReaderFilter->m_lastRun) / 1000.0 ;
-              }
+              REFERENCE_TIME RefClock = 0;
+              m_pTsReaderFilter->GetMediaPosition(&RefClock) ;
+              float clock = (double)(RefClock-m_rtStart.m_time)/10000000.0 ;
+              float fTime=(float)cRefTime.Millisecs()/1000.0f - clock ;
 
-              float fTime=(float)cRefTime.Millisecs();
-              fTime/=1000.0f;
-              double fTime3 = fTime - clock ;
-
-              if (ShowBuffer || fTime3 < 0.030)
+              if (ShowBuffer || fTime < 0.030)
               {
-                LogDebug("Aud/Ref : %03.3f, Late              Compensated = %03.3f ( %0.3f A/V buffers=%02d/%02d), Clk : %f, State %d", (float)RefTime.Millisecs()/1000.0f, (float)cRefTime.Millisecs()/1000.0f, fTime3,cntA,cntV, clock, m_pTsReaderFilter->State());
+                LogDebug("Aud/Ref : %03.3f, Late              Compensated = %03.3f ( %0.3f A/V buffers=%02d/%02d), Clk : %f, State %d", (float)RefTime.Millisecs()/1000.0f, (float)cRefTime.Millisecs()/1000.0f, fTime,cntA,cntV, clock, m_pTsReaderFilter->State());
               }
               if (ShowBuffer) ShowBuffer--;
             }
@@ -444,7 +432,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           buffer=NULL ;
         }
       }
-      m_bInFillBuffer=false;
     } while (buffer==NULL);
     return NOERROR;
   }
@@ -458,7 +445,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
   {
     LogDebug("aud:fillbuffer exception ...");
   }
-  m_bInFillBuffer=false;
   return NOERROR;
 }
 
@@ -496,31 +482,14 @@ HRESULT CAudioPin::ChangeRate()
 HRESULT CAudioPin::OnThreadStartPlay()
 {
   //set flag to compensate any differences in the stream time & file time
-  m_pTsReaderFilter->m_bStreamCompensated=false;
+  m_pTsReaderFilter->m_bStreamCompensated = false;
 
   //set discontinuity flag indicating to codec that the new data
   //is not belonging to any previous data
-  m_bDiscontinuity=TRUE;
-  m_bInFillBuffer=false;
-  m_bPresentSample=false;
+  m_bDiscontinuity = TRUE;
+  m_bPresentSample = false;
 
-  float fStart=(float)m_rtStart.Millisecs();
-  fStart/=1000.0f;
-
-  //tell demuxer to start deliver audio packets again
-  CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
-  demux.SetHoldAudio(false);
-
-  if (!m_pTsReaderFilter->GetVideoPin()->IsConnected())
-  {
-    m_pTsReaderFilter->SetWaitForSeekToEof(false) ;
-    demux.SetVideoChanging(false);
-  }
-  else
-  {
-		while((m_pTsReaderFilter->IsSeekingToEof() || demux.IsVideoChanging()) && !m_pTsReaderFilter->m_bStopping) Sleep(5) ;
-  }
-  LogDebug("aud:OnThreadStartPlay(%f) %02.2f", fStart,m_dRateSeeking);
+  LogDebug("aud:OnThreadStartPlay(%f) %02.2f", (float)m_rtStart.Millisecs()/1000.0f, m_dRateSeeking);
 
   //start playing
   DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
@@ -541,114 +510,36 @@ STDMETHODIMP CAudioPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LON
 ///
 void CAudioPin::UpdateFromSeek()
 {
-  CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   CTsDuration tsduration=m_pTsReaderFilter->GetDuration();
-
-  //if (m_rtStart>m_rtDuration)
-  //  m_rtStart=m_rtDuration;
-
-  //there is a bug in directshow causing UpdateFromSeek() to be called multiple times
-  //directly after eachother
-  //for a single seek operation. To 'fix' this we only perform the seeking operation
-  //if we didnt do a seek in the last 5 seconds...
-  if (GetTickCount()-m_seekTimer < 5000)
-  {
-    if (m_lastSeek==m_rtStart)
-    {
-      LogDebug("aud:skip seek");
-      return;
-    }
-  }
-	if (demux.IsVideoChanging())
-	{
-    LogDebug("aud:skip seek-2");
-    demux.FlushAudio() ;
-    return ;
-	}
-
-  m_seekTimer=GetTickCount();
 
   //Note that the seek timestamp (m_rtStart) is done in the range
   //from earliest - latest from GetAvailable()
   //We however would like the seek timestamp to be in the range 0-fileduration
-  m_lastSeek=m_rtStart;
-  CRefTime rtSeek=m_rtStart;
-  float seekTime=(float)rtSeek.Millisecs();
-  seekTime/=1000.0f;
+  CRefTime rtSeek = m_rtStart;
+  float seekTime = (float)rtSeek.Millisecs();
+  seekTime /= 1000.0f;
 
   //get the earliest timestamp available in the file
-  float earliesTimeStamp=0;
-  earliesTimeStamp= tsduration.StartPcr().ToClock() - tsduration.FirstStartPcr().ToClock();
+  float earliesTimeStamp = 0;
+  earliesTimeStamp = tsduration.StartPcr().ToClock() - tsduration.FirstStartPcr().ToClock();
 
-  if (earliesTimeStamp<0) earliesTimeStamp=0;
+  if (earliesTimeStamp < 0) earliesTimeStamp = 0;
 
   //correct the seek time
   seekTime -= earliesTimeStamp;
-  if (seekTime < 0) seekTime=0;
+  if (seekTime < 0) seekTime = 0;
 
-  float duration=(float)m_rtDuration.Millisecs();
-  duration /=1000.0f;
-  LogDebug("aud seek to %f/%f", seekTime, duration);
-
-  seekTime*=1000.0f;
+  seekTime *= 1000.0f;
   rtSeek = CRefTime((LONG)seekTime);
 
-  //if another output pin is seeking, then wait until its finished
-  m_bSeeking=true;
-  while (m_pTsReaderFilter->IsSeeking()) Sleep(1);
-
-  //tell demuxer to stop deliver audio data and wait until
-  //FillBuffer() finished
-  demux.SetHoldAudio(true);
-  while (m_bInFillBuffer) Sleep(10);
-  CAutoLock lock(&m_bufferLock);
-
-  //if a pin-output thread exists...
-  // GEMX: streaming: use old behaviour -> If ThreadExists do init a new seek else just seek (otherwise breaks channel changes while streaming)
-  //       singleseat: always tell the filter that we are starting a seek operation - This fixes rewinding/forwarding
-  if (ThreadExists() || !m_pTsReaderFilter->IsStreaming())
+  if (!m_pTsReaderFilter->SeekPreStart(rtSeek,true,false))
   {
-    //tell the filter we are starting a seek operation
-    m_pTsReaderFilter->SeekStart();
-
-    //deliver a begin-flush to the codec filter so it stops asking for data
-    DeliverBeginFlush();
-
-    //stop the thread
-    Stop();
-
-    //do the seek...
-    m_pTsReaderFilter->Seek(rtSeek,true);
-
-    //deliver a end-flush to the codec filter so it will start asking for data again
-    DeliverEndFlush();
-
-    //tell filter we're done with seeking
-    m_pTsReaderFilter->SeekDone(rtSeek);
-
-    //set our start time
-    //m_rtStart=rtSeek;
-
-    demux.FlushAudio() ;
-
-    //clear flags indiciating that the pin is seeking
-    m_bSeeking=false;
-    LogDebug("aud seek done (1)");
-
-    // and restart the thread
-    Run();
-    //LogDebug("aud seek running");
+      LogDebug("aud:skip seek");
+      return;
   }
-  else
-  {
-    //no thread running? then simply seek to the position
-    m_pTsReaderFilter->Seek(rtSeek,false);
 
-    demux.FlushAudio() ;
-    //clear flags indiciating that the pin is seeking
-    m_bSeeking=false;
-    LogDebug("aud seek done (2)");
-  }
+  LogDebug("aud: seek done %f/%f",(float)m_rtStart.Millisecs()/1000.0f,(float)m_rtDuration.Millisecs()/1000.0f);
+  return ;
 }
 
 //******************************************************

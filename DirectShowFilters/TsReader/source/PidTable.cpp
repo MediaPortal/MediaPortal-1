@@ -19,7 +19,9 @@
  *
  */
 #pragma warning(disable : 4995)
-#include <windows.h>
+
+#include "StdAfx.h"
+
 #include <atlbase.h>
 #include "PidTable.h"
 

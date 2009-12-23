@@ -23,7 +23,8 @@
 *  nate can be reached on the forums at
 *    http://forums.dvbowners.com/
 */
-#include <windows.h>
+#include "StdAfx.h"
+
 #include "FileReader.h"
 //#include "global.h"
 extern void LogDebug(const char *fmt, ...) ;
@@ -43,40 +44,40 @@ FileReader::FileReader() :
 
 FileReader::~FileReader()
 {
-	CloseFile();
-	if (m_pFileName)
-		delete m_pFileName;
+  CloseFile();
+  if (m_pFileName)
+    delete m_pFileName;
 }
 
 
 HRESULT FileReader::GetFileName(LPOLESTR *lpszFileName)
 {
-	*lpszFileName = m_pFileName;
-	return S_OK;
+  *lpszFileName = m_pFileName;
+  return S_OK;
 }
 
 HRESULT FileReader::SetFileName(LPCOLESTR pszFileName)
 {
-	// Is this a valid filename supplied
-	//CheckPointer(pszFileName,E_POINTER);
+  // Is this a valid filename supplied
+  //CheckPointer(pszFileName,E_POINTER);
 
-	if(wcslen(pszFileName) > MAX_PATH)
-		return ERROR_FILENAME_EXCED_RANGE;
+  if(wcslen(pszFileName) > MAX_PATH)
+    return ERROR_FILENAME_EXCED_RANGE;
 
-	// Take a copy of the filename
+  // Take a copy of the filename
 
-	if (m_pFileName)
-	{
-		delete[] m_pFileName;
-		m_pFileName = NULL;
-	}
-	m_pFileName = new WCHAR[1+lstrlenW(pszFileName)];
-	if (m_pFileName == NULL)
-		return E_OUTOFMEMORY;
+  if (m_pFileName)
+  {
+    delete[] m_pFileName;
+    m_pFileName = NULL;
+  }
+  m_pFileName = new WCHAR[1+lstrlenW(pszFileName)];
+  if (m_pFileName == NULL)
+    return E_OUTOFMEMORY;
 
-	wcscpy(m_pFileName, pszFileName);
+  wcscpy(m_pFileName, pszFileName);
 
-	return S_OK;
+  return S_OK;
 }
 
 //

@@ -21,9 +21,11 @@
 
 #pragma warning(disable:4996)
 #pragma warning(disable:4995)
+#include "StdAfx.h"
+
 #include <winsock2.h>
 #include <ws2tcpip.h>
-#include <windows.h>
+
 #include <commdlg.h>
 #include <bdatypes.h>
 #include <time.h>
@@ -96,7 +98,8 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,bool isMpeg2)
 bool CMpegPesParser::OnTsPacket(byte *Frame,int Length,bool isMpeg2)
 {
 	//LogDebug("Framesize: %i",Length);
-	if (Length<=100) return false ; // arbitrary for safety.
+	//if (Length<=100) return false ; // arbitrary for safety.
 	hdrParser.Reset(Frame,Length);
 	return ParseVideo(Frame,isMpeg2);
 }
+

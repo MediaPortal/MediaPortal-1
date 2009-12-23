@@ -62,11 +62,6 @@ protected:
   bool      m_bConnected;
   BOOL      m_bDiscontinuity;
   CCritSec* m_section;
-  CCritSec  m_bufferLock;
-  bool      m_bSeeking;
-  DWORD     m_seekTimer;
-  CRefTime  m_lastSeek;
-  bool      m_bInFillBuffer;     
   bool      m_bPresentSample;
   bool      m_bSubtitleCompensationSet;
 };

@@ -25,6 +25,7 @@ class CBuffer
 {
 public:
   CBuffer(void);
+  CBuffer(unsigned long size);
   ~CBuffer(void);
   int    Length();
   byte*  Data();
@@ -37,6 +38,8 @@ public:
   bool   MediaTime(CRefTime &reftime);
   void   SetDiscontinuity();
   bool   GetDiscontinuity();
+  void   SetVideoServiceType(int type);
+  int    GetVideoServiceType();
   void   SetFrameType(char type) { m_frameType = type ; } ;
   char   GetFrameType() { return m_frameType ; }
   void   SetFrameCount(int count) { m_frameCount = count ; };
@@ -44,6 +47,7 @@ public:
 
 private:
   bool  m_bDiscontinuity;
+  int   m_iVideoServiceType;
   CPcr  m_currentPcr;
   CPcr  m_pts;
   CPcr  m_firstPcr;
@@ -52,4 +56,5 @@ private:
   int   m_iLength;
   int   m_frameType ;
   int   m_frameCount ;
+  unsigned int m_iSize;
 };

@@ -20,9 +20,11 @@
  */
 #pragma warning(disable:4996)
 #pragma warning(disable:4995)
+#include "StdAfx.h"
+
 #include <winsock2.h>
 #include <ws2tcpip.h>
-#include <windows.h>
+
 #include <commdlg.h>
 #include <bdatypes.h>
 #include <time.h>
