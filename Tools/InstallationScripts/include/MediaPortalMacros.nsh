@@ -23,7 +23,7 @@
 
 #endregion
 
-!if "${NSIS_VERSION}" != "v2.45"
+!if "${NSIS_VERSION}" != "v2.46"
   !error "$\r$\n$\r$\nPlease update your NSIS installation to latest version. http://nsis.sourceforge.net$\r$\n$\r$\n"
 !endif
 
