@@ -34,6 +34,7 @@
 #---------------------------------------------------------------------------
 # import other header files
 #---------------------------------------------------------------------------
+!include FileFunc.nsh
 !include LogicLib.nsh
 !include x64.nsh
 
@@ -141,23 +142,23 @@
 # COMMANDLINE PARAMETERS
 #---------------------------------------------------------------------------
 ; gets comandline parameter
-!macro InitCommandlineParameterCall UNINSTALL
-  ${${UNINSTALL}GetParameters} $R0
+!macro InitCommandlineParameterCall
+  ${GetParameters} $R0
   ${LOG_TEXT} "DEBUG" "commandline parameters: $R0"
 !macroend
-!define InitCommandlineParameter `!insertmacro InitCommandlineParameterCall ""`
-!define un.InitCommandlineParameter `!insertmacro InitCommandlineParameterCall "un."`
+!define InitCommandlineParameter `!insertmacro InitCommandlineParameterCall`
+!define un.InitCommandlineParameter `!insertmacro InitCommandlineParameterCall`
 
 ; check for special parameter and set the their variables, need InitCommandlineParameter first
-!macro ReadCommandlineParameterCall UNINSTALL Parameter
+!macro ReadCommandlineParameterCall Parameter
   ClearErrors
-  ${${UNINSTALL}GetOptions} $R0 "/${Parameter}" $R1
+  ${GetOptions} $R0 "/${Parameter}" $R1
   ${IfNot} ${Errors}
     StrCpy $${Parameter} 1
   ${EndUnless}
 !macroend
-!define ReadCommandlineParameter `!insertmacro ReadCommandlineParameterCall ""`
-!define un.ReadCommandlineParameter `!insertmacro ReadCommandlineParameterCall "un."`
+!define ReadCommandlineParameter `!insertmacro ReadCommandlineParameterCall`
+!define un.ReadCommandlineParameter `!insertmacro ReadCommandlineParameterCall`
 
 
 #**********************************************************************************************************#
@@ -343,8 +344,6 @@
 
 !macroend
 
-!include FileFunc.nsh
-!insertmacro GetTime
 !macro GET_BACKUP_POSTFIX _var
 
   ${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
@@ -553,14 +552,12 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
 
 !macroend
 
-!include FileFunc.nsh
-!insertmacro un.GetParent
 !macro NSISuninstall REG_KEY
 
   ReadRegStr $R0 HKLM "${REG_KEY}" UninstallString
   ${If} ${FileExists} "$R0"
     ; get parent folder of uninstallation EXE (RO) and save it to R1
-    ${un.GetParent} $R0 $R1
+    ${GetParent} $R0 $R1
     ; start uninstallation of installed MP, from tmp folder, so it will delete itself
     ;HideWindow
     ClearErrors
@@ -585,7 +582,7 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
   ReadRegStr $R0 HKLM "${REG_KEY}" UninstallString
   ${If} ${FileExists} "$R0"
     ; get parent folder of uninstallation EXE (RO) and save it to R1
-    ${un.GetParent} $R0 $R1
+    ${GetParent} $R0 $R1
     ; start uninstallation of installed MP, from tmp folder, so it will delete itself
     ;HideWindow
     ClearErrors

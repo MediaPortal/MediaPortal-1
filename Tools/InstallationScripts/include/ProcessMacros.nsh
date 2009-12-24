@@ -30,8 +30,16 @@
 !include LogicLib.nsh
 !include "${svn_InstallScripts}\include\LoggingMacros.nsh"
 
+#***************************
+#***************************
+
 !define KillProcess `!insertmacro KillProcess`
 !macro KillProcess Process
+  !echo "KillProcess: ${Process}"
+  !verbose push
+  !verbose 3
+
+
   ${LOG_TEXT} "INFO" "KillProcess: ${Process}"
 
   StrCpy $R1 1  ; set counter to 1
@@ -60,10 +68,17 @@
 
       ${EndSelect}
   ${Loop}
+
+
+  !verbose pop
 !macroend
 
 !define StopService `!insertmacro StopService`
 !macro StopService Service
+  !echo "StopService: ${Service}"
+  !verbose push
+  !verbose 3
+
   ${LOG_TEXT} "INFO" "StopService: ${Service}"
 
   StrCpy $R1 1  ; set counter to 1
@@ -92,10 +107,18 @@
 
       ${EndSelect}
   ${Loop}
+
+
+  !verbose pop
 !macroend
 
 !define RenameDirectory `!insertmacro RenameDirectory`
 !macro RenameDirectory DirPath NewDirPath
+  !echo "RenameDirectory: old ${DirPath} | new: ${NewDirPath}"
+  !verbose push
+  !verbose 3
+
+
   ${LOG_TEXT} "INFO" "RenameDirectory: Old path: ${DirPath}"
   ${LOG_TEXT} "INFO" "RenameDirectory: New path: ${NewDirPath}"
 
@@ -135,6 +158,9 @@ ${Else}
     ${LOG_TEXT} "INFO" "RenameDirectory: Directory does not exist. No need to rename: ${DirPath}"
 
 ${EndIf}
+
+
+  !verbose pop
 !macroend
 
 
