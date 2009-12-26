@@ -896,7 +896,7 @@ bool CTsReaderFilter::SeekPreStart(CRefTime& rtSeek, bool IsAudio, bool IsVideo)
       LONG seekTime = rtSeek.Millisecs() ;
       if (seekTime + 200 > duration) // End of timeshift buffer requested.
       {
-        if (m_bLiveTv && !m_bAnalog) doSeek=false ;       // Live & not analog do not seek
+        if (m_bLiveTv && !m_bAnalog  && (m_fileDuration != NULL)) doSeek=false ;       // Live & not analog & not RTSP do not seek
         m_bLiveTv=true ;
       }
       else

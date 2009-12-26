@@ -52,7 +52,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;&quot;$(WINDOWS_SDK)Include\&quot;;&quot;$(DXSDK_DIR)Include&quot;;..\LiveMedia555\BasicUsageEnvironment/include;..\LiveMedia555\groupsock/include;..\LiveMedia555\liveMedia;..\LiveMedia555\liveMedia/include;..\LiveMedia555\UsageEnvironment/include;../LiveMedia555/MediaPortal;..\shared;..\streamingserver\Source"
+				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;&quot;$(WINDOWS_SDK)Include\&quot;;&quot;$(DXSDK_DIR)Include&quot;;..\LiveMedia555\BasicUsageEnvironment/include;..\LiveMedia555\groupsock/include;..\LiveMedia555\liveMedia;..\LiveMedia555\liveMedia/include;..\LiveMedia555\UsageEnvironment/include;../LiveMedia555/MediaPortal;..\shared;..\streamingserver\Source;..\dxerr"
 				PreprocessorDefinitions="WIN32; _WIN32; NDEBUG; _CRT_SECURE_NO_WARNINGS"
 				StringPooling="false"
 				RuntimeLibrary="2"
