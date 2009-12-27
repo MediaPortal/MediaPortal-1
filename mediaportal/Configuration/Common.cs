@@ -55,7 +55,7 @@ namespace MediaPortal.Configuration
 
           for (int i = 0; i < addr.Length; i++)
           {
-            if (addr[i].Equals(servername))
+            if (addr[i].ToString().Equals(servername))
             {
               Log.Debug("Configuration: IsSingleSeat - MPSettings.HostName = {0} / Dns.GetHostEntry(Environment.MachineName) = {1}",
                         servername, addr[i]);

@@ -2057,7 +2057,7 @@ namespace TvPlugin
 
           for (int i = 0; i < addr.Length; i++)
           {
-            if (addr[i].Equals(RemoteControl.HostName))
+            if (addr[i].ToString().Equals(RemoteControl.HostName))
             {
               Log.Debug(
                 "TVHome: IsSingleSeat - RemoteControl.HostName = {0} / Dns.GetHostEntry(Environment.MachineName) = {1}",
