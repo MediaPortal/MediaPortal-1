@@ -1262,7 +1262,8 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
         CRefTime Ref;
         CBuffer *pCurrentVideoBuffer = new CBuffer(p->GetCount());
         pCurrentVideoBuffer->Add(p->GetData(), p->GetCount());
-        pCurrentVideoBuffer->SetPts(timestamp);
+        pCurrentVideoBuffer->SetPts(timestamp);   
+        pCurrentVideoBuffer->SetPcr(m_duration.FirstStartPcr(),m_duration.MaxPcr());
         pCurrentVideoBuffer->MediaTime(Ref) ;
         // Must use p->rtStart as CPcr is UINT64 and INVALID_TIME is LONGLONG
         // Too risky to change CPcr implementation at this time 
@@ -1273,11 +1274,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
             m_IframeSample = Ref;
             m_bIframeFound = true;
 
-            
-            CPcr timestamp2; 
-            timestamp2.PcrReferenceBase = p->rtStart;
-            timestamp2.IsValid = true;
-            LogDebug("  H.264 I-FRAME found %f ", timestamp2.ToClock());
+            LogDebug("  H.264 I-FRAME found %f ", m_IframeSample.Millisecs()/1000.0f);
           }
           if (Ref < m_FirstVideoSample) m_FirstVideoSample = Ref;
           if (Ref > m_LastVideoSample) m_LastVideoSample = Ref;
