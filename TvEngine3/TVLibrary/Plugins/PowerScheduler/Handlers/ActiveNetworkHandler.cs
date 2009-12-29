@@ -218,11 +218,6 @@ namespace TvEngine.PowerScheduler.Handlers
             ps.UserActivityDetected(now);
           }
 
-        if (_preventers.Count == 0)
-        {
-          Log.Debug("NetworkMonitorHandler: standby allowed");
-        }
-
         return (_preventers.Count > 0);
       }
     }

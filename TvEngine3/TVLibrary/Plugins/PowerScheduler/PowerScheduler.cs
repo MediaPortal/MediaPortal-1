@@ -1309,9 +1309,9 @@ namespace TvEngine.PowerScheduler
 
         foreach (IStandbyHandler handler in _standbyHandlers)
         {
+          LogVerbose("PowerScheduler.DisAllowShutdown: inspecting IStandbyHandler:{0} DisAllowShutdown:{1}", handler.HandlerName, handler.DisAllowShutdown);
           if (handler.DisAllowShutdown)
           {
-            LogVerbose("PowerScheduler.DisAllowShutdown: handler {0} wants to prevent standby", handler.HandlerName);
             _currentDisAllowShutdownHandler = handler.HandlerName;
             _currentDisAllowShutdown = true;
             _powerManager.PreventStandby();
@@ -1392,7 +1392,7 @@ namespace TvEngine.PowerScheduler
         {
           DateTime nextTime = handler.GetNextWakeupTime(earliestWakeupTime);
           if (nextTime < earliestWakeupTime) nextTime = DateTime.MaxValue;
-          LogVerbose("PowerScheduler.NextWakeupTime: inspecting handler:{0} time:{1}", handler.HandlerName, nextTime);
+          LogVerbose("PowerScheduler.NextWakeupTime: inspecting IWakeupHandler:{0} time:{1}", handler.HandlerName, nextTime);
           if (nextTime < nextWakeupTime && nextTime >= earliestWakeupTime)
           {
             //too much logging Log.Debug("PowerScheduler: found next wakeup time {0} by {1}", nextTime, handler.HandlerName);
