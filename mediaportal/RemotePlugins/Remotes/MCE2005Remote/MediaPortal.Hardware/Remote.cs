@@ -33,7 +33,7 @@ using Microsoft.Win32.SafeHandles;
 
 namespace MediaPortal.Hardware
 {
-  internal sealed class Remote : Device
+  public class Remote : Device
   {
     #region Constructor
 

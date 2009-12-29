@@ -63,6 +63,9 @@ xcopy /y %1\RemotePlugins\Remotes\X10Remote\Interop.X10.dll .
 REM Utils
 xcopy /y %1\Utils\bin\%2\Utils.dll .
 
+REM MPTray
+xcopy /y %1\MPTray\bin\%2\MPTray.exe .
+
 rem C#scripts
 rem don't need to be copied seperate, those files are already in MediaPortal.Base
 rem xcopy /y %1\scripts\*.* scripts\
