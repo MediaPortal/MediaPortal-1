@@ -342,7 +342,11 @@ Global
 		{7A626CB9-0660-4F47-B059-7AC7F68EDB0A}.UseCaptureCardDefinitions|x86.ActiveCfg = Release|Any CPU
 		{7A626CB9-0660-4F47-B059-7AC7F68EDB0A}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|Any CPU
 		{74FB430C-6F41-434B-B9C3-F93BEE56E5FF}.Debug|x86.ActiveCfg = Debug|x86
+		{74FB430C-6F41-434B-B9C3-F93BEE56E5FF}.Debug|x86.Build.0 = Debug|x86
 		{74FB430C-6F41-434B-B9C3-F93BEE56E5FF}.Release|x86.ActiveCfg = Release|x86
+		{74FB430C-6F41-434B-B9C3-F93BEE56E5FF}.Release|x86.Build.0 = Release|x86
+		{74FB430C-6F41-434B-B9C3-F93BEE56E5FF}.UseCaptureCardDefinitions|x86.ActiveCfg = Release|x86
+		{74FB430C-6F41-434B-B9C3-F93BEE56E5FF}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
