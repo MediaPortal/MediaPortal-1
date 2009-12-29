@@ -33,11 +33,14 @@ using MediaPortal.Hardware;
 using MediaPortal.Hooks;
 using MediaPortal.ServiceImplementations;
 using Microsoft.Win32;
+using System.Drawing;
 
 namespace MPTray
 {
     public class ShellApplication
     {
+      private NotifyIcon _SystemNotificationAreaIcon = null;
+
         #region Methods
 
         void InstallKeyboardHook()
@@ -233,7 +236,8 @@ namespace MPTray
                 process.MaxWorkingSet = (IntPtr)800000;
                 process.MinWorkingSet = (IntPtr)500000;
 
-                Application.Run();
+                InitTrayIcon();
+                Application.Run();                
             }
             catch (Exception e)
             {
@@ -332,6 +336,46 @@ namespace MPTray
             }
 
             handler.Run();
+        }
+
+        private void InitTrayIcon()
+        {
+          if (_SystemNotificationAreaIcon == null)
+          {
+            try
+            {
+              ContextMenu contextMenuTray = new ContextMenu();
+              MenuItem menuItem1 = new MenuItem();
+              //MenuItem menuItem2 = new MenuItem();
+
+              // Initialize contextMenuTray
+              contextMenuTray.MenuItems.AddRange(new MenuItem[] { menuItem1 /*, menuItem2 */});
+
+              // Initialize menuItem1
+              menuItem1.Index = 0;
+              menuItem1.Text = "Close";
+              menuItem1.Click += new EventHandler(menuItem1_Click);
+
+              _SystemNotificationAreaIcon = new NotifyIcon();
+              _SystemNotificationAreaIcon.ContextMenu = contextMenuTray;
+
+              //Stream s = GetType().Assembly.GetManifestResourceStream("MPTrayIcon");
+              _SystemNotificationAreaIcon.Icon = MPTray.Properties.Resources.MPTrayIcon;
+              _SystemNotificationAreaIcon.Text = "MediaPortal Tray Launcher";
+              _SystemNotificationAreaIcon.Visible = true;
+            }
+            catch (Exception ex)
+            {
+              Log.Error("MPTray: Could not init tray icon - {0}", ex.ToString());
+            }
+          }
+        }
+
+        void menuItem1_Click(object sender, EventArgs e)
+        {
+          _SystemNotificationAreaIcon.Visible = false;
+          _SystemNotificationAreaIcon = null;
+          Application.Exit();
         }
 
         #endregion Entry Point
