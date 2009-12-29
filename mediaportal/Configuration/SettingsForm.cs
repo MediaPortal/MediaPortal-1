@@ -1121,7 +1121,6 @@ namespace MediaPortal.Configuration
           // LoadSectionSettings will recursively load all settings
           if (loadNode.Parent == null)
           {
-            Log.Info("  Load settings:{0}", loadNode.Text);
             LoadSectionSettings(loadNode);
           }
         }
@@ -1132,19 +1131,18 @@ namespace MediaPortal.Configuration
 
     private void LoadSectionSettings(TreeNode currentNode)
     {
-      Log.Info("LoadSectionSettings()");
       if (currentNode != null)
       {
         // Load settings for current node
         SectionTreeNode treeNode = currentNode as SectionTreeNode;
         if (treeNode != null)
         {
+          Log.Info("LoadSectionSettings() - {0}", treeNode.Text);
           treeNode.Section.LoadSettings();
         }
         // Load settings for all child nodes
         foreach (TreeNode childNode in treeNode.Nodes)
         {
-          Log.Info("  Load settings:{0}", childNode.Text);
           LoadSectionSettings(childNode);
         }
       }
@@ -1153,19 +1151,18 @@ namespace MediaPortal.Configuration
 
     private void SaveSectionSettings(TreeNode currentNode)
     {
-      Log.Info("SaveSectionSettings()");
       if (currentNode != null)
       {
         // Save settings for current node
         SectionTreeNode treeNode = currentNode as SectionTreeNode;
         if (treeNode != null)
         {
+          Log.Info("SaveSectionSettings() - {0}", treeNode.Text);      
           treeNode.Section.SaveSettings();
         }
         // Load settings for all child nodes
         foreach (TreeNode childNode in treeNode.Nodes)
         {
-          Log.Info("SaveSectionSettings:{0}", childNode.Text);
           SaveSectionSettings(childNode);
         }
       }

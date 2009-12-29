@@ -195,6 +195,8 @@ namespace MediaPortal.Configuration.Sections
 
     public override void OnSectionActivated()
     {
+      if (!settingsLoaded)
+        Load();
       //
       // Clear any existing entries
       //
@@ -1522,9 +1524,13 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Persistance
-
     public override void LoadSettings()
     {
+    }
+
+    private void Load()
+    {
+      Cursor.Current = Cursors.WaitCursor;
       using (Settings xmlreader = new MPSettings())
       {
         _isFuzzyMatching = xmlreader.GetValueAsBool("movies", "fuzzyMatching", true);
@@ -1561,7 +1567,7 @@ namespace MediaPortal.Configuration.Sections
 
         ReloadGrabberScripts();
       }
-
+      Cursor.Current = Cursors.Default;
       settingsLoaded = true;
     }
 
