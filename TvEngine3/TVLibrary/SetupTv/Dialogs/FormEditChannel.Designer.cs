@@ -54,6 +54,8 @@ namespace SetupTv.Sections
       this.label28 = new System.Windows.Forms.Label();
       this.label31 = new System.Windows.Forms.Label();
       this.tabPage3 = new System.Windows.Forms.TabPage();
+      this.comboBoxDvbCModulation = new System.Windows.Forms.ComboBox();
+      this.label42 = new System.Windows.Forms.Label();
       this.checkBoxDVBCfta = new System.Windows.Forms.CheckBox();
       this.label46 = new System.Windows.Forms.Label();
       this.textBoxDVBCProvider = new System.Windows.Forms.TextBox();
@@ -467,6 +469,8 @@ namespace SetupTv.Sections
       // 
       // tabPage3
       // 
+      this.tabPage3.Controls.Add(this.comboBoxDvbCModulation);
+      this.tabPage3.Controls.Add(this.label42);
       this.tabPage3.Controls.Add(this.checkBoxDVBCfta);
       this.tabPage3.Controls.Add(this.label46);
       this.tabPage3.Controls.Add(this.textBoxDVBCProvider);
@@ -489,10 +493,28 @@ namespace SetupTv.Sections
       this.tabPage3.Text = "DVB-C";
       this.tabPage3.UseVisualStyleBackColor = true;
       // 
+      // comboBoxDvbCModulation
+      // 
+      this.comboBoxDvbCModulation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxDvbCModulation.FormattingEnabled = true;
+      this.comboBoxDvbCModulation.Location = new System.Drawing.Point(95, 197);
+      this.comboBoxDvbCModulation.Name = "comboBoxDvbCModulation";
+      this.comboBoxDvbCModulation.Size = new System.Drawing.Size(129, 21);
+      this.comboBoxDvbCModulation.TabIndex = 80;
+      // 
+      // label42
+      // 
+      this.label42.AutoSize = true;
+      this.label42.Location = new System.Drawing.Point(17, 200);
+      this.label42.Name = "label42";
+      this.label42.Size = new System.Drawing.Size(62, 13);
+      this.label42.TabIndex = 81;
+      this.label42.Text = "Modulation:";
+      // 
       // checkBoxDVBCfta
       // 
       this.checkBoxDVBCfta.AutoSize = true;
-      this.checkBoxDVBCfta.Location = new System.Drawing.Point(95, 201);
+      this.checkBoxDVBCfta.Location = new System.Drawing.Point(95, 227);
       this.checkBoxDVBCfta.Name = "checkBoxDVBCfta";
       this.checkBoxDVBCfta.Size = new System.Drawing.Size(78, 17);
       this.checkBoxDVBCfta.TabIndex = 79;
@@ -1032,7 +1054,7 @@ namespace SetupTv.Sections
       // checkBoxDVBTfta
       // 
       this.checkBoxDVBTfta.AutoSize = true;
-      this.checkBoxDVBTfta.Location = new System.Drawing.Point(103, 231);
+      this.checkBoxDVBTfta.Location = new System.Drawing.Point(103, 227);
       this.checkBoxDVBTfta.Name = "checkBoxDVBTfta";
       this.checkBoxDVBTfta.Size = new System.Drawing.Size(78, 17);
       this.checkBoxDVBTfta.TabIndex = 79;
@@ -1802,6 +1824,8 @@ namespace SetupTv.Sections
     private System.Windows.Forms.GroupBox groupBox2;
     private System.Windows.Forms.Label labelDVBIPProvider;
     private System.Windows.Forms.CheckBox checkBoxVCR;
+    private System.Windows.Forms.ComboBox comboBoxDvbCModulation;
+    private System.Windows.Forms.Label label42;
 
   }
 }

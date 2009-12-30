@@ -220,6 +220,7 @@ namespace SetupTv.Sections
                         dvbcChannel.PmtPid = pmt;
                         dvbcChannel.Provider = textBoxDVBCProvider.Text;
                         dvbcChannel.FreeToAir = checkBoxDVBCfta.Checked;
+                        dvbcChannel.ModulationType = (ModulationType)comboBoxDvbCModulation.SelectedItem;
                         layer.AddTuningDetails(_channel, dvbcChannel);
                       }
                     }
@@ -462,6 +463,7 @@ namespace SetupTv.Sections
           detail.PmtPid = Int32.Parse(textBoxDVBCPmt.Text);
           detail.Provider = textBoxDVBCProvider.Text;
           detail.FreeToAir = checkBoxDVBCfta.Checked;
+          detail.Modulation = (int)comboBoxDvbCModulation.SelectedItem;
           detail.Persist();
         }
 
@@ -575,6 +577,12 @@ namespace SetupTv.Sections
         comboBoxCountry.Items.Add(countries.Countries[i].Name);
       }
 
+      comboBoxDvbCModulation.Items.Clear();
+      foreach (ModulationType modValue in Enum.GetValues(typeof(ModulationType)))
+      {
+        comboBoxDvbCModulation.Items.Add(modValue);
+      }
+
       /*comboBoxSatellite.Items.Clear();
       IList satellites = Satellite.ListAll();
       foreach (Satellite sat in satellites)
@@ -674,6 +682,7 @@ namespace SetupTv.Sections
             textBoxDVBCPmt.Text = detail.PmtPid.ToString();
             textBoxDVBCProvider.Text = detail.Provider;
             checkBoxDVBCfta.Checked = detail.FreeToAir;
+            comboBoxDvbCModulation.SelectedItem = (ModulationType)detail.Modulation;
           }
 
           //DVB-S Tab
