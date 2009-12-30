@@ -523,7 +523,8 @@ bool CRTSPClient::Pause()
 	if (m_ourClient!=NULL && m_session!=NULL)
 	{
 	  LogDebug("CRTSPClient::Pause() stopthread");
-		StopThread(1000);                           // Ambass : sometimes 100mS ( prev value ) is not enough and thread is not stopped.
+	  StopThread(10000);                           // Ambass : sometimes 100mS ( prev value ) is not enough and thread is not stopped.  
+	                                               //          now stopping takes around 5 secs ?!?! why ????         
 	  LogDebug("CRTSPClient::Pause() thread stopped");
 		RTSPClient* rtspClient=(RTSPClient*)m_ourClient;
 		rtspClient->pauseMediaSession(*m_session);

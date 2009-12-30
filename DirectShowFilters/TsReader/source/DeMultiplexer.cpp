@@ -167,6 +167,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_FirstAudioSample = 0x7FFFFFFF00000000LL;
   m_LastAudioSample = 0;
 
+  m_WaitHeaderPES=-1 ;
   m_VideoPrevCC = -1;
   m_bIframeFound = false;
   m_FirstVideoSample = 0x7FFFFFFF00000000LL;
@@ -422,7 +423,7 @@ void CDeMultiplexer::GetVideoStreamType(CMediaType &pmt)
 {
   if( m_pids.videoPids.size() != 0 && m_mpegPesParser != NULL)
   {
-		pmt = m_mpegPesParser->pmt;
+    pmt = m_mpegPesParser->pmt;
   }
 }
 
@@ -460,6 +461,8 @@ void CDeMultiplexer::FlushVideo()
   m_LastVideoSample = 0;
   m_lastVideoPTS.IsValid = false;
   m_VideoValidPES = false;
+  m_mVideoValidPES = false;
+  m_WaitHeaderPES=-1 ;
 
   Reset();  // PacketSync reset.
 }
@@ -578,7 +581,7 @@ CBuffer* CDeMultiplexer::GetVideo()
     //demuxer should stop getting video packets
     //then return NULL
     if (!m_filter.IsFilterRunning()) return NULL;
-		if (m_filter.m_bStopping) return NULL;
+    if (m_filter.m_bStopping) return NULL;
     if (m_bEndOfFile) return NULL;
 //    if (m_bHoldVideo) return NULL;
 
@@ -629,7 +632,7 @@ CBuffer* CDeMultiplexer::GetAudio()
     //demuxer should stop getting audio packets
     //then return NULL
     if (!m_filter.IsFilterRunning()) return NULL;
-		if (m_filter.m_bStopping) return NULL;
+    if (m_filter.m_bStopping) return NULL;
 
     if (m_bEndOfFile) return NULL;
 //    if (m_bHoldAudio) return NULL;
@@ -639,7 +642,7 @@ CBuffer* CDeMultiplexer::GetAudio()
 
   //are there audio packets in the buffer?
   if (m_vecAudioBuffers.size()==0) return NULL ;
-	if (IsMediaChanging()) return NULL ;
+  if (IsMediaChanging()) return NULL ;
   if ((!m_filter.GetVideoPin()->IsConnected()) ||
       ( m_filter.m_bLiveTv && m_bIframeFound && (m_FirstAudioSample.m_time + 1500000 < m_LastAudioSample.m_time)) ||
       (!m_filter.m_bLiveTv &&                  (m_IframeSample.m_time + 1500000 < m_LastAudioSample.m_time)))
@@ -683,7 +686,7 @@ void CDeMultiplexer::Start()
     if (dwBytesProcessed>5000000 || GetAudioStreamCount()>0)
     {
       #ifdef USE_DYNAMIC_PINS
-			if ((!m_mpegPesParser->basicVideoInfo.isValid && m_pids.videoPids.size() > 0 && m_pids.videoPids[0].Pid>1) && dwBytesProcessed<5000000)
+      if ((!m_mpegPesParser->basicVideoInfo.isValid && m_pids.videoPids.size() > 0 && m_pids.videoPids[0].Pid>1) && dwBytesProcessed<5000000)
       {
         dwBytesProcessed+=BytesRead;
         continue;
@@ -823,8 +826,8 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
   // Wait for new PAT if required.
   if ((m_iPatVersion & 0x0F) != (m_ReqPatVersion & 0x0F))
   {
-    if (m_ReqPatVersion==-1)										
-    {	                                    // Now, unless channel change, 
+    if (m_ReqPatVersion==-1)                    
+    {                                     // Now, unless channel change, 
        m_ReqPatVersion = m_iPatVersion;    // Initialize Pat Request.
        m_WaitNewPatTmo = GetTickCount();   // Now, unless channel change request,timeout will be always true. 
     }
@@ -953,7 +956,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
             m_AudioValidPES=false;
           }
           else
-		  {
+      {
             m_lastAudioPTS=pts;
           }
 
@@ -1092,234 +1095,247 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
   CPcr pts;
   CPcr dts;
 
-  bool ptsAvailable = false;
-
-  if (header.PayloadUnitStart)
-  {
-    if ((tsPacket[header.PayLoadStart]==0) && 
-        (tsPacket[header.PayLoadStart+1]==0) && 
-        (tsPacket[header.PayLoadStart+2]==1))
-    {
-      int pesHeaderLen=9+tsPacket[header.PayLoadStart + 8];
-      headerlen += pesHeaderLen;
-
-      if (CPcr::DecodeFromPesHeader(&tsPacket[header.PayLoadStart],0,pts,dts))
-      {
-        ptsAvailable = true;
-        double diff;
-        if (!m_lastVideoPTS.IsValid)
-          m_lastVideoPTS=pts;
-        if (m_lastVideoPTS>pts)
-          diff=m_lastVideoPTS.ToClock()-pts.ToClock();
-        else
-          diff=pts.ToClock()-m_lastVideoPTS.ToClock();
-        if (diff>10.0)
-        {
-          LogDebug("DeMultiplexer::FillVideo pts jump found : %f %f, %f", (float) diff, (float)pts.ToClock(), (float)m_lastVideoPTS.ToClock());
-          m_VideoValidPES=false ;
-        }
-        else
-        {
-          m_lastVideoPTS=pts;
-        }
-      }
-    }
-    else
-    {
-      LogDebug("Pes 0-0-1 fail") ;
-      return;
-    }
-  }
-
-  CAutoPtr<Packet> p(DNew Packet());
-  p->TrackNumber = 0; // TrackNumber is not used
-  p->bSyncPoint = !!pts.IsValid;
-  p->bAppendable = !pts.IsValid;
-  p->rtStart = pts.IsValid ? (pts.PcrReferenceBase) : Packet::INVALID_TIME;
-  p->rtStop = p->rtStart+1;
-  
-  int dataLen = 188-headerlen;
-  
-  p->SetCount(dataLen);
-  p->SetData(&tsPacket[headerlen],dataLen);
-
   if(!m_p)
   {
     m_p.Attach(DNew Packet());
-    m_p->TrackNumber = p->TrackNumber;
-    m_p->bDiscontinuity = p->bDiscontinuity; p->bDiscontinuity = FALSE;
-    m_p->bSyncPoint = p->bSyncPoint; p->bSyncPoint = FALSE;
-    m_p->rtStart = p->rtStart; p->rtStart = Packet::INVALID_TIME;
-    m_p->rtStop = p->rtStop; p->rtStop = Packet::INVALID_TIME;
+    m_p->bDiscontinuity = false ;
+    m_p->rtStart = Packet::INVALID_TIME;
   }
+  
+  if (header.PayloadUnitStart)
+  {
+    m_WaitHeaderPES = m_p->GetCount() ;
+    m_mVideoValidPES = m_VideoValidPES ;
+//    LogDebug("DeMultiplexer::FillVideo PayLoad Unit Start");
+  }
+  
+  CAutoPtr<Packet> p(DNew Packet());
+  
+  if (headerlen < 188)
+  {            
+    int dataLen = 188-headerlen ;
+    p->SetCount(dataLen);
+    p->SetData(&tsPacket[headerlen],dataLen);
 
-  m_p->Append(*p);
+    m_p->Append(*p);
+  }
+  else
+    return ;
 
-  BYTE* start = m_p->GetData();
-  BYTE* end = start + m_p->GetCount();
-
-  while(start <= end-4 && *(DWORD*)start != 0x01000000) start++;
-
-  while(start <= end-4)
-	{
-    BYTE* next = start+1;
-
-    while(next <= end-4 && *(DWORD*)next != 0x01000000) next++;
-
-    if(next >= end-4) break;
-
-    int size = next - start;
-
-    CH264Nalu			Nalu;
-    Nalu.SetBuffer (start, size, 0);
-
-    CAutoPtr<Packet> p2;
-
-    while (Nalu.ReadNext())
-    {
-      DWORD	dwNalLength = 
-        ((Nalu.GetDataLength() >> 24) & 0x000000ff) |
-        ((Nalu.GetDataLength() >>  8) & 0x0000ff00) |
-        ((Nalu.GetDataLength() <<  8) & 0x00ff0000) |
-        ((Nalu.GetDataLength() << 24) & 0xff000000);
-
-      CAutoPtr<Packet> p3(DNew Packet());
-
-      p3->SetCount (Nalu.GetDataLength()+sizeof(dwNalLength));
-
-      memcpy (p3->GetData(), &dwNalLength, sizeof(dwNalLength));
-      memcpy (p3->GetData()+sizeof(dwNalLength), Nalu.GetDataBuffer(), Nalu.GetDataLength());
-
-      if (p2 == NULL)
-        p2 = p3;
+  if (m_WaitHeaderPES >= 0)
+  {
+    int AvailablePESlength = m_p->GetCount()-m_WaitHeaderPES ;
+    BYTE* start = m_p->GetData() + m_WaitHeaderPES ;
+    if ((AvailablePESlength >= 9) && (AvailablePESlength >= 9+start[8]))
+    { // full PES header is available.
+      CPcr pts;
+      CPcr dts;
+      if ((start[0]==0) && 
+        (start[1]==0) && 
+        (start[2]==1))
+      {                    
+        m_VideoValidPES=true ;
+        if (CPcr::DecodeFromPesHeader(start,0,pts,dts))
+        {
+          double diff;
+          if (!m_lastVideoPTS.IsValid)
+            m_lastVideoPTS=pts;
+          if (m_lastVideoPTS>pts)
+            diff=m_lastVideoPTS.ToClock()-pts.ToClock();
+          else
+            diff=pts.ToClock()-m_lastVideoPTS.ToClock();
+          if (diff>10.0)
+          {
+            LogDebug("DeMultiplexer::FillVideo pts jump found : %f %f, %f", (float) diff, (float)pts.ToClock(), (float)m_lastVideoPTS.ToClock());
+            m_VideoValidPES=false ;
+          }
+          else
+          {
+//            LogDebug("DeMultiplexer::FillVideo pts : %f ", (float)pts.ToClock());
+            m_lastVideoPTS=pts;
+          }
+        }
+        m_p->RemoveAt(m_WaitHeaderPES, 9+start[8]) ;
+      }
       else
-        p2->Append(*p3);
-    }
-
-    p2->TrackNumber = m_p->TrackNumber;
-    p2->bDiscontinuity = m_p->bDiscontinuity; m_p->bDiscontinuity = FALSE;
-    p2->bSyncPoint = m_p->bSyncPoint; m_p->bSyncPoint = FALSE;
-    p2->rtStart = m_p->rtStart; m_p->rtStart = Packet::INVALID_TIME;
-    p2->rtStop = m_p->rtStop; m_p->rtStop = Packet::INVALID_TIME;
-    p2->pmt = m_p->pmt; m_p->pmt = NULL;
-
-    m_pl.AddTail(p2);
-
-    if(p->rtStart != Packet::INVALID_TIME) {m_p->rtStart = p->rtStart; m_p->rtStop = p->rtStop; p->rtStart = Packet::INVALID_TIME;}
-    if(p->bDiscontinuity) {m_p->bDiscontinuity = p->bDiscontinuity; p->bDiscontinuity = FALSE;}
-    if(p->bSyncPoint) {m_p->bSyncPoint = p->bSyncPoint; p->bSyncPoint = FALSE;}
-    if(m_p->pmt) DeleteMediaType(m_p->pmt); m_p->pmt = p->pmt; p->pmt = NULL;
-
-    start = next;
-  }
-  if(start > m_p->GetData())
-  {
-    m_p->RemoveAt(0, start - m_p->GetData());
-  }
-
-  for(POSITION pos = m_pl.GetHeadPosition(); pos; m_pl.GetNext(pos))
-  {
-    if(pos == m_pl.GetHeadPosition()) 
-      continue;
-
-    Packet* pPacket = m_pl.GetAt(pos);
-    BYTE* pData = pPacket->GetData();
-
-    if((pData[4]&0x1f) == 0x09) m_fHasAccessUnitDelimiters = true;
-    if((pData[4]&0x1f) == 0x09 || !m_fHasAccessUnitDelimiters && pPacket->rtStart != Packet::INVALID_TIME)
-    {
-      p = m_pl.RemoveHead();
-      //LogDebug("Output NALU Type: %d", p->GetAt(4)&0x1f);
-      CH246IFrameScanner iFrameScanner;
-      iFrameScanner.ProcessNALU(p);
-
-      while(pos != m_pl.GetHeadPosition())
       {
-        CAutoPtr<Packet> p2 = m_pl.RemoveHead();
-        if (!iFrameScanner.SeenEnough())
-          iFrameScanner.ProcessNALU(p2);
+        LogDebug("Pes 0-0-1 fail") ;
+        m_VideoValidPES=false ;
+      }
 
-        //LogDebug("Output NALU Type: %d", p2->GetAt(4)&0x1f);
-        p->Append(*p2);
+      m_p->rtStart = pts.IsValid ? (pts.PcrReferenceBase) : Packet::INVALID_TIME;
+
+      m_WaitHeaderPES = -1 ;
+    }
+    else   
+    {                             
+      int FullLen = -1 ;   
+      if (AvailablePESlength >= 9) FullLen = 9+start[8] ;   
+      LogDebug("demux:vid Incomplete PES ( Avail %d / %d )", AvailablePESlength,FullLen) ;    
+      return ;
+    }
+  }
+
+  if (m_p->GetCount())
+  {
+    BYTE* start = m_p->GetData();
+    BYTE* end = start + m_p->GetCount();
+
+    while(start <= end-4 && *(DWORD*)start != 0x01000000) start++;
+
+    while(start <= end-4)
+    {
+      BYTE* next = start+1;
+
+      while(next <= end-4 && *(DWORD*)next != 0x01000000) next++;
+
+      if(next >= end-4) break ;
+        
+      int size = next - start;
+
+      CH264Nalu     Nalu;
+      Nalu.SetBuffer (start, size, 0);
+
+      CAutoPtr<Packet> p2;
+
+      while (Nalu.ReadNext())
+      {
+        DWORD dwNalLength = 
+          ((Nalu.GetDataLength() >> 24) & 0x000000ff) |
+          ((Nalu.GetDataLength() >>  8) & 0x0000ff00) |
+          ((Nalu.GetDataLength() <<  8) & 0x00ff0000) |
+          ((Nalu.GetDataLength() << 24) & 0xff000000);
+        CAutoPtr<Packet> p3(DNew Packet());
+
+        p3->SetCount (Nalu.GetDataLength()+sizeof(dwNalLength));
+
+        memcpy (p3->GetData(), &dwNalLength, sizeof(dwNalLength));
+        memcpy (p3->GetData()+sizeof(dwNalLength), Nalu.GetDataBuffer(), Nalu.GetDataLength());
+
+        if (p2 == NULL)
+          p2 = p3;
+        else
+          p2->Append(*p3);
+      }
+
+      if((*(p2->GetData()+4)&0x1f) == 0x09) m_fHasAccessUnitDelimiters = true;
+      if((*(p2->GetData()+4)&0x1f) == 0x09 || !m_fHasAccessUnitDelimiters && m_p->rtStart != Packet::INVALID_TIME)
+      {
+        if ((m_pl.GetCount()>0) && m_mVideoValidPES)
+        {
+          CAutoPtr<Packet> p(DNew Packet());
+          p = m_pl.RemoveHead();
+//          LogDebug("Output NALU Type: %d (%d)", p->GetAt(4)&0x1f,p->GetCount());
+          CH246IFrameScanner iFrameScanner;
+          iFrameScanner.ProcessNALU(p);
+    
+          while(m_pl.GetCount())
+          {
+            CAutoPtr<Packet> p2 = m_pl.RemoveHead();
+            if (!iFrameScanner.SeenEnough())
+              iFrameScanner.ProcessNALU(p2);
+//          LogDebug("Output NALU Type: %d (%d)", p2->GetAt(4)&0x1f,p2->GetCount());
+            p->Append(*p2);
+          }
+        
+          CPcr timestamp;
+          if(p->rtStart != Packet::INVALID_TIME )
+          {
+            timestamp.PcrReferenceBase = p->rtStart;
+            timestamp.IsValid=true;
+          }
+//          LogDebug("frame len %d decoded PTS %f p timestamp %f", p->GetCount(), pts.ToClock(), timestamp.ToClock());
+    
+          int lastVidResX=m_mpegPesParser->basicVideoInfo.width;
+          int lastVidResY=m_mpegPesParser->basicVideoInfo.height;
+    
+          bool Gop = m_mpegPesParser->OnTsPacket(p->GetData(), p->GetCount(),(m_pids.videoPids[0].VideoServiceType==SERVICE_TYPE_VIDEO_MPEG2));
+    
+          if ((Gop || m_bIframeFound) && m_filter.GetVideoPin()->IsConnected())
+          {
+            CRefTime Ref;
+            CBuffer *pCurrentVideoBuffer = new CBuffer(p->GetCount());
+            pCurrentVideoBuffer->Add(p->GetData(), p->GetCount());
+            pCurrentVideoBuffer->SetPts(timestamp);   
+            pCurrentVideoBuffer->SetPcr(m_duration.FirstStartPcr(),m_duration.MaxPcr());
+            pCurrentVideoBuffer->MediaTime(Ref) ;
+            // Must use p->rtStart as CPcr is UINT64 and INVALID_TIME is LONGLONG
+            // Too risky to change CPcr implementation at this time 
+            if(p->rtStart != Packet::INVALID_TIME)
+            {
+              if (Gop && !m_bIframeFound)
+              {
+                m_IframeSample = Ref;
+                m_bIframeFound = true;
+                LogDebug("  H.264 I-FRAME found %f ", m_IframeSample.Millisecs()/1000.0f);
+              }
+              if (Ref < m_FirstVideoSample) m_FirstVideoSample = Ref;
+              if (Ref > m_LastVideoSample) m_LastVideoSample = Ref;
+            }
+    
+            pCurrentVideoBuffer->SetFrameType(Gop? 'I':'?');
+            pCurrentVideoBuffer->SetFrameCount(0);
+            pCurrentVideoBuffer->SetVideoServiceType(m_pids.videoPids[0].VideoServiceType);
+            if (m_bSetVideoDiscontinuity)
+            {
+              m_bSetVideoDiscontinuity=false;
+              pCurrentVideoBuffer->SetDiscontinuity();
+            }
+    
+            // ownership is transfered to vector
+            m_vecVideoBuffers.push_back(pCurrentVideoBuffer);
+          }
+    
+          if (lastVidResX!=m_mpegPesParser->basicVideoInfo.width || lastVidResY!=m_mpegPesParser->basicVideoInfo.height)
+          {
+            LogDebug("DeMultiplexer: %x video format changed: res=%dx%d aspectRatio=%d:%d fps=%d isInterlaced=%d",header.Pid,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,m_mpegPesParser->basicVideoInfo.fps,m_mpegPesParser->basicVideoInfo.isInterlaced);
+            if (m_mpegParserTriggerFormatChange)
+            {
+              LogDebug("DeMultiplexer: OnMediaFormatChange triggered by mpeg2Parser");
+              SetMediaChanging(true);
+              m_filter.OnMediaTypeChanged(3);
+              m_mpegParserTriggerFormatChange=false;
+            }
+            LogDebug("DeMultiplexer: triggering OnVideoFormatChanged");
+            m_filter.OnVideoFormatChanged(m_mpegPesParser->basicVideoInfo.streamType,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,15000000,m_mpegPesParser->basicVideoInfo.isInterlaced);
+          }
+          else
+          {
+            if (m_mpegParserTriggerFormatChange && Gop)
+            {
+              LogDebug("DeMultiplexer: Got GOP after the channel change was detected without correct mpeg header parsing, so we trigger the format change now.");
+              m_filter.OnMediaTypeChanged(3);
+              m_mpegParserTriggerFormatChange=false;
+            }
+          }
+        }  
+        else
+          m_bSetVideoDiscontinuity = !m_mVideoValidPES ;
+        m_pl.RemoveAll() ;
+          
+        p2->bDiscontinuity = m_p->bDiscontinuity; m_p->bDiscontinuity = FALSE;
+        p2->rtStart = m_p->rtStart; m_p->rtStart = Packet::INVALID_TIME;
+      }
+      else
+      {
+        p2->bDiscontinuity = FALSE;
+        p2->rtStart = Packet::INVALID_TIME;
       }
       
-      CPcr timestamp;
-      if(p->rtStart != Packet::INVALID_TIME )
-      {
-        timestamp.PcrReferenceBase = p->rtStart;
-        timestamp.IsValid=true;
-      }
+//      LogDebug(".......> Store NALU length = %d (%d)", (*(p2->GetData()+4) & 0x1F), p2->GetCount()) ;
+      m_pl.AddTail(p2);
 
-      //LogDebug("frame len %d decoded PTS %f p timestamp %f", p->GetCount(), pts.ToClock(), timestamp.ToClock());
-
-      int lastVidResX=m_mpegPesParser->basicVideoInfo.width;
-      int lastVidResY=m_mpegPesParser->basicVideoInfo.height;
-
-      bool Gop = m_mpegPesParser->OnTsPacket(p->GetData(), p->GetCount(),(m_pids.videoPids[0].VideoServiceType==SERVICE_TYPE_VIDEO_MPEG2));
-
-      if ((Gop || m_bIframeFound) && m_filter.GetVideoPin()->IsConnected())
-      {
-        CRefTime Ref;
-        CBuffer *pCurrentVideoBuffer = new CBuffer(p->GetCount());
-        pCurrentVideoBuffer->Add(p->GetData(), p->GetCount());
-        pCurrentVideoBuffer->SetPts(timestamp);   
-        pCurrentVideoBuffer->SetPcr(m_duration.FirstStartPcr(),m_duration.MaxPcr());
-        pCurrentVideoBuffer->MediaTime(Ref) ;
-        // Must use p->rtStart as CPcr is UINT64 and INVALID_TIME is LONGLONG
-        // Too risky to change CPcr implementation at this time 
-        if(p->rtStart != Packet::INVALID_TIME)
-        {
-          if (Gop && !m_bIframeFound)
-          {
-            m_IframeSample = Ref;
-            m_bIframeFound = true;
-
-            LogDebug("  H.264 I-FRAME found %f ", m_IframeSample.Millisecs()/1000.0f);
-          }
-          if (Ref < m_FirstVideoSample) m_FirstVideoSample = Ref;
-          if (Ref > m_LastVideoSample) m_LastVideoSample = Ref;
-        }
-
-        pCurrentVideoBuffer->SetFrameType(Gop? 'I':'?');
-        pCurrentVideoBuffer->SetFrameCount(0);
-        pCurrentVideoBuffer->SetVideoServiceType(m_pids.videoPids[0].VideoServiceType);
-        if (m_bSetVideoDiscontinuity)
-        {
-          m_bSetVideoDiscontinuity=false;
-          pCurrentVideoBuffer->SetDiscontinuity();
-        }
-
-        // ownership is transfered to vector
-        m_vecVideoBuffers.push_back(pCurrentVideoBuffer);
-      }
-
-      if (lastVidResX!=m_mpegPesParser->basicVideoInfo.width || lastVidResY!=m_mpegPesParser->basicVideoInfo.height)
-      {
-        LogDebug("DeMultiplexer: %x video format changed: res=%dx%d aspectRatio=%d:%d fps=%d isInterlaced=%d",header.Pid,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,m_mpegPesParser->basicVideoInfo.fps,m_mpegPesParser->basicVideoInfo.isInterlaced);
-
-        if (m_mpegParserTriggerFormatChange)
-        {
-          LogDebug("DeMultiplexer: OnMediaFormatChange triggered by mpeg2Parser");
-          SetMediaChanging(true);
-          m_filter.OnMediaTypeChanged(3);
-          m_mpegParserTriggerFormatChange=false;
-        }
-        LogDebug("DeMultiplexer: triggering OnVideoFormatChanged");
-        m_filter.OnVideoFormatChanged(m_mpegPesParser->basicVideoInfo.streamType,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,15000000,m_mpegPesParser->basicVideoInfo.isInterlaced);
-      }
-      else
-      {
-        if (m_mpegParserTriggerFormatChange && Gop)
-        {
-          LogDebug("DeMultiplexer: Got GOP after the channel change was detected without correct mpeg header parsing, so we trigger the format change now.");
-          m_filter.OnMediaTypeChanged(3);
-          m_mpegParserTriggerFormatChange=false;
-        }
-      }
+      start = next;
+    }
+      
+    if(start > m_p->GetData())
+    {
+      m_p->RemoveAt(0, start - m_p->GetData());
     }
   }
   return;
 }
+
 void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
 {
   //does tspacket contain the start of a pes packet?
@@ -1365,7 +1381,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
           }
           else
           {
-	        m_lastVideoPTS=pts;
+          m_lastVideoPTS=pts;
           }
 
           Cbuf->SetPts(pts);
@@ -1430,9 +1446,9 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
             marker = 0xffffffff;
             offset=0 ;
             p = (*it)->Data() ;
-						(*it)->SetFrameType('!') ;
-						(*it)->SetFrameCount(99) ;
-						bool found=false;
+            (*it)->SetFrameType('!') ;
+            (*it)->SetFrameCount(99) ;
+            bool found=false;
             for (; offset < (*it)->Length()-2 ; offset++)
             {
               marker=(unsigned int)marker<<8;
@@ -1786,7 +1802,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   {
     #ifdef USE_DYNAMIC_PINS
     // if we have a video stream and it's format changed, let the mpeg parser trigger the OnMediaTypeChanged
-		if (m_pids.videoPids[0].Pid>0x1 && videoChanged)  
+    if (m_pids.videoPids[0].Pid>0x1 && videoChanged)  
     {
       LogDebug("DeMultiplexer: We detected a new media type change which has a video stream, so we let the mpegParser trigger the event");
       m_receivedPackets=0;
@@ -1935,7 +1951,7 @@ void CDeMultiplexer::ClearRequestNewPat(void)
 
 bool CDeMultiplexer::IsNewPatReady(void)
 {
-	return ((m_ReqPatVersion & 0x0F) == (m_iPatVersion & 0x0F)) ? true : false ;
+  return ((m_ReqPatVersion & 0x0F) == (m_iPatVersion & 0x0F)) ? true : false ;
 }
 
 void CDeMultiplexer::ResetPatInfo(void)
