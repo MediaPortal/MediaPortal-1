@@ -108,8 +108,6 @@ namespace MediaPortal.Configuration.Sections
 
         LoadSettings();
         PopulateListView();
-        LoadListFiles();
-        LoadToListview("All");
       }
     }
 
@@ -241,7 +239,7 @@ namespace MediaPortal.Configuration.Sections
             foreach (Type type in exportedTypes)
             {
               bool isPlugin = (type.GetInterface("MediaPortal.GUI.Library.ISetupForm") != null);
-              bool isGuiWindow = ((type.IsClass) && (type.IsSubclassOf(typeof (GUIWindow))));
+              bool isGuiWindow = ((type.IsClass) && (type.IsSubclassOf(typeof(GUIWindow))));
 
               // an abstract class cannot be instanciated
               if (type.IsAbstract)
@@ -286,7 +284,7 @@ namespace MediaPortal.Configuration.Sections
 
                     if (isGuiWindow)
                     {
-                      GUIWindow win = (GUIWindow) pluginObject;
+                      GUIWindow win = (GUIWindow)pluginObject;
                       if (tag.WindowId == win.GetID)
                       {
                         tag.Type = win.GetType().ToString();
@@ -359,7 +357,7 @@ namespace MediaPortal.Configuration.Sections
     private static void LoadPluginImages(Type type, ItemTag tag)
     {
       PluginIconsAttribute[] icons =
-        (PluginIconsAttribute[]) type.GetCustomAttributes(typeof (PluginIconsAttribute), false);
+        (PluginIconsAttribute[])type.GetCustomAttributes(typeof(PluginIconsAttribute), false);
       if (icons == null || icons.Length == 0)
       {
         //Log.Debug("PluginsNew: no icons");
@@ -444,14 +442,13 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      if (!isLoaded) //no need to save
-        return;        
-      
+      LoadAll();
+
       using (Settings xmlwriter = new MPSettings())
       {
         foreach (ListViewItem item in listViewPlugins.Items)
         {
-          ItemTag itemTag = (ItemTag) item.Tag;
+          ItemTag itemTag = (ItemTag)item.Tag;
 
           bool isEnabled = itemTag.IsEnabled;
           bool isHome = itemTag.IsHome;
@@ -459,7 +456,7 @@ namespace MediaPortal.Configuration.Sections
 
           xmlwriter.SetValueAsBool("plugins", itemTag.SetupForm.PluginName(), isEnabled);
           xmlwriter.SetValueAsBool("pluginsdlls", itemTag.DllName, isEnabled);
-          
+
           if ((isEnabled) && (!isHome && !isPlugins))
           {
             isHome = true;
@@ -471,13 +468,13 @@ namespace MediaPortal.Configuration.Sections
             xmlwriter.SetValueAsBool("myplugins", itemTag.SetupForm.PluginName(), isPlugins);
             xmlwriter.SetValueAsBool("pluginswindows", itemTag.Type, isEnabled);
           }
-        }        
+        }
       }
     }
 
     private void listViewPlugins_DoubleClick(object sender, EventArgs e)
     {
-      ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
+      ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
       itemTag.IsEnabled = !itemTag.IsEnabled;
       if (!itemTag.SetupForm.CanEnable())
       {
@@ -490,7 +487,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void updateListViewItem(ListViewItem item)
     {
-      ItemTag tag = (ItemTag) item.Tag;
+      ItemTag tag = (ItemTag)item.Tag;
 
       if (tag.IsWindow)
       {
@@ -574,7 +571,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void itemMyPlugins_Click(object sender, EventArgs e)
     {
-      ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
+      ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
       itemTag.IsPlugins = !itemTag.IsPlugins;
       if (itemTag.IsPlugins)
       {
@@ -590,7 +587,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void itemMyHome_Click(object sender, EventArgs e)
     {
-      ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
+      ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
       itemTag.IsHome = !itemTag.IsHome;
       if (itemTag.IsHome)
       {
@@ -606,7 +603,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void itemEnabled_Click(object sender, EventArgs e)
     {
-      ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
+      ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
       itemTag.IsEnabled = !itemTag.IsEnabled;
       if (!itemTag.SetupForm.CanEnable())
       {
@@ -618,7 +615,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void itemConfigure_Click(object sender, EventArgs e)
     {
-      ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
+      ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
       if ((itemTag.SetupForm != null) &&
           (itemTag.SetupForm.HasSetup()))
       {
@@ -703,7 +700,7 @@ namespace MediaPortal.Configuration.Sections
 
       if (listViewPlugins.FocusedItem != null)
       {
-        ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
+        ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
 
         addContextMenuItem("Name", itemTag.SetupForm.PluginName(), null, false);
         addContextMenuItem("Author", string.Format("Author: {0}", itemTag.SetupForm.Author()), null, false);
@@ -753,198 +750,5 @@ namespace MediaPortal.Configuration.Sections
         }
       }
     }
-
-    #region MPInstaller stuff
-
-    private void mpButtonInstall_Click(object sender, EventArgs e)
-    {
-      if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
-      {
-        this.Hide();
-        install_Package(openFileDialog1.FileName);
-        this.Show();
-        LoadListFiles();
-        LoadToListview("All");
-      }
-    }
-
-    private void install_Package(string fil)
-    {
-      InstallWizard wiz = new InstallWizard();
-      wiz.package.LoadFromFile(fil);
-      if (wiz.package.isValid)
-      {
-        wiz.starStep();
-      }
-      else
-      {
-        MessageBox.Show("Invalid package !");
-      }
-    }
-
-    private void LoadListFiles()
-    {
-      lst.LoadFromFile();
-      //for (int i = 0; i < lst.lst.Count; i++)
-      //{
-      //  ((MPpackageStruct)lst.lst[i]).isInstalled = true;
-      //  ((MPpackageStruct)lst.lst[i]).isLocal = true;
-      //}
-      //string temp_file = InstalDir + @"\online.xml";
-      //if (File.Exists(temp_file))
-      //{
-      //  lst_online.LoadFromFile(temp_file);
-      //  lst_online.Compare(lst);
-      //  lst.AddRange(lst_online);
-      //}
-    }
-
-    public void LoadToListview(string strgroup)
-    {
-      LoadToListview(lst, mpListView1, strgroup);
-    }
-
-    public bool TestView(MPpackageStruct pk, int idx)
-    {
-      switch (idx)
-      {
-        case 0:
-          return true;
-        case 1:
-          {
-            if (!pk.isNew)
-            {
-              return true;
-            }
-            break;
-          }
-        case 2:
-          {
-            if (pk.isUpdated)
-            {
-              return true;
-            }
-            break;
-          }
-        case 3:
-          {
-            if (pk.isNew)
-            {
-              return true;
-            }
-            break;
-          }
-      }
-      return false;
-    }
-
-    public void LoadToListview(MPInstallHelper mpih, ListView lv, string strgroup)
-    {
-      lv.Items.Clear();
-      for (int i = 0; i < mpih.Items.Count; i++)
-      {
-        MPpackageStruct pk = (MPpackageStruct) mpih.Items[i];
-        if ((pk.InstallerInfo.Group == strgroup || strgroup == "All") /*&& TestView(pk, comboBox3.SelectedIndex)*/)
-        {
-          ListViewItem item1 = new ListViewItem(pk.InstallerInfo.Name,
-                                                mpListView1.Groups["listViewGroup" + pk.InstallerInfo.Group]);
-            //listViewGroup listViewPlugins.Groups["listViewGroupProcess"]
-          item1.ImageIndex = 0;
-          if (pk.InstallerInfo.Logo != null)
-          {
-            imageListMPInstaller.Images.Add(pk.InstallerInfo.Logo);
-            item1.ImageIndex = imageListMPInstaller.Images.Count - 1;
-          }
-          if (pk.isNew)
-          {
-            item1.ForeColor = Color.Red;
-          }
-          if (pk.isUpdated)
-          {
-            item1.ForeColor = Color.BlueViolet;
-          }
-          item1.ToolTipText = pk.InstallerInfo.Description;
-          item1.SubItems.Add(pk.InstallerInfo.Author);
-          item1.SubItems.Add(pk.InstallerInfo.Version);
-          item1.SubItems.Add(Path.GetFileName(pk.FileName));
-          item1.SubItems.Add(pk.InstallerInfo.Group);
-          lv.Items.AddRange(new ListViewItem[] {item1});
-        }
-        //        InitGroups(lv);
-        //        SetGroups(0, lv);
-        //        SetButtonState();
-      }
-    }
-
-    private void mpListView1_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      SetButtonState();
-    }
-
-    private void SetButtonState()
-    {
-      //contextMenuStrip1.Enabled = false;
-      if (mpListView1.SelectedItems.Count > 0)
-      {
-        MPpackageStruct pk = lst.Find(mpListView1.SelectedItems[0].Text);
-        //contextMenuStrip1.Enabled = true;
-        mpButtonReinstall.Enabled = true;
-        mpButtonUninstall.Enabled = true;
-      }
-      else
-      {
-        mpButtonReinstall.Enabled = false;
-        mpButtonUninstall.Enabled = false;
-      }
-    }
-
-    private void mpButtonReinstall_Click(object sender, EventArgs e)
-    {
-      InstallWizard wiz = new InstallWizard();
-      MPpackageStruct pk = lst.Find(mpListView1.SelectedItems[0].Text);
-      wiz.package.LoadFromFile(InstalDir + @"\" + pk.FileName);
-      if (wiz.package.isValid)
-      {
-        if (wiz.package.containsPlugin)
-        {
-          MessageBox.Show("This package contain plugin file. \n Use MPInstaller to reistall it !");
-        }
-        else
-        {
-          wiz.starStep();
-        }
-      }
-      else
-      {
-        MessageBox.Show("Invalid package !");
-      }
-    }
-
-    private void mpButtonUninstall_Click(object sender, EventArgs e)
-    {
-      InstallWizard wiz = new InstallWizard();
-      MPpackageStruct pk = lst.Find(mpListView1.SelectedItems[0].Text);
-      wiz.package.LoadFromFile(InstalDir + @"\" + pk.FileName);
-      if (wiz.package.isValid)
-      {
-        if (wiz.package.containsPlugin)
-        {
-          MessageBox.Show("This package contain plugin file. \n Use MPInstaller to unistall it !");
-        }
-        else
-        {
-          wiz.uninstall(pk.InstallerInfo.Name);
-          mpListView1.Items.Clear();
-          LoadListFiles();
-          LoadToListview("All");
-        }
-      }
-      else
-      {
-        MessageBox.Show("Invalid package !");
-      }
-    }
-
-    #endregion
   }
 }
