@@ -179,6 +179,10 @@ namespace TvPlugin
     public static GUIDialogCIMenu dlgCiMenu;
     public static GUIDialogNotify _dialogNotify = null;
 
+    private static CiMenu currentCiMenu = null;
+    private static object CiMenuLock = new object();
+    private static bool CiMenuActive = false;
+
     #endregion
 
     #region events
@@ -732,6 +736,8 @@ namespace TvPlugin
         return;
       }
 
+      ShowCiMenu();
+
       doProcess();
 
       _updateTimer = DateTime.Now;
@@ -969,6 +975,7 @@ namespace TvPlugin
     }
 
     private delegate void ShowDlgAsynchDelegate();
+    private delegate void ShowDlgMessageAsynchDelegate(String Message);
 
     private static void ShowDlgAsynch ()
     {
@@ -1531,34 +1538,53 @@ namespace TvPlugin
                   break;
               }
 
-              GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
-
-              if (pDlgOK != null)
-              {
-                if (GUIWindowManager.ActiveWindow == (int)(int)Window.WINDOW_TVFULLSCREEN)
-                {
-                  GUIWindowManager.ActivateWindow((int)Window.WINDOW_TV, true);
-                }
-
-                pDlgOK.SetHeading(GUILocalizeStrings.Get(605) + " - " + Navigator.CurrentChannel); //my tv
-                errMsg = errMsg.Replace("\\r", "\r");
-                string[] lines = errMsg.Split('\r');
-
-                for (int i = 0; i < lines.Length; i++)
-                {
-                  string line = lines[i];
-                  pDlgOK.SetLine(1 + i, line);
-                }
-                pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
-              }
-              Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);
-              GUIGraphicsContext.OnAction(keyAction);
-              _playbackStopped = true;
+              NotifyUser(errMsg);
             }
           }
         }
         Thread.Sleep(HEARTBEAT_INTERVAL * 1000); //sleep for 5 secs. before sending heartbeat again
       }
+    }
+
+    /// <summary>
+    /// Notify the user about the reason of stopped live tv. 
+    /// Ensures that the dialog is run in main thread.
+    /// </summary>
+    /// <param name="errMsg">The error messages</param>
+    private static void NotifyUser(string errMsg)
+    {
+      //show dialogue only on main thread.
+      if (GUIGraphicsContext.form.InvokeRequired)
+      {
+        ShowDlgMessageAsynchDelegate d = new ShowDlgMessageAsynchDelegate(NotifyUser);
+        GUIGraphicsContext.form.Invoke(d, errMsg);
+        return;
+      }
+
+
+      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+
+      if (pDlgOK != null)
+      {
+        if (GUIWindowManager.ActiveWindow == (int)(int)Window.WINDOW_TVFULLSCREEN)
+        {
+          GUIWindowManager.ActivateWindow((int)Window.WINDOW_TV, true);
+        }
+
+        pDlgOK.SetHeading(GUILocalizeStrings.Get(605) + " - " + Navigator.CurrentChannel); //my tv
+        errMsg = errMsg.Replace("\\r", "\r");
+        string[] lines = errMsg.Split('\r');
+
+        for (int i = 0; i < lines.Length; i++)
+        {
+          string line = lines[i];
+          pDlgOK.SetLine(1 + i, line);
+        }
+        pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
+      }
+      Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);
+      GUIGraphicsContext.OnAction(keyAction);
+      _playbackStopped = true;
     }
 
     private void startHeartBeatThread()
@@ -3488,79 +3514,102 @@ namespace TvPlugin
     }
 
     /// <summary>
+    /// Pass the CiMenu to TvHome so that Process can handle it in own thread
+    /// </summary>
+    /// <param name="Menu"></param>
+    public static void ProcessCiMenu(CiMenu Menu)
+    {
+      lock (CiMenuLock)
+      {
+        currentCiMenu = Menu;
+      }
+    }
+    /// <summary>
     /// Handles all CiMenu actions from callback
     /// </summary>
-    /// <param name="Menu">complete CI menu object</param>
-    public static void ShowMenu(CiMenu Menu)
+    public static void ShowCiMenu()
     {
-      if (dlgCiMenu == null)
+      lock (CiMenuLock)
       {
-        dlgCiMenu = (GUIDialogCIMenu)GUIWindowManager.GetWindow((int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_DIALOG_CIMENU);
-      }
+        if (currentCiMenu == null || CiMenuActive == true)
+        {
+          return;
+        }
+        
+        CiMenuActive = true; // avoid re-entrance from process()
 
-      switch (Menu.State)
-      {
-        // choices available, so show them
-        case TvLibrary.Interfaces.CiMenuState.Ready:
-          dlgCiMenu.Reset();
-          dlgCiMenu.SetHeading(Menu.Title, Menu.Subtitle, Menu.BottomText); // CI Menu
+        if (dlgCiMenu == null)
+        {
+          dlgCiMenu = (GUIDialogCIMenu)GUIWindowManager.GetWindow((int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_DIALOG_CIMENU);
+        }
+
+        switch (currentCiMenu.State)
+        {
+          // choices available, so show them
+          case TvLibrary.Interfaces.CiMenuState.Ready:
+            dlgCiMenu.Reset();
+            dlgCiMenu.SetHeading(currentCiMenu.Title, currentCiMenu.Subtitle, currentCiMenu.BottomText); // CI Menu
 
 
-          for (int i = 0; i < Menu.NumChoices; i++) // CI Menu Entries
-            dlgCiMenu.Add(Menu.MenuEntries[i].Message); // take only message, numbers come from dialog
+            for (int i = 0; i < currentCiMenu.NumChoices; i++) // CI Menu Entries
+              dlgCiMenu.Add(currentCiMenu.MenuEntries[i].Message); // take only message, numbers come from dialog
 
-          // show dialog and wait for result       
-          dlgCiMenu.DoModal(GUIWindowManager.ActiveWindow);
-          if (Menu.State != TvLibrary.Interfaces.CiMenuState.Error)
-          {
-            if (dlgCiMenu.SelectedId != -1)
+            // show dialog and wait for result       
+            dlgCiMenu.DoModal(GUIWindowManager.ActiveWindow);
+            if (currentCiMenu.State != TvLibrary.Interfaces.CiMenuState.Error)
             {
-              TVHome.Card.SelectCiMenu(Convert.ToByte(dlgCiMenu.SelectedId));
+              if (dlgCiMenu.SelectedId != -1)
+              {
+                TVHome.Card.SelectCiMenu(Convert.ToByte(dlgCiMenu.SelectedId));
+              }
+              else
+              {
+                TVHome.Card.SelectCiMenu(0); // 0 means "back"
+              }
             }
             else
             {
-              TVHome.Card.SelectCiMenu(0); // 0 means "back"
+              TVHome.Card.CloseMenu(); // in case of error close the menu
             }
-          }
-          else
-          {
-            TVHome.Card.CloseMenu(); // in case of error close the menu
-          }
-          break;
+            break;
 
-        // errors and menu options with no choices
-        case TvLibrary.Interfaces.CiMenuState.Error:
-        case TvLibrary.Interfaces.CiMenuState.NoChoices:
+          // errors and menu options with no choices
+          case TvLibrary.Interfaces.CiMenuState.Error:
+          case TvLibrary.Interfaces.CiMenuState.NoChoices:
 
-          if (_dialogNotify == null)
-          {
-            //_dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
-            _dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
-          }
-          if (null != _dialogNotify)
-          {
-            _dialogNotify.Reset();
-            _dialogNotify.ClearAll();
-            _dialogNotify.SetHeading(Menu.Title);
+            if (_dialogNotify == null)
+            {
+              //_dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+              _dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
+            }
+            if (null != _dialogNotify)
+            {
+              _dialogNotify.Reset();
+              _dialogNotify.ClearAll();
+              _dialogNotify.SetHeading(currentCiMenu.Title);
 
-            _dialogNotify.SetText(String.Format("{0}\r\n{1}", Menu.Subtitle, Menu.BottomText));
-            _dialogNotify.TimeOut = 2; // seconds
-            _dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
-          }
-          break;
+              _dialogNotify.SetText(String.Format("{0}\r\n{1}", currentCiMenu.Subtitle, currentCiMenu.BottomText));
+              _dialogNotify.TimeOut = 2; // seconds
+              _dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
+            }
+            break;
 
-        // requests require users input so open keyboard
-        case TvLibrary.Interfaces.CiMenuState.Request:
-          String result = "";
-          if (GetKeyboard(Menu.RequestText, Menu.AnswerLength, Menu.Password, ref result) == true)
-          {
-            TVHome.Card.SendMenuAnswer(false, result); // send answer, cancel=false
-          }
-          else
-          {
-            TVHome.Card.SendMenuAnswer(true, null); // cancel request 
-          }
-          break;
+          // requests require users input so open keyboard
+          case TvLibrary.Interfaces.CiMenuState.Request:
+            String result = "";
+            if (GetKeyboard(currentCiMenu.RequestText, currentCiMenu.AnswerLength, currentCiMenu.Password, ref result) == true)
+            {
+              TVHome.Card.SendMenuAnswer(false, result); // send answer, cancel=false
+            }
+            else
+            {
+              TVHome.Card.SendMenuAnswer(true, null); // cancel request 
+            }
+            break;
+        }
+
+        CiMenuActive = false; // finished
+        currentCiMenu = null; // reset menu
       }
     }
 
@@ -3585,13 +3634,13 @@ public class CiMenuHandler : CiMenuCallbackSink
       Log.Debug("Callback from tvserver {0}", Menu.Title);
 
       // pass menu to calling dialog
-      TvPlugin.TVHome.ShowMenu(Menu);
+      TvPlugin.TVHome.ProcessCiMenu(Menu);
     }
     catch
     {
       Menu = new CiMenu("Remoting Exception", "Communication with server failed", null, TvLibrary.Interfaces.CiMenuState.Error);
       // pass menu to calling dialog
-      TvPlugin.TVHome.ShowMenu(Menu);
+      TvPlugin.TVHome.ProcessCiMenu(Menu);
     }
   }
 }

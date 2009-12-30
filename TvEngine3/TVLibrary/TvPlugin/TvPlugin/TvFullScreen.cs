@@ -2281,6 +2281,8 @@ namespace TvPlugin
         }
       }
 
+      TVHome.ShowCiMenu();
+
       GUIGraphicsContext.IsFullScreenVideo = true;
     }
 

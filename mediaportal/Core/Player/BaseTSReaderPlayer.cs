@@ -740,10 +740,7 @@ namespace MediaPortal.Player
         SeekAbsolute(pos);
       }
       
-      // DS can be called only from the application thread.
-      // CI menu changes the thread where Process() gets run (nasty :))
-      // http://mantis.team-mediaportal.com/view.php?id=2590
-      if (_ireader != null && Thread.CurrentThread.Name == "MPMain")
+      if (_ireader != null)
       {
         _ireader.SetMediaPosition((long)(_streamPos * 10000000d));
       }
