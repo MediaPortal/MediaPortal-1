@@ -440,17 +440,16 @@ namespace MediaPortal.Player
         if (_graphBuilder != null)
         {
           DirectShowUtil.RemoveFilters(_graphBuilder);
+          // _rotEntry has a reference to _graphBuilder (see _rotEntry ctor)
+          // so, release of _rotEntry must be before _graphBuilder is released
+          if (_rotEntry != null)
+          {
+            _rotEntry.Dispose();
+            _rotEntry = null;
+          }
           while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;
           _graphBuilder = null;
         }
-
-        if (_rotEntry != null)
-        {
-          _rotEntry.Dispose();
-          _rotEntry = null;
-        }
-
-
 
         _state = PlayState.Init;
         GUIGraphicsContext.form.Invalidate(true);
