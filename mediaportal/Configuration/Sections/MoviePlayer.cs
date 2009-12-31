@@ -48,7 +48,7 @@ namespace MediaPortal.Configuration.Sections
     private MPGroupBox wmvGroupBox;
     private MPCheckBox wmvCheckBox;
     private MPLabel mpLabel2;
-    private bool _init;
+    private bool _init = false;
 
     public MoviePlayer()
       : this("Video Player")
@@ -72,6 +72,8 @@ namespace MediaPortal.Configuration.Sections
       {
         wmvCheckBox.Checked = false;
       }
+      _init = true;
+      LoadSettings();
     }
 
     /// <summary>
