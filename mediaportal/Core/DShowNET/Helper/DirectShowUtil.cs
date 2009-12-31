@@ -1478,7 +1478,16 @@ namespace DShowNET.Helper
           {
             Log.Error("Remove of filter: {0}, failed with code (HR): {1}, explanation: {2}", info.achName, hr.ToString(), error.Message); 
           }
-          while (ReleaseComObject(filter) > 0) ;
+        }
+        // Release after the filter has been removed from the graph
+        foreach (IBaseFilter filter in filtersArray)
+        {
+          do
+          {
+            hr = ReleaseComObject(filter);
+            //Log.Debug("ReleaseComObject: {0}", hr);
+          }
+          while (hr > 0);
         }
       }
       catch (Exception)
