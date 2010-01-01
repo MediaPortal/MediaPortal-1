@@ -736,6 +736,18 @@ namespace SetupTv
       // please add better check if needed
       if (DBServerName.ToLowerInvariant() == Environment.MachineName.ToLowerInvariant())
         return true;
+      // Check for ip addresses
+      IPHostEntry ipEntry = Dns.GetHostEntry(Environment.MachineName);
+      IPAddress[] addr = ipEntry.AddressList;
+
+      for (int i = 0; i < addr.Length; i++)
+      {
+        if (addr[i].ToString().Equals(DBServerName))
+        {
+          return true;
+        }
+      }
+
       return false;
     }
 
