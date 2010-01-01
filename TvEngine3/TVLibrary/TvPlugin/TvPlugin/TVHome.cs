@@ -1483,9 +1483,7 @@ namespace TvPlugin
     private void HeartBeatTransmitter()
     {
       while (true)
-      {
-        if (!Connected) // is this needed to update connection status
-          RefreshConnectionState();
+      {        
         if (Connected && !_suspended)
         {
           bool isTS = (Card != null && Card.IsTimeShifting);
