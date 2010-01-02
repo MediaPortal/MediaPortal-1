@@ -370,9 +370,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           cRefTime += AddOffset;
           cRefTime += m_pTsReaderFilter->m_ClockOnStart.m_time;
                                                                       
-//        Ambass: We should check audio FillBuffer method is not blocked ( on audio/video starting ) by excessive video Fill buffer preemption.                                                                   
-//          if (cRefTime.m_time >= 0)
-//            Sleep(5); // TODO ...to figure out why this is set
+          if (cRefTime.m_time >= 0)
+            Sleep(1); // Ambass : avoid blocking audio FillBuffer method ( on audio/video starting ) by excessive video Fill buffer preemption
           m_bPresentSample = true;
           //else
           // Sample is too late.
@@ -506,6 +505,8 @@ STDMETHODIMP CVideoPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LON
 void CVideoPin::UpdateFromSeek()
 {
   CTsDuration tsduration=m_pTsReaderFilter->GetDuration();
+
+  m_pTsReaderFilter->SetMediaPosition(m_rtStart.m_time) ;
 
   //Note that the seek timestamp (m_rtStart) is done in the range
   //from earliest - latest from GetAvailable()

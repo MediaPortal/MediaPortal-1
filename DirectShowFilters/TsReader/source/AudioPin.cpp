@@ -512,6 +512,8 @@ void CAudioPin::UpdateFromSeek()
 {
   CTsDuration tsduration=m_pTsReaderFilter->GetDuration();
 
+  m_pTsReaderFilter->SetMediaPosition(m_rtStart.m_time) ;
+
   //Note that the seek timestamp (m_rtStart) is done in the range
   //from earliest - latest from GetAvailable()
   //We however would like the seek timestamp to be in the range 0-fileduration

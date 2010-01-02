@@ -1127,14 +1127,32 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
   {
     int AvailablePESlength = m_p->GetCount()-m_WaitHeaderPES ;
     BYTE* start = m_p->GetData() + m_WaitHeaderPES ;
-    if ((AvailablePESlength >= 9) && (AvailablePESlength >= 9+start[8]))
-    { // full PES header is available.
-      CPcr pts;
-      CPcr dts;
-      if ((start[0]==0) && 
-        (start[1]==0) && 
-        (start[2]==1))
-      {                    
+    
+    if (AvailablePESlength < 9)
+    {
+      LogDebug("demux:vid Incomplete PES ( Avail %d )", AvailablePESlength) ;    
+      return ;
+    }  
+    
+    if ((start[0]!=0) || (start[1]!=0) || (start[2]!=1))
+    {
+      LogDebug("Pes 0-0-1 fail") ;
+      m_VideoValidPES=false ;
+      m_p->rtStart = Packet::INVALID_TIME;
+      m_WaitHeaderPES = -1 ;
+    }   
+    else
+    {
+      if (AvailablePESlength < 9+start[8])
+      {
+        LogDebug("demux:vid Incomplete PES ( Avail %d/%d )", AvailablePESlength, AvailablePESlength+9+start[8]) ;    
+        return ;
+      }
+      else
+      { // full PES header is available.
+        CPcr pts;
+        CPcr dts;
+      
         m_VideoValidPES=true ;
         if (CPcr::DecodeFromPesHeader(start,0,pts,dts))
         {
@@ -1157,23 +1175,10 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
           }
         }
         m_p->RemoveAt(m_WaitHeaderPES, 9+start[8]) ;
+      
+        m_p->rtStart = pts.IsValid ? (pts.PcrReferenceBase) : Packet::INVALID_TIME;
+        m_WaitHeaderPES = -1 ;
       }
-      else
-      {
-        LogDebug("Pes 0-0-1 fail") ;
-        m_VideoValidPES=false ;
-      }
-
-      m_p->rtStart = pts.IsValid ? (pts.PcrReferenceBase) : Packet::INVALID_TIME;
-
-      m_WaitHeaderPES = -1 ;
-    }
-    else   
-    {                             
-      int FullLen = -1 ;   
-      if (AvailablePESlength >= 9) FullLen = 9+start[8] ;   
-      LogDebug("demux:vid Incomplete PES ( Avail %d / %d )", AvailablePESlength,FullLen) ;    
-      return ;
     }
   }
 
@@ -1682,6 +1687,12 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   {
     LogDebug("OnNewChannel pat version:%d->%d",m_iPatVersion, info.PatVersion);
     m_iPatVersion=info.PatVersion;
+	if (m_filter.m_bLiveTv && !IsNewPatReady())
+	{
+		LogDebug("Unexpected LiveTV PAT change due to provider, update m_ReqPatVersion to new PAT version : %d",m_ReqPatVersion);
+		// Unexpected LiveTV PAT change due to provider.
+		ClearRequestNewPat() ;
+	}
     m_bSetAudioDiscontinuity=true;
     m_bSetVideoDiscontinuity=true;
     Flush();
