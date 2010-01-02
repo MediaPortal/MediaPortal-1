@@ -518,163 +518,174 @@ namespace TvDatabase
 
     private static void ApplyProgramStates(int idSchedule, bool clear)
     {
-      Schedule schedule = Schedule.Retrieve(idSchedule);
-
-      // update the needed program entries (states) based on schedule type-         
-      switch (schedule.scheduleType)
+      try
       {
-        case (int)ScheduleRecordingType.Once:
-          Program prgOnce = Program.RetrieveOnce(schedule.programName, schedule.startTime, schedule.endTime, schedule.ReferencedChannel().IdChannel);
+        Schedule schedule = Schedule.Retrieve(idSchedule);
+        if (schedule == null)
+        {
+          return;
+        }
 
-          //if the program is in the future, then set it as being pending.
-          if (prgOnce != null && !schedule.IsSerieIsCanceled(prgOnce.StartTime))
-          {
-            prgOnce.IsRecordingOncePending = !clear;
-            prgOnce.IsRecordingSeriesPending = false;
-            prgOnce.Persist();
-          }
-          break;
+        // update the needed program entries (states) based on schedule type-         
+        switch (schedule.scheduleType)
+        {
+          case (int)ScheduleRecordingType.Once:
+            Program prgOnce = Program.RetrieveOnce(schedule.programName, schedule.startTime, schedule.endTime, schedule.ReferencedChannel().IdChannel);
 
-        case (int)ScheduleRecordingType.Daily:
-          //List<Program> prgsDaily = (List<Program>)Program.RetrieveDaily(schedule.programName, schedule.startTime, DateTime.MaxValue, schedule.ReferencedChannel().IdChannel);
-          List<Program> prgsDaily = (List<Program>)Program.RetrieveDaily(schedule.programName, schedule.startTime, schedule.endTime, schedule.ReferencedChannel().IdChannel);
-
-          if (prgsDaily != null && prgsDaily.Count > 0)
-          {
-            foreach (Program prgDaily in prgsDaily)
+            //if the program is in the future, then set it as being pending.
+            if (prgOnce != null && !schedule.IsSerieIsCanceled(prgOnce.StartTime))
             {
-              if (!schedule.IsSerieIsCanceled(prgDaily.StartTime))
+              prgOnce.IsRecordingOncePending = !clear;
+              prgOnce.IsRecordingSeriesPending = false;
+              prgOnce.Persist();
+            }
+            break;
+
+          case (int)ScheduleRecordingType.Daily:
+            //List<Program> prgsDaily = (List<Program>)Program.RetrieveDaily(schedule.programName, schedule.startTime, DateTime.MaxValue, schedule.ReferencedChannel().IdChannel);
+            List<Program> prgsDaily = (List<Program>)Program.RetrieveDaily(schedule.programName, schedule.startTime, schedule.endTime, schedule.ReferencedChannel().IdChannel);
+
+            if (prgsDaily != null && prgsDaily.Count > 0)
+            {
+              foreach (Program prgDaily in prgsDaily)
               {
-                //if (prgDaily.StartTime >= schedule.startTime && prgDaily.EndTime <= schedule.endTime) //maybe SQL query could do this faster ?
+                if (!schedule.IsSerieIsCanceled(prgDaily.StartTime))
                 {
-                  prgDaily.IsRecordingOncePending = false;
-                  prgDaily.IsRecordingSeriesPending = !clear;
-                  prgDaily.Persist();
-                }
-              }
-            }
-          }
-          break;
-
-        case (int)ScheduleRecordingType.EveryTimeOnEveryChannel:
-          List<Program> prgsEveryTimeOnEveryChannel = (List<Program>)Program.RetrieveEveryTimeOnEveryChannel(schedule.programName, schedule.startTime, DateTime.MaxValue);
-
-          if (prgsEveryTimeOnEveryChannel != null && prgsEveryTimeOnEveryChannel.Count > 0)
-          {
-            foreach (Program prgEveryTimeOnEveryChannel in prgsEveryTimeOnEveryChannel)
-            {
-              if (!schedule.IsSerieIsCanceled(prgEveryTimeOnEveryChannel.StartTime))
-              {
-                prgEveryTimeOnEveryChannel.IsRecordingOncePending = false;
-                prgEveryTimeOnEveryChannel.IsRecordingSeriesPending = !clear;
-                prgEveryTimeOnEveryChannel.Persist();
-              }
-            }
-          }
-          break;
-
-        case (int)ScheduleRecordingType.EveryTimeOnThisChannel:
-          List<Program> prgsEveryTimeOnThisChannel = (List<Program>)Program.RetrieveEveryTimeOnThisChannel(schedule.programName, schedule.startTime, DateTime.MaxValue, schedule.ReferencedChannel().IdChannel);
-
-          if (prgsEveryTimeOnThisChannel != null && prgsEveryTimeOnThisChannel.Count > 0)
-          {
-            foreach (Program prgEveryTimeOnThisChannel in prgsEveryTimeOnThisChannel)
-            {
-              if (!schedule.IsSerieIsCanceled(prgEveryTimeOnThisChannel.StartTime))
-              {
-                prgEveryTimeOnThisChannel.IsRecordingOncePending = false;
-                prgEveryTimeOnThisChannel.IsRecordingSeriesPending = !clear;
-                prgEveryTimeOnThisChannel.Persist();
-              }
-            }
-          }
-          break;
-
-        case (int)ScheduleRecordingType.Weekends:
-          //List<Program> prgsWeekends = (List<Program>)Program.RetrieveWeekends(schedule.programName, schedule.startTime, DateTime.MaxValue, schedule.ReferencedChannel().IdChannel);
-          List<Program> prgsWeekends = (List<Program>)Program.RetrieveWeekends(schedule.programName, schedule.startTime, schedule.endTime, schedule.ReferencedChannel().IdChannel);
-
-          if (prgsWeekends != null && prgsWeekends.Count > 0)
-          {
-            foreach (Program prgWeekends in prgsWeekends)
-            {
-              if (!schedule.IsSerieIsCanceled(prgWeekends.StartTime))
-              {
-                // TODO : following IF statements should be done by WHERE clause in SQL.
-                //do we have a program in the weekend ?
-                //if (prgWeekends.StartTime.DayOfWeek == DayOfWeek.Saturday || prgWeekends.StartTime.DayOfWeek == DayOfWeek.Sunday)
-                {
-                  //DateTime start = new DateTime(schedule.startTime.Year, schedule.startTime.Month, prgWeekends.StartTime.Day, schedule.startTime.Hour, schedule.startTime.Minute, schedule.startTime.Second);
-                  //DateTime end = new DateTime(schedule.endTime.Year, schedule.endTime.Month, prgWeekends.EndTime.Day, schedule.endTime.Hour, schedule.endTime.Minute, schedule.endTime.Second);
-
-                  //if (prgWeekends.StartTime >= start && prgWeekends.EndTime <= end)
+                  //if (prgDaily.StartTime >= schedule.startTime && prgDaily.EndTime <= schedule.endTime) //maybe SQL query could do this faster ?
                   {
-                    prgWeekends.IsRecordingOncePending = false;
-                    prgWeekends.IsRecordingSeriesPending = !clear;
-                    prgWeekends.Persist();
+                    prgDaily.IsRecordingOncePending = false;
+                    prgDaily.IsRecordingSeriesPending = !clear;
+                    prgDaily.Persist();
                   }
                 }
               }
             }
-          }
-          break;
+            break;
 
-        case (int)ScheduleRecordingType.Weekly:
-          //List<Program> prgsWeekly = (List<Program>)Program.RetrieveWeekly(schedule.programName, schedule.startTime, DateTime.MaxValue, schedule.ReferencedChannel().IdChannel);
-          List<Program> prgsWeekly = (List<Program>)Program.RetrieveWeekly(schedule.programName, schedule.startTime, schedule.endTime, schedule.ReferencedChannel().IdChannel);
+          case (int)ScheduleRecordingType.EveryTimeOnEveryChannel:
+            List<Program> prgsEveryTimeOnEveryChannel = (List<Program>)Program.RetrieveEveryTimeOnEveryChannel(schedule.programName, schedule.startTime, DateTime.MaxValue);
 
-          if (prgsWeekly != null && prgsWeekly.Count > 0)
-          {
-            foreach (Program prgWeekly in prgsWeekly)
+            if (prgsEveryTimeOnEveryChannel != null && prgsEveryTimeOnEveryChannel.Count > 0)
             {
-              if (!schedule.IsSerieIsCanceled(prgWeekly.StartTime))
+              foreach (Program prgEveryTimeOnEveryChannel in prgsEveryTimeOnEveryChannel)
               {
-                // TODO : following IF statements should be done by WHERE clause in SQL.                    
-                //if (prgWeekly.StartTime.DayOfWeek == schedule.startTime.DayOfWeek)
+                if (!schedule.IsSerieIsCanceled(prgEveryTimeOnEveryChannel.StartTime))
                 {
-                  //DateTime start = new DateTime(schedule.startTime.Year, schedule.startTime.Month, prgWeekly.StartTime.Day, schedule.startTime.Hour, schedule.startTime.Minute, schedule.startTime.Second);
-                  //DateTime end = new DateTime(schedule.endTime.Year, schedule.endTime.Month, prgWeekly.EndTime.Day, schedule.endTime.Hour, schedule.endTime.Minute, schedule.endTime.Second);
+                  prgEveryTimeOnEveryChannel.IsRecordingOncePending = false;
+                  prgEveryTimeOnEveryChannel.IsRecordingSeriesPending = !clear;
+                  prgEveryTimeOnEveryChannel.Persist();
+                }
+              }
+            }
+            break;
 
-                  //if (prgWeekly.StartTime >= start && prgWeekly.EndTime <= end)
+          case (int)ScheduleRecordingType.EveryTimeOnThisChannel:
+            List<Program> prgsEveryTimeOnThisChannel = (List<Program>)Program.RetrieveEveryTimeOnThisChannel(schedule.programName, schedule.startTime, DateTime.MaxValue, schedule.ReferencedChannel().IdChannel);
+
+            if (prgsEveryTimeOnThisChannel != null && prgsEveryTimeOnThisChannel.Count > 0)
+            {
+              foreach (Program prgEveryTimeOnThisChannel in prgsEveryTimeOnThisChannel)
+              {
+                if (!schedule.IsSerieIsCanceled(prgEveryTimeOnThisChannel.StartTime))
+                {
+                  prgEveryTimeOnThisChannel.IsRecordingOncePending = false;
+                  prgEveryTimeOnThisChannel.IsRecordingSeriesPending = !clear;
+                  prgEveryTimeOnThisChannel.Persist();
+                }
+              }
+            }
+            break;
+
+          case (int)ScheduleRecordingType.Weekends:
+            //List<Program> prgsWeekends = (List<Program>)Program.RetrieveWeekends(schedule.programName, schedule.startTime, DateTime.MaxValue, schedule.ReferencedChannel().IdChannel);
+            List<Program> prgsWeekends = (List<Program>)Program.RetrieveWeekends(schedule.programName, schedule.startTime, schedule.endTime, schedule.ReferencedChannel().IdChannel);
+
+            if (prgsWeekends != null && prgsWeekends.Count > 0)
+            {
+              foreach (Program prgWeekends in prgsWeekends)
+              {
+                if (!schedule.IsSerieIsCanceled(prgWeekends.StartTime))
+                {
+                  // TODO : following IF statements should be done by WHERE clause in SQL.
+                  //do we have a program in the weekend ?
+                  //if (prgWeekends.StartTime.DayOfWeek == DayOfWeek.Saturday || prgWeekends.StartTime.DayOfWeek == DayOfWeek.Sunday)
                   {
-                    prgWeekly.IsRecordingOncePending = false;
-                    prgWeekly.IsRecordingSeriesPending = !clear;
-                    prgWeekly.Persist();
+                    //DateTime start = new DateTime(schedule.startTime.Year, schedule.startTime.Month, prgWeekends.StartTime.Day, schedule.startTime.Hour, schedule.startTime.Minute, schedule.startTime.Second);
+                    //DateTime end = new DateTime(schedule.endTime.Year, schedule.endTime.Month, prgWeekends.EndTime.Day, schedule.endTime.Hour, schedule.endTime.Minute, schedule.endTime.Second);
+
+                    //if (prgWeekends.StartTime >= start && prgWeekends.EndTime <= end)
+                    {
+                      prgWeekends.IsRecordingOncePending = false;
+                      prgWeekends.IsRecordingSeriesPending = !clear;
+                      prgWeekends.Persist();
+                    }
                   }
                 }
               }
             }
-          }
-          break;
+            break;
 
-        case (int)ScheduleRecordingType.WorkingDays:
-          //List<Program> prgsWorkingDays = (List<Program>)Program.RetrieveWorkingDays(schedule.programName, schedule.startTime, DateTime.MaxValue, schedule.ReferencedChannel().IdChannel);
-          List<Program> prgsWorkingDays = (List<Program>)Program.RetrieveWorkingDays(schedule.programName, schedule.startTime, schedule.endTime, schedule.ReferencedChannel().IdChannel);
+          case (int)ScheduleRecordingType.Weekly:
+            //List<Program> prgsWeekly = (List<Program>)Program.RetrieveWeekly(schedule.programName, schedule.startTime, DateTime.MaxValue, schedule.ReferencedChannel().IdChannel);
+            List<Program> prgsWeekly = (List<Program>)Program.RetrieveWeekly(schedule.programName, schedule.startTime, schedule.endTime, schedule.ReferencedChannel().IdChannel);
 
-          if (prgsWorkingDays != null && prgsWorkingDays.Count > 0)
-          {
-            foreach (Program prgWorkingDays in prgsWorkingDays)
+            if (prgsWeekly != null && prgsWeekly.Count > 0)
             {
-              if (!schedule.IsSerieIsCanceled(prgWorkingDays.StartTime))
+              foreach (Program prgWeekly in prgsWeekly)
               {
-                // TODO : following IF statements should be done by WHERE clause in SQL.                    
-                //if (prgWorkingDays.StartTime.DayOfWeek != DayOfWeek.Saturday && prgWorkingDays.StartTime.DayOfWeek != DayOfWeek.Sunday)
+                if (!schedule.IsSerieIsCanceled(prgWeekly.StartTime))
                 {
-                  //DateTime start = new DateTime(schedule.startTime.Year, schedule.startTime.Month, prgWorkingDays.StartTime.Day, schedule.startTime.Hour, schedule.startTime.Minute, schedule.startTime.Second);
-                  //DateTime end = new DateTime(schedule.endTime.Year, schedule.endTime.Month, prgWorkingDays.EndTime.Day, schedule.endTime.Hour, schedule.endTime.Minute, schedule.endTime.Second);
-
-                  //if (prgWorkingDays.StartTime >= start && prgWorkingDays.EndTime <= end)
+                  // TODO : following IF statements should be done by WHERE clause in SQL.                    
+                  //if (prgWeekly.StartTime.DayOfWeek == schedule.startTime.DayOfWeek)
                   {
-                    prgWorkingDays.IsRecordingOncePending = false;
-                    prgWorkingDays.IsRecordingSeriesPending = !clear;
-                    prgWorkingDays.Persist();
+                    //DateTime start = new DateTime(schedule.startTime.Year, schedule.startTime.Month, prgWeekly.StartTime.Day, schedule.startTime.Hour, schedule.startTime.Minute, schedule.startTime.Second);
+                    //DateTime end = new DateTime(schedule.endTime.Year, schedule.endTime.Month, prgWeekly.EndTime.Day, schedule.endTime.Hour, schedule.endTime.Minute, schedule.endTime.Second);
+
+                    //if (prgWeekly.StartTime >= start && prgWeekly.EndTime <= end)
+                    {
+                      prgWeekly.IsRecordingOncePending = false;
+                      prgWeekly.IsRecordingSeriesPending = !clear;
+                      prgWeekly.Persist();
+                    }
                   }
                 }
               }
             }
-          }
-          break;
-      }          
+            break;
+
+          case (int)ScheduleRecordingType.WorkingDays:
+            //List<Program> prgsWorkingDays = (List<Program>)Program.RetrieveWorkingDays(schedule.programName, schedule.startTime, DateTime.MaxValue, schedule.ReferencedChannel().IdChannel);
+            List<Program> prgsWorkingDays = (List<Program>)Program.RetrieveWorkingDays(schedule.programName, schedule.startTime, schedule.endTime, schedule.ReferencedChannel().IdChannel);
+
+            if (prgsWorkingDays != null && prgsWorkingDays.Count > 0)
+            {
+              foreach (Program prgWorkingDays in prgsWorkingDays)
+              {
+                if (!schedule.IsSerieIsCanceled(prgWorkingDays.StartTime))
+                {
+                  // TODO : following IF statements should be done by WHERE clause in SQL.                    
+                  //if (prgWorkingDays.StartTime.DayOfWeek != DayOfWeek.Saturday && prgWorkingDays.StartTime.DayOfWeek != DayOfWeek.Sunday)
+                  {
+                    //DateTime start = new DateTime(schedule.startTime.Year, schedule.startTime.Month, prgWorkingDays.StartTime.Day, schedule.startTime.Hour, schedule.startTime.Minute, schedule.startTime.Second);
+                    //DateTime end = new DateTime(schedule.endTime.Year, schedule.endTime.Month, prgWorkingDays.EndTime.Day, schedule.endTime.Hour, schedule.endTime.Minute, schedule.endTime.Second);
+
+                    //if (prgWorkingDays.StartTime >= start && prgWorkingDays.EndTime <= end)
+                    {
+                      prgWorkingDays.IsRecordingOncePending = false;
+                      prgWorkingDays.IsRecordingSeriesPending = !clear;
+                      prgWorkingDays.Persist();
+                    }
+                  }
+                }
+              }
+            }
+            break;
+        }
+      }
+      catch (Exception e)
+      {
+        Log.Write(e);
+      }
     }
 
     
