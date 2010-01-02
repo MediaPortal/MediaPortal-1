@@ -204,6 +204,12 @@ HRESULT StatsRenderer::DrawRect(DWORD _Color, DWORD _Alpha, const CRect &_Rect)
 
 void StatsRenderer::DrawStats()
 {
+  if (m_bVideoSizeChanged)
+  {
+    m_pFont = NULL;
+    m_bVideoSizeChanged = false;
+  }
+  
   // Font is created when it is needed for the first time so that video dimensions can be used to scale the text
   if (!m_pFont && m_pD3DXCreateFont)
   {
@@ -386,13 +392,18 @@ void StatsRenderer::DrawTearingTest()
   rcTearing.top = 0;
   rcTearing.right = rcTearing.left + 4;
   rcTearing.bottom = m_pPresenter->m_iVideoHeight;
-  m_pD3DDev->ColorFill(m_pPresenter->m_pVideoSurface, &rcTearing, D3DCOLOR_ARGB (255,255,0,0));
+  m_pD3DDev->ColorFill(m_pPresenter->m_pVideoSurface, &rcTearing, D3DCOLOR_ARGB (255,255,255,255));
 
   rcTearing.left = (rcTearing.right + 15) % m_pPresenter->m_iVideoWidth;
   rcTearing.right	= rcTearing.left + 4;
-  m_pD3DDev->ColorFill(m_pPresenter->m_pVideoSurface, &rcTearing, D3DCOLOR_ARGB (255,255,0,0));
+  m_pD3DDev->ColorFill(m_pPresenter->m_pVideoSurface, &rcTearing, D3DCOLOR_ARGB (255,255,255,255));
 
   m_nTearingPos = (m_nTearingPos + 7) % m_pPresenter->m_iVideoWidth;
+}
+
+void StatsRenderer::VideSizeChanged()
+{
+  m_bVideoSizeChanged = true;
 }
 
 HINSTANCE StatsRenderer::GetD3X9Dll()

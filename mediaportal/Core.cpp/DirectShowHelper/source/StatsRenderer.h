@@ -51,6 +51,7 @@ public:
   
   void DrawTearingTest();
   void DrawStats();
+  void VideSizeChanged();
 
 private:
 
@@ -79,4 +80,7 @@ private:
   
   // Our friend class that contains the stats to be rendered
   MPEVRCustomPresenter* m_pPresenter;
+
+  // Presenter notices us when video frame size changes
+  bool m_bVideoSizeChanged;
 };

@@ -709,6 +709,8 @@ void MPEVRCustomPresenter::ReAllocSurfaces()
   }
 
   hr = m_pD3DDev->ColorFill(m_pVideoSurface, NULL, 0);
+  
+  m_pStatsRenderer->VideSizeChanged();
 
   Log("ReallocSurfaces done");
 }
@@ -1669,6 +1671,7 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
     if (m_bDrawStats)
     {
       m_pStatsRenderer->DrawStats();
+      m_pStatsRenderer->DrawTearingTest();
     }
 
     hr = m_pCallback->PresentImage(m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY, (DWORD)(IDirect3DTexture9*)m_pVideoTexture, (DWORD)(IDirect3DSurface9*)pSurface);
