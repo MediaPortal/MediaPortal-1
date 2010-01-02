@@ -250,6 +250,7 @@ bool CDeMultiplexer::SetAudioStream(int stream)
         Flush() ;                   
         m_filter.OnMediaTypeChanged(1);
         SetMediaChanging(true);
+        m_filter.m_bForceSeekOnStop=true;     // Force stream to be resumed after
       }
       else                                    // Mpeg parser info is required or audio graph is already rebuilding.
         LogDebug("SetAudioStream : Media already changing") ;   // just wait 1st GOP

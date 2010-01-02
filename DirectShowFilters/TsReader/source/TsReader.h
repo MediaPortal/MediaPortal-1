@@ -153,7 +153,7 @@ public:
   void            Seek(CRefTime&  seekTime, bool seekInFile);
   void            SeekDone(CRefTime& refTime);
   void            SeekStart();
-  bool            SeekPreStart(CRefTime& rtSeek, bool IsAudio, bool IsVideo);
+  void            SeekPreStart(CRefTime& rtSeek);
   double          UpdateDuration();
   CAudioPin*      GetAudioPin();
   CVideoPin*      GetVideoPin();
@@ -189,6 +189,7 @@ public:
 	void GetMediaPosition(REFERENCE_TIME *pMediaTime);
 
   bool            m_bOnZap ;
+  bool            m_bForceSeekOnStop;
 
 protected:
   void ThreadProc();
@@ -222,8 +223,6 @@ private:
   ITSReaderAudioChange* m_pRequestAudioCallback;
 
   bool            m_bAnalog;
-
-  bool            m_bDoSeek_Audio;
-  bool            m_bDoSeek_Video;
+  bool            m_bStoppedForUnexpectedSeek ;
 };
 

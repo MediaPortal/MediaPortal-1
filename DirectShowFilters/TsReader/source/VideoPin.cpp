@@ -369,9 +369,10 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 
           cRefTime += AddOffset;
           cRefTime += m_pTsReaderFilter->m_ClockOnStart.m_time;
-
-          if (cRefTime.m_time >= 0)
-            Sleep(5); // TODO ...to figure out why this is set
+                                                                      
+//        Ambass: We should check audio FillBuffer method is not blocked ( on audio/video starting ) by excessive video Fill buffer preemption.                                                                   
+//          if (cRefTime.m_time >= 0)
+//            Sleep(5); // TODO ...to figure out why this is set
           m_bPresentSample = true;
           //else
           // Sample is too late.
@@ -526,13 +527,8 @@ void CVideoPin::UpdateFromSeek()
   seekTime *= 1000.0f;
   rtSeek = CRefTime((LONG)seekTime);
 
-  if (!m_pTsReaderFilter->SeekPreStart(rtSeek,false,true))
-  {
-      LogDebug("vid:skip seek");
-      return;
-  }
-
-  LogDebug("vid: seek done %f/%f",(float)m_rtStart.Millisecs()/1000.0f,(float)m_rtDuration.Millisecs()/1000.0f);
+  m_pTsReaderFilter->SeekPreStart(rtSeek) ;
+//  LogDebug("vid: seek done %f/%f",(float)m_rtStart.Millisecs()/1000.0f,(float)m_rtDuration.Millisecs()/1000.0f);
   return ;
 }
 

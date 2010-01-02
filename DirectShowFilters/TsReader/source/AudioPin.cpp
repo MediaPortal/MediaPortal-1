@@ -532,13 +532,8 @@ void CAudioPin::UpdateFromSeek()
   seekTime *= 1000.0f;
   rtSeek = CRefTime((LONG)seekTime);
 
-  if (!m_pTsReaderFilter->SeekPreStart(rtSeek,true,false))
-  {
-      LogDebug("aud:skip seek");
-      return;
-  }
-
-  LogDebug("aud: seek done %f/%f",(float)m_rtStart.Millisecs()/1000.0f,(float)m_rtDuration.Millisecs()/1000.0f);
+  m_pTsReaderFilter->SeekPreStart(rtSeek);
+//  LogDebug("aud: seek done %f/%f",(float)m_rtStart.Millisecs()/1000.0f,(float)m_rtDuration.Millisecs()/1000.0f);
   return ;
 }
 
