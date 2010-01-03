@@ -120,8 +120,11 @@ HRESULT FileReader::OpenFile()
 //#endif
 	do
 	{
-		// Try to open the file
-		m_hFile = ::CreateFileW(pFileName,      // The filename
+		// do not try to open a tsbuffer file without SHARE_WRITE so skip this try if we have a buffer file
+		if (wcsstr(pFileName, L".ts.tsbuffer") == NULL) 
+		{
+			// Try to open the file
+			m_hFile = ::CreateFileW(pFileName,      // The filename
 						 (DWORD) GENERIC_READ,        // File access
 						 (DWORD) FILE_SHARE_READ,     // Share access
 						 NULL,                        // Security
@@ -129,8 +132,9 @@ HRESULT FileReader::OpenFile()
 						 (DWORD) 0,                   // More flags
 						 NULL);                       // Template
 
-		m_bReadOnly = FALSE;
-		if (m_hFile != INVALID_HANDLE_VALUE) break ;
+			m_bReadOnly = FALSE;
+			if (m_hFile != INVALID_HANDLE_VALUE) break ;
+		}
 
 		//Test incase file is being recorded to
 		m_hFile = ::CreateFileW(pFileName,		// The filename

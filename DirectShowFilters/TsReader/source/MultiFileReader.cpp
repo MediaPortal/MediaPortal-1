@@ -347,8 +347,14 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
 
     if ((filesAdded2!=filesAdded) || (filesRemoved2!=filesRemoved))
     {
-      Sleep(10) ;
-      Error=0x80 ;
+      Error = 0x80;
+
+	  LogDebug("MultiFileReader has error 0x80 in Loop %d. Try to clear SMB Cache.", 10-Loop);
+	  
+	  // try to clear local / remote SMB file cache. This should happen when we close the filehandle
+      m_TSBufferFile.CloseFile();
+	  m_TSBufferFile.OpenFile();
+	  Sleep(5);
     }
 
     if (Error) delete[] pBuffer;
