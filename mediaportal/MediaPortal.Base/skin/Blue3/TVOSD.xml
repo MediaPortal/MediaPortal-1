@@ -142,7 +142,7 @@
       <posX>126</posX>
       <posY>424</posY>
       <font>font13</font>
-      <label>#TV.View.title</label>
+      <label>#TV.View.compositetitle</label>
       <textcolor>white</textcolor>
       <visible>!Control.IsVisible(989)</visible>
       <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
@@ -156,7 +156,7 @@
       <posX>126</posX>
       <posY>424</posY>
       <font>font13</font>
-      <label>#TV.View.title</label>
+      <label>#TV.View.compositetitle</label>
       <textcolor>white</textcolor>
       <visible>Control.IsVisible(989)</visible>
       <animation effect="slide" start="0,0" end="0,-100" time="400" reversible="false">visible</animation>

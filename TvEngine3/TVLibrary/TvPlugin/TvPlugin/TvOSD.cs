@@ -1655,7 +1655,8 @@ namespace TvPlugin
                                          prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
           GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
           GUIPropertyManager.SetProperty("#TV.View.genre", prog.Genre);
-          GUIPropertyManager.SetProperty("#TV.View.title", TVUtil.GetDisplayTitle(prog));
+          GUIPropertyManager.SetProperty("#TV.View.title", prog.Title);
+          GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(prog));
           GUIPropertyManager.SetProperty("#TV.View.subtitle", prog.EpisodeName);
           GUIPropertyManager.SetProperty("#TV.View.description", prog.Description);
           GUIPropertyManager.SetProperty("#TV.View.episode", prog.EpisodeNumber);
@@ -1665,8 +1666,6 @@ namespace TvPlugin
       else
       {
         Recording rec = null;
-        string description = "";
-        string title = "";
         string startTime = "";
         string endTime = "";
         string channelDisplayName = "";
@@ -1675,8 +1674,6 @@ namespace TvPlugin
         rec = TvRecorded.ActiveRecording();
         if (rec != null)
         {
-          description = rec.Description;
-          title = TVUtil.GetDisplayTitle(rec);
           long currentPosition = (long)(g_Player.CurrentPosition);
           startTime = Utils.SecondsToHMSString((int)currentPosition);
 
@@ -1685,7 +1682,6 @@ namespace TvPlugin
 
 
           channelDisplayName = TvRecorded.GetRecordingDisplayName(rec) + " (" + GUILocalizeStrings.Get(604) + ")";
-          genre = rec.Genre;
 
           double fPercent;
           if (rec == null)
@@ -1703,9 +1699,10 @@ namespace TvPlugin
           GUIPropertyManager.SetProperty("#TV.View.channel", channelDisplayName);
           GUIPropertyManager.SetProperty("#TV.View.start", startTime);
           GUIPropertyManager.SetProperty("#TV.View.stop", endTime);
-          GUIPropertyManager.SetProperty("#TV.View.genre", genre);
-          GUIPropertyManager.SetProperty("#TV.View.title", title);
-          GUIPropertyManager.SetProperty("#TV.View.description", description);
+          GUIPropertyManager.SetProperty("#TV.View.genre", rec.Genre);
+          GUIPropertyManager.SetProperty("#TV.View.title", rec.Title);
+          GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(rec));
+          GUIPropertyManager.SetProperty("#TV.View.description", rec.Description);
           GUIPropertyManager.SetProperty("#TV.View.subtitle", rec.EpisodeName);
           GUIPropertyManager.SetProperty("#TV.View.episode", rec.EpisodeNumber);
 
