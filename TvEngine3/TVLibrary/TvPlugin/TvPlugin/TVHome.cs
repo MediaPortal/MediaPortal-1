@@ -305,6 +305,10 @@ namespace TvPlugin
         HandleWakeUpTvServer();
 
         startHeartBeatThread();
+        if (!Connected)
+        {
+          RefreshConnectionState();
+        }
         //System.Diagnostics.Debugger.Launch();
         
         m_navigator = new ChannelNavigator();
