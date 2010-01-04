@@ -56,7 +56,7 @@ namespace MediaPortal.WebEPG
 
     #region Variables
 
-    bool _deleteOverlapping = false;
+    bool _deleteExisting;
     Dictionary<string, List<Channel>> _channels;
     List<Channel> _currentChannels;
     ProgramList _channelPrograms;
@@ -72,9 +72,9 @@ namespace MediaPortal.WebEPG
     {
     }
 
-    public DatabaseEPGDataSink(bool deleteOverlapping)
+    public DatabaseEPGDataSink(bool deleteExisting)
     {
-      _deleteOverlapping = deleteOverlapping;
+      _deleteExisting = deleteExisting;
     }
 
     #endregion
@@ -255,25 +255,7 @@ namespace MediaPortal.WebEPG
       // Remove overlapping programs
       _channelPrograms.RemoveOverlappingPrograms();
 
-      if (_deleteOverlapping)
-      {
-        // Remove programs from DB ending after the first imported program
-        SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Program));
-        sb.AddConstraint(Operator.In, "idChannel", _currentChannels, "IdChannel");
-        sb.AddConstraint(string.Format("((endTime > {0}rangeStart{1} AND startTime < {0}rangeEnd{1}) OR (startTime = endTime AND startTime BETWEEN {0}rangeStart{1} AND {0}rangeEnd{1}))", sb.ParameterPrefix, sb.ParameterSuffix));
-        sb.AddParameter("rangeStart", typeof(DateTime));
-        sb.AddParameter("rangeEnd", typeof(DateTime));
-        SqlStatement stmt = sb.GetStatement(true);
-        List<DateTimeRange> ranges = GetGrabbedDateTimeRanges();
-        foreach(var range in ranges)
-        {
-          Log.Info("Removing programs between {0} and {1}", range.Start, range.End);
-          stmt.SetParameter("rangeStart", range.Start);
-          stmt.SetParameter("rangeEnd", range.End);
-          stmt.Execute();  
-        }
-      }
-      else
+      if (!_deleteExisting)
       {
         // Remove programs overlapping ones in DB:
         // First retrieve all programs for current channels 
@@ -291,7 +273,10 @@ namespace MediaPortal.WebEPG
         layer.RemoveOldPrograms(chan.IdChannel);
       }
 
-      layer.InsertPrograms(_channelPrograms, ThreadPriority.BelowNormal);
+      DeleteBeforeImportOption programsToDelete = _deleteExisting
+                                                    ? DeleteBeforeImportOption.OverlappingPrograms
+                                                    : DeleteBeforeImportOption.None;
+      layer.InsertPrograms(_channelPrograms, programsToDelete, ThreadPriority.BelowNormal);
       
       //_channelPrograms.Clear();
       _channelPrograms = null;

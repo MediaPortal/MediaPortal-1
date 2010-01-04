@@ -223,18 +223,16 @@ namespace TvEngine
           if (destination == "db")
           {
             bool deleteBeforeImport = Convert.ToBoolean(layer.GetSetting("webepgDeleteBeforeImport", "true").Value);
-            bool deleteOnlyOverlapping = Convert.ToBoolean(layer.GetSetting("webepgDeleteOnlyOverlapping", "true").Value) 
-                                          && deleteBeforeImport;
-            // Allow for deleting of all existing programs before adding the new ones. 
-            // Already imported programs might have incorrect data depending on the grabber & setup
-            // f.e when grabbing programs many days ahead
-            if (deleteBeforeImport && ! deleteOnlyOverlapping)
-            {
-              SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Program));
-              SqlStatement stmt = sb.GetStatement();
-              stmt.Execute();
-            }
-            epgSink = new DatabaseEPGDataSink(deleteOnlyOverlapping);
+            //// Allow for deleting of all existing programs before adding the new ones. 
+            //// Already imported programs might have incorrect data depending on the grabber & setup
+            //// f.e when grabbing programs many days ahead
+            //if (deleteBeforeImport && ! deleteOnlyOverlapping)
+            //{
+            //  SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Program));
+            //  SqlStatement stmt = sb.GetStatement();
+            //  stmt.Execute();
+            //}
+            epgSink = new DatabaseEPGDataSink(deleteBeforeImport);
             Log.Info("Writing to TVServer database");
           }
           else

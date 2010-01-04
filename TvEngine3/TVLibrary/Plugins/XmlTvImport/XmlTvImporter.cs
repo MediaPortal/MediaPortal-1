@@ -425,8 +425,9 @@ namespace TvEngine
     /// <summary>
     /// Forces the import of the tvguide. Usable when testing the grabber
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
+    /// <param name="folder">The folder where tvguide.xml or tvguide.lst is stored</param>
+    /// <param name="importXML">True to import tvguide.xml</param>
+    /// <param name="importLST">True to import files in tvguide.lst</param>
     public void ForceImport(String folder, bool importXML, bool importLST)
     {
       string fileName = folder + @"\tvguide.xml";
@@ -745,12 +746,13 @@ namespace TvEngine
         // Allow for deleting of all existing programs before adding the new ones. 
         // Already imported programs might have incorrect data depending on the grabber & setup
         // f.e when grabbing programs many days ahead
-        if (layer.GetSetting("xmlTvDeleteBeforeImport", "true").Value == "true")
-        {
-          SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Program));
-          SqlStatement stmt = sb.GetStatement();
-          stmt.Execute();
-        }
+        bool deleteBeforeImport = (layer.GetSetting("xmlTvDeleteBeforeImport", "true").Value == "true");
+        //if (layer.GetSetting("xmlTvDeleteBeforeImport", "true").Value == "true")
+        //{
+        //  SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Program));
+        //  SqlStatement stmt = sb.GetStatement();
+        //  stmt.Execute();
+        //}
 
         int numChannels = 0, numPrograms = 0;
         string errors = "";
@@ -763,7 +765,7 @@ namespace TvEngine
             Log.Write("plugin:xmltv importing " + fileName);
 
             XMLTVImport import = new XMLTVImport(10);  // add 10 msec dely to the background thread
-            import.Import(fileName, false);
+            import.Import(fileName, deleteBeforeImport, false);
 
             numChannels += import.ImportStats.Channels;
             numPrograms += import.ImportStats.Programs;
@@ -796,7 +798,7 @@ namespace TvEngine
 
               XMLTVImport import = new XMLTVImport(10);  // add 10 msec dely to the background thread
 
-              import.Import(tvguideFileName, false);
+              import.Import(tvguideFileName, deleteBeforeImport, false);
 
               numChannels += import.ImportStats.Channels;
               numPrograms += import.ImportStats.Programs;

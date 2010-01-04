@@ -467,7 +467,7 @@ namespace TvEngine
             {
               // make a copy of this list because Insert it done in syncronized threads - therefore the object reference would cause multiple/missing entries
               List<Program> InsertCopy = new List<Program>(_tvmEpgProgs);
-              int debugCount = TvBLayer.InsertPrograms(InsertCopy, importPrio);
+              int debugCount = TvBLayer.InsertPrograms(InsertCopy, DeleteBeforeImportOption.OverlappingPrograms, importPrio);
               Log.Info("TVMovie: Inserted {0} programs", debugCount);
             }
           }
@@ -541,15 +541,17 @@ namespace TvEngine
       OleDbTransaction databaseTransaction = null;
       using (OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection))
       {
-        foreach (Mapping map in channelNames)
-          if (map.TvmEpgChannel == stationName)
-          {
-            Log.Debug("TVMovie: Purging old programs for channel {0}", map.Channel);
-            ClearPrograms(map.Channel);
-            if (_slowImport)
-              Thread.Sleep(32);
-          }
-
+        if (useGentle)
+        {
+          foreach (Mapping map in channelNames)
+            if (map.TvmEpgChannel == stationName)
+            {
+              Log.Debug("TVMovie: Purging old programs for channel {0}", map.Channel);
+              ClearPrograms(map.Channel);
+              if (_slowImport)
+                Thread.Sleep(32);
+            }
+        }
         try
         {
           _databaseConnection.Open();

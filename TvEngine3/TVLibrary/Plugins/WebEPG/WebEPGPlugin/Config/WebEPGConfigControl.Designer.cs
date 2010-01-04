@@ -35,7 +35,6 @@ namespace SetupTv.Sections
       this.cbCountry = new System.Windows.Forms.ComboBox();
       this.bAutoMap = new System.Windows.Forms.Button();
       this.gbGlobal = new System.Windows.Forms.GroupBox();
-      this.checkBoxDeleteOnlyOverlapping = new System.Windows.Forms.CheckBox();
       this.checkBoxDeleteBeforeImport = new System.Windows.Forms.CheckBox();
       this.buttonBrowse = new System.Windows.Forms.Button();
       this.textBoxFolder = new System.Windows.Forms.TextBox();
@@ -100,7 +99,7 @@ namespace SetupTv.Sections
       this.gbMapping.Controls.Add(this.label3);
       this.gbMapping.Controls.Add(this.cbCountry);
       this.gbMapping.Controls.Add(this.bAutoMap);
-      this.gbMapping.Location = new System.Drawing.Point(3, 163);
+      this.gbMapping.Location = new System.Drawing.Point(3, 133);
       this.gbMapping.Name = "gbMapping";
       this.gbMapping.Size = new System.Drawing.Size(443, 58);
       this.gbMapping.TabIndex = 25;
@@ -143,7 +142,6 @@ namespace SetupTv.Sections
       // 
       this.gbGlobal.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.gbGlobal.Controls.Add(this.checkBoxDeleteOnlyOverlapping);
       this.gbGlobal.Controls.Add(this.checkBoxDeleteBeforeImport);
       this.gbGlobal.Controls.Add(this.buttonBrowse);
       this.gbGlobal.Controls.Add(this.textBoxFolder);
@@ -153,20 +151,10 @@ namespace SetupTv.Sections
       this.gbGlobal.Controls.Add(this.lGrabDay);
       this.gbGlobal.Location = new System.Drawing.Point(3, 0);
       this.gbGlobal.Name = "gbGlobal";
-      this.gbGlobal.Size = new System.Drawing.Size(443, 157);
+      this.gbGlobal.Size = new System.Drawing.Size(443, 127);
       this.gbGlobal.TabIndex = 22;
       this.gbGlobal.TabStop = false;
       this.gbGlobal.Text = "Global Settings";
-      // 
-      // checkBoxDeleteOnlyOverlapping
-      // 
-      this.checkBoxDeleteOnlyOverlapping.AutoSize = true;
-      this.checkBoxDeleteOnlyOverlapping.Location = new System.Drawing.Point(20, 125);
-      this.checkBoxDeleteOnlyOverlapping.Name = "checkBoxDeleteOnlyOverlapping";
-      this.checkBoxDeleteOnlyOverlapping.Size = new System.Drawing.Size(262, 17);
-      this.checkBoxDeleteOnlyOverlapping.TabIndex = 36;
-      this.checkBoxDeleteOnlyOverlapping.Text = "but only if new programs overlap (Recommended!)";
-      this.checkBoxDeleteOnlyOverlapping.UseVisualStyleBackColor = true;
       // 
       // checkBoxDeleteBeforeImport
       // 
@@ -177,7 +165,6 @@ namespace SetupTv.Sections
       this.checkBoxDeleteBeforeImport.TabIndex = 35;
       this.checkBoxDeleteBeforeImport.Text = "Delete old programs before import (Recommended!)";
       this.checkBoxDeleteBeforeImport.UseVisualStyleBackColor = true;
-      this.checkBoxDeleteBeforeImport.CheckedChanged += new System.EventHandler(this.checkBoxDeleteBeforeImport_CheckedChanged);
       // 
       // buttonBrowse
       // 
@@ -305,7 +292,7 @@ namespace SetupTv.Sections
       this.groupBox1.Controls.Add(this.label10);
       this.groupBox1.Controls.Add(this.label11);
       this.groupBox1.Controls.Add(this.label12);
-      this.groupBox1.Location = new System.Drawing.Point(3, 227);
+      this.groupBox1.Location = new System.Drawing.Point(3, 197);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(443, 119);
       this.groupBox1.TabIndex = 31;
@@ -642,7 +629,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Button buttonBrowse;
     private System.Windows.Forms.TextBox textBoxFolder;
     private System.Windows.Forms.CheckBox checkBoxDeleteBeforeImport;
-    private System.Windows.Forms.CheckBox checkBoxDeleteOnlyOverlapping;
     private System.Windows.Forms.FolderBrowserDialog folderBrowserDialogTVGuide;
     private System.Windows.Forms.BindingSource bsMergedChannel;
     private System.Windows.Forms.TabPage tabTVMappings;

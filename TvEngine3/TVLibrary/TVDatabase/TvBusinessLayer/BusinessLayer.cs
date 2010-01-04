@@ -53,10 +53,21 @@ using ThreadState = System.Threading.ThreadState;
 
 namespace TvDatabase
 {
+  #region enums
+  public enum DeleteBeforeImportOption
+  {
+    None,
+    OverlappingPrograms,
+    ProgramsOnSameChannel,
+    //All
+  }
+  #endregion
+
   public class TvBusinessLayer
   {
     #region delegates
 
+    private delegate void DeleteProgramsDelegate();
     private delegate void InsertProgramsDelegate(ImportParams aImportParam);
 
     #endregion
@@ -2029,7 +2040,8 @@ namespace TvDatabase
 
     private class ImportParams
     {
-      public List<Program> ProgramList;
+      public ProgramList ProgramList;
+      public DeleteBeforeImportOption ProgamsToDelete;
       public string ConnectString;
       public ThreadPriority Priority;
       public int SleepTime;
@@ -2045,6 +2057,28 @@ namespace TvDatabase
     /// <param name="aThreadPriority">Use "Lowest" for Background imports allowing LiveTV, AboveNormal for full speed</param>
     /// <returns>The record count of programs if successful, 0 on errors</returns>
     public int InsertPrograms(List<Program> aProgramList, ThreadPriority aThreadPriority)
+    {
+      return InsertPrograms(aProgramList, DeleteBeforeImportOption.None, aThreadPriority);
+    }
+
+    /// <summary>
+    /// Batch inserts programs - intended for faster EPG import. You must make sure before that there are no duplicates 
+    /// (e.g. delete all program data of the current channel).
+    /// Also you MUST provide a true copy of "aProgramList". If you update it's reference in your own code the values will get overwritten
+    /// (possibly before they are written to disk)!
+    /// </summary>
+    /// <param name="aProgramList">A list of persistable gentle.NET Program objects mapping to the Programs table</param>
+    /// <param name="progamsToDelete">Flag specifying which existing programs to delete before the insert</param>
+    /// <param name="aThreadPriority">Use "Lowest" for Background imports allowing LiveTV, AboveNormal for full speed</param>
+    /// <returns>The record count of programs if successful, 0 on errors</returns>
+    /// <remarks><para>Inserts are queued to be performed in the background. Each batch of inserts is executed in a single transaction.
+    /// You may also optionally specify to delete either all existing programs in the same channel(s) as the programs to be inserted 
+    /// (<see cref="DeleteBeforeImportOption.ProgramsOnSameChannel"/>), or existing programs that would otherwise overlap new programs
+    /// (<see cref="DeleteBeforeImportOption.OverlappingPrograms"/>), or none (<see cref="DeleteBeforeImportOption.None"/>).
+    /// The deletion is also performed in the same transaction as the inserts so that EPG will not be at any time empty.</para>
+    /// <para>After all insert have completed and the background thread is idle for 60 seconds, the program states are
+    /// automatically updated to reflect the changes.</para></remarks>
+    public int InsertPrograms(List<Program> aProgramList, DeleteBeforeImportOption progamsToDelete, ThreadPriority aThreadPriority)
     {
       try
       {
@@ -2071,11 +2105,10 @@ namespace TvDatabase
         }
 
         ImportParams param = new ImportParams();
-        param.ProgramList = aProgramList;
+        param.ProgramList = new ProgramList(aProgramList);
+        param.ProgamsToDelete = progamsToDelete;
         param.SleepTime = sleepTime;
         param.Priority = aThreadPriority;
-
-
 
         lock (_programInsertsQueue)
         {
@@ -2196,10 +2229,10 @@ namespace TvDatabase
         switch (provider)
         {
           case "mysql":
-            insertProgams = InsertMySql;
+            insertProgams = InsertProgramsMySql;
             break;
           case "sqlserver":
-            insertProgams = InsertSqlServer;
+            insertProgams = InsertProgramsSqlServer;
             break;
           default:
             Log.Info("BusinessLayer: InsertPrograms unknown provider - {0}", provider);
@@ -2249,6 +2282,8 @@ namespace TvDatabase
               Log.Write(ex);
             }
           }
+          // Now all queued inserts have been processed, clear Gentle cache
+          Gentle.Common.CacheManager.ClearQueryResultsByType(typeof(Program));
         }
       }
       catch (Exception ex)
@@ -2323,16 +2358,35 @@ namespace TvDatabase
       }
     }
 
-    private static void InsertMySql(ImportParams aImportParam)
+    private static void InsertProgramsMySql(ImportParams aImportParam)
     {
       MySqlTransaction transact = null;
       try
       {
         using (MySqlConnection connection = new MySqlConnection(aImportParam.ConnectString))
         {
+          DeleteProgramsDelegate deletePrograms = null;
+
+          switch (aImportParam.ProgamsToDelete)
+          {
+            case DeleteBeforeImportOption.OverlappingPrograms:
+              IEnumerable<ProgramListPartition> partitions = aImportParam.ProgramList.GetPartitions();
+              deletePrograms =
+                () => ExecuteDeleteProgramsMySqlCommand(partitions, connection, transact, aImportParam.SleepTime);
+              break;
+            case DeleteBeforeImportOption.ProgramsOnSameChannel:
+              IEnumerable<int> channelIds = aImportParam.ProgramList.GetChannelIds();
+              deletePrograms =
+                () => ExecuteDeleteProgramsMySqlCommand(channelIds, connection, transact, aImportParam.SleepTime);
+              break;
+          }
           connection.Open();
           transact = connection.BeginTransaction();
-          ExecuteMySqlCommand(aImportParam.ProgramList, connection, transact, aImportParam.SleepTime);
+          if (deletePrograms != null)
+          {
+            deletePrograms();
+          }
+          ExecuteInsertProgramsMySqlCommand(aImportParam.ProgramList, connection, transact, aImportParam.SleepTime);
           transact.Commit();
           //OptimizeMySql("Program");
         }
@@ -2348,22 +2402,41 @@ namespace TvDatabase
         }
         catch (Exception ex2)
         {
-          Log.Info("BusinessLayer: OptimizeMySql unsuccessful - ROLLBACK - {0}, {1}", ex2.Message, ex2.StackTrace);
+          Log.Info("BusinessLayer: InsertSqlServer unsuccessful - ROLLBACK - {0}, {1}", ex2.Message, ex2.StackTrace);
         }
         Log.Info("BusinessLayer: InsertMySql caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
       }
     }
 
-    private static void InsertSqlServer(ImportParams aImportParam)
+    private static void InsertProgramsSqlServer(ImportParams aImportParam)
     {
       SqlTransaction transact = null;
       try
       {
         using (SqlConnection connection = new SqlConnection(aImportParam.ConnectString))
         {
+          DeleteProgramsDelegate deletePrograms = null;
+
+          switch (aImportParam.ProgamsToDelete)
+          {
+            case DeleteBeforeImportOption.OverlappingPrograms:
+              IEnumerable<ProgramListPartition> partitions = aImportParam.ProgramList.GetPartitions();
+              deletePrograms =
+                () => ExecuteDeleteProgramsSqlServerCommand(partitions, connection, transact, aImportParam.SleepTime);
+              break;
+            case DeleteBeforeImportOption.ProgramsOnSameChannel:
+              IEnumerable<int> channelIds = aImportParam.ProgramList.GetChannelIds();
+              deletePrograms =
+                () => ExecuteDeleteProgramsSqlServerCommand(channelIds, connection, transact, aImportParam.SleepTime);
+              break;
+          }
           connection.Open();
           transact = connection.BeginTransaction();
-          ExecuteSqlServerCommand(aImportParam.ProgramList, connection, transact, aImportParam.SleepTime);
+          if (deletePrograms != null)
+          {
+            deletePrograms();
+          }
+          ExecuteInsertProgramsSqlServerCommand(aImportParam.ProgramList, connection, transact, aImportParam.SleepTime);
           transact.Commit();
 
         }
@@ -2379,7 +2452,7 @@ namespace TvDatabase
         }
         catch (Exception ex2)
         {
-          Log.Info("BusinessLayer: OptimizeMySql unsuccessful - ROLLBACK - {0}, {1}", ex2.Message, ex2.StackTrace);
+          Log.Info("BusinessLayer: InsertSqlServer unsuccessful - ROLLBACK - {0}, {1}", ex2.Message, ex2.StackTrace);
         }
         Log.Info("BusinessLayer: InsertSqlServer caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
       }
@@ -2389,7 +2462,105 @@ namespace TvDatabase
 
     #region SQL Builder
 
-    private static void ExecuteMySqlCommand(IEnumerable<Program> aProgramList, MySqlConnection aConnection,
+    private static void ExecuteDeleteProgramsMySqlCommand(IEnumerable<ProgramListPartition> deleteProgramRanges, MySqlConnection aConnection,
+                                            MySqlTransaction aTransaction, int aDelay)
+    {
+      int aCounter = 0;
+      MySqlCommand sqlCmd = new MySqlCommand();
+
+      sqlCmd.CommandText =
+        "DELETE FROM Program WHERE idChannel = ?idChannel AND ((endTime > ?rangeStart AND startTime < ?rangeEnd) OR (startTime = endTime AND startTime BETWEEN ?rangeStart AND ?rangeEnd))";
+
+      sqlCmd.Parameters.Add("?idChannel", MySqlDbType.Int32);
+      sqlCmd.Parameters.Add("?rangeStart", MySqlDbType.Datetime);
+      sqlCmd.Parameters.Add("?rangeEnd", MySqlDbType.Datetime);
+
+      try
+      {
+        sqlCmd.Connection = aConnection;
+        sqlCmd.Transaction = aTransaction;
+        // Prepare the command since we will reuse it quite often
+        sqlCmd.Prepare();
+      }
+      catch (Exception ex)
+      {
+        Log.Info("BusinessLayer: ExecuteDeleteProgramsMySqlCommand - Prepare caused an Exception - {0}", ex.Message);
+        throw;
+      }
+
+      foreach (ProgramListPartition partition in deleteProgramRanges)
+      {
+        sqlCmd.Parameters["?idChannel"].Value = partition.IdChannel;
+        sqlCmd.Parameters["?rangeStart"].Value = partition.Start;
+        sqlCmd.Parameters["?rangeEnd"].Value = partition.End;
+        try
+        {
+          // Finally insert all our data
+          sqlCmd.ExecuteNonQuery();
+          aCounter++;
+          // Avoid I/O starving
+          if (aCounter % 3 == 0)
+          {
+            Thread.Sleep(aDelay);
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Info("BusinessLayer: ExecuteDeleteProgramsMySqlCommand caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
+          throw;
+        }
+      }
+      return;
+    }
+
+    private static void ExecuteDeleteProgramsMySqlCommand(IEnumerable<int> channelIds, MySqlConnection aConnection,
+                                            MySqlTransaction aTransaction, int aDelay)
+    {
+      int aCounter = 0;
+      MySqlCommand sqlCmd = new MySqlCommand();
+
+      sqlCmd.CommandText =
+        "DELETE FROM Program WHERE idChannel = ?idChannel";
+
+      sqlCmd.Parameters.Add("?idChannel", MySqlDbType.Int32);
+
+      try
+      {
+        sqlCmd.Connection = aConnection;
+        sqlCmd.Transaction = aTransaction;
+        // Prepare the command since we will reuse it quite often
+        sqlCmd.Prepare();
+      }
+      catch (Exception ex)
+      {
+        Log.Info("BusinessLayer: ExecuteDeleteProgramsMySqlCommand - Prepare caused an Exception - {0}", ex.Message);
+        throw;
+      }
+
+      foreach (int idChannel in channelIds)
+      {
+        sqlCmd.Parameters["?idChannel"].Value = idChannel;
+        try
+        {
+          // Finally insert all our data
+          sqlCmd.ExecuteNonQuery();
+          aCounter++;
+          // Avoid I/O starving
+          if (aCounter % 3 == 0)
+          {
+            Thread.Sleep(aDelay);
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Info("BusinessLayer: ExecuteDeleteProgramsMySqlCommand caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
+          throw;
+        }
+      }
+      return;
+    }
+
+    private static void ExecuteInsertProgramsMySqlCommand(IEnumerable<Program> aProgramList, MySqlConnection aConnection,
                                             MySqlTransaction aTransaction, int aDelay)
     {
       int aCounter = 0;
@@ -2424,7 +2595,7 @@ namespace TvDatabase
       }
       catch (Exception ex)
       {
-        Log.Info("BusinessLayer: ExecuteMySqlCommand - Prepare caused an Exception - {0}", ex.Message);
+        Log.Info("BusinessLayer: ExecuteInsertProgramsMySqlCommand - Prepare caused an Exception - {0}", ex.Message);
       }
 
       foreach (Program prog in currentInserts)
@@ -2468,20 +2639,114 @@ namespace TvDatabase
               Log.Info("BusinessLayer: Your importer tried to add a too much info: {0}, {1}", errorRow, myex.Message);
               break;
             default:
-              Log.Info("BusinessLayer: ExecuteMySqlCommand caused a MySqlException - {0}, {1} {2}", myex.Message,
+              Log.Info("BusinessLayer: ExecuteInsertProgramsMySqlCommand caused a MySqlException - {0}, {1} {2}", myex.Message,
                        myex.Number, myex.HelpLink);
               break;
           }
         }
         catch (Exception ex)
         {
-          Log.Info("BusinessLayer: ExecuteMySqlCommand caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
+          Log.Info("BusinessLayer: ExecuteInsertProgramsMySqlCommand caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
         }
       }
       return;
     }
 
-    private static void ExecuteSqlServerCommand(IEnumerable<Program> aProgramList, SqlConnection aConnection,
+    private static void ExecuteDeleteProgramsSqlServerCommand(IEnumerable<ProgramListPartition> deleteProgramRanges, SqlConnection aConnection,
+                                                SqlTransaction aTransaction, int aDelay)
+    {
+      int aCounter = 0;
+      SqlCommand sqlCmd = new SqlCommand();
+
+      sqlCmd.CommandText =
+        "DELETE FROM Program WHERE idChannel = @idChannel AND ((endTime > @rangeStart AND startTime < @rangeEnd) OR (startTime = endTime AND startTime BETWEEN @rangeStart AND @rangeEnd))";
+
+      sqlCmd.Parameters.Add("idChannel", SqlDbType.Int);
+      sqlCmd.Parameters.Add("rangeStart", SqlDbType.DateTime);
+      sqlCmd.Parameters.Add("rangeEnd", SqlDbType.DateTime);
+
+      try
+      {
+        sqlCmd.Connection = aConnection;
+        sqlCmd.Transaction = aTransaction;
+        // Prepare the command since we will reuse it quite often
+        // sqlCmd.Prepare(); <-- this would need exact param field length definitions
+      }
+      catch (Exception ex)
+      {
+        Log.Info("BusinessLayer: ExecuteDeleteProgramsSqlServerCommand - Prepare caused an Exception - {0}", ex.Message);
+      }
+      foreach (ProgramListPartition partition in deleteProgramRanges)
+      {
+        sqlCmd.Parameters["idChannel"].Value = partition.IdChannel;
+        sqlCmd.Parameters["rangeStart"].Value = partition.Start;
+        sqlCmd.Parameters["rangeEnd"].Value = partition.End;
+
+        try
+        {
+          // Finally insert all our data
+          sqlCmd.ExecuteNonQuery();
+          aCounter++;
+          // Avoid I/O starving
+          if (aCounter % 2 == 0)
+          {
+            Thread.Sleep(aDelay);
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("BusinessLayer: ExecuteDeleteProgramsSqlServerCommand error - {0}, {1}", ex.Message, ex.StackTrace);
+        }
+      }
+      return;
+    }
+
+    private static void ExecuteDeleteProgramsSqlServerCommand(IEnumerable<int> channelIds, SqlConnection aConnection,
+                                                SqlTransaction aTransaction, int aDelay)
+    {
+      int aCounter = 0;
+      SqlCommand sqlCmd = new SqlCommand();
+
+      sqlCmd.CommandText =
+        "DELETE FROM Program WHERE idChannel = @idChannel";
+
+      sqlCmd.Parameters.Add("idChannel", SqlDbType.Int);
+
+      try
+      {
+        sqlCmd.Connection = aConnection;
+        sqlCmd.Transaction = aTransaction;
+        // Prepare the command since we will reuse it quite often
+        // sqlCmd.Prepare(); <-- this would need exact param field length definitions
+      }
+      catch (Exception ex)
+      {
+        Log.Info("BusinessLayer: ExecuteDeleteProgramsSqlServerCommand - Prepare caused an Exception - {0}", ex.Message);
+      }
+      foreach (int idChannel in channelIds)
+      {
+        sqlCmd.Parameters["idChannel"].Value = idChannel;
+
+        try
+        {
+          // Finally insert all our data
+          sqlCmd.ExecuteNonQuery();
+          aCounter++;
+          // Avoid I/O starving
+          if (aCounter % 2 == 0)
+          {
+            Thread.Sleep(aDelay);
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("BusinessLayer: ExecuteDeleteProgramsSqlServerCommand error - {0}, {1}", ex.Message, ex.StackTrace);
+        }
+      }
+      return;
+    }
+
+    private static void ExecuteInsertProgramsSqlServerCommand(IEnumerable<Program> aProgramList, SqlConnection aConnection,
                                                 SqlTransaction aTransaction, int aDelay)
     {
       int aCounter = 0;
@@ -2516,7 +2781,7 @@ namespace TvDatabase
       }
       catch (Exception ex)
       {
-        Log.Info("BusinessLayer: ExecuteSqlServerCommand - Prepare caused an Exception - {0}", ex.Message);
+        Log.Info("BusinessLayer: ExecuteInsertProgramsSqlServerCommand - Prepare caused an Exception - {0}", ex.Message);
       }
       foreach (Program prog in currentInserts)
       {
@@ -2560,14 +2825,14 @@ namespace TvDatabase
               Log.Info("BusinessLayer: Your importer tried to add a too much info: {0}, {1}", errorRow, msex.Message);
               break;
             default:
-              Log.Info("BusinessLayer: InsertSqlServer caused a SqlException - {0}, {1} {2}", msex.Message, msex.Number,
+              Log.Info("BusinessLayer: ExecuteInsertProgramsSqlServerCommand caused a SqlException - {0}, {1} {2}", msex.Message, msex.Number,
                        msex.HelpLink);
               break;
           }
         }
         catch (Exception ex)
         {
-          Log.Error("BusinessLayer: InsertSqlServer error - {0}, {1}", ex.Message, ex.StackTrace);
+          Log.Error("BusinessLayer: ExecuteInsertProgramsSqlServerCommand error - {0}, {1}", ex.Message, ex.StackTrace);
         }
       }
       return;

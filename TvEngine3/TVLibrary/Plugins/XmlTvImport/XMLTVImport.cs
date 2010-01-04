@@ -128,7 +128,7 @@ namespace TvEngine
         // Some EPG providers only supply the value without n/10
         if (slashPos > 0)
           strRating = strRating.Remove(slashPos);
-        
+
         decimal tmpRating = -1;
         NumberFormatInfo NFO = NumberFormatInfo.InvariantInfo;
         NumberStyles NStyle = NumberStyles.Float;
@@ -145,7 +145,7 @@ namespace TvEngine
       return Rating;
     }
 
-    public bool Import(string fileName, bool showProgress)
+    public bool Import(string fileName, bool deleteBeforeImport, bool showProgress)
     {
       //System.Diagnostics.Debugger.Launch();
       _errorMessage = "";
@@ -154,7 +154,7 @@ namespace TvEngine
         _errorMessage = "already importing...";
         return false;
       }
-      _isImporting = true;      
+      _isImporting = true;
 
       bool result = false;
       XmlTextReader xmlReader = null;
@@ -355,7 +355,7 @@ namespace TvEngine
           // one-to-many so we need a collection of channels for each externalId
           List<Channel> eidMappedChannels = new List<Channel>();
 
-          for (int i = 0 ; i < allChannels.Count ; i++)
+          for (int i = 0; i < allChannels.Count; i++)
           {
             Channel ch = (Channel)allChannels[i];
 
@@ -546,7 +546,7 @@ namespace TvEngine
                     dateTimeStart = dateTimeStart.AddMinutes(-m);
                   }
                   startDate = datetolong(dateTimeStart);
-        
+
                   if (nodeStop != null)
                   {
                     // correct program endtime
@@ -597,9 +597,9 @@ namespace TvEngine
                         episodeNum = serEpNum.Substring(dot1 + 1, dot2 - (dot1 + 1));
                         episodePart = serEpNum.Substring(dot2 + 1, serEpNum.Length - (dot2 + 1));
                         //xmltv_ns is theorically zero-based number will be increased by one
-                        seriesNum = CorrectEpisodeNum(seriesNum,1);
-                        episodeNum = CorrectEpisodeNum(episodeNum,1);
-                        episodePart = CorrectEpisodeNum(episodePart,1);
+                        seriesNum = CorrectEpisodeNum(seriesNum, 1);
+                        episodeNum = CorrectEpisodeNum(episodeNum, 1);
+                        episodePart = CorrectEpisodeNum(episodePart, 1);
                       }
                       else if (nodeEpisodeNumSystem == "onscreen")
                       {
@@ -607,14 +607,14 @@ namespace TvEngine
                         serEpNum = ConvertHTMLToAnsi(nodeEpisodeNum);
                         int num1 = serEpNum.IndexOf("#", 0);
                         if (num1 < 0) num1 = 0;
-                        episodeNum = CorrectEpisodeNum(serEpNum.Substring(num1, serEpNum.Length - num1),0);
+                        episodeNum = CorrectEpisodeNum(serEpNum.Substring(num1, serEpNum.Length - num1), 0);
                       }
                     }
                     else  // fixing mantis bug 1486: XMLTV import doesn't take episode number from TVGuide.xml made by WebEPG 
                     {
                       // example: '5' like WebEPG is creating
                       serEpNum = ConvertHTMLToAnsi(nodeEpisodeNum.Replace(" ", ""));
-                      episodeNum = CorrectEpisodeNum(serEpNum,0);
+                      episodeNum = CorrectEpisodeNum(serEpNum, 0);
                     }
                   }
 
@@ -746,8 +746,8 @@ namespace TvEngine
                 //List<Program> importProgs = new List<Program>(progChan.programs.Count);
                 progChan.programs.RemoveOverlappingPrograms(dbPrograms);
 
-                for (int i = 0 ; i < progChan.programs.Count ; ++i)
-                {                  
+                for (int i = 0; i < progChan.programs.Count; ++i)
+                {
                   Program prog = progChan.programs[i];
                   // don't import programs which have already ended...
                   if (prog.EndTime <= dtStartDate)
@@ -779,9 +779,12 @@ namespace TvEngine
                   if (showProgress && ShowProgress != null && (_status.Programs % 100) == 0) ShowProgress(_status);
                 }
                 Log.Info("XMLTVImport: Inserting {0} programs for {1}", progChan.programs.Count.ToString(), progChan.Name);
-                layer.InsertPrograms(progChan.programs, ThreadPriority.BelowNormal);
+                layer.InsertPrograms(progChan.programs,
+                                     deleteBeforeImport
+                                       ? DeleteBeforeImportOption.OverlappingPrograms
+                                       : DeleteBeforeImportOption.None, ThreadPriority.BelowNormal);
               }
-            }           
+            }
               #endregion
 
             //TVDatabase.RemoveOverlappingPrograms();
@@ -813,7 +816,7 @@ namespace TvEngine
       }
 
       Programs.Clear();
-      Programs = null;      
+      Programs = null;
 
       _isImporting = false;
       //      TVDatabase.SupressEvents = false;
@@ -834,7 +837,7 @@ namespace TvEngine
     string CorrectEpisodeNum(string episodenum, int nodeEpisodeNumSystemBase)
     {
 
-      if(episodenum == "")
+      if (episodenum == "")
         return episodenum;
 
       // Find format of the episode number
@@ -938,7 +941,7 @@ namespace TvEngine
         if (Programs.Count == 0) return;
         Programs.Sort(this);
         Program prevProg = (Program)Programs[0];
-        for (int i = 1 ; i < Programs.Count ; i++)
+        for (int i = 1; i < Programs.Count; i++)
         {
           Program newProg = (Program)Programs[i];
           if (newProg.StartTime < prevProg.EndTime)   // we have an overlap here
@@ -957,7 +960,7 @@ namespace TvEngine
             newList.Add(newProg);
             Program syncPrev = prevProg;
             Program syncProg = newProg;
-            for (int j = i + 1 ; j < Programs.Count ; j++)
+            for (int j = i + 1; j < Programs.Count; j++)
             {
               Program syncNew = (Program)Programs[j];
               if (syncPrev.EndTime == syncNew.StartTime)
@@ -1013,7 +1016,7 @@ namespace TvEngine
       Programs.Sort(this);
       dbEPG.Sort(this);
       Program prevProg = (Program)Programs[0];
-      for (int i = 1 ; i < Programs.Count ; i++)
+      for (int i = 1; i < Programs.Count; i++)
       {
         Program newProg = (Program)Programs[i];
         if (newProg.StartTime > prevProg.EndTime)   // we have a gab here

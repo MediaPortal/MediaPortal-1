@@ -33,19 +33,35 @@ using System.Text;
 
 namespace TvDatabase
 {
+  /// <summary>
+  /// Holds program list partition info. A partition is a contiguous series of programs on the same channel
+  /// </summary>
+  public struct ProgramListPartition
+  {
+    public int IdChannel;
+    public DateTime Start;
+    public DateTime End;
+
+    public ProgramListPartition(int idChannel, DateTime start, DateTime end)
+    {
+      IdChannel = idChannel;
+      Start = start;
+      End = end;
+    }
+  }
+
   public class ProgramList
     : List<Program>, IComparer<Program>
   {
     #region variables
 
-    bool _alreadySorted = false;
+    bool _alreadySorted;
 
     #endregion
 
     #region ctor
 
     public ProgramList()
-      : base()
     {
       //_alreadySorted = false;
     }
@@ -138,7 +154,7 @@ namespace TvDatabase
               if (syncNew.StartTime > syncProg.EndTime)
               {
                 // stop point reached => delete Programs in newList
-                foreach (Program Prog in newList) Remove(Prog);
+                foreach (Program prog in newList) Remove(prog);
                 i = j - 1;
                 prevProg = syncPrev;
                 newList.Clear();
@@ -153,7 +169,7 @@ namespace TvDatabase
               if (syncNew.StartTime > syncPrev.EndTime)
               {
                 // stop point reached => delete Programs in prevList
-                foreach (Program Prog in prevList) Remove(Prog);
+                foreach (Program prog in prevList) Remove(prog);
                 i = j - 1;
                 prevProg = syncProg;
                 newList.Clear();
@@ -165,7 +181,7 @@ namespace TvDatabase
           // check if a stop point was reached => if not delete newList
           if (newList.Count > 0)
           {
-            foreach (Program Prog in prevList) Remove(Prog);
+            foreach (Program prog in prevList) Remove(prog);
             i = Count;
             break;
           }
@@ -327,15 +343,107 @@ namespace TvDatabase
       }
     }
 
+    /// <summary>
+    /// Parse the program list and find partitions of chained programs 
+    /// (each program starts at the end of the previous one and is on the same channel).
+    /// </summary>
+    /// <returns>A list of partition data</returns>
+    public List<ProgramListPartition> GetPartitions()
+    {
+      List<ProgramListPartition> partitions = new List<ProgramListPartition>();
+      if (Count != 0)
+      {
+        SortIfNeeded();
+        ProgramListPartition partition = new ProgramListPartition(this[0].IdChannel, this[0].StartTime, this[0].EndTime);
+        for (int i = 1; i < Count; i++)
+        {
+          Program currProg = this[i];
+          if (partition.IdChannel.Equals(currProg.IdChannel) && partition.End.Equals(currProg.StartTime))
+          {
+            partition.End = currProg.EndTime;
+          }
+          else
+          {
+            partitions.Add(partition);
+            partition = new ProgramListPartition(currProg.IdChannel, currProg.StartTime, currProg.EndTime);
+          }
+        }
+        partitions.Add(partition);
+      }
+      return partitions;
+    }
+
+    /// <summary>
+    /// Parse the program list and find the unique channel IDs
+    /// </summary>
+    /// <returns>A list of channel IDs</returns>
+    public List<int> GetChannelIds()
+    {
+      List<int> channelIds = new List<int>();
+      if (Count != 0)
+      {
+        SortIfNeeded();
+        int lastChannelId = this[0].IdChannel;
+        channelIds.Add(lastChannelId);
+        for (int i = 1; i < Count; i++)
+        {
+          Program currProg = this[i];
+          if (lastChannelId != currProg.IdChannel)
+          {
+            lastChannelId = currProg.IdChannel;
+            channelIds.Add(lastChannelId);
+          }
+        }
+      }
+      return channelIds;
+    }
+
     #endregion
 
     #region Base overrides
 
+    new public void Add(Program item)
+    {
+      _alreadySorted = false;
+      base.Add(item);
+    }
+
+    new public void AddRange(IEnumerable<Program> collection)
+    {
+      _alreadySorted = false;
+      base.AddRange(collection);
+    }
+
+    new public void Insert(int index, Program item)
+    {
+      _alreadySorted = false;
+      base.Insert(index, item);
+    }
+
+    new public void InsertRange(int index, IEnumerable<Program> collection)
+    {
+      _alreadySorted = false;
+      base.InsertRange(index, collection);
+    }
+
+    new public void Reverse(int index, int count)
+    {
+      _alreadySorted = false;
+      base.Reverse(index, count);
+    }
+
+    new public void Reverse()
+    {
+      _alreadySorted = false;
+      base.Reverse();
+    }
+
     new public void Sort()
     {
       Sort(this);
+      _alreadySorted = true;
     }
-
+    
     #endregion
 
     #region IComparer<Program> Members

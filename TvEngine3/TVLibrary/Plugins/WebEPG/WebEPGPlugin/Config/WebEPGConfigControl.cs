@@ -149,7 +149,6 @@ namespace SetupTv.Sections
 
       textBoxFolder.Text = layer.GetSetting("webepgDestinationFolder").Value;
       checkBoxDeleteBeforeImport.Checked = Convert.ToBoolean(layer.GetSetting("webepgDeleteBeforeImport", "true").Value);
-      checkBoxDeleteOnlyOverlapping.Checked = Convert.ToBoolean(layer.GetSetting("webepgDeleteOnlyOverlapping", "true").Value);
 
       LoadWebepgConfigFile();
       //RedrawList(null);
@@ -242,10 +241,6 @@ namespace SetupTv.Sections
 
       setting = layer.GetSetting("webepgDeleteBeforeImport", "true");
       setting.Value = checkBoxDeleteBeforeImport.Checked ? "true" : "false";
-      setting.Persist();
-
-      setting = layer.GetSetting("webepgDeleteOnlyOverlapping", "true");
-      setting.Value = checkBoxDeleteOnlyOverlapping.Checked ? "true" : "false";
       setting.Persist();
 
       setting = layer.GetSetting("webepgScheduleEnabled", "true");
@@ -808,11 +803,6 @@ namespace SetupTv.Sections
 
       textBoxFolder.Enabled = enable;
       buttonBrowse.Enabled = enable;
-    }
-
-    private void checkBoxDeleteBeforeImport_CheckedChanged(object sender, EventArgs e)
-    {
-      checkBoxDeleteOnlyOverlapping.Enabled = checkBoxDeleteBeforeImport.Checked;
     }
 
     private void buttonBrowse_Click(object sender, EventArgs e)
