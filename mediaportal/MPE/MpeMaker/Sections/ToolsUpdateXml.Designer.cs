@@ -51,6 +51,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(568, 20);
             this.textBox1.TabIndex = 0;
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // button1
             // 
@@ -127,6 +128,7 @@
             this.txt_list2.Name = "txt_list2";
             this.txt_list2.Size = new System.Drawing.Size(568, 20);
             this.txt_list2.TabIndex = 3;
+            this.txt_list2.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // btn_browse1
             // 
@@ -157,6 +159,7 @@
             this.txt_list1.Name = "txt_list1";
             this.txt_list1.Size = new System.Drawing.Size(568, 20);
             this.txt_list1.TabIndex = 0;
+            this.txt_list1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // ToolsUpdateXml
             // 

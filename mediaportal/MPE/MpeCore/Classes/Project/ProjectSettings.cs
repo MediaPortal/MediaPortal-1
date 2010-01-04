@@ -9,6 +9,9 @@ namespace MpeCore.Classes.Project
     {
         public List<FolderGroup> FolderGroups { get; set; }
         public string ProjectFilename { get; set; }
+        public string UpdatePath1 { get; set; }
+        public string UpdatePath2 { get; set; }
+        public string UpdatePath3 { get; set; }
 
         public ProjectSettings()
         {

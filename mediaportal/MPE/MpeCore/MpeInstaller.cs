@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using MediaPortal.Configuration;
 using MpeCore.Classes.ProviderHelpers;
 using MpeCore.Interfaces;
@@ -65,13 +66,11 @@ namespace MpeCore
             AddVersion(new MediaPortalVersion());
             AddVersion(new TvServerVersion());
             AddVersion(new ExtensionVersion());
-            
+
             InstalledExtensions =
-                ExtensionCollection.Load(string.Format("{0}\\V2\\InstalledExtensions.xml",
-                                                       Config.GetFolder(Config.Dir.Installer)));
+                ExtensionCollection.Load(string.Format("{0}\\InstalledExtensions.xml", BaseFolder));
             KnownExtensions =
-                ExtensionCollection.Load(string.Format("{0}\\V2\\KnownExtensions.xml",
-                                                       Config.GetFolder(Config.Dir.Installer)));
+                ExtensionCollection.Load(string.Format("{0}\\KnownExtensions.xml", BaseFolder));
 
         }
 
@@ -97,9 +96,10 @@ namespace MpeCore
 
         public static void Save()
         {
+            if (!Directory.Exists(BaseFolder))
+                Directory.CreateDirectory(BaseFolder);
             InstalledExtensions.Save(string.Format("{0}\\InstalledExtensions.xml", BaseFolder));
             KnownExtensions.Save(string.Format("{0}\\KnownExtensions.xml", BaseFolder));
-
         }
 
         /// <summary>

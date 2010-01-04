@@ -14,14 +14,16 @@ namespace MpeMaker.Sections
     public partial class ToolsUpdateXml : UserControl, ISectionControl
     {
         public PackageClass Package { get; set; }
-
+        private bool loading = false;
         public ToolsUpdateXml()
         {
+            Package = new PackageClass();
             InitializeComponent();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
+            saveFileDialog1.FileName = textBox1.Text;
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 textBox1.Text = saveFileDialog1.FileName;
@@ -46,6 +48,11 @@ namespace MpeMaker.Sections
         public void Set(PackageClass pak)
         {
             Package = pak;
+            loading = true;
+            textBox1.Text = Package.ProjectSettings.UpdatePath1;
+            txt_list1.Text = Package.ProjectSettings.UpdatePath2;
+            txt_list2.Text = Package.ProjectSettings.UpdatePath3;
+            loading = false;
         }
 
         public PackageClass Get()
@@ -55,6 +62,7 @@ namespace MpeMaker.Sections
 
         private void btn_browse1_Click(object sender, EventArgs e)
         {
+            saveFileDialog1.FileName = txt_list1.Text;
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 txt_list1.Text = saveFileDialog1.FileName;
@@ -63,6 +71,7 @@ namespace MpeMaker.Sections
 
         private void btn_browse2_Click(object sender, EventArgs e)
         {
+            saveFileDialog1.FileName = txt_list2.Text;
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 txt_list2.Text = saveFileDialog1.FileName;
@@ -81,5 +90,14 @@ namespace MpeMaker.Sections
             list.Add(list2);
             list.Save(xmlFile);
         }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            if (loading)
+                return;
+            Package.ProjectSettings.UpdatePath1 = textBox1.Text;
+            Package.ProjectSettings.UpdatePath2 = txt_list1.Text;
+            Package.ProjectSettings.UpdatePath3 = txt_list2.Text;
+       }
     }
 }
