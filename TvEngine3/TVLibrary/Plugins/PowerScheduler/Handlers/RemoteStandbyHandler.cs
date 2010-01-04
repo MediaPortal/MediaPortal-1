@@ -12,11 +12,13 @@ namespace TvEngine.PowerScheduler.Handlers
   {
     private IStandbyHandler remote;
     private int tag;
+    public readonly string Url;
 
     public RemoteStandbyHandler( String URL, int tag )
     {
       remote = (IStandbyHandler)Activator.GetObject(typeof(IStandbyHandler), URL);
       this.tag = tag;
+      this.Url = URL;
     }
 
     public void Close()

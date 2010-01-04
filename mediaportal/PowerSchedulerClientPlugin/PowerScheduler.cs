@@ -922,6 +922,7 @@ namespace MediaPortal.Plugins.Process
         // check for singleseat or multiseat setup
         if (_settings.GetSetting("SingleSeat").Get<bool>())
         {
+          RegisterToRemotePowerScheduler();
           // tell the tvserver when we detected the real user the last time
           bool dummy = Unattended; // this will update _lastUserTime in case a player was running
           if (RemotePowerControl.Isconnected)
@@ -1238,7 +1239,7 @@ namespace MediaPortal.Plugins.Process
 
     #endregion
 
-    private void OnResume()
+    private void RegisterToRemotePowerScheduler()
     {
       if (_settings.GetSetting("SingleSeat").Get<bool>())
       {
@@ -1250,13 +1251,25 @@ namespace MediaPortal.Plugins.Process
           _remotingURI = "http://localhost:31458" + RemotingServices.GetObjectUri(this);
           Log.Debug("PSClientPlugin: marshalled handlers as {0}", _remotingURI);
         }
-        if (_remotingTag == 0)
+        // (re-)register with the TVServer
+        int newTag = RemotePowerControl.Instance.RegisterRemote(_remotingURI, _remotingURI);
+        if (_remotingTag != newTag)
         {
-          // register with the TVServer
-          _remotingTag = RemotePowerControl.Instance.RegisterRemote(_remotingURI, _remotingURI);
+          if (_remotingTag != 0)
+          {
+            LogVerbose("PSClientPlugin: reconnected to tvservice");
+          }
           LogVerbose("PSClientPlugin: registered handlers with tvservice with tag {0}", _remotingTag);
+          _remotingTag = newTag;
         }
+      }
+    }
 
+    private void OnResume()
+    {
+      RegisterToRemotePowerScheduler();
+      if (_settings.GetSetting("SingleSeat").Get<bool>())
+      {
         _lastUserTime = DateTime.Now;
         _standby = false;
       }

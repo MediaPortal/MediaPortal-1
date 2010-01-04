@@ -12,11 +12,13 @@ namespace TvEngine.PowerScheduler.Handlers
   {
     private IWakeupHandler remote;
     private int tag;
+    public readonly string Url;
 
     public RemoteWakeupHandler(String URL, int tag)
     {
       remote = (IWakeupHandler)Activator.GetObject(typeof(IWakeupHandler), URL);
       this.tag = tag;
+      this.Url = URL;
     }
 
     public void Close()

@@ -606,26 +606,97 @@ namespace TvEngine.PowerScheduler
     private int _remoteTags = 0;
     private Hashtable _remoteStandbyHandlers = new Hashtable();
     private Hashtable _remoteWakeupHandlers = new Hashtable();
+    private Dictionary<string, int> _remoteStandbyHandlerURIs = new Dictionary<string, int>();
+    private Dictionary<string, int> _remoteWakeupHandlerURIs = new Dictionary<string, int>();
 
     [MethodImpl(MethodImplOptions.Synchronized)]
     public int RegisterRemote(string standbyHandlerURI, string wakeupHandlerURI)
     {
-      _remoteTags++;
+      int oldStandbyTag = 0;
+      int oldWakeupTag = 0;
 
-      LogVerbose("PowerScheduler: RegisterRemote tag: {0}, uris: {1}, {2}", _remoteTags, standbyHandlerURI, wakeupHandlerURI);
+      // Find existing registrations
+      if (!string.IsNullOrEmpty(standbyHandlerURI) &&
+          !_remoteStandbyHandlerURIs.TryGetValue(standbyHandlerURI, out oldStandbyTag))
+      {
+        oldStandbyTag = _remoteTags + 1;
+      }
+      if (!string.IsNullOrEmpty(wakeupHandlerURI) &&
+          !_remoteWakeupHandlerURIs.TryGetValue(wakeupHandlerURI, out oldWakeupTag))
+      {
+        oldWakeupTag = _remoteTags + 1;
+      }
+
+      if (oldStandbyTag == 0 && oldWakeupTag == 0)
+        return 0; // No URIs supplied!
+
+      // Determine new registration tag
+      int newTag = 0;
+      if (oldStandbyTag == oldWakeupTag && oldStandbyTag != 0 && oldStandbyTag <= _remoteTags)
+      {
+        newTag = oldStandbyTag;
+      }
+      else if (oldStandbyTag == 0)
+      {
+        newTag = oldWakeupTag;
+      }
+      else if (oldWakeupTag == 0)
+      {
+        newTag = oldStandbyTag;
+      }
+      else
+      {
+        newTag = _remoteTags + 1;
+      }
+
+      // Register handlers
+      LogVerbose("PowerScheduler: RegisterRemote tag: {0}, uris: {1}, {2}", newTag, standbyHandlerURI, wakeupHandlerURI);
       if (standbyHandlerURI != null && standbyHandlerURI.Length > 0)
       {
-        RemoteStandbyHandler hdl = new RemoteStandbyHandler(standbyHandlerURI, _remoteTags);
-        Register(hdl);
-        _remoteStandbyHandlers[_remoteTags] = hdl;
+        RemoteStandbyHandler hdl;
+        if (newTag <= _remoteTags)
+        {
+          hdl = (RemoteStandbyHandler)_remoteStandbyHandlers[oldStandbyTag];
+          _remoteStandbyHandlers.Remove(oldStandbyTag);
+        }
+        else
+        {
+          hdl = new RemoteStandbyHandler(standbyHandlerURI, newTag);
+          Register(hdl);
+        }
+        
+        _remoteStandbyHandlers[newTag] = hdl;
+        _remoteStandbyHandlerURIs[standbyHandlerURI] = newTag;
       }
       if (wakeupHandlerURI != null && wakeupHandlerURI.Length > 0)
       {
-        RemoteWakeupHandler hdl = new RemoteWakeupHandler(wakeupHandlerURI, _remoteTags);
-        Register(hdl);
-        _remoteWakeupHandlers[_remoteTags] = hdl;
+        RemoteWakeupHandler hdl;
+        if (newTag <= _remoteTags)
+        {
+          hdl = (RemoteWakeupHandler)_remoteWakeupHandlers[oldWakeupTag];
+          _remoteWakeupHandlers.Remove(oldWakeupTag);
+        }
+        else
+        {
+          hdl = new RemoteWakeupHandler(wakeupHandlerURI, newTag);
+          Register(hdl);
+        }
+        _remoteWakeupHandlers[newTag] = hdl;
+        _remoteWakeupHandlerURIs[wakeupHandlerURI] = newTag;
       }
-      return _remoteTags;
+      if (newTag > _remoteTags)
+        _remoteTags = newTag;
+
+      //Unregister old handlers
+      if(oldStandbyTag != 0 && oldStandbyTag != newTag)
+      {
+        UnregisterRemote(oldStandbyTag);
+      }
+      if (oldWakeupTag != 0 && oldWakeupTag != newTag)
+      {
+        UnregisterRemote(oldWakeupTag);
+      }
+      return newTag;
     }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
@@ -636,6 +707,7 @@ namespace TvEngine.PowerScheduler
         if (hdl != null)
         {
           _remoteStandbyHandlers.Remove(tag);
+          _remoteStandbyHandlerURIs.Remove(hdl.Url);
           hdl.Close();
           LogVerbose("PowerScheduler: UnregisterRemote StandbyHandler {0}", tag);
           Unregister(hdl);
@@ -646,6 +718,7 @@ namespace TvEngine.PowerScheduler
         if (hdl != null)
         {
           _remoteWakeupHandlers.Remove(tag);
+          _remoteWakeupHandlerURIs.Remove(hdl.Url);
           hdl.Close();
           LogVerbose("PowerScheduler: UnregisterRemote WakeupHandler {0}", tag);
           Unregister(hdl);
@@ -1309,8 +1382,9 @@ namespace TvEngine.PowerScheduler
 
         foreach (IStandbyHandler handler in _standbyHandlers)
         {
-          LogVerbose("PowerScheduler.DisAllowShutdown: inspecting IStandbyHandler:{0} DisAllowShutdown:{1}", handler.HandlerName, handler.DisAllowShutdown);
-          if (handler.DisAllowShutdown)
+          bool handlerDisAllowsShutdown = handler.DisAllowShutdown;
+          LogVerbose("PowerScheduler.DisAllowShutdown: inspecting handler:{0} DisAllowShutdown:{1}", handler.HandlerName, handlerDisAllowsShutdown);
+          if (handlerDisAllowsShutdown)
           {
             _currentDisAllowShutdownHandler = handler.HandlerName;
             _currentDisAllowShutdown = true;
