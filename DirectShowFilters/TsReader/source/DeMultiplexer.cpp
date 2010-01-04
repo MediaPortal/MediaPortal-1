@@ -754,7 +754,7 @@ int CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
       {
         //LogDebug("demux:endoffile...%d",GetTickCount()-m_LastDataFromRtsp );
         //set EOF flag and return
-        if (GetTickCount()-m_LastDataFromRtsp > 2000) // A bit crappy, but no better idea...
+        if (GetTickCount()-m_LastDataFromRtsp > 2000 && m_filter.State() != State_Paused ) // A bit crappy, but no better idea...
         {
           LogDebug("demux:endoffile");
           m_bEndOfFile=true;
