@@ -368,6 +368,7 @@ Section "-prepare" SecPrepare
     ${LOG_TEXT} "DEBUG" "SecPrepare: DeployMode = 1 | UpdateMode = 0"
 
     !insertmacro RenameInstallDirectory
+    ${ReadMediaPortalDirs} "$INSTDIR"
 
   ${Else}
     ${LOG_TEXT} "DEBUG" "SecPrepare: DeployMode = 0 | UpdateMode = 0"
@@ -393,11 +394,13 @@ Section "MediaPortal core files (required)" SecCore
   SetOverwrite on
 
   #CONFIG FILES ARE ALWAYS INSTALLED by SVN and FINAL releases, BECAUSE of the config dir location
+  #MediaPortal Paths should not be overwritten
   !define EXCLUDED_CONFIG_FILES "\
     /x 'eHome Infrared Transceiver List XP.xml' \
     /x HelpReferences.xml \
     /x ISDNCodes.xml \
     /x keymap.xml \
+    /x MediaPortalDirs.xml \
     /x wikipedia.xml \
     /x yac-area-codes.xml \
     "
@@ -459,6 +462,8 @@ Section "MediaPortal core files (required)" SecCore
 
 
   SetOutPath "$MPdir.Base"
+  SetOverwrite off
+  File /nonfatal "${MEDIAPORTAL.BASE}\MediaPortalDirs.xml"
   SetOverwrite on
   ; MediaPortal.exe
   File "${svn_MP}\xbmc\bin\${BUILD_TYPE}\MediaPortal.exe"

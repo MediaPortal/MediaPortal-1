@@ -6,5 +6,6 @@ $MPdir.Base\eHome Infrared Transceiver List XP.xml
 $MPdir.Base\HelpReferences.xml
 $MPdir.Base\ISDNCodes.xml
 $MPdir.Base\keymap.xml
+$MPdir.Base\MediaPortalDirs.xml
 $MPdir.Base\wikipedia.xml
 $MPdir.Base\yac-area-codes.xml
