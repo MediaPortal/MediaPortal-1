@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using System.IO;
-using System.Diagnostics;
-using System.Reflection;
-using System.Globalization;
 
 namespace LogoAutoRenamer
 {
@@ -19,22 +19,28 @@ namespace LogoAutoRenamer
       textBoxSrc.Text = curDir + @"\logos src";
       textBoxDst.Text = curDir + @"\logos dst";
       textboxXml.Text = curDir + @"\export.xml";
-      Text = Assembly.GetExecutingAssembly().GetName().Name + " v0.9";
+      Text = Assembly.GetExecutingAssembly().GetName().Name + " v1.0.0.0";
+    }
+
+    public override sealed string Text
+    {
+      get { return base.Text; }
+      set { base.Text = value; }
     }
 
     private void buttonStart_Click(object sender, EventArgs e)
     {
-      XmlDocument doc = new XmlDocument();
-      List<string> rules = new List<string>();
-      int i_ch_with_logo = 0;
-      int i_ch_no_logo = 0;
-      string ch_name;
-      string ch_type;
-      string logo_name = string.Empty;
-      string logo_ext = string.Empty;
+      var doc = new XmlDocument();
+      var rules = new List<string>();
+      int iChWithLogo = 0;
+      int iChNoLogo = 0;
+      string chName;
+      string chType;
+      string logoName = string.Empty;
+      string logoExt = string.Empty;
       string log = "c:\\" + Assembly.GetExecutingAssembly().GetName().Name + ".log";
-      string[] dirs = { textBoxDst.Text, textBoxDst.Text + "\\TV", textBoxDst.Text + "\\Radio" };
-      char[] invalid_chs = { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
+      string[] dirs = {textBoxDst.Text, textBoxDst.Text + "\\TV", textBoxDst.Text + "\\Radio"};
+      char[] invalidChs = {'\\', '/', ':', '*', '?', '"', '<', '>', '|'};
 
       buttonStart.Enabled = false;
 
@@ -48,72 +54,73 @@ namespace LogoAutoRenamer
         }
       }
 
-      DirectoryInfo dirSrc = new DirectoryInfo(textBoxSrc.Text);
+      var dirSrc = new DirectoryInfo(textBoxSrc.Text);
 
       doc.Load(textboxXml.Text);
       if (doc.DocumentElement != null)
       {
-        XmlNodeList NodeList = doc.DocumentElement.SelectNodes("/tvserver/channels/channel");
-        foreach (XmlNode Node in NodeList)
+        XmlNodeList nodeList = doc.DocumentElement.SelectNodes("/tvserver/channels/channel");
+        foreach (XmlNode node in nodeList)
         {
-          ch_name = Node.Attributes["DisplayName"].Value.ToLower();    // "rete 4"
-          string ch_search = ch_name;
-          ch_type = Node.Attributes["IsTv"].Value.ToLower() == "true" ? "TV   " : "Radio";
+          chName = node.Attributes["DisplayName"].Value.ToLower(); // "rete 4"
+          string chSearch = chName;
+          chType = node.Attributes["IsTv"].Value.ToLower() == "true" ? "TV   " : "Radio";
 
-          foreach (char invalid_ch in invalid_chs)
+          foreach (char invalidCh in invalidChs)
           {
-            if (ch_name.Contains(invalid_ch.ToString()))
+            if (chName.Contains(invalidCh.ToString()))
             {
-              ch_search = ch_name.Replace(invalid_ch, ' ');
-              ch_name = ch_name.Replace(invalid_ch, '_');
+              chSearch = chName.Replace(invalidCh, ' ');
+              chName = chName.Replace(invalidCh, '_');
             }
           }
 
           rules.Clear();
-          if (ch_name.Contains("+"))
+          if (chName.Contains("+"))
           {
-            ch_search = ch_name.Replace("+", " plus");
-            rules.AddRange(AddRules(ch_name.Replace("+", "_plus")));
-            rules.AddRange(AddRules(ch_name.Replace("+", "plus_")));
-            rules.AddRange(AddRules(ch_name.Replace("+", "plus")));
+            chSearch = chName.Replace("+", " plus");
+            rules.AddRange(AddRules(chName.Replace("+", "_plus")));
+            rules.AddRange(AddRules(chName.Replace("+", "plus_")));
+            rules.AddRange(AddRules(chName.Replace("+", "plus")));
           }
-          rules.AddRange(AddRules(ch_search));
+          rules.AddRange(AddRules(chSearch));
 
-          bool FoundLogo = false;
+          bool foundLogo = false;
 
           foreach (FileInfo f in dirSrc.GetFiles("*"))
           {
             foreach (string rule in rules)
             {
-              logo_name = f.Name.ToLower();
-              logo_ext = f.Extension.ToLower();
+              logoName = f.Name.ToLower();
+              logoExt = f.Extension.ToLower();
 
-              if (ch_name.Length >= 2 && (logo_name.StartsWith(rule) || logo_name.EndsWith(rule + logo_ext)))
+              if (chName.Length >= 2 && (logoName.StartsWith(rule) || logoName.EndsWith(rule + logoExt)))
               {
 #if DEBUG
-                Console.WriteLine("Channelname : <" + ch_name + ">");
-                Console.WriteLine("FileName    : <" + logo_name + ">");
+                Console.WriteLine("Channelname : <" + chName + ">");
+                Console.WriteLine("FileName    : <" + logoName + ">");
                 Console.WriteLine("Rule        : <" + rule + ">");
                 Console.WriteLine("***");
 #endif
-                FoundLogo = true;
+                foundLogo = true;
                 break;
               }
             }
-            if (FoundLogo) break;
+            if (foundLogo) break;
           }
 
-          string ch_name_log = ("<" + ch_name + ">").PadRight(40, ' ') + "[" + ch_type + "]";
-          if (FoundLogo)
+          string chNameLog = ("<" + chName + ">").PadRight(40, ' ') + "[" + chType + "]";
+          if (foundLogo)
           {
-            File.Copy(textBoxSrc.Text + "\\" + logo_name, textBoxDst.Text + "\\" + ch_type.Trim() + "\\" + ch_name + logo_ext, true);
-            tw.WriteLine(ch_name_log + ":  found logo <" + logo_name + ">");
-            i_ch_with_logo++;
+            File.Copy(textBoxSrc.Text + "\\" + logoName,
+                      textBoxDst.Text + "\\" + chType.Trim() + "\\" + chName + logoExt, true);
+            tw.WriteLine(chNameLog + ":  found logo <" + logoName + ">");
+            iChWithLogo++;
           }
           else
           {
-            tw.WriteLine(ch_name_log + ":  no logo available");
-            i_ch_no_logo++;
+            tw.WriteLine(chNameLog + ":  no logo available");
+            iChNoLogo++;
           }
         }
       }
@@ -122,17 +129,22 @@ namespace LogoAutoRenamer
       tw.WriteLine("******************************");
       tw.WriteLine("Statistics:");
       tw.WriteLine("");
-      tw.WriteLine("  found   : " + i_ch_with_logo.ToString().PadLeft(5, ' '));
-      tw.WriteLine("  missing : " + i_ch_no_logo.ToString().PadLeft(5, ' '));
+      tw.WriteLine("  found   : " + iChWithLogo.ToString().PadLeft(5, ' '));
+      tw.WriteLine("  missing : " + iChNoLogo.ToString().PadLeft(5, ' '));
       tw.WriteLine("******************************");
       tw.Close();
 
       MessageBox.Show("Rename complete !");
-      Process process = new Process();
-      process.StartInfo.FileName = "notepad.exe";
-      process.StartInfo.WindowStyle = ProcessWindowStyle.Maximized;
-      process.StartInfo.Arguments = log;
-      process.StartInfo.UseShellExecute = true;
+      var process = new Process
+                      {
+                        StartInfo =
+                          {
+                            FileName = "notepad.exe",
+                            WindowStyle = ProcessWindowStyle.Maximized,
+                            Arguments = log,
+                            UseShellExecute = true
+                          }
+                      };
       process.Start();
       Application.Exit();
     }
@@ -167,38 +179,38 @@ namespace LogoAutoRenamer
       textboxXml.Text = openFileDialog1.FileName;
     }
 
-    private static IEnumerable<string> AddRules(string ch_search)
+    private static IEnumerable<string> AddRules(string chSearch)
     {
       //
       // RemoveDiacritics convert щ->u , т->o, м->i, а->a and ий->e
       //
-      string ch_clean_search = RemoveDiacritics(ch_search);
+      string chCleanSearch = RemoveDiacritics(chSearch);
 
-      List<string> rules = new List<string>();
+      var rules = new List<string>();
       rules.Clear();
-      if (ch_clean_search.Contains("-"))
+      if (chCleanSearch.Contains("-"))
       {
-        string tmp_search = ch_clean_search.Split('-')[0].Trim();     // "joi - mediaset premium" -> "joi.xxx"
-        if (tmp_search.Length < 2)
+        string tmpSearch = chCleanSearch.Split('-')[0].Trim(); // "joi - mediaset premium" -> "joi.xxx"
+        if (tmpSearch.Length < 2)
         {
-          rules.Add(ch_clean_search + ".");
+          rules.Add(chCleanSearch + ".");
           return rules;
         }
-        ch_clean_search = tmp_search;
+        chCleanSearch = tmpSearch;
       }
 
-      rules.Add(ch_clean_search.Replace(".", "") + ".");              // "rtl 102.5"              -> "rtl 1025"
-      rules.Add(ch_clean_search + ".");                               // "rete 4"                 -> "rete 4.xxx"
-      rules.Add(ch_clean_search.Replace(" ", "") + ".");              // "rete 4"                 -> "rete4.xxx"
-      rules.Add(ch_clean_search.Replace(" ", "_") + ".");             // "rete 4"                 -> "rete_4.xxx"
+      rules.Add(chCleanSearch.Replace(".", "") + "."); // "rtl 102.5"              -> "rtl 1025"
+      rules.Add(chCleanSearch + "."); // "rete 4"                 -> "rete 4.xxx"
+      rules.Add(chCleanSearch.Replace(" ", "") + "."); // "rete 4"                 -> "rete4.xxx"
+      rules.Add(chCleanSearch.Replace(" ", "_") + "."); // "rete 4"                 -> "rete_4.xxx"
 
       return rules;
     }
 
-    static string RemoveDiacritics(string stIn)
+    private static string RemoveDiacritics(string stIn)
     {
       string stFormD = stIn.Normalize(NormalizationForm.FormD);
-      StringBuilder sb = new StringBuilder();
+      var sb = new StringBuilder();
 
       for (int ich = 0; ich < stFormD.Length; ich++)
       {
@@ -210,6 +222,5 @@ namespace LogoAutoRenamer
       }
       return (sb.ToString().Normalize(NormalizationForm.FormC));
     }
-
   }
 }
