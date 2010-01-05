@@ -397,19 +397,7 @@ namespace TvPlugin
         protected override void OnPageDestroy(int newWindowId)
         {
             _iSelectedItem = GetSelectedItemNo();
-            SaveSettings();
-            if (!GUIGraphicsContext.IsTvWindow(newWindowId))
-            {
-                if (TVHome.Card.IsTimeShifting && !(TVHome.Card.IsTimeShifting || TVHome.Card.IsRecording))
-                {
-                    if (GUIGraphicsContext.ShowBackground)
-                    {
-                        // stop timeshifting & viewing... 
-
-                        //@Recorder.StopViewing();
-                    }
-                }
-            }
+            SaveSettings();          
             base.OnPageDestroy(newWindowId);
         }
 

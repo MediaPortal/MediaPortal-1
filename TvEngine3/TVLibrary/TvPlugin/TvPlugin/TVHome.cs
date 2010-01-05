@@ -713,7 +713,7 @@ namespace TvPlugin
     public override void Process()
     {
       TimeSpan ts = DateTime.Now - _updateTimer;
-      if (ts.TotalMilliseconds < 1000 || !Connected)
+      if (!Connected || _suspended || ts.TotalMilliseconds < 1000)
       {
         return;
       }
