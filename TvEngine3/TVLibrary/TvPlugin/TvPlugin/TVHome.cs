@@ -303,13 +303,7 @@ namespace TvPlugin
 
         //Wake up the TV server, if required
         HandleWakeUpTvServer();
-
-        startHeartBeatThread();
-        if (!Connected)
-        {
-          RefreshConnectionState();
-        }
-        //System.Diagnostics.Debugger.Launch();
+        startHeartBeatThread();      
         
         m_navigator = new ChannelNavigator();
         LoadSettings();
@@ -1487,7 +1481,9 @@ namespace TvPlugin
     private void HeartBeatTransmitter()
     {
       while (true)
-      {        
+      {                
+        if (!Connected) // is this needed to update connection status
+          RefreshConnectionState();
         if (Connected && !_suspended)
         {
           bool isTS = (Card != null && Card.IsTimeShifting);
