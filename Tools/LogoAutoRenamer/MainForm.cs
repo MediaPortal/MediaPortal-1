@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -39,8 +40,8 @@ namespace LogoAutoRenamer
       string logoName = string.Empty;
       string logoExt = string.Empty;
       string log = "c:\\" + Assembly.GetExecutingAssembly().GetName().Name + ".log";
-      string[] dirs = {textBoxDst.Text, textBoxDst.Text + "\\TV", textBoxDst.Text + "\\Radio"};
-      char[] invalidChs = {'\\', '/', ':', '*', '?', '"', '<', '>', '|'};
+      string[] dirs = { textBoxDst.Text, textBoxDst.Text + "\\TV", textBoxDst.Text + "\\Radio" };
+      char[] invalidChs = { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
 
       buttonStart.Enabled = false;
 
@@ -60,69 +61,79 @@ namespace LogoAutoRenamer
       if (doc.DocumentElement != null)
       {
         XmlNodeList nodeList = doc.DocumentElement.SelectNodes("/tvserver/channels/channel");
-        foreach (XmlNode node in nodeList)
-        {
-          chName = node.Attributes["DisplayName"].Value.ToLower(); // "rete 4"
-          string chSearch = chName;
-          chType = node.Attributes["IsTv"].Value.ToLower() == "true" ? "TV   " : "Radio";
-
-          foreach (char invalidCh in invalidChs)
+        if (nodeList != null)
+          foreach (XmlNode node in nodeList)
           {
-            if (chName.Contains(invalidCh.ToString()))
+            chName = node.Attributes["DisplayName"].Value.ToLower(); // "rete 4"
+            string chSearch = chName;
+            chType = node.Attributes["IsTv"].Value.ToLower() == "true" ? "TV   " : "Radio";
+
+            //Remove invalid chars
+            foreach (char invalidCh in invalidChs)
             {
-              chSearch = chName.Replace(invalidCh, ' ');
-              chName = chName.Replace(invalidCh, '_');
-            }
-          }
-
-          rules.Clear();
-          if (chName.Contains("+"))
-          {
-            chSearch = chName.Replace("+", " plus");
-            rules.AddRange(AddRules(chName.Replace("+", "_plus")));
-            rules.AddRange(AddRules(chName.Replace("+", "plus_")));
-            rules.AddRange(AddRules(chName.Replace("+", "plus")));
-          }
-          rules.AddRange(AddRules(chSearch));
-
-          bool foundLogo = false;
-
-          foreach (FileInfo f in dirSrc.GetFiles("*"))
-          {
-            foreach (string rule in rules)
-            {
-              logoName = f.Name.ToLower();
-              logoExt = f.Extension.ToLower();
-
-              if (chName.Length >= 2 && (logoName.StartsWith(rule) || logoName.EndsWith(rule + logoExt)))
+              if (chName.Contains(invalidCh.ToString()))
               {
+                chSearch = chName.Replace(invalidCh, ' ');
+                chName = chName.Replace(invalidCh, '_');
+              }
+            }
+
+            //Clears all rules
+            rules.Clear();
+
+            //Add rules for channels with the "+" in the name
+            if (chName.Contains("+"))
+            {
+              chSearch = chName.Replace("+", " plus");
+              rules.AddRange(AddRules(chName.Replace("+", "_plus")));
+              rules.AddRange(AddRules(chName.Replace("+", "plus_")));
+              rules.AddRange(AddRules(chName.Replace("+", "plus")));
+            }
+
+            //Add rules for channels that end with (?) when ? is a number
+            rules.AddRange(AddRules(Regex.Replace(chName, @"(\([0-9]\))", string.Empty)));
+
+            //Add standard rules
+            rules.AddRange(AddRules(chSearch));
+
+            bool foundLogo = false;
+
+            foreach (FileInfo f in dirSrc.GetFiles("*"))
+            {
+              foreach (string rule in rules)
+              {
+                logoName = f.Name.ToLower();
+                logoExt = f.Extension.ToLower();
+
+                if (chName.Length >= 2 && (logoName.StartsWith(rule) || logoName.EndsWith(rule + logoExt)))
+                {
 #if DEBUG
                 Console.WriteLine("Channelname : <" + chName + ">");
                 Console.WriteLine("FileName    : <" + logoName + ">");
                 Console.WriteLine("Rule        : <" + rule + ">");
                 Console.WriteLine("***");
 #endif
-                foundLogo = true;
-                break;
+                  foundLogo = true;
+                  break;
+                }
               }
+              if (foundLogo) break;
             }
-            if (foundLogo) break;
-          }
 
-          string chNameLog = ("<" + chName + ">").PadRight(40, ' ') + "[" + chType + "]";
-          if (foundLogo)
-          {
-            File.Copy(textBoxSrc.Text + "\\" + logoName,
-                      textBoxDst.Text + "\\" + chType.Trim() + "\\" + chName + logoExt, true);
-            tw.WriteLine(chNameLog + ":  found logo <" + logoName + ">");
-            iChWithLogo++;
+            string chNameLog = ("<" + chName + ">").PadRight(40, ' ') + "[" + chType + "]";
+            if (foundLogo)
+            {
+              File.Copy(textBoxSrc.Text + "\\" + logoName,
+                        textBoxDst.Text + "\\" + chType.Trim() + "\\" + chName + logoExt, true);
+              tw.WriteLine(chNameLog + ":  found logo <" + logoName + ">");
+              iChWithLogo++;
+            }
+            else
+            {
+              tw.WriteLine(chNameLog + ":  no logo available");
+              iChNoLogo++;
+            }
           }
-          else
-          {
-            tw.WriteLine(chNameLog + ":  no logo available");
-            iChNoLogo++;
-          }
-        }
       }
 
       tw.WriteLine("");
