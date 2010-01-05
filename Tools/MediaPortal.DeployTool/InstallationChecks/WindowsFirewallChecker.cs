@@ -111,32 +111,35 @@ namespace MediaPortal.DeployTool.InstallationChecks
       {
         //TVService
         app = InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe";
-        AuthorizeApplication("MediaPortal TV Server", app, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
+        AuthorizeApplication("MediaPortal TV Server", app, NET_FW_SCOPE_.NET_FW_SCOPE_ALL, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
+        //SetupTV
+        app = InstallationProperties.Instance["TVServerDir"] + "\\SetupTv.exe";
+        AuthorizeApplication("MediaPortal TV Setup", app, NET_FW_SCOPE_.NET_FW_SCOPE_ALL, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
       }
       if (InstallationProperties.Instance["ConfigureMediaPortalFirewall"] == "1")
       {
         //MediaPortal
         app = InstallationProperties.Instance["MPDir"] + "\\MediaPortal.exe";
-        AuthorizeApplication("MediaPortal", app, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
+        AuthorizeApplication("MediaPortal", app, NET_FW_SCOPE_.NET_FW_SCOPE_ALL, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
       }
       if (InstallationProperties.Instance["ConfigureDBMSFirewall"] == "1")
       {
         int port;
         if (InstallationProperties.Instance["DBMSType"] == "msSQL2005")
         {
-          //SQL2008 TCP Port
+          //SQL2005 TCP Port
           port = 1433;
-          GloballyOpenPort("Microsoft SQL (TCP)", port, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_TCP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
+          GloballyOpenPort("Microsoft SQL (TCP)", port, NET_FW_SCOPE_.NET_FW_SCOPE_ALL, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_TCP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
 
-          //SQL2008 UDP Port
+          //SQL2005 UDP Port
           port = 1434;
-          GloballyOpenPort("Microsoft SQL (UDP)", port, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_UDP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
+          GloballyOpenPort("Microsoft SQL (UDP)", port, NET_FW_SCOPE_.NET_FW_SCOPE_ALL, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_UDP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
         }
         else
         {
           //MySQL TCP Port
           port = 3306;
-          GloballyOpenPort("MySQL", port, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_TCP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
+          GloballyOpenPort("MySQL", port, NET_FW_SCOPE_.NET_FW_SCOPE_ALL, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_TCP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
         }
       }
     }
