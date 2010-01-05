@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Xml.Serialization;
-using MediaPortal.Configuration;
 
-namespace MpeInstaller.Classes
+namespace MpeCore.Classes
 {
     public class ApplicationSettings
     {
@@ -25,7 +22,7 @@ namespace MpeInstaller.Classes
 
         public void Save()
         {
-            string filename = string.Format("{0}\\InstallerSettings.xml", MpeCore.MpeInstaller.BaseFolder);
+            string filename = string.Format("{0}\\InstallerSettings.xml", MpeInstaller.BaseFolder);
             var serializer = new XmlSerializer(typeof(ApplicationSettings));
             TextWriter writer = new StreamWriter(filename);
             serializer.Serialize(writer, this);
@@ -34,15 +31,15 @@ namespace MpeInstaller.Classes
 
         public static ApplicationSettings Load()
         {
-            ApplicationSettings apls = new ApplicationSettings();
-            string filename = string.Format("{0}\\InstallerSettings.xml", MpeCore.MpeInstaller.BaseFolder);
+            var apls = new ApplicationSettings();
+            string filename = string.Format("{0}\\InstallerSettings.xml", MpeInstaller.BaseFolder);
 
             if (File.Exists(filename))
             {
                 FileStream fs = null;
                 try
                 {
-                    XmlSerializer serializer = new XmlSerializer(typeof(ApplicationSettings));
+                    var serializer = new XmlSerializer(typeof(ApplicationSettings));
                     fs = new FileStream(filename, FileMode.Open);
                     apls = (ApplicationSettings)serializer.Deserialize(fs);
                     fs.Close();

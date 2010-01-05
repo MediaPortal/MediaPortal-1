@@ -35,7 +35,7 @@ namespace MpeInstaller
                 if (File.Exists(args.PackageFile))
                 {
                     _settings.DoUpdateInStartUp = false;
-                    InstallFile(args.PackageFile, args.Silent);
+                    InstallFile(args.PackageFile, args.Silent, false);
                     this.Close();
                     return;
                 }
@@ -101,7 +101,7 @@ namespace MpeInstaller
             }
             ExecuteQueue();
             Process.Start(Config.GetFile(Config.Dir.Base, "MediaPortal.exe"));
-            Thread.Sleep(5000);
+            Thread.Sleep(3000);
         }
 
         public void ExecuteQueue()
@@ -121,7 +121,7 @@ namespace MpeInstaller
                                 continue;
                             splashScreen.SetInfo("Installing " + packageClass.GeneralInfo.Name);
                             string newPackageLoacation = GetPackageLocation(packageClass);
-                            InstallFile(newPackageLoacation, true);
+                            InstallFile(newPackageLoacation, true, false);
                         }
                         break;
                     case CommandEnum.Uninstall:
@@ -383,6 +383,11 @@ namespace MpeInstaller
 
         public void InstallFile(string file, bool silent)
         {
+            InstallFile(file, silent, true);
+        }
+
+        public void InstallFile(string file, bool silent, bool gui)
+        {
             if (!File.Exists(file))
             {
                 if (!silent)
@@ -418,11 +423,15 @@ namespace MpeInstaller
                     dlg.Execute(installedPak, true);
                     pak.CopyGroupCheck(installedPak);
                 }
-                this.Hide();
+                if (gui)
+                    this.Hide();
                 pak.Silent = silent;
                 pak.StartInstallWizard();
-                RefreshLists();
-                this.Show();
+                if (gui)
+                {
+                    RefreshLists();
+                    this.Show();
+                }
             }
             else
             {

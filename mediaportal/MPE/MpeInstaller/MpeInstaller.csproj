@@ -61,7 +61,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\ApplicationSettings.cs" />
     <Compile Include="Classes\ProgramArguments.cs" />
     <Compile Include="Controls\ExtensionControl.cs">
       <SubType>UserControl</SubType>
