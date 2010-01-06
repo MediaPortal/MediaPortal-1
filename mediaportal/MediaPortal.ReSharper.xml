@@ -19,6 +19,7 @@
       </MODIFIERS_ORDER>
       <SPACE_AFTER_TYPECAST_PARENTHESES>False</SPACE_AFTER_TYPECAST_PARENTHESES>
       <SPACE_AROUND_MULTIPLICATIVE_OP>True</SPACE_AROUND_MULTIPLICATIVE_OP>
+      <EMPTY_BLOCK_STYLE>TOGETHER_SAME_LINE</EMPTY_BLOCK_STYLE>
     </FormatSettings>
     <UsingsSettings />
     <Naming2>
@@ -38,6 +39,10 @@
       <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="StaticReadonly" />
       <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="EnumMember" />
       <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="Other" />
+      <PredefinedRule Inspect="True" Prefix="_" Suffix="" Style="aaBb" ElementKind="PrivateInstanceFields" />
+      <PredefinedRule Inspect="True" Prefix="_" Suffix="" Style="aaBb" ElementKind="PrivateStaticFields" />
+      <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="PrivateConstants" />
+      <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="PrivateStaticReadonly" />
     </Naming2>
   </CSharp>
   <VB>
