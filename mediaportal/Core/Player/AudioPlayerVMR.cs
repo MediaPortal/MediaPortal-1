@@ -440,12 +440,6 @@ namespace MediaPortal.Player
       int hr;
       try
       {
-        if (_rotEntry != null)
-        {
-          _rotEntry.Dispose();
-        }
-        _rotEntry = null;
-
 
         if (mediaCtrl != null)
         {
@@ -484,9 +478,14 @@ namespace MediaPortal.Player
 
         if (graphBuilder != null)
         {
+          if (_rotEntry != null)
+          {
+            _rotEntry.Dispose();
+            _rotEntry = null;
+          }
           DirectShowUtil.ReleaseComObject(graphBuilder);
+          graphBuilder = null;
         }
-        graphBuilder = null;
 
         m_state = PlayState.Init;
       }

@@ -1444,15 +1444,17 @@ namespace MediaPortal.Player
         }
         _vmr7 = null;        
 
-        if (_rotEntry != null)
-        {
-          _rotEntry.Dispose();
-        }
-        _rotEntry = null;
+
+        
 
         if (_graphBuilder != null)
         {
           DirectShowUtil.RemoveFilters(_graphBuilder);
+          if (_rotEntry != null)
+          {
+            _rotEntry.Dispose();
+            _rotEntry = null;
+          }
           while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0)
           {
             ;

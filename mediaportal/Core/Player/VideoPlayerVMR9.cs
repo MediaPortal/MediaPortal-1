@@ -409,16 +409,15 @@ namespace MediaPortal.Player
         if (graphBuilder != null)
         {          
           DirectShowUtil.RemoveFilters(graphBuilder);
+          if (_rotEntry != null)
+          {
+            _rotEntry.Dispose();
+            _rotEntry = null;
+          }
           DirectShowUtil.ReleaseComObject(graphBuilder);
           graphBuilder = null;
         }
 
-        if (_rotEntry != null)
-        {
-          _rotEntry.Dispose();
-          _rotEntry = null;
-        }
-        
         GUIGraphicsContext.form.Invalidate(true);
         m_state = PlayState.Init;
         
