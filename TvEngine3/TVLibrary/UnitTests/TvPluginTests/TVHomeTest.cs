@@ -502,6 +502,35 @@ namespace TvPluginTests
       Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
     }
 
+    [Test]
+    ///<summary>
+    /// streams : 5
+    /// stream1 : mpeg1, lang: dan.
+    /// stream2 : ac3, lang: dan.
+    /// stream3 : mpeg1, lang: eng.
+    /// stream4 : ac3, lang: eng.
+    /// stream5 : mpeg1, lang: deu.
+    /// pref_lang : empty
+    /// PreferAC3 : true
+    /// PreferAudioTypeOverLang : false
+    ///</summary>
+    public void GetPreferedAudioStreamIndexTest27()
+    {
+      g_Player.Player = new PlayerMultipleAudioStreams();
+
+      List<string> prefLangs = new List<string>();
+      TVHome.PreferredLanguages = prefLangs; //empty
+      TVHome.PreferAC3 = true;
+      TVHome.PreferAudioTypeOverLang = false;
+
+      eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
+
+      int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
+
+      Assert.AreEqual(index, 1, "Wrong audio index returned");
+      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+    }
+
     #endregion
 
     #region 1 dualmono audiostream available tests
