@@ -191,8 +191,8 @@ namespace MediaPortal.GUI.Video
           }
         }
 
-        int speed = g_Player.Speed;
-        double pos = g_Player.CurrentPosition;
+//        int speed = g_Player.Speed;
+//        double pos = g_Player.CurrentPosition;    // Should not called from this thread. !
         if (_imagePlayLogo != null)
         {
           _imagePlayLogo.Visible = (g_Player.Paused == false);

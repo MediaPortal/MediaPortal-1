@@ -1395,7 +1395,7 @@ namespace MediaPortal.Player
 
     protected void UpdateCurrentPosition()
     {
-      if (_mediaSeeking == null || _graphBuilder == null)
+      if (_mediaSeeking == null || _graphBuilder == null || Thread.CurrentThread.Name != "MPMain")
       {
         return;
       }
