@@ -1,5 +1,7 @@
 @ECHO OFF
 
+REM set the path to svn root
+set SVN_ROOT=..\..
 
 REM detect if BUILD_TYPE should be release or debug
 if not %1!==Debug! goto RELEASE
@@ -22,13 +24,15 @@ echo -= TV Server / Client plugin =-
 echo -= build mode: %BUILD_TYPE% =-
 echo.
 
+
 echo.
 echo Building DeployVersionSVN...
-"%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild "..\..\Tools\Script & Batch tools\DeployVersionSVN\DeployVersionSVN.sln" > build.log
+"%SVN_ROOT%\Tools\Script & Batch tools\DeployVersionSVN\Build.bat" > build.log
 
 echo.
 echo Writing SVN revision assemblies...
-"..\..\Tools\Script & Batch tools\DeployVersionSVN\DeployVersionSVN\bin\Debug\DeployVersionSVN.exe" /svn=%CD% >> build.log
+"%SVN_ROOT%\Tools\Script & Batch tools\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn=%CD% >> build.log
+"%SVN_ROOT%\Tools\Script & Batch tools\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn=%CD%\%SVN_ROOT%\Common-MP-TVE3 >> build.log
 
 echo.
 echo Building TV Server...
@@ -39,7 +43,9 @@ echo Building TV Client plugin...
 
 echo.
 echo Reverting assemblies...
-"..\..\Tools\Script & Batch tools\DeployVersionSVN\DeployVersionSVN\bin\Debug\DeployVersionSVN.exe" /svn=%CD% /revert >> build.log
+"%SVN_ROOT%\Tools\Script & Batch tools\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn=%CD% /revert >> build.log
+"%SVN_ROOT%\Tools\Script & Batch tools\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn=%CD%\%SVN_ROOT%\Common-MP-TVE3 /revert >> build.log
+
 
 echo.
 echo Reading the svn revision...
