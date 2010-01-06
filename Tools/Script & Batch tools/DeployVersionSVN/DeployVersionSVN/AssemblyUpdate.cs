@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace DeployVersionSVN
 {
@@ -48,7 +49,8 @@ namespace DeployVersionSVN
       _updateMode = mode;
       _excludedFiles = new List<string>();
 
-      LoadExcludedFiles("ExcludeFromUpdate.txt");
+      LoadExcludedFiles(Path.Combine(
+        Application.StartupPath, "ExcludeFromUpdate.txt"));
     }
 
     public void UpdateAll(string directory)
@@ -76,7 +78,10 @@ namespace DeployVersionSVN
       {
         foreach (string excludedFile in _excludedFiles)
           if (file.FullName.Contains(excludedFile))
+          {
+            Console.WriteLine("   Exluded: " + file.FullName);
             goto exclude;
+          }
 
         StreamReader read = new StreamReader(file.FullName, true);
         Encoding encoding = read.CurrentEncoding;
@@ -111,10 +116,12 @@ namespace DeployVersionSVN
     {
       if (!File.Exists(filename)) return;
 
+      Console.WriteLine("Excluding file which matches the following expressions: ");
       foreach (string str in File.ReadAllLines(filename))
       {
         if (String.IsNullOrEmpty(str)) continue;
 
+        Console.WriteLine("   " + str);
         _excludedFiles.Add(str);
       }
     }
