@@ -17,6 +17,7 @@
         <Item>unsafe</Item>
         <Item>volatile</Item>
       </MODIFIERS_ORDER>
+      <SPACE_AFTER_TYPECAST_PARENTHESES>False</SPACE_AFTER_TYPECAST_PARENTHESES>
       <SPACE_AROUND_MULTIPLICATIVE_OP>True</SPACE_AROUND_MULTIPLICATIVE_OP>
     </FormatSettings>
     <UsingsSettings />
