@@ -63,9 +63,6 @@ xcopy /y %1\RemotePlugins\Remotes\X10Remote\Interop.X10.dll .
 REM Utils
 xcopy /y %1\Utils\bin\%2\Utils.dll .
 
-REM MPTray
-xcopy /y %1\MPTray\bin\%2\MPTray.exe .
-
 rem C#scripts
 rem don't need to be copied seperate, those files are already in MediaPortal.Base
 rem xcopy /y %1\scripts\*.* scripts\
@@ -102,6 +99,9 @@ xcopy /y %1\WatchDog\bin\%2\DaggerLib.dll .
 xcopy /y %1\WatchDog\bin\%2\DaggerLib.DSGraphEdit.dll .
 xcopy /y %1\WatchDog\bin\%2\DirectShowLib-2005.dll .
 xcopy /y %1\WatchDog\bin\%2\MediaFoundation.dll .
+
+REM MPTray
+xcopy /y %1\MPTray\bin\%2\MPTray.* .
 
 REM MPInstaller
 xcopy /y %1\MPInstaller\bin\%2\MPInstaller.Library.* .

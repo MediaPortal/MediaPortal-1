@@ -61,7 +61,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="mptray.ico" />
-    <None Include="Resources\TrayIcon.ico" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

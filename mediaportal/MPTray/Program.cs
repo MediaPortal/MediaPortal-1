@@ -52,22 +52,40 @@ namespace MPTray
 
       if (processes.Length > 0)
       {
-        NativeMethods.SetForegroundWindow(processes[0].MainWindowHandle, true);
+        NativeMethods.ShowWindow(processes[0].MainWindowHandle, NativeMethods.ShowWindowFlags.ShowNormal);
+        if (NativeMethods.SetForegroundWindow(processes[0].MainWindowHandle, true))
+        {
+          Log.Info("MPTray: Successfully switched focus.");
+        }
+      }
+      else
+      {
+        if (processes.Length <= 0)
+        {
+          Log.Debug("MPTray: MediaPortal is not running (yet).");
+        }
       }
 
-      /* MPTrayMOD version
-            int attempts = 0;
-            while (attempts < 60)
-            {
-                processes = Process.GetProcessesByName("mediaportal");
-                if (processes.Length > 0 && NativeMethods.SetForegroundWindow(processes[0].MainWindowHandle, true))
-                {
-                    break;
-                }
-                Thread.Sleep(1000);
-                attempts++;
-            }
-            */
+      // MPTrayMOD version
+      //int attempts = 0;
+      //while (attempts < 60) // considerably high since MP might be caching textures
+      //{
+      //  processes = Process.GetProcessesByName("mediaportal");
+      //  if (processes.Length > 0 && NativeMethods.SetForegroundWindow(processes[0].MainWindowHandle, true))
+      //  {
+      //    Log.Info("MPTray: Successfully switched focus.");
+      //    break;
+      //  }
+      //  else
+      //  {
+      //    if (processes.Length <= 0)
+      //    {
+      //      Log.Debug("MPTray: MediaPortal is not running (yet).");
+      //    }
+      //  }
+      //  Thread.Sleep(1000);
+      //  attempts++;
+      //}
     }
 
     private void OnClick(object sender, RemoteEventArgs e)
@@ -79,6 +97,19 @@ namespace MPTray
 
       if (processes.Length != 0)
       {
+        if (processes.Length > 1)
+        {
+          try
+          {
+            Log.Warn("MPTray: More than one window named \"MediaPortal\" has been found!");
+            foreach (Process procName in processes)
+            {
+              Log.Info("MPTray:   {0} (Started: {1}, ID: {2})", procName.ProcessName, procName.StartTime.ToShortTimeString(), procName.Id);
+            }
+          }
+          catch (Exception) { }
+        }
+        Log.Info("MPTray: MediaPortal is already running - switching focus.");
         SwitchFocus();
       }
       else
@@ -110,19 +141,19 @@ namespace MPTray
         }
         catch (Exception ex)
         {
-          Log.Error("ShellApplication.OnClick: {0}", ex.Message);
+          Log.Error("MPTray: Error starting MediaPortal {0}", ex.Message);
         }
       }
     }
 
     private void OnDeviceArrival(object sender, EventArgs e)
     {
-      Log.Info("ShellApplication.OnDeviceArrival: Device installed");
+      Log.Debug("MPTray: Device installed");
     }
 
     private void OnDeviceRemoval(object sender, EventArgs e)
     {
-      Log.Info("ShellApplication.OnDeviceRemoval: Device removed");
+      Log.Debug("MPTray: Device removed");
     }
 
     private void OnKeyDown(object sender, KeyEventArgs e)
@@ -202,25 +233,26 @@ namespace MPTray
       }
       catch (Exception e)
       {
-        Log.Error("ShellApplication.Register: {0}", e.Message);
+        Log.Error("MPTray: Failed to modify autostart entry {0}", e.ToString());
       }
     }
 
     private void Run()
     {
       try
-      {
-        Log.Debug("ShellApplication.Run: Starting...");
+      {        
+        try
+        {
+          Thread.CurrentThread.Name = "MPTray";
+        }
+        catch (InvalidOperationException) { }
+
+        Log.Debug("MPTray: Starting...");
 
         if (TerminateProcess("ehtray"))
         {
-          Log.Info("ShellApplication.Run: Terminating running instance(s) of ehtray.exe");
+          Log.Info("MPTray: Terminating running instance(s) of ehtray.exe");
         }
-        //                IpcChannel channel = new IpcChannel("MediaPortal");
-
-        //                ChannelServices.RegisterChannel(channel);
-
-        //                RemotingConfiguration.RegisterWellKnownServiceType(Type.GetType("RemotingSample.RemoteObject,RemoteObject"), "TrayNotifications", WellKnownObjectMode.Singleton);
 
         Remote.Click += new RemoteEventHandler(this.OnClick);
         Remote.DeviceArrival += new DeviceEventHandler(this.OnDeviceArrival);
@@ -229,37 +261,47 @@ namespace MPTray
         // reduce the memory footprint of the app
         Process process = Process.GetCurrentProcess();
 
-        process.MaxWorkingSet = (IntPtr)800000;
-        process.MinWorkingSet = (IntPtr)500000;
+        process.MaxWorkingSet = (IntPtr)900000;
+        process.MinWorkingSet = (IntPtr)300000;
 
         InitTrayIcon();
         Application.Run();
       }
       catch (Exception e)
       {
-        Log.Error("ShellApplication.Run: {0}", e.Message);
+        Log.Error("MPTray: Error on startup {0}", e.ToString());
       }
 
       if (_keyboardHook != null)
+      {
+        Log.Info("MPTray: Disabling keyboard hook");
         _keyboardHook.IsEnabled = false;
+      }
 
-      Log.Debug("ShellApplication.Run: Exiting");
+      Log.Debug("MPTray: Exiting");
     }
 
     private bool TerminateProcess(string processName)
     {
       bool terminatedProcess = false;
 
-      foreach (Process process in Process.GetProcessesByName(processName))
+      try
       {
-        if (process != Process.GetCurrentProcess())
+        foreach (Process process in Process.GetProcessesByName(processName))
         {
-          process.Kill();
-          process.Close();
+          if (process != Process.GetCurrentProcess())
+          {
+            process.Kill();
+            process.Close();
 
-          if (terminatedProcess == false)
-            terminatedProcess = true;
+            if (terminatedProcess == false)
+              terminatedProcess = true;
+          }
         }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("MPTray: Error while terminating process(es): {0}, {1}", processName, ex.ToString());
       }
 
       return terminatedProcess;
@@ -318,7 +360,7 @@ namespace MPTray
             handler.Register(false, Registry.LocalMachine);
             return;
           default:
-            Log.Info("Ignoring unknown command line parameter: '{0}'", arg);
+            Log.Info("MPTray: Ignoring unknown command line parameter: '{0}'", arg);
             break;
         }
       }
@@ -327,7 +369,7 @@ namespace MPTray
 
       if (processes.Length != 1)
       {
-        Log.Warn("Another instance of this application is already running");
+        Log.Warn("MPTray: Another instance of MPTray is already running");
         return;
       }
 
@@ -345,7 +387,7 @@ namespace MPTray
           //MenuItem menuItem2 = new MenuItem();
 
           // Initialize contextMenuTray
-          contextMenuTray.MenuItems.AddRange(new MenuItem[] {menuItem1 /*, menuItem2 */});
+          contextMenuTray.MenuItems.AddRange(new MenuItem[] { menuItem1 /*, menuItem2 */});
 
           // Initialize menuItem1
           menuItem1.Index = 0;
