@@ -27,7 +27,7 @@ echo.
 
 echo.
 echo Building DeployVersionSVN...
-"%SVN_ROOT%\Tools\Script & Batch tools\DeployVersionSVN\Build.bat" > build.log
+call "%SVN_ROOT%\Tools\Script & Batch tools\DeployVersionSVN\Build.bat" > build.log
 
 echo.
 echo Writing SVN revision assemblies...
