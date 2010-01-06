@@ -1814,7 +1814,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   {
     #ifdef USE_DYNAMIC_PINS
     // if we have a video stream and it's format changed, let the mpeg parser trigger the OnMediaTypeChanged
-    if (m_pids.videoPids[0].Pid>0x1 && videoChanged)  
+    if (m_pids.videoPids.size() > 0 && m_pids.videoPids[0].Pid>0x1 && videoChanged)  
     {
       LogDebug("DeMultiplexer: We detected a new media type change which has a video stream, so we let the mpegParser trigger the event");
       m_receivedPackets=0;
