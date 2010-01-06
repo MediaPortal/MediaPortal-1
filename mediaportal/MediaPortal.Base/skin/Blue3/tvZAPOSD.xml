@@ -113,6 +113,18 @@
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
+      <description>Zap to channel no</description>
+      <type>label</type>
+      <id>38</id>
+      <posX>335</posX>
+      <posY>551</posY>
+      <label>-</label>
+      <align>center</align>
+      <font>font13</font>
+      <textcolor>white</textcolor>
+      <visible>no</visible>
+    </control>
+    <control>
       <description>Current channel</description>
       <type>label</type>
       <id>35</id>
