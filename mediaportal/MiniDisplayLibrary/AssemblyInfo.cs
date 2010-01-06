@@ -12,7 +12,7 @@ using System.Security.Permissions;
 [assembly: AssemblyKeyFile("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("Copyright © 2005-2009 Team MediaPortal")]
+[assembly: AssemblyCopyright("Copyright © 2005-2010 Team MediaPortal")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDescription("External Status Display Plugin for MediaPortal")]

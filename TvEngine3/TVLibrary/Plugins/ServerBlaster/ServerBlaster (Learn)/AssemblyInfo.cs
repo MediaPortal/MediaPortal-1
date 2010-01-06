@@ -38,7 +38,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Team MediaPortal")]
 [assembly: AssemblyProduct("ServerBlaster plugin")]
-[assembly: AssemblyCopyright("Copyright © 2005-2009 Team MediaPortal")]
+[assembly: AssemblyCopyright("Copyright © 2005-2010 Team MediaPortal")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
