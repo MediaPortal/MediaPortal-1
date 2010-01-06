@@ -56,6 +56,7 @@
   !warning "It seems there was an error, reading the svn revision. 0 will be used."
 !endif
 
+!system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Debug\DeployVersionSVN.exe" /svn="${svn_ROOT}\Common-MP-TVE3"' = 0
 !ifdef BUILD_MediaPortal
 !system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Debug\DeployVersionSVN.exe" /svn="${svn_MP}"' = 0
 !system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${svn_MP}\MediaPortal.sln"' = 0
@@ -68,6 +69,7 @@
 !system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${svn_TVServer}\TvPlugin\TvPlugin.sln"' = 0
 !system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Debug\DeployVersionSVN.exe" /svn="${svn_TVServer}"  /revert' = 0
 !endif
+!system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Debug\DeployVersionSVN.exe" /svn="${svn_ROOT}\Common-MP-TVE3"  /revert' = 0
 
 !ifdef BUILD_DeployTool
 !system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /p:ALToolPath="${ALToolPath}" /target:Rebuild /property:Configuration=Release;Platform=x86 "${svn_DeployTool}\MediaPortal.DeployTool.sln"' = 0
