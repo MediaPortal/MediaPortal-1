@@ -32,7 +32,7 @@ using namespace std;
 #define DEFAULT_FRAME_TIME 400000 // used when fps information is not provided (e.g. TsReader)
 
 // uncomment the //Log to enable extra logging
-#define LOG_TRACE Log
+#define LOG_TRACE //Log
 
 // Macro for locking 
 #define TIME_LOCK(obj, crit, name)  \
