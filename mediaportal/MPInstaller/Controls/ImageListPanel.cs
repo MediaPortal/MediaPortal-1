@@ -1,10 +1,22 @@
-// ImageListPopup by John O'Byrne
-// This class pops up window displaying the different images
-// contained in an ImageList and allows to select one.
-// History: 24/02/2003 : Initial Release
-//          25/02/2003 : Added Keyboard support (arrows + space or enter to validate)
-//                       Added Drag'n'Drop Support (disabled by default) - The selected Image
-//                       and its Id are available to the drop target
+#region Copyright (C) 2005-2010 Team MediaPortal
+
+// Copyright (C) 2005-2010 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
 
 using System;
 using System.ComponentModel;

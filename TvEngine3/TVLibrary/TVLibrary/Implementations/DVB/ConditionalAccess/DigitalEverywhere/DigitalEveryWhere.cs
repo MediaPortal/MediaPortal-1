@@ -1,23 +1,23 @@
-/* 
- *	Copyright (C) 2005-2009 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+#region Copyright (C) 2005-2010 Team MediaPortal
+
+// Copyright (C) 2005-2010 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -83,13 +83,13 @@ namespace TvLibrary.Implementations.DVB
       [FieldOffset(12)] public byte uBandwidth; // BANDWIDTH_8_MHZ, BANDWIDTH_7_MHZ, BANDWIDTH_6_MHZ
 
       [FieldOffset(13)] public byte uConstellation;
-                                    // CONSTELLATION_DVB_T_QPSK,CONSTELLATION_QAM_16,CONSTELLATION_QAM_64,OFDM_AUTO
+      // CONSTELLATION_DVB_T_QPSK,CONSTELLATION_QAM_16,CONSTELLATION_QAM_64,OFDM_AUTO
 
       [FieldOffset(14)] public byte uCodeRateHP; // CR_12,CR_23,CR_34,CR_56,CR_78,OFDM_AUTO
       [FieldOffset(15)] public byte uCodeRateLP; // CR_12,CR_23,CR_34,CR_56,CR_78,OFDM_AUTO
 
       [FieldOffset(16)] public byte uGuardInterval;
-                                    // GUARD_INTERVAL_1_32,GUARD_INTERVAL_1_16,GUARD_INTERVAL_1_8,GUARD_INTERVAL_1_4,OFDM_AUTO
+      // GUARD_INTERVAL_1_32,GUARD_INTERVAL_1_16,GUARD_INTERVAL_1_8,GUARD_INTERVAL_1_4,OFDM_AUTO
 
       [FieldOffset(17)] public byte uTransmissionMode; // TRANSMISSION_MODE_2K, TRANSMISSION_MODE_8K, OFDM_AUTO
       [FieldOffset(18)] public byte uHierarchyInfo; // HIERARCHY_NONE,HIERARCHY_1,HIERARCHY_2,HIERARCHY_4,OFDM_AUTO

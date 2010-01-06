@@ -1,23 +1,23 @@
-/* 
- *	Copyright (C) 2005-2009 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+#region Copyright (C) 2005-2010 Team MediaPortal
+
+// Copyright (C) 2005-2010 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
 using System;
 using System.Runtime.InteropServices;
 using DirectShowLib;
@@ -211,7 +211,7 @@ namespace TvLibrary.Implementations.DVB
                                Int32 OutBufferSize)
     {
       Marshal.WriteInt32(_thbdaBuf, 0, 0x255e0082);
-        //GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
+      //GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
       Marshal.WriteInt16(_thbdaBuf, 4, 0x2017);
       Marshal.WriteInt16(_thbdaBuf, 6, 0x4b03);
       Marshal.WriteByte(_thbdaBuf, 8, 0x90);
@@ -551,7 +551,7 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteInt32(_ptrDiseqc, 8, LNBLOFHighBand); // 8: ulLNBLOFHighBand  LNBLOF HighBand MHz
       Marshal.WriteInt32(_ptrDiseqc, 12, LNBLOFHiLoSW); //12: ulLNBLOFHiLoSW   LNBLOF HiLoSW MHz
       Marshal.WriteByte(_ptrDiseqc, 16, (byte)turnon22Khz);
-        //16: f22K_Output (F22K_Output_HiLo:0 | F22K_Output_Off:1 | F22K_Output_On:2
+      //16: f22K_Output (F22K_Output_HiLo:0 | F22K_Output_Off:1 | F22K_Output_On:2
       Marshal.WriteByte(_ptrDiseqc, 17, (byte)disEqcPort); //17: DiSEqC_Port
       Marshal.WriteByte(_ptrDiseqc, 18, 0);
       Marshal.WriteByte(_ptrDiseqc, 19, 0);

@@ -1,25 +1,20 @@
-#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2010 Team MediaPortal
 
-/* 
- *	Copyright (C) 2005-2009 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2010 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #endregion
 
@@ -710,7 +705,7 @@ namespace TvPlugin
       if (!Card.IsTimeShifting)
       {
         UpdateProgressPercentageBar();
-          // mantis #2218 : TV guide information in TV home screen does not update when program changes if TV is not playing 
+        // mantis #2218 : TV guide information in TV home screen does not update when program changes if TV is not playing 
         return;
       }
 
@@ -2484,7 +2479,7 @@ namespace TvPlugin
           {
             GUIPropertyManager.SetProperty("#TV.View.title", GUILocalizeStrings.Get(736)); // no epg for this channel
             GUIPropertyManager.SetProperty("#TV.View.compositetitle", GUILocalizeStrings.Get(736));
-              // no epg for this channel
+            // no epg for this channel
             GUIPropertyManager.SetProperty("#TV.View.start", String.Empty);
             GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
             GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
@@ -2512,7 +2507,7 @@ namespace TvPlugin
           {
             GUIPropertyManager.SetProperty("#TV.Next.title", GUILocalizeStrings.Get(736)); // no epg for this channel
             GUIPropertyManager.SetProperty("#TV.View.compositetitle", GUILocalizeStrings.Get(736));
-              // no epg for this channel
+            // no epg for this channel
             GUIPropertyManager.SetProperty("#TV.Next.start", String.Empty);
             GUIPropertyManager.SetProperty("#TV.Next.stop", String.Empty);
             GUIPropertyManager.SetProperty("#TV.Next.description", String.Empty);
@@ -2670,7 +2665,7 @@ namespace TvPlugin
       string langSel = ""; // find audio based on this language.
       string ac3BasedOnLang = ""; // for debugging, what lang. in prefs. where used to choose the ac3 audio track ?
       string mpegBasedOnLang = "";
-        // for debugging, what lang. in prefs. where used to choose the mpeg audio track ?      
+      // for debugging, what lang. in prefs. where used to choose the mpeg audio track ?      
 
       dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
 
@@ -3075,7 +3070,7 @@ namespace TvPlugin
 
       GUIDialogNotify pDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
       string caption = GUILocalizeStrings.Get(605) + " - " + channel.Name;
-        // +GUILocalizeStrings.Get(1512); ("tune last?")
+      // +GUILocalizeStrings.Get(1512); ("tune last?")
       pDlgNotify.SetHeading(caption); //my tv
       StringBuilder sbMessage = new StringBuilder();
       // ignore the "unable to start timeshift" line to avoid scrolling, because NotifyDLG has very few space available.
