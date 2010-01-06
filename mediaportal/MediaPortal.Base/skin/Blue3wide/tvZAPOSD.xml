@@ -26,7 +26,7 @@
     <control>
       <description>TV Logo</description>
       <type>image</type>
-      <id>0</id>
+      <id>10</id>
       <posX>1050</posX>
       <posY>635</posY>
       <width>70</width>
@@ -110,6 +110,18 @@
       <align>left</align>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control>
+      <description>Zap to channel no</description>
+      <type>label</type>
+      <id>38</id>
+      <posX>650</posX>
+      <posY>690</posY>
+      <label>-</label>
+      <align>center</align>
+      <font>font13</font>
+      <textcolor>white</textcolor>
+      <visible>no</visible>
     </control>
     <control>
       <description>Current channel</description>

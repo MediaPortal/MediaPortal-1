@@ -328,7 +328,9 @@ namespace TvPlugin
             return;
           }
       }
-      if ((action.wID >= Action.ActionType.REMOTE_0) && (action.wID <= Action.ActionType.REMOTE_9))
+      if (/*((action.wID >= Action.ActionType.REMOTE_0) && (action.wID <= Action.ActionType.REMOTE_9)) ||*/
+           (action.wID == Action.ActionType.ACTION_KEY_PRESSED && action.m_key != null &&
+            (char)action.m_key.KeyChar >= '0' && (char)action.m_key.KeyChar <= '9'))
       {
         TvFullScreen TVWindow = (TvFullScreen)GUIWindowManager.GetWindow((int)Window.WINDOW_TVFULLSCREEN);
         if (TVWindow != null)

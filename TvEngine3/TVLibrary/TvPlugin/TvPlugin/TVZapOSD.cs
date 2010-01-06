@@ -44,11 +44,13 @@ namespace TvPlugin
     [SkinControl(102)] protected GUILabelControl lblEndTime = null;
     [SkinControl(39)] protected GUIImage imgRecIcon = null;
     [SkinControl(10)] protected GUIImage imgTvChannelLogo = null;
+    [SkinControl(38)] protected GUILabelControl lblZapToCannelNo = null;
 
 
     private bool m_bNeedRefresh = false;
     private DateTime m_dateTime = DateTime.Now;
     private string channelName = "";
+    private string channelNr = "";
     private int idChannel;
     private String tvErrorMessage = String.Empty;
 
@@ -168,6 +170,7 @@ namespace TvPlugin
       ResetAllControls(); // make sure the controls are positioned relevant to the OSD Y offset
       m_bNeedRefresh = false;
       m_dateTime = DateTime.Now;
+      channelNr = GetChannelNumber();
       channelName = GetChannelName();
       idChannel = GetIdChannel();
       SetCurrentChannelLogo();
@@ -176,11 +179,10 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
     }
 
-
     private void Get_TimeInfo()
     {
       string strTime = channelName;
-      Program prog = TVHome.Navigator.GetChannel(idChannel).CurrentProgram;
+      Program prog = TVHome.Navigator.GetChannel(idChannel, true).CurrentProgram;
       if (prog != null)
       {
         strTime = String.Format("{0}-{1}",
@@ -259,6 +261,7 @@ namespace TvPlugin
         return;
       }
       TVHome.Navigator.ZapToPreviousChannel(true);
+      channelNr = "";
       channelName = GetChannelName();
       idChannel = GetIdChannel();
       SetCurrentChannelLogo();
@@ -273,6 +276,7 @@ namespace TvPlugin
         return;
       }
       TVHome.Navigator.ZapToNextChannel(true);
+      channelNr = "";
       channelName = GetChannelName();
       idChannel = GetIdChannel();
       SetCurrentChannelLogo();
@@ -282,6 +286,7 @@ namespace TvPlugin
 
     public void UpdateChannelInfo()
     {
+      channelNr = GetChannelNumber();
       channelName = GetChannelName();
       idChannel = GetIdChannel();
       SetCurrentChannelLogo();
@@ -316,6 +321,17 @@ namespace TvPlugin
       return TVHome.Navigator.ZapChannel.DisplayName;
     }
 
+    private string GetChannelNumber()
+    {
+      int zapChannelNr = TVHome.Navigator.ZapChannelNr;
+      
+      if (zapChannelNr<0)
+      {
+        return "";
+      }
+      return zapChannelNr.ToString();
+    }
+
     private int GetIdChannel()
     {
       return TVHome.Navigator.ZapChannel.IdChannel;
@@ -346,6 +362,11 @@ namespace TvPlugin
       {
         lblCurrentChannel.Label = channelName;
       }
+      if (lblZapToCannelNo != null)
+      {
+        lblZapToCannelNo.Label = channelNr;
+        lblZapToCannelNo.Visible = !string.IsNullOrEmpty(channelNr);
+      }
       if (LastError != null)
       {
         if (LastError.Messages.Count > 0)
@@ -361,7 +382,8 @@ namespace TvPlugin
       }
       else
       {
-        Program prog = TVHome.Navigator.GetChannel(idChannel).GetProgramAt(m_dateTime);
+        Channel chan = TVHome.Navigator.GetChannel(idChannel, true);
+        Program prog = chan.GetProgramAt(m_dateTime);
         if (prog != null)
         {
           string strTime = String.Format("{0}-{1}",
@@ -389,7 +411,7 @@ namespace TvPlugin
           }
 
           // next program
-          prog = TVHome.Navigator.GetChannel(idChannel).GetProgramAt(prog.EndTime.AddMinutes(1));
+          prog = chan.GetProgramAt(prog.EndTime.AddMinutes(1));
           //prog = TVHome.Navigator.GetChannel(channelName).GetProgramAt(prog.EndTime.AddMinutes(1));
           if (prog != null)
           {
@@ -423,7 +445,7 @@ namespace TvPlugin
     private void UpdateProgressBar()
     {
       double fPercent;
-      Program prog = TVHome.Navigator.GetChannel(idChannel).CurrentProgram;
+      Program prog = TVHome.Navigator.GetChannel(idChannel, true).CurrentProgram;
       if (prog == null)
       {
         return;

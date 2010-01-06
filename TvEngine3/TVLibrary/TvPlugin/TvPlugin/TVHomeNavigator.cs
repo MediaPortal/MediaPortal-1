@@ -84,6 +84,7 @@ namespace TvPlugin
     private DateTime m_zaptime;
     private long m_zapdelay;
     private Channel m_zapchannel = null;
+    private int m_zapChannelNr = -1;
     private int m_zapgroup = -1;
     private Channel _lastViewedChannel = null; // saves the last viewed Channel  // mPod    
     private Channel m_currentChannel = null;
@@ -318,6 +319,21 @@ namespace TvPlugin
     }
 
     /// <summary>
+    /// Gets the channel number that we will zap to. If not zapping by number or not zapping to anything, returns -1.
+    /// </summary>
+    public int ZapChannelNr
+    {
+      get
+      {
+        return m_zapChannelNr;
+      }
+      set
+      {
+        m_zapChannelNr = value;
+      }
+    }
+
+    /// <summary>
     /// Gets the configured zap delay (in milliseconds).
     /// </summary>
     public long ZapDelay
@@ -419,6 +435,7 @@ namespace TvPlugin
 
             TVHome.ViewChannel(zappingTo);
           }
+          m_zapChannelNr = -1;
           reentrant = false;
 
           return true;
@@ -612,6 +629,7 @@ namespace TvPlugin
           }
           iCounter++;
         }
+        m_zapChannelNr = channelNr;
       }
     }
 
@@ -623,6 +641,7 @@ namespace TvPlugin
     public void ZapToChannel(int channelNr, bool useZapDelay)
     {
       IList<GroupMap> channels = CurrentGroup.ReferringGroupMap();
+      m_zapChannelNr = channelNr;
       channelNr--;
       if (channelNr >= 0 && channelNr < channels.Count)
       {
@@ -669,6 +688,7 @@ namespace TvPlugin
 
       TVHome.UserChannelChanged = true;
       m_zapchannel = chan;
+      m_zapChannelNr = -1;
       Log.Info("Navigator:ZapNext {0}->{1}", currentChan.DisplayName, m_zapchannel.DisplayName);
       if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
       {
@@ -723,6 +743,7 @@ namespace TvPlugin
 
       TVHome.UserChannelChanged = true;
       m_zapchannel = chan;
+      m_zapChannelNr = -1;
       Log.Info("Navigator:ZapPrevious {0}->{1}",
                currentChan.DisplayName, m_zapchannel.DisplayName);
       if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
@@ -809,6 +830,7 @@ namespace TvPlugin
       {
         TVHome.UserChannelChanged = true;
         m_zapchannel = _lastViewedChannel;
+        m_zapChannelNr = -1;
         m_zaptime = DateTime.Now;
       }
     }
@@ -856,9 +878,14 @@ namespace TvPlugin
 
     public Channel GetChannel(int channelId)
     {
+      return GetChannel(channelId, false);
+    }
+
+    public Channel GetChannel(int channelId, bool allChannels)
+    {
       foreach (Channel chan in channels)
       {
-        if (chan.IdChannel == channelId && chan.VisibleInGuide)
+        if (chan.IdChannel == channelId && (allChannels || chan.VisibleInGuide))
         {
           return chan;
         }

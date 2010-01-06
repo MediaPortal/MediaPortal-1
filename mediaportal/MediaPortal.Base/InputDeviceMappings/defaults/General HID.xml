@@ -84,11 +84,13 @@
 		</button>
 		<button name="51 MediaChannelUp" code="51">
 			<action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="95" sound="cursor.wav" />
-			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="5" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="3003" command="ACTION" cmdproperty="95" sound="cursor.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="5" sound="cursor.wav" />
 		</button>
 		<button name="52 MediaChannelDown" code="52">
 			<action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="94" sound="cursor.wav" />
-			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="6" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="3003" command="ACTION" cmdproperty="94" sound="cursor.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="6" sound="cursor.wav" />
 		</button>
 	</remote>
 </mappings>
